@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+  <span>HeartBeat</span>
+</mat-toolbar>
+
+<mat-grid-list cols="1" rowHeight="fit">
+  <mat-grid-tile>
+    <div class="buttons">
+      <button mat-raised-button color="primary" (click)="uploader.click()">Import Project From File</button>
+      <input hidden type="file" accept=".json" #uploader (change)="importProject($event)" />
+      <button mat-raised-button color="primary" (click)="createNewProject()">Create A New Project</button>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>

@@ -1,0 +1,50 @@
+[
+  {
+    "label": "Pipeline Name",
+    "value": "pipeLineName"
+  },
+  {
+    "label": "Pipeline Step",
+    "value": "stepName"
+  },
+  {
+    "label": "Build Number",
+    "value": "buildInfo.number"
+  },
+  {
+    "label": "Committer",
+    "value": "commitInfo.commit.committer.name"
+  },
+  {
+    "label": "Code Committed Time",
+    "value": "commitInfo.commit.committer.date"
+  },
+  {
+    "label": "PR Created Time",
+    "value": "leadTimeInfo.prCreatedTime"
+  },
+  {
+    "label": "PR Merged Time",
+    "value": "leadTimeInfo.prMergedTime"
+  },
+  {
+    "label": "Deployment Completed Time",
+    "value": "leadTimeInfo.jobFinishTime"
+  },
+  {
+    "label": "Total Lead Time (mins)",
+    "value": "leadTimeInfo.totalTime"
+  },
+  {
+    "label": "Time from PR Created to PR Merged (mins)",
+    "value": "leadTimeInfo.prDelayTime"
+  },
+  {
+    "label": "Time from PR Merged to Deployment Completed (mins)",
+    "value": "leadTimeInfo.pipelineDelayTime"
+  },
+  {
+    "label": "Status",
+    "value": "deployInfo.state"
+  }
+]

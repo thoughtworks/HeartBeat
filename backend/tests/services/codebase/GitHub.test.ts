@@ -1,0 +1,92 @@
+import "mocha";
+import { expect } from "chai";
+import { mock } from "../../TestTools";
+import Repositories from "../../fixture/GitHubAllRepo.json";
+import GitHubPullsOne from "../../fixture/GitHubPullsFromCommitOne.json";
+import GitHubPullsTwo from "../../fixture/GitHubPullsFromCommitTwo.json";
+import { GitHub } from "../../../src/services/codebase/GitHub";
+import {
+  DeployInfo,
+  DeployTimes,
+} from "../../../src/models/pipeline/DeployTimes";
+import {
+  LeadTime,
+  PipelineLeadTime,
+} from "../../../src/models/codebase/LeadTime";
+
+const gitHub = new GitHub("testToken");
+
+describe("fetch all repositories", () => {
+  it("should return repo list", async () => {
+    mock.onGet("/user/repos").reply(200, Repositories);
+    const fetchedRepositories = await gitHub.fetchAllRepo();
+
+    expect(fetchedRepositories.length).equal(2);
+    expect(fetchedRepositories).contains("https://github.com/owner/repo");
+    expect(fetchedRepositories).contain("https://github.com/owner/repo1");
+  });
+});
+
+describe("fetch pipelines lead time", () => {
+  const passed: DeployInfo[] = [
+    new DeployInfo(
+      "2020-05-21T06:27:50.185Z",
+      "2020-05-22T06:27:50.185Z",
+      "2020-05-22T06:30:50.185Z",
+      "id-1",
+      "passed"
+    ),
+    new DeployInfo(
+      "2020-05-21T06:27:50.185Z",
+      "2020-05-21T06:30:50.185Z",
+      "2020-05-22T06:33:50.185Z",
+      "id-2",
+      "passed"
+    ),
+  ];
+  const deployTimes: DeployTimes[] = new Array(1).fill(
+    new DeployTimes("id", "name", "step", passed, [])
+  );
+  const repositories: Map<string, string> = new Map<string, string>([
+    ["id", "https://github.com/example/example.git"],
+  ]);
+
+  it("should return pipelines lead time given deploy times and repositories", async () => {
+    mock
+      .onGet(`/repos/example/example/commits/${passed[0].commitId}/pulls`)
+      .reply(200, GitHubPullsOne);
+    mock
+      .onGet(`/repos/example/example/commits/${passed[1].commitId}/pulls`)
+      .reply(200, GitHubPullsTwo);
+    const pipelinesLeadTimes: PipelineLeadTime[] = await gitHub.fetchPipelinesLeadTime(
+      deployTimes,
+      repositories
+    );
+
+    const leadTimeList: LeadTime[] = [
+      new LeadTime(
+        passed[0].commitId,
+        new Date(passed[0].pipelineCreateTime).getTime(),
+        new Date(passed[0].jobFinishTime).getTime(),
+        new Date(GitHubPullsOne[0].created_at).getTime(),
+        new Date(GitHubPullsOne[0].merged_at).getTime()
+      ),
+      new LeadTime(
+        passed[1].commitId,
+        new Date(passed[1].pipelineCreateTime).getTime(),
+        new Date(passed[1].jobFinishTime).getTime(),
+        new Date(GitHubPullsTwo[0].created_at).getTime(),
+        new Date(GitHubPullsTwo[0].merged_at).getTime()
+      ),
+    ];
+    const expectPipelinesLeadTime: PipelineLeadTime[] = [
+      new PipelineLeadTime(
+        deployTimes[0].pipelineName,
+        deployTimes[0].pipelineStep,
+        leadTimeList
+      ),
+    ];
+
+    expect(pipelinesLeadTimes).deep.equal(expectPipelinesLeadTime);
+  });
+});

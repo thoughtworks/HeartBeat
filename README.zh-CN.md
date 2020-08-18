@@ -83,29 +83,29 @@ Image 3-4，Project config
 |SourceControl|您所在团队的源码管理工具，在第一版中仅支持GitHub|
 |Token|源码管理工具的Token|
 
-### 3.2 Config Dora Metrics data
+### 3.2 配置Dora指标数据
 
-After inputting the details info, users need to click the “Verify” button to verify if can access to these tool. Once can access, can click the “Next” button go to next page -- Config Dora Metrics page(Image 3-5，Image 3-6，Image 3-7)
+键入详细信息后，用户需要单击“验证”按钮以验证是否可以访问这些工具。一经验证通过，可以单击“下一步”按钮转到下一页-Config Dora Metrics页面(Image 3-5，Image 3-6，Image 3-7)
 
-#### 3.2.1 Config Crews/Cycle Time
+#### 3.2.1 配置团队成员和周期时间
 
 ![Image 3-5](https://user-images.githubusercontent.com/995849/89784257-f43e2e00-db4a-11ea-80c8-f6a495822bfc.png)
 _Image 3-5, Crews/Cycle Time config_
 
-**Crew Settings:** In the last page, it will get all the tickets that finished in the time period selected in the last step. So also get the all assignees list that assigned for these done tickets. In the crew setting, will list all assignees. Users can select any assignees or all assignees to generate the report.  
-**Cycle Time:** It will list all columns for the current active jira board. Then users need to map the each column to the Dora support columns. Like, if your board have “in progress” column, it means developer doing this ticket, so it should be mapping with “In Dev” for the list we provide.
+**团队成员设置 / Crew Settings:** 在上一页中，HeartBeat取到了您选择的时间段内所有已完成的Jira Ticket。与此同时，HeartBeat也获取到了这些Jira Ticket的Assignee列表。在团队成员（Crew Settings）设置中，将会列出所有Assignee。用户可以选择基于任何Assignee或所有Assignee来生成报告。
+**周期时间 / Cycle Time:** Cycle Time将列出当前活动的Jira看板的所有列。用户需要将每个列映射到Dora支持列。 例如，您的Jira看板中有“进行中”列，表示开发人员正在此Ticket上工作，因此对于我们提供的列表，它应与“In Dev”对应。
 
 | Status              | Description                                                                                                                            |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| To do               | It means the ticket needs to be done, waiting for Dev to pick it. Cycle time doesn't include this time.                                |
-| Analysis            | BA or other people still need to analyze the ticket. Cycle time doesn't include this time.                                             |
-| In Dev              | It means dev is doing the ticket. This time should be a part of cycle time. And it is named development time.                          |
-| Block               | It means the tickets blocked by some issues, cannot be done now. This time should be a part of cycle time. And it is named block time. |
-| Waiting for testing | It means waiting for Dev to pick or QA to testing. This time should be a part of cycle time. And it is named waiting time.             |
-| Testing             | It means QA is testing the tickets. This time should be a part of cycle time. And it is named testing time.                            |
-| Review              | It means PO or other people are reviewing the tickets. This time should be a part of cycle time. And it is named review time.          |
-| Done                | It means the tickets are already done. Cycle time doesn't include this time.                                                           |
-| --                  | If you don't need to map, you can select --                                                                                            |
+| To do               | 属于本列的Ticket需要被开发者拣选和完成。同时Cycle time并不会统计在本列所花费的时间。|
+| Analysis            | Ticket仍然需要BA或者其他人来进行分析。Cycle time并不会统计在本列所花费的时间。|
+| In Dev              | 这意味着开发人员正在Ticket上工作。该时间应该是Cycle Time的一部分，被称为开发时间。|
+| Block               | 这意味着由于某些问题导致Ticket无法正常进行。该时间应该是Cycle Time的一部分，被称为受阻碍时间。|
+| Waiting for testing | 这意味着Ticket处于等待开发选择质量检查人员进行质量检查的阶段。该时间应该是Cycle Time的一部分，被称为等待时间。|
+| Testing             | 这意味着质量检查人员正在测试Ticket。该时间应该是Cycle Time的一部分，被称为测试时间。|
+| Review              | 这表示PO或其他人正在审查Ticket。该时间应该是Cycle Time的一部分，被称为审查时间。|
+| Done                | 这意味着Ticket已经完成。Cycle Time不包括这个时间。|
+| --                  | 如果您不需要进行映射，请选择本项|
 
 #### 3.2.2 Setting Classification
 

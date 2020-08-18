@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "bin": "dist/server.js",
   "main": "dist/server.js",
-  "repository": "https://github.com/Tw-Dora/HeartBeat/backend.git",
+  "repository": "https://github.com/thoughtworks/HeartBeat.git",
   "author": "tw-heartbeat-team",
   "license": "UNLICENSED",
   "scripts": {

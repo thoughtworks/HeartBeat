@@ -2,7 +2,7 @@
 
 # 1 About HeartBeat
 
-HeartBeat is a next generation product from ThoughtWorks. This products can use to statistical project Dora Metrics data, more convenient, more faster, and more accurate.
+HeartBeat is a tool to know project delivery to help the team identify performance metrics, thereby driving continuous improvement and enhancing team productivity and efficiency.
 
 State of DevOps Report is launching in 2019. In this webinar, The DORA research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
 
@@ -13,7 +13,7 @@ State of DevOps Report is launching in 2019. In this webinar, The DORA research 
 3. Mean Time To Recover (MTTR)
 4. Change Failure Rate (CFR)
 
-In our HeartBeat tool, we also statistical some other datas, like: Velocity, Cycle Time and Classification. So can statistical DF, MLT and CFR data, also can statistical team's Velocity, Cycle Time and Classification.
+In our HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So can also collect DF, MLT and CFR.
 
 # 2 Support tools
 
@@ -276,13 +276,12 @@ For the next-gen Jira, when you add story points item, the name should be Story 
 
 For now, we just can download the code in our local machine, please follow below steps:
 
-1. Clone the backend code in your local machine: https://github.com/Tw-Dora/HeartBeat/backend
-2. Clone the frontend code in your local machine: https://github.com/Tw-Dora/HeartBeat/frontend
-3. Follow the Readme to deploy the product
+1. Clone the backend code in your local machine: https://github.com/thoughtworks/HeartBeat/
+2. Follow the steps as below
 
-# 6 Install HeartBeat Backend
+# 6 Install HeartBeat
 
-## 6.1 How to install
+## 6.1 How to install backend
 
 Install node modules:
 
@@ -298,13 +297,13 @@ Run project:
 
 swagger address: `http://localhost:3001/swagger-html`
 
-## 6.2 How to build it:
+## 6.1.1 How to build it
 
 ```shell script
     yarn package
 ```
 
-## 6.3 How to package it
+## 6.1.2 How to package it (optional)
 
 you can build server to binary file, it will output 3 files:
 
@@ -313,3 +312,16 @@ you can build server to binary file, it will output 3 files:
 - heartbeat-backend-win.exe
 
 these files can run on different system, you do not need to install node environment
+
+## 6.2 How to install frontend
+
+```
+yarn install --pure-lockfile
+yarn start
+```
+
+## 6.2.1 How to build it
+
+```
+yarn build
+```

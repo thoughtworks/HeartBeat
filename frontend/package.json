@@ -2,7 +2,7 @@
   "name": "heartbeat-frontend",
   "version": "0.0.0",
   "author": "tw-heartbeat-team",
-  "repository": "https://github.com/Tw-Dora/HeartBeat/frontend.git",
+  "repository": "https://github.com/thoughtworks/HeartBeat.git",
   "husky": {
     "hooks": {
       "pre-commit": "run-s format:fix lint"

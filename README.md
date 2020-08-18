@@ -13,11 +13,11 @@ State of DevOps Report is launching in 2019. In this webinar, The DORA research 
 3. Mean Time To Recover (MTTR)
 4. Change Failure Rate (CFR)
 
-In our HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So can also collect DF, MLT and CFR.
+In HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So we can collect DF, MLT, CFR, Velocity, Cycle Time and Classification.
 
 # 2 Support tools
 
-Here is the user manaul for Version 1 on 2020/06. For now, we just can support Jira/Buildkite/Github to generate the corresponding Dora data.
+Here is the user manaul for Version 1 on 2020/06. For now, we just can support Jira/Buildkite/Github to generate the corresponding metrics data.
 | Type | board | pipeline | Repo |
 | ------------- | --------------------- | ---------------------------------------- | -------------------------- |
 | Support tools | Jira √ </br> Trello × | Buildkite √ </br>Teamcity × </br> GoCD × | Github √ </br> Bitbucket × |
@@ -30,7 +30,7 @@ Here is the user manaul for Version 1 on 2020/06. For now, we just can support J
 
 ### 3.1.1 Config Board/Pipeline/Source data
 
-Before generator the dora metric data, user need to config the project info in Dora, in Home page(Image3-1), you can create a new project for your project, or you can import a project config json file (If you already saved one config file, for import file feature will introduce in “Import and Export feature ”).
+Before generator the metrics data, user need to config the project info, in Home page (Image3-1), you can create a new project for your project, or you can import a project config json file (If you already saved one config file, for import file feature will introduce in “Import and Export feature ”).
 
 ![Image 3-1](https://user-images.githubusercontent.com/995849/89783965-6b26f700-db4a-11ea-8b3a-a0d81ff37f85.png)
 _Image 3-1，home page_
@@ -83,9 +83,9 @@ Image 3-4，Project config
 |SourceControl|The source control tool you team use, but just support GitHub in Version 1|
 |Token|The token can access to source control tool|
 
-### 3.2 Config Dora Metrics data
+### 3.2 Config Metrics data
 
-After inputting the details info, users need to click the “Verify” button to verify if can access to these tool. Once can access, can click the “Next” button go to next page -- Config Dora Metrics page(Image 3-5，Image 3-6，Image 3-7)
+After inputting the details info, users need to click the “Verify” button to verify if can access to these tool. Once can access, can click the “Next” button go to next page -- Config Metrics page(Image 3-5，Image 3-6，Image 3-7)
 
 #### 3.2.1 Config Crews/Cycle Time
 
@@ -93,7 +93,7 @@ After inputting the details info, users need to click the “Verify” button to
 _Image 3-5, Crews/Cycle Time config_
 
 **Crew Settings:** In the last page, it will get all the tickets that finished in the time period selected in the last step. So also get the all assignees list that assigned for these done tickets. In the crew setting, will list all assignees. Users can select any assignees or all assignees to generate the report.  
-**Cycle Time:** It will list all columns for the current active jira board. Then users need to map the each column to the Dora support columns. Like, if your board have “in progress” column, it means developer doing this ticket, so it should be mapping with “In Dev” for the list we provide.
+**Cycle Time:** It will list all columns for the current active jira board. Then users need to map the each column to the supported columns. Like, if your board have “in progress” column, it means developer doing this ticket, so it should be mapping with “In Dev” for the list we provide.
 
 | Status              | Description                                                                                                                            |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -129,7 +129,7 @@ _Image 3-7，Settings for Pipeline_
 
 ### 3.2.1 Export Config Json File
 
-When user first use this tool, need to create a project, and do some config. To avoid the user entering configuration information repeatedly every time, we provide a “Save” button in the config and Dora Metrics pages. In config page, click the save button, it will save all items in config page in a Json file. If you click the save button in the Dora Metrics page, it will save all items in config and Dora metrics in a Json file. Here is the json file (Image 3-8)。Note: Below screenshot just contains a part of data.
+When user first use this tool, need to create a project, and do some config. To avoid the user entering configuration information repeatedly every time, we provide a “Save” button in the config and metrics pages. In config page, click the save button, it will save all items in config page in a Json file. If you click the save button in the metrics page, it will save all items in config and metrics settings in a Json file. Here is the json file (Image 3-8)。Note: Below screenshot just contains a part of data.
 
 ![Image 3-8](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)
 _Image 3-8, Config Json file_
@@ -141,7 +141,7 @@ When user already saved config file before, then you don’t need to create a ne
 ![Image 3-9](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)
 _Image 3-9, Warning message_
 
-## 3.3 Generate Dora Metrics Data
+## 3.3 Generate Metrics Data
 
 After config, then it will generate the report for you.
 

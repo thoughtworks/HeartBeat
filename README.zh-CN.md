@@ -107,92 +107,96 @@ _Image 3-5, Crews/Cycle Time config_
 | Done                | 这意味着Ticket已经完成。Cycle Time不包括这个时间。|
 | --                  | 如果您不需要进行映射，请选择本项|
 
-#### 3.2.2 Setting Classification
+#### 3.2.2 设置工作分类
 
 ![Image 3-6](https://user-images.githubusercontent.com/995849/89784259-f56f5b00-db4a-11ea-8a58-d6238e81df3c.png)
 _Image 3-6，Classification Settings_
 
-In classification settings, it will list all Context fields for your jira board. Users can select anyone to get the data for them.
+在工作分类设置中，HeartBeat会列出您的Jira看板上的所有Context字段，您可以根据需要来选择它们。
 
-#### 3.2.3 Deployment Frequency/Lead Time for Changes
+#### 3.2.3 部署频率(Deployment Frequency)和变更准备时间(Lead Time for Changes)
 
 ![Image 3-7](https://user-images.githubusercontent.com/995849/89784260-f6a08800-db4a-11ea-8ce2-87983363aa18.png)
 _Image 3-7，Settings for Pipeline_
 
 | Items         | Description                         |
 | ------------- | ----------------------------------- |
-| Organization  | The organization for your pipelines |
-| Pipeline Name | Your pipeline name                  |
-| Steps         | Your pipeline steps name            |
+| Organization  | 您的部署流水线所属的组织 |
+| Pipeline Name | 您的流水线名|
+| Steps         | 流水线步骤名|
 
-## 3.2 Export and import config info
+## 3.2 导入导出配置信息
 
-### 3.2.1 Export Config Json File
+### 3.2.1 导出Json配置文件
 
-When user first use this tool, need to create a project, and do some config. To avoid the user entering configuration information repeatedly every time, we provide a “Save” button in the config and Dora Metrics pages. In config page, click the save button, it will save all items in config page in a Json file. If you click the save button in the Dora Metrics page, it will save all items in config and Dora metrics in a Json file. Here is the json file (Image 3-8)。Note: Below screenshot just contains a part of data.
+用户首次使用此工具时，需要创建一个项目，并进行一些配置。为了避免用户每次重复输入配置信息，我们在config和Dora Metrics页面中提供了一个“保存”按钮。在配置页面中，单击保存按钮，它将配置页面中的所有项目保存在一个Json文件中。如果单击“Dora Metrics”页面中的“保存”按钮，它将把config和Dora度量标准中的所有项目都保存在Json文件中。 示例json文件请见(Image 3-8)。注意：下图中仅包含了文件的部分内容。
 
 ![Image 3-8](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)
 _Image 3-8, Config Json file_
 
-### 3.2.2 Import Config Json File
+### 3.2.2 导入Json配置文件
 
-When user already saved config file before, then you don’t need to create a new project. In the home page, can click Import Project from File button(Image 3-1) to select the config file. If your config file is too old, and the tool already have some new feature change, then if you import the config file, it will get some warning info(Image 3-9). You need to re-select some info, then go to the next page.
+如果用户之前已经保存过配置文件，则无需创建新项目。在主页中，可以单击“从文件导入项目”按钮(Image 3-1)以选择配置文件。
+
+如果您的配置文件太旧，并且该工具已经具有一些新功能更改，那么当您导入配置文件时将会看到一些警告信息(Image 3-9)。这时，您需要重新选择一些数据以继续使用本工具。
 
 ![Image 3-9](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)
 _Image 3-9, Warning message_
 
-## 3.3 Generate Dora Metrics Data
+## 3.3 生成Dora Metrics数据
 
-After config, then it will generate the report for you.
+当您完成了所有设置项，HeartBeat可以开始为您生成报告了。
 
-### 3.3.1 Velocity
+### 3.3.1 交付速率 / Velocity
 
-In Velocity Report, it will list the corresponding data by Story Point and the number of story tickets. (image 3-10)
+在Velocity报告中，HeartBeat将按Story Point和Story的数量列出相应的数据。(image 3-10)
 ![Image 3-10](https://user-images.githubusercontent.com/995849/89784271-facca580-db4a-11ea-87be-a555bb05a0a3.png)
 _Image 3-10，Velocity Report_
 
-### 3.3.2 Cycle Time
+### 3.3.2 周期时间 / Cycle Time
 
-The calculation process data and final result of Cycle Time are calculated by rounding method, and two digits are kept after the decimal point. Such as: 3.567... Is 3.56; 3.564... Is 3.56.
+计算过程数据和Cycle Time的最终结果通过四舍五入方法计算，小数点后保留两位数字。例如：3.567保留到3.56。
 
 ![Image 3-11](https://user-images.githubusercontent.com/995849/89784273-fbfdd280-db4a-11ea-9185-da89a862dace.png)
 _Image 3-11，Cycle Time Report_
 
-### 3.3.3 Classification
+### 3.3.3 工作分类 / Classification
 
 ![Image 3-12](https://user-images.githubusercontent.com/995849/89784278-fdc79600-db4a-11ea-820a-fc409a89b86a.png)
 _Image 3-12，Classification Report_
 
-### 3.3.4 Deployment Frequency
+### 3.3.4 部署频率 / Deployment Frequency
 
 ![Image 3-13](https://user-images.githubusercontent.com/995849/89784281-fef8c300-db4a-11ea-992b-6e2eca426f53.png)
 _Image 3-13，Deployment Frequency Report_
 
-### 3.3.5 Lead time for changes Data
+### 3.3.5 变更等待时间 / Lead time for changes Data
 
 ![Image 3-14](https://user-images.githubusercontent.com/995849/89784283-ff915980-db4a-11ea-83b3-304372e8749a.png)
 _Image 3-14，Lead time for changes Report_
 
-### 3.3.6 Change Failure Rate
+### 3.3.6 变更失败率 / Change Failure Rate
 
 ![Image 3-15](https://user-images.githubusercontent.com/995849/89784288-00c28680-db4b-11ea-9756-878176148d63.png)
 _Image 3-15，Change Failure Rate Report_
 
-## 3.4 Export original data
+## 3.4 导出报告
 
-After generating the report, you can export the original data for your board and pipeline (Image 3-15). Users can click the “Export board data” or “Export pipeline data” button to export the original data.
+生成报告后，您可以导出Jira看板和部署流水线的原始数据(Image 3-15)。用户可以单击“Export board data”或“Export pipeline data”按钮以导出原始数据。
 
-### 3.4.1 Export board data
+### 3.4.1 导出看板数据 / Export board data
 
-It will export a scv file for board data. It contains two parts:
-**Part 1:** Export the all done tickets during the time period
-**Part 2:** Export the all non-done tickets in your current active board. And it will order by ticket status (Image 3-16)
+本功能会导出看板数据到csv文件，该文件包含两个部分：
+
+**Part 1:** 在所选择时间段内所有的Jira Ticket
+
+**Part 2:** 在所选时间段内所有未完成的Jira Ticket，并且会根据状态进行排序。(Image 3-16)
 
 ![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)
 _Image 3-16，Exported Board Data_
 
-**All columns for Jira board:**
-|Column name |Description|
+**Jira看板的所有列：**
+|列名 |描述|
 |---|---|
 |Issue key|Ticket ID|
 |Summary|--|
@@ -204,44 +208,44 @@ _Image 3-16，Exported Board Data_
 |Project Key|--|
 |Project Name|--|
 |Priority|--|
-|Parent Summary|The epic for ticket|
-|Sprint|Which sprint this ticket in |
+|Parent Summary|Epic描述|
+|Sprint|Ticket所在的Sprint |
 |Labels|--|
-|Cycle Time|total Cycle Time|
-|Cycle Time / Story Points|Cycle Time for each point|
-|Analysis Days|Analysis days for each ticket|
-|In Dev Days|Development days for each ticket |
-|Waiting Days|After development, how long will take before testing|
-|Testing Days|Testing days for each ticket |
-|Block Days|Blocked days for each ticket|
+|Cycle Time|总Cycle Time|
+|Cycle Time / Story Points|每个Story Point的Cycle Time|
+|Analysis Days|每个Ticket所用的分析时间|
+|In Dev Days|每个Ticket所用的开发时间|
+|Waiting Days|从开发到测试所用的等待时间|
+|Testing Days|每个Ticket所用的测试时间|
+|Block Days|每个Ticket的被阻碍时间|
 |Review Days|--|
 |Original Cycle Time: {Column Name}|The data for Jira board original data |
 
-### 3.4.2 Export pipeline data
+### 3.4.2 导出Pipeline数据
 
-It will export a scv file for pipeline data (image 3-17).
+本功能会导出部署流水线数据到csv文件(image 3-17).
 
 ![Image 3-17](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)
 _Image 3-17，Exported Pipeline Data_
 
-**All columns for pipeline data:**
-|Column name |Description|
+**部署流水线的所有列：**
+|列名 |描述|
 |---|---|
 |Pipeline Name|--|
-|Pipeline Step|Step name |
+|Pipeline Step|步骤名 |
 |Committer|--|
-|Code Committed Time|Committed time |
+|Code Committed Time|代码提交次数 |
 |PR Created Time|-- |
 |PR Merged Time|-- |
 |Deployment Completed Time|When it finished deploy |
 |Total Lead Time (mins)|--|
 |Time from PR Created to PR Merged (mins)|--|
 |Time from PR Merged to Deployment Completed (mins)|--|
-|Status|Status for pipeline (Pass or Failed)|
+|Status|部署结果(Pass或者Failed)|
 
-# 4 Known issues
+# 4 已知的问题
 
-## 4.1 Add/Delete columns in Jira board
+## 4.1 更改Jira看板的列
 
 In the current version, if you add or delete some columns for the jira board, it will change finish time for all last column tickets to add/delete column time. (It just impact Next-gen Jira), here are the details info:
 
@@ -252,64 +256,56 @@ In the current version, if you add or delete some columns for the jira board, it
 
 For now, we don’t have a good solution to resolve this issue.
 
-# 5 Instructions
+# 5 使用说明
 
-## 5.1 Prepare for Jira Project
+## 5.1 设置Jira Project
 
-For Classic Jira users, before you use this tool, you need to do some settings for the jira board. Otherwise, you cannot get the data. Here are the steps you need to do:
+对于Classic Jira用户，在使用此工具之前，需要对jira看板进行一些设置，否则您将无法获取数据。以下是您需要执行的步骤：
 
-1. Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
+1. 打开 https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
    ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)
 
    _Image 5-1_
 
-2. You need to enable any items you want to know. In the above page, If you want to change any items' screens, you can click the screens link in the actions column for that item. Then in the next page, check the project you want to change, and update it. Like: Story points
+2. 如果您需要启用任何项，可以在上述页面中单击该项目的“Action”列中的“Screens”链接。然后在下一页中，检查要更改的项目，然后进行更新。例如：故事点
    ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)
    _Image 5-2_
 
    ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)
    _Image 5-3_
 
-For the next-gen Jira, when you add story points item, the name should be Story Points or Story point estimate.
+对于next-gen Jira，当添加Story Point项时，名称应为“Story Points”或“Story point estimate”。
 
-## 5.2 Prepare env to use HeartBeat tool
+# 6 安装 HeartBeat 后台服务
 
-For now, we just can download the code in our local machine, please follow below steps:
+## 6.1 如何安装
 
-1. Clone the backend code in your local machine: https://github.com/Tw-Dora/HeartBeat/backend
-2. Clone the frontend code in your local machine: https://github.com/Tw-Dora/HeartBeat/frontend
-3. Follow the Readme to deploy the product
-
-# 6 Install HeartBeat Backend
-
-## 6.1 How to install
-
-Install node modules:
+安装node modules：
 
 ```shell script
     yarn install
 ```
 
-Run project:
+运行项目：
 
 ```shell script
     yarn start
 ```
 
-swagger address: `http://localhost:3001/swagger-html`
+swagger 地址: `http://localhost:3001/swagger-html`
 
-## 6.2 How to build it:
+## 6.2 如何编译:
 
 ```shell script
     yarn package
 ```
 
-## 6.3 How to package it
+## 6.3 如何打包
 
-you can build server to binary file, it will output 3 files:
+你可以将server构建到二进制文件，它将会输出3个文件：
 
 - heartbeat-backend-linux
 - heartbeat-backend-macos
 - heartbeat-backend-win.exe
 
-these files can run on different system, you do not need to install node environment
+这些文件能满足不同操作系统的需要，并且您不需要额外安装Node.js环境。

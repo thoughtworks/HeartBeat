@@ -276,21 +276,24 @@ For now, we don’t have a good solution to resolve this issue.
 
 对于next-gen Jira，当添加Story Point项时，名称应为“Story Points”或“Story point estimate”。
 
-# 6 安装 HeartBeat 后台服务
+# 6 HeartBeat基本操作
 
-## 6.1 如何安装
-
-安装node modules：
+## 6.1 安装和运行
 
 ```shell script
-    yarn install
+$ cd HearBeat/frontend
+$ yarn install #为前端安装node modules
+$ yarn start #运行项目
 ```
-
-运行项目：
 
 ```shell script
-    yarn start
+$ cd HearBeat/backend
+$ yarn install #为后端安装node modules
+$ yarn start #运行项目
+$ yarn watch-server #如果不能运行，请使用本命令
 ```
+
+访问 `http://localhost:4200`开始使用
 
 swagger 地址: `http://localhost:3001/swagger-html`
 

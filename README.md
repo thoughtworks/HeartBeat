@@ -2,18 +2,18 @@
 
 # 1 About HeartBeat
 
-HeartBeat is a tool to know project delivery to help the team identify performance metrics, thereby driving continuous improvement and enhancing team productivity and efficiency.
+HeartBeat is a tool to understand project delivery to help the team identify performance metrics, thereby driving continuous improvement and enhancing team productivity and efficiency.
 
-State of DevOps Report is launching in 2019. In this webinar, The DORA research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
+State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
 
 **Here are the for Key meterics:**
 
 1. Deployment Frequency (DF)
-2. Mean Lead Time for changes (MLT)
+2. Mean Lead Time for changes (LTC)
 3. Mean Time To Recover (MTTR)
 4. Change Failure Rate (CFR)
 
-In HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So we can collect DF, MLT, CFR, Velocity, Cycle Time and Classification.
+In HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So we can collect DF, LTC, CFR, Velocity, Cycle Time and Classification.
 
 # 2 Support tools
 
@@ -32,14 +32,14 @@ Here is the user manaul for Version 1 on 2020/06. For now, we just can support J
 
 Before generator the metrics data, user need to config the project info, in Home page (Image3-1), you can create a new project for your project, or you can import a project config json file (If you already saved one config file, for import file feature will introduce in “Import and Export feature ”).
 
-![Image 3-1](https://user-images.githubusercontent.com/995849/89783965-6b26f700-db4a-11ea-8b3a-a0d81ff37f85.png)
+![Image 3-1](https://user-images.githubusercontent.com/995849/90855493-5b14e000-e3b2-11ea-9222-eba90c37e05e.png)\
 _Image 3-1，home page_
 
 #### 3.1.2 Config search data
 
 If you are first use the product, you need to select “Create A New Project”，it will go to config page (Image 3-2)
 
-![Image 3-2](https://user-images.githubusercontent.com/995849/89784081-a3c6d080-db4a-11ea-8ede-f892968735ee.png)
+![Image 3-2](https://user-images.githubusercontent.com/995849/90855655-bc3cb380-e3b2-11ea-8bed-28750ee26aae.png)\
 _Image 3-2，Project config page_
 
 Users need to select a period of time, then all of the data that follows is based on that time period.
@@ -51,14 +51,14 @@ Users need to select a period of time, then all of the data that follows is base
 
 All need to select which data you want to get, for now, we support six metrics data (Image 3-3).
 
-![Image 3-3](https://user-images.githubusercontent.com/995849/89784245-ed172000-db4a-11ea-8188-2d00c90c55bf.png)
+![Image 3-3](https://user-images.githubusercontent.com/995849/90855755-ef7f4280-e3b2-11ea-8b72-923f544db508.png)\
 _Image 3-3，Metrics Data_
 
 #### 3.1.3 Config project account
 
 Because all metrics data from different tools that your projects use. Need to have the access to these tools then you can get the data. So after select time period and metrics data, then you need to input the config for different tools(Image 3-4).
 
-![Image 3-4](https://user-images.githubusercontent.com/995849/89784256-f30d0100-db4a-11ea-903b-8ad5af40e6b3.png)
+![Image 3-4](https://user-images.githubusercontent.com/995849/90856214-0d00dc00-e3b4-11ea-9f51-7fc0bd6a5ab8.png)\
 Image 3-4，Project config
 
 **The details for board:**
@@ -89,7 +89,7 @@ After inputting the details info, users need to click the “Verify” button to
 
 #### 3.2.1 Config Crews/Cycle Time
 
-![Image 3-5](https://user-images.githubusercontent.com/995849/89784257-f43e2e00-db4a-11ea-80c8-f6a495822bfc.png)
+![Image 3-5](https://user-images.githubusercontent.com/995849/90856562-c6f84800-e3b4-11ea-80ea-f1a267f1dcd7.png)\
 _Image 3-5, Crews/Cycle Time config_
 
 **Crew Settings:** In the last page, it will get all the tickets that finished in the time period selected in the last step. So also get the all assignees list that assigned for these done tickets. In the crew setting, will list all assignees. Users can select any assignees or all assignees to generate the report.  
@@ -109,14 +109,14 @@ _Image 3-5, Crews/Cycle Time config_
 
 #### 3.2.2 Setting Classification
 
-![Image 3-6](https://user-images.githubusercontent.com/995849/89784259-f56f5b00-db4a-11ea-8a58-d6238e81df3c.png)
+![Image 3-6](https://user-images.githubusercontent.com/995849/89784259-f56f5b00-db4a-11ea-8a58-d6238e81df3c.png)\
 _Image 3-6，Classification Settings_
 
 In classification settings, it will list all Context fields for your jira board. Users can select anyone to get the data for them.
 
 #### 3.2.3 Deployment Frequency/Lead Time for Changes
 
-![Image 3-7](https://user-images.githubusercontent.com/995849/89784260-f6a08800-db4a-11ea-8ce2-87983363aa18.png)
+![Image 3-7](https://user-images.githubusercontent.com/995849/89784260-f6a08800-db4a-11ea-8ce2-87983363aa18.png)\
 _Image 3-7，Settings for Pipeline_
 
 | Items         | Description                         |
@@ -131,14 +131,14 @@ _Image 3-7，Settings for Pipeline_
 
 When user first use this tool, need to create a project, and do some config. To avoid the user entering configuration information repeatedly every time, we provide a “Save” button in the config and metrics pages. In config page, click the save button, it will save all items in config page in a Json file. If you click the save button in the metrics page, it will save all items in config and metrics settings in a Json file. Here is the json file (Image 3-8)。Note: Below screenshot just contains a part of data.
 
-![Image 3-8](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)
+![Image 3-8](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)\
 _Image 3-8, Config Json file_
 
 ### 3.2.2 Import Config Json File
 
 When user already saved config file before, then you don’t need to create a new project. In the home page, can click Import Project from File button(Image 3-1) to select the config file. If your config file is too old, and the tool already have some new feature change, then if you import the config file, it will get some warning info(Image 3-9). You need to re-select some info, then go to the next page.
 
-![Image 3-9](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)
+![Image 3-9](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)\
 _Image 3-9, Warning message_
 
 ## 3.3 Generate Metrics Data
@@ -148,34 +148,34 @@ After config, then it will generate the report for you.
 ### 3.3.1 Velocity
 
 In Velocity Report, it will list the corresponding data by Story Point and the number of story tickets. (image 3-10)
-![Image 3-10](https://user-images.githubusercontent.com/995849/89784271-facca580-db4a-11ea-87be-a555bb05a0a3.png)
+![Image 3-10](https://user-images.githubusercontent.com/995849/90856819-5ef63180-e3b5-11ea-8e94-e5363d305cf1.png)\
 _Image 3-10，Velocity Report_
 
 ### 3.3.2 Cycle Time
 
 The calculation process data and final result of Cycle Time are calculated by rounding method, and two digits are kept after the decimal point. Such as: 3.567... Is 3.56; 3.564... Is 3.56.
 
-![Image 3-11](https://user-images.githubusercontent.com/995849/89784273-fbfdd280-db4a-11ea-9185-da89a862dace.png)
+![Image 3-11](https://user-images.githubusercontent.com/995849/89784273-fbfdd280-db4a-11ea-9185-da89a862dace.png)\
 _Image 3-11，Cycle Time Report_
 
 ### 3.3.3 Classification
 
-![Image 3-12](https://user-images.githubusercontent.com/995849/89784278-fdc79600-db4a-11ea-820a-fc409a89b86a.png)
+![Image 3-12](https://user-images.githubusercontent.com/995849/89784278-fdc79600-db4a-11ea-820a-fc409a89b86a.png)\
 _Image 3-12，Classification Report_
 
 ### 3.3.4 Deployment Frequency
 
-![Image 3-13](https://user-images.githubusercontent.com/995849/89784281-fef8c300-db4a-11ea-992b-6e2eca426f53.png)
+![Image 3-13](https://user-images.githubusercontent.com/995849/89784281-fef8c300-db4a-11ea-992b-6e2eca426f53.png)\
 _Image 3-13，Deployment Frequency Report_
 
 ### 3.3.5 Lead time for changes Data
 
-![Image 3-14](https://user-images.githubusercontent.com/995849/89784283-ff915980-db4a-11ea-83b3-304372e8749a.png)
+![Image 3-14](https://user-images.githubusercontent.com/995849/89784283-ff915980-db4a-11ea-83b3-304372e8749a.png)\
 _Image 3-14，Lead time for changes Report_
 
 ### 3.3.6 Change Failure Rate
 
-![Image 3-15](https://user-images.githubusercontent.com/995849/89784288-00c28680-db4b-11ea-9756-878176148d63.png)
+![Image 3-15](https://user-images.githubusercontent.com/995849/89784288-00c28680-db4b-11ea-9756-878176148d63.png)\
 _Image 3-15，Change Failure Rate Report_
 
 ## 3.4 Export original data
@@ -188,7 +188,7 @@ It will export a scv file for board data. It contains two parts:
 **Part 1:** Export the all done tickets during the time period
 **Part 2:** Export the all non-done tickets in your current active board. And it will order by ticket status (Image 3-16)
 
-![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)
+![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
 _Image 3-16，Exported Board Data_
 
 **All columns for Jira board:**
@@ -221,7 +221,7 @@ _Image 3-16，Exported Board Data_
 
 It will export a scv file for pipeline data (image 3-17).
 
-![Image 3-17](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)
+![Image 3-17](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
 _Image 3-17，Exported Pipeline Data_
 
 **All columns for pipeline data:**
@@ -259,15 +259,14 @@ For now, we don’t have a good solution to resolve this issue.
 For Classic Jira users, before you use this tool, you need to do some settings for the jira board. Otherwise, you cannot get the data. Here are the steps you need to do:
 
 1. Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
-   ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)
-
+   ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
    _Image 5-1_
 
 2. You need to enable any items you want to know. In the above page, If you want to change any items' screens, you can click the screens link in the actions column for that item. Then in the next page, check the project you want to change, and update it. Like: Story points
-   ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)
+   ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
    _Image 5-2_
 
-   ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)
+   ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
    _Image 5-3_
 
 For the next-gen Jira, when you add story points item, the name should be Story Points or Story point estimate.
@@ -279,31 +278,30 @@ For now, we just can download the code in our local machine, please follow below
 1. Clone the backend code in your local machine: https://github.com/thoughtworks/HeartBeat/
 2. Follow the steps as below
 
-# 6 Install HeartBeat
+# 6 Run HeartBeat
 
-## 6.1 How to install backend
+## 6.1 How to run backend
 
 Install node modules:
 
 ```shell script
-    yarn install
+cd HearBeat/backend
+yarn install
 ```
 
-Run project:
+Run backend:
 
 ```shell script
-    yarn start
+yarn start
 ```
 
 swagger address: `http://localhost:3001/swagger-html`
 
-## 6.1.1 How to build it
+## 6.1.1 How to package it (optional)
 
 ```shell script
-    yarn package
+yarn package
 ```
-
-## 6.1.2 How to package it (optional)
 
 you can build server to binary file, it will output 3 files:
 
@@ -313,9 +311,10 @@ you can build server to binary file, it will output 3 files:
 
 these files can run on different system, you do not need to install node environment
 
-## 6.2 How to install frontend
+## 6.2 How to run frontend
 
 ```
+cd HearBeat/frontend
 yarn install --pure-lockfile
 yarn start
 ```

@@ -9,7 +9,7 @@ State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics 
 **Here are the for Key meterics:**
 
 1. Deployment Frequency (DF)
-2. Mean Lead Time for changes (LTC)
+2. Lead Time for changes (LTC)
 3. Mean Time To Recover (MTTR)
 4. Change Failure Rate (CFR)
 

@@ -21,9 +21,6 @@
       "pre-commit": "yarn eslint"
     }
   },
-  "eslintIgnore": [
-    "src/models/kanban/JiraCard.ts"
-  ],
   "pkg": {
     "scripts": [
       "dist/**/*.js"

@@ -75,8 +75,8 @@ export class JiraCardField {
   project?: JiraProject = undefined;
   priority?: Priority = undefined;
   parent?: CardParent = undefined;
-  label?: String = "";
-  sprint?: String = "";
+  label?: string = "";
+  sprint?: string = "";
 }
 
 @JsonObject("JiraCard")

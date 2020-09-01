@@ -12,6 +12,7 @@ export default class CodebaseController {
   public static async fetchTimePeriod(ctx: Context): Promise<void> {
     const tokenModel: CodebaseTokenModel = ctx.validatedQuery;
     const gitHub = new GitHub(tokenModel.token);
-    ctx.response.body = await gitHub.fetchAllRepo();
+    const gitOrganizations = await gitHub.fetchAllOrganization();
+    ctx.response.body = await gitHub.fetchAllRepo(gitOrganizations);
   }
 }

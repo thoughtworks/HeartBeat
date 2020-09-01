@@ -3,8 +3,8 @@ module.exports = {
   extends: ["plugin:@typescript-eslint/recommended"],
   plugins: ["@typescript-eslint"],
   rules: {
-    semi: ["error", "never"],
-    quotes: ["error", "single"],
+    semi: ["error", "always"],
+    quotes: ["error", "double"],
     camelcase: "off",
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/consistent-type-assertions": "off",

@@ -2,6 +2,7 @@ import "mocha";
 import { expect } from "chai";
 import { mock } from "../../TestTools";
 import Repositories from "../../fixture/GitHubAllRepo.json";
+import Organizations from "../../fixture/GitHubAllOrganization.json";
 import GitHubPullsOne from "../../fixture/GitHubPullsFromCommitOne.json";
 import GitHubPullsTwo from "../../fixture/GitHubPullsFromCommitTwo.json";
 import { GitHub } from "../../../src/services/codebase/GitHub";
@@ -16,10 +17,26 @@ import {
 
 const gitHub = new GitHub("testToken");
 
+describe("fetch all organizations", () => {
+  it("should return organization list", async () => {
+    mock.onGet("/user/orgs").reply(200, Organizations);
+    const fetchedOrganizations = await gitHub.fetchAllOrganization();
+
+    expect(fetchedOrganizations.length).equal(2);
+    expect(fetchedOrganizations).contains("github");
+    expect(fetchedOrganizations).contain("tw");
+  });
+});
+
 describe("fetch all repositories", () => {
   it("should return repo list", async () => {
-    mock.onGet("/user/repos").reply(200, Repositories);
-    const fetchedRepositories = await gitHub.fetchAllRepo();
+    const orgs = ["github", "tw"];
+    const requestUrls = ["/user/repos"];
+
+    orgs.forEach(org => { requestUrls.push(`/orgs/${org}/repos`); });
+    requestUrls.forEach((url) => { mock.onGet(url).reply(200, Repositories);});
+
+    const fetchedRepositories = await gitHub.fetchAllRepo(orgs);
 
     expect(fetchedRepositories.length).equal(2);
     expect(fetchedRepositories).contains("https://github.com/owner/repo");

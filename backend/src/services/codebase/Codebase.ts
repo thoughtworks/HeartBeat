@@ -9,7 +9,7 @@ enum CodebaseType {
 }
 
 export interface Codebase {
-  fetchAllRepo(): Promise<string[]>;
+  fetchAllRepo(gitOrganizations: string[]): Promise<string[]>;
   fetchPipelinesLeadTime(
     deployTimes: DeployTimes[],
     repositories: Map<string, string>

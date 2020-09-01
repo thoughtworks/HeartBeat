@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Codebase } from "./Codebase";
 import { DeployTimes } from "../../models/pipeline/DeployTimes";
 import axios, { AxiosInstance } from "axios";
@@ -7,6 +6,7 @@ import GitUrlParse from "git-url-parse";
 import { GitHubPull } from "../../models/codebase/GitHubPull";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { LeadTime, PipelineLeadTime } from "../../models/codebase/LeadTime";
+import { GitOrganization } from "../../models/codebase/GitOrganization";
 import { GitHubRepo } from "../../models/codebase/GitHubRepo";
 
 export class GitHub implements Codebase {
@@ -14,21 +14,46 @@ export class GitHub implements Codebase {
 
   constructor(token: string) {
     this.httpClient = axios.create({
-      baseURL: `https://api.github.com`,
+      baseURL: "https://api.github.com",
       headers: {
         Accept: "application/vnd.github.groot-preview+json",
         Authorization: `token ${token}`,
       },
     });
   }
-
-  async fetchAllRepo(): Promise<string[]> {
-    const response = await this.httpClient.get("user/repos");
-    const gitHubRepos: GitHubRepo[] = new JsonConvert().deserializeArray(
+  
+  async fetchAllOrganization(): Promise<string[]> {
+    const response = await this.httpClient.get("/user/orgs");
+    const gitOrganizations = new JsonConvert().deserializeArray(
       response.data,
-      GitHubRepo
+      GitOrganization
     );
-    return gitHubRepos.map((repo) => repo.repoUrl);
+    return gitOrganizations.map((org) => org.orgName);
+   }
+
+  async fetchAllRepo(gitOrganizations: string[]): Promise<string[]> {
+    const result: string[] = [];
+    const requestUrl: string[] = [];
+    
+    requestUrl.push("user/repos");
+    gitOrganizations.forEach(organization => { requestUrl.push(`/orgs/${organization}/repos`); });
+    
+    await Promise.all(requestUrl.map(
+      async (url) => {
+        const response = await this.httpClient.get(url);
+        const gitHubRepos: GitHubRepo[] = new JsonConvert().deserializeArray(
+          response.data,
+          GitHubRepo
+          );
+          gitHubRepos.forEach((repo) =>{
+            if(!result.includes(repo.repoUrl)) {
+              result.push(repo.repoUrl);
+            }
+          });
+      }
+    ));
+    
+    return result;
   }
 
   async fetchPipelinesLeadTime(

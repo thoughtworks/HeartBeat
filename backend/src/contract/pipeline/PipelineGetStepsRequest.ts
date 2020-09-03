@@ -17,19 +17,19 @@ export class PipelineGetStepsRequest {
   @swaggerProperty({
     type: "string",
     description: "pipeline repository address",
-    example: "https://github.com/myob-tw/pfs-mock-server",
+    example: "https://github.com/thoughtworks/mock-server",
   })
   repository: string;
   @swaggerProperty({
     type: "string",
     description: "organization id",
-    example: "myob",
+    example: "thoughtworks",
   })
   orgId?: string;
   @swaggerProperty({
     type: "string",
     description: "organization name",
-    example: "MYOB",
+    example: "ThoughtWorks",
   })
   orgName?: string;
   @swaggerProperty({

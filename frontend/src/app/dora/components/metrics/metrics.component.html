@@ -61,7 +61,7 @@
     <app-metric-pipeline
       [metricsForm]="metricsForm"
       [formArrayName]="leadTimeControlName"
-      [pipelines]="metricsSource?.sourceControl.data"
+      [pipelines]="metricsSource?.pipelineTool.data"
       [importPipelines]="importConfig && importConfig[leadTimeControlName]"
     >
     </app-metric-pipeline>

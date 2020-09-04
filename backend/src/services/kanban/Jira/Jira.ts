@@ -8,6 +8,7 @@ import {
 import {
   ColumnValue,
   JiraColumnResponse,
+  TargetField,
 } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import {
@@ -365,14 +366,19 @@ export class Jira implements Kanban {
     return card;
   }
 
-  private static generateSprintName(sprintField: [string]): string {
+  private static generateSprintName(sprintField: [any]): string {
     if (
       sprintField == undefined ||
       sprintField == null ||
       sprintField.length < 1
     )
       return "";
+    
+    const targetField = sprintField[sprintField.length - 1];
 
+    if(targetField.name)
+      return targetField.name;
+    
     const fields = sprintField[sprintField.length - 1].split(",");
     for (const index in fields) {
       if (fields[index].split("=")[0].trim() == "name") {

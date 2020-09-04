@@ -69,19 +69,19 @@ Image 3-4，Project config
 |Project|Project 是您的 Jira project 关键字。您也可以在您的 Jira URL 中找到它。 <br/> 例如： <br/> 1. 你的 Jira board 的 URL 如下所示，那么 ADM 就是 project 的值 <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2<br/> 2. 你的 Jira board 的 URL 包含 projectKey=KAN1，那么 KAN1 就是 project 的值 <br/> https://pokergame.atlassian.net/secure/RapidBoard.jspa?projectKey=KAN1&useStoredSettings=true&rapidView=3 |
 |Site|Site 是您的 Jira 项目的域，在下面的 URL 中 dorametrics 就是 site 的值 <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2 |
 |Email|可以登录您的 Jira 项目的邮件地址 |
-|Token|上述邮件地址的 token |
+|Token|上述邮件地址的 token https://id.atlassian.com/manage-profile/security/api-tokens |
 
 **部署工具配置细节：**
 |Items|Description|
 |---|---|
 |PipelineTool|您所在团队的部署流水线工具，在第一版中仅支持 BuildKit|
-|Token|流水线工具的 Token|
+|Token|流水线工具的 Token https://buildkite.com/user/api-access-tokens |
 
 **源码管理工具配置细节：**
 |Items|Description|
 |---|---|
 |SourceControl|您所在团队的源码管理工具，在第一版中仅支持 GitHub|
-|Token|源码管理工具的 Token|
+|Token|源码管理工具的 Token https://github.com/settings/tokens |
 
 ### 3.2 配置指标数据
 

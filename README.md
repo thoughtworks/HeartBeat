@@ -69,19 +69,19 @@ Image 3-4，Project config
 |Project|Project is the project key for your project. Also can find it from your team’s Jira board URL. <br/> For Example: <br/> 1. Your jira board URL like below, then ADM is the project <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2<br/> 2. Your jira board URL like below, then projectKey=KAN1, KAN1 is the project <br/> https://pokergame.atlassian.net/secure/RapidBoard.jspa?projectKey=KAN1&useStoredSettings=true&rapidView=3 |
 |Site|Site is the domain for your jira board, like below URL, dorametrics is the site <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2 |
 |Email|The email can access to the Jira board |
-|Token|Use the token for the email you used |
+|Token|Use the token for the email you used, https://id.atlassian.com/manage-profile/security/api-tokens |
 
 **The details for Pipeline:**
 |Items|Description|
 |---|---|
 |PipelineTool| The pipeline tool you team use, but just support BuildKit in Version 1|
-|Token|The token can access to pipeline tool|
+|Token|The token can access to pipeline tool, https://buildkite.com/user/api-access-tokens|
 
 **The details for SourceControl:**
 |Items|Description|
 |---|---|
 |SourceControl|The source control tool you team use, but just support GitHub in Version 1|
-|Token|The token can access to source control tool|
+|Token|The token can access to source control tool, https://github.com/settings/tokens|
 
 ### 3.2 Config Metrics data
 

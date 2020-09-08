@@ -1,8 +1,7 @@
 # HeartBeat User Guide（2020/06，Version 1）
 
 # 1 About HeartBeat
-
-HeartBeat is a tool to understand project delivery to help the team identify performance metrics, thereby driving continuous improvement and enhancing team productivity and efficiency.
+HeartBeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.
 
 State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
 

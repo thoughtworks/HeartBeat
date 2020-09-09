@@ -30,7 +30,7 @@ describe("WorkDayCalculate", () => {
         new Date("2019-12-1").getTime(),
         new Date("2020-1-31").getTime()
       )
-    ).to.equal(40);
+    ).to.equal(39);
 
     //search total work days in 2020 on google always get the wrong answer, so I have to count every month's result one by one
     expect(
@@ -38,7 +38,7 @@ describe("WorkDayCalculate", () => {
         new Date("2020-1-1").getTime(),
         new Date("2020-1-31").getTime()
       )
-    ).to.equal(18);
+    ).to.equal(17);
     expect(
       calculateWorkDaysBetween(
         new Date("2020-2-1").getTime(),
@@ -111,7 +111,7 @@ describe("WorkDayCalculate", () => {
         new Date("2020-1-1").getTime(),
         new Date("2020-12-31").getTime()
       )
-    ).to.equal(250);
+    ).to.equal(249);
   });
 });
 describe("calculateWorkDayTimesBetween", () => {

@@ -5,4 +5,5 @@ node_js:
 before_script: cd backend
 
 script: 
+  - yarn install
   - yarn test

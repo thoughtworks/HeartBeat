@@ -1,6 +1,7 @@
 # HeartBeat User Guide（2020/06，Version 1）
 
 # 1 About HeartBeat
+
 HeartBeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.
 
 State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
@@ -278,6 +279,12 @@ For now, we just can download the code in our local machine, please follow below
 2. Follow the steps as below
 
 # 6 Run HeartBeat
+
+## Run via Docker
+
+```
+$ docker-compose up
+```
 
 ## 6.1 How to run backend
 

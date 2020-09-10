@@ -277,6 +277,12 @@ For now, we don’t have a good solution to resolve this issue.
 
 # 6 HeartBeat 基本操作
 
+## 通过 Docker 运行
+
+```
+$ docker-compose up
+```
+
 ## 6.1 安装和运行
 
 ```shell script

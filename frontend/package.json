@@ -29,9 +29,16 @@
     "@angular/platform-browser": "~9.1.1",
     "@angular/platform-browser-dynamic": "~9.1.1",
     "@angular/router": "~9.1.1",
+    "elliptic": "^6.5.3",
     "git-url-parse": "^11.1.2",
+    "lodash": "^4.17.19",
+    "minimist": "^0.2.1",
+    "node-forge": "^0.10.0",
+    "npm-registry-fetch": "^4.0.5",
     "rxjs": "~6.5.4",
+    "serialize-javascript": "^3.1.0",
     "tslib": "^1.10.0",
+    "websocket-extensions": "^0.1.4",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

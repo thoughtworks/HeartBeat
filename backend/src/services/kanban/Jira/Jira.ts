@@ -116,6 +116,11 @@ export class Jira implements Kanban {
           model.treatFlagCardAsBlock
         );
 
+        //fix the assignee not in the card history, only in the card field issue.
+        if (DoneCard.fields.assignee && DoneCard.fields.assignee.displayName) {
+          assigneeSet.add(DoneCard.fields.assignee.displayName);
+        }
+
         if (Jira.confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
           const matchedCard = Jira.processCustomFieldsForCard(DoneCard);
           matchedCard.fields.label = matchedCard.fields.labels.join(",");
@@ -373,12 +378,11 @@ export class Jira implements Kanban {
       sprintField.length < 1
     )
       return "";
-    
+
     const targetField = sprintField[sprintField.length - 1];
 
-    if(targetField.name)
-      return targetField.name;
-    
+    if (targetField.name) return targetField.name;
+
     const fields = sprintField[sprintField.length - 1].split(",");
     for (const index in fields) {
       if (fields[index].split("=")[0].trim() == "name") {

@@ -140,6 +140,15 @@ export class JiraVerifyToken implements KanbanVerifyToken {
         assigneeSet.forEach((assignee) => {
           userNames.add(assignee);
         });
+
+        //fix the assignee not in the card history, only in the card field issue.
+        if (
+          assigneeSet.size == 0 &&
+          DoneCard.fields.assignee &&
+          DoneCard.fields.assignee.displayName
+        ) {
+          userNames.add(DoneCard.fields.assignee.displayName);
+        }
       })
     );
 

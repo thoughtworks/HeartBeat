@@ -18,6 +18,7 @@ export class ExportComponent implements OnInit, OnChanges {
   reportResponse: ReportResponse;
   includeBoardData: boolean;
   includePipelineData: boolean;
+  csvTimeStamp: number;
 
   constructor(private apiService: ApiService) {}
 
@@ -26,6 +27,7 @@ export class ExportComponent implements OnInit, OnChanges {
   ngOnChanges({ params }: SimpleChanges): void {
     this.reportResponse = null;
     if (params && params.currentValue) {
+      this.csvTimeStamp = new Date().getTime();
       this.fetchReports();
 
       const boardConfig = metrics.filter((metric) => metric.roles.includes('board')).map((metric) => metric.name);
@@ -39,7 +41,7 @@ export class ExportComponent implements OnInit, OnChanges {
 
   fetchReports() {
     this.loading = true;
-    this.apiService.generateReporter(this.params).subscribe(
+    this.apiService.generateReporter({ ...this.params, csvTimeStamp: this.csvTimeStamp }).subscribe(
       (res) => {
         this.loading = false;
         this.reportResponse = res;

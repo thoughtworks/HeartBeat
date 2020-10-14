@@ -129,10 +129,15 @@ function ReadStringFromCSVFile(fileName: string): string {
   }
 }
 
-export async function GetDataFromCsv(dataType: string): Promise<string> {
+export async function GetDataFromCsv(
+  dataType: string,
+  csvTimeStamp: number
+): Promise<string> {
   switch (dataType) {
     case SourceTypeEnum.BOARD:
-      return ReadStringFromCSVFile(CsvFileNameEnum.BOARD);
+      return ReadStringFromCSVFile(
+        `${CsvFileNameEnum.BOARD}-${csvTimeStamp}.csv`
+      );
     case SourceTypeEnum.PIPELINE:
       return ReadStringFromCSVFile(CsvFileNameEnum.PIPELINE);
     default:

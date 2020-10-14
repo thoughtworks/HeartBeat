@@ -134,8 +134,8 @@ export class GenerateReportService {
     return reporterResponse;
   }
 
-  async fetchCsvData(dataType: string): Promise<string> {
-    return await GetDataFromCsv(dataType);
+  async fetchCsvData(dataType: string, csvTimeStamp: number): Promise<string> {
+    return await GetDataFromCsv(dataType, csvTimeStamp);
   }
 
   private async fetchOriginalData(

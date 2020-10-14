@@ -9,14 +9,15 @@ import { ApiService } from 'src/app/dora/service/api.service';
 export class ExportCsvComponent implements OnInit {
   @Input() includeBoardData: boolean;
   @Input() includePipelineData: boolean;
+  @Input() csvTimeStamp: number;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {}
 
   downloadBoardCsv() {
-    this.apiService.fetchExportData('board').subscribe((res) => {
-      const exportedFilenmae = 'board-data.csv';
+    this.apiService.fetchExportData('board', this.csvTimeStamp).subscribe((res) => {
+      const exportedFilenmae = `board-data-${this.csvTimeStamp}.csv`;
       const blob = new Blob([res], { type: 'text/csv;charset=utf-8;' });
       if (navigator.msSaveBlob) {
         navigator.msSaveBlob(blob, exportedFilenmae);

@@ -42,6 +42,7 @@ import { BuildInfo } from "../../models/pipeline/BuildInfo";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { JiraColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
+import fs from "fs";
 
 export class GenerateReportService {
   private readonly kanbanMetrics = [
@@ -135,6 +136,7 @@ export class GenerateReportService {
   }
 
   async fetchCsvData(dataType: string, csvTimeStamp: number): Promise<string> {
+    this.deleteOldCsv();
     return await GetDataFromCsv(dataType, csvTimeStamp);
   }
 
@@ -433,5 +435,22 @@ export class GenerateReportService {
     }
 
     return csvData;
+  }
+
+  private async deleteOldCsv(): Promise<void> {
+    const files = fs.readdirSync("./csv/");
+    const currentTimeStamp = new Date().getTime();
+    files.forEach((file) => {
+      const splitResult = file.split(/\s*\-|\.\s*/g);
+      const timeStamp = splitResult[1];
+      //remove csv which created 1h ago
+      if (+timeStamp < currentTimeStamp - 3600000) {
+        try {
+          fs.unlinkSync(`./csv/${file}`);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
   }
 }

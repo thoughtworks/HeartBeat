@@ -225,4 +225,10 @@ export class GenerateReportRequest {
   endTime = 0;
   @swaggerProperty({ type: "number", required: false, example: true })
   considerHoliday: boolean = true;
+  @swaggerProperty({
+    type: "number",
+    required: true,
+    example: new Date().getTime(),
+  })
+  csvTimeStamp = 0;
 }

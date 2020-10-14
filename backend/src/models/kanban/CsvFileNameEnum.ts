@@ -1,4 +1,4 @@
 export enum CsvFileNameEnum {
-  BOARD = "./exportOriginMetrics.csv",
+  BOARD = "./csv/exportOriginMetrics",
   PIPELINE = "./exportPipelineMetrics.csv",
 }

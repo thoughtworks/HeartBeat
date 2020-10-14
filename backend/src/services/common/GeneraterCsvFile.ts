@@ -64,7 +64,8 @@ function getIndexForStatus(
 export async function ConvertBoardDataToCsv(
   jiraCardResponses: JiraCardResponse[],
   jiraNonDoneCardResponses: JiraCardResponse[],
-  jiraColumns: JiraColumnResponse[]
+  jiraColumns: JiraColumnResponse[],
+  csvTimeStamp: number
 ): Promise<void> {
   const fields = CsvForBoardConfig;
 
@@ -105,7 +106,9 @@ export async function ConvertBoardDataToCsv(
 
   const csvString = parse(cards, { fields });
   const csvArray = GenerateObjectArrayToCsvFile(CSV.parse(csvString));
-  new ObjectsToCsv(csvArray).toDisk(CsvFileNameEnum.BOARD);
+  new ObjectsToCsv(csvArray).toDisk(
+    `${CsvFileNameEnum.BOARD}-${csvTimeStamp}.csv`
+  );
 }
 
 export async function ConvertPipelineDataToCsv(

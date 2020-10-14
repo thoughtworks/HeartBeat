@@ -296,7 +296,8 @@ export class GenerateReportService {
     await ConvertBoardDataToCsv(
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,
-      this.jiraColumns
+      this.jiraColumns,
+      request.csvTimeStamp
     );
   }
 

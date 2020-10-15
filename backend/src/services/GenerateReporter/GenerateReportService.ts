@@ -299,6 +299,7 @@ export class GenerateReportService {
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,
       this.jiraColumns,
+      kanbanSetting.targetFields,
       request.csvTimeStamp
     );
   }

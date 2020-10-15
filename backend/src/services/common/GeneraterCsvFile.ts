@@ -1,3 +1,7 @@
+import {
+  TargetField,
+  CSVField,
+} from "./../../contract/kanban/KanbanTokenVerifyResponse";
 import { parse } from "json2csv";
 import {
   JiraCardResponse,
@@ -15,6 +19,7 @@ import { SourceTypeEnum } from "../../models/kanban/CsvSourceTypeEnum";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { JiraColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import { JiraCard } from "../../models/kanban/JiraCard";
+import _ from "lodash";
 
 function GenerateObjectArrayToCsvFile(arr: any): any {
   const jsonObj = [];
@@ -61,13 +66,104 @@ function getIndexForStatus(
   return jiraColumns.length;
 }
 
+export function getExtraFields(
+  targetFields: TargetField[],
+  currentFields: CSVField[]
+): CSVField[] {
+  let extraFields: CSVField[] = [];
+  targetFields.forEach((targetField) => {
+    let isInCurrentFields = false;
+    currentFields.forEach((currentField) => {
+      if (
+        currentField.label.toLowerCase() === targetField.name.toLowerCase() ||
+        currentField.value.indexOf(targetField.key) > -1
+      ) {
+        isInCurrentFields = true;
+      }
+    });
+    if (!isInCurrentFields) {
+      extraFields.push({
+        label: targetField.name,
+        value: `baseInfo.fields.${targetField.key}`,
+        originKey: targetField.key,
+      });
+    }
+  });
+  return extraFields;
+}
+
+export function insertExtraFields(
+  extraFields: CSVField[],
+  currentFields: CSVField[]
+): void {
+  let insertIndex = 0;
+  currentFields.forEach((currentField, index) => {
+    //insert extra columns in right
+    if (currentField.label === "Cycle Time") {
+      insertIndex = index + 1;
+    }
+  });
+  currentFields.splice(insertIndex, 0, ...extraFields);
+}
+
+export function getFieldDisplayValue(obj: any) {
+  let isArray = false;
+  let result = "";
+  if (_.isArray(obj)) {
+    obj = obj[0];
+    isArray = true;
+  }
+  if (_.isObject(obj as any)) {
+    if (obj.displayName !== undefined) {
+      result = ".displayName";
+    } else if (obj.name !== undefined) {
+      result = ".name";
+    } else if (obj.key !== undefined) {
+      result = ".key";
+    } else if (obj.value !== undefined) {
+      result = ".value";
+    }
+  } else {
+    return false;
+  }
+  if (isArray) {
+    result = "[0]" + result;
+  }
+  return result;
+}
+
+export function updateExtraFields(
+  extraFields: CSVField[],
+  cards: JiraCardResponse[]
+) {
+  extraFields.forEach((field) => {
+    let hasUpdated = false;
+    cards.forEach((card) => {
+      if (
+        !hasUpdated &&
+        field.originKey &&
+        _.isObject((card.baseInfo.fields as any)[field.originKey])
+      ) {
+        let obj = (card.baseInfo.fields as any)[field.originKey];
+        const extend = getFieldDisplayValue(obj);
+        if (extend) {
+          field.value += extend;
+          hasUpdated = true;
+        }
+      }
+    });
+  });
+}
+
 export async function ConvertBoardDataToCsv(
   jiraCardResponses: JiraCardResponse[],
   jiraNonDoneCardResponses: JiraCardResponse[],
   jiraColumns: JiraColumnResponse[],
+  targetFields: TargetField[],
   csvTimeStamp: number
 ): Promise<void> {
   const fields = CsvForBoardConfig;
+  const extraFields = getExtraFields(targetFields, fields);
 
   jiraNonDoneCardResponses.sort((a, b) => {
     if (
@@ -86,6 +182,10 @@ export async function ConvertBoardDataToCsv(
   const cards = jiraCardResponses
     .concat(getBlank())
     .concat(jiraNonDoneCardResponses);
+
+  updateExtraFields(extraFields, cards);
+  insertExtraFields(extraFields, fields);
+
   const columns = new Set<string>();
   cards.forEach((jiraCard) => {
     jiraCard.originCycleTime.forEach((cardCycleTime) =>

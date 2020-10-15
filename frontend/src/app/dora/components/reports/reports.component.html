@@ -37,6 +37,10 @@
     *ngIf="!loading"
   >
     <button mat-raised-button matStepperPrevious>Back</button>
-    <app-export-csv [includeBoardData]="includeBoardData" [includePipelineData]="includePipelineData"></app-export-csv>
+    <app-export-csv
+      [includeBoardData]="includeBoardData"
+      [includePipelineData]="includePipelineData"
+      [csvTimeStamp]="csvTimeStamp"
+    ></app-export-csv>
   </div>
 </div>

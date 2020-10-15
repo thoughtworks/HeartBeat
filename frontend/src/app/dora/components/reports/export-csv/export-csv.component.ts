@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ApiService } from 'src/app/dora/service/api.service';
+import moment from 'moment';
 
 @Component({
   selector: 'app-export-csv',
@@ -9,14 +10,19 @@ import { ApiService } from 'src/app/dora/service/api.service';
 export class ExportCsvComponent implements OnInit {
   @Input() includeBoardData: boolean;
   @Input() includePipelineData: boolean;
+  @Input() csvTimeStamp: number;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {}
 
+  parseTimeStampToHumanDate(): string {
+    return moment(this.csvTimeStamp).format('YYYY-MM-DD');
+  }
+
   downloadBoardCsv() {
-    this.apiService.fetchExportData('board').subscribe((res) => {
-      const exportedFilenmae = 'board-data.csv';
+    this.apiService.fetchExportData('board', this.csvTimeStamp).subscribe((res) => {
+      const exportedFilenmae = `board-data-${this.parseTimeStampToHumanDate()}.csv`;
       const blob = new Blob([res], { type: 'text/csv;charset=utf-8;' });
       if (navigator.msSaveBlob) {
         navigator.msSaveBlob(blob, exportedFilenmae);

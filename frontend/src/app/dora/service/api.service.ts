@@ -72,9 +72,12 @@ export class ApiService {
     return this.httpClient.post(`${this.baseUrl}/generateReporter`, params);
   }
 
-  fetchExportData(type: string) {
+  fetchExportData(type: string, csvTimeStamp?: number) {
     const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
-    return this.httpClient.get(`${this.baseUrl}/exportCsv?dataType=${type}`, { headers, responseType: 'text' });
+    return this.httpClient.get(`${this.baseUrl}/exportCsv?dataType=${type}&csvTimeStamp=${csvTimeStamp}`, {
+      headers,
+      responseType: 'text',
+    });
   }
 
   fetchStepsByPipeline(params: any) {

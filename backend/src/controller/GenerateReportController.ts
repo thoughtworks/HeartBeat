@@ -25,7 +25,8 @@ export default class GenerateReportController {
   public static async exportCsv(ctx: Context): Promise<void> {
     const request: DataSourceType = ctx.validatedQuery;
     ctx.response.body = await new GenerateReportService().fetchCsvData(
-      request.dataType
+      request.dataType,
+      request.csvTimeStamp
     );
   }
 }

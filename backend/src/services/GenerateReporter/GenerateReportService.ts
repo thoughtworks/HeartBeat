@@ -42,6 +42,7 @@ import { BuildInfo } from "../../models/pipeline/BuildInfo";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { JiraColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
+import fs from "fs";
 
 export class GenerateReportService {
   private readonly kanbanMetrics = [
@@ -134,8 +135,9 @@ export class GenerateReportService {
     return reporterResponse;
   }
 
-  async fetchCsvData(dataType: string): Promise<string> {
-    return await GetDataFromCsv(dataType);
+  async fetchCsvData(dataType: string, csvTimeStamp: number): Promise<string> {
+    this.deleteOldCsv();
+    return await GetDataFromCsv(dataType, csvTimeStamp);
   }
 
   private async fetchOriginalData(
@@ -296,7 +298,8 @@ export class GenerateReportService {
     await ConvertBoardDataToCsv(
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,
-      this.jiraColumns
+      this.jiraColumns,
+      request.csvTimeStamp
     );
   }
 
@@ -432,5 +435,22 @@ export class GenerateReportService {
     }
 
     return csvData;
+  }
+
+  private deleteOldCsv(): void {
+    const files = fs.readdirSync("./csv/");
+    const currentTimeStamp = new Date().getTime();
+    files.forEach((file) => {
+      const splitResult = file.split(/\s*\-|\.\s*/g);
+      const timeStamp = splitResult[1];
+      //remove csv which created 10h ago
+      if (+timeStamp < currentTimeStamp - 36000000) {
+        try {
+          fs.unlinkSync(`./csv/${file}`);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
   }
 }

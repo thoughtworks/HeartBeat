@@ -17,7 +17,7 @@ export class ExportCsvComponent implements OnInit {
   ngOnInit() {}
 
   parseTimeStampToHumanDate(): string {
-    return moment(this.csvTimeStamp).format('YYYY-MM-DD');
+    return moment(this.csvTimeStamp).format('YYYY-MM-DD-kk-mm-ss');
   }
 
   downloadBoardCsv() {
@@ -43,7 +43,7 @@ export class ExportCsvComponent implements OnInit {
 
   downloadPipelineCsv() {
     this.apiService.fetchExportData('pipeline', this.csvTimeStamp).subscribe((res) => {
-      const exportedFilenmae = 'pipeline-data.csv';
+      const exportedFilenmae = `pipeline-data-${this.parseTimeStampToHumanDate()}.csv`;
       const blob = new Blob([res], { type: 'text/csv;charset=utf-8;' });
       if (navigator.msSaveBlob) {
         navigator.msSaveBlob(blob, exportedFilenmae);

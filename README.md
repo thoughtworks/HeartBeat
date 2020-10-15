@@ -184,7 +184,7 @@ After generating the report, you can export the original data for your board and
 
 ### 3.4.1 Export board data
 
-It will export a scv file for board data. It contains two parts:
+It will export a csv file for board data. It contains two parts:
 **Part 1:** Export the all done tickets during the time period
 **Part 2:** Export the all non-done tickets in your current active board. And it will order by ticket status (Image 3-16)
 
@@ -219,7 +219,7 @@ _Image 3-16，Exported Board Data_
 
 ### 3.4.2 Export pipeline data
 
-It will export a scv file for pipeline data (image 3-17).
+It will export a csv file for pipeline data (image 3-17).
 
 ![Image 3-17](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
 _Image 3-17，Exported Pipeline Data_

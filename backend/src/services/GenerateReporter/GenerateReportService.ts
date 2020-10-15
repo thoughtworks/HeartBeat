@@ -443,8 +443,8 @@ export class GenerateReportService {
     files.forEach((file) => {
       const splitResult = file.split(/\s*\-|\.\s*/g);
       const timeStamp = splitResult[1];
-      //remove csv which created 1h ago
-      if (+timeStamp < currentTimeStamp - 3600000) {
+      //remove csv which created 10h ago
+      if (+timeStamp < currentTimeStamp - 36000000) {
         try {
           fs.unlinkSync(`./csv/${file}`);
         } catch (err) {

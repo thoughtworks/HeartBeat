@@ -437,7 +437,7 @@ export class GenerateReportService {
     return csvData;
   }
 
-  private async deleteOldCsv(): Promise<void> {
+  private deleteOldCsv(): void {
     const files = fs.readdirSync("./csv/");
     const currentTimeStamp = new Date().getTime();
     files.forEach((file) => {

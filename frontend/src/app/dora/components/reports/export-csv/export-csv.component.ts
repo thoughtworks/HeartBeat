@@ -42,7 +42,7 @@ export class ExportCsvComponent implements OnInit {
   }
 
   downloadPipelineCsv() {
-    this.apiService.fetchExportData('pipeline').subscribe((res) => {
+    this.apiService.fetchExportData('pipeline', this.csvTimeStamp).subscribe((res) => {
       const exportedFilenmae = 'pipeline-data.csv';
       const blob = new Blob([res], { type: 'text/csv;charset=utf-8;' });
       if (navigator.msSaveBlob) {

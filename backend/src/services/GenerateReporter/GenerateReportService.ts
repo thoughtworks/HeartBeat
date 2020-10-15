@@ -316,7 +316,10 @@ export class GenerateReportService {
       request.pipeline.deployment
     );
 
-    await ConvertPipelineDataToCsv(leadTimeData.concat(pipelineData));
+    await ConvertPipelineDataToCsv(
+      leadTimeData.concat(pipelineData),
+      request.csvTimeStamp
+    );
   }
 
   private async generateCsvForPipelineWithCodebase(

@@ -112,12 +112,15 @@ export async function ConvertBoardDataToCsv(
 }
 
 export async function ConvertPipelineDataToCsv(
-  csvData: PipelineCsvInfo[]
+  csvData: PipelineCsvInfo[],
+  csvTimeStamp: number
 ): Promise<void> {
   const fields = CsvForPipeLineConfig;
   const csvString = parse(csvData, { fields });
   const csvArray = GenerateObjectArrayToCsvFile(CSV.parse(csvString));
-  new ObjectsToCsv(csvArray).toDisk(CsvFileNameEnum.PIPELINE);
+  new ObjectsToCsv(csvArray).toDisk(
+    `${CsvFileNameEnum.PIPELINE}-${csvTimeStamp}.csv`
+  );
 }
 
 function ReadStringFromCSVFile(fileName: string): string {
@@ -139,7 +142,9 @@ export async function GetDataFromCsv(
         `${CsvFileNameEnum.BOARD}-${csvTimeStamp}.csv`
       );
     case SourceTypeEnum.PIPELINE:
-      return ReadStringFromCSVFile(CsvFileNameEnum.PIPELINE);
+      return ReadStringFromCSVFile(
+        `${CsvFileNameEnum.PIPELINE}-${csvTimeStamp}.csv`
+      );
     default:
       return "";
   }

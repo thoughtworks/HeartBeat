@@ -155,6 +155,11 @@ export function updateExtraFields(
   });
 }
 
+export function getActiveExtraFields(targetFields: TargetField[]) {
+  const activeTargetFields = targetFields.filter((field) => field.flag);
+  return activeTargetFields;
+}
+
 export async function ConvertBoardDataToCsv(
   jiraCardResponses: JiraCardResponse[],
   jiraNonDoneCardResponses: JiraCardResponse[],
@@ -162,8 +167,9 @@ export async function ConvertBoardDataToCsv(
   targetFields: TargetField[],
   csvTimeStamp: number
 ): Promise<void> {
+  const activeTargetFields = getActiveExtraFields(targetFields);
   const fields = CsvForBoardConfig;
-  const extraFields = getExtraFields(targetFields, fields);
+  const extraFields = getExtraFields(activeTargetFields, fields);
 
   jiraNonDoneCardResponses.sort((a, b) => {
     if (

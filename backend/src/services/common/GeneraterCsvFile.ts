@@ -168,7 +168,7 @@ export async function ConvertBoardDataToCsv(
   csvTimeStamp: number
 ): Promise<void> {
   const activeTargetFields = getActiveExtraFields(targetFields);
-  const fields = CsvForBoardConfig;
+  let fields = _.clone(CsvForBoardConfig);
   const extraFields = getExtraFields(activeTargetFields, fields);
 
   jiraNonDoneCardResponses.sort((a, b) => {

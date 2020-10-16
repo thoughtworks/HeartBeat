@@ -70,7 +70,7 @@ export function getExtraFields(
   targetFields: TargetField[],
   currentFields: CSVField[]
 ): CSVField[] {
-  let extraFields: CSVField[] = [];
+  const extraFields: CSVField[] = [];
   targetFields.forEach((targetField) => {
     let isInCurrentFields = false;
     currentFields.forEach((currentField) => {
@@ -144,7 +144,7 @@ export function updateExtraFields(
         field.originKey &&
         _.isObject((card.baseInfo.fields as any)[field.originKey])
       ) {
-        let obj = (card.baseInfo.fields as any)[field.originKey];
+        const obj = (card.baseInfo.fields as any)[field.originKey];
         const extend = getFieldDisplayValue(obj);
         if (extend) {
           field.value += extend;
@@ -168,7 +168,7 @@ export async function ConvertBoardDataToCsv(
   csvTimeStamp: number
 ): Promise<void> {
   const activeTargetFields = getActiveExtraFields(targetFields);
-  let fields = _.clone(CsvForBoardConfig);
+  const fields = _.clone(CsvForBoardConfig);
   const extraFields = getExtraFields(activeTargetFields, fields);
 
   jiraNonDoneCardResponses.sort((a, b) => {

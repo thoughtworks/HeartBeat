@@ -69,3 +69,25 @@ export class TargetField {
   })
   flag = false;
 }
+
+@swaggerClass()
+export class CSVField {
+  @swaggerProperty({
+    type: "string",
+    required: true,
+    example: "Issue key",
+  })
+  label = "Issue key";
+  @swaggerProperty({
+    type: "string",
+    required: true,
+    example: "baseInfo.key",
+  })
+  value = "baseInfo.key";
+  @swaggerProperty({
+    type: "string",
+    required: false,
+    example: "key",
+  })
+  originKey? = "key";
+}

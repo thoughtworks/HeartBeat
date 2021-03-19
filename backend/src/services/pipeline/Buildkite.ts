@@ -122,15 +122,15 @@ export class Buildkite implements Pipeline {
       await Promise.all(
         [...Array(Number(totalPage)).keys()].map(async (index) => {
           if (index == 0) return;
-          fetchParams.page = String(index + 1);
           const response = await this.httpClient.get(fetchURL, {
-            params: fetchParams,
+            params: {...fetchParams, page: String(index + 1)},
           });
           const dataFromOnePage: [] = response.data;
           dataCollector.push(...dataFromOnePage);
         })
       );
     }
+
     return dataCollector;
   }
 
@@ -186,6 +186,7 @@ export class Buildkite implements Pipeline {
       startTime,
       endTime
     );
+
     const pipelineBuilds: [] = await this.fetchDataPageByPage(
       fetchURL,
       fetchParams

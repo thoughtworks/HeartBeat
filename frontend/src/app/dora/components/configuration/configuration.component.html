@@ -43,7 +43,14 @@
   ></app-metric-source>
 
   <div class="config-form__button">
-    <button mat-raised-button color="primary" type="button" (click)="saveConfig()">
+    <button
+      mat-raised-button
+      matTooltip="Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)"
+      matTooltipPosition="right"
+      color="warn"
+      type="button"
+      (click)="saveConfig()"
+    >
       Save
     </button>
     <div>

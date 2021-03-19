@@ -16,7 +16,7 @@ export default class Step {
         const emojiPath =
           imgBuildkite.find((e) => e.name === emojiName || e.aliases.includes(emojiName)) ??
           imgApple.find((e) => e.name === emojiName || e.aliases.includes(emojiName));
-        this.emoji = 'assets/images/' + emojiPath.image;
+        this.emoji = `assets/images/${emojiPath.image}`;
         const stepName = step.replace(matchedEmojis[0], '');
         this.stepName = stepName === '' ? emojiName : stepName;
       }

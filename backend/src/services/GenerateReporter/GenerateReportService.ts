@@ -416,9 +416,8 @@ export class GenerateReportService {
             );
 
             const jobFinishTime = new Date(deployInfo.jobFinishTime).getTime();
-            const pipelineStartTime: number = new Date(
-              deployInfo.pipelineCreateTime
-            ).getTime();
+            const pipelineStartTime: number = new Date(deployInfo.pipelineCreateTime).getTime();
+            
             const noMergeDelayTime = new LeadTime(
               deployInfo.commitId,
               pipelineStartTime,

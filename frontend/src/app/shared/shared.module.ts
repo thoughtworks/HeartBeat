@@ -18,6 +18,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatListModule } from '@angular/material/list';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import * as fromComponents from './components';
 
 const materialModules: any[] = [
@@ -39,6 +40,7 @@ const materialModules: any[] = [
   MatListModule,
   MatCheckboxModule,
   MatDialogModule,
+  MatTooltipModule,
 ];
 
 @NgModule({

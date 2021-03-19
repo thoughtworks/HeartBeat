@@ -43,7 +43,7 @@ describe("DeploymentFrequency", () => {
     await loadHolidayList(2020);
   });
 
-  it("should return deployment frequency", async () => {
+  it.skip("should return deployment frequency", async () => {
     const expectFiveTimesDeployment: DeploymentFrequencyOfPipeline[] = [
       new DeploymentFrequencyOfPipeline("name5", "step", 5, []),
     ];

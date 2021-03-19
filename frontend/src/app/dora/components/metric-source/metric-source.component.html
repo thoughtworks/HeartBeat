@@ -18,7 +18,7 @@
       <mat-label>{{ source.key }}</mat-label>
       <input
         matInput
-        type="text"
+        [type]="source.key == 'token' ? 'password' : 'text'"
         placeholder="input"
         [formControlName]="source.key"
         autocomplete="off"

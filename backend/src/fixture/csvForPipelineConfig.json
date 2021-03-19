@@ -16,6 +16,10 @@
     "value": "commitInfo.commit.committer.name"
   },
   {
+    "label": "First Code Committed Time In PR",
+    "value": "leadTimeInfo.firstCommitTimeInPr"
+  },
+  {
     "label": "Code Committed Time",
     "value": "commitInfo.commit.committer.date"
   },
@@ -32,15 +36,15 @@
     "value": "leadTimeInfo.jobFinishTime"
   },
   {
-    "label": "Total Lead Time (mins)",
+    "label": "Total Lead Time (HH:mm:ss)",
     "value": "leadTimeInfo.totalTime"
   },
   {
-    "label": "Time from PR Created to PR Merged (mins)",
+    "label": "Time from PR Created to PR Merged (HH:mm:ss)",
     "value": "leadTimeInfo.prDelayTime"
   },
   {
-    "label": "Time from PR Merged to Deployment Completed (mins)",
+    "label": "Time from PR Merged to Deployment Completed (HH:mm:ss)",
     "value": "leadTimeInfo.pipelineDelayTime"
   },
   {

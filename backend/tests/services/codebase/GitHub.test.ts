@@ -75,6 +75,13 @@ describe("fetch pipelines lead time", () => {
     mock
       .onGet(`/repos/example/example/commits/${passed[1].commitId}/pulls`)
       .reply(200, GitHubPullsTwo);
+    mock
+      .onGet(`/repos/example/example/pulls/${GitHubPullsOne[0].number}/commits`)
+      .reply(200, GitHubPullsOne);
+    mock
+      .onGet(`/repos/example/example/pulls/${GitHubPullsTwo[0].number}/commits`)
+      .reply(200, GitHubPullsTwo);
+    
     const pipelinesLeadTimes: PipelineLeadTime[] = await gitHub.fetchPipelinesLeadTime(
       deployTimes,
       repositories

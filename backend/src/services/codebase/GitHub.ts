@@ -81,16 +81,15 @@ export class GitHub implements Codebase {
               const response = await this.httpClient.get(
                 `/repos/${repository}/commits/${deployInfo.commitId}/pulls`
               );
+              
               const gitHubPulls: GitHubPull[] = new JsonConvert().deserializeArray(
                 response.data,
                 GitHubPull
               );
-              const jobFinishTime = new Date(
-                deployInfo.jobFinishTime
-              ).getTime();
-              const pipelineCreateTime: number = new Date(
-                deployInfo.pipelineCreateTime
-              ).getTime();
+              
+              const jobFinishTime: number = new Date(deployInfo.jobFinishTime).getTime();
+              const pipelineCreateTime: number = new Date(deployInfo.pipelineCreateTime).getTime();
+
               const noMergeDelayTime = new LeadTime(
                 deployInfo.commitId,
                 pipelineCreateTime,
@@ -98,16 +97,33 @@ export class GitHub implements Codebase {
                 pipelineCreateTime,
                 pipelineCreateTime
               );
+
               if (gitHubPulls.length == 0) {
                 return noMergeDelayTime;
               }
+              
               const mergedPull: GitHubPull | undefined = gitHubPulls
                 .filter((gitHubPull) => gitHubPull.mergedAt != null)
                 .pop();
+              
               if (mergedPull == undefined) {
                 return noMergeDelayTime;
               }
-              return LeadTime.mapFrom(mergedPull, deployInfo);
+
+              //get the pull request commits.
+              const prResponse = await this.httpClient.get(
+                `/repos/${repository}/pulls/${mergedPull.number}/commits`
+              );
+              
+              const gitHubCommites: CommitInfo[] = new JsonConvert().deserializeArray(
+                prResponse.data,
+                CommitInfo
+              );
+
+              //get the first commit.
+              const firstCommit: CommitInfo = gitHubCommites[0];
+
+              return LeadTime.mapFrom(mergedPull, deployInfo, firstCommit);
             })
           );
 

@@ -4,6 +4,10 @@ import { JsonObject, JsonProperty } from "json2typescript";
 export class GitHubPull {
   @JsonProperty("created_at", String, true)
   createdAt: string = "";
+
   @JsonProperty("merged_at", String, true)
   mergedAt: string | null = null;
+
+  @JsonProperty("number", Number, true)
+  number: number = 0;
 }

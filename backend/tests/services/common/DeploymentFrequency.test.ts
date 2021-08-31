@@ -17,6 +17,13 @@ import {
 
 describe("DeploymentFrequency", () => {
   const deployInfo = new DeployInfo("time", "time", "time", "commit", "passed");
+  const deployinfoOutOfTime = new DeployInfo(
+    "time",
+    "time",
+    "2020-4-15",
+    "commit",
+    "passed"
+  );
   const deployTimes5 = new DeployTimes(
     "id",
     "name5",
@@ -35,6 +42,27 @@ describe("DeploymentFrequency", () => {
     new Array(10).fill(deployInfo),
     []
   );
+  const deploytimes6 = new DeployTimes(
+    "id",
+    "name6",
+    "step",
+    new Array(6).fill(deployInfo, 0, 4).fill(deployinfoOutOfTime, 5),
+    []
+  );
+  const deploytimes3 = new DeployTimes(
+    "id",
+    "name3",
+    "step",
+    new Array(3).fill(DeployInfo),
+    []
+  );
+  const deploytimes2 = new DeployTimes(
+    "id",
+    "name2",
+    "step",
+    new Array(2).fill(DeployInfo),
+    []
+  );
 
   before(async function () {
     mock.onGet("2019.json").reply(200, Holiday2019);
@@ -43,11 +71,11 @@ describe("DeploymentFrequency", () => {
     await loadHolidayList(2020);
   });
 
-  it.skip("should return deployment frequency", async () => {
+  it("should return deployment frequency", async () => {
     const expectFiveTimesDeployment: DeploymentFrequencyOfPipeline[] = [
       new DeploymentFrequencyOfPipeline("name5", "step", 5, []),
     ];
-    const expectTowPipelineDeploymentInFiveDays: DeploymentFrequencyOfPipeline[] = [
+    const expectTwoPipelineDeploymentInFiveDays: DeploymentFrequencyOfPipeline[] = [
       new DeploymentFrequencyOfPipeline("name5", "step", 1, []),
       new DeploymentFrequencyOfPipeline("name10", "step", 2, []),
     ];
@@ -72,7 +100,7 @@ describe("DeploymentFrequency", () => {
       )
     ).deep.equal(
       new Pair(
-        expectTowPipelineDeploymentInFiveDays,
+        expectTwoPipelineDeploymentInFiveDays,
         expectAvgDeploymentInFiveDays
       )
     );
@@ -98,5 +126,48 @@ describe("DeploymentFrequency", () => {
         new Date("2020-4-6").getTime()
       )
     ).deep.equal(new Pair(expectNoDeployment, noAvgDeploymentFrequency));
+  });
+
+  it("should return correct deployment frequency when some deploy date not falls into the date range", async () => {
+    const expectSixTimesDeployment: DeploymentFrequencyOfPipeline[] = [
+      new DeploymentFrequencyOfPipeline("name6", "step", 5, [
+        { count: 1, date: "4/15/2020" },
+      ]),
+    ];
+    const sixTimesAvgDeploymentFrequency = new AvgDeploymentFrequency(5);
+
+    const result = calculateDeploymentFrequency(
+      [deploytimes6],
+      new Date("2020-4-7").getTime(),
+      new Date("2020-4-7").getTime()
+    );
+
+    expect(result).deep.equal(
+      new Pair(expectSixTimesDeployment, sixTimesAvgDeploymentFrequency)
+    );
+  });
+
+  it("should return correct deployment frequency when contains over three pipelines", async () => {
+    const expectAvgDeploymentInOneDay = new AvgDeploymentFrequency(5);
+
+    const expectFourPipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] = [
+      new DeploymentFrequencyOfPipeline("name5", "step", 5, []),
+      new DeploymentFrequencyOfPipeline("name10", "step", 10, []),
+      new DeploymentFrequencyOfPipeline("name3", "step", 3, []),
+      new DeploymentFrequencyOfPipeline("name2", "step", 2, []),
+    ];
+
+    expect(
+      calculateDeploymentFrequency(
+        [deployTimes5, deployTimes10, deploytimes3, deploytimes2],
+        new Date("2020-5-11").getTime(),
+        new Date("2020-5-11").getTime()
+      )
+    ).deep.equal(
+      new Pair(
+        expectFourPipelineDeploymentInOneDay,
+        expectAvgDeploymentInOneDay
+      )
+    );
   });
 });

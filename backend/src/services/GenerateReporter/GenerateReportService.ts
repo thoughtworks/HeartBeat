@@ -71,8 +71,13 @@ export class GenerateReportService {
   async generateReporter(
     request: GenerateReportRequest
   ): Promise<GenerateReporterResponse> {
+
     if (Object.keys(request).length === 0) {
       throw new LackRequiredDataError();
+    }
+
+    if (this.requestIsEmptyButValid(request)) {
+      return new GenerateReporterResponse();
     }
 
     await changeConsiderHolidayMode(request.considerHoliday);
@@ -138,6 +143,10 @@ export class GenerateReportService {
       }
     });
     return reporterResponse;
+  }
+
+  protected requestIsEmptyButValid(request: GenerateReportRequest): boolean {
+    return Object.keys(request).length === 8 && request.metrics.length === 0;
   }
 
   async fetchCsvData(dataType: string, csvTimeStamp: number): Promise<string> {

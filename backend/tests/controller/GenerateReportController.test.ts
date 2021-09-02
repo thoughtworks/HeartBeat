@@ -1,5 +1,7 @@
 import "mocha";
+// @ts-ignore
 import chai, { expect } from "chai";
+// @ts-ignore
 import chaiHttp from "chai-http";
 import app from "../../src/server";
 import { GenerateReporterResponse } from "../../src/contract/GenerateReporter/GenerateReporterResponse";

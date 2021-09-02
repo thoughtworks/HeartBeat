@@ -2,6 +2,7 @@ import Application from "koa";
 import { PlatformTypeError } from "./types/PlatformTypeError";
 import { SettingMissingError } from "./types/SettingMissingError";
 import { ThereIsNoCardsInDoneColumn } from "./types/ThereIsNoCardsInDoneColumn";
+import {LackRequiredDataError} from "./types/LackRequiredDataError";
 
 export default () => async (
   ctx: Application.ExtendableContext & {
@@ -17,6 +18,8 @@ export default () => async (
     } else if (error instanceof PlatformTypeError) {
       ctx.status = 400;
     } else if (error instanceof SettingMissingError) {
+      ctx.status = 400;
+    } else if (error instanceof LackRequiredDataError) {
       ctx.status = 400;
     } else if (error instanceof ThereIsNoCardsInDoneColumn) {
       ctx.status = 444;

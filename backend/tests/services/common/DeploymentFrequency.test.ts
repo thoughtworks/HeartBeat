@@ -12,6 +12,7 @@ import Holiday2020 from "../../fixture/Holiday-2020.json";
 import { Pair } from "../../../src/types/Pair";
 import {
   AvgDeploymentFrequency,
+  DeploymentDateCount,
   DeploymentFrequencyOfPipeline,
 } from "../../../src/contract/GenerateReporter/GenerateReporterResponse";
 
@@ -36,6 +37,46 @@ describe("DeploymentFrequency", () => {
     []
   );
 
+  const deployInfo1 = new DeployInfo(
+    "time",
+    "2020-4-20",
+    "2020-4-30",
+    "commit",
+    "passed"
+  );
+  const deployInfo2 = new DeployInfo(
+    "time",
+    "2020-4-20",
+    "2020-4-28",
+    "commit",
+    "passed"
+  );
+  const deploymentDate1: DeploymentDateCount = new DeploymentDateCount(
+    "4/28/2020",
+    3
+  );
+  const deploymentDatecount: DeploymentDateCount[] = new Array(1).fill(
+    deploymentDate1
+  );
+  const threeAvgDeploymentFrequency = new AvgDeploymentFrequency(3);
+  const expectThreeDeployment: DeploymentFrequencyOfPipeline[] = [
+    new DeploymentFrequencyOfPipeline("name5", "step", 3, deploymentDatecount),
+  ];
+  const deployTimes1 = new DeployTimes(
+    "id",
+    "name5",
+    "step",
+    new Array(3).fill(deployInfo1),
+    []
+  );
+  const deployTimes2 = new DeployTimes(
+    "id",
+    "name5",
+    "step",
+    new Array(6).fill(deployInfo2, 0, 3).fill(deployInfo1, 3, 6),
+    []
+  );
+
   before(async function () {
     mock.onGet("2019.json").reply(200, Holiday2019);
     mock.onGet("2020.json").reply(200, Holiday2020);
@@ -43,7 +84,7 @@ describe("DeploymentFrequency", () => {
     await loadHolidayList(2020);
   });
 
-  it.skip("should return deployment frequency", async () => {
+  it("should return deployment frequency", async () => {
     const expectFiveTimesDeployment: DeploymentFrequencyOfPipeline[] = [
       new DeploymentFrequencyOfPipeline("name5", "step", 5, []),
     ];
@@ -98,5 +139,25 @@ describe("DeploymentFrequency", () => {
         new Date("2020-4-6").getTime()
       )
     ).deep.equal(new Pair(expectNoDeployment, noAvgDeploymentFrequency));
+  });
+
+  it("should return 0 when time period is out of bounds", async () => {
+    expect(
+      calculateDeploymentFrequency(
+        [deployTimes1],
+        new Date("2020-4-22").getTime(),
+        new Date("2020-4-29").getTime()
+      )
+    ).deep.equal(new Pair(expectNoDeployment, noAvgDeploymentFrequency));
+  });
+
+  it("should return 3 when three period is out of bounds in six period", async () => {
+    expect(
+      calculateDeploymentFrequency(
+        [deployTimes2],
+        new Date("2020-4-29").getTime(),
+        new Date("2020-4-29").getTime()
+      )
+    ).deep.equal(new Pair(expectThreeDeployment, threeAvgDeploymentFrequency));
   });
 });

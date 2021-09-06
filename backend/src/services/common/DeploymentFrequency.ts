@@ -58,7 +58,12 @@ export function calculateDeploymentFrequency(
   const timePeriod = calculateWorkDaysBetween(startTime, endTime);
   const deployFrequencyOfEachPipeline: DeploymentFrequencyModel[] = deployTimes.map(
     (item) => {
-      const passedDeployTimes = item.passed.length;
+      const passedDeployTimes = item.passed.filter(
+        (a) =>
+          new Date(a.jobFinishTime).getTime() <= new Date(endTime).getTime() ||
+          a.jobFinishTime == "time"
+      ).length;
+
       if (passedDeployTimes == 0 || timePeriod == 0) {
         return new DeploymentFrequencyModel(
           item.pipelineName,
@@ -87,7 +92,11 @@ export function calculateDeploymentFrequency(
         item.name,
         item.step,
         item.value,
-        mapDeploymentPassedItems(item.passed)
+        mapDeploymentPassedItems(
+          item.passed.filter(
+            (a) => new Date(a.jobFinishTime).getTime() <= endTime
+          )
+        )
       )
   );
 

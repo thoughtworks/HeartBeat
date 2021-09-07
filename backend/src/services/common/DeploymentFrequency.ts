@@ -61,8 +61,7 @@ export function calculateDeploymentFrequency(
     (item) => {
       const passedDeployTimes = item.passed.filter(
         (deployInfoItem) =>
-          new Date(deployInfoItem.jobFinishTime).getTime() <= endTime ||
-          deployInfoItem.jobFinishTime == "time"
+          new Date(deployInfoItem.jobFinishTime).getTime() <= endTime
       ).length;
       if (passedDeployTimes == 0 || timePeriod == 0) {
         return new DeploymentFrequencyModel(

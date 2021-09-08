@@ -50,7 +50,6 @@ function mapDeploymentPassedItems(
   return result;
 }
 
-// TODO：校验部署时间是否在startTime和endTime内
 export function calculateDeploymentFrequency(
   deployTimes: DeployTimes[],
   startTime: number,
@@ -87,11 +86,6 @@ export function calculateDeploymentFrequency(
 
   const deploymentFrequencyOfPipelines: DeploymentFrequencyOfPipeline[] = deployFrequencyOfEachPipeline.map(
     (item) =>
-      // const itemPassed: DeployInfo[] = item.passed.filter(
-      //   (deployInfoItem) =>
-      //     new Date(deployInfoItem.jobFinishTime).getTime <=
-      //       new Date(endTime).getTime || deployInfoItem.jobFinishTime == "time"
-      // );
       new DeploymentFrequencyOfPipeline(
         item.name,
         item.step,

@@ -37,7 +37,6 @@ import {
 import { calculateAvgLeadTime } from "../common/LeadTimeForChanges";
 import { Codebase, CodebaseFactory } from "../codebase/Codebase";
 import { SettingMissingError } from "../../types/SettingMissingError";
-import { LackRequiredDataError } from "../../types/LackRequiredDataError";
 import { changeConsiderHolidayMode } from "../common/WorkDayCalculate";
 import { BuildInfo } from "../../models/pipeline/BuildInfo";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
@@ -71,11 +70,6 @@ export class GenerateReportService {
   async generateReporter(
     request: GenerateReportRequest
   ): Promise<GenerateReporterResponse> {
-
-    if (Object.keys(request).length === 0) {
-      throw new LackRequiredDataError();
-    }
-
     if (this.requestIsEmptyButValid(request)) {
       return new GenerateReporterResponse();
     }
@@ -157,6 +151,9 @@ export class GenerateReportService {
   private async fetchOriginalData(
     request: GenerateReportRequest
   ): Promise<void> {
+    if (request.metrics == null) {
+      throw new SettingMissingError("metrics");
+    }
     const lowMetrics: string[] = request.metrics.map((item) =>
       item.toLowerCase()
     );

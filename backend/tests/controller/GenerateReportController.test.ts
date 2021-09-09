@@ -1,5 +1,5 @@
 import "mocha";
-import * as chai from "chai";
+import chai from "chai";
 import { expect } from "chai";
 import chaiHttp = require("chai-http");
 import app from "../../src/server";

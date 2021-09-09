@@ -70,6 +70,10 @@ export class GenerateReportService {
   async generateReporter(
     request: GenerateReportRequest
   ): Promise<GenerateReporterResponse> {
+    if (this.requestIsEmptyButValid(request)) {
+      return new GenerateReporterResponse();
+    }
+
     await changeConsiderHolidayMode(request.considerHoliday);
     await this.fetchOriginalData(request);
     await this.generateCsvForPipeline(request);
@@ -135,6 +139,10 @@ export class GenerateReportService {
     return reporterResponse;
   }
 
+  protected requestIsEmptyButValid(request: GenerateReportRequest): boolean {
+    return Object.keys(request).length === 8 && request.metrics.length === 0;
+  }
+
   async fetchCsvData(dataType: string, csvTimeStamp: number): Promise<string> {
     this.deleteOldCsv();
     return await GetDataFromCsv(dataType, csvTimeStamp);
@@ -143,6 +151,9 @@ export class GenerateReportService {
   private async fetchOriginalData(
     request: GenerateReportRequest
   ): Promise<void> {
+    if (request.metrics == null) {
+      throw new SettingMissingError("metrics");
+    }
     const lowMetrics: string[] = request.metrics.map((item) =>
       item.toLowerCase()
     );

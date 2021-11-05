@@ -38,6 +38,7 @@ import { calculateAvgLeadTime } from "../common/LeadTimeForChanges";
 import { Codebase, CodebaseFactory } from "../codebase/Codebase";
 import { SettingMissingError } from "../../types/SettingMissingError";
 import { changeConsiderHolidayMode } from "../common/WorkDayCalculate";
+import { calculateMeanTimeToRecovery } from "../common/MeanTimeToRecovery";
 import { BuildInfo } from "../../models/pipeline/BuildInfo";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
@@ -53,6 +54,7 @@ export class GenerateReportService {
   private readonly pipeLineMetrics = [
     RequireDataEnum.CHANGE_FAILURE_RATE,
     RequireDataEnum.DEPLOYMENT_FREQUENCY,
+    RequireDataEnum.MEAN_TIME_TO_RECOVERY,
   ].map((metric) => metric.toLowerCase());
   private readonly codebaseMetrics = [
     RequireDataEnum.LEAD_TIME_OF_CHANGES,
@@ -113,6 +115,11 @@ export class GenerateReportService {
           break;
         case RequireDataEnum.CHANGE_FAILURE_RATE:
           reporterResponse.changeFailureRate = calculateChangeFailureRate(
+            this.deployTimesListFromDeploySetting!
+          );
+          break;
+        case RequireDataEnum.MEAN_TIME_TO_RECOVERY:
+          reporterResponse.meanTimeToRecovery = calculateMeanTimeToRecovery(
             this.deployTimesListFromDeploySetting!
           );
           break;
@@ -427,8 +434,10 @@ export class GenerateReportService {
             );
 
             const jobFinishTime = new Date(deployInfo.jobFinishTime).getTime();
-            const pipelineStartTime: number = new Date(deployInfo.pipelineCreateTime).getTime();
-            
+            const pipelineStartTime: number = new Date(
+              deployInfo.pipelineCreateTime
+            ).getTime();
+
             const noMergeDelayTime = new LeadTime(
               deployInfo.commitId,
               pipelineStartTime,

@@ -297,6 +297,78 @@ export class ChangeFailureRate {
 }
 
 @swaggerClass()
+export class MeanTimeToRecoveryOfPipeline {
+  @swaggerProperty({
+    type: "string",
+    example: "pipeline-name",
+  })
+  name?: string = undefined;
+
+  @swaggerProperty({
+    type: "string",
+    example: "pipeline-step",
+  })
+  step?: string = undefined;
+
+  @swaggerProperty({
+    type: "number",
+    example: 360000,
+  })
+  timeToRecovery: number;
+
+  constructor(name: string, step: string, timeToRecovery: number) {
+    this.name = name;
+    this.step = step;
+    this.timeToRecovery = timeToRecovery;
+  }
+}
+
+@swaggerClass()
+export class AvgMeanTimeToRecovery {
+  @swaggerProperty({
+    type: "string",
+    example: "average",
+  })
+  name: string = "Average";
+
+  @swaggerProperty({
+    type: "number",
+    example: 360000,
+  })
+  timeToRecovery: number;
+
+  constructor(timeToRecovery: number) {
+    this.timeToRecovery = timeToRecovery;
+  }
+}
+
+@swaggerClass()
+export class MeanTimeToRecovery {
+  @swaggerProperty({
+    type: "object",
+    properties: (AvgMeanTimeToRecovery as any).swaggerDocument,
+  })
+  avgMeanTimeToRecovery?: AvgMeanTimeToRecovery = undefined;
+
+  @swaggerProperty({
+    type: "array",
+    items: {
+      type: "object",
+      properties: (MeanTimeToRecoveryOfPipeline as any).swaggerDocument,
+    },
+  })
+  meanTimeRecoveryPipelines?: MeanTimeToRecoveryOfPipeline[] = undefined;
+
+  constructor(
+    avgMeanTimeToRecovery: AvgMeanTimeToRecovery,
+    changeFailureRateOfPipelines: MeanTimeToRecoveryOfPipeline[]
+  ) {
+    this.avgMeanTimeToRecovery = avgMeanTimeToRecovery;
+    this.meanTimeRecoveryPipelines = changeFailureRateOfPipelines;
+  }
+}
+
+@swaggerClass()
 export class LeadTimeForChangesOfPipeline {
   @swaggerProperty({
     type: "string",
@@ -476,6 +548,17 @@ export class GenerateReporterResponse {
     },
   })
   changeFailureRate?: ChangeFailureRate = undefined;
+  @swaggerProperty({
+    type: "object",
+    description: "mean time to recovery",
+    properties: (MeanTimeToRecovery as any).swaggerDocument,
+    example: {
+      meanTimeToRecovery: {
+        timeToRecovery: 10000,
+      },
+    },
+  })
+  meanTimeToRecovery?: MeanTimeToRecovery = undefined;
   @swaggerProperty({
     type: "array",
     required: true,

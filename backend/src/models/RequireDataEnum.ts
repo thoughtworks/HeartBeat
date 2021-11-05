@@ -5,5 +5,6 @@ export enum RequireDataEnum {
   LEAD_TIME_OF_CHANGES = "lead time for changes",
   DEPLOYMENT_FREQUENCY = "deployment frequency",
   CHANGE_FAILURE_RATE = "change failure rate",
+  MEAN_TIME_TO_RECOVERY = "mean time to recovery",
   CLASSIFICATION = "classification",
 }

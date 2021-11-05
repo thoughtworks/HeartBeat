@@ -27,6 +27,11 @@
     [failureRate]="reportResponse.changeFailureRate"
   ></app-failure-rate-report>
 
+  <app-mean-time-to-recovery-report
+    *ngIf="reportResponse?.meanTimeToRecovery"
+    [meanTimeToRecovery]="reportResponse.meanTimeToRecovery"
+  ></app-mean-time-to-recovery-report>
+
   <p class="reports-container__message reports-container__message--error" *ngIf="!loading && !reportResponse">
     Ops, Something went wrong. Please try again later...
   </p>

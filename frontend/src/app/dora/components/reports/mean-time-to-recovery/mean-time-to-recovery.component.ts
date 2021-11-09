@@ -21,7 +21,7 @@ export class MeanTimeToRecoveryComponent implements OnInit {
       pipeline: this.meanTimeToRecovery.avgMeanTimeToRecovery.name,
       step: new Step(this.meanTimeToRecovery.avgMeanTimeToRecovery.step),
       name,
-      value: this.meanTimeToRecovery.avgMeanTimeToRecovery[id],
+      value: timeToHour(this.meanTimeToRecovery.avgMeanTimeToRecovery[id]),
     }));
 
     const meanTimeToRecoveryOfPipelines = this.meanTimeToRecovery.meanTimeRecoveryPipelines;
@@ -30,13 +30,15 @@ export class MeanTimeToRecoveryComponent implements OnInit {
         pipeline: meanTimeToRecoveryPipeline.name,
         step: new Step(meanTimeToRecoveryPipeline.step),
         name,
-        value: `${Math.ceil(meanTimeToRecoveryPipeline[id] / 3600000)}h${Math.ceil(
-          (meanTimeToRecoveryPipeline[id] % 3600000) / 60000
-        )}min`,
+        value: timeToHour(meanTimeToRecoveryPipeline[id]),
       }));
       this.dataSource.push(...pipelineReports);
     });
 
     if (meanTimeToRecoveryOfPipelines.length > 1) this.dataSource.push(...meanTimeToRecoveryOfAvg);
   }
+}
+
+function timeToHour(time: number): string {
+  return `${Math.ceil(time / 3600000)}h${Math.ceil((time % 3600000) / 60000)}min`;
 }

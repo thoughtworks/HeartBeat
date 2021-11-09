@@ -1,47 +1,69 @@
-import { DeployInfo, DeployTimes } from "../../models/pipeline/DeployTimes";
+import { DeployTimes } from "../../models/pipeline/DeployTimes";
 import {
   AvgMeanTimeToRecovery,
   MeanTimeToRecovery,
   MeanTimeToRecoveryOfPipeline,
 } from "../../contract/GenerateReporter/GenerateReporterResponse";
+import sortBy from "lodash/sortBy";
+
+function getTotalRecoveryTimeAndRecoveryTimes(
+  item: DeployTimes
+): { totalTimeToRecovery: number; recoveryTimes: number } {
+  const sortedJobs = sortBy([...item.failed, ...item.passed], (deployInfo) => {
+    return deployInfo.pipelineCreateTime;
+  });
+
+  let totalTimeToRecovery = 0,
+    failedJobCreateTime = 0,
+    recoveryTimes = 0;
+
+  sortedJobs.forEach((job) => {
+    if (job.state === "passed" && failedJobCreateTime) {
+      totalTimeToRecovery +=
+        new Date(job.pipelineCreateTime).getTime() - failedJobCreateTime;
+      failedJobCreateTime = 0;
+      recoveryTimes += 1;
+    }
+    if (job.state === "failed" && failedJobCreateTime === 0) {
+      failedJobCreateTime = new Date(job.pipelineCreateTime).getTime();
+    }
+  });
+  return { totalTimeToRecovery, recoveryTimes };
+}
 
 export function calculateMeanTimeToRecovery(
   deployTimes: DeployTimes[]
 ): MeanTimeToRecovery {
   const meanTimeRecoveryPipelines: MeanTimeToRecoveryOfPipeline[] = deployTimes.map(
     (item) => {
-      const totalTimeToRecovery = item.failed.reduce(
-        (prev: number, failedJob: DeployInfo): number => {
-          const failedJobCreateTime = new Date(
-            failedJob.pipelineCreateTime
-          ).getTime();
-          let timeToRecovery = Infinity;
-          for (let i = 0; i < item.passed.length; i++) {
-            const time =
-              new Date(item.passed[i].pipelineCreateTime).getTime() -
-              failedJobCreateTime;
-            timeToRecovery =
-              time > 0 && time < timeToRecovery ? time : timeToRecovery;
-          }
-          return prev + timeToRecovery;
-        },
-        0
-      );
+      if (item.failed.length === 0) {
+        return new MeanTimeToRecoveryOfPipeline(
+          item.pipelineName,
+          item.pipelineStep,
+          0
+        );
+      }
+      const {
+        totalTimeToRecovery,
+        recoveryTimes,
+      } = getTotalRecoveryTimeAndRecoveryTimes(item);
       return new MeanTimeToRecoveryOfPipeline(
         item.pipelineName,
         item.pipelineStep,
-        totalTimeToRecovery / item.failed.length || 0
+        totalTimeToRecovery / recoveryTimes
       );
     }
   );
 
   const avgMeanTimeToRecovery: number =
-    meanTimeRecoveryPipelines.reduce(
-      (prev: number, pipeline: MeanTimeToRecoveryOfPipeline): number => {
-        return prev + pipeline.timeToRecovery;
-      },
-      0
-    ) / meanTimeRecoveryPipelines.length;
+    meanTimeRecoveryPipelines.length === 0
+      ? 0
+      : meanTimeRecoveryPipelines.reduce(
+          (prev: number, pipeline: MeanTimeToRecoveryOfPipeline): number => {
+            return prev + pipeline.timeToRecovery;
+          },
+          0
+        ) / meanTimeRecoveryPipelines.length;
 
   return new MeanTimeToRecovery(
     new AvgMeanTimeToRecovery(avgMeanTimeToRecovery),

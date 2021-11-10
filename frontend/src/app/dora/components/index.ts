@@ -16,6 +16,7 @@ import { CycleTimeReportComponent } from './reports/cycle-time/cycle-time.compon
 import { DeploymentFrequencyReportComponent } from './reports/deployment-frequency/deployment-frequency.component';
 import { LeadTimeReportComponent } from './reports/lead-time/lead-time.component';
 import { FailureRateReportComponent } from './reports/failure-rate/failure-rate.component';
+import { MeanTimeToRecoveryComponent } from './reports/mean-time-to-recovery/mean-time-to-recovery.component';
 import { ClassificationReportComponent } from './reports/classification/classification.component';
 import { ExportCsvComponent } from './reports/export-csv/export-csv.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
@@ -49,6 +50,7 @@ export const components: any[] = [
   DoneColumnsComponent,
   MessageDialogComponent,
   WarningMessageComponent,
+  MeanTimeToRecoveryComponent,
 ];
 
 export * from './home/home.component';
@@ -68,6 +70,7 @@ export * from './reports/cycle-time/cycle-time.component';
 export * from './reports/deployment-frequency/deployment-frequency.component';
 export * from './reports/lead-time/lead-time.component';
 export * from './reports/failure-rate/failure-rate.component';
+export * from './reports/mean-time-to-recovery/mean-time-to-recovery.component';
 export * from './metric-pipeline/metric-pipeline.component';
 export * from './reports/classification/classification.component';
 export * from './reports/export-csv/export-csv.component';

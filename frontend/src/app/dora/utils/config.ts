@@ -28,6 +28,10 @@ export const metrics: Metric[] = [
     name: 'Change failure rate',
     roles: ['pipelineTool'],
   },
+  {
+    name: 'Mean time to recovery',
+    roles: ['pipelineTool'],
+  },
 ];
 
 export const metricsConfig: MetricsConfig = {
@@ -203,6 +207,13 @@ export const failureRateReport = [
   },
 ];
 
+export const meanTimeToRecoveryReport = [
+  {
+    id: 'timeToRecovery',
+    name: 'Mean Time To Recovery',
+  },
+];
+
 export const metricFormConfig = [
   {
     name: 'Velocity',
@@ -226,6 +237,10 @@ export const metricFormConfig = [
   },
   {
     name: 'Change failure rate',
+    displayItems: ['deployment'],
+  },
+  {
+    name: 'Mean time to recovery',
     displayItems: ['deployment'],
   },
 ];

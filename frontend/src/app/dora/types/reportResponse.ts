@@ -78,6 +78,23 @@ export interface FailureRate {
   changeFailureRateOfPipelines: FailureRateOfPipeline[];
 }
 
+export interface MeanTimeToRecoveryOfPipeline {
+  name: string;
+  step: string;
+  timeToRecovery: number;
+}
+
+export interface AvgMeanTimeToRecovery {
+  name: string;
+  step: string;
+  timeToRecovery: string;
+}
+
+export interface MeanTimeToRecovery {
+  avgMeanTimeToRecovery: AvgMeanTimeToRecovery;
+  meanTimeRecoveryPipelines: MeanTimeToRecoveryOfPipeline[];
+}
+
 export interface Pair {
   name: string;
   value: string;
@@ -95,4 +112,5 @@ export interface ReportResponse {
   changeFailureRate?: FailureRate;
   classification?: Array<Classification>;
   hasExportCsvData?: string;
+  meanTimeToRecovery?: MeanTimeToRecovery;
 }

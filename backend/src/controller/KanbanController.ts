@@ -7,6 +7,7 @@ import {
 import { KanbanEnum } from "../services/kanban/Kanban";
 import { KanbanTokenVerifyResponse } from "../contract/kanban/KanbanTokenVerifyResponse";
 import { JiraVerifyToken } from "../services/kanban/Jira/JiraVerifyToken";
+import { LinearVerifyToken } from "../services/kanban/Linear/LinearVerifyToken";
 
 @tagsAll(["KanbanController"])
 export default class KanbanController {
@@ -23,6 +24,11 @@ export default class KanbanController {
         ctx.response.body = await new JiraVerifyToken(
           kanbanTokenVerifyModel.token,
           kanbanTokenVerifyModel.site
+        ).verifyTokenAndGetColumnsAndUser(kanbanTokenVerifyModel);
+        break;
+      case KanbanEnum.LINEAR:
+        ctx.response.body = await new LinearVerifyToken(
+          kanbanTokenVerifyModel.token
         ).verifyTokenAndGetColumnsAndUser(kanbanTokenVerifyModel);
         break;
       default:

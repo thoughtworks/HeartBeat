@@ -1,6 +1,7 @@
 import { JiraCard } from "../../models/kanban/JiraCard";
 import { swaggerClass, swaggerProperty } from "koa-swagger-decorator";
 import { CardCycleTime } from "../../models/kanban/CardCycleTime";
+import { Issue } from "@linear/sdk";
 
 @swaggerClass()
 export class KanbanStoryPointResponse {
@@ -31,7 +32,7 @@ export class KanbanStoryPointResponse {
 }
 
 export class JiraCardResponse {
-  baseInfo: JiraCard;
+  baseInfo: JiraCard | Issue;
   cycleTime: CycleTimeInfo[];
   originCycleTime: CycleTimeInfo[];
   cardCycleTime?: CardCycleTime;
@@ -39,7 +40,7 @@ export class JiraCardResponse {
   totalCycleTimeDivideStoryPoints?: string;
 
   constructor(
-    baseInfo: JiraCard,
+    baseInfo: JiraCard | Issue,
     cycleTime: CycleTimeInfo[],
     originCycleTime: CycleTimeInfo[] = [],
     cardCycleTime?: CardCycleTime
@@ -61,14 +62,24 @@ export class JiraCardResponse {
   }
 
   calculateTotalCycleTimeDivideStoryPoints(): void {
-    const storyPoints =
-      this.baseInfo.fields.storyPoints == undefined
-        ? 0
-        : this.baseInfo.fields.storyPoints;
+    const storyPoints = this.getStoryPoint();
     const cycleTime =
       this.cardCycleTime?.total == undefined ? 0 : this.cardCycleTime?.total;
     this.totalCycleTimeDivideStoryPoints =
       storyPoints > 0 ? (cycleTime / storyPoints).toFixed(2) : "";
+  }
+
+  private getStoryPoint(): number {
+    let storyPoints = 0;
+
+    if (this.baseInfo instanceof JiraCard) {
+      storyPoints = this.baseInfo.fields.storyPoints || 0;
+    }
+    if (this.baseInfo instanceof Issue) {
+      storyPoints = this.baseInfo.estimate || 0;
+    }
+
+    return storyPoints;
   }
 }
 

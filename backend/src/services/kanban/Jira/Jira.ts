@@ -26,7 +26,7 @@ import {
 import { CardFieldsEnum } from "../../../models/kanban/CardFieldsEnum";
 import { CardStepsEnum } from "../../../models/kanban/CardStepsEnum";
 
-type statusChangedArrayItem = {
+export type statusChangedArrayItem = {
   timestamp: number;
   status: string;
 };

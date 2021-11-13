@@ -163,7 +163,7 @@ export function CalculateCardCycleTime(
     }
   });
   return new CardCycleTime(
-    jiraCardResponse.baseInfo.key,
+    jiraCardResponse.getCardId(),
     stepsDay,
     +total.toFixed(2)
   );

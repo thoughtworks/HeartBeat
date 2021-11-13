@@ -1,4 +1,4 @@
-import { JiraCard } from "../../models/kanban/JiraCard";
+import { JiraCard, Status } from "../../models/kanban/JiraCard";
 import { swaggerClass, swaggerProperty } from "koa-swagger-decorator";
 import { CardCycleTime } from "../../models/kanban/CardCycleTime";
 import { Issue } from "@linear/sdk";
@@ -32,7 +32,7 @@ export class KanbanStoryPointResponse {
 }
 
 export class JiraCardResponse {
-  baseInfo: JiraCard | Issue;
+  baseInfo: JiraCard;
   cycleTime: CycleTimeInfo[];
   originCycleTime: CycleTimeInfo[];
   cardCycleTime?: CardCycleTime;
@@ -40,7 +40,7 @@ export class JiraCardResponse {
   totalCycleTimeDivideStoryPoints?: string;
 
   constructor(
-    baseInfo: JiraCard | Issue,
+    baseInfo: JiraCard,
     cycleTime: CycleTimeInfo[],
     originCycleTime: CycleTimeInfo[] = [],
     cardCycleTime?: CardCycleTime
@@ -69,17 +69,16 @@ export class JiraCardResponse {
       storyPoints > 0 ? (cycleTime / storyPoints).toFixed(2) : "";
   }
 
-  private getStoryPoint(): number {
-    let storyPoints = 0;
+  getCardId(): string {
+    return this.baseInfo.key;
+  }
 
-    if (this.baseInfo instanceof JiraCard) {
-      storyPoints = this.baseInfo.fields.storyPoints || 0;
-    }
-    if (this.baseInfo instanceof Issue) {
-      storyPoints = this.baseInfo.estimate || 0;
-    }
+  async getStatus(): Promise<string | undefined> {
+    return this.baseInfo.fields.status?.name;
+  }
 
-    return storyPoints;
+  getStoryPoint(): number {
+    return this.baseInfo.fields.storyPoints || 0;
   }
 }
 

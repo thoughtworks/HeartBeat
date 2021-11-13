@@ -7,22 +7,27 @@ import { StoryPointsAndCycleTimeRequest } from "../../../../src/contract/kanban/
 import { Linear } from "../../../../src/services/kanban/Linear/Linear";
 import { LinearClient } from "@linear/sdk";
 
-const linear = new Linear("lin_api_OJeVbfTRU5KD1qcRIv2JgzxrE1VbTlEkmwMOLhRB");
-
 describe("get story points and cycle times of done cards during period", () => {
-  sinon
-    .stub(LinearClient.prototype, "issues")
-    .returns(Promise.resolve(linearCards as any));
-  sinon.replace(
-    linearCards.nodes[0],
-    "history",
-    sinon.fake.returns(Promise.resolve(linearCardHistory as any))
-  );
-  sinon.replace(
-    linearCards.nodes[1],
-    "history",
-    sinon.fake.returns(Promise.resolve(linearCardHistory as any))
-  );
+  let linear: Linear;
+  beforeEach(() => {
+    linear = new Linear("test token");
+    sinon
+      .stub(Date, "now")
+      .returns(new Date("2021-11-11T06:31:35.693Z").getTime());
+    sinon
+      .stub(LinearClient.prototype, "issues")
+      .returns(Promise.resolve(linearCards as any));
+    sinon.replace(
+      linearCards.nodes[0],
+      "history",
+      sinon.fake.returns(Promise.resolve(linearCardHistory as any))
+    );
+    sinon.replace(
+      linearCards.nodes[1],
+      "history",
+      sinon.fake.returns(Promise.resolve(linearCardHistory as any))
+    );
+  });
   const storyPointsAndCycleTimeRequest = new StoryPointsAndCycleTimeRequest(
     "testToken",
     "jira",
@@ -46,13 +51,17 @@ describe("get story points and cycle times of done cards during period", () => {
     const response = await linear.getStoryPointsAndCycleTime(
       storyPointsAndCycleTimeRequest,
       [],
-      []
+      ["test"]
     );
-    expect(response.storyPointSum).deep.equal(3);
+    expect(response.storyPointSum).equal(3);
     expect(response.matchedCards[0].cycleTime).deep.equal([
       {
+        column: "IN PROGRESS",
+        day: 2,
+      },
+      {
         column: "DONE",
-        day: 1.84,
+        day: 0,
       },
     ]);
     sinon.restore();

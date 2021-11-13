@@ -8,14 +8,12 @@ import {
 import {
   ColumnValue,
   JiraColumnResponse,
-  TargetField,
 } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import {
   HistoryDetail,
   JiraCardHistory,
 } from "../../../models/kanban/JiraCardHistory";
-import { calculateWorkDaysBy24Hours } from "../../common/WorkDayCalculate";
 import { CalculateCardCycleTime } from "../CalculateCycleTime";
 import { RequestKanbanColumnSetting } from "../../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { Cards } from "../../../models/kanban/RequestKanbanResults";
@@ -25,11 +23,12 @@ import {
 } from "../../../models/kanban/JiraCard";
 import { CardFieldsEnum } from "../../../models/kanban/CardFieldsEnum";
 import { CardStepsEnum } from "../../../models/kanban/CardStepsEnum";
-
-export type statusChangedArrayItem = {
-  timestamp: number;
-  status: string;
-};
+import {
+  confirmThisCardHasAssignedBySelectedUser,
+  getCardTimeForEachStep,
+  reformTimeLineForFlaggedCards,
+  StatusChangedArrayItem,
+} from "../util";
 
 export class Jira implements Kanban {
   private readonly queryCount: number = 100;
@@ -42,7 +41,7 @@ export class Jira implements Kanban {
     this.httpClient.defaults.headers.common["Authorization"] = token;
   }
 
-  async getJiraColumns(
+  async getColumns(
     model: StoryPointsAndCycleTimeRequest
   ): Promise<JiraColumnResponse[]> {
     const jiraColumnNames = Array.of<JiraColumnResponse>();
@@ -121,7 +120,7 @@ export class Jira implements Kanban {
           assigneeSet.add(DoneCard.fields.assignee.displayName);
         }
 
-        if (Jira.confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
+        if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
           const matchedCard = Jira.processCustomFieldsForCard(DoneCard);
           matchedCard.fields.label = matchedCard.fields.labels.join(",");
 
@@ -393,13 +392,6 @@ export class Jira implements Kanban {
     return "";
   }
 
-  static confirmThisCardHasAssignedBySelectedUser(
-    selectedUsers: string[],
-    cardIncludeUsers: Set<string>
-  ): boolean {
-    return selectedUsers.some((user: string) => cardIncludeUsers.has(user));
-  }
-
   static async getCycleTimeAndAssigneeSet(
     jiraCardKey: string,
     jiraToken: string,
@@ -419,18 +411,22 @@ export class Jira implements Kanban {
 
     const jiraCardHistory: JiraCardHistory = jiraCardHistoryResponse.data;
 
-    const cycleTimeInfos = Array.of<CycleTimeInfo>();
-    const originCycleTimeInfos = Array.of<CycleTimeInfo>();
-
-    Jira.getCardTimeForEachStep(jiraCardHistory, treatFlagCardAsBlock).forEach(
-      function (value, key) {
-        cycleTimeInfos.push(new CycleTimeInfo(key, value));
-      }
+    const statusChangedArray = this.putStatusChangeEventsIntoAnArray(
+      jiraCardHistory,
+      treatFlagCardAsBlock
     );
-
-    Jira.getCardTimeForEachStep(jiraCardHistory).forEach(function (value, key) {
-      originCycleTimeInfos.push(new CycleTimeInfo(key, value));
-    });
+    const statusChangeArrayWithoutFlag = this.putStatusChangeEventsIntoAnArray(
+      jiraCardHistory,
+      false
+    );
+    const cycleTimeInfos = getCardTimeForEachStep(
+      statusChangedArray,
+      reformTimeLineForFlaggedCards(statusChangedArray)
+    );
+    const originCycleTimeInfos = getCardTimeForEachStep(
+      statusChangeArrayWithoutFlag,
+      reformTimeLineForFlaggedCards(statusChangedArray)
+    );
 
     const assigneeList = jiraCardHistory.items
       .filter(
@@ -455,75 +451,11 @@ export class Jira implements Kanban {
     return startTime <= Date.parse(cardTime) && Date.parse(cardTime) <= endTime;
   }
 
-  private static getCardTimeForEachStep(
-    jiraCardHistory: JiraCardHistory,
-    treatFlagCardAsBlock: boolean = true
-  ): Map<string, number> {
-    const statusChangedArray: statusChangedArrayItem[] = this.putStatusChangeEventsIntoAnArray(
-      jiraCardHistory,
-      treatFlagCardAsBlock
-    );
-
-    const timeLine = statusChangedArray.sort(
-      (a, b) => a.timestamp - b.timestamp
-    );
-
-    const reformedTimeLine = this.reformTimeLineForFlaggedCards(timeLine);
-
-    const result = new Map<string, number>();
-    reformedTimeLine.forEach(
-      (statusChangedArrayItem, index, statusChangedArrayItems) => {
-        const addedTime = result.get(
-          statusChangedArrayItem.status.toUpperCase()
-        );
-        const costedTime = Jira.getThisStepCostTime(
-          index,
-          statusChangedArrayItems
-        );
-        const value = addedTime
-          ? +(costedTime + addedTime).toFixed(2)
-          : +costedTime.toFixed(2);
-        result.set(statusChangedArrayItem.status.toUpperCase(), value);
-      }
-    );
-    return result;
-  }
-
-  private static reformTimeLineForFlaggedCards(
-    statusChangedArray: statusChangedArrayItem[]
-  ): statusChangedArrayItem[] {
-    const needToFilterArray: number[] = [];
-    statusChangedArray.forEach(function (
-      statusChangedArrayItem,
-      index,
-      statusChangedArrayItems
-    ) {
-      if (statusChangedArrayItem.status == CardStepsEnum.FLAG) {
-        let statusNameAfterBlock: string = CardStepsEnum.UNKNOWN;
-        if (index > 0)
-          statusNameAfterBlock = statusChangedArrayItems[index - 1].status;
-        for (index++; index < statusChangedArrayItems.length; index++) {
-          if (
-            statusChangedArrayItems[index].status == CardStepsEnum.REMOVEFLAG
-          ) {
-            statusChangedArrayItems[index].status = statusNameAfterBlock;
-            break;
-          }
-          statusNameAfterBlock = statusChangedArrayItems[index].status;
-          needToFilterArray.push(statusChangedArrayItems[index].timestamp);
-        }
-      }
-    });
-    return statusChangedArray.filter(
-      (activity) => !needToFilterArray.includes(activity.timestamp)
-    );
-  }
-
   private static putStatusChangeEventsIntoAnArray(
     jiraCardHistory: JiraCardHistory,
     treatFlagCardAsBlock: boolean
-  ): statusChangedArrayItem[] {
-    const statusChangedArray: statusChangedArrayItem[] = [];
+  ): StatusChangedArrayItem[] {
+    const statusChangedArray: StatusChangedArrayItem[] = [];
     const statusActivities = jiraCardHistory.items.filter(
       (activity) => "status" == activity.fieldId
     );
@@ -558,20 +490,5 @@ export class Jira implements Kanban {
           }
         });
     return statusChangedArray;
-  }
-
-  private static getThisStepCostTime(
-    index: number,
-    statusChangedArrayItems: statusChangedArrayItem[]
-  ): number {
-    if (index < statusChangedArrayItems.length - 1)
-      return calculateWorkDaysBy24Hours(
-        statusChangedArrayItems[index].timestamp,
-        statusChangedArrayItems[index + 1].timestamp
-      );
-    return calculateWorkDaysBy24Hours(
-      statusChangedArrayItems[index].timestamp,
-      Date.now()
-    );
   }
 }

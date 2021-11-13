@@ -7,12 +7,14 @@ import {
 import { Cards } from "../../../models/kanban/RequestKanbanResults";
 import { RequestKanbanColumnSetting } from "../../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { IssueHistory, LinearClient } from "@linear/sdk";
-import { statusChangedArrayItem } from "../Jira/Jira";
-import { calculateWorkDaysBy24Hours } from "../../common/WorkDayCalculate";
+import { JiraCardResponse } from "../../../contract/kanban/KanbanStoryPointResponse";
 import {
-  CycleTimeInfo,
-  JiraCardResponse,
-} from "../../../contract/kanban/KanbanStoryPointResponse";
+  confirmThisCardHasAssignedBySelectedUser,
+  getCardTimeForEachStep,
+  sortStatusChangedArray,
+  StatusChangedArrayItem,
+  transformLinearCardToJiraCard,
+} from "../util";
 
 export class Linear implements Kanban {
   private client: LinearClient;
@@ -23,7 +25,7 @@ export class Linear implements Kanban {
     });
   }
 
-  async getJiraColumns(): Promise<JiraColumnResponse[]> {
+  async getColumns(): Promise<JiraColumnResponse[]> {
     const workflows = await this.client.workflowStates();
     const columns = workflows.nodes.map((workflow) => {
       const columnValue = new ColumnValue();
@@ -41,27 +43,39 @@ export class Linear implements Kanban {
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards> {
+    console.log("start get cards");
     const allCards = await this.client.issues({
       includeArchived: false,
     });
+
+    console.log("all cards", allCards.nodes.length);
 
     const matchedCards: JiraCardResponse[] = [];
     let storyPointSum = 0;
 
     for (const card of allCards.nodes) {
       const cardCreateTime = card.createdAt.getTime();
+      console.log(card.branchName, cardCreateTime);
       if (cardCreateTime > model.startTime && cardCreateTime < model.endTime) {
         const cardHistory = await card.history();
-        const cycleTimeInfo = await Linear.getCardTimeForEachStep(
-          cardHistory.nodes
-        );
-        const cardResponse = new JiraCardResponse(
-          card,
-          cycleTimeInfo,
-          cycleTimeInfo
-        );
-        matchedCards.push(cardResponse);
-        storyPointSum += card.estimate || 0;
+        const assigneeSet = await Linear.getAssigneeSet(cardHistory.nodes);
+        if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
+          console.log(card.branchName);
+          const statusChangedArray: StatusChangedArrayItem[] = await Linear.putStatusChangeEventsIntoAnArray(
+            cardHistory.nodes
+          );
+          const cycleTimeInfo = getCardTimeForEachStep(
+            statusChangedArray,
+            sortStatusChangedArray(statusChangedArray)
+          );
+          const cardResponse = new JiraCardResponse(
+            await transformLinearCardToJiraCard(card),
+            cycleTimeInfo,
+            cycleTimeInfo
+          );
+          matchedCards.push(cardResponse);
+          storyPointSum += card.estimate || 0;
+        }
       }
     }
 
@@ -75,18 +89,24 @@ export class Linear implements Kanban {
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards> {
-    return Promise.resolve(undefined as any);
+    return Promise.resolve({
+      matchedCards: [],
+      storyPointSum: 0,
+      cardsNumber: 0,
+    } as any);
   }
 
   private static async putStatusChangeEventsIntoAnArray(
     cardHistory: IssueHistory[]
-  ): Promise<statusChangedArrayItem[]> {
-    const statusChangedArray: statusChangedArrayItem[] = [];
-    const statusActivities = cardHistory.filter((activity) => activity.toState);
+  ): Promise<StatusChangedArrayItem[]> {
+    const statusChangedArray: StatusChangedArrayItem[] = [];
+    const statusActivities = cardHistory.filter(
+      (activity) => activity.fromState
+    );
     if (cardHistory.length > 0 && statusActivities.length > 0) {
       statusChangedArray.push({
         timestamp: cardHistory[0].createdAt.getTime(),
-        status: (await statusActivities[0].toState)?.name || "",
+        status: (await statusActivities[0].fromState)?.name || "",
       });
       for (const activity of statusActivities) {
         statusChangedArray.push({
@@ -98,64 +118,17 @@ export class Linear implements Kanban {
     return statusChangedArray;
   }
 
-  private static getAssigneeArray(cardHistory: IssueHistory[]) {
-    const assigneeArray = new Set();
-    cardHistory.forEach((activity) => {
-      if (activity.fromAssignee) {
-        assigneeArray.add(activity.fromAssignee);
-        assigneeArray.add(activity.toAssignee);
-      }
-    });
-    return assigneeArray;
-  }
-
-  private static async getCardTimeForEachStep(
+  private static async getAssigneeSet(
     cardHistory: IssueHistory[]
-  ): Promise<CycleTimeInfo[]> {
-    const statusChangedArray: statusChangedArrayItem[] = await this.putStatusChangeEventsIntoAnArray(
-      cardHistory
-    );
-
-    const timeLine = statusChangedArray.sort(
-      (a, b) => a.timestamp - b.timestamp
-    );
-
-    const result = new Map<string, number>();
-    timeLine.forEach(
-      (statusChangedArrayItem, index, statusChangedArrayItems) => {
-        const addedTime = result.get(
-          statusChangedArrayItem.status.toUpperCase()
-        );
-        const costedTime = Linear.getThisStepCostTime(
-          index,
-          statusChangedArrayItems
-        );
-        const value = addedTime
-          ? +(costedTime + addedTime).toFixed(2)
-          : +costedTime.toFixed(2);
-        result.set(statusChangedArrayItem.status.toUpperCase(), value);
+  ): Promise<Set<string>> {
+    const assigneeArray = new Set<string>();
+    for (const activity of cardHistory) {
+      const assignee = await activity.toAssignee;
+      if (assignee) {
+        assigneeArray.add(assignee.displayName);
       }
-    );
-    const cycleTimeInfos: CycleTimeInfo[] = [];
-    result.forEach(function (value, key) {
-      cycleTimeInfos.push(new CycleTimeInfo(key, value));
-    });
-    return cycleTimeInfos;
-  }
-
-  private static getThisStepCostTime(
-    index: number,
-    statusChangedArrayItems: statusChangedArrayItem[]
-  ): number {
-    if (index < statusChangedArrayItems.length - 1)
-      return calculateWorkDaysBy24Hours(
-        statusChangedArrayItems[index].timestamp,
-        statusChangedArrayItems[index + 1].timestamp
-      );
-    return calculateWorkDaysBy24Hours(
-      statusChangedArrayItems[index].timestamp,
-      Date.now()
-    );
+    }
+    return assigneeArray;
   }
 }
 

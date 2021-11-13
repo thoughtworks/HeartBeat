@@ -9,14 +9,16 @@ import { Linear } from "./Linear/Linear";
 export interface Kanban {
   // verifyTokenAndGetColumnsAndUser(model: KanbanTokenVerifyModel): Promise<KanbanTokenVerifyResponse>;
 
-  getJiraColumns(
+  getColumns(
     model: StoryPointsAndCycleTimeRequest
   ): Promise<JiraColumnResponse[]>;
+
   getStoryPointsAndCycleTime(
     model: StoryPointsAndCycleTimeRequest,
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards>;
+
   getStoryPointsAndCycleTimeForNonDoneCards(
     model: StoryPointsAndCycleTimeRequest,
     boardColumns: RequestKanbanColumnSetting[],

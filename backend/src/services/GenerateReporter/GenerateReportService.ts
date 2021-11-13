@@ -283,6 +283,7 @@ export class GenerateReportService {
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
+    console.log(this.cards);
     this.nonDonecards = await kanban.getStoryPointsAndCycleTimeForNonDoneCards(
       new StoryPointsAndCycleTimeRequest(
         kanbanSetting.token,
@@ -299,7 +300,8 @@ export class GenerateReportService {
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
-    this.jiraColumns = await kanban.getJiraColumns(
+    console.log(this.nonDonecards);
+    this.jiraColumns = await kanban.getColumns(
       new StoryPointsAndCycleTimeRequest(
         kanbanSetting.token,
         kanbanSetting.type,
@@ -313,6 +315,7 @@ export class GenerateReportService {
         kanbanSetting.treatFlagCardAsBlock
       )
     );
+    console.log("jiraColumns");
     await ConvertBoardDataToCsv(
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,

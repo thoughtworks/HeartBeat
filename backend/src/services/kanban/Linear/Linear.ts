@@ -1,4 +1,5 @@
 import { Kanban } from "../Kanban";
+import sortBy from "lodash/sortBy";
 import { StoryPointsAndCycleTimeRequest } from "../../../contract/kanban/KanbanStoryPointParameterVerify";
 import {
   ColumnValue,
@@ -15,6 +16,16 @@ import {
   StatusChangedArrayItem,
   transformLinearCardToJiraCard,
 } from "../util";
+import { IssueConnection } from "@linear/sdk/dist/_generated_sdk";
+
+export enum LinearColumnType {
+  BACKLOG = "backlog",
+  UNSTARTED = "unstarted",
+  CANCELED = "canceled",
+  COMPLETED = "completed",
+  STARTED = "started",
+  BLOCK = "block",
+}
 
 export class Linear implements Kanban {
   private client: LinearClient;
@@ -45,77 +56,40 @@ export class Linear implements Kanban {
   ): Promise<Cards> {
     console.log("start get cards");
     const allCards = await this.client.issues({
-      includeArchived: false,
+      filter: {
+        updatedAt: {
+          lte: new Date(model.endTime),
+          gte: new Date(model.startTime),
+        },
+        team: { id: { eq: model.project } },
+        state: {
+          type: { eq: LinearColumnType.COMPLETED },
+        },
+      },
     });
 
-    console.log("all cards", allCards.nodes.length);
-
-    const matchedCards: JiraCardResponse[] = [];
-    let storyPointSum = 0;
-
-    for (const card of allCards.nodes) {
-      const cardCreateTime = card.createdAt.getTime();
-      console.log(card.branchName, cardCreateTime);
-      if (cardCreateTime > model.startTime && cardCreateTime < model.endTime) {
-        const cardHistory = await card.history();
-        const assigneeSet = await Linear.getAssigneeSet(cardHistory.nodes);
-        if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
-          console.log(card.branchName);
-          const statusChangedArray: StatusChangedArrayItem[] = await Linear.putStatusChangeEventsIntoAnArray(
-            cardHistory.nodes
-          );
-          const cycleTimeInfo = getCardTimeForEachStep(
-            statusChangedArray,
-            sortStatusChangedArray(statusChangedArray)
-          );
-          const cardResponse = new JiraCardResponse(
-            await transformLinearCardToJiraCard(card),
-            cycleTimeInfo,
-            cycleTimeInfo
-          );
-          matchedCards.push(cardResponse);
-          storyPointSum += card.estimate || 0;
-        }
-      }
-    }
-
-    const cardsNumber = matchedCards.length;
-
-    return Promise.resolve({ storyPointSum, cardsNumber, matchedCards });
+    return this.generateCardsCycleTime(allCards, users);
   }
 
-  getStoryPointsAndCycleTimeForNonDoneCards(
+  async getStoryPointsAndCycleTimeForNonDoneCards(
     model: StoryPointsAndCycleTimeRequest,
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards> {
-    return Promise.resolve({
-      matchedCards: [],
-      storyPointSum: 0,
-      cardsNumber: 0,
-    } as any);
-  }
+    const allCards = await this.client.issues({
+      filter: {
+        updatedAt: {
+          lte: new Date(model.endTime),
+          gte: new Date(model.startTime),
+        },
+        team: { id: { eq: model.project } },
+        state: {
+          name: { neq: LinearColumnType.COMPLETED },
+        },
+      },
+    });
 
-  private static async putStatusChangeEventsIntoAnArray(
-    cardHistory: IssueHistory[]
-  ): Promise<StatusChangedArrayItem[]> {
-    const statusChangedArray: StatusChangedArrayItem[] = [];
-    const statusActivities = cardHistory.filter(
-      (activity) => activity.fromState
-    );
-    if (cardHistory.length > 0 && statusActivities.length > 0) {
-      statusChangedArray.push({
-        timestamp: cardHistory[0].createdAt.getTime(),
-        status: (await statusActivities[0].fromState)?.name || "",
-      });
-      for (const activity of statusActivities) {
-        statusChangedArray.push({
-          timestamp: activity.createdAt.getTime(),
-          status: (await statusActivities[0].toState)?.name || "",
-        });
-      }
-    }
-    return statusChangedArray;
+    return this.generateCardsCycleTime(allCards, users);
   }
 
   private static async getAssigneeSet(
@@ -130,12 +104,64 @@ export class Linear implements Kanban {
     }
     return assigneeArray;
   }
-}
 
-export enum LinearColumnType {
-  BACKLOG = "backlog",
-  UNSTARTED = "unstarted",
-  CANCELED = "canceled",
-  COMPLETED = "completed",
-  STARTED = "started",
+  private async generateCardsCycleTime(
+    allCards: IssueConnection,
+    users: string[]
+  ): Promise<Cards> {
+    const matchedCards: JiraCardResponse[] = [];
+    let storyPointSum = 0;
+
+    for (const card of allCards.nodes) {
+      const cardHistory = await card.history();
+      const assigneeSet = await Linear.getAssigneeSet(cardHistory.nodes);
+      console.log(assigneeSet);
+      if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
+        console.log("start calculate", card.branchName);
+        const statusChangedArray: StatusChangedArrayItem[] = await Linear.putStatusChangeEventsIntoAnArray(
+          cardHistory.nodes
+        );
+        const cycleTimeInfo = getCardTimeForEachStep(
+          statusChangedArray,
+          sortStatusChangedArray(statusChangedArray)
+        );
+        const cardResponse = new JiraCardResponse(
+          await transformLinearCardToJiraCard(card),
+          cycleTimeInfo,
+          cycleTimeInfo
+        );
+        matchedCards.push(cardResponse);
+        storyPointSum += card.estimate || 0;
+      }
+    }
+
+    const cardsNumber = matchedCards.length;
+
+    return { storyPointSum, cardsNumber, matchedCards };
+  }
+
+  private static async putStatusChangeEventsIntoAnArray(
+    cardHistory: IssueHistory[]
+  ): Promise<StatusChangedArrayItem[]> {
+    const statusChangedArray: StatusChangedArrayItem[] = [];
+    const statusActivities = cardHistory.filter(
+      (activity) => activity.fromState
+    );
+    const sortedActivities = sortBy(statusActivities, (activity) => {
+      return activity.createdAt;
+    });
+    if (cardHistory.length > 0 && sortedActivities.length > 0) {
+      statusChangedArray.push({
+        timestamp: cardHistory[0].createdAt.getTime(),
+        status: (await sortedActivities[0].fromState)?.name || "",
+      });
+      for (const activity of sortedActivities) {
+        statusChangedArray.push({
+          timestamp: activity.createdAt.getTime(),
+          status: (await activity.toState)?.name || "",
+        });
+      }
+    }
+    return statusChangedArray;
+  }
 }

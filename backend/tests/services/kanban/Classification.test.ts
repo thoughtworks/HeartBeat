@@ -5,6 +5,7 @@ import { TargetField } from "../../../src/contract/kanban/KanbanTokenVerifyRespo
 import { ClassificationField } from "../../../src/contract/GenerateReporter/GenerateReporterResponse";
 import { getClassificationOfSelectedFields } from "../../../src/services/kanban/Classification";
 import { expect } from "chai";
+import sinon from "sinon";
 
 describe("verify token and get cards", () => {
   const emptyJiraCardField: JiraCardField = {
@@ -35,6 +36,9 @@ describe("verify token and get cards", () => {
         cycleTimeFlat: undefined,
         buildCycleTimeFlatObject: () => void {},
         calculateTotalCycleTimeDivideStoryPoints: () => void {},
+        getCardId: sinon.fake(),
+        getStatus: sinon.fake(),
+        getStoryPoint: sinon.fake(),
       },
       {
         baseInfo: {
@@ -51,6 +55,9 @@ describe("verify token and get cards", () => {
         cycleTimeFlat: undefined,
         buildCycleTimeFlatObject: () => void {},
         calculateTotalCycleTimeDivideStoryPoints: () => void {},
+        getCardId: sinon.fake(),
+        getStatus: sinon.fake(),
+        getStoryPoint: sinon.fake(),
       },
       {
         baseInfo: {
@@ -67,6 +74,9 @@ describe("verify token and get cards", () => {
         cycleTimeFlat: undefined,
         buildCycleTimeFlatObject: () => void {},
         calculateTotalCycleTimeDivideStoryPoints: () => void {},
+        getCardId: sinon.fake(),
+        getStatus: sinon.fake(),
+        getStoryPoint: sinon.fake(),
       },
     ],
     storyPointSum: 3,

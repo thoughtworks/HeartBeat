@@ -115,9 +115,7 @@ export class Linear implements Kanban {
     for (const card of allCards.nodes) {
       const cardHistory = await card.history();
       const assigneeSet = await Linear.getAssigneeSet(cardHistory.nodes);
-      console.log(assigneeSet);
       if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
-        console.log("start calculate", card.branchName);
         const statusChangedArray: StatusChangedArrayItem[] = await Linear.putStatusChangeEventsIntoAnArray(
           cardHistory.nodes
         );

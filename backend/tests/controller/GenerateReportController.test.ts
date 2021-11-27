@@ -16,7 +16,7 @@ describe("GenerateReporter", () => {
       .post("/generateReporter")
       .send(new GenerateReportRequest());
     expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(new GenerateReporterResponse());
+    expect(response.body).to.deep.equal({});
   });
 
   it("should return 400 when request lack required data", async () => {

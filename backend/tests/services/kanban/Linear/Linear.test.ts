@@ -9,11 +9,11 @@ import { LinearClient } from "@linear/sdk";
 
 describe("get story points and cycle times of done cards during period", () => {
   let linear: Linear;
-  beforeEach(() => {
+  before(() => {
     linear = new Linear("test token");
-    sinon
-      .stub(Date, "now")
-      .returns(new Date("2021-11-11T06:31:35.693Z").getTime());
+    // eslint-disable-next-line
+    const WorkDayCalculate = require("../../../../src/services/common/WorkDayCalculate");
+    sinon.stub(WorkDayCalculate, "calculateWorkDaysBy24Hours").returns(0.5);
     sinon
       .stub(LinearClient.prototype, "issues")
       .returns(Promise.resolve(linearCards as any));
@@ -27,6 +27,9 @@ describe("get story points and cycle times of done cards during period", () => {
       "history",
       sinon.fake.returns(Promise.resolve(linearCardHistory as any))
     );
+  });
+  after(() => {
+    sinon.restore();
   });
   const storyPointsAndCycleTimeRequest = new StoryPointsAndCycleTimeRequest(
     "testToken",
@@ -57,11 +60,11 @@ describe("get story points and cycle times of done cards during period", () => {
     expect(response.matchedCards[0].cycleTime).deep.equal([
       {
         column: "IN PROGRESS",
-        day: 2,
+        day: 0.5,
       },
       {
         column: "DONE",
-        day: 0,
+        day: 0.5,
       },
     ]);
     sinon.restore();

@@ -145,6 +145,7 @@ describe("DeploymentFrequency", () => {
   );
 
   before(async function () {
+    this.timeout(10000);
     mock.onGet("2019.json").reply(200, Holiday2019);
     mock.onGet("2020.json").reply(200, Holiday2020);
     await loadHolidayList(2019);

@@ -111,5 +111,6 @@ describe("get story points and cycle times of done cards during period", () => {
     );
 
     expect(response.cycleTimeInfos).deep.equal(cycleTime);
+    sinon.restore();
   });
 });

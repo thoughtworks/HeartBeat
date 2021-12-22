@@ -17,6 +17,7 @@ export default class KanbanController {
   @query(kanbanTokenVerifySchema)
   @responses((KanbanTokenVerifyResponse as any).swaggerDocument)
   public static async verifyToken(ctx: Context): Promise<void> {
+    // 先验证一下token
     const kanbanTokenVerifyModel: KanbanTokenVerifyModel = ctx.validatedQuery;
     switch (kanbanTokenVerifyModel.type.toLowerCase()) {
       case KanbanEnum.JIRA:

@@ -31,7 +31,7 @@ describe("verify token and return columns and users", async () => {
     "jira",
     1589010717000,
     1591471243000,
-    2
+    "2"
   );
   it("should throw exception when token is invalid", async () => {
     mock.onGet(`/project/${tokenVerifyModel.projectKey}`).reply(401);

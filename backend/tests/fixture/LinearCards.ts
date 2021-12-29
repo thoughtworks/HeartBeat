@@ -1,4 +1,5 @@
 import sinon from "sinon";
+import linearAssignees from "./LinearAssignees";
 
 const linearCards = {
   pageInfo: {
@@ -9,6 +10,7 @@ const linearCards = {
   },
   nodes: [
     {
+      assignee: Promise.resolve(linearAssignees[0]),
       boardOrder: 0,
       branchName: "ynsun/tw-15-add-linear-to-board-selection",
       createdAt: new Date("2021-11-09T06:35:03.020Z"),
@@ -40,6 +42,7 @@ const linearCards = {
       },
     },
     {
+      assignee: Promise.resolve(linearAssignees[0]),
       boardOrder: 0,
       branchName: "ynsun/tw-14-spike-check-linear-data-support",
       createdAt: new Date("2021-11-09T06:33:49.834Z"),

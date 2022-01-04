@@ -16,7 +16,7 @@ describe("get story points and cycle times of done cards during period", () => {
     "jira",
     "domain",
     "project",
-    2,
+    "2",
     ["Done"],
     1589080044000,
     1589944044000,

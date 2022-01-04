@@ -321,7 +321,7 @@ export class Jira implements Kanban {
     total: any,
     jql: string,
     cards: any,
-    boardId: number
+    boardId: string
   ): Promise<void> {
     const count = Math.floor((total as number) / this.queryCount);
     await Promise.all(

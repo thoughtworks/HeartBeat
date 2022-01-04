@@ -42,7 +42,7 @@ describe("get story points and cycle times of done cards during period", () => {
         "jira",
         "domain",
         "project",
-        2,
+        "2",
         ["Done"],
         1636439702020,
         1636439704020,
@@ -157,4 +157,8 @@ describe("verify token and return columns and users for Linear", async function 
         expect(res.users).deep.equal(["Yingkai Fan"]);
     });
 
+});
+
+describe("generate report of cycleTime for Linear", () =>{
+    expect(1).equal(1);
 });

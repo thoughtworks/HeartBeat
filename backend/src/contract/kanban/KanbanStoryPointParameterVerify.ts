@@ -5,7 +5,7 @@ export class StoryPointsAndCycleTimeRequest {
   type: string;
   site: string;
   project: string;
-  boardId: number;
+  boardId: string;
   startTime: number;
   endTime: number;
   status: string[];
@@ -17,7 +17,7 @@ export class StoryPointsAndCycleTimeRequest {
     type: string,
     site: string,
     project: string,
-    boardId: number,
+    boardId: string,
     status: string[],
     startTime: number,
     endTime: number,

@@ -24,6 +24,7 @@ export function getThisStepCostTime(
   );
 }
 
+// todo: 去掉statusChangedArray参数, 添加treatFlagAsBlocked参数
 export function getCardTimeForEachStep(
   statusChangedArray: StatusChangedArrayItem[],
   timeLine: StatusChangedArrayItem[]

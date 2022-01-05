@@ -91,13 +91,6 @@ export class Linear implements Kanban {
                 },
             },
         });
-        // 97321
-        // const arr = await Promise.all(allCards.nodes.map(item => item.history()));
-        // arr.map(item => {
-        //     console.log("!!----------------------------------------");
-        //     console.log(item.nodes);
-        //
-        // });
         return this.generateCardsCycleTime(allCards, users);
     }
 
@@ -111,7 +104,6 @@ export class Linear implements Kanban {
                 assigneeSet.add(toAssignee.name);
             }
         }
-        // console.log(assigneeSet);
         return assigneeSet;
     }
 

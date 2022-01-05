@@ -35,7 +35,7 @@ function mapDeploymentPassedItems(
 
     if (isNaN(Date.parse(value.jobFinishTime))) return;
 
-    const localeDate = new Date(value.jobFinishTime).toLocaleDateString();
+    const localeDate = new Date(value.jobFinishTime).toLocaleDateString("en-US");
     const existingDateItem = result.find((x) => x.date === localeDate);
 
     if (!existingDateItem) {

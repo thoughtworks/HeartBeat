@@ -7,6 +7,9 @@ const cardHistory = {
       fromPriority: undefined,
       id: "8e864caf-562f-43c1-a18b-0d0a71088fc1",
       toPriority: undefined,
+      toAssignee: {
+          name:"test"
+      },
       updatedAt: new Date("2021-11-09T06:39:03.723Z"),
       _actor: {
         id: "d0c29b61-219c-4b29-acb7-928be5e739fe",
@@ -30,6 +33,9 @@ const cardHistory = {
       fromPriority: undefined,
       id: "8e864caf-562f-43c1-a18b-0d0a71088fc1",
       toPriority: undefined,
+      toAssignee: {
+          name:"test"
+      },
       updatedAt: new Date("2021-11-11T06:39:03.723Z"),
       _actor: {
         id: "d0c29b61-219c-4b29-acb7-928be5e739fe",
@@ -49,29 +55,30 @@ const cardHistory = {
         name: "Done",
       },
     },
-    {
-      autoArchived: false,
-      autoClosed: false,
-      createdAt: new Date("2021-11-09T06:31:35.693Z"),
-      fromPriority: undefined,
-      id: "8e864caf-562f-43c1-a18b-0d0a71088fc1",
-      toPriority: undefined,
-      updatedAt: new Date("2021-11-09T06:39:03.723Z"),
-      toAssignee: {
-        displayName: "test",
-      },
-      _actor: {
-        id: "d0c29b61-219c-4b29-acb7-928be5e739fe",
-      },
-      fromState: undefined,
-      _issue: {
-        id: "66aa1c59-caac-4489-9b05-ca4253c71a0a",
-      },
-      _toCycle: {
-        id: "4aed65be-6c3b-45bc-9987-90f0d4749c8a",
-      },
-      toState: undefined,
-    },
+    // {
+    //   autoArchived: false,
+    //   autoClosed: false,
+    //   createdAt: new Date("2021-11-09T06:31:35.693Z"),
+    //   fromPriority: undefined,
+    //   id: "8e864caf-562f-43c1-a18b-0d0a71088fc1",
+    //   toPriority: undefined,
+    //   updatedAt: new Date("2021-11-09T06:39:03.723Z"),
+    //   toAssignee: {
+    //     name: "test",
+    //     displayName: "test",
+    //   },
+    //   _actor: {
+    //     id: "d0c29b61-219c-4b29-acb7-928be5e739fe",
+    //   },
+    //   fromState: undefined,
+    //   _issue: {
+    //     id: "66aa1c59-caac-4489-9b05-ca4253c71a0a",
+    //   },
+    //   _toCycle: {
+    //     id: "4aed65be-6c3b-45bc-9987-90f0d4749c8a",
+    //   },
+    //   toState: undefined,
+    // },
   ],
 };
 

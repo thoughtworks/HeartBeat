@@ -47,17 +47,6 @@ export class Linear implements Kanban {
             jiraColumn.value = columnValue;
             return jiraColumn;
         });
-
-        // const workflows = await this.client.workflowStates();
-        // const columns = workflows.nodes.map((workflow) => {
-        //     const columnValue = new ColumnValue();
-        //     columnValue.statuses = [workflow.type];
-        //     const columnResponse = new JiraColumnResponse();
-        //     columnResponse.key = workflow.type;
-        //     columnResponse.value = columnValue;
-        //     return columnResponse;
-        // });
-        // return Promise.resolve(columns);
     }
 
     async getStoryPointsAndCycleTime(
@@ -74,7 +63,6 @@ export class Linear implements Kanban {
                 project: {
                     name: {eq: model.boardId}
                 },
-                // team: { id: { eq: model.project } },
                 state: {
                     type: {eq: LinearColumnType.COMPLETED},
                 },
@@ -133,28 +121,22 @@ export class Linear implements Kanban {
     ): Promise<Cards> {
         const matchedCards: JiraCardResponse[] = [];
         let storyPointSum = 0;
-        console.log("本轮为:");
         for (const card of allCards.nodes) {
-            console.log(card.title + "--------------------");
             const cardHistory = await card.history();
             const assigneeSet = await Linear.getAssigneeSet(cardHistory.nodes);
-            // console.log(`第${allCards.nodes.indexOf(card)}张卡片的历史为:`, cardHistory.nodes, card.title);
             if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
                 const statusChangedArray: StatusChangedArrayItem[] = await Linear.putStatusChangeEventsIntoAnArray(
                     cardHistory.nodes
                 );
-                console.log(`第${allCards.nodes.indexOf(card)}张卡片的历史为`, statusChangedArray);
                 const cycleTimeInfo = getCardTimeForEachStep(
                     statusChangedArray,
                     sortStatusChangedArray(statusChangedArray)
                 );
-                // console.log(`第${allCards.nodes.indexOf(card)}张卡片的info为`, cycleTimeInfo);
                 const cardResponse = new JiraCardResponse(
                     await transformLinearCardToJiraCard(card),
                     cycleTimeInfo,
                     cycleTimeInfo
                 );
-                // console.log(`第${allCards.nodes.indexOf(card)}张卡片的info为`, cardResponse);
                 matchedCards.push(cardResponse);
                 storyPointSum += card.estimate || 0;
             }
@@ -169,20 +151,25 @@ export class Linear implements Kanban {
         cardHistory: IssueHistory[]
     ): Promise<StatusChangedArrayItem[]> {
         const statusChangedArray: StatusChangedArrayItem[] = [];
-        cardHistory.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        if (cardHistory.length === 1) {
-            statusChangedArray.push({timestamp: cardHistory[0].createdAt.getTime(), status: "Done"});
+        const sortedAndStateRelatedHistory = cardHistory.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).filter((item, index) => {
+            if (index === 0) return true;
+            return !(!item.fromState && !item.toState);
+        });
+        if (sortedAndStateRelatedHistory.length === 1) {
+            const issue = await sortedAndStateRelatedHistory[0].issue;
+            const status: string = (await issue?.state)?.name || "";
+            statusChangedArray.push({timestamp: sortedAndStateRelatedHistory[0].createdAt.getTime(), status});
         } else {
-            for (let i = 0; i < cardHistory.length; i++) {
+            for (let i = 0; i < sortedAndStateRelatedHistory.length; i++) {
                 if (i === 0) {
                     statusChangedArray.push({
-                        timestamp: cardHistory[0].createdAt.getTime(),
-                        status: (await cardHistory[1].fromState)?.name || ""
+                        timestamp: sortedAndStateRelatedHistory[0].createdAt.getTime(),
+                        status: (await sortedAndStateRelatedHistory[1].fromState)?.name || ""
                     });
-                } else if (i > 0 && cardHistory[i].toState) {
+                } else if (i > 0 && sortedAndStateRelatedHistory[i].toState) {
                     statusChangedArray.push({
-                        timestamp: cardHistory[i].createdAt.getTime(),
-                        status: (await cardHistory[i].toState)?.name || ""
+                        timestamp: sortedAndStateRelatedHistory[i].createdAt.getTime(),
+                        status: (await sortedAndStateRelatedHistory[i].toState)?.name || ""
                     });
                 }
             }

@@ -159,7 +159,3 @@ describe("verify token and return columns and users for Linear", async function 
     });
 
 });
-
-describe("generate report of cycleTime for Linear", () =>{
-    expect(1).equal(1);
-});

@@ -13,12 +13,13 @@
     "host": "node dist/server.js",
     "test": "mocha -r ts-node/register **/tests/**/*.test.ts",
     "watch-server": "nodemon --watch src -e ts,tsx --exec ts-node src/server.ts",
-    "package": "yarn build && pkg package.json"
+    "package": "yarn build && pkg package.json",
+    "format:fix": "pretty-quick --staged"
   },
   "husky": {
     "hooks": {
       "pre-push": "yarn test",
-      "pre-commit": "yarn eslint"
+      "pre-commit": "yarn format:fix && yarn eslint"
     }
   },
   "pkg": {

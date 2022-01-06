@@ -111,7 +111,6 @@ export class Linear implements Kanban {
     allCards: IssueConnection,
     users: string[]
   ): Promise<Cards> {
-    console.log("test");
     const matchedCards: JiraCardResponse[] = [];
     let storyPointSum = 0;
     for (const card of allCards.nodes) {

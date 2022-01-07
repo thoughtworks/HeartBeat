@@ -35,7 +35,9 @@ function mapDeploymentPassedItems(
 
     if (isNaN(Date.parse(value.jobFinishTime))) return;
 
-    const localeDate = new Date(value.jobFinishTime).toLocaleDateString("en-US");
+    const localeDate = new Date(value.jobFinishTime).toLocaleDateString(
+      "en-US"
+    );
     const existingDateItem = result.find((x) => x.date === localeDate);
 
     if (!existingDateItem) {
@@ -56,8 +58,8 @@ export function calculateDeploymentFrequency(
   endTime: number
 ): Pair<DeploymentFrequencyOfPipeline[], AvgDeploymentFrequency> {
   const timePeriod = calculateWorkDaysBetween(startTime, endTime);
-  const deployFrequencyOfEachPipeline: DeploymentFrequencyModel[] = deployTimes.map(
-    (item) => {
+  const deployFrequencyOfEachPipeline: DeploymentFrequencyModel[] =
+    deployTimes.map((item) => {
       const passedDeployTimes = item.passed.filter(
         (deployInfoItem) =>
           new Date(deployInfoItem.jobFinishTime).getTime() <= endTime
@@ -76,36 +78,35 @@ export function calculateDeploymentFrequency(
         passedDeployTimes / timePeriod,
         item.passed
       );
-    }
-  );
+    });
 
   const deployFrequency = deployFrequencyOfEachPipeline.reduce(
     (prev, now) => prev + now.value,
     0
   );
 
-  const deploymentFrequencyOfPipelines: DeploymentFrequencyOfPipeline[] = deployFrequencyOfEachPipeline.map(
-    (item) =>
-      new DeploymentFrequencyOfPipeline(
-        item.name,
-        item.step,
-        item.value,
-        mapDeploymentPassedItems(
-          item.passed.filter(
-            (item) => new Date(item.jobFinishTime).getTime() <= endTime
+  const deploymentFrequencyOfPipelines: DeploymentFrequencyOfPipeline[] =
+    deployFrequencyOfEachPipeline.map(
+      (item) =>
+        new DeploymentFrequencyOfPipeline(
+          item.name,
+          item.step,
+          item.value,
+          mapDeploymentPassedItems(
+            item.passed.filter(
+              (item) => new Date(item.jobFinishTime).getTime() <= endTime
+            )
           )
         )
-      )
-  );
+    );
 
   const pipelineCount = deploymentFrequencyOfPipelines.length;
 
   const avgDeployFrequency: number =
     pipelineCount === 0 ? 0 : deployFrequency / pipelineCount;
 
-  const avgDeploymentFrequency: AvgDeploymentFrequency = new AvgDeploymentFrequency(
-    avgDeployFrequency
-  );
+  const avgDeploymentFrequency: AvgDeploymentFrequency =
+    new AvgDeploymentFrequency(avgDeployFrequency);
 
   return new Pair<DeploymentFrequencyOfPipeline[], AvgDeploymentFrequency>(
     deploymentFrequencyOfPipelines,

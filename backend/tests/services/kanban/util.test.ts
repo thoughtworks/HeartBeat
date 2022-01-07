@@ -90,7 +90,6 @@ describe("utils", () => {
 
   it("getCardTimeForEachStep", () => {
     const cardTimeForEachStep = getCardTimeForEachStep(
-      statusChangedArrayInTimeOrder,
       statusChangedArrayInTimeOrder
     );
 
@@ -136,16 +135,17 @@ describe("utils", () => {
     ];
     const cardIncludedUsers: Set<string> = new Set<string>();
     cardIncludedUsers.add("testUser1");
-    const ifThisCardHasAssignedBySelectedUser = confirmThisCardHasAssignedBySelectedUser(
-      selectedUsers,
-      cardIncludedUsers
-    );
+    const ifThisCardHasAssignedBySelectedUser =
+      confirmThisCardHasAssignedBySelectedUser(
+        selectedUsers,
+        cardIncludedUsers
+      );
 
     expect(ifThisCardHasAssignedBySelectedUser).equal(true);
   });
 
   it("transformLinearCardToJiraCard", async () => {
-    const linearCard = (linearCards.nodes[0] as unknown) as Issue;
+    const linearCard = linearCards.nodes[0] as unknown as Issue;
     const jiraCard = await transformLinearCardToJiraCard(linearCard);
 
     expect(jiraCard.key).equal(linearCard.identifier);

@@ -104,16 +104,13 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allDoneCards.map(async function (DoneCard: any) {
-        const {
-          cycleTimeInfos,
-          assigneeSet,
-          originCycleTimeInfos,
-        } = await Jira.getCycleTimeAndAssigneeSet(
-          DoneCard.key,
-          model.token,
-          model.site,
-          model.treatFlagCardAsBlock
-        );
+        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
+          await Jira.getCycleTimeAndAssigneeSet(
+            DoneCard.key,
+            model.token,
+            model.site,
+            model.treatFlagCardAsBlock
+          );
 
         //fix the assignee not in the card history, only in the card field issue.
         if (DoneCard.fields.assignee && DoneCard.fields.assignee.displayName) {
@@ -166,21 +163,17 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allNonDoneCards.map(async function (nonDoneCard: any) {
-        const {
-          cycleTimeInfos,
-          assigneeSet,
-          originCycleTimeInfos,
-        } = await Jira.getCycleTimeAndAssigneeSet(
-          nonDoneCard.key,
-          model.token,
-          model.site,
-          model.treatFlagCardAsBlock
-        );
+        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
+          await Jira.getCycleTimeAndAssigneeSet(
+            nonDoneCard.key,
+            model.token,
+            model.site,
+            model.treatFlagCardAsBlock
+          );
 
         const matchedNonDoneCard = Jira.processCustomFieldsForCard(nonDoneCard);
-        matchedNonDoneCard.fields.label = matchedNonDoneCard.fields.labels.join(
-          ","
-        );
+        matchedNonDoneCard.fields.label =
+          matchedNonDoneCard.fields.labels.join(",");
 
         const jiraCardResponse = new JiraCardResponse(
           matchedNonDoneCard,
@@ -420,12 +413,10 @@ export class Jira implements Kanban {
       false
     );
     const cycleTimeInfos = getCardTimeForEachStep(
-      statusChangedArray,
       reformTimeLineForFlaggedCards(statusChangedArray)
     );
     const originCycleTimeInfos = getCardTimeForEachStep(
-      statusChangeArrayWithoutFlag,
-      reformTimeLineForFlaggedCards(statusChangedArray)
+      reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag)
     );
 
     const assigneeList = jiraCardHistory.items

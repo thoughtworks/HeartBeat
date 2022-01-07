@@ -8,7 +8,7 @@ const cardHistory = {
       id: "8e864caf-562f-43c1-a18b-0d0a71088fc1",
       toPriority: undefined,
       toAssignee: {
-          name:"test"
+        name: "test",
       },
       updatedAt: new Date("2021-11-09T06:39:03.723Z"),
       _actor: {
@@ -21,10 +21,7 @@ const cardHistory = {
       _toCycle: {
         id: "4aed65be-6c3b-45bc-9987-90f0d4749c8a",
       },
-      toState: {
-        id: "3f7682f8-4e6c-488f-95f8-4320e01236c3",
-        name: "In Progress",
-      },
+      toState: undefined,
     },
     {
       autoArchived: false,
@@ -34,7 +31,7 @@ const cardHistory = {
       id: "8e864caf-562f-43c1-a18b-0d0a71088fc1",
       toPriority: undefined,
       toAssignee: {
-          name:"test"
+        name: "test",
       },
       updatedAt: new Date("2021-11-11T06:39:03.723Z"),
       _actor: {

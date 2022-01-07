@@ -1,5 +1,4 @@
 import { Kanban } from "../Kanban";
-import sortBy from "lodash/sortBy";
 import { StoryPointsAndCycleTimeRequest } from "../../../contract/kanban/KanbanStoryPointParameterVerify";
 import {
   ColumnValue,
@@ -16,7 +15,11 @@ import {
   StatusChangedArrayItem,
   transformLinearCardToJiraCard,
 } from "../util";
-import { IssueConnection } from "@linear/sdk/dist/_generated_sdk";
+import {
+  IssueConnection,
+  WorkflowStateConnection,
+} from "@linear/sdk/dist/_generated_sdk";
+import { sortBy } from "lodash";
 
 export enum LinearColumnType {
   BACKLOG = "backlog",
@@ -25,6 +28,20 @@ export enum LinearColumnType {
   COMPLETED = "completed",
   STARTED = "started",
   BLOCK = "block",
+}
+
+export function transformWorkflowToJiraColumn(
+  workflows: WorkflowStateConnection
+): JiraColumnResponse[] {
+  return workflows.nodes.map((workflow) => {
+    const columnValue = new ColumnValue();
+    columnValue.name = workflow.name;
+    columnValue.statuses = [workflow.type];
+    const jiraColumn = new JiraColumnResponse();
+    jiraColumn.key = workflow.type;
+    jiraColumn.value = columnValue;
+    return jiraColumn;
+  });
 }
 
 export class Linear implements Kanban {
@@ -38,15 +55,7 @@ export class Linear implements Kanban {
 
   async getColumns(): Promise<JiraColumnResponse[]> {
     const workflows = await this.client.workflowStates();
-    return workflows.nodes.map((workflow) => {
-      const columnValue = new ColumnValue();
-      columnValue.name = workflow.name;
-      columnValue.statuses = [workflow.type];
-      const jiraColumn = new JiraColumnResponse();
-      jiraColumn.key = workflow.type;
-      jiraColumn.value = columnValue;
-      return jiraColumn;
-    });
+    return transformWorkflowToJiraColumn(workflows);
   }
 
   async getStoryPointsAndCycleTime(
@@ -100,9 +109,7 @@ export class Linear implements Kanban {
     const assigneeSet = new Set<string>();
     for (const activity of activities) {
       const toAssignee = await activity.toAssignee;
-      if (toAssignee) {
-        assigneeSet.add(toAssignee.name);
-      }
+      if (toAssignee) assigneeSet.add(toAssignee.name);
     }
     return assigneeSet;
   }
@@ -120,7 +127,6 @@ export class Linear implements Kanban {
         const statusChangedArray: StatusChangedArrayItem[] =
           await Linear.putStatusChangeEventsIntoAnArray(cardHistory.nodes);
         const cycleTimeInfo = getCardTimeForEachStep(
-          statusChangedArray,
           sortStatusChangedArray(statusChangedArray)
         );
         const cardResponse = new JiraCardResponse(
@@ -141,39 +147,36 @@ export class Linear implements Kanban {
   private static async putStatusChangeEventsIntoAnArray(
     cardHistory: IssueHistory[]
   ): Promise<StatusChangedArrayItem[]> {
-    const statusChangedArray: StatusChangedArrayItem[] = [];
-    const sortedAndStateRelatedHistory = cardHistory
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      )
-      .filter((item, index) => {
-        if (index === 0) return true;
-        return !(!item.fromState && !item.toState);
-      });
-    if (sortedAndStateRelatedHistory.length === 1) {
-      const issue = await sortedAndStateRelatedHistory[0].issue;
-      const status: string = (await issue?.state)?.name || "";
-      statusChangedArray.push({
-        timestamp: sortedAndStateRelatedHistory[0].createdAt.getTime(),
-        status,
-      });
-    } else {
-      for (let i = 0; i < sortedAndStateRelatedHistory.length; i++) {
-        if (i === 0) {
-          statusChangedArray.push({
-            timestamp: sortedAndStateRelatedHistory[0].createdAt.getTime(),
-            status:
-              (await sortedAndStateRelatedHistory[1].fromState)?.name || "",
-          });
-        } else if (i > 0 && sortedAndStateRelatedHistory[i].toState) {
-          statusChangedArray.push({
-            timestamp: sortedAndStateRelatedHistory[i].createdAt.getTime(),
-            status: (await sortedAndStateRelatedHistory[i].toState)?.name || "",
-          });
-        }
-      }
+    const sortedActivities = sortBy(cardHistory, "createdAt");
+
+    const sortedAndStateRelatedHistory = sortedActivities.filter(
+      (item) => item.fromState || item.toState
+    );
+
+    const firstActivity = sortedActivities[0];
+
+    if (sortedAndStateRelatedHistory.length === 0) {
+      return [
+        {
+          timestamp: firstActivity.createdAt.getTime(),
+          status: (await (await firstActivity.issue)?.state)?.name || "",
+        },
+      ];
     }
-    return statusChangedArray;
+
+    const stateChanged = await Promise.all(
+      sortedAndStateRelatedHistory.map(async (activity) => ({
+        timestamp: activity.createdAt.getTime(),
+        status: (await activity.toState)?.name || "",
+      }))
+    );
+
+    return [
+      {
+        timestamp: firstActivity.createdAt.getTime(),
+        status: (await sortedAndStateRelatedHistory[0].fromState)?.name || "",
+      },
+      ...stateChanged,
+    ];
   }
 }

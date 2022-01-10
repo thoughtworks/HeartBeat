@@ -16,7 +16,7 @@ import InProductionStatus from "../../../fixture/statuses/InProductionStatus.jso
 import JiraCardCycleTime from "../../../fixture/JiraCardCycleTime.json";
 import JiraCards from "../../../fixture/JiraCards.json";
 import {
-  JiraColumnResponse,
+  ColumnResponse,
   KanbanTokenVerifyResponse,
 } from "../../../../src/contract/kanban/KanbanTokenVerifyResponse";
 import { JiraVerifyToken } from "../../../../src/services/kanban/Jira/JiraVerifyToken";
@@ -92,40 +92,40 @@ describe("verify token and return columns and users", async () => {
     const response = await jiraVerifyToken.verifyTokenAndGetColumnsAndUser(
       tokenVerifyModel
     );
-    const jiraReadyForDevColumn = new JiraColumnResponse();
+    const jiraReadyForDevColumn = new ColumnResponse();
     jiraReadyForDevColumn.key = "new";
     jiraReadyForDevColumn.value.name = "Ready for Dev";
     jiraReadyForDevColumn.value.statuses.push("TO DO");
-    const jiraInDevColumn = new JiraColumnResponse();
+    const jiraInDevColumn = new ColumnResponse();
     jiraInDevColumn.key = "indeterminate";
     jiraInDevColumn.value.name = "In Dev";
     jiraInDevColumn.value.statuses.push("IN DEV");
     jiraInDevColumn.value.statuses.push("BLOCK");
-    const jiraBlockColumn = new JiraColumnResponse();
+    const jiraBlockColumn = new ColumnResponse();
     jiraBlockColumn.key = "indeterminate";
     jiraBlockColumn.value.name = "Blocked";
     jiraBlockColumn.value.statuses.push("BLOCK");
-    const jiraInReviewColumn = new JiraColumnResponse();
+    const jiraInReviewColumn = new ColumnResponse();
     jiraInReviewColumn.key = "indeterminate";
     jiraInReviewColumn.value.name = "In Review";
     jiraInReviewColumn.value.statuses.push("IN REVIEW");
-    const jiraReadyForTestColumn = new JiraColumnResponse();
+    const jiraReadyForTestColumn = new ColumnResponse();
     jiraReadyForTestColumn.key = "indeterminate";
     jiraReadyForTestColumn.value.name = "Ready for Test";
     jiraReadyForTestColumn.value.statuses.push("READY FOR TEST");
-    const jiraInTestColumn = new JiraColumnResponse();
+    const jiraInTestColumn = new ColumnResponse();
     jiraInTestColumn.key = "indeterminate";
     jiraInTestColumn.value.name = "In Test";
     jiraInTestColumn.value.statuses.push("IN TEST");
-    const jiraDoneColumn = new JiraColumnResponse();
+    const jiraDoneColumn = new ColumnResponse();
     jiraDoneColumn.key = "done";
     jiraDoneColumn.value.name = "Done (In SIT)";
     jiraDoneColumn.value.statuses.push("DONE");
-    const jiraInProductionColumn = new JiraColumnResponse();
+    const jiraInProductionColumn = new ColumnResponse();
     jiraInProductionColumn.key = "done";
     jiraInProductionColumn.value.name = "In Production";
     jiraInProductionColumn.value.statuses.push("PRODUCTION");
-    const jiraColumnNames = Array.of<JiraColumnResponse>(
+    const jiraColumnNames = Array.of<ColumnResponse>(
       jiraReadyForDevColumn,
       jiraInDevColumn,
       jiraBlockColumn,

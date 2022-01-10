@@ -7,7 +7,7 @@ import {
 } from "../../../contract/kanban/KanbanStoryPointResponse";
 import {
   ColumnValue,
-  JiraColumnResponse,
+  ColumnResponse,
 } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import {
@@ -43,8 +43,8 @@ export class Jira implements Kanban {
 
   async getColumns(
     model: StoryPointsAndCycleTimeRequest
-  ): Promise<JiraColumnResponse[]> {
-    const jiraColumnNames = Array.of<JiraColumnResponse>();
+  ): Promise<ColumnResponse[]> {
+    const jiraColumnNames = Array.of<ColumnResponse>();
 
     //column
     const configurationResponse = await axios.get(
@@ -66,7 +66,7 @@ export class Jira implements Kanban {
       const columnValue: ColumnValue = new ColumnValue();
       columnValue.name = column.name;
 
-      const jiraColumnResponse = new JiraColumnResponse();
+      const jiraColumnResponse = new ColumnResponse();
       for (const status of column.statuses) {
         const statusSelf = await Jira.queryStatus(status.self, model.token);
         jiraColumnResponse.key = statusSelf.statusCategory.key;

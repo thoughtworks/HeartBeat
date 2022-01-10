@@ -42,7 +42,7 @@ import { calculateMeanTimeToRecovery } from "../common/MeanTimeToRecovery";
 import { BuildInfo } from "../../models/pipeline/BuildInfo";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
-import { JiraColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
+import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import fs from "fs";
 
 export class GenerateReportService {
@@ -56,12 +56,12 @@ export class GenerateReportService {
     RequireDataEnum.DEPLOYMENT_FREQUENCY,
     RequireDataEnum.MEAN_TIME_TO_RECOVERY,
   ].map((metric) => metric.toLowerCase());
-  private readonly codebaseMetrics = [
-    RequireDataEnum.LEAD_TIME_OF_CHANGES,
-  ].map((metric) => metric.toLowerCase());
+  private readonly codebaseMetrics = [RequireDataEnum.LEAD_TIME_OF_CHANGES].map(
+    (metric) => metric.toLowerCase()
+  );
   private cards?: Cards;
   private nonDonecards?: Cards;
-  private jiraColumns?: JiraColumnResponse[];
+  private columns?: ColumnResponse[];
   // noinspection JSMismatchedCollectionQueryUpdate
   private deployTimesListFromDeploySetting: DeployTimes[] = [];
   private deployTimesListFromLeadTimeSetting: DeployTimes[] = [];
@@ -79,7 +79,8 @@ export class GenerateReportService {
     await changeConsiderHolidayMode(request.considerHoliday);
     await this.fetchOriginalData(request);
     await this.generateCsvForPipeline(request);
-    const reporterResponse: GenerateReporterResponse = new GenerateReporterResponse();
+    const reporterResponse: GenerateReporterResponse =
+      new GenerateReporterResponse();
     const startTime = new Date(request.startTime);
     const endTime = new Date(request.endTime);
     const kanbanSetting = request.kanbanSetting;
@@ -299,7 +300,7 @@ export class GenerateReportService {
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
-    this.jiraColumns = await kanban.getColumns(
+    this.columns = await kanban.getColumns(
       new StoryPointsAndCycleTimeRequest(
         kanbanSetting.token,
         kanbanSetting.type,
@@ -316,7 +317,7 @@ export class GenerateReportService {
     await ConvertBoardDataToCsv(
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,
-      this.jiraColumns,
+      this.columns,
       kanbanSetting.targetFields,
       request.csvTimeStamp
     );

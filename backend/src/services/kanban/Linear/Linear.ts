@@ -2,7 +2,7 @@ import { Kanban } from "../Kanban";
 import { StoryPointsAndCycleTimeRequest } from "../../../contract/kanban/KanbanStoryPointParameterVerify";
 import {
   ColumnValue,
-  JiraColumnResponse,
+  ColumnResponse,
 } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { Cards } from "../../../models/kanban/RequestKanbanResults";
 import { RequestKanbanColumnSetting } from "../../../contract/GenerateReporter/GenerateReporterRequestBody";
@@ -32,12 +32,12 @@ export enum LinearColumnType {
 
 export function transformWorkflowToJiraColumn(
   workflows: WorkflowStateConnection
-): JiraColumnResponse[] {
+): ColumnResponse[] {
   return workflows.nodes.map((workflow) => {
     const columnValue = new ColumnValue();
     columnValue.name = workflow.name;
     columnValue.statuses = [workflow.type];
-    const jiraColumn = new JiraColumnResponse();
+    const jiraColumn = new ColumnResponse();
     jiraColumn.key = workflow.type;
     jiraColumn.value = columnValue;
     return jiraColumn;
@@ -53,7 +53,7 @@ export class Linear implements Kanban {
     });
   }
 
-  async getColumns(): Promise<JiraColumnResponse[]> {
+  async getColumns(): Promise<ColumnResponse[]> {
     const workflows = await this.client.workflowStates();
     return transformWorkflowToJiraColumn(workflows);
   }

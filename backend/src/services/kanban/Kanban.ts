@@ -3,15 +3,13 @@ import { Jira } from "./Jira/Jira";
 import { PlatformTypeError } from "../../types/PlatformTypeError";
 import { RequestKanbanColumnSetting } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { Cards } from "../../models/kanban/RequestKanbanResults";
-import { JiraColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
+import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import { Linear } from "./Linear/Linear";
 
 export interface Kanban {
   // verifyTokenAndGetColumnsAndUser(model: KanbanTokenVerifyModel): Promise<KanbanTokenVerifyResponse>;
 
-  getColumns(
-    model: StoryPointsAndCycleTimeRequest
-  ): Promise<JiraColumnResponse[]>;
+  getColumns(model: StoryPointsAndCycleTimeRequest): Promise<ColumnResponse[]>;
 
   getStoryPointsAndCycleTime(
     model: StoryPointsAndCycleTimeRequest,

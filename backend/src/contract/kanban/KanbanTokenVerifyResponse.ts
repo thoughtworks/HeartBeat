@@ -13,7 +13,7 @@ export class ColumnValue {
 }
 
 @swaggerClass()
-export class JiraColumnResponse {
+export class ColumnResponse {
   @swaggerProperty({ type: "string", required: true, example: "done" })
   key: string = "";
   @swaggerProperty({
@@ -30,10 +30,10 @@ export class KanbanTokenVerifyResponse {
     required: true,
     items: {
       type: "object",
-      properties: (JiraColumnResponse as any).swaggerDocument,
+      properties: (ColumnResponse as any).swaggerDocument,
     },
   })
-  jiraColumns: JiraColumnResponse[] = [];
+  jiraColumns: ColumnResponse[] = [];
 
   @swaggerProperty({
     type: "array",

@@ -17,7 +17,7 @@ import fs from "fs";
 import { CsvFileNameEnum } from "../../models/kanban/CsvFileNameEnum";
 import { SourceTypeEnum } from "../../models/kanban/CsvSourceTypeEnum";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
-import { JiraColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
+import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import { JiraCard } from "../../models/kanban/JiraCard";
 import _ from "lodash";
 
@@ -52,7 +52,7 @@ function getBlank(): JiraCardResponse[] {
 }
 
 function getIndexForStatus(
-  jiraColumns: JiraColumnResponse[],
+  jiraColumns: ColumnResponse[],
   status: string
 ): number {
   for (let index = 0; index < jiraColumns.length; index++) {
@@ -163,7 +163,7 @@ export function getActiveExtraFields(targetFields: TargetField[]) {
 export async function ConvertBoardDataToCsv(
   jiraCardResponses: JiraCardResponse[],
   jiraNonDoneCardResponses: JiraCardResponse[],
-  jiraColumns: JiraColumnResponse[],
+  jiraColumns: ColumnResponse[],
   targetFields: TargetField[],
   csvTimeStamp: number
 ): Promise<void> {

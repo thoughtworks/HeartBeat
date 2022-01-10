@@ -145,7 +145,6 @@ describe("DeploymentFrequency", () => {
   );
 
   before(async function () {
-    this.timeout(10000);
     mock.onGet("2019.json").reply(200, Holiday2019);
     mock.onGet("2020.json").reply(200, Holiday2020);
     await loadHolidayList(2019);
@@ -180,14 +179,15 @@ describe("DeploymentFrequency", () => {
           { count: 5, date: "5/11/2020" },
         ]),
       ];
-      const expectTwoPipelineDeploymentInFiveDays: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name5", "step", 1, [
-          { count: 5, date: "5/11/2020" },
-        ]),
-        new DeploymentFrequencyOfPipeline("name10", "step", 2, [
-          { count: 10, date: "5/11/2020" },
-        ]),
-      ];
+      const expectTwoPipelineDeploymentInFiveDays: DeploymentFrequencyOfPipeline[] =
+        [
+          new DeploymentFrequencyOfPipeline("name5", "step", 1, [
+            { count: 5, date: "5/11/2020" },
+          ]),
+          new DeploymentFrequencyOfPipeline("name10", "step", 2, [
+            { count: 10, date: "5/11/2020" },
+          ]),
+        ];
       const fiveTimesAvgDeploymentFrequency = new AvgDeploymentFrequency(5);
       const expectAvgDeploymentInFiveDays = new AvgDeploymentFrequency(1.5);
 
@@ -218,20 +218,21 @@ describe("DeploymentFrequency", () => {
     it("should return correct deployment frequency when contains over three pipelines", async () => {
       const expectAvgDeploymentInOneDay = new AvgDeploymentFrequency(5);
 
-      const expectFourPipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name5", "step", 5, [
-          { count: 5, date: "5/11/2020" },
-        ]),
-        new DeploymentFrequencyOfPipeline("name10", "step", 10, [
-          { count: 10, date: "5/11/2020" },
-        ]),
-        new DeploymentFrequencyOfPipeline("name3", "step", 3, [
-          { count: 3, date: "5/11/2020" },
-        ]),
-        new DeploymentFrequencyOfPipeline("name2", "step", 2, [
-          { count: 2, date: "5/11/2020" },
-        ]),
-      ];
+      const expectFourPipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] =
+        [
+          new DeploymentFrequencyOfPipeline("name5", "step", 5, [
+            { count: 5, date: "5/11/2020" },
+          ]),
+          new DeploymentFrequencyOfPipeline("name10", "step", 10, [
+            { count: 10, date: "5/11/2020" },
+          ]),
+          new DeploymentFrequencyOfPipeline("name3", "step", 3, [
+            { count: 3, date: "5/11/2020" },
+          ]),
+          new DeploymentFrequencyOfPipeline("name2", "step", 2, [
+            { count: 2, date: "5/11/2020" },
+          ]),
+        ];
 
       expect(
         calculateDeploymentFrequency(
@@ -271,11 +272,12 @@ describe("DeploymentFrequency", () => {
     it("should return 8 deployment passed items when 8 deployment all passed", async () => {
       const expectAvgDeploymentInOneDay = new AvgDeploymentFrequency(8);
 
-      const expectOnePipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name8", "step", 8, [
-          { count: 8, date: "5/11/2020" },
-        ]),
-      ];
+      const expectOnePipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] =
+        [
+          new DeploymentFrequencyOfPipeline("name8", "step", 8, [
+            { count: 8, date: "5/11/2020" },
+          ]),
+        ];
 
       expect(
         calculateDeploymentFrequency(
@@ -294,9 +296,8 @@ describe("DeploymentFrequency", () => {
     it("should return 0 deployment passed items when deployment all failed", async () => {
       const expectAvgDeploymentInOneDay = new AvgDeploymentFrequency(0);
 
-      const expectOnePipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name9", "step", 0, []),
-      ];
+      const expectOnePipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] =
+        [new DeploymentFrequencyOfPipeline("name9", "step", 0, [])];
 
       expect(
         calculateDeploymentFrequency(
@@ -315,11 +316,12 @@ describe("DeploymentFrequency", () => {
     it("should return 6 deployment passed items of one pipeline when 6 deployment passed and 6 deployment failed", async () => {
       const expectAvgDeploymentInOneDay = new AvgDeploymentFrequency(6);
 
-      const expectOnePipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name12", "step", 6, [
-          { count: 6, date: "5/11/2020" },
-        ]),
-      ];
+      const expectOnePipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] =
+        [
+          new DeploymentFrequencyOfPipeline("name12", "step", 6, [
+            { count: 6, date: "5/11/2020" },
+          ]),
+        ];
 
       expect(
         calculateDeploymentFrequency(
@@ -338,12 +340,13 @@ describe("DeploymentFrequency", () => {
     it("should return 8 deployment passed items of two pipelines when one pipeline all passed and another all failed", async () => {
       const expectAvgDeploymentInOneDay = new AvgDeploymentFrequency(4);
 
-      const expectTwoPipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name8", "step", 8, [
-          { count: 8, date: "5/11/2020" },
-        ]),
-        new DeploymentFrequencyOfPipeline("name9", "step", 0, []),
-      ];
+      const expectTwoPipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] =
+        [
+          new DeploymentFrequencyOfPipeline("name8", "step", 8, [
+            { count: 8, date: "5/11/2020" },
+          ]),
+          new DeploymentFrequencyOfPipeline("name9", "step", 0, []),
+        ];
 
       expect(
         calculateDeploymentFrequency(
@@ -362,14 +365,15 @@ describe("DeploymentFrequency", () => {
     it("should return 8 deployment passed items of two pipelines when both of them contain passed and failed deployment", async () => {
       const expectAvgDeploymentInOneDay = new AvgDeploymentFrequency(8);
 
-      const expectTwoPipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name12", "step", 6, [
-          { count: 6, date: "5/11/2020" },
-        ]),
-        new DeploymentFrequencyOfPipeline("name18", "step", 10, [
-          { count: 10, date: "5/11/2020" },
-        ]),
-      ];
+      const expectTwoPipelineDeploymentInOneDay: DeploymentFrequencyOfPipeline[] =
+        [
+          new DeploymentFrequencyOfPipeline("name12", "step", 6, [
+            { count: 6, date: "5/11/2020" },
+          ]),
+          new DeploymentFrequencyOfPipeline("name18", "step", 10, [
+            { count: 10, date: "5/11/2020" },
+          ]),
+        ];
 
       expect(
         calculateDeploymentFrequency(
@@ -388,12 +392,13 @@ describe("DeploymentFrequency", () => {
     it("should return deployment passed items of two pipelines when some deploy date not falls into the date range", async () => {
       const expectAvgDeploymentInFiveDay = new AvgDeploymentFrequency(2.5);
 
-      const expectTwoPipelineDeploymentInFiveDay: DeploymentFrequencyOfPipeline[] = [
-        new DeploymentFrequencyOfPipeline("name20", "step", 0, []),
-        new DeploymentFrequencyOfPipeline("name25", "step", 5, [
-          { count: 25, date: "5/14/2020" },
-        ]),
-      ];
+      const expectTwoPipelineDeploymentInFiveDay: DeploymentFrequencyOfPipeline[] =
+        [
+          new DeploymentFrequencyOfPipeline("name20", "step", 0, []),
+          new DeploymentFrequencyOfPipeline("name25", "step", 5, [
+            { count: 25, date: "5/14/2020" },
+          ]),
+        ];
 
       expect(
         calculateDeploymentFrequency(

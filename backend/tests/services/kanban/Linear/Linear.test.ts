@@ -11,7 +11,6 @@ import { LinearVerifyToken } from "../../../../src/services/kanban/Linear/Linear
 import { KanbanTokenVerifyModel } from "../../../../src/contract/kanban/KanbanTokenVerify";
 import {
   IssueConnection,
-  LinearFetch,
   WorkflowStateConnection,
 } from "@linear/sdk/dist/_generated_sdk";
 

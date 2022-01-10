@@ -1,7 +1,6 @@
-import { JiraCard, Status } from "../../models/kanban/JiraCard";
+import { JiraCard } from "../../models/kanban/JiraCard";
 import { swaggerClass, swaggerProperty } from "koa-swagger-decorator";
 import { CardCycleTime } from "../../models/kanban/CardCycleTime";
-import { Issue } from "@linear/sdk";
 
 @swaggerClass()
 export class KanbanStoryPointResponse {

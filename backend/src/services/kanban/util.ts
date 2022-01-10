@@ -53,7 +53,8 @@ export function reformTimeLineForFlaggedCards(
   statusChangedArray: StatusChangedArrayItem[]
 ): StatusChangedArrayItem[] {
   const needToFilterArray: number[] = [];
-  statusChangedArray.forEach(function (
+  const timeLine = sortStatusChangedArray(statusChangedArray);
+  timeLine.forEach(function (
     statusChangedArrayItem,
     index,
     statusChangedArrayItems
@@ -63,8 +64,8 @@ export function reformTimeLineForFlaggedCards(
       if (index > 0)
         statusNameAfterBlock = statusChangedArrayItems[index - 1].status;
       for (index++; index < statusChangedArrayItems.length; index++) {
-        if (statusChangedArray[index].status == CardStepsEnum.REMOVEFLAG) {
-          statusChangedArray[index].status = statusNameAfterBlock;
+        if (timeLine[index].status == CardStepsEnum.REMOVEFLAG) {
+          timeLine[index].status = statusNameAfterBlock;
           break;
         }
         statusNameAfterBlock = statusChangedArrayItems[index].status;
@@ -72,7 +73,7 @@ export function reformTimeLineForFlaggedCards(
       }
     }
   });
-  return statusChangedArray.filter(
+  return timeLine.filter(
     (activity) => !needToFilterArray.includes(activity.timestamp)
   );
 }

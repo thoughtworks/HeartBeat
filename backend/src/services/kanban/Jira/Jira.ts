@@ -410,7 +410,7 @@ export class Jira implements Kanban {
     );
     const statusChangeArrayWithoutFlag = this.putStatusChangeEventsIntoAnArray(
       jiraCardHistory,
-      false
+      true
     );
     const cycleTimeInfos = getCardTimeForEachStep(
       reformTimeLineForFlaggedCards(statusChangedArray)

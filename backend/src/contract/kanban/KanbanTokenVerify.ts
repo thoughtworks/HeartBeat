@@ -3,7 +3,7 @@ export const kanbanTokenVerifySchema = {
   token: { type: "string", required: true, description: "kanban token" },
   site: { type: "string", required: true, description: "kanban domain" },
   projectKey: { type: "string", required: true, description: "kanban project" },
-  boardId: { type: "number", required: true, description: "kanban boardId" },
+  boardId: { type: "string", required: true, description: "kanban boardId" },
   startTime: {
     type: "number",
     required: true,
@@ -19,7 +19,7 @@ export class KanbanTokenVerifyModel {
   type: string;
   startTime: number;
   endTime: number;
-  boardId: number;
+  boardId: string;
 
   constructor(
     token: string,
@@ -28,7 +28,7 @@ export class KanbanTokenVerifyModel {
     type: string,
     startTime: number,
     endTime: number,
-    boardId: number
+    boardId: string
   ) {
     this.token = token;
     this.site = site;

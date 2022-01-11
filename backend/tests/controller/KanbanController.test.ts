@@ -4,7 +4,7 @@ import chaiHttp from "chai-http";
 import app from "../../src/server";
 import sinon from "sinon";
 import {
-  JiraColumnResponse,
+  ColumnResponse,
   KanbanTokenVerifyResponse,
 } from "../../src/contract/kanban/KanbanTokenVerifyResponse";
 import { JiraVerifyToken } from "../../src/services/kanban/Jira/JiraVerifyToken";
@@ -18,13 +18,13 @@ describe("KanbanController", () => {
       "/kanban/verify?token=test-token&site=dorametrics&projectKey=ADM&startTime=0&endTime=0&boardId=2";
 
     it("should return 200 when using valid token", async () => {
-      const jiraColumn1 = new JiraColumnResponse();
+      const jiraColumn1 = new ColumnResponse();
       jiraColumn1.key = "DOING";
       jiraColumn1.value.name = "DOING";
-      const jiraColumn2 = new JiraColumnResponse();
+      const jiraColumn2 = new ColumnResponse();
       jiraColumn2.key = "TESTING";
       jiraColumn2.value.name = "TESTING";
-      const jiraColumnNames = Array.of<JiraColumnResponse>(
+      const jiraColumnNames = Array.of<ColumnResponse>(
         jiraColumn1,
         jiraColumn2
       );

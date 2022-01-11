@@ -61,14 +61,23 @@ export class JiraCardResponse {
   }
 
   calculateTotalCycleTimeDivideStoryPoints(): void {
-    const storyPoints =
-      this.baseInfo.fields.storyPoints == undefined
-        ? 0
-        : this.baseInfo.fields.storyPoints;
+    const storyPoints = this.getStoryPoint();
     const cycleTime =
       this.cardCycleTime?.total == undefined ? 0 : this.cardCycleTime?.total;
     this.totalCycleTimeDivideStoryPoints =
       storyPoints > 0 ? (cycleTime / storyPoints).toFixed(2) : "";
+  }
+
+  getCardId(): string {
+    return this.baseInfo.key;
+  }
+
+  async getStatus(): Promise<string | undefined> {
+    return this.baseInfo.fields.status?.name;
+  }
+
+  getStoryPoint(): number {
+    return this.baseInfo.fields.storyPoints || 0;
   }
 }
 

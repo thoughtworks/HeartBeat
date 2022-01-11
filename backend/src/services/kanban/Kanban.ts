@@ -3,19 +3,20 @@ import { Jira } from "./Jira/Jira";
 import { PlatformTypeError } from "../../types/PlatformTypeError";
 import { RequestKanbanColumnSetting } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { Cards } from "../../models/kanban/RequestKanbanResults";
-import { JiraColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
+import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
+import { Linear } from "./Linear/Linear";
 
 export interface Kanban {
   // verifyTokenAndGetColumnsAndUser(model: KanbanTokenVerifyModel): Promise<KanbanTokenVerifyResponse>;
 
-  getJiraColumns(
-    model: StoryPointsAndCycleTimeRequest
-  ): Promise<JiraColumnResponse[]>;
+  getColumns(model: StoryPointsAndCycleTimeRequest): Promise<ColumnResponse[]>;
+
   getStoryPointsAndCycleTime(
     model: StoryPointsAndCycleTimeRequest,
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards>;
+
   getStoryPointsAndCycleTimeForNonDoneCards(
     model: StoryPointsAndCycleTimeRequest,
     boardColumns: RequestKanbanColumnSetting[],
@@ -26,6 +27,7 @@ export interface Kanban {
 export enum KanbanEnum {
   JIRA = "jira",
   CLASSIC_JIRA = "classic jira",
+  LINEAR = "linear",
 }
 
 export class KanbanFactory {
@@ -38,6 +40,8 @@ export class KanbanFactory {
       case KanbanEnum.JIRA:
       case KanbanEnum.CLASSIC_JIRA:
         return new Jira(token, site);
+      case KanbanEnum.LINEAR:
+        return new Linear(token);
       default:
         throw new PlatformTypeError(type);
     }

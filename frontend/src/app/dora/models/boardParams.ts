@@ -13,7 +13,7 @@ export class BoardParams {
   };
   users: string[];
   targetFields: TargetField[];
-  boardId: number;
+  boardId: string;
 
   constructor({
     type,
@@ -28,13 +28,13 @@ export class BoardParams {
     site: string;
     projectKey: string;
     email: string;
-    boardId: number;
+    boardId: string;
   }) {
     this.type = type;
     this.token = this.generateBasicToken(token, email);
     this.site = site;
     this.projectKey = projectKey;
-    this.boardId = Number(boardId);
+    this.boardId = boardId;
   }
 
   generateBasicToken(token: string, email: string) {

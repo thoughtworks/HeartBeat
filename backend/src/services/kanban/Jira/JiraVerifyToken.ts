@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from "axios";
 import { KanbanTokenVerifyModel } from "../../../contract/kanban/KanbanTokenVerify";
 import {
   ColumnValue,
-  JiraColumnResponse,
+  ColumnResponse,
   KanbanTokenVerifyResponse,
   TargetField,
 } from "../../../contract/kanban/KanbanTokenVerifyResponse";
@@ -27,7 +27,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
   async verifyTokenAndGetColumnsAndUser(
     model: KanbanTokenVerifyModel
   ): Promise<KanbanTokenVerifyResponse> {
-    const jiraColumnNames = Array.of<JiraColumnResponse>();
+    const jiraColumnNames = Array.of<ColumnResponse>();
 
     const doneColumn = Array.of<string>();
 
@@ -51,7 +51,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
       const columnValue: ColumnValue = new ColumnValue();
       columnValue.name = column.name;
 
-      const jiraColumnResponse = new JiraColumnResponse();
+      const jiraColumnResponse = new ColumnResponse();
       let anyDoneKey = false;
       for (const status of column.statuses) {
         const statusSelf = await JiraVerifyToken.queryStatus(

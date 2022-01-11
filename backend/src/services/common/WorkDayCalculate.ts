@@ -79,10 +79,10 @@ export function calculateWorkDaysBy24Hours(
   const startDate = new Date(startTime).setHours(0, 0, 0, 0);
   const endDate = new Date(endTime).setHours(0, 0, 0, 0);
   const gapDaysTime = endDate - startDate;
-  const gapWrokingDaysTime =
+  const gapWorkingDaysTime =
     (calculateWorkDaysBetween(startTime, endTime) - 1) * ONE_DAY;
   return +(
-    (endTime - startTime - gapDaysTime + gapWrokingDaysTime) /
+    (endTime - startTime - gapDaysTime + gapWorkingDaysTime) /
     ONE_DAY
   ).toFixed(2);
 }

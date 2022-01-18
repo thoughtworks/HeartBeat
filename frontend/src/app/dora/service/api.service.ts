@@ -14,11 +14,19 @@ export class ApiService {
     if (type === 'pipelineTool') {
       return this.fetchPipelineData(params);
     } else if (type === 'board') {
-      return this.verifyJiraBoard(params);
+      return this.verifyBoard(params);
     } else if (type === 'sourceControl') {
       return this.fetchCodeBaseRepos(params);
     }
   };
+
+  verifyBoard(params: any): any {
+    const { type } = params;
+    if (type === 'Jira') {
+      return this.verifyJiraBoard(params);
+    }
+    return this.verifyLinearBoard(params);
+  }
 
   verifyJiraBoard({
     type,
@@ -43,6 +51,24 @@ export class ApiService {
     const newToken = `Basic ${btoa(msg)}`;
     return this.httpClient.get(`${this.baseUrl}/kanban/verify`, {
       params: { token: newToken, type: type.toLowerCase(), site, projectKey, startTime, endTime, boardId },
+    });
+  }
+
+  verifyLinearBoard({
+    type,
+    projectName,
+    startTime,
+    endTime,
+    token,
+  }: {
+    type: string;
+    projectName: string;
+    startTime: string;
+    endTime: string;
+    token: string;
+  }) {
+    return this.httpClient.get(`${this.baseUrl}/kanban/verify`, {
+      params: { token, type: type.toLowerCase(), projectName, startTime, endTime },
     });
   }
 

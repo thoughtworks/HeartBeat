@@ -1,9 +1,13 @@
 export const kanbanTokenVerifySchema = {
   type: { type: "string", required: true, description: "kanban type" },
   token: { type: "string", required: true, description: "kanban token" },
-  site: { type: "string", required: true, description: "kanban domain" },
-  projectKey: { type: "string", required: true, description: "kanban project" },
-  boardId: { type: "string", required: true, description: "kanban boardId" },
+
+  site: { type: "string", description: "Jira domain" },
+  projectKey: { type: "string", description: "Jira projectKey" },
+  boardId: { type: "string", description: "Jira boardId" },
+
+  projectName: { type: "string", description: "Linear projectName" },
+
   startTime: {
     type: "number",
     required: true,

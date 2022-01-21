@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeploymentFrequencyComponent } from './deployment-frequency.component';
+import { DeploymentFrequencyReportComponent } from './deployment-frequency.component';
 
 describe('DeploymentFrequencyComponent', () => {
-  let component: DeploymentFrequencyComponent;
-  let fixture: ComponentFixture<DeploymentFrequencyComponent>;
+  let component: DeploymentFrequencyReportComponent;
+  let fixture: ComponentFixture<DeploymentFrequencyReportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DeploymentFrequencyComponent],
+      declarations: [DeploymentFrequencyReportComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DeploymentFrequencyComponent);
+    fixture = TestBed.createComponent(DeploymentFrequencyReportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

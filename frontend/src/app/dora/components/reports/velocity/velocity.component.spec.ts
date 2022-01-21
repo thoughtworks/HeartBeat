@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VelocityComponent } from './velocity.component';
+import { VelocityReportComponent } from './velocity.component';
 
 describe('VelocityComponent', () => {
-  let component: VelocityComponent;
-  let fixture: ComponentFixture<VelocityComponent>;
+  let component: VelocityReportComponent;
+  let fixture: ComponentFixture<VelocityReportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [VelocityComponent],
+      declarations: [VelocityReportComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VelocityComponent);
+    fixture = TestBed.createComponent(VelocityReportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -101,7 +101,7 @@ describe("verify token and return columns and users for Linear", async function 
       new KanbanTokenVerifyModel(
         "test apikey",
         "yingkai-fan",
-        "",
+        "projectKey",
         "YIN",
         "linear",
         1633046400000,

@@ -5,6 +5,7 @@ export class BoardParams {
   token: string;
   site: string;
   projectKey: string;
+  projectName: string;
   doneColumn: string[];
   treatFlagCardAsBlock: boolean;
   boardColumns: {
@@ -20,6 +21,7 @@ export class BoardParams {
     token,
     site,
     projectKey,
+    projectName,
     email,
     boardId,
   }: {
@@ -27,13 +29,15 @@ export class BoardParams {
     token: string;
     site: string;
     projectKey: string;
+    projectName: string;
     email: string;
     boardId: string;
   }) {
     this.type = type;
-    this.token = this.generateBasicToken(token, email);
+    this.token = type === 'jira' ? this.generateBasicToken(token, email) : token;
     this.site = site;
     this.projectKey = projectKey;
+    this.projectName = projectName;
     this.boardId = boardId;
   }
 

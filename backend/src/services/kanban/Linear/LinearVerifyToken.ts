@@ -4,6 +4,7 @@ import { KanbanTokenVerifyResponse } from "../../../contract/kanban/KanbanTokenV
 import { LinearClient } from "@linear/sdk";
 import uniq from "lodash/uniq";
 import { transformWorkflowToJiraColumn } from "./Linear";
+import { ThereIsNoCardsInDoneColumn } from "../../../types/ThereIsNoCardsInDoneColumn";
 
 export class LinearVerifyToken implements KanbanVerifyToken {
   client: LinearClient;
@@ -27,10 +28,15 @@ export class LinearVerifyToken implements KanbanVerifyToken {
           gte: new Date(model.startTime),
         },
         project: {
-          name: { eq: model.boardId },
+          name: { eq: model.projectName },
         },
       },
     });
+
+    if (issues.nodes.length === 0) {
+      throw new ThereIsNoCardsInDoneColumn();
+    }
+
     const assigneeNames = await Promise.all(
       issues.nodes.map(async (issue) => (await issue.assignee)?.name)
     );

@@ -13,7 +13,7 @@ import {
   LeadTimeForChanges,
   LeadTimeForChangesOfPipeline,
 } from "../../contract/GenerateReporter/GenerateReporterResponse";
-import { Kanban, KanbanFactory } from "../kanban/Kanban";
+import { Kanban, KanbanEnum, KanbanFactory } from "../kanban/Kanban";
 import { StoryPointsAndCycleTimeRequest } from "../../contract/kanban/KanbanStoryPointParameterVerify";
 import { CalculateCycleTime } from "../kanban/CalculateCycleTime";
 import { DeployTimes, DeployInfo } from "../../models/pipeline/DeployTimes";
@@ -273,7 +273,9 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.projectKey,
+        kanbanSetting.type === KanbanEnum.JIRA
+          ? kanbanSetting.projectKey
+          : kanbanSetting.projectName,
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -289,7 +291,9 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.projectKey,
+        kanbanSetting.type === KanbanEnum.JIRA
+          ? kanbanSetting.projectKey
+          : kanbanSetting.projectName,
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -305,7 +309,9 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.projectKey,
+        kanbanSetting.type === KanbanEnum.JIRA
+          ? kanbanSetting.projectKey
+          : kanbanSetting.projectName,
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,

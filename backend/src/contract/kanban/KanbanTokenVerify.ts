@@ -20,6 +20,7 @@ export class KanbanTokenVerifyModel {
   token: string;
   site: string;
   projectKey: string;
+  projectName: string;
   type: string;
   startTime: number;
   endTime: number;
@@ -29,6 +30,7 @@ export class KanbanTokenVerifyModel {
     token: string,
     site: string,
     projectKey: string,
+    projectName: string,
     type: string,
     startTime: number,
     endTime: number,
@@ -37,6 +39,7 @@ export class KanbanTokenVerifyModel {
     this.token = token;
     this.site = site;
     this.projectKey = projectKey;
+    this.projectName = projectName;
     this.type = type;
     this.startTime = startTime;
     this.endTime = endTime;

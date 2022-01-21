@@ -70,7 +70,7 @@ export class Linear implements Kanban {
           gte: new Date(model.startTime),
         },
         project: {
-          name: { eq: model.boardId },
+          name: { eq: model.project },
         },
         state: {
           type: { eq: LinearColumnType.COMPLETED },
@@ -93,7 +93,7 @@ export class Linear implements Kanban {
           gte: new Date(model.startTime),
         },
         project: {
-          name: { eq: model.boardId },
+          name: { eq: model.project },
         },
         state: {
           type: { neq: LinearColumnType.COMPLETED },

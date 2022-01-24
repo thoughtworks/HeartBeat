@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PipelineItemComponent } from './pipeline-item.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormGroup } from '@angular/forms';
 
 describe('PipelineItemComponent', () => {
   let component: PipelineItemComponent;
@@ -18,6 +19,7 @@ describe('PipelineItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PipelineItemComponent);
     component = fixture.componentInstance;
+    component.metricsForm = new FormGroup({});
     fixture.detectChanges();
   });
 

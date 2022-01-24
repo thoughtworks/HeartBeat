@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { ClassificationComponent } from './classification.component';
+import { FormGroup } from '@angular/forms';
 
 describe('ClassificationComponent', () => {
   let component: ClassificationComponent;
@@ -18,6 +19,7 @@ describe('ClassificationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ClassificationComponent);
     component = fixture.componentInstance;
+    component.metricsForm = new FormGroup({});
     fixture.detectChanges();
   });
 

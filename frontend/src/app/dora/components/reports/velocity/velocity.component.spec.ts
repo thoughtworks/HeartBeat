@@ -15,6 +15,10 @@ describe('VelocityComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(VelocityReportComponent);
     component = fixture.componentInstance;
+    component.velocity = {
+      velocityForSP: '1',
+      velocityForCards: '1',
+    };
     fixture.detectChanges();
   });
 

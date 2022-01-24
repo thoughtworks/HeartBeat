@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CrewsComponent } from './crews.component';
+import { FormGroup } from '@angular/forms';
 
 describe('CrewsComponent', () => {
   let component: CrewsComponent;
@@ -15,6 +16,7 @@ describe('CrewsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CrewsComponent);
     component = fixture.componentInstance;
+    component.metricsForm = new FormGroup({});
     fixture.detectChanges();
   });
 

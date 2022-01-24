@@ -15,6 +15,14 @@ describe('DeploymentFrequencyComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DeploymentFrequencyReportComponent);
     component = fixture.componentInstance;
+    component.deploymentFrequency = {
+      avgDeploymentFrequency: {
+        name: '1',
+        step: '1',
+        deploymentFrequency: '1',
+      },
+      deploymentFrequencyOfPipelines: [],
+    };
     fixture.detectChanges();
   });
 

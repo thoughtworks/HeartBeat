@@ -15,6 +15,7 @@ describe('WarningMessageComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WarningMessageComponent);
     component = fixture.componentInstance;
+    component.warningMessagesForImport = [];
     fixture.detectChanges();
   });
 

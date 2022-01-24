@@ -15,6 +15,24 @@ describe('LeadTimeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LeadTimeReportComponent);
     component = fixture.componentInstance;
+    component.leadTime = {
+      leadTimeForChangesOfPipelines: [
+        {
+          name: 'string2',
+          step: 'string2',
+          mergeDelayTime: 2,
+          pipelineDelayTime: 2,
+          totalDelayTime: 2,
+        },
+      ],
+      avgLeadTimeForChanges: {
+        name: 'string',
+        step: 'string',
+        mergeDelayTime: 1,
+        pipelineDelayTime: 1,
+        totalDelayTime: 1,
+      },
+    };
     fixture.detectChanges();
   });
 

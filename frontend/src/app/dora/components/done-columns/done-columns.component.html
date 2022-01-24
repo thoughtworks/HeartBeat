@@ -1,4 +1,4 @@
-<div class="cycle-time__done" [formGroup]="metricsForm" *ngIf="doneColumns.length > 1">
+<div class="cycle-time__done" [formGroup]="metricsForm" *ngIf="doneColumns && doneColumns.length > 1">
   <app-divider [text]="'Real Done'"></app-divider>
   <app-warning-message *ngIf="warningMessagesForImport.length" [warningMessagesForImport]="warningMessagesForImport">
   </app-warning-message>

@@ -15,6 +15,14 @@ describe('FailureRateComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FailureRateReportComponent);
     component = fixture.componentInstance;
+    component.failureRate = {
+      avgChangeFailureRate: {
+        name: 'test1',
+        step: 'test1',
+        failureRate: '50%',
+      },
+      changeFailureRateOfPipelines: [],
+    };
     fixture.detectChanges();
   });
 

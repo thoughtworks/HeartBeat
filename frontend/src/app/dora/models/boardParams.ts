@@ -1,4 +1,5 @@
 import { TargetField } from '../types/board';
+import { BOARD_TYPE } from '../utils/constant';
 
 export class BoardParams {
   type: string;
@@ -34,7 +35,7 @@ export class BoardParams {
     boardId: string;
   }) {
     this.type = type;
-    this.token = type === 'jira' ? this.generateBasicToken(token, email) : token;
+    this.token = type === BOARD_TYPE.JIRA ? this.generateBasicToken(token, email) : token;
     this.site = site;
     this.projectKey = projectKey;
     this.projectName = projectName;

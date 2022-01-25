@@ -38,3 +38,9 @@ export const controlNames = {
   classifications: 'classifications',
   deployment: 'deployment',
 };
+
+export const BOARD_TYPE = {
+  JIRA: 'jira',
+  CLASSIC_JIRA: 'jira',
+  LINEAR: 'linear',
+};

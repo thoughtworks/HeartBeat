@@ -21,11 +21,13 @@ export class ApiService {
   };
 
   verifyBoard(params: any): any {
+    const fnMap = {
+      Jira: this.verifyJiraBoard,
+      'Classic Jira': this.verifyJiraBoard,
+      Linear: this.verifyLinearBoard,
+    };
     const { type } = params;
-    if (type === 'Jira') {
-      return this.verifyJiraBoard(params);
-    }
-    return this.verifyLinearBoard(params);
+    return fnMap[type](params);
   }
 
   verifyJiraBoard({

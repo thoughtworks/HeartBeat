@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CycleTimeComponent } from './cycle-time.component';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 describe('CycleTimeComponent', () => {
   let component: CycleTimeComponent;
@@ -10,7 +11,7 @@ describe('CycleTimeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
-      declarations: [CycleTimeComponent],
+      declarations: [CycleTimeComponent, MatCheckbox],
     }).compileComponents();
   }));
 
@@ -20,7 +21,6 @@ describe('CycleTimeComponent', () => {
     component.cycleTimeData = [];
     component.importCycleTime = undefined;
     component.metricsForm = new FormGroup({});
-    component.ngOnInit();
     fixture.detectChanges();
   });
 

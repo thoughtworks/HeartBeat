@@ -6,6 +6,10 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UtilsService } from '../../service/utils.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('MetricSourceComponent', () => {
   let component: MetricSourceComponent;
@@ -13,7 +17,16 @@ describe('MetricSourceComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, HttpClientTestingModule, MatSnackBarModule, MatDialogModule],
+      imports: [
+        ReactiveFormsModule,
+        HttpClientTestingModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatCardModule,
+        MatSelectModule,
+        MatInputModule,
+        BrowserAnimationsModule,
+      ],
       providers: [UtilsService],
       declarations: [MetricSourceComponent],
     }).compileComponents();

@@ -27,7 +27,7 @@ export class ApiService {
       Linear: this.verifyLinearBoard,
     };
     const { type } = params;
-    return fnMap[type](params);
+    return fnMap[type].bind(this)(params);
   }
 
   verifyJiraBoard({
@@ -69,6 +69,7 @@ export class ApiService {
     endTime: string;
     token: string;
   }) {
+    console.log(this);
     return this.httpClient.get(`${this.baseUrl}/kanban/verify`, {
       params: { token, type: type.toLowerCase(), projectName, startTime, endTime },
     });

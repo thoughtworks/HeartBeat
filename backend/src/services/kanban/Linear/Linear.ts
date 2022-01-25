@@ -65,19 +65,21 @@ export class Linear implements Kanban {
   ): Promise<Cards> {
     const allCards = await this.client.issues({
       filter: {
-        updatedAt: {
+        completedAt: {
           lte: new Date(model.endTime),
           gte: new Date(model.startTime),
         },
-        project: {
-          name: { eq: model.project },
+        team: {
+          name: { eq: "🔌 Signup API" },
         },
         state: {
           type: { eq: LinearColumnType.COMPLETED },
         },
       },
     });
-
+    allCards.nodes.forEach((card) => {
+      console.log(card.title, card.estimate);
+    });
     return this.generateCardsCycleTime(allCards, users);
   }
 
@@ -92,8 +94,8 @@ export class Linear implements Kanban {
           lte: new Date(model.endTime),
           gte: new Date(model.startTime),
         },
-        project: {
-          name: { eq: model.project },
+        team: {
+          name: { eq: "🔌 Signup API" },
         },
         state: {
           type: { neq: LinearColumnType.COMPLETED },
@@ -124,8 +126,9 @@ export class Linear implements Kanban {
       const cardHistory = await card.history();
       const assigneeSet = await Linear.getAssigneeSet(cardHistory.nodes);
       if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
-        const statusChangedArray: StatusChangedArrayItem[] =
-          await Linear.putStatusChangeEventsIntoAnArray(cardHistory.nodes);
+        const statusChangedArray: StatusChangedArrayItem[] = await Linear.putStatusChangeEventsIntoAnArray(
+          cardHistory.nodes
+        );
         const cycleTimeInfo = getCardTimeForEachStep(
           sortStatusChangedArray(statusChangedArray)
         );

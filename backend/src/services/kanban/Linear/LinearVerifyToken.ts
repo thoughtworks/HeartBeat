@@ -20,30 +20,14 @@ export class LinearVerifyToken implements KanbanVerifyToken {
   ): Promise<KanbanTokenVerifyResponse> {
     const response = new KanbanTokenVerifyResponse();
 
-    // users
-    const issues = await this.client.issues({
-      filter: {
-        completedAt: {
-          lte: new Date(model.endTime),
-          gte: new Date(model.startTime),
-        },
-        project: {
-          name: { eq: model.projectName },
-        },
-      },
-    });
+    const members = (await (await this.client.team("SIG")).members()).nodes;
 
-    if (issues.nodes.length === 0) {
-      throw new ThereIsNoCardsInDoneColumn();
-    }
-
-    const assigneeNames = await Promise.all(
-      issues.nodes.map(async (issue) => (await issue.assignee)?.name)
-    );
-    response.users = uniq(assigneeNames).filter((item) => item) as string[];
+    response.users = members.map((member) => member.name);
 
     // columns
-    const workflows = await this.client.workflowStates();
+    const workflows = await this.client.workflowStates({
+      filter: { team: { name: { eq: "🔌 Signup API" } } },
+    });
     response.jiraColumns = transformWorkflowToJiraColumn(workflows);
 
     // targetFields: hardCoded

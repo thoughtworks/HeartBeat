@@ -77,8 +77,8 @@ export class RequestKanbanSetting {
   @swaggerProperty({ type: "string", required: true }) token: string = "";
   @swaggerProperty({ type: "string", required: false }) site: string = "";
   @swaggerProperty({ type: "string", required: false }) projectKey: string = "";
-  @swaggerProperty({ type: "string", required: false }) projectName: string =
-    "";
+  @swaggerProperty({ type: "string", required: false }) teamName: string = "";
+  @swaggerProperty({ type: "string", required: false }) teamId: string = "";
   @swaggerProperty({ type: "string", required: false }) boardId: string = "";
   @swaggerProperty({
     type: "array",

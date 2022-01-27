@@ -2,7 +2,6 @@ import { KanbanVerifyToken } from "../KanbanVerifyToken";
 import { KanbanTokenVerifyModel } from "../../../contract/kanban/KanbanTokenVerify";
 import { KanbanTokenVerifyResponse } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { LinearClient } from "@linear/sdk";
-import uniq from "lodash/uniq";
 import { transformWorkflowToJiraColumn } from "./Linear";
 import { ThereIsNoCardsInDoneColumn } from "../../../types/ThereIsNoCardsInDoneColumn";
 
@@ -20,13 +19,29 @@ export class LinearVerifyToken implements KanbanVerifyToken {
   ): Promise<KanbanTokenVerifyResponse> {
     const response = new KanbanTokenVerifyResponse();
 
-    const members = (await (await this.client.team("SIG")).members()).nodes;
+    const cards = await this.client.issues({
+      filter: {
+        completedAt: {
+          gte: new Date(model.startTime),
+          lte: new Date(model.endTime),
+        },
+        team: { name: { eq: model.teamName } },
+      },
+    });
 
+    if (cards.nodes.length === 0) throw new ThereIsNoCardsInDoneColumn();
+
+    // users
+    const members = (await (await this.client.team(model.teamId)).members())
+      .nodes;
+    // console.log(await this.client.team(model.teamId));
+    // console.log("-----------------");
+    // console.log(members);
     response.users = members.map((member) => member.name);
 
     // columns
     const workflows = await this.client.workflowStates({
-      filter: { team: { name: { eq: "🔌 Signup API" } } },
+      filter: { team: { name: { eq: model.teamName } } },
     });
     response.jiraColumns = transformWorkflowToJiraColumn(workflows);
 

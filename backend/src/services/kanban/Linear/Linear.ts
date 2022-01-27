@@ -53,8 +53,14 @@ export class Linear implements Kanban {
     });
   }
 
-  async getColumns(): Promise<ColumnResponse[]> {
-    const workflows = await this.client.workflowStates();
+  async getColumns(
+    model: StoryPointsAndCycleTimeRequest
+  ): Promise<ColumnResponse[]> {
+    const workflows = await this.client.workflowStates({
+      filter: {
+        team: { name: { eq: model.project } },
+      },
+    });
     return transformWorkflowToJiraColumn(workflows);
   }
 
@@ -66,19 +72,16 @@ export class Linear implements Kanban {
     const allCards = await this.client.issues({
       filter: {
         completedAt: {
-          lte: new Date(model.endTime),
           gte: new Date(model.startTime),
+          lte: new Date(model.endTime),
         },
         team: {
-          name: { eq: "🔌 Signup API" },
+          name: { eq: model.project },
         },
         state: {
           type: { eq: LinearColumnType.COMPLETED },
         },
       },
-    });
-    allCards.nodes.forEach((card) => {
-      console.log(card.title, card.estimate);
     });
     return this.generateCardsCycleTime(allCards, users);
   }
@@ -95,7 +98,7 @@ export class Linear implements Kanban {
           gte: new Date(model.startTime),
         },
         team: {
-          name: { eq: "🔌 Signup API" },
+          name: { eq: model.project },
         },
         state: {
           type: { neq: LinearColumnType.COMPLETED },
@@ -126,9 +129,8 @@ export class Linear implements Kanban {
       const cardHistory = await card.history();
       const assigneeSet = await Linear.getAssigneeSet(cardHistory.nodes);
       if (confirmThisCardHasAssignedBySelectedUser(users, assigneeSet)) {
-        const statusChangedArray: StatusChangedArrayItem[] = await Linear.putStatusChangeEventsIntoAnArray(
-          cardHistory.nodes
-        );
+        const statusChangedArray: StatusChangedArrayItem[] =
+          await Linear.putStatusChangeEventsIntoAnArray(cardHistory.nodes);
         const cycleTimeInfo = getCardTimeForEachStep(
           sortStatusChangedArray(statusChangedArray)
         );

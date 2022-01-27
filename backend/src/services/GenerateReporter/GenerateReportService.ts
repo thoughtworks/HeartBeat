@@ -275,7 +275,7 @@ export class GenerateReportService {
         kanbanSetting.site,
         kanbanSetting.type === KanbanEnum.JIRA
           ? kanbanSetting.projectKey
-          : kanbanSetting.projectName,
+          : kanbanSetting.teamName,
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -293,7 +293,7 @@ export class GenerateReportService {
         kanbanSetting.site,
         kanbanSetting.type === KanbanEnum.JIRA
           ? kanbanSetting.projectKey
-          : kanbanSetting.projectName,
+          : kanbanSetting.teamName,
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -311,7 +311,7 @@ export class GenerateReportService {
         kanbanSetting.site,
         kanbanSetting.type === KanbanEnum.JIRA
           ? kanbanSetting.projectKey
-          : kanbanSetting.projectName,
+          : kanbanSetting.teamName,
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,

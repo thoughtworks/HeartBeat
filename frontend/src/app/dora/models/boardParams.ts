@@ -6,7 +6,8 @@ export class BoardParams {
   token: string;
   site: string;
   projectKey: string;
-  projectName: string;
+  teamName: string;
+  teamId: string;
   doneColumn: string[];
   treatFlagCardAsBlock: boolean;
   boardColumns: {
@@ -22,7 +23,8 @@ export class BoardParams {
     token,
     site,
     projectKey,
-    projectName,
+    teamName,
+    teamId,
     email,
     boardId,
   }: {
@@ -30,7 +32,8 @@ export class BoardParams {
     token: string;
     site: string;
     projectKey: string;
-    projectName: string;
+    teamName: string;
+    teamId: string;
     email: string;
     boardId: string;
   }) {
@@ -38,7 +41,8 @@ export class BoardParams {
     this.token = type === BOARD_TYPE.JIRA ? this.generateBasicToken(token, email) : token;
     this.site = site;
     this.projectKey = projectKey;
-    this.projectName = projectName;
+    this.teamName = teamName;
+    this.teamId = teamId;
     this.boardId = boardId;
   }
 

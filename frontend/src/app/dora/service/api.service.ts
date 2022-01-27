@@ -58,20 +58,21 @@ export class ApiService {
 
   verifyLinearBoard({
     type,
-    projectName,
+    teamName,
+    teamId,
     startTime,
     endTime,
     token,
   }: {
     type: string;
-    projectName: string;
+    teamName: string;
+    teamId: string;
     startTime: string;
     endTime: string;
     token: string;
   }) {
-    console.log(this);
     return this.httpClient.get(`${this.baseUrl}/kanban/verify`, {
-      params: { token, type: type.toLowerCase(), projectName, startTime, endTime },
+      params: { token, type: type.toLowerCase(), teamName, teamId, startTime, endTime },
     });
   }
 

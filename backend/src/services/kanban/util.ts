@@ -82,7 +82,6 @@ export function confirmThisCardHasAssignedBySelectedUser(
   selectedUsers: string[],
   cardIncludeUsers: Set<string>
 ): boolean {
-  console.log(selectedUsers, cardIncludeUsers);
   return selectedUsers.some((user: string) => cardIncludeUsers.has(user));
 }
 

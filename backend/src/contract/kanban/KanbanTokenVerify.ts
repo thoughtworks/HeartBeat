@@ -6,7 +6,8 @@ export const kanbanTokenVerifySchema = {
   projectKey: { type: "string", description: "Jira projectKey" },
   boardId: { type: "string", description: "Jira boardId" },
 
-  projectName: { type: "string", description: "Linear projectName" },
+  teamName: { type: "string", description: "Linear teamName" },
+  teamId: { type: "string", description: "Linear teamId" },
 
   startTime: {
     type: "number",
@@ -20,7 +21,8 @@ export class KanbanTokenVerifyModel {
   token: string;
   site: string;
   projectKey: string;
-  projectName: string;
+  teamName: string;
+  teamId: string;
   type: string;
   startTime: number;
   endTime: number;
@@ -30,7 +32,8 @@ export class KanbanTokenVerifyModel {
     token: string,
     site: string,
     projectKey: string,
-    projectName: string,
+    teamName: string,
+    teamId: string,
     type: string,
     startTime: number,
     endTime: number,
@@ -39,7 +42,8 @@ export class KanbanTokenVerifyModel {
     this.token = token;
     this.site = site;
     this.projectKey = projectKey;
-    this.projectName = projectName;
+    this.teamName = teamName;
+    this.teamId = teamId;
     this.type = type;
     this.startTime = startTime;
     this.endTime = endTime;

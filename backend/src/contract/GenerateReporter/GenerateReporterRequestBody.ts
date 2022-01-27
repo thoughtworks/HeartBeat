@@ -164,7 +164,8 @@ export class GenerateReportRequest {
       token: "Basic XXXXXX",
       site: "dorametrics",
       projectKey: "ADM",
-      projectName: "ADM",
+      teamName: "testName",
+      teamId: "testId",
       boardId: 2,
       doneColumn: ["DONE"],
       boardColumns: [

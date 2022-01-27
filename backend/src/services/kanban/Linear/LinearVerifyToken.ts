@@ -34,9 +34,6 @@ export class LinearVerifyToken implements KanbanVerifyToken {
     // users
     const members = (await (await this.client.team(model.teamId)).members())
       .nodes;
-    // console.log(await this.client.team(model.teamId));
-    // console.log("-----------------");
-    // console.log(members);
     response.users = members.map((member) => member.name);
 
     // columns

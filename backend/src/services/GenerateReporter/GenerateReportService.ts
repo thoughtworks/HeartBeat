@@ -45,6 +45,12 @@ import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import fs from "fs";
 
+const KanbanKeyIdentifierMap: { [key: string]: "projectKey" | "teamName" } = {
+  [KanbanEnum.CLASSIC_JIRA]: "projectKey",
+  [KanbanEnum.JIRA]: "projectKey",
+  [KanbanEnum.LINEAR]: "teamName",
+};
+
 export class GenerateReportService {
   private readonly kanbanMetrics = [
     RequireDataEnum.VELOCITY,
@@ -273,9 +279,7 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.type === KanbanEnum.JIRA
-          ? kanbanSetting.projectKey
-          : kanbanSetting.teamName,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -291,9 +295,7 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.type === KanbanEnum.JIRA
-          ? kanbanSetting.projectKey
-          : kanbanSetting.teamName,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -309,9 +311,7 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.type === KanbanEnum.JIRA
-          ? kanbanSetting.projectKey
-          : kanbanSetting.teamName,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,

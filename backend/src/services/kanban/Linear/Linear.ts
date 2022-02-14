@@ -89,9 +89,6 @@ export class Linear implements Kanban {
       },
     });
 
-    allCards.nodes.forEach((item) => console.log(item.title, item.estimate));
-    console.log(allCards.nodes.length);
-
     return this.generateCardsCycleTime(allCards, users);
   }
 

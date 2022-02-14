@@ -69,6 +69,8 @@ export class Linear implements Kanban {
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards> {
+    const assignees = users.map((user) => ({ name: { eq: user } }));
+
     const allCards = await this.client.issues({
       filter: {
         completedAt: {
@@ -81,8 +83,15 @@ export class Linear implements Kanban {
         state: {
           type: { eq: LinearColumnType.COMPLETED },
         },
+        assignee: {
+          or: assignees,
+        },
       },
     });
+
+    allCards.nodes.forEach((item) => console.log(item.title, item.estimate));
+    console.log(allCards.nodes.length);
+
     return this.generateCardsCycleTime(allCards, users);
   }
 

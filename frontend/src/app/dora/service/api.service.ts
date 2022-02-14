@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
+import { LinearBoardParam } from '../types/LinearBoardParam';
+import { JiraBoardParam } from '../types/JiraBoardParam';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +23,7 @@ export class ApiService {
     }
   };
 
-  verifyBoard(params: any): any {
+  verifyBoard(params: JiraBoardParam | LinearBoardParam): Observable<object> {
     const fnMap = {
       Jira: this.verifyJiraBoard,
       'Classic Jira': this.verifyJiraBoard,
@@ -30,25 +33,7 @@ export class ApiService {
     return fnMap[type].bind(this)(params);
   }
 
-  verifyJiraBoard({
-    type,
-    site,
-    email,
-    token,
-    projectKey,
-    startTime,
-    endTime,
-    boardId,
-  }: {
-    type: string;
-    site: string;
-    email: string;
-    token: string;
-    projectKey: string;
-    startTime: string;
-    endTime: string;
-    boardId: string;
-  }) {
+  verifyJiraBoard({ type, site, email, token, projectKey, startTime, endTime, boardId }: JiraBoardParam) {
     const msg = `${email}:${token}`;
     const newToken = `Basic ${btoa(msg)}`;
     return this.httpClient.get(`${this.baseUrl}/kanban/verify`, {
@@ -56,21 +41,7 @@ export class ApiService {
     });
   }
 
-  verifyLinearBoard({
-    type,
-    teamName,
-    teamId,
-    startTime,
-    endTime,
-    token,
-  }: {
-    type: string;
-    teamName: string;
-    teamId: string;
-    startTime: string;
-    endTime: string;
-    token: string;
-  }) {
+  verifyLinearBoard({ type, teamName, teamId, startTime, endTime, token }: LinearBoardParam) {
     return this.httpClient.get(`${this.baseUrl}/kanban/verify`, {
       params: { token, type: type.toLowerCase(), teamName, teamId, startTime, endTime },
     });

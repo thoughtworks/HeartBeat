@@ -11,8 +11,11 @@ import { LinearVerifyToken } from "../../../../src/services/kanban/Linear/Linear
 import { KanbanTokenVerifyModel } from "../../../../src/contract/kanban/KanbanTokenVerify";
 import {
   IssueConnection,
+  LinearFetch,
+  Team,
   WorkflowStateConnection,
 } from "@linear/sdk/dist/_generated_sdk";
+import { linearTeam } from "../../../fixture/LinearTeam";
 
 describe("get story points and cycle times of done cards during period", () => {
   let linear: Linear;
@@ -85,6 +88,9 @@ describe("verify token and return columns and users for Linear", async function 
       .stub(LinearClient.prototype, "issues")
       .returns(Promise.resolve(linearCards as unknown as IssueConnection));
     sinon
+      .stub(LinearClient.prototype, "team")
+      .returns(Promise.resolve(linearTeam as unknown as LinearFetch<Team>));
+    sinon
       .stub(LinearClient.prototype, "workflowStates")
       .returns(
         Promise.resolve(
@@ -101,7 +107,9 @@ describe("verify token and return columns and users for Linear", async function 
       new KanbanTokenVerifyModel(
         "test apikey",
         "yingkai-fan",
-        "YIN",
+        "projectKey",
+        "testName",
+        "testId",
         "linear",
         1633046400000,
         1640660806109,

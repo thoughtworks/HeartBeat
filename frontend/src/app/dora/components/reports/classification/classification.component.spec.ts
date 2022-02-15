@@ -2,7 +2,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ClassificationReportComponent } from '../..';
 
-describe('ClassificationComponent', () => {
+describe('ReportsClassificationComponent', () => {
   let component: ClassificationReportComponent;
   let fixture: ComponentFixture<ClassificationReportComponent>;
 
@@ -15,6 +15,7 @@ describe('ClassificationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ClassificationReportComponent);
     component = fixture.componentInstance;
+    component.classifications = [];
     fixture.detectChanges();
   });
 

@@ -1,5 +1,5 @@
 import { Component, OnChanges, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormArray } from '@angular/forms';
+import { FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { cycleTimeList, controlNames } from '../../utils/constant';
 
 @Component({
@@ -8,7 +8,7 @@ import { cycleTimeList, controlNames } from '../../utils/constant';
   styleUrls: ['./cycle-item.component.scss'],
 })
 export class CycleItemComponent implements OnChanges {
-  @Input() cycleItem: FormGroup;
+  @Input() cycleItem: AbstractControl;
   @Input() metricsForm: FormGroup;
   @Input() groupName: string;
   @Input() cycleTimeGroupName: string;

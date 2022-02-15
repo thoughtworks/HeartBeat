@@ -6,7 +6,7 @@
     <app-cycle-item
       *ngFor="let cycleItem of jiraColumnsForm.controls; let i = index"
       [metricsForm]="metricsForm"
-      [groupName]="i"
+      [groupName]="i.toString()"
       [cycleItem]="cycleItem"
       [cycleTimeGroupName]="cycleTimeGroupName"
       (selectionChange)="onSelectionChange()"

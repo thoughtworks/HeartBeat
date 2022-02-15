@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DoneColumnsComponent } from './done-columns.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 describe('DoneColumnsComponent', () => {
   let component: DoneColumnsComponent;
@@ -15,10 +16,12 @@ describe('DoneColumnsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DoneColumnsComponent);
     component = fixture.componentInstance;
+    component.metricsForm = new FormGroup({});
     fixture.detectChanges();
   });
 
   it('should create', () => {
+    component.metricsForm = new FormBuilder().group({});
     expect(component).toBeTruthy();
   });
 });

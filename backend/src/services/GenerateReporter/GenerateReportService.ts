@@ -13,7 +13,7 @@ import {
   LeadTimeForChanges,
   LeadTimeForChangesOfPipeline,
 } from "../../contract/GenerateReporter/GenerateReporterResponse";
-import { Kanban, KanbanFactory } from "../kanban/Kanban";
+import { Kanban, KanbanEnum, KanbanFactory } from "../kanban/Kanban";
 import { StoryPointsAndCycleTimeRequest } from "../../contract/kanban/KanbanStoryPointParameterVerify";
 import { CalculateCycleTime } from "../kanban/CalculateCycleTime";
 import { DeployTimes, DeployInfo } from "../../models/pipeline/DeployTimes";
@@ -44,6 +44,12 @@ import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import fs from "fs";
+
+const KanbanKeyIdentifierMap: { [key: string]: "projectKey" | "teamName" } = {
+  [KanbanEnum.CLASSIC_JIRA]: "projectKey",
+  [KanbanEnum.JIRA]: "projectKey",
+  [KanbanEnum.LINEAR]: "teamName",
+};
 
 export class GenerateReportService {
   private readonly kanbanMetrics = [
@@ -273,7 +279,7 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.projectKey,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -289,7 +295,7 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.projectKey,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,
@@ -305,7 +311,7 @@ export class GenerateReportService {
         kanbanSetting.token,
         kanbanSetting.type,
         kanbanSetting.site,
-        kanbanSetting.projectKey,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
         kanbanSetting.boardId,
         kanbanSetting.doneColumn,
         request.startTime,

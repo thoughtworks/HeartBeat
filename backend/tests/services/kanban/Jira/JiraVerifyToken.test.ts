@@ -28,6 +28,8 @@ describe("verify token and return columns and users", async () => {
     "testToken",
     "domain",
     "ADM",
+    "teamName",
+    "teamId",
     "jira",
     1589010717000,
     1591471243000,

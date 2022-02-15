@@ -1,10 +1,13 @@
 import { TargetField } from '../types/board';
+import { BOARD_TYPE } from '../utils/constant';
 
 export class BoardParams {
   type: string;
   token: string;
   site: string;
   projectKey: string;
+  teamName: string;
+  teamId: string;
   doneColumn: string[];
   treatFlagCardAsBlock: boolean;
   boardColumns: {
@@ -20,6 +23,8 @@ export class BoardParams {
     token,
     site,
     projectKey,
+    teamName,
+    teamId,
     email,
     boardId,
   }: {
@@ -27,13 +32,17 @@ export class BoardParams {
     token: string;
     site: string;
     projectKey: string;
+    teamName: string;
+    teamId: string;
     email: string;
     boardId: string;
   }) {
     this.type = type;
-    this.token = this.generateBasicToken(token, email);
+    this.token = type === BOARD_TYPE.JIRA ? this.generateBasicToken(token, email) : token;
     this.site = site;
     this.projectKey = projectKey;
+    this.teamName = teamName;
+    this.teamId = teamId;
     this.boardId = boardId;
   }
 

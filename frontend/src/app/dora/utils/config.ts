@@ -63,6 +63,11 @@ export const metricsConfig: MetricsConfig = {
       email: [Validators.required, Validators.email],
       projectKey: [Validators.required],
     },
+    Linear: {
+      teamName: [Validators.required],
+      teamId: [Validators.required],
+      token: [Validators.required],
+    },
     // Trello: {
     //   token: [Validators.required],
     // },

@@ -1,20 +1,28 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FailureRateComponent } from './failure-rate.component';
+import { FailureRateReportComponent } from './failure-rate.component';
 
 describe('FailureRateComponent', () => {
-  let component: FailureRateComponent;
-  let fixture: ComponentFixture<FailureRateComponent>;
+  let component: FailureRateReportComponent;
+  let fixture: ComponentFixture<FailureRateReportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [FailureRateComponent],
+      declarations: [FailureRateReportComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FailureRateComponent);
+    fixture = TestBed.createComponent(FailureRateReportComponent);
     component = fixture.componentInstance;
+    component.failureRate = {
+      avgChangeFailureRate: {
+        name: 'test1',
+        step: 'test1',
+        failureRate: '50%',
+      },
+      changeFailureRateOfPipelines: [],
+    };
     fixture.detectChanges();
   });
 

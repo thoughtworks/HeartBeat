@@ -15,6 +15,14 @@ describe('MeanTimeToRecoveryComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MeanTimeToRecoveryComponent);
     component = fixture.componentInstance;
+    component.meanTimeToRecovery = {
+      avgMeanTimeToRecovery: {
+        name: '1',
+        step: '1',
+        timeToRecovery: '1',
+      },
+      meanTimeRecoveryPipelines: [],
+    };
     fixture.detectChanges();
   });
 

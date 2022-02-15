@@ -76,8 +76,10 @@ export class RequestKanbanSetting {
   type: string = "";
   @swaggerProperty({ type: "string", required: true }) token: string = "";
   @swaggerProperty({ type: "string", required: false }) site: string = "";
-  @swaggerProperty({ type: "string", required: true }) projectKey: string = "";
-  @swaggerProperty({ type: "string", required: true }) boardId: string = "";
+  @swaggerProperty({ type: "string", required: false }) projectKey: string = "";
+  @swaggerProperty({ type: "string", required: false }) teamName: string = "";
+  @swaggerProperty({ type: "string", required: false }) teamId: string = "";
+  @swaggerProperty({ type: "string", required: false }) boardId: string = "";
   @swaggerProperty({
     type: "array",
     required: false,
@@ -161,7 +163,9 @@ export class GenerateReportRequest {
       type: "jira",
       token: "Basic XXXXXX",
       site: "dorametrics",
-      project: "ADM",
+      projectKey: "ADM",
+      teamName: "testName",
+      teamId: "testId",
       boardId: 2,
       doneColumn: ["DONE"],
       boardColumns: [

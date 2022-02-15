@@ -53,8 +53,14 @@ export class Linear implements Kanban {
     });
   }
 
-  async getColumns(): Promise<ColumnResponse[]> {
-    const workflows = await this.client.workflowStates();
+  async getColumns(
+    model: StoryPointsAndCycleTimeRequest
+  ): Promise<ColumnResponse[]> {
+    const workflows = await this.client.workflowStates({
+      filter: {
+        team: { name: { eq: model.project } },
+      },
+    });
     return transformWorkflowToJiraColumn(workflows);
   }
 
@@ -63,17 +69,22 @@ export class Linear implements Kanban {
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards> {
+    const assignees = users.map((user) => ({ name: { eq: user } }));
+
     const allCards = await this.client.issues({
       filter: {
-        updatedAt: {
-          lte: new Date(model.endTime),
+        completedAt: {
           gte: new Date(model.startTime),
+          lte: new Date(model.endTime),
         },
-        project: {
-          name: { eq: model.boardId },
+        team: {
+          name: { eq: model.project },
         },
         state: {
           type: { eq: LinearColumnType.COMPLETED },
+        },
+        assignee: {
+          or: assignees,
         },
       },
     });
@@ -92,8 +103,8 @@ export class Linear implements Kanban {
           lte: new Date(model.endTime),
           gte: new Date(model.startTime),
         },
-        project: {
-          name: { eq: model.boardId },
+        team: {
+          name: { eq: model.project },
         },
         state: {
           type: { neq: LinearColumnType.COMPLETED },

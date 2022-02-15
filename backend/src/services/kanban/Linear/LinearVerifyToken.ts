@@ -2,8 +2,8 @@ import { KanbanVerifyToken } from "../KanbanVerifyToken";
 import { KanbanTokenVerifyModel } from "../../../contract/kanban/KanbanTokenVerify";
 import { KanbanTokenVerifyResponse } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { LinearClient } from "@linear/sdk";
-import uniq from "lodash/uniq";
 import { transformWorkflowToJiraColumn } from "./Linear";
+import { ThereIsNoCardsInDoneColumn } from "../../../types/ThereIsNoCardsInDoneColumn";
 
 export class LinearVerifyToken implements KanbanVerifyToken {
   client: LinearClient;
@@ -19,25 +19,27 @@ export class LinearVerifyToken implements KanbanVerifyToken {
   ): Promise<KanbanTokenVerifyResponse> {
     const response = new KanbanTokenVerifyResponse();
 
-    // users
-    const issues = await this.client.issues({
+    const cards = await this.client.issues({
       filter: {
         completedAt: {
-          lte: new Date(model.endTime),
           gte: new Date(model.startTime),
+          lte: new Date(model.endTime),
         },
-        project: {
-          name: { eq: model.boardId },
-        },
+        team: { name: { eq: model.teamName } },
       },
     });
-    const assigneeNames = await Promise.all(
-      issues.nodes.map(async (issue) => (await issue.assignee)?.name)
-    );
-    response.users = uniq(assigneeNames).filter((item) => item) as string[];
+
+    if (cards.nodes.length === 0) throw new ThereIsNoCardsInDoneColumn();
+
+    // users
+    const members = (await (await this.client.team(model.teamId)).members())
+      .nodes;
+    response.users = members.map((member) => member.name);
 
     // columns
-    const workflows = await this.client.workflowStates();
+    const workflows = await this.client.workflowStates({
+      filter: { team: { name: { eq: model.teamName } } },
+    });
     response.jiraColumns = transformWorkflowToJiraColumn(workflows);
 
     // targetFields: hardCoded

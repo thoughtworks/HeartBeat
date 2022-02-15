@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PipelineItemComponent } from './pipeline-item.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormArray, FormGroup } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('PipelineItemComponent', () => {
   let component: PipelineItemComponent;
@@ -8,6 +13,7 @@ describe('PipelineItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, MatSnackBarModule, MatSelectModule, BrowserAnimationsModule],
       declarations: [PipelineItemComponent],
     }).compileComponents();
   }));
@@ -15,6 +21,10 @@ describe('PipelineItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PipelineItemComponent);
     component = fixture.componentInstance;
+    component.metricsForm = new FormGroup({
+      test: new FormArray([]),
+    });
+    component.formArrayName = 'test';
     fixture.detectChanges();
   });
 

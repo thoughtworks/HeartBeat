@@ -38,7 +38,7 @@ export class BoardParams {
     boardId: string;
   }) {
     this.type = type;
-    this.token = type === BOARD_TYPE.JIRA ? this.generateBasicToken(token, email) : token;
+    this.token = type.toLowerCase() === BOARD_TYPE.JIRA ? this.generateBasicToken(token, email) : token;
     this.site = site;
     this.projectKey = projectKey;
     this.teamName = teamName;

@@ -29,6 +29,7 @@ import {
   reformTimeLineForFlaggedCards,
   StatusChangedArrayItem,
 } from "../util";
+import { Sprint } from "../../../models/kanban/Sprint";
 
 export class Jira implements Kanban {
   private readonly queryCount: number = 100;
@@ -39,6 +40,27 @@ export class Jira implements Kanban {
       baseURL: `https://${site}.atlassian.net/rest/agile/1.0/board`,
     });
     this.httpClient.defaults.headers.common["Authorization"] = token;
+  }
+
+  async getAllSprintsByBoardId(
+    model: StoryPointsAndCycleTimeRequest
+  ): Promise<Sprint[]> {
+    const sprintResponse = await this.httpClient.get(
+      `/${model.boardId}/sprint`
+    );
+    const sprintArray = sprintResponse.data.values;
+    const sprints = sprintArray.map(
+      (sprint: any) =>
+        new Sprint(
+          sprint.id,
+          sprint.state,
+          sprint.name,
+          sprint.startDate,
+          sprint.endDate,
+          sprint.completeDate
+        )
+    );
+    return sprints;
   }
 
   async getColumns(

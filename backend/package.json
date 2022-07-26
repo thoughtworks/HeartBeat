@@ -9,7 +9,7 @@
   "scripts": {
     "build": "yarn install & rimraf dist && yarn eslint && yarn test && tsc",
     "eslint": "eslint . --fix --ext .ts",
-    "start": "yarn build && node dist/server.js",
+    "start": "yarn build && node dist/src/server.js",
     "host": "node dist/server.js",
     "test": "mocha -r ts-node/register **/tests/**/*.test.ts",
     "watch-server": "nodemon --watch src -e ts,tsx --exec ts-node src/server.ts",

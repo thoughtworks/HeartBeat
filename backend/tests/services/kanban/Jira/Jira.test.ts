@@ -8,8 +8,8 @@ import Sprints from "../../../fixture/Sprints.json";
 import EmptySprints from "../../../fixture/EmptySprints.json";
 import JiraCardCycleTime from "../../../fixture/JiraCardCycleTime.json";
 import { StoryPointsAndCycleTimeRequest } from "../../../../src/contract/kanban/KanbanStoryPointParameterVerify";
-import { CycleTimeInfo } from "../../../../src/contract/kanban/KanbanStoryPointResponse";
 import { Sprint } from "../../../../src/models/kanban/Sprint";
+import { CycleTimeInfo } from "../../../../src/contract/kanban/KanbanStoryPointResponse";
 
 const jira = new Jira("testToken", "domain");
 
@@ -56,7 +56,7 @@ describe("get story points and cycle times of done cards during period", () => {
       [],
       ["Test User"]
     );
-    expect(response.storyPointSum).deep.equal(3);
+    expect(response.storyPointSum).deep.equal(6);
     sinon.restore();
   });
 

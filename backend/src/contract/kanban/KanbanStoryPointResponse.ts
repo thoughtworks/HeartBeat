@@ -79,6 +79,10 @@ export class JiraCardResponse {
   getStoryPoint(): number {
     return this.baseInfo.fields.storyPoints || 0;
   }
+
+  getTotalOrZero(): number {
+    return this.cardCycleTime?.total || 0;
+  }
 }
 
 export class CycleTimeInfo {

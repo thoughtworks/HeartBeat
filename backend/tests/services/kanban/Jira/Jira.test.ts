@@ -139,25 +139,25 @@ describe("get sprints data by domain name and boardId", () => {
     false
   );
 
-  it("should return all the sprints when has sprints", async () => {
-    const expected = [
-      new Sprint(
-        1,
-        "closed",
-        "ADM Sprint 1",
-        "2020-05-26T03:20:43.632Z",
-        "2020-06-09T03:20:37.000Z",
-        "2020-07-22T01:46:20.917Z"
-      ),
-      new Sprint(
-        4,
-        "active",
-        "ADM Sprint 2",
-        "2020-07-22T01:48:39.455Z",
-        "2020-08-05T01:48:37.000Z"
-      ),
-      new Sprint(9, "future", "ADM Sprint 5"),
-    ];
+  const sprint1 = new Sprint(
+    1,
+    "closed",
+    "ADM Sprint 1",
+    "2020-07-22T01:48:39.455Z",
+    "2020-08-09T03:20:37.000Z",
+    "2020-08-22T01:46:20.917Z"
+  );
+  const sprint2 = new Sprint(
+    4,
+    "active",
+    "ADM Sprint 2",
+    "2020-05-26T03:20:43.632Z",
+    "2020-08-05T01:48:37.000Z"
+  );
+  const sprint3 = new Sprint(9, "future", "ADM Sprint 5");
+
+  it("should return all the sprints", async () => {
+    const expected = [sprint1, sprint2, sprint3];
 
     mock
       .onGet(

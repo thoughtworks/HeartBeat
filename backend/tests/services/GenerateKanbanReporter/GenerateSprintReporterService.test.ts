@@ -246,7 +246,7 @@ describe("calculate percentage of different block reasons in the latest iteratio
     "2020-07-22T01:49:26.508Z"
   );
   const sprint3 = new Sprint(9, "future", "test Sprint 5");
-  let sprints: Sprint[] = [sprint1, sprint2, sprint3];
+  const sprints: Sprint[] = [sprint1, sprint2, sprint3];
 
   sprint1JiraCardField.sprint = "test sprint 1";
   sprint2JiraCardField.sprint = "test Sprint 2";

@@ -39,6 +39,7 @@ describe("verify token and get cards", () => {
         getCardId: sinon.fake(),
         getStatus: sinon.fake(),
         getStoryPoint: sinon.fake(),
+        getTotalOrZero: sinon.fake(),
       },
       {
         baseInfo: {
@@ -58,6 +59,7 @@ describe("verify token and get cards", () => {
         getCardId: sinon.fake(),
         getStatus: sinon.fake(),
         getStoryPoint: sinon.fake(),
+        getTotalOrZero: sinon.fake(),
       },
       {
         baseInfo: {
@@ -77,6 +79,7 @@ describe("verify token and get cards", () => {
         getCardId: sinon.fake(),
         getStatus: sinon.fake(),
         getStoryPoint: sinon.fake(),
+        getTotalOrZero: sinon.fake(),
       },
     ],
     storyPointSum: 3,
@@ -125,10 +128,8 @@ describe("verify token and get cards", () => {
     ],
   };
   it("should return classification", () => {
-    const classificationList: ClassificationField[] = getClassificationOfSelectedFields(
-      cards,
-      targetField
-    );
+    const classificationList: ClassificationField[] =
+      getClassificationOfSelectedFields(cards, targetField);
     expect(classificationList).deep.equal([resultOne, resultTwo, resultThree]);
   });
 });

@@ -8,9 +8,9 @@
       "self": "https://doamin.atlassian.net/rest/agile/1.0/sprint/1",
       "state": "closed",
       "name": "ADM Sprint 1",
-      "startDate": "2020-05-26T03:20:43.632Z",
-      "endDate": "2020-06-09T03:20:37.000Z",
-      "completeDate": "2020-07-22T01:46:20.917Z",
+      "startDate": "2020-07-22T01:48:39.455Z",
+      "endDate": "2020-08-09T03:20:37.000Z",
+      "completeDate": "2020-08-22T01:46:20.917Z",
       "originBoardId": 2,
       "goal": ""
     },
@@ -19,7 +19,7 @@
       "self": "https://domain.atlassian.net/rest/agile/1.0/sprint/4",
       "state": "active",
       "name": "ADM Sprint 2",
-      "startDate": "2020-07-22T01:48:39.455Z",
+      "startDate": "2020-05-26T03:20:43.632Z",
       "endDate": "2020-08-05T01:48:37.000Z",
       "originBoardId": 2,
       "goal": ""

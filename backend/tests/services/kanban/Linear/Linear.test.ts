@@ -67,7 +67,6 @@ describe("get story points and cycle times of done cards during period", () => {
       ["test"]
     );
     expect(response.storyPointSum).equal(3);
-    console.log(response.matchedCards[0].cycleTime);
     expect(response.matchedCards[0].cycleTime).deep.equal([
       {
         column: "IN PROGRESS",

@@ -1,6 +1,5 @@
 import {
   GenerateReportRequest,
-  RequestKanbanColumnSetting,
   RequestKanbanSetting,
 } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { StoryPointsAndCycleTimeRequest } from "../../contract/kanban/KanbanStoryPointParameterVerify";
@@ -8,7 +7,6 @@ import { JiraCardResponse } from "../../contract/kanban/KanbanStoryPointResponse
 import { JiraBlockReasonEnum } from "../../models/kanban/JiraBlockReasonEnum";
 import { Cards } from "../../models/kanban/RequestKanbanResults";
 import { Sprint } from "../../models/kanban/Sprint";
-import { CalculateCardCycleTime } from "../kanban/CalculateCycleTime";
 import { Jira } from "../kanban/Jira/Jira";
 import { Kanban, KanbanEnum, KanbanFactory } from "../kanban/Kanban";
 
@@ -20,10 +18,11 @@ const KanbanKeyIdentifierMap: { [key: string]: "projectKey" | "teamName" } = {
 export class GenerateSprintReporterService {
   private cards?: Cards;
   private sprints?: Sprint[];
-  private blockPercentage?: Map<string, any>;
-  private standardDeviation?: Map<string, any>;
+  private mapSprintBlockPercentage?: Map<string, number>;
+  private mapSprintStandardDeviation?: Map<string, number>;
+  private mapSprintBlockReasonPercentage?: Map<string, number>;
 
-  async fetchIterationInfoFromKanban(
+  async fetchSprintInfoFromKanban(
     request: GenerateReportRequest
   ): Promise<void> {
     const kanbanSetting: RequestKanbanSetting = request.kanbanSetting;
@@ -50,165 +49,147 @@ export class GenerateSprintReporterService {
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
-    if (kanban instanceof Jira) {
-      const sprints: Sprint[] = await kanban.getAllSprintsByBoardId(model);
 
-      const sprintPercentageMap: Map<string, any> =
-        this.calculateIterationBlockedAndDevelopingPercentage(
-          this.mapCardsByIteration(this.cards.matchedCards),
-          kanbanSetting.boardColumns
-        );
-      this.blockPercentage = this.sortBySprintStartDate(
-        sprintPercentageMap,
-        sprints
+    const matchedCards = this.cards.matchedCards;
+    const mapSprintCards = this.mapCardsBySprintName(matchedCards);
+
+    if (kanban instanceof Jira) {
+      this.sprints = await kanban.getAllSprintsByBoardId(model);
+      const activeAndClosedSprints = this.getActiveAndClosedSprints(
+        this.sprints
       );
 
-      const mapSprintStandardDeviation: Map<string, any> =
-        this.calculateStandardDeviation(this.cards);
-      this.standardDeviation = this.sortBySprintStartDate(
-        mapSprintStandardDeviation,
-        sprints
+      const unorderedMapSprintBlockPercentage: Map<string, number> =
+        this.calculateBlockedAndDevelopingPercentage(mapSprintCards);
+      this.mapSprintBlockPercentage = this.sortBySprintStartDate(
+        unorderedMapSprintBlockPercentage,
+        activeAndClosedSprints
+      );
+
+      const unorderedMapSprintStandardDeviation: Map<string, number> =
+        this.calculateStandardDeviation(mapSprintCards);
+      this.mapSprintStandardDeviation = this.sortBySprintStartDate(
+        unorderedMapSprintStandardDeviation,
+        activeAndClosedSprints
+      );
+
+      this.mapSprintBlockReasonPercentage = this.calculateBlockReasonPercentage(
+        activeAndClosedSprints,
+        mapSprintCards
       );
     }
   }
-  getLatestIterationSprintName(sprints: Sprint[]): string {
-    const sortedSprints = sprints
-      .filter((sprint) => sprint.startDate)
-      .sort((a, b) => Date.parse(a.startDate) - Date.parse(b.startDate));
+
+  private initTotalBlockTimeForEveryReasonMap(): Map<string, number> {
+    const totalBlockTimeForEveryReasonMap = new Map<string, number>();
+    for (let reason in JiraBlockReasonEnum) {
+      reason = Object.entries(JiraBlockReasonEnum).find(
+        ([key, val]) => key === reason
+      )?.[1]!;
+      totalBlockTimeForEveryReasonMap.set(reason, 0);
+    }
+    return totalBlockTimeForEveryReasonMap;
+  }
+
+  private getLatestSprintName(sprints: Sprint[]): string {
+    const sortedSprints = sprints.sort(
+      (a, b) => Date.parse(a.startDate) - Date.parse(b.startDate)
+    );
     return sortedSprints.length > 0
       ? sortedSprints[sortedSprints.length - 1].name
       : "";
   }
 
-  getAllCardsByLatestSprintName(
-    cards: JiraCardResponse[],
-    sprintName: string
-  ): JiraCardResponse[] {
-    const allCardsInLatestSprint: JiraCardResponse[] = [];
-    cards.forEach((card) => {
-      if (card.baseInfo.fields.sprint === sprintName) {
-        allCardsInLatestSprint[allCardsInLatestSprint.length] = card;
+  calculateBlockReasonPercentage(
+    sprints: Sprint[],
+    mapSprintCards: Map<string, JiraCardResponse[]>
+  ): Map<string, number> {
+    let totalCycleTime = 0;
+    const blockTimeForEveryReasonMap: Map<string, number> =
+      this.initTotalBlockTimeForEveryReasonMap();
+    const latestSprintName = this.getLatestSprintName(sprints);
+    const latestSprintCards = mapSprintCards.get(latestSprintName)!;
+
+    if (latestSprintCards.length === 0) {
+      return blockTimeForEveryReasonMap;
+    }
+    for (const card of latestSprintCards) {
+      totalCycleTime += card.getTotalOrZero();
+    }
+
+    for (const card of latestSprintCards) {
+      let blockReason = card.baseInfo.fields.label || "";
+
+      if (!blockTimeForEveryReasonMap.has(blockReason)) {
+        blockReason = JiraBlockReasonEnum.OTHERS;
       }
-    });
-    return allCardsInLatestSprint;
+
+      const blockTimeForEveryReason =
+        (blockTimeForEveryReasonMap.get(blockReason) || 0) +
+        card.cardCycleTime!.steps.blocked;
+
+      const blockedReasonPercentage = parseFloat(
+        (blockTimeForEveryReason / totalCycleTime).toFixed(2)
+      );
+
+      blockTimeForEveryReasonMap.set(blockReason, blockedReasonPercentage);
+    }
+
+    return blockTimeForEveryReasonMap;
   }
 
-  calculateBlockReasonPercentage(
-    cards: JiraCardResponse[],
-    boardColumns: RequestKanbanColumnSetting[] = [],
-    sprints: Sprint[]
-  ): Map<string, number> {
-    let totalBlockTime = 0;
-
-    const initBlockTimeForEveryReasonMap: Map<string, number> =
-      this.initTotalBlockTimeForEveryReasonMap();
-    const sprintName = this.getLatestIterationSprintName(sprints);
-    const matchedCards = this.getAllCardsByLatestSprintName(cards, sprintName);
-    if (matchedCards.length === 0) {
-      return initBlockTimeForEveryReasonMap;
-    }
+  mapCardsBySprintName(
+    matchedCards: JiraCardResponse[]
+  ): Map<string, JiraCardResponse[]> {
+    const mapSprintCards = new Map<string, JiraCardResponse[]>();
 
     for (const card of matchedCards) {
-      const blockReason = card.baseInfo.fields.label || "";
-      const cardCycleTime = CalculateCardCycleTime(card, boardColumns);
-      totalBlockTime += cardCycleTime.steps.blocked;
-
-      if (!initBlockTimeForEveryReasonMap.has(blockReason)) {
-        initBlockTimeForEveryReasonMap.set(
-          JiraBlockReasonEnum.OTHERS,
-          initBlockTimeForEveryReasonMap.get(JiraBlockReasonEnum.OTHERS) ||
-            0 + cardCycleTime.steps.blocked
-        );
-      } else {
-        initBlockTimeForEveryReasonMap.set(
-          blockReason,
-          initBlockTimeForEveryReasonMap.get(blockReason) ||
-            0 + cardCycleTime.steps.blocked
-        );
-      }
-    }
-
-    const blockTimePercentageForEveryReasonMap: Map<string, number> = new Map<
-      string,
-      number
-    >();
-
-    initBlockTimeForEveryReasonMap.forEach((value, key) => {
-      const blockedReasonPercentage = parseFloat(
-        (Math.floor((value / totalBlockTime) * 100) / 100).toFixed(2)
-      );
-      blockTimePercentageForEveryReasonMap.set(key, blockedReasonPercentage);
-    });
-    return blockTimePercentageForEveryReasonMap;
-  }
-
-  initTotalBlockTimeForEveryReasonMap(): Map<string, number> {
-    const totalBlockTimeForEveryReasonMap = new Map<string, number>();
-    for (const reason in JiraBlockReasonEnum) {
-      totalBlockTimeForEveryReasonMap.set(reason, 0);
-    }
-    return totalBlockTimeForEveryReasonMap;
-  }
-  mapCardsByIteration(
-    cards: JiraCardResponse[]
-  ): Map<string, JiraCardResponse[]> {
-    const mapIterationCards = new Map<string, JiraCardResponse[]>();
-
-    for (const card of cards) {
       const sprint = card.baseInfo.fields.sprint;
       if (sprint) {
-        if (!mapIterationCards.has(sprint)) {
-          mapIterationCards.set(sprint, []);
+        if (!mapSprintCards.has(sprint)) {
+          mapSprintCards.set(sprint, []);
         }
 
-        mapIterationCards.get(sprint)!.push(card);
+        mapSprintCards.get(sprint)!.push(card);
       }
     }
 
-    return mapIterationCards;
+    return mapSprintCards;
   }
 
-  calculateCardsBlockedPercentage(
-    cards: JiraCardResponse[],
-    boardColumns: RequestKanbanColumnSetting[] = []
+  private calculateCardsBlockedPercentage(
+    matchedCards: JiraCardResponse[]
   ): number {
     let totalCycleTime = 0;
     let totalBlockedTime = 0;
 
-    for (const card of cards) {
-      const cardCycleTime = CalculateCardCycleTime(card, boardColumns);
-      totalCycleTime += cardCycleTime.total;
-      totalBlockedTime += cardCycleTime.steps.blocked;
+    for (const card of matchedCards) {
+      totalCycleTime += card.getTotalOrZero();
+      totalBlockedTime += card.cardCycleTime!.steps.blocked;
     }
 
-    const blockedPercentage = totalBlockedTime / totalCycleTime;
-    const blockedPercentageWith2Decimal = parseFloat(
-      (Math.floor(blockedPercentage * 100) / 100).toFixed(2)
-    );
-    return blockedPercentageWith2Decimal;
+    const blockedPercentage =
+      totalCycleTime === 0
+        ? 0
+        : parseFloat((totalBlockedTime / totalCycleTime).toFixed(2));
+    return blockedPercentage;
   }
 
-  calculateIterationBlockedAndDevelopingPercentage(
-    mapIterationCards: Map<string, JiraCardResponse[]>,
-    boardColumns: RequestKanbanColumnSetting[] = []
+  calculateBlockedAndDevelopingPercentage(
+    mapSprintCards: Map<string, JiraCardResponse[]>
   ): Map<string, any> {
-    const mapIterationBlockedPercentage = new Map<string, any>();
-    mapIterationCards.forEach(
-      (cards: JiraCardResponse[], iteration: string) => {
-        const blockedPercentage = this.calculateCardsBlockedPercentage(
-          cards,
-          boardColumns
-        );
-        mapIterationBlockedPercentage.set(iteration, {
-          blockedPercentage,
-          developingPercentage: 1 - blockedPercentage,
-        });
-      }
-    );
-    return mapIterationBlockedPercentage;
+    const mapSprintBlockedPercentage = new Map<string, any>();
+    mapSprintCards.forEach((cards: JiraCardResponse[], sprint: string) => {
+      const blockedPercentage = this.calculateCardsBlockedPercentage(cards);
+      mapSprintBlockedPercentage.set(sprint, {
+        blockedPercentage,
+        developingPercentage: 1 - blockedPercentage,
+      });
+    });
+    return mapSprintBlockedPercentage;
   }
 
-  sortBySprintStartDate(
+  private sortBySprintStartDate(
     unorderedMap: Map<string, any>,
     sprints: Sprint[]
   ): Map<string, any> {
@@ -226,54 +207,68 @@ export class GenerateSprintReporterService {
     );
   }
 
-  getActiveAndClosedSprints(sprints: Sprint[]) {
+  private getActiveAndClosedSprints(sprints: Sprint[]) {
     return sprints.filter((sprint) => sprint.startDate);
   }
 
-  classifyCardsBySprintName(cards: Cards): Map<string, any> {
+  private calculateCardsCycleTimes(matchedCards: JiraCardResponse[]): any {
+    let totalCycleTime = 0;
+    const cycleTimes = [];
+
+    for (const card of matchedCards) {
+      const totalTime = card.getTotalOrZero();
+      totalCycleTime += totalTime;
+      cycleTimes.push(totalTime);
+    }
+
+    return { totalCycleTime, cycleTimes };
+  }
+
+  private getCardsCycleTimesBySprintName(
+    mapSprintCards: Map<string, JiraCardResponse[]>
+  ): Map<string, any> {
     const mapSprintObj: Map<string, any> = new Map<string, any>();
-    cards.matchedCards.forEach((card) => {
-      const sprintName = card.baseInfo?.fields?.sprint;
-      if (sprintName) {
-        if (!mapSprintObj.has(sprintName)) {
-          mapSprintObj.set(sprintName, {
-            count: 1,
-            totalCycleTime: card.getTotalOrZero(),
-            cycleTimes: [card.getTotalOrZero()],
-          });
-        } else {
-          let sprintObj = mapSprintObj.get(sprintName);
-          sprintObj = {
-            count: sprintObj.count + 1,
-            totalCycleTime:
-              parseFloat(sprintObj.totalCycleTime) + card.getTotalOrZero(),
-            cycleTimes: [...sprintObj.cycleTimes, card.getTotalOrZero()],
-          };
-          mapSprintObj.set(sprintName, sprintObj);
-        }
-      }
+
+    mapSprintCards.forEach((cards: JiraCardResponse[], sprintName: string) => {
+      const { totalCycleTime, cycleTimes } =
+        this.calculateCardsCycleTimes(cards);
+      mapSprintObj.set(sprintName, {
+        count: cards.length,
+        totalCycleTime: totalCycleTime,
+        cycleTimes: cycleTimes,
+      });
     });
+
     return mapSprintObj;
   }
 
-  calculateStandardDeviation(cards: Cards): Map<string, any> {
+  calculateStandardDeviation(
+    mapSprintCards: Map<string, JiraCardResponse[]>
+  ): Map<string, any> {
     const mapSprintStandardDeviation: Map<string, any> = new Map<string, any>();
 
     const mapSprintObj: Map<string, any> =
-      this.classifyCardsBySprintName(cards);
+      this.getCardsCycleTimesBySprintName(mapSprintCards);
 
     mapSprintObj.forEach((sprintObj, sprintName) => {
-      const avgerage: number = parseFloat(
-        (sprintObj.totalCycleTime / sprintObj.count).toFixed(2)
-      );
-      const standardDeviation: number = parseFloat(
-        Math.sqrt(
-          sprintObj.cycleTimes.reduce(
-            (accu: number, curr: number) => Math.pow(curr - avgerage, 2) + accu,
-            0
-          ) / sprintObj.count
-        ).toFixed(2)
-      );
+      let avgerage = 0;
+      let standardDeviation = 0;
+
+      if (sprintObj.count != 0) {
+        avgerage = parseFloat(
+          (sprintObj.totalCycleTime / sprintObj.count).toFixed(2)
+        );
+        standardDeviation = parseFloat(
+          Math.sqrt(
+            sprintObj.cycleTimes.reduce(
+              (accu: number, curr: number) =>
+                Math.pow(curr - avgerage, 2) + accu,
+              0
+            ) / sprintObj.count
+          ).toFixed(2)
+        );
+      }
+
       mapSprintStandardDeviation.set(sprintName, {
         standardDeviation,
         avgerage,

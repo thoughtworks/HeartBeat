@@ -72,8 +72,8 @@ export class JiraCardResponse {
     return this.baseInfo.key;
   }
 
-  async getStatus(): Promise<string | undefined> {
-    return this.baseInfo.fields.status?.name;
+  getStatus(): string {
+    return this.baseInfo.fields.status?.name || "";
   }
 
   getStoryPoint(): number {

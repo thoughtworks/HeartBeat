@@ -4,6 +4,7 @@ import {
 } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { StoryPointsAndCycleTimeRequest } from "../../contract/kanban/KanbanStoryPointParameterVerify";
 import { JiraCardResponse } from "../../contract/kanban/KanbanStoryPointResponse";
+import { CardStepsEnum } from "../../models/kanban/CardStepsEnum";
 import { JiraBlockReasonEnum } from "../../models/kanban/JiraBlockReasonEnum";
 import { Cards } from "../../models/kanban/RequestKanbanResults";
 import { Sprint } from "../../models/kanban/Sprint";
@@ -276,5 +277,20 @@ export class GenerateSprintReporterService {
     });
 
     return mapSprintStandardDeviation;
+  }
+
+  calculateCompletedCardsNumber(
+    mapSprintCards: Map<string, JiraCardResponse[]>
+  ): Map<string, number> {
+    const mapSprintCompletedCardsNumber = new Map<string, number>();
+
+    mapSprintCards.forEach((cards, sprint) => {
+      const completedCardsNumber = cards.filter(
+        (card) => card.getStatus()! === CardStepsEnum.DONE
+      ).length;
+      mapSprintCompletedCardsNumber.set(sprint, completedCardsNumber);
+    });
+
+    return mapSprintCompletedCardsNumber;
   }
 }

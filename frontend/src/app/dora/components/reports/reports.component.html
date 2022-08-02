@@ -1,13 +1,6 @@
 <div class="reports-container">
   <mat-spinner class="spinner" *ngIf="loading"></mat-spinner>
 
-  <app-velocity-report *ngIf="reportResponse?.velocity" [velocity]="reportResponse.velocity"></app-velocity-report>
-
-  <app-cycle-time-report
-    *ngIf="reportResponse?.cycleTime"
-    [cycleTime]="reportResponse.cycleTime"
-  ></app-cycle-time-report>
-
   <app-throughput-report>
 
   </app-throughput-report>
@@ -23,6 +16,13 @@
   <app-block-reason-percentage-report>
 
   </app-block-reason-percentage-report>
+
+  <app-velocity-report *ngIf="reportResponse?.velocity" [velocity]="reportResponse.velocity"></app-velocity-report>
+
+  <app-cycle-time-report
+    *ngIf="reportResponse?.cycleTime"
+    [cycleTime]="reportResponse.cycleTime"
+  ></app-cycle-time-report>
 
   <app-classification-report
     *ngIf="reportResponse?.classification && reportResponse?.classification?.length !== 0"

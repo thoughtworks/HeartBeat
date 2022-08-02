@@ -111,26 +111,23 @@ export interface CompletedCardsNumber {
 
 export interface StandardDeviation {
   sprintName: string,
-  value: StandardDeviationValue;
-}
-
-export interface StandardDeviationValue {
-  standardDeviation: number,
-  average: number,
+  value: {
+    standardDeviation: number,
+    average: number,
+  };
 }
 
 export interface BlockedAndDevelopingPercentage {
   sprintName: string,
-  value: BlockedAndDevelopingPercentageValue,
+  value: {
+    blockedPercentage: number,
+    developingPercentage: number,
+  }
 }
 
-export interface BlockedAndDevelopingPercentageValue {
-  blockedPercentage: number,
-  developingPercentage: number,
-}
 export interface LatestSprintBlockReason {
   totalBlockedPercentage: number,
-  blockReasonPercentage: BlockReasonPercentage[];
+  blockReasonPercentage: Array<BlockReasonPercentage>
 }
 
 export interface BlockReasonPercentage {

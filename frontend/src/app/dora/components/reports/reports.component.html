@@ -8,6 +8,22 @@
     [cycleTime]="reportResponse.cycleTime"
   ></app-cycle-time-report>
 
+  <app-throughput-report>
+
+  </app-throughput-report>
+
+  <app-time-allocation-report>
+
+  </app-time-allocation-report>
+
+  <app-average-cycle-time-report>
+
+  </app-average-cycle-time-report>
+
+  <app-block-reason-percentage-report>
+
+  </app-block-reason-percentage-report>
+
   <app-classification-report
     *ngIf="reportResponse?.classification && reportResponse?.classification?.length !== 0"
     [classifications]="reportResponse.classification"

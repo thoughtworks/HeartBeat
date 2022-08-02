@@ -23,6 +23,10 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { DoneColumnsComponent } from './done-columns/done-columns.component';
 import { MessageDialogComponent } from './message-dialog/message-dialog.component';
 import { WarningMessageComponent } from './warning-message/warning-message.component';
+import { BlockReasonPercentageReportComponent } from './reports/block-reason-percentage/block-reason-percentage.component'
+import { AverageCycleTimeReportComponent } from './reports/average-cycle-time/average-cycle-time.component'
+import { ThroughputReportComponent } from './reports/throughput/throughput.component'
+import { TimeAllocationReportComponent } from './reports/time-allocation/time-allocation.component'
 
 export const components: any[] = [
   HomeComponent,
@@ -51,6 +55,10 @@ export const components: any[] = [
   MessageDialogComponent,
   WarningMessageComponent,
   MeanTimeToRecoveryComponent,
+  BlockReasonPercentageReportComponent,
+  AverageCycleTimeReportComponent,
+  ThroughputReportComponent,
+  TimeAllocationReportComponent,
 ];
 
 export * from './home/home.component';

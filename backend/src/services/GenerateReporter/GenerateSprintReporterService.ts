@@ -106,13 +106,19 @@ export class GenerateSprintReporterService {
     return totalBlockTimeForEveryReasonMap;
   }
 
-  private getLatestSprintName(sprints: Sprint[]): string {
+  private getLatestSprintName(
+    mapSprintCards: Map<string, JiraCardResponse[]>,
+    sprints: Sprint[]
+  ): string {
     const sortedSprints = sprints.sort(
       (a, b) => Date.parse(a.startDate) - Date.parse(b.startDate)
     );
-    return sortedSprints.length > 0
-      ? sortedSprints[sortedSprints.length - 1].name
-      : "";
+    for (let i: number = sortedSprints.length - 1; i >= 0; i--) {
+      if (mapSprintCards.has(sortedSprints[i].name)) {
+        return sortedSprints[i].name;
+      }
+    }
+    return "";
   }
 
   calculateBlockReasonPercentage(
@@ -122,32 +128,34 @@ export class GenerateSprintReporterService {
     let totalCycleTime = 0;
     const blockTimeForEveryReasonMap: Map<string, number> =
       this.initTotalBlockTimeForEveryReasonMap();
-    const latestSprintName = this.getLatestSprintName(sprints);
+    const latestSprintName = this.getLatestSprintName(mapSprintCards, sprints);
     const latestSprintCards = mapSprintCards.get(latestSprintName)!;
 
     if (!latestSprintCards) {
       return blockTimeForEveryReasonMap;
     }
-    for (const card of latestSprintCards) {
-      totalCycleTime += card.getTotalOrZero();
-    }
 
     for (const card of latestSprintCards) {
+      totalCycleTime += card.getTotalOrZero();
       let blockReason = card.baseInfo.fields.label || "";
 
       if (!blockTimeForEveryReasonMap.has(blockReason)) {
         blockReason = JiraBlockReasonEnum.OTHERS;
       }
 
-      const blockTimeForEveryReason =
+      const currentBlockTime =
         (blockTimeForEveryReasonMap.get(blockReason) || 0) +
         card.cardCycleTime!.steps.blocked;
 
-      const blockedReasonPercentage = parseFloat(
-        (blockTimeForEveryReason / totalCycleTime).toFixed(2)
-      );
-
-      blockTimeForEveryReasonMap.set(blockReason, blockedReasonPercentage);
+      blockTimeForEveryReasonMap.set(blockReason, currentBlockTime);
+    }
+    if (totalCycleTime) {
+      blockTimeForEveryReasonMap.forEach((value, key) => {
+        blockTimeForEveryReasonMap.set(
+          key,
+          parseFloat((value / totalCycleTime).toFixed(2))
+        );
+      });
     }
 
     return blockTimeForEveryReasonMap;

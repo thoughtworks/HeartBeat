@@ -44,6 +44,8 @@ import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import fs from "fs";
+import { GenerateSprintReporterService } from "./GenerateSprintReporterService";
+import { SprintStatistics } from "../../models/kanban/SprintStatistics";
 
 const KanbanKeyIdentifierMap: { [key: string]: "projectKey" | "teamName" } = {
   [KanbanEnum.CLASSIC_JIRA]: "projectKey",
@@ -74,6 +76,7 @@ export class GenerateReportService {
   private leadTimes: PipelineLeadTime[] = [];
   private BuildInfos: Pair<string, BuildInfo[]>[] = [];
   private BuildInfosOfLeadtimes: Pair<string, BuildInfo[]>[] = [];
+  private kanabanSprintStatistics?: SprintStatistics;
 
   async generateReporter(
     request: GenerateReportRequest
@@ -150,6 +153,7 @@ export class GenerateReportService {
           throw new Error(`can not match this metric: ${metric}`);
       }
     });
+    this.addKanbanSprintStatisticsToResponse(reporterResponse);
     return reporterResponse;
   }
 
@@ -290,6 +294,9 @@ export class GenerateReportService {
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
+    this.kanabanSprintStatistics = await new GenerateSprintReporterService(
+      this.cards
+    ).fetchSprintInfoFromKanban(request);
     this.nonDonecards = await kanban.getStoryPointsAndCycleTimeForNonDoneCards(
       new StoryPointsAndCycleTimeRequest(
         kanbanSetting.token,
@@ -482,5 +489,16 @@ export class GenerateReportService {
         }
       }
     });
+  }
+
+  addKanbanSprintStatisticsToResponse(response: GenerateReporterResponse) {
+    response.completedCardsNumber =
+      this.kanabanSprintStatistics?.completedCardsNumber;
+    response.standardDeviation =
+      this.kanabanSprintStatistics?.standardDeviation;
+    response.blockedAndDevelopingPercentage =
+      this.kanabanSprintStatistics?.blockedAndDevelopingPercentage;
+    response.latestSprintBlockReason =
+      this.kanabanSprintStatistics?.latestSprintBlockReason;
   }
 }

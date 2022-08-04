@@ -1,7 +1,11 @@
 <div class="reports-container">
   <mat-spinner class="spinner" *ngIf="loading"></mat-spinner>
 
-  <app-throughput-report> </app-throughput-report>
+  <app-throughput-report
+    *ngIf="reportResponse?.completedCardsNumber && reportResponse?.completedCardsNumber?.length !== 0"
+    [completedCardsNumber]="reportResponse.completedCardsNumber"
+  >
+  </app-throughput-report>
 
   <app-time-allocation-report> </app-time-allocation-report>
 

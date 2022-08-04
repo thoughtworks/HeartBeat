@@ -493,6 +493,107 @@ export class Velocity {
 }
 
 @swaggerClass()
+export class CompleteCardsNumber {
+  @swaggerProperty({
+    type: "string",
+    required: true,
+  })
+  sprintName?: string;
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  value?: number;
+}
+
+@swaggerClass()
+export class StandardDeviationAveragePair {
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  standardDeviation?: number;
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  average?: number;
+}
+
+@swaggerClass()
+export class StandardDeviation {
+  @swaggerProperty({
+    type: "string",
+    required: true,
+  })
+  sprintName?: string;
+  @swaggerProperty({
+    type: "object",
+    required: true,
+    properties: (StandardDeviationAveragePair as any).swaggerDocument,
+  })
+  value?: StandardDeviationAveragePair;
+}
+
+@swaggerClass()
+export class BlockedDevelopingPair {
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  blockedPercentage?: number;
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  developingPercentage?: number;
+}
+
+@swaggerClass()
+export class BlockedAndDevelopingPercentage {
+  @swaggerProperty({
+    type: "string",
+    required: true,
+  })
+  sprintName?: string;
+  @swaggerProperty({
+    type: "object",
+    required: true,
+    properties: (BlockedDevelopingPair as any).swaggerDocument,
+  })
+  value?: BlockedDevelopingPair;
+}
+
+@swaggerClass()
+export class BlockReasonPercentage {
+  @swaggerProperty({
+    type: "string",
+    required: true,
+  })
+  reasonName?: string;
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  percentage?: number;
+}
+
+@swaggerClass()
+export class LatestSprintBlockReason {
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  totalBlockedPercentage?: number;
+  @swaggerProperty({
+    type: "object",
+    required: true,
+    properties: (BlockReasonPercentage as any).swaggerDocument,
+  })
+  blockReasonPercentage?: BlockReasonPercentage[];
+}
+
+@swaggerClass()
 export class GenerateReporterResponse {
   @swaggerProperty({
     type: "object",
@@ -568,4 +669,28 @@ export class GenerateReporterResponse {
     },
   })
   classification?: ClassificationField[] = undefined;
+  @swaggerProperty({
+    type: "object",
+    description: "completed cards number",
+    properties: (CompleteCardsNumber as any).swaggerDocument,
+  })
+  completedCardsNumber?: CompleteCardsNumber[];
+  @swaggerProperty({
+    type: "object",
+    description: "standard deviation and average",
+    properties: (StandardDeviation as any).swaggerDocument,
+  })
+  standardDeviation?: StandardDeviation[];
+  @swaggerProperty({
+    type: "object",
+    description: "blocked and developing percentage",
+    properties: (BlockedAndDevelopingPercentage as any).swaggerDocument,
+  })
+  blockedAndDevelopingPercentage?: BlockedAndDevelopingPercentage[];
+  @swaggerProperty({
+    type: "object",
+    description: "latest sprint block reason",
+    properties: (LatestSprintBlockReason as any).swaggerDocument,
+  })
+  latestSprintBlockReason?: LatestSprintBlockReason;
 }

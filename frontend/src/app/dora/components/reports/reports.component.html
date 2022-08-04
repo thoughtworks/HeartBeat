@@ -11,14 +11,11 @@
   >
   </app-average-cycle-time-report>
 
-<<<<<<< HEAD
-  <app-block-reason-percentage-report *ngIf="reportResponse?.latestSprintBlockReason" [latestSprintBlockReason]="reportResponse.latestSprintBlockReason">
-
-
+  <app-block-reason-percentage-report
+    *ngIf="reportResponse?.latestSprintBlockReason"
+    [latestSprintBlockReason]="reportResponse.latestSprintBlockReason"
+  >
   </app-block-reason-percentage-report>
-=======
-  <app-block-reason-percentage-report> </app-block-reason-percentage-report>
->>>>>>> ce99738 (feat: display Average Cycle TimeReport Component)
 
   <app-velocity-report *ngIf="reportResponse?.velocity" [velocity]="reportResponse.velocity"></app-velocity-report>
 

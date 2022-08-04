@@ -1,21 +1,17 @@
 <div class="reports-container">
   <mat-spinner class="spinner" *ngIf="loading"></mat-spinner>
 
-  <app-throughput-report>
-
+  <app-throughput-report
+    *ngIf="reportResponse?.CompletedCardsNumber && reportResponse?.CompletedCardsNumber?.length !== 0"
+    [classifications]="reportResponse.CompletedCardsNumber"
+  >
   </app-throughput-report>
 
-  <app-time-allocation-report>
+  <app-time-allocation-report> </app-time-allocation-report>
 
-  </app-time-allocation-report>
+  <app-average-cycle-time-report> </app-average-cycle-time-report>
 
-  <app-average-cycle-time-report>
-
-  </app-average-cycle-time-report>
-
-  <app-block-reason-percentage-report>
-
-  </app-block-reason-percentage-report>
+  <app-block-reason-percentage-report> </app-block-reason-percentage-report>
 
   <app-velocity-report *ngIf="reportResponse?.velocity" [velocity]="reportResponse.velocity"></app-velocity-report>
 

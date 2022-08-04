@@ -20,17 +20,17 @@ export class ThroughputReportComponent implements OnInit {
       cardsNumber.push(curSprint.value);
       sprintName.push(curSprint.sprintName);
     });
-    const array = [];
+    const arrayRegression = [];
     let x = 0;
     for (let i = 0; i < sprintNumber; i++) {
       const cur = cardsNumber[i];
       x += 1;
-      array.push([x, cur]);
+      arrayRegression.push([x, cur]);
     }
 
-    const model = ss.linearRegression(array);
+    const model = ss.linearRegression(arrayRegression);
     const myCharts = echarts.init(document.getElementById('throughput'));
-    let lastRegressionValue = model.m * sprintNumber + model.b ? 0 : model.m * sprintNumber + model.b;
+    const lastRegressionValue = model.m * sprintNumber + model.b ? 0 : model.m * sprintNumber + model.b;
     const myOption: EChartsOption = {
       title: {
         text: 'Throughput - Completed Cards By Sprint',

@@ -13,18 +13,6 @@ export class ThroughputReportComponent implements OnInit {
   @Input() completedCardsNumber: CompletedCardsNumber[];
 
   ngOnInit(): void {
-    // const mockCompletedCardsNumber = [
-    //   { sprintName: 'Iteration30', value: 11 },
-    //   { sprintName: 'Iteration31', value: 8 },
-    //   { sprintName: 'Iteration32', value: 11 },
-    //   { sprintName: 'Iteration33', value: 12 },
-    //   { sprintName: 'Iteration34', value: 13 },
-    //   { sprintName: 'Iteration35', value: 6 },
-    //   { sprintName: 'Iteration36', value: 13 },
-    //   { sprintName: 'Iteration37', value: 8 },
-    //   { sprintName: 'Iteration38', value: 11 },
-    //   { sprintName: 'Iteration39', value: 8 },
-    // ];
     const sprintNumber = this.completedCardsNumber.length;
     const cardsNumber = [];
     const sprintName = [];
@@ -32,7 +20,6 @@ export class ThroughputReportComponent implements OnInit {
       cardsNumber.push(curSprint.value);
       sprintName.push(curSprint.sprintName);
     });
-
     const array = [];
     let x = 0;
     for (let i = 0; i < sprintNumber; i++) {
@@ -43,15 +30,15 @@ export class ThroughputReportComponent implements OnInit {
 
     const model = ss.linearRegression(array);
     const myCharts = echarts.init(document.getElementById('throughput'));
+    let lastRegressionValue = model.m * sprintNumber + model.b ? 0 : model.m * sprintNumber + model.b;
     const myOption: EChartsOption = {
       title: {
         text: 'Throughput - Completed Cards By Sprint',
         left: 'center',
         textStyle: {
-          color: '#595959',
+          color: 'black',
           fontSize: 30,
         },
-        top: '1%',
       },
       xAxis: {
         type: 'category',
@@ -61,7 +48,7 @@ export class ThroughputReportComponent implements OnInit {
         },
         axisLabel: {
           align: 'center',
-          color: '#595959',
+          color: 'black',
           fontSize: 14,
           interval: 0,
         },
@@ -73,11 +60,14 @@ export class ThroughputReportComponent implements OnInit {
         },
         axisLabel: {
           align: 'center',
-          color: '#595959',
+          color: 'black',
           fontSize: 14,
         },
-        min: Math.min(...cardsNumber) - 2,
+        min: Math.min(...cardsNumber, lastRegressionValue) - 1 ? 0 : Math.min(...cardsNumber, lastRegressionValue) - 1,
         scale: true,
+        splitLine: {
+          show: false,
+        },
       },
       series: [
         {
@@ -85,7 +75,7 @@ export class ThroughputReportComponent implements OnInit {
           type: 'line',
           smooth: true,
           symbolSize: 0.1,
-          label: { show: true, fontSize: 14, color: '#404040' },
+          label: { show: true, fontSize: 14, color: 'black' },
           lineStyle: {
             width: 3,
             color: '#0070c0',
@@ -103,7 +93,7 @@ export class ThroughputReportComponent implements OnInit {
                   coord: [this.completedCardsNumber[0].sprintName, model.m + model.b],
                 },
                 {
-                  coord: [this.completedCardsNumber[sprintNumber - 1].sprintName, model.m * sprintNumber + model.b],
+                  coord: [this.completedCardsNumber[sprintNumber - 1].sprintName, lastRegressionValue],
                 },
               ],
             ],

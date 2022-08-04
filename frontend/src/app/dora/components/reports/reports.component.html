@@ -2,8 +2,8 @@
   <mat-spinner class="spinner" *ngIf="loading"></mat-spinner>
 
   <app-throughput-report
-    *ngIf="reportResponse?.CompletedCardsNumber && reportResponse?.CompletedCardsNumber?.length !== 0"
-    [classifications]="reportResponse.CompletedCardsNumber"
+    *ngIf="reportResponse?.completedCardsNumber && reportResponse?.completedCardsNumber?.length !== 0"
+    [completedCardsNumber]="reportResponse.completedCardsNumber"
   >
   </app-throughput-report>
 

@@ -36,7 +36,6 @@ export class ThroughputReportComponent implements OnInit {
         text: 'Throughput - Completed Cards By Sprint',
         left: 'center',
         textStyle: {
-          color: 'black',
           fontSize: 30,
         },
       },
@@ -48,7 +47,6 @@ export class ThroughputReportComponent implements OnInit {
         },
         axisLabel: {
           align: 'center',
-          color: 'black',
           fontSize: 14,
           interval: 0,
         },
@@ -60,7 +58,6 @@ export class ThroughputReportComponent implements OnInit {
         },
         axisLabel: {
           align: 'center',
-          color: 'black',
           fontSize: 14,
         },
         min: Math.min(...cardsNumber, lastRegressionValue) - 1 ? 0 : Math.min(...cardsNumber, lastRegressionValue) - 1,
@@ -75,7 +72,7 @@ export class ThroughputReportComponent implements OnInit {
           type: 'line',
           smooth: true,
           symbolSize: 0.1,
-          label: { show: true, fontSize: 14, color: 'black' },
+          label: { show: true, fontSize: 14 },
           lineStyle: {
             width: 3,
             color: '#0070c0',

@@ -1,9 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
-import * as echarts from "echarts";
-import {EChartsOption} from "echarts";
-import {
-  LatestSprintBlockReason
-} from "../../../types/reportResponse";
+import { Component, Input, OnInit } from '@angular/core';
+import * as echarts from 'echarts';
+import { EChartsOption } from 'echarts';
+import { LatestSprintBlockReason } from '../../../types/reportResponse';
 
 @Component({
   selector: 'app-block-reason-percentage-report',
@@ -20,18 +18,25 @@ export class BlockReasonPercentageReportComponent implements OnInit {
   }
 
   getDevelopingAndBlockPercentage() {
-    const latestSprintDevelopingPercentage: number = (1 - this.latestSprintBlockReason.totalBlockedPercentage) * 100;
-    const latestSprintBlockPercentage: number = (this.latestSprintBlockReason.totalBlockedPercentage) * 100;
+    const latestSprintDevelopingPercentage: number = parseFloat(
+      ((1 - this.latestSprintBlockReason.totalBlockedPercentage) * 100).toFixed(0)
+    );
+    const latestSprintBlockPercentage: number = parseFloat(
+      (this.latestSprintBlockReason.totalBlockedPercentage * 100).toFixed(0)
+    );
 
-    const developingAndBlockPercentage = [{
-      value: latestSprintDevelopingPercentage,
-      name: String(latestSprintDevelopingPercentage) + '% \n developing percentage'
-    }, {
-      value: latestSprintBlockPercentage, name: String(latestSprintBlockPercentage) + '% \n block percentage'
-    }];
+    const developingAndBlockPercentage = [
+      {
+        value: latestSprintDevelopingPercentage,
+        name: String(latestSprintDevelopingPercentage) + '% \n developing percentage',
+      },
+      {
+        value: latestSprintBlockPercentage,
+        name: String(latestSprintBlockPercentage) + '% \n block percentage',
+      },
+    ];
     return developingAndBlockPercentage;
   }
-
 
   getOption() {
     const blockReasonPercentage = this.latestSprintBlockReason.blockReasonPercentage;
@@ -43,17 +48,17 @@ export class BlockReasonPercentageReportComponent implements OnInit {
 
     const seriesLabel = {
       show: true,
-      color: "#FFF",
+      color: '#FFF',
       formatter: (params) => {
         if (params.value > 0) {
-          return params.value * 100 + '%';
+          return (params.value * 100).toFixed(0) + '%';
         } else {
           return '';
         }
       },
     };
 
-    const blockReason = "Block Reason";
+    const blockReason = 'Block Reason';
     const myOption: EChartsOption = {
       legend: {
         data: allBlockReason,
@@ -61,8 +66,8 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         top: '30%',
         orient: 'vertical',
         textStyle: {
-          fontSize: 14
-        }
+          fontSize: 14,
+        },
       },
       tooltip: {},
       title: [
@@ -72,49 +77,49 @@ export class BlockReasonPercentageReportComponent implements OnInit {
           top: '5%',
           textAlign: 'center',
           textStyle: {
-            fontSize: 30
-          }
-        }
+            fontSize: 30,
+          },
+        },
       ],
       grid: [
         {
           width: '15%',
           left: '60%',
           top: '20%',
-          containLabel: true
-        }
+          containLabel: true,
+        },
       ],
       xAxis: [
         {
-          type: "category",
-          show: false
+          type: 'category',
+          show: false,
         },
       ],
       yAxis: [
         {
-          type: "value",
-          show: false
+          type: 'value',
+          show: false,
         },
       ],
       series: [
         {
           name: blockReasonPercentage[0].reasonName,
-          type: "bar",
+          type: 'bar',
           barWidth: 150,
           stack: blockReason,
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[0].percentage],
           label: seriesLabel,
-          color: '#f1c94d'
+          color: '#f1c94d',
         },
         {
           name: blockReasonPercentage[1].reasonName,
-          type: "bar",
+          type: 'bar',
           stack: blockReason,
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[1].percentage],
           label: seriesLabel,
@@ -122,21 +127,21 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         },
         {
           name: blockReasonPercentage[2].reasonName,
-          type: "bar",
-          stack: "Block Reason",
+          type: 'bar',
+          stack: 'Block Reason',
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[2].percentage],
           label: seriesLabel,
-          color: '#f1424e'
+          color: '#f1424e',
         },
         {
           name: blockReasonPercentage[3].reasonName,
-          type: "bar",
+          type: 'bar',
           stack: blockReason,
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[3].percentage],
           color: '#1fb283',
@@ -144,10 +149,10 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         },
         {
           name: blockReasonPercentage[4].reasonName,
-          type: "bar",
+          type: 'bar',
           stack: blockReason,
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[4].percentage],
           label: seriesLabel,
@@ -155,10 +160,10 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         },
         {
           name: blockReasonPercentage[5].reasonName,
-          type: "bar",
+          type: 'bar',
           stack: blockReason,
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[5].percentage],
           label: seriesLabel,
@@ -166,10 +171,10 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         },
         {
           name: blockReasonPercentage[6].reasonName,
-          type: "bar",
+          type: 'bar',
           stack: blockReason,
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[6].percentage],
           label: seriesLabel,
@@ -177,10 +182,10 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         },
         {
           name: blockReasonPercentage[7].reasonName,
-          type: "bar",
+          type: 'bar',
           stack: blockReason,
           emphasis: {
-            focus: "series",
+            focus: 'series',
           },
           data: [blockReasonPercentage[7].percentage],
           label: seriesLabel,
@@ -194,13 +199,13 @@ export class BlockReasonPercentageReportComponent implements OnInit {
           label: {
             fontSize: 14,
           },
-        }
+        },
       ],
       toolbox: {
         feature: {
-          saveAsImage: {backgroundColor: "#FFF"}
-        }
-      }
+          saveAsImage: { backgroundColor: '#FFF' },
+        },
+      },
     };
     return myOption;
   }

@@ -4,9 +4,8 @@
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['jasmine', '@angular-devkit/build-angular'], //测试框架jasmine
+    frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
-      //使用到的插件
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),

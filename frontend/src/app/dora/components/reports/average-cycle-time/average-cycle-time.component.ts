@@ -26,22 +26,23 @@ export class AverageCycleTimeReportComponent implements OnInit {
     myOption = {
       title: {
         text: 'Avg Cycle Time - Day',
-        left: 'center',
-        textStyle: { fontSize: 30 },
-      },
-      tooltip: {
-        trigger: 'axis',
+        left: '50%',
+        textAlign: 'center',
+        textStyle: {
+          fontSize: 30,
+        },
+        top: '3%',
       },
       legend: {
         data: ['Standard Deviation for Population', 'Avg Cycle Time'],
-        top: 60,
+        top: '10%',
         textStyle: { fontSize: 14 },
       },
       grid: {
-        left: '3%',
-        right: '4%',
         bottom: '3%',
         top: '20%',
+        left: '14.5%',
+        right: '14%',
         containLabel: true,
       },
       toolbox: {
@@ -75,7 +76,7 @@ export class AverageCycleTimeReportComponent implements OnInit {
           color: '#d67b2a',
           symbolSize: 10,
           symbol: 'circle',
-          label: { show: true },
+          label: { show: true, fontSize: 14 },
           lineStyle: { width: 5 },
         },
 
@@ -87,7 +88,7 @@ export class AverageCycleTimeReportComponent implements OnInit {
           color: '#f0434d',
           symbolSize: 10,
           symbol: 'circle',
-          label: { show: true },
+          label: { show: true, fontSize: 14 },
           lineStyle: { width: 5 },
         },
       ],

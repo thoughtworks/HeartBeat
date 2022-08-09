@@ -51,9 +51,12 @@ export class TimeAllocationReportComponent implements OnInit {
         containLabel: true,
         backgroundColor: 'white',
         show: true,
+        bottom: '3%',
         top: '20%',
-        bottom: '5',
+        left: '13%',
+        right: '14%',
       },
+
       xAxis: [
         {
           type: 'category',

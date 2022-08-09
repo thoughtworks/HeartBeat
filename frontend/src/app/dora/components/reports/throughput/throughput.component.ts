@@ -34,21 +34,27 @@ export class ThroughputReportComponent implements OnInit {
     const myOption: EChartsOption = {
       title: {
         text: 'Throughput - Completed Cards By Sprint',
-        left: 'center',
+        left: '50%',
+        textAlign: 'center',
         textStyle: {
           fontSize: 30,
         },
+        top: '3%',
+      },
+
+      grid: {
+        bottom: '3%',
+        top: '20%',
+        left: '14%',
+        right: '14%',
+        containLabel: true,
       },
       xAxis: {
         type: 'category',
         data: sprintName,
+        boundaryGap: true,
         axisTick: {
           alignWithLabel: true,
-        },
-        axisLabel: {
-          align: 'center',
-          fontSize: 14,
-          interval: 0,
         },
       },
       yAxis: {
@@ -56,16 +62,11 @@ export class ThroughputReportComponent implements OnInit {
         axisLine: {
           show: true,
         },
-        axisLabel: {
-          align: 'center',
-          fontSize: 14,
-        },
-        min: Math.min(...cardsNumber, lastRegressionValue) - 1 ? 0 : Math.min(...cardsNumber, lastRegressionValue) - 1,
-        scale: true,
         splitLine: {
           show: false,
         },
       },
+
       series: [
         {
           data: cardsNumber,
@@ -74,14 +75,14 @@ export class ThroughputReportComponent implements OnInit {
           symbolSize: 0.1,
           label: { show: true, fontSize: 14 },
           lineStyle: {
-            width: 3,
+            width: 5,
             color: '#0070c0',
           },
           markLine: {
             symbol: 'none',
             lineStyle: {
               type: 'dotted',
-              width: 3,
+              width: 5,
               color: '#39bcd2',
             },
             data: [

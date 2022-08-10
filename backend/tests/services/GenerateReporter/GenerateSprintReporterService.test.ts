@@ -5,11 +5,7 @@ import {
 import "mocha";
 import { expect } from "chai";
 import { GenerateSprintReporterService } from "../../../src/services/GenerateReporter/GenerateSprintReporterService";
-import {
-  JiraCard,
-  JiraCardField,
-  Status,
-} from "../../../src/models/kanban/JiraCard";
+import { JiraCard, JiraCardField } from "../../../src/models/kanban/JiraCard";
 import { Sprint } from "../../../src/models/kanban/Sprint";
 import {
   CardCycleTime,
@@ -193,7 +189,6 @@ describe("calculate percentage of different block reasons in the latest sprint",
       [sprint2Name, cardList2],
       [sprint3Name, cardList3],
     ]);
-
     const blockedPercentageByReason = service.calculateBlockReasonPercentage(
       activeAndClosedSprints,
       mapLatestSprintEmptyCards
@@ -206,6 +201,9 @@ describe("calculate percentage of different block reasons in the latest sprint",
       0
     );
     expect(blockedPercentageByReason.get(JiraBlockReasonEnum.OTHERS)).equal(0);
+    expect(
+      blockedPercentageByReason.get(JiraBlockReasonEnum.QUESTION_TO_BE_ANSWERED)
+    ).equal(0);
   });
 });
 
@@ -216,8 +214,9 @@ describe("calculate standard deviation", () => {
     expected.set(sprint2Name, { standardDeviation: 1.5, average: 3.5 });
     expected.set(sprint3Name, { standardDeviation: 0, average: 2 });
 
-    const mapSprintStandardDeviation =
-      service.calculateStandardDeviation(mapSprintCards);
+    const mapSprintStandardDeviation = service.calculateStandardDeviation(
+      mapSprintCards
+    );
 
     expect(mapSprintStandardDeviation).deep.equal(expected);
   });
@@ -226,8 +225,9 @@ describe("calculate standard deviation", () => {
     const expected: Map<string, any> = new Map<string, any>();
     expected.set(sprint1Name, { standardDeviation: 0, average: 0 });
 
-    const mapSprintStandardDeviation =
-      service.calculateStandardDeviation(mapSprintEmptyCards);
+    const mapSprintStandardDeviation = service.calculateStandardDeviation(
+      mapSprintEmptyCards
+    );
 
     expect(mapSprintStandardDeviation).deep.equal(expected);
   });
@@ -235,8 +235,9 @@ describe("calculate standard deviation", () => {
 
 describe("calculate blocked and developing percentage", () => {
   it("should return correct blocked and developing percentage when there are matched cards in sprint", () => {
-    const mapIterationBlockedPercentage =
-      service.calculateBlockedAndDevelopingPercentage(mapSprintCards);
+    const mapIterationBlockedPercentage = service.calculateBlockedAndDevelopingPercentage(
+      mapSprintCards
+    );
 
     const expected: Map<string, any> = new Map<string, any>();
     expected.set(sprint1Name, {
@@ -256,8 +257,9 @@ describe("calculate blocked and developing percentage", () => {
   });
 
   it("should return 0% blocked percentage and 100% developing percentage when there is not any matched card in sprint", () => {
-    const mapIterationBlockedPercentage =
-      service.calculateBlockedAndDevelopingPercentage(mapSprintEmptyCards);
+    const mapIterationBlockedPercentage = service.calculateBlockedAndDevelopingPercentage(
+      mapSprintEmptyCards
+    );
 
     const expected: Map<string, any> = new Map<string, number>();
     expected.set(sprint1Name, {
@@ -276,8 +278,9 @@ describe("calculate the number of completed cards in every sprint", () => {
       [sprint2Name, cardList2],
     ]);
 
-    const mapSprintCompletedCardsNumber =
-      service.calculateCompletedCardsNumber(mapSprintCards);
+    const mapSprintCompletedCardsNumber = service.calculateCompletedCardsNumber(
+      mapSprintCards
+    );
 
     const expected: Map<string, number> = new Map<string, number>();
     expected.set(sprint1Name, 3);
@@ -286,19 +289,21 @@ describe("calculate the number of completed cards in every sprint", () => {
     expect(mapSprintCompletedCardsNumber).deep.equal(expected);
   });
 
-  it("should return 0 when the cardlist is empty", () => {
+  it("should return 0 when the cardList is empty", () => {
     const mapSprintCards = new Map<string, JiraCardResponse[]>([
       [sprint1Name, emptyCardList],
     ]);
 
-    const mapSprintCompletedCardsNumber =
-      service.calculateCompletedCardsNumber(mapSprintCards);
+    const mapSprintCompletedCardsNumber = service.calculateCompletedCardsNumber(
+      mapSprintCards
+    );
     const expected: Map<string, number> = new Map<string, number>();
     expected.set(sprint1Name, 0);
 
     expect(mapSprintCompletedCardsNumber).deep.equal(expected);
   });
 });
+
 describe("generate Jira sprint statistics", () => {
   it("should return the Jira sprint statistics when statistic data are not empty", () => {
     const sprintBlockReasonPercentageMap = new Map<string, number>([
@@ -417,5 +422,34 @@ describe("generate Jira sprint statistics", () => {
       blockReasonPercentage: [],
     });
     expect(sprintStartistics).deep.equal(expected);
+  });
+});
+
+describe("sort sprints by sprint start date", () => {
+  it("sort sprints by sprint start date", () => {
+    const unorderedMap = new Map<string, JiraCardResponse[]>([
+      [sprint1Name, cardList1],
+      [sprint2Name, cardList2],
+    ]);
+    const excepted = new Map<string, JiraCardResponse[]>([
+      [sprint2Name, cardList2],
+      [sprint1Name, cardList1],
+    ]);
+
+    const serviceProto = Object.getPrototypeOf(service);
+    const orderedMap = serviceProto.sortBySprintStartDate(
+      unorderedMap,
+      sprints
+    );
+    expect(orderedMap).deep.equal(excepted);
+  });
+});
+
+describe("get active and closed Sprints", () => {
+  it("get active and closed Sprints", () => {
+    const excepted = [activeSprint, closedSprint];
+    const serviceProto = Object.getPrototypeOf(service);
+    const filteredSprints = serviceProto.getActiveAndClosedSprints(sprints);
+    expect(filteredSprints).deep.equal(excepted);
   });
 });

@@ -479,4 +479,12 @@ export class GenerateReportService {
     response.latestSprintBlockReason =
       this.kanabanSprintStatistics?.latestSprintBlockReason;
   }
+
+  public setCards(cards: Cards) {
+    this.cards = cards;
+  }
+
+  public setKanbanSprintStatistics(statistics: SprintStatistics) {
+    this.kanabanSprintStatistics = statistics;
+  }
 }

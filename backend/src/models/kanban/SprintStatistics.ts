@@ -1,31 +1,13 @@
 export class SprintStatistics {
-  public completedCardsNumber?: Array<{ sprintName: string; value: number }>;
-  public standardDeviation?: Array<{
-    sprintName: string;
-    value: { standardDeviation: number; average: number };
-  }>;
-  public blockedAndDevelopingPercentage?: Array<{
-    sprintName: string;
-    value: { blockedPercentage: number; developingPercentage: number };
-  }>;
-  public latestSprintBlockReason?: {
-    totalBlockedPercentage: number;
-    blockReasonPercentage: Array<{ reasonName: string; percentage: number }>;
-  };
+  public completedCardsNumber?: Array<CompleteCardNumber>;
+  public standardDeviation?: Array<StandardDeviation>;
+  public blockedAndDevelopingPercentage?: Array<BlockedAndDevelopingPercentage>;
+  public latestSprintBlockReason?: BlockedReason;
   constructor(
-    completedCardsNumber?: Array<{ sprintName: string; value: number }>,
-    standardDeviation?: Array<{
-      sprintName: string;
-      value: { standardDeviation: number; average: number };
-    }>,
-    blockedAndDevelopingPercentage?: Array<{
-      sprintName: string;
-      value: { blockedPercentage: number; developingPercentage: number };
-    }>,
-    latestSprintBlockReason?: {
-      totalBlockedPercentage: number;
-      blockReasonPercentage: Array<{ reasonName: string; percentage: number }>;
-    }
+    completedCardsNumber?: Array<CompleteCardNumber>,
+    standardDeviation?: Array<StandardDeviation>,
+    blockedAndDevelopingPercentage?: Array<BlockedAndDevelopingPercentage>,
+    latestSprintBlockReason?: BlockedReason
   ) {
     this.completedCardsNumber = completedCardsNumber;
     this.standardDeviation = standardDeviation;
@@ -33,3 +15,49 @@ export class SprintStatistics {
     this.latestSprintBlockReason = latestSprintBlockReason;
   }
 }
+
+export type CompleteCardNumber = {
+  sprintName: string;
+  value: number;
+};
+
+export type StandardDeviationAndAveragePair = {
+  standardDeviation: number;
+  average: number;
+};
+
+export type StandardDeviation = {
+  sprintName: string;
+  value: StandardDeviationAndAveragePair;
+};
+
+export type BlockedAndDevelopingPercentagePair = {
+  blockedPercentage: number;
+  developingPercentage: number;
+};
+
+export type BlockedAndDevelopingPercentage = {
+  sprintName: string;
+  value: BlockedAndDevelopingPercentagePair;
+};
+
+export type BlockedReasonAndPercenagePair = {
+  reasonName: string;
+  percentage: number;
+};
+
+export type BlockedReason = {
+  totalBlockedPercentage: number;
+  blockReasonPercentage: BlockedReasonAndPercenagePair[];
+};
+
+export type SprintCycleTime = {
+  totalCycleTime: number;
+  cycleTimes: number[];
+};
+
+export type SprintCycleTimeCount = {
+  count: number;
+  totalCycleTime: number;
+  cycleTimes: number[];
+};

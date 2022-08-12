@@ -9,3 +9,5 @@ dora-backend-linux
 dora-backend-macos
 dora-backend-win.exe
 *.csv
+.nyc_output
+coverage

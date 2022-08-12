@@ -90,10 +90,10 @@ export class GenerateSprintReporterService {
         activeAndClosedSprints
       );
 
-      const unorderSprintCompletedCardsNumberMap: Map<string, number> =
+      const unorderedSprintCompletedCardsNumberMap: Map<string, number> =
         this.calculateCompletedCardsNumber(sprintCardsMap);
       this.sprintCompletedCardsNumberMap = this.sortBySprintStartDate(
-        unorderSprintCompletedCardsNumberMap,
+        unorderedSprintCompletedCardsNumberMap,
         activeAndClosedSprints
       );
 
@@ -128,7 +128,8 @@ export class GenerateSprintReporterService {
   ): string {
     let latestSprintName: string = "";
     const sortedSprints = sprints.sort(
-      (a, b) => Date.parse(a.startDate) - Date.parse(b.startDate)
+      (sprint1, sprint2) =>
+        Date.parse(sprint1.startDate) - Date.parse(sprint2.startDate)
     );
     for (let i: number = sortedSprints.length - 1; i >= 0; i--) {
       if (sprintCardsMap.has(sortedSprints[i].name)) {
@@ -144,39 +145,39 @@ export class GenerateSprintReporterService {
     sprintCardsMap: Map<string, JiraCardResponse[]>
   ): Map<string, number> {
     let totalCycleTime = 0;
-    const blockTimeForEveryReasonMap: Map<string, number> =
+    const blockedTimeForEveryReasonMap: Map<string, number> =
       this.initBlockedTimeMap();
     const latestSprintName = this.getLatestSprintName(sprintCardsMap, sprints);
     const latestSprintCards = sprintCardsMap.get(latestSprintName)!;
 
     if (!latestSprintCards || latestSprintCards.length == 0) {
-      return blockTimeForEveryReasonMap;
+      return blockedTimeForEveryReasonMap;
     }
 
     for (const card of latestSprintCards) {
       totalCycleTime += card.getTotalOrZero();
       let blockReason = card.baseInfo.fields.label || "";
 
-      if (!blockTimeForEveryReasonMap.has(blockReason)) {
+      if (!blockedTimeForEveryReasonMap.has(blockReason)) {
         blockReason = JiraBlockReasonEnum.OTHERS;
       }
 
       const currentBlockTime =
-        (blockTimeForEveryReasonMap.get(blockReason) || 0) +
+        (blockedTimeForEveryReasonMap.get(blockReason) || 0) +
         card.cardCycleTime!.steps.blocked;
 
-      blockTimeForEveryReasonMap.set(blockReason, currentBlockTime);
+      blockedTimeForEveryReasonMap.set(blockReason, currentBlockTime);
     }
     if (totalCycleTime) {
-      blockTimeForEveryReasonMap.forEach((value, key) => {
-        blockTimeForEveryReasonMap.set(
+      blockedTimeForEveryReasonMap.forEach((value, key) => {
+        blockedTimeForEveryReasonMap.set(
           key,
           parseFloat((value / totalCycleTime).toFixed(2))
         );
       });
     }
 
-    return blockTimeForEveryReasonMap;
+    return blockedTimeForEveryReasonMap;
   }
 
   mapCardsBySprintName(
@@ -316,8 +317,8 @@ export class GenerateSprintReporterService {
           standardDeviation = parseFloat(
             Math.sqrt(
               sprintCycleTime.cycleTimes.reduce(
-                (accu: number, curr: number) =>
-                  Math.pow(curr - average, 2) + accu,
+                (accumulator: number, currentValue: number) =>
+                  Math.pow(currentValue - average, 2) + accumulator,
                 0
               ) / sprintCycleTime.count
             ).toFixed(2)

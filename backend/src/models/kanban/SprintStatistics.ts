@@ -1,10 +1,10 @@
 export class SprintStatistics {
-  public completedCardsNumber?: Array<CompleteCardNumber>;
+  public completedCardsNumber?: Array<CompletedCardNumber>;
   public standardDeviation?: Array<StandardDeviation>;
   public blockedAndDevelopingPercentage?: Array<BlockedAndDevelopingPercentage>;
   public latestSprintBlockReason?: BlockedReason;
   constructor(
-    completedCardsNumber?: Array<CompleteCardNumber>,
+    completedCardsNumber?: Array<CompletedCardNumber>,
     standardDeviation?: Array<StandardDeviation>,
     blockedAndDevelopingPercentage?: Array<BlockedAndDevelopingPercentage>,
     latestSprintBlockReason?: BlockedReason
@@ -16,7 +16,7 @@ export class SprintStatistics {
   }
 }
 
-export type CompleteCardNumber = {
+export type CompletedCardNumber = {
   sprintName: string;
   value: number;
 };

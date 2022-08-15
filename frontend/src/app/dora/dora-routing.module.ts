@@ -5,6 +5,7 @@ import { NgModule } from '@angular/core';
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'config', component: ConfigStepperComponent },
+  { path: '', redirectTo: 'home' },
 ];
 
 @NgModule({

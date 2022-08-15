@@ -1,0 +1,81 @@
+{
+  "id": 2,
+  "name": "ADM board",
+  "type": "simple",
+  "self": "https://dorametrics.atlassian.net/rest/agile/1.0/board/2/configuration",
+  "location": {
+    "type": "project",
+    "key": "ADM",
+    "id": "10001",
+    "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+    "name": "\"Auto\" Dora Metrics"
+  },
+  "filter": {
+    "id": "10001",
+    "self": "https://dorametrics.atlassian.net/rest/api/2/filter/10001"
+  },
+  "columnConfig": {
+    "columns": [
+      {
+        "name": "TODO",
+        "statuses": [
+          {
+            "id": "10006",
+            "self": "https://dorametrics.atlassian.net/rest/api/2/status/10006"
+          }
+        ]
+      },
+      {
+        "name": "Blocked",
+        "statuses": [
+          {
+            "id": "10010",
+            "self": "https://dorametrics.atlassian.net/rest/api/2/status/10010"
+          }
+        ]
+      },
+      {
+        "name": "Doing",
+        "statuses": [
+          {
+            "id": "10007",
+            "self": "https://dorametrics.atlassian.net/rest/api/2/status/10007"
+          }
+        ]
+      },
+      {
+        "name": "Testing",
+        "statuses": [
+          {
+            "id": "10008",
+            "self": "https://dorametrics.atlassian.net/rest/api/2/status/10008"
+          }
+        ]
+      },
+      {
+        "name": "Done",
+        "statuses": [
+          {
+            "id": "10009",
+            "self": "https://dorametrics.atlassian.net/rest/api/2/status/10009"
+          },
+          {
+            "id": "10038",
+            "self": "https://dorametrics.atlassian.net/rest/api/2/status/10038"
+          }
+        ]
+      }
+    ],
+    "constraintType": "none"
+  },
+  "estimation": {
+    "type": "field",
+    "field": {
+      "fieldId": "customfield_10016",
+      "displayName": "Story point estimate"
+    }
+  },
+  "ranking": {
+    "rankCustomFieldId": 10019
+  }
+}

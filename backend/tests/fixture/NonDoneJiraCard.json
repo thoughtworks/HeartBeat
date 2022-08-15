@@ -1,0 +1,262 @@
+{
+  "expand": "names,schema",
+  "startAt": 0,
+  "maxResults": 50,
+  "total": 1,
+  "issues": [
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations,customfield_10010.requestTypePractice",
+      "id": "10240",
+      "self": "https://dorametrics.atlassian.net/rest/api/2/issue/10240",
+      "key": "ADM-224",
+      "fields": {
+        "statuscategorychangedate": "2022-08-03T13:49:35.695+0800",
+        "issuetype": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10005",
+          "id": "10005",
+          "description": "Tasks track small, distinct pieces of work.",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Task",
+          "subtask": false,
+          "avatarId": 10318,
+          "entityId": "584ca3ca-8604-4a22-9ca2-56f0a5d47a87",
+          "hierarchyLevel": 0
+        },
+        "timespent": null,
+        "customfield_10030": null,
+        "project": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+          "id": "10001",
+          "key": "ADM",
+          "name": "\"Auto\" Dora Metrics",
+          "projectTypeKey": "software",
+          "simplified": true,
+          "avatarUrls": {
+            "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+            "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+            "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+            "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+          }
+        },
+        "customfield_10031": null,
+        "customfield_10032": null,
+        "customfield_10033": null,
+        "fixVersions": [],
+        "aggregatetimespent": null,
+        "customfield_10034": null,
+        "customfield_10035": null,
+        "resolution": null,
+        "customfield_10036": [],
+        "customfield_10037": null,
+        "resolutiondate": null,
+        "workratio": -1,
+        "watches": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issue/ADM-224/watchers",
+          "watchCount": 2,
+          "isWatching": true
+        },
+        "lastViewed": "2022-08-09T15:24:22.144+0800",
+        "issuerestriction": {
+          "issuerestrictions": {},
+          "shouldDisplay": true
+        },
+        "created": "2022-08-03T13:49:35.371+0800",
+        "customfield_10020": [
+          {
+            "id": 8,
+            "name": "ADM Sprint 4",
+            "state": "closed",
+            "boardId": 2,
+            "goal": "",
+            "startDate": "2022-07-21T01:51:56.966Z",
+            "endDate": "2022-08-04T01:51:43.000Z",
+            "completeDate": "2022-08-04T02:11:51.933Z"
+          },
+          {
+            "id": 9,
+            "name": "ADM Sprint 5",
+            "state": "active",
+            "boardId": 2,
+            "goal": "",
+            "startDate": "2022-08-04T02:14:41.848Z",
+            "endDate": "2022-08-18T02:14:29.000Z"
+          }
+        ],
+        "customfield_10021": null,
+        "customfield_10022": "2022-08-10T16:03:59.842+0800",
+        "customfield_10023": null,
+        "priority": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+          "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+          "name": "Medium",
+          "id": "3"
+        },
+        "labels": [],
+        "customfield_10016": 2,
+        "customfield_10017": null,
+        "customfield_10018": {
+          "hasEpicLinkFieldDependency": false,
+          "showField": false,
+          "nonEditableReason": {
+            "reason": "PLUGIN_LICENSE_ERROR",
+            "message": "The Parent Link is only available to Jira Premium users."
+          }
+        },
+        "customfield_10019": "0|i000gv:0008i",
+        "aggregatetimeoriginalestimate": null,
+        "timeestimate": null,
+        "versions": [],
+        "issuelinks": [],
+        "assignee": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/user?accountId=62bdfaa4fa171a27239e7ec8",
+          "accountId": "62bdfaa4fa171a27239e7ec8",
+          "emailAddress": "peihang.yu@thoughtworks.com",
+          "avatarUrls": {
+            "48x48": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+            "24x24": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+            "16x16": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+            "32x32": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png"
+          },
+          "displayName": "Test User",
+          "active": true,
+          "timeZone": "Asia/Shanghai",
+          "accountType": "atlassian"
+        },
+        "updated": "2022-08-10T16:03:59.842+0800",
+        "status": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/status/10010",
+          "description": "",
+          "iconUrl": "https://dorametrics.atlassian.net/",
+          "name": "Blocked",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://dorametrics.atlassian.net/rest/api/2/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "In Progress"
+          }
+        },
+        "components": [],
+        "timeoriginalestimate": null,
+        "description": "As a user\n\nI want to export the board data as an excel file\n\nSo that I could directly acquire the data I need from the file\n\n*Acceptance Criteria*\n\n*AC1: Export data as an excel file using a new button*\n\n# Add a button named “Export sprint data” in front-end\n# Create a new API in back-end for exporting data\n## PATH: “/exportExcel”\n## HTTP Request: GET\n\n*AC2: Exported data include*\n\n# Sheet name: *Card Statistics*\n\n* Existing exported data\n\n 2. Sheet name:  *Iteration* *Statistics*\n\n* Analyse existing info we can get from Jira iteration, then make decision with BA/TL\n* Standard deviations(population) of cycle time\n* Total cycle time\n* Total blocked time\n* Percentage of developing time\n* Percentage of blocked time\n* Total blocked time for each block reason\n* Percentage of blocked time for each reason",
+        "customfield_10010": null,
+        "customfield_10014": null,
+        "timetracking": {},
+        "customfield_10015": null,
+        "customfield_10005": null,
+        "customfield_10006": null,
+        "security": null,
+        "customfield_10007": null,
+        "customfield_10008": null,
+        "customfield_10009": null,
+        "aggregatetimeestimate": null,
+        "attachment": [],
+        "summary": "Export the board data as an excel file-2",
+        "creator": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/user?accountId=6299101b658d58006889e938",
+          "accountId": "6299101b658d58006889e938",
+          "emailAddress": "huijun.hong@thoughtworks.com",
+          "avatarUrls": {
+            "48x48": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png",
+            "24x24": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png",
+            "16x16": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png",
+            "32x32": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png"
+          },
+          "displayName": "Huijun Hong",
+          "active": true,
+          "timeZone": "Asia/Shanghai",
+          "accountType": "atlassian"
+        },
+        "subtasks": [],
+        "reporter": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/user?accountId=6299101b658d58006889e938",
+          "accountId": "6299101b658d58006889e938",
+          "emailAddress": "huijun.hong@thoughtworks.com",
+          "avatarUrls": {
+            "48x48": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png",
+            "24x24": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png",
+            "16x16": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png",
+            "32x32": "https://secure.gravatar.com/avatar/a58d0a2cfb90452f17237ba478d4c5d4?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-5.png"
+          },
+          "displayName": "Huijun Hong",
+          "active": true,
+          "timeZone": "Asia/Shanghai",
+          "accountType": "atlassian"
+        },
+        "aggregateprogress": {
+          "progress": 0,
+          "total": 0
+        },
+        "customfield_10001": null,
+        "customfield_10002": null,
+        "customfield_10003": null,
+        "customfield_10004": null,
+        "customfield_10038": null,
+        "environment": null,
+        "duedate": null,
+        "progress": {
+          "progress": 0,
+          "total": 0
+        },
+        "votes": {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issue/ADM-224/votes",
+          "votes": 0,
+          "hasVoted": false
+        },
+        "comment": {
+          "comments": [
+            {
+              "self": "https://dorametrics.atlassian.net/rest/api/2/issue/10240/comment/10120",
+              "id": "10120",
+              "author": {
+                "self": "https://dorametrics.atlassian.net/rest/api/2/user?accountId=62bdfaa4fa171a27239e7ec8",
+                "accountId": "62bdfaa4fa171a27239e7ec8",
+                "emailAddress": "peihang.yu@thoughtworks.com",
+                "avatarUrls": {
+                  "48x48": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+                  "24x24": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+                  "16x16": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+                  "32x32": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png"
+                },
+                "displayName": "Peihang Yu",
+                "active": true,
+                "timeZone": "Asia/Shanghai",
+                "accountType": "atlassian"
+              },
+              "body": "*Block Reason:*\n\n# Relevant requirements are not clear, waiting for confirmation from TL:\n## whether it is necessary to migrate the table in the .csv file to the .xlsx file.\n# The backend code has not been refactored: \n## Especially the opinion on the data structure of sprint statistics is not agreed. \n## Therefore, the data of *total cycle time*, *total blocked time*, *total blocked time for each block reason*, and *percentage of blocked time for each reason* could not be more easily obtained and stored in excel file.",
+              "updateAuthor": {
+                "self": "https://dorametrics.atlassian.net/rest/api/2/user?accountId=62bdfaa4fa171a27239e7ec8",
+                "accountId": "62bdfaa4fa171a27239e7ec8",
+                "emailAddress": "peihang.yu@thoughtworks.com",
+                "avatarUrls": {
+                  "48x48": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+                  "24x24": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+                  "16x16": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png",
+                  "32x32": "https://secure.gravatar.com/avatar/ac3fd18706f8ee29d91832bc20845c73?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FPY-3.png"
+                },
+                "displayName": "Peihang Yu",
+                "active": true,
+                "timeZone": "Asia/Shanghai",
+                "accountType": "atlassian"
+              },
+              "created": "2022-08-10T16:03:59.842+0800",
+              "updated": "2022-08-10T16:03:59.842+0800",
+              "jsdPublic": true
+            }
+          ],
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issue/10240/comment",
+          "maxResults": 1,
+          "total": 1,
+          "startAt": 0
+        },
+        "worklog": {
+          "startAt": 0,
+          "maxResults": 20,
+          "total": 0,
+          "worklogs": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "self": "https://test.atlassian.net/rest/api/2/statuscategory/4",
+  "description": "",
+  "iconUrl": "https://test.atlassian.net/",
+  "name": "TODO",
+  "untranslatedName": "TODO",
+  "id": "10006",
+  "statusCategory": {
+    "self": "https://test.atlassian.net/rest/api/2/statuscategory/4",
+    "id": 4,
+    "key": "indeterminate",
+    "colorName": "yellow",
+    "name": "In Progress"
+  }
+}

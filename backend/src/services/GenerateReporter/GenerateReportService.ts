@@ -278,55 +278,34 @@ export class GenerateReportService {
       kanbanSetting.token,
       kanbanSetting.site
     );
+    const model: StoryPointsAndCycleTimeRequest =
+      new StoryPointsAndCycleTimeRequest(
+        kanbanSetting.token,
+        kanbanSetting.type,
+        kanbanSetting.site,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
+        kanbanSetting.boardId,
+        kanbanSetting.doneColumn,
+        request.startTime,
+        request.endTime,
+        kanbanSetting.targetFields,
+        kanbanSetting.treatFlagCardAsBlock
+      );
     this.cards = await kanban.getStoryPointsAndCycleTime(
-      new StoryPointsAndCycleTimeRequest(
-        kanbanSetting.token,
-        kanbanSetting.type,
-        kanbanSetting.site,
-        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
-        kanbanSetting.boardId,
-        kanbanSetting.doneColumn,
-        request.startTime,
-        request.endTime,
-        kanbanSetting.targetFields,
-        kanbanSetting.treatFlagCardAsBlock
-      ),
+      model,
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
-    this.kanabanSprintStatistics = await new GenerateSprintReporterService(
+    this.kanabanSprintStatistics = await kanban.getSprintStatistics(
+      model,
       this.cards
-    ).fetchSprintInfoFromKanban(request);
+    );
     this.nonDonecards = await kanban.getStoryPointsAndCycleTimeForNonDoneCards(
-      new StoryPointsAndCycleTimeRequest(
-        kanbanSetting.token,
-        kanbanSetting.type,
-        kanbanSetting.site,
-        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
-        kanbanSetting.boardId,
-        kanbanSetting.doneColumn,
-        request.startTime,
-        request.endTime,
-        kanbanSetting.targetFields,
-        kanbanSetting.treatFlagCardAsBlock
-      ),
+      model,
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
-    this.columns = await kanban.getColumns(
-      new StoryPointsAndCycleTimeRequest(
-        kanbanSetting.token,
-        kanbanSetting.type,
-        kanbanSetting.site,
-        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
-        kanbanSetting.boardId,
-        kanbanSetting.doneColumn,
-        request.startTime,
-        request.endTime,
-        kanbanSetting.targetFields,
-        kanbanSetting.treatFlagCardAsBlock
-      )
-    );
+    this.columns = await kanban.getColumns(model);
     await ConvertBoardDataToCsv(
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,

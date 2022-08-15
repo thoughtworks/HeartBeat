@@ -5,6 +5,7 @@ import { RequestKanbanColumnSetting } from "../../contract/GenerateReporter/Gene
 import { Cards } from "../../models/kanban/RequestKanbanResults";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import { Linear } from "./Linear/Linear";
+import { SprintStatistics } from "../../models/kanban/SprintStatistics";
 
 export interface Kanban {
   // verifyTokenAndGetColumnsAndUser(model: KanbanTokenVerifyModel): Promise<KanbanTokenVerifyResponse>;
@@ -22,6 +23,10 @@ export interface Kanban {
     boardColumns: RequestKanbanColumnSetting[],
     users: string[]
   ): Promise<Cards>;
+  getSprintStatistics(
+    model: StoryPointsAndCycleTimeRequest,
+    cards: Cards
+  ): Promise<SprintStatistics>;
 }
 
 export enum KanbanEnum {

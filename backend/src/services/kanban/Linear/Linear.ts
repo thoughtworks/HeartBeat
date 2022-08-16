@@ -20,6 +20,7 @@ import {
   WorkflowStateConnection,
 } from "@linear/sdk/dist/_generated_sdk";
 import { sortBy } from "lodash";
+import { SprintStatistics } from "../../../models/kanban/SprintStatistics";
 
 export enum LinearColumnType {
   BACKLOG = "backlog",
@@ -189,5 +190,12 @@ export class Linear implements Kanban {
       },
       ...stateChanged,
     ];
+  }
+
+  public async getSprintStatistics(
+    model: StoryPointsAndCycleTimeRequest,
+    cards: Cards
+  ): Promise<SprintStatistics> {
+    throw new Error("Spring statistics for Linear is not available.");
   }
 }

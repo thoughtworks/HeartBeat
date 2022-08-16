@@ -44,7 +44,6 @@ import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import fs from "fs";
-import { GenerateSprintReporterService } from "./GenerateSprintReporterService";
 import { SprintStatistics } from "../../models/kanban/SprintStatistics";
 
 const KanbanKeyIdentifierMap: { [key: string]: "projectKey" | "teamName" } = {
@@ -278,55 +277,34 @@ export class GenerateReportService {
       kanbanSetting.token,
       kanbanSetting.site
     );
+    const storyPointAndCycleTimeRequest: StoryPointsAndCycleTimeRequest =
+      new StoryPointsAndCycleTimeRequest(
+        kanbanSetting.token,
+        kanbanSetting.type,
+        kanbanSetting.site,
+        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
+        kanbanSetting.boardId,
+        kanbanSetting.doneColumn,
+        request.startTime,
+        request.endTime,
+        kanbanSetting.targetFields,
+        kanbanSetting.treatFlagCardAsBlock
+      );
     this.cards = await kanban.getStoryPointsAndCycleTime(
-      new StoryPointsAndCycleTimeRequest(
-        kanbanSetting.token,
-        kanbanSetting.type,
-        kanbanSetting.site,
-        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
-        kanbanSetting.boardId,
-        kanbanSetting.doneColumn,
-        request.startTime,
-        request.endTime,
-        kanbanSetting.targetFields,
-        kanbanSetting.treatFlagCardAsBlock
-      ),
+      storyPointAndCycleTimeRequest,
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
-    this.kanabanSprintStatistics = await new GenerateSprintReporterService(
+    this.kanabanSprintStatistics = await kanban.getSprintStatistics(
+      storyPointAndCycleTimeRequest,
       this.cards
-    ).fetchSprintInfoFromKanban(request);
+    );
     this.nonDonecards = await kanban.getStoryPointsAndCycleTimeForNonDoneCards(
-      new StoryPointsAndCycleTimeRequest(
-        kanbanSetting.token,
-        kanbanSetting.type,
-        kanbanSetting.site,
-        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
-        kanbanSetting.boardId,
-        kanbanSetting.doneColumn,
-        request.startTime,
-        request.endTime,
-        kanbanSetting.targetFields,
-        kanbanSetting.treatFlagCardAsBlock
-      ),
+      storyPointAndCycleTimeRequest,
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
-    this.columns = await kanban.getColumns(
-      new StoryPointsAndCycleTimeRequest(
-        kanbanSetting.token,
-        kanbanSetting.type,
-        kanbanSetting.site,
-        kanbanSetting[KanbanKeyIdentifierMap[kanbanSetting.type]],
-        kanbanSetting.boardId,
-        kanbanSetting.doneColumn,
-        request.startTime,
-        request.endTime,
-        kanbanSetting.targetFields,
-        kanbanSetting.treatFlagCardAsBlock
-      )
-    );
+    this.columns = await kanban.getColumns(storyPointAndCycleTimeRequest);
     await ConvertBoardDataToCsv(
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,
@@ -493,7 +471,7 @@ export class GenerateReportService {
 
   addKanbanSprintStatisticsToResponse(response: GenerateReporterResponse) {
     response.completedCardsNumber =
-      this.kanabanSprintStatistics?.completedCardsNumber;
+      this.kanabanSprintStatistics?.sprintCompletedCardsCounts;
     response.standardDeviation =
       this.kanabanSprintStatistics?.standardDeviation;
     response.blockedAndDevelopingPercentage =

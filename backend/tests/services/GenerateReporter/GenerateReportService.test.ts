@@ -69,7 +69,7 @@ const kanbanSetting: RequestKanbanSetting = {
     },
   ],
   treatFlagCardAsBlock: true,
-  users: ["Huijun Hong", "Wu Jinpeng", "Xinyi Wei", "junfeng.dai"],
+  users: ["aaa", "bbb", "ccc", "ddd"],
   targetFields: [
     {
       key: "parent",
@@ -503,21 +503,21 @@ describe("GenerateReportService", () => {
 
     const deployInfo1 = {
       pipelineCreateTime: "2021-12-17T07:22:38.100Z",
-      jobStartTime: "2021-12-17T07:37:36.455Z",
-      jobFinishTime: "2021-12-17T07:38:08.835Z",
-      commitId: "beccbf50c2a345097f10fd1f2b33a34e6df304e1",
+      jobStartTime: "2021-12-18T07:37:36.455Z",
+      jobFinishTime: "2021-12-19T07:38:08.835Z",
+      commitId: "1",
       state: "passed",
     };
     const deployInfo2 = {
       pipelineCreateTime: "2021-12-17T07:22:38.100Z",
       jobStartTime: "2021-12-17T07:37:36.455Z",
       jobFinishTime: "2021-12-17T07:38:08.835Z",
-      commitId: "beccbf50c2a345097f10fd1f2b33a34e6df304e1",
+      commitId: "2",
       state: "passed",
     };
     const deployTimes = {
-      pipelineId: "reporting-web",
-      pipelineName: "reporting-web",
+      pipelineId: "reporting",
+      pipelineName: "reporting",
       pipelineStep: ':white_check_mark: Record "qa" release',
       passed: [deployInfo1, deployInfo2],
       failed: [" ", " "],
@@ -672,20 +672,20 @@ describe("fetch data ", () => {
 
   it("fetch data from codebase ", async () => {
     const leadTime1 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web",
-      name: "sme-web",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "deploymentTest",
+      name: "deploymentTest",
       step: ":rocket: :eagle: Deploy Integration App",
-      repository: "https://github.com/MYOB-Technology/sme-web",
+      repository: "https://github.com/orgtest-Technology/deploymentTest",
     };
     const leadTime2 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web-bff",
-      name: "sme-web-bff",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "leadtimeTest",
+      name: "leadtimeTest",
       step: ":kubernetes: Deploy to Integration",
-      repository: "https://github.com/MYOB-Technology/sme-web-bff",
+      repository: "https://github.com/orgtest-Technology/leadtimeTest",
     };
     request.codebaseSetting = {
       type: "Github",
@@ -693,20 +693,20 @@ describe("fetch data ", () => {
       leadTime: [leadTime1, leadTime2],
     };
     const deployment1 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web",
-      name: "sme-web",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "deploymentTest",
+      name: "deploymentTest",
       step: ":rocket: :eagle: Deploy Integration App",
-      repository: "https://github.com/MYOB-Technology/sme-web",
+      repository: "https://github.com/orgtest-Technology/deploymentTest",
     };
     const deployment2 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web-bff",
-      name: "sme-web-bff",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "leadtimeTest",
+      name: "leadtimeTest",
       step: ":kubernetes: Deploy to Integration",
-      repository: "https://github.com/MYOB-Technology/sme-web-bff",
+      repository: "https://github.com/orgtest-Technology/leadtimeTest",
     };
     request.pipeline = {
       type: "BuildKite",
@@ -732,20 +732,20 @@ describe("fetch data ", () => {
 
   it("should get repo map ", async () => {
     const leadTime1 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web",
-      name: "sme-web",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "deploymentTest",
+      name: "deploymentTest",
       step: ":rocket: :eagle: Deploy Integration App",
-      repository: "https://github.com/MYOB-Technology/sme-web",
+      repository: "https://github.com/orgtest-Technology/deploymentTest",
     };
     const leadTime2 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web-bff",
-      name: "sme-web-bff",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "leadtimeTest",
+      name: "leadtimeTest",
       step: ":kubernetes: Deploy to Integration",
-      repository: "https://github.com/MYOB-Technology/sme-web-bff",
+      repository: "https://github.com/orgtest-Technology/leadtimeTest",
     };
     const codebaseSetting = {
       type: "Github",
@@ -756,30 +756,33 @@ describe("fetch data ", () => {
       codebaseSetting
     );
     const expectedMap: Map<string, string> = new Map();
-    expectedMap.set("sme-web", "https://github.com/MYOB-Technology/sme-web");
     expectedMap.set(
-      "sme-web-bff",
-      "https://github.com/MYOB-Technology/sme-web-bff"
+      "deploymentTest",
+      "https://github.com/orgtest-Technology/deploymentTest"
+    );
+    expectedMap.set(
+      "leadtimeTest",
+      "https://github.com/orgtest-Technology/leadtimeTest"
     );
     expect(responseMap).deep.equals(expectedMap);
   });
 
   it("fetch data from pipeline ", async () => {
     const deployment1 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web",
-      name: "sme-web",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "deploymentTest",
+      name: "deploymentTest",
       step: ":rocket: :eagle: Deploy Integration App",
-      repository: "https://github.com/MYOB-Technology/sme-web",
+      repository: "https://github.com/orgtest-Technology/deploymentTest",
     };
     const deployment2 = {
-      orgId: "myob",
-      orgName: "MYOB",
-      id: "sme-web-bff",
-      name: "sme-web-bff",
+      orgId: "orgtest",
+      orgName: "orgtest",
+      id: "leadtimeTest",
+      name: "leadtimeTest",
       step: ":kubernetes: Deploy to Integration",
-      repository: "https://github.com/MYOB-Technology/sme-web-bff",
+      repository: "https://github.com/orgtest-Technology/leadtimeTest",
     };
     request.pipeline = {
       type: "BuildKite",

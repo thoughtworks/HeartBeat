@@ -314,7 +314,6 @@ const cards: Cards = {
   cardsNumber: 3,
   matchedCards: matchedCards,
 };
-
 const request: GenerateReportRequest = {
   metrics: ["Velocity", "Cycle time", "Classification"],
   startTime: 1640966400000,
@@ -468,7 +467,6 @@ const statistics = new SprintStatistics(
   blockedAndDevelopingPercentage,
   sprintBlockReason
 );
-
 const sprintStatistics = new SprintStatistics(
   [
     { sprintName: sprint1Name, value: 3 },
@@ -592,7 +590,6 @@ const sprintStatistics = new SprintStatistics(
     },
   ]
 );
-
 const pipeLineMetrics = [
   RequireDataEnum.CHANGE_FAILURE_RATE,
   RequireDataEnum.DEPLOYMENT_FREQUENCY,
@@ -607,14 +604,15 @@ const kanbanMetrics = [
   RequireDataEnum.CLASSIFICATION,
 ].map((metric) => metric.toLowerCase());
 
-describe("GenerateReportService", () => {
+const service = new GenerateReportService();
+const serviceProto = Object.getPrototypeOf(service);
+serviceProto.kanbanMetrics = kanbanMetrics;
+serviceProto.pipeLineMetrics = pipeLineMetrics;
+serviceProto.codebaseMetrics = codebaseMetrics;
+
+describe("Generate report", () => {
   afterEach(() => sinon.restore());
-  const service = new GenerateReportService();
-  const serviceProto = Object.getPrototypeOf(service);
-  serviceProto.kanbanMetrics = kanbanMetrics;
-  serviceProto.pipeLineMetrics = pipeLineMetrics;
-  serviceProto.codebaseMetrics = codebaseMetrics;
-  it("generate report with velocity & cycle time & classification", async () => {
+  it("should generate report with velocity & cycle time & classification", async () => {
     sinon.stub(changeConsiderHolidayMode);
     sinon.stub(GenerateReportService.prototype, <any>"fetchOriginalData");
     sinon.stub(GenerateReportService.prototype, <any>"generateCsvForPipeline");
@@ -626,7 +624,7 @@ describe("GenerateReportService", () => {
     expect(reportResponse).deep.equal(response);
   });
 
-  it("generate report with deployment frequnency & change failure rate & mean time to recovery & lead time for changes", async () => {
+  it("should generate report with deployment frequnency & change failure rate & mean time to recovery & lead time for changes", async () => {
     const requestWithOtherMetrics: GenerateReportRequest = {
       metrics: [
         "deployment frequency",
@@ -684,8 +682,11 @@ describe("GenerateReportService", () => {
       reportResponse.leadTimeForChanges?.avgLeadTimeForChanges?.name
     ).equals("Average");
   });
+});
 
-  it("fetch original data with kanban metric", async () => {
+describe("process response when given different metrics", () => {
+  afterEach(() => sinon.restore());
+  it("process response when given kanban metrics", async () => {
     request.metrics = ["Velocity", "Cycle time", "Classification"];
     const fetchDataFromKanban = sinon.stub(
       GenerateReportService.prototype,
@@ -693,6 +694,35 @@ describe("GenerateReportService", () => {
     );
     await (service as any).fetchOriginalData(request);
     expect(fetchDataFromKanban.callCount).equal(1);
+  });
+
+  it("process response when given codebse metrics", async () => {
+    const fetchDataFromCodebase = sinon.stub(
+      GenerateReportService.prototype,
+      <any>"fetchDataFromCodebase"
+    );
+    request.metrics = ["lead time for changes"];
+    request.codebaseSetting = new CodebaseSetting();
+    request.codebaseSetting.type = "Github";
+    request.codebaseSetting.token = "abc";
+    request.pipeline = new PipelineSetting();
+    request.pipeline.type = "buildkite";
+    request.pipeline.token = "abc";
+
+    await serviceProto.fetchOriginalData(request);
+    expect(fetchDataFromCodebase.callCount).equal(1);
+  });
+
+  it("process response when given pipeline metrics", async () => {
+    const fetchDataFromPipeline = sinon.stub(
+      GenerateReportService.prototype,
+      <any>"fetchDataFromPipeline"
+    );
+    request.metrics = ["change failure rate"];
+    request.pipeline = new PipelineSetting();
+    request.pipeline.type = "buildkite";
+    await serviceProto.fetchOriginalData(request);
+    expect(fetchDataFromPipeline.callCount).equal(1);
   });
 
   it("should throw error when metrics does not exist", async () => {
@@ -717,85 +747,11 @@ describe("GenerateReportService", () => {
       }
     }
   });
-
-  it("fetch original data with codebse metrics", async () => {
-    const fetchDataFromCodebase = sinon.stub(
-      GenerateReportService.prototype,
-      <any>"fetchDataFromCodebase"
-    );
-    request.metrics = ["lead time for changes"];
-    request.codebaseSetting = new CodebaseSetting();
-    request.codebaseSetting.type = "Github";
-    request.codebaseSetting.token = "abc";
-    request.pipeline = new PipelineSetting();
-    request.pipeline.type = "buildkite";
-    request.pipeline.token = "abc";
-
-    await serviceProto.fetchOriginalData(request);
-    expect(fetchDataFromCodebase.callCount).equal(1);
-  });
-
-  it("fetch original data with pipeline metrics", async () => {
-    const fetchDataFromPipeline = sinon.stub(
-      GenerateReportService.prototype,
-      <any>"fetchDataFromPipeline"
-    );
-    request.metrics = ["change failure rate"];
-    request.pipeline = new PipelineSetting();
-    request.pipeline.type = "buildkite";
-    await serviceProto.fetchOriginalData(request);
-    expect(fetchDataFromPipeline.callCount).equal(1);
-  });
-
-  it("should throw error when fetching original data without kanban setting", async () => {
-    try {
-      await serviceProto.fetchOriginalData(requestWithNullKanbanSetting);
-    } catch (err) {
-      if (err instanceof SettingMissingError) {
-        expect(err.message).equals(
-          new SettingMissingError("kanban setting").message
-        );
-      }
-    }
-  });
-
-  it("should throw error when fetching original data without pipeline setting", async () => {
-    request.metrics = ["CHANGE_FAILURE_RATE"];
-    request.pipeline = new PipelineSetting();
-    try {
-      await serviceProto.fetchOriginalData(request);
-    } catch (err) {
-      if (err instanceof SettingMissingError) {
-        expect(err.message).equals(
-          new SettingMissingError("pipeline setting").message
-        );
-      }
-    }
-  });
-
-  it("should throw error when fetching original data without codebase or pipeline setting", async () => {
-    request.metrics = ["lead time for changes"];
-    request.codebaseSetting = new CodebaseSetting();
-    try {
-      await serviceProto.fetchOriginalData(request);
-    } catch (err) {
-      if (err instanceof SettingMissingError) {
-        expect(err.message).equals(
-          new SettingMissingError("codebase setting or pipeline setting")
-            .message
-        );
-      }
-    }
-  });
 });
-describe("fetch data ", () => {
+
+describe("fetch data from different sources", () => {
   afterEach(() => sinon.restore());
-  const service = new GenerateReportService();
-  const serviceProto = Object.getPrototypeOf(service);
-  serviceProto.kanbanMetrics = kanbanMetrics;
-  serviceProto.pipeLineMetrics = pipeLineMetrics;
-  serviceProto.codebaseMetrics = codebaseMetrics;
-  it("fetch data from Kanban ", async () => {
+  it("should fetch data from Kanban", async () => {
     sinon
       .stub(Jira.prototype, "getStoryPointsAndCycleTime")
       .returns(Promise.resolve(cards));
@@ -814,7 +770,7 @@ describe("fetch data ", () => {
     expect(serviceProto.kanabanSprintStatistics).deep.equal(statistics);
   });
 
-  it("fetch data from codebase ", async () => {
+  it("should fetch data from codebase", async () => {
     const leadTime1 = {
       orgId: "orgtest",
       orgName: "orgtest",
@@ -859,11 +815,11 @@ describe("fetch data ", () => {
     };
     sinon.stub(Buildkite.prototype, "fetchPipelineBuilds");
     sinon.stub(Buildkite.prototype, "countDeployTimes");
-
+    sinon.stub(GitHub.prototype, "fetchPipelinesLeadTime");
+    
     serviceProto.deployTimesListFromLeadTimeSetting = [];
     serviceProto.BuildInfosOfLeadtimes = [];
 
-    sinon.stub(GitHub.prototype, "fetchPipelinesLeadTime");
     await serviceProto.fetchDataFromCodebase(
       request,
       1640966400000,
@@ -874,7 +830,7 @@ describe("fetch data ", () => {
     expect(serviceProto.BuildInfosOfLeadtimes.length).equals(2);
   });
 
-  it("should get repo map ", async () => {
+  it("should get repo map", async () => {
     const leadTime1 = {
       orgId: "orgtest",
       orgName: "orgtest",
@@ -911,7 +867,7 @@ describe("fetch data ", () => {
     expect(responseMap).deep.equals(expectedMap);
   });
 
-  it("fetch data from pipeline ", async () => {
+  it("should fetch data from pipeline", async () => {
     const deployment1 = {
       orgId: "orgtest",
       orgName: "orgtest",
@@ -946,6 +902,50 @@ describe("fetch data ", () => {
     );
     expect(serviceProto.deployTimesListFromDeploySetting.length).equals(2);
     expect(serviceProto.BuildInfos.length).equals(2);
+  });
+});
+
+describe("throw error when fetching original data without relevant setting", () => {
+  afterEach(() => sinon.restore());
+  it("should throw error when fetching original data without kanban setting", async () => {
+    try {
+      await serviceProto.fetchOriginalData(requestWithNullKanbanSetting);
+    } catch (err) {
+      if (err instanceof SettingMissingError) {
+        expect(err.message).equals(
+          new SettingMissingError("kanban setting").message
+        );
+      }
+    }
+  });
+
+  it("should throw error when fetching original data without pipeline setting", async () => {
+    request.metrics = ["CHANGE_FAILURE_RATE"];
+    request.pipeline = new PipelineSetting();
+    try {
+      await serviceProto.fetchOriginalData(request);
+    } catch (err) {
+      if (err instanceof SettingMissingError) {
+        expect(err.message).equals(
+          new SettingMissingError("pipeline setting").message
+        );
+      }
+    }
+  });
+
+  it("should throw error when fetching original data without codebase or pipeline setting", async () => {
+    request.metrics = ["lead time for changes"];
+    request.codebaseSetting = new CodebaseSetting();
+    try {
+      await serviceProto.fetchOriginalData(request);
+    } catch (err) {
+      if (err instanceof SettingMissingError) {
+        expect(err.message).equals(
+          new SettingMissingError("codebase setting or pipeline setting")
+            .message
+        );
+      }
+    }
   });
 });
 

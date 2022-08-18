@@ -11,3 +11,4 @@ dora-backend-win.exe
 *.csv
 .nyc_output
 coverage
+*.xlsx

@@ -34,7 +34,11 @@ import {
   CardCycleTime,
   StepsDay,
 } from "../../../../src/models/kanban/CardCycleTime";
-import { SprintStatistics } from "../../../../src/models/kanban/SprintStatistics";
+import {
+  BlockedReason,
+  SprintCycleTimeAndBlockedTime,
+  SprintStatistics,
+} from "../../../../src/models/kanban/SprintStatistics";
 
 const jira = new Jira("testToken", "domain");
 const jiraTest = Object.getPrototypeOf(jira);
@@ -957,28 +961,40 @@ describe("map cards by sprint name", () => {
     expect(mapSprintCards).deep.equal(new Map<string, JiraCardResponse[]>());
   });
 });
+describe("calculate cycleTime and blockedTime", () => {
+  it("should return correct cycleTime and blockedTime when there are matched cards in sprint", () => {
+    const cycleTimeAndBlockedTime =
+      jiraTest.calculateTotalCycleTimeAndBlockedTime(mapSprintCards);
+    const expected = [
+      { sprintName: "test Sprint 1", cycleTime: 13.6, blockedTime: 3 },
+      { sprintName: "test Sprint 2", cycleTime: 7, blockedTime: 2 },
+      { sprintName: "test Sprint 3", cycleTime: 2, blockedTime: 1 },
+    ];
+    expect(cycleTimeAndBlockedTime).deep.equal(expected);
+  });
+  it("should return an empty array when there is no matched card in sprint", () => {
+    const cycleTimeAndBlockedTime =
+      jiraTest.calculateTotalCycleTimeAndBlockedTime(
+        new Map<string, JiraCardResponse[]>()
+      );
+    const expected = new Array<SprintCycleTimeAndBlockedTime>();
+    expect(cycleTimeAndBlockedTime).deep.equal(expected);
+  });
+});
 describe("calculate percentage of different block reasons in the latest sprint", () => {
   it("should return correct blocked reason percentage when there are matched cards in sprint", () => {
     const blockedPercentageByReason = jiraTest.calculateBlockReasonPercentage(
       activeAndClosedSprints,
       mapSprintCards
     );
-
-    expect(
-      blockedPercentageByReason.get(JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK)
-    ).equal(0.07);
-    expect(blockedPercentageByReason.get(JiraBlockReasonEnum.TAKE_LEAVE)).equal(
-      0.07
-    );
-    expect(blockedPercentageByReason.get(JiraBlockReasonEnum.OTHERS)).equal(
-      0.07
-    );
+    expect(blockedPercentageByReason[0].blockDetails[0].percentage).equal(0.07);
+    expect(blockedPercentageByReason[0].blockDetails[6].percentage).equal(0.07);
+    expect(blockedPercentageByReason[0].blockDetails[7].percentage).equal(0.07);
   });
 
-  it("should return 0 when there is not any matched card in sprint", () => {
+  it("should return a empty array when there is no matched card in sprint", () => {
     const mapLatestSprintEmptyCards = new Map<string, JiraCardResponse[]>([
       [sprint1Name, emptyCardList],
-      [sprint2Name, cardList2],
       [sprint3Name, cardList3],
     ]);
     const blockedPercentageByReason = jiraTest.calculateBlockReasonPercentage(
@@ -986,16 +1002,7 @@ describe("calculate percentage of different block reasons in the latest sprint",
       mapLatestSprintEmptyCards
     );
 
-    expect(
-      blockedPercentageByReason.get(JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK)
-    ).equal(0);
-    expect(blockedPercentageByReason.get(JiraBlockReasonEnum.TAKE_LEAVE)).equal(
-      0
-    );
-    expect(blockedPercentageByReason.get(JiraBlockReasonEnum.OTHERS)).equal(0);
-    expect(
-      blockedPercentageByReason.get(JiraBlockReasonEnum.QUESTION_TO_BE_ANSWERED)
-    ).equal(0);
+    expect(blockedPercentageByReason).deep.equal([]);
   });
 });
 
@@ -1092,11 +1099,76 @@ describe("calculate the number of completed cards in every sprint", () => {
 
 describe("generate Jira sprint statistics", () => {
   it("should return the Jira sprint statistics when statistic data are not empty", () => {
-    const sprintBlockReasonPercentageMap = new Map<string, number>([
-      [JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK, 0.07],
-      [JiraBlockReasonEnum.TAKE_LEAVE, 0.07],
-      [JiraBlockReasonEnum.OTHERS, 0.07],
-    ]);
+    const sprintBlockReason = [
+      {
+        sprintName: sprint1Name,
+        totalBlockedPercentage: 0.22,
+        blockDetails: [
+          {
+            reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+            percentage: 0.05,
+            time: 0,
+          },
+          {
+            reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+            percentage: 0.15,
+            time: 0,
+          },
+          {
+            reasonName: JiraBlockReasonEnum.OTHERS,
+            percentage: 0.02,
+            time: 0,
+          },
+        ],
+      },
+      {
+        sprintName: sprint2Name,
+        totalBlockedPercentage: 0.29,
+        blockDetails: [
+          {
+            reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+            percentage: 0.09,
+            time: 0,
+          },
+          {
+            reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+            percentage: 0.15,
+            time: 0,
+          },
+          {
+            reasonName: JiraBlockReasonEnum.OTHERS,
+            percentage: 0.05,
+            time: 0,
+          },
+        ],
+      },
+      {
+        sprintName: sprint3Name,
+        totalBlockedPercentage: 0.5,
+        blockDetails: [
+          {
+            reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+            percentage: 0.35,
+            time: 0,
+          },
+          {
+            reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+            percentage: 0.15,
+            time: 0,
+          },
+          {
+            reasonName: JiraBlockReasonEnum.OTHERS,
+            percentage: 0.05,
+            time: 0,
+          },
+        ],
+      },
+    ];
+    const cycleTimeAndBlockedTime = [
+      { sprintName: sprint1Name, cycleTime: 1, blockedTime: 1 },
+      { sprintName: sprint2Name, cycleTime: 2, blockedTime: 2 },
+      { sprintName: sprint3Name, cycleTime: 3, blockedTime: 3 },
+    ];
     const sprintBlockPercentageMap = new Map<string, any>([
       [sprint1Name, { blockedPercentage: 0.22, developingPercentage: 0.78 }],
       [
@@ -1122,19 +1194,22 @@ describe("generate Jira sprint statistics", () => {
     const sprintCompletedCardsNumberMap = new Map<string, number>([
       [sprint1Name, 3],
       [sprint2Name, 2],
+      [sprint3Name, 2],
     ]);
 
     const sprintStartistics = jiraTest.generateJiraSprintStatistics(
       sprintCompletedCardsNumberMap,
       sprintBlockPercentageMap,
       sprintStandardDeviationMap,
-      sprintBlockReasonPercentageMap
+      sprintBlockReason,
+      cycleTimeAndBlockedTime
     );
 
     const expected = new SprintStatistics(
       [
         { sprintName: sprint1Name, value: 3 },
         { sprintName: sprint2Name, value: 2 },
+        { sprintName: sprint3Name, value: 2 },
       ],
       [
         {
@@ -1170,43 +1245,95 @@ describe("generate Jira sprint statistics", () => {
           },
         },
       ],
-      {
-        totalBlockedPercentage: 0.5,
-        blockReasonPercentage: [
-          {
-            reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
-            percentage: 0.07,
-          },
-          {
-            reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
-            percentage: 0.07,
-          },
-          {
-            reasonName: JiraBlockReasonEnum.OTHERS,
-            percentage: 0.07,
-          },
-        ],
-      }
+      [
+        {
+          sprintName: sprint1Name,
+          totalBlockedPercentage: 0.22,
+          blockDetails: [
+            {
+              reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+              percentage: 0.05,
+              time: 0,
+            },
+            {
+              reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+              percentage: 0.15,
+              time: 0,
+            },
+            {
+              reasonName: JiraBlockReasonEnum.OTHERS,
+              percentage: 0.02,
+              time: 0,
+            },
+          ],
+        },
+        {
+          sprintName: sprint2Name,
+          totalBlockedPercentage: 0.29,
+          blockDetails: [
+            {
+              reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+              percentage: 0.09,
+              time: 0,
+            },
+            {
+              reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+              percentage: 0.15,
+              time: 0,
+            },
+            {
+              reasonName: JiraBlockReasonEnum.OTHERS,
+              percentage: 0.05,
+              time: 0,
+            },
+          ],
+        },
+        {
+          sprintName: sprint3Name,
+          totalBlockedPercentage: 0.5,
+          blockDetails: [
+            {
+              reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+              percentage: 0.35,
+              time: 0,
+            },
+            {
+              reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+              percentage: 0.15,
+              time: 0,
+            },
+            {
+              reasonName: JiraBlockReasonEnum.OTHERS,
+              percentage: 0.05,
+              time: 0,
+            },
+          ],
+        },
+      ],
+      [
+        { sprintName: sprint1Name, cycleTime: 1, blockedTime: 1 },
+        { sprintName: sprint2Name, cycleTime: 2, blockedTime: 2 },
+        { sprintName: sprint3Name, cycleTime: 3, blockedTime: 3 },
+      ]
     );
 
     expect(sprintStartistics).deep.equal(expected);
   });
   it("should return the empty Jira sprint statistics when statistic data is empty", () => {
-    const sprintBlockReasonPercentageMap = new Map<string, number>();
+    const sprintBlockReason = new Array<BlockedReason>();
     const sprintBlockPercentageMap = new Map<string, any>();
     const sprintStandardDeviationMap = new Map<string, any>();
     const sprintCompletedCardsNumberMap = new Map<string, number>();
+    const cycleTimeAndBlockedTime = new Array<SprintCycleTimeAndBlockedTime>();
 
     const sprintStatistics = jiraTest.generateJiraSprintStatistics(
       sprintCompletedCardsNumberMap,
       sprintBlockPercentageMap,
       sprintStandardDeviationMap,
-      sprintBlockReasonPercentageMap
+      sprintBlockReason,
+      cycleTimeAndBlockedTime
     );
-    const expected = new SprintStatistics([], [], [], {
-      totalBlockedPercentage: 0,
-      blockReasonPercentage: [],
-    });
+    const expected = new SprintStatistics([], [], [], [], []);
     expect(sprintStatistics).deep.equal(expected);
   });
 });
@@ -1263,19 +1390,40 @@ describe("get sprint statistics", () => {
           value: { blockedPercentage: 0.5, developingPercentage: 0.5 },
         },
       ],
-      {
-        totalBlockedPercentage: 0.5,
-        blockReasonPercentage: [
-          { reasonName: "dependencies_not_work", percentage: 0.5 },
-          { reasonName: "sit_env_down", percentage: 0 },
-          { reasonName: "priority_change", percentage: 0 },
-          { reasonName: "solution_review", percentage: 0 },
-          { reasonName: "pr_review", percentage: 0 },
-          { reasonName: "question_to_be_answered", percentage: 0 },
-          { reasonName: "take_leave", percentage: 0 },
-          { reasonName: "others", percentage: 0 },
-        ],
-      }
+      [
+        {
+          sprintName: sprint1Name,
+          totalBlockedPercentage: 0.5,
+          blockDetails: [
+            { reasonName: "dependencies_not_work", percentage: 0.5, time: 1 },
+            { reasonName: "sit_env_down", percentage: 0, time: 0 },
+            { reasonName: "priority_change", percentage: 0, time: 0 },
+            { reasonName: "solution_review", percentage: 0, time: 0 },
+            { reasonName: "pr_review", percentage: 0, time: 0 },
+            { reasonName: "question_to_be_answered", percentage: 0, time: 0 },
+            { reasonName: "take_leave", percentage: 0, time: 0 },
+            { reasonName: "others", percentage: 0, time: 0 },
+          ],
+        },
+        {
+          sprintName: sprint2Name,
+          totalBlockedPercentage: 0.2,
+          blockDetails: [
+            { reasonName: "dependencies_not_work", percentage: 0, time: 0 },
+            { reasonName: "sit_env_down", percentage: 0, time: 0 },
+            { reasonName: "priority_change", percentage: 0, time: 0 },
+            { reasonName: "solution_review", percentage: 0, time: 0 },
+            { reasonName: "pr_review", percentage: 0, time: 0 },
+            { reasonName: "question_to_be_answered", percentage: 0, time: 0 },
+            { reasonName: "take_leave", percentage: 0.2, time: 1 },
+            { reasonName: "others", percentage: 0, time: 0 },
+          ],
+        },
+      ],
+      [
+        { sprintName: sprint1Name, cycleTime: 2, blockedTime: 1 },
+        { sprintName: sprint2Name, cycleTime: 5, blockedTime: 1 },
+      ]
     );
     const actual: SprintStatistics = await jira.getSprintStatistics(
       storyPointsAndCycleTimeRequest,

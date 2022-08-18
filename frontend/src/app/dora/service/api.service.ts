@@ -80,7 +80,14 @@ export class ApiService {
       responseType: 'text',
     });
   }
-
+  fetchExportSprintData(timeStamp: number) {
+    const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
+    return this.httpClient.get(`${this.baseUrl}/exportExcel?timeStamp=${timeStamp}`, {
+      headers,
+      responseType: 'blob',
+      observe: 'body',
+    });
+  }
   fetchStepsByPipeline(params: any) {
     return this.httpClient.post(`${this.baseUrl}/pipeline/getSteps`, params);
   }

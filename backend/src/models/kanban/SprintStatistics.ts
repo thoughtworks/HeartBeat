@@ -1,21 +1,29 @@
 export class SprintStatistics {
-  public sprintCompletedCardsCounts?: Array<SprintCompletedCardsCount>;
-  public standardDeviation?: Array<StandardDeviation>;
-  public blockedAndDevelopingPercentage?: Array<BlockedAndDevelopingPercentage>;
-  public latestSprintBlockReason?: BlockedReason;
+  public sprintCompletedCardsCounts: Array<SprintCompletedCardsCount>;
+  public standardDeviation: Array<StandardDeviation>;
+  public blockedAndDevelopingPercentage: Array<BlockedAndDevelopingPercentage>;
+  public sprintBlockReason: Array<BlockedReason>;
+  public cycleTimeAndBlockedTime: Array<SprintCycleTimeAndBlockedTime>;
   constructor(
     sprintComletedCardsCounts?: Array<SprintCompletedCardsCount>,
     standardDeviation?: Array<StandardDeviation>,
     blockedAndDevelopingPercentage?: Array<BlockedAndDevelopingPercentage>,
-    latestSprintBlockReason?: BlockedReason
+    sprintBlockReason?: Array<BlockedReason>,
+    cycleTimeAndBlockedTime?: Array<SprintCycleTimeAndBlockedTime>
   ) {
-    this.sprintCompletedCardsCounts = sprintComletedCardsCounts;
-    this.standardDeviation = standardDeviation;
-    this.blockedAndDevelopingPercentage = blockedAndDevelopingPercentage;
-    this.latestSprintBlockReason = latestSprintBlockReason;
+    this.sprintCompletedCardsCounts = sprintComletedCardsCounts || [];
+    this.standardDeviation = standardDeviation || [];
+    this.blockedAndDevelopingPercentage = blockedAndDevelopingPercentage || [];
+    this.sprintBlockReason = sprintBlockReason || [];
+    this.cycleTimeAndBlockedTime = cycleTimeAndBlockedTime || [];
   }
 }
 
+export type SprintCycleTimeAndBlockedTime = {
+  sprintName: string;
+  cycleTime: number;
+  blockedTime: number;
+};
 export type SprintCompletedCardsCount = {
   sprintName: string;
   value: number;
@@ -41,14 +49,16 @@ export type BlockedAndDevelopingPercentage = {
   value: BlockedAndDevelopingPercentagePair;
 };
 
-export type BlockedReasonAndPercenagePair = {
+export type BlockDetails = {
   reasonName: string;
   percentage: number;
+  time: number;
 };
 
 export type BlockedReason = {
+  sprintName: string;
   totalBlockedPercentage: number;
-  blockReasonPercentage: BlockedReasonAndPercenagePair[];
+  blockDetails: BlockDetails[];
 };
 
 export type SprintCycleTime = {

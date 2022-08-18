@@ -576,6 +576,11 @@ export class BlockReasonPercentage {
     required: true,
   })
   percentage?: number;
+  @swaggerProperty({
+    type: "number",
+    required: true,
+  })
+  time?: number;
 }
 
 @swaggerClass()

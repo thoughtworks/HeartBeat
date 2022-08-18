@@ -27,6 +27,7 @@ import { BlockReasonPercentageReportComponent } from './reports/block-reason-per
 import { AverageCycleTimeReportComponent } from './reports/average-cycle-time/average-cycle-time.component'
 import { ThroughputReportComponent } from './reports/throughput/throughput.component'
 import { TimeAllocationReportComponent } from './reports/time-allocation/time-allocation.component'
+import { ExportExcelComponent } from "./reports/export-excel/export-excel.component";
 
 export const components: any[] = [
   HomeComponent,
@@ -59,6 +60,7 @@ export const components: any[] = [
   AverageCycleTimeReportComponent,
   ThroughputReportComponent,
   TimeAllocationReportComponent,
+  ExportExcelComponent,
 ];
 
 export * from './home/home.component';

@@ -32,10 +32,16 @@ import {
 import { Sprint } from "../../../models/kanban/Sprint";
 import { JiraBlockReasonEnum } from "../../../models/kanban/JiraBlockReasonEnum";
 import {
+  BlockedAndDevelopingPercentage,
   BlockedAndDevelopingPercentagePair,
+  BlockedReason,
+  BlockDetails,
+  SprintCompletedCardsCount,
   SprintCycleTime,
+  SprintCycleTimeAndBlockedTime,
   SprintCycleTimeCount,
   SprintStatistics,
+  StandardDeviation,
   StandardDeviationAndAveragePair,
 } from "../../../models/kanban/SprintStatistics";
 
@@ -547,15 +553,19 @@ export class Jira implements Kanban {
       activeAndClosedSprints
     );
 
-    const sprintBlockReasonPercentageMap = this.calculateBlockReasonPercentage(
+    const sprintBlockReasonPercentages = this.calculateBlockReasonPercentage(
       activeAndClosedSprints,
       sprintCardsMap
     );
+
+    const cycleTimeAndBlockedTime =
+      this.calculateTotalCycleTimeAndBlockedTime(sprintCardsMap);
     return this.generateJiraSprintStatistics(
       sprintCompletedCardsNumberMap,
       sprintBlockPercentageMap,
       sprintStandardDeviationMap,
-      sprintBlockReasonPercentageMap
+      sprintBlockReasonPercentages,
+      cycleTimeAndBlockedTime
     );
   }
 
@@ -570,62 +580,55 @@ export class Jira implements Kanban {
     return blockedTimeMap;
   }
 
-  private getLatestSprintName(
-    sprintCardsMap: Map<string, JiraCardResponse[]>,
-    sprints: Sprint[]
-  ): string {
-    let latestSprintName: string = "";
-    const sortedSprints = sprints.sort(
-      (sprint1, sprint2) =>
-        Date.parse(sprint1.startDate) - Date.parse(sprint2.startDate)
-    );
-    for (let i: number = sortedSprints.length - 1; i >= 0; i--) {
-      if (sprintCardsMap.has(sortedSprints[i].name)) {
-        latestSprintName = sortedSprints[i].name;
-        break;
-      }
-    }
-    return latestSprintName;
-  }
-
   private calculateBlockReasonPercentage(
     sprints: Sprint[],
     sprintCardsMap: Map<string, JiraCardResponse[]>
-  ): Map<string, number> {
-    let totalCycleTime = 0;
-    const blockedTimeForEveryReasonMap: Map<string, number> =
-      this.initBlockedTimeMap();
-    const latestSprintName = this.getLatestSprintName(sprintCardsMap, sprints);
-    const latestSprintCards = sprintCardsMap.get(latestSprintName)!;
-
-    if (!latestSprintCards || latestSprintCards.length == 0) {
-      return blockedTimeForEveryReasonMap;
-    }
-
-    for (const card of latestSprintCards) {
-      totalCycleTime += card.getTotalOrZero();
-      let blockReason = card.baseInfo.fields.label || "";
-
-      if (!blockedTimeForEveryReasonMap.has(blockReason)) {
-        blockReason = JiraBlockReasonEnum.OTHERS;
+  ): Array<BlockedReason> {
+    const sprintBlockedResaon: Array<BlockedReason> = [];
+    for (const sprintCardEntry of sprintCardsMap) {
+      if (
+        !sprints.filter((sprint) => sprint.name === sprintCardEntry[0]).length
+      ) {
+        break;
       }
+      let cycleTime = 0;
+      let blockedTime = 0;
+      const blockedTimeForEveryReasonMap: Map<string, number> =
+        this.initBlockedTimeMap();
+      for (const card of sprintCardEntry[1]) {
+        cycleTime += card.getTotalOrZero();
+        blockedTime += card.cardCycleTime!.steps.blocked || 0;
+        let blockReason = card.baseInfo.fields.label || "";
 
-      const currentBlockTime =
-        (blockedTimeForEveryReasonMap.get(blockReason) || 0) +
-        card.cardCycleTime!.steps.blocked;
+        if (!blockedTimeForEveryReasonMap.has(blockReason)) {
+          blockReason = JiraBlockReasonEnum.OTHERS;
+        }
 
-      blockedTimeForEveryReasonMap.set(blockReason, currentBlockTime);
+        const currentBlockTime =
+          (blockedTimeForEveryReasonMap.get(blockReason) || 0) +
+          card.cardCycleTime!.steps.blocked;
+
+        blockedTimeForEveryReasonMap.set(blockReason, currentBlockTime);
+      }
+      if (cycleTime) {
+        const blockedReasonAndPercenagePairs: Array<BlockDetails> = [];
+        for (const pairEntry of blockedTimeForEveryReasonMap) {
+          blockedReasonAndPercenagePairs.push({
+            reasonName: pairEntry[0],
+            percentage: parseFloat((pairEntry[1] / cycleTime).toFixed(2)),
+            time: pairEntry[1],
+          });
+        }
+        sprintBlockedResaon.push({
+          sprintName: sprintCardEntry[0],
+          totalBlockedPercentage: parseFloat(
+            (blockedTime / cycleTime).toFixed(2)
+          ),
+          blockDetails: blockedReasonAndPercenagePairs,
+        });
+      }
     }
-    if (totalCycleTime) {
-      blockedTimeForEveryReasonMap.forEach((value, key) => {
-        blockedTimeForEveryReasonMap.set(
-          key,
-          parseFloat((value / totalCycleTime).toFixed(2))
-        );
-      });
-    }
-
-    return blockedTimeForEveryReasonMap;
+    return sprintBlockedResaon;
   }
 
   private mapCardsBySprintName(
@@ -645,6 +648,27 @@ export class Jira implements Kanban {
     }
 
     return sprintCardsMap;
+  }
+
+  private calculateTotalCycleTimeAndBlockedTime(
+    sprintCardMap: Map<string, JiraCardResponse[]>
+  ): Array<SprintCycleTimeAndBlockedTime> {
+    const sprintCycleTimeAndBlockedTime: Array<SprintCycleTimeAndBlockedTime> =
+      [];
+    sprintCardMap.forEach((value, key) => {
+      let cycleTime = 0;
+      let blockedTime = 0;
+      for (const card of value) {
+        cycleTime += card.getTotalOrZero();
+        blockedTime += card.cardCycleTime!.steps.blocked || 0;
+      }
+      sprintCycleTimeAndBlockedTime.push({
+        sprintName: key,
+        cycleTime,
+        blockedTime,
+      });
+    });
+    return sprintCycleTimeAndBlockedTime;
   }
 
   private calculateCardsBlockedPercentage(
@@ -799,61 +823,34 @@ export class Jira implements Kanban {
     sprintCompletedCardsNumberMap: Map<string, number>,
     sprintBlockPercentageMap: Map<string, BlockedAndDevelopingPercentagePair>,
     sprintStandardDeviationMap: Map<string, StandardDeviationAndAveragePair>,
-    sprintBlockReasonPercentageMap: Map<string, number>
+    sprintBlockReason: Array<BlockedReason>,
+    cycleTimeAndBlockedTime: Array<SprintCycleTimeAndBlockedTime>
   ): SprintStatistics {
-    const completedCardsNumber: Array<{
-      sprintName: string;
-      value: number;
-    }> = [];
-    const blockedAndDevelopingPercentage: Array<{
-      sprintName: string;
-      value: { blockedPercentage: number; developingPercentage: number };
-    }> = [];
-    const standardDeviation: Array<{
-      sprintName: string;
-      value: { standardDeviation: number; average: number };
-    }> = [];
-    sprintCompletedCardsNumberMap?.forEach((value, key) => {
+    const completedCardsNumber: Array<SprintCompletedCardsCount> = [];
+    const blockedAndDevelopingPercentage: Array<BlockedAndDevelopingPercentage> =
+      [];
+    const standardDeviation: Array<StandardDeviation> = [];
+    sprintCompletedCardsNumberMap.forEach((value, key) => {
       completedCardsNumber.push({ sprintName: key, value });
     });
-    sprintBlockPercentageMap?.forEach((value, key) => {
+    sprintBlockPercentageMap.forEach((value, key) => {
       blockedAndDevelopingPercentage.push({
         sprintName: key,
-        value: {
-          blockedPercentage: value.blockedPercentage,
-          developingPercentage: value.developingPercentage,
-        },
+        value,
       });
     });
-    sprintStandardDeviationMap?.forEach((value, key) => {
+    sprintStandardDeviationMap.forEach((value, key) => {
       standardDeviation.push({
         sprintName: key,
-        value: {
-          standardDeviation: value.standardDeviation,
-          average: value.average,
-        },
-      });
-    });
-    const latestSprintBlockReason: {
-      totalBlockedPercentage: number;
-      blockReasonPercentage: Array<{ reasonName: string; percentage: number }>;
-    } = {
-      totalBlockedPercentage: blockedAndDevelopingPercentage.length
-        ? blockedAndDevelopingPercentage.slice(-1)[0].value.blockedPercentage
-        : 0,
-      blockReasonPercentage: [],
-    };
-    sprintBlockReasonPercentageMap?.forEach((value, key) => {
-      latestSprintBlockReason.blockReasonPercentage.push({
-        reasonName: key,
-        percentage: value,
+        value,
       });
     });
     return new SprintStatistics(
       completedCardsNumber,
       standardDeviation,
       blockedAndDevelopingPercentage,
-      latestSprintBlockReason
+      sprintBlockReason,
+      cycleTimeAndBlockedTime
     );
   }
 }

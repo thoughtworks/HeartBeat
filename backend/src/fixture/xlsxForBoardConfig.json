@@ -1,0 +1,108 @@
+[
+  { "header": "sprintName", "key": "sprintName:", "width": 32 },
+  {
+    "header": "Standard deviations(population) of cycle time",
+    "key": "Standard deviations(population) of cycle time",
+    "width": 32
+  },
+  {
+    "header": "Total cycle time",
+    "key": "Total cycle time",
+    "width": 32
+  },
+  {
+    "header": "Total blocked time",
+    "key": "Total blocked time",
+    "width": 32
+  },
+  {
+    "header": "Percentage of developing time",
+    "key": "Percentage of developing time",
+    "width": 32
+  },
+  {
+    "header": "Percentage of blocked time",
+    "key": "Percentage of blocked time",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: dependencies_not_work",
+    "key": "Blocked time: dependencies_not_work",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: sit_env_down",
+    "key": "Blocked time: sit_env_down",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: priority_change",
+    "key": "Blocked time: priority_change",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: solution_review",
+    "key": "Blocked time: solution_review",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: pr_review",
+    "key": "Blocked time: pr_review",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: question_to_be_answered",
+    "key": "Blocked time: question_to_be_answered",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: take_leave",
+    "key": "Blocked time: take_leave",
+    "width": 32
+  },
+  {
+    "header": "Blocked time: others",
+    "key": "Blocked time: others",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: dependencies_not_work",
+    "key": "Blocked percentage: dependencies_not_work",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: sit_env_down",
+    "key": "Blocked percentage: sit_env_down",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: priority_change",
+    "key": "Blocked percentage: priority_change",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: solution_review",
+    "key": "Blocked percentage: solution_review",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: pr_review",
+    "key": "Blocked percentage: pr_review",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: question_to_be_answered",
+    "key": "Blocked percentage: question_to_be_answered",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: take_leave",
+    "key": "Blocked percentage: take_leave",
+    "width": 32
+  },
+  {
+    "header": "Blocked percentage: others",
+    "key": "Blocked percentage: others",
+    "width": 32
+  }
+]

@@ -29,4 +29,22 @@ export default class GenerateReportController {
       request.csvTimeStamp
     );
   }
+
+  @request("get", "/exportExcel")
+  @summary("exportExcel")
+  @description("exportExcel")
+  public static async exportExcel(ctx: Context): Promise<void> {
+    ctx.response.set(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    ctx.response.set(
+      "Content-Disposition",
+      `attachment; filename=exportSprintExcel-${ctx.validatedQuery.timeStamp}.xlsx`
+    );
+    ctx.body = new GenerateReportService().fetchExcelFileStream(
+      ctx,
+      ctx.validatedQuery.timeStamp
+    );
+  }
 }

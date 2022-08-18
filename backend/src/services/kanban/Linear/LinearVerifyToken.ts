@@ -3,7 +3,7 @@ import { KanbanTokenVerifyModel } from "../../../contract/kanban/KanbanTokenVeri
 import { KanbanTokenVerifyResponse } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { LinearClient } from "@linear/sdk";
 import { transformWorkflowToJiraColumn } from "./Linear";
-import { ThereIsNoCardsInDoneColumn } from "../../../types/ThereIsNoCardsInDoneColumn";
+import { NoCardsInDoneColumnError } from "../../../types/NoCardsInDoneColumnError";
 
 export class LinearVerifyToken implements KanbanVerifyToken {
   client: LinearClient;
@@ -29,7 +29,8 @@ export class LinearVerifyToken implements KanbanVerifyToken {
       },
     });
 
-    if (cards.nodes.length === 0) throw new ThereIsNoCardsInDoneColumn();
+    if (cards.nodes.length === 0)
+      throw new NoCardsInDoneColumnError("There is no cards in done column");
 
     // users
     const members = (await (await this.client.team(model.teamId)).members())

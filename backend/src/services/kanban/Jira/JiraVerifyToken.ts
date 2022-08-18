@@ -11,7 +11,7 @@ import { fieldsIgonre } from "../../../models/kanban/JiraCardtype";
 import { JiraCardHistory } from "../../../models/kanban/JiraCardHistory";
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import { KanbanEnum } from "../Kanban";
-import { ThereIsNoCardsInDoneColumn } from "../../../types/ThereIsNoCardsInDoneColumn";
+import { NoCardsInDoneColumnError } from "../../../types/NoCardsInDoneColumnError";
 
 export class JiraVerifyToken implements KanbanVerifyToken {
   private readonly queryCount: number = 100;
@@ -126,7 +126,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     const allDoneCards = await this.getAllDoneCards(model, doneColumn);
 
     if (allDoneCards.length == 0) {
-      throw new ThereIsNoCardsInDoneColumn();
+      throw new NoCardsInDoneColumnError("There is no cards in done column");
     }
 
     await Promise.all(

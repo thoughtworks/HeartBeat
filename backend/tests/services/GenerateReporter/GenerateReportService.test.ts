@@ -3,7 +3,10 @@ import {
   JiraCardResponse,
 } from "../../../src/contract/kanban/KanbanStoryPointResponse";
 import "mocha";
-import { JiraCard, JiraCardField } from "../../../src/models/kanban/JiraCard";
+import {
+  JiraCard,
+  JiraCardField,
+} from "../../../src/models/kanban/JiraBoard/JiraCard";
 import {
   CodebaseSetting,
   GenerateReportRequest,
@@ -15,17 +18,20 @@ import sinon from "sinon";
 import { GenerateReportService } from "../../../src/services/GenerateReporter/GenerateReportService";
 import { changeConsiderHolidayMode } from "../../../src/services/common/WorkDayCalculate";
 import { Cards } from "../../../src/models/kanban/RequestKanbanResults";
-import { JiraBlockReasonEnum } from "../../../src/models/kanban/JiraBlockReasonEnum";
+import { JiraBlockReasonEnum } from "../../../src/models/kanban/JiraBoard/JiraBlockReasonEnum";
 import { expect } from "chai";
 import { SprintStatistics } from "../../../src/models/kanban/SprintStatistics";
 import { Jira } from "../../../src/services/kanban/Jira/Jira";
 import * as GeneraterCsvFile from "../../../src/services/common/GeneraterCsvFile";
 import { RequireDataEnum } from "../../../src/models/RequireDataEnum";
-import { GitHub } from "../../../src/services/codebase/GitHub";
-import { SettingMissingError } from "../../../src/types/SettingMissingError";
-import { Buildkite } from "../../../src/services/pipeline/Buildkite";
+import { GitHub } from "../../../src/services/codebase/GitHub/GitHub";
+import { SettingMissingError } from "../../../src/errors/SettingMissingError";
+import { Buildkite } from "../../../src/services/pipeline/Buildkite/Buildkite";
+import fs from "fs";
+
 const sprint1Name = "test Sprint 1";
 const sprint2Name = "test Sprint 2";
+const sprint3Name = "test Sprint 3";
 const jiraCardField1: JiraCardField = new JiraCardField();
 const jiraCardField2: JiraCardField = new JiraCardField();
 const jiraCardField3: JiraCardField = new JiraCardField();
@@ -353,43 +359,54 @@ const blockedAndDevelopingPercentage = [
     },
   },
 ];
-const latestSprintBlockReason = {
-  totalBlockedPercentage: 0.16,
-  blockReasonPercentage: [
-    {
-      reasonName: "dependencies_not_work",
-      percentage: 0,
-    },
-    {
-      reasonName: "sit_env_down",
-      percentage: 0,
-    },
-    {
-      reasonName: "priority_change",
-      percentage: 0,
-    },
-    {
-      reasonName: "solution_review",
-      percentage: 0,
-    },
-    {
-      reasonName: "pr_review",
-      percentage: 0,
-    },
-    {
-      reasonName: "question_to_be_answered",
-      percentage: 0,
-    },
-    {
-      reasonName: "take_leave",
-      percentage: 0,
-    },
-    {
-      reasonName: "others",
-      percentage: 0.16,
-    },
-  ],
-};
+const sprintBlockReason = [
+  {
+    sprintName: "ADM Sprint 4",
+    totalBlockedPercentage: 0.16,
+    blockDetails: [
+      {
+        reasonName: "dependencies_not_work",
+        percentage: 0,
+        time: 0,
+      },
+      {
+        reasonName: "sit_env_down",
+        percentage: 0,
+        time: 0,
+      },
+      {
+        reasonName: "priority_change",
+        percentage: 0,
+        time: 0,
+      },
+      {
+        reasonName: "solution_review",
+        percentage: 0,
+        time: 0,
+      },
+      {
+        reasonName: "pr_review",
+        percentage: 0,
+        time: 0,
+      },
+      {
+        reasonName: "question_to_be_answered",
+        percentage: 0,
+        time: 0,
+      },
+      {
+        reasonName: "take_leave",
+        percentage: 0,
+        time: 0,
+      },
+      {
+        reasonName: "others",
+        percentage: 0.16,
+        time: 1,
+      },
+    ],
+  },
+];
 const response: GenerateReporterResponse = {
   velocity: {
     velocityForSP: "6",
@@ -440,13 +457,140 @@ const response: GenerateReporterResponse = {
   deploymentFrequency: undefined,
   leadTimeForChanges: undefined,
   meanTimeToRecovery: undefined,
-  latestSprintBlockReason: latestSprintBlockReason,
+  latestSprintBlockReason: {
+    totalBlockedPercentage: sprintBlockReason[0].totalBlockedPercentage,
+    blockReasonPercentage: sprintBlockReason[0].blockDetails,
+  },
 };
 const statistics = new SprintStatistics(
   completedCardsNumber,
   standardDeviation,
   blockedAndDevelopingPercentage,
-  latestSprintBlockReason
+  sprintBlockReason
+);
+
+const sprintStatistics = new SprintStatistics(
+  [
+    { sprintName: sprint1Name, value: 3 },
+    { sprintName: sprint2Name, value: 2 },
+    { sprintName: sprint3Name, value: 2 },
+  ],
+  [
+    {
+      sprintName: sprint1Name,
+      value: { standardDeviation: 1.91, average: 4.53 },
+    },
+    {
+      sprintName: sprint2Name,
+      value: { standardDeviation: 1.5, average: 3.5 },
+    },
+    {
+      sprintName: sprint3Name,
+      value: { standardDeviation: 0, average: 2 },
+    },
+  ],
+  [
+    {
+      sprintName: sprint1Name,
+      value: { blockedPercentage: 0.22, developingPercentage: 0.78 },
+    },
+    {
+      sprintName: sprint2Name,
+      value: {
+        blockedPercentage: 0.29,
+        developingPercentage: 0.71,
+      },
+    },
+    {
+      sprintName: sprint3Name,
+      value: {
+        blockedPercentage: 0.5,
+        developingPercentage: 0.5,
+      },
+    },
+  ],
+  [
+    {
+      sprintName: sprint1Name,
+      totalBlockedPercentage: 0.22,
+      blockDetails: [
+        {
+          reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+          percentage: 0.05,
+          time: 0,
+        },
+        {
+          reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+          percentage: 0.15,
+          time: 0,
+        },
+        {
+          reasonName: JiraBlockReasonEnum.OTHERS,
+          percentage: 0.02,
+          time: 0,
+        },
+      ],
+    },
+    {
+      sprintName: sprint2Name,
+      totalBlockedPercentage: 0.29,
+      blockDetails: [
+        {
+          reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+          percentage: 0.09,
+          time: 0,
+        },
+        {
+          reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+          percentage: 0.15,
+          time: 0,
+        },
+        {
+          reasonName: JiraBlockReasonEnum.OTHERS,
+          percentage: 0.05,
+          time: 0,
+        },
+      ],
+    },
+    {
+      sprintName: sprint3Name,
+      totalBlockedPercentage: 0.5,
+      blockDetails: [
+        {
+          reasonName: JiraBlockReasonEnum.DEPENDENCIES_NOT_WORK,
+          percentage: 0.35,
+          time: 0,
+        },
+        {
+          reasonName: JiraBlockReasonEnum.TAKE_LEAVE,
+          percentage: 0.1,
+          time: 0,
+        },
+        {
+          reasonName: JiraBlockReasonEnum.OTHERS,
+          percentage: 0.05,
+          time: 0,
+        },
+      ],
+    },
+  ],
+  [
+    {
+      sprintName: sprint1Name,
+      cycleTime: 1,
+      blockedTime: 1,
+    },
+    {
+      sprintName: sprint2Name,
+      cycleTime: 2,
+      blockedTime: 2,
+    },
+    {
+      sprintName: sprint3Name,
+      cycleTime: 3,
+      blockedTime: 3,
+    },
+  ]
 );
 
 const pipeLineMetrics = [
@@ -802,5 +946,111 @@ describe("fetch data ", () => {
     );
     expect(serviceProto.deployTimesListFromDeploySetting.length).equals(2);
     expect(serviceProto.BuildInfos.length).equals(2);
+  });
+});
+
+describe("generate excel file", () => {
+  const reportService = new GenerateReportService();
+  const reportServiceProto = Object.getPrototypeOf(reportService);
+  it("should return the sprint statistics map when given sprint statistics", () => {
+    const iterationDataMap =
+      reportServiceProto.getSprintStatisticsMap(sprintStatistics);
+    const expected = new Map();
+    expected.set("test Sprint 1", [
+      "test Sprint 1",
+      1.91,
+      1,
+      1,
+      0.78,
+      0.22,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.05,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.15,
+      0.02,
+    ]);
+    expected.set("test Sprint 2", [
+      "test Sprint 2",
+      1.5,
+      2,
+      2,
+      0.71,
+      0.29,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.09,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.15,
+      0.05,
+    ]);
+    expected.set("test Sprint 3", [
+      "test Sprint 3",
+      0,
+      3,
+      3,
+      0.5,
+      0.5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.35,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.1,
+      0.05,
+    ]);
+    expect(iterationDataMap).deep.equal(expected);
+  });
+
+  it("should return the empty sprint statistics map when given empty sprint statistics", () => {
+    const emptySprintStatistics = new SprintStatistics([], [], [], [], []);
+    const emptyIterationDataMap = reportServiceProto.getSprintStatisticsMap(
+      emptySprintStatistics
+    );
+    const expected = new Map();
+    expect(emptyIterationDataMap).deep.equal(expected);
+  });
+
+  it("should generate the file when given time stamp", () => {
+    reportServiceProto.kanabanSprintStatistics = sprintStatistics;
+    const testTimeStamp = 11;
+    reportServiceProto.generateExcelFile(testTimeStamp);
+    setTimeout(() => {
+      fs.stat("xlsx/exportSprintExcel-11.xlsx", (error, stats) => {
+        expect(stats !== undefined).equal(true);
+      });
+      fs.stat("xlsx/exportSprintExcel-a.xlsx", (error, stats) => {
+        expect(stats !== undefined).equal(false);
+      });
+    }, 1000);
   });
 });

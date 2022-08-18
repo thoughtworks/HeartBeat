@@ -1,8 +1,8 @@
 import { DeployTimes } from "../../models/pipeline/DeployTimes";
 import { PipelineLeadTime } from "../../models/codebase/LeadTime";
-import { GitHub } from "./GitHub";
+import { GitHub } from "./GitHub/GitHub";
 import { CommitInfo } from "../../models/codebase/CommitInfo";
-import { PlatformTypeError } from "../../types/PlatformTypeError";
+import { PlatformTypeError } from "../../errors/PlatformTypeError";
 
 enum CodebaseType {
   GITHUB = "github",

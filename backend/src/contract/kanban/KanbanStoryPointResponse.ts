@@ -1,4 +1,4 @@
-import { JiraCard } from "../../models/kanban/JiraCard";
+import { JiraCard } from "../../models/kanban/JiraBoard/JiraCard";
 import { swaggerClass, swaggerProperty } from "koa-swagger-decorator";
 import { CardCycleTime } from "../../models/kanban/CardCycleTime";
 

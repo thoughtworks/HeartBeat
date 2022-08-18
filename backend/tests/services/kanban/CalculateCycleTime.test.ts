@@ -7,7 +7,10 @@ import {
   CycleTimeInfo,
   JiraCardResponse,
 } from "../../../src/contract/kanban/KanbanStoryPointResponse";
-import { JiraCard, JiraCardField } from "../../../src/models/kanban/JiraCard";
+import {
+  JiraCard,
+  JiraCardField,
+} from "../../../src/models/kanban/JiraBoard/JiraCard";
 import { RequestKanbanColumnSetting } from "../../../src/contract/GenerateReporter/GenerateReporterRequestBody";
 import { expect } from "chai";
 import { CycleTime } from "../../../src/contract/GenerateReporter/GenerateReporterResponse";

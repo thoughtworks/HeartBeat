@@ -1,5 +1,5 @@
 import { JsonObject, JsonProperty } from "json2typescript";
-import { PipelineInfo } from "../../contract/pipeline/PipelineInfo";
+import { PipelineInfo } from "../../../contract/pipeline/PipelineInfo";
 
 @JsonObject("BKStepInfo")
 export class BKStepInfo {

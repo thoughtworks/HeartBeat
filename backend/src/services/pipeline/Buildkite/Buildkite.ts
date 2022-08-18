@@ -1,16 +1,16 @@
-import { Pipeline } from "./Pipeline";
+import { Pipeline } from "../Pipeline";
 import axios from "axios";
-import { BKTokenInfo } from "../../models/pipeline/BKTokenInfo";
-import { BKOrganizationInfo } from "../../models/pipeline/BKOrganizationInfo";
-import { PipelineInfo } from "../../contract/pipeline/PipelineInfo";
-import { BKPipelineInfo } from "../../models/pipeline/BKPipelineInfo";
-import { BuildInfo } from "../../models/pipeline/BuildInfo";
-import { BKBuildInfo } from "../../models/pipeline/BKBuildInfo";
-import { DeployInfo, DeployTimes } from "../../models/pipeline/DeployTimes";
+import { BKTokenInfo } from "../../../models/pipeline/Buildkite/BKTokenInfo";
+import { BKOrganizationInfo } from "../../../models/pipeline/Buildkite/BKOrganizationInfo";
+import { PipelineInfo } from "../../../contract/pipeline/PipelineInfo";
+import { BKPipelineInfo } from "../../../models/pipeline/Buildkite/BKPipelineInfo";
+import { BuildInfo } from "../../../models/pipeline/BuildInfo";
+import { BKBuildInfo } from "../../../models/pipeline/Buildkite/BKBuildInfo";
+import { DeployInfo, DeployTimes } from "../../../models/pipeline/DeployTimes";
 import { JsonConvert } from "json2typescript";
 import parseLinkHeader from "parse-link-header";
-import { DeploymentEnvironment } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
-import { FetchParams } from "../../types/FetchParams";
+import { DeploymentEnvironment } from "../../../contract/GenerateReporter/GenerateReporterRequestBody";
+import { FetchParams } from "../../../types/FetchParams";
 
 export class Buildkite implements Pipeline {
   private static permissions = [
@@ -123,7 +123,7 @@ export class Buildkite implements Pipeline {
         [...Array(Number(totalPage)).keys()].map(async (index) => {
           if (index == 0) return;
           const response = await this.httpClient.get(fetchURL, {
-            params: {...fetchParams, page: String(index + 1)},
+            params: { ...fetchParams, page: String(index + 1) },
           });
           const dataFromOnePage: [] = response.data;
           dataCollector.push(...dataFromOnePage);

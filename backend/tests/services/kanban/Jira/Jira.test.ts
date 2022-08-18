@@ -24,12 +24,12 @@ import {
   HistoryDetail,
   JiraCardHistory,
   Status,
-} from "../../../../src/models/kanban/JiraCardHistory";
+} from "../../../../src/models/kanban/JiraBoard/JiraCardHistory";
 import {
   JiraCard,
   JiraCardField,
-} from "../../../../src/models/kanban/JiraCard";
-import { JiraBlockReasonEnum } from "../../../../src/models/kanban/JiraBlockReasonEnum";
+} from "../../../../src/models/kanban/JiraBoard/JiraCard";
+import { JiraBlockReasonEnum } from "../../../../src/models/kanban/JiraBoard/JiraBlockReasonEnum";
 import {
   CardCycleTime,
   StepsDay,
@@ -479,6 +479,7 @@ describe("get story points and cycle times of non done cards during period", () 
   });
 
   it("should return cycle time when having matched  non done cards", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const WorkDayCalculate = require("../../../../src/services/common/WorkDayCalculate");
     sinon.stub(WorkDayCalculate, "calculateWorkDaysBy24Hours").returns(0.5);
 

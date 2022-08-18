@@ -1,6 +1,6 @@
 import "mocha";
 import { Cards } from "../../../src/models/kanban/RequestKanbanResults";
-import { JiraCardField } from "../../../src/models/kanban/JiraCard";
+import { JiraCardField } from "../../../src/models/kanban/JiraBoard/JiraCard";
 import { TargetField } from "../../../src/contract/kanban/KanbanTokenVerifyResponse";
 import { ClassificationField } from "../../../src/contract/GenerateReporter/GenerateReporterResponse";
 import { getClassificationOfSelectedFields } from "../../../src/services/kanban/Classification";

@@ -1,5 +1,5 @@
 import { DeployInfo } from "./DeployTimes";
-import { BKBuildInfo } from "./BKBuildInfo";
+import { BKBuildInfo } from "./Buildkite/BKBuildInfo";
 
 export class JobInfo {
   name?: string = undefined;

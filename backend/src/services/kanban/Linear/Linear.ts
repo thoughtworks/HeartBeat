@@ -21,7 +21,7 @@ import {
 } from "@linear/sdk/dist/_generated_sdk";
 import { sortBy } from "lodash";
 import { SprintStatistics } from "../../../models/kanban/SprintStatistics";
-import { SprintStatisticsError } from "../../../types/SprintStatisticsError";
+import { SprintStatisticsError } from "../../../errors/SprintStatisticsError";
 
 export enum LinearColumnType {
   BACKLOG = "backlog",

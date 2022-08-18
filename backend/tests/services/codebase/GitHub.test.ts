@@ -5,7 +5,7 @@ import Repositories from "../../fixture/GitHubAllRepo.json";
 import Organizations from "../../fixture/GitHubAllOrganization.json";
 import GitHubPullsOne from "../../fixture/GitHubPullsFromCommitOne.json";
 import GitHubPullsTwo from "../../fixture/GitHubPullsFromCommitTwo.json";
-import { GitHub } from "../../../src/services/codebase/GitHub";
+import { GitHub } from "../../../src/services/codebase/GitHub/GitHub";
 import {
   DeployInfo,
   DeployTimes,
@@ -33,8 +33,12 @@ describe("fetch all repositories", () => {
     const orgs = ["github", "tw"];
     const requestUrls = ["/user/repos"];
 
-    orgs.forEach(org => { requestUrls.push(`/orgs/${org}/repos`); });
-    requestUrls.forEach((url) => { mock.onGet(url).reply(200, Repositories);});
+    orgs.forEach((org) => {
+      requestUrls.push(`/orgs/${org}/repos`);
+    });
+    requestUrls.forEach((url) => {
+      mock.onGet(url).reply(200, Repositories);
+    });
 
     const fetchedRepositories = await gitHub.fetchAllRepo(orgs);
 
@@ -81,11 +85,9 @@ describe("fetch pipelines lead time", () => {
     mock
       .onGet(`/repos/example/example/pulls/${GitHubPullsTwo[0].number}/commits`)
       .reply(200, GitHubPullsTwo);
-    
-    const pipelinesLeadTimes: PipelineLeadTime[] = await gitHub.fetchPipelinesLeadTime(
-      deployTimes,
-      repositories
-    );
+
+    const pipelinesLeadTimes: PipelineLeadTime[] =
+      await gitHub.fetchPipelinesLeadTime(deployTimes, repositories);
 
     const leadTimeList: LeadTime[] = [
       new LeadTime(

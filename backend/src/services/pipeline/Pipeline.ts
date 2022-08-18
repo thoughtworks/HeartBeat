@@ -1,9 +1,9 @@
 import { PipelineInfo } from "../../contract/pipeline/PipelineInfo";
 import { DeployTimes } from "../../models/pipeline/DeployTimes";
-import { Buildkite } from "./Buildkite";
+import { Buildkite } from "./Buildkite/Buildkite";
 import { BuildInfo } from "../../models/pipeline/BuildInfo";
 import { DeploymentEnvironment } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
-import { PlatformTypeError } from "../../types/PlatformTypeError";
+import { PlatformTypeError } from "../../errors/PlatformTypeError";
 
 export interface Pipeline {
   fetchPipelineInfo(

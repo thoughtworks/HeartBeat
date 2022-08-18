@@ -4,7 +4,7 @@ import { mock } from "../../TestTools";
 import BKOrganizationInfo from "../../fixture/BKOrganizationInfo.json";
 import BKPipelineInfo from "../../fixture/BKPipelineInfo.json";
 import BKBuildInfoList from "../../fixture/BKBuildInfoList.json";
-import { Buildkite } from "../../../src/services/pipeline/Buildkite";
+import { Buildkite } from "../../../src/services/pipeline/Buildkite/Buildkite";
 import { PipelineInfo } from "../../../src/contract/pipeline/PipelineInfo";
 
 const buildkite = new Buildkite("testToken");

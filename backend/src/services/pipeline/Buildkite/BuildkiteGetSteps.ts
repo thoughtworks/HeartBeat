@@ -4,7 +4,10 @@ import { PipelineGetStepsRequest } from "../../../contract/pipeline/PipelineGetS
 import { PipelineInfo } from "../../../contract/pipeline/PipelineInfo";
 import { JsonConvert } from "json2typescript";
 import { FetchParams } from "../../../types/FetchParams";
-import { BKBuildInfo, BKJobInfo } from "../../../models/pipeline/BKBuildInfo";
+import {
+  BKBuildInfo,
+  BKJobInfo,
+} from "../../../models/pipeline/Buildkite/BKBuildInfo";
 import parseLinkHeader from "parse-link-header";
 
 export class BuildkiteGetSteps implements PipelineGetSteps {
@@ -86,7 +89,7 @@ export class BuildkiteGetSteps implements PipelineGetSteps {
         [...Array(Number(totalPage)).keys()].map(async (index) => {
           if (index == 0) return;
           const response = await this.httpClient.get(fetchURL, {
-            params: {...fetchParams, page: String(index + 1)},
+            params: { ...fetchParams, page: String(index + 1) },
           });
           const dataFromOnePage: [] = response.data;
           dataCollector.push(...dataFromOnePage);

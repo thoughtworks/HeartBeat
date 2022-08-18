@@ -1,6 +1,6 @@
 import { StoryPointsAndCycleTimeRequest } from "../../contract/kanban/KanbanStoryPointParameterVerify";
 import { Jira } from "./Jira/Jira";
-import { PlatformTypeError } from "../../types/PlatformTypeError";
+import { PlatformTypeError } from "../../errors/PlatformTypeError";
 import { RequestKanbanColumnSetting } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { Cards } from "../../models/kanban/RequestKanbanResults";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";

@@ -2,7 +2,7 @@ import { calculateWorkDaysBy24Hours } from "../common/WorkDayCalculate";
 import { CycleTimeInfo } from "../../contract/kanban/KanbanStoryPointResponse";
 import { CardStepsEnum } from "../../models/kanban/CardStepsEnum";
 import { Issue } from "@linear/sdk";
-import { JiraCard } from "../../models/kanban/JiraCard";
+import { JiraCard } from "../../models/kanban/JiraBoard/JiraCard";
 
 export type StatusChangedArrayItem = {
   timestamp: number;

@@ -37,7 +37,7 @@ import {
 } from "../../models/codebase/LeadTime";
 import { calculateAvgLeadTime } from "../common/LeadTimeForChanges";
 import { Codebase, CodebaseFactory } from "../codebase/Codebase";
-import { SettingMissingError } from "../../types/SettingMissingError";
+import { SettingMissingError } from "../../errors/SettingMissingError";
 import { changeConsiderHolidayMode } from "../common/WorkDayCalculate";
 import { calculateMeanTimeToRecovery } from "../common/MeanTimeToRecovery";
 import { BuildInfo } from "../../models/pipeline/BuildInfo";
@@ -49,7 +49,7 @@ import { SprintStatistics } from "../../models/kanban/SprintStatistics";
 import xlsxForBoardConfig from "../../fixture/xlsxForBoardConfig.json";
 import { Context } from "koa-swagger-decorator";
 import excelJs from "exceljs";
-import { JiraBlockReasonEnum } from "../../models/kanban/JiraBlockReasonEnum";
+import { JiraBlockReasonEnum } from "../../models/kanban/JiraBoard/JiraBlockReasonEnum";
 
 const KanbanKeyIdentifierMap: { [key: string]: "projectKey" | "teamName" } = {
   [KanbanEnum.CLASSIC_JIRA]: "projectKey",

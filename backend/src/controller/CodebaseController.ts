@@ -1,7 +1,7 @@
 import { description, request, summary, tagsAll } from "koa-swagger-decorator";
 import { Context, query } from "koa-swagger-decorator/dist";
 import { CodebaseTokenModel } from "../contract/codebase/CodebaseTokenModel";
-import { GitHub } from "../services/codebase/GitHub";
+import { GitHub } from "../services/codebase/GitHub/GitHub";
 
 @tagsAll(["CodebaseController"])
 export default class CodebaseController {

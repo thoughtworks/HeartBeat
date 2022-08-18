@@ -3,7 +3,7 @@ import { KanbanTokenVerifyModel } from "../../../contract/kanban/KanbanTokenVeri
 import { KanbanTokenVerifyResponse } from "../../../contract/kanban/KanbanTokenVerifyResponse";
 import { LinearClient } from "@linear/sdk";
 import { transformWorkflowToJiraColumn } from "./Linear";
-import { NoCardsInDoneColumnError } from "../../../types/NoCardsInDoneColumnError";
+import { NoCardsInDoneColumnError } from "../../../errors/NoCardsInDoneColumnError";
 
 export class LinearVerifyToken implements KanbanVerifyToken {
   client: LinearClient;

@@ -1,5 +1,5 @@
 import { PipelineInfo } from "../../contract/pipeline/PipelineInfo";
-import { PlatformTypeError } from "../../types/PlatformTypeError";
+import { PlatformTypeError } from "../../errors/PlatformTypeError";
 import { PipelineType } from "./Pipeline";
 import { PipelineGetStepsRequest } from "../../contract/pipeline/PipelineGetStepsRequest";
 import { BuildkiteGetSteps } from "./Buildkite/BuildkiteGetSteps";

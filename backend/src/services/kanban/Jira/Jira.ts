@@ -13,14 +13,14 @@ import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import {
   HistoryDetail,
   JiraCardHistory,
-} from "../../../models/kanban/JiraCardHistory";
+} from "../../../models/kanban/JiraBoard/JiraCardHistory";
 import { CalculateCardCycleTime } from "../CalculateCycleTime";
 import { RequestKanbanColumnSetting } from "../../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { Cards } from "../../../models/kanban/RequestKanbanResults";
 import {
   CardCustomFieldKey,
   FixVersion,
-} from "../../../models/kanban/JiraCard";
+} from "../../../models/kanban/JiraBoard/JiraCard";
 import { CardFieldsEnum } from "../../../models/kanban/CardFieldsEnum";
 import { CardStepsEnum } from "../../../models/kanban/CardStepsEnum";
 import {
@@ -30,7 +30,7 @@ import {
   StatusChangedArrayItem,
 } from "../util";
 import { Sprint } from "../../../models/kanban/Sprint";
-import { JiraBlockReasonEnum } from "../../../models/kanban/JiraBlockReasonEnum";
+import { JiraBlockReasonEnum } from "../../../models/kanban/JiraBoard/JiraBlockReasonEnum";
 import {
   BlockedAndDevelopingPercentage,
   BlockedAndDevelopingPercentagePair,

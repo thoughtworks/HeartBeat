@@ -18,7 +18,7 @@ import { CsvFileNameEnum } from "../../models/kanban/CsvFileNameEnum";
 import { SourceTypeEnum } from "../../models/kanban/CsvSourceTypeEnum";
 import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
-import { JiraCard } from "../../models/kanban/JiraCard";
+import { JiraCard } from "../../models/kanban/JiraBoard/JiraCard";
 import _ from "lodash";
 
 function GenerateObjectArrayToCsvFile(arr: any): any {

@@ -1,4 +1,4 @@
-import { GitHubPull } from "./GitHubPull";
+import { GitHubPull } from "./GitHub/GitHubPull";
 import { DeployInfo } from "../pipeline/DeployTimes";
 import { CommitInfo } from "./CommitInfo";
 
@@ -19,7 +19,7 @@ export class LeadTime {
     jobFinishTime: number,
     prCreatedTime?: number,
     prMergedTime?: number,
-    firstCommitTimeInPr? : number
+    firstCommitTimeInPr?: number
   ) {
     this.commitId = commitId;
     this.prCreatedTime = prCreatedTime;
@@ -30,10 +30,10 @@ export class LeadTime {
     this.pipelineDelayTime = jobFinishTime - pipelineCreateTime;
 
     if (prMergedTime != undefined && prCreatedTime != undefined) {
-      if(firstCommitTimeInPr != undefined) {
+      if (firstCommitTimeInPr != undefined) {
         this.prDelayTime = prMergedTime - firstCommitTimeInPr;
       } else {
-        this.prDelayTime = prMergedTime - prCreatedTime;       
+        this.prDelayTime = prMergedTime - prCreatedTime;
       }
       this.totalTime = this.prDelayTime + this.pipelineDelayTime;
     } else {
@@ -41,20 +41,28 @@ export class LeadTime {
     }
   }
 
-  static mapFrom(gitHubPull: GitHubPull, deployInfo: DeployInfo, firstCommit: CommitInfo): LeadTime {
+  static mapFrom(
+    gitHubPull: GitHubPull,
+    deployInfo: DeployInfo,
+    firstCommit: CommitInfo
+  ): LeadTime {
     if (gitHubPull.mergedAt == undefined) {
       throw Error("this commit has not been merged");
     }
     const prCreatedTime: number = new Date(gitHubPull.createdAt).getTime();
     const prMergedTime: number = new Date(gitHubPull.mergedAt).getTime();
     const jobFinishTime: number = new Date(deployInfo.jobFinishTime).getTime();
-    const pipelineCreateTime: number = new Date(deployInfo.pipelineCreateTime).getTime();
+    const pipelineCreateTime: number = new Date(
+      deployInfo.pipelineCreateTime
+    ).getTime();
     let firstCommitTimeInPr;
 
-    if(firstCommit.commit?.committer?.date != undefined) {
-      firstCommitTimeInPr = new Date(firstCommit.commit?.committer?.date).getTime();
+    if (firstCommit.commit?.committer?.date != undefined) {
+      firstCommitTimeInPr = new Date(
+        firstCommit.commit?.committer?.date
+      ).getTime();
     }
-    
+
     return new LeadTime(
       deployInfo.commitId,
       pipelineCreateTime,
@@ -67,7 +75,7 @@ export class LeadTime {
 }
 
 export class LeadTimeInfo {
-  firstCommitTimeInPr? : string
+  firstCommitTimeInPr?: string;
   prCreatedTime?: string;
   prMergedTime?: string;
   jobFinishTime?: string;
@@ -78,7 +86,9 @@ export class LeadTimeInfo {
   constructor(leadTime?: LeadTime) {
     if (leadTime != undefined) {
       if (leadTime.firstCommitTimeInPr != undefined) {
-        this.firstCommitTimeInPr = LeadTimeInfo.formatDate(leadTime.firstCommitTimeInPr);
+        this.firstCommitTimeInPr = LeadTimeInfo.formatDate(
+          leadTime.firstCommitTimeInPr
+        );
       }
 
       if (leadTime.prCreatedTime != undefined) {
@@ -102,7 +112,7 @@ export class LeadTimeInfo {
   }
 
   static formatDate(timeNumber: number): string {
-    return new Date(timeNumber).toISOString().split(".")[0]+"Z";
+    return new Date(timeNumber).toISOString().split(".")[0] + "Z";
   }
 
   static msToHMS(s: number): string {

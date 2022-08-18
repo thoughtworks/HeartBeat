@@ -7,11 +7,11 @@ import {
   KanbanTokenVerifyResponse,
   TargetField,
 } from "../../../contract/kanban/KanbanTokenVerifyResponse";
-import { fieldsIgonre } from "../../../models/kanban/JiraCardtype";
-import { JiraCardHistory } from "../../../models/kanban/JiraCardHistory";
+import { fieldsIgonre } from "../../../models/kanban/JiraBoard/JiraCardtype";
+import { JiraCardHistory } from "../../../models/kanban/JiraBoard/JiraCardHistory";
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import { KanbanEnum } from "../Kanban";
-import { NoCardsInDoneColumnError } from "../../../types/NoCardsInDoneColumnError";
+import { NoCardsInDoneColumnError } from "../../../errors/NoCardsInDoneColumnError";
 
 export class JiraVerifyToken implements KanbanVerifyToken {
   private readonly queryCount: number = 100;

@@ -3,6 +3,7 @@ import {
   GenerateReportRequest,
   RequestKanbanSetting,
   CodebaseSetting,
+  PipelineSetting,
 } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import {
   AvgDeploymentFrequency,
@@ -182,19 +183,30 @@ export class GenerateReportService {
     const endTime = new Date(request.endTime);
 
     if (lowMetrics.some((metric) => this.kanbanMetrics.includes(metric))) {
-      if (request.kanbanSetting == null)
+      if (
+        JSON.stringify(request.kanbanSetting) ===
+        JSON.stringify(new RequestKanbanSetting())
+      )
         throw new SettingMissingError("kanban setting");
       await this.fetchDataFromKanban(request);
     }
 
     if (lowMetrics.some((metric) => this.pipeLineMetrics.includes(metric))) {
-      if (request.pipeline == null)
+      if (
+        JSON.stringify(request.pipeline) ===
+        JSON.stringify(new PipelineSetting())
+      )
         throw new SettingMissingError("pipeline setting");
       await this.fetchDataFromPipeline(request, startTime, endTime);
     }
 
     if (lowMetrics.some((metric) => this.codebaseMetrics.includes(metric))) {
-      if (request.codebaseSetting == null || request.pipeline == null)
+      if (
+        JSON.stringify(request.codebaseSetting) ===
+          JSON.stringify(new CodebaseSetting()) ||
+        JSON.stringify(request.pipeline) ===
+          JSON.stringify(new PipelineSetting())
+      )
         throw new SettingMissingError("codebase setting or pipeline setting");
       await this.fetchDataFromCodebase(request, startTime, endTime);
     }
@@ -215,6 +227,7 @@ export class GenerateReportService {
       codebaseSetting.type,
       codebaseSetting.token
     );
+
     for (const deploymentEnvironment of codebaseSetting.leadTime) {
       const buildInfos: BuildInfo[] = await pipeline.fetchPipelineBuilds(
         deploymentEnvironment,
@@ -553,5 +566,13 @@ export class GenerateReportService {
 
   public fetchExcelFileStream(ctx: Context, timeStamp: number): fs.ReadStream {
     return fs.createReadStream(`xlsx/exportSprintExcel-${timeStamp}.xlsx`);
+  }
+
+  public setCards(cards: Cards) {
+    this.cards = cards;
+  }
+
+  public setKanbanSprintStatistics(statistics: SprintStatistics) {
+    this.kanabanSprintStatistics = statistics;
   }
 }

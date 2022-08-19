@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { MetricsSource } from '../../types/metricsSource';
-import { ReportParams } from '../../models/reportParams';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { Router } from '@angular/router';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ReportParams } from '../../models/reportParams';
+import { MetricsSource } from '../../types/metricsSource';
 
 @Component({
   selector: 'app-config-stepper',

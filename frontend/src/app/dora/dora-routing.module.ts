@@ -1,6 +1,7 @@
-import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent, ConfigStepperComponent } from './components';
 import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ConfigStepperComponent } from './components/config-stepper/config-stepper.component';
+import { HomeComponent } from './components/home/home.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },

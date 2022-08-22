@@ -1,33 +1,31 @@
-import { ClassificationComponent } from './classification/classification.component';
+import { ClassificationComponent } from './config-stepper/metrics/metrics-board/classification/classification.component';
 import { HomeComponent } from './home/home.component';
-import { ConfigurationComponent } from './configuration/configuration.component';
-import { MetricsComponent } from './metrics/metrics.component';
+import { ConfigurationComponent } from './config-stepper/configuration/configuration.component';
+import { MetricsComponent } from './config-stepper/metrics/metrics.component';
 import { ConfigStepperComponent } from './config-stepper/config-stepper.component';
-import { MetricSourceComponent } from './metric-source/metric-source.component';
-import { PipelineItemComponent } from './pipeline-item/pipeline-item.component';
-import { ExportComponent } from './reports/reports.component';
-import { CycleItemComponent } from './cycle-item/cycle-item.component';
-import { CrewsComponent } from './crews/crews.component';
-import { CollectionComponent } from './collection/collection.component';
-import { MetricPipelineComponent } from './metric-pipeline/metric-pipeline.component';
-import { CycleTimeComponent } from './cycle-time/cycle-time.component';
-import { VelocityReportComponent } from './reports/velocity/velocity.component';
-import { CycleTimeReportComponent } from './reports/cycle-time/cycle-time.component';
-import { DeploymentFrequencyReportComponent } from './reports/deployment-frequency/deployment-frequency.component';
-import { LeadTimeReportComponent } from './reports/lead-time/lead-time.component';
-import { FailureRateReportComponent } from './reports/failure-rate/failure-rate.component';
-import { MeanTimeToRecoveryComponent } from './reports/mean-time-to-recovery/mean-time-to-recovery.component';
-import { ClassificationReportComponent } from './reports/classification/classification.component';
-import { ExportCsvComponent } from './reports/export-csv/export-csv.component';
-import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
-import { DoneColumnsComponent } from './done-columns/done-columns.component';
-import { MessageDialogComponent } from './message-dialog/message-dialog.component';
-import { WarningMessageComponent } from './warning-message/warning-message.component';
-import { BlockReasonPercentageReportComponent } from './reports/block-reason-percentage/block-reason-percentage.component'
-import { AverageCycleTimeReportComponent } from './reports/average-cycle-time/average-cycle-time.component'
-import { ThroughputReportComponent } from './reports/throughput/throughput.component'
-import { TimeAllocationReportComponent } from './reports/time-allocation/time-allocation.component'
-import { ExportExcelComponent } from "./reports/export-excel/export-excel.component";
+import { MetricSourceComponent } from './config-stepper/configuration/metric-source/metric-source.component';
+import { PipelineItemComponent } from './config-stepper/metrics/metric-pipeline/pipeline-item/pipeline-item.component';
+import { ExportComponent } from './config-stepper/reports/reports.component';
+import { CycleItemComponent } from './config-stepper/metrics/metrics-board/cycle-time/cycle-item/cycle-item.component';
+import { CrewsComponent } from './config-stepper/metrics/metrics-board/crews/crews.component';
+import { CollectionComponent } from './config-stepper/configuration/collection/collection.component';
+import { MetricPipelineComponent } from './config-stepper/metrics/metric-pipeline/metric-pipeline.component';
+import { CycleTimeComponent } from './config-stepper/metrics/metrics-board/cycle-time/cycle-time.component';
+import { VelocityReportComponent } from './config-stepper/reports/velocity/velocity.component';
+import { CycleTimeReportComponent } from './config-stepper/reports/cycle-time/cycle-time.component';
+import { DeploymentFrequencyReportComponent } from './config-stepper/reports/deployment-frequency/deployment-frequency.component';
+import { LeadTimeReportComponent } from './config-stepper/reports/lead-time/lead-time.component';
+import { FailureRateReportComponent } from './config-stepper/reports/failure-rate/failure-rate.component';
+import { MeanTimeToRecoveryComponent } from './config-stepper/reports/mean-time-to-recovery/mean-time-to-recovery.component';
+import { ClassificationReportComponent } from './config-stepper/reports/classification/classification.component';
+import { ExportCsvComponent } from './config-stepper/reports/export-csv/export-csv.component';
+import { DoneColumnsComponent } from './config-stepper/metrics/metrics-board/done-columns/done-columns.component';
+import { WarningMessageComponent } from './config-stepper/metrics/warning-message/warning-message.component';
+import { BlockReasonPercentageReportComponent } from './config-stepper/reports/block-reason-percentage/block-reason-percentage.component';
+import { AverageCycleTimeReportComponent } from './config-stepper/reports/average-cycle-time/average-cycle-time.component';
+import { ThroughputReportComponent } from './config-stepper/reports/throughput/throughput.component';
+import { TimeAllocationReportComponent } from './config-stepper/reports/time-allocation/time-allocation.component';
+import { ExportExcelComponent } from './config-stepper/reports/export-excel/export-excel.component';
 
 export const components: any[] = [
   HomeComponent,
@@ -51,9 +49,7 @@ export const components: any[] = [
   CycleTimeComponent,
   ClassificationReportComponent,
   ExportCsvComponent,
-  ConfirmDialogComponent,
   DoneColumnsComponent,
-  MessageDialogComponent,
   WarningMessageComponent,
   MeanTimeToRecoveryComponent,
   BlockReasonPercentageReportComponent,
@@ -62,29 +58,3 @@ export const components: any[] = [
   TimeAllocationReportComponent,
   ExportExcelComponent,
 ];
-
-export * from './home/home.component';
-export * from './configuration/configuration.component';
-export * from './metrics/metrics.component';
-export * from './config-stepper/config-stepper.component';
-export * from './metric-source/metric-source.component';
-export * from './pipeline-item/pipeline-item.component';
-export * from './reports/reports.component';
-export * from './cycle-item/cycle-item.component';
-export * from './crews/crews.component';
-export * from './collection/collection.component';
-export * from './metric-pipeline/metric-pipeline.component';
-export * from './cycle-time/cycle-time.component';
-export * from './reports/velocity/velocity.component';
-export * from './reports/cycle-time/cycle-time.component';
-export * from './reports/deployment-frequency/deployment-frequency.component';
-export * from './reports/lead-time/lead-time.component';
-export * from './reports/failure-rate/failure-rate.component';
-export * from './reports/mean-time-to-recovery/mean-time-to-recovery.component';
-export * from './metric-pipeline/metric-pipeline.component';
-export * from './reports/classification/classification.component';
-export * from './reports/export-csv/export-csv.component';
-export * from './confirm-dialog/confirm-dialog.component';
-export * from './done-columns/done-columns.component';
-export * from './message-dialog/message-dialog.component';
-export * from './warning-message/warning-message.component';

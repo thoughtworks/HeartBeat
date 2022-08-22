@@ -21,7 +21,7 @@ export class ExportExcelComponent implements OnInit {
 
   downloadBoardExcel() {
     this.apiService.fetchExportSprintData(this.csvTimeStamp).subscribe((res) => {
-      const exportedFilename = `board-data-${this.parseTimeStampToHumanDate()}.xlsx`;
+      const exportedFilename = `sprint-data-${this.parseTimeStampToHumanDate()}.xlsx`;
       const blob = new Blob([res], { type: 'application/vnd.ms.excel' });
       saveAs(blob, exportedFilename);
     });

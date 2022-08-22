@@ -1,4 +1,4 @@
-# HeartBeat 用户手册（2020/06，第一版）
+# HeartBeat 用户手册（2022/08，第二版）
 
 # 1 什么是 HeartBeat
 
@@ -180,9 +180,33 @@ _Image 3-14，Lead time for changes Report_
 ![Image 3-15](https://user-images.githubusercontent.com/995849/89784288-00c28680-db4b-11ea-9756-878176148d63.png)\
 _Image 3-15，Change Failure Rate Report_
 
+### 3.3.7 迭代完成卡数图 / Completed Cards by Sprint Graph
+
+![Image 3-16](https://user-images.githubusercontent.com/109513161/185023348-d7320a75-aacb-472f-9483-46177723481a.png)\
+_Image 3-16，Throughput - Completed Cards by Sprint_
+
+### 3.3.8 平均周期时间图 / Average cycle time Graph
+
+![Image 3-17](https://user-images.githubusercontent.com/109513161/185023202-9c791105-d559-42de-9736-d44378c25651.png)\
+_Image 3-17，Average Cycle Time - Day_
+
+### 3.3.9 时间分配图 / Time Allocation Graph
+
+这是用户选中的周期中每个迭代的受阻时间与开发时间分配图。
+
+![Image 3-18](https://user-images.githubusercontent.com/109513161/185022817-1d987b4a-dbaf-4514-96b1-e76e7e6770c6.png)\
+_Image 3-18，Time Allocation_
+
+### 3.3.10 受阻原因图 / Block Reason Graph
+
+这是用户选中的周期中最后一个迭代的受阻原因图。
+
+![Image 3-19](https://user-images.githubusercontent.com/109513161/185023327-e04311d6-5000-4c8f-b460-044799ce2fea.png)\
+_Image 3-19，Block Reason - Latest Iteration_
+
 ## 3.4 导出报告
 
-生成报告后，您可以导出 Jira 看板和部署流水线的原始数据(Image 3-15)。用户可以单击“Export board data”或“Export pipeline data”按钮以导出原始数据。
+生成报告后，您可以导出 Jira 看板和部署流水线的原始数据(Image 3-15)。用户可以单击“Export board data”、“Export pipeline data”或“Export sprint data”按钮以导出原始数据。
 
 ### 3.4.1 导出看板数据 / Export board data
 
@@ -190,10 +214,10 @@ _Image 3-15，Change Failure Rate Report_
 
 **Part 1:** 在所选择时间段内所有的 Jira Ticket
 
-**Part 2:** 在所选时间段内所有未完成的 Jira Ticket，并且会根据状态进行排序。(Image 3-16)
+**Part 2:** 在所选时间段内所有未完成的 Jira Ticket，并且会根据状态进行排序。(Image 3-20)
 
-![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
-_Image 3-16，Exported Board Data_
+![Image 3-20](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
+_Image 3-20，Exported Board Data_
 
 **Jira 看板的所有列：**
 |列名 |描述|
@@ -223,10 +247,10 @@ _Image 3-16，Exported Board Data_
 
 ### 3.4.2 导出 Pipeline 数据
 
-本功能会导出部署流水线数据到 csv 文件(image 3-17).
+本功能会导出部署流水线数据到 csv 文件(image 3-21).
 
-![Image 3-17](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
-_Image 3-17，Exported Pipeline Data_
+![Image 3-21](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
+_Image 3-21，Exported Pipeline Data_
 
 **部署流水线的所有列：**
 |列名 |描述|
@@ -242,6 +266,61 @@ _Image 3-17，Exported Pipeline Data_
 |Time from PR Created to PR Merged (mins)|--|
 |Time from PR Merged to Deployment Completed (mins)|--|
 |Status|部署结果(Pass 或者 Failed)|
+
+### 3.4.3 导出 Sprint 数据
+
+本功能会导出看板数据到 excel 文件，该文件包含两个 sheet：
+
+**Sheet1 - Card Statistics:** 包含两个部分：
+
+**_Part 1:_** 在所选择时间段内所有的 Jira Ticket
+
+**_Part 2:_** 在所选时间段内所有未完成的 Jira Ticket，并且会根据状态进行排序。(Image 3-20)
+
+![Image 3-20](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
+_Image 3-20，Exported Board Data_
+
+**_Jira 看板的所有列：_**
+|列名 |描述|
+|---|---|
+|Issue key|Ticket ID|
+|Summary|--|
+|Issue Type|-- |
+|Status|--|
+|Story Point|--|
+|Assignee|--|
+|Reporter|--|
+|Project Key|--|
+|Project Name|--|
+|Priority|--|
+|Parent Summary|Epic 描述|
+|Sprint|Ticket 所在的 Sprint |
+|Labels|--|
+|Cycle Time|总 Cycle Time|
+|Cycle Time / Story Points|每个 Story Point 的 Cycle Time|
+|Analysis Days|每个 Ticket 所用的分析时间|
+|In Dev Days|每个 Ticket 所用的开发时间|
+|Waiting Days|从开发到测试所用的等待时间|
+|Testing Days|每个 Ticket 所用的测试时间|
+|Block Days|每个 Ticket 的被阻碍时间|
+|Review Days|--|
+|Original Cycle Time: {Column Name}|The data for Jira board original data |
+
+**Sheet2 - Iteration Statistics:** 在所选时间段内所有迭代的数据分析(Image 3-22)
+
+![Image 3-22](https://user-images.githubusercontent.com/109513161/185026165-1d16d436-14e5-4531-a266-544fa9ad29fa.png)\
+_Image 3-22，Exported Sprint Data_
+
+**_Iteration 的所有列：_**
+|列名 |描述|
+|---|---|
+|Standard deviations(population) of cycle time|每个迭代周期时间的标准差|
+|Total cycle time|每个 Sprint 的总周期时间|
+|Total blocked time|每个迭代的总受阻时间|
+|Percentage of developing time|每个迭代的开发时间占总周期时间的百分比|
+|Percentage of blocked time|每个迭代的受阻时间占总周期时间的百分比|
+|Total blocked time for each block reason|最后一个迭代中各受阻原因的总时长|
+|Percentage of blocked time for each reason|---|
 
 # 4 已知的问题
 
@@ -298,22 +377,44 @@ $ yarn start #运行项目
 $ yarn watch-server #如果不能运行，请使用本命令
 ```
 
-访问 `http://localhost:4200`开始使用
+在成功启动前后端后，访问 `http://localhost:4200` 即可使用 HeartBeat。
 
 swagger 地址: `http://localhost:3001/swagger-html`
 
-## 6.2 如何编译:
+## 6.2 运行测试
 
 ```shell script
-    yarn package
+$ cd HearBeat/frontend
+$ yarn test #运行前端测试及生成测试报告
 ```
 
-## 6.3 如何打包
+前端测试报告在 `HearBeat/frontend/coverage/index.html` 文件中，使用浏览器打开即可。
 
-你可以将 server 构建到二进制文件，它将会输出 3 个文件：
+```shell script
+$ cd HearBeat/backend
+$ yarn test #运行后端测试
+$ yarn test-with-coverage #运行后端测试及生成测试报告
+```
+
+后端测试报告在 `HearBeat/backend/coverage/index.html` 文件中，使用浏览器打开即可。
+
+## 6.3 如何构建
+
+```
+$ yarn build
+```
+
+## 6.4 如何打包
+
+```shell script
+$ cd HearBeat/backend
+$ yarn package
+```
+
+你可以将 server 构建到二进制文件，它将会在 `HearBeat/backend` 输出操作系统对应的 `Unix Executable File` ：
 
 - heartbeat-backend-linux
 - heartbeat-backend-macos
 - heartbeat-backend-win.exe
 
-这些文件能满足不同操作系统的需要，并且您不需要额外安装 Node.js 环境。
+打开生成的文件即可启动后端应用程序，使用 HeartBeat。

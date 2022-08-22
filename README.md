@@ -1,4 +1,4 @@
-# HeartBeat User Guide（2020/06，Version 1）
+# HeartBeat User Guide（2022/08，Version 2）
 
 # 1 About HeartBeat
 
@@ -178,6 +178,30 @@ _Image 3-14，Lead time for changes Report_
 ![Image 3-15](https://user-images.githubusercontent.com/995849/89784288-00c28680-db4b-11ea-9756-878176148d63.png)\
 _Image 3-15，Change Failure Rate Report_
 
+### 3.3.7 Completed Cards by Sprint Graph
+
+![Image 3-16](https://user-images.githubusercontent.com/109513161/185023348-d7320a75-aacb-472f-9483-46177723481a.png)\
+_Image 3-16，Throughput - Completed Cards by Sprint_
+
+### 3.3.8 Average cycle time Graph
+
+![Image 3-17](https://user-images.githubusercontent.com/109513161/185023202-9c791105-d559-42de-9736-d44378c25651.png)\
+_Image 3-17，Average Cycle Time - Day_
+
+### 3.3.9 Time Allocation Graph
+
+The graph shows percentage of blocked time and developing time for every sprint which selected by user.
+
+![Image 3-18](https://user-images.githubusercontent.com/109513161/185022817-1d987b4a-dbaf-4514-96b1-e76e7e6770c6.png)\
+_Image 3-18，Time Allocation_
+
+### 3.3.10 Block Reason Graph
+
+The graph shows block reason for the latest sprint which selected by user.
+
+![Image 3-19](https://user-images.githubusercontent.com/109513161/185023327-e04311d6-5000-4c8f-b460-044799ce2fea.png)\
+_Image 3-19，Block Reason - Latest Iteration_
+
 ## 3.4 Export original data
 
 After generating the report, you can export the original data for your board and pipeline (Image 3-15). Users can click the “Export board data” or “Export pipeline data” button to export the original data.
@@ -186,10 +210,10 @@ After generating the report, you can export the original data for your board and
 
 It will export a csv file for board data. It contains two parts:
 **Part 1:** Export the all done tickets during the time period
-**Part 2:** Export the all non-done tickets in your current active board. And it will order by ticket status (Image 3-16)
+**Part 2:** Export the all non-done tickets in your current active board. And it will order by ticket status (Image 3-20)
 
-![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
-_Image 3-16，Exported Board Data_
+![Image 3-20](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
+_Image 3-20，Exported Board Data_
 
 **All columns for Jira board:**
 |Column name |Description|
@@ -219,10 +243,10 @@ _Image 3-16，Exported Board Data_
 
 ### 3.4.2 Export pipeline data
 
-It will export a csv file for pipeline data (image 3-17).
+It will export a csv file for pipeline data (image 3-21).
 
-![Image 3-17](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
-_Image 3-17，Exported Pipeline Data_
+![Image 3-21](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
+_Image 3-21，Exported Pipeline Data_
 
 **All columns for pipeline data:**
 |Column name |Description|
@@ -238,6 +262,61 @@ _Image 3-17，Exported Pipeline Data_
 |Time from PR Created to PR Merged (mins)|--|
 |Time from PR Merged to Deployment Completed (mins)|--|
 |Status|Status for pipeline (Pass or Failed)|
+
+### 3.4.3 Export sprint data
+
+It will export a excel file for sprint data. It contains two sheets:
+
+**Sheet1 - Card Statistics:** contains two parts:
+
+**_Part 1:_** Export the all done tickets during the time period
+
+**_Part 2:_** Export the all non-done tickets in your current active board. And it will order by ticket status (Image 3-20)
+
+![Image 3-20](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
+_Image 3-20，Exported Board Data_
+
+**_All columns for Jira board:_**
+|Column name |Description|
+|---|---|
+|Issue key|Ticket ID|
+|Summary|--|
+|Issue Type|-- |
+|Status|--|
+|Story Point|--|
+|Assignee|--|
+|Reporter|--|
+|Project Key|--|
+|Project Name|--|
+|Priority|--|
+|Parent Summary|The epic for ticket|
+|Sprint|Which sprint this ticket in |
+|Labels|--|
+|Cycle Time|total Cycle Time|
+|Cycle Time / Story Points|Cycle Time for each point|
+|Analysis Days|Analysis days for each ticket|
+|In Dev Days|Development days for each ticket |
+|Waiting Days|After development, how long will take before testing|
+|Testing Days|Testing days for each ticket |
+|Block Days|Blocked days for each ticket|
+|Review Days|--|
+|Original Cycle Time: {Column Name}|The data for Jira board original data |
+
+**Sheet2 - Iteration Statistics:** Statistics data for all sprints which selected by user(Image 3-22)
+
+![Image 3-22](https://user-images.githubusercontent.com/109513161/185026165-1d16d436-14e5-4531-a266-544fa9ad29fa.png)\
+_Image 3-22，Exported Sprint Data_
+
+**_All columns for Iteration：_**
+|Column name |Description|
+|---|---|
+|Standard deviations(population) of cycle time|---|
+|Total cycle time|---|
+|Total blocked time|---|
+|Percentage of developing time|---|
+|Percentage of blocked time|---|
+|Total blocked time for each block reason|The data for the latest sprint|
+|Percentage of blocked time for each reason|The data for the latest sprint|
 
 # 4 Known issues
 
@@ -286,47 +365,59 @@ For now, we just can download the code in our local machine, please follow below
 $ docker-compose up
 ```
 
-## 6.1 How to run backend
-
-Install node modules:
+## 6.1 How to install and run HeartBeat
 
 ```shell script
-cd HearBeat/backend
-yarn install
+$ cd HearBeat/frontend
+$ yarn install #Install node modules for frontend
+$ yarn start #Run frontend
 ```
-
-Run backend:
 
 ```shell script
-yarn start
+$ cd HearBeat/backend
+$ yarn install #Install node modules for backend
+$ yarn start #Run backend
+$ yarn watch-server #If you can't use yarn start to run backend, please use this script
 ```
+
+After starting frontend and backend successfully, you can access to `http://localhost:4200` use HeartBeat.
 
 swagger address: `http://localhost:3001/swagger-html`
 
-## 6.1.1 How to package it (optional)
+## 6.2 How to run test
 
 ```shell script
-yarn package
+$ cd HearBeat/frontend
+$ yarn test #Run test for frontend and generate test report
 ```
 
-you can build server to binary file, it will output 3 files:
+You can check frontend test report in `HearBeat/frontend/coverage/index.html`, and use browser to check it.
+
+```shell script
+$ cd HearBeat/backend
+$ yarn test #Run test for backend
+$ yarn test-with-coverage #Run test for backend and generate test report
+```
+
+You can check backend test report in `HearBeat/backend/coverage/index.html` , and use browser to check it.
+
+## 6.3 How to build it
+
+```
+$ yarn build
+```
+
+## 6.4 How to package it (optional)
+
+```shell script
+$ cd HearBeat/backend
+$ yarn package
+```
+
+You can build server to binary file, it will output `Unix Executable File` according to your OS in `HearBeat/backend`：
 
 - heartbeat-backend-linux
 - heartbeat-backend-macos
 - heartbeat-backend-win.exe
 
-these files can run on different system, you do not need to install node environment
-
-## 6.2 How to run frontend
-
-```
-cd HearBeat/frontend
-yarn install --pure-lockfile
-yarn start
-```
-
-## 6.2.1 How to build it
-
-```
-yarn build
-```
+and you can use HeartBeat when open `Unix Executable File`

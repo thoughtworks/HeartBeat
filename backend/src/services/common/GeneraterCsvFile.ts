@@ -9,10 +9,8 @@ import {
 } from "../../contract/kanban/KanbanStoryPointResponse";
 import CsvForBoardConfig from "../../fixture/csvForBoardConfig.json";
 import CsvForPipeLineConfig from "../../fixture/csvForPipelineConfig.json";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const ObjectsToCsv = require("objects-to-csv");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const CSV = require("csv-string");
+import ObjectsToCsv from "objects-to-csv";
+import * as CSV from "csv-string";
 import fs from "fs";
 import { CsvFileNameEnum } from "../../models/kanban/CsvFileNameEnum";
 import { SourceTypeEnum } from "../../models/kanban/CsvSourceTypeEnum";

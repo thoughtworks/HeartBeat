@@ -1,7 +1,7 @@
 import "mocha";
 import chai from "chai";
 import { expect } from "chai";
-import chaiHttp = require("chai-http");
+import chaiHttp from "chai-http";
 import app from "../../src/server";
 import { GenerateReporterResponse } from "../../src/contract/GenerateReporter/GenerateReporterResponse";
 import { GenerateReportRequest } from "../../src/contract/GenerateReporter/GenerateReporterRequestBody";

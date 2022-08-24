@@ -87,7 +87,7 @@ export function calculateWorkDaysBy24Hours(
   ).toFixed(2);
 }
 
-module.exports = {
+export default {
   calculateWorkDaysBy24Hours,
   loadHolidayList,
   calculateWorkDaysBetween,

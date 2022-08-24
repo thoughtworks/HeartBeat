@@ -816,7 +816,7 @@ describe("fetch data from different sources", () => {
     sinon.stub(Buildkite.prototype, "fetchPipelineBuilds");
     sinon.stub(Buildkite.prototype, "countDeployTimes");
     sinon.stub(GitHub.prototype, "fetchPipelinesLeadTime");
-    
+
     serviceProto.deployTimesListFromLeadTimeSetting = [];
     serviceProto.BuildInfosOfLeadtimes = [];
 
@@ -953,8 +953,9 @@ describe("generate excel file", () => {
   const reportService = new GenerateReportService();
   const reportServiceProto = Object.getPrototypeOf(reportService);
   it("should return the sprint statistics map when given sprint statistics", () => {
-    const iterationDataMap =
-      reportServiceProto.getSprintStatisticsMap(sprintStatistics);
+    const iterationDataMap = reportServiceProto.getSprintStatisticsMap(
+      sprintStatistics
+    );
     const expected = new Map();
     expected.set("test Sprint 1", [
       "test Sprint 1",

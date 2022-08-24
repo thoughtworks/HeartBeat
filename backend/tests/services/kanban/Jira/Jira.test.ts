@@ -39,6 +39,7 @@ import {
   SprintCycleTimeAndBlockedTime,
   SprintStatistics,
 } from "../../../../src/models/kanban/SprintStatistics";
+import WorkDayCalculate from "../../../../src/services/common/WorkDayCalculate";
 
 const jira = new Jira("testToken", "domain");
 const jiraTest = Object.getPrototypeOf(jira);
@@ -400,8 +401,6 @@ describe("get story points and cycle times of done cards during period", () => {
   });
 
   it("should return cycle time when having matched cards", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const WorkDayCalculate = require("../../../../src/services/common/WorkDayCalculate");
     sinon.stub(WorkDayCalculate, "calculateWorkDaysBy24Hours").returns(0.5);
 
     const jiraCardKey = "ADM-50";
@@ -479,10 +478,7 @@ describe("get story points and cycle times of non done cards during period", () 
   });
 
   it("should return cycle time when having matched  non done cards", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const WorkDayCalculate = require("../../../../src/services/common/WorkDayCalculate");
     sinon.stub(WorkDayCalculate, "calculateWorkDaysBy24Hours").returns(0.5);
-
     const jiraCardKey = "ADM-224";
     mock
       .onGet(
@@ -964,8 +960,9 @@ describe("map cards by sprint name", () => {
 });
 describe("calculate cycleTime and blockedTime", () => {
   it("should return correct cycleTime and blockedTime when there are matched cards in sprint", () => {
-    const cycleTimeAndBlockedTime =
-      jiraTest.calculateTotalCycleTimeAndBlockedTime(mapSprintCards);
+    const cycleTimeAndBlockedTime = jiraTest.calculateTotalCycleTimeAndBlockedTime(
+      mapSprintCards
+    );
     const expected = [
       { sprintName: "test Sprint 1", cycleTime: 13.6, blockedTime: 3 },
       { sprintName: "test Sprint 2", cycleTime: 7, blockedTime: 2 },
@@ -974,10 +971,9 @@ describe("calculate cycleTime and blockedTime", () => {
     expect(cycleTimeAndBlockedTime).deep.equal(expected);
   });
   it("should return an empty array when there is no matched card in sprint", () => {
-    const cycleTimeAndBlockedTime =
-      jiraTest.calculateTotalCycleTimeAndBlockedTime(
-        new Map<string, JiraCardResponse[]>()
-      );
+    const cycleTimeAndBlockedTime = jiraTest.calculateTotalCycleTimeAndBlockedTime(
+      new Map<string, JiraCardResponse[]>()
+    );
     const expected = new Array<SprintCycleTimeAndBlockedTime>();
     expect(cycleTimeAndBlockedTime).deep.equal(expected);
   });
@@ -1014,8 +1010,9 @@ describe("calculate standard deviation", () => {
     expected.set(sprint2Name, { standardDeviation: 1.5, average: 3.5 });
     expected.set(sprint3Name, { standardDeviation: 0, average: 2 });
 
-    const mapSprintStandardDeviation =
-      jiraTest.calculateStandardDeviation(mapSprintCards);
+    const mapSprintStandardDeviation = jiraTest.calculateStandardDeviation(
+      mapSprintCards
+    );
 
     expect(mapSprintStandardDeviation).deep.equal(expected);
   });
@@ -1024,8 +1021,9 @@ describe("calculate standard deviation", () => {
     const expected: Map<string, any> = new Map<string, any>();
     expected.set(sprint1Name, { standardDeviation: 0, average: 0 });
 
-    const mapSprintStandardDeviation =
-      jiraTest.calculateStandardDeviation(mapSprintEmptyCards);
+    const mapSprintStandardDeviation = jiraTest.calculateStandardDeviation(
+      mapSprintEmptyCards
+    );
 
     expect(mapSprintStandardDeviation).deep.equal(expected);
   });
@@ -1033,8 +1031,9 @@ describe("calculate standard deviation", () => {
 
 describe("calculate blocked and developing percentage", () => {
   it("should return correct blocked and developing percentage when there are matched cards in sprint", () => {
-    const mapIterationBlockedPercentage =
-      jiraTest.calculateBlockedAndDevelopingPercentage(mapSprintCards);
+    const mapIterationBlockedPercentage = jiraTest.calculateBlockedAndDevelopingPercentage(
+      mapSprintCards
+    );
 
     const expected: Map<string, any> = new Map<string, any>();
     expected.set(sprint1Name, {
@@ -1054,8 +1053,9 @@ describe("calculate blocked and developing percentage", () => {
   });
 
   it("should return 0% blocked percentage and 100% developing percentage when there is not any matched card in sprint", () => {
-    const mapIterationBlockedPercentage =
-      jiraTest.calculateBlockedAndDevelopingPercentage(mapSprintEmptyCards);
+    const mapIterationBlockedPercentage = jiraTest.calculateBlockedAndDevelopingPercentage(
+      mapSprintEmptyCards
+    );
 
     const expected: Map<string, any> = new Map<string, number>();
     expected.set(sprint1Name, {
@@ -1074,8 +1074,9 @@ describe("calculate the number of completed cards in every sprint", () => {
       [sprint2Name, cardList2],
     ]);
 
-    const mapSprintCompletedCardsNumber =
-      jiraTest.calculateCompletedCardsNumber(mapSprintCards);
+    const mapSprintCompletedCardsNumber = jiraTest.calculateCompletedCardsNumber(
+      mapSprintCards
+    );
 
     const expected: Map<string, number> = new Map<string, number>();
     expected.set(sprint1Name, 3);
@@ -1089,8 +1090,9 @@ describe("calculate the number of completed cards in every sprint", () => {
       [sprint1Name, emptyCardList],
     ]);
 
-    const mapSprintCompletedCardsNumber =
-      jiraTest.calculateCompletedCardsNumber(mapSprintCards);
+    const mapSprintCompletedCardsNumber = jiraTest.calculateCompletedCardsNumber(
+      mapSprintCards
+    );
     const expected: Map<string, number> = new Map<string, number>();
     expected.set(sprint1Name, 0);
 

@@ -16,7 +16,7 @@ import {
   WorkflowStateConnection,
 } from "@linear/sdk/dist/_generated_sdk";
 import { linearTeam } from "../../../fixture/LinearTeam";
-import WorkDayCalculate from "../../../../src/services/common/WorkDayCalculate";
+import * as WorkDayCalculate from "../../../../src/services/common/WorkDayCalculate";
 
 describe("get story points and cycle times of done cards during period", () => {
   let linear: Linear;
@@ -84,15 +84,15 @@ describe("verify token and return columns and users for Linear", async function 
   before(() => {
     sinon
       .stub(LinearClient.prototype, "issues")
-      .returns(Promise.resolve((linearCards as unknown) as IssueConnection));
+      .returns(Promise.resolve(linearCards as unknown as IssueConnection));
     sinon
       .stub(LinearClient.prototype, "team")
-      .returns(Promise.resolve((linearTeam as unknown) as LinearFetch<Team>));
+      .returns(Promise.resolve(linearTeam as unknown as LinearFetch<Team>));
     sinon
       .stub(LinearClient.prototype, "workflowStates")
       .returns(
         Promise.resolve(
-          (linearWorkflowStates as unknown) as WorkflowStateConnection
+          linearWorkflowStates as unknown as WorkflowStateConnection
         )
       );
   });

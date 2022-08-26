@@ -13,7 +13,7 @@ import sinon from "sinon";
 import { CycleTimeInfo } from "../../../src/contract/kanban/KanbanStoryPointResponse";
 import linearCards from "../../fixture/LinearCards";
 import { Issue } from "@linear/sdk";
-import WorkDayCalculate from "../../../src/services/common/WorkDayCalculate";
+import * as WorkDayCalculate from "../../../src/services/common/WorkDayCalculate";
 const statusChangedArrayInTimeOrder = [
   {
     timestamp: 1628227640000,
@@ -133,16 +133,17 @@ describe("utils", () => {
     ];
     const cardIncludedUsers: Set<string> = new Set<string>();
     cardIncludedUsers.add("testUser1");
-    const ifThisCardHasAssignedBySelectedUser = confirmThisCardHasAssignedBySelectedUser(
-      selectedUsers,
-      cardIncludedUsers
-    );
+    const ifThisCardHasAssignedBySelectedUser =
+      confirmThisCardHasAssignedBySelectedUser(
+        selectedUsers,
+        cardIncludedUsers
+      );
 
     expect(ifThisCardHasAssignedBySelectedUser).equal(true);
   });
 
   it("transformLinearCardToJiraCard", async () => {
-    const linearCard = (linearCards.nodes[0] as unknown) as Issue;
+    const linearCard = linearCards.nodes[0] as unknown as Issue;
     const jiraCard = await transformLinearCardToJiraCard(linearCard);
 
     expect(jiraCard.key).equal(linearCard.identifier);

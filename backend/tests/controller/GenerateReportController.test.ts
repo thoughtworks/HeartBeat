@@ -41,12 +41,12 @@ describe("ExportExcel", () => {
     });
   });
   it("should return 200  when post timeStamp", async () => {
-    fs.writeFile("xlsx/test.txt", "Hello", (error) => {
+    fs.writeFile("tests/controller/tempStream.txt", "Hello", (error) => {
       if (error) throw error;
     });
     sinon
       .stub(GenerateReportService.prototype, "fetchExcelFileStream")
-      .returns(fs.createReadStream("xlsx/test.txt"));
+      .returns(fs.createReadStream("tests/controller/tempStream.txt"));
     const response = await chai.request(app).get("/exportExcel?timeStamp=11");
     expect(response.status).equal(200);
     expect(response.header["content-type"]).equal(

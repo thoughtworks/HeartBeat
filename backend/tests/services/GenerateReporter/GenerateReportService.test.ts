@@ -660,7 +660,7 @@ describe("Generate report", () => {
     const deployTimes = {
       pipelineId: "reporting",
       pipelineName: "reporting",
-      pipelineStep: ':white_check_mark: Record "qa" release',
+      pipelineStep: ":white_check_mark: Record \"qa\" release",
       passed: [deployInfo1, deployInfo2],
       failed: [" ", " "],
     };

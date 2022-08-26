@@ -8,7 +8,9 @@ export class TokenVerifyService {
   constructor() {}
 
   verifyTokenValidator(): ValidatorFn {
+    // const invalid = group.controls.verifyToken?.value === 'Verify';
     return (group: FormGroup): ValidationErrors | null => {
+      console.log(group.controls);
       const invalid = Object.keys(group.controls)
         .map((control) => group.get(control))
         .filter((instance) => instance instanceof FormGroup)

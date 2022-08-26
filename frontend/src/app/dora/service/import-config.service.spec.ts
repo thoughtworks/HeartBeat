@@ -1,16 +1,29 @@
 import { TestBed } from '@angular/core/testing';
-
 import { ImportConfigService } from './import-config.service';
 
 describe('ImportConfigService', () => {
-  let service: ImportConfigService;
+  let importConfigService: ImportConfigService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ImportConfigService);
+    importConfigService = TestBed.inject(ImportConfigService);
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(importConfigService).toBeTruthy();
+  });
+
+  it('should get the corresponding object when set json string', () => {
+    const importConfig = '{"key": "value"}';
+    const expected = { key: 'value' };
+
+    importConfigService.set(importConfig);
+    expect(importConfigService.get()).toEqual(expected);
+  });
+
+  it('should get null when set null in importConfigService', () => {
+    const importConfig = null;
+    importConfigService.set(importConfig);
+    expect(importConfigService.get()).toEqual(importConfig);
   });
 });

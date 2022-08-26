@@ -11,7 +11,7 @@ export class CycleDoneService {
     this.doneList = new BehaviorSubject<string[]>([]);
   }
 
-  getVaule(): Observable<string[]> {
+  getValue(): Observable<string[]> {
     return this.doneList.asObservable();
   }
 

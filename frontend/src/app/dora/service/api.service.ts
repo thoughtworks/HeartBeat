@@ -14,12 +14,15 @@ export class ApiService {
   constructor(private httpClient: HttpClient) {}
 
   verify = ({ type, params }: { type: string; params: any }) => {
-    if (type === 'pipelineTool') {
-      return this.fetchPipelineData(params);
-    } else if (type === 'board') {
-      return this.verifyBoard(params);
-    } else if (type === 'sourceControl') {
-      return this.fetchCodeBaseRepos(params);
+    switch (type) {
+      case 'pipelineTool':
+        return this.fetchPipelineData(params);
+      case 'board':
+        return this.verifyBoard(params);
+      case 'sourceControl':
+        return this.fetchCodeBaseRepos(params);
+      default:
+        throw Error('Invalid data source type');
     }
   };
 

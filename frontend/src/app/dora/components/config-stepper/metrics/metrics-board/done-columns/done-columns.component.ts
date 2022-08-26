@@ -53,7 +53,7 @@ export class DoneColumnsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getDoneColumns(isInit: boolean) {
-    this.cycleDoneService.getVaule().subscribe((doneList) => {
+    this.cycleDoneService.getValue().subscribe((doneList) => {
       if (isInit) {
         this.initControl(doneList);
       }

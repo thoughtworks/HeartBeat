@@ -96,10 +96,3 @@ export class AverageCycleTimeReportComponent implements OnInit {
     myCharts.setOption(myOption);
   }
 }
-function getStandardDeviationArray() {
-  throw new Error('Function not implemented.');
-}
-
-function standardDeviatio(standardDeviation: any) {
-  throw new Error('Function not implemented.');
-}

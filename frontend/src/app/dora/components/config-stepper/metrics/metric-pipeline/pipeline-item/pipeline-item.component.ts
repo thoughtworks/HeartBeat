@@ -126,7 +126,7 @@ export class PipelineItemComponent implements OnInit, OnChanges {
       });
     const pipeline = this.rawData.find((pipelineItem) => pipelineItem.id === pipelineId);
     pipeline &&
-      this.stepsFetchService.getVaule().subscribe((extraParams) => {
+      this.stepsFetchService.getValue().subscribe((extraParams) => {
         this.fetchSteps(pipeline, extraParams);
       });
   }

@@ -38,4 +38,13 @@ describe('ConfigurationComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('check initial from values for config form group', () => {
+    const configFormGroup = component.configForm;
+    const configFormValues = {
+      projectName: '',
+      metrics: '',
+    };
+    expect(configFormGroup.value).toEqual(configFormValues);
+  });
 });

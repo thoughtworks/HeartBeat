@@ -10,8 +10,8 @@ export class UtilsService {
     const dataStr = JSON.stringify(json, null, 4);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
     const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', fileName);
+    linkElement.href = dataUri;
+    linkElement.download = fileName;
     linkElement.click();
   }
 

@@ -39,7 +39,7 @@ describe('ConfigurationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('check initial from values for config form group', () => {
+  it('should check initial values for config form group', () => {
     const configFormGroup = component.configForm;
     const configFormValues = {
       projectName: '',

@@ -6,7 +6,7 @@ import { TokenVerifyService } from './token-verify.service';
 describe('TokenVerifyService', () => {
   const tokenVerifyService = new TokenVerifyService();
   let formGroup = new FormGroup({ first: new FormControl('first name') });
-  let formGroupBig = new FormGroup({ first: new FormControl('first name') });
+  let formGroups = new FormGroup({ first: new FormControl('first name') });
 
   beforeEach(async(() => {
     const verifyToken = new FormControl({
@@ -19,7 +19,7 @@ describe('TokenVerifyService', () => {
       value: 'no-Verify',
     });
     formGroup.addControl('verifyToken', verifyToken);
-    formGroupBig.addControl('formGroup', formGroup);
+    formGroups.addControl('formGroup', formGroup);
   }));
 
   it('should be created', () => {
@@ -27,7 +27,7 @@ describe('TokenVerifyService', () => {
   });
 
   it('should verify token validator', () => {
-    const res = tokenVerifyService.verifyTokenValidator()(formGroupBig);
+    const res = tokenVerifyService.verifyTokenValidator()(formGroups);
     expect(res).toEqual(null);
   });
 });

@@ -13,13 +13,11 @@ import { metrics } from '../../../utils/config';
 export class ExportComponent implements OnInit, OnChanges {
   @Input() params: ReportParams;
   @Input() metricsSource: MetricsSource;
-
   loading: boolean;
   reportResponse: ReportResponse;
   includeBoardData: boolean;
   includePipelineData: boolean;
   csvTimeStamp: number;
-
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {}
@@ -41,14 +39,13 @@ export class ExportComponent implements OnInit, OnChanges {
 
   fetchReports() {
     this.loading = true;
-    this.apiService.generateReporter({ ...this.params, csvTimeStamp: this.csvTimeStamp }).subscribe(
-      (res) => {
+    this.apiService.generateReporter({ ...this.params, csvTimeStamp: this.csvTimeStamp }).subscribe((res) => {
+      if (res) {
         this.loading = false;
         this.reportResponse = res;
-      },
-      () => {
+      } else {
         this.loading = false;
       }
-    );
+    });
   }
 }

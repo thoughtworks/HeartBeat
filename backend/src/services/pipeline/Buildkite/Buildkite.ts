@@ -11,6 +11,7 @@ import { JsonConvert } from "json2typescript";
 import parseLinkHeader from "parse-link-header";
 import { DeploymentEnvironment } from "../../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { FetchParams } from "../../../types/FetchParams";
+import { PipelineError } from "../../../errors/PipelineError";
 
 export class Buildkite implements Pipeline {
   private static permissions = [
@@ -63,7 +64,7 @@ export class Buildkite implements Pipeline {
     const orgResponse = await this.httpClient.get("/organizations");
     const organizations: BKOrganizationInfo[] = orgResponse.data;
     if (!(await this.verifyToken())) {
-      throw Error("permission deny!");
+      throw new PipelineError("permission deny!");
     }
 
     await Promise.all(

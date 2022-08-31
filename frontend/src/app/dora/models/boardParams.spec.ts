@@ -26,7 +26,7 @@ describe('BoardParams', () => {
 
   it('should create a basic token', () => {
     const basicToken = boardParams.generateBasicToken('token', 'email');
-    const expectedBasicToken = `Basic ${btoa(`${'email'}:${'token'}`)}`;
+    const expectedBasicToken = 'Basic ZW1haWw6dG9rZW4=';
     expect(basicToken).toEqual(expectedBasicToken);
   });
 });

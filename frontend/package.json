@@ -5,7 +5,6 @@
   "repository": "https://github.com/thoughtworks/HeartBeat.git",
   "husky": {
     "hooks": {
-      "pre-push": "yarn test",
       "pre-commit": "run-s format:fix lint"
     }
   },

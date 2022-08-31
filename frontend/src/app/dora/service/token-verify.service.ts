@@ -6,7 +6,6 @@ import { ValidationErrors, FormGroup, ValidatorFn } from '@angular/forms';
 })
 export class TokenVerifyService {
   constructor() {}
-
   verifyTokenValidator(): ValidatorFn {
     return (group: FormGroup): ValidationErrors | null => {
       const invalid = Object.keys(group.controls)

@@ -24,7 +24,7 @@ export class StepsFetchService {
     });
   }
 
-  getVaule(): Observable<StepsFetchExtraParams> {
+  getValue(): Observable<StepsFetchExtraParams> {
     return this.stepsFetchExtraParams.asObservable();
   }
 

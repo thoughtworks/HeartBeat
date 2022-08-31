@@ -1,16 +1,33 @@
-import { TestBed } from '@angular/core/testing';
+import { async } from '@angular/core/testing';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { TokenVerifyService } from './token-verify.service';
 
 describe('TokenVerifyService', () => {
-  let service: TokenVerifyService;
+  const tokenVerifyService = new TokenVerifyService();
+  let formGroup = new FormGroup({ first: new FormControl('first name') });
+  let formGroups = new FormGroup({ first: new FormControl('first name') });
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(TokenVerifyService);
-  });
+  beforeEach(async(() => {
+    const verifyToken = new FormControl({
+      asyncValidator: null,
+      errors: null,
+      pristine: true,
+      status: 'VALID',
+      touched: false,
+      validator: null,
+      value: 'no-Verify',
+    });
+    formGroup.addControl('verifyToken', verifyToken);
+    formGroups.addControl('formGroup', formGroup);
+  }));
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(tokenVerifyService).toBeTruthy();
+  });
+
+  it('should verify token validator', () => {
+    const res = tokenVerifyService.verifyTokenValidator()(formGroups);
+    expect(res).toEqual(null);
   });
 });

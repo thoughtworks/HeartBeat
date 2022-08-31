@@ -23,10 +23,6 @@ export class BKPipelineInfo {
     orgName: string,
     bkEffectiveSteps: string[]
   ): PipelineInfo {
-    const stepNames = this.steps
-      .filter((step) => step.name.length != 0)
-      .map((step) => step.name);
-    stepNames.push(...bkEffectiveSteps);
     return new PipelineInfo(
       this.slug,
       this.name,

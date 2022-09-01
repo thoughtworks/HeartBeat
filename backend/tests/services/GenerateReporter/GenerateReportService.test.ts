@@ -920,7 +920,7 @@ describe("throw error when fetching original data without relevant setting", () 
   });
 
   it("should throw error when fetching original data without pipeline setting", async () => {
-    request.metrics = ["change failue rate"];
+    request.metrics = ["change failure rate"];
     request.pipeline = new PipelineSetting();
     try {
       await serviceProto.fetchOriginalData(request);

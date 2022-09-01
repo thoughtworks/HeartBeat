@@ -660,7 +660,7 @@ describe("Generate report", () => {
     const deployTimes = {
       pipelineId: "reporting",
       pipelineName: "reporting",
-      pipelineStep: ":white_check_mark: Record \"qa\" release",
+      pipelineStep: ':white_check_mark: Record "qa" release',
       passed: [deployInfo1, deployInfo2],
       failed: [" ", " "],
     };
@@ -920,7 +920,7 @@ describe("throw error when fetching original data without relevant setting", () 
   });
 
   it("should throw error when fetching original data without pipeline setting", async () => {
-    request.metrics = ["CHANGE_FAILURE_RATE"];
+    request.metrics = ["change failue rate"];
     request.pipeline = new PipelineSetting();
     try {
       await serviceProto.fetchOriginalData(request);
@@ -953,9 +953,8 @@ describe("generate excel file", () => {
   const reportService = new GenerateReportService();
   const reportServiceProto = Object.getPrototypeOf(reportService);
   it("should return the sprint statistics map when given sprint statistics", () => {
-    const iterationDataMap = reportServiceProto.getSprintStatisticsMap(
-      sprintStatistics
-    );
+    const iterationDataMap =
+      reportServiceProto.getSprintStatisticsMap(sprintStatistics);
     const expected = new Map();
     expected.set("test Sprint 1", [
       "test Sprint 1",

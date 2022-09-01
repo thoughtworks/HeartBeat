@@ -3,11 +3,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BoardParams } from './boardParams';
 
 describe('BoardParams', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-    }).compileComponents();
-  }));
   const boardParams = new BoardParams({
     type: ' ',
     token: 'token',
@@ -21,12 +16,14 @@ describe('BoardParams', () => {
 
   it('should create a boardParams instance', () => {
     const token = 'token';
+
     expect(boardParams.token).toEqual(token);
   });
 
   it('should create a basic token', () => {
     const basicToken = boardParams.generateBasicToken('token', 'email');
     const expectedBasicToken = 'Basic ZW1haWw6dG9rZW4=';
+
     expect(basicToken).toEqual(expectedBasicToken);
   });
 });

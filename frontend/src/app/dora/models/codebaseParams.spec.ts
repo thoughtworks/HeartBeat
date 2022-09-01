@@ -3,12 +3,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CodebaseParams } from './codebaseParams';
 
 describe('CodebaseParams', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-    }).compileComponents();
-  }));
-
   it('should create a codebaseParams instance', () => {
     const codebaseParams = new CodebaseParams({
       type: 'type',
@@ -25,6 +19,7 @@ describe('CodebaseParams', () => {
       ],
     });
     const token = 'token';
+
     expect(codebaseParams.token).toEqual(token);
   });
 });

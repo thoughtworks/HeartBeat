@@ -3,12 +3,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { PipelineParams } from './pipelineParams';
 
 describe('PipelineParams', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-    }).compileComponents();
-  }));
-
   it('should create a pipelineParams instance', () => {
     const pipelineParams = new PipelineParams({
       type: ' ',
@@ -33,6 +27,7 @@ describe('PipelineParams', () => {
         step: ' ',
       },
     ];
+
     expect(pipelineParams.deployment).toEqual(deployment);
   });
 });

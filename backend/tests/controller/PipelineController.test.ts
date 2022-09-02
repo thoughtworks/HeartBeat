@@ -38,14 +38,22 @@ describe("PipelineController", () => {
         endTime: 6789,
       });
       const expectPipelineInfo: PipelineInfo[] = [
-        new PipelineInfo(
-          "buildkite-test-slug",
-          "buildkite-test-name",
-          [],
-          "https://github.com/expample/example.git",
-          "buildkite-test-slug",
-          "buildkite-test-name"
-        ),
+        {
+          id: "buildkite-test-slug",
+          name: "buildkite-test1-name",
+          steps: [],
+          repository: "https://github.com/expample/example.git",
+          orgId: "buildkite-test-slug",
+          orgName: "buildkite-test-name",
+        },
+        {
+          id: "buildkite-test-slug",
+          name: "buildkite-test2-name",
+          steps: [],
+          repository: "https://github.com/expample/example.git",
+          orgId: "buildkite-test-slug",
+          orgName: "buildkite-test-name",
+        },
       ];
       expect(response.status).equal(200);
       expect(response.body).deep.equal(expectPipelineInfo);

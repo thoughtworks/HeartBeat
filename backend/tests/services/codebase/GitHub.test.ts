@@ -1,19 +1,21 @@
-import "mocha";
 import { expect } from "chai";
-import { mock } from "../../TestTools";
-import Repositories from "../../fixture/GitHubAllRepo.json";
-import Organizations from "../../fixture/GitHubAllOrganization.json";
-import GitHubPullsOne from "../../fixture/GitHubPullsFromCommitOne.json";
-import GitHubPullsTwo from "../../fixture/GitHubPullsFromCommitTwo.json";
-import { GitHub } from "../../../src/services/codebase/GitHub/GitHub";
-import {
-  DeployInfo,
-  DeployTimes,
-} from "../../../src/models/pipeline/DeployTimes";
+import { JsonConvert } from "json2typescript";
+import "mocha";
+import { CommitInfo } from "../../../src/models/codebase/CommitInfo";
 import {
   LeadTime,
   PipelineLeadTime,
 } from "../../../src/models/codebase/LeadTime";
+import {
+  DeployInfo,
+  DeployTimes,
+} from "../../../src/models/pipeline/DeployTimes";
+import { GitHub } from "../../../src/services/codebase/GitHub/GitHub";
+import Organizations from "../../fixture/GitHubAllOrganization.json";
+import Repositories from "../../fixture/GitHubAllRepo.json";
+import GitHubPullsOne from "../../fixture/GitHubPullsFromCommitOne.json";
+import GitHubPullsTwo from "../../fixture/GitHubPullsFromCommitTwo.json";
+import { mock } from "../../TestTools";
 
 const gitHub = new GitHub("testToken");
 
@@ -114,5 +116,32 @@ describe("fetch pipelines lead time", () => {
     ];
 
     expect(pipelinesLeadTimes).deep.equal(expectPipelinesLeadTime);
+  });
+
+  describe("fetchCommitInfo", () => {
+    it("should return corresponding commit info when given commit id and repository id", async () => {
+      const commitId: string = "commitid";
+      const repositoryId: string = "repositoryid";
+      const httpCommitResponse = {
+        commit: {
+          committer: { name: "Allen", date: "2022-05-21T06:27:50.185Z" },
+        },
+      };
+
+      mock
+        .onGet(`/repos/${repositoryId}/commits/${commitId}`)
+        .reply(200, httpCommitResponse);
+
+      const actual: CommitInfo = await gitHub.fetchCommitInfo(
+        commitId,
+        repositoryId
+      );
+      const expected: CommitInfo = new JsonConvert().deserializeObject(
+        httpCommitResponse,
+        CommitInfo
+      );
+
+      expect(actual).deep.equal(expected);
+    });
   });
 });

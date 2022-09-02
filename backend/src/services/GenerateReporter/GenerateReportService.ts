@@ -173,9 +173,6 @@ export class GenerateReportService {
   private async fetchOriginalData(
     request: GenerateReportRequest
   ): Promise<void> {
-    if (request.metrics == null) {
-      throw new SettingMissingError("metrics");
-    }
     const lowMetrics: string[] = request.metrics.map((item) =>
       item.toLowerCase()
     );

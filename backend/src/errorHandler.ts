@@ -3,6 +3,7 @@ import { PlatformTypeError } from "./errors/PlatformTypeError";
 import { SettingMissingError } from "./errors/SettingMissingError";
 import { SprintStatisticsError } from "./errors/SprintStatisticsError";
 import { NoCardsInDoneColumnError } from "./errors/NoCardsInDoneColumnError";
+import { PipelineError } from "./errors/PipelineError";
 
 export default () =>
   async (
@@ -26,6 +27,8 @@ export default () =>
         ctx.status = 400;
       } else if (error.status == 400) {
         ctx.status = 400;
+      } else if (error instanceof PipelineError) {
+        ctx.status = 401;
       } else {
         ctx.response.status = 500;
         throw error;

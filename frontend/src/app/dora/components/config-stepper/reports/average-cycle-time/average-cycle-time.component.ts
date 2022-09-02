@@ -36,7 +36,7 @@ export class AverageCycleTimeReportComponent implements OnInit {
       legend: {
         data: ['Standard Deviation for Population', 'Avg Cycle Time'],
         top: '10%',
-        textStyle: { fontSize: 14 },
+        textStyle: { fontSize: 13 },
       },
       grid: {
         bottom: '3%',
@@ -76,7 +76,7 @@ export class AverageCycleTimeReportComponent implements OnInit {
           color: '#d67b2a',
           symbolSize: 10,
           symbol: 'circle',
-          label: { show: true, fontSize: 14 },
+          label: { show: true, fontSize: 13 },
           lineStyle: { width: 5 },
         },
 
@@ -88,7 +88,7 @@ export class AverageCycleTimeReportComponent implements OnInit {
           color: '#f0434d',
           symbolSize: 10,
           symbol: 'circle',
-          label: { show: true, fontSize: 14 },
+          label: { show: true, fontSize: 13 },
           lineStyle: { width: 5 },
         },
       ],

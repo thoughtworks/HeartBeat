@@ -75,7 +75,7 @@ export class ThroughputReportComponent implements OnInit {
           type: 'line',
           smooth: true,
           symbolSize: 0.1,
-          label: { show: true, fontSize: 14 },
+          label: { show: true, fontSize: 13 },
           lineStyle: {
             width: 5,
             color: '#0070c0',

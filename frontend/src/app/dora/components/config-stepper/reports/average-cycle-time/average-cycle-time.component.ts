@@ -57,6 +57,7 @@ export class AverageCycleTimeReportComponent implements OnInit {
         type: 'category',
         boundaryGap: true,
         data: iterationNameArray,
+        axisLabel: { interval: 0, rotate: 30 },
       },
       yAxis: {
         axisLine: {

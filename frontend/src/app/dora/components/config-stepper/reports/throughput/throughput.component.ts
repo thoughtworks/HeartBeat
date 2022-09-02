@@ -58,6 +58,7 @@ export class ThroughputReportComponent implements OnInit {
         axisTick: {
           alignWithLabel: true,
         },
+        axisLabel: { interval: 0, rotate: 30 },
       },
       yAxis: {
         type: 'value',

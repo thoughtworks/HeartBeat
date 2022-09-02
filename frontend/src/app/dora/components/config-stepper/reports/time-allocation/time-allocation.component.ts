@@ -28,7 +28,7 @@ export class TimeAllocationReportComponent implements OnInit {
       show: true,
       color: '#000',
       textStyle: {
-        fontSize: 14,
+        fontSize: 13,
       },
     };
 
@@ -38,14 +38,14 @@ export class TimeAllocationReportComponent implements OnInit {
         left: '50%',
         textAlign: 'center',
         textStyle: {
-          fontSize: 30,
+          fontSize: 15,
         },
         top: '3%',
       },
       legend: {
         data: ['Developing Time', 'Blocked Time'],
         top: '10%',
-        textStyle: { fontSize: 14 },
+        textStyle: { fontSize: 13 },
       },
       grid: {
         containLabel: true,
@@ -53,7 +53,7 @@ export class TimeAllocationReportComponent implements OnInit {
         show: true,
         bottom: '3%',
         top: '20%',
-        left: '13%',
+        left: '14%',
         right: '14%',
       },
 

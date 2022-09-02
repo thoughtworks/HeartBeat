@@ -20,7 +20,7 @@ export class ThroughputReportComponent implements OnInit {
       cardsNumber.push(curSprint.value);
       sprintName.push(curSprint.sprintName);
     });
-    
+
     const arrayRegression = [];
     let x = 0;
     for (let i = 0; i < sprintNumber; i++) {
@@ -39,7 +39,7 @@ export class ThroughputReportComponent implements OnInit {
         left: '50%',
         textAlign: 'center',
         textStyle: {
-          fontSize: 30,
+          fontSize: 15,
         },
         top: '3%',
       },
@@ -75,7 +75,7 @@ export class ThroughputReportComponent implements OnInit {
           type: 'line',
           smooth: true,
           symbolSize: 0.1,
-          label: { show: true, fontSize: 14 },
+          label: { show: true, fontSize: 13 },
           lineStyle: {
             width: 5,
             color: '#0070c0',
@@ -113,17 +113,16 @@ export class ThroughputReportComponent implements OnInit {
   calculateTrendLinePoint(model: { m: number; b: number }, xAxis: number): { x: number; y: number } {
     const yTemp = model.m * xAxis + model.b;
     let xValue = xAxis;
-    
+
     if (yTemp < 0) {
       const xIntersection = Math.floor((0 - model.b) / model.m);
-      if(xIntersection >= 0) {
-        xValue = model.m > 0 ? xIntersection + 1 : xIntersection;  
-      }
-      else {
+      if (xIntersection >= 0) {
+        xValue = model.m > 0 ? xIntersection + 1 : xIntersection;
+      } else {
         xValue = 1;
       }
     }
-    
+
     return {
       x: xValue,
       y: xValue * model.m + model.b,

@@ -62,11 +62,11 @@ export class BlockReasonPercentageReportComponent implements OnInit {
     const myOption: EChartsOption = {
       legend: {
         data: allBlockReason,
-        left: '78%',
-        top: '30%',
+        left: '66%',
+        top: '20%',
         orient: 'vertical',
         textStyle: {
-          fontSize: 14,
+          fontSize: 12,
         },
       },
       tooltip: {},
@@ -74,17 +74,17 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         {
           text: 'Block Reason - Latest Iteration',
           left: '50%',
-          top: '5%',
+          top: '3%',
           textAlign: 'center',
           textStyle: {
-            fontSize: 30,
+            fontSize: 15,
           },
         },
       ],
       grid: [
         {
-          width: '15%',
-          left: '60%',
+          width: '12%',
+          left: '53%',
           top: '20%',
           containLabel: true,
         },
@@ -105,7 +105,7 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         {
           name: blockReasonPercentage[0].reasonName,
           type: 'bar',
-          barWidth: 150,
+          barWidth: 100,
           stack: blockReason,
           emphasis: {
             focus: 'series',
@@ -194,10 +194,11 @@ export class BlockReasonPercentageReportComponent implements OnInit {
           color: ['#00b150', '#7031a1'],
           type: 'pie',
           radius: [0, '40%'],
-          center: ['30%', '50%'],
+          left: 0,
+          center: ['28%', '50%'],
           data: this.getDevelopingAndBlockPercentage(),
           label: {
-            fontSize: 14,
+            fontSize: 13,
           },
         },
       ],

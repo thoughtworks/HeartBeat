@@ -62,6 +62,7 @@ export class TimeAllocationReportComponent implements OnInit {
           type: 'category',
           boundaryGap: false,
           data: sprintName,
+          axisLabel: { interval: 0, rotate: 30 },
         },
       ],
       yAxis: [

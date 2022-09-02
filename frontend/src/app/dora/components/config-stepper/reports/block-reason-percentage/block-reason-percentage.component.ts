@@ -77,7 +77,7 @@ export class BlockReasonPercentageReportComponent implements OnInit {
           top: '5%',
           textAlign: 'center',
           textStyle: {
-            fontSize: 30,
+            fontSize: 15,
           },
         },
       ],

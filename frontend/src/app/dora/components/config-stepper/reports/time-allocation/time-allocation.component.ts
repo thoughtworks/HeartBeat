@@ -38,7 +38,7 @@ export class TimeAllocationReportComponent implements OnInit {
         left: '50%',
         textAlign: 'center',
         textStyle: {
-          fontSize: 30,
+          fontSize: 15,
         },
         top: '3%',
       },

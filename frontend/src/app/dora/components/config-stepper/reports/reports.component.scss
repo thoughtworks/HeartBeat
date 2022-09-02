@@ -32,20 +32,23 @@
   }
 
   .secondary-metrics {
+    width: 1000px;
+    height: 833px;
     margin: auto;
   }
 
   .graphs {
     width: 100%;
-    height: 916px;
-    align-items: center;
+    height: 782px;
     margin-bottom: 16px;
-    display: flex;
   }
   .top,
   .bottom {
-    width: 1000px;
-    height: 450px;
+    width: 100%;
+    height: 375px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: row;
   }
   &__message {
     text-align: center;

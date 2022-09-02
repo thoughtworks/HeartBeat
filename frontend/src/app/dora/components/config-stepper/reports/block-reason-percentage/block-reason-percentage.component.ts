@@ -74,7 +74,7 @@ export class BlockReasonPercentageReportComponent implements OnInit {
         {
           text: 'Block Reason - Latest Iteration',
           left: '50%',
-          top: '5%',
+          // top: '3%',
           textAlign: 'center',
           textStyle: {
             fontSize: 15,

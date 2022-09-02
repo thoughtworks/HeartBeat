@@ -1,6 +1,6 @@
 <div class="reports-container">
   <mat-spinner class="spinner" *ngIf="loading"></mat-spinner>
-  <div class="secondary-metrics" style="width: 1000px; height: 948px">
+  <div class="secondary-metrics" *ngIf="reportResponse">
     <app-divider text="Secondary metrics"></app-divider>
     <div class="graphs">
       <div class="top">

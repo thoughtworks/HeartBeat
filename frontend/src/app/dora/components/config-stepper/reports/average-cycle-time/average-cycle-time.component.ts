@@ -41,7 +41,7 @@ export class AverageCycleTimeReportComponent implements OnInit {
       grid: {
         bottom: '3%',
         top: '20%',
-        left: '14.5%',
+        left: '14%',
         right: '14%',
         containLabel: true,
       },

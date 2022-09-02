@@ -53,7 +53,7 @@ export class TimeAllocationReportComponent implements OnInit {
         show: true,
         bottom: '3%',
         top: '20%',
-        left: '13%',
+        left: '14%',
         right: '14%',
       },
 

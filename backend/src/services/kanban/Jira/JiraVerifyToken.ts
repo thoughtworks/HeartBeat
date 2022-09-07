@@ -12,6 +12,7 @@ import { JiraCardHistory } from "../../../models/kanban/JiraBoard/JiraCardHistor
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import { KanbanEnum } from "../Kanban";
 import { NoCardsInDoneColumnError } from "../../../errors/NoCardsInDoneColumnError";
+import { Column } from "../../../models/kanban/JiraBoard/Configuration";
 
 export class JiraVerifyToken implements KanbanVerifyToken {
   private readonly queryCount: number = 100;
@@ -43,44 +44,12 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     const columns = configuration.columnConfig.columns;
 
-    for (const column of columns) {
-      if (column.statuses.length == 0) {
-        continue;
-      }
-
-      const columnValue: ColumnValue = new ColumnValue();
-      columnValue.name = column.name;
-
-      const jiraColumnResponse = new ColumnResponse();
-      let anyDoneKey = false;
-      await Promise.all(
-        column.statuses.map((status: { self: string }) =>
-          JiraVerifyToken.queryStatus(status.self, model.token)
-        )
+    await Promise.all(
+      columns.map((column: any) =>
+        this.getJiraColumnNames(column, model, doneColumn, jiraColumnNames)
       )
-        .then((responses) => {
-          responses.map((response) => {
-            if (!anyDoneKey) {
-              jiraColumnResponse.key = (
-                response as StatusSelf
-              ).statusCategory.key;
-            }
-            columnValue.statuses.push(
-              (response as StatusSelf).untranslatedName.toUpperCase()
-            );
-            if ((response as StatusSelf).statusCategory.key == "done") {
-              doneColumn.push(
-                (response as StatusSelf).untranslatedName.toUpperCase()
-              );
-              anyDoneKey = true;
-            }
-          });
-        })
-        .then(() => {
-          jiraColumnResponse.value = columnValue;
-          jiraColumnNames.push(jiraColumnResponse);
-        });
-    }
+    );
+
     //user
     const userNames = await this.queryUsersByCards(model, doneColumn);
 
@@ -110,6 +79,45 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     response.jiraColumns = jiraColumnNames;
     response.users = userNames;
     return response;
+  }
+
+  private async getJiraColumnNames(
+    column: any,
+    model: KanbanTokenVerifyModel,
+    doneColumn: string[],
+    jiraColumnNames: ColumnResponse[]
+  ) {
+    if (column.statuses.length == 0) {
+      return;
+    }
+
+    const columnValue: ColumnValue = new ColumnValue();
+    columnValue.name = column.name;
+
+    const jiraColumnResponse = new ColumnResponse();
+    let anyDoneKey = false;
+    await Promise.all(
+      column.statuses.map((status: { self: string }) =>
+        JiraVerifyToken.queryStatus(status.self, model.token)
+      )
+    ).then((responses) => {
+      responses.map((response) => {
+        if (!anyDoneKey) {
+          jiraColumnResponse.key = (response as StatusSelf).statusCategory.key;
+        }
+        columnValue.statuses.push(
+          (response as StatusSelf).untranslatedName.toUpperCase()
+        );
+        if ((response as StatusSelf).statusCategory.key == "done") {
+          doneColumn.push(
+            (response as StatusSelf).untranslatedName.toUpperCase()
+          );
+          anyDoneKey = true;
+        }
+      });
+      jiraColumnResponse.value = columnValue;
+      jiraColumnNames.push(jiraColumnResponse);
+    });
   }
 
   private static async queryStatus(

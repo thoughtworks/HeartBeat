@@ -26,6 +26,7 @@ import {
   ConvertBoardDataToCsv,
   GetDataFromCsv,
   ConvertPipelineDataToCsv,
+  ConvertBoardDataToXlsx,
 } from "../common/GeneraterCsvFile";
 import { Cards } from "../../models/kanban/RequestKanbanResults";
 import { Pair } from "../../types/Pair";
@@ -81,6 +82,7 @@ export class GenerateReportService {
   private BuildInfos: Pair<string, BuildInfo[]>[] = [];
   private BuildInfosOfLeadtimes: Pair<string, BuildInfo[]>[] = [];
   private kanabanSprintStatistics?: SprintStatistics;
+  private boardStatisticsXlsx: Array<Array<any>> = new Array<Array<any>>();
 
   async generateReporter(
     request: GenerateReportRequest
@@ -313,13 +315,20 @@ export class GenerateReportService {
       storyPointAndCycleTimeRequest,
       this.cards
     );
-    this.generateExcelFile(request.csvTimeStamp);
+
     this.nonDonecards = await kanban.getStoryPointsAndCycleTimeForNonDoneCards(
       storyPointAndCycleTimeRequest,
       kanbanSetting.boardColumns,
       kanbanSetting.users
     );
     this.columns = await kanban.getColumns(storyPointAndCycleTimeRequest);
+    this.boardStatisticsXlsx = await ConvertBoardDataToXlsx(
+      this.cards.matchedCards,
+      this.nonDonecards.matchedCards,
+      this.columns,
+      kanbanSetting.targetFields
+    );
+    this.generateExcelFile(request);
     await ConvertBoardDataToCsv(
       this.cards.matchedCards,
       this.nonDonecards.matchedCards,
@@ -546,18 +555,27 @@ export class GenerateReportService {
     return sprintDataMap;
   }
 
-  private generateExcelFile(timeStamp: number): void {
+  private async generateExcelFile(
+    request: GenerateReportRequest
+  ): Promise<void> {
     const workbook = new excelJs.Workbook();
-    const sheetDataMap = this.getSprintStatisticsMap(
+    const sprintSheetDataMap = this.getSprintStatisticsMap(
       this.kanabanSprintStatistics!
     );
-    const iterationSheet = workbook.addWorksheet("Iteration Statistics");
-    const fileName = "exportSprintExcel-" + timeStamp;
+    const sprintSheet = workbook.addWorksheet("Sprint Statistics");
+    const boardSheet = workbook.addWorksheet("Board Data");
 
-    iterationSheet.columns = xlsxForBoardConfig;
-    sheetDataMap.forEach((value) => {
-      iterationSheet.addRow(value);
+    const fileName = "exportSprintExcel-" + request.csvTimeStamp;
+
+    sprintSheet.columns = xlsxForBoardConfig;
+
+    sprintSheetDataMap.forEach((value) => {
+      sprintSheet.addRow(value);
     });
+    boardSheet.columns = this.boardStatisticsXlsx[0];
+
+    boardSheet.addRows(this.boardStatisticsXlsx[1]);
+
     workbook.xlsx.writeFile("xlsx/" + fileName + ".xlsx");
   }
 

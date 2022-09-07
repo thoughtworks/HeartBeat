@@ -158,13 +158,12 @@ export function getActiveExtraFields(targetFields: TargetField[]) {
   return activeTargetFields;
 }
 
-export async function ConvertBoardDataToCsv(
-  jiraCardResponses: JiraCardResponse[],
+function getCsvStringData(
+  targetFields: TargetField[],
   jiraNonDoneCardResponses: JiraCardResponse[],
   jiraColumns: ColumnResponse[],
-  targetFields: TargetField[],
-  csvTimeStamp: number
-): Promise<void> {
+  jiraCardResponses: JiraCardResponse[]
+) {
   const activeTargetFields = getActiveExtraFields(targetFields);
   const fields = _.clone(CsvForBoardConfig);
   const extraFields = getExtraFields(activeTargetFields, fields);
@@ -209,10 +208,50 @@ export async function ConvertBoardDataToCsv(
   });
 
   const csvString = parse(cards, { fields });
+  return csvString;
+}
+
+export async function ConvertBoardDataToCsv(
+  jiraCardResponses: JiraCardResponse[],
+  jiraNonDoneCardResponses: JiraCardResponse[],
+  jiraColumns: ColumnResponse[],
+  targetFields: TargetField[],
+  csvTimeStamp: number
+): Promise<void> {
+  const csvString = getCsvStringData(
+    targetFields,
+    jiraNonDoneCardResponses,
+    jiraColumns,
+    jiraCardResponses
+  );
   const csvArray = GenerateObjectArrayToCsvFile(CSV.parse(csvString));
   new ObjectsToCsv(csvArray).toDisk(
     `${CsvFileNameEnum.BOARD}-${csvTimeStamp}.csv`
   );
+}
+
+export async function ConvertBoardDataToXlsx(
+  jiraCardResponses: JiraCardResponse[],
+  jiraNonDoneCardResponses: JiraCardResponse[],
+  jiraColumns: ColumnResponse[],
+  targetFields: TargetField[]
+) {
+  const csvString = getCsvStringData(
+    targetFields,
+    jiraNonDoneCardResponses,
+    jiraColumns,
+    jiraCardResponses
+  );
+  const csvArray = GenerateObjectArrayToCsvFile(CSV.parse(csvString));
+  const colKeys = Object.keys(csvArray[0]).map((item) => ({
+    header: item,
+    key: item,
+  }));
+  const rowData = [];
+  for (const item of csvArray) {
+    rowData.push(item);
+  }
+  return [colKeys, rowData];
 }
 
 export async function ConvertPipelineDataToCsv(

@@ -155,6 +155,7 @@ describe("fetch pipeline repository", () => {
     expect(repositories).deep.equal(expectRepositories);
   });
 });
+
 describe("fetch data page by page", async () => {
   it("should return data collector", async () => {
     const fetchUrl = "/organizations/mytest/pipelines";

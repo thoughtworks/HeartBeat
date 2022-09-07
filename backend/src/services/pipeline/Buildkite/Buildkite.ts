@@ -23,6 +23,8 @@ export class Buildkite implements Pipeline {
     baseURL: "https://api.buildkite.com/v2",
   });
 
+  private jsonConvert = new JsonConvert();
+
   constructor(token: string) {
     this.httpClient.defaults.headers.common[
       "Authorization"
@@ -59,51 +61,61 @@ export class Buildkite implements Pipeline {
     startTime: number,
     endTime: number
   ): Promise<PipelineInfo[]> {
-    const jsonConvert = new JsonConvert();
     const pipelines: PipelineInfo[] = [];
     const orgResponse = await this.httpClient.get("/organizations");
     const organizations: BKOrganizationInfo[] = orgResponse.data;
-    if (!(await this.verifyToken())) {
-      throw new PipelineError("permission deny!");
-    }
 
     await Promise.all(
-      organizations.map(async (organization) => {
-        const organizationId = organization.slug;
-        const pipelineInfoFetchUrl = `/organizations/${organizationId}/pipelines`;
-        const pipelineInfoFetchParams: FetchParams = new FetchParams(
-          "1",
-          "100",
-          new Date(startTime),
-          new Date(endTime)
+      organizations.map((organization) => {
+        return this.fetchPipelineInfoInOrgnazation(
+          pipelines,
+          organization,
+          startTime,
+          endTime
         );
-        const pipelineInfoList = await this.fetchDataPageByPage(
-          pipelineInfoFetchUrl,
-          pipelineInfoFetchParams
-        );
-
-        const bkPipelineInfos: BKPipelineInfo[] = jsonConvert.deserializeArray(
-          pipelineInfoList,
-          BKPipelineInfo
-        );
-
-        await Promise.all(
-          bkPipelineInfos
-            .sort((a: BKPipelineInfo, b: BKPipelineInfo) => {
-              return a.name.localeCompare(b.name);
-            })
-            .map(async (pipelineInfo) => {
-              const bkEffectiveSteps: string[] = [];
-              return pipelineInfo.mapToDeployInfo(
-                organizationId,
-                organization.name,
-                bkEffectiveSteps
-              );
-            })
-        ).then((value) => pipelines.push(...value));
       })
     );
+
     return pipelines;
+  }
+
+  private async fetchPipelineInfoInOrgnazation(
+    pipelines: PipelineInfo[],
+    organization: BKOrganizationInfo,
+    startTime: number,
+    endTime: number
+  ) {
+    const organizationId = organization.slug;
+    const pipelineInfoFetchUrl = `/organizations/${organizationId}/pipelines`;
+    const pipelineInfoFetchParams: FetchParams = new FetchParams(
+      "1",
+      "100",
+      new Date(startTime),
+      new Date(endTime)
+    );
+    const pipelineInfoList = await this.fetchDataPageByPage(
+      pipelineInfoFetchUrl,
+      pipelineInfoFetchParams
+    );
+
+    const bkPipelineInfos: BKPipelineInfo[] = this.jsonConvert.deserializeArray(
+      pipelineInfoList,
+      BKPipelineInfo
+    );
+
+    const pipelinesOfOrgnazation = bkPipelineInfos
+      .sort((a: BKPipelineInfo, b: BKPipelineInfo) => {
+        return a.name.localeCompare(b.name);
+      })
+      .map((pipelineInfo) => {
+        const bkEffectiveSteps: string[] = [];
+        return pipelineInfo.mapToDeployInfo(
+          organizationId,
+          organization.name,
+          bkEffectiveSteps
+        );
+      });
+    pipelines.push(...pipelinesOfOrgnazation);
   }
 
   private async fetchDataPageByPage(
@@ -121,17 +133,19 @@ export class Buildkite implements Pipeline {
       links != null && links["last"] != null ? links["last"].page : "1";
     if (totalPage != "1") {
       await Promise.all(
-        [...Array(Number(totalPage)).keys()].map(async (index) => {
+        [...Array(Number(totalPage)).keys()].map((index) => {
           if (index == 0) return;
-          const response = await this.httpClient.get(fetchURL, {
-            params: { ...fetchParams, page: String(index + 1) },
-          });
-          const dataFromOnePage: [] = response.data;
-          dataCollector.push(...dataFromOnePage);
+          return this.httpClient
+            .get(fetchURL, {
+              params: { ...fetchParams, page: String(index + 1) },
+            })
+            .then((response) => {
+              const dataFromOnePage: [] = response.data;
+              dataCollector.push(...dataFromOnePage);
+            });
         })
       );
     }
-
     return dataCollector;
   }
 
@@ -192,7 +206,7 @@ export class Buildkite implements Pipeline {
       fetchURL,
       fetchParams
     );
-    return new JsonConvert()
+    return this.jsonConvert
       .deserializeArray(pipelineBuilds, BKBuildInfo)
       .map((buildInfo) => new BuildInfo(buildInfo));
   }

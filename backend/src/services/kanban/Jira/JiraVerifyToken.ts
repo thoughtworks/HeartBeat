@@ -12,7 +12,6 @@ import { JiraCardHistory } from "../../../models/kanban/JiraBoard/JiraCardHistor
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import { KanbanEnum } from "../Kanban";
 import { NoCardsInDoneColumnError } from "../../../errors/NoCardsInDoneColumnError";
-import { Column } from "../../../models/kanban/JiraBoard/Configuration";
 
 export class JiraVerifyToken implements KanbanVerifyToken {
   private readonly queryCount: number = 100;

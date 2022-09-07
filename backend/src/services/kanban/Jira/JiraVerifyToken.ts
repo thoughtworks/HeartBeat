@@ -53,28 +53,34 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
       const jiraColumnResponse = new ColumnResponse();
       let anyDoneKey = false;
-      for (const status of column.statuses) {
-        const statusSelf = await JiraVerifyToken.queryStatus(
-          status.self,
-          model.token
-        );
-
-        if (!anyDoneKey) {
-          jiraColumnResponse.key = statusSelf.statusCategory.key;
-        }
-
-        columnValue.statuses.push(statusSelf.untranslatedName.toUpperCase());
-
-        if (statusSelf.statusCategory.key == "done") {
-          doneColumn.push(statusSelf.untranslatedName.toUpperCase());
-          anyDoneKey = true;
-        }
-      }
-
-      jiraColumnResponse.value = columnValue;
-      jiraColumnNames.push(jiraColumnResponse);
+      await Promise.all(
+        column.statuses.map((status: { self: string }) =>
+          JiraVerifyToken.queryStatus(status.self, model.token)
+        )
+      )
+        .then((responses) => {
+          responses.map((response) => {
+            if (!anyDoneKey) {
+              jiraColumnResponse.key = (
+                response as StatusSelf
+              ).statusCategory.key;
+            }
+            columnValue.statuses.push(
+              (response as StatusSelf).untranslatedName.toUpperCase()
+            );
+            if ((response as StatusSelf).statusCategory.key == "done") {
+              doneColumn.push(
+                (response as StatusSelf).untranslatedName.toUpperCase()
+              );
+              anyDoneKey = true;
+            }
+          });
+        })
+        .then(() => {
+          jiraColumnResponse.value = columnValue;
+          jiraColumnNames.push(jiraColumnResponse);
+        });
     }
-
     //user
     const userNames = await this.queryUsersByCards(model, doneColumn);
 
@@ -166,7 +172,11 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     if (doneColumn.length > 0) {
       switch (model.type.toLowerCase()) {
         case KanbanEnum.JIRA:
-          jql = `status in ('${doneColumn.join("','")}')`;
+          jql = `status in ('${doneColumn.join(
+            "','"
+          )}') AND statusCategoryChangedDate >= ${
+            model.startTime
+          } AND statusCategoryChangedDate <= ${model.endTime}`;
           break;
         case KanbanEnum.CLASSIC_JIRA: {
           let subJql = "";
@@ -199,19 +209,6 @@ export class JiraVerifyToken implements KanbanVerifyToken {
         allDoneCards
       );
     }
-
-    if (model.type.toLowerCase() == KanbanEnum.JIRA) {
-      const allDoneCardsResult = allDoneCards.filter(
-        (DoneCard: { fields: { statuscategorychangedate: string } }) =>
-          JiraVerifyToken.matchTime(
-            DoneCard.fields.statuscategorychangedate,
-            model.startTime,
-            model.endTime
-          )
-      );
-      return allDoneCardsResult;
-    }
-
     return allDoneCards;
   }
 

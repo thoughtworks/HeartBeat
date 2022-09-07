@@ -1,34 +1,13 @@
 <div class="reports-container">
   <mat-spinner class="spinner" *ngIf="loading"></mat-spinner>
-  <div class="secondary-metrics" *ngIf="reportResponse">
-    <app-divider text="Secondary metrics"></app-divider>
-    <div class="graphs">
-      <div class="top">
-        <app-throughput-report
-          *ngIf="reportResponse?.completedCardsNumber && reportResponse?.completedCardsNumber?.length !== 0"
-          [completedCardsNumber]="reportResponse.completedCardsNumber"
-        >
-        </app-throughput-report>
-        <app-time-allocation-report
-          *ngIf="reportResponse?.blockedAndDevelopingPercentage"
-          [blockedAndDevelopingPercentage]="reportResponse.blockedAndDevelopingPercentage"
-        >
-        </app-time-allocation-report>
-      </div>
-      <div class="bottom">
-        <app-average-cycle-time-report
-          *ngIf="reportResponse?.standardDeviation"
-          [standardDeviation]="reportResponse.standardDeviation"
-        >
-        </app-average-cycle-time-report>
-        <app-block-reason-percentage-report
-          *ngIf="reportResponse?.latestSprintBlockReason"
-          [latestSprintBlockReason]="reportResponse.latestSprintBlockReason"
-        >
-        </app-block-reason-percentage-report>
-      </div>
-    </div>
-  </div>
+
+  <app-secondary-metrics-report
+    *ngIf="reportResponse"
+    [blockedAndDevelopingPercentage]="reportResponse.blockedAndDevelopingPercentage"
+    [latestSprintBlockReason]="reportResponse.latestSprintBlockReason"
+    [standardDeviation]="reportResponse.standardDeviation"
+    [completedCardsNumber]="reportResponse.completedCardsNumber"
+  ></app-secondary-metrics-report>
 
   <app-velocity-report *ngIf="reportResponse?.velocity" [velocity]="reportResponse.velocity"></app-velocity-report>
 

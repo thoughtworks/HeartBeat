@@ -5,8 +5,8 @@ import { TokenVerifyService } from './token-verify.service';
 
 describe('TokenVerifyService', () => {
   const tokenVerifyService = new TokenVerifyService();
-  let formGroup = new FormGroup({ first: new FormControl('first name') });
-  let formGroups = new FormGroup({ first: new FormControl('first name') });
+  const formGroup = new FormGroup({ first: new FormControl('first name') });
+  const formGroups = new FormGroup({ first: new FormControl('first name') });
 
   beforeEach(async(() => {
     const verifyToken = new FormControl({

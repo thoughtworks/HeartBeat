@@ -31,25 +31,6 @@
     margin-top: 15%;
   }
 
-  .secondary-metrics {
-    width: 1000px;
-    height: 833px;
-    margin: auto;
-  }
-
-  .graphs {
-    width: 100%;
-    height: 782px;
-    margin-bottom: 16px;
-  }
-  .top,
-  .bottom {
-    width: 100%;
-    height: 375px;
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: row;
-  }
   &__message {
     text-align: center;
     margin-top: 200px;

@@ -21,12 +21,8 @@ import { ClassificationReportComponent } from './config-stepper/reports/classifi
 import { ExportCsvComponent } from './config-stepper/reports/export-csv/export-csv.component';
 import { DoneColumnsComponent } from './config-stepper/metrics/metrics-board/done-columns/done-columns.component';
 import { WarningMessageComponent } from './config-stepper/metrics/warning-message/warning-message.component';
-import { BlockReasonPercentageReportComponent } from './config-stepper/reports/block-reason-percentage/block-reason-percentage.component';
-import { AverageCycleTimeReportComponent } from './config-stepper/reports/average-cycle-time/average-cycle-time.component';
-import { ThroughputReportComponent } from './config-stepper/reports/throughput/throughput.component';
-import { TimeAllocationReportComponent } from './config-stepper/reports/time-allocation/time-allocation.component';
 import { ExportExcelComponent } from './config-stepper/reports/export-excel/export-excel.component';
-
+import { SecondaryMetricsReportComponent } from './config-stepper/reports/secondary-metrics/secondary-metrics.component';
 export const components: any[] = [
   HomeComponent,
   ConfigStepperComponent,
@@ -52,9 +48,6 @@ export const components: any[] = [
   DoneColumnsComponent,
   WarningMessageComponent,
   MeanTimeToRecoveryComponent,
-  BlockReasonPercentageReportComponent,
-  AverageCycleTimeReportComponent,
-  ThroughputReportComponent,
-  TimeAllocationReportComponent,
   ExportExcelComponent,
+  SecondaryMetricsReportComponent,
 ];

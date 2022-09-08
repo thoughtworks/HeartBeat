@@ -49,7 +49,7 @@ describe('ExportComponent', () => {
       considerHoliday: true,
     });
     const reportParams = {
-      kanbanSetting: kanbanSetting,
+      kanbanSetting,
       ...commonReportParams,
     };
     exportComponent.csvTimeStamp = 1467302400000;

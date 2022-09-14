@@ -43,37 +43,11 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     const columns = configuration.columnConfig.columns;
 
-    for (const column of columns) {
-      if (column.statuses.length == 0) {
-        continue;
-      }
-
-      const columnValue: ColumnValue = new ColumnValue();
-      columnValue.name = column.name;
-
-      const jiraColumnResponse = new ColumnResponse();
-      let anyDoneKey = false;
-      for (const status of column.statuses) {
-        const statusSelf = await JiraVerifyToken.queryStatus(
-          status.self,
-          model.token
-        );
-
-        if (!anyDoneKey) {
-          jiraColumnResponse.key = statusSelf.statusCategory.key;
-        }
-
-        columnValue.statuses.push(statusSelf.untranslatedName.toUpperCase());
-
-        if (statusSelf.statusCategory.key == "done") {
-          doneColumn.push(statusSelf.untranslatedName.toUpperCase());
-          anyDoneKey = true;
-        }
-      }
-
-      jiraColumnResponse.value = columnValue;
-      jiraColumnNames.push(jiraColumnResponse);
-    }
+    await Promise.all(
+      columns.map((column: any) =>
+        this.getJiraColumnNames(column, model, doneColumn, jiraColumnNames)
+      )
+    );
 
     //user
     const userNames = await this.queryUsersByCards(model, doneColumn);
@@ -104,6 +78,45 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     response.jiraColumns = jiraColumnNames;
     response.users = userNames;
     return response;
+  }
+
+  private async getJiraColumnNames(
+    column: any,
+    model: KanbanTokenVerifyModel,
+    doneColumn: string[],
+    jiraColumnNames: ColumnResponse[]
+  ) {
+    if (column.statuses.length == 0) {
+      return;
+    }
+
+    const columnValue: ColumnValue = new ColumnValue();
+    columnValue.name = column.name;
+
+    const jiraColumnResponse = new ColumnResponse();
+    let anyDoneKey = false;
+    await Promise.all(
+      column.statuses.map((status: { self: string }) =>
+        JiraVerifyToken.queryStatus(status.self, model.token)
+      )
+    ).then((responses) => {
+      responses.map((response) => {
+        if (!anyDoneKey) {
+          jiraColumnResponse.key = (response as StatusSelf).statusCategory.key;
+        }
+        columnValue.statuses.push(
+          (response as StatusSelf).untranslatedName.toUpperCase()
+        );
+        if ((response as StatusSelf).statusCategory.key == "done") {
+          doneColumn.push(
+            (response as StatusSelf).untranslatedName.toUpperCase()
+          );
+          anyDoneKey = true;
+        }
+      });
+      jiraColumnResponse.value = columnValue;
+      jiraColumnNames.push(jiraColumnResponse);
+    });
   }
 
   private static async queryStatus(
@@ -166,7 +179,11 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     if (doneColumn.length > 0) {
       switch (model.type.toLowerCase()) {
         case KanbanEnum.JIRA:
-          jql = `status in ('${doneColumn.join("','")}')`;
+          jql = `status in ('${doneColumn.join(
+            "','"
+          )}') AND statusCategoryChangedDate >= ${
+            model.startTime
+          } AND statusCategoryChangedDate <= ${model.endTime}`;
           break;
         case KanbanEnum.CLASSIC_JIRA: {
           let subJql = "";
@@ -199,19 +216,6 @@ export class JiraVerifyToken implements KanbanVerifyToken {
         allDoneCards
       );
     }
-
-    if (model.type.toLowerCase() == KanbanEnum.JIRA) {
-      const allDoneCardsResult = allDoneCards.filter(
-        (DoneCard: { fields: { statuscategorychangedate: string } }) =>
-          JiraVerifyToken.matchTime(
-            DoneCard.fields.statuscategorychangedate,
-            model.startTime,
-            model.endTime
-          )
-      );
-      return allDoneCardsResult;
-    }
-
     return allDoneCards;
   }
 
@@ -260,13 +264,5 @@ export class JiraVerifyToken implements KanbanVerifyToken {
       });
 
     return new Set<string>(assigneeList);
-  }
-
-  private static matchTime(
-    cardTime: string,
-    startTime: number,
-    endTime: number
-  ): boolean {
-    return startTime <= Date.parse(cardTime) && Date.parse(cardTime) <= endTime;
   }
 }

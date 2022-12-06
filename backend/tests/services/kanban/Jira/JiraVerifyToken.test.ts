@@ -29,7 +29,7 @@ import { IssueImportCreateClubhouseDocument } from "@linear/sdk/dist/_generated_
 import { StoryPointsAndCycleTimeRequest } from "../../../../src/contract/kanban/KanbanStoryPointParameterVerify";
 import { NoCardsInDoneColumnError } from "../../../../src/errors/NoCardsInDoneColumnError";
 import { Any } from "json2typescript";
-import { Assignee } from "../../../../src/models/kanban/JiraBoard/JiraCard";
+import { Assignee } from "../../../../src/models/kanban/JiraCard";
 
 const jiraVerifyToken = new JiraVerifyToken("testToken", "domain");
 const jiraVerifyTokenProto = Object.getPrototypeOf(jiraVerifyToken);

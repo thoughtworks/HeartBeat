@@ -1,4 +1,4 @@
-import { JsonObject, JsonProperty, ValueCheckingMode } from "json2typescript";
+import { JsonObject, JsonProperty } from "json2typescript";
 import { JiraProject } from "./JiraColumn";
 
 @JsonObject("FixVersion")
@@ -76,7 +76,6 @@ export class JiraCardField {
   priority?: Priority = undefined;
   parent?: CardParent = undefined;
   label?: string = "";
-  sprint?: string = "";
 }
 
 @JsonObject("JiraCard")

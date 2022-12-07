@@ -32,11 +32,19 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     const doneColumn = Array.of<string>();
 
     //column
-    const configurationResponse = await axios.get(
-      `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`,
-      {
-        headers: { Authorization: `${model.token}` },
-      }
+    const boardConfigurationUrl = `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`;
+    console.log(
+      `Start to get configuration for board_url: ${boardConfigurationUrl}`
+    );
+
+    const configurationResponse = await axios.get(boardConfigurationUrl, {
+      headers: { Authorization: `${model.token}` },
+    });
+
+    console.log(
+      `Successfully get configuration_data: ${JSON.stringify(
+        configurationResponse
+      )}`
     );
 
     const configuration = configurationResponse.data;
@@ -123,9 +131,11 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     url: string,
     token: string
   ): Promise<StatusSelf> {
+    console.log(`Start to query status_url:${url}`);
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
+    console.log(`Successfully queried status_data:${JSON.stringify(result)}`);
     return result.data;
   }
 

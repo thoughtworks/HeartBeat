@@ -144,7 +144,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     await Promise.all(
       allDoneCards.map(async function (DoneCard: any) {
-        const assigneeSet = await JiraVerifyToken.getCycleTimeAndAssigneeSet(
+        const assigneeSet = await JiraVerifyToken.getAssigneeSet(
           DoneCard.key,
           model.token,
           model.site
@@ -241,7 +241,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     );
   }
 
-  static async getCycleTimeAndAssigneeSet(
+  static async getAssigneeSet(
     jiraCardKey: string,
     jiraToken: string,
     jiraSite: string

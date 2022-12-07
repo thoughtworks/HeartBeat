@@ -5,31 +5,14 @@ import { StatusSelf } from "../../../../src/models/kanban/JiraBoard/StatusSelf";
 import { expect } from "chai";
 import { KanbanTokenVerifyModel } from "../../../../src/contract/kanban/KanbanTokenVerify";
 import { mock } from "../../../TestTools";
-import JiraColumns from "../../../fixture/JiraColumns.json";
+import JiraColumnConfig from "../../../fixture/JiraColumnConfig.json";
 import JiraFields from "../../../fixture/JiraFields.json";
 import StatusData from "../../../fixture/StatusData.json";
 
-import ReadyForDevStatus from "../../../fixture/statuses/ReadyForDevStatus.json";
-import InDevStatus from "../../../fixture/statuses/InDevStatus.json";
-import BlockedStatus from "../../../fixture/statuses/BlockedStatus.json";
-import InReviewStatus from "../../../fixture/statuses/InReviewStatus.json";
-import ReadyForTestStatus from "../../../fixture/statuses/ReadyForTest.json";
-import InTestStatus from "../../../fixture/statuses/InTest.json";
-import DoneStatus from "../../../fixture/statuses/DoneStatus.json";
-import InProductionStatus from "../../../fixture/statuses/InProductionStatus.json";
-
 import JiraCardCycleTime from "../../../fixture/JiraCardCycleTime.json";
 import JiraCards from "../../../fixture/JiraCards.json";
-import {
-  ColumnResponse,
-  KanbanTokenVerifyResponse,
-} from "../../../../src/contract/kanban/KanbanTokenVerifyResponse";
 import { JiraVerifyToken } from "../../../../src/services/kanban/Jira/JiraVerifyToken";
-import { IssueImportCreateClubhouseDocument } from "@linear/sdk/dist/_generated_documents";
-import { StoryPointsAndCycleTimeRequest } from "../../../../src/contract/kanban/KanbanStoryPointParameterVerify";
-import { NoCardsInDoneColumnError } from "../../../../src/errors/NoCardsInDoneColumnError";
-import { Any } from "json2typescript";
-import { Assignee } from "../../../../src/models/kanban/JiraCard";
+import { ThereIsNoCardsInDoneColumn } from "../../../../src/types/ThereIsNoCardsInDoneColumn";
 
 const jiraVerifyToken = new JiraVerifyToken("testToken", "domain");
 const jiraVerifyTokenProto = Object.getPrototypeOf(jiraVerifyToken);
@@ -45,8 +28,9 @@ const tokenVerifyModel = new KanbanTokenVerifyModel(
   "2"
 );
 const doneColumn = ["DONE", "CANCELLED"];
-describe("verify token and return columns and users", async () => {
+describe("verify token and return columns and users", () => {
   afterEach(() => sinon.restore());
+
   it("should throw exception when token is invalid", async () => {
     mock.onGet(`/project/${tokenVerifyModel.projectKey}`).reply(401);
     expect(async () => {
@@ -55,35 +39,6 @@ describe("verify token and return columns and users", async () => {
   });
 
   it("should return columns and users when token is valid", async () => {
-    jiraVerifyTokenProto.httpClient = axios.create({
-      baseURL: "https://site.atlassian.net/rest/api/2",
-    });
-    jiraVerifyTokenProto.httpClient.defaults.headers.common["Authorization"] =
-      "test Token";
-    mock
-      .onGet(
-        `https://${tokenVerifyModel.site}.atlassian.net/rest/agile/1.0/board/${tokenVerifyModel.boardId}/configuration`
-      )
-      .reply(200, JiraColumns);
-    const statusSelf: StatusSelf = new StatusSelf(
-      "https://dorametrics.atlassian.net/rest/api/2/status/10006",
-      "TODO",
-      "TODO",
-      {
-        key: "done",
-        name: "完成",
-      }
-    );
-    sinon.stub(JiraVerifyToken, <any>"queryStatus").callsFake(() => statusSelf);
-    sinon
-      .stub(jiraVerifyTokenProto, "queryUsersByCards")
-      .returns(["Hu hua", "Jiang Jiang", "Kang Pang"]);
-    mock
-      .onGet(
-        `/issue/createmeta?projectKeys=${tokenVerifyModel.projectKey}&expand=projects.issuetypes.fields`
-      )
-      .reply(200, JiraFields);
-
     const jiraColumns = [
       {
         key: "done",
@@ -141,61 +96,51 @@ describe("verify token and return columns and users", async () => {
         flag: false,
       },
       {
-        key: "customfield_10021",
-        name: "Flagged",
-        flag: false,
-      },
-      {
-        key: "fixVersions",
-        name: "Fix versions",
-        flag: false,
-      },
-      {
-        flag: false,
-        key: "customfield_10000",
-        name: "Development",
-      },
-      {
-        key: "priority",
-        name: "Priority",
-        flag: false,
-      },
-      {
         key: "labels",
         name: "Labels",
         flag: false,
-      },
-      {
-        flag: false,
-        key: "customfield_10015",
-        name: "Start date",
-      },
-      {
-        key: "customfield_10016",
-        name: "Story point estimate",
-        flag: false,
-      },
-      {
-        flag: false,
-        key: "customfield_10019",
-        name: "Rank",
       },
       {
         key: "assignee",
         name: "Assignee",
         flag: false,
       },
-      {
-        flag: false,
-        key: "customfield_10017",
-        name: "Issue color",
-      },
-      {
-        key: "customfield_10027",
-        name: "Feature/Operation",
-        flag: false,
-      },
     ];
+
+    const statusSelf: StatusSelf = new StatusSelf(
+      "https://dorametrics.atlassian.net/rest/api/2/status/10006",
+      "TODO",
+      "TODO",
+      {
+        key: "done",
+        name: "完成",
+      }
+    );
+
+    jiraVerifyTokenProto.httpClient = axios.create({
+      baseURL: "https://site.atlassian.net/rest/api/2",
+    });
+    jiraVerifyTokenProto.httpClient.defaults.headers.common["Authorization"] =
+      "test Token";
+
+    mock
+      .onGet(
+        `https://${tokenVerifyModel.site}.atlassian.net/rest/agile/1.0/board/${tokenVerifyModel.boardId}/configuration`
+      )
+      .reply(200, JiraColumnConfig);
+
+    sinon.stub(JiraVerifyToken, <any>"queryStatus").callsFake(() => statusSelf);
+
+    sinon
+      .stub(jiraVerifyTokenProto, "queryUsersByCards")
+      .returns(["Hu hua", "Jiang Jiang", "Kang Pang"]);
+
+    mock
+      .onGet(
+        `/issue/createmeta?projectKeys=${tokenVerifyModel.projectKey}&expand=projects.issuetypes.fields`
+      )
+      .reply(200, JiraFields);
+
     const expectedResponse = {
       jiraColumns,
       users,
@@ -204,6 +149,7 @@ describe("verify token and return columns and users", async () => {
     const response = await jiraVerifyToken.verifyTokenAndGetColumnsAndUser(
       tokenVerifyModel
     );
+
     expect(response.targetFields[0].flag).to.equal(false);
     expect(response.users.length).to.equal(3);
     expect(response).deep.equal(expectedResponse);
@@ -211,12 +157,13 @@ describe("verify token and return columns and users", async () => {
 });
 
 describe("get query status", () => {
-  it("should return query status data", async () => {
+  it("should return query status data when token is valid", async () => {
     mock
       .onGet("https://domain.atlassian.net/rest/api/2/status/10006", {
         headers: { Authorization: "testToken" },
       })
       .reply(200, StatusData);
+
     const result: StatusSelf =
       await jiraVerifyTokenProto.constructor.queryStatus(
         "https://domain.atlassian.net/rest/api/2/status/10006",
@@ -227,32 +174,14 @@ describe("get query status", () => {
 });
 
 describe("get all done cards", () => {
-  const storyPointsAndCycleTimeRequest = new StoryPointsAndCycleTimeRequest(
-    "testToken",
-    "jira",
-    "domain",
-    "project",
-    "2",
-    ["Done"],
-    1589080044000,
-    1589944044000,
-    [
-      {
-        key: "customfield_10016",
-        name: "Story point estimate",
-        flag: true,
-      },
-    ],
-    false
-  );
-
-  it("should return all done cards", async () => {
+  it("should return all done cards when board has done cards in time range", async () => {
     jiraVerifyTokenProto.httpClient = axios.create({
       baseURL: "https://domain.atlassian.net/rest/agile/1.0/board",
     });
     jiraVerifyTokenProto.httpClient.defaults.headers.common["Authorization"] =
       "testToken";
     jiraVerifyTokenProto.queryCount = 100;
+
     mock
       .onGet(
         `https://${
@@ -278,7 +207,7 @@ describe("get all done cards", () => {
 });
 
 describe("make page query", () => {
-  it("should return cards issues ", async () => {
+  it("should return cards issues when total cards number is larger than query count limit", async () => {
     const total = 123;
     const jql = `status in ('${doneColumn.join(
       "','"
@@ -287,6 +216,7 @@ describe("make page query", () => {
     } AND statusCategoryChangedDate <= ${tokenVerifyModel.endTime}`;
     const cards: any = [];
     jiraVerifyTokenProto.queryCount = 100;
+
     mock
       .onGet(
         `https://${
@@ -301,6 +231,7 @@ describe("make page query", () => {
         }
       )
       .reply(200, JiraCards);
+
     await jiraVerifyTokenProto.pageQuerying(
       tokenVerifyModel,
       total,
@@ -311,11 +242,12 @@ describe("make page query", () => {
   });
 });
 
-describe("get cycle time and assignee set", () => {
+describe("get assignee set", () => {
   afterEach(() => sinon.restore());
 
-  it("should return cycle time and assigneeset", async () => {
+  it("should return assigneeset when the card has been assigned", async () => {
     const jiraCardKey = "ADM-50";
+
     mock
       .onGet(
         `https://${tokenVerifyModel.site}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfeed
@@ -326,19 +258,20 @@ describe("get cycle time and assignee set", () => {
       )
       .reply(200, JiraCardCycleTime);
 
-    const response = await JiraVerifyToken.getCycleTimeAndAssigneeSet(
+    const asigneeSet = await JiraVerifyToken.getAssigneeSet(
       jiraCardKey,
       tokenVerifyModel.token,
       tokenVerifyModel.site
     );
-    expect(response.values.length).equal(0);
+
+    expect(asigneeSet.size).equal(1);
   });
 });
 
 describe("query users by cards", () => {
   afterEach(() => sinon.restore());
-  it("should throw error when allDoneCards length is Zero", async () => {
-    sinon.stub(jiraVerifyTokenProto, "getAllDoneCards").returns("");
+  it("should throw error when there is no cards in Done column", async () => {
+    sinon.stub(jiraVerifyTokenProto, "getAllDoneCards").returns([]);
 
     try {
       await jiraVerifyTokenProto.queryUsersByCards(
@@ -346,15 +279,13 @@ describe("query users by cards", () => {
         doneColumn
       );
     } catch (error) {
-      if (error instanceof NoCardsInDoneColumnError) {
-        expect(error.message).equals(
-          "Unsupported type: There is no cards in done column."
-        );
+      if (error instanceof ThereIsNoCardsInDoneColumn) {
+        expect(error.message).equals("There is no cards in Done column.");
       }
     }
   });
 
-  it("should return users", async () => {
+  it("should return users when there exists assigned card in done column", async () => {
     const allDoneCards = [
       {
         expand:
@@ -368,7 +299,7 @@ describe("query users by cards", () => {
     sinon.stub(jiraVerifyTokenProto, "getAllDoneCards").returns(allDoneCards);
 
     sinon
-      .stub(JiraVerifyToken, "getCycleTimeAndAssigneeSet")
+      .stub(JiraVerifyToken, "getAssigneeSet")
       .returns(Promise.resolve(new Set<string>(["Peng Peng", "Ming xiao"])));
 
     const expectedUsers = ["Peng Peng", "Ming xiao"];

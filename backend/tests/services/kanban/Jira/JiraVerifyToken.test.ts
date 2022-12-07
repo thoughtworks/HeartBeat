@@ -348,7 +348,7 @@ describe("query users by cards", () => {
     } catch (error) {
       if (error instanceof NoCardsInDoneColumnError) {
         expect(error.message).equals(
-          "unsupported type: There is no cards in done column."
+          "Unsupported type: There is no cards in done column."
         );
       }
     }

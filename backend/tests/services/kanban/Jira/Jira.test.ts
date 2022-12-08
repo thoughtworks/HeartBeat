@@ -44,7 +44,11 @@ describe("get story points and cycle times of done cards during period", () => {
           storyPointsAndCycleTimeRequest.site
         }.atlassian.net/rest/agile/1.0/board/2/issue?maxResults=100&jql=status in ('${storyPointsAndCycleTimeRequest.status.join(
           "','"
-        )}')`
+        )}') AND statusCategoryChangedDate >= ${
+          storyPointsAndCycleTimeRequest.startTime
+        } AND statusCategoryChangedDate <= ${
+          storyPointsAndCycleTimeRequest.endTime
+        }`
       )
       .reply(200, JiraCards);
 

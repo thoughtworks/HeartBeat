@@ -43,7 +43,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     console.log(
       `Successfully get configuration_data: ${JSON.stringify(
-        configurationResponse
+        configurationResponse.data
       )}`
     );
 
@@ -135,7 +135,9 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
-    console.log(`Successfully queried status_data:${JSON.stringify(result)}`);
+    console.log(
+      `Successfully queried status_data:${JSON.stringify(result.data)}`
+    );
     return result.data;
   }
 

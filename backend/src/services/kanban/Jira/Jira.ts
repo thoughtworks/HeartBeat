@@ -45,39 +45,45 @@ export class Jira implements Kanban {
     model: StoryPointsAndCycleTimeRequest
   ): Promise<ColumnResponse[]> {
     const jiraColumnNames = Array.of<ColumnResponse>();
-
     //column
-    const configurationResponse = await axios.get(
-      `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`,
-      {
-        headers: { Authorization: `${model.token}` },
-      }
+    const configurationUrl = `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`;
+    console.log(`Start to query configuration_url:${configurationUrl}`);
+    const configurationResponse = await axios.get(configurationUrl, {
+      headers: { Authorization: `${model.token}` },
+    });
+    console.log(
+      `Successfully queried configuration_data:${JSON.stringify(
+        configurationResponse.data
+      )}`
     );
 
     const configuration = configurationResponse.data;
-
     const columns = configuration.columnConfig.columns;
 
-    for (const column of columns) {
-      if (column.statuses.length == 0) {
-        continue;
+    columns.map(async (column: any) => {
+      if (column.statuses.length != 0) {
+        const columnValue: ColumnValue = new ColumnValue();
+        columnValue.name = column.name;
+
+        const jiraColumnResponse = new ColumnResponse();
+        await Promise.all(
+          column.statuses.map(async (status: { self: string }) => {
+            const queryStatusUri = status.self;
+            const statusResponse = await Jira.queryStatus(
+              queryStatusUri,
+              model.token
+            );
+            const cardStatusName = (
+              statusResponse as StatusSelf
+            ).untranslatedName.toUpperCase();
+            columnValue.statuses.push(cardStatusName);
+          })
+        ).then(() => {
+          jiraColumnResponse.value = columnValue;
+          jiraColumnNames.push(jiraColumnResponse);
+        });
       }
-
-      const columnValue: ColumnValue = new ColumnValue();
-      columnValue.name = column.name;
-
-      const jiraColumnResponse = new ColumnResponse();
-      for (const status of column.statuses) {
-        const statusSelf = await Jira.queryStatus(status.self, model.token);
-        jiraColumnResponse.key = statusSelf.statusCategory.key;
-
-        columnValue.statuses.push(statusSelf.untranslatedName.toUpperCase());
-      }
-
-      jiraColumnResponse.value = columnValue;
-      jiraColumnNames.push(jiraColumnResponse);
-    }
-
+    });
     return jiraColumnNames;
   }
 
@@ -85,9 +91,13 @@ export class Jira implements Kanban {
     url: string,
     token: string
   ): Promise<StatusSelf> {
+    console.log(`Start to query card status_url:${url}`);
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
+    console.log(
+      `Successfully queried card status_data:${JSON.stringify(result.data)}`
+    );
     return result.data;
   }
 
@@ -207,7 +217,11 @@ export class Jira implements Kanban {
     if (model.status.length > 0) {
       switch (model.type.toLowerCase()) {
         case KanbanEnum.JIRA:
-          jql = `status in ('${model.status.join("','")}')`;
+          jql = `status in ('${model.status.join(
+            "','"
+          )}') AND statusCategoryChangedDate >= ${
+            model.startTime
+          } AND statusCategoryChangedDate <= ${model.endTime}`;
           break;
         case KanbanEnum.CLASSIC_JIRA: {
           let subJql = "";
@@ -236,18 +250,6 @@ export class Jira implements Kanban {
         allDoneCards,
         model.boardId
       );
-    }
-
-    if (model.type.toLowerCase() == KanbanEnum.JIRA) {
-      const allDoneCardsResult = allDoneCards.filter(
-        (DoneCard: { fields: { statuscategorychangedate: string } }) =>
-          Jira.matchTime(
-            DoneCard.fields.statuscategorychangedate,
-            model.startTime,
-            model.endTime
-          )
-      );
-      return allDoneCardsResult;
     }
     return allDoneCards;
   }
@@ -432,14 +434,6 @@ export class Jira implements Kanban {
       assigneeSet: new Set<string>(assigneeList),
       originCycleTimeInfos,
     };
-  }
-
-  private static matchTime(
-    cardTime: string,
-    startTime: number,
-    endTime: number
-  ): boolean {
-    return startTime <= Date.parse(cardTime) && Date.parse(cardTime) <= endTime;
   }
 
   private static putStatusChangeEventsIntoAnArray(

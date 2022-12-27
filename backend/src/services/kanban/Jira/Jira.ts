@@ -29,6 +29,7 @@ import {
   reformTimeLineForFlaggedCards,
   StatusChangedArrayItem,
 } from "../util";
+import logger from "../../../utils/loggerUtils";
 
 export class Jira implements Kanban {
   private readonly queryCount: number = 100;
@@ -47,11 +48,11 @@ export class Jira implements Kanban {
     const jiraColumnNames = Array.of<ColumnResponse>();
     //column
     const configurationUrl = `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`;
-    console.log(`Start to query configuration_url:${configurationUrl}`);
+    logger.info(`Start to query configuration_url:${configurationUrl}`);
     const configurationResponse = await axios.get(configurationUrl, {
       headers: { Authorization: `${model.token}` },
     });
-    console.log(
+    logger.info(
       `Successfully queried configuration_data:${JSON.stringify(
         configurationResponse.data
       )}`
@@ -91,11 +92,11 @@ export class Jira implements Kanban {
     url: string,
     token: string
   ): Promise<StatusSelf> {
-    console.log(`Start to query card status_url:${url}`);
+    logger.info(`Start to query card status_url:${url}`);
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
-    console.log(
+    logger.info(
       `Successfully queried card status_data:${JSON.stringify(result.data)}`
     );
     return result.data;

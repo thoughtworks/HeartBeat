@@ -31,6 +31,6 @@ jobs:
           yarn eslint
       - name: Testing
         run: |
-          yarn test
+          yarn test-coverage
       - name: Building
         run: yarn build

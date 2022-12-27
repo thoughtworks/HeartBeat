@@ -12,6 +12,7 @@ import { JiraCardHistory } from "../../../models/kanban/JiraCardHistory";
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import { KanbanEnum } from "../Kanban";
 import { ThereIsNoCardsInDoneColumn } from "../../../types/ThereIsNoCardsInDoneColumn";
+import logger from "../../../utils/loggerUtils";
 
 export class JiraVerifyToken implements KanbanVerifyToken {
   private readonly queryCount: number = 100;
@@ -33,7 +34,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     //column
     const boardConfigurationUrl = `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`;
-    console.log(
+    logger.info(
       `Start to get configuration for board_url: ${boardConfigurationUrl}`
     );
 
@@ -41,7 +42,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
       headers: { Authorization: `${model.token}` },
     });
 
-    console.log(
+    logger.info(
       `Successfully get configuration_data: ${JSON.stringify(
         configurationResponse.data
       )}`
@@ -131,11 +132,11 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     url: string,
     token: string
   ): Promise<StatusSelf> {
-    console.log(`Start to query status_url:${url}`);
+    logger.info(`Start to query status_url:${url}`);
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
-    console.log(
+    logger.info(
       `Successfully queried status_data:${JSON.stringify(result.data)}`
     );
     return result.data;

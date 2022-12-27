@@ -4,7 +4,8 @@ WORKDIR /app
 RUN yarn install && yarn build:prod
 
 FROM nginx:latest
-LABEL app=HeartBeat,arch=Frontend
+LABEL app=HeartBeat
+LABEL arch=Frontend
 WORKDIR /app
 COPY --from=builder /app/dist/heartbeat-frontend /usr/share/nginx/html
 COPY ./infra/nginx.conf /etc/nginx/nginx.conf

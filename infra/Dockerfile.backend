@@ -6,7 +6,8 @@ RUN yarn package
 RUN chmod +x ./heartbeat-backend
 
 FROM ubuntu:latest
-LABEL app=HeartBeat,arch=Backend
+LABEL app=HeartBeat
+LABEL arch=Backend
 RUN groupadd -r nonroot && useradd --no-log-init -r -g nonroot nonroot
 RUN mkdir -p ./csv
 RUN chown nonroot ./csv

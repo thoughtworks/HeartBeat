@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://heartbeat.com',
+  apiUrl: '/api/v1',
 };

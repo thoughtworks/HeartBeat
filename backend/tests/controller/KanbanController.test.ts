@@ -8,14 +8,15 @@ import {
   KanbanTokenVerifyResponse,
 } from "../../src/contract/kanban/KanbanTokenVerifyResponse";
 import { JiraVerifyToken } from "../../src/services/kanban/Jira/JiraVerifyToken";
+import { API_VERSION } from "../fixture/common";
 
 chai.use(chaiHttp);
 chai.should();
 
 describe("KanbanController", () => {
   describe("verify token API test", () => {
-    const baseUrl =
-      "/kanban/verify?token=test-token&site=dorametrics&projectKey=ADM&startTime=0&endTime=0&boardId=2";
+    const KANBAN_VERIFY_URL =
+      `${API_VERSION}/kanban/verify?token=test-token&site=dorametrics&projectKey=ADM&startTime=0&endTime=0&boardId=2`;
 
     it("should return 200 when using valid token", async () => {
       const jiraColumn1 = new ColumnResponse();
@@ -36,7 +37,7 @@ describe("KanbanController", () => {
         .stub(JiraVerifyToken.prototype, "verifyTokenAndGetColumnsAndUser")
         .returns(Promise.resolve(expectedResponse));
 
-      const response = await chai.request(app).get(baseUrl + "&type=jira");
+      const response = await chai.request(app).get(KANBAN_VERIFY_URL + "&type=jira");
       expect(response.status).equal(200);
       expect(response.body).deep.equal(expectedResponse);
 
@@ -46,7 +47,7 @@ describe("KanbanController", () => {
     it("should return 400 when type is not jira", async () => {
       sinon.stub(JiraVerifyToken.prototype, "verifyTokenAndGetColumnsAndUser");
 
-      const response = await chai.request(app).get(baseUrl + "&type=not-jira");
+      const response = await chai.request(app).get(KANBAN_VERIFY_URL + "&type=not-jira");
       expect(response.status).equals(400);
 
       sinon.restore();
@@ -58,7 +59,7 @@ describe("KanbanController", () => {
         .stub(JiraVerifyToken.prototype, "verifyTokenAndGetColumnsAndUser")
         .throws(error);
 
-      const response = await chai.request(app).get(baseUrl + "&type=jira");
+      const response = await chai.request(app).get(KANBAN_VERIFY_URL + "&type=jira");
       expect(response).to.throws;
 
       sinon.restore();

@@ -40,6 +40,7 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           source: "./infra/docker-compose.yml"
           target: "./"
+          strip_components: 1
 
       - name: Deploy
         uses: appleboy/ssh-action@master

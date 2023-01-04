@@ -11,6 +11,7 @@ on:
 
 jobs:
   build-and-push-image:
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -90,4 +91,4 @@ jobs:
             docker rmi -f $(docker images -f label=app=HeartBeat -q)
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
-            docker-compose up -d
+            docker-compose up -d frontend

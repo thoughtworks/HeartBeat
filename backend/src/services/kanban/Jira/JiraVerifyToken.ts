@@ -32,48 +32,30 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     const doneColumn = Array.of<string>();
 
     //column
-    const configurationResponse = await axios.get(
-      `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`,
-      {
-        headers: { Authorization: `${model.token}` },
-      }
+    const boardConfigurationUrl = `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`;
+    console.log(
+      `Start to get configuration for board_url: ${boardConfigurationUrl}`
+    );
+
+    const configurationResponse = await axios.get(boardConfigurationUrl, {
+      headers: { Authorization: `${model.token}` },
+    });
+
+    console.log(
+      `Successfully get configuration_data: ${JSON.stringify(
+        configurationResponse.data
+      )}`
     );
 
     const configuration = configurationResponse.data;
 
     const columns = configuration.columnConfig.columns;
 
-    for (const column of columns) {
-      if (column.statuses.length == 0) {
-        continue;
-      }
-
-      const columnValue: ColumnValue = new ColumnValue();
-      columnValue.name = column.name;
-
-      const jiraColumnResponse = new ColumnResponse();
-      let anyDoneKey = false;
-      for (const status of column.statuses) {
-        const statusSelf = await JiraVerifyToken.queryStatus(
-          status.self,
-          model.token
-        );
-
-        if (!anyDoneKey) {
-          jiraColumnResponse.key = statusSelf.statusCategory.key;
-        }
-
-        columnValue.statuses.push(statusSelf.untranslatedName.toUpperCase());
-
-        if (statusSelf.statusCategory.key == "done") {
-          doneColumn.push(statusSelf.untranslatedName.toUpperCase());
-          anyDoneKey = true;
-        }
-      }
-
-      jiraColumnResponse.value = columnValue;
-      jiraColumnNames.push(jiraColumnResponse);
-    }
+    await Promise.all(
+      columns.map((column: any) =>
+        this.getJiraColumnNames(column, model, doneColumn, jiraColumnNames)
+      )
+    );
 
     //user
     const userNames = await this.queryUsersByCards(model, doneColumn);
@@ -106,13 +88,56 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     return response;
   }
 
+  private async getJiraColumnNames(
+    column: any,
+    model: KanbanTokenVerifyModel,
+    doneColumn: string[],
+    jiraColumnNames: ColumnResponse[]
+  ) {
+    if (column.statuses.length == 0) {
+      return;
+    }
+
+    const columnValue: ColumnValue = new ColumnValue();
+    columnValue.name = column.name;
+
+    const jiraColumnResponse = new ColumnResponse();
+    let anyDoneKey = false;
+    await Promise.all(
+      column.statuses.map((status: { self: string }) =>
+        JiraVerifyToken.queryStatus(status.self, model.token)
+      )
+    ).then((responses) => {
+      responses.map((response) => {
+        if (!anyDoneKey) {
+          jiraColumnResponse.key = (response as StatusSelf).statusCategory.key;
+        }
+        columnValue.statuses.push(
+          (response as StatusSelf).untranslatedName.toUpperCase()
+        );
+        if ((response as StatusSelf).statusCategory.key == "done") {
+          doneColumn.push(
+            (response as StatusSelf).untranslatedName.toUpperCase()
+          );
+          anyDoneKey = true;
+        }
+      });
+      jiraColumnResponse.value = columnValue;
+      jiraColumnNames.push(jiraColumnResponse);
+    });
+  }
+
   private static async queryStatus(
     url: string,
     token: string
   ): Promise<StatusSelf> {
+    console.log(`Start to query status_url:${url}`);
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
+    console.log(
+      `Successfully queried status_data:${JSON.stringify(result.data)}`
+    );
     return result.data;
   }
 
@@ -131,7 +156,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     await Promise.all(
       allDoneCards.map(async function (DoneCard: any) {
-        const assigneeSet = await JiraVerifyToken.getCycleTimeAndAssigneeSet(
+        const assigneeSet = await JiraVerifyToken.getAssigneeSet(
           DoneCard.key,
           model.token,
           model.site
@@ -166,7 +191,11 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     if (doneColumn.length > 0) {
       switch (model.type.toLowerCase()) {
         case KanbanEnum.JIRA:
-          jql = `status in ('${doneColumn.join("','")}')`;
+          jql = `status in ('${doneColumn.join(
+            "','"
+          )}') AND statusCategoryChangedDate >= ${
+            model.startTime
+          } AND statusCategoryChangedDate <= ${model.endTime}`;
           break;
         case KanbanEnum.CLASSIC_JIRA: {
           let subJql = "";
@@ -199,19 +228,6 @@ export class JiraVerifyToken implements KanbanVerifyToken {
         allDoneCards
       );
     }
-
-    if (model.type.toLowerCase() == KanbanEnum.JIRA) {
-      const allDoneCardsResult = allDoneCards.filter(
-        (DoneCard: { fields: { statuscategorychangedate: string } }) =>
-          JiraVerifyToken.matchTime(
-            DoneCard.fields.statuscategorychangedate,
-            model.startTime,
-            model.endTime
-          )
-      );
-      return allDoneCardsResult;
-    }
-
     return allDoneCards;
   }
 
@@ -237,7 +253,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     );
   }
 
-  static async getCycleTimeAndAssigneeSet(
+  static async getAssigneeSet(
     jiraCardKey: string,
     jiraToken: string,
     jiraSite: string
@@ -260,13 +276,5 @@ export class JiraVerifyToken implements KanbanVerifyToken {
       });
 
     return new Set<string>(assigneeList);
-  }
-
-  private static matchTime(
-    cardTime: string,
-    startTime: number,
-    endTime: number
-  ): boolean {
-    return startTime <= Date.parse(cardTime) && Date.parse(cardTime) <= endTime;
   }
 }

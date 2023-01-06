@@ -1,4 +1,4 @@
-package backend.service;
+package heartbeat.service;
 
 public class SimpleService {
 

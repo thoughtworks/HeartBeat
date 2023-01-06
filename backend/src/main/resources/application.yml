@@ -1,2 +1,6 @@
 server:
   port: 3001
+
+logging:
+  level:
+    root: INFO

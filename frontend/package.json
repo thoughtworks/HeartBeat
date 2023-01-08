@@ -13,7 +13,7 @@
     "test-coverage": "jest --env=jsdom --watchAll=false --coverage"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "npx prettier --write --ignore-unknown ./frontend"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -50,5 +50,8 @@
     "ts-jest": "^29.0.3",
     "typescript": "*",
     "vite": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=16.18.0"
   }
 }

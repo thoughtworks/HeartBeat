@@ -1,11 +1,11 @@
 name: Build and Deploy
 
 on:
-  workflow_run:
-    workflows:
-      - Backend
-    types:
-      - completed
+  # workflow_run:
+  #   workflows:
+  #     - Backend
+  #   types:
+  #     - completed
   workflow_dispatch:
 
 

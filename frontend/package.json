@@ -1,6 +1,9 @@
 {
-  "name": "frontend",
-  "private": true,
+  "name": "heartbeat-frontend",
+  "license": "MIT",
+  "author": "HeartBeat Team <heartbeat@thoughtworks.com>",
+  "description": "HeartBeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.",
+  "private": false,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -53,5 +56,10 @@
   },
   "engines": {
     "node": ">=16.18.0"
+  },
+  "repository": "https://github.com/thoughtworks/HeartBeat.git",
+  "bugs": {
+    "url": "https://github.com/thoughtworks/HeartBeat/issues",
+    "email": "heartbeat@thoughtworks.com"
   }
 }

@@ -8,7 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "prepare": "cd .. && husky install frontend/.husky",
-    "lint": "eslint --ext .js,.ts,.jsx,.tsx"
+    "lint": "eslint --ext .js,.ts,.jsx,.tsx",
+    "test": "jest",
+    "test-coverage": "jest --env=jsdom --watchAll=false --coverage"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

@@ -2,7 +2,7 @@
 <Configuration status="WARN" monitorInterval="30">
     <Properties>
         <Property name="LOG_PATTERN">
-            %d{yyyy-MM-dd HH:mm:ss.SSS} [%highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}] [%t] %M(%c{1.}):(%L): %m%n%ex
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}] [%t] %M(%c{1}:%L): %m%n%ex
         </Property>
     </Properties>
 

@@ -10,10 +10,11 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prepare": "cd .. && husky install frontend/.husky",
     "lint": "eslint --ext .js,.ts,.jsx,.tsx && prettier --check ./",
     "test": "jest",
-    "test-coverage": "jest --env=jsdom --watchAll=false --coverage"
+    "test-coverage": "jest --env=jsdom --watchAll=false --coverage",
+    "e2e-test": "npx playwright test",
+    "e2e-report": "npx playwright show-report"
   },
   "lint-staged": {
     "**/*": "npx prettier --write --ignore-unknown ./frontend"
@@ -30,6 +31,7 @@
     "react-router-dom": "^6.6.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.29.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",

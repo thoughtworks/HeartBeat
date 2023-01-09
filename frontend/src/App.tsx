@@ -6,7 +6,7 @@ import { Counter } from './components/counter/Counter';
 function App() {
   return (
     <div className="App">
-      <p>Hello World</p>
+      <p className="title">Hello World</p>
       <Button variant="contained">Import Project</Button>
       <hr />
       <BrowserRouter>

@@ -1,12 +1,20 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App from '../src/App';
+import { Provider } from 'react-redux';
+import { store } from '../src/app/store';
+import React from 'react';
 
 describe('render app', () => {
-  it('should show hello World', () => {
-    const { getByText } = render(<App />);
-
+  test('should show hello World', async () => {
+    const { getByText } = render(
+      <Provider store={store}>
+        <App />
+      </Provider>
+    );
     const text = getByText('Hello World');
-    expect(text).toBeInTheDocument();
+    await waitFor(() => {
+      expect(text).toBeInTheDocument();
+    });
   });
 });

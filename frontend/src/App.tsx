@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import './App.css';
 import { BrowserRouter, Link } from 'react-router-dom';
 import Router from './router';
+import { Counter } from './components/counter/Counter';
 function App() {
   return (
     <div className="App">
@@ -14,6 +15,8 @@ function App() {
         <Link to="/about">About Page</Link>
         <Router />
       </BrowserRouter>
+      <hr />
+      <Counter />
     </div>
   );
 }

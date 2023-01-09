@@ -22,8 +22,11 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.11.3",
+    "@reduxjs/toolkit": "^1.9.1",
+    "@types/react-redux": "^7.1.25",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^6.6.1"
   },
   "devDependencies": {

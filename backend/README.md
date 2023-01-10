@@ -10,7 +10,7 @@ cd HearBeat/backend
 ```
 
 Health endpoint:
-http://localhost:3001/api/v1/actuator/health
+http://localhost:3001/api/v1/health
 
 Swagger address:
 http://localhost:3001/api/v1/swagger-ui/index.html

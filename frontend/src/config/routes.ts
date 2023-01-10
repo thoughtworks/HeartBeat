@@ -4,17 +4,17 @@ const routes = [
   {
     path: '/',
     exact: true,
-    component: lazy(() => import('../views/Home')),
+    component: lazy(() => import('../pages/Home')),
     name: 'Home',
   },
   {
     path: '/home',
-    component: lazy(() => import('../views/Home')),
+    component: lazy(() => import('../pages/Home')),
     name: 'Home',
   },
   {
     path: '/about',
-    component: lazy(() => import('../views/About')),
+    component: lazy(() => import('../pages/About')),
     name: 'About',
   },
 ];

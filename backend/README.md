@@ -10,10 +10,10 @@ cd HearBeat/backend
 ```
 
 Health endpoint:
-http://localhost:3001/actuator/health
+http://localhost:3001/api/v1/actuator/health
 
 Swagger address:
-http://localhost:3001/swagger-ui/index.html
+http://localhost:3001/api/v1/swagger-ui/index.html
 
 ## 2. How to build docker image and run locally
 

@@ -1,6 +1,7 @@
 server:
   port: 3001
-
+  servlet:
+    context-path: /api/v1
 logging:
   level:
     root: INFO

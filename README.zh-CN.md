@@ -1,4 +1,4 @@
-# HeartBeat 用户手册（2020/06，第一版）
+# HeartBeat （2023/01）
 
 # 1 什么是 HeartBeat
 
@@ -277,43 +277,38 @@ For now, we don’t have a good solution to resolve this issue.
 
 # 6 HeartBeat 基本操作
 
-## 通过 Docker 运行
+## 6.1 运行前端项目
 
 ```
-$ docker-compose up
+cd HearBeat/frontend
+yarn 
+yarn start
+```
+ 
+## 6.1.1 打包 并进行本地预览
+
+```
+yarn build
+yarn preview
 ```
 
-## 6.1 安装和运行
+## 6.1.2 前端单元测试
 
-```shell script
-$ cd HearBeat/frontend
-$ yarn install #为前端安装node modules
-$ yarn start #运行项目
 ```
-
-```shell script
-$ cd HearBeat/backend
-$ yarn install #为后端安装node modules
-$ yarn start #运行项目
-$ yarn watch-server #如果不能运行，请使用本命令
+yarn test
 ```
+## 6.1.3 前端测试报告
 
-访问 `http://localhost:4200`开始使用
-
-swagger 地址: `http://localhost:3001/swagger-html`
-
-## 6.2 如何编译:
-
-```shell script
-    yarn package
 ```
+yarn test-coverage
+```
+## 6.1.4 端对端测试
 
-## 6.3 如何打包
+```
+yarn e2e-test
+```
+## 6.1.5 端对端测试报告
 
-你可以将 server 构建到二进制文件，它将会输出 3 个文件：
-
-- heartbeat-backend-linux
-- heartbeat-backend-macos
-- heartbeat-backend-win.exe
-
-这些文件能满足不同操作系统的需要，并且您不需要额外安装 Node.js 环境。
+```
+yarn e2e-report
+```

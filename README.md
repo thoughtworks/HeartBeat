@@ -1,4 +1,4 @@
-# HeartBeat User Guide（2020/06，Version 1）
+# HeartBeat Project（2023/01）
 
 # 1 About HeartBeat
 
@@ -280,53 +280,38 @@ For now, we just can download the code in our local machine, please follow below
 
 # 6 Run HeartBeat
 
-## Run via Docker
-
-```
-$ docker-compose up
-```
-
-## 6.1 How to run backend
-
-Install node modules:
-
-```shell script
-cd HearBeat/backend
-yarn install
-```
-
-Run backend:
-
-```shell script
-yarn start
-```
-
-swagger address: `http://localhost:3001/swagger-html`
-
-## 6.1.1 How to package it (optional)
-
-```shell script
-yarn package
-```
-
-you can build server to binary file, it will output 3 files:
-
-- heartbeat-backend-linux
-- heartbeat-backend-macos
-- heartbeat-backend-win.exe
-
-these files can run on different system, you do not need to install node environment
-
-## 6.2 How to run frontend
+## 6.1 How to run frontend
 
 ```
 cd HearBeat/frontend
-yarn install --pure-lockfile
+yarn 
 yarn start
 ```
-
-## 6.2.1 How to build it
+ 
+## 6.1.1 How to build  and local preview
 
 ```
 yarn build
+yarn preview
+```
+
+## 6.1.2 How to run unit tests
+
+```
+yarn test
+```
+## 6.1.3 How to generate a test report
+
+```
+yarn test-coverage
+```
+## 6.1.4 How to run e2e tests
+
+```
+yarn e2e-test
+```
+## 6.1.5 How to generate a e2e report
+
+```
+yarn e2e-report
 ```

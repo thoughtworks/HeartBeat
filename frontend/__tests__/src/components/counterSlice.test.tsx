@@ -4,18 +4,18 @@ describe('counter reducer', () => {
   const initialState: CounterState = {
     value: 0,
   };
-  it('should handle initial state', () => {
+  it('should get 0 when handle initial state', () => {
     expect(counterReducer(undefined, { type: 'unknown' })).toEqual({
       value: 0,
     });
   });
 
-  it('should handle increment', () => {
+  it('should get 1 when handle increment', () => {
     const actual = counterReducer(initialState, increment());
     expect(actual.value).toEqual(1);
   });
 
-  it('should handle decrement', () => {
+  it('should get -1 when handle decrement', () => {
     const actual = counterReducer(initialState, decrement());
     expect(actual.value).toEqual(-1);
   });

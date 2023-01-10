@@ -6,7 +6,7 @@ import { store } from '../../src/app/store';
 import React from 'react';
 
 describe('render app', () => {
-  test('should show hello World', () => {
+  test('should show hello World when render app component', () => {
     const { getByText } = render(
       <Provider store={store}>
         <App />

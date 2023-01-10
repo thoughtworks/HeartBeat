@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useAppSelector, useAppDispatch } from '../../hooks';
+import { useAppSelector, useAppDispatch } from '@src/hooks';
 
 import { decrement, increment, selectCount } from './counterSlice';
 

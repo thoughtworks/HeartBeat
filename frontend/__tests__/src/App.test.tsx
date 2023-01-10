@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import App from '../../src/App';
+import App from '@src/App';
 import { Provider } from 'react-redux';
-import { index } from '../../src/store';
+import { index } from '@src/store';
 import React from 'react';
 
 describe('render hooks', () => {

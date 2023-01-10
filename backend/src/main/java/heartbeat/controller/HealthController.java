@@ -1,4 +1,4 @@
-package heartbeat.controllers;
+package heartbeat.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.HealthEndpoint;

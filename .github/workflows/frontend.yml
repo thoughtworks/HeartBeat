@@ -4,7 +4,7 @@ on:
   push:
     branches: ["*"]
   pull_request:
-    branches: ["master"]
+    branches: ["main"]
 defaults:
   run:
     working-directory: ./frontend
@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [16.18.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -31,7 +31,6 @@ jobs:
           yarn lint
       - name: Testing
         run: |
-          export karmaBrowser=ChromeHeadless
-          yarn test --watch=false
+          yarn test
       - name: Building
         run: yarn build

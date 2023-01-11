@@ -4,7 +4,7 @@ on:
   push:
     branches: ["*"]
   pull_request:
-    branches: ["master"]
+    branches: ["main"]
 defaults:
   run:
     working-directory: ./backend
@@ -13,24 +13,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Set up JDK 19
+        uses: actions/setup-java@v3
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install & Lint
-        run: |
-          npm install -g yarn
-          yarn
-          yarn eslint
-      - name: Testing
-        run: |
-          yarn test-coverage
-      - name: Building
-        run: yarn build
+          java-version: '19'
+          distribution: 'adopt'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build

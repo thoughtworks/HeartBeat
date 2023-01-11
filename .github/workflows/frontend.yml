@@ -16,7 +16,6 @@ jobs:
     strategy:
       matrix:
         node-version: [16.18.0]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v3
@@ -26,11 +25,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install & Lint
         run: |
-          npm install -g yarn
-          yarn
-          yarn lint
+          npm install -g pnpm
+          pnpm install
+          pnpm lint
       - name: Testing
         run: |
-          yarn test
+          pnpm test
       - name: Building
-        run: yarn build
+        run: pnpm build

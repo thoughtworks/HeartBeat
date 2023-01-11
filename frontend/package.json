@@ -12,9 +12,9 @@
     "preview": "vite preview",
     "lint": "eslint --ext .js,.ts,.jsx,.tsx && prettier --check ./",
     "test": "jest",
-    "test-coverage": "jest --env=jsdom --watchAll=false --coverage",
-    "e2e-test": "npx playwright test",
-    "e2e-report": "npx playwright show-report"
+    "coverage": "jest --env=jsdom --watchAll=false --coverage",
+    "e2e": "npx playwright test",
+    "e2e:report": "npx playwright show-report"
   },
   "lint-staged": {
     "**/*": "npx prettier --write --ignore-unknown ./frontend"

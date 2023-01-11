@@ -12,7 +12,9 @@ describe('render hooks', () => {
         <App />
       </Provider>
     );
+
     const text = getByText('Hello World');
+
     expect(text).toBeInTheDocument();
   });
 });

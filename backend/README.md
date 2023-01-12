@@ -28,3 +28,9 @@ docker run
 docker run -p 3001:3001 -itd backend-spring:v1 
 ```
 Then you can use health endpoint to check the app status.
+
+## 3. How to run all tests
+```shell script
+cd HearBeat/backend
+./gradlew clean test
+```

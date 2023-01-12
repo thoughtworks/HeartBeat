@@ -25,13 +25,34 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+  testLogging {
+    events "started", "passed", "skipped", "failed"
+  }
 	finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
 	dependsOn test
 }
+jacocoTestCoverageVerification {
+  afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: [
+        "**/HeartbeatApplication.class"
+      ])
+    }))
+  }
+  violationRules {
+    rule {
+      limit {
+        minimum = 1
+      }
+    }
+  }
+}
+

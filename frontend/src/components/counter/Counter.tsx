@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useAppSelector, useAppDispatch } from '@src/hooks';
 
-import { decrement, increment, selectCount } from './counterSlice';
+import { decrement, increment, selectCount } from '@src/features/counter/counterSlice';
 
 export const Counter = () => {
   const count = useAppSelector(selectCount);

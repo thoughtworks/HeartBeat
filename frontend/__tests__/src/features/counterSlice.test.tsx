@@ -1,4 +1,4 @@
-import counterReducer, { CounterState, increment, decrement } from '@src/components/counter/counterSlice';
+import counterReducer, { CounterState, increment, decrement } from '@src/features/counter/counterSlice';
 
 describe('counter reducer', () => {
   const initialState: CounterState = {

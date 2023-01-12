@@ -74,9 +74,7 @@ export class Jira implements Kanban {
               queryStatusUri,
               model.token
             );
-            const cardStatusName = (
-              statusResponse as StatusSelf
-            ).untranslatedName.toUpperCase();
+            const cardStatusName = (statusResponse as StatusSelf).untranslatedName.toUpperCase();
             columnValue.statuses.push(cardStatusName);
           })
         ).then(() => {
@@ -115,13 +113,16 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allDoneCards.map(async function (DoneCard: any) {
-        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
-          await Jira.getCycleTimeAndAssigneeSet(
-            DoneCard.key,
-            model.token,
-            model.site,
-            model.treatFlagCardAsBlock
-          );
+        const {
+          cycleTimeInfos,
+          assigneeSet,
+          originCycleTimeInfos,
+        } = await Jira.getCycleTimeAndAssigneeSet(
+          DoneCard.key,
+          model.token,
+          model.site,
+          model.treatFlagCardAsBlock
+        );
 
         //fix the assignee not in the card history, only in the card field issue.
         if (DoneCard.fields.assignee && DoneCard.fields.assignee.displayName) {
@@ -174,17 +175,21 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allNonDoneCards.map(async function (nonDoneCard: any) {
-        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
-          await Jira.getCycleTimeAndAssigneeSet(
-            nonDoneCard.key,
-            model.token,
-            model.site,
-            model.treatFlagCardAsBlock
-          );
+        const {
+          cycleTimeInfos,
+          assigneeSet,
+          originCycleTimeInfos,
+        } = await Jira.getCycleTimeAndAssigneeSet(
+          nonDoneCard.key,
+          model.token,
+          model.site,
+          model.treatFlagCardAsBlock
+        );
 
         const matchedNonDoneCard = Jira.processCustomFieldsForCard(nonDoneCard);
-        matchedNonDoneCard.fields.label =
-          matchedNonDoneCard.fields.labels.join(",");
+        matchedNonDoneCard.fields.label = matchedNonDoneCard.fields.labels.join(
+          ","
+        );
 
         const jiraCardResponse = new JiraCardResponse(
           matchedNonDoneCard,
@@ -237,9 +242,16 @@ export class Jira implements Kanban {
         }
       }
     }
-
+    logger.info(
+      `Start to query jira all done cards_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+    );
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+    );
+    logger.info(
+      `Successfully queried jira all done cards_data:${JSON.stringify(
+        response.data
+      )}`
     );
 
     const allDoneCardsResponse = response.data;
@@ -264,11 +276,17 @@ export class Jira implements Kanban {
         "','"
       )}')`;
     }
-
+    logger.info(
+      `Start to query jira all non-done cards for active sprint_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+    );
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
-
+    logger.info(
+      `Successfully queried jira all non-done cards for active sprint_data:${JSON.stringify(
+        response.data
+      )}`
+    );
     const allNonDoneCardsResponse = response.data;
     const allNonDoneCards = allNonDoneCardsResponse.issues;
     if (allNonDoneCardsResponse.total > this.queryCount) {
@@ -290,11 +308,17 @@ export class Jira implements Kanban {
     if (model.status.length > 0) {
       jql = `status not in ('${model.status.join("','")}')`;
     }
-
+    logger.info(
+      `Start to query kanban all non-done cards_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+    );
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
-
+    logger.info(
+      `Successfully queried kanban all non-done cards_data:${JSON.stringify(
+        response.data
+      )}`
+    );
     const allNonDoneCardsResponse = response.data;
     const allNonDoneCards = allNonDoneCardsResponse.issues;
     if (allNonDoneCardsResponse.total > this.queryCount) {
@@ -323,11 +347,19 @@ export class Jira implements Kanban {
     await Promise.all(
       [...Array(count).keys()].map(async (i) => {
         const startAt = this.queryCount * (i + 1);
+        logger.info(
+          `Start to page querying_url:${this.httpClient.defaults.baseURL}/${boardId}/issue/?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql}`
+        );
         await this.httpClient
           .get(
             `/${boardId}/issue/?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql}`
           )
-          .then((response) => cards.push(...response.data.issues));
+          .then((response) => {
+            logger.info(
+              `Successfully page queried_data:${JSON.stringify(response.data)}`
+            );
+            return cards.push(...response.data.issues);
+          });
       })
     );
   }
@@ -398,13 +430,20 @@ export class Jira implements Kanban {
     assigneeSet: Set<string>;
     originCycleTimeInfos: CycleTimeInfo[];
   }> {
+    logger.info(
+      `Start to query jira card history_url:https://${jiraSite}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfee`
+    );
     const jiraCardHistoryResponse = await axios.get(
       `https://${jiraSite}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfeed`,
       {
         headers: { Authorization: `${jiraToken}` },
       }
     );
-
+    logger.info(
+      `Successfully queried jira card history_data:${JSON.stringify(
+        jiraCardHistoryResponse.data
+      )}`
+    );
     const jiraCardHistory: JiraCardHistory = jiraCardHistoryResponse.data;
 
     const statusChangedArray = this.putStatusChangeEventsIntoAnArray(

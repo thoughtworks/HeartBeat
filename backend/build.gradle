@@ -39,3 +39,20 @@ tasks.named('test') {
 jacocoTestReport {
 	dependsOn test
 }
+jacocoTestCoverageVerification {
+  afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: [
+        "**/HeartbeatApplication.class"
+      ])
+    }))
+  }
+  violationRules {
+    rule {
+      limit {
+        minimum = 1
+      }
+    }
+  }
+}
+

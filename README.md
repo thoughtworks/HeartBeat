@@ -284,34 +284,34 @@ For now, we just can download the code in our local machine, please follow below
 
 ```
 cd HearBeat/frontend
-yarn 
-yarn start
+pnpm install 
+pnpm start
 ```
  
 ## 6.1.1 How to build  and local preview
 
 ```
-yarn build
-yarn preview
+pnpm build
+pnpm preview
 ```
 
 ## 6.1.2 How to run unit tests
 
 ```
-yarn test
+pnpm test
 ```
 ## 6.1.3 How to generate a test report
 
 ```
-yarn test-coverage
+pnpm coverage
 ```
 ## 6.1.4 How to run e2e tests
 
 ```
-yarn e2e-test
+pnpm e2e
 ```
 ## 6.1.5 How to generate a e2e report
 
 ```
-yarn e2e-report
+pnpm e2e:report
 ```

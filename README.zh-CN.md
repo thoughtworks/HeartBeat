@@ -281,34 +281,34 @@ For now, we don’t have a good solution to resolve this issue.
 
 ```
 cd HearBeat/frontend
-yarn 
-yarn start
+pnpm install
+pnpm start
 ```
  
 ## 6.1.1 打包 并进行本地预览
 
 ```
-yarn build
-yarn preview
+pnpm build
+pnpm preview
 ```
 
 ## 6.1.2 前端单元测试
 
 ```
-yarn test
+pnpm test
 ```
 ## 6.1.3 前端测试报告
 
 ```
-yarn test-coverage
+pnpm coverage
 ```
 ## 6.1.4 端对端测试
 
 ```
-yarn e2e-test
+pnpm e2e
 ```
 ## 6.1.5 端对端测试报告
 
 ```
-yarn e2e-report
+pnpm e2e:report
 ```

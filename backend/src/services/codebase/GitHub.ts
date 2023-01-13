@@ -31,9 +31,6 @@ export class GitHub implements Codebase {
     logger.info(
       `Successfully queried all organization_data:${JSON.stringify(
         response.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
       )}`
     );
     const gitOrganizations = new JsonConvert().deserializeArray(
@@ -115,10 +112,8 @@ export class GitHub implements Codebase {
                 )}`
               );
 
-              const gitHubPulls: GitHubPull[] = new JsonConvert().deserializeArray(
-                response.data,
-                GitHubPull
-              );
+              const gitHubPulls: GitHubPull[] =
+                new JsonConvert().deserializeArray(response.data, GitHubPull);
 
               const jobFinishTime: number = new Date(
                 deployInfo.jobFinishTime
@@ -162,10 +157,8 @@ export class GitHub implements Codebase {
                   "*******"
                 )}`
               );
-              const gitHubCommites: CommitInfo[] = new JsonConvert().deserializeArray(
-                prResponse.data,
-                CommitInfo
-              );
+              const gitHubCommites: CommitInfo[] =
+                new JsonConvert().deserializeArray(prResponse.data, CommitInfo);
 
               //get the first commit.
               const firstCommit: CommitInfo = gitHubCommites[0];

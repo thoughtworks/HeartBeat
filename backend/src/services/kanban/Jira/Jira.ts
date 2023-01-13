@@ -55,6 +55,9 @@ export class Jira implements Kanban {
     logger.info(
       `Successfully queried configuration_data:${JSON.stringify(
         configurationResponse.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
       )}`
     );
 
@@ -95,7 +98,12 @@ export class Jira implements Kanban {
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
     logger.info(
-      `Successfully queried card status_data:${JSON.stringify(result.data)}`
+      `Successfully queried card status_data:${JSON.stringify(
+        result.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
+      )}`
     );
     return result.data;
   }
@@ -251,6 +259,9 @@ export class Jira implements Kanban {
     logger.info(
       `Successfully queried jira all done cards_data:${JSON.stringify(
         response.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
       )}`
     );
 
@@ -285,6 +296,9 @@ export class Jira implements Kanban {
     logger.info(
       `Successfully queried jira all non-done cards for active sprint_data:${JSON.stringify(
         response.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
       )}`
     );
     const allNonDoneCardsResponse = response.data;
@@ -317,6 +331,9 @@ export class Jira implements Kanban {
     logger.info(
       `Successfully queried kanban all non-done cards_data:${JSON.stringify(
         response.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
       )}`
     );
     const allNonDoneCardsResponse = response.data;
@@ -356,7 +373,12 @@ export class Jira implements Kanban {
           )
           .then((response) => {
             logger.info(
-              `Successfully page queried_data:${JSON.stringify(response.data)}`
+              `Successfully page queried_data:${JSON.stringify(
+                response.data
+              ).replace(
+                /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+                "*******"
+              )}`
             );
             return cards.push(...response.data.issues);
           });
@@ -442,6 +464,9 @@ export class Jira implements Kanban {
     logger.info(
       `Successfully queried jira card history_data:${JSON.stringify(
         jiraCardHistoryResponse.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
       )}`
     );
     const jiraCardHistory: JiraCardHistory = jiraCardHistoryResponse.data;

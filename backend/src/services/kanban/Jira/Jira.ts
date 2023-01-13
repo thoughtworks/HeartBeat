@@ -55,9 +55,6 @@ export class Jira implements Kanban {
     logger.info(
       `Successfully queried configuration_data:${JSON.stringify(
         configurationResponse.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
       )}`
     );
 
@@ -77,7 +74,9 @@ export class Jira implements Kanban {
               queryStatusUri,
               model.token
             );
-            const cardStatusName = (statusResponse as StatusSelf).untranslatedName.toUpperCase();
+            const cardStatusName = (
+              statusResponse as StatusSelf
+            ).untranslatedName.toUpperCase();
             columnValue.statuses.push(cardStatusName);
           })
         ).then(() => {
@@ -98,12 +97,7 @@ export class Jira implements Kanban {
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
     logger.info(
-      `Successfully queried card status_data:${JSON.stringify(
-        result.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
-      )}`
+      `Successfully queried card status_data:${JSON.stringify(result.data)}`
     );
     return result.data;
   }
@@ -121,16 +115,13 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allDoneCards.map(async function (DoneCard: any) {
-        const {
-          cycleTimeInfos,
-          assigneeSet,
-          originCycleTimeInfos,
-        } = await Jira.getCycleTimeAndAssigneeSet(
-          DoneCard.key,
-          model.token,
-          model.site,
-          model.treatFlagCardAsBlock
-        );
+        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
+          await Jira.getCycleTimeAndAssigneeSet(
+            DoneCard.key,
+            model.token,
+            model.site,
+            model.treatFlagCardAsBlock
+          );
 
         //fix the assignee not in the card history, only in the card field issue.
         if (DoneCard.fields.assignee && DoneCard.fields.assignee.displayName) {
@@ -183,21 +174,17 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allNonDoneCards.map(async function (nonDoneCard: any) {
-        const {
-          cycleTimeInfos,
-          assigneeSet,
-          originCycleTimeInfos,
-        } = await Jira.getCycleTimeAndAssigneeSet(
-          nonDoneCard.key,
-          model.token,
-          model.site,
-          model.treatFlagCardAsBlock
-        );
+        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
+          await Jira.getCycleTimeAndAssigneeSet(
+            nonDoneCard.key,
+            model.token,
+            model.site,
+            model.treatFlagCardAsBlock
+          );
 
         const matchedNonDoneCard = Jira.processCustomFieldsForCard(nonDoneCard);
-        matchedNonDoneCard.fields.label = matchedNonDoneCard.fields.labels.join(
-          ","
-        );
+        matchedNonDoneCard.fields.label =
+          matchedNonDoneCard.fields.labels.join(",");
 
         const jiraCardResponse = new JiraCardResponse(
           matchedNonDoneCard,
@@ -373,12 +360,7 @@ export class Jira implements Kanban {
           )
           .then((response) => {
             logger.info(
-              `Successfully page queried_data:${JSON.stringify(
-                response.data
-              ).replace(
-                /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-                "*******"
-              )}`
+              `Successfully page queried_data:${JSON.stringify(response.data)}`
             );
             return cards.push(...response.data.issues);
           });

@@ -8,6 +8,7 @@ import { CommitInfo } from "../../models/codebase/CommitInfo";
 import { LeadTime, PipelineLeadTime } from "../../models/codebase/LeadTime";
 import { GitOrganization } from "../../models/codebase/GitOrganization";
 import { GitHubRepo } from "../../models/codebase/GitHubRepo";
+import logger from "../../utils/loggerUtils";
 
 export class GitHub implements Codebase {
   private httpClient: AxiosInstance;
@@ -21,38 +22,59 @@ export class GitHub implements Codebase {
       },
     });
   }
-  
+
   async fetchAllOrganization(): Promise<string[]> {
+    logger.info(
+      `Start to query all organization_url:${this.httpClient.defaults.baseURL}/user/orgs`
+    );
     const response = await this.httpClient.get("/user/orgs");
+    logger.info(
+      `Successfully queried all organization_data:${JSON.stringify(
+        response.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
+      )}`
+    );
     const gitOrganizations = new JsonConvert().deserializeArray(
       response.data,
       GitOrganization
     );
     return gitOrganizations.map((org) => org.orgName);
-   }
+  }
 
   async fetchAllRepo(gitOrganizations: string[]): Promise<string[]> {
     const result: string[] = [];
     const requestUrl: string[] = [];
-    
+
     requestUrl.push("user/repos");
-    gitOrganizations.forEach(organization => { requestUrl.push(`/orgs/${organization}/repos`); });
-    
-    await Promise.all(requestUrl.map(
-      async (url) => {
+    gitOrganizations.forEach((organization) => {
+      requestUrl.push(`/orgs/${organization}/repos`);
+    });
+
+    await Promise.all(
+      requestUrl.map(async (url) => {
+        logger.info(`Start to query all repository_url:${url}`);
         const response = await this.httpClient.get(url);
+        logger.info(
+          `Successfully queried all repository_data:${JSON.stringify(
+            response.data
+          ).replace(
+            /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+            "*******"
+          )}`
+        );
         const gitHubRepos: GitHubRepo[] = new JsonConvert().deserializeArray(
           response.data,
           GitHubRepo
-          );
-          gitHubRepos.forEach((repo) =>{
-            if(!result.includes(repo.repoUrl)) {
-              result.push(repo.repoUrl);
-            }
-          });
-      }
-    ));
-    
+        );
+        gitHubRepos.forEach((repo) => {
+          if (!result.includes(repo.repoUrl)) {
+            result.push(repo.repoUrl);
+          }
+        });
+      })
+    );
     return result;
   }
 
@@ -78,17 +100,32 @@ export class GitHub implements Codebase {
           const repository = item.repository;
           const leadTimes: LeadTime[] = await Promise.all(
             item.deployInfo.map(async (deployInfo) => {
+              logger.info(
+                `Start to query pipeline leadTime_url:${this.httpClient.defaults.baseURL}/repos/${repository}/commits/${deployInfo.commitId}/pulls`
+              );
               const response = await this.httpClient.get(
                 `/repos/${repository}/commits/${deployInfo.commitId}/pulls`
               );
-              
+              logger.info(
+                `Successfully queried pipeline leadTime_data:${JSON.stringify(
+                  response.data
+                ).replace(
+                  /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+                  "*******"
+                )}`
+              );
+
               const gitHubPulls: GitHubPull[] = new JsonConvert().deserializeArray(
                 response.data,
                 GitHubPull
               );
-              
-              const jobFinishTime: number = new Date(deployInfo.jobFinishTime).getTime();
-              const pipelineCreateTime: number = new Date(deployInfo.pipelineCreateTime).getTime();
+
+              const jobFinishTime: number = new Date(
+                deployInfo.jobFinishTime
+              ).getTime();
+              const pipelineCreateTime: number = new Date(
+                deployInfo.pipelineCreateTime
+              ).getTime();
 
               const noMergeDelayTime = new LeadTime(
                 deployInfo.commitId,
@@ -101,20 +138,30 @@ export class GitHub implements Codebase {
               if (gitHubPulls.length == 0) {
                 return noMergeDelayTime;
               }
-              
+
               const mergedPull: GitHubPull | undefined = gitHubPulls
                 .filter((gitHubPull) => gitHubPull.mergedAt != null)
                 .pop();
-              
+
               if (mergedPull == undefined) {
                 return noMergeDelayTime;
               }
 
               //get the pull request commits.
+              logger.info(
+                `Start to query the pull request commits_url:${this.httpClient.defaults.baseURL}/repos/${repository}/pulls/${mergedPull.number}/commits`
+              );
               const prResponse = await this.httpClient.get(
                 `/repos/${repository}/pulls/${mergedPull.number}/commits`
               );
-              
+              logger.info(
+                `Successfully queried the pull request commits_data:${JSON.stringify(
+                  prResponse.data
+                ).replace(
+                  /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+                  "*******"
+                )}`
+              );
               const gitHubCommites: CommitInfo[] = new JsonConvert().deserializeArray(
                 prResponse.data,
                 CommitInfo
@@ -141,9 +188,19 @@ export class GitHub implements Codebase {
     repositoryId: string
   ): Promise<CommitInfo> {
     const repository = GitUrlParse(repositoryId).full_name;
-
+    logger.info(
+      `Start to query commit info_url:${this.httpClient.defaults.baseURL}/repos/${repository}/commits/${commitId}`
+    );
     const response = await this.httpClient.get(
       `/repos/${repository}/commits/${commitId}`
+    );
+    logger.info(
+      `Successfully queried commit info_data:${JSON.stringify(
+        response.data
+      ).replace(
+        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
+        "*******"
+      )}`
     );
     const commitInfo: CommitInfo = new JsonConvert().deserializeObject(
       response.data,

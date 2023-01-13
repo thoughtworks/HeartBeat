@@ -79,9 +79,6 @@ export class Buildkite implements Pipeline {
     logger.info(
       `Successfully queried pipeline organizations_data:${JSON.stringify(
         orgResponse.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
       )}`
     );
     const organizations: BKOrganizationInfo[] = orgResponse.data;

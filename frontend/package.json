@@ -13,9 +13,10 @@
     "lint": "eslint --ext .js,.ts,.jsx,.tsx && prettier --check ./",
     "test": "jest",
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
-    "e2e": "npx playwright test",
-    "e2e:report": "npx playwright show-report",
-    "prepare": "npx playwright install && cd .. && husky install frontend/.husky"
+    "e2e:local": "playwright test --trace on",
+    "e2e": "playwright test",
+    "e2e:report": "playwright show-report",
+    "prepare": "playwright install && cd .. && husky install frontend/.husky"
   },
   "lint-staged": {
     "**/*": "npx prettier --write . --ignore-unknown"

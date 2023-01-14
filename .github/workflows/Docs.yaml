@@ -21,11 +21,11 @@ jobs:
           node-version: 16.18.0
       - name: Install & Lint
         run: |
-          npm install -g yarn
-          yarn
-          yarn lint
+          npm install -g pnpm
+          pnpm install
+          pnpm lint
       - name: Build docs
-        run: yarn build
+        run: pnpm build
       - name: Deploy to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:

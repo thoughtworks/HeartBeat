@@ -1,5 +1,8 @@
 lockfileVersion: 5.4
 
+overrides:
+  json5@<1.0.2: '>=1.0.2'
+
 specifiers:
   '@algolia/client-search': ^4.14.3
   '@astrojs/preact': ^1.2.0
@@ -1637,7 +1640,7 @@ packages:
     resolution: {integrity: sha512-jB2CHJeqy6a820ssiqwrKMeyC6nNdmrcgkKWJWmpoxpE8RKciYJXCcXRq1h2AzCo5I5BJeN2tkGEO3hLTuePRA==}
     engines: {node: '>=4.0.0'}
     dependencies:
-      json5: 0.5.1
+      json5: 2.2.3
       path-exists: 3.0.0
     dev: false
 
@@ -2064,11 +2067,6 @@ packages:
 
   /json-stringify-safe/5.0.1:
     resolution: {integrity: sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA==}
-    dev: false
-
-  /json5/0.5.1:
-    resolution: {integrity: sha512-4xrs1aW+6N5DalkqSVA8fxh458CXvR99WU8WLKmq4v8eWAL86Xo3BVqyd3SkA9wEVjCMqyvvRRkshAdOnBp5rw==}
-    hasBin: true
     dev: false
 
   /json5/2.2.3:

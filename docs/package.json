@@ -12,7 +12,11 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "prettier --check .",
-    "fix": "prettier --write . --ignore-unknown"
+    "fix": "prettier --write . --ignore-unknown",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*": "npm run fix"
   },
   "dependencies": {
     "@algolia/client-search": "^4.14.3",
@@ -30,6 +34,8 @@
   },
   "devDependencies": {
     "html-escaper": "^3.0.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
     "prettier": "^2.8.2"
   },
   "engines": {

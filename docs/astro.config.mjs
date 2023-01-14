@@ -1,6 +1,6 @@
-import { defineConfig } from "astro/config";
-import preact from "@astrojs/preact";
-import react from "@astrojs/react";
+import { defineConfig } from 'astro/config';
+import preact from '@astrojs/preact';
+import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +11,6 @@ export default defineConfig({
     react(),
   ],
   site: `https://thoughtworks.github.io/HeartBeat`,
-  base: "/HeartBeat",
-  publicDir: "/HeartBeat",
+  base: '/HeartBeat',
+  publicDir: '/HeartBeat',
 });

@@ -26,7 +26,7 @@
   opacity: 1;
 }
 
-input[name="theme-toggle"] {
+input[name='theme-toggle'] {
   position: absolute;
   opacity: 0;
   top: 0;

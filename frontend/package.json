@@ -15,7 +15,7 @@
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
     "e2e": "npx playwright test",
     "e2e:report": "npx playwright show-report",
-    "prepare": "cd .. && husky install frontend/.husky"
+    "prepare": "npx playwright install && cd .. && husky install frontend/.husky"
   },
   "lint-staged": {
     "**/*": "npx prettier --write . --ignore-unknown"

@@ -18,7 +18,7 @@
     "prepare": "cd .. && husky install frontend/.husky"
   },
   "lint-staged": {
-    "**/*": "npx prettier --write --ignore-unknown"
+    "**/*": "npx prettier --write . --ignore-unknown"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",

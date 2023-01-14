@@ -32,6 +32,9 @@
     "html-escaper": "^3.0.3",
     "prettier": "^2.8.2"
   },
+  "engines": {
+    "node": ">=16.18.0"
+  },
   "pnpm": {
     "overrides": {
       "json5@<1.0.2": ">=1.0.2"

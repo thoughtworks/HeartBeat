@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @OpenAPIDefinition(info = @Info(title = "HeartBeat API",description = "HeartBeat Information"))
-public class HeartbeatApplication {
+public class HeartBeatApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HeartbeatApplication.class, args);
+		SpringApplication.run(HeartBeatApplication.class, args);
 	}
 
 }

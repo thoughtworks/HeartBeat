@@ -6,6 +6,8 @@ import { JsonConvert } from "json2typescript";
 import { FetchParams } from "../../../types/FetchParams";
 import { BKBuildInfo, BKJobInfo } from "../../../models/pipeline/BKBuildInfo";
 import parseLinkHeader from "parse-link-header";
+import logger from "../../../utils/loggerUtils";
+import { maskEmailResponseLogger } from "../../../utils/responseLoggerUtils";
 
 export class BuildkiteGetSteps implements PipelineGetSteps {
   private static permissions = [
@@ -73,9 +75,19 @@ export class BuildkiteGetSteps implements PipelineGetSteps {
     fetchParams: FetchParams
   ): Promise<[]> {
     const dataCollector: [] = [];
+    logger.info(
+      `[Buildkite] Start to query first page data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
+    );
+    logger.info(
+      `[Buildkite] Start to query first page data_params:${fetchParams}`
+    );
     const response = await this.httpClient.get(fetchURL, {
       params: fetchParams,
     });
+    maskEmailResponseLogger(
+      "[Buildkite] Successfully queried first page_data",
+      response
+    );
     const dataFromTheFirstPage: [] = response.data;
     dataCollector.push(...dataFromTheFirstPage);
     const links = parseLinkHeader(response.headers["link"]);
@@ -85,9 +97,23 @@ export class BuildkiteGetSteps implements PipelineGetSteps {
       await Promise.all(
         [...Array(Number(totalPage)).keys()].map(async (index) => {
           if (index == 0) return;
+          logger.info(
+            `[Buildkite] Start to query ${index + 1} page data_url:${
+              this.httpClient.defaults.baseURL
+            }/${fetchURL}`
+          );
+          logger.info(
+            `[Buildkite] Start to query ${
+              index + 1
+            } page data_params:${fetchParams}`
+          );
           const response = await this.httpClient.get(fetchURL, {
-            params: {...fetchParams, page: String(index + 1)},
+            params: { ...fetchParams, page: String(index + 1) },
           });
+          maskEmailResponseLogger(
+            `[Buildkite] Successfully queried ${index + 1} page_data`,
+            response
+          );
           const dataFromOnePage: [] = response.data;
           dataCollector.push(...dataFromOnePage);
         })

@@ -30,10 +30,7 @@ import {
   StatusChangedArrayItem,
 } from "../util";
 import logger from "../../../utils/loggerUtils";
-import {
-  maskEmailResponseLogger,
-  responseLogger,
-} from "../../../utils/responseLoggerUtils";
+import { maskEmailResponseLogger } from "../../../utils/responseLoggerUtils";
 
 export class Jira implements Kanban {
   private readonly queryCount: number = 100;
@@ -52,12 +49,12 @@ export class Jira implements Kanban {
     const jiraColumnNames = Array.of<ColumnResponse>();
     //column
     const configurationUrl = `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`;
-    logger.info(`Start to query configuration_url:${configurationUrl}`);
+    logger.info(`[Jira] Start to query configuration_url:${configurationUrl}`);
     const configurationResponse = await axios.get(configurationUrl, {
       headers: { Authorization: `${model.token}` },
     });
-    responseLogger(
-      "Successfully queried configuration_data",
+    maskEmailResponseLogger(
+      "[Jira] Successfully queried configuration_data",
       configurationResponse
     );
 
@@ -93,11 +90,14 @@ export class Jira implements Kanban {
     url: string,
     token: string
   ): Promise<StatusSelf> {
-    logger.info(`Start to query card status_url:${url}`);
+    logger.info(`[Jira] Start to query card status_url:${url}`);
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
-    responseLogger("Successfully queried card status_data", result);
+    maskEmailResponseLogger(
+      "[Jira] Successfully queried card status_data",
+      result
+    );
     return result.data;
   }
 
@@ -244,13 +244,13 @@ export class Jira implements Kanban {
       }
     }
     logger.info(
-      `Start to query jira all done cards_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+      `[Jira] Start to query jira all done cards_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
     maskEmailResponseLogger(
-      "Successfully queried jira all done cards_data",
+      "[Jira] Successfully queried jira all done cards_data",
       response
     );
 
@@ -277,13 +277,13 @@ export class Jira implements Kanban {
       )}')`;
     }
     logger.info(
-      `Start to query jira all non-done cards for active sprint_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+      `[Jira] Start to query jira all non-done cards for active sprint_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
     maskEmailResponseLogger(
-      "Successfully queried jira all non-done cards for active sprint_data",
+      "[Jira] Successfully queried jira all non-done cards for active sprint_data",
       response
     );
     const allNonDoneCardsResponse = response.data;
@@ -308,13 +308,13 @@ export class Jira implements Kanban {
       jql = `status not in ('${model.status.join("','")}')`;
     }
     logger.info(
-      `Start to query kanban all non-done cards_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+      `[Jira] Start to query kanban all non-done cards_url:${this.httpClient.defaults.baseURL}/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
     maskEmailResponseLogger(
-      "Successfully queried kanban all non-done cards_data",
+      "[Jira] Successfully queried kanban all non-done cards_data",
       response
     );
     const allNonDoneCardsResponse = response.data;
@@ -346,14 +346,17 @@ export class Jira implements Kanban {
       [...Array(count).keys()].map(async (i) => {
         const startAt = this.queryCount * (i + 1);
         logger.info(
-          `Start to page querying_url:${this.httpClient.defaults.baseURL}/${boardId}/issue/?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql}`
+          `[Jira] Start to page querying_url:${this.httpClient.defaults.baseURL}/${boardId}/issue/?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql}`
         );
         await this.httpClient
           .get(
             `/${boardId}/issue/?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql}`
           )
           .then((response) => {
-            responseLogger("Successfully page queried_data", response);
+            maskEmailResponseLogger(
+              "[Jira] Successfully page queried_data",
+              response
+            );
             return cards.push(...response.data.issues);
           });
       })
@@ -427,7 +430,7 @@ export class Jira implements Kanban {
     originCycleTimeInfos: CycleTimeInfo[];
   }> {
     logger.info(
-      `Start to query jira card history_url:https://${jiraSite}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfee`
+      `[Jira] Start to query jira card history_url:https://${jiraSite}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfee`
     );
     const jiraCardHistoryResponse = await axios.get(
       `https://${jiraSite}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfeed`,
@@ -436,7 +439,7 @@ export class Jira implements Kanban {
       }
     );
     maskEmailResponseLogger(
-      "Successfully queried jira card history_data",
+      "[Jira] Successfully queried jira card history_data",
       jiraCardHistoryResponse
     );
     const jiraCardHistory: JiraCardHistory = jiraCardHistoryResponse.data;

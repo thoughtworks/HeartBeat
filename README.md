@@ -284,11 +284,11 @@ For now, we just can download the code in our local machine, please follow below
 
 ```
 cd HearBeat/frontend
-pnpm install 
+pnpm install
 pnpm start
 ```
- 
-## 6.1.1 How to build  and local preview
+
+## 6.1.1 How to build and local preview
 
 ```
 pnpm build
@@ -300,16 +300,19 @@ pnpm preview
 ```
 pnpm test
 ```
+
 ## 6.1.3 How to generate a test report
 
 ```
 pnpm coverage
 ```
+
 ## 6.1.4 How to run e2e tests
 
 ```
 pnpm e2e
 ```
+
 ## 6.1.5 How to generate a e2e report
 
 ```

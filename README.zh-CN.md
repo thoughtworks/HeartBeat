@@ -284,7 +284,7 @@ cd HearBeat/frontend
 pnpm install
 pnpm start
 ```
- 
+
 ## 6.1.1 打包 并进行本地预览
 
 ```
@@ -297,16 +297,19 @@ pnpm preview
 ```
 pnpm test
 ```
+
 ## 6.1.3 前端测试报告
 
 ```
 pnpm coverage
 ```
+
 ## 6.1.4 端对端测试
 
 ```
 pnpm e2e
 ```
+
 ## 6.1.5 端对端测试报告
 
 ```

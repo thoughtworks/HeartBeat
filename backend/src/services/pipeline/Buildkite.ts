@@ -11,6 +11,8 @@ import { JsonConvert } from "json2typescript";
 import parseLinkHeader from "parse-link-header";
 import { DeploymentEnvironment } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { FetchParams } from "../../types/FetchParams";
+import logger from "../../utils/loggerUtils";
+import { maskEmailResponseLogger } from "../../utils/responseLoggerUtils";
 
 export class Buildkite implements Pipeline {
   private static permissions = [
@@ -45,8 +47,15 @@ export class Buildkite implements Pipeline {
     const result: Map<string, string> = new Map();
     await Promise.all(
       deployments.map(async (deployment) => {
+        logger.info(
+          `[Buildkite] Start to query deployment repository_url:${this.httpClient.defaults.baseURL}/organizations/${deployment.orgId}/pipelines/${deployment.id}`
+        );
         const axiosResponse = await this.httpClient.get(
           `/organizations/${deployment.orgId}/pipelines/${deployment.id}`
+        );
+        maskEmailResponseLogger(
+          "[Buildkite] Successfully queried deployment repository_data",
+          axiosResponse
         );
         result.set(deployment.id, axiosResponse.data.repository);
       })
@@ -60,7 +69,14 @@ export class Buildkite implements Pipeline {
   ): Promise<PipelineInfo[]> {
     const jsonConvert = new JsonConvert();
     const pipelines: PipelineInfo[] = [];
+    logger.info(
+      `[Buildkite] Start to query pipeline organizations_url:${this.httpClient.defaults.baseURL}/organizations`
+    );
     const orgResponse = await this.httpClient.get("/organizations");
+    maskEmailResponseLogger(
+      "[Buildkite] Successfully queried pipeline organizations_data",
+      orgResponse
+    );
     const organizations: BKOrganizationInfo[] = orgResponse.data;
     if (!(await this.verifyToken())) {
       throw Error("permission deny!");
@@ -110,10 +126,18 @@ export class Buildkite implements Pipeline {
     fetchParams: FetchParams
   ): Promise<[]> {
     const dataCollector: [] = [];
+    logger.info(
+      `[Buildkite] Start to query page 0 data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
+    );
+    logger.info(`[Buildkite] Start to query page 0 data_params:${fetchParams}`);
     const response = await this.httpClient.get(fetchURL, {
       params: fetchParams,
     });
     const dataFromTheFirstPage: [] = response.data;
+    maskEmailResponseLogger(
+      "[Buildkite] Successfully queried page0_data",
+      response
+    );
     dataCollector.push(...dataFromTheFirstPage);
     const links = parseLinkHeader(response.headers["link"]);
     const totalPage: string =
@@ -122,9 +146,23 @@ export class Buildkite implements Pipeline {
       await Promise.all(
         [...Array(Number(totalPage)).keys()].map(async (index) => {
           if (index == 0) return;
+          logger.info(
+            `[Buildkite] Start to query page ${index + 1} data_url:${
+              this.httpClient.defaults.baseURL
+            }/${fetchURL}`
+          );
+          logger.info(
+            `[Buildkite] Start to query page ${
+              index + 1
+            }  data_params:${fetchParams}`
+          );
           const response = await this.httpClient.get(fetchURL, {
-            params: {...fetchParams, page: String(index + 1)},
+            params: { ...fetchParams, page: String(index + 1) },
           });
+          maskEmailResponseLogger(
+            `[Buildkite] Successfully queried page${index + 1}_data`,
+            response
+          );
           const dataFromOnePage: [] = response.data;
           dataCollector.push(...dataFromOnePage);
         })

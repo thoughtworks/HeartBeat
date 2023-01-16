@@ -9,6 +9,7 @@ import { LeadTime, PipelineLeadTime } from "../../models/codebase/LeadTime";
 import { GitOrganization } from "../../models/codebase/GitOrganization";
 import { GitHubRepo } from "../../models/codebase/GitHubRepo";
 import logger from "../../utils/loggerUtils";
+import { maskEmailResponseLogger } from "../../utils/responseLoggerUtils";
 
 export class GitHub implements Codebase {
   private httpClient: AxiosInstance;
@@ -53,13 +54,9 @@ export class GitHub implements Codebase {
       requestUrl.map(async (url) => {
         logger.info(`Start to query all repository_url:${url}`);
         const response = await this.httpClient.get(url);
-        logger.info(
-          `Successfully queried all repository_data:${JSON.stringify(
-            response.data
-          ).replace(
-            /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-            "*******"
-          )}`
+        maskEmailResponseLogger(
+          "Successfully queried all repository_data",
+          response
         );
         const gitHubRepos: GitHubRepo[] = new JsonConvert().deserializeArray(
           response.data,
@@ -112,8 +109,10 @@ export class GitHub implements Codebase {
                 )}`
               );
 
-              const gitHubPulls: GitHubPull[] =
-                new JsonConvert().deserializeArray(response.data, GitHubPull);
+              const gitHubPulls: GitHubPull[] = new JsonConvert().deserializeArray(
+                response.data,
+                GitHubPull
+              );
 
               const jobFinishTime: number = new Date(
                 deployInfo.jobFinishTime
@@ -157,8 +156,10 @@ export class GitHub implements Codebase {
                   "*******"
                 )}`
               );
-              const gitHubCommites: CommitInfo[] =
-                new JsonConvert().deserializeArray(prResponse.data, CommitInfo);
+              const gitHubCommites: CommitInfo[] = new JsonConvert().deserializeArray(
+                prResponse.data,
+                CommitInfo
+              );
 
               //get the first commit.
               const firstCommit: CommitInfo = gitHubCommites[0];

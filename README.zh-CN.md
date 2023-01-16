@@ -1,5 +1,11 @@
 # HeartBeat （2023/01）
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Grade)[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Coverage)
+
+[![Docs](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml) [![Frontend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml) [![Backend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml) [![Security](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml) [![Build and Deploy](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # 1 什么是 HeartBeat
 
 HeartBeat 是了解项目交付情况的工具，可帮助团队确定绩效指标，从而推动持续改进并提高团队生产力和效率。
@@ -8,10 +14,10 @@ HeartBeat 是了解项目交付情况的工具，可帮助团队确定绩效指�
 
 **这四个关键指标有：**
 
-1. 部署频率 (DF)
-2. 平均变更时间 (LTC)
-3. 平均恢复时间 (MTTR)
-4. 变更失败率 (CFR)
+1.  部署频率 (DF)
+2.  平均变更时间 (LTC)
+3.  平均恢复时间 (MTTR)
+4.  变更失败率 (CFR)
 
 HeartBeat 工具除了可以用来统计部署频率、平均变更时间以及变更失败率外，我们还可以统计了其他数据，例如：速率(Velocity)、周期时间(Cycle Time)和工作分类(Classification)。
 
@@ -46,8 +52,8 @@ _Image 3-2，Project config page_
 
 **两种不同的时间段：**
 
-1. **常规日历 / Regular Calendar(Weekend Considered)：** 如果选择此项，则意味着所有数据都将排除周末。
-2. **中国假期的日历 / Calendar with Chinese Holiday:** 如果选择此项目，则意味着所有数据将排除周末和中国假期。 因此，如果您选择的时间段包含中国假期，则可以选择此项目。
+1.  **常规日历 / Regular Calendar(Weekend Considered)：** 如果选择此项，则意味着所有数据都将排除周末。
+2.  **中国假期的日历 / Calendar with Chinese Holiday:** 如果选择此项目，则意味着所有数据将排除周末和中国假期。 因此，如果您选择的时间段包含中国假期，则可以选择此项目。
 
 下图展示了所有可以获取的数据，目前，我们支持六种指标数据(Image 3-3).
 
@@ -262,16 +268,18 @@ For now, we don’t have a good solution to resolve this issue.
 
 对于 Classic Jira 用户，在使用此工具之前，需要对 jira 看板进行一些设置，否则您将无法获取数据。以下是您需要执行的步骤：
 
-1. 打开 https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
-   ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
+1. 打开 https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=
+
+- ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
    _Image 5-1_
 
 2. 如果您需要启用任何项，可以在上述页面中单击该项目的“Action”列中的“Screens”链接。然后在下一页中，检查要更改的项目，然后进行更新。例如：故事点
-   ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
+
+- ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
    _Image 5-2_
 
-   ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
-   _Image 5-3_
+- ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
+  _Image 5-3_
 
 对于 next-gen Jira，当添加 Story Point 项时，名称应为“Story Points”或“Story point estimate”。
 

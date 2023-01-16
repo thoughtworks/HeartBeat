@@ -30,6 +30,10 @@ import {
   StatusChangedArrayItem,
 } from "../util";
 import logger from "../../../utils/loggerUtils";
+import {
+  maskEmailResponseLogger,
+  responseLogger,
+} from "../../../utils/responseLoggerUtils";
 
 export class Jira implements Kanban {
   private readonly queryCount: number = 100;
@@ -52,10 +56,9 @@ export class Jira implements Kanban {
     const configurationResponse = await axios.get(configurationUrl, {
       headers: { Authorization: `${model.token}` },
     });
-    logger.info(
-      `Successfully queried configuration_data:${JSON.stringify(
-        configurationResponse.data
-      )}`
+    responseLogger(
+      "Successfully queried configuration_data",
+      configurationResponse
     );
 
     const configuration = configurationResponse.data;
@@ -74,9 +77,7 @@ export class Jira implements Kanban {
               queryStatusUri,
               model.token
             );
-            const cardStatusName = (
-              statusResponse as StatusSelf
-            ).untranslatedName.toUpperCase();
+            const cardStatusName = (statusResponse as StatusSelf).untranslatedName.toUpperCase();
             columnValue.statuses.push(cardStatusName);
           })
         ).then(() => {
@@ -96,9 +97,7 @@ export class Jira implements Kanban {
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
-    logger.info(
-      `Successfully queried card status_data:${JSON.stringify(result.data)}`
-    );
+    responseLogger("Successfully queried card status_data", result);
     return result.data;
   }
 
@@ -115,13 +114,16 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allDoneCards.map(async function (DoneCard: any) {
-        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
-          await Jira.getCycleTimeAndAssigneeSet(
-            DoneCard.key,
-            model.token,
-            model.site,
-            model.treatFlagCardAsBlock
-          );
+        const {
+          cycleTimeInfos,
+          assigneeSet,
+          originCycleTimeInfos,
+        } = await Jira.getCycleTimeAndAssigneeSet(
+          DoneCard.key,
+          model.token,
+          model.site,
+          model.treatFlagCardAsBlock
+        );
 
         //fix the assignee not in the card history, only in the card field issue.
         if (DoneCard.fields.assignee && DoneCard.fields.assignee.displayName) {
@@ -174,17 +176,21 @@ export class Jira implements Kanban {
 
     await Promise.all(
       allNonDoneCards.map(async function (nonDoneCard: any) {
-        const { cycleTimeInfos, assigneeSet, originCycleTimeInfos } =
-          await Jira.getCycleTimeAndAssigneeSet(
-            nonDoneCard.key,
-            model.token,
-            model.site,
-            model.treatFlagCardAsBlock
-          );
+        const {
+          cycleTimeInfos,
+          assigneeSet,
+          originCycleTimeInfos,
+        } = await Jira.getCycleTimeAndAssigneeSet(
+          nonDoneCard.key,
+          model.token,
+          model.site,
+          model.treatFlagCardAsBlock
+        );
 
         const matchedNonDoneCard = Jira.processCustomFieldsForCard(nonDoneCard);
-        matchedNonDoneCard.fields.label =
-          matchedNonDoneCard.fields.labels.join(",");
+        matchedNonDoneCard.fields.label = matchedNonDoneCard.fields.labels.join(
+          ","
+        );
 
         const jiraCardResponse = new JiraCardResponse(
           matchedNonDoneCard,
@@ -243,13 +249,9 @@ export class Jira implements Kanban {
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
-    logger.info(
-      `Successfully queried jira all done cards_data:${JSON.stringify(
-        response.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
-      )}`
+    maskEmailResponseLogger(
+      "Successfully queried jira all done cards_data",
+      response
     );
 
     const allDoneCardsResponse = response.data;
@@ -280,13 +282,9 @@ export class Jira implements Kanban {
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
-    logger.info(
-      `Successfully queried jira all non-done cards for active sprint_data:${JSON.stringify(
-        response.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
-      )}`
+    maskEmailResponseLogger(
+      "Successfully queried jira all non-done cards for active sprint_data",
+      response
     );
     const allNonDoneCardsResponse = response.data;
     const allNonDoneCards = allNonDoneCardsResponse.issues;
@@ -315,13 +313,9 @@ export class Jira implements Kanban {
     const response = await this.httpClient.get(
       `/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
     );
-    logger.info(
-      `Successfully queried kanban all non-done cards_data:${JSON.stringify(
-        response.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
-      )}`
+    maskEmailResponseLogger(
+      "Successfully queried kanban all non-done cards_data",
+      response
     );
     const allNonDoneCardsResponse = response.data;
     const allNonDoneCards = allNonDoneCardsResponse.issues;
@@ -359,9 +353,7 @@ export class Jira implements Kanban {
             `/${boardId}/issue/?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql}`
           )
           .then((response) => {
-            logger.info(
-              `Successfully page queried_data:${JSON.stringify(response.data)}`
-            );
+            responseLogger("Successfully page queried_data", response);
             return cards.push(...response.data.issues);
           });
       })
@@ -443,13 +435,9 @@ export class Jira implements Kanban {
         headers: { Authorization: `${jiraToken}` },
       }
     );
-    logger.info(
-      `Successfully queried jira card history_data:${JSON.stringify(
-        jiraCardHistoryResponse.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
-      )}`
+    maskEmailResponseLogger(
+      "Successfully queried jira card history_data",
+      jiraCardHistoryResponse
     );
     const jiraCardHistory: JiraCardHistory = jiraCardHistoryResponse.data;
 

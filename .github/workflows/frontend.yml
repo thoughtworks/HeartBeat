@@ -31,5 +31,5 @@ jobs:
         run: pnpm build
       - name: Upload Test Report to Codacy
         run: |
-          export CODACY_PROJECT_TOKEN=${{secrets.CODACY_API_TOKEN}}
+          export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)

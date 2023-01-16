@@ -14,10 +14,10 @@ State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics 
 
 **Here are the for Key meterics:**
 
-1. Deployment Frequency (DF)
-2. Lead Time for changes (LTC)
-3. Mean Time To Recover (MTTR)
-4. Change Failure Rate (CFR)
+1.  Deployment Frequency (DF)
+2.  Lead Time for changes (LTC)
+3.  Mean Time To Recover (MTTR)
+4.  Change Failure Rate (CFR)
 
 In HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So we can collect DF, LTC, CFR, Velocity, Cycle Time and Classification.
 
@@ -52,8 +52,8 @@ Users need to select a period of time, then all of the data that follows is base
 
 **Have two items of time period:**
 
-1. **Regular Calendar(Weekend Considered):** If you select this item, it means all data will exclude the weekend.
-2. **Calendar with Chinese Holiday:** If you select this item, it means all data will exclude the weekend and Chinese holiday. So if the time period you selected contains Chinese holiday, you need to select this item.
+1.  **Regular Calendar(Weekend Considered):** If you select this item, it means all data will exclude the weekend.
+2.  **Calendar with Chinese Holiday:** If you select this item, it means all data will exclude the weekend and Chinese holiday. So if the time period you selected contains Chinese holiday, you need to select this item.
 
 All need to select which data you want to get, for now, we support six metrics data (Image 3-3).
 
@@ -264,11 +264,11 @@ For now, we don’t have a good solution to resolve this issue.
 
 For Classic Jira users, before you use this tool, you need to do some settings for the jira board. Otherwise, you cannot get the data. Here are the steps you need to do:
 
-1. Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
-   ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
-   _Image 5-1_
+1.  Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
+    ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
+    _Image 5-1_
 
-2. You need to enable any items you want to know. In the above page, If you want to change any items' screens, you can click the screens link in the actions column for that item. Then in the next page, check the project you want to change, and update it. Like: Story points
+2.  You need to enable any items you want to know. In the above page, If you want to change any items' screens, you can click the screens link in the actions column for that item. Then in the next page, check the project you want to change, and update it. Like: Story points
 
 - ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
   _Image 5-2_

@@ -268,17 +268,17 @@ For now, we don’t have a good solution to resolve this issue.
 
 对于 Classic Jira 用户，在使用此工具之前，需要对 jira 看板进行一些设置，否则您将无法获取数据。以下是您需要执行的步骤：
 
-1. 打开 https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=
+1.  打开 https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=
 
-- ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
-   _Image 5-1_
+-  ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
+  _Image 5-1_
 
-2. 如果您需要启用任何项，可以在上述页面中单击该项目的“Action”列中的“Screens”链接。然后在下一页中，检查要更改的项目，然后进行更新。例如：故事点
+2.  如果您需要启用任何项，可以在上述页面中单击该项目的“Action”列中的“Screens”链接。然后在下一页中，检查要更改的项目，然后进行更新。例如：故事点
 
-- ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
-   _Image 5-2_
+-  ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
+  _Image 5-2_
 
-- ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
+-  ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
   _Image 5-3_
 
 对于 next-gen Jira，当添加 Story Point 项时，名称应为“Story Points”或“Story point estimate”。

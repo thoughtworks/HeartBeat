@@ -12,10 +12,7 @@ import parseLinkHeader from "parse-link-header";
 import { DeploymentEnvironment } from "../../contract/GenerateReporter/GenerateReporterRequestBody";
 import { FetchParams } from "../../types/FetchParams";
 import logger from "../../utils/loggerUtils";
-import {
-  maskEmailResponseLogger,
-  responseLogger,
-} from "../../utils/responseLoggerUtils";
+import { maskEmailResponseLogger } from "../../utils/responseLoggerUtils";
 
 export class Buildkite implements Pipeline {
   private static permissions = [
@@ -51,13 +48,13 @@ export class Buildkite implements Pipeline {
     await Promise.all(
       deployments.map(async (deployment) => {
         logger.info(
-          `Start to query deployment repository_url:${this.httpClient.defaults.baseURL}/organizations/${deployment.orgId}/pipelines/${deployment.id}`
+          `[Buildkite] Start to query deployment repository_url:${this.httpClient.defaults.baseURL}/organizations/${deployment.orgId}/pipelines/${deployment.id}`
         );
         const axiosResponse = await this.httpClient.get(
           `/organizations/${deployment.orgId}/pipelines/${deployment.id}`
         );
         maskEmailResponseLogger(
-          "Successfully queried deployment repository_data",
+          "[Buildkite] Successfully queried deployment repository_data",
           axiosResponse
         );
         result.set(deployment.id, axiosResponse.data.repository);
@@ -73,11 +70,11 @@ export class Buildkite implements Pipeline {
     const jsonConvert = new JsonConvert();
     const pipelines: PipelineInfo[] = [];
     logger.info(
-      `Start to query pipeline organizations_url:${this.httpClient.defaults.baseURL}/organizations`
+      `[Buildkite] Start to query pipeline organizations_url:${this.httpClient.defaults.baseURL}/organizations`
     );
     const orgResponse = await this.httpClient.get("/organizations");
-    responseLogger(
-      "Successfully queried pipeline organizations_data",
+    maskEmailResponseLogger(
+      "[Buildkite] Successfully queried pipeline organizations_data",
       orgResponse
     );
     const organizations: BKOrganizationInfo[] = orgResponse.data;
@@ -130,14 +127,19 @@ export class Buildkite implements Pipeline {
   ): Promise<[]> {
     const dataCollector: [] = [];
     logger.info(
-      `Start to query first page data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
+      `[Buildkite] Start to query first page data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
     );
-    logger.info(`Start to query first page data_params:${fetchParams}`);
+    logger.info(
+      `[Buildkite] Start to query first page data_params:${fetchParams}`
+    );
     const response = await this.httpClient.get(fetchURL, {
       params: fetchParams,
     });
     const dataFromTheFirstPage: [] = response.data;
-    maskEmailResponseLogger("Successfully queried first page_data", response);
+    maskEmailResponseLogger(
+      "[Buildkite] Successfully queried first page_data",
+      response
+    );
     dataCollector.push(...dataFromTheFirstPage);
     const links = parseLinkHeader(response.headers["link"]);
     const totalPage: string =
@@ -147,10 +149,10 @@ export class Buildkite implements Pipeline {
         [...Array(Number(totalPage)).keys()].map(async (index) => {
           if (index == 0) return;
           logger.info(
-            `Start to query one page data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
+            `[Buildkite] Start to query one page data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
           );
           logger.info(
-            `Start to query one page data_params:${fetchParams}, page: ${
+            `[Buildkite] Start to query one page data_params:${fetchParams}, page: ${
               index + 1
             }`
           );
@@ -158,7 +160,7 @@ export class Buildkite implements Pipeline {
             params: { ...fetchParams, page: String(index + 1) },
           });
           maskEmailResponseLogger(
-            "Successfully queried one page_data",
+            "[Buildkite] Successfully queried one page_data",
             response
           );
           const dataFromOnePage: [] = response.data;

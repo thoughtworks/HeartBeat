@@ -9,7 +9,10 @@ import { LeadTime, PipelineLeadTime } from "../../models/codebase/LeadTime";
 import { GitOrganization } from "../../models/codebase/GitOrganization";
 import { GitHubRepo } from "../../models/codebase/GitHubRepo";
 import logger from "../../utils/loggerUtils";
-import { maskEmailResponseLogger } from "../../utils/responseLoggerUtils";
+import {
+  maskEmailResponseLogger,
+  responseLogger,
+} from "../../utils/responseLoggerUtils";
 
 export class GitHub implements Codebase {
   private httpClient: AxiosInstance;
@@ -29,11 +32,7 @@ export class GitHub implements Codebase {
       `Start to query all organization_url:${this.httpClient.defaults.baseURL}/user/orgs`
     );
     const response = await this.httpClient.get("/user/orgs");
-    logger.info(
-      `Successfully queried all organization_data:${JSON.stringify(
-        response.data
-      )}`
-    );
+    responseLogger("Successfully queried all organization_data", response);
     const gitOrganizations = new JsonConvert().deserializeArray(
       response.data,
       GitOrganization
@@ -100,15 +99,10 @@ export class GitHub implements Codebase {
               const response = await this.httpClient.get(
                 `/repos/${repository}/commits/${deployInfo.commitId}/pulls`
               );
-              logger.info(
-                `Successfully queried pipeline leadTime_data:${JSON.stringify(
-                  response.data
-                ).replace(
-                  /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-                  "*******"
-                )}`
+              maskEmailResponseLogger(
+                "Successfully queried pipeline leadTime_data",
+                response
               );
-
               const gitHubPulls: GitHubPull[] = new JsonConvert().deserializeArray(
                 response.data,
                 GitHubPull
@@ -148,13 +142,9 @@ export class GitHub implements Codebase {
               const prResponse = await this.httpClient.get(
                 `/repos/${repository}/pulls/${mergedPull.number}/commits`
               );
-              logger.info(
-                `Successfully queried the pull request commits_data:${JSON.stringify(
-                  prResponse.data
-                ).replace(
-                  /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-                  "*******"
-                )}`
+              maskEmailResponseLogger(
+                "Successfully queried the pull request commits_data",
+                prResponse
               );
               const gitHubCommites: CommitInfo[] = new JsonConvert().deserializeArray(
                 prResponse.data,
@@ -188,14 +178,7 @@ export class GitHub implements Codebase {
     const response = await this.httpClient.get(
       `/repos/${repository}/commits/${commitId}`
     );
-    logger.info(
-      `Successfully queried commit info_data:${JSON.stringify(
-        response.data
-      ).replace(
-        /[A-Za-z0-9]+([_.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+.)+[A-Za-z]{2,6}/g,
-        "*******"
-      )}`
-    );
+    maskEmailResponseLogger("Successfully queried commit info_data", response);
     const commitInfo: CommitInfo = new JsonConvert().deserializeObject(
       response.data,
       CommitInfo

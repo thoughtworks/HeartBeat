@@ -45,7 +45,7 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     maskEmailResponseLogger(
       "[Jira] Successfully get configuration_data",
-      configurationResponse.data
+      configurationResponse
     );
 
     const configuration = configurationResponse.data;

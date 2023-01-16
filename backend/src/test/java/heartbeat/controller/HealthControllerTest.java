@@ -17,9 +17,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class HealthControllerTest {
     @Mock
-    private HealthEndpoint healthEndpoint;
+    private static HealthEndpoint healthEndpoint;
     @InjectMocks
-    private HealthController healthController;
+    private static HealthController healthController;
 
     @Test
     void should_return_health_status() {

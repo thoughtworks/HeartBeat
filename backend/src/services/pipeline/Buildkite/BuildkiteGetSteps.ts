@@ -76,16 +76,14 @@ export class BuildkiteGetSteps implements PipelineGetSteps {
   ): Promise<[]> {
     const dataCollector: [] = [];
     logger.info(
-      `[Buildkite] Start to query first page data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
+      `[Buildkite] Start to query page 0 data_url:${this.httpClient.defaults.baseURL}/${fetchURL}`
     );
-    logger.info(
-      `[Buildkite] Start to query first page data_params:${fetchParams}`
-    );
+    logger.info(`[Buildkite] Start to query page 0 data_params:${fetchParams}`);
     const response = await this.httpClient.get(fetchURL, {
       params: fetchParams,
     });
     maskEmailResponseLogger(
-      "[Buildkite] Successfully queried first page_data",
+      "[Buildkite] Successfully queried page0_data",
       response
     );
     const dataFromTheFirstPage: [] = response.data;
@@ -98,20 +96,20 @@ export class BuildkiteGetSteps implements PipelineGetSteps {
         [...Array(Number(totalPage)).keys()].map(async (index) => {
           if (index == 0) return;
           logger.info(
-            `[Buildkite] Start to query ${index + 1} page data_url:${
+            `[Buildkite] Start to query page ${index + 1} data_url:${
               this.httpClient.defaults.baseURL
             }/${fetchURL}`
           );
           logger.info(
-            `[Buildkite] Start to query ${
+            `[Buildkite] Start to query page ${
               index + 1
-            } page data_params:${fetchParams}`
+            } data_params:${fetchParams}`
           );
           const response = await this.httpClient.get(fetchURL, {
             params: { ...fetchParams, page: String(index + 1) },
           });
           maskEmailResponseLogger(
-            `[Buildkite] Successfully queried ${index + 1} page_data`,
+            `[Buildkite] Successfully queried page${index + 1}_data`,
             response
           );
           const dataFromOnePage: [] = response.data;

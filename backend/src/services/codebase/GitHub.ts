@@ -9,10 +9,7 @@ import { LeadTime, PipelineLeadTime } from "../../models/codebase/LeadTime";
 import { GitOrganization } from "../../models/codebase/GitOrganization";
 import { GitHubRepo } from "../../models/codebase/GitHubRepo";
 import logger from "../../utils/loggerUtils";
-import {
-  maskEmailResponseLogger,
-  responseLogger,
-} from "../../utils/responseLoggerUtils";
+import { maskEmailResponseLogger } from "../../utils/responseLoggerUtils";
 
 export class GitHub implements Codebase {
   private httpClient: AxiosInstance;
@@ -29,10 +26,13 @@ export class GitHub implements Codebase {
 
   async fetchAllOrganization(): Promise<string[]> {
     logger.info(
-      `Start to query all organization_url:${this.httpClient.defaults.baseURL}/user/orgs`
+      `[Github] Start to query all organization_url:${this.httpClient.defaults.baseURL}/user/orgs`
     );
     const response = await this.httpClient.get("/user/orgs");
-    responseLogger("Successfully queried all organization_data", response);
+    maskEmailResponseLogger(
+      "[Github] Successfully queried all organization_data",
+      response
+    );
     const gitOrganizations = new JsonConvert().deserializeArray(
       response.data,
       GitOrganization
@@ -51,10 +51,10 @@ export class GitHub implements Codebase {
 
     await Promise.all(
       requestUrl.map(async (url) => {
-        logger.info(`Start to query all repository_url:${url}`);
+        logger.info(`[Github] Start to query all repository_url:${url}`);
         const response = await this.httpClient.get(url);
         maskEmailResponseLogger(
-          "Successfully queried all repository_data",
+          "[Github] Successfully queried all repository_data",
           response
         );
         const gitHubRepos: GitHubRepo[] = new JsonConvert().deserializeArray(
@@ -94,13 +94,13 @@ export class GitHub implements Codebase {
           const leadTimes: LeadTime[] = await Promise.all(
             item.deployInfo.map(async (deployInfo) => {
               logger.info(
-                `Start to query pipeline leadTime_url:${this.httpClient.defaults.baseURL}/repos/${repository}/commits/${deployInfo.commitId}/pulls`
+                `[Github] Start to query pipeline leadTime_url:${this.httpClient.defaults.baseURL}/repos/${repository}/commits/${deployInfo.commitId}/pulls`
               );
               const response = await this.httpClient.get(
                 `/repos/${repository}/commits/${deployInfo.commitId}/pulls`
               );
               maskEmailResponseLogger(
-                "Successfully queried pipeline leadTime_data",
+                "[Github] Successfully queried pipeline leadTime_data",
                 response
               );
               const gitHubPulls: GitHubPull[] = new JsonConvert().deserializeArray(
@@ -137,13 +137,13 @@ export class GitHub implements Codebase {
 
               //get the pull request commits.
               logger.info(
-                `Start to query the pull request commits_url:${this.httpClient.defaults.baseURL}/repos/${repository}/pulls/${mergedPull.number}/commits`
+                `[Github] Start to query the pull request commits_url:${this.httpClient.defaults.baseURL}/repos/${repository}/pulls/${mergedPull.number}/commits`
               );
               const prResponse = await this.httpClient.get(
                 `/repos/${repository}/pulls/${mergedPull.number}/commits`
               );
               maskEmailResponseLogger(
-                "Successfully queried the pull request commits_data",
+                "[Github] Successfully queried the pull request commits_data",
                 prResponse
               );
               const gitHubCommites: CommitInfo[] = new JsonConvert().deserializeArray(
@@ -173,12 +173,15 @@ export class GitHub implements Codebase {
   ): Promise<CommitInfo> {
     const repository = GitUrlParse(repositoryId).full_name;
     logger.info(
-      `Start to query commit info_url:${this.httpClient.defaults.baseURL}/repos/${repository}/commits/${commitId}`
+      `[Github] Start to query commit info_url:${this.httpClient.defaults.baseURL}/repos/${repository}/commits/${commitId}`
     );
     const response = await this.httpClient.get(
       `/repos/${repository}/commits/${commitId}`
     );
-    maskEmailResponseLogger("Successfully queried commit info_data", response);
+    maskEmailResponseLogger(
+      "[Github] Successfully queried commit info_data",
+      response
+    );
     const commitInfo: CommitInfo = new JsonConvert().deserializeObject(
       response.data,
       CommitInfo

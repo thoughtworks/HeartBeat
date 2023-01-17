@@ -43,10 +43,36 @@ jobs:
         run: |
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  frontend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.18.0
+      - name: Install & Lint
+        run: |
+          npm install -g pnpm
+          pnpm install
+          pnpm lint
+      - name: Testing and coverage
+        run: |
+          pnpm coverage
+      - name: Building
+        run: pnpm build
+      - name: Upload Test Report to Codacy
+        run: |
+          export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
+          bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
   build-and-push-image:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
+      - frontend-check
       - backend-check
       - security-check
     runs-on: ubuntu-latest

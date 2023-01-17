@@ -1,11 +1,8 @@
 name: Build and Deploy
 
 on:
-  workflow_run:
-    workflows:
-      - Backend
-    types:
-      - completed
+  push:
+    branches: ["master"]
   workflow_dispatch:
 
 

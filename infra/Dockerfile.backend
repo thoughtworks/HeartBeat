@@ -1,11 +1,11 @@
 FROM node:16-alpine AS builder
 WORKDIR /app
 COPY ./backend ./
+RUN npm install -g yarn
 RUN yarn install && yarn build
 
-FROM ubuntu:latest
 LABEL app=HeartBeat
 LABEL arch=Backend
 RUN mkdir -p ./csv
 EXPOSE 3001
-ENTRYPOINT [ "yarn", "host" ]
+CMD [ "yarn", "host" ]

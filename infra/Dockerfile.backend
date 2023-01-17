@@ -1,6 +1,9 @@
 FROM node:16-alpine AS builder
 WORKDIR /app
 COPY ./backend ./
+RUN yarn install && yarn build
+
+FROM ubuntu:latest
 LABEL app=HeartBeat
 LABEL arch=Backend
 RUN mkdir -p ./csv

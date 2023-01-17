@@ -70,7 +70,6 @@ jobs:
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
   build-and-push-image:
-    if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - frontend-check
       - backend-check

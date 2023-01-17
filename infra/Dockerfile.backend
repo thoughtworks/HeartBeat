@@ -9,5 +9,5 @@ LABEL arch=Backend
 RUN groupadd -r nonroot && useradd --no-log-init -r -g nonroot nonroot
 USER nonroot
 EXPOSE 3001
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+COPY --from=build /home/gradle/src/build/libs/heartbeat-backend-0.0.1-SNAPSHOT.jar /app/spring-boot-application.jar
 ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]

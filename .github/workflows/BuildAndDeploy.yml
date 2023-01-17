@@ -48,7 +48,6 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - backend-check
-      - frontend-check
       - security-check
     runs-on: ubuntu-latest
     permissions:

@@ -43,12 +43,17 @@ jacocoTestReport {
     html.enabled true
     xml.enabled true
   }
+  classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: [
+        "**/HeartbeatApplication**",
+      ])
+    }))
 }
 jacocoTestCoverageVerification {
   afterEvaluate {
     classDirectories.setFrom(files(classDirectories.files.collect {
       fileTree(dir: it, exclude: [
-        "**/HeartbeatApplication.class"
+        "**/HeartbeatApplication**",
       ])
     }))
   }

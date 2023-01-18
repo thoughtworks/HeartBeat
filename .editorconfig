@@ -12,6 +12,7 @@ trim_trailing_whitespace = true
 quote_type = single
 
 [*.java]
+indent_style = tab
 indent_size = 4
 
 [*.md]

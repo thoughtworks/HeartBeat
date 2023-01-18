@@ -2,8 +2,10 @@ plugins {
 	id 'java'
 	id 'jacoco'
   id 'pmd'
+  id 'checkstyle'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.1.0'
+  id "io.spring.javaformat" version "0.0.27"
 }
 
 group = 'com.tw'
@@ -35,6 +37,11 @@ tasks.named('test') {
     events "started", "passed", "skipped", "failed"
   }
 	finalizedBy jacocoTestReport
+}
+
+checkstyle {
+  toolVersion = "10.6.0"
+  configFile = file("src/main/resources/checkstyle.xml")
 }
 
 def testIgnoreList = [

@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Heartbeat API",description = "Heartbeat Information"))
+@OpenAPIDefinition(info = @Info(title = "Heartbeat API", description = "Heartbeat Information"))
 public class HeartbeatApplication {
 
 	public static void main(String[] args) {

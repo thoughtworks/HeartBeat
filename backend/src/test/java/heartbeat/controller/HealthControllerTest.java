@@ -1,6 +1,5 @@
 package heartbeat.controller;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,19 +15,23 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HealthControllerTest {
-    @Mock
-    private static HealthEndpoint healthEndpoint;
-    @InjectMocks
-    private static HealthController healthController;
 
-    @Test
-    void should_return_health_status() {
-        HealthComponent mockHealth = mock(HealthComponent.class);
-        when(healthEndpoint.health()).thenReturn(mockHealth);
-        when(mockHealth.getStatus()).thenReturn(Status.UP);
+	@Mock
+	private static HealthEndpoint healthEndpoint;
 
-        Status healthStatus = healthController.getHealthStatus();
+	@InjectMocks
+	private static HealthController healthController;
 
-        assertThat(healthStatus).isEqualTo(Status.UP);
-    }
+	@Test
+	void should_return_health_status() {
+
+		HealthComponent mockHealth = mock(HealthComponent.class);
+		when(healthEndpoint.health()).thenReturn(mockHealth);
+		when(mockHealth.getStatus()).thenReturn(Status.UP);
+
+		Status healthStatus = healthController.getHealthStatus();
+
+		assertThat(healthStatus).isEqualTo(Status.UP);
+	}
+
 }

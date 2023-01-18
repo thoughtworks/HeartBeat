@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/health")
 @RequiredArgsConstructor
 public class HealthController {
-    private final HealthEndpoint healthEndpoint;
 
-    @GetMapping
-    public Status getHealthStatus() {
-        return healthEndpoint.health().getStatus();
-    }
+	private final HealthEndpoint healthEndpoint;
+
+	@GetMapping
+	public Status getHealthStatus() {
+		return healthEndpoint.health().getStatus();
+	}
+
 }

@@ -68,6 +68,23 @@ jobs:
         run: |
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  license-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.18.0
+      - name: Install
+        run: |
+          npm install
+      - name: License compliance check
+        run: |
+          npm run license-compliance
 
   build-and-push-image:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -75,6 +92,7 @@ jobs:
       - frontend-check
       - backend-check
       - security-check
+      - license-check
     runs-on: ubuntu-latest
     permissions:
       id-token: write

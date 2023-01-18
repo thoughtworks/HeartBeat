@@ -37,6 +37,10 @@ tasks.named('test') {
 	finalizedBy jacocoTestReport
 }
 
+def testIgnoreList = [
+  "**/HeartbeatApplication**",
+]
+
 jacocoTestReport {
 	dependsOn test
   reports {
@@ -44,17 +48,13 @@ jacocoTestReport {
     xml.enabled true
   }
   classDirectories.setFrom(files(classDirectories.files.collect {
-      fileTree(dir: it, exclude: [
-        "**/HeartbeatApplication**",
-      ])
+      fileTree(dir: it, exclude: testIgnoreList)
     }))
 }
 jacocoTestCoverageVerification {
   afterEvaluate {
     classDirectories.setFrom(files(classDirectories.files.collect {
-      fileTree(dir: it, exclude: [
-        "**/HeartbeatApplication**",
-      ])
+      fileTree(dir: it, exclude: testIgnoreList)
     }))
   }
   violationRules {

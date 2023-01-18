@@ -5,7 +5,7 @@ plugins {
   id 'checkstyle'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.1.0'
-  id "io.spring.javaformat" version "0.0.27"
+  id "io.spring.javaformat" version "0.0.35"
 }
 
 group = 'com.tw'

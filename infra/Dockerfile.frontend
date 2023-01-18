@@ -1,11 +1,12 @@
 FROM node:16-alpine as builder
 COPY ./frontend /app
 WORKDIR /app
-RUN yarn install && yarn build:prod
+RUN npm install -g pnpm
+RUN pnpm install && pnpm build
 
 FROM nginx:latest
 LABEL app=HeartBeat
 LABEL arch=Frontend
 WORKDIR /app
-COPY --from=builder /app/dist/heartbeat-frontend /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 COPY ./infra/nginx.conf /etc/nginx/nginx.conf

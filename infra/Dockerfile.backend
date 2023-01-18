@@ -4,7 +4,7 @@ WORKDIR /home/gradle/src
 RUN gradle build --no-daemon
 
 FROM openjdk:19-jdk-slim-buster
-LABEL app=HeartBeat
+LABEL app=Heartbeat
 LABEL arch=Backend
 RUN groupadd -r nonroot && useradd --no-log-init -r -g nonroot nonroot
 USER nonroot

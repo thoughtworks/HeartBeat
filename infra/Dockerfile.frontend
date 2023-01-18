@@ -5,7 +5,7 @@ RUN npm install -g pnpm
 RUN pnpm install && pnpm build
 
 FROM nginx:latest
-LABEL app=HeartBeat
+LABEL app=Heartbeat
 LABEL arch=Frontend
 WORKDIR /app
 COPY --from=builder /app/dist /usr/share/nginx/html

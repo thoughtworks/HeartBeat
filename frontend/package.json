@@ -47,7 +47,7 @@
     "@vitejs/plugin-react-swc": "^3.0.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.6.0",
-    "eslint-config-standard-with-typescript": "^26.0.0",
+    "eslint-config-standard-with-typescript": "^30.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-prettier": "^4.2.1",

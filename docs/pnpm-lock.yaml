@@ -10,7 +10,7 @@ specifiers:
   '@docsearch/css': ^3.3.2
   '@docsearch/react': ^3.3.2
   '@types/node': ^18.11.18
-  '@types/react': ^17.0.52
+  '@types/react': ^18.0.0
   '@types/react-dom': ^18.0.10
   astro: ^1.9.2
   html-escaper: ^3.0.3
@@ -24,11 +24,11 @@ specifiers:
 dependencies:
   '@algolia/client-search': 4.14.3
   '@astrojs/preact': 1.2.0_preact@10.11.3
-  '@astrojs/react': 1.2.2_4yi36mm7yx75zrqassrukihd4e
+  '@astrojs/react': 1.2.2_fxtgt6bjwd6p4cwoordejim2zi
   '@docsearch/css': 3.3.2
-  '@docsearch/react': 3.3.2_5j26jteexnweqz5zwysrjrjyhm
+  '@docsearch/react': 3.3.2_y6lbs4o5th67cuzjdmtw5eqh7a
   '@types/node': 18.11.18
-  '@types/react': 17.0.52
+  '@types/react': 18.0.27
   '@types/react-dom': 18.0.10
   astro: 1.9.2_@types+node@18.11.18
   preact: 10.11.3
@@ -252,7 +252,7 @@ packages:
       prismjs: 1.29.0
     dev: false
 
-  /@astrojs/react/1.2.2_4yi36mm7yx75zrqassrukihd4e:
+  /@astrojs/react/1.2.2_fxtgt6bjwd6p4cwoordejim2zi:
     resolution: {integrity: sha512-ab9fYvzkC74J7N+M3DWQuZgwu7sYjW0aLO3sEAdCX/jZZz+0BhrqS8m9QjtGJyQK/niF4tgJjpPfadopxKc56g==}
     engines: {node: ^14.18.0 || >=16.12.0}
     peerDependencies:
@@ -263,7 +263,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/plugin-transform-react-jsx': 7.20.7_@babel+core@7.20.12
-      '@types/react': 17.0.52
+      '@types/react': 18.0.27
       '@types/react-dom': 18.0.10
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -528,7 +528,7 @@ packages:
     resolution: {integrity: sha512-dctFYiwbvDZkksMlsmc7pj6W6By/EjnVXJq5TEPd05MwQe+dcdHJgaIn1c8wfsucxHpIsdrUcgSkACHCq6aIhw==}
     dev: false
 
-  /@docsearch/react/3.3.2_5j26jteexnweqz5zwysrjrjyhm:
+  /@docsearch/react/3.3.2_y6lbs4o5th67cuzjdmtw5eqh7a:
     resolution: {integrity: sha512-ugILab2TYKSh6IEHf6Z9xZbOovsYbsdfo60PBj+Bw+oMJ1MHJ7pBt1TTcmPki1hSgg8mysgKy2hDiVdPm7XWSQ==}
     peerDependencies:
       '@types/react': '>= 16.8.0 < 19.0.0'
@@ -545,7 +545,7 @@ packages:
       '@algolia/autocomplete-core': 1.7.4
       '@algolia/autocomplete-preset-algolia': 1.7.4_dk4ct527ug5whbfokpeal2wzha
       '@docsearch/css': 3.3.2
-      '@types/react': 17.0.52
+      '@types/react': 18.0.27
       algoliasearch: 4.14.3
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -797,11 +797,11 @@ packages:
   /@types/react-dom/18.0.10:
     resolution: {integrity: sha512-E42GW/JA4Qv15wQdqJq8DL4JhNpB3prJgjgapN3qJT9K2zO5IIAQh4VXvCEDupoqAwnz0cY4RlXeC/ajX5SFHg==}
     dependencies:
-      '@types/react': 17.0.52
+      '@types/react': 18.0.27
     dev: false
 
-  /@types/react/17.0.52:
-    resolution: {integrity: sha512-vwk8QqVODi0VaZZpDXQCmEmiOuyjEFPY7Ttaw5vjM112LOq37yz1CDJGrRJwA1fYEq4Iitd5rnjd1yWAc/bT+A==}
+  /@types/react/18.0.27:
+    resolution: {integrity: sha512-3vtRKHgVxu3Jp9t718R9BuzoD4NcQ8YJ5XRzsSKxNDiDonD2MXIT1TmSkenxuCycZJoQT5d2vE8LwWJxBC1gmA==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2

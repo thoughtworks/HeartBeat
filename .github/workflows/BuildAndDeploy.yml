@@ -175,6 +175,9 @@ jobs:
             docker-compose up -d frontend
   e2e:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     needs:
       - deploy
     steps:

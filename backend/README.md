@@ -10,10 +10,10 @@ cd HearBeat/backend
 ```
 
 Health endpoint:
-http://localhost:3001/api/v1/health
+http://localhost:4322/api/v1/health
 
 Swagger address:
-http://localhost:3001/api/v1/swagger-ui/index.html
+http://localhost:4322/api/v1/swagger-ui/index.html
 
 ## 2. How to build docker image and run locally
 
@@ -22,10 +22,10 @@ BUILD docker image backend-spring:v1
 cd HearBeat/backend
 docker build -f Dockerfile -t backend-spring:v1 .
 ```
-RUN docker image locally using port 3001
+RUN docker image locally using port 4322
 ```shell script
 docker run
-docker run -p 3001:3001 -itd backend-spring:v1 
+docker run -p 4322:4322 -itd backend-spring:v1 
 ```
 Then you can use health endpoint to check the app status.
 

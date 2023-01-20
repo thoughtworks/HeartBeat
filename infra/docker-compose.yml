@@ -5,7 +5,7 @@ services:
     image: heartbeat_backend:latest
     container_name: backend
     ports:
-      - 3001:3001
+      - 4322:4322
     restart: always
     networks:
       - default

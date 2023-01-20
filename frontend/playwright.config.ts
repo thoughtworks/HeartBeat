@@ -40,6 +40,7 @@ const config: PlaywrightTestConfig = {
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    baseURL: process.env.APP_ORIGIN || 'http://localhost:4321',
   },
 
   /* Configure projects for major browsers */
@@ -98,10 +99,10 @@ const config: PlaywrightTestConfig = {
   // outputDir: 'test-results/',
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'pnpm run start',
-    port: 4321,
-  },
+  // webServer: {
+  //   command: 'pnpm run start',
+  //   port: 4321,
+  // },
 };
 
 export default config;

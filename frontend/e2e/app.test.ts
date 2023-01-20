@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Hello world', async ({ page }) => {
-  await page.goto('http://localhost:4321');
+  await page.goto('/index.html');
   const locator = page.locator('.title');
 
   expect(locator).toContainText(['Hello World']);

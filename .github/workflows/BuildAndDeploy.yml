@@ -188,5 +188,5 @@ jobs:
           pnpm install
       - name: Run e2e Testing
         run: pnpm run e2e
-        with:
+        env:
           APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP }}:${{ secrets.APP_PORT }}

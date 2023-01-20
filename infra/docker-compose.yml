@@ -1,21 +1,21 @@
 version: "3.4"
 
 services:
-  backend:
+  backend-old:
     image: heartbeat_backend:latest
-    container_name: backend
+    container_name: backend-old
     ports:
       - 3001:3001
     restart: always
     networks:
       - default
-  frontend:
+  frontend-old:
     image: heartbeat_frontend:latest
-    container_name: frontend
+    container_name: frontend-old
     ports:
       - 3000:80
     depends_on:
-      - backend
+      - backend-old
     restart: always
     networks:
       - default

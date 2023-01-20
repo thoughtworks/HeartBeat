@@ -3,7 +3,7 @@ WORKDIR /app
 COPY ./backend ./
 RUN yarn install && yarn build
 
-LABEL app=HeartBeat
+LABEL app=HeartBeat-old
 LABEL arch=Backend
 RUN mkdir -p ./csv
 EXPOSE 3001

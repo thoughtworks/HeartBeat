@@ -5,10 +5,67 @@ on:
     branches: ["master"]
   workflow_dispatch:
 
-
 jobs:
+  frontend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+      - name: Install & Lint
+        run: |
+          npm install -g yarn
+          yarn
+          yarn lint
+      - name: Testing
+        run: |
+          export karmaBrowser=ChromeHeadless
+          yarn test --watch=false
+      - name: Building
+        run: yarn build
+
+  backend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+      - name: Install & Lint
+        run: |
+          npm install -g yarn
+          yarn
+          yarn eslint
+      - name: Testing
+        run: |
+          yarn test-coverage
+      - name: Building
+        run: yarn build
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+      - name: trufflehog-actions-scan
+        uses: edplato/trufflehog-actions-scan@master
+
   build-and-push-image:
-    if: ${{ github.event_name != 'pull_request' }}
+    needs:
+      - frontend-check
+      - backend-check
+      - security
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -84,8 +141,8 @@ jobs:
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             cp "./infra/docker-compose-old.yml" ./
-            docker-compose down
+            # docker-compose down
             docker rmi -f $(docker images -f label=app=HeartBeat-old -q)
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
-            docker-compose -f docker-compose-old.yml up -d frontend
+            docker-compose -f docker-compose-old.yml up -d frontend-old

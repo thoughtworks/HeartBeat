@@ -13,7 +13,7 @@ services:
     image: heartbeat_frontend:latest
     container_name: frontend
     ports:
-      - 3000:80
+      - 4321:80
     depends_on:
       - backend
     restart: always

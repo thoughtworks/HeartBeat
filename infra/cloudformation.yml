@@ -163,8 +163,8 @@ Resources:
         - Key: "app"
           Value: "HeartBeat"
       SecurityGroups:
-      - !Ref EC2SSHSecurityGroup
-      - !Ref EC2AppSecurityGroup
+        - !Ref EC2SSHSecurityGroup
+        - !Ref EC2AppSecurityGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
       UserData:
@@ -202,8 +202,8 @@ Resources:
       GroupDescription: Enable access application
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 3000
-        ToPort: 3000
+        FromPort: 4321
+        ToPort: 4321
         CidrIp: 0.0.0.0/0
 
   WebPortAddress:

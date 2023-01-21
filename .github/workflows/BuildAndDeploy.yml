@@ -24,25 +24,51 @@ jobs:
         working-directory: ./backend
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 19
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: "19"
+          java-version: ${{ vars.JAVA_VERSION }}
           distribution: "adopt"
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.6
+          gradle-version: ${{ vars.GRADLE_VERSION }}
       - name: Test and check
         run: ./gradlew clean check
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew clean build
       - name: Upload Test Report to Codacy
         run: |
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  backend-license-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: "adopt"
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: ${{ vars.GRADLE_VERSION }}
+      - name: License check
+        run: ./gradlew clean checkLicense
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: backend-license-report
+          path: ./build/reports/dependency-license/
+          retention-days: 30
   frontend-check:
     runs-on: ubuntu-latest
     defaults:
@@ -68,7 +94,7 @@ jobs:
         run: |
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
-  license-check:
+  frontend-license-check:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -92,7 +118,8 @@ jobs:
       - frontend-check
       - backend-check
       - security-check
-      - license-check
+      - frontend-license-check
+      - backend-license-check
     runs-on: ubuntu-latest
     permissions:
       id-token: write

@@ -6,6 +6,7 @@ plugins {
 	id 'org.springframework.boot' version '3.0.2'
 	id 'io.spring.dependency-management' version '1.1.0'
   id "io.spring.javaformat" version "0.0.35"
+  id 'com.github.jk1.dependency-license-report' version '2.0'
 }
 
 group = 'com.tw'
@@ -71,5 +72,9 @@ jacocoTestCoverageVerification {
       }
     }
   }
+}
+
+licenseReport {
+    allowedLicensesFile = new File("src/main/resources/allowed-licenses.json")
 }
 

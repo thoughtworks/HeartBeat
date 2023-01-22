@@ -28,6 +28,18 @@ describe('Header', () => {
     expect(logoInstance.getAttribute('alt')).toContain('logo');
   });
 
+  it('should go to home page when click logo', () => {
+    const { getByText } = render(
+      <BrowserRouter>
+        <Header />
+      </BrowserRouter>
+    );
+
+    fireEvent.click(getByText(PROJECT_NAME));
+
+    expect(window.location.pathname).toEqual('/');
+  });
+
   describe('HomeIcon', () => {
     const homeBtnText = 'Home';
     const notHomePageRender = () =>
@@ -49,6 +61,14 @@ describe('Header', () => {
       fireEvent.click(getByTitle(homeBtnText));
       expect(navigateMock).toBeCalledTimes(1);
       expect(navigateMock).toBeCalledWith('/');
+    });
+
+    it('should go to home page when click logo given a not home page path', () => {
+      const { getByText } = notHomePageRender();
+
+      fireEvent.click(getByText(PROJECT_NAME));
+
+      expect(window.location.pathname).toEqual('/');
     });
   });
 });

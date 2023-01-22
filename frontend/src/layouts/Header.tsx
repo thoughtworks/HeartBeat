@@ -13,7 +13,7 @@ const Header = () => {
 
   return (
     <div className='bg-indigo-600 h-16 flex justify-between p-2 items-center'>
-      <div className='flex items-center'>
+      <div className='flex items-center cursor-pointer' onClick={goHome}>
         <img className='h-12 w-12' src={Logo} alt='logo' />
         <span className='text-white text-xl font-bold'>Heartbeat</span>
       </div>

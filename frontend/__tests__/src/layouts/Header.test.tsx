@@ -49,6 +49,10 @@ describe('Header', () => {
         </MemoryRouter>
       );
 
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('should show home icon', () => {
       const { getByTitle } = notHomePageRender();
 

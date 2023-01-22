@@ -21,5 +21,8 @@
     }
   },
   "include": ["src", "__tests__"],
+  "exclude": [
+    "__tests__/__mocks__/svgTransformer.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

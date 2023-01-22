@@ -1,11 +1,27 @@
-import logo from '../assets/logo.svg';
+import { useLocation, useNavigate } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+
+import Logo from '@src/assets/Logo.svg';
+
 const Header = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const goHome = () => {
+    navigate('/');
+  };
+
   return (
-    <div className='bg-indigo-600 h-16 justify-evenly'>
-      <div className='flex'>
-        <img className='h-1' src={logo} alt='logo' />
-        <title>Heartbeat</title>
+    <div className='bg-indigo-600 h-16 flex justify-between p-2 items-center'>
+      <div className='flex items-center'>
+        <img className='h-12 w-12' src={Logo} alt='logo' />
+        <span className='text-white text-xl font-bold'>Heartbeat</span>
       </div>
+      {location.pathname !== '/' && (
+        <span onClick={goHome}>
+          <HomeIcon className='text-white' />
+        </span>
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@emotion/react': ^11.10.5
   '@emotion/styled': ^11.10.5
+  '@mui/icons-material': ^5.11.0
   '@mui/material': ^5.11.3
   '@playwright/test': ^1.29.2
   '@reduxjs/toolkit': ^1.9.1
@@ -19,7 +20,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.48.0
   '@vitejs/plugin-react-swc': ^3.0.0
   autoprefixer: ^10.4.13
-  eslint: ^8.0.1
+  eslint: ^8.31.0
   eslint-config-prettier: ^8.6.0
   eslint-config-standard-with-typescript: ^31.0.0
   eslint-plugin-import: ^2.25.2
@@ -48,6 +49,7 @@ specifiers:
 dependencies:
   '@emotion/react': 11.10.5_kzbn2opkn2327fwg5yzwzya5o4
   '@emotion/styled': 11.10.5_qvatmowesywn4ye42qoh247szu
+  '@mui/icons-material': 5.11.0_6zueiyxsk3wwk7ardr4xipkxnu
   '@mui/material': 5.11.4_lskpmcsdi7ipu6qpuapyu56ihm
   '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
   react: 18.2.0
@@ -1109,6 +1111,23 @@ packages:
 
   /@mui/core-downloads-tracker/5.11.4:
     resolution: {integrity: sha512-jWVwGM3vG4O0sXcW0VcIl+njCWbGCBF5vvjRpuKJajrz51AD7D6+fP1SkInZXVk5pRHf6Bnk/Yj9Of9gXxb/hA==}
+    dev: false
+
+  /@mui/icons-material/5.11.0_6zueiyxsk3wwk7ardr4xipkxnu:
+    resolution: {integrity: sha512-I2LaOKqO8a0xcLGtIozC9xoXjZAto5G5gh0FYUMAlbsIHNHIjn4Xrw9rvjY20vZonyiGrZNMAlAXYkY6JvhF6A==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@mui/material': ^5.0.0
+      '@types/react': ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.20.7
+      '@mui/material': 5.11.4_lskpmcsdi7ipu6qpuapyu56ihm
+      '@types/react': 18.0.26
+      react: 18.2.0
     dev: false
 
   /@mui/material/5.11.4_lskpmcsdi7ipu6qpuapyu56ihm:

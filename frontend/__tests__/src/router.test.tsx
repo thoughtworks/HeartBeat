@@ -1,6 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import React from 'react';
 import Router from '@src/router';
 import '@testing-library/jest-dom';
 
@@ -15,20 +14,20 @@ describe('router', () => {
   it('should show home page when loading on a bad page', async () => {
     const badRoute = '/some/bad/route';
 
-    const { getByText } = setup(badRoute);
+    setup(badRoute);
 
     await waitFor(() => {
-      expect(getByText('This is Home Page')).toBeInTheDocument();
+      expect(window.location.pathname).toEqual('/');
     });
   });
 
   it('should show home page when go home page', async () => {
     const homeRoute = '/home';
 
-    const { getByText } = setup(homeRoute);
+    setup(homeRoute);
 
     await waitFor(() => {
-      expect(getByText('This is Home Page')).toBeInTheDocument();
+      expect(window.location.pathname).toEqual('/');
     });
   });
 

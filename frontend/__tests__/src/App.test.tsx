@@ -3,7 +3,6 @@ import '@testing-library/jest-dom';
 import App from '@src/App';
 import { Provider } from 'react-redux';
 import { store } from '@src/store/store';
-import { PROJECT_NAME } from '__tests__/src/fixtures';
 
 describe('render app', () => {
   const setup = () => {
@@ -14,9 +13,15 @@ describe('render app', () => {
     );
   };
   it('should show hello World when render app', () => {
-    const { getByText } = setup();
-    const text = getByText(PROJECT_NAME);
+    const { getByText, rerender } = setup();
 
-    expect(text).toBeInTheDocument();
+    rerender(
+      <Provider store={store}>
+        <App />
+      </Provider>
+    );
+    const loadText = getByText('Loading...');
+
+    expect(loadText).toBeInTheDocument();
   });
 });

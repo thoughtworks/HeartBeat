@@ -1,8 +1,9 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Header from '@src/layouts/Header';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { PROJECT_NAME } from '../fixtures';
+import { navigateMock } from '../../setupTests';
 
 describe('Header', () => {
   it('should show project name', () => {
@@ -28,31 +29,26 @@ describe('Header', () => {
   });
 
   describe('HomeIcon', () => {
-    it('should show home icon', () => {
-      jest.mock('react-router-dom', () => {
-        return {
-          ...jest.requireActual('react-router-dom'),
-          useLocation: () => {
-            return {
-              pathname: '/any_path_except_home_path',
-              search: '',
-              hash: '',
-              state: null,
-              key: 'default',
-            };
-          },
-        };
-      });
-
-      const { getByText } = render(
-        <BrowserRouter>
+    const homeBtnText = 'Home';
+    const notHomePageRender = () =>
+      render(
+        <MemoryRouter initialEntries={[{ pathname: '/not/home/page' }]}>
           <Header />
-        </BrowserRouter>
+        </MemoryRouter>
       );
 
-      expect(getByText(PROJECT_NAME)).toBeInTheDocument();
+    it('should show home icon', () => {
+      const { getByTitle } = notHomePageRender();
 
-      jest.resetAllMocks();
+      expect(getByTitle(homeBtnText)).toBeVisible();
+    });
+
+    it('should navigate to home page', () => {
+      const { getByTitle } = notHomePageRender();
+
+      fireEvent.click(getByTitle(homeBtnText));
+      expect(navigateMock).toBeCalledTimes(1);
+      expect(navigateMock).toBeCalledWith('/');
     });
   });
 });

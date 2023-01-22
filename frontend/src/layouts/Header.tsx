@@ -18,7 +18,7 @@ const Header = () => {
         <span className='text-white text-xl font-bold'>Heartbeat</span>
       </div>
       {location.pathname !== '/' && (
-        <span onClick={goHome}>
+        <span className='cursor-pointer' title='Home' onClick={goHome}>
           <HomeIcon className='text-white' />
         </span>
       )}

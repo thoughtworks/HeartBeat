@@ -49,6 +49,13 @@ describe('Header', () => {
         </MemoryRouter>
       );
 
+    const indexHomePageRender = () =>
+      render(
+        <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
+          <Header />
+        </MemoryRouter>
+      );
+
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -59,16 +66,35 @@ describe('Header', () => {
       expect(getByTitle(homeBtnText)).toBeVisible();
     });
 
+    it('should not show home icon when pathname is index.html', () => {
+      const { queryByTitle } = indexHomePageRender();
+
+      expect(queryByTitle(homeBtnText)).not.toBeInTheDocument();
+    });
+
     it('should navigate to home page', () => {
       const { getByTitle } = notHomePageRender();
 
       fireEvent.click(getByTitle(homeBtnText));
+
       expect(navigateMock).toBeCalledTimes(1);
       expect(navigateMock).toBeCalledWith('/');
     });
 
     it('should go to home page when click logo given a not home page path', () => {
       const { getByText } = notHomePageRender();
+
+      fireEvent.click(getByText(PROJECT_NAME));
+
+      expect(window.location.pathname).toEqual('/');
+    });
+
+    it('should go to home page when click logo given a not home page path', () => {
+      const { getByText } = render(
+        <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
+          <Header />
+        </MemoryRouter>
+      );
 
       fireEvent.click(getByText(PROJECT_NAME));
 

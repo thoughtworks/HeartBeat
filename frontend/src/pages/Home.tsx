@@ -1,4 +1,10 @@
+import Header from '@src/layouts/Header';
+
 const Home = () => {
-  return <div>This is Home Page</div>;
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 };
 export default Home;

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import ProjectDescription from '@src/components/ProjectDescription'
 import { PROJECT_DESCRIPTION } from '../fixtures'
 

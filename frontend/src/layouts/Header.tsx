@@ -2,6 +2,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 
 import Logo from '@src/assets/Logo.svg';
+import styled from '@emotion/styled';
+import theme from '@src/theme';
 
 const Header = () => {
   const location = useLocation();
@@ -15,18 +17,53 @@ const Header = () => {
     return !['/', '/index.html'].includes(location.pathname);
   };
 
+  const LogoWarp = styled.div({
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '2rem',
+    alignItems: 'center',
+    backgroundColor: theme.main.backgroundColor,
+    height: '4rem',
+  });
+
+  const LogoTitle = styled.span({
+    color: theme.main.color,
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
+  });
+
+  const LogoImage = styled.img({
+    height: '4rem',
+    width: '4rem',
+  });
+
+  const LogoContainer = styled.div({
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    color: theme.main.color,
+  });
+
+  const HomeIconContainer = styled.span`
+    cursor: pointer;
+  `;
+
+  const HomeIconElement = styled(HomeIcon)`
+    color: ${theme.main.color};
+  `;
+
   return (
-    <div className='bg-indigo-600 h-16 flex justify-between p-2 items-center'>
-      <div className='flex items-center cursor-pointer' onClick={goHome}>
-        <img className='h-12 w-12' src={Logo} alt='logo' />
-        <span className='text-white text-xl font-bold'>Heartbeat</span>
-      </div>
+    <LogoWarp>
+      <LogoContainer onClick={goHome}>
+        <LogoImage src={Logo} alt='logo' />
+        <LogoTitle>Heartbeat</LogoTitle>
+      </LogoContainer>
       {shouldShowHomeIcon() && (
-        <span className='cursor-pointer' title='Home' onClick={goHome}>
-          <HomeIcon className='text-white' />
-        </span>
+        <HomeIconContainer title='Home' onClick={goHome}>
+          <HomeIconElement />
+        </HomeIconContainer>
       )}
-    </div>
+    </LogoWarp>
   );
 };
 export default Header;

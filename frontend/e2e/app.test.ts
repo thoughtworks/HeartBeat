@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const PROJECT_NAME = 'Heartbeat';
 
-test('Hello world', async ({ page }) => {
+test('should have project title', async ({ page }) => {
   await page.goto('/index.html');
 
   const projectTitle = page.getByTitle(PROJECT_NAME);

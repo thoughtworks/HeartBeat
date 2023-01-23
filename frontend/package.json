@@ -14,7 +14,7 @@
     "fix": "npx prettier --write . --ignore-unknown",
     "test": "jest",
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
-    "e2e:local": "playwright test --debug",
+    "e2e:debug": "playwright test --debug --trace on",
     "e2e": "playwright test",
     "e2e:report": "playwright show-report",
     "prepare": "playwright install && cd .. && husky install frontend/.husky",

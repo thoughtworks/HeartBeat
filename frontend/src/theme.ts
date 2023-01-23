@@ -22,7 +22,7 @@ declare module '@mui/material/styles' {
 const theme = createTheme({
   main: {
     backgroundColor: indigo[500],
-    color: grey.A100,
+    color: '#fff',
     fontSize: '1rem',
   },
 });

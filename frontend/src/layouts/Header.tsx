@@ -20,10 +20,9 @@ const Header = () => {
   const LogoWarp = styled.div({
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '2rem',
+    padding: '0 1rem',
     alignItems: 'center',
     backgroundColor: theme.main.backgroundColor,
-    height: '4rem',
   });
 
   const LogoTitle = styled.span({

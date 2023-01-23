@@ -7,10 +7,13 @@ import theme from '@src/theme';
 const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
   color: theme.main.color,
+  margin: '2rem',
+  width: '20rem',
+  minWidth: '10rem',
+  minHeight: '3rem',
 };
 const ImportButton = styled(Button)<ButtonProps>({
   ...basicStyle,
-  width: '16rem',
   '&:hover': {
     ...basicStyle,
   },
@@ -24,7 +27,7 @@ const ImportButton = styled(Button)<ButtonProps>({
 
 const HomeGuide = () => {
   return (
-    <Stack direction='column' spacing={4} justifyContent='center' alignItems='center' height={'100%'}>
+    <Stack direction='column' spacing={2} justifyContent='center' alignItems='center' flex={'auto'}>
       <ThemeProvider theme={theme}>
         <ImportButton>Import project from file</ImportButton>
         <ImportButton>Create a new project</ImportButton>

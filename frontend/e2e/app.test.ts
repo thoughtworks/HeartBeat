@@ -5,7 +5,7 @@ const PROJECT_NAME = 'Heartbeat';
 test('Hello world', async ({ page }) => {
   await page.goto('/index.html');
 
-  const projectTitle = page.getByText(PROJECT_NAME);
+  const projectTitle = page.getByTitle(PROJECT_NAME);
 
   await expect(projectTitle).toBeVisible();
 });

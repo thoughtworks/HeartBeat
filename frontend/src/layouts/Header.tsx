@@ -4,6 +4,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import Logo from '@src/assets/Logo.svg';
 import styled from '@emotion/styled';
 import theme from '@src/theme';
+import { PROJECT_NAME } from '@src/constants';
 
 const Header = () => {
   const location = useLocation();
@@ -55,7 +56,7 @@ const Header = () => {
     <LogoWarp>
       <LogoContainer onClick={goHome}>
         <LogoImage src={Logo} alt='logo' />
-        <LogoTitle>Heartbeat</LogoTitle>
+        <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
       </LogoContainer>
       {shouldShowHomeIcon() && (
         <HomeIconContainer title='Home' onClick={goHome}>

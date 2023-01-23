@@ -2,8 +2,8 @@ import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Header from '@src/layouts/Header';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { PROJECT_NAME } from '../fixtures';
 import { navigateMock } from '../../setupTests';
+import { PROJECT_NAME } from '@src/constants';
 
 describe('Header', () => {
   it('should show project name', () => {

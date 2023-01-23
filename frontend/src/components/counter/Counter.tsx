@@ -1,12 +1,12 @@
-import React from 'react';
+import React from 'react'
 
-import { useAppSelector, useAppDispatch } from '@src/hooks';
+import { useAppSelector, useAppDispatch } from '@src/hooks'
 
-import { decrement, increment, selectCount } from '@src/features/counter/counterSlice';
+import { decrement, increment, selectCount } from '@src/features/counter/counterSlice'
 
 export const Counter = () => {
-  const count = useAppSelector(selectCount);
-  const dispatch = useAppDispatch();
+  const count = useAppSelector(selectCount)
+  const dispatch = useAppDispatch()
 
   return (
     <div>
@@ -20,5 +20,5 @@ export const Counter = () => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}

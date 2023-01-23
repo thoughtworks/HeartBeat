@@ -1,9 +1,9 @@
-import { ThemeProvider } from '@emotion/react';
-import Button, { ButtonProps } from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
+import { ThemeProvider } from '@emotion/react'
+import Button, { ButtonProps } from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material/styles'
 
-import theme from '@src/theme';
+import theme from '@src/theme'
 
 const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -12,7 +12,7 @@ const basicStyle = {
   width: '15rem',
   minWidth: '10rem',
   minHeight: '3rem',
-};
+}
 const GuideButton = styled(Button)<ButtonProps>({
   ...basicStyle,
   '&:hover': {
@@ -24,7 +24,7 @@ const GuideButton = styled(Button)<ButtonProps>({
   '&:focus': {
     ...basicStyle,
   },
-});
+})
 
 const HomeGuide = () => {
   return (
@@ -36,7 +36,7 @@ const HomeGuide = () => {
         <GuideButton>Create a new project</GuideButton>
       </ThemeProvider>
     </Stack>
-  );
-};
+  )
+}
 
-export default HomeGuide;
+export default HomeGuide

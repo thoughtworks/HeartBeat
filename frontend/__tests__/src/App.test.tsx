@@ -1,8 +1,8 @@
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import App from '@src/App';
-import { Provider } from 'react-redux';
-import { store } from '@src/store/store';
+import { render } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import App from '@src/App'
+import { Provider } from 'react-redux'
+import { store } from '@src/store/store'
 
 describe('render app', () => {
   const setup = () => {
@@ -10,18 +10,18 @@ describe('render app', () => {
       <Provider store={store}>
         <App />
       </Provider>
-    );
-  };
+    )
+  }
   it('should show hello World when render app', () => {
-    const { getByText, rerender } = setup();
+    const { getByText, rerender } = setup()
 
     rerender(
       <Provider store={store}>
         <App />
       </Provider>
-    );
-    const loadText = getByText('Loading...');
+    )
+    const loadText = getByText('Loading...')
 
-    expect(loadText).toBeInTheDocument();
-  });
-});
+    expect(loadText).toBeInTheDocument()
+  })
+})

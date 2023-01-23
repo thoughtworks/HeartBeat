@@ -1,1 +1,1 @@
-export const PROJECT_NAME = 'Heartbeat';
+export const PROJECT_NAME = 'Heartbeat'

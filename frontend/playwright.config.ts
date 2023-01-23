@@ -1,5 +1,5 @@
-import type { PlaywrightTestConfig } from '@playwright/test';
-import { devices } from '@playwright/test';
+import type { PlaywrightTestConfig } from '@playwright/test'
+import { devices } from '@playwright/test'
 
 /**
  * Read environment variables from file.
@@ -103,6 +103,6 @@ const config: PlaywrightTestConfig = {
   //   command: 'pnpm run start',
   //   port: 4321,
   // },
-};
+}
 
-export default config;
+export default config

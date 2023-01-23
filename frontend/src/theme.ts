@@ -25,6 +25,11 @@ const theme = createTheme({
     color: '#fff',
     fontSize: '1rem',
   },
+  typography: {
+    button: {
+      textTransform: 'none',
+    },
+  },
 });
 
 export default theme;

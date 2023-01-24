@@ -5,7 +5,7 @@ overrides:
 
 specifiers:
   '@algolia/client-search': ^4.14.3
-  '@astrojs/preact': ^1.2.0
+  '@astrojs/preact': ^2.0.0
   '@astrojs/react': ^1.2.2
   '@docsearch/css': ^3.3.2
   '@docsearch/react': ^3.3.2
@@ -23,7 +23,7 @@ specifiers:
 
 dependencies:
   '@algolia/client-search': 4.14.3
-  '@astrojs/preact': 1.2.0_preact@10.11.3
+  '@astrojs/preact': 2.0.0_preact@10.11.3
   '@astrojs/react': 1.2.2_fxtgt6bjwd6p4cwoordejim2zi
   '@docsearch/css': 3.3.2
   '@docsearch/react': 3.3.2_y6lbs4o5th67cuzjdmtw5eqh7a
@@ -229,9 +229,9 @@ packages:
       vfile-message: 3.1.3
     dev: false
 
-  /@astrojs/preact/1.2.0_preact@10.11.3:
-    resolution: {integrity: sha512-Vm8rkBIE3cNlxhFoUO2Rsv5RxSP7x7Oi9J6qz8+91lwAIjdm6oyDOrrBmdGqsONJ1MqnjPG4EPmIZJGuFtz2SQ==}
-    engines: {node: ^14.18.0 || >=16.12.0}
+  /@astrojs/preact/2.0.0_preact@10.11.3:
+    resolution: {integrity: sha512-Zr0u6U3gxLrhrtHsZjVXarUXqOM6pn/Efj+P5DcnTjuczz34LcdmZcuCck2rqPoqf8Fi4mJ6Hlx2FsWjtG0YwA==}
+    engines: {node: '>=16.12.0'}
     peerDependencies:
       preact: ^10.6.5
     dependencies:
@@ -1241,7 +1241,7 @@ packages:
     dev: false
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: false
 
   /convert-source-map/1.9.0:

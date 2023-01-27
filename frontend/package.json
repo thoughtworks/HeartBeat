@@ -51,7 +51,7 @@
     "autoprefixer": "^10.4.13",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",
-    "eslint-config-standard-with-typescript": "^32.0.0",
+    "eslint-config-standard-with-typescript": "^33.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-prettier": "^4.2.1",

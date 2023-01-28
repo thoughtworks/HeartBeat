@@ -37,7 +37,7 @@ describe('router', () => {
     const { getByText } = setup(aboutRoute)
 
     await waitFor(() => {
-      expect(getByText('This is About Page')).toBeInTheDocument()
+      expect(getByText('This is Metrics Page')).toBeInTheDocument()
     })
   })
 })

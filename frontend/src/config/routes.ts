@@ -13,9 +13,9 @@ const routes = [
     name: 'Home',
   },
   {
-    path: '/about',
-    component: lazy(() => import('../pages/About')),
-    name: 'About',
+    path: '/metrics',
+    component: lazy(() => import('../pages/Metrics')),
+    name: 'Metrics',
   },
   {
     path: '*',

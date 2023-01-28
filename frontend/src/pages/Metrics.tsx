@@ -1,4 +1,10 @@
+import Header from '@src/layouts/Header'
+
 const Metrics = () => {
-  return <div>This is About Page</div>
+  return (
+    <>
+      <Header />
+    </>
+  )
 }
 export default Metrics

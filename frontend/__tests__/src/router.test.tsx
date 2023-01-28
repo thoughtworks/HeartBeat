@@ -31,13 +31,14 @@ describe('router', () => {
     })
   })
 
-  it('should show about page when go about page', async () => {
-    const aboutRoute = '/about'
+  it('should show metrics page when go metrics page', async () => {
+    const metricsRoute = '/metrics'
 
-    const { getByText } = setup(aboutRoute)
+    const { getByText } = setup(metricsRoute)
 
     await waitFor(() => {
-      expect(getByText('This is Metrics Page')).toBeInTheDocument()
+      expect(getByText('Heartbeat')).toBeInTheDocument()
+      expect(getByText('metricsStepper')).toBeInTheDocument()
     })
   })
 })

@@ -4,6 +4,7 @@ import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 
 import theme from '@src/theme'
+import { useNavigate } from 'react-router-dom'
 
 const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -27,13 +28,15 @@ const GuideButton = styled(Button)<ButtonProps>({
 })
 
 const HomeGuide = () => {
+  const navigate = useNavigate()
+
   return (
     <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
       <ThemeProvider theme={theme}>
         <GuideButton>
           <span>Import project from file</span>
         </GuideButton>
-        <GuideButton>Create a new project</GuideButton>
+        <GuideButton onClick={() => navigate('/metrics')}>Create a new project</GuideButton>
       </ThemeProvider>
     </Stack>
   )

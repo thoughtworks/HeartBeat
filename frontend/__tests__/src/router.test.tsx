@@ -33,12 +33,15 @@ describe('router', () => {
 
   it('should show metrics page when go metrics page', async () => {
     const metricsRoute = '/metrics'
+    const steps = ['config', 'metrics', 'export']
 
     const { getByText } = setup(metricsRoute)
 
     await waitFor(() => {
       expect(getByText('Heartbeat')).toBeInTheDocument()
-      expect(getByText('metricsStepper')).toBeInTheDocument()
+      steps.map((label) => {
+        expect(getByText(label)).toBeInTheDocument()
+      })
     })
   })
 })

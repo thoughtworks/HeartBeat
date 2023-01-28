@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 
 import theme from '@src/theme'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 const basicStyle = {
   backgroundColor: theme.main.backgroundColor,

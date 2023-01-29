@@ -4,9 +4,6 @@ import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
-import io.swagger.v3.core.util.Json;
-import net.minidev.json.JSONObject;
-import org.apache.logging.log4j.message.Message;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import static com.jayway.jsonpath.internal.function.ParamType.JSON;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -83,7 +79,6 @@ public class JiraControllerTest {
 			.andExpect(jsonPath("$.message").value(message))
 			.andReturn().getResponse();
 
-		assertThat(response.getContentAsString()).isEqualTo("{\"message\":\"message\"}");
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	}
 

@@ -18,9 +18,9 @@ public class JiraService {
 	private final JiraFeignClient jiraFeignClient;
 
 	public BoardConfigResponse getJiraReconfiguration(BoardRequest boardRequest) {
-		if(ObjectUtils.isEmpty(boardRequest)) throw new RequestFailedException();
+		if (ObjectUtils.isEmpty(boardRequest)) throw new RequestFailedException();
 		String url = "https://" + boardRequest.getSite() + ".atlassian.net";
-		JiraBoardConfigDTO jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId());
+		JiraBoardConfigDTO jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(), boardRequest.getToken());
 		return BoardConfigResponse.builder()
 			.id(jiraBoardConfigDTO.getId())
 			.name(jiraBoardConfigDTO.getName())

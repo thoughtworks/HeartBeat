@@ -34,19 +34,20 @@ class JiraServiceTest {
 			.name("jira board")
 			.build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
+		String token = "token";
 		BoardRequest boardRequest = BoardRequest.builder()
 			.boardName("board name")
 			.boardId(boardId)
 			.email("test@email.com")
 			.projectKey("project key")
 			.site("site")
-			.token("token")
+			.token(token)
 			.build();
-		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId)).thenReturn(jiraBoardConfigDTO);
+		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId, token)).thenReturn(jiraBoardConfigDTO);
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraReconfiguration(boardRequest);
 
-		verify(jiraFeignClient).getJiraBoardConfiguration(baseUrl, boardId);
+		verify(jiraFeignClient).getJiraBoardConfiguration(baseUrl, boardId, token);
 		assertThat(boardConfigResponse.getId()).isEqualTo(jiraBoardConfigDTO.getId());
 		assertThat(boardConfigResponse.getName()).isEqualTo(jiraBoardConfigDTO.getName());
 	}

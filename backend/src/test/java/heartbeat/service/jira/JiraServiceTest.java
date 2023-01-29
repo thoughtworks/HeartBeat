@@ -1,7 +1,10 @@
 package heartbeat.service.jira;
 
 import heartbeat.client.JiraFeignClient;
-import heartbeat.client.dto.JiraBoardConfigurationDTO;
+import heartbeat.client.dto.JiraBoardConfigDTO;
+import heartbeat.controller.board.vo.request.BoardRequest;
+import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,18 +26,28 @@ class JiraServiceTest {
 	JiraService jiraService;
 
 	@Test
-	@DisplayName("Should Call Jira Feign Client When Verify Jira")
-	void shouldCallJiraFeignClientWhenVerifyJira() {
+	@DisplayName("Should Call Jira Feign Client And Return Board Config Response When Get Jira Board Config")
+	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {
 		String boardId = "123";
-		JiraBoardConfigurationDTO jiraBoardConfigurationDTO = JiraBoardConfigurationDTO.builder()
+		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder()
 			.id(boardId)
 			.name("jira board")
 			.build();
-		URI baseUrl = URI.create("https://test.com");
-		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId)).thenReturn(jiraBoardConfigurationDTO);
+		URI baseUrl = URI.create("https://site.atlassian.net");
+		BoardRequest boardRequest = BoardRequest.builder()
+			.boardName("board name")
+			.boardId(boardId)
+			.email("test@email.com")
+			.projectKey("project key")
+			.site("site")
+			.token("token")
+			.build();
+		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId)).thenReturn(jiraBoardConfigDTO);
 
-		jiraService.verify();
+		BoardConfigResponse boardConfigResponse = jiraService.getJiraReconfiguration(boardRequest);
 
 		verify(jiraFeignClient).getJiraBoardConfiguration(baseUrl, boardId);
+		assertThat(boardConfigResponse.getId()).isEqualTo(jiraBoardConfigDTO.getId());
+		assertThat(boardConfigResponse.getName()).isEqualTo(jiraBoardConfigDTO.getName());
 	}
 }

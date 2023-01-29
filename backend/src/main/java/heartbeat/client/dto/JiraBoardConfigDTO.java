@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JiraBoardConfigurationDTO {
+public class JiraBoardConfigDTO {
 	private String id;
 	private String name;
 }

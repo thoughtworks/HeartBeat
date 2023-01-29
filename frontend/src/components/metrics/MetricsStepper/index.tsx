@@ -1,13 +1,11 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
-import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
-import { NextButton, BackButton, ExportButton, MetricsStepperBody } from './style'
+import { NextButton, BackButton, ExportButton, MetricsStepperBody, MetricsStepLabel } from './style'
 
-const steps = ['config', 'metrics', 'export']
-
+const steps = ['Config', 'Metrics', 'Export']
 const MetricsStepper = () => {
   const [activeStep, setActiveStep] = useState(0)
 
@@ -25,7 +23,7 @@ const MetricsStepper = () => {
         {steps.map((label) => {
           return (
             <Step key={label}>
-              <StepLabel>{label} </StepLabel>
+              <MetricsStepLabel>{label}</MetricsStepLabel>
             </Step>
           )
         })}

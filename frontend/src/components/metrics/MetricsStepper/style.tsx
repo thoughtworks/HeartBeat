@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles'
 import Button, { ButtonProps } from '@mui/material/Button'
 import theme from '@src/theme'
+import StepLabel from '@mui/material/StepLabel'
 
 const basicButtonStyle = {
   boxShadow: '0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%)',
@@ -12,6 +13,20 @@ const basicButtonStyle = {
   fontWeight: '500',
   textTransform: theme.typography.button.textTransform,
 }
+
+export const MetricsStepLabel = styled(StepLabel)({
+  padding: '0 24px',
+  height: '72px',
+  circle: {
+    color: theme.main.backgroundColor,
+  },
+  path: {
+    color: theme.main.backgroundColor,
+  },
+  span: {
+    fontFamily: 'Roboto,Helvetica Neue,sans-serif',
+  },
+})
 
 export const BackButton = styled(Button)<ButtonProps>({
   ...basicButtonStyle,

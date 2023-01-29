@@ -52,9 +52,8 @@ class JiraServiceTest {
 	@Test
 	@DisplayName("Should Throw Custom Exception When Call Jira Feign Client To Get Board Config Failed")
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
-		doThrow(FeignException.FeignClientException.class)
-				.when(jiraFeignClient)
-				.getJiraBoardConfiguration(any(), any(), any());
+		doThrow(FeignException.FeignClientException.class).when(jiraFeignClient).getJiraBoardConfiguration(any(), any(),
+				any());
 
 		assertThatThrownBy(() -> jiraService.getJiraReconfiguration(BoardRequest.builder().build()))
 				.isInstanceOf(RequestFailedException.class)

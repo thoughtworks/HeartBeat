@@ -33,7 +33,7 @@ describe('router', () => {
 
   it('should show metrics page when go metrics page', async () => {
     const metricsRoute = '/metrics'
-    const steps = ['config', 'metrics', 'export']
+    const steps = ['Config', 'Metrics', 'Export']
 
     const { getByText } = setup(metricsRoute)
 

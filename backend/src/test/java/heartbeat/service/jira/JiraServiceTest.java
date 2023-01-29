@@ -1,9 +1,11 @@
 package heartbeat.service.jira;
 
+import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,4 +55,16 @@ class JiraServiceTest {
 		assertThat(boardConfigResponse.getId()).isEqualTo(jiraBoardConfigDTO.getId());
 		assertThat(boardConfigResponse.getName()).isEqualTo(jiraBoardConfigDTO.getName());
 	}
+
+	@Test
+	@DisplayName("Should Throw Custom Exception When Call Jira Feign Client To Get Board Config Failed")
+	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
+		BoardRequest boardRequest = BoardRequest.builder().build();
+		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))
+			.thenThrow(FeignException.FeignClientException.class);
+
+		assertThatThrownBy(() -> jiraService.getJiraReconfiguration(boardRequest))
+			.isInstanceOf(RequestFailedException.class);
+	}
+
 }

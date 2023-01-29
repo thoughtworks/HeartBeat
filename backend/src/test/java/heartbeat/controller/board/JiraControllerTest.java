@@ -2,8 +2,9 @@ package heartbeat.controller.board;
 
 import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
-import heartbeat.service.board.jira.exception.RequestFailedException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -34,8 +35,10 @@ public class JiraControllerTest {
 	private JacksonTester<BoardConfigResponse> boardConfigResponseJson;
 	@Autowired
 	private JacksonTester<BoardRequest> boardRequestJson;
+
 	@Test
-	void should_return_correct_board_config_response_when_given_the_correct_board_request() throws Exception {
+	@DisplayName("Should Return Correct Board Config Response When Given The Correct Board Request")
+	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
 		String boardId = "123";
 		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder()
 			.id(boardId)
@@ -61,12 +64,14 @@ public class JiraControllerTest {
 			.andReturn()
 			.getResponse();
 		System.out.println(response.getContentAsString());
-        assertThat(response.getStatus()).isEqualTo(200);
+		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentAsString()).isEqualTo(boardConfigResponseJson.write(boardConfigResponse).getJson());
 		verify(jiraService).getJiraReconfiguration(boardRequest);
 	}
+
 	@Test
-	void should_return_incorrect_board_config_response_when_given_the_incorrect_board_request() throws Exception {
+	@DisplayName("Should Return Incorrect Board Config Response When Given The Incorrect Board Request")
+	void shouldReturnIncorrectBoardConfigResponseWhenGivenTheIncorrectBoardRequest() throws Exception {
 		String boardId = "";
 		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder()
 			.id("")

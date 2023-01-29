@@ -1,5 +1,6 @@
 package heartbeat.controller;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +24,8 @@ class HealthControllerTest {
 	private static HealthController healthController;
 
 	@Test
-	void should_return_health_status() {
+	@DisplayName("Should Return Health Status")
+	void shouldReturnHealthStatus() {
 
 		HealthComponent mockHealth = mock(HealthComponent.class);
 		when(healthEndpoint.health()).thenReturn(mockHealth);

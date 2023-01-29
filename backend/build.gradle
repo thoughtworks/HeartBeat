@@ -53,8 +53,8 @@ def testIgnoreList = [
 jacocoTestReport {
 	dependsOn test
   reports {
-    html.enabled true
-    xml.enabled true
+    html.required
+    xml.required
   }
   classDirectories.setFrom(files(classDirectories.files.collect {
       fileTree(dir: it, exclude: testIgnoreList)

@@ -1,10 +1,10 @@
-import { fireEvent, getByText, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import MetricsStepper from '@src/components/metrics/MetricsStepper'
 import '@testing-library/jest-dom'
 
 describe('MetricsStepper', () => {
   it('should show metrics stepper', () => {
-    const steps = ['config', 'metrics', 'export']
+    const steps = ['Config', 'Metrics', 'Export']
     const { getByText } = render(<MetricsStepper />)
 
     steps.map((label) => {

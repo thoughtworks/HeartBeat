@@ -11,8 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 
-import java.net.URI;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,10 +20,10 @@ import static org.mockito.Mockito.when;
 public class JiraControllerTest {
 
 	@Mock
-	private JiraService jiraService;
+	private static JiraService jiraService;
 
 	@InjectMocks
-	JiraController jiraController;
+	private static JiraController jiraController;
 
 	@Test
 	@DisplayName("Should Return Correct Board Config Response When Given The Correct Board Request")

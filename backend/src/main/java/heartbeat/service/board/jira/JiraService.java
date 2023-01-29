@@ -22,11 +22,12 @@ public class JiraService {
 		try {
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
 					boardRequest.getToken());
+			return BoardConfigResponse.builder().id(jiraBoardConfigDTO.getId()).name(jiraBoardConfigDTO.getName())
+					.build();
 		}
 		catch (Exception e) {
-			throw new RequestFailedException();
+			throw new RequestFailedException(e);
 		}
-		return BoardConfigResponse.builder().id(jiraBoardConfigDTO.getId()).name(jiraBoardConfigDTO.getName()).build();
 	}
 
 }

@@ -46,6 +46,12 @@ checkstyle {
   configFile = file("src/main/resources/checkstyle.xml")
 }
 
+pmd {
+  toolVersion = '6.54.0'
+  ruleSets = ['java-basic']
+  ruleSetConfig = resources.text.fromFile("src/main/resources/pmd.xml")
+}
+
 def testIgnoreList = [
   "**/HeartbeatApplication**",
 ]

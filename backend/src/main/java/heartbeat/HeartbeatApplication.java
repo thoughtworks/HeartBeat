@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
+@SuppressWarnings("PMD.UseUtilityClass")
 @OpenAPIDefinition(info = @Info(title = "Heartbeat API", description = "Heartbeat Information"))
 public class HeartbeatApplication {
 

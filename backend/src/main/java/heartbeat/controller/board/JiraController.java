@@ -4,7 +4,6 @@ import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.service.board.jira.JiraService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

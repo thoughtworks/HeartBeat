@@ -1,10 +1,10 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
+import { NextButton, BackButton, ExportButton, MetricsStepperBody } from './style'
 
 const steps = ['config', 'metrics', 'export']
 
@@ -30,16 +30,19 @@ const MetricsStepper = () => {
           )
         })}
       </Stepper>
-      <Fragment>
+      <MetricsStepperBody>
         <Typography>Step {activeStep + 1}</Typography>
         <Box>
-          <Button color='inherit' disabled={activeStep === 0} onClick={handleBack}>
+          <BackButton color='inherit' disabled={activeStep === 0} onClick={handleBack}>
             Back
-          </Button>
-          <Box />
-          <Button onClick={handleNext}>{activeStep === steps.length - 1 ? 'Export board data' : 'Next'}</Button>
+          </BackButton>
+          {activeStep === steps.length - 1 ? (
+            <ExportButton> Export board data</ExportButton>
+          ) : (
+            <NextButton onClick={handleNext}>Next</NextButton>
+          )}
         </Box>
-      </Fragment>
+      </MetricsStepperBody>
     </Box>
   )
 }

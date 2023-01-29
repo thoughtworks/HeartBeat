@@ -10,7 +10,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 	@ExceptionHandler(value = {RequestFailedException.class})
 	protected ResponseEntity<Object> handleException(RuntimeException ex) {
-		return ResponseEntity.badRequest().body(ex.getMessage());
+		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
 }

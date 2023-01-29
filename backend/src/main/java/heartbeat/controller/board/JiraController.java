@@ -4,10 +4,8 @@ import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.service.board.jira.JiraService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor

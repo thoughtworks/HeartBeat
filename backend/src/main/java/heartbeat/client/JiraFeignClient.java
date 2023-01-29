@@ -10,6 +10,9 @@ import java.net.URI;
 
 @FeignClient(value = "jiraFeignClient", url = "https://this-is-a-placeholder.com")
 public interface JiraFeignClient {
+
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/configuration")
-	JiraBoardConfigDTO getJiraBoardConfiguration(URI baseUrl, @PathVariable String boardId, @RequestHeader String Authorization);
+	JiraBoardConfigDTO getJiraBoardConfiguration(URI baseUrl, @PathVariable String boardId,
+			@RequestHeader String Authorization);
+
 }

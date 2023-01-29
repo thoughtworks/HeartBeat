@@ -8,6 +8,9 @@ import lombok.Data;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JiraBoardConfigDTO {
+
 	private String id;
+
 	private String name;
+
 }

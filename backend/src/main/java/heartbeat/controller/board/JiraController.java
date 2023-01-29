@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/board/jira")
 public class JiraController {
+
 	private final JiraService jiraService;
 
 	@PostMapping("/config")
 	public BoardConfigResponse getJiraBoardConfig(@RequestBody BoardRequest boardRequest) {
 		return jiraService.getJiraReconfiguration(boardRequest);
 	}
+
 }

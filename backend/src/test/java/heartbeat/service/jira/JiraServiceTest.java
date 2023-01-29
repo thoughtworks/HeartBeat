@@ -24,8 +24,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JiraServiceTest {
+
 	@Mock
 	JiraFeignClient jiraFeignClient;
+
 	@InjectMocks
 	JiraService jiraService;
 
@@ -33,20 +35,11 @@ class JiraServiceTest {
 	@DisplayName("Should Call Jira Feign Client And Return Board Config Response When Get Jira Board Config")
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {
 		String boardId = "123";
-		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder()
-			.id(boardId)
-			.name("jira board")
-			.build();
+		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder().id(boardId).name("jira board").build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
-		BoardRequest boardRequest = BoardRequest.builder()
-			.boardName("board name")
-			.boardId(boardId)
-			.email("test@email.com")
-			.projectKey("project key")
-			.site("site")
-			.token(token)
-			.build();
+		BoardRequest boardRequest = BoardRequest.builder().boardName("board name").boardId(boardId)
+				.email("test@email.com").projectKey("project key").site("site").token(token).build();
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId, token)).thenReturn(jiraBoardConfigDTO);
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraReconfiguration(boardRequest);
@@ -61,10 +54,10 @@ class JiraServiceTest {
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		BoardRequest boardRequest = BoardRequest.builder().build();
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))
-			.thenThrow(FeignException.FeignClientException.class);
+				.thenThrow(FeignException.FeignClientException.class);
 
 		assertThatThrownBy(() -> jiraService.getJiraReconfiguration(boardRequest))
-			.isInstanceOf(RequestFailedException.class);
+				.isInstanceOf(RequestFailedException.class);
 	}
 
 }

@@ -20,11 +20,13 @@ public class JiraService {
 		String url = "https://" + boardRequest.getSite() + ".atlassian.net";
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
-			jiraBoardConfigDTO = jiraFeignClient
-				.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(), boardRequest.getToken());
-		} catch (Exception e) {
+			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
+					boardRequest.getToken());
+		}
+		catch (Exception e) {
 			throw new RequestFailedException();
 		}
 		return BoardConfigResponse.builder().id(jiraBoardConfigDTO.getId()).name(jiraBoardConfigDTO.getName()).build();
 	}
+
 }

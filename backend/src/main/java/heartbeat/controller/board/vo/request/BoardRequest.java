@@ -8,9 +8,15 @@ import lombok.Data;
 public class BoardRequest {
 
 	private String boardName;
+
 	private String boardId;
+
 	private String email;
+
 	private String projectKey;
+
 	private String site;
+
 	private String token;
+
 }

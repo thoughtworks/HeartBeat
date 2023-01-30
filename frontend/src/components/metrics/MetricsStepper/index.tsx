@@ -1,20 +1,23 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import Typography from '@mui/material/Typography'
 import { NextButton, BackButton, ExportButton, MetricsStepperBody, MetricsStepLabel } from './style'
+import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
 
 const steps = ['Config', 'Metrics', 'Export']
 const MetricsStepper = () => {
-  const [activeStep, setActiveStep] = useState(0)
+  const dispatch = useAppDispatch()
+  const activeStep = useAppSelector(selectStep)
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1)
+    dispatch(nextStep())
   }
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => (prevActiveStep === 0 ? 0 : prevActiveStep - 1))
+    dispatch(backStep())
   }
 
   return (

@@ -1,6 +1,7 @@
 package heartbeat.controller.board.vo.request;
 
 public enum BoardType {
+
 	JIRA("jira");
 
 	public final String boardType;
@@ -8,4 +9,5 @@ public enum BoardType {
 	BoardType(String boardType) {
 		this.boardType = boardType;
 	}
+
 }

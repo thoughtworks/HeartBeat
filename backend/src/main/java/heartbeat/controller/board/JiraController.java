@@ -21,7 +21,8 @@ public class JiraController {
 	private final JiraService jiraService;
 
 	@GetMapping("/{boardType}")
-	public BoardConfigResponse getBoard(@PathVariable @NotBlank BoardType boardType, @RequestBody @Valid BoardRequest boardRequest) {
+	public BoardConfigResponse getBoard(@PathVariable @NotBlank BoardType boardType,
+			@RequestBody @Valid BoardRequest boardRequest) {
 		if (BoardType.JIRA.equals(boardType)) {
 			return jiraService.getJiraReconfiguration(boardRequest);
 		}

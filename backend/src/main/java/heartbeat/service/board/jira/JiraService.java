@@ -22,8 +22,9 @@ public class JiraService {
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
-				boardRequest.getToken());
-		} catch (FeignException e) {
+					boardRequest.getToken());
+		}
+		catch (FeignException e) {
 			// TODO handle different exception
 			throw new RequestFailedException(e.status());
 		}

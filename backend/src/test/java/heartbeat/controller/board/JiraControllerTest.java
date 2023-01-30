@@ -42,28 +42,14 @@ public class JiraControllerTest {
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
 		String boardId = "123";
 		String boardName = "jira";
-		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder()
-			.id(boardId)
-			.name(boardName)
-			.build();
+		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder().id(boardId).name(boardName).build();
 		when(jiraService.getJiraReconfiguration(any())).thenReturn(boardConfigResponse);
 
-		BoardRequest boardRequest = BoardRequest.builder()
-			.boardName(boardName)
-			.boardId(boardId)
-			.email("test@email.com")
-			.projectKey("project key")
-			.site("site")
-			.token("token")
-			.build();
-		mockMvc.perform(
-				get("/boards/{boardType}", "jira")
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(boardRequestJson.write(boardRequest).getJson())
-			)
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(boardId))
-			.andExpect(jsonPath("$.name").value(boardName));
+		BoardRequest boardRequest = BoardRequest.builder().boardName(boardName).boardId(boardId).email("test@email.com")
+				.projectKey("project key").site("site").token("token").build();
+		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(boardId)).andExpect(jsonPath("$.name").value(boardName));
 	}
 
 	@Test
@@ -72,23 +58,16 @@ public class JiraControllerTest {
 		when(jiraService.getJiraReconfiguration(any())).thenThrow(new RequestFailedException(statusCode));
 
 		BoardRequest boardRequest = BoardRequest.builder().token("token").build();
-		mockMvc.perform(
-				get("/boards/{boardType}", "jira")
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(boardRequestJson.write(boardRequest).getJson())
-			)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("Request failed with status code " + statusCode));
+		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Request failed with status code " + statusCode));
 	}
 
 	@Test
 	void shouldVerifyRequestTokenNotBlank() throws Exception {
 		BoardRequest boardRequest = BoardRequest.builder().build();
-		mockMvc.perform(
-				get("/boards/{boardType}", "jira")
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(boardRequestJson.write(boardRequest).getJson())
-			)
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest());
 	}
+
 }

@@ -25,14 +25,14 @@ describe('MetricsStepper', () => {
     expect(getByText('Step 1')).toBeInTheDocument()
   })
 
-  it('should show metrics stepper 2 when click next button given stepper 1', async () => {
+  it('should show metrics metrics step when click next button given config step', async () => {
     const { getByText } = render(<MetricsStepper />)
 
     fireEvent.click(getByText(NEXT))
     expect(getByText('Step 2')).toBeInTheDocument()
   })
 
-  it('should show metrics stepper 1 when click back button given stepper 2', async () => {
+  it('should show metrics config step when click back button given metrics step', async () => {
     const { getByText } = render(<MetricsStepper />)
 
     fireEvent.click(getByText(NEXT))
@@ -40,7 +40,7 @@ describe('MetricsStepper', () => {
     expect(getByText('Step 1')).toBeInTheDocument()
   })
 
-  it('should show metrics stepper 3 when click next button given stepper 3', async () => {
+  it('should show metrics export step when click next button given export step', async () => {
     const { getByText } = render(<MetricsStepper />)
 
     fireEvent.click(getByText(NEXT))

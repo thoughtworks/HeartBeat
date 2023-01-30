@@ -23,12 +23,12 @@ public class JiraService {
 		try {
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
 					boardRequest.getToken());
+			return BoardConfigResponse.builder().id(jiraBoardConfigDTO.getId()).name(jiraBoardConfigDTO.getName())
+					.build();
 		}
 		catch (FeignException e) {
-			// TODO handle different exception
 			throw new RequestFailedException(e.status());
 		}
-		return BoardConfigResponse.builder().id(jiraBoardConfigDTO.getId()).name(jiraBoardConfigDTO.getName()).build();
 	}
 
 }

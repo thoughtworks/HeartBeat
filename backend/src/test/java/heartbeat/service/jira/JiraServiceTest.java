@@ -49,11 +49,10 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
-		BoardRequest boardRequest = BoardRequest.builder().build();
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))
 				.thenThrow(FeignException.FeignClientException.class);
 
-		assertThatThrownBy(() -> jiraService.getJiraReconfiguration(boardRequest))
+		assertThatThrownBy(() -> jiraService.getJiraReconfiguration(BoardRequest.builder().build()))
 				.isInstanceOf(RequestFailedException.class);
 	}
 

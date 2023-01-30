@@ -1,6 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
 import MetricsStepper from '@src/components/metrics/MetricsStepper'
-import '@testing-library/jest-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { stepperSlice } from '@src/features/stepper/StepperSlice'

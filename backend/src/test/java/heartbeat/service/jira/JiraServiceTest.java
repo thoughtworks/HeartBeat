@@ -7,7 +7,6 @@ import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +31,6 @@ class JiraServiceTest {
 	JiraService jiraService;
 
 	@Test
-	@DisplayName("Should Call Jira Feign Client And Return Board Config Response When Get Jira Board Config")
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {
 		String boardId = "123";
 		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder().id(boardId).name("jira board").build();
@@ -50,7 +48,6 @@ class JiraServiceTest {
 	}
 
 	@Test
-	@DisplayName("Should Throw Custom Exception When Call Jira Feign Client To Get Board Config Failed")
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		BoardRequest boardRequest = BoardRequest.builder().build();
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))

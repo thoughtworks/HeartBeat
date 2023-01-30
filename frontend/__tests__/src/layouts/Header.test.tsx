@@ -1,5 +1,4 @@
 import { fireEvent, render } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import Header from '@src/layouts/Header'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import { navigateMock } from '../../setupTests'

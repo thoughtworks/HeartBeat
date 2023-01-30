@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import App from '@src/App'
 import { Provider } from 'react-redux'
 import { store } from '@src/store/store'

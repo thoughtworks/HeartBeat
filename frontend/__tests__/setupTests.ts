@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom'
 export const navigateMock = jest.fn()
 
 jest.mock('react-router-dom', () => ({

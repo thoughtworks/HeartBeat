@@ -9,3 +9,10 @@ test('should have project title', async ({ page }) => {
 
   await expect(projectTitle).toBeVisible()
 })
+test('should create a new project', async ({ page }) => {
+  await page.goto('/index.html')
+
+  await page.getByRole('button', { name: 'Create a new project' }).click()
+
+  await expect(page).toHaveURL(/.*metrics/)
+})

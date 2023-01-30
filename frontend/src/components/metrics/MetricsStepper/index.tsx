@@ -31,7 +31,7 @@ const MetricsStepper = () => {
       <MetricsStepperBody>
         <Typography>Step {activeStep + 1}</Typography>
         <Box>
-          <BackButton color='inherit' disabled={activeStep === 0} onClick={handleBack}>
+          <BackButton disabled={activeStep === 0} onClick={handleBack}>
             Back
           </BackButton>
           {activeStep === steps.length - 1 ? (

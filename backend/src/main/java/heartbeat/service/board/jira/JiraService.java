@@ -1,5 +1,6 @@
 package heartbeat.service.board.jira;
 
+import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.controller.board.vo.request.BoardRequest;
@@ -21,13 +22,12 @@ public class JiraService {
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
-					boardRequest.getToken());
-			return BoardConfigResponse.builder().id(jiraBoardConfigDTO.getId()).name(jiraBoardConfigDTO.getName())
-					.build();
+				boardRequest.getToken());
+		} catch (FeignException e) {
+			// TODO handle different exception
+			throw new RequestFailedException(e.status());
 		}
-		catch (Exception e) {
-			throw new RequestFailedException(e);
-		}
+		return BoardConfigResponse.builder().id(jiraBoardConfigDTO.getId()).name(jiraBoardConfigDTO.getName()).build();
 	}
 
 }

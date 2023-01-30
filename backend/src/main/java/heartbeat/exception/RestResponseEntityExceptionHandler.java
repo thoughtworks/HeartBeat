@@ -8,9 +8,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(RequestFailedException.class)
-	protected ResponseEntity<Object> handleException(RuntimeException ex) {
-		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
+	@ExceptionHandler(value = {RequestFailedException.class})
+	protected ResponseEntity<Object> handleException(RequestFailedException ex) {
+		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
 }

@@ -1,10 +1,13 @@
 package heartbeat.exception;
 
-@SuppressWarnings("PMD.MissingSerialVersionUID")
+import lombok.Getter;
+
+@Getter
 public class RequestFailedException extends RuntimeException {
+	private final int status;
 
-	public RequestFailedException(Exception e) {
-		super("Request failed with status code 400, error: " + e.getMessage());
+	public RequestFailedException(int status) {
+		super("Request failed with status code " + status);
+		this.status = status;
 	}
-
 }

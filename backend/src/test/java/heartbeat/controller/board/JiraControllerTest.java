@@ -1,9 +1,9 @@
 package heartbeat.controller.board;
 
 import heartbeat.controller.board.vo.request.BoardRequest;
+import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.service.board.jira.JiraService;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,22 +20,21 @@ import static org.mockito.Mockito.when;
 public class JiraControllerTest {
 
 	@Mock
-	private static JiraService jiraService;
+	private JiraService jiraService;
 
 	@InjectMocks
-	private static JiraController jiraController;
+	JiraController jiraController;
 
 	@Test
-	@DisplayName("Should Return Correct Board Config Response When Given The Correct Board Request")
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() {
 		String boardId = "123";
 		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder().id(boardId).name("jira").build();
 
 		BoardRequest boardRequest = BoardRequest.builder().boardName("jira").boardId(boardId).email("test@email.com")
-				.projectKey("project key").site("site").token("token").build();
+			.projectKey("project key").site("site").token("token").build();
 
 		when(jiraService.getJiraReconfiguration(boardRequest)).thenReturn(boardConfigResponse);
-		BoardConfigResponse result = jiraController.getJiraBoardConfig(boardRequest);
+		BoardConfigResponse result = jiraController.getBoard(BoardType.JIRA, boardRequest);
 
 		assertThat(result).isEqualTo(boardConfigResponse);
 		verify(jiraService).getJiraReconfiguration(boardRequest);

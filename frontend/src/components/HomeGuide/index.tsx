@@ -1,4 +1,3 @@
-import { ThemeProvider } from '@emotion/react'
 import Button, { ButtonProps } from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
@@ -32,12 +31,10 @@ const HomeGuide = () => {
 
   return (
     <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
-      <ThemeProvider theme={theme}>
-        <GuideButton>
-          <span>Import project from file</span>
-        </GuideButton>
-        <GuideButton onClick={() => navigate('/metrics')}>Create a new project</GuideButton>
-      </ThemeProvider>
+      <GuideButton>
+        <span>Import project from file</span>
+      </GuideButton>
+      <GuideButton onClick={() => navigate('/metrics')}>Create a new project</GuideButton>
     </Stack>
   )
 }

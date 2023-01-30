@@ -2,13 +2,17 @@ import { render, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Router from '@src/router'
 import '@testing-library/jest-dom'
+import { Provider } from 'react-redux'
+import { store } from '@src/store/store'
 
 describe('router', () => {
   const setup = (routeUrl: string) =>
     render(
-      <MemoryRouter initialEntries={[routeUrl]}>
-        <Router />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={[routeUrl]}>
+          <Router />
+        </MemoryRouter>
+      </Provider>
     )
 
   it('should show home page when loading on a bad page', async () => {

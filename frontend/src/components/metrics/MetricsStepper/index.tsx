@@ -14,7 +14,7 @@ const MetricsStepper = () => {
   }
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1)
+    setActiveStep((prevActiveStep) => (prevActiveStep === 0 ? 0 : prevActiveStep - 1))
   }
 
   return (
@@ -31,9 +31,7 @@ const MetricsStepper = () => {
       <MetricsStepperBody>
         <Typography>Step {activeStep + 1}</Typography>
         <Box>
-          <BackButton disabled={activeStep === 0} onClick={handleBack}>
-            Back
-          </BackButton>
+          <BackButton onClick={handleBack}>Back</BackButton>
           {activeStep === steps.length - 1 ? (
             <ExportButton> Export board data</ExportButton>
           ) : (

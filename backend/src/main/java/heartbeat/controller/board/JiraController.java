@@ -23,10 +23,7 @@ public class JiraController {
 	@GetMapping("/{boardType}")
 	public BoardConfigResponse getBoard(@PathVariable @NotBlank BoardType boardType,
 			@RequestBody @Valid BoardRequest boardRequest) {
-		if (BoardType.JIRA.equals(boardType)) {
-			return jiraService.getJiraReconfiguration(boardRequest);
-		}
-		return null;
+		return jiraService.getJiraReconfiguration(boardRequest);
 	}
 
 }

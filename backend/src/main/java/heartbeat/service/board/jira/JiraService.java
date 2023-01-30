@@ -7,12 +7,14 @@ import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.exception.RequestFailedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class JiraService {
 
 	private final JiraFeignClient jiraFeignClient;
@@ -27,6 +29,7 @@ public class JiraService {
 					.build();
 		}
 		catch (FeignException e) {
+			log.error("Exception When Calling Jira to Get Board Config", e);
 			throw new RequestFailedException(e.status());
 		}
 	}

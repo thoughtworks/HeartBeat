@@ -1,5 +1,6 @@
 package heartbeat.controller.board.vo.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ public class BoardRequest {
 	private String email;
 	private String projectKey;
 	private String site;
+	@Valid
 	@NotBlank
 	private String token;
 }

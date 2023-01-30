@@ -24,6 +24,7 @@
   "rules": {
     "semi": 0,
     "react/react-in-jsx-scope": "off",
+    "import/prefer-default-export": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }]
   },
   "settings": {
@@ -32,5 +33,6 @@
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
-  }
+  },
+  "ignorePatterns": ["dist/*", "coverage/*"]
 }

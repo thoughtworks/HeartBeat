@@ -1,11 +1,12 @@
 import { createTheme } from '@mui/material/styles'
-import { indigo, grey } from '@mui/material/colors'
+import { indigo } from '@mui/material/colors'
 
 declare module '@mui/material/styles' {
   interface Theme {
     main: {
       backgroundColor: string
       color: string
+      secondColor: string
       fontSize: string
     }
   }
@@ -14,15 +15,22 @@ declare module '@mui/material/styles' {
     main: {
       backgroundColor: string
       color: string
+      secondColor: string
       fontSize: string
     }
   }
 }
 
 const theme = createTheme({
+  palette: {
+    primary: {
+      main: indigo[500],
+    },
+  },
   main: {
     backgroundColor: indigo[500],
     color: '#fff',
+    secondColor: 'black',
     fontSize: '1rem',
   },
   typography: {

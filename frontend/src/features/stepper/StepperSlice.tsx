@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store/store'
+import { ZERO } from '@src/constants'
 
 export interface StepState {
   value: number
@@ -17,7 +18,7 @@ export const stepperSlice = createSlice({
       state.value += 1
     },
     backStep: (state) => {
-      state.value = state.value === 0 ? 0 : state.value - 1
+      state.value = state.value === ZERO ? ZERO : state.value - 1
     },
   },
 })

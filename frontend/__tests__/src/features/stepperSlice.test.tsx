@@ -1,4 +1,5 @@
 import stepperReducer, { nextStep, backStep } from '@src/features/stepper/StepperSlice'
+import { ZERO } from '../fixtures'
 
 describe('counter reducer', () => {
   it('should get 0 when handle initial state', () => {
@@ -26,7 +27,7 @@ describe('counter reducer', () => {
       backStep()
     )
 
-    expect(actual.value).toEqual(0)
+    expect(actual.value).toEqual(ZERO)
   })
 
   it('should get 1 when handle back step given value is 2', () => {

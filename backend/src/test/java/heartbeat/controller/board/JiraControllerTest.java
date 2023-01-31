@@ -31,9 +31,6 @@ public class JiraControllerTest {
 	private JiraService jiraService;
 
 	@Autowired
-	JiraController jiraController;
-
-	@Autowired
 	private JacksonTester<BoardRequest> boardRequestJson;
 
 	@Autowired

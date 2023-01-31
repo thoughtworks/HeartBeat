@@ -15,6 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static heartbeat.controller.board.BoardRequestFixture.BOARD_ID;
+import static heartbeat.controller.board.BoardRequestFixture.BOARD_NAME;
+import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,16 +41,13 @@ public class JiraControllerTest {
 
 	@Test
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
-		String boardId = "123";
-		String boardName = "jira";
-		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder().id(boardId).name(boardName).build();
+		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder().id(BOARD_ID).name(BOARD_NAME).build();
 		when(jiraService.getJiraReconfiguration(any())).thenReturn(boardConfigResponse);
 
-		BoardRequest boardRequest = BoardRequest.builder().boardName(boardName).boardId(boardId).email("test@email.com")
-				.projectKey("project key").site("site").token("token").build();
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(boardId)).andExpect(jsonPath("$.name").value(boardName));
+				.andExpect(jsonPath("$.id").value(BOARD_ID)).andExpect(jsonPath("$.name").value(BOARD_NAME));
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class JiraControllerTest {
 		when(mockException.getMessage()).thenReturn(message);
 		when(mockException.getStatus()).thenReturn(400);
 
-		BoardRequest boardRequest = BoardRequest.builder().token("token").build();
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message").value(message));
@@ -66,7 +66,7 @@ public class JiraControllerTest {
 
 	@Test
 	void shouldVerifyRequestTokenNotBlank() throws Exception {
-		BoardRequest boardRequest = BoardRequest.builder().build();
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.detail").value("Invalid request content."));

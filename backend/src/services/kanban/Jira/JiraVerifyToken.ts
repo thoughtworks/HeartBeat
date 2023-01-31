@@ -12,6 +12,8 @@ import { JiraCardHistory } from "../../../models/kanban/JiraCardHistory";
 import { StatusSelf } from "../../../models/kanban/JiraBoard/StatusSelf";
 import { KanbanEnum } from "../Kanban";
 import { ThereIsNoCardsInDoneColumn } from "../../../types/ThereIsNoCardsInDoneColumn";
+import logger from "../../../utils/loggerUtils";
+import { maskEmailResponseLogger } from "../../../utils/responseLoggerUtils";
 
 export class JiraVerifyToken implements KanbanVerifyToken {
   private readonly queryCount: number = 100;
@@ -33,18 +35,17 @@ export class JiraVerifyToken implements KanbanVerifyToken {
 
     //column
     const boardConfigurationUrl = `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/configuration`;
-    console.log(
-      `Start to get configuration for board_url: ${boardConfigurationUrl}`
+    logger.info(
+      `[Jira] Start to get configuration for board_url: ${boardConfigurationUrl}`
     );
 
     const configurationResponse = await axios.get(boardConfigurationUrl, {
       headers: { Authorization: `${model.token}` },
     });
 
-    console.log(
-      `Successfully get configuration_data: ${JSON.stringify(
-        configurationResponse.data
-      )}`
+    maskEmailResponseLogger(
+      "[Jira] Successfully get configuration_data",
+      configurationResponse
     );
 
     const configuration = configurationResponse.data;
@@ -61,8 +62,15 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     const userNames = await this.queryUsersByCards(model, doneColumn);
 
     //targetField
+    logger.info(
+      `[Jira] Start to get targetFields_url:${this.httpClient.defaults.baseURL}/issue/createmeta?projectKeys=${model.projectKey}&expand=projects.issuetypes.fields`
+    );
     const fieldResponse = await this.httpClient.get(
       `/issue/createmeta?projectKeys=${model.projectKey}&expand=projects.issuetypes.fields`
+    );
+    maskEmailResponseLogger(
+      "[Jira] Successfully get targetFields_data",
+      fieldResponse
     );
     const jiraCardTypeResponse: any[] = fieldResponse.data.projects;
     const issuetypes = jiraCardTypeResponse[0].issuetypes;
@@ -131,13 +139,11 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     url: string,
     token: string
   ): Promise<StatusSelf> {
-    console.log(`Start to query status_url:${url}`);
+    logger.info(`[Jira] Start to query status_url:${url}`);
     const http = axios.create();
     http.defaults.headers.common["Authorization"] = token;
     const result = await http.get(url);
-    console.log(
-      `Successfully queried status_data:${JSON.stringify(result.data)}`
-    );
+    maskEmailResponseLogger("[Jira] Successfully queried status_data", result);
     return result.data;
   }
 
@@ -210,14 +216,19 @@ export class JiraVerifyToken implements KanbanVerifyToken {
         }
       }
     }
-
+    logger.info(
+      `[Jira] Start to query all done cards_url:https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`
+    );
     const response = await axios.get(
       `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/issue?maxResults=${this.queryCount}&jql=${jql}`,
       {
         headers: { Authorization: `${model.token}` },
       }
     );
-
+    maskEmailResponseLogger(
+      "[Jira] Successfully queried all done cards_data",
+      response
+    );
     const allDoneCardsResponse = response.data;
     const allDoneCards = allDoneCardsResponse.issues;
     if (allDoneCardsResponse.total > this.queryCount) {
@@ -241,6 +252,9 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     await Promise.all(
       [...Array(count).keys()].map(async (i) => {
         const startAt = this.queryCount * (i + 1);
+        logger.info(
+          `[Jira] Start to page query_url:https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/issue?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql} `
+        );
         await axios
           .get(
             `https://${model.site}.atlassian.net/rest/agile/1.0/board/${model.boardId}/issue?maxResults=${this.queryCount}&startAt=${startAt}&jql=${jql}`,
@@ -248,7 +262,13 @@ export class JiraVerifyToken implements KanbanVerifyToken {
               headers: { Authorization: `${model.token}` },
             }
           )
-          .then((response) => cards.push(...response.data.issues));
+          .then((response) => {
+            maskEmailResponseLogger(
+              "[Jira] Successfully page query_data",
+              response
+            );
+            return cards.push(...response.data.issues);
+          });
       })
     );
   }
@@ -258,11 +278,18 @@ export class JiraVerifyToken implements KanbanVerifyToken {
     jiraToken: string,
     jiraSite: string
   ): Promise<Set<string>> {
+    logger.info(
+      `[Jira] Start to query jira cards history_url:https://${jiraSite}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfeed`
+    );
     const jiraCardHistoryResponse = await axios.get(
       `https://${jiraSite}.atlassian.net/rest/internal/2/issue/${jiraCardKey}/activityfeed`,
       {
         headers: { Authorization: `${jiraToken}` },
       }
+    );
+    maskEmailResponseLogger(
+      "[Jira] Successfully queried jira cards history_data",
+      jiraCardHistoryResponse
     );
 
     const jiraCardHistory: JiraCardHistory = jiraCardHistoryResponse.data;

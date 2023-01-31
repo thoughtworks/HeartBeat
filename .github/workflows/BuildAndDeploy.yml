@@ -1,0 +1,94 @@
+name: Build and Deploy
+
+on:
+  workflow_run:
+    workflows:
+      - Backend
+    types:
+      - completed
+  workflow_dispatch:
+
+
+jobs:
+  build-and-push-image:
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push for Backend
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: heartbeat_backend
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.backend
+          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.backend
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
+      - name: Build, tag, and push for Frontend
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: heartbeat_frontend
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.frontend
+          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.frontend
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-push-image
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Update docker-compose.yaml
+        run: |
+          sed -i -e 's/heartbeat_backend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_backend:${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/heartbeat_frontend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_frontend:${{ github.run_number }}/g' infra/docker-compose.yml
+
+      - name: Copy docker-compose to ec2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_IP }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          source: "./infra/docker-compose.yml"
+          target: "./"
+          strip_components: 1
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        env:
+          REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+          IMAGE_TAG: ${{ github.run_number }}
+        with:
+          host: ${{ secrets.AWS_EC2_IP }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          script: |
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+            cp "./infra/docker-compose.yml" ./
+            docker-compose down
+            docker rmi -f $(docker images -f label=app=HeartBeat -q)
+            docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
+            docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
+            docker-compose up -d frontend

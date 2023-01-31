@@ -7,12 +7,15 @@ import BKOrganizationInfo from "../fixture/BKOrganizationInfo.json";
 import BKPipelineInfo from "../fixture/BKPipelineInfo.json";
 import BKBuildInfoList from "../fixture/BKBuildInfoList.json";
 import { PipelineInfo } from "../../src/contract/pipeline/PipelineInfo";
+import { API_VERSION } from "../fixture/common";
 
 chai.use(chaiHttp);
 chai.should();
 
 describe("PipelineController", () => {
   describe("fetch pipeline API test", () => {
+    const PIPELINE_FETCH_URL = `${API_VERSION}/pipeline/fetch`;
+
     it("should return 200 when using valid token", async () => {
       mock.onGet("/organizations").reply(200, BKOrganizationInfo);
       mock
@@ -31,7 +34,7 @@ describe("PipelineController", () => {
         scopes: ["read_builds", "read_organizations", "read_pipelines"],
       });
 
-      const response = await chai.request(app).post("/pipeline/fetch").send({
+      const response = await chai.request(app).post(PIPELINE_FETCH_URL).send({
         token: "test-token",
         type: "buildkite",
         startTime: 5678,
@@ -57,7 +60,7 @@ describe("PipelineController", () => {
         scopes: ["read_builds", "read_organizations", "read_pipelines"],
       });
 
-      const response = await chai.request(app).post("/pipeline/fetch").send({
+      const response = await chai.request(app).post(PIPELINE_FETCH_URL).send({
         token: "test-token",
         type: "buildkite",
         startTime: 5678,

@@ -20,6 +20,7 @@ import { PipelineCsvInfo } from "../../models/pipeline/PipelineCsvInfo";
 import { ColumnResponse } from "../../contract/kanban/KanbanTokenVerifyResponse";
 import { JiraCard } from "../../models/kanban/JiraCard";
 import _ from "lodash";
+import logger from "../../utils/loggerUtils";
 
 function GenerateObjectArrayToCsvFile(arr: any): any {
   const jsonObj = [];
@@ -209,6 +210,7 @@ export async function ConvertBoardDataToCsv(
     jiraCard.buildCycleTimeFlatObject();
     jiraCard.calculateTotalCycleTimeDivideStoryPoints();
   });
+  logger.info(`project key:${cards[0].baseInfo.fields.project!.key}`);
 
   const csvString = parse(cards, { fields });
   const csvArray = GenerateObjectArrayToCsvFile(CSV.parse(csvString));

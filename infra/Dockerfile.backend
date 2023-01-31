@@ -1,0 +1,18 @@
+FROM node:16-alpine AS builder
+WORKDIR /app
+COPY ./backend ./
+RUN yarn install && yarn build
+RUN yarn package
+RUN chmod +x ./heartbeat-backend
+
+FROM ubuntu:latest
+LABEL app=HeartBeat
+LABEL arch=Backend
+RUN groupadd -r nonroot && useradd --no-log-init -r -g nonroot nonroot
+RUN mkdir -p ./csv
+RUN chown nonroot ./csv
+USER nonroot
+WORKDIR /app
+COPY --from=builder /app/heartbeat-backend ./
+EXPOSE 3001
+CMD [ "./heartbeat-backend" ]

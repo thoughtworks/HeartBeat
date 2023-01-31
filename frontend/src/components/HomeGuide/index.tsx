@@ -2,7 +2,7 @@ import Button, { ButtonProps } from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 
-import theme from '@src/theme'
+import { theme } from '@src/theme'
 import { useNavigate } from 'react-router-dom'
 
 const basicStyle = {
@@ -26,7 +26,7 @@ const GuideButton = styled(Button)<ButtonProps>({
   },
 })
 
-const HomeGuide = () => {
+export const HomeGuide = () => {
   const navigate = useNavigate()
 
   return (
@@ -38,5 +38,3 @@ const HomeGuide = () => {
     </Stack>
   )
 }
-
-export default HomeGuide

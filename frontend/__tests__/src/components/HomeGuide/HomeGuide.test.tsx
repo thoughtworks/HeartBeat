@@ -1,4 +1,4 @@
-import HomeGuide from '@src/components/HomeGuide'
+import { HomeGuide } from '@src/components/HomeGuide'
 import { fireEvent, render } from '@testing-library/react'
 import * as router from 'react-router-dom'
 

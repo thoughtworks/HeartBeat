@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
-import theme from '@src/theme'
+import { theme } from '@src/theme'
 import StepLabel from '@mui/material/StepLabel'
 
 const basicButtonStyle = {

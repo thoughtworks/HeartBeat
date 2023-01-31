@@ -3,7 +3,7 @@ import HomeIcon from '@mui/icons-material/Home'
 
 import Logo from '@src/assets/Logo.svg'
 import styled from '@emotion/styled'
-import theme from '@src/theme'
+import { theme } from '@src/theme'
 import { PROJECT_NAME } from '@src/constants'
 
 const Header = () => {

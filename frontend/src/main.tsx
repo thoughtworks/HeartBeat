@@ -4,7 +4,7 @@ import App from './App'
 import { Provider } from 'react-redux'
 import { store } from './store/store'
 import { ThemeProvider } from '@mui/material'
-import theme from '@src/theme'
+import { theme } from '@src/theme'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

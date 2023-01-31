@@ -11,19 +11,16 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(JiraController.class)
 @ExtendWith(SpringExtension.class)
@@ -35,8 +32,7 @@ public class JiraControllerTest {
 
 	@Autowired
 	private JacksonTester<BoardRequest> boardRequestJson;
-	@Autowired
-	private JacksonTester<BoardConfigResponse> boardConfigResponseJson;
+
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -45,58 +41,36 @@ public class JiraControllerTest {
 		String boardId = "123";
 		String boardName = "jira";
 		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder().id(boardId).name(boardName).build();
-		BoardRequest boardRequest = BoardRequest.builder().boardName(boardName).boardId(boardId).email("test@email.com")
-			.projectKey("project key").site("site").token("token").build();
-
 		when(jiraService.getJiraReconfiguration(any())).thenReturn(boardConfigResponse);
 
-		MockHttpServletRequestBuilder requestBuilder = get("/boards/{boardType}", "jira")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(boardRequestJson.write(boardRequest).getJson());
-		MockHttpServletResponse response = mockMvc.perform(requestBuilder)
-			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andReturn()
-			.getResponse();
-
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		assertThat(response.getContentAsString()).isEqualTo(boardConfigResponseJson.write(boardConfigResponse).getJson());
+		BoardRequest boardRequest = BoardRequest.builder().boardName(boardName).boardId(boardId).email("test@email.com")
+				.projectKey("project key").site("site").token("token").build();
+		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(boardId)).andExpect(jsonPath("$.name").value(boardName));
 	}
 
 	@Test
 	void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";
-		BoardRequest boardRequest = BoardRequest.builder().token("token").build();
-
+		when(jiraService.getJiraReconfiguration(any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn(message);
-		when(mockException.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
-		when(jiraService.getJiraReconfiguration(boardRequest)).thenThrow(mockException);
+		when(mockException.getStatus()).thenReturn(400);
 
-		MockHttpServletResponse response = mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-				.content(boardRequestJson.write(boardRequest).getJson()))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value(message))
-			.andReturn().getResponse();
-
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		BoardRequest boardRequest = BoardRequest.builder().token("token").build();
+		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value(message));
 	}
 
 	@Test
 	void shouldVerifyRequestTokenNotBlank() throws Exception {
 		BoardRequest boardRequest = BoardRequest.builder().build();
-		RequestFailedException mockException = mock(RequestFailedException.class);
-
-		when(jiraService.getJiraReconfiguration(boardRequest)).thenThrow(mockException);
-		when(mockException.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
-
-		MockHttpServletResponse response = mockMvc.perform(get("/boards/{boardType}", "jira")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(boardRequestJson.write(boardRequest).getJson()))
-			.andExpect(status().isBadRequest())
-			.andReturn()
-			.getResponse();
-
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest());
+		// TODO assert response body
+		// TODO extract fixture
 	}
+
 }

@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import routes from './config/routes'
+import { routes } from './config/routes'
 import { Loading } from './pages/Loading'
 
 const Router = () => {

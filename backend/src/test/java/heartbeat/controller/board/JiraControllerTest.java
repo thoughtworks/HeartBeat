@@ -68,8 +68,8 @@ public class JiraControllerTest {
 	void shouldVerifyRequestTokenNotBlank() throws Exception {
 		BoardRequest boardRequest = BoardRequest.builder().build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest());
-		// TODO assert response body
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.detail").value("Invalid request content."));
 		// TODO extract fixture
 	}
 

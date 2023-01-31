@@ -15,7 +15,7 @@ const checkConfigStepPage = async (page) => {
   steps.map(async (label) => {
     await expect(page.getByText(label)).toBeVisible()
   })
-  await expect(page.getByText('Step 1')).toBeVisible()
+  await expect(page.getByText('Project Name')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Next' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
 }
@@ -24,7 +24,7 @@ const checkMetricsStepPage = async (page) => {
   steps.map(async (label) => {
     await expect(page.getByText(label)).toBeVisible()
   })
-  await expect(page.getByText('Step 2')).toBeVisible()
+  await expect(page.getByText('Project Name')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Next' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
 }
@@ -33,7 +33,7 @@ const checkExportStepPage = async (page) => {
   steps.map(async (label) => {
     await expect(page.getByText(label, { exact: true })).toBeVisible()
   })
-  await expect(page.getByText('Step 3')).toBeVisible()
+  await expect(page.getByText('Project Name')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Export board data' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
 }

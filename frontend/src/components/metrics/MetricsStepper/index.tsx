@@ -2,10 +2,10 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
-import Typography from '@mui/material/Typography'
-import { NextButton, BackButton, ExportButton, MetricsStepperBody, MetricsStepLabel } from './style'
+import { NextButton, BackButton, ExportButton, MetricsStepperContent, MetricsStepLabel } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
+import { ConfigStep } from '@src/components/metrics/ConfigStep'
 
 const steps = ['Config', 'Metrics', 'Export']
 const MetricsStepper = () => {
@@ -31,8 +31,8 @@ const MetricsStepper = () => {
           )
         })}
       </Stepper>
-      <MetricsStepperBody>
-        <Typography>Step {activeStep + 1}</Typography>
+      <MetricsStepperContent>
+        <ConfigStep />
         <Box>
           <BackButton onClick={handleBack}>Back</BackButton>
           {activeStep === steps.length - 1 ? (
@@ -41,7 +41,7 @@ const MetricsStepper = () => {
             <NextButton onClick={handleNext}>Next</NextButton>
           )}
         </Box>
-      </MetricsStepperBody>
+      </MetricsStepperContent>
     </Box>
   )
 }

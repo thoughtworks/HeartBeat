@@ -48,8 +48,9 @@ export const ExportButton = styled(Button)({
   },
 })
 
-export const MetricsStepperBody = styled('div')({
+export const MetricsStepperContent = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
+  margin: '0 280px',
+  textAlign: 'left',
 })

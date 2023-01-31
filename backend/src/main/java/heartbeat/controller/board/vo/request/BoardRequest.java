@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
+// TODO add info about invalid param
 public class BoardRequest {
 
 	private String boardName;

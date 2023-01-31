@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -54,13 +55,16 @@ public class JiraControllerTest {
 
 	@Test
 	void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
-		int statusCode = 400;
-		when(jiraService.getJiraReconfiguration(any())).thenThrow(new RequestFailedException(statusCode));
+		RequestFailedException mockException = mock(RequestFailedException.class);
+		String message = "message";
+		when(jiraService.getJiraReconfiguration(any())).thenThrow(mockException);
+		when(mockException.getMessage()).thenReturn(message);
+		when(mockException.getStatus()).thenReturn(400);
 
 		BoardRequest boardRequest = BoardRequest.builder().token("token").build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.message").value("Request failed with status code " + statusCode));
+				.andExpect(jsonPath("$.message").value(message));
 	}
 
 	@Test
@@ -68,6 +72,8 @@ public class JiraControllerTest {
 		BoardRequest boardRequest = BoardRequest.builder().build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest());
+		// TODO assert response body
+		// TODO extract fixture
 	}
 
 }

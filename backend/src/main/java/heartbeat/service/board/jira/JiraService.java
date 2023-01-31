@@ -29,8 +29,8 @@ public class JiraService {
 					.build();
 		}
 		catch (FeignException e) {
-			log.error("Exception When Calling Jira to Get Board Config", e);
-			throw new RequestFailedException(e.status());
+			log.error("Failed when call Jira to get board config", e);
+			throw new RequestFailedException(e);
 		}
 	}
 

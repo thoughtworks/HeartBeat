@@ -18,7 +18,8 @@ import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,22 +39,24 @@ class JiraServiceTest {
 		String token = "token";
 		BoardRequest boardRequest = BoardRequest.builder().boardName("board name").boardId(boardId)
 				.email("test@email.com").projectKey("project key").site("site").token(token).build();
-		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId, token)).thenReturn(jiraBoardConfigDTO);
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, boardId, token);
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraReconfiguration(boardRequest);
 
-		verify(jiraFeignClient).getJiraBoardConfiguration(baseUrl, boardId, token);
 		assertThat(boardConfigResponse.getId()).isEqualTo(jiraBoardConfigDTO.getId());
 		assertThat(boardConfigResponse.getName()).isEqualTo(jiraBoardConfigDTO.getName());
 	}
 
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
-		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))
-				.thenThrow(FeignException.FeignClientException.class);
+		FeignException mockException = mock(FeignException.class);
+		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
+		when(mockException.getMessage()).thenReturn("exception");
+		when(mockException.status()).thenReturn(400);
 
 		assertThatThrownBy(() -> jiraService.getJiraReconfiguration(BoardRequest.builder().build()))
-				.isInstanceOf(RequestFailedException.class);
+				.isInstanceOf(RequestFailedException.class)
+				.hasMessageContaining("Request failed with status code 400, error: ", "");
 	}
 
 }

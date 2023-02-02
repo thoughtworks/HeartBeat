@@ -1,5 +1,7 @@
 package heartbeat.exception;
 
+import org.springframework.core.convert.ConversionException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +13,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	@ExceptionHandler(value = RequestFailedException.class)
 	protected ResponseEntity<Object> handleException(RequestFailedException ex) {
 		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
+	}
+
+	@ExceptionHandler(ConversionException.class)
+	public ResponseEntity<String> handleConflict(RuntimeException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 }

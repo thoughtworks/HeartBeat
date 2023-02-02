@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_ID;
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_NAME;
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
+import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_CONFIG_RESPONSE_BUILDER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -41,7 +42,7 @@ public class JiraControllerTest {
 
 	@Test
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
-		BoardConfigResponse boardConfigResponse = BoardConfigResponse.builder().id(BOARD_ID).name(BOARD_NAME).build();
+		BoardConfigResponse boardConfigResponse = BOARD_CONFIG_RESPONSE_BUILDER().build();
 		when(jiraService.getJiraReconfiguration(any())).thenReturn(boardConfigResponse);
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
@@ -70,7 +71,6 @@ public class JiraControllerTest {
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.detail").value("Invalid request content."));
-		// TODO extract fixture
 	}
 
 }

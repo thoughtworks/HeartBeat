@@ -15,6 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 
+import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
+import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_ID;
+import static heartbeat.controller.board.BoardConfigResponseFixture.JIRA_BOARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,13 +36,12 @@ class JiraServiceTest {
 
 	@Test
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {
-		String boardId = "123";
-		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder().id(boardId).name("jira board").build();
+		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder().id(BOARD_ID).name(JIRA_BOARD).build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
-		BoardRequest boardRequest = BoardRequest.builder().boardName("board name").boardId(boardId)
-				.email("test@email.com").projectKey("project key").site("site").token(token).build();
-		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, boardId, token);
+
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraReconfiguration(boardRequest);
 

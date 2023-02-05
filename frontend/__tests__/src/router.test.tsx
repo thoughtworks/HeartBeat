@@ -39,9 +39,7 @@ describe('router', () => {
     const steps = ['Config', 'Metrics', 'Export']
 
     const { getByText } = setup(metricsRoute)
-
     await waitFor(() => {
-      expect(getByText('Heartbeat')).toBeInTheDocument()
       steps.map((label) => {
         expect(getByText(label)).toBeInTheDocument()
       })

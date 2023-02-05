@@ -18,15 +18,15 @@ describe('ConfigStep', () => {
   })
   it('should switch the radio switch when any radioLabel is selected', () => {
     const { getByRole } = render(<ConfigStep />)
-
     const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR })
     const regularCalendar = getByRole('radio', { name: REGULAR_CALENDAR })
-
     fireEvent.click(chinaCalendar)
+
     expect(chinaCalendar).toBeChecked()
     expect(regularCalendar).not.toBeChecked()
 
     fireEvent.click(regularCalendar)
+
     expect(regularCalendar).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
   })

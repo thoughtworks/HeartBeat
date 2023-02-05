@@ -10,20 +10,24 @@ describe('ConfigStep', () => {
   })
   it('should selected by default value when rendering the radioGroup', () => {
     const { getByRole } = render(<ConfigStep />)
-
     const defaultValue = getByRole('radio', { name: REGULAR_CALENDAR })
+    const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR })
 
     expect(defaultValue).toBeChecked()
+    expect(chinaCalendar).not.toBeChecked()
   })
   it('should switch the radio switch when any radioLabel is selected', () => {
-    const { getByLabelText } = render(<ConfigStep />)
+    const { getByRole } = render(<ConfigStep />)
 
-    const chinaCalendar = getByLabelText(CHINA_CALENDAR)
+    const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR })
+    const regularCalendar = getByRole('radio', { name: REGULAR_CALENDAR })
+
     fireEvent.click(chinaCalendar)
     expect(chinaCalendar).toBeChecked()
+    expect(regularCalendar).not.toBeChecked()
 
-    const regularCalendar = getByLabelText(REGULAR_CALENDAR)
     fireEvent.click(regularCalendar)
     expect(regularCalendar).toBeChecked()
+    expect(chinaCalendar).not.toBeChecked()
   })
 })

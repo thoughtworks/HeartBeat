@@ -68,7 +68,7 @@ public class JiraControllerTest {
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.detail").value("Invalid request content."));
+				.andExpect(jsonPath("$.token").value("Token cannot be empty."));
 	}
 
 }

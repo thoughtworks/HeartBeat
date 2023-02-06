@@ -6,17 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JiraBoardConfigDTO {
+public class JiraColumnConfig {
 
-	private String id;
-
-	private String name;
-
-	private JiraColumnConfig columnConfig;
+	private List<JiraColumn> columns;
 
 }

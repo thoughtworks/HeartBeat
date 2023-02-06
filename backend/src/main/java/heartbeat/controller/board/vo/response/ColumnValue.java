@@ -7,8 +7,10 @@ import java.util.List;
 
 @Data
 @Builder
-public class BoardConfigResponse {
+public class ColumnValue {
 
-	private List<ColumnResponse> jiraColumns;
+	private String name;
+
+	private List<String> statuses;
 
 }

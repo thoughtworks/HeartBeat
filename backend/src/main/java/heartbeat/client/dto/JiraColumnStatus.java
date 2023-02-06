@@ -11,12 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JiraBoardConfigDTO {
+public class JiraColumnStatus {
 
 	private String id;
-
-	private String name;
-
-	private JiraColumnConfig columnConfig;
 
 }

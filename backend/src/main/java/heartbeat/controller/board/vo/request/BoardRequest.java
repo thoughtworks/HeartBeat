@@ -21,7 +21,7 @@ public class BoardRequest {
 	private String site;
 
 	@Valid
-	@NotBlank
+	@NotBlank(message = "Token can not be empty")
 	private String token;
 
 }

@@ -3,8 +3,6 @@ package heartbeat.service.jira;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.JiraColumn;
-import heartbeat.client.dto.JiraColumnConfig;
 import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.exception.RequestFailedException;
@@ -16,11 +14,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
-import java.util.List;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
-import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_ID;
-import static heartbeat.controller.board.BoardConfigResponseFixture.JIRA_BOARD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,10 +36,7 @@ class JiraServiceTest {
 
 	@Test
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder().id(BOARD_ID).name(JIRA_BOARD)
-				.columnConfig(
-						JiraColumnConfig.builder().columns(List.of(JiraColumn.builder().name("TODO").build())).build())
-				.build();
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
 

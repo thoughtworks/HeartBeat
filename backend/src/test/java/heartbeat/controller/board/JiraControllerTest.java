@@ -71,4 +71,12 @@ public class JiraControllerTest {
 				.andExpect(jsonPath("$.token").value("Token cannot be empty."));
 	}
 
+	@Test
+	void shouldThrowExceptionWhenBoardTypeNotSupported() throws Exception {
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
+		mockMvc.perform(get("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").isNotEmpty());
+	}
+
 }

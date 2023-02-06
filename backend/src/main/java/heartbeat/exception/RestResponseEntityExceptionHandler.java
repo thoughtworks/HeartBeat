@@ -1,17 +1,15 @@
 package heartbeat.exception;
 
-import org.springframework.core.convert.ConversionException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
@@ -21,9 +19,9 @@ public class RestResponseEntityExceptionHandler {
 		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
-	@ExceptionHandler(ConversionException.class)
-	public ResponseEntity<String> handleConflict(RuntimeException ex) {
-		return new ResponseEntity<>(ex.getMessage(), BAD_REQUEST);
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<Object> handleConflict(RuntimeException ex) {
+		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

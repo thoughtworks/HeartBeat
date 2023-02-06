@@ -3,6 +3,8 @@ package heartbeat.service.jira;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.dto.JiraBoardConfigDTO;
+import heartbeat.client.dto.JiraColumn;
+import heartbeat.client.dto.JiraColumnConfig;
 import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.exception.RequestFailedException;
@@ -14,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
+import java.util.List;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_ID;
@@ -36,7 +39,10 @@ class JiraServiceTest {
 
 	@Test
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder().id(BOARD_ID).name(JIRA_BOARD).build();
+		JiraBoardConfigDTO jiraBoardConfigDTO = JiraBoardConfigDTO.builder().id(BOARD_ID).name(JIRA_BOARD)
+				.columnConfig(
+						JiraColumnConfig.builder().columns(List.of(JiraColumn.builder().name("TODO").build())).build())
+				.build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
 
@@ -47,6 +53,8 @@ class JiraServiceTest {
 
 		assertThat(boardConfigResponse.getId()).isEqualTo(jiraBoardConfigDTO.getId());
 		assertThat(boardConfigResponse.getName()).isEqualTo(jiraBoardConfigDTO.getName());
+		assertThat(boardConfigResponse.getJiraColumns()).hasSize(1);
+		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getName()).isEqualTo("TODO");
 	}
 
 	@Test

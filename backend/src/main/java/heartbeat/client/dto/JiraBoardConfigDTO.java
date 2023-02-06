@@ -13,4 +13,6 @@ public class JiraBoardConfigDTO {
 
 	private String name;
 
+	private JiraColumnConfig columnConfig;
+
 }

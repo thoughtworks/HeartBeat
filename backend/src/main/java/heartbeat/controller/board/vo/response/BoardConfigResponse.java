@@ -9,10 +9,6 @@ import java.util.List;
 @Builder
 public class BoardConfigResponse {
 
-	private String id;
-
-	private String name;
-
 	private List<ColumnResponse> jiraColumns;
 
 }

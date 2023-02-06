@@ -15,10 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static heartbeat.controller.board.BoardRequestFixture.BOARD_ID;
-import static heartbeat.controller.board.BoardRequestFixture.BOARD_NAME;
-import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -48,7 +46,7 @@ public class JiraControllerTest {
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(BOARD_ID)).andExpect(jsonPath("$.name").value(BOARD_NAME));
+				.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"));
 	}
 
 	@Test

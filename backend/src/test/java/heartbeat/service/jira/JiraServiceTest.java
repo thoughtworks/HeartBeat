@@ -51,8 +51,6 @@ class JiraServiceTest {
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraReconfiguration(boardRequest);
 
-		assertThat(boardConfigResponse.getId()).isEqualTo(jiraBoardConfigDTO.getId());
-		assertThat(boardConfigResponse.getName()).isEqualTo(jiraBoardConfigDTO.getName());
 		assertThat(boardConfigResponse.getJiraColumns()).hasSize(1);
 		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getName()).isEqualTo("TODO");
 	}

@@ -13,14 +13,31 @@ import {
   TextField,
 } from '@mui/material'
 import React, { useState } from 'react'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRE_DATA } from '@src/constants'
+import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRE_DATA, STEPS } from '@src/constants'
+import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
+import Box from '@mui/material/Box'
+import { BackButton, ExportButton, NextButton } from './style'
+import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
 
 export const ConfigStep = () => {
+  const dispatch = useAppDispatch()
+  const activeStep = useAppSelector(selectStep)
+
   const [projectName, setProjectName] = useState<string>('')
   const [isEmptyProjectName, setIsEmptyProjectName] = useState<boolean>(false)
 
   const [requireData, setRequireData] = useState<string[]>([])
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
+
+  const handleNext = () => {
+    dispatch(nextStep())
+  }
+
+  const handleBack = () => {
+    dispatch(backStep())
+  }
+
   const changeRequireData = (event: SelectChangeEvent<typeof requireData>) => {
     const {
       target: { value },
@@ -55,6 +72,7 @@ export const ConfigStep = () => {
         <FormControlLabel value={REGULAR_CALENDAR} control={<Radio />} label={REGULAR_CALENDAR} />
         <FormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
       </RadioGroup>
+      <DateRangePicker />
       <FormControl variant='standard' required sx={{ m: 1, minWidth: 150, maxWidth: 500 }} error={isEmptyRequireData}>
         <InputLabel id='demo-multiple-checkbox-label'>Require Data</InputLabel>
         <Select
@@ -73,6 +91,14 @@ export const ConfigStep = () => {
         </Select>
         {isEmptyRequireData && <FormHelperText>Metrics is required</FormHelperText>}
       </FormControl>
+      <Box>
+        <BackButton onClick={handleBack}>Back</BackButton>
+        {activeStep === STEPS.length - 1 ? (
+          <ExportButton> Export board data</ExportButton>
+        ) : (
+          <NextButton onClick={handleNext}>Next</NextButton>
+        )}
+      </Box>
     </>
   )
 }

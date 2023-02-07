@@ -25,7 +25,7 @@ export const ConfigStep = () => {
     const {
       target: { value },
     } = event
-    setRequireData(typeof value === 'string' ? value.split(',') : value)
+    setRequireData(value as string[])
     if (value.length === 0) {
       setIsEmptyProjectData(true)
     } else {
@@ -38,29 +38,20 @@ export const ConfigStep = () => {
       <TextField
         sx={{ m: 1, minWidth: 150, maxWidth: 500 }}
         required
-        id='standard-error-helper-text'
         label='Project Name'
         variant='standard'
         value={projectName}
         onChange={(e) => {
           setProjectName(e.target.value)
-          if (e.target.value === '') {
-            setIsEmptyProjectName(true)
-          } else {
-            setIsEmptyProjectName(false)
-          }
+          setIsEmptyProjectName(e.target.value === '')
         }}
         error={isEmptyProjectName}
         helperText={isEmptyProjectName ? 'Project Name is required' : ''}
+        inputProps={{ 'data-testid': 'testProjectName' }}
       />
 
       <h3>Collection Date</h3>
-      <RadioGroup
-        data-testid='radio-test'
-        aria-labelledby='demo-controlled-radio-buttons-group'
-        name='controlled-radio-buttons-group'
-        defaultValue={REGULAR_CALENDAR}
-      >
+      <RadioGroup defaultValue={REGULAR_CALENDAR}>
         <FormControlLabel value={REGULAR_CALENDAR} control={<Radio />} label={REGULAR_CALENDAR} />
         <FormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
       </RadioGroup>
@@ -68,12 +59,10 @@ export const ConfigStep = () => {
         <InputLabel id='demo-multiple-checkbox-label'>Require Data</InputLabel>
         <Select
           labelId='demo-multiple-checkbox-label'
-          id='demo-multiple-checkbox'
           multiple
           value={requireData}
           onChange={changeRequireData}
-          label='Require Data'
-          renderValue={(selected) => selected.join(', ')}
+          renderValue={(selected) => selected.join(',')}
         >
           {REQUIRE_DATA.map((data) => (
             <MenuItem key={data} value={data}>
@@ -82,7 +71,7 @@ export const ConfigStep = () => {
             </MenuItem>
           ))}
         </Select>
-        {isEmptyRequireData ? <FormHelperText>Metrics is required</FormHelperText> : null}
+        {isEmptyRequireData && <FormHelperText>Metrics is required</FormHelperText>}
       </FormControl>
     </>
   )

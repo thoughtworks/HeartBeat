@@ -5,6 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { TextField } from '@mui/material'
 import { DateRangeBox } from '@src/components/metrics/ConfigStep/DateRangePicker/style'
+import { END_DATE, SELECT_OR_WRITE_DATE, START_DATE } from '@src/constants'
 
 export const DateRangePicker = () => {
   const [dateRange, setDateRange] = useState<{
@@ -18,7 +19,7 @@ export const DateRangePicker = () => {
   })
 
   const checkDateformat = (value: Dayjs | null, dateType: string) => {
-    if (dateType === 'startDate') {
+    if (dateType === START_DATE) {
       if (value === null || !value?.isValid())
         setDateRangeValueError({
           ...dateRangeValueError,
@@ -30,7 +31,7 @@ export const DateRangePicker = () => {
           startDate: false,
         })
     }
-    if (dateType === 'endDate') {
+    if (dateType === END_DATE) {
       if (value === null || !value?.isValid())
         setDateRangeValueError({
           ...dateRangeValueError,
@@ -59,20 +60,12 @@ export const DateRangePicker = () => {
           value={dateRange.startDate}
           disablePast={true}
           onChange={(newValue) => {
-            checkDateformat(newValue, 'startDate')
+            checkDateformat(newValue, START_DATE)
             checkDateRangeValid(newValue, dateRange.endDate)
           }}
           renderInput={(params) => {
-            params.inputProps!.placeholder = 'Select Or Write Date'
-            return (
-              <TextField
-                {...params}
-                variant='standard'
-                required
-                error={dateRangeValueError.startDate}
-                aria-label='startDateInput'
-              />
-            )
+            params.inputProps!.placeholder = SELECT_OR_WRITE_DATE
+            return <TextField {...params} variant='standard' required error={dateRangeValueError.startDate} />
           }}
         />
         <DatePicker
@@ -81,11 +74,11 @@ export const DateRangePicker = () => {
           disablePast={true}
           minDate={dateRange.startDate}
           onChange={(newValue) => {
-            checkDateformat(newValue, 'endDate')
+            checkDateformat(newValue, END_DATE)
             checkDateRangeValid(dateRange.startDate, newValue)
           }}
           renderInput={(params) => {
-            params.inputProps!.placeholder = 'Select Or Write Date'
+            params.inputProps!.placeholder = SELECT_OR_WRITE_DATE
             return <TextField {...params} variant='standard' required error={dateRangeValueError.endDate} />
           }}
         />

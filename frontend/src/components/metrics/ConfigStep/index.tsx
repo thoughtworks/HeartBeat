@@ -1,9 +1,10 @@
 import { FormControl, FormControlLabel, Radio, RadioGroup, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import { CHINA_CALENDAR, REGULAR_CALENDAR } from '@src/constants'
+import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
 
 export const ConfigStep = () => {
-  const [projectName, setProjectName] = useState<undefined | string>(undefined)
+  const [projectName, setProjectName] = useState('')
   const [isEmptyProjectName, setIsEmptyProjectName] = useState(false)
 
   return (
@@ -36,6 +37,7 @@ export const ConfigStep = () => {
         <FormControlLabel value={REGULAR_CALENDAR} control={<Radio />} label={REGULAR_CALENDAR} />
         <FormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
       </RadioGroup>
+      <DateRangePicker />
     </FormControl>
   )
 }

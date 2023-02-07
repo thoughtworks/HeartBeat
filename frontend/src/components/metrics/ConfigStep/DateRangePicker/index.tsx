@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { TextField } from '@mui/material'
 import { DateRangeBox } from '@src/components/metrics/ConfigStep/DateRangePicker/style'
-import { END_DATE, SELECT_OR_WRITE_DATE, START_DATE } from '@src/constants'
+import { DATE_RANGE, SELECT_OR_WRITE_DATE } from '@src/constants'
 
 export const DateRangePicker = () => {
   const [dateRange, setDateRange] = useState<{
@@ -13,36 +13,13 @@ export const DateRangePicker = () => {
     endDate: Dayjs | null
   }>({ startDate: null, endDate: null })
 
-  const [dateRangeValueError, setDateRangeValueError] = useState({
-    startDate: false,
-    endDate: false,
-  })
+  const [dateRangeValueError, setDateRangeValueError] = useState([false, false])
 
-  const checkDateformat = (value: Dayjs | null, dateType: string) => {
-    if (dateType === START_DATE) {
-      if (value === null || !value?.isValid())
-        setDateRangeValueError({
-          ...dateRangeValueError,
-          startDate: true,
-        })
-      else
-        setDateRangeValueError({
-          ...dateRangeValueError,
-          startDate: false,
-        })
-    }
-    if (dateType === END_DATE) {
-      if (value === null || !value?.isValid())
-        setDateRangeValueError({
-          ...dateRangeValueError,
-          endDate: true,
-        })
-      else
-        setDateRangeValueError({
-          ...dateRangeValueError,
-          endDate: false,
-        })
-    }
+  const checkDateformat = (value: Dayjs | null, dateType: number) => {
+    const newDateRangeValueError = [...dateRangeValueError]
+    if (value === null || !value.isValid()) newDateRangeValueError.splice(dateType, 1, true)
+    else newDateRangeValueError.splice(dateType, 1, false)
+    setDateRangeValueError(newDateRangeValueError)
   }
 
   const checkDateRangeValid = (startDate: Dayjs | null, endDate: Dayjs | null) => {
@@ -60,12 +37,14 @@ export const DateRangePicker = () => {
           value={dateRange.startDate}
           disablePast={true}
           onChange={(newValue) => {
-            checkDateformat(newValue, START_DATE)
+            checkDateformat(newValue, DATE_RANGE.START_DATE)
             checkDateRangeValid(newValue, dateRange.endDate)
           }}
           renderInput={(params) => {
             params.inputProps!.placeholder = SELECT_OR_WRITE_DATE
-            return <TextField {...params} variant='standard' required error={dateRangeValueError.startDate} />
+            return (
+              <TextField {...params} variant='standard' required error={dateRangeValueError[DATE_RANGE.START_DATE]} />
+            )
           }}
         />
         <DatePicker
@@ -74,12 +53,14 @@ export const DateRangePicker = () => {
           disablePast={true}
           minDate={dateRange.startDate}
           onChange={(newValue) => {
-            checkDateformat(newValue, END_DATE)
+            checkDateformat(newValue, DATE_RANGE.END_DATE)
             checkDateRangeValid(dateRange.startDate, newValue)
           }}
           renderInput={(params) => {
             params.inputProps!.placeholder = SELECT_OR_WRITE_DATE
-            return <TextField {...params} variant='standard' required error={dateRangeValueError.endDate} />
+            return (
+              <TextField {...params} variant='standard' required error={dateRangeValueError[DATE_RANGE.END_DATE]} />
+            )
           }}
         />
       </DateRangeBox>

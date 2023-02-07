@@ -3,41 +3,41 @@ import { ZERO } from '../fixtures'
 
 describe('counter reducer', () => {
   it('should get 0 when handle initial state', () => {
-    expect(stepperReducer(undefined, { type: 'unknown' })).toEqual({
-      value: 0,
-    })
+    const STEPPER = stepperReducer(undefined, { type: 'unknown' })
+
+    expect(STEPPER.value).toEqual(ZERO)
   })
 
   it('should get 1 when handle next step given value is 0', () => {
-    const actual = stepperReducer(
+    const STEPPER = stepperReducer(
       {
         value: 0,
       },
       nextStep()
     )
 
-    expect(actual.value).toEqual(1)
+    expect(STEPPER.value).toEqual(1)
   })
 
   it('should get 0 when handle back step given value is 0', () => {
-    const actual = stepperReducer(
+    const STEPPER = stepperReducer(
       {
         value: 0,
       },
       backStep()
     )
 
-    expect(actual.value).toEqual(ZERO)
+    expect(STEPPER.value).toEqual(ZERO)
   })
 
   it('should get 1 when handle back step given value is 2', () => {
-    const actual = stepperReducer(
+    const STEPPER = stepperReducer(
       {
         value: 2,
       },
       backStep()
     )
 
-    expect(actual.value).toEqual(1)
+    expect(STEPPER.value).toEqual(1)
   })
 })

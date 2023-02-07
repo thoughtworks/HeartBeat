@@ -9,16 +9,33 @@ const clickCreateNewProjectButton = async (page) => {
   await page.getByRole('button', { name: 'Create a new project' }).click()
 }
 
+const checkSteps = async (page) => {
+  steps.map(async (label) => {
+    await expect(page.getByText(label, { exact: true })).toBeVisible()
+  })
+}
+
+const checkNextButton = async (page) => {
+  await expect(page.getByRole('button', { name: 'Next' })).toBeVisible()
+}
+
+const checkBackButton = async (page) => {
+  await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
+}
+
+const checkExportDataButton = async (page) => {
+  await expect(page.getByRole('button', { name: 'Export board data' })).toBeVisible()
+}
+
 const clickNextButton = async (page) => {
   await page.getByRole('button', { name: 'Next' }).click()
 }
 
-const checkConfigStepPage = async (page) => {
-  steps.map(async (label) => {
-    await expect(page.getByText(label)).toBeVisible()
-  })
+const checkProjectName = async (page) => {
   await expect(page.getByText('Project Name')).toBeVisible()
+}
 
+const checkCollectionData = async (page) => {
   const defaultValue = page.getByRole('radio', { name: REGULAR_CALENDAR })
   const regularCalendar = page.getByRole('radio', { name: REGULAR_CALENDAR })
   const chinaCalendar = page.getByRole('radio', { name: CHINA_CALENDAR })
@@ -27,9 +44,6 @@ const checkConfigStepPage = async (page) => {
   await expect(chinaCalendar).toBeVisible()
   await expect(defaultValue).toBeChecked()
   await expect(chinaCalendar).not.toBeChecked()
-
-  await expect(page.getByRole('button', { name: 'Next' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
 
   chinaCalendar.click()
 
@@ -42,22 +56,26 @@ const checkConfigStepPage = async (page) => {
   await expect(chinaCalendar).not.toBeChecked()
 }
 
+const checkConfigStepPage = async (page) => {
+  await checkSteps(page)
+  await checkProjectName(page)
+  await checkCollectionData(page)
+  await checkNextButton(page)
+  await checkBackButton(page)
+}
+
 const checkMetricsStepPage = async (page) => {
-  steps.map(async (label) => {
-    await expect(page.getByText(label)).toBeVisible()
-  })
-  await expect(page.getByText('Project Name')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Next' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
+  await checkSteps(page)
+  await checkProjectName(page)
+  await checkNextButton(page)
+  await checkBackButton(page)
 }
 
 const checkExportStepPage = async (page) => {
-  steps.map(async (label) => {
-    await expect(page.getByText(label, { exact: true })).toBeVisible()
-  })
-  await expect(page.getByText('Project Name')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Export board data' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
+  await checkSteps(page)
+  await checkProjectName(page)
+  await checkExportDataButton(page)
+  await checkBackButton(page)
 }
 
 test('should render metrics page', async ({ page }) => {

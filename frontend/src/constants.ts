@@ -14,3 +14,13 @@ export enum DATE_RANGE {
 }
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
+
+export const REQUIRE_DATA = [
+  'Velocity',
+  'Cycle time',
+  'Classification',
+  'Lead time for changes',
+  'Deployment frequency',
+  'Change failure rate',
+  'Mean time to recovery',
+]

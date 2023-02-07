@@ -1,4 +1,4 @@
-import { fireEvent, Matcher, render } from '@testing-library/react'
+import { fireEvent, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
 import { CHINA_CALENDAR, REGULAR_CALENDAR } from '../../../fixtures'
 
@@ -21,17 +21,13 @@ describe('ConfigStep', () => {
 
     expect(hasInputValue(input, 'test project Name')).toBe(true)
   })
-  it('should show error message when project name is null', async () => {
-    const { getByRole, getByDisplayValue, getByText } = render(<ConfigStep />)
-    const hasInputValue = (e: HTMLElement, inputValue: Matcher) => {
-      return getByDisplayValue(inputValue) === e
-    }
-    const input = getByRole('textbox', { name: 'Project Name' })
+  it('should show error message when project name is null', () => {
+    const { getByTestId, getByText } = render(<ConfigStep />)
+    const input = getByTestId('testProjectName')
 
     fireEvent.change(input, { target: { value: 'test project Name' } })
     fireEvent.change(input, { target: { value: '' } })
 
-    expect(hasInputValue(input, '')).toBe(true)
     expect(getByText('Project Name is required')).toBeInTheDocument()
   })
   it('should selected by default value when rendering the radioGroup', () => {
@@ -55,5 +51,52 @@ describe('ConfigStep', () => {
 
     expect(regularCalendar).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
+  })
+  it('should show require data and do not display specific options when init', async () => {
+    const { getByText, queryByText } = render(<ConfigStep />)
+    const require = getByText('Require Data')
+
+    expect(require).toBeInTheDocument()
+
+    const option = queryByText('Velocity')
+    expect(option).not.toBeTruthy()
+  })
+  it('should show detail options when click require data button', async () => {
+    const { getByRole } = render(<ConfigStep />)
+    fireEvent.mouseDown(getByRole('button'))
+    const listBox = within(getByRole('listbox'))
+    const options = listBox.getAllByRole('option')
+    const optionValue = options.map((li) => li.getAttribute('data-value'))
+
+    expect(optionValue).toEqual([
+      'Velocity',
+      'Cycle time',
+      'Classification',
+      'Lead time for changes',
+      'Deployment frequency',
+      'Change failure rate',
+      'Mean time to recovery',
+    ])
+  })
+  it('should show multiple selections when multiple options are selected', async () => {
+    const { getByRole, getByText } = render(<ConfigStep />)
+    fireEvent.mouseDown(getByRole('button'))
+    const listBox = within(getByRole('listbox'))
+    fireEvent.click(listBox.getByRole('option', { name: 'Velocity' }))
+    fireEvent.click(listBox.getByRole('option', { name: 'Cycle time' }))
+
+    expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
+  })
+  it('should show error message when require data is null', async () => {
+    const { getByRole, getByText } = render(<ConfigStep />)
+
+    fireEvent.mouseDown(getByRole('button'))
+    const listBox = within(getByRole('listbox'))
+    fireEvent.click(listBox.getByRole('option', { name: 'Velocity' }))
+    fireEvent.click(listBox.getByRole('option', { name: 'Velocity' }))
+    fireEvent.mouseDown(getByRole('listbox', { name: 'Require Data' }))
+
+    const errorMessage = getByText('Metrics is required')
+    expect(errorMessage).toBeInTheDocument()
   })
 })

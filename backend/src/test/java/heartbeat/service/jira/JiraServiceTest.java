@@ -43,7 +43,7 @@ class JiraServiceTest {
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraReconfiguration(boardRequest);
+		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
 		assertThat(boardConfigResponse.getJiraColumns()).hasSize(1);
 		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getName()).isEqualTo("TODO");
@@ -56,7 +56,7 @@ class JiraServiceTest {
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(400);
 
-		assertThatThrownBy(() -> jiraService.getJiraReconfiguration(BoardRequest.builder().build()))
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build()))
 				.isInstanceOf(RequestFailedException.class)
 				.hasMessageContaining("Request failed with status code 400, error: ", "");
 	}

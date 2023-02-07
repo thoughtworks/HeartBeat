@@ -41,7 +41,7 @@ public class JiraControllerTest {
 	@Test
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
 		BoardConfigResponse boardConfigResponse = BOARD_CONFIG_RESPONSE_BUILDER().build();
-		when(jiraService.getJiraReconfiguration(any())).thenReturn(boardConfigResponse);
+		when(jiraService.getJiraConfiguration(any())).thenReturn(boardConfigResponse);
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
@@ -53,7 +53,7 @@ public class JiraControllerTest {
 	void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";
-		when(jiraService.getJiraReconfiguration(any())).thenThrow(mockException);
+		when(jiraService.getJiraConfiguration(any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn(message);
 		when(mockException.getStatus()).thenReturn(400);
 

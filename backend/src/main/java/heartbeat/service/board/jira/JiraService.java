@@ -23,7 +23,7 @@ public class JiraService {
 
 	private final JiraFeignClient jiraFeignClient;
 
-	public BoardConfigResponse getJiraReconfiguration(BoardRequest boardRequest) {
+	public BoardConfigResponse getJiraConfiguration(BoardRequest boardRequest) {
 		String url = "https://" + boardRequest.getSite() + ".atlassian.net";
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {

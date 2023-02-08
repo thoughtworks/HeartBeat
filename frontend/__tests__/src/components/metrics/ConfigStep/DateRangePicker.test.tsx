@@ -68,13 +68,14 @@ describe('DateRangePicker', () => {
   })
 
   it('should clear end date when start date is after end date given valid end date', () => {
-    const { getByRole } = render(<DateRangePicker />)
+    const { getByRole, getByText } = render(<DateRangePicker />)
     const startDateInput = getByRole('textbox', { name: 'From' }) as HTMLInputElement
     const endDateInput = getByRole('textbox', { name: 'To' }) as HTMLInputElement
     fireEvent.change(endDateInput, { target: { value: '03/02/2022' } })
 
     fireEvent.change(startDateInput, { target: { value: '08/02/2022' } })
 
-    expect(endDateInput.value).toEqual('')
+    expect(endDateInput.value).toEqual('03/02/2022')
+    expect(getByText('To')).toHaveStyle(`color: #d32f2f`)
   })
 })

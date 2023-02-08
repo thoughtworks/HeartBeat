@@ -15,7 +15,7 @@
     "test": "jest",
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
     "e2e:debug": "playwright test --debug --trace on",
-    "e2e": "playwright test",
+    "e2e": "playwright test --headed",
     "e2e:report": "playwright show-report",
     "prepare": "playwright install && cd .. && husky install frontend/.husky",
     "license-compliance": "license-compliance -r detailed --allow='MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Python-2.0;CC-BY-4.0;CC-BY-3.0;WTFPL;CC0-1.0'"

@@ -1,6 +1,7 @@
 import { theme } from '@src/theme'
 import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
+import { FormControl, TextField } from '@mui/material'
 
 const basicButtonStyle = {
   boxShadow: '0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%)',
@@ -40,6 +41,17 @@ export const ExportButton = styled(Button)({
     backgroundColor: theme.main.backgroundColor,
     color: theme.main.color,
   },
+})
+
+export const ProjectNameInput = styled(TextField)({
+  minWidth: '8rem',
+  maxWidth: '20rem',
+})
+
+export const RequireDataSelections = styled(FormControl)({
+  minWidth: '8rem',
+  maxWidth: '20rem',
+  paddingBottom: '1rem',
 })
 
 export const ButtonGroup = styled('div')({

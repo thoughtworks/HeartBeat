@@ -4,7 +4,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { TextField } from '@mui/material'
-import { DateRangeBox } from '@src/components/metrics/ConfigStep/DateRangePicker/style'
+import { datePickerPropsStyles, DateRangeBox } from '@src/components/metrics/ConfigStep/DateRangePicker/style'
 import { DATE_RANGE, SELECT_OR_WRITE_DATE } from '@src/constants'
 
 export const DateRangePicker = () => {
@@ -33,6 +33,7 @@ export const DateRangePicker = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateRangeBox>
         <DatePicker
+          PaperProps={datePickerPropsStyles}
           label='From'
           value={dateRange.startDate}
           disablePast={true}
@@ -48,6 +49,7 @@ export const DateRangePicker = () => {
           }}
         />
         <DatePicker
+          PaperProps={datePickerPropsStyles}
           label='To'
           value={dateRange.endDate}
           disablePast={true}

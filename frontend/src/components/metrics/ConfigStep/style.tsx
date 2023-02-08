@@ -41,3 +41,9 @@ export const ExportButton = styled(Button)({
     color: theme.main.color,
   },
 })
+
+export const ButtonGroup = styled('div')({
+  padding: '1rem',
+  display: 'flex',
+  justifyContent: 'flex-end',
+})

@@ -1,4 +1,4 @@
-import { fireEvent, getByRole, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
 
 const today = new Date()

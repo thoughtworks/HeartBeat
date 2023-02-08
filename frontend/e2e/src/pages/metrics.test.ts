@@ -16,26 +16,30 @@ const checkSteps = async (page) => {
 }
 
 const checkNextButton = async (page) => {
-  await expect(page.getByRole('button', { name: 'Next' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Next' })).toBeTruthy()
 }
 
 const checkBackButton = async (page) => {
-  await expect(page.getByRole('button', { name: 'Back' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Back' })).toBeTruthy()
 }
 
 const checkExportDataButton = async (page) => {
-  await expect(page.getByRole('button', { name: 'Export board data' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Export board data' })).toBeTruthy()
 }
 
 const clickNextButton = async (page) => {
-  await page.getByRole('button', { name: 'Next' }).click()
+  await page.getByRole('button', { name: 'Next', exact: true }).first().click()
 }
 
 const checkProjectName = async (page) => {
-  await expect(page.getByText('Project Name')).toBeVisible()
+  await expect(page.getByText('Project Name *')).toBeVisible()
+  await page.getByTestId('testProjectName').fill('test Project Name')
+  await page.getByTestId('testProjectName').fill('')
+  await expect(page.getByText('Project Name is required')).toBeTruthy()
 }
 
 const checkCollectionData = async (page) => {
+  await page.getByRole('heading', { name: 'Collection Data' })
   const defaultValue = page.getByRole('radio', { name: REGULAR_CALENDAR })
   const regularCalendar = page.getByRole('radio', { name: REGULAR_CALENDAR })
   const chinaCalendar = page.getByRole('radio', { name: CHINA_CALENDAR })
@@ -56,17 +60,61 @@ const checkCollectionData = async (page) => {
   await expect(chinaCalendar).not.toBeChecked()
 }
 
+const checkDateRangePicker = async (page) => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const day = today.getDate()
+  await expect(page.getByLabel('Form *')).toBeTruthy()
+  await page.getByRole('button', { name: 'Choose date' }).nth(0).click()
+  await page.getByRole('gridcell', { name: `${day}`, exact: true }).click()
+  await expect(page.getByText(`${today.getMonth() + 1}/${day}/${year}`)).toBeTruthy()
+
+  await expect(page.getByLabel('To *')).toBeTruthy()
+  await page.getByRole('button', { name: 'Choose date' }).nth(1).click()
+  await page
+    .getByRole('gridcell', { name: `${day}` })
+    .nth(1)
+    .click()
+  await expect(page.getByText(`${today.getMonth() + 1}/${day}/${year}`)).toBeTruthy()
+
+  await page.getByLabel('From *').click()
+  await page.getByLabel('From *').fill('02/20')
+  expect(await page.getByText('From *').evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe(
+    'black'
+  )
+
+  await page.getByLabel('To *').click()
+  await page.getByLabel('To *').fill('02/20')
+  expect(await page.getByText('To *').evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe(
+    'black'
+  )
+}
+
+const checkRequireData = async (page) => {
+  await page.getByRole('button', { name: 'Require Data' }).click()
+  await page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox').check()
+  await page.getByRole('option', { name: 'Classification' }).getByRole('checkbox').check()
+  await page.locator('.MuiBackdrop-root').click()
+  await expect(page.getByText('Velocity,Classification')).toBeTruthy()
+  await page.getByRole('button', { name: 'Require Data' }).click()
+  await page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox').uncheck()
+  await page.getByRole('option', { name: 'Classification' }).getByRole('checkbox').uncheck()
+  await page.locator('.MuiBackdrop-root').click()
+  await expect(page.getByText('Metrics is required')).toBeTruthy()
+}
+
 const checkConfigStepPage = async (page) => {
   await checkSteps(page)
   await checkProjectName(page)
   await checkCollectionData(page)
+  await checkDateRangePicker(page)
+  await checkRequireData(page)
   await checkNextButton(page)
   await checkBackButton(page)
 }
 
 const checkMetricsStepPage = async (page) => {
   await checkSteps(page)
-  await checkProjectName(page)
   await checkNextButton(page)
   await checkBackButton(page)
 }

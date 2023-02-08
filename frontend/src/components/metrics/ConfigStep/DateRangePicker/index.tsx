@@ -24,7 +24,7 @@ export const DateRangePicker = () => {
 
   const checkDateRangeValid = (startDate: Dayjs | null, endDate: Dayjs | null) => {
     setDateRange({ startDate, endDate })
-    if (startDate?.isAfter(endDate!)) {
+    if (startDate && endDate && startDate.isAfter(endDate)) {
       setDateRangeValueError([dateRangeValueError[0], true])
     }
   }
@@ -42,7 +42,7 @@ export const DateRangePicker = () => {
             checkDateRangeValid(newValue, dateRange.endDate)
           }}
           renderInput={(params) => {
-            params.inputProps!.placeholder = SELECT_OR_WRITE_DATE
+            if (params.inputProps) params.inputProps.placeholder = SELECT_OR_WRITE_DATE
             return (
               <TextField {...params} variant='standard' required error={dateRangeValueError[DATE_RANGE.START_DATE]} />
             )
@@ -59,7 +59,7 @@ export const DateRangePicker = () => {
             checkDateRangeValid(dateRange.startDate, newValue)
           }}
           renderInput={(params) => {
-            params.inputProps!.placeholder = SELECT_OR_WRITE_DATE
+            if (params.inputProps) params.inputProps.placeholder = SELECT_OR_WRITE_DATE
             return (
               <TextField {...params} variant='standard' required error={dateRangeValueError[DATE_RANGE.END_DATE]} />
             )

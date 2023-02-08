@@ -5,3 +5,11 @@ export const DateRangeBox = styled('div')({
   justifyContent: 'space-around',
   padding: '1rem',
 })
+
+export const datePickerPropsStyles = {
+  sx: {
+    '.MuiPickersCalendarHeader-label': {
+      fontSize: '0.8rem',
+    },
+  },
+}

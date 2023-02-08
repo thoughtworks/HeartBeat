@@ -25,7 +25,7 @@ export const DateRangePicker = () => {
   const checkDateRangeValid = (startDate: Dayjs | null, endDate: Dayjs | null) => {
     setDateRange({ startDate, endDate })
     if (startDate?.isAfter(endDate!)) {
-      setDateRange({ startDate, endDate: null })
+      setDateRangeValueError([dateRangeValueError[0], true])
     }
   }
 

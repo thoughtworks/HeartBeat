@@ -4,7 +4,6 @@ export const PROJECT_DESCRIPTION =
 
 export const ZERO = 0
 
-
 export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
 
 export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
@@ -24,4 +23,3 @@ export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
 export const PAST_DATE = '08/02/2022'
-

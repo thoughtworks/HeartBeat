@@ -31,3 +31,9 @@ export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
 export const PAST_DATE = '08/02/2022'
+
+export const BOARD_TYPES = {
+  CLASSIC_JIRA: 'Classic Jira',
+  JIRA: 'Jira',
+  LINEAR: 'Linear',
+}

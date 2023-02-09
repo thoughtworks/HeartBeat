@@ -27,4 +27,8 @@ export const REQUIRE_DATA = [
   'Mean time to recovery',
 ]
 
-export const BOARD_TYPE = ['Classic Jira', 'Jira', 'Linear']
+export const BOARD_TYPES = {
+  CLASSIC_JIRA: 'Classic Jira',
+  JIRA: 'Jira',
+  LINEAR: 'Linear',
+}

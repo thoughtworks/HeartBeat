@@ -1,11 +1,15 @@
-import { fireEvent, render, waitFor, within } from '@testing-library/react'
+import { fireEvent, getByLabelText, render, waitFor, within } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
-import { BOARD_TYPES } from '../../../fixtures'
+import { BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
+import { BOARD_FIELDS } from '@src/constants'
 
 describe('Board', () => {
-  it('should show board title when render board component ', () => {
-    const { getByRole } = render(<Board />)
+  it('should show board title and fields when render board component ', () => {
+    const { getByRole, getByLabelText } = render(<Board />)
 
+    BOARD_FIELDS.map((field) => {
+      expect(getByLabelText(`${field} *`)).toBeInTheDocument()
+    })
     expect(getByRole('heading', { name: 'board' })).toBeInTheDocument()
   })
   it('should show default value jira when init board component', () => {
@@ -41,6 +45,19 @@ describe('Board', () => {
 
     await waitFor(() => {
       expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
+    })
+  })
+  it('should show error message when input a wrong type email ', async () => {
+    const { getByRole, getByText } = render(<Board />)
+    const emailInput = getByRole('textbox', {
+      name: 'email',
+    })
+
+    fireEvent.change(emailInput, { target: { value: 'wrong email type' } })
+
+    await waitFor(() => {
+      expect(getByText('email is required')).toBeVisible()
+      expect(getByText('email is required')).toHaveStyle(ERROR_MESSAGE_COLOR)
     })
   })
 })

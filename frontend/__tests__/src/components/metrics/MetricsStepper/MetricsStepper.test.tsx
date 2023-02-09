@@ -3,7 +3,7 @@ import MetricsStepper from '@src/components/metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { stepperSlice } from '@src/features/stepper/StepperSlice'
-import { NEXT, BACK, STEPS } from '../../../fixtures'
+import { NEXT, BACK, STEPS, EXPORT_BOARD_DATA } from '../../../fixtures'
 
 describe('MetricsStepper', () => {
   const setupStepperStore = () => {
@@ -66,7 +66,7 @@ describe('MetricsStepper', () => {
     fireEvent.click(getByText(NEXT))
     fireEvent.click(getByText(NEXT))
 
-    fireEvent.click(getByText(ExportBoardData))
+    fireEvent.click(getByText(EXPORT_BOARD_DATA))
     expect(getByText('Project Name')).toBeInTheDocument()
   })
 })

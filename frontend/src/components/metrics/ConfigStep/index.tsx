@@ -89,7 +89,7 @@ export const ConfigStep = () => {
       <ButtonGroup>
         <BackButton onClick={handleBack}>Back</BackButton>
         {activeStep === STEPS.length - 1 ? (
-          <ExportButton> Export board data</ExportButton>
+          <ExportButton>Export board data</ExportButton>
         ) : (
           <NextButton onClick={handleNext}>Next</NextButton>
         )}

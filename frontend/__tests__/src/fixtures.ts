@@ -8,6 +8,14 @@ export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
 
 export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
 
+export const NEXT = 'Next'
+
+export const BACK = 'Back'
+
+export const EXPORT_BOARD_DATA = 'Export board data'
+
+export const STEPS = ['Config', 'Metrics', 'Export']
+
 export const REQUIRE_DATAS = [
   'Velocity',
   'Cycle time',

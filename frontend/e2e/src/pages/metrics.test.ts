@@ -30,7 +30,6 @@ const checkExportDataButton = async (page) => {
 const clickNextButton = async (page) => {
   await page.getByRole('button', { name: 'Next', exact: true }).first().click()
 }
-
 const checkProjectName = async (page) => {
   await expect(page.getByText('Project Name *')).toBeVisible()
   await page.getByLabel('Project Name *').fill('test Project Name')

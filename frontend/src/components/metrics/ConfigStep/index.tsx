@@ -60,7 +60,6 @@ export const ConfigStep = () => {
         }}
         error={isEmptyProjectName}
         helperText={isEmptyProjectName ? 'Project Name is required' : ''}
-        inputProps={{ 'data-testid': 'testProjectName' }}
       />
 
       <h3>Collection Date</h3>
@@ -70,9 +69,9 @@ export const ConfigStep = () => {
       </RadioGroup>
       <DateRangePicker />
       <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
-        <InputLabel id='demo-multiple-checkbox-label'>Require Data</InputLabel>
+        <InputLabel id='require-data-multiple-checkbox-label'>Required Data</InputLabel>
         <Select
-          labelId='demo-multiple-checkbox-label'
+          labelId='require-data-multiple-checkbox-label'
           multiple
           value={requireData}
           onChange={changeRequireData}

@@ -17,3 +17,9 @@ export const REQUIRE_DATAS = [
   'Change failure rate',
   'Mean time to recovery',
 ]
+export const VELOCITY = 'Velocity'
+export const REQUIRE_DATA = 'Required Data'
+export const TEST_PROJECT_NAME = 'test project Name'
+export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
+export const ERROR_DATE = '02/03/'
+export const PAST_DATE = '08/02/2022'

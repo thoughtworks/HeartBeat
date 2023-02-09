@@ -33,8 +33,8 @@ const clickNextButton = async (page) => {
 
 const checkProjectName = async (page) => {
   await expect(page.getByText('Project Name *')).toBeVisible()
-  await page.getByTestId('testProjectName').fill('test Project Name')
-  await page.getByTestId('testProjectName').fill('')
+  await page.getByLabel('Project Name *').fill('test Project Name')
+  await page.getByLabel('Project Name *').fill('')
   await expect(page.getByText('Project Name is required')).toBeTruthy()
 }
 
@@ -91,12 +91,12 @@ const checkDateRangePicker = async (page) => {
 }
 
 const checkRequireData = async (page) => {
-  await page.getByRole('button', { name: 'Require Data' }).click()
+  await page.getByRole('button', { name: 'Required Data' }).click()
   await page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox').check()
   await page.getByRole('option', { name: 'Classification' }).getByRole('checkbox').check()
   await page.locator('.MuiBackdrop-root').click()
   await expect(page.getByText('Velocity,Classification')).toBeTruthy()
-  await page.getByRole('button', { name: 'Require Data' }).click()
+  await page.getByRole('button', { name: 'Required Data' }).click()
   await page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox').uncheck()
   await page.getByRole('option', { name: 'Classification' }).getByRole('checkbox').uncheck()
   await page.locator('.MuiBackdrop-root').click()

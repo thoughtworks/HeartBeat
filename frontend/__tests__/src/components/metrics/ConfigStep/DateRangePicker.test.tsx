@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
+import { ERROR_DATE, ERROR_MESSAGE_COLOR, PAST_DATE } from '../../../fixtures'
 
 const today = new Date()
   .toLocaleDateString('en-US')
@@ -36,51 +37,51 @@ describe('DateRangePicker', () => {
     const { getByRole, getByText } = render(<DateRangePicker />)
     const startDateInput = getByRole('textbox', { name: 'From' }) as HTMLInputElement
 
-    fireEvent.change(startDateInput, { target: { value: '02/03/' } })
+    fireEvent.change(startDateInput, { target: { value: ERROR_DATE } })
 
-    expect(startDateInput.value).toEqual('02/03/')
-    expect(getByText('From')).toHaveStyle(`color: #d32f2f`)
+    expect(startDateInput.value).toEqual(ERROR_DATE)
+    expect(getByText('From')).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show error when input a invalid end date given init end date is null ', () => {
     const { getByRole, getByText } = render(<DateRangePicker />)
     const endDateInput = getByRole('textbox', { name: 'To' }) as HTMLInputElement
 
-    fireEvent.change(endDateInput, { target: { value: '03/02/' } })
+    fireEvent.change(endDateInput, { target: { value: ERROR_DATE } })
 
-    expect(endDateInput.value).toEqual('03/02/')
-    expect(getByText('To')).toHaveStyle(`color: #d32f2f`)
+    expect(endDateInput.value).toEqual(ERROR_DATE)
+    expect(getByText('To')).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show error when input a null start date given init start date is valid ', () => {
     const { getByRole, getByText } = render(<DateRangePicker />)
     const startDateInput = getByRole('textbox', { name: 'From' }) as HTMLInputElement
-    fireEvent.change(startDateInput, { target: { value: '03/02/2022' } })
+    fireEvent.change(startDateInput, { target: { value: today } })
 
     fireEvent.change(startDateInput, { target: { value: null } })
 
-    expect(getByText('From')).toHaveStyle(`color: #d32f2f`)
+    expect(getByText('From')).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show error when input a null end date given init end date is valid ', () => {
     const { getByRole, getByText } = render(<DateRangePicker />)
     const endDateInput = getByRole('textbox', { name: 'To' }) as HTMLInputElement
-    fireEvent.change(endDateInput, { target: { value: '03/02/2022' } })
+    fireEvent.change(endDateInput, { target: { value: today } })
 
     fireEvent.change(endDateInput, { target: { value: null } })
 
-    expect(getByText('To')).toHaveStyle(`color: #d32f2f`)
+    expect(getByText('To')).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should clear end date when start date is after end date given valid end date', () => {
     const { getByRole, getByText } = render(<DateRangePicker />)
     const startDateInput = getByRole('textbox', { name: 'From' }) as HTMLInputElement
     const endDateInput = getByRole('textbox', { name: 'To' }) as HTMLInputElement
-    fireEvent.change(endDateInput, { target: { value: '03/02/2022' } })
+    fireEvent.change(endDateInput, { target: { value: PAST_DATE } })
 
-    fireEvent.change(startDateInput, { target: { value: '08/02/2022' } })
+    fireEvent.change(startDateInput, { target: { value: today } })
 
-    expect(endDateInput.value).toEqual('03/02/2022')
-    expect(getByText('To')).toHaveStyle(`color: #d32f2f`)
+    expect(endDateInput.value).toEqual(PAST_DATE)
+    expect(getByText('To')).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 })

@@ -1,11 +1,15 @@
 import { fireEvent, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRE_DATAS } from '../../../fixtures'
+import {
+  CHINA_CALENDAR,
+  REGULAR_CALENDAR,
+  REQUIRE_DATA,
+  REQUIRE_DATAS,
+  TEST_PROJECT_NAME,
+  VELOCITY,
+} from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { store } from '@src/store/store'
-
-const VELOCITY = 'Velocity'
-const REQUIRE_DATA = 'Require Data'
 
 describe('ConfigStep', () => {
   const setup = () =>
@@ -28,20 +32,20 @@ describe('ConfigStep', () => {
 
     expect(input).toBeInTheDocument()
 
-    fireEvent.change(input, { target: { value: 'test project Name' } })
+    fireEvent.change(input, { target: { value: TEST_PROJECT_NAME } })
 
-    expect(hasInputValue(input, 'test project Name')).toBe(true)
+    expect(hasInputValue(input, TEST_PROJECT_NAME)).toBe(true)
   })
-  it('should show error message when project name is null', () => {
-    const { getByTestId, getByText } = setup()
-    const input = getByTestId('testProjectName')
+  it('should show error message when project name is Empty', () => {
+    const { getByRole, getByText } = setup()
+    const input = getByRole('textbox', { name: 'Project Name' })
 
-    fireEvent.change(input, { target: { value: 'test project Name' } })
+    fireEvent.change(input, { target: { value: TEST_PROJECT_NAME } })
     fireEvent.change(input, { target: { value: '' } })
 
     expect(getByText('Project Name is required')).toBeInTheDocument()
   })
-  it('should selected by default value when rendering the radioGroup', () => {
+  it('should select Regular calendar by default when rendering the radioGroup', () => {
     const { getByRole } = setup()
     const defaultValue = getByRole('radio', { name: REGULAR_CALENDAR })
     const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR })
@@ -49,7 +53,7 @@ describe('ConfigStep', () => {
     expect(defaultValue).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
   })
-  it('should switch the radio switch when any radioLabel is selected', () => {
+  it('should switch the radio when any radioLabel is selected', () => {
     const { getByRole } = setup()
     const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR })
     const regularCalendar = getByRole('radio', { name: REGULAR_CALENDAR })

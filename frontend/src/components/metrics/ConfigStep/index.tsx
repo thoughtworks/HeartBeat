@@ -16,6 +16,7 @@ import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePic
 import { BackButton, ButtonGroup, ExportButton, NextButton, ProjectNameInput, RequireDataSelections } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
+import { Board } from '@src/components/metrics/ConfigStep/Board'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
@@ -86,6 +87,7 @@ export const ConfigStep = () => {
         </Select>
         {isEmptyRequireData && <FormHelperText>Metrics is required</FormHelperText>}
       </RequireDataSelections>
+      <Board />
       <ButtonGroup>
         <BackButton onClick={handleBack}>Back</BackButton>
         {activeStep === STEPS.length - 1 ? (

@@ -32,3 +32,6 @@ export const BOARD_TYPES = {
   JIRA: 'Jira',
   LINEAR: 'Linear',
 }
+
+export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
+export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/

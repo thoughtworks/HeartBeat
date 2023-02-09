@@ -1,5 +1,5 @@
 import { InputLabel, ListItemText, MenuItem, Select, TextField } from '@mui/material'
-import { BOARD_TYPES } from '@src/constants'
+import { BOARD_FIELDS, BOARD_TYPES, emailRegExp } from '@src/constants'
 import React, { useState } from 'react'
 import { BoardSection, BoardTypeSelections } from '@src/components/metrics/ConfigStep/Board/style'
 
@@ -13,10 +13,8 @@ export const Board = () => {
     token: { value: '', isError: false, helpText: '' },
   })
 
-  const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
-
   const checkFiledValid = (type: string, value: string): boolean =>
-    type === 'email' ? /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(value) : value !== ''
+    type === BOARD_FIELDS[2] ? emailRegExp.test(value) : value !== ''
 
   const onFormUpdate = (key: string, value: string) => {
     const isError = !checkFiledValid(key, value)

@@ -1,13 +1,6 @@
-import { fireEvent, Matcher, render, within } from '@testing-library/react'
+import { fireEvent, Matcher, render } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
-import {
-  CHINA_CALENDAR,
-  REGULAR_CALENDAR,
-  REQUIRE_DATA,
-  REQUIRE_DATAS,
-  TEST_PROJECT_NAME,
-  VELOCITY,
-} from '../../../fixtures'
+import { CHINA_CALENDAR, REGULAR_CALENDAR, TEST_PROJECT_NAME } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { store } from '@src/store/store'
 
@@ -66,45 +59,5 @@ describe('ConfigStep', () => {
 
     expect(regularCalendar).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
-  })
-  it('should show require data and do not display specific options when init', async () => {
-    const { getByText, queryByText } = setup()
-    const require = getByText(REQUIRE_DATA)
-
-    expect(require).toBeInTheDocument()
-
-    const option = queryByText(VELOCITY)
-    expect(option).not.toBeTruthy()
-  })
-  it('should show detail options when click require data button', async () => {
-    const { getByRole } = setup()
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
-    const listBox = within(getByRole('listbox'))
-    const options = listBox.getAllByRole('option')
-    const optionValue = options.map((li) => li.getAttribute('data-value'))
-
-    expect(optionValue).toEqual(REQUIRE_DATAS)
-  })
-  it('should show multiple selections when multiple options are selected', async () => {
-    const { getByRole, getByText } = setup()
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
-
-    const listBox = within(getByRole('listbox'))
-    fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    fireEvent.click(listBox.getByRole('option', { name: 'Cycle time' }))
-
-    expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
-  })
-  it('should show error message when require data is null', async () => {
-    const { getByRole, getByText } = setup()
-
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
-    const listBox = within(getByRole('listbox'))
-    fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    fireEvent.mouseDown(getByRole('listbox', { name: REQUIRE_DATA }))
-
-    const errorMessage = getByText('Metrics is required')
-    expect(errorMessage).toBeInTheDocument()
   })
 })

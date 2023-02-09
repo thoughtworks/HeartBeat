@@ -3,7 +3,7 @@ import MetricsStepper from '@src/components/metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { stepperSlice } from '@src/features/stepper/StepperSlice'
-import { NEXT, BACK, EXPORT_BOARD_DATA, STEPS } from '../../../fixtures'
+import { NEXT, BACK, STEPS } from '../../../fixtures'
 
 describe('MetricsStepper', () => {
   const setupStepperStore = () => {
@@ -50,7 +50,6 @@ describe('MetricsStepper', () => {
     fireEvent.click(getByText(NEXT))
 
     expect(getByText('Project Name')).toBeInTheDocument()
-
   })
 
   it('should show metrics config step when click back button given metrics step', async () => {

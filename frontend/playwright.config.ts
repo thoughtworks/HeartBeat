@@ -41,6 +41,9 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     baseURL: process.env.APP_ORIGIN || 'http://localhost:4321',
+    launchOptions: {
+      slowMo: 300,
+    },
   },
 
   /* Configure projects for major browsers */

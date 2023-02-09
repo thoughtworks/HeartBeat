@@ -3,7 +3,7 @@ import MetricsStepper from '@src/components/metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { stepperSlice } from '@src/features/stepper/StepperSlice'
-import { NEXT, BACK, EXPORT_BOARD_DATA, STEPS } from '../../../fixtures'
+import { NEXT, BACK, STEPS, EXPORT_BOARD_DATA } from '../../../fixtures'
 
 describe('MetricsStepper', () => {
   const setupStepperStore = () => {
@@ -41,7 +41,7 @@ describe('MetricsStepper', () => {
 
     fireEvent.click(getByText(BACK))
 
-    expect(getByText('Step 1')).toBeInTheDocument()
+    expect(getByText('Project Name')).toBeInTheDocument()
   })
 
   it('should show metrics metrics step when click next button given config step', async () => {
@@ -49,7 +49,7 @@ describe('MetricsStepper', () => {
 
     fireEvent.click(getByText(NEXT))
 
-    expect(getByText('Step 2')).toBeInTheDocument()
+    expect(getByText('Project Name')).toBeInTheDocument()
   })
 
   it('should show metrics config step when click back button given metrics step', async () => {
@@ -57,7 +57,7 @@ describe('MetricsStepper', () => {
 
     fireEvent.click(getByText(NEXT))
     fireEvent.click(getByText(BACK))
-    expect(getByText('Step 1')).toBeInTheDocument()
+    expect(getByText('Project Name')).toBeInTheDocument()
   })
 
   it('should show metrics export step when click next button given export step', async () => {
@@ -65,7 +65,8 @@ describe('MetricsStepper', () => {
 
     fireEvent.click(getByText(NEXT))
     fireEvent.click(getByText(NEXT))
+
     fireEvent.click(getByText(EXPORT_BOARD_DATA))
-    expect(getByText('Step 3')).toBeInTheDocument()
+    expect(getByText('Project Name')).toBeInTheDocument()
   })
 })

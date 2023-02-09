@@ -4,6 +4,10 @@ export const PROJECT_DESCRIPTION =
 
 export const ZERO = 0
 
+export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
+
+export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
+
 export const NEXT = 'Next'
 
 export const BACK = 'Back'
@@ -11,3 +15,19 @@ export const BACK = 'Back'
 export const EXPORT_BOARD_DATA = 'Export board data'
 
 export const STEPS = ['Config', 'Metrics', 'Export']
+
+export const REQUIRE_DATAS = [
+  'Velocity',
+  'Cycle time',
+  'Classification',
+  'Lead time for changes',
+  'Deployment frequency',
+  'Change failure rate',
+  'Mean time to recovery',
+]
+export const VELOCITY = 'Velocity'
+export const REQUIRE_DATA = 'Required Data'
+export const TEST_PROJECT_NAME = 'test project Name'
+export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
+export const ERROR_DATE = '02/03/'
+export const PAST_DATE = '08/02/2022'

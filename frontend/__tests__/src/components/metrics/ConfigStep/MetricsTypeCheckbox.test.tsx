@@ -3,7 +3,7 @@ import { fireEvent, render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
 
 describe('MetricsTypeCheckbox', () => {
-  it('should show require data and do not display specific options when init', async () => {
+  it('should show require data and do not display specific options when init', () => {
     const { getByText, queryByText } = render(<MetricsTypeCheckbox />)
     const require = getByText(REQUIRE_DATA)
 
@@ -12,7 +12,7 @@ describe('MetricsTypeCheckbox', () => {
     const option = queryByText(VELOCITY)
     expect(option).not.toBeTruthy()
   })
-  it('should show detail options when click require data button', async () => {
+  it('should show detail options when click require data button', () => {
     const { getByRole } = render(<MetricsTypeCheckbox />)
     fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
     const listBox = within(getByRole('listbox'))
@@ -21,7 +21,7 @@ describe('MetricsTypeCheckbox', () => {
 
     expect(optionValue).toEqual(REQUIRE_DATAS)
   })
-  it('should show multiple selections when multiple options are selected', async () => {
+  it('should show multiple selections when multiple options are selected', () => {
     const { getByRole, getByText } = render(<MetricsTypeCheckbox />)
     fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
 
@@ -31,7 +31,7 @@ describe('MetricsTypeCheckbox', () => {
 
     expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
   })
-  it('should show error message when require data is null', async () => {
+  it('should show error message when require data is null', () => {
     const { getByRole, getByText } = render(<MetricsTypeCheckbox />)
 
     fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))

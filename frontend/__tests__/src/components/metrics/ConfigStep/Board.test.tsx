@@ -1,4 +1,4 @@
-import { fireEvent, getByLabelText, render, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, waitFor, within } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { BOARD_FIELDS } from '@src/constants'

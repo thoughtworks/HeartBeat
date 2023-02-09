@@ -102,12 +102,23 @@ const checkRequireData = async (page) => {
   await expect(page.getByText('Metrics is required')).toBeTruthy()
 }
 
+const checkBoard = async (page) => {
+  await expect(page.locator('heading=board')).toBeTruthy()
+  await expect(page.locator('text=Jira')).toBeTruthy()
+  await page.getByRole('button', { name: 'board' }).click()
+  await page.getByText('Classic Jira').click()
+  await expect(page.locator('text=Classic Jira')).toBeTruthy()
+}
+
 const checkConfigStepPage = async (page) => {
   await checkSteps(page)
   await checkProjectName(page)
   await checkCollectionData(page)
   await checkDateRangePicker(page)
   await checkRequireData(page)
+
+  await checkBoard(page)
+
   await checkNextButton(page)
   await checkBackButton(page)
 }

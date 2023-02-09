@@ -1,10 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-
 const steps = ['Config', 'Metrics', 'Export']
 export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
 export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
-
 
 const clickCreateNewProjectButton = async (page) => {
   await page.goto('/index.html')
@@ -30,7 +28,6 @@ const checkExportDataButton = async (page) => {
 }
 
 const clickNextButton = async (page) => {
-
   await page.getByRole('button', { name: 'Next', exact: true }).first().click()
 }
 
@@ -127,7 +124,6 @@ const checkExportStepPage = async (page) => {
   await checkProjectName(page)
   await checkExportDataButton(page)
   await checkBackButton(page)
-
 }
 
 test('should render metrics page', async ({ page }) => {

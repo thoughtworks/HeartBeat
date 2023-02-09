@@ -17,5 +17,5 @@ test('should create a new project', async ({ page }) => {
   await startApp(page)
   await page.getByRole('button', { name: 'Create a new project' }).click()
 
-  await expect(page).toHaveURL(/.metrics/)
+  await expect(page).toHaveURL(/metrics/)
 })

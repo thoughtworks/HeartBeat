@@ -41,7 +41,7 @@ tasks.named('test') {
 }
 
 checkstyle {
-  toolVersion = "10.6.0"
+  toolVersion = "10.7.0"
   configFile = file("src/main/resources/checkstyle.xml")
 }
 

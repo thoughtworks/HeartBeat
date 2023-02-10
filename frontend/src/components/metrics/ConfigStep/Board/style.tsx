@@ -3,7 +3,7 @@ import { Button, FormControl, TextField } from '@mui/material'
 
 export const BoardSection = styled('div')({
   boxShadow: '0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);',
-  borderRadius: '1rem',
+  borderRadius: '0.25rem',
   width: '85%',
   margin: '1rem 0',
   padding: '1rem',
@@ -38,5 +38,4 @@ export const BoardButtonGroup = styled('div')({
 
 export const VerifyButton = styled(Button)({
   width: '3rem',
-  color: '#3f51b5',
 })

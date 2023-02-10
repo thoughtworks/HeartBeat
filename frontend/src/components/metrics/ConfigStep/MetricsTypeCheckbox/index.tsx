@@ -2,14 +2,18 @@ import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, S
 import { REQUIRE_DATA } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox/style'
-
-export const MetricsTypeCheckbox = () => {
+interface MetricsTypeCheckboxProps {
+  onHandleRequireData: Function
+}
+export const MetricsTypeCheckbox: React.FC<MetricsTypeCheckboxProps> = (props) => {
+  const { onHandleRequireData } = props
   const [requireData, setRequireData] = useState<string[]>([])
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const changeRequireData = (event: SelectChangeEvent<typeof requireData>) => {
     const {
       target: { value },
     } = event
+    onHandleRequireData(value)
     setRequireData(value as string[])
     if (value.length === 0) {
       setIsEmptyProjectData(true)

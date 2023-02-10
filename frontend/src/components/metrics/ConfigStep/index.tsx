@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
+import { REQUIRE_DATAS } from '../../../../__tests__/src/fixtures'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
@@ -14,6 +15,7 @@ export const ConfigStep = () => {
 
   const [projectName, setProjectName] = useState<string>('')
   const [isEmptyProjectName, setIsEmptyProjectName] = useState<boolean>(false)
+  const [isShowBoard, setIsShowBoard] = useState(false)
 
   const handleNext = () => {
     dispatch(nextStep())
@@ -21,6 +23,14 @@ export const ConfigStep = () => {
 
   const handleBack = () => {
     dispatch(backStep())
+  }
+
+  const handleRequireData = (requireData: string[]) => {
+    setIsShowBoard(
+      requireData.includes(REQUIRE_DATAS[0]) ||
+        requireData.includes(REQUIRE_DATAS[1]) ||
+        requireData.includes(REQUIRE_DATAS[2])
+    )
   }
 
   return (
@@ -43,8 +53,8 @@ export const ConfigStep = () => {
         <FormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
       </RadioGroup>
       <DateRangePicker />
-      <MetricsTypeCheckbox />
-      <Board />
+      <MetricsTypeCheckbox onHandleRequireData={(value: string[]) => handleRequireData(value)} />
+      {isShowBoard && <Board />}
       <ButtonGroup>
         <BackButton onClick={handleBack}>Back</BackButton>
         {activeStep === STEPS.length - 1 ? (

@@ -2,7 +2,7 @@ import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import React, { useState } from 'react'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS } from '@src/constants'
 import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
-import { BackButton, ButtonGroup, ExportButton, NextButton, ProjectNameInput } from './style'
+import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
@@ -24,7 +24,7 @@ export const ConfigStep = () => {
   }
 
   return (
-    <>
+    <ConfigStepWrapper>
       <ProjectNameInput
         required
         label='Project Name'
@@ -53,6 +53,6 @@ export const ConfigStep = () => {
           <NextButton onClick={handleNext}>Next</NextButton>
         )}
       </ButtonGroup>
-    </>
+    </ConfigStepWrapper>
   )
 }

@@ -13,6 +13,10 @@ const basicButtonStyle = {
   textTransform: theme.typography.button.textTransform,
 }
 
+export const ConfigStepWrapper = styled('div')({
+  width: '100%',
+})
+
 export const BackButton = styled(Button)({
   ...basicButtonStyle,
   width: '3rem',
@@ -44,12 +48,12 @@ export const ExportButton = styled(Button)({
 })
 
 export const ProjectNameInput = styled(TextField)({
-  minWidth: '8rem',
-  maxWidth: '20rem',
+  minWidth: '30rem',
+  maxWidth: '40rem',
 })
 
 export const ButtonGroup = styled('div')({
-  padding: '1rem',
   display: 'flex',
   justifyContent: 'flex-end',
+  padding: '1rem',
 })

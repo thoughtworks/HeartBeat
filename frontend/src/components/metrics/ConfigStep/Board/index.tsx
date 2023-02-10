@@ -1,7 +1,13 @@
-import { InputLabel, ListItemText, MenuItem, Select, TextField } from '@mui/material'
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO } from '@src/constants'
 import React, { useState } from 'react'
-import { BoardSection, BoardTypeSelections } from '@src/components/metrics/ConfigStep/Board/style'
+import {
+  BoardForm,
+  BoardSection,
+  BoardTextField,
+  BoardTitle,
+  BoardTypeSelections,
+} from '@src/components/metrics/ConfigStep/Board/style'
 
 export const Board = () => {
   const [boardField, seBoardField] = useState({
@@ -31,8 +37,8 @@ export const Board = () => {
 
   return (
     <BoardSection>
-      <h2>board</h2>
-      <form>
+      <BoardTitle>board</BoardTitle>
+      <BoardForm>
         {BOARD_FIELDS.map((filedTitle, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={fields[index].value}>
@@ -52,7 +58,7 @@ export const Board = () => {
               </Select>
             </BoardTypeSelections>
           ) : (
-            <TextField
+            <BoardTextField
               key={index}
               required
               label={filedTitle}
@@ -66,7 +72,7 @@ export const Board = () => {
             />
           )
         )}
-      </form>
+      </BoardForm>
     </BoardSection>
   )
 }

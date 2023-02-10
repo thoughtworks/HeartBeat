@@ -9,6 +9,7 @@ export const MetricsStepLabel = styled(StepLabel)({
 export const MetricsStepperContent = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  margin: '0 280px',
+  width: '60%',
+  margin: '0 auto',
   textAlign: 'left',
 })

@@ -40,6 +40,9 @@ export const ConfigStep = () => {
         label='Project Name'
         variant='standard'
         value={projectName}
+        onFocus={(e) => {
+          setIsEmptyProjectName(e.target.value === '')
+        }}
         onChange={(e) => {
           setProjectName(e.target.value)
           setIsEmptyProjectName(e.target.value === '')

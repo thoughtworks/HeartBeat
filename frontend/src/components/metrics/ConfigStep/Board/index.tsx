@@ -2,11 +2,13 @@ import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO } from '@src/constants'
 import React, { useState } from 'react'
 import {
+  BoardButtonGroup,
   BoardForm,
   BoardSection,
   BoardTextField,
   BoardTitle,
   BoardTypeSelections,
+  VerifyButton,
 } from '@src/components/metrics/ConfigStep/Board/style'
 
 export const Board = () => {
@@ -72,6 +74,9 @@ export const Board = () => {
             />
           )
         )}
+        <BoardButtonGroup>
+          <VerifyButton type='submit'>Verify</VerifyButton>
+        </BoardButtonGroup>
       </BoardForm>
     </BoardSection>
   )

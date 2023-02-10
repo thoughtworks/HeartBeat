@@ -1,30 +1,42 @@
 import { styled } from '@mui/material/styles'
-import { FormControl, TextField } from '@mui/material'
+import { Button, FormControl, TextField } from '@mui/material'
 
 export const BoardSection = styled('div')({
   boxShadow: '0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);',
-  borderRadius: '4px',
-  margin: '16px 0',
-  padding: '16px',
-  fontSize: '14px',
-  lineHeight: '20px',
+  borderRadius: '1rem',
+  width: '85%',
+  margin: '1rem 0',
+  padding: '1rem',
+  fontSize: '1rem',
+  lineHeight: '2rem',
 })
 
 export const BoardTitle = styled('h2')({
-  margin: '0px 12px',
-  fontSize: '20px',
+  margin: '0 1rem',
+  fontSize: '1.5rem',
 })
 export const BoardForm = styled('form')({
-  margin: '16px',
+  margin: '1rem',
 })
 
 export const BoardTypeSelections = styled(FormControl)({
   width: '20rem',
-  margin: '0px 60px 12px 0px',
+  margin: '0 4rem 1rem 0',
 })
 
 export const BoardTextField = styled(TextField)({
   width: '20rem',
-  margin: '0px 60px 12px 0px',
-  padding: '9px 0px',
+  margin: '0 4rem 1rem 0',
+  padding: '0.5rem 0',
+})
+
+export const BoardButtonGroup = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  padding: '1rem',
+})
+
+export const VerifyButton = styled(Button)({
+  width: '3rem',
+  color: '#3f51b5',
 })

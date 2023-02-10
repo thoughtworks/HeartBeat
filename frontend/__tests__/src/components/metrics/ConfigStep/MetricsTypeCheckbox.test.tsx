@@ -4,7 +4,7 @@ import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsT
 
 describe('MetricsTypeCheckbox', () => {
   it('should show require data and do not display specific options when init', () => {
-    const { getByText, queryByText } = render(<MetricsTypeCheckbox />)
+    const { getByText, queryByText } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
     const require = getByText(REQUIRE_DATA)
 
     expect(require).toBeInTheDocument()
@@ -13,7 +13,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(option).not.toBeTruthy()
   })
   it('should show detail options when click require data button', () => {
-    const { getByRole } = render(<MetricsTypeCheckbox />)
+    const { getByRole } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
     fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
@@ -22,7 +22,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(optionValue).toEqual(REQUIRE_DATAS)
   })
   it('should show multiple selections when multiple options are selected', () => {
-    const { getByRole, getByText } = render(<MetricsTypeCheckbox />)
+    const { getByRole, getByText } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
     fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
 
     const listBox = within(getByRole('listbox'))
@@ -32,7 +32,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
   })
   it('should show error message when require data is null', () => {
-    const { getByRole, getByText } = render(<MetricsTypeCheckbox />)
+    const { getByRole, getByText } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
 
     fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
     const listBox = within(getByRole('listbox'))
@@ -42,5 +42,15 @@ describe('MetricsTypeCheckbox', () => {
 
     const errorMessage = getByText('Metrics is required')
     expect(errorMessage).toBeInTheDocument()
+  })
+
+  it('should call handleRequireDate function when click MetricsTypeCheckbox selection, ', async () => {
+    const handleRequireDate = jest.fn()
+    const { getByRole } = render(<MetricsTypeCheckbox onHandleRequireData={handleRequireDate} />)
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
+    const listBox = within(getByRole('listbox'))
+    fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
+
+    expect(handleRequireDate).toBeCalled()
   })
 })

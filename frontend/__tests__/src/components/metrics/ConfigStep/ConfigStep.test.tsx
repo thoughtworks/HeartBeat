@@ -1,6 +1,6 @@
-import { fireEvent, Matcher, render } from '@testing-library/react'
+import { fireEvent, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, TEST_PROJECT_NAME } from '../../../fixtures'
+import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRE_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { store } from '@src/store/store'
 
@@ -59,5 +59,32 @@ describe('ConfigStep', () => {
 
     expect(regularCalendar).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
+  })
+
+  it('should not show board component when init ConfigStep component ', () => {
+    const { queryByText } = setup()
+
+    expect(queryByText('board')).toBeNull()
+  })
+
+  it('should show board component when MetricsTypeCheckbox select Velocity,Cycle time', () => {
+    const { getByRole } = setup()
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: 'Cycle time' }))
+
+    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
+  })
+
+  it('should show board component when MetricsTypeCheckbox select  Classification, ', () => {
+    const { getByRole } = setup()
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: 'Classification' }))
+
+    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
   })
 })

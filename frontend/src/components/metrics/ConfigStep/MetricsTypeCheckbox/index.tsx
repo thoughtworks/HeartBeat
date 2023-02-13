@@ -3,8 +3,9 @@ import { REQUIRE_DATA } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox/style'
 interface MetricsTypeCheckboxProps {
-  onHandleRequireData: Function
+  onHandleRequireData: (value: string[]) => void
 }
+
 export const MetricsTypeCheckbox: React.FC<MetricsTypeCheckboxProps> = (props) => {
   const { onHandleRequireData } = props
   const [requireData, setRequireData] = useState<string[]>([])
@@ -13,7 +14,7 @@ export const MetricsTypeCheckbox: React.FC<MetricsTypeCheckboxProps> = (props) =
     const {
       target: { value },
     } = event
-    onHandleRequireData(value)
+    onHandleRequireData([...value])
     setRequireData(value as string[])
     if (value.length === 0) {
       setIsEmptyProjectData(true)

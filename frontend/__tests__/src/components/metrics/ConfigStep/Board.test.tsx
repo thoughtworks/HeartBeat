@@ -1,7 +1,25 @@
-import { fireEvent, render, within } from '@testing-library/react'
+import { fireEvent, getByRole, render, within } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { BOARD_FIELDS } from '@src/constants'
+
+const fillBoardFieldsInformation = (getByRole: Function) => {
+  const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
+  const mockInfo = ['2', 'mockEmail@qq.com ', 'mockKey', '1', 'mockToken']
+  const fieldInputs = fields.map(
+    (label) =>
+      getByRole('textbox', {
+        name: label,
+      }) as HTMLInputElement
+  )
+  fieldInputs.map((input, index) => {
+    fireEvent.change(input, { target: { value: mockInfo[index] } })
+  })
+  fieldInputs.map((input, index) => {
+    expect(input.value).toEqual(mockInfo[index])
+  })
+  return fieldInputs
+}
 
 describe('Board', () => {
   it('should show board title and fields when render board component ', () => {
@@ -73,45 +91,21 @@ describe('Board', () => {
   })
   it('should clear all fields information when click reset button', () => {
     const { getByRole, getByText } = render(<Board />)
-    const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
-    const mockInfo = ['2', 'mockEmail@qq.com ', 'mockKey', '1', 'mockToken']
-    const inputs = fields.map(
-      (label) =>
-        getByRole('textbox', {
-          name: label,
-        }) as HTMLInputElement
-    )
-    inputs.map((input, index) => {
-      fireEvent.change(input, { target: { value: mockInfo[index] } })
-    })
-
-    inputs.map((input, index) => {
-      expect(input.value).toEqual(mockInfo[index])
-    })
+    const fieldInputs = fillBoardFieldsInformation(getByRole)
 
     fireEvent.click(getByText('Verify'))
 
     const resetButton = getByRole('button', { name: 'Reset' })
     fireEvent.click(resetButton)
 
-    inputs.map((input) => {
+    fieldInputs.map((input) => {
       expect(input.value).toEqual('')
     })
     expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
   })
   it('should show reset button when verify succeed ', async () => {
-    const { getByRole, getByText } = render(<Board />)
-    const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
-    const mockInfo = ['2', 'mockEmail@qq.com ', 'mockKey', '1', 'mockToken']
-    const inputs = fields.map(
-      (label) =>
-        getByRole('textbox', {
-          name: label,
-        }) as HTMLInputElement
-    )
-    inputs.map((input, index) => {
-      fireEvent.change(input, { target: { value: mockInfo[index] } })
-    })
+    const { getByText, getByRole } = render(<Board />)
+    fillBoardFieldsInformation(getByRole)
 
     fireEvent.click(getByText('Verify'))
 

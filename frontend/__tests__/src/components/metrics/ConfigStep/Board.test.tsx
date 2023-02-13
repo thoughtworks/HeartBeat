@@ -81,8 +81,6 @@ describe('Board', () => {
           name: label,
         }) as HTMLInputElement
     )
-    const resetButton = getByRole('button', { name: 'Reset' })
-
     inputs.map((input, index) => {
       fireEvent.change(input, { target: { value: mockInfo[index] } })
     })
@@ -91,11 +89,32 @@ describe('Board', () => {
       expect(input.value).toEqual(mockInfo[index])
     })
 
+    fireEvent.click(getByText('Verify'))
+
+    const resetButton = getByRole('button', { name: 'Reset' })
     fireEvent.click(resetButton)
 
     inputs.map((input) => {
       expect(input.value).toEqual('')
     })
     expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
+  })
+  it('should show reset button when verify succeed ', async () => {
+    const { getByRole, getByText } = render(<Board />)
+    const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
+    const mockInfo = ['2', 'mockEmail@qq.com ', 'mockKey', '1', 'mockToken']
+    const inputs = fields.map(
+      (label) =>
+        getByRole('textbox', {
+          name: label,
+        }) as HTMLInputElement
+    )
+    inputs.map((input, index) => {
+      fireEvent.change(input, { target: { value: mockInfo[index] } })
+    })
+
+    fireEvent.click(getByText('Verify'))
+
+    expect(getByText('Reset')).toBeVisible()
   })
 })

@@ -60,4 +60,23 @@ describe('Board', () => {
       expect(getByText('email is required')).toHaveStyle(ERROR_MESSAGE_COLOR)
     })
   })
+  it('should clear other fields information when change board field selection', async () => {
+    const { getByRole, getByText } = render(<Board />)
+    const boardIdInput = getByRole('textbox', {
+      name: 'boardId',
+    }) as HTMLInputElement
+    const emailInput = getByRole('textbox', {
+      name: 'email',
+    }) as HTMLInputElement
+
+    fireEvent.change(boardIdInput, { target: { value: 2 } })
+    fireEvent.change(emailInput, { target: { value: 'mockEmail@qq.com' } })
+    fireEvent.mouseDown(getByRole('button', { name: 'board' }))
+    fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
+
+    await waitFor(() => {
+      expect(emailInput.value).toEqual('')
+      expect(boardIdInput.value).toEqual('')
+    })
+  })
 })

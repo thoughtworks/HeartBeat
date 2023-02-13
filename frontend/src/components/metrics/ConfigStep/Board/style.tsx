@@ -34,8 +34,17 @@ export const BoardButtonGroup = styled('div')({
   display: 'flex',
   justifyContent: 'flex-end',
   padding: '1rem',
+  gap: '1rem',
 })
 
 export const VerifyButton = styled(Button)({
   width: '3rem',
+  fontSize: '0.8rem',
+  fontWeight: '550',
+})
+export const ResetButton = styled(Button)({
+  width: '3rem',
+  fontSize: '0.8rem',
+  fontWeight: '550',
+  color: '#f44336',
 })

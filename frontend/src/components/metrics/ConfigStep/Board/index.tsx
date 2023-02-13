@@ -8,6 +8,7 @@ import {
   BoardTextField,
   BoardTitle,
   BoardTypeSelections,
+  ResetButton,
   VerifyButton,
 } from '@src/components/metrics/ConfigStep/Board/style'
 
@@ -80,6 +81,7 @@ export const Board = () => {
         )}
         <BoardButtonGroup>
           <VerifyButton type='submit'>Verify</VerifyButton>
+          <ResetButton onClick={() => setBoardField(INIT_BOARD_BOARD_STATE)}>Reset</ResetButton>
         </BoardButtonGroup>
       </BoardForm>
     </BoardSection>

@@ -23,7 +23,6 @@ export const DateRangePicker = () => {
   }
 
   const checkDateRangeValid = (startDate: Dayjs | null, endDate: Dayjs | null) => {
-    setDateRange({ startDate, endDate })
     if (startDate && endDate && startDate.isAfter(endDate)) {
       setDateRangeValueError([dateRangeValueError[0], true])
     }
@@ -36,10 +35,10 @@ export const DateRangePicker = () => {
           PaperProps={datePickerPropsStyles}
           label='From'
           value={dateRange.startDate}
-          disablePast={true}
           onChange={(newValue) => {
             checkDateformat(newValue, DATE_RANGE.START_DATE)
-            checkDateRangeValid(newValue, dateRange.endDate)
+            checkDateRangeValid(newValue, newValue && newValue.add(14, 'day'))
+            setDateRange({ startDate: newValue, endDate: newValue && newValue.add(14, 'day') })
           }}
           renderInput={(params) => {
             if (params.inputProps) params.inputProps.placeholder = SELECT_OR_WRITE_DATE
@@ -52,11 +51,11 @@ export const DateRangePicker = () => {
           PaperProps={datePickerPropsStyles}
           label='To'
           value={dateRange.endDate}
-          disablePast={true}
           minDate={dateRange.startDate}
           onChange={(newValue) => {
             checkDateformat(newValue, DATE_RANGE.END_DATE)
             checkDateRangeValid(dateRange.startDate, newValue)
+            setDateRange({ startDate: dateRange.startDate, endDate: newValue })
           }}
           renderInput={(params) => {
             if (params.inputProps) params.inputProps.placeholder = SELECT_OR_WRITE_DATE

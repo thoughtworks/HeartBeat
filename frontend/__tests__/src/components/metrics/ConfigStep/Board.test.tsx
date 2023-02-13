@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, within } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { BOARD_FIELDS } from '@src/constants'
@@ -30,24 +30,20 @@ describe('Board', () => {
 
     expect(optionValue).toEqual(Object.values(BOARD_TYPES))
   })
-  it('should show different board type when select different board field value ', async () => {
+  it('should show different board type when select different board field value ', () => {
     const { getByRole, getByText } = render(<Board />)
 
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
 
-    await waitFor(() => {
-      expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
-    })
+    expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
 
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.LINEAR))
 
-    await waitFor(() => {
-      expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
-    })
+    expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
   })
-  it('should show error message when input a wrong type email ', async () => {
+  it('should show error message when input a wrong type email ', () => {
     const { getByRole, getByText } = render(<Board />)
     const EMAil_ERROR_MESSAGE = 'email is required'
     const emailInput = getByRole('textbox', {
@@ -55,12 +51,10 @@ describe('Board', () => {
     })
 
     fireEvent.change(emailInput, { target: { value: 'wrong type email' } })
-    await waitFor(() => {
-      expect(getByText(EMAil_ERROR_MESSAGE)).toBeVisible()
-      expect(getByText(EMAil_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
-    })
+    expect(getByText(EMAil_ERROR_MESSAGE)).toBeVisible()
+    expect(getByText(EMAil_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
-  it('should clear other fields information when change board field selection', async () => {
+  it('should clear other fields information when change board field selection', () => {
     const { getByRole, getByText } = render(<Board />)
     const boardIdInput = getByRole('textbox', {
       name: 'boardId',
@@ -74,12 +68,10 @@ describe('Board', () => {
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
 
-    await waitFor(() => {
-      expect(emailInput.value).toEqual('')
-      expect(boardIdInput.value).toEqual('')
-    })
+    expect(emailInput.value).toEqual('')
+    expect(boardIdInput.value).toEqual('')
   })
-  it('should clear all fields information when click reset button', async () => {
+  it('should clear all fields information when click reset button', () => {
     const { getByRole, getByText } = render(<Board />)
     const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
     const mockInfo = ['2', 'mockEmail@qq.com ', 'mockKey', '1', 'mockToken']
@@ -95,19 +87,15 @@ describe('Board', () => {
       fireEvent.change(input, { target: { value: mockInfo[index] } })
     })
 
-    await waitFor(() => {
-      inputs.map((input, index) => {
-        expect(input.value).toEqual(mockInfo[index])
-      })
+    inputs.map((input, index) => {
+      expect(input.value).toEqual(mockInfo[index])
     })
 
     fireEvent.click(resetButton)
 
-    await waitFor(() => {
-      inputs.map((input) => {
-        expect(input.value).toEqual('')
-      })
-      expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
+    inputs.map((input) => {
+      expect(input.value).toEqual('')
     })
+    expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
   })
 })

@@ -95,4 +95,15 @@ describe('ConfigStep', () => {
 
     expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
   })
+
+  it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', () => {
+    const { getByRole, queryByText } = setup()
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+
+    expect(queryByText('board')).toBeNull()
+  })
 })

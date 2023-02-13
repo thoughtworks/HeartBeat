@@ -1,6 +1,6 @@
 import { fireEvent, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRE_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
+import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRED_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { store } from '@src/store/store'
 
@@ -78,7 +78,7 @@ describe('ConfigStep', () => {
   it('should show board component when MetricsTypeCheckbox select Velocity,Cycle time', () => {
     const { getByRole } = setup()
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Cycle time' }))
@@ -89,7 +89,7 @@ describe('ConfigStep', () => {
   it('should show board component when MetricsTypeCheckbox select  Classification, ', () => {
     const { getByRole } = setup()
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Classification' }))
 
@@ -99,7 +99,7 @@ describe('ConfigStep', () => {
   it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', () => {
     const { getByRole, queryByText } = setup()
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))

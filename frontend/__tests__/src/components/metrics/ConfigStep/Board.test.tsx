@@ -49,15 +49,15 @@ describe('Board', () => {
   })
   it('should show error message when input a wrong type email ', async () => {
     const { getByRole, getByText } = render(<Board />)
+    const EMAil_ERROR_MESSAGE = 'email is required'
     const emailInput = getByRole('textbox', {
       name: 'email',
     })
 
-    fireEvent.change(emailInput, { target: { value: 'wrong email type' } })
-
+    fireEvent.change(emailInput, { target: { value: 'wrong type email' } })
     await waitFor(() => {
-      expect(getByText('email is required')).toBeVisible()
-      expect(getByText('email is required')).toHaveStyle(ERROR_MESSAGE_COLOR)
+      expect(getByText(EMAil_ERROR_MESSAGE)).toBeVisible()
+      expect(getByText(EMAil_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
     })
   })
   it('should clear other fields information when change board field selection', async () => {

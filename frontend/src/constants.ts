@@ -17,7 +17,7 @@ export enum DATE_RANGE {
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
 
-export const REQUIRE_DATA = [
+export const REQUIRED_DATAS = [
   'Velocity',
   'Cycle time',
   'Classification',

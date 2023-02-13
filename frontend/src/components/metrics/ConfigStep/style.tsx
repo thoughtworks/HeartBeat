@@ -4,7 +4,8 @@ import Button from '@mui/material/Button'
 import { TextField } from '@mui/material'
 
 const basicButtonStyle = {
-  boxShadow: '0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%)',
+  boxShadow:
+    '0 0.2rem 0.1rem -0.1rem rgb(0 0 0 / 20%), 0 0.1rem 0.1rem 0 rgb(0 0 0 / 14%), 0 0.1rem 0.3rem 0 rgb(0 0 0 / 12%)',
   height: '2rem',
   padding: '0 1rem',
   margin: '0 1rem',

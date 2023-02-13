@@ -1,5 +1,5 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { REQUIRE_DATA } from '@src/constants'
+import { REQUIRED_DATAS } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox/style'
 interface MetricsTypeCheckboxProps {
@@ -32,7 +32,7 @@ export const MetricsTypeCheckbox: React.FC<MetricsTypeCheckboxProps> = (props) =
         onChange={changeRequireData}
         renderValue={(selected) => selected.join(',')}
       >
-        {REQUIRE_DATA.map((data) => (
+        {REQUIRED_DATAS.map((data) => (
           <MenuItem key={data} value={data}>
             <Checkbox checked={requireData.indexOf(data) > -1} />
             <ListItemText primary={data} />

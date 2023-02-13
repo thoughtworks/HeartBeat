@@ -1,13 +1,12 @@
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import React, { useState } from 'react'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS } from '@src/constants'
+import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS, REQUIRED_DATAS } from '@src/constants'
 import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
 import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
-import { REQUIRE_DATAS } from '../../../../__tests__/src/fixtures'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
@@ -27,9 +26,9 @@ export const ConfigStep = () => {
 
   const handleRequireData = (requireData: string[]) => {
     setIsShowBoard(
-      requireData.includes(REQUIRE_DATAS[0]) ||
-        requireData.includes(REQUIRE_DATAS[1]) ||
-        requireData.includes(REQUIRE_DATAS[2])
+      requireData.includes(REQUIRED_DATAS[0]) ||
+        requireData.includes(REQUIRED_DATAS[1]) ||
+        requireData.includes(REQUIRED_DATAS[2])
     )
   }
 

@@ -1,5 +1,5 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO } from '@src/constants'
+import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_BOARD_STATE, EMAIL } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
@@ -12,18 +12,11 @@ import {
 } from '@src/components/metrics/ConfigStep/Board/style'
 
 export const Board = () => {
-  const [boardField, setBoardField] = useState({
-    board: { value: BOARD_TYPES.JIRA, isError: false, helpText: '' },
-    boardId: { value: '', isError: false, helpText: '' },
-    email: { value: '', isError: false, helpText: '' },
-    projectKey: { value: '', isError: false, helpText: '' },
-    site: { value: '', isError: false, helpText: '' },
-    token: { value: '', isError: false, helpText: '' },
-  })
+  const [boardField, setBoardField] = useState(INIT_BOARD_BOARD_STATE)
   const fields = Object.values(boardField)
 
   const checkFiledValid = (type: string, value: string): boolean =>
-    type === BOARD_FIELDS[2] ? emailRegExp.test(value) : value !== ''
+    type === EMAIL ? emailRegExp.test(value) : value !== ''
 
   const onFormUpdate = (key: string, value: string) => {
     const isError = !checkFiledValid(key, value)
@@ -40,11 +33,11 @@ export const Board = () => {
   useEffect(() => {
     setBoardField({
       ...boardField,
-      boardId: { value: '', isError: false, helpText: '' },
-      email: { value: '', isError: false, helpText: '' },
-      projectKey: { value: '', isError: false, helpText: '' },
-      site: { value: '', isError: false, helpText: '' },
-      token: { value: '', isError: false, helpText: '' },
+      boardId: INIT_BOARD_BOARD_STATE.boardId,
+      email: INIT_BOARD_BOARD_STATE.email,
+      projectKey: INIT_BOARD_BOARD_STATE.projectKey,
+      site: INIT_BOARD_BOARD_STATE.site,
+      token: INIT_BOARD_BOARD_STATE.token,
     })
   }, [boardField.board])
 

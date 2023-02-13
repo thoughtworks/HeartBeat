@@ -38,6 +38,14 @@ describe('ConfigStep', () => {
 
     expect(getByText('Project Name is required')).toBeInTheDocument()
   })
+  it('should show error message when click project name input with no letter', () => {
+    const { getByRole, getByText } = setup()
+    const input = getByRole('textbox', { name: 'Project Name' })
+
+    fireEvent.focus(input)
+
+    expect(getByText('Project Name is required')).toBeInTheDocument()
+  })
   it('should select Regular calendar by default when rendering the radioGroup', () => {
     const { getByRole } = setup()
     const defaultValue = getByRole('radio', { name: REGULAR_CALENDAR })

@@ -90,7 +90,7 @@ describe('Board', () => {
     expect(boardIdInput.value).toEqual('')
   })
   it('should clear all fields information when click reset button', () => {
-    const { getByRole, getByText } = render(<Board />)
+    const { getByRole, getByText, queryByRole } = render(<Board />)
     const fieldInputs = fillBoardFieldsInformation(getByRole)
 
     fireEvent.click(getByText('Verify'))
@@ -102,6 +102,7 @@ describe('Board', () => {
       expect(input.value).toEqual('')
     })
     expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
+    expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
   })
   it('should show reset button when verify succeed ', async () => {
     const { getByText, getByRole } = render(<Board />)

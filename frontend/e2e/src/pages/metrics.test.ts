@@ -70,10 +70,7 @@ const checkDateRangePicker = async (page) => {
 
   await expect(page.getByLabel('To *')).toBeTruthy()
   await page.getByRole('button', { name: 'Choose date' }).nth(1).click()
-  await page
-    .getByRole('gridcell', { name: `${day}` })
-    .nth(1)
-    .click()
+  await page.getByRole('gridcell', { name: `${day}` }).click()
   await expect(page.getByText(`${today.getMonth() + 1}/${day}/${year}`)).toBeTruthy()
 
   await page.getByLabel('From *').click()

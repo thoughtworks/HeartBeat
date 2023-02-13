@@ -79,4 +79,35 @@ describe('Board', () => {
       expect(boardIdInput.value).toEqual('')
     })
   })
+  it('should clear all fields information when click reset button', async () => {
+    const { getByRole, getByText } = render(<Board />)
+    const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
+    const mockInfo = ['2', 'mockEmail@qq.com ', 'mockKey', '1', 'mockToken']
+    const inputs = fields.map(
+      (label) =>
+        getByRole('textbox', {
+          name: label,
+        }) as HTMLInputElement
+    )
+    const resetButton = getByRole('button', { name: 'Reset' })
+
+    inputs.map((input, index) => {
+      fireEvent.change(input, { target: { value: mockInfo[index] } })
+    })
+
+    await waitFor(() => {
+      inputs.map((input, index) => {
+        expect(input.value).toEqual(mockInfo[index])
+      })
+    })
+
+    fireEvent.click(resetButton)
+
+    await waitFor(() => {
+      inputs.map((input) => {
+        expect(input.value).toEqual('')
+      })
+      expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
+    })
+  })
 })

@@ -218,7 +218,7 @@ jobs:
           pnpm install
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run Playwright tests --trace on
+      - name: Run Playwright
         env:
           APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP }}:${{ secrets.APP_PORT }}
         run: npx playwright test

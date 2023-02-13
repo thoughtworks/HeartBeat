@@ -14,6 +14,7 @@ import {
 
 export const Board = () => {
   const [boardField, setBoardField] = useState(INIT_BOARD_BOARD_STATE)
+  const [isShowResetButton, setIsShowResetButton] = useState(false)
   const fields = Object.values(boardField)
 
   const checkFiledValid = (type: string, value: string): boolean =>
@@ -29,6 +30,10 @@ export const Board = () => {
         helpText: isError ? ` ${key} is required` : '',
       },
     })
+  }
+
+  const handleSubmitBoardFields = () => {
+    setIsShowResetButton(true)
   }
 
   useEffect(() => {
@@ -80,8 +85,8 @@ export const Board = () => {
           )
         )}
         <BoardButtonGroup>
-          <VerifyButton type='submit'>Verify</VerifyButton>
-          <ResetButton onClick={() => setBoardField(INIT_BOARD_BOARD_STATE)}>Reset</ResetButton>
+          <VerifyButton onClick={handleSubmitBoardFields}>Verify</VerifyButton>
+          {isShowResetButton && <ResetButton onClick={() => setBoardField(INIT_BOARD_BOARD_STATE)}>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>
     </BoardSection>

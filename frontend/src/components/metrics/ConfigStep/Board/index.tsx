@@ -1,6 +1,6 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO } from '@src/constants'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -12,7 +12,7 @@ import {
 } from '@src/components/metrics/ConfigStep/Board/style'
 
 export const Board = () => {
-  const [boardField, seBoardField] = useState({
+  const [boardField, setBoardField] = useState({
     board: { value: BOARD_TYPES.JIRA, isError: false, helpText: '' },
     boardId: { value: '', isError: false, helpText: '' },
     email: { value: '', isError: false, helpText: '' },
@@ -27,7 +27,7 @@ export const Board = () => {
 
   const onFormUpdate = (key: string, value: string) => {
     const isError = !checkFiledValid(key, value)
-    seBoardField({
+    setBoardField({
       ...boardField,
       [key]: {
         value,
@@ -36,6 +36,17 @@ export const Board = () => {
       },
     })
   }
+
+  useEffect(() => {
+    setBoardField({
+      ...boardField,
+      boardId: { value: '', isError: false, helpText: '' },
+      email: { value: '', isError: false, helpText: '' },
+      projectKey: { value: '', isError: false, helpText: '' },
+      site: { value: '', isError: false, helpText: '' },
+      token: { value: '', isError: false, helpText: '' },
+    })
+  }, [boardField.board])
 
   return (
     <BoardSection>

@@ -53,10 +53,12 @@ export const Board = () => {
     e.preventDefault()
     setIsShowResetButton(true)
   }
-  const handleResetClick = () => {
+
+  const handleResetBoardFields = () => {
     setBoardField(INIT_BOARD_FIELDS_STATE)
     setIsShowResetButton(false)
   }
+
   useEffect(() => {
     setBoardField({
       ...boardField,
@@ -71,7 +73,7 @@ export const Board = () => {
   return (
     <BoardSection>
       <BoardTitle>board</BoardTitle>
-      <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)}>
+      <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {BOARD_FIELDS.map((filedTitle, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={fields[index].value}>
@@ -109,7 +111,7 @@ export const Board = () => {
           <VerifyButton type='submit' disabled={isAbleVerifyButton}>
             Verify
           </VerifyButton>
-          {isShowResetButton && <ResetButton onClick={handleResetClick}>Reset</ResetButton>}
+          {isShowResetButton && <ResetButton type='reset'>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>
     </BoardSection>

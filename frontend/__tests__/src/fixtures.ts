@@ -37,3 +37,5 @@ export const BOARD_TYPES = {
   JIRA: 'Jira',
   LINEAR: 'Linear',
 }
+
+export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']

@@ -1,11 +1,10 @@
 import { fireEvent, getByRole, render, within } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
-import { BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
-import { BOARD_FIELDS } from '@src/constants'
+import { BOARD_FIELDS, BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 
 const fillBoardFieldsInformation = (getByRole: Function) => {
   const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
-  const mockInfo = ['2', 'mockEmail@qq.com ', 'mockKey', '1', 'mockToken']
+  const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
   const fieldInputs = fields.map(
     (label) =>
       getByRole('textbox', {
@@ -104,7 +103,17 @@ describe('Board', () => {
     expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
     expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
   })
-  it('should show reset button when verify succeed ', async () => {
+  it('should enabled verify button when all fields checked correctly given disable verify button', () => {
+    const { getByRole } = render(<Board />)
+    const verifyButton = getByRole('button', { name: 'Verify' })
+
+    expect(verifyButton).toBeDisabled()
+
+    fillBoardFieldsInformation(getByRole)
+
+    expect(verifyButton).toBeEnabled()
+  })
+  it('should show reset button when verify succeed ', () => {
     const { getByText, getByRole } = render(<Board />)
     fillBoardFieldsInformation(getByRole)
 

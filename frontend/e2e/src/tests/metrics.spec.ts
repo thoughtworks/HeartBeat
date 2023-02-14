@@ -27,7 +27,7 @@ test('should show error message when project name is Empty', async ({ metricsPag
 
   await metricsPage.checkProjectName()
 
-  await expect(metricsPage.errorMessage).toBeTruthy()
+  await expect(metricsPage.projectNameErrorMessage).toBeTruthy()
 
   await metricsPage.close()
 })
@@ -58,6 +58,20 @@ test('should show error message when input a illegal date', async ({ metricsPage
   await metricsPage.createNewProject()
 
   await metricsPage.checkDatePickerError()
+
+  await metricsPage.close()
+})
+test('should show multiple selections when multiple options are selected', async ({ metricsPage }) => {
+  await metricsPage.createNewProject()
+
+  await metricsPage.checkMultipleRequireData()
+
+  await metricsPage.close()
+})
+test('should show error message when require data is null', async ({ metricsPage }) => {
+  await metricsPage.createNewProject()
+
+  await metricsPage.checkNullRequireData()
 
   await metricsPage.close()
 })

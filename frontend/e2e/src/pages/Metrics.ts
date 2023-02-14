@@ -8,7 +8,7 @@ const month = today.getMonth() + 1
 
 export default class Metrics {
   page: Page
-  readonly errorMessage: Locator
+  readonly projectNameErrorMessage: Locator
   readonly projectNameLabel: Locator
   readonly collectionDate: Locator
   readonly regularCalendar: Locator
@@ -17,12 +17,16 @@ export default class Metrics {
   readonly chooseDate: Locator
   readonly formDateLabel: Locator
   readonly endDateLabel: Locator
+  readonly requireDataButton: Locator
+  readonly velocityCheckbox: Locator
+  readonly classificationCheckbox: Locator
+  readonly requiredDataErrorMessage: Locator
 
   constructor(page: Page) {
     this.page = page
     this.page.goto('/index.html')
     this.projectNameLabel = page.locator('label', { hasText: 'Project Name *' })
-    this.errorMessage = page.locator('Project Name is required')
+    this.projectNameErrorMessage = page.locator('Project Name is required')
     this.collectionDate = page.locator('h3', { hasText: 'Collection Date' })
     this.regularCalendar = page.locator("input[value='Regular Calendar(Weekend Considered)']")
     this.chinaCalendar = page.locator("input[value='Calendar with Chinese Holiday']")
@@ -30,6 +34,10 @@ export default class Metrics {
     this.chooseDate = page.getByRole('gridcell', { name: `${day}`, exact: true })
     this.formDateLabel = page.getByLabel('From *')
     this.endDateLabel = page.getByLabel('To *')
+    this.requireDataButton = page.getByRole('button', { name: 'Required Data' })
+    this.velocityCheckbox = page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox')
+    this.classificationCheckbox = page.getByRole('option', { name: 'Classification' }).getByRole('checkbox')
+    this.requiredDataErrorMessage = page.locator('Metrics is required')
   }
 
   async createNewProject() {
@@ -77,6 +85,26 @@ export default class Metrics {
     await this.endDateLabel.fill(ERROR_DATE)
 
     expect(this.endDateLabel.evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe('black')
+  }
+
+  async checkMultipleRequireData() {
+    await this.requireDataButton.click()
+    await this.velocityCheckbox.check()
+    await this.classificationCheckbox.check()
+    await this.page.locator('.MuiBackdrop-root').click()
+
+    await expect(this.requireDataButton).toHaveText('Velocity,Classification')
+  }
+
+  async checkNullRequireData() {
+    await this.checkMultipleRequireData()
+
+    await this.requireDataButton.click()
+    await this.velocityCheckbox.uncheck()
+    await this.classificationCheckbox.uncheck()
+    await this.page.locator('.MuiBackdrop-root').click()
+
+    expect(this.requiredDataErrorMessage).toBeTruthy()
   }
 
   async close() {

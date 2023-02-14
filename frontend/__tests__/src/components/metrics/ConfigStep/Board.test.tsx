@@ -1,13 +1,13 @@
-import { fireEvent, getByRole, render, within } from '@testing-library/react'
+import { fireEvent, render, within, screen } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 
-const fillBoardFieldsInformation = (getByRole: Function) => {
+const fillBoardFieldsInformation = () => {
   const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
   const fieldInputs = fields.map(
     (label) =>
-      getByRole('textbox', {
+      screen.getByRole('textbox', {
         name: label,
       }) as HTMLInputElement
   )
@@ -17,7 +17,6 @@ const fillBoardFieldsInformation = (getByRole: Function) => {
   fieldInputs.map((input, index) => {
     expect(input.value).toEqual(mockInfo[index])
   })
-  return fieldInputs
 }
 
 describe('Board', () => {
@@ -90,7 +89,13 @@ describe('Board', () => {
   })
   it('should clear all fields information when click reset button', () => {
     const { getByRole, getByText, queryByRole } = render(<Board />)
-    const fieldInputs = fillBoardFieldsInformation(getByRole)
+    const fieldInputs = BOARD_FIELDS.slice(1, 5).map(
+      (label) =>
+        screen.getByRole('textbox', {
+          name: label,
+        }) as HTMLInputElement
+    )
+    fillBoardFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
 
@@ -110,13 +115,13 @@ describe('Board', () => {
 
     expect(verifyButton).toBeDisabled()
 
-    fillBoardFieldsInformation(getByRole)
+    fillBoardFieldsInformation()
 
     expect(verifyButton).toBeEnabled()
   })
   it('should show reset button when verify succeed ', () => {
-    const { getByText, getByRole } = render(<Board />)
-    fillBoardFieldsInformation(getByRole)
+    const { getByText } = render(<Board />)
+    fillBoardFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
 

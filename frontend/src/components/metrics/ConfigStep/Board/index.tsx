@@ -1,6 +1,6 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_BOARD_STATE, EMAIL } from '@src/constants'
-import React, { useEffect, useState } from 'react'
+import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL } from '@src/constants'
+import React, { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -13,8 +13,9 @@ import {
 } from '@src/components/metrics/ConfigStep/Board/style'
 
 export const Board = () => {
-  const [boardField, setBoardField] = useState(INIT_BOARD_BOARD_STATE)
+  const [boardField, setBoardField] = useState(INIT_BOARD_FIELDS_STATE)
   const [isShowResetButton, setIsShowResetButton] = useState(false)
+  const [isAbleVerifyButton, setIsAbleVerifyButton] = useState(true)
   const fields = Object.values(boardField)
 
   const checkFiledValid = (type: string, value: string): boolean =>
@@ -22,38 +23,55 @@ export const Board = () => {
 
   const onFormUpdate = (key: string, value: string) => {
     const isError = !checkFiledValid(key, value)
-    setBoardField({
+    const newBoardFieldsState = {
       ...boardField,
       [key]: {
         value,
         isError,
         helpText: isError ? ` ${key} is required` : '',
       },
-    })
+    }
+
+    setIsAbleVerifyButton(
+      !(
+        newBoardFieldsState.boardId.value !== '' &&
+        newBoardFieldsState.site.value !== '' &&
+        newBoardFieldsState.token.value !== '' &&
+        newBoardFieldsState.projectKey.value !== '' &&
+        emailRegExp.test(newBoardFieldsState.email.value) &&
+        !newBoardFieldsState.boardId.isError &&
+        !newBoardFieldsState.email.isError &&
+        !newBoardFieldsState.site.isError &&
+        !newBoardFieldsState.token.isError &&
+        !newBoardFieldsState.projectKey.isError
+      )
+    )
+    setBoardField(newBoardFieldsState)
   }
 
-  const handleSubmitBoardFields = () => {
+  const handleSubmitBoardFields = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault()
     setIsShowResetButton(true)
   }
   const handleResetClick = () => {
-    setBoardField(INIT_BOARD_BOARD_STATE)
+    setBoardField(INIT_BOARD_FIELDS_STATE)
     setIsShowResetButton(false)
   }
   useEffect(() => {
     setBoardField({
       ...boardField,
-      boardId: INIT_BOARD_BOARD_STATE.boardId,
-      email: INIT_BOARD_BOARD_STATE.email,
-      projectKey: INIT_BOARD_BOARD_STATE.projectKey,
-      site: INIT_BOARD_BOARD_STATE.site,
-      token: INIT_BOARD_BOARD_STATE.token,
+      boardId: INIT_BOARD_FIELDS_STATE.boardId,
+      email: INIT_BOARD_FIELDS_STATE.email,
+      projectKey: INIT_BOARD_FIELDS_STATE.projectKey,
+      site: INIT_BOARD_FIELDS_STATE.site,
+      token: INIT_BOARD_FIELDS_STATE.token,
     })
   }, [boardField.board])
 
   return (
     <BoardSection>
       <BoardTitle>board</BoardTitle>
-      <BoardForm>
+      <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)}>
         {BOARD_FIELDS.map((filedTitle, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={fields[index].value}>
@@ -88,7 +106,9 @@ export const Board = () => {
           )
         )}
         <BoardButtonGroup>
-          <VerifyButton onClick={handleSubmitBoardFields}>Verify</VerifyButton>
+          <VerifyButton type='submit' disabled={isAbleVerifyButton}>
+            Verify
+          </VerifyButton>
           {isShowResetButton && <ResetButton onClick={handleResetClick}>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>

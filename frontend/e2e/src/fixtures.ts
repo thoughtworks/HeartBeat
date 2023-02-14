@@ -17,3 +17,4 @@ export const test = fixtures
 export const expect = fixtures.expect
 export const describe = fixtures.describe
 export const STEPS = ['Config', 'Metrics', 'Export']
+export const ERROR_DATE = '02/20'

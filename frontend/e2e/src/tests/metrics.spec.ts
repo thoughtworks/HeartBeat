@@ -47,3 +47,17 @@ test('should switch the radio when any collection date is selected', async ({ me
 
   await metricsPage.close()
 })
+test('should show right start date when input a valid date given init start date is null', async ({ metricsPage }) => {
+  await metricsPage.createNewProject()
+
+  await metricsPage.checkDateRangePicker()
+
+  await metricsPage.close()
+})
+test('should show error message when input a illegal date', async ({ metricsPage }) => {
+  await metricsPage.createNewProject()
+
+  await metricsPage.checkDatePickerError()
+
+  await metricsPage.close()
+})

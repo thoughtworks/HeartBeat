@@ -102,6 +102,7 @@ describe('Board', () => {
     })
     expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
     expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
+    expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
   })
   it('should enabled verify button when all fields checked correctly given disable verify button', () => {
     const { getByRole } = render(<Board />)

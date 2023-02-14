@@ -94,10 +94,6 @@ export default class Metrics {
     await this.page.locator('.MuiBackdrop-root').click()
 
     await expect(this.requireDataButton).toHaveText('Velocity,Classification')
-  }
-
-  async checkNullRequireData() {
-    await this.checkMultipleRequireData()
 
     await this.requireDataButton.click()
     await this.velocityCheckbox.uncheck()

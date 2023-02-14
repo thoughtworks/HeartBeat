@@ -57,6 +57,7 @@ export const Board = () => {
   const handleResetBoardFields = () => {
     setBoardField(INIT_BOARD_FIELDS_STATE)
     setIsShowResetButton(false)
+    setIsAbleVerifyButton(true)
   }
 
   useEffect(() => {

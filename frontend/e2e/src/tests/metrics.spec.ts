@@ -31,3 +31,19 @@ test('should show error message when project name is Empty', async ({ metricsPag
 
   await metricsPage.close()
 })
+test('should select Regular calendar by default when rendering the collection date', async ({ metricsPage }) => {
+  await metricsPage.createNewProject()
+
+  await expect(metricsPage.collectionDate).toBeVisible()
+  await expect(metricsPage.regularCalendar).toBeChecked()
+  await expect(metricsPage.chinaCalendar).not.toBeChecked()
+
+  await metricsPage.close()
+})
+test('should switch the radio when any collection date is selected', async ({ metricsPage }) => {
+  await metricsPage.createNewProject()
+
+  await metricsPage.switchCollectionDate()
+
+  await metricsPage.close()
+})

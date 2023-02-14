@@ -5,5 +5,12 @@ test('should render metrics page', async ({ homePage }) => {
 
   expect(homePage.page.url()).toContain('metrics')
 
-  homePage.close()
+  await homePage.close()
+})
+test('should show three steps when render metrics page', async ({ metricsPage }) => {
+  await metricsPage.createNewProject()
+
+  await metricsPage.checkSteps()
+
+  await metricsPage.close()
 })

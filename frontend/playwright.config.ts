@@ -44,6 +44,7 @@ const config: PlaywrightTestConfig = {
     launchOptions: {
       slowMo: 300,
     },
+    video: 'on',
   },
 
   /* Configure projects for major browsers */

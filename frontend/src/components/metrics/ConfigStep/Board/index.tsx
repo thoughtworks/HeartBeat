@@ -12,10 +12,13 @@ import {
   ResetButton,
   VerifyButton,
 } from '@src/components/metrics/ConfigStep/Board/style'
+import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 
 export const Board = () => {
+  const dispatch = useAppDispatch()
+  const isVerified = useAppSelector(isBoardVerified)
   const [boardField, setBoardField] = useState(INIT_BOARD_FIELDS_STATE)
-  const [isShowResetButton, setIsShowResetButton] = useState(false)
   const [isAbleVerifyButton, setIsAbleVerifyButton] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const fields = Object.values(boardField)
@@ -33,7 +36,6 @@ export const Board = () => {
         helpText: isError ? ` ${key} is required` : '',
       },
     }
-
     setIsAbleVerifyButton(
       !(
         newBoardFieldsState.boardId.value !== '' &&
@@ -53,14 +55,14 @@ export const Board = () => {
 
   const handleSubmitBoardFields = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
-    setIsShowResetButton(true)
+    dispatch(changeBoardVerifyState(true))
     setIsLoading(!isLoading)
   }
 
   const handleResetBoardFields = () => {
     setBoardField(INIT_BOARD_FIELDS_STATE)
-    setIsShowResetButton(false)
     setIsAbleVerifyButton(true)
+    dispatch(changeBoardVerifyState(false))
   }
 
   useEffect(() => {
@@ -118,9 +120,9 @@ export const Board = () => {
         )}
         <BoardButtonGroup>
           <VerifyButton type='submit' disabled={isAbleVerifyButton}>
-            {isShowResetButton ? 'Verified' : 'Verify'}
+            {isVerified ? 'Verified' : 'Verify'}
           </VerifyButton>
-          {isShowResetButton && <ResetButton type='reset'>Reset</ResetButton>}
+          {isVerified && <ResetButton type='reset'>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>
     </BoardSection>

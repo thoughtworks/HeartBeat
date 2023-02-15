@@ -6,8 +6,11 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { TextField } from '@mui/material'
 import { datePickerPropsStyles, DateRangeBox } from '@src/components/metrics/ConfigStep/DateRangePicker/style'
 import { DATE_RANGE, SELECT_OR_WRITE_DATE } from '@src/constants'
+import { useAppDispatch } from '@src/hooks'
+import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 
 export const DateRangePicker = () => {
+  const dispatch = useAppDispatch()
   const [dateRange, setDateRange] = useState<{
     startDate: Dayjs | null
     endDate: Dayjs | null
@@ -39,6 +42,7 @@ export const DateRangePicker = () => {
             checkDateformat(newValue, DATE_RANGE.START_DATE)
             checkDateRangeValid(newValue, newValue && newValue.add(14, 'day'))
             setDateRange({ startDate: newValue, endDate: newValue && newValue.add(14, 'day') })
+            dispatch(changeBoardVerifyState(false))
           }}
           renderInput={(params) => {
             if (params.inputProps) params.inputProps.placeholder = SELECT_OR_WRITE_DATE
@@ -56,6 +60,7 @@ export const DateRangePicker = () => {
             checkDateformat(newValue, DATE_RANGE.END_DATE)
             checkDateRangeValid(dateRange.startDate, newValue)
             setDateRange({ startDate: dateRange.startDate, endDate: newValue })
+            dispatch(changeBoardVerifyState(false))
           }}
           renderInput={(params) => {
             if (params.inputProps) params.inputProps.placeholder = SELECT_OR_WRITE_DATE

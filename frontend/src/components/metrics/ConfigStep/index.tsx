@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
+import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
@@ -50,7 +51,7 @@ export const ConfigStep = () => {
         helperText={isEmptyProjectName ? 'Project Name is required' : ''}
       />
       <h3>Collection Date</h3>
-      <RadioGroup defaultValue={REGULAR_CALENDAR}>
+      <RadioGroup defaultValue={REGULAR_CALENDAR} onChange={() => dispatch(changeBoardVerifyState(false))}>
         <FormControlLabel value={REGULAR_CALENDAR} control={<Radio />} label={REGULAR_CALENDAR} />
         <FormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
       </RadioGroup>

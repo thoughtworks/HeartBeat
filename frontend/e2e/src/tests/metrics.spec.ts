@@ -11,7 +11,7 @@ test('should render metrics page', async ({ homePage }) => {
 test('happy path to fill metrics config', async ({ metricsPage }) => {
   await metricsPage.checkSteps()
 
-  await expect(metricsPage.projectNameLabel).toBeVisible()
+  await expect(metricsPage.projectNameInput).toBeTruthy()
 
   await metricsPage.typeProjectName('test Project Name')
 

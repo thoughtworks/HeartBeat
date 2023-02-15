@@ -9,7 +9,7 @@ const month = today.getMonth() + 1
 
 export default class Metrics extends BasePage {
   readonly projectNameErrorMessage: Locator
-  readonly projectNameLabel: Locator
+  readonly projectNameInput: Locator
   readonly collectionDate: Locator
   readonly regularCalendar: Locator
   readonly chinaCalendar: Locator
@@ -23,7 +23,7 @@ export default class Metrics extends BasePage {
   constructor(page: Page) {
     super(page)
     super.navigate('/metrics')
-    this.projectNameLabel = page.locator('label', { hasText: 'Project Name *' })
+    this.projectNameInput = page.locator('label', { hasText: 'Project Name *' })
     this.projectNameErrorMessage = page.locator('Project Name is required')
     this.collectionDate = page.locator('h3', { hasText: 'Collection Date' })
     this.regularCalendar = page.locator("input[value='Regular Calendar(Weekend Considered)']")
@@ -43,7 +43,7 @@ export default class Metrics extends BasePage {
   }
 
   async typeProjectName(projectName: string) {
-    await this.projectNameLabel.fill(projectName)
+    await this.projectNameInput.fill(projectName)
   }
 
   async selectRegularCalendar() {

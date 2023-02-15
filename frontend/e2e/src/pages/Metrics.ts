@@ -1,13 +1,13 @@
 import { Page, expect, Locator } from '@playwright/test'
-import { ERROR_DATE, STEPS } from '../fixtures'
+import { STEPS } from '../fixtures'
+import BasePage from './BasePage'
 
 const today = new Date()
 const year = today.getFullYear()
 const day = today.getDate()
 const month = today.getMonth() + 1
 
-export default class Metrics {
-  page: Page
+export default class Metrics extends BasePage {
   readonly projectNameErrorMessage: Locator
   readonly projectNameLabel: Locator
   readonly collectionDate: Locator
@@ -23,8 +23,8 @@ export default class Metrics {
   readonly requiredDataErrorMessage: Locator
 
   constructor(page: Page) {
-    this.page = page
-    this.page.goto('/index.html')
+    super(page)
+    super.navigate('/metrics')
     this.projectNameLabel = page.locator('label', { hasText: 'Project Name *' })
     this.projectNameErrorMessage = page.locator('Project Name is required')
     this.collectionDate = page.locator('h3', { hasText: 'Collection Date' })
@@ -50,44 +50,50 @@ export default class Metrics {
     })
   }
 
-  async checkProjectName() {
-    await this.projectNameLabel.fill('test Project Name')
-    await this.projectNameLabel.fill('')
+  async typeProjectName(projectName: string) {
+    await this.projectNameLabel.fill(projectName)
   }
 
-  async switchCollectionDate() {
-    await this.chinaCalendar.click()
-    await expect(this.chinaCalendar).toBeChecked()
-    await expect(this.regularCalendar).not.toBeChecked()
-
+  async selectRegularCalendar() {
     await this.regularCalendar.click()
+
     await expect(this.chinaCalendar).not.toBeChecked()
     await expect(this.regularCalendar).toBeChecked()
   }
 
-  async checkDateRangePicker() {
+  async selectChinaCalendar() {
+    await this.chinaCalendar.click()
+
+    await expect(this.chinaCalendar).toBeChecked()
+    await expect(this.regularCalendar).not.toBeChecked()
+  }
+
+  async selectDateRange() {
     await this.chooseDateButton.nth(0).click()
     await this.chooseDate.click()
+
     expect(this.page.getByText(`${month}/${day}/${year}`)).toBeTruthy()
 
     await this.chooseDateButton.nth(1).click()
     await this.chooseDate.click()
+
     expect(this.page.getByText(`${month}/${day}/${year}`)).toBeTruthy()
   }
 
-  async checkDatePickerError() {
+  async typeDateRange(fromDate: string, endDate: string) {
     await this.formDateLabel.click()
-    await this.formDateLabel.fill(ERROR_DATE)
-
-    expect(this.formDateLabel.evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe('black')
+    await this.formDateLabel.fill(fromDate)
 
     await this.endDateLabel.click()
-    await this.endDateLabel.fill(ERROR_DATE)
+    await this.endDateLabel.fill(endDate)
+  }
 
+  checkErrorDataRange() {
+    expect(this.formDateLabel.evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe('black')
     expect(this.endDateLabel.evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe('black')
   }
 
-  async checkMultipleRequireData() {
+  async selectVelocityAndClassificationInRequireData() {
     await this.requireDataButton.click()
     await this.velocityCheckbox.check()
     await this.classificationCheckbox.check()
@@ -103,7 +109,12 @@ export default class Metrics {
     expect(this.requiredDataErrorMessage).toBeTruthy()
   }
 
-  async close() {
-    await this.page.close()
+  async unSelectVelocityAndClassificationInRequireData() {
+    await this.requireDataButton.click()
+    await this.velocityCheckbox.uncheck()
+    await this.classificationCheckbox.uncheck()
+    await this.page.locator('.MuiBackdrop-root').click()
+
+    expect(this.requiredDataErrorMessage).toBeTruthy()
   }
 }

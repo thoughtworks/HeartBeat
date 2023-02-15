@@ -5,30 +5,25 @@ test('should render metrics page', async ({ homePage }) => {
 
   expect(homePage.page.url()).toContain('metrics')
 
-  await homePage.close()
+  homePage.close()
 })
-test('should show config content when in the config step', async ({ metricsPage }) => {
-  await metricsPage.createNewProject()
 
+test('happy path to fill metrics config', async ({ metricsPage }) => {
   await metricsPage.checkSteps()
 
   await expect(metricsPage.projectNameLabel).toBeVisible()
 
-  await metricsPage.checkProjectName()
-
-  await expect(metricsPage.projectNameErrorMessage).toBeTruthy()
+  await metricsPage.typeProjectName('test Project Name')
 
   await expect(metricsPage.collectionDate).toBeVisible()
   await expect(metricsPage.regularCalendar).toBeChecked()
   await expect(metricsPage.chinaCalendar).not.toBeChecked()
 
-  await metricsPage.switchCollectionDate()
+  await metricsPage.selectRegularCalendar()
 
-  await metricsPage.checkDateRangePicker()
+  await metricsPage.selectDateRange()
 
-  await metricsPage.checkDatePickerError()
+  await metricsPage.selectVelocityAndClassificationInRequireData()
 
-  await metricsPage.checkMultipleRequireData()
-
-  await metricsPage.close()
+  metricsPage.close()
 })

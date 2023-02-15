@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import stepperReducer from '../features/stepper/StepperSlice'
+import boardReducer from '../features/board/boardSlice'
 export const store = configureStore({
   reducer: {
     stepper: stepperReducer,
+    board: boardReducer,
   },
 })
 

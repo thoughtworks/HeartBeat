@@ -1,8 +1,10 @@
 import { fireEvent, render, within, screen } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
+import { Provider } from 'react-redux'
+import { store } from '@src/store/store'
 
-const fillBoardFieldsInformation = () => {
+export const fillBoardFieldsInformation = () => {
   const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
   const fieldInputs = fields.map(
@@ -19,9 +21,16 @@ const fillBoardFieldsInformation = () => {
   })
 }
 
+const setup = () =>
+  render(
+    <Provider store={store}>
+      <Board />
+    </Provider>
+  )
+
 describe('Board', () => {
   it('should show board title and fields when render board component ', () => {
-    const { getByRole, getByLabelText } = render(<Board />)
+    const { getByRole, getByLabelText } = setup()
 
     BOARD_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
@@ -29,7 +38,7 @@ describe('Board', () => {
     expect(getByRole('heading', { name: 'board' })).toBeInTheDocument()
   })
   it('should show default value jira when init board component', () => {
-    const { getByText, queryByText } = render(<Board />)
+    const { getByText, queryByText } = setup()
     const boardType = getByText(BOARD_TYPES.JIRA)
 
     expect(boardType).toBeInTheDocument()
@@ -38,7 +47,7 @@ describe('Board', () => {
     expect(option).not.toBeTruthy()
   })
   it('should show detail options when click board field', () => {
-    const { getByRole } = render(<Board />)
+    const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
@@ -47,7 +56,7 @@ describe('Board', () => {
     expect(optionValue).toEqual(Object.values(BOARD_TYPES))
   })
   it('should show different board type when select different board field value ', () => {
-    const { getByRole, getByText } = render(<Board />)
+    const { getByRole, getByText } = setup()
 
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
@@ -60,7 +69,7 @@ describe('Board', () => {
     expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
   })
   it('should show error message when input a wrong type email ', () => {
-    const { getByRole, getByText } = render(<Board />)
+    const { getByRole, getByText } = setup()
     const EMAil_ERROR_MESSAGE = 'email is required'
     const emailInput = getByRole('textbox', {
       name: 'email',
@@ -71,7 +80,7 @@ describe('Board', () => {
     expect(getByText(EMAil_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
   it('should clear other fields information when change board field selection', () => {
-    const { getByRole, getByText } = render(<Board />)
+    const { getByRole, getByText } = setup()
     const boardIdInput = getByRole('textbox', {
       name: 'boardId',
     }) as HTMLInputElement
@@ -88,7 +97,7 @@ describe('Board', () => {
     expect(boardIdInput.value).toEqual('')
   })
   it('should clear all fields information when click reset button', () => {
-    const { getByRole, getByText, queryByRole } = render(<Board />)
+    const { getByRole, getByText, queryByRole } = setup()
     const fieldInputs = BOARD_FIELDS.slice(1, 5).map(
       (label) =>
         screen.getByRole('textbox', {
@@ -110,7 +119,7 @@ describe('Board', () => {
     expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
   })
   it('should enabled verify button when all fields checked correctly given disable verify button', () => {
-    const { getByRole } = render(<Board />)
+    const { getByRole } = setup()
     const verifyButton = getByRole('button', { name: 'Verify' })
 
     expect(verifyButton).toBeDisabled()
@@ -120,7 +129,7 @@ describe('Board', () => {
     expect(verifyButton).toBeEnabled()
   })
   it('should show reset button when verify succeed ', () => {
-    const { getByText } = render(<Board />)
+    const { getByText } = setup()
     fillBoardFieldsInformation()
 
     fireEvent.click(getByText('Verify'))

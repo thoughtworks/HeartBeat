@@ -15,8 +15,6 @@ export default class Metrics extends BasePage {
   readonly chinaCalendar: Locator
   readonly chooseDateButton: Locator
   readonly chooseDate: Locator
-  readonly formDateLabel: Locator
-  readonly endDateLabel: Locator
   readonly requireDataButton: Locator
   readonly velocityCheckbox: Locator
   readonly classificationCheckbox: Locator
@@ -32,16 +30,10 @@ export default class Metrics extends BasePage {
     this.chinaCalendar = page.locator("input[value='Calendar with Chinese Holiday']")
     this.chooseDateButton = page.getByRole('button', { name: 'Choose date' })
     this.chooseDate = page.getByRole('gridcell', { name: `${day}`, exact: true })
-    this.formDateLabel = page.getByLabel('From *')
-    this.endDateLabel = page.getByLabel('To *')
     this.requireDataButton = page.getByRole('button', { name: 'Required Data' })
     this.velocityCheckbox = page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox')
     this.classificationCheckbox = page.getByRole('option', { name: 'Classification' }).getByRole('checkbox')
     this.requiredDataErrorMessage = page.locator('Metrics is required')
-  }
-
-  async createNewProject() {
-    await this.page.getByRole('button', { name: 'Create a new project' }).click()
   }
 
   async checkSteps() {
@@ -61,13 +53,6 @@ export default class Metrics extends BasePage {
     await expect(this.regularCalendar).toBeChecked()
   }
 
-  async selectChinaCalendar() {
-    await this.chinaCalendar.click()
-
-    await expect(this.chinaCalendar).toBeChecked()
-    await expect(this.regularCalendar).not.toBeChecked()
-  }
-
   async selectDateRange() {
     await this.chooseDateButton.nth(0).click()
     await this.chooseDate.click()
@@ -80,19 +65,6 @@ export default class Metrics extends BasePage {
     expect(this.page.getByText(`${month}/${day}/${year}`)).toBeTruthy()
   }
 
-  async typeDateRange(fromDate: string, endDate: string) {
-    await this.formDateLabel.click()
-    await this.formDateLabel.fill(fromDate)
-
-    await this.endDateLabel.click()
-    await this.endDateLabel.fill(endDate)
-  }
-
-  checkErrorDataRange() {
-    expect(this.formDateLabel.evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe('black')
-    expect(this.endDateLabel.evaluate((e) => window.getComputedStyle(e).getPropertyValue('color'))).not.toBe('black')
-  }
-
   async selectVelocityAndClassificationInRequireData() {
     await this.requireDataButton.click()
     await this.velocityCheckbox.check()
@@ -101,15 +73,6 @@ export default class Metrics extends BasePage {
 
     await expect(this.requireDataButton).toHaveText('Velocity,Classification')
 
-    await this.requireDataButton.click()
-    await this.velocityCheckbox.uncheck()
-    await this.classificationCheckbox.uncheck()
-    await this.page.locator('.MuiBackdrop-root').click()
-
-    expect(this.requiredDataErrorMessage).toBeTruthy()
-  }
-
-  async unSelectVelocityAndClassificationInRequireData() {
     await this.requireDataButton.click()
     await this.velocityCheckbox.uncheck()
     await this.classificationCheckbox.uncheck()

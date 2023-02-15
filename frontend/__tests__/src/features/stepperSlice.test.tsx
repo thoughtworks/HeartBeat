@@ -1,7 +1,7 @@
 import stepperReducer, { nextStep, backStep } from '@src/features/stepper/StepperSlice'
 import { ZERO } from '../fixtures'
 
-describe('counter reducer', () => {
+describe('stepper reducer', () => {
   it('should get 0 when handle initial state', () => {
     const STEPPER = stepperReducer(undefined, { type: 'unknown' })
 

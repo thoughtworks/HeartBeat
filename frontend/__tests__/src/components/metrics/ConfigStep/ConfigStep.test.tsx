@@ -1,8 +1,9 @@
-import { fireEvent, Matcher, render, within } from '@testing-library/react'
+import { fireEvent, getByText, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRED_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { store } from '@src/store/store'
+import { fillBoardFieldsInformation } from './Board.test'
 
 describe('ConfigStep', () => {
   const setup = () =>
@@ -105,5 +106,41 @@ describe('ConfigStep', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
 
     expect(queryByText('board')).toBeNull()
+  })
+
+  it('should verify again when calendar type is changed given board fields are filled and verified', () => {
+    const { getByRole, getByText, queryByText } = setup()
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fillBoardFieldsInformation()
+    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByRole('radio', { name: CHINA_CALENDAR }))
+
+    expect(queryByText('Verify')).toBeVisible()
+    expect(queryByText('Verified')).toBeNull()
+    expect(queryByText('Reset')).toBeNull()
+  })
+
+  it('should verify again when date picker is changed given board fields are filled and verified', () => {
+    const { getByRole, getByText, queryByText, getByLabelText } = setup()
+    const today = new Date()
+      .toLocaleDateString('en-US')
+      .split('/')
+      .map((num) => (Number(num) < 10 ? 0 + num : num))
+      .join('/')
+    const startDateInput = getByLabelText('From *')
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fillBoardFieldsInformation()
+    fireEvent.click(getByText('Verify'))
+    fireEvent.change(startDateInput, { target: { value: today } })
+
+    expect(queryByText('Verify')).toBeVisible()
+    expect(queryByText('Verified')).toBeNull()
+    expect(queryByText('Reset')).toBeNull()
   })
 })

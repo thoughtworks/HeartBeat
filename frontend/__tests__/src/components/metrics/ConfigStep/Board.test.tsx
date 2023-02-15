@@ -11,6 +11,7 @@ export const fillBoardFieldsInformation = () => {
     (label) =>
       screen.getByRole('textbox', {
         name: label,
+        hidden: true,
       }) as HTMLInputElement
   )
   fieldInputs.map((input, index) => {
@@ -102,6 +103,7 @@ describe('Board', () => {
       (label) =>
         screen.getByRole('textbox', {
           name: label,
+          hidden: true,
         }) as HTMLInputElement
     )
     fillBoardFieldsInformation()

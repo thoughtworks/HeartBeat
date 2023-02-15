@@ -1,7 +1,9 @@
 import { styled } from '@mui/material/styles'
-import { Button, FormControl, TextField } from '@mui/material'
+import { Backdrop, Button, FormControl, TextField } from '@mui/material'
+import { theme } from '@src/theme'
 
 export const BoardSection = styled('div')({
+  position: 'relative',
   boxShadow: '0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);',
   borderRadius: '0.25rem',
   width: '85%',
@@ -28,6 +30,13 @@ export const BoardTextField = styled(TextField)({
   width: '20rem',
   margin: '0 4rem 1rem 0',
   padding: '0.5rem 0',
+})
+
+export const BoardLoadingDrop = styled(Backdrop)({
+  position: 'absolute',
+  zIndex: '999',
+  backgroundColor: 'rgba(199,199,199,0.43)',
+  color: theme.main.backgroundColor,
 })
 
 export const BoardButtonGroup = styled('div')({

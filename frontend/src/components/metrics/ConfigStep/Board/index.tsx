@@ -1,9 +1,10 @@
-import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL } from '@src/constants'
 import React, { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
+  BoardLoadingDrop,
   BoardSection,
   BoardTextField,
   BoardTitle,
@@ -16,6 +17,7 @@ export const Board = () => {
   const [boardField, setBoardField] = useState(INIT_BOARD_FIELDS_STATE)
   const [isShowResetButton, setIsShowResetButton] = useState(false)
   const [isAbleVerifyButton, setIsAbleVerifyButton] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const fields = Object.values(boardField)
 
   const checkFiledValid = (type: string, value: string): boolean =>
@@ -52,6 +54,7 @@ export const Board = () => {
   const handleSubmitBoardFields = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     setIsShowResetButton(true)
+    setIsLoading(!isLoading)
   }
 
   const handleResetBoardFields = () => {
@@ -73,6 +76,11 @@ export const Board = () => {
 
   return (
     <BoardSection>
+      {isLoading && (
+        <BoardLoadingDrop open={isLoading}>
+          <CircularProgress size='8rem' />
+        </BoardLoadingDrop>
+      )}
       <BoardTitle>board</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {BOARD_FIELDS.map((filedTitle, index) =>
@@ -110,7 +118,7 @@ export const Board = () => {
         )}
         <BoardButtonGroup>
           <VerifyButton type='submit' disabled={isAbleVerifyButton}>
-            Verify
+            {isShowResetButton ? 'Verified' : 'Verify'}
           </VerifyButton>
           {isShowResetButton && <ResetButton type='reset'>Reset</ResetButton>}
         </BoardButtonGroup>

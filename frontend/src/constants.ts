@@ -33,7 +33,6 @@ export const BOARD_TYPES = {
   LINEAR: 'Linear',
 }
 
-export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 export const INIT_BOARD_FIELDS_STATE = {

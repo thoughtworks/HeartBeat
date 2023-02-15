@@ -1,5 +1,5 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_FIELDS, BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL } from '@src/constants'
+import { BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL } from '@src/constants'
 import React, { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
@@ -22,6 +22,7 @@ export const Board = () => {
   const [isAbleVerifyButton, setIsAbleVerifyButton] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const fields = Object.values(boardField)
+  const boardFieldNames = Object.keys(boardField)
 
   const checkFiledValid = (type: string, value: string): boolean =>
     type === EMAIL ? emailRegExp.test(value) : value !== ''
@@ -37,18 +38,9 @@ export const Board = () => {
       },
     }
     setIsAbleVerifyButton(
-      !(
-        newBoardFieldsState.boardId.value !== '' &&
-        newBoardFieldsState.site.value !== '' &&
-        newBoardFieldsState.token.value !== '' &&
-        newBoardFieldsState.projectKey.value !== '' &&
-        emailRegExp.test(newBoardFieldsState.email.value) &&
-        !newBoardFieldsState.boardId.isError &&
-        !newBoardFieldsState.email.isError &&
-        !newBoardFieldsState.site.isError &&
-        !newBoardFieldsState.token.isError &&
-        !newBoardFieldsState.projectKey.isError
-      )
+      !boardFieldNames
+        .map((fieldName, index) => checkFiledValid(fieldName, fields[index].value))
+        .every((validField) => validField)
     )
     setBoardField(newBoardFieldsState)
   }
@@ -85,7 +77,7 @@ export const Board = () => {
       )}
       <BoardTitle>board</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
-        {BOARD_FIELDS.map((filedTitle, index) =>
+        {boardFieldNames.map((filedTitle, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={fields[index].value}>
               <InputLabel id='board-type-checkbox-label'>board</InputLabel>

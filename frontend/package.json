@@ -16,8 +16,10 @@
     "e2e:debug": "playwright test --debug --trace on",
     "e2e": "playwright test",
     "e2e:report": "playwright show-report",
+    "cypress:open": "cypress open",
+    "cy": "cypress run --spec cypress/",
     "prepare": "playwright install && cd .. && husky install frontend/.husky",
-    "license-compliance": "license-compliance -r detailed --allow='MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Python-2.0;CC-BY-4.0;CC-BY-3.0;WTFPL;CC0-1.0'"
+    "license-compliance": "license-compliance -r detailed --allow='Unlicense;MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Python-2.0;CC-BY-4.0;CC-BY-3.0;WTFPL;CC0-1.0'"
   },
   "lint-staged": {
     "**/*": "npx prettier --write . --ignore-unknown"

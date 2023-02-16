@@ -1,0 +1,36 @@
+name: E2E
+
+on:
+  push:
+    branches: ["*"]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+      - name: Install dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
+      - name: Run E2E
+        env:
+          APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP }}:${{ secrets.APP_PORT }}
+        run: pnpm run cy
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-report
+          path: frontend/cypress/videos/
+          retention-days: ${{ vars.RETENTION_DAYS }}

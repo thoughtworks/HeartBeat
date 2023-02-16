@@ -4,12 +4,16 @@ import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { stepperSlice } from '@src/features/stepper/StepperSlice'
 import { NEXT, BACK, STEPS, EXPORT_BOARD_DATA } from '../../../fixtures'
+import { configSlice } from '@src/features/config/configSlice'
+import { boardSlice } from '@src/features/board/boardSlice'
 
 describe('MetricsStepper', () => {
   const setupStepperStore = () => {
     return configureStore({
       reducer: {
         [stepperSlice.name]: stepperSlice.reducer,
+        [configSlice.name]: configSlice.reducer,
+        [boardSlice.name]: boardSlice.reducer,
       },
     })
   }

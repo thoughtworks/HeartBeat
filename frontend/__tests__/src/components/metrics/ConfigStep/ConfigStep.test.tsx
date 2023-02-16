@@ -116,7 +116,6 @@ describe('ConfigStep', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fillBoardFieldsInformation()
     fireEvent.click(getByText('Verify'))
-    fireEvent.click(getByRole('radio', { name: CHINA_CALENDAR }))
 
     expect(queryByText('Verify')).toBeVisible()
     expect(queryByText('Verified')).toBeNull()

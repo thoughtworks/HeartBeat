@@ -1,9 +1,10 @@
-import { fireEvent, getByText, Matcher, render, within } from '@testing-library/react'
+import { fireEvent, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRED_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { fillBoardFieldsInformation } from './Board.test'
 import { setupStore } from '../../../utils/setupStoreUtil'
+import * as dayjs from 'Dayjs'
 
 let store: any = null
 describe('ConfigStep', () => {
@@ -107,6 +108,7 @@ describe('ConfigStep', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fillBoardFieldsInformation()
     fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(CHINA_CALENDAR))
 
     expect(queryByText('Verify')).toBeVisible()
     expect(queryByText('Verified')).toBeNull()
@@ -115,11 +117,7 @@ describe('ConfigStep', () => {
 
   it('should verify again when date picker is changed given board fields are filled and verified', () => {
     const { getByRole, getByText, queryByText, getByLabelText } = setup()
-    const today = new Date()
-      .toLocaleDateString('en-US')
-      .split('/')
-      .map((num) => (Number(num) < 10 ? 0 + num : num))
-      .join('/')
+    const today = dayjs().format('MM/DD/YYYY')
     const startDateInput = getByLabelText('From *')
 
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))

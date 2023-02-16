@@ -110,19 +110,16 @@ describe('Board', () => {
         }) as HTMLInputElement
     )
     fillBoardFieldsInformation()
-    expect(getByRole('button', { name: 'Verify' })).toBeEnabled()
-    //
-    // fireEvent.click(getByText('Verify'))
-    //
-    // const resetButton = getByRole('button', { name: 'Reset' })
-    // fireEvent.click(resetButton)
-    //
-    // fieldInputs.map((input) => {
-    //   expect(input.value).toEqual('')
-    // })
-    // expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
-    // expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
-    // expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
+
+    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByRole('button', { name: 'Reset' }))
+
+    fieldInputs.map((input) => {
+      expect(input.value).toEqual('')
+    })
+    expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
+    expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
+    expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
   })
   it('should enabled verify button when all fields checked correctly given disable verify button', () => {
     const { getByRole } = setup()

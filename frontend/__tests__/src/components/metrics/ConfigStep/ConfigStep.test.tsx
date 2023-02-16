@@ -2,10 +2,12 @@ import { fireEvent, getByText, Matcher, render, within } from '@testing-library/
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRED_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
 import { Provider } from 'react-redux'
-import { store } from '@src/store/store'
 import { fillBoardFieldsInformation } from './Board.test'
+import { setupStore } from '../../../utils/setupStoreUtil'
 
+let store: any = null
 describe('ConfigStep', () => {
+  store = setupStore()
   const setup = () =>
     render(
       <Provider store={store}>
@@ -95,17 +97,6 @@ describe('ConfigStep', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Classification' }))
 
     expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
-  })
-
-  it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', () => {
-    const { getByRole, queryByText } = setup()
-
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
-    const requireDateSelection = within(getByRole('listbox'))
-    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
-    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
-
-    expect(queryByText('board')).toBeNull()
   })
 
   it('should verify again when calendar type is changed given board fields are filled and verified', () => {

@@ -1,10 +1,21 @@
 import { REQUIRED_DATA, REQUIRED_DATAS, VELOCITY } from '../../../fixtures'
 import { fireEvent, render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
+import { Provider } from 'react-redux'
+import { setupStore } from '../../../utils/setupStoreUtil'
+let store = null
+const setup = () => {
+  store = setupStore()
+  return render(
+    <Provider store={store}>
+      <MetricsTypeCheckbox />
+    </Provider>
+  )
+}
 
 describe('MetricsTypeCheckbox', () => {
   it('should show require data and do not display specific options when init', () => {
-    const { getByText, queryByText } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
+    const { getByText, queryByText } = setup()
     const require = getByText(REQUIRED_DATA)
 
     expect(require).toBeInTheDocument()
@@ -13,7 +24,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(option).not.toBeTruthy()
   })
   it('should show detail options when click require data button', () => {
-    const { getByRole } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
+    const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
@@ -22,7 +33,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(optionValue).toEqual(REQUIRED_DATAS)
   })
   it('should show multiple selections when multiple options are selected', () => {
-    const { getByRole, getByText } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
+    const { getByRole, getByText } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
 
     const listBox = within(getByRole('listbox'))
@@ -32,7 +43,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
   })
   it('should show error message when require data is null', () => {
-    const { getByRole, getByText } = render(<MetricsTypeCheckbox onHandleRequireData={jest.fn} />)
+    const { getByRole, getByText } = setup()
 
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
@@ -43,14 +54,22 @@ describe('MetricsTypeCheckbox', () => {
     const errorMessage = getByText('Metrics is required')
     expect(errorMessage).toBeInTheDocument()
   })
-
-  it('should call handleRequireDate function when click MetricsTypeCheckbox selection, ', async () => {
-    const handleRequireDate = jest.fn()
-    const { getByRole } = render(<MetricsTypeCheckbox onHandleRequireData={handleRequireDate} />)
+  it('should board component  when click MetricsTypeCheckbox selection velocity ', () => {
+    const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
     fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
 
-    expect(handleRequireDate).toHaveBeenCalledTimes(1)
+    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
+  })
+  it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', () => {
+    const { getByRole, queryByText } = setup()
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+
+    expect(queryByText('board')).toBeNull()
   })
 })

@@ -1,20 +1,19 @@
 import React, { useState } from 'react'
 import { Dayjs } from 'dayjs'
+import * as dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { TextField } from '@mui/material'
 import { datePickerPropsStyles, DateRangeBox } from '@src/components/metrics/ConfigStep/DateRangePicker/style'
 import { DATE_RANGE, SELECT_OR_WRITE_DATE } from '@src/constants'
-import { useAppDispatch } from '@src/hooks'
+import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
+import { selectDateRange, updateDateRange } from '@src/features/config/configSlice'
 
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch()
-  const [dateRange, setDateRange] = useState<{
-    startDate: Dayjs | null
-    endDate: Dayjs | null
-  }>({ startDate: null, endDate: null })
+  const { startDate, endDate } = useAppSelector(selectDateRange)
 
   const [dateRangeValueError, setDateRangeValueError] = useState([false, false])
 
@@ -37,11 +36,17 @@ export const DateRangePicker = () => {
         <DatePicker
           PaperProps={datePickerPropsStyles}
           label='From'
-          value={dateRange.startDate}
+          value={dayjs(startDate)}
           onChange={(newValue) => {
             checkDateformat(newValue, DATE_RANGE.START_DATE)
             checkDateRangeValid(newValue, newValue && newValue.add(14, 'day'))
-            setDateRange({ startDate: newValue, endDate: newValue && newValue.add(14, 'day') })
+            newValue &&
+              dispatch(
+                updateDateRange({
+                  startDate: newValue.valueOf(),
+                  endDate: newValue.add(14, 'day').valueOf(),
+                })
+              )
             dispatch(changeBoardVerifyState(false))
           }}
           renderInput={(params) => {
@@ -54,12 +59,12 @@ export const DateRangePicker = () => {
         <DatePicker
           PaperProps={datePickerPropsStyles}
           label='To'
-          value={dateRange.endDate}
-          minDate={dateRange.startDate}
+          value={dayjs(endDate)}
+          minDate={dayjs(startDate)}
           onChange={(newValue) => {
             checkDateformat(newValue, DATE_RANGE.END_DATE)
-            checkDateRangeValid(dateRange.startDate, newValue)
-            setDateRange({ startDate: dateRange.startDate, endDate: newValue })
+            checkDateRangeValid(dayjs(startDate), newValue)
+            newValue && dispatch(updateDateRange({ startDate: startDate, endDate: newValue.valueOf() }))
             dispatch(changeBoardVerifyState(false))
           }}
           renderInput={(params) => {

@@ -1,4 +1,4 @@
-import configReducer, { updateCalendarType, updateProjectName } from '@src/features/config/configSlice'
+import configReducer, { updateCalendarType, updateDateRange, updateProjectName } from '@src/features/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR } from '../fixtures'
 
 describe('config reducer', () => {
@@ -7,6 +7,7 @@ describe('config reducer', () => {
 
     expect(config.projectName).toEqual('')
     expect(config.calendarType).toEqual(REGULAR_CALENDAR)
+    expect(config.dateRange).toEqual({ startDate: null, endDate: null })
   })
 
   it('should update project name when change project name input', () => {
@@ -14,6 +15,7 @@ describe('config reducer', () => {
       {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
+        dateRange: { startDate: null, endDate: null },
       },
       updateProjectName('mock project name')
     )
@@ -26,10 +28,26 @@ describe('config reducer', () => {
       {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
+        dateRange: { startDate: null, endDate: null },
       },
       updateCalendarType(CHINA_CALENDAR)
     )
 
     expect(config.calendarType).toEqual(CHINA_CALENDAR)
+  })
+
+  it('should update date range when change date', () => {
+    const today = new Date().getMilliseconds()
+    const config = configReducer(
+      {
+        projectName: '',
+        calendarType: REGULAR_CALENDAR,
+        dateRange: { startDate: null, endDate: null },
+      },
+      updateDateRange({ startDate: today, endDate: null })
+    )
+
+    expect(config.dateRange.startDate).toEqual(today)
+    expect(config.dateRange.endDate).toEqual(null)
   })
 })

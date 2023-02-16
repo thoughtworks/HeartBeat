@@ -1,11 +1,10 @@
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import React, { useState } from 'react'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS, REQUIRED_DATAS } from '@src/constants'
+import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS } from '@src/constants'
 import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
 import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
-import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 import {
@@ -22,7 +21,6 @@ export const ConfigStep = () => {
   const calendarType = useAppSelector(selectCalendarType)
 
   const [isEmptyProjectName, setIsEmptyProjectName] = useState<boolean>(false)
-  const [isShowBoard, setIsShowBoard] = useState(false)
 
   const handleNext = () => {
     dispatch(nextStep())
@@ -30,14 +28,6 @@ export const ConfigStep = () => {
 
   const handleBack = () => {
     dispatch(backStep())
-  }
-
-  const handleRequireData = (requireData: string[]) => {
-    setIsShowBoard(
-      requireData.includes(REQUIRED_DATAS[0]) ||
-        requireData.includes(REQUIRED_DATAS[1]) ||
-        requireData.includes(REQUIRED_DATAS[2])
-    )
   }
 
   return (
@@ -69,8 +59,7 @@ export const ConfigStep = () => {
         <FormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
       </RadioGroup>
       <DateRangePicker />
-      <MetricsTypeCheckbox onHandleRequireData={(value: string[]) => handleRequireData(value)} />
-      {isShowBoard && <Board />}
+      <MetricsTypeCheckbox />
       <ButtonGroup>
         <BackButton onClick={handleBack}>Back</BackButton>
         {activeStep === STEPS.length - 1 ? (

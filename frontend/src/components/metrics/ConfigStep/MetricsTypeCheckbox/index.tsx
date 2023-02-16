@@ -2,44 +2,47 @@ import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, S
 import { REQUIRED_DATAS } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox/style'
-interface MetricsTypeCheckboxProps {
-  onHandleRequireData: (value: string[]) => void
-}
+import { Board } from '@src/components/metrics/ConfigStep/Board'
+import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { selectRequiredData, updateRequiredData } from '@src/features/config/configSlice'
 
-export const MetricsTypeCheckbox: React.FC<MetricsTypeCheckboxProps> = (props) => {
-  const { onHandleRequireData } = props
-  const [requireData, setRequireData] = useState<string[]>([])
+export const MetricsTypeCheckbox = () => {
+  const dispatch = useAppDispatch()
+  const requireData = useAppSelector(selectRequiredData)
+  const [isShowBoard, setIsShowBoard] = useState(false)
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
-  const changeRequireData = (event: SelectChangeEvent<typeof requireData>) => {
+
+  const handleRequireDataChange = (event: SelectChangeEvent<typeof requireData>) => {
     const {
       target: { value },
     } = event
-    onHandleRequireData([...value])
-    setRequireData(value as string[])
-    if (value.length === 0) {
-      setIsEmptyProjectData(true)
-    } else {
-      setIsEmptyProjectData(false)
-    }
+    dispatch(updateRequiredData(value))
+    value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
+    setIsShowBoard(
+      value.includes(REQUIRED_DATAS[0]) || value.includes(REQUIRED_DATAS[1]) || value.includes(REQUIRED_DATAS[2])
+    )
   }
   return (
-    <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
-      <InputLabel id='require-data-multiple-checkbox-label'>Required Data</InputLabel>
-      <Select
-        labelId='require-data-multiple-checkbox-label'
-        multiple
-        value={requireData}
-        onChange={changeRequireData}
-        renderValue={(selected) => selected.join(',')}
-      >
-        {REQUIRED_DATAS.map((data) => (
-          <MenuItem key={data} value={data}>
-            <Checkbox checked={requireData.indexOf(data) > -1} />
-            <ListItemText primary={data} />
-          </MenuItem>
-        ))}
-      </Select>
-      {isEmptyRequireData && <FormHelperText>Metrics is required</FormHelperText>}
-    </RequireDataSelections>
+    <>
+      <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
+        <InputLabel id='require-data-multiple-checkbox-label'>Required Data</InputLabel>
+        <Select
+          labelId='require-data-multiple-checkbox-label'
+          multiple
+          value={requireData}
+          onChange={handleRequireDataChange}
+          renderValue={(selected) => selected.join(',')}
+        >
+          {REQUIRED_DATAS.map((data) => (
+            <MenuItem key={data} value={data}>
+              <Checkbox checked={requireData.indexOf(data) > -1} />
+              <ListItemText primary={data} />
+            </MenuItem>
+          ))}
+        </Select>
+        {isEmptyRequireData && <FormHelperText>Metrics is required</FormHelperText>}
+      </RequireDataSelections>
+      {isShowBoard && <Board />}
+    </>
   )
 }

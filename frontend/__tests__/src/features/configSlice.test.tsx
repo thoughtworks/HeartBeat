@@ -1,5 +1,10 @@
-import configReducer, { updateCalendarType, updateDateRange, updateProjectName } from '@src/features/config/configSlice'
-import { CHINA_CALENDAR, REGULAR_CALENDAR } from '../fixtures'
+import configReducer, {
+  updateCalendarType,
+  updateDateRange,
+  updateProjectName,
+  updateRequiredData,
+} from '@src/features/config/configSlice'
+import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 
 describe('config reducer', () => {
   it('should be default value when init render config page', () => {
@@ -16,6 +21,7 @@ describe('config reducer', () => {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
         dateRange: { startDate: null, endDate: null },
+        requiredData: [],
       },
       updateProjectName('mock project name')
     )
@@ -29,6 +35,7 @@ describe('config reducer', () => {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
         dateRange: { startDate: null, endDate: null },
+        requiredData: [],
       },
       updateCalendarType(CHINA_CALENDAR)
     )
@@ -43,11 +50,26 @@ describe('config reducer', () => {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
         dateRange: { startDate: null, endDate: null },
+        requiredData: [],
       },
       updateDateRange({ startDate: today, endDate: null })
     )
 
     expect(config.dateRange.startDate).toEqual(today)
     expect(config.dateRange.endDate).toEqual(null)
+  })
+
+  it('should update required data when change require data selections', () => {
+    const config = configReducer(
+      {
+        projectName: '',
+        calendarType: REGULAR_CALENDAR,
+        dateRange: { startDate: null, endDate: null },
+        requiredData: [],
+      },
+      updateRequiredData([VELOCITY])
+    )
+
+    expect(config.requiredData).toEqual([VELOCITY])
   })
 })

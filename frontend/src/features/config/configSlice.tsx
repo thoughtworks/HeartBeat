@@ -9,6 +9,7 @@ export interface configState {
     startDate: number | null
     endDate: number | null
   }
+  requiredData: string[]
 }
 
 const initialState: configState = {
@@ -18,6 +19,7 @@ const initialState: configState = {
     startDate: null,
     endDate: null,
   },
+  requiredData: [],
 }
 
 export const configSlice = createSlice({
@@ -34,13 +36,17 @@ export const configSlice = createSlice({
       const { startDate, endDate } = action.payload
       state.dateRange = { startDate, endDate }
     },
+    updateRequiredData: (state, action) => {
+      state.requiredData = action.payload
+    },
   },
 })
 
-export const { updateProjectName, updateCalendarType, updateDateRange } = configSlice.actions
+export const { updateProjectName, updateCalendarType, updateDateRange, updateRequiredData } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.projectName
 export const selectCalendarType = (state: RootState) => state.config.calendarType
 export const selectDateRange = (state: RootState) => state.config.dateRange
+export const selectRequiredData = (state: RootState) => state.config.requiredData
 
 export default configSlice.reducer

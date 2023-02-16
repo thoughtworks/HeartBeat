@@ -8,12 +8,13 @@ import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSli
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
+import { selectProjectName, updateProjectName } from '@src/features/config/configSlice'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStep)
+  const projectName: string = useAppSelector(selectProjectName)
 
-  const [projectName, setProjectName] = useState<string>('')
   const [isEmptyProjectName, setIsEmptyProjectName] = useState<boolean>(false)
   const [isShowBoard, setIsShowBoard] = useState(false)
 
@@ -44,7 +45,7 @@ export const ConfigStep = () => {
           setIsEmptyProjectName(e.target.value === '')
         }}
         onChange={(e) => {
-          setProjectName(e.target.value)
+          dispatch(updateProjectName(e.target.value))
           setIsEmptyProjectName(e.target.value === '')
         }}
         error={isEmptyProjectName}

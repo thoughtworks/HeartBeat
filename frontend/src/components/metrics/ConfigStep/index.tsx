@@ -8,12 +8,18 @@ import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSli
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
-import { selectProjectName, updateProjectName } from '@src/features/config/configSlice'
+import {
+  selectCalendarType,
+  selectProjectName,
+  updateCalendarType,
+  updateProjectName,
+} from '@src/features/config/configSlice'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStep)
-  const projectName: string = useAppSelector(selectProjectName)
+  const projectName = useAppSelector(selectProjectName)
+  const calendarType = useAppSelector(selectCalendarType)
 
   const [isEmptyProjectName, setIsEmptyProjectName] = useState<boolean>(false)
   const [isShowBoard, setIsShowBoard] = useState(false)
@@ -52,7 +58,13 @@ export const ConfigStep = () => {
         helperText={isEmptyProjectName ? 'Project Name is required' : ''}
       />
       <h3>Collection Date</h3>
-      <RadioGroup defaultValue={REGULAR_CALENDAR} onChange={() => dispatch(changeBoardVerifyState(false))}>
+      <RadioGroup
+        value={calendarType}
+        onChange={(e) => {
+          dispatch(changeBoardVerifyState(false))
+          dispatch(updateCalendarType(e.target.value))
+        }}
+      >
         <FormControlLabel value={REGULAR_CALENDAR} control={<Radio />} label={REGULAR_CALENDAR} />
         <FormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
       </RadioGroup>

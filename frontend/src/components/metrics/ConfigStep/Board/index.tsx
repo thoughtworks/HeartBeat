@@ -14,35 +14,56 @@ import {
 } from '@src/components/metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
+import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
+  const boardFields = useAppSelector(selectBoardFields)
   const isVerified = useAppSelector(isBoardVerified)
-  const [boardField, setBoardField] = useState(INIT_BOARD_FIELDS_STATE)
+  const [fieldErrors, setFieldErrors] = useState(INIT_BOARD_FIELDS_STATE)
   const [isAbleVerifyButton, setIsAbleVerifyButton] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const fields = Object.values(boardField)
-  const boardFieldNames = Object.keys(boardField)
+  const boardFieldValues = Object.values(boardFields)
+  const boardFieldNames = Object.keys(boardFields)
+  const boardFieldStates = Object.values(fieldErrors)
+
+  const initBoardFields = () => {
+    dispatch(
+      updateBoardFields({
+        board: BOARD_TYPES.JIRA,
+        boardId: '',
+        email: '',
+        projectKey: '',
+        site: '',
+        token: '',
+      })
+    )
+  }
 
   const checkFiledValid = (type: string, value: string): boolean =>
     type === EMAIL ? emailRegExp.test(value) : value !== ''
 
   const onFormUpdate = (key: string, value: string) => {
     const isError = !checkFiledValid(key, value)
-    const newBoardFieldsState = {
-      ...boardField,
+    const newFieldErrors = {
+      ...fieldErrors,
       [key]: {
-        value,
         isError,
         helpText: isError ? ` ${key} is required` : '',
       },
     }
     setIsAbleVerifyButton(
       !boardFieldNames
-        .map((fieldName, index) => checkFiledValid(fieldName, fields[index].value))
+        .map((fieldName, index) => checkFiledValid(fieldName, boardFieldValues[index]))
         .every((validField) => validField)
     )
-    setBoardField(newBoardFieldsState)
+    setFieldErrors(newFieldErrors)
+    dispatch(
+      updateBoardFields({
+        ...boardFields,
+        [key]: value,
+      })
+    )
   }
 
   const handleSubmitBoardFields = (e: FormEvent<HTMLFormElement>): void => {
@@ -52,21 +73,23 @@ export const Board = () => {
   }
 
   const handleResetBoardFields = () => {
-    setBoardField(INIT_BOARD_FIELDS_STATE)
+    initBoardFields()
     setIsAbleVerifyButton(true)
     dispatch(changeBoardVerifyState(false))
   }
 
   useEffect(() => {
-    setBoardField({
-      ...boardField,
-      boardId: INIT_BOARD_FIELDS_STATE.boardId,
-      email: INIT_BOARD_FIELDS_STATE.email,
-      projectKey: INIT_BOARD_FIELDS_STATE.projectKey,
-      site: INIT_BOARD_FIELDS_STATE.site,
-      token: INIT_BOARD_FIELDS_STATE.token,
-    })
-  }, [boardField.board])
+    dispatch(
+      updateBoardFields({
+        board: boardFields.board,
+        boardId: '',
+        email: '',
+        projectKey: '',
+        site: '',
+        token: '',
+      })
+    )
+  }, [boardFields.board])
 
   return (
     <BoardSection>
@@ -77,13 +100,13 @@ export const Board = () => {
       )}
       <BoardTitle>board</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
-        {boardFieldNames.map((filedTitle, index) =>
+        {boardFieldNames.map((filedName, index) =>
           index === ZERO ? (
-            <BoardTypeSelections variant='standard' required key={fields[index].value}>
+            <BoardTypeSelections variant='standard' required key={boardFieldValues[index]}>
               <InputLabel id='board-type-checkbox-label'>board</InputLabel>
               <Select
                 labelId='board-type-checkbox-label'
-                value={boardField.board.value}
+                value={boardFields.board}
                 onChange={(e) => {
                   onFormUpdate('board', e.target.value)
                 }}
@@ -99,14 +122,14 @@ export const Board = () => {
             <BoardTextField
               key={index}
               required
-              label={filedTitle}
+              label={boardFieldNames[index]}
               variant='standard'
-              value={fields[index].value}
+              value={boardFieldValues[index]}
               onChange={(e) => {
-                onFormUpdate(filedTitle, e.target.value)
+                onFormUpdate(filedName, e.target.value)
               }}
-              error={fields[index].isError}
-              helperText={fields[index].helpText}
+              error={boardFieldStates[index].isError}
+              helperText={boardFieldStates[index].helpText}
             />
           )
         )}

@@ -36,12 +36,12 @@ export const BOARD_TYPES = {
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 export const INIT_BOARD_FIELDS_STATE = {
-  board: { value: BOARD_TYPES.JIRA, isError: false, helpText: '' },
-  boardId: { value: '', isError: false, helpText: '' },
-  email: { value: '', isError: false, helpText: '' },
-  projectKey: { value: '', isError: false, helpText: '' },
-  site: { value: '', isError: false, helpText: '' },
-  token: { value: '', isError: false, helpText: '' },
+  board: { isError: false, helpText: '' },
+  boardId: { isError: false, helpText: '' },
+  email: { isError: false, helpText: '' },
+  projectKey: { isError: false, helpText: '' },
+  site: { isError: false, helpText: '' },
+  token: { isError: false, helpText: '' },
 }
 
 export const EMAIL = 'email'

@@ -21,11 +21,32 @@ export const Board = () => {
   const boardFields = useAppSelector(selectBoardFields)
   const isVerified = useAppSelector(isBoardVerified)
   const [fieldErrors, setFieldErrors] = useState(INIT_BOARD_FIELDS_STATE)
-  const [isAbleVerifyButton, setIsAbleVerifyButton] = useState(true)
+  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const boardFieldValues = Object.values(boardFields)
   const boardFieldNames = Object.keys(boardFields)
   const boardFieldStates = Object.values(fieldErrors)
+
+  useEffect(() => {
+    dispatch(
+      updateBoardFields({
+        board: boardFields.board,
+        boardId: '',
+        email: '',
+        projectKey: '',
+        site: '',
+        token: '',
+      })
+    )
+  }, [boardFields.board])
+
+  useEffect(() => {
+    setIsDisableVerifyButton(
+      !boardFieldNames
+        .map((fieldName, index) => checkFiledValid(fieldName, boardFieldValues[index]))
+        .every((validField) => validField)
+    )
+  }, [boardFields])
 
   const initBoardFields = () => {
     dispatch(
@@ -52,11 +73,6 @@ export const Board = () => {
         helpText: isError ? ` ${key} is required` : '',
       },
     }
-    setIsAbleVerifyButton(
-      !boardFieldNames
-        .map((fieldName, index) => checkFiledValid(fieldName, boardFieldValues[index]))
-        .every((validField) => validField)
-    )
     setFieldErrors(newFieldErrors)
     dispatch(
       updateBoardFields({
@@ -74,22 +90,9 @@ export const Board = () => {
 
   const handleResetBoardFields = () => {
     initBoardFields()
-    setIsAbleVerifyButton(true)
+    setIsDisableVerifyButton(true)
     dispatch(changeBoardVerifyState(false))
   }
-
-  useEffect(() => {
-    dispatch(
-      updateBoardFields({
-        board: boardFields.board,
-        boardId: '',
-        email: '',
-        projectKey: '',
-        site: '',
-        token: '',
-      })
-    )
-  }, [boardFields.board])
 
   return (
     <BoardSection>
@@ -134,7 +137,7 @@ export const Board = () => {
           )
         )}
         <BoardButtonGroup>
-          <VerifyButton type='submit' disabled={isAbleVerifyButton}>
+          <VerifyButton type='submit' disabled={isDisableVerifyButton}>
             {isVerified ? 'Verified' : 'Verify'}
           </VerifyButton>
           {isVerified && <ResetButton type='reset'>Reset</ResetButton>}

@@ -1,25 +1,18 @@
+import homePage from '../pages/home'
+import metricsPage from '../pages/metrics'
+
 describe('Create a new project', () => {
-  it('Visits the Heartbeat home page', () => {
-    cy.visit(Cypress.env('url') + '/index.html')
+  it('Should create a new project manually', () => {
+    homePage.navigate()
 
-    cy.contains('Create a new project').click()
+    homePage.createANewProject()
 
-    cy.url().should('include', '/metrics')
+    metricsPage.typeProjectName('E2E Project')
 
-    cy.contains('Project Name').siblings().type('E2E Project')
+    const today = new Date()
+    const day = today.getDate()
+    metricsPage.selectDateRange(`${day}`, `${day + 1}`)
 
-    cy.contains('From').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains('16').click()
-
-    cy.contains('To').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains('20').click()
-
-    cy.contains('Required Data').siblings().click()
-    // cy.get('.MuiPaper-root ul').click()
-
-    cy.contains('Velocity').click()
-    cy.contains('Cycle time').click()
-
-    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+    metricsPage.selectVelocityAndCycleTime()
   })
 })

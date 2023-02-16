@@ -7,7 +7,6 @@ specifiers:
   '@mui/icons-material': ^5.11.0
   '@mui/material': ^5.11.3
   '@mui/x-date-pickers': ^5.0.17
-  '@playwright/test': ^1.29.2
   '@reduxjs/toolkit': ^1.9.1
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
@@ -63,7 +62,6 @@ dependencies:
   react-router-dom: 6.6.2_biqbaboplfbrettd7655fr4n2y
 
 devDependencies:
-  '@playwright/test': 1.29.2
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
   '@testing-library/user-event': 14.4.3
@@ -1420,15 +1418,6 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
-    dev: true
-
-  /@playwright/test/1.29.2:
-    resolution: {integrity: sha512-+3/GPwOgcoF0xLz/opTnahel1/y42PdcgZ4hs+BZGIUjtmEFSXGg+nFoaH3NSmuc7a6GSFwXDJ5L7VXpqzigNg==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dependencies:
-      '@types/node': 18.11.18
-      playwright-core: 1.29.2
     dev: true
 
   /@popperjs/core/2.11.6:
@@ -5369,12 +5358,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       find-up: 4.1.0
-    dev: true
-
-  /playwright-core/1.29.2:
-    resolution: {integrity: sha512-94QXm4PMgFoHAhlCuoWyaBYKb92yOcGVHdQLoxQ7Wjlc7Flg4aC/jbFW7xMR52OfXMVkWicue4WXE7QEegbIRA==}
-    engines: {node: '>=14'}
-    hasBin: true
     dev: true
 
   /postcss-value-parser/4.2.0:

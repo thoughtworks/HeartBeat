@@ -1,10 +1,9 @@
-import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL } from '@src/constants'
 import React, { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
-  BoardLoadingDrop,
   BoardSection,
   BoardTextField,
   BoardTitle,
@@ -15,6 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
+import { verifyBoard } from '@src/service/config.service'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -22,7 +22,6 @@ export const Board = () => {
   const isVerified = useAppSelector(isBoardVerified)
   const [fieldErrors, setFieldErrors] = useState(INIT_BOARD_FIELDS_STATE)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
   const boardFieldValues = Object.values(boardFields)
   const boardFieldNames = Object.keys(boardFields)
   const boardFieldStates = Object.values(fieldErrors)
@@ -82,10 +81,10 @@ export const Board = () => {
     )
   }
 
-  const handleSubmitBoardFields = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     dispatch(changeBoardVerifyState(true))
-    setIsLoading(!isLoading)
+    await verifyBoard()
   }
 
   const handleResetBoardFields = () => {
@@ -96,11 +95,6 @@ export const Board = () => {
 
   return (
     <BoardSection>
-      {isLoading && (
-        <BoardLoadingDrop open={isLoading}>
-          <CircularProgress size='8rem' />
-        </BoardLoadingDrop>
-      )}
       <BoardTitle>board</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {boardFieldNames.map((filedName, index) =>

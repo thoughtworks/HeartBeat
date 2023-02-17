@@ -95,7 +95,7 @@ export const Board = () => {
 
   return (
     <BoardSection>
-      <BoardTitle>board</BoardTitle>
+      <BoardTitle>Board</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {boardFieldNames.map((filedName, index) =>
           index === ZERO ? (

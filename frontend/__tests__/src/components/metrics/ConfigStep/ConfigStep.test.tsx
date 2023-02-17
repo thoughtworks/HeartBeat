@@ -4,7 +4,7 @@ import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRED_DATA, TEST_PROJECT_NAME, VEL
 import { Provider } from 'react-redux'
 import { fillBoardFieldsInformation } from './Board.test'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import * as dayjs from 'Dayjs'
+import * as dayjs from 'dayjs'
 
 jest.useFakeTimers()
 let store: any = null

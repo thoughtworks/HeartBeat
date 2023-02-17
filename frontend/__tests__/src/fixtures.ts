@@ -16,7 +16,7 @@ export const EXPORT_BOARD_DATA = 'Export board data'
 
 export const STEPS = ['Config', 'Metrics', 'Export']
 
-export const REQUIRED_DATAS = [
+export const REQUIRED_DATA_LIST = [
   'Velocity',
   'Cycle time',
   'Classification',
@@ -37,5 +37,7 @@ export const BOARD_TYPES = {
   JIRA: 'Jira',
   LINEAR: 'Linear',
 }
+
+export const CONFIG_TITLE_BOARD = 'Board'
 
 export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']

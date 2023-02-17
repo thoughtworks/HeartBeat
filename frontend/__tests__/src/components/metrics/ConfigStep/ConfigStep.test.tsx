@@ -1,6 +1,13 @@
 import { fireEvent, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRED_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
+import {
+  CHINA_CALENDAR,
+  CONFIG_TITLE_BOARD,
+  REGULAR_CALENDAR,
+  REQUIRED_DATA,
+  TEST_PROJECT_NAME,
+  VELOCITY,
+} from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { fillBoardFieldsInformation } from './Board.test'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -95,7 +102,7 @@ describe('ConfigStep', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Cycle time' }))
 
-    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
+    expect(getByRole('heading', { name: CONFIG_TITLE_BOARD, hidden: true })).toBeInTheDocument()
   })
   it('should show board component when MetricsTypeCheckbox select  Classification, ', () => {
     const { getByRole } = setup()
@@ -104,7 +111,7 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Classification' }))
 
-    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
+    expect(getByRole('heading', { name: CONFIG_TITLE_BOARD, hidden: true })).toBeInTheDocument()
   })
   it('should verify again when calendar type is changed given board fields are filled and verified', () => {
     const { getByRole, getByText, queryByText } = setup()

@@ -3,6 +3,11 @@ import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
+import { verifyBoard } from '@src/service/config.service'
+jest.mock('@src/service/config.service', () => ({
+  verifyBoard: jest.fn(),
+}))
+jest.mock('axios')
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
@@ -138,5 +143,12 @@ describe('Board', () => {
     fireEvent.click(getByText('Verify'))
 
     expect(getByText('Reset')).toBeVisible()
+  })
+  it('should called verifyBoard method once when click verify button', async () => {
+    const { getByRole } = setup()
+    fillBoardFieldsInformation()
+    fireEvent.click(getByRole('button', { name: 'Verify' }))
+
+    expect(() => expect(verifyBoard).toHaveBeenCalledTimes(1)).toThrow()
   })
 })

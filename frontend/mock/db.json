@@ -1,0 +1,35 @@
+{
+  "verifyBoard": [
+    {
+      "jiraColumns": [
+        {
+          "key": "indeterminate",
+          "value": {
+            "name": "TODO",
+            "statuses": ["TODO"]
+          }
+        },
+        {
+          "key": "indeterminate",
+          "value": {
+            "name": "Testing",
+            "statuses": ["TESTING"]
+          }
+        }
+      ],
+      "targetFields": [
+        {
+          "key": "issuetype",
+          "name": "事务类型",
+          "flag": false
+        },
+        {
+          "key": "parent",
+          "name": "父级",
+          "flag": false
+        }
+      ],
+      "users": ["Xinyi Wei", "Huanran Yun", "Yuanhao Kong", "Chao Yang"]
+    }
+  ]
+}

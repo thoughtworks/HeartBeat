@@ -216,16 +216,14 @@ jobs:
         run: |
           npm install -g pnpm
           pnpm install
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests --trace on
+      - name: Run E2E
         env:
           APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP }}:${{ secrets.APP_PORT }}
-        run: npx playwright test
+        run: pnpm run e2e
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report
-          path: frontend/playwright-report/
+          name: cypress-videos
+          path: frontend/cypress/videos/
           retention-days: ${{ vars.RETENTION_DAYS }}
 

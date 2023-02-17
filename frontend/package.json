@@ -13,11 +13,10 @@
     "fix": "eslint -c .eslintrc.json --fix && npx prettier --write . --ignore-unknown",
     "test": "jest",
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
-    "e2e:debug": "playwright test --debug --trace on",
-    "e2e": "playwright test --headed",
-    "e2e:report": "playwright show-report",
-    "prepare": "playwright install && cd .. && husky install frontend/.husky",
-    "license-compliance": "license-compliance -r detailed --allow='MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Python-2.0;CC-BY-4.0;CC-BY-3.0;WTFPL;CC0-1.0'"
+    "e2e:open": "cypress open",
+    "e2e": "cypress run --spec cypress/",
+    "prepare": "cd .. && husky install frontend/.husky",
+    "license-compliance": "license-compliance -r detailed --allow='Unlicense;MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Python-2.0;CC-BY-4.0;CC-BY-3.0;WTFPL;CC0-1.0'"
   },
   "lint-staged": {
     "**/*": "npx prettier --write . --ignore-unknown"
@@ -40,9 +39,8 @@
     "react-router-dom": "^6.6.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.29.2",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.2.5",
     "@types/node": "^18.11.18",
@@ -54,6 +52,7 @@
     "@typescript-eslint/parser": "^5.48.0",
     "@vitejs/plugin-react-swc": "^3.0.0",
     "autoprefixer": "^10.4.13",
+    "cypress": "^12.5.1",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-config-standard-with-typescript": "^34.0.0",

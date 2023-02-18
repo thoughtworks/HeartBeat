@@ -38,6 +38,8 @@ export const BOARD_TYPES = {
   LINEAR: 'Linear',
 }
 
-export const CONFIG_TITLE_BOARD = 'Board'
+export enum CONFIG_TITLE {
+  BOARD = 'Board',
+}
 
 export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']

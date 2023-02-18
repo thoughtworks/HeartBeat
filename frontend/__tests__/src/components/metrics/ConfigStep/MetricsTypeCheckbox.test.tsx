@@ -1,4 +1,4 @@
-import { CONFIG_TITLE_BOARD, REQUIRED_DATA, REQUIRED_DATA_LIST, VELOCITY } from '../../../fixtures'
+import { CONFIG_TITLE, REQUIRED_DATA, REQUIRED_DATA_LIST, VELOCITY } from '../../../fixtures'
 import { fireEvent, render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
 import { Provider } from 'react-redux'
@@ -60,7 +60,7 @@ describe('MetricsTypeCheckbox', () => {
     const listBox = within(getByRole('listbox'))
     fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
 
-    expect(getByRole('heading', { name: CONFIG_TITLE_BOARD, hidden: true })).toBeInTheDocument()
+    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
   it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', () => {
     const { getByRole, queryByText } = setup()
@@ -70,6 +70,6 @@ describe('MetricsTypeCheckbox', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
 
-    expect(queryByText(CONFIG_TITLE_BOARD)).toBeNull()
+    expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull()
   })
 })

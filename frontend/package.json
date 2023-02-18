@@ -67,6 +67,7 @@
     "jest-environment-jsdom": "^29.3.1",
     "license-compliance": "^1.2.5",
     "lint-staged": "^13.1.0",
+    "msw": "^1.0.1",
     "prettier": "2.8.4",
     "ts-jest": "^29.0.3",
     "typescript": "*",

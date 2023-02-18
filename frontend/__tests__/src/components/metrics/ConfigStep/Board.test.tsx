@@ -1,13 +1,10 @@
 import { fireEvent, render, within, screen } from '@testing-library/react'
+import { rest } from 'msw'
+import { setupServer, SetupServerApi } from 'msw/node'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { verifyBoard } from '@src/service/config.service'
-jest.mock('@src/service/config.service', () => ({
-  verifyBoard: jest.fn(),
-}))
-jest.mock('axios')
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
@@ -38,6 +35,18 @@ const setup = () => {
 }
 
 describe('Board', () => {
+  let server: SetupServerApi
+  beforeEach(() => {
+    server = setupServer(
+      rest.get('/api/v1/board/jira', (req, res, ctx) => {
+        return res(ctx.status(200, 'success'))
+      })
+    )
+    server.listen()
+  })
+
+  afterAll(() => server.close())
+
   it('should show board title and fields when render board component ', () => {
     const { getByRole, getByLabelText } = setup()
 
@@ -145,10 +154,10 @@ describe('Board', () => {
     expect(getByText('Reset')).toBeVisible()
   })
   it('should called verifyBoard method once when click verify button', async () => {
-    const { getByRole } = setup()
+    const { getByRole, getByText } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
-    expect(() => expect(verifyBoard).toHaveBeenCalledTimes(1)).toThrow()
+    expect(getByText('Verified')).toBeInTheDocument()
   })
 })

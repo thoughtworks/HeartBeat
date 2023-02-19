@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Dayjs } from 'dayjs'
 import * as dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -17,14 +16,14 @@ export const DateRangePicker = () => {
 
   const [dateRangeValueError, setDateRangeValueError] = useState([false, false])
 
-  const checkDateformat = (value: Dayjs | null, dateType: number) => {
+  const checkDateformat = (value: dayjs.Dayjs | null, dateType: number) => {
     const newDateRangeValueError = [...dateRangeValueError]
     if (value === null || !value.isValid()) newDateRangeValueError.splice(dateType, 1, true)
     else newDateRangeValueError.splice(dateType, 1, false)
     setDateRangeValueError(newDateRangeValueError)
   }
 
-  const checkDateRangeValid = (startDate: Dayjs | null, endDate: Dayjs | null) => {
+  const checkDateRangeValid = (startDate: dayjs.Dayjs | null, endDate: dayjs.Dayjs | null) => {
     if (startDate && endDate && startDate.isAfter(endDate)) {
       setDateRangeValueError([dateRangeValueError[0], true])
     }

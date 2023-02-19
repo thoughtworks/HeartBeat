@@ -1,9 +1,10 @@
-import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL } from '@src/constants'
 import React, { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
+  BoardLoadingDrop,
   BoardSection,
   BoardTextField,
   BoardTitle,
@@ -14,7 +15,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
-import { verifyBoard } from '@src/service/config.service'
+import { verifyBoard } from '@src/service/boardService'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -25,6 +26,7 @@ export const Board = () => {
   const boardFieldValues = Object.values(boardFields)
   const boardFieldNames = Object.keys(boardFields)
   const boardFieldStates = Object.values(fieldErrors)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     dispatch(
@@ -81,10 +83,30 @@ export const Board = () => {
     )
   }
 
-  const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  useEffect(() => {
+    // axios.get('https://jsonplaceholder.typicode.com/posts').then((res) => {
+    //   setIsLoading(res.status !== 200)
+    // })
+    // const testVerify = async () => {
+    //   const response = await verifyBoard()
+    //   console.log(response)
+    //   if (response.status === 200) {
+    //     setIsLoading(false)
+    //   }
+    //   return response.data
+    // }
+    // testVerify().then((r) => r)
+    ;(async () => {
+      const response = await verifyBoard()
+      if (response.status === 200) {
+        setIsLoading(false)
+      }
+    })()
+  }, [isLoading])
+  const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(changeBoardVerifyState(true))
-    await verifyBoard()
+    setIsLoading(true)
   }
 
   const handleResetBoardFields = () => {
@@ -95,6 +117,11 @@ export const Board = () => {
 
   return (
     <BoardSection>
+      {isLoading && (
+        <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
+          <CircularProgress size='8rem' />
+        </BoardLoadingDrop>
+      )}
       <BoardTitle>board</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {boardFieldNames.map((filedName, index) =>

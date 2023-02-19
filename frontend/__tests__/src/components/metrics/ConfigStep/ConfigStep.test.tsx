@@ -1,10 +1,17 @@
 import { fireEvent, Matcher, render, within } from '@testing-library/react'
 import { ConfigStep } from '@src/components/metrics/ConfigStep'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, REQUIRED_DATA, TEST_PROJECT_NAME, VELOCITY } from '../../../fixtures'
+import {
+  CHINA_CALENDAR,
+  CONFIG_TITLE,
+  REGULAR_CALENDAR,
+  REQUIRED_DATA,
+  TEST_PROJECT_NAME,
+  VELOCITY,
+} from '../../../fixtures'
 import { Provider } from 'react-redux'
-import { fillBoardFieldsInformation } from './Board.test'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import * as dayjs from 'dayjs'
+import { fillBoardFieldsInformation } from './Board.test'
 
 let store = null
 describe('ConfigStep', () => {
@@ -81,7 +88,7 @@ describe('ConfigStep', () => {
   it('should not show board component when init ConfigStep component ', () => {
     const { queryByText } = setup()
 
-    expect(queryByText('board')).toBeNull()
+    expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull()
   })
   it('should show board component when MetricsTypeCheckbox select Velocity,Cycle time', () => {
     const { getByRole } = setup()

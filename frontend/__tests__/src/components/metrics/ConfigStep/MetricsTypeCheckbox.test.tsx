@@ -1,4 +1,4 @@
-import { REQUIRED_DATA, REQUIRED_DATAS, VELOCITY } from '../../../fixtures'
+import { CONFIG_TITLE, REQUIRED_DATA, REQUIRED_DATA_LIST, VELOCITY } from '../../../fixtures'
 import { fireEvent, render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
 import { Provider } from 'react-redux'
@@ -30,7 +30,7 @@ describe('MetricsTypeCheckbox', () => {
     const options = listBox.getAllByRole('option')
     const optionValue = options.map((li) => li.getAttribute('data-value'))
 
-    expect(optionValue).toEqual(REQUIRED_DATAS)
+    expect(optionValue).toEqual(REQUIRED_DATA_LIST)
   })
   it('should show multiple selections when multiple options are selected', () => {
     const { getByRole, getByText } = setup()
@@ -54,13 +54,13 @@ describe('MetricsTypeCheckbox', () => {
     const errorMessage = getByText('Metrics is required')
     expect(errorMessage).toBeInTheDocument()
   })
-  it('should board component  when click MetricsTypeCheckbox selection velocity ', () => {
+  it('should board component when click MetricsTypeCheckbox selection velocity ', () => {
     const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
     fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
 
-    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
+    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
   it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', () => {
     const { getByRole, queryByText } = setup()
@@ -70,6 +70,6 @@ describe('MetricsTypeCheckbox', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
 
-    expect(queryByText('board')).toBeNull()
+    expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull()
   })
 })

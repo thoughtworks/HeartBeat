@@ -1,6 +1,6 @@
 import { fireEvent, render, within, screen } from '@testing-library/react'
 import { Board } from '@src/components/metrics/ConfigStep/Board'
-import { BOARD_FIELDS, BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
+import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
@@ -49,7 +49,7 @@ describe('Board', () => {
     BOARD_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
     })
-    expect(getByRole('heading', { name: 'board' })).toBeInTheDocument()
+    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD })).toBeInTheDocument()
   })
   it('should show default value jira when init board component', () => {
     const { getByText, queryByText } = setup()

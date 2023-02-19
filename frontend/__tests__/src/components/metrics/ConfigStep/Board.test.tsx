@@ -3,11 +3,14 @@ import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { verifyBoard } from '@src/service/config.service'
-jest.mock('@src/service/config.service', () => ({
-  verifyBoard: jest.fn(),
-}))
-jest.mock('axios')
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
+
+const server = setupServer(
+  rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
+    return res(ctx.status(200))
+  })
+)
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
@@ -38,6 +41,8 @@ const setup = () => {
 }
 
 describe('Board', () => {
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
   it('should show board title and fields when render board component ', () => {
     const { getByRole, getByLabelText } = setup()
 
@@ -144,11 +149,16 @@ describe('Board', () => {
 
     expect(getByText('Reset')).toBeVisible()
   })
-  it('should called verifyBoard method once when click verify button', async () => {
-    const { getByRole } = setup()
+
+  it('should show loading animation when click verify button', async () => {
+    const { getByRole, getByTestId } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
-    expect(() => expect(verifyBoard).toHaveBeenCalledTimes(1)).toThrow()
+    expect(getByTestId('circularProgress')).toBeVisible()
+
+    setTimeout(() => {
+      expect(getByTestId('circularProgress')).not.toBeVisible()
+    }, 1000)
   })
 })

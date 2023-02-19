@@ -84,18 +84,6 @@ export const Board = () => {
   }
 
   useEffect(() => {
-    // axios.get('https://jsonplaceholder.typicode.com/posts').then((res) => {
-    //   setIsLoading(res.status !== 200)
-    // })
-    // const testVerify = async () => {
-    //   const response = await verifyBoard()
-    //   console.log(response)
-    //   if (response.status === 200) {
-    //     setIsLoading(false)
-    //   }
-    //   return response.data
-    // }
-    // testVerify().then((r) => r)
     ;(async () => {
       const response = await verifyBoard()
       if (response.status === 200) {

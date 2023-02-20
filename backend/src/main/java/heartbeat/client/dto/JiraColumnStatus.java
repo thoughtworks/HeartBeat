@@ -15,4 +15,5 @@ public class JiraColumnStatus {
 
 	private String id;
 
+	private String self;
 }

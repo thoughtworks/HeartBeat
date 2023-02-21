@@ -1,5 +1,6 @@
 package heartbeat.service.board.jira;
 
+import static java.util.Objects.isNull;
 import static org.springframework.http.HttpMethod.GET;
 
 import feign.FeignException;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -49,11 +51,17 @@ public class JiraService {
 	}
 
 	private ColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, String token) {
+		List<StatusSelf> statusSelfList = jiraColumn.getStatuses().stream()
+			.map(jiraColumnStatus -> getColumnStatusCategory(jiraColumnStatus.getSelf(), token)).toList();
+
+		List<String> statusKey = statusSelfList.stream().map(statusSelf -> statusSelf.getStatusCategory().getKey()).toList();
+		String key = statusKey.contains("done") ? "done" : statusKey.get(statusKey.size() - 1);
+
 		return ColumnResponse.builder()
+			.key(key)
 			.value(ColumnValue.builder()
 				.name(jiraColumn.getName())
-				.statuses(jiraColumn.getStatuses().stream()
-					.map(jiraColumnStatus -> getColumnStatusCategory(jiraColumnStatus.getSelf(), token).getUntranslatedName().toUpperCase()).toList())
+				.statuses(statusSelfList.stream().map(statusSelf -> statusSelf.getUntranslatedName().toUpperCase()).toList())
 				.build())
 			.build();
 	}
@@ -65,7 +73,7 @@ public class JiraService {
 			new HttpEntity<>(buildHttpHeaders(token)),
 			StatusSelf.class
 		);
-		if (exchange.getBody() == null) {
+		if (isNull(exchange.getBody())) {
 			throw new RequestFailedException(exchange.getStatusCode().value(), "Failed when call Jira to get colum body is null");
 		}
 		return exchange.getBody();

@@ -20,9 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.SELF;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,19 +45,23 @@ class JiraServiceTest {
 	@Test
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelf doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelf doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
-		StatusSelf statusSelf = new StatusSelf("status");
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(restTemplate.exchange(SELF, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(statusSelf, OK));
+		when(restTemplate.exchange(SELF_1, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(doneStatusSelf, OK));
+		when(restTemplate.exchange(SELF_2, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(doingStatusSelf, OK));
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
 		assertThat(boardConfigResponse.getJiraColumns()).hasSize(1);
 		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getStatuses().get(0)).isEqualTo("STATUS");
+		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigResponse.getJiraColumns().get(0).getKey()).isEqualTo("done");
 	}
 
 	@Test
@@ -70,7 +72,7 @@ class JiraServiceTest {
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(restTemplate.exchange(SELF, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(null, BAD_REQUEST));
+		when(restTemplate.exchange(SELF_1, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(null, BAD_REQUEST));
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest)).isInstanceOf(RequestFailedException.class).hasMessageContaining("Request failed with status statusCode 400, error: Failed when call Jira to get colum body is null");
 	}

@@ -3,7 +3,7 @@ import { Board } from '@src/components/metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { setupServer, SetupServerApi } from 'msw/node'
+import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 
 export const fillBoardFieldsInformation = () => {
@@ -33,17 +33,14 @@ const setup = () => {
     </Provider>
   )
 }
+const server = setupServer(
+  rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
+    return res(ctx.status(200))
+  })
+)
 
 describe('Board', () => {
-  let server: SetupServerApi
-  beforeEach(() => {
-    server = setupServer(
-      rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
-        return res(ctx.status(200, 'success'))
-      })
-    )
-    server.listen()
-  })
+  beforeAll(() => server.listen())
   afterAll(() => server.close())
 
   it('should show board title and fields when render board component ', () => {

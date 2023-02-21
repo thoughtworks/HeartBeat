@@ -14,5 +14,9 @@ describe('Create a new project', () => {
     metricsPage.selectDateRange(`${day}`, `${day + 1}`)
 
     metricsPage.selectVelocityAndCycleTime()
+
+    metricsPage.fillBoardFieldsInfo('2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken')
+
+    metricsPage.resetBoardInfo()
   })
 })

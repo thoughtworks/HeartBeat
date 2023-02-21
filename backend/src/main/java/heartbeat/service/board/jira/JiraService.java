@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -36,20 +36,19 @@ public class JiraService {
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
-					boardRequest.getToken());
+				boardRequest.getToken());
 
 			return BoardConfigResponse.builder().jiraColumns(
 				jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
 					.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, boardRequest.getToken())).toList()
 			).build();
-		}
-		catch (FeignException e) {
+		} catch (FeignException e) {
 			log.error("Failed when call Jira to get board config", e);
 			throw new RequestFailedException(e);
 		}
 	}
 
-	private ColumnResponse getColumnNameAndStatus (JiraColumn jiraColumn, String token) {
+	private ColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, String token) {
 		return ColumnResponse.builder()
 			.value(ColumnValue.builder()
 				.name(jiraColumn.getName())
@@ -59,13 +58,17 @@ public class JiraService {
 			.build();
 	}
 
-	public StatusSelf getColumnStatusCategory(String url, String token) {
-		return restTemplate.exchange(
+	private StatusSelf getColumnStatusCategory(String url, String token) {
+		ResponseEntity<StatusSelf> exchange = restTemplate.exchange(
 			url,
 			GET,
 			new HttpEntity<>(buildHttpHeaders(token)),
 			StatusSelf.class
-		).getBody();
+		);
+		if (exchange.getBody() == null) {
+			throw new RequestFailedException(exchange.getStatusCode().value(), "Failed when call Jira to get colum body is null");
+		}
+		return exchange.getBody();
 	}
 
 	public HttpHeaders buildHttpHeaders(String token) {

@@ -13,7 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -23,9 +25,8 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,8 +50,7 @@ class JiraServiceTest {
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(restTemplate.exchange(SELF, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class))
-			.thenReturn(new ResponseEntity<>(statusSelf, OK));
+		when(restTemplate.exchange(SELF, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(statusSelf, OK));
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
@@ -60,14 +60,25 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create("https://site.atlassian.net");
+		String token = "token";
+
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(restTemplate.exchange(SELF, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(null, BAD_REQUEST));
+
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest)).isInstanceOf(RequestFailedException.class).hasMessageContaining("Request failed with status statusCode 400, error: Failed when call Jira to get colum body is null");
+	}
+
+	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		FeignException mockException = mock(FeignException.class);
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(400);
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status code 400, error: ", "");
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build())).isInstanceOf(RequestFailedException.class).hasMessageContaining("Request failed with status code 400, error: ", "");
 	}
 }

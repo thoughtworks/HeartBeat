@@ -33,6 +33,7 @@ describe('ConfigStep', () => {
 
     expect(getByText('Project Name')).toBeInTheDocument()
   })
+
   it('should show project name when input some letters', () => {
     const { getByRole, getByDisplayValue } = setup()
     const hasInputValue = (e: HTMLElement, inputValue: Matcher) => {
@@ -46,6 +47,7 @@ describe('ConfigStep', () => {
 
     expect(hasInputValue(input, TEST_PROJECT_NAME)).toBe(true)
   })
+
   it('should show error message when project name is Empty', () => {
     const { getByRole, getByText } = setup()
     const input = getByRole('textbox', { name: 'Project Name' })
@@ -55,6 +57,7 @@ describe('ConfigStep', () => {
 
     expect(getByText('Project Name is required')).toBeInTheDocument()
   })
+
   it('should show error message when click project name input with no letter', () => {
     const { getByRole, getByText } = setup()
     const input = getByRole('textbox', { name: 'Project Name' })
@@ -63,6 +66,7 @@ describe('ConfigStep', () => {
 
     expect(getByText('Project Name is required')).toBeInTheDocument()
   })
+
   it('should select Regular calendar by default when rendering the radioGroup', () => {
     const { getByRole } = setup()
     const defaultValue = getByRole('radio', { name: REGULAR_CALENDAR })
@@ -71,6 +75,7 @@ describe('ConfigStep', () => {
     expect(defaultValue).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
   })
+
   it('should switch the radio when any radioLabel is selected', () => {
     const { getByRole } = setup()
     const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR })
@@ -85,11 +90,13 @@ describe('ConfigStep', () => {
     expect(regularCalendar).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
   })
+
   it('should not show board component when init ConfigStep component ', () => {
     const { queryByText } = setup()
 
     expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull()
   })
+
   it('should show board component when MetricsTypeCheckbox select Velocity,Cycle time', () => {
     const { getByRole } = setup()
 
@@ -100,6 +107,7 @@ describe('ConfigStep', () => {
 
     expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
+
   it('should show board component when MetricsTypeCheckbox select  Classification, ', () => {
     const { getByRole } = setup()
 
@@ -109,6 +117,7 @@ describe('ConfigStep', () => {
 
     expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
+
   it('should verify again when calendar type is changed given board fields are filled and verified', () => {
     const { getByRole, getByText, queryByText } = setup()
 
@@ -123,6 +132,7 @@ describe('ConfigStep', () => {
     expect(queryByText('Verified')).toBeNull()
     expect(queryByText('Reset')).toBeNull()
   })
+
   it('should verify again when date picker is changed given board fields are filled and verified', () => {
     const { getByRole, getByText, queryByText, getByLabelText } = setup()
     const today = dayjs().format('MM/DD/YYYY')

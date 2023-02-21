@@ -107,6 +107,7 @@ describe('config reducer', () => {
 
     expect(config.requiredData).toEqual([VELOCITY])
   })
+
   it('should update board fields when change board fields input', () => {
     const config = configReducer(
       {

@@ -17,6 +17,7 @@ describe('HomeGuide', () => {
     expect(getByText('Import project from file')).toBeInTheDocument()
     expect(getByText(CREATE_NEW_PROJECT)).toBeInTheDocument()
   })
+
   it('should go to metrics page when click create a new project button', async () => {
     const { getByText } = render(<HomeGuide />)
 

@@ -23,6 +23,7 @@ describe('MetricsTypeCheckbox', () => {
     const option = queryByText(VELOCITY)
     expect(option).not.toBeTruthy()
   })
+
   it('should show detail options when click require data button', () => {
     const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
@@ -32,6 +33,7 @@ describe('MetricsTypeCheckbox', () => {
 
     expect(optionValue).toEqual(REQUIRED_DATA_LIST)
   })
+
   it('should show multiple selections when multiple options are selected', () => {
     const { getByRole, getByText } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
@@ -42,6 +44,7 @@ describe('MetricsTypeCheckbox', () => {
 
     expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
   })
+
   it('should show error message when require data is null', () => {
     const { getByRole, getByText } = setup()
 
@@ -54,6 +57,7 @@ describe('MetricsTypeCheckbox', () => {
     const errorMessage = getByText('Metrics is required')
     expect(errorMessage).toBeInTheDocument()
   })
+
   it('should board component when click MetricsTypeCheckbox selection velocity ', () => {
     const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
@@ -62,6 +66,7 @@ describe('MetricsTypeCheckbox', () => {
 
     expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
+
   it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', () => {
     const { getByRole, queryByText } = setup()
 

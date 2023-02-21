@@ -51,6 +51,7 @@ describe('Board', () => {
     })
     expect(getByRole('heading', { name: CONFIG_TITLE.BOARD })).toBeInTheDocument()
   })
+
   it('should show default value jira when init board component', () => {
     const { getByText, queryByText } = setup()
     const boardType = getByText(BOARD_TYPES.JIRA)
@@ -60,6 +61,7 @@ describe('Board', () => {
     const option = queryByText(BOARD_TYPES.CLASSIC_JIRA)
     expect(option).not.toBeTruthy()
   })
+
   it('should show detail options when click board field', () => {
     const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
@@ -69,6 +71,7 @@ describe('Board', () => {
 
     expect(optionValue).toEqual(Object.values(BOARD_TYPES))
   })
+
   it('should show different board type when select different board field value ', () => {
     const { getByRole, getByText } = setup()
 
@@ -82,6 +85,7 @@ describe('Board', () => {
 
     expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
   })
+
   it('should show error message when input a wrong type email ', () => {
     const { getByRole, getByText } = setup()
     const EMAil_ERROR_MESSAGE = 'email is required'
@@ -93,6 +97,7 @@ describe('Board', () => {
     expect(getByText(EMAil_ERROR_MESSAGE)).toBeVisible()
     expect(getByText(EMAil_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
+
   it('should clear other fields information when change board field selection', () => {
     const { getByRole, getByText } = setup()
     const boardIdInput = getByRole('textbox', {
@@ -110,6 +115,7 @@ describe('Board', () => {
     expect(emailInput.value).toEqual('')
     expect(boardIdInput.value).toEqual('')
   })
+
   it('should clear all fields information when click reset button', () => {
     const { getByRole, getByText, queryByRole } = setup()
     const fieldInputs = BOARD_FIELDS.slice(1, 5).map(
@@ -131,6 +137,7 @@ describe('Board', () => {
     expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
     expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
   })
+
   it('should enabled verify button when all fields checked correctly given disable verify button', () => {
     const { getByRole } = setup()
     const verifyButton = getByRole('button', { name: 'Verify' })
@@ -141,6 +148,7 @@ describe('Board', () => {
 
     expect(verifyButton).toBeEnabled()
   })
+
   it('should show reset button when verify succeed ', () => {
     const { getByText } = setup()
     fillBoardFieldsInformation()
@@ -149,6 +157,7 @@ describe('Board', () => {
 
     expect(getByText('Reset')).toBeVisible()
   })
+
   it('should called verifyBoard method once when click verify button', async () => {
     const { getByRole, getByText } = setup()
     fillBoardFieldsInformation()
@@ -157,7 +166,7 @@ describe('Board', () => {
     expect(getByText('Verified')).toBeInTheDocument()
   })
 
-  it('should show loading animation when click verify button', async () => {
+  it('should check loading animation when click verify button', async () => {
     const { getByRole, getByTestId } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))

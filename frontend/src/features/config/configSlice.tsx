@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import type { RootState } from '@src/store/store'
+import type { RootState } from '@src/store'
 import { BOARD_TYPES, REGULAR_CALENDAR } from '@src/constants'
 
 export interface configState {

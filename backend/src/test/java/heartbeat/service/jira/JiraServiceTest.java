@@ -13,21 +13,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.List;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(MockitoExtension.class)
 class JiraServiceTest {
@@ -46,12 +45,12 @@ class JiraServiceTest {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
-		StatusSelf statusSelf = new StatusSelf(List.of("DONE","CANCELED"));
+		StatusSelf statusSelf = new StatusSelf("status");
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(restTemplate.exchange(SELF, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class))
-			.thenReturn(new ResponseEntity<>(statusSelf, HttpStatus.OK));
+			.thenReturn(new ResponseEntity<>(statusSelf, OK));
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 

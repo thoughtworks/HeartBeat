@@ -10,5 +10,5 @@ import java.util.List;
 @Data
 public class StatusSelf {
 
-	private List<String> untranslatedNames;
+	private String untranslatedName;
 }

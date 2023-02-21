@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
-import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
+import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
 import { ERROR_DATE, ERROR_MESSAGE_COLOR, PAST_DATE } from '../../../fixtures'
 import * as dayjs from 'dayjs'
 import { Provider } from 'react-redux'

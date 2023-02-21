@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
-import MetricsStepper from '@src/components/metrics/MetricsStepper'
+import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { NEXT, BACK, STEPS, EXPORT_BOARD_DATA } from '../../../fixtures'
 import { setupStore } from '../../../utils/setupStoreUtil'

@@ -1,5 +1,5 @@
 import { fireEvent, render, within, screen } from '@testing-library/react'
-import { Board } from '@src/components/metrics/ConfigStep/Board'
+import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'

@@ -1,6 +1,6 @@
 import { CONFIG_TITLE, REQUIRED_DATA, REQUIRED_DATA_LIST, VELOCITY } from '../../../fixtures'
 import { fireEvent, render, within } from '@testing-library/react'
-import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
+import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 let store = null

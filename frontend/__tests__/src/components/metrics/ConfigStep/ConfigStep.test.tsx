@@ -10,7 +10,7 @@ import {
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { fillBoardFieldsInformation } from './Board.test'
 
 let store = null

@@ -39,7 +39,7 @@ export const BOARD_TYPES = {
 }
 
 export enum CONFIG_TITLE {
-  BOARD = 'board',
+  BOARD = 'Board',
 }
 
 export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']

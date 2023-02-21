@@ -98,7 +98,7 @@ describe('ConfigStep', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Cycle time' }))
 
-    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
+    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
   it('should show board component when MetricsTypeCheckbox select  Classification, ', () => {
     const { getByRole } = setup()
@@ -107,7 +107,7 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Classification' }))
 
-    expect(getByRole('heading', { name: 'board', hidden: true })).toBeInTheDocument()
+    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
   it('should verify again when calendar type is changed given board fields are filled and verified', () => {
     const { getByRole, getByText, queryByText } = setup()

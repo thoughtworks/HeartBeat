@@ -15,6 +15,10 @@ export enum DATE_RANGE {
   END_DATE = 1,
 }
 
+export enum CONFIG_TITLE {
+  BOARD = 'Board',
+}
+
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
 
 export const REQUIRED_DATAS = [

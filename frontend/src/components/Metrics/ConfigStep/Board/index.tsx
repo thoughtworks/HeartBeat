@@ -1,5 +1,5 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL } from '@src/constants'
+import { BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL, CONFIG_TITLE } from '@src/constants'
 import React, { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
@@ -110,7 +110,7 @@ export const Board = () => {
           <CircularProgress size='8rem' />
         </BoardLoadingDrop>
       )}
-      <BoardTitle>board</BoardTitle>
+      <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {boardFieldNames.map((filedName, index) =>
           index === ZERO ? (

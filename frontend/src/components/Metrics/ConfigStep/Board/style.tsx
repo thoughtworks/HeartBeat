@@ -4,7 +4,8 @@ import { theme } from '@src/theme'
 
 export const BoardSection = styled('div')({
   position: 'relative',
-  boxShadow: '0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);',
+  boxShadow:
+    '0 0.125rem 0.0625rem -0.0625rem rgb(0 0 0 / 20%), 0 0.125rem 0.25rem 0 rgb(0 0 0 / 14%), 0 0.0625rem 0.1875px 0 rgb(0 0 0 / 12%);',
   borderRadius: '0.25rem',
   width: '85%',
   margin: '1rem 0',

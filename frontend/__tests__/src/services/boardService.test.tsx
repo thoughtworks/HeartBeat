@@ -1,4 +1,4 @@
-import { verifyBoard } from '@src/service/boardService'
+import { verifyBoard } from '@src/services/boardService'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 

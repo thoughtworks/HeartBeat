@@ -11,11 +11,11 @@ import {
   BoardTypeSelections,
   ResetButton,
   VerifyButton,
-} from '@src/components/metrics/ConfigStep/Board/style'
+} from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
-import { verifyBoard } from '@src/service/boardService'
+import { verifyBoard } from '@src/services/boardService'
 
 export const Board = () => {
   const dispatch = useAppDispatch()

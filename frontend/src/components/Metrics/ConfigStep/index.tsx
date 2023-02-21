@@ -1,11 +1,11 @@
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import React, { useState } from 'react'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS } from '@src/constants'
-import { DateRangePicker } from '@src/components/metrics/ConfigStep/DateRangePicker'
+import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
 import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
-import { MetricsTypeCheckbox } from '@src/components/metrics/ConfigStep/MetricsTypeCheckbox'
+import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 import {
   selectCalendarType,

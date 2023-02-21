@@ -5,7 +5,7 @@ import Step from '@mui/material/Step'
 import { MetricsStepperContent, MetricsStepLabel } from './style'
 import { useAppSelector } from '@src/hooks'
 import { selectStep } from '@src/features/stepper/StepperSlice'
-import { ConfigStep } from '@src/components/metrics/ConfigStep'
+import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import { STEPS } from '@src/constants'
 
 const MetricsStepper = () => {

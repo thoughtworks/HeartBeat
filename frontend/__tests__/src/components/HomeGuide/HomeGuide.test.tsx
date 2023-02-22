@@ -1,6 +1,5 @@
 import { HomeGuide } from '@src/components/HomeGuide'
 import { fireEvent, render } from '@testing-library/react'
-import * as router from 'react-router-dom'
 
 const CREATE_NEW_PROJECT = 'Create a new project'
 const mockedUsedNavigate = jest.fn()

@@ -39,7 +39,9 @@ export const Board = () => {
         token: '',
       })
     )
-  }, [boardFields.board])
+    setIsDisableVerifyButton(true)
+    dispatch(changeBoardVerifyState(false))
+  }, [boardFields.board, dispatch])
 
   useEffect(() => {
     setIsDisableVerifyButton(
@@ -47,7 +49,7 @@ export const Board = () => {
         .map((fieldName, index) => checkFiledValid(fieldName, boardFieldValues[index]))
         .every((validField) => validField)
     )
-  }, [boardFields])
+  }, [boardFields, boardFieldNames, boardFieldValues])
 
   const initBoardFields = () => {
     dispatch(

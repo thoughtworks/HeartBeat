@@ -3,7 +3,7 @@ import { REQUIRED_DATAS } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectRequiredData, updateRequiredData } from '@src/features/config/configSlice'
 
 export const MetricsTypeCheckbox = () => {

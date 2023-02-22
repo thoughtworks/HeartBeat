@@ -12,10 +12,10 @@ import {
   ResetButton,
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/Board/style'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
-import { verifyBoard } from '@src/services/boardService'
+import { useVerifyBoardState } from '@src/hooks/useVerifyBoardState'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -23,10 +23,10 @@ export const Board = () => {
   const isVerified = useAppSelector(isBoardVerified)
   const [fieldErrors, setFieldErrors] = useState(INIT_BOARD_FIELDS_STATE)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
+  const { isVerifyLoading, verifyJira } = useVerifyBoardState()
   const boardFieldValues = Object.values(boardFields)
   const boardFieldNames = Object.keys(boardFields)
   const boardFieldStates = Object.values(fieldErrors)
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     dispatch(
@@ -85,18 +85,10 @@ export const Board = () => {
     )
   }
 
-  useEffect(() => {
-    ;(async () => {
-      const response = await verifyBoard()
-      if (response.status === 200) {
-        setIsLoading(false)
-      }
-    })()
-  }, [isLoading])
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(changeBoardVerifyState(true))
-    setIsLoading(true)
+    await verifyJira()
   }
 
   const handleResetBoardFields = () => {
@@ -107,14 +99,14 @@ export const Board = () => {
 
   return (
     <BoardSection>
-      {isLoading && (
-        <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
+      {isVerifyLoading && (
+        <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />
         </BoardLoadingDrop>
       )}
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
-        {boardFieldNames.map((filedName, index) =>
+        {boardFieldNames.map((fieldName, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={boardFieldValues[index]}>
               <InputLabel id='board-type-checkbox-label'>board</InputLabel>
@@ -140,7 +132,7 @@ export const Board = () => {
               variant='standard'
               value={boardFieldValues[index]}
               onChange={(e) => {
-                onFormUpdate(filedName, e.target.value)
+                onFormUpdate(fieldName, e.target.value)
               }}
               error={boardFieldStates[index].isError}
               helperText={boardFieldStates[index].helpText}

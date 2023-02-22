@@ -52,8 +52,10 @@ class JiraServiceTest {
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(restTemplate.exchange(SELF_1, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(doneStatusSelf, OK));
-		when(restTemplate.exchange(SELF_2, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(doingStatusSelf, OK));
+		when(restTemplate.exchange(SELF_1, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)),
+				StatusSelf.class)).thenReturn(new ResponseEntity<>(doneStatusSelf, OK));
+		when(restTemplate.exchange(SELF_2, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)),
+				StatusSelf.class)).thenReturn(new ResponseEntity<>(doingStatusSelf, OK));
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
@@ -72,9 +74,12 @@ class JiraServiceTest {
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(restTemplate.exchange(SELF_1, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)), StatusSelf.class)).thenReturn(new ResponseEntity<>(null, BAD_REQUEST));
+		when(restTemplate.exchange(SELF_1, HttpMethod.GET, new HttpEntity<>(jiraService.buildHttpHeaders(token)),
+				StatusSelf.class)).thenReturn(new ResponseEntity<>(null, BAD_REQUEST));
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest)).isInstanceOf(RequestFailedException.class).hasMessageContaining("Request failed with status statusCode 400, error: Failed when call Jira to get colum body is null");
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest))
+				.isInstanceOf(RequestFailedException.class).hasMessageContaining(
+						"Request failed with status statusCode 400, error: Failed when call Jira to get colum body is null");
 	}
 
 	@Test
@@ -84,6 +89,9 @@ class JiraServiceTest {
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(400);
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build())).isInstanceOf(RequestFailedException.class).hasMessageContaining("Request failed with status code 400, error: ", "");
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build()))
+				.isInstanceOf(RequestFailedException.class)
+				.hasMessageContaining("Request failed with status code 400, error: ", "");
 	}
+
 }

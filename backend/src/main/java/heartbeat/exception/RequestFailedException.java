@@ -18,4 +18,5 @@ public class RequestFailedException extends RuntimeException {
 		super(String.format("Request failed with status statusCode %d, error: %s", statusCode, message));
 		this.status = statusCode;
 	}
+
 }

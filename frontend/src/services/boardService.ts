@@ -1,4 +1,7 @@
-import axios from 'axios'
+import { boardClient } from '@src/clients/BoardClient'
 
-const BASE_URL = 'https://jsonplaceholder.typicode.com'
-export const verifyBoard = () => axios.get(`${BASE_URL}/posts`).then((res) => res)
+export class BoardService {
+  getVerifyBoard = async () => await boardClient.get('/jira/board')
+}
+
+export const boardService = new BoardService()

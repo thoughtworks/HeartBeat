@@ -55,7 +55,7 @@ export const Board = () => {
       isValid: true,
     },
   ])
-  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
+  const { verifyJira, isVerifyLoading, isErrorNotification, showErrorMessage } = useVerifyBoardState()
 
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {

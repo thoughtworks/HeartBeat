@@ -17,7 +17,7 @@ import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boa
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
 import { useVerifyBoardState } from '@src/hooks/useVerifyBoardState'
 
-const getBoardFields = () => {
+const GetBoardFields = () => {
   const boardFields = useAppSelector(selectBoardFields)
   return [
     {
@@ -53,7 +53,7 @@ export const Board = () => {
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [validFields, setValidFields] = useState([false, false, false, false, false, false])
   const { verifyJira, isVerifyLoading } = useVerifyBoardState()
-  const boardFields = getBoardFields()
+  const boardFields = GetBoardFields()
 
   useEffect(() => {
     dispatch(

@@ -4,9 +4,10 @@ export class BoardClient extends HttpClient {
   public async get(path: string) {
     try {
       return await this.axiosInstance.get(path)
-    } catch (e) {
+    } catch (e: any) {
       //TODO: handle error
-      return e
+      // return e
+      throw new Error(e)
     }
   }
 }

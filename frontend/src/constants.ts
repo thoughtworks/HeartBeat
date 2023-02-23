@@ -39,13 +39,4 @@ export const BOARD_TYPES = {
 
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
-export const INIT_BOARD_FIELDS_STATE = {
-  board: { isError: false, helpText: '' },
-  boardId: { isError: false, helpText: '' },
-  email: { isError: false, helpText: '' },
-  projectKey: { isError: false, helpText: '' },
-  site: { isError: false, helpText: '' },
-  token: { isError: false, helpText: '' },
-}
-
 export const EMAIL = 'email'

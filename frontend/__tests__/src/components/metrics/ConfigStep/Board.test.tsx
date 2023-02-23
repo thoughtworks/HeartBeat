@@ -120,7 +120,7 @@ describe('Board', () => {
     expect(boardIdInput.value).toEqual('')
   })
 
-  it('should clear all fields information when click reset button', () => {
+  it('should clear all fields information when click reset button', async () => {
     const { getByRole, getByText, queryByRole } = setup()
     const fieldInputs = BOARD_FIELDS.slice(1, 5).map(
       (label) =>
@@ -132,7 +132,9 @@ describe('Board', () => {
     fillBoardFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
-    fireEvent.click(getByRole('button', { name: 'Reset' }))
+    await waitFor(() => {
+      fireEvent.click(getByRole('button', { name: 'Reset' }))
+    })
 
     fieldInputs.map((input) => {
       expect(input.value).toEqual('')
@@ -153,13 +155,15 @@ describe('Board', () => {
     expect(verifyButton).toBeEnabled()
   })
 
-  it('should show reset button when verify succeed ', () => {
+  it('should show reset button when verify succeed ', async () => {
     const { getByText } = setup()
     fillBoardFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
 
-    expect(getByText('Reset')).toBeVisible()
+    await waitFor(() => {
+      expect(getByText('Reset')).toBeVisible()
+    })
   })
 
   it('should called verifyBoard method once when click verify button', async () => {
@@ -167,7 +171,9 @@ describe('Board', () => {
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
-    expect(getByText('Verified')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(getByText('Verified')).toBeInTheDocument()
+    })
   })
 
   it('should check loading animation when click verify button', async () => {

@@ -2,17 +2,17 @@ import { useState } from 'react'
 import { boardService } from '@src/services/BoardService'
 
 export interface useVerifyBoardStateInterface {
-  verifyJira: () => Promise<any>
+  verifyJira: () => Promise<void>
   isVerifyLoading: boolean
 }
 
 export const useVerifyBoardState = (): useVerifyBoardStateInterface => {
   const [isVerifyLoading, setIsVerifyLoading] = useState(false)
 
-  const verifyJira = async () => {
+  const verifyJira = async (): Promise<void> => {
     setIsVerifyLoading(true)
     try {
-      return await boardService.getVerifyBoard()
+      await boardService.getVerifyBoard()
     } catch (e) {
       // showErrorNotification({ message: 'Jira verify failed' })
     } finally {

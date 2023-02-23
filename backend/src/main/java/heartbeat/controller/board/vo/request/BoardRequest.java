@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+
 @Data
 @Builder
 public class BoardRequest {
@@ -22,5 +25,9 @@ public class BoardRequest {
 	@Valid
 	@NotBlank(message = "Token cannot be empty.")
 	private String token;
+
+	private OffsetDateTime startTime;
+
+	private OffsetDateTime endTime;
 
 }

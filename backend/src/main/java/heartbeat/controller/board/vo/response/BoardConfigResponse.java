@@ -11,4 +11,6 @@ public class BoardConfigResponse {
 
 	private List<ColumnResponse> jiraColumns;
 
+	private List<String> users;
+
 }

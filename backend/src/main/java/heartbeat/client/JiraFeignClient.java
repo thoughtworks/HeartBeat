@@ -1,6 +1,8 @@
 package heartbeat.client;
 
 import heartbeat.client.dto.JiraBoardConfigDTO;
+import heartbeat.controller.board.vo.response.AllDoneCardsResponse;
+import heartbeat.controller.board.vo.response.CardHistoryResponse;
 import heartbeat.controller.board.vo.response.StatusSelf;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,4 +22,11 @@ public interface JiraFeignClient {
 	StatusSelf getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
 			@RequestHeader String authorization);
 
+	@GetMapping(path = "rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
+	AllDoneCardsResponse getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount, @PathVariable int startAt, @PathVariable String jql,
+										 @RequestHeader String authorization);
+
+	@GetMapping(path = "rest/internal/2/issue/{jiraCardKey}/activityfeed")
+	CardHistoryResponse getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
+										   @RequestHeader String authorization);
 }

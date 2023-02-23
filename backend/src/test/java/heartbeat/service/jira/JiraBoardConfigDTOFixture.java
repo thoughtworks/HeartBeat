@@ -15,15 +15,15 @@ public class JiraBoardConfigDTOFixture {
 
 	public static final String BOARD_NAME = "jira";
 
-	public static final String COLUM_SELF_1 = "http://www.example.com/jira/status/1";
+	public static final String COLUM_SELF_ID_1 = "1";
 
-	public static final String COLUM_SELF_2 = "http://www.example.com/jira/status/2";
+	public static final String COLUM_SELF_ID_2 = "2";
 
 	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
 
 		return JiraBoardConfigDTO.builder().id(BOARD_ID).name(BOARD_NAME).columnConfig(JiraColumnConfig.builder()
-				.columns(List.of(JiraColumn.builder().name("TODO").statuses(
-						List.of(new JiraColumnStatus("1", COLUM_SELF_1), new JiraColumnStatus("2", COLUM_SELF_2)))
+				.columns(List.of(JiraColumn.builder().name("TODO")
+						.statuses(List.of(new JiraColumnStatus(COLUM_SELF_ID_1), new JiraColumnStatus(COLUM_SELF_ID_2)))
 						.build()))
 				.build());
 	}

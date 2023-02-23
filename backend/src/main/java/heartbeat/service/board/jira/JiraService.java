@@ -13,8 +13,6 @@ import heartbeat.exception.RequestFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -31,22 +29,17 @@ public class JiraService {
 
 	private final JiraFeignClient jiraFeignClient;
 
-	@Autowired
-	private final WebClient.Builder webClientBuilder;
-
 	public BoardConfigResponse getJiraConfiguration(BoardRequest boardRequest) {
-		String url = "https://" + boardRequest.getSite() + ".atlassian.net";
+		URI baseUrl = URI.create("https://" + boardRequest.getSite() + ".atlassian.net");
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
-			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
+			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardRequest.getBoardId(),
 					boardRequest.getToken());
 			List<String> doneColumn = new ArrayList<>();
 
-			return BoardConfigResponse.builder()
-					.jiraColumns(jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
-							.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, boardRequest.getToken(), doneColumn))
-							.toList())
-					.build();
+			return BoardConfigResponse.builder().jiraColumns(jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
+					.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, baseUrl, boardRequest.getToken(), doneColumn))
+					.toList()).build();
 		}
 		catch (FeignException e) {
 			log.error("Failed when call Jira to get board config", e);
@@ -54,8 +47,9 @@ public class JiraService {
 		}
 	}
 
-	private ColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, String token, List<String> doneColumn) {
-		List<StatusSelf> statusSelfList = getStatusSelfList(jiraColumn, token);
+	private ColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, String token,
+			List<String> doneColumn) {
+		List<StatusSelf> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
 		String key = handleColumKey(doneColumn, statusSelfList);
 
 		return ColumnResponse.builder().key(key)
@@ -66,23 +60,16 @@ public class JiraService {
 				.build();
 	}
 
-	private List<StatusSelf> getStatusSelfList(JiraColumn jiraColumn, String token) {
+	private List<StatusSelf> getStatusSelfList(URI baseUrl, JiraColumn jiraColumn, String token) {
 		List<Mono<StatusSelf>> statusSelfMonos = jiraColumn.getStatuses().stream()
-				.map(jiraColumnStatus -> getColumnStatusCategory(jiraColumnStatus.getSelf(), token))
+				.map(jiraColumnStatus -> getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token))
 				.collect(Collectors.toList());
 
 		return Flux.merge(statusSelfMonos).collectList().block();
 	}
 
-	private Mono<StatusSelf> getColumnStatusCategory(String url, String token) {
-		return webClientBuilder.build().get().uri(url).header(HttpHeaders.AUTHORIZATION, token).retrieve().onStatus(
-				HttpStatusCode::is4xxClientError,
-				clientResponse -> Mono.error(new RequestFailedException(clientResponse.statusCode().value(),
-						"Failed when call Jira to get column")))
-				.onStatus(HttpStatusCode::is5xxServerError,
-						clientResponse -> Mono.error(new RequestFailedException(clientResponse.statusCode().value(),
-								"Failed when call Jira to get column")))
-				.bodyToMono(StatusSelf.class);
+	private Mono<StatusSelf> getColumnStatusCategory(URI baseUrl, String jiraStatusId, String token) {
+		return Mono.just(jiraFeignClient.getColumnStatusCategory(baseUrl, jiraStatusId, token));
 	}
 
 	private String handleColumKey(List<String> doneColumn, List<StatusSelf> statusSelfList) {

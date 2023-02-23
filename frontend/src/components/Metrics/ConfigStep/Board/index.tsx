@@ -22,95 +22,86 @@ export const Board = () => {
   const isVerified = useAppSelector(isBoardVerified)
   const boardFields = useAppSelector(selectBoardFields)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
-  const [validFields, setValidFields] = useState([false, false, false, false, false, false])
-  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
-  const fields = [
+  const [fields, setFields] = useState([
     {
       key: 'board',
       value: boardFields.board,
+      isValid: true,
     },
     {
       key: 'boardId',
       value: boardFields.boardId,
+      isValid: true,
     },
     {
       key: 'email',
       value: boardFields.email,
+      isValid: true,
     },
     {
       key: 'projectKey',
       value: boardFields.projectKey,
+      isValid: true,
     },
     {
       key: 'site',
       value: boardFields.site,
+      isValid: true,
     },
     {
       key: 'token',
       value: boardFields.token,
+      isValid: true,
     },
-  ]
+  ])
+  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
 
   useEffect(() => {
-    dispatch(
-      updateBoardFields({
-        board: fields[0].value,
-        boardId: '',
-        email: '',
-        projectKey: '',
-        site: '',
-        token: '',
-      })
-    )
-    setValidFields([false, false, false, false, false, false])
+    const newFields = fields.map((field, index) => {
+      if (index !== ZERO) field.value = ''
+      return field
+    })
+    setFields(newFields)
+    dispatch(changeBoardVerifyState(false))
   }, [fields[0].value])
 
-  useEffect(() => {
-    setIsDisableVerifyButton(
-      !fields.map((field) => checkFiledValid(field.key, field.value)).every((validField) => validField)
-    )
-  }, [fields])
-
   const initBoardFields = () => {
-    dispatch(
-      updateBoardFields({
-        board: BOARD_TYPES.JIRA,
-        boardId: '',
-        email: '',
-        projectKey: '',
-        site: '',
-        token: '',
-      })
-    )
+    const newFields = fields.map((field, index) => {
+      field.value = index === ZERO ? BOARD_TYPES.JIRA : ''
+      return field
+    })
+    setFields(newFields)
+    dispatch(changeBoardVerifyState(false))
   }
 
   const checkFiledValid = (type: string, value: string): boolean =>
     type === EMAIL ? emailRegExp.test(value) : value !== ''
 
   const onFormUpdate = (index: number, value: string) => {
-    const newBoardFields = {
-      board: fields[0].value,
-      boardId: fields[1].value,
-      email: fields[2].value,
-      projectKey: fields[3].value,
-      site: fields[4].value,
-      token: fields[5].value,
-    }
-    const newValidFields = validFields.map((isValidField, fieldIndex) =>
-      fieldIndex === index ? !checkFiledValid(fields[index].key, value) : isValidField
-    )
+    const newFieldsValue = fields.map((field, fieldIndex) => {
+      if (fieldIndex === index) {
+        field.value = value
+        field.isValid = checkFiledValid(fields[index].key, value)
+      }
+      return field
+    })
 
-    setValidFields(newValidFields)
-    dispatch(
-      updateBoardFields({
-        ...newBoardFields,
-        [fields[index].key]: value,
-      })
-    )
+    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
+    setFields(newFieldsValue)
   }
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    dispatch(
+      updateBoardFields({
+        board: fields[0].value,
+        boardId: fields[1].value,
+        email: fields[2].value,
+        projectKey: fields[3].value,
+        site: fields[4].value,
+        token: fields[5].value,
+      })
+    )
     await verifyJira()
     dispatch(changeBoardVerifyState(true))
   }
@@ -158,8 +149,8 @@ export const Board = () => {
               onChange={(e) => {
                 onFormUpdate(index, e.target.value)
               }}
-              error={validFields[index]}
-              helperText={validFields[index] ? `${filed.key} is required` : ''}
+              error={!filed.isValid}
+              helperText={!filed.isValid ? `${filed.key} is required` : ''}
             />
           )
         )}

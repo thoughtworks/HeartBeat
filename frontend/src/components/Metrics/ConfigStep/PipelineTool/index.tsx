@@ -109,7 +109,7 @@ export const PipelineTool = () => {
         {pipelineToolFieldNames.map((filedName, index) =>
           index === ZERO ? (
             <PipelineToolTypeSelections variant='standard' required key={pipelineToolFieldValues[index]}>
-              <InputLabel id='pipelineTool-type-checkbox-label'>board</InputLabel>
+              <InputLabel id='pipelineTool-type-checkbox-label'>pipelineTool</InputLabel>
               <Select
                 labelId='pipelineTool-type-checkbox-label'
                 value={pipelineToolFields.pipelineTool}

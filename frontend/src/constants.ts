@@ -17,6 +17,7 @@ export enum DATE_RANGE {
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
+  PIPELINE_TOOL = 'PipelineTool',
 }
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
@@ -37,6 +38,11 @@ export const BOARD_TYPES = {
   LINEAR: 'Linear',
 }
 
+export const PIPELINE_TOOL_TYPES = {
+  BUILD_KITE: 'BuildKite',
+  GO_CD: 'GoCD',
+}
+
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 export const INIT_BOARD_FIELDS_STATE = {
@@ -45,6 +51,11 @@ export const INIT_BOARD_FIELDS_STATE = {
   email: { isError: false, helpText: '' },
   projectKey: { isError: false, helpText: '' },
   site: { isError: false, helpText: '' },
+  token: { isError: false, helpText: '' },
+}
+
+export const INIT_PIPELINE_TOOL_FIELDS_STATE = {
+  pipelineTool: { isError: false, helpText: '' },
   token: { isError: false, helpText: '' },
 }
 

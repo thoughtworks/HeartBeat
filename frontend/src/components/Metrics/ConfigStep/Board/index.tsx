@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
 import { useVerifyBoardState } from '@src/hooks/useVerifyBoardState'
+import { ErrorNotification } from '@src/components/ErrorNotifaction'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -113,6 +114,7 @@ export const Board = () => {
 
   return (
     <BoardSection>
+      {isErrorNotification && <ErrorNotification message={showErrorMessage} />}
       {isVerifyLoading && (
         <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

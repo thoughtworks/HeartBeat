@@ -1,6 +1,6 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -56,15 +56,6 @@ export const Board = () => {
   ])
   const { verifyJira, isVerifyLoading } = useVerifyBoardState()
 
-  useEffect(() => {
-    const newFields = fields.map((field, index) => {
-      if (index !== ZERO) field.value = ''
-      return field
-    })
-    setFields(newFields)
-    dispatch(changeBoardVerifyState(false))
-  }, [fields[0].value])
-
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {
       field.value = index === ZERO ? BOARD_TYPES.JIRA : ''
@@ -78,6 +69,15 @@ export const Board = () => {
     type === EMAIL ? emailRegExp.test(value) : value !== ''
 
   const onFormUpdate = (index: number, value: string) => {
+    if (index === ZERO) {
+      const newFieldsValue = fields.map((field, index) => {
+        if (index !== ZERO) field.value = ''
+        return field
+      })
+      setFields(newFieldsValue)
+      dispatch(changeBoardVerifyState(false))
+      return
+    }
     const newFieldsValue = fields.map((field, fieldIndex) => {
       if (fieldIndex === index) {
         field.value = value
@@ -85,7 +85,6 @@ export const Board = () => {
       }
       return field
     })
-
     setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
     setFields(newFieldsValue)
   }

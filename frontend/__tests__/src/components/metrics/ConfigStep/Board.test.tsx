@@ -1,4 +1,4 @@
-import { fireEvent, render, within, screen } from '@testing-library/react'
+import { fireEvent, render, within, screen, waitFor } from '@testing-library/react'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR, MOCK_URL } from '../../../fixtures'
 import { Provider } from 'react-redux'
@@ -72,18 +72,22 @@ describe('Board', () => {
     expect(optionValue).toEqual(Object.values(BOARD_TYPES))
   })
 
-  it('should show different board type when select different board field value ', () => {
+  it('should show different board type when select different board field value ', async () => {
     const { getByRole, getByText } = setup()
 
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
 
-    expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
+    })
 
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.LINEAR))
 
-    expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
+    })
   })
 
   it('should show error message when input a wrong type email ', () => {

@@ -115,8 +115,8 @@ export const Board = () => {
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    dispatch(changeBoardVerifyState(true))
     await verifyJira()
+    dispatch(changeBoardVerifyState(true))
   }
 
   const handleResetBoardFields = () => {
@@ -171,7 +171,7 @@ export const Board = () => {
           {isVerified ? (
             <VerifyButton>Verified</VerifyButton>
           ) : (
-            <VerifyButton type='submit' disabled={isDisableVerifyButton}>
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isVerifyLoading}>
               Verify
             </VerifyButton>
           )}

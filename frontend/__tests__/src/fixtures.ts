@@ -38,8 +38,15 @@ export const BOARD_TYPES = {
   LINEAR: 'Linear',
 }
 
+export const PIPELINE_TOOL_TYPES = {
+  BUILD_KITE: 'BuildKite',
+  GO_CD: 'GoCD',
+}
+
 export enum CONFIG_TITLE {
   BOARD = 'Board',
+  PIPELINE_TOOL = 'PipelineTool',
 }
 
 export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
+export const PIPELINE_TOOL_FIELDS = ['pipelineTool', 'token']

@@ -2,11 +2,12 @@ import configReducer, {
   updateBoardFields,
   updateCalendarType,
   updateDateRange,
+  updatePipelineToolFields,
   updateProjectName,
   updateRequiredData,
 } from '@src/features/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
-import { BOARD_TYPES } from '@src/constants'
+import { BOARD_TYPES, PIPELINE_TOOL_TYPES } from '@src/constants'
 
 describe('config reducer', () => {
   it('should be default value when init render config page', () => {
@@ -32,6 +33,10 @@ describe('config reducer', () => {
           site: '',
           token: '',
         },
+        pipelineToolFields: {
+          pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
       },
 
       updateProjectName('mock project name')
@@ -53,6 +58,10 @@ describe('config reducer', () => {
           email: '',
           projectKey: '',
           site: '',
+          token: '',
+        },
+        pipelineToolFields: {
+          pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
           token: '',
         },
       },
@@ -78,6 +87,10 @@ describe('config reducer', () => {
           site: '',
           token: '',
         },
+        pipelineToolFields: {
+          pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
       },
       updateDateRange({ startDate: today, endDate: null })
     )
@@ -99,6 +112,10 @@ describe('config reducer', () => {
           email: '',
           projectKey: '',
           site: '',
+          token: '',
+        },
+        pipelineToolFields: {
+          pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
           token: '',
         },
       },
@@ -123,9 +140,38 @@ describe('config reducer', () => {
           site: '',
           token: '',
         },
+        pipelineToolFields: {
+          pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
       },
       updateBoardFields({ boardId: '1' })
     )
     expect(config.boardFields.boardId).toEqual('1')
+  })
+
+  it('should update pipelineTool fields when change pipelineTool fields input', () => {
+    const config = configReducer(
+      {
+        projectName: '',
+        calendarType: REGULAR_CALENDAR,
+        dateRange: { startDate: null, endDate: null },
+        requiredData: [],
+        boardFields: {
+          board: BOARD_TYPES.JIRA,
+          boardId: '',
+          email: '',
+          projectKey: '',
+          site: '',
+          token: '',
+        },
+        pipelineToolFields: {
+          pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
+      },
+      updatePipelineToolFields({ token: 'abcd' })
+    )
+    expect(config.pipelineToolFields.token).toEqual('abcd')
   })
 })

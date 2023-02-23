@@ -17,9 +17,14 @@ import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boa
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
 import { useVerifyBoardState } from '@src/hooks/useVerifyBoardState'
 
-const GetBoardFields = () => {
+export const Board = () => {
+  const dispatch = useAppDispatch()
+  const isVerified = useAppSelector(isBoardVerified)
   const boardFields = useAppSelector(selectBoardFields)
-  return [
+  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
+  const [validFields, setValidFields] = useState([false, false, false, false, false, false])
+  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
+  const fields = [
     {
       key: 'board',
       value: boardFields.board,
@@ -45,20 +50,11 @@ const GetBoardFields = () => {
       value: boardFields.token,
     },
   ]
-}
-
-export const Board = () => {
-  const dispatch = useAppDispatch()
-  const isVerified = useAppSelector(isBoardVerified)
-  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
-  const [validFields, setValidFields] = useState([false, false, false, false, false, false])
-  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
-  const boardFields = GetBoardFields()
 
   useEffect(() => {
     dispatch(
       updateBoardFields({
-        board: boardFields[0].value,
+        board: fields[0].value,
         boardId: '',
         email: '',
         projectKey: '',
@@ -67,13 +63,13 @@ export const Board = () => {
       })
     )
     setValidFields([false, false, false, false, false, false])
-  }, [boardFields[0].value])
+  }, [fields[0].value])
 
   useEffect(() => {
     setIsDisableVerifyButton(
-      !boardFields.map((field) => checkFiledValid(field.key, field.value)).every((validField) => validField)
+      !fields.map((field) => checkFiledValid(field.key, field.value)).every((validField) => validField)
     )
-  }, [boardFields])
+  }, [fields])
 
   const initBoardFields = () => {
     dispatch(
@@ -93,22 +89,22 @@ export const Board = () => {
 
   const onFormUpdate = (index: number, value: string) => {
     const newBoardFields = {
-      board: boardFields[0].value,
-      boardId: boardFields[1].value,
-      email: boardFields[2].value,
-      projectKey: boardFields[3].value,
-      site: boardFields[4].value,
-      token: boardFields[5].value,
+      board: fields[0].value,
+      boardId: fields[1].value,
+      email: fields[2].value,
+      projectKey: fields[3].value,
+      site: fields[4].value,
+      token: fields[5].value,
     }
     const newValidFields = validFields.map((isValidField, fieldIndex) =>
-      fieldIndex === index ? !checkFiledValid(boardFields[index].key, value) : isValidField
+      fieldIndex === index ? !checkFiledValid(fields[index].key, value) : isValidField
     )
 
     setValidFields(newValidFields)
     dispatch(
       updateBoardFields({
         ...newBoardFields,
-        [boardFields[index].key]: value,
+        [fields[index].key]: value,
       })
     )
   }
@@ -134,7 +130,7 @@ export const Board = () => {
       )}
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
-        {boardFields.map((filed, index) =>
+        {fields.map((filed, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>board</InputLabel>

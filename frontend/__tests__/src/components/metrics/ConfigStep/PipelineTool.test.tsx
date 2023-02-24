@@ -40,6 +40,8 @@ const server = setupServer(
 )
 
 describe('PipelineTool', () => {
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
     const { getByRole, getByLabelText } = setup()
 
@@ -118,7 +120,6 @@ describe('PipelineTool', () => {
   it('should show reset button when verify succeed ', () => {
     const { getByText } = setup()
     fillPipelineToolFieldsInformation()
-
     fireEvent.click(getByText('Verify'))
 
     expect(getByText('Reset')).toBeVisible()

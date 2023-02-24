@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Router from '@src/router'
 import { Provider } from 'react-redux'
-import { store } from '@src/store/store'
+import { store } from '@src/store'
 
 describe('router', () => {
   const setup = (routeUrl: string) =>

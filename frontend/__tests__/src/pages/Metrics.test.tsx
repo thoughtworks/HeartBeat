@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import Metrics from '@src/pages/Metrics'
 import { Provider } from 'react-redux'
-import { store } from '@src/store/store'
+import { store } from '@src/store'
 import { MemoryRouter } from 'react-router-dom'
 
 describe('Metrics', () => {

@@ -16,7 +16,7 @@ export const EXPORT_BOARD_DATA = 'Export board data'
 
 export const STEPS = ['Config', 'Metrics', 'Export']
 
-export const REQUIRE_DATAS = [
+export const REQUIRED_DATA_LIST = [
   'Velocity',
   'Cycle time',
   'Classification',
@@ -26,8 +26,22 @@ export const REQUIRE_DATAS = [
   'Mean time to recovery',
 ]
 export const VELOCITY = 'Velocity'
-export const REQUIRE_DATA = 'Required Data'
+export const REQUIRED_DATA = 'Required Data'
 export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
 export const PAST_DATE = '08/02/2022'
+
+export const BOARD_TYPES = {
+  CLASSIC_JIRA: 'Classic Jira',
+  JIRA: 'Jira',
+  LINEAR: 'Linear',
+}
+
+export enum CONFIG_TITLE {
+  BOARD = 'Board',
+}
+
+export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
+
+export const MOCK_URL = '/api/v1/jira/board'

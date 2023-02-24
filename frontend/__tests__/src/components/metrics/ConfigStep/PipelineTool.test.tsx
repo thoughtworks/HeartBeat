@@ -3,6 +3,8 @@ import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { PIPELINE_TOOL_FIELDS, CONFIG_TITLE, PIPELINE_TOOL_TYPES } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
 
 export const fillPipelineToolFieldsInformation = () => {
   const fields = ['token']
@@ -31,6 +33,11 @@ const setup = () => {
     </Provider>
   )
 }
+const server = setupServer(
+  rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
+    return res(ctx.status(200))
+  })
+)
 
 describe('PipelineTool', () => {
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
@@ -50,6 +57,41 @@ describe('PipelineTool', () => {
 
     const option = queryByText(PIPELINE_TOOL_TYPES.GO_CD)
     expect(option).not.toBeTruthy()
+  })
+
+  it('should clear other fields information when change board field selection', () => {
+    const { getByRole, getByText } = setup()
+    const tokenInput = getByRole('textbox', {
+      name: 'token',
+    }) as HTMLInputElement
+
+    fireEvent.change(tokenInput, { target: { value: 'abcd' } })
+    fireEvent.mouseDown(getByRole('button', { name: 'pipelineTool' }))
+    fireEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD))
+
+    expect(tokenInput.value).toEqual('')
+  })
+
+  it('should clear all fields information when click reset button', () => {
+    const { getByRole, getByText, queryByRole } = setup()
+    const fieldInputs = PIPELINE_TOOL_FIELDS.slice(1).map(
+      (label) =>
+        screen.getByRole('textbox', {
+          name: label,
+          hidden: true,
+        }) as HTMLInputElement
+    )
+    fillPipelineToolFieldsInformation()
+
+    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByRole('button', { name: 'Reset' }))
+
+    fieldInputs.map((input) => {
+      expect(input.value).toEqual('')
+    })
+    expect(getByText(PIPELINE_TOOL_TYPES.BUILD_KITE)).toBeInTheDocument()
+    expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
+    expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
   })
 
   it('should show detail options when click pipelineTool fields', () => {

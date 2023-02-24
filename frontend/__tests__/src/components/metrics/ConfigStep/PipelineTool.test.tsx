@@ -3,6 +3,8 @@ import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { PIPELINE_TOOL_FIELDS, CONFIG_TITLE, PIPELINE_TOOL_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
 
 export const fillPipelineToolFieldsInformation = () => {
   const fields = ['token']
@@ -32,7 +34,15 @@ const setup = () => {
   )
 }
 
+const server = setupServer(
+  rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
+    return res(ctx.status(200))
+  })
+)
+
 describe('PipelineTool', () => {
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
     const { getByRole, getByLabelText } = setup()
 

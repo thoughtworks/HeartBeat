@@ -26,6 +26,7 @@ export const REQUIRED_DATA_LIST = [
   'Mean time to recovery',
 ]
 export const VELOCITY = 'Velocity'
+export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 export const REQUIRED_DATA = 'Required Data'
 export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'

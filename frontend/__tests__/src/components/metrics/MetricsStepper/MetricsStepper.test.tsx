@@ -1,13 +1,22 @@
 import { fireEvent, render } from '@testing-library/react'
-import MetricsStepper from '@src/components/Metrics/MetricsStepper'
+import MetricsStepper from '@src/components/metrics/MetricsStepper'
 import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
+import { stepperSlice } from '@src/features/stepper/StepperSlice'
 import { NEXT, BACK, STEPS, EXPORT_BOARD_DATA } from '../../../fixtures'
-import { setupStore } from '../../../utils/setupStoreUtil'
 
 describe('MetricsStepper', () => {
-  let store = setupStore()
+  const setupStepperStore = () => {
+    return configureStore({
+      reducer: {
+        [stepperSlice.name]: stepperSlice.reducer,
+      },
+    })
+  }
+
+  let store = setupStepperStore()
   beforeEach(() => {
-    store = setupStore()
+    store = setupStepperStore()
   })
 
   const setup = () =>

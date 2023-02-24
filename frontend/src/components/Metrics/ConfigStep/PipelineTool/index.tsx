@@ -1,5 +1,5 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { PIPELINE_TOOL_TYPES, ZERO, INIT_PIPELINE_TOOL_FIELDS_STATE, CONFIG_TITLE } from '@src/constants'
+import { PIPELINE_TOOL_TYPES, INIT_PIPELINE_TOOL_FIELDS_STATE, CONFIG_TITLE } from '@src/constants'
 import React, { FormEvent, useEffect, useState } from 'react'
 import {
   PipelineToolButtonGroup,
@@ -12,10 +12,9 @@ import {
   ResetButton,
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/PipelineTool/style'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changePipelineToolVerifyState, isPipelineToolVerified } from '@src/features/pipelineTool/pipelineToolSlice'
 import { selectPipelineToolFields, updatePipelineToolFields } from '@src/features/config/configSlice'
-import { verifyBoard } from '@src/services/boardService'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -76,19 +75,10 @@ export const PipelineTool = () => {
     )
   }
 
-  useEffect(() => {
-    ;(async () => {
-      const response = await verifyBoard()
-      if (response.status === 200) {
-        setIsLoading(false)
-      }
-    })()
-  }, [isLoading])
   const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(changePipelineToolVerifyState(true))
     setIsLoading(true)
-    // alert('Verified failed')
   }
 
   const handleResetBPipelineToolFields = () => {

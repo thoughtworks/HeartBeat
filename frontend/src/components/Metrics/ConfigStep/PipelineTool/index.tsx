@@ -88,7 +88,7 @@ export const PipelineTool = () => {
     e.preventDefault()
     dispatch(changePipelineToolVerifyState(true))
     setIsLoading(true)
-    alert('Verified failed')
+    // alert('Verified failed')
   }
 
   const handleResetBPipelineToolFields = () => {
@@ -105,41 +105,34 @@ export const PipelineTool = () => {
         </PipelineToolLoadingDrop>
       )}
       <PipelineToolTitle>{CONFIG_TITLE.PIPELINE_TOOL}</PipelineToolTitle>
-      <PipelineToolForm onSubmit={(e) => handleSubmitPipelineToolFields(e)} onReset={handleResetBPipelineToolFields}>
-        {pipelineToolFieldNames.map((filedName, index) =>
-          index === ZERO ? (
-            <PipelineToolTypeSelections variant='standard' required key={pipelineToolFieldValues[index]}>
-              <InputLabel id='pipelineTool-type-checkbox-label'>pipelineTool</InputLabel>
-              <Select
-                labelId='pipelineTool-type-checkbox-label'
-                value={pipelineToolFields.pipelineTool}
-                onChange={(e) => {
-                  onFormUpdate('pipelineTool', e.target.value)
-                }}
-              >
-                {Object.values(PIPELINE_TOOL_TYPES).map((data) => (
-                  <MenuItem key={data} value={data}>
-                    <ListItemText primary={data} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </PipelineToolTypeSelections>
-          ) : (
-            <PipelineToolTextField
-              key={index}
-              required
-              label={pipelineToolFieldNames[index]}
-              variant='standard'
-              type='password'
-              value={pipelineToolFieldValues[index]}
-              onChange={(e) => {
-                onFormUpdate(filedName, e.target.value)
-              }}
-              error={pipelineToolFieldStates[index].isError}
-              helperText={pipelineToolFieldStates[index].helpText}
-            />
-          )
-        )}
+      <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetBPipelineToolFields}>
+        <PipelineToolTypeSelections variant='standard' required>
+          <InputLabel id='pipelineTool-type-checkbox-label'>pipelineTool</InputLabel>
+          <Select
+            labelId='pipelineTool-type-checkbox-label'
+            value={pipelineToolFields.pipelineTool}
+            onChange={(e) => onFormUpdate('pipelineTool', e.target.value)}
+          >
+            {Object.values(PIPELINE_TOOL_TYPES).map((toolType) => (
+              <MenuItem key={toolType} value={toolType}>
+                <ListItemText primary={toolType} />
+              </MenuItem>
+            ))}
+          </Select>
+        </PipelineToolTypeSelections>
+        {pipelineToolFieldNames.slice(1).map((fieldName, index) => (
+          <PipelineToolTextField
+            key={fieldName}
+            required
+            label={fieldName}
+            variant='standard'
+            // type='password'
+            value={pipelineToolFieldValues[index + 1]}
+            onChange={(e) => onFormUpdate(fieldName, e.target.value)}
+            error={pipelineToolFieldStates[index + 1].isError}
+            helperText={pipelineToolFieldStates[index + 1].helpText}
+          />
+        ))}
         <PipelineToolButtonGroup>
           <VerifyButton type='submit' disabled={isDisableVerifyButton}>
             {isVerified ? 'Verified' : 'Verify'}

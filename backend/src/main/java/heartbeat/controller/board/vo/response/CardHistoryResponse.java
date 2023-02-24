@@ -8,4 +8,5 @@ import java.util.List;
 public class CardHistoryResponse {
 
 	private List<Item> items;
+
 }

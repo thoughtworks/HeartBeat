@@ -29,6 +29,8 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-validation'
   implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.1'
   implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+  implementation 'org.springframework.boot:spring-boot-starter-cache'
+  implementation 'org.ehcache:ehcache:3.10.0'
   testImplementation 'junit:junit:4.13.1'
   compileOnly 'org.projectlombok:lombok:1.18.26'
   annotationProcessor 'org.projectlombok:lombok:1.18.26'

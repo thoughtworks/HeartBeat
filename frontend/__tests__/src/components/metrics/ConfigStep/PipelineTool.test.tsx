@@ -1,10 +1,8 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, getByRole, getByText, render, screen, within } from '@testing-library/react'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
-import { PIPELINE_TOOL_FIELDS, CONFIG_TITLE, PIPELINE_TOOL_TYPES } from '../../../fixtures'
+import { PIPELINE_TOOL_FIELDS, CONFIG_TITLE, PIPELINE_TOOL_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { setupServer } from 'msw/node'
-import { rest } from 'msw'
 
 export const fillPipelineToolFieldsInformation = () => {
   const fields = ['token']
@@ -33,15 +31,8 @@ const setup = () => {
     </Provider>
   )
 }
-const server = setupServer(
-  rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
-    return res(ctx.status(200))
-  })
-)
 
 describe('PipelineTool', () => {
-  beforeAll(() => server.listen())
-  afterAll(() => server.close())
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
     const { getByRole, getByLabelText } = setup()
 
@@ -115,6 +106,17 @@ describe('PipelineTool', () => {
     fillPipelineToolFieldsInformation()
 
     expect(verifyButton).toBeEnabled()
+  })
+
+  it('should show error message and error style when token is empty', () => {
+    const { getByText, getByRole } = setup()
+    const TOKEN_ERROR_MESSAGE = 'token is required'
+    fillPipelineToolFieldsInformation()
+
+    const tokenInput = getByRole('textbox', { name: 'token' })
+    fireEvent.change(tokenInput, { target: { value: '' } })
+    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeVisible()
+    expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show reset button when verify succeed ', () => {

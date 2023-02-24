@@ -33,7 +33,6 @@ describe('config reducer', () => {
           token: '',
         },
       },
-
       updateProjectName('mock project name')
     )
 

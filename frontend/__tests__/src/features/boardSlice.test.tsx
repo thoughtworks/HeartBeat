@@ -1,20 +1,20 @@
 import boardReducer, { changeBoardVerifyState } from '@src/features/board/boardSlice'
 
 describe('board reducer', () => {
-  it('should false when handle initial state', () => {
-    const STEPPER = boardReducer(undefined, { type: 'unknown' })
+  it('should return false when handle initial state', () => {
+    const steeper = boardReducer(undefined, { type: 'unknown' })
 
-    expect(STEPPER.isBoardVerified).toEqual(false)
+    expect(steeper.isBoardVerified).toEqual(false)
   })
 
-  it('should true when handle changeBoardVerifyState given isBoardVerified is true', () => {
-    const STEPPER = boardReducer(
+  it('should return true when handle changeBoardVerifyState given isBoardVerified is true', () => {
+    const steeper = boardReducer(
       {
         isBoardVerified: false,
       },
       changeBoardVerifyState(true)
     )
 
-    expect(STEPPER.isBoardVerified).toEqual(true)
+    expect(steeper.isBoardVerified).toEqual(true)
   })
 })

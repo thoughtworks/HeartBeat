@@ -1,6 +1,6 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_TYPES, emailRegExp, ZERO, INIT_BOARD_FIELDS_STATE, EMAIL, CONFIG_TITLE } from '@src/constants'
-import React, { FormEvent, useEffect, useState } from 'react'
+import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
+import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -12,91 +12,97 @@ import {
   ResetButton,
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/Board/style'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
-import { verifyBoard } from '@src/services/boardService'
+import { useVerifyBoardState } from '@src/hooks/useVerifyBoardState'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
-  const boardFields = useAppSelector(selectBoardFields)
   const isVerified = useAppSelector(isBoardVerified)
-  const [fieldErrors, setFieldErrors] = useState(INIT_BOARD_FIELDS_STATE)
+  const boardFields = useAppSelector(selectBoardFields)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
-  const boardFieldValues = Object.values(boardFields)
-  const boardFieldNames = Object.keys(boardFields)
-  const boardFieldStates = Object.values(fieldErrors)
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    dispatch(
-      updateBoardFields({
-        board: boardFields.board,
-        boardId: '',
-        email: '',
-        projectKey: '',
-        site: '',
-        token: '',
-      })
-    )
-    setIsDisableVerifyButton(true)
-    dispatch(changeBoardVerifyState(false))
-  }, [boardFields.board, dispatch])
-
-  useEffect(() => {
-    setIsDisableVerifyButton(
-      !boardFieldNames
-        .map((fieldName, index) => checkFiledValid(fieldName, boardFieldValues[index]))
-        .every((validField) => validField)
-    )
-  }, [boardFields, boardFieldNames, boardFieldValues])
+  const [fields, setFields] = useState([
+    {
+      key: 'board',
+      value: boardFields.board,
+      isValid: true,
+    },
+    {
+      key: 'boardId',
+      value: boardFields.boardId,
+      isValid: true,
+    },
+    {
+      key: 'email',
+      value: boardFields.email,
+      isValid: true,
+    },
+    {
+      key: 'projectKey',
+      value: boardFields.projectKey,
+      isValid: true,
+    },
+    {
+      key: 'site',
+      value: boardFields.site,
+      isValid: true,
+    },
+    {
+      key: 'token',
+      value: boardFields.token,
+      isValid: true,
+    },
+  ])
+  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
 
   const initBoardFields = () => {
-    dispatch(
-      updateBoardFields({
-        board: BOARD_TYPES.JIRA,
-        boardId: '',
-        email: '',
-        projectKey: '',
-        site: '',
-        token: '',
-      })
-    )
+    const newFields = fields.map((field, index) => {
+      field.value = index === ZERO ? BOARD_TYPES.JIRA : ''
+      return field
+    })
+    setFields(newFields)
+    dispatch(changeBoardVerifyState(false))
   }
 
   const checkFiledValid = (type: string, value: string): boolean =>
     type === EMAIL ? emailRegExp.test(value) : value !== ''
 
-  const onFormUpdate = (key: string, value: string) => {
-    const isError = !checkFiledValid(key, value)
-    const newFieldErrors = {
-      ...fieldErrors,
-      [key]: {
-        isError,
-        helpText: isError ? ` ${key} is required` : '',
-      },
-    }
-    setFieldErrors(newFieldErrors)
-    dispatch(
-      updateBoardFields({
-        ...boardFields,
-        [key]: value,
+  const onFormUpdate = (index: number, value: string) => {
+    if (index === ZERO) {
+      const newFieldsValue = fields.map((field, index) => {
+        if (index !== ZERO) field.value = ''
+        return field
       })
-    )
+      setFields(newFieldsValue)
+      dispatch(changeBoardVerifyState(false))
+      return
+    }
+    const newFieldsValue = fields.map((field, fieldIndex) => {
+      if (fieldIndex === index) {
+        field.value = value
+        field.isValid = checkFiledValid(fields[index].key, value)
+      }
+      return field
+    })
+    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
+    setFields(newFieldsValue)
   }
 
-  useEffect(() => {
-    ;(async () => {
-      const response = await verifyBoard()
-      if (response.status === 200) {
-        setIsLoading(false)
-      }
-    })()
-  }, [isLoading])
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    dispatch(
+      updateBoardFields({
+        board: fields[0].value,
+        boardId: fields[1].value,
+        email: fields[2].value,
+        projectKey: fields[3].value,
+        site: fields[4].value,
+        token: fields[5].value,
+      })
+    )
+    await verifyJira()
     dispatch(changeBoardVerifyState(true))
-    setIsLoading(true)
   }
 
   const handleResetBoardFields = () => {
@@ -107,22 +113,22 @@ export const Board = () => {
 
   return (
     <BoardSection>
-      {isLoading && (
-        <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
+      {isVerifyLoading && (
+        <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />
         </BoardLoadingDrop>
       )}
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
-        {boardFieldNames.map((filedName, index) =>
+        {fields.map((filed, index) =>
           index === ZERO ? (
-            <BoardTypeSelections variant='standard' required key={boardFieldValues[index]}>
+            <BoardTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>board</InputLabel>
               <Select
                 labelId='board-type-checkbox-label'
-                value={boardFields.board}
+                value={filed.value}
                 onChange={(e) => {
-                  onFormUpdate('board', e.target.value)
+                  onFormUpdate(index, e.target.value)
                 }}
               >
                 {Object.values(BOARD_TYPES).map((data) => (
@@ -136,21 +142,26 @@ export const Board = () => {
             <BoardTextField
               key={index}
               required
-              label={boardFieldNames[index]}
+              label={filed.key}
               variant='standard'
-              value={boardFieldValues[index]}
+              value={filed.value}
               onChange={(e) => {
-                onFormUpdate(filedName, e.target.value)
+                onFormUpdate(index, e.target.value)
               }}
-              error={boardFieldStates[index].isError}
-              helperText={boardFieldStates[index].helpText}
+              error={!filed.isValid}
+              helperText={!filed.isValid ? `${filed.key} is required` : ''}
             />
           )
         )}
         <BoardButtonGroup>
-          <VerifyButton type='submit' disabled={isDisableVerifyButton}>
-            {isVerified ? 'Verified' : 'Verify'}
-          </VerifyButton>
+          {isVerified ? (
+            <VerifyButton>Verified</VerifyButton>
+          ) : (
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isVerifyLoading}>
+              Verify
+            </VerifyButton>
+          )}
+
           {isVerified && <ResetButton type='reset'>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>

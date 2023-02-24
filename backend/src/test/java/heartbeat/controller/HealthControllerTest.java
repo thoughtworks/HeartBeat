@@ -23,7 +23,7 @@ class HealthControllerTest {
 	private static HealthController healthController;
 
 	@Test
-	void should_return_health_status() {
+	void shouldReturnHealthStatus() {
 
 		HealthComponent mockHealth = mock(HealthComponent.class);
 		when(healthEndpoint.health()).thenReturn(mockHealth);

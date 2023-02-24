@@ -6,7 +6,7 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { TextField } from '@mui/material'
 import { datePickerPropsStyles, DateRangeBox } from '@src/components/Metrics/ConfigStep/DateRangePicker/style'
 import { DATE_RANGE, SELECT_OR_WRITE_DATE } from '@src/constants'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 import { selectDateRange, updateDateRange } from '@src/features/config/configSlice'
 

@@ -1,6 +1,6 @@
-import { fireEvent, render, within, screen } from '@testing-library/react'
+import { fireEvent, render, within, screen, waitFor } from '@testing-library/react'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
-import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR } from '../../../fixtures'
+import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR, MOCK_URL } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
@@ -34,7 +34,7 @@ const setup = () => {
   )
 }
 const server = setupServer(
-  rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
+  rest.get(MOCK_URL, (req, res, ctx) => {
     return res(ctx.status(200))
   })
 )
@@ -72,18 +72,22 @@ describe('Board', () => {
     expect(optionValue).toEqual(Object.values(BOARD_TYPES))
   })
 
-  it('should show different board type when select different board field value ', () => {
+  it('should show different board type when select different board field value ', async () => {
     const { getByRole, getByText } = setup()
 
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
 
-    expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
+    })
 
     fireEvent.mouseDown(getByRole('button', { name: 'board' }))
     fireEvent.click(getByText(BOARD_TYPES.LINEAR))
 
-    expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
+    })
   })
 
   it('should show error message when input a wrong type email ', () => {
@@ -116,7 +120,7 @@ describe('Board', () => {
     expect(boardIdInput.value).toEqual('')
   })
 
-  it('should clear all fields information when click reset button', () => {
+  it('should clear all fields information when click reset button', async () => {
     const { getByRole, getByText, queryByRole } = setup()
     const fieldInputs = BOARD_FIELDS.slice(1, 5).map(
       (label) =>
@@ -128,7 +132,9 @@ describe('Board', () => {
     fillBoardFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
-    fireEvent.click(getByRole('button', { name: 'Reset' }))
+    await waitFor(() => {
+      fireEvent.click(getByRole('button', { name: 'Reset' }))
+    })
 
     fieldInputs.map((input) => {
       expect(input.value).toEqual('')
@@ -149,13 +155,15 @@ describe('Board', () => {
     expect(verifyButton).toBeEnabled()
   })
 
-  it('should show reset button when verify succeed ', () => {
+  it('should show reset button when verify succeed ', async () => {
     const { getByText } = setup()
     fillBoardFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
 
-    expect(getByText('Reset')).toBeVisible()
+    await waitFor(() => {
+      expect(getByText('Reset')).toBeVisible()
+    })
   })
 
   it('should called verifyBoard method once when click verify button', async () => {
@@ -163,7 +171,9 @@ describe('Board', () => {
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
-    expect(getByText('Verified')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(getByText('Verified')).toBeInTheDocument()
+    })
   })
 
   it('should check loading animation when click verify button', async () => {

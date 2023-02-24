@@ -27,8 +27,9 @@ public class RestResponseEntityExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 		BindingResult result = ex.getBindingResult();
-		Map<String, String> fieldErrors = result.getFieldErrors().stream()
-				.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+		Map<String, String> fieldErrors = result.getFieldErrors()
+			.stream()
+			.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
 		return ResponseEntity.badRequest().body(fieldErrors);
 	}
 

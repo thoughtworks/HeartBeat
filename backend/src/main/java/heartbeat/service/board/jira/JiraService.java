@@ -29,8 +29,13 @@ public class JiraService {
 		try {
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(URI.create(url), boardRequest.getBoardId(),
 					boardRequest.getToken());
-			return BoardConfigResponse.builder().jiraColumns(jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
-					.map(this::mapToResponseColumn).collect(Collectors.toList())).build();
+			return BoardConfigResponse.builder()
+				.jiraColumns(jiraBoardConfigDTO.getColumnConfig()
+					.getColumns()
+					.stream()
+					.map(this::mapToResponseColumn)
+					.collect(Collectors.toList()))
+				.build();
 		}
 		catch (FeignException e) {
 			log.error("Failed when call Jira to get board config", e);

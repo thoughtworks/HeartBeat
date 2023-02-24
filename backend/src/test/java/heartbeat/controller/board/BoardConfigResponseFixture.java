@@ -9,8 +9,8 @@ import java.util.List;
 public class BoardConfigResponseFixture {
 
 	public static BoardConfigResponse.BoardConfigResponseBuilder BOARD_CONFIG_RESPONSE_BUILDER() {
-		return BoardConfigResponse.builder().jiraColumns(
-				List.of(ColumnResponse.builder().value(ColumnValue.builder().name("TODO").build()).build()));
+		return BoardConfigResponse.builder()
+			.jiraColumns(List.of(ColumnResponse.builder().value(ColumnValue.builder().name("TODO").build()).build()));
 	}
 
 }

@@ -57,8 +57,8 @@ class JiraServiceTest {
 		when(mockException.status()).thenReturn(400);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build()))
-				.isInstanceOf(RequestFailedException.class)
-				.hasMessageContaining("Request failed with status code 400, error: ", "");
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status code 400, error: ", "");
 	}
 
 }

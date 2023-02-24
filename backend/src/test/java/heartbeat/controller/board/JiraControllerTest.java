@@ -44,9 +44,11 @@ public class JiraControllerTest {
 		when(jiraService.getJiraConfiguration(any())).thenReturn(boardConfigResponse);
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isOk())
-				.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"));
+		mockMvc
+			.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"));
 	}
 
 	@Test
@@ -58,25 +60,31 @@ public class JiraControllerTest {
 		when(mockException.getStatus()).thenReturn(400);
 
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.message").value(message));
+		mockMvc
+			.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value(message));
 	}
 
 	@Test
 	void shouldVerifyRequestTokenNotBlank() throws Exception {
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
-		mockMvc.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.token").value("Token cannot be empty."));
+		mockMvc
+			.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.token").value("Token cannot be empty."));
 	}
 
 	@Test
 	void shouldThrowExceptionWhenBoardTypeNotSupported() throws Exception {
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
-		mockMvc.perform(get("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
-				.content(boardRequestJson.write(boardRequest).getJson())).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.message").isNotEmpty());
+		mockMvc
+			.perform(get("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").isNotEmpty());
 	}
 
 }

@@ -50,7 +50,7 @@ checkstyle {
 }
 
 pmd {
-  toolVersion = '6.54.0'
+  toolVersion = '6.55.0'
   ruleSets = ['java-basic']
   ruleSetConfig = resources.text.fromFile("src/main/resources/pmd.xml")
 }

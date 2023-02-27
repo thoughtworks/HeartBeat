@@ -1,4 +1,4 @@
-import { fireEvent, getByRole, getByText, render, screen, within } from '@testing-library/react'
+import { fireEvent, getByRole, getByText, render, screen, waitFor, within } from '@testing-library/react'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { PIPELINE_TOOL_FIELDS, CONFIG_TITLE, PIPELINE_TOOL_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
@@ -65,7 +65,7 @@ describe('PipelineTool', () => {
     expect(tokenInput.value).toEqual('')
   })
 
-  it('should clear all fields information when click reset button', () => {
+  it('should clear all fields information when click reset button', async () => {
     const { getByRole, getByText, queryByRole } = setup()
     const fieldInputs = PIPELINE_TOOL_FIELDS.slice(1).map(
       (label) =>
@@ -77,7 +77,9 @@ describe('PipelineTool', () => {
     fillPipelineToolFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
-    fireEvent.click(getByRole('button', { name: 'Reset' }))
+    await waitFor(() => {
+      fireEvent.click(getByRole('button', { name: 'Reset' }))
+    })
 
     fieldInputs.map((input) => {
       expect(input.value).toEqual('')
@@ -119,20 +121,22 @@ describe('PipelineTool', () => {
     expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
-  it('should show reset button when verify succeed ', () => {
+  it('should show reset button when verify succeed ', async () => {
     const { getByText } = setup()
     fillPipelineToolFieldsInformation()
     fireEvent.click(getByText('Verify'))
-
-    expect(getByText('Reset')).toBeVisible()
+    await waitFor(() => {
+      expect(getByText('Reset')).toBeVisible()
+    })
   })
 
   it('should called verifyPipelineTool method once when click verify button', async () => {
     const { getByRole, getByText } = setup()
     fillPipelineToolFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))
-
-    expect(getByText('Verified')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(getByText('Verified')).toBeInTheDocument()
+    })
   })
 
   it('should check loading animation when click verify button', async () => {

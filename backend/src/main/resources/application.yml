@@ -5,9 +5,3 @@ server:
 logging:
   level:
     root: INFO
-spring:
-  cache:
-    type: ehcache
-    ehcache:
-      timeToLiveSeconds: 100
-

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { boardClient } from '@src/clients/BoardClient'
@@ -8,7 +8,6 @@ export interface useVerifyBoardStateInterface {
   isVerifyLoading: boolean
   isErrorNotification: boolean
   showErrorMessage: string
-  setIsErrorNotification: Dispatch<SetStateAction<boolean>>
 }
 
 export const useVerifyBoardState = (): useVerifyBoardStateInterface => {
@@ -28,6 +27,9 @@ export const useVerifyBoardState = (): useVerifyBoardStateInterface => {
       setIsErrorNotification(true)
     } finally {
       setIsVerifyLoading(false)
+      setTimeout(() => {
+        setIsErrorNotification(false)
+      }, 2000)
     }
   }
   return {
@@ -35,6 +37,5 @@ export const useVerifyBoardState = (): useVerifyBoardStateInterface => {
     isVerifyLoading,
     isErrorNotification,
     showErrorMessage,
-    setIsErrorNotification,
   }
 }

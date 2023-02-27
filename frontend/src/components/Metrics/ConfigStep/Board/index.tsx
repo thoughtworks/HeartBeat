@@ -55,8 +55,7 @@ export const Board = () => {
       isValid: true,
     },
   ])
-  const { verifyJira, isVerifyLoading, isErrorNotification, setIsErrorNotification, showErrorMessage } =
-    useVerifyBoardState()
+  const { verifyJira, isVerifyLoading, isErrorNotification, showErrorMessage } = useVerifyBoardState()
 
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {
@@ -114,9 +113,7 @@ export const Board = () => {
 
   return (
     <BoardSection>
-      {isErrorNotification && (
-        <ErrorNotification message={showErrorMessage} closeErrorNotification={setIsErrorNotification} />
-      )}
+      {isErrorNotification && <ErrorNotification message={showErrorMessage} />}
       {isVerifyLoading && (
         <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

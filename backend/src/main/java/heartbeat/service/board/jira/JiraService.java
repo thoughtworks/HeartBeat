@@ -9,15 +9,14 @@ import heartbeat.controller.board.vo.response.*;
 import heartbeat.exception.RequestFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -29,7 +28,7 @@ public class JiraService {
 
 	private final JiraFeignClient jiraFeignClient;
 
-	private final static int QUERY_COUNT = 100;
+	public final static int QUERY_COUNT = 100;
 
 	public BoardConfigResponse getJiraConfiguration(BoardRequest boardRequest) {
 		URI baseUrl = URI.create("https://" + boardRequest.getSite() + ".atlassian.net");
@@ -89,9 +88,13 @@ public class JiraService {
 	}
 
 	private List<String> getUsers (URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
+		if (doneColumns.isEmpty()) {
+			throw new RequestFailedException(404, "There is no done column.");
+		}
+
 		List<DoneCard> doneCards = getAllDoneCards(baseUrl, doneColumns, boardRequest);
 
-		if (doneColumns.isEmpty() || isNull(doneCards)) {
+		if (isNull(doneCards)) {
 			throw new RequestFailedException(404, "There is no done column.");
 		}
 
@@ -114,21 +117,32 @@ public class JiraService {
 		if (doneColumns.isEmpty()) {
 			return null;
 		}
-		int startAt = 0;
-		int page = 1;
-		boolean isFirstTime = true;
+
 		List<DoneCard> doneCards = new ArrayList<>();
 		String jql = String.format("status in '%s' AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", String.join(",", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
+		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(), QUERY_COUNT, 0, jql, boardRequest.getToken());
+		doneCards.add(allDoneCardsResponse.getIssues());
 
-		for (int i = 0; i < page; i++) {
-			AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(), QUERY_COUNT, startAt, jql, boardRequest.getToken());
-			if (isFirstTime) {
-				page = Integer.parseInt(allDoneCardsResponse.getTotal()) / QUERY_COUNT + 1;
-				isFirstTime = false;
-			}
-			startAt = (i + 1) * QUERY_COUNT;
-			doneCards.add(allDoneCardsResponse.getIssues());
+		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponse.getTotal()) * 1.0 / QUERY_COUNT);
+		if ( pages == 1 ) {
+			return doneCards;
 		}
+
+		List<Integer> range = IntStream.rangeClosed(1, pages)
+			.boxed().toList();
+		List<Mono<AllDoneCardsResponse>> doneCardsResponseMonos = range.stream()
+			.map(startFrom -> Mono.just(jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(), QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequest.getToken())))
+			.collect(Collectors.toList());
+		List<AllDoneCardsResponse> doneCardsResponses = Flux.merge(doneCardsResponseMonos).collectList().block();
+
+		if (isNull(doneCardsResponses)) {
+			throw new RequestFailedException(404, "Cannot get more done cards information.");
+		}
+
+		List<DoneCard> moreDoneCards = doneCardsResponses.stream()
+			.map(AllDoneCardsResponse::getIssues)
+			.toList();
+		doneCards.addAll(moreDoneCards);
 
 		return doneCards;
 	}

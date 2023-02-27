@@ -4,8 +4,7 @@ import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.JiraColumnConfig;
 import heartbeat.client.dto.JiraColumnStatus;
-import heartbeat.controller.board.vo.response.StatusCategory;
-import heartbeat.controller.board.vo.response.StatusSelf;
+import heartbeat.controller.board.vo.response.*;
 
 import java.util.List;
 
@@ -36,4 +35,14 @@ public class JiraBoardConfigDTOFixture {
 		return StatusSelf.builder().untranslatedName("doing").statusCategory(new StatusCategory("doing", "doing"));
 	}
 
+	public static AllDoneCardsResponse.AllDoneCardsResponseBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
+		return AllDoneCardsResponse.builder()
+			.total("2")
+			.issues(new DoneCard("1", new Fields(new Assignee("Zhang San"))));
+	}
+
+	public static CardHistoryResponse.CardHistoryResponseBuilder CARD_HISTORY_RESPONSE_BUILDER() {
+		return CardHistoryResponse.builder()
+			.items(List.of(new Item("assignee", new To("San Zhang"))));
+	}
 }

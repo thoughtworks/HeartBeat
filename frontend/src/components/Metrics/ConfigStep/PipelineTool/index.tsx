@@ -120,11 +120,12 @@ export const PipelineTool = () => {
           </Select>
         </PipelineToolTypeSelections>
         <PipelineToolTextField
+          data-testid='pipelineToolTextField'
           key={fields[1].key}
           required
           label={fields[1].key}
           variant='standard'
-          // type='password'
+          type='password'
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}

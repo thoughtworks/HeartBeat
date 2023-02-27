@@ -18,5 +18,11 @@ describe('Create a new project', () => {
     metricsPage.fillBoardFieldsInfo('2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken')
 
     metricsPage.resetBoardInfo()
+
+    metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
+
+    metricsPage.fillPipelineToolFieldsInfo('mockToken')
+
+    metricsPage.resetPipelineToolFieldsInfo()
   })
 })

@@ -50,6 +50,35 @@ class Metrics {
     cy.contains('token').invoke('val', '')
     cy.get('button:contains("Verify")').should('be.disabled')
   }
+
+  selectLeadTimeForChangesAndDeploymentFrequency() {
+    cy.contains('Required Data').siblings().click()
+    cy.get("[type='checkbox']").uncheck()
+
+    cy.contains('Lead time for changes').click()
+    cy.contains('Deployment frequency').click()
+
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+  }
+
+  fillPipelineToolFieldsInfo(token: string) {
+    cy.get('button:contains("Verify")').should('be.disabled')
+
+    cy.contains('token').siblings().type(token)
+    cy.get('button:contains("Verify")').should('be.enabled')
+
+    cy.contains('Verify').click()
+
+    cy.get('button:contains("Verified")')
+    cy.get('button:contains("Reset")')
+  }
+
+  resetPipelineToolFieldsInfo() {
+    cy.contains('Reset').click()
+
+    cy.contains('token').invoke('val', '')
+    cy.get('button:contains("Verify")').should('be.disabled')
+  }
 }
 
 const metricsPage = new Metrics()

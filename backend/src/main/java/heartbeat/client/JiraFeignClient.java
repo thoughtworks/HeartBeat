@@ -14,22 +14,22 @@ import java.net.URI;
 @FeignClient(value = "jiraFeignClient", url = "https://demo.atlassian.net")
 public interface JiraFeignClient {
 
-	@Cacheable("jiraConfig")
+	@Cacheable(cacheNames = "jiraConfig")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/configuration")
 	JiraBoardConfigDTO getJiraBoardConfiguration(URI baseUrl, @PathVariable String boardId,
 			@RequestHeader String authorization);
 
-	@Cacheable("jiraStatusCategory")
+	@Cacheable(cacheNames = "jiraStatusCategory")
 	@GetMapping(path = "/status/{statusNum}")
 	StatusSelf getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
 			@RequestHeader String authorization);
 
-	@Cacheable("jiraAllDoneCards")
+	@Cacheable(cacheNames = "jiraAllDoneCards")
 	@GetMapping(path = "rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
 	AllDoneCardsResponse getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
-	@Cacheable("jiraActivityfeed")
+	@Cacheable(cacheNames = "jiraActivityfeed")
 	@GetMapping(path = "rest/internal/2/issue/{jiraCardKey}/activityfeed")
 	CardHistoryResponse getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
 			@RequestHeader String authorization);

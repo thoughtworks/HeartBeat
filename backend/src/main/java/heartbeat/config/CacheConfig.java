@@ -23,18 +23,21 @@ public class CacheConfig {
 		CachingProvider provider = Caching.getCachingProvider();
 		CacheManager cacheManager = provider.getCacheManager();
 
-		CacheConfigurationBuilder<String, String> configuration =
+		CacheConfigurationBuilder<Object, Object> configuration =
 			CacheConfigurationBuilder.newCacheConfigurationBuilder(
-					String.class,
-					String.class,
+					Object.class,
+					Object.class,
 					ResourcePoolsBuilder
 						.newResourcePoolsBuilder().offheap(1, MemoryUnit.MB))
 				.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(20)));
 
-		javax.cache.configuration.Configuration<String, String> stringDoubleConfiguration =
+		javax.cache.configuration.Configuration<Object, Object> stringDoubleConfiguration =
 			Eh107Configuration.fromEhcacheCacheConfiguration(configuration);
 
-		cacheManager.createCache("users", stringDoubleConfiguration);
+		cacheManager.createCache("jiraConfig", stringDoubleConfiguration);
+		cacheManager.createCache("jiraStatusCategory", stringDoubleConfiguration);
+		cacheManager.createCache("jiraAllDoneCards", stringDoubleConfiguration);
+		cacheManager.createCache("jiraActivityfeed", stringDoubleConfiguration);
 		return cacheManager;
 	}
 }

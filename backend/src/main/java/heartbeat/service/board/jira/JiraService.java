@@ -128,7 +128,7 @@ public class JiraService {
 			return doneCards;
 		}
 
-		List<Integer> range = IntStream.rangeClosed(1, pages)
+		List<Integer> range = IntStream.rangeClosed(1, pages - 1)
 			.boxed().toList();
 		List<Mono<AllDoneCardsResponse>> doneCardsResponseMonos = range.stream()
 			.map(startFrom -> Mono.just(jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(), QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequest.getToken())))

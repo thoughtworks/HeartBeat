@@ -11,12 +11,15 @@ const server = setupServer(
 describe('error notification', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
+
   it('should return 200 status when verify board success', async () => {
     const result = await boardClient.getVerifyBoard()
+
     expect(result.status).toEqual(200)
   })
-  it('should throw error  when verify board failed', async () => {
+  it('should throw error when verify board failed', async () => {
     server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(404))))
+
     try {
       await boardClient.getVerifyBoard()
     } catch (error) {

@@ -1,25 +1,23 @@
-import { fireEvent, getByRole, getByText, render, screen, waitFor, within } from '@testing-library/react'
+import {
+  fireEvent,
+  getByLabelText,
+  getByRole,
+  getByText,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { PIPELINE_TOOL_FIELDS, CONFIG_TITLE, PIPELINE_TOOL_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 
 export const fillPipelineToolFieldsInformation = () => {
-  const fields = ['token']
-  const mockInfo = ['mockToken']
-  const fieldInputs = fields.map(
-    (label) =>
-      screen.getByRole('textbox', {
-        name: label,
-        hidden: true,
-      }) as HTMLInputElement
-  )
-  fieldInputs.map((input, index) => {
-    fireEvent.change(input, { target: { value: mockInfo[index] } })
-  })
-  fieldInputs.map((input, index) => {
-    expect(input.value).toEqual(mockInfo[index])
-  })
+  const mockInfo = 'mockToken'
+  const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
+  fireEvent.change(tokenInput, { target: { value: mockInfo } })
+  expect(tokenInput.value).toEqual(mockInfo)
 }
 
 let store = setupStore()
@@ -54,9 +52,7 @@ describe('PipelineTool', () => {
 
   it('should clear other fields information when change board field selection', () => {
     const { getByRole, getByText } = setup()
-    const tokenInput = getByRole('textbox', {
-      name: 'token',
-    }) as HTMLInputElement
+    const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
     fireEvent.change(tokenInput, { target: { value: 'abcd' } })
     fireEvent.mouseDown(getByRole('button', { name: 'pipelineTool' }))
@@ -67,13 +63,7 @@ describe('PipelineTool', () => {
 
   it('should clear all fields information when click reset button', async () => {
     const { getByRole, getByText, queryByRole } = setup()
-    const fieldInputs = PIPELINE_TOOL_FIELDS.slice(1).map(
-      (label) =>
-        screen.getByRole('textbox', {
-          name: label,
-          hidden: true,
-        }) as HTMLInputElement
-    )
+    const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
     fillPipelineToolFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
@@ -81,9 +71,7 @@ describe('PipelineTool', () => {
       fireEvent.click(getByRole('button', { name: 'Reset' }))
     })
 
-    fieldInputs.map((input) => {
-      expect(input.value).toEqual('')
-    })
+    expect(tokenInput.value).toEqual('')
     expect(getByText(PIPELINE_TOOL_TYPES.BUILD_KITE)).toBeInTheDocument()
     expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
     expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
@@ -111,11 +99,11 @@ describe('PipelineTool', () => {
   })
 
   it('should show error message and error style when token is empty', () => {
-    const { getByText, getByRole } = setup()
+    const { getByText } = setup()
     const TOKEN_ERROR_MESSAGE = 'token is required'
     fillPipelineToolFieldsInformation()
 
-    const tokenInput = getByRole('textbox', { name: 'token' })
+    const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
     fireEvent.change(tokenInput, { target: { value: '' } })
     expect(getByText(TOKEN_ERROR_MESSAGE)).toBeVisible()
     expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)

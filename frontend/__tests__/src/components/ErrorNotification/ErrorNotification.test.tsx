@@ -1,16 +1,11 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
+import { JIRA_VERIFY_FAILED_MESSAGE } from '../../fixtures'
 
 describe('error notification', () => {
-  it('should call closeErrorNotification method when render error notification', () => {
-    jest.useFakeTimers()
-    const mockCloseErrorNotification = jest.fn()
+  it('should show error message when render error notification', () => {
+    const { getByText } = render(<ErrorNotification message={JIRA_VERIFY_FAILED_MESSAGE} />)
 
-    render(<ErrorNotification message={'Jira verify failed'} closeErrorNotification={mockCloseErrorNotification} />)
-    act(() => {
-      jest.advanceTimersByTime(2000)
-    })
-
-    expect(mockCloseErrorNotification).toHaveBeenCalledTimes(1)
+    expect(getByText(JIRA_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
   })
 })

@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from 'react'
-import { boardService } from '@src/services/BoardService'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import { boardClient } from '@src/clients/BoardClient'
 
 export interface useVerifyBoardStateInterface {
   verifyJira: () => Promise<void>
@@ -20,7 +20,7 @@ export const useVerifyBoardState = (): useVerifyBoardStateInterface => {
   const verifyJira = async (): Promise<void> => {
     setIsVerifyLoading(true)
     try {
-      const response = await boardService.getVerifyBoard().then((res) => res)
+      const response = await boardClient.getVerifyBoard().then((res) => res)
       console.log('response', response)
       dispatch(changeBoardVerifyState(true))
     } catch (e) {

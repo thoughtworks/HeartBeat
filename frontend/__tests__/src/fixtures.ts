@@ -44,4 +44,4 @@ export enum CONFIG_TITLE {
 
 export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
 
-export const MOCK_URL = '/api/v1/jira/board'
+export const MOCK_URL = '/api/v1/kanban/verify'

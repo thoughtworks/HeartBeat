@@ -22,6 +22,15 @@
       "functions": 100,
       "lines": 100,
       "statements": 100
+    },
+    "./src/hooks/useVerifyBoardState": {
+      "branches": 50,
+      "functions": 50,
+      "lines": 50,
+      "statements": 50
+    },
+    "./src/components/Metrics/ConfigStep/Board": {
+      "branches": 90
     }
   }
 }

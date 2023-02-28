@@ -18,6 +18,7 @@ export enum DATE_RANGE {
 export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'PipelineTool',
+  SOURCE_CONTROL = 'SourceControl',
 }
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
@@ -41,6 +42,10 @@ export const BOARD_TYPES = {
 export const PIPELINE_TOOL_TYPES = {
   BUILD_KITE: 'BuildKite',
   GO_CD: 'GoCD',
+}
+
+export const SOURCE_CONTROL_TYPES = {
+  GIT_HUB: 'Github',
 }
 
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/

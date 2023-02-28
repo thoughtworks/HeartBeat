@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changePipelineToolVerifyState, isPipelineToolVerified } from '@src/features/pipelineTool/pipelineToolSlice'
 import { selectPipelineToolFields, updatePipelineToolFields } from '@src/features/config/configSlice'
 import { useVerifyPipelineToolState } from '@src/hooks/useVerifyPipelineToolState'
+import { ErrorNotification } from '@src/components/ErrorNotifaction'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -34,7 +35,7 @@ export const PipelineTool = () => {
       isValid: true,
     },
   ])
-  const { verifyPipelineTool, isVerifyLoading } = useVerifyPipelineToolState()
+  const { verifyPipelineTool, isVerifyLoading, isErrorNotification, showErrorMessage } = useVerifyPipelineToolState()
   useEffect(() => {
     dispatch(
       updatePipelineToolFields({
@@ -98,6 +99,7 @@ export const PipelineTool = () => {
 
   return (
     <PipelineToolSection>
+      {isErrorNotification && <ErrorNotification message={showErrorMessage} />}
       {isVerifyLoading && (
         <PipelineToolLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

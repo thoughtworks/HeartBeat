@@ -158,6 +158,16 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.frontend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
+      - name: Build, tag, and push for Stub
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: heartbeat_stub
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.stub
+          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.stub
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
 
   deploy:
     runs-on: ubuntu-latest

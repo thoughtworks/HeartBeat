@@ -155,7 +155,7 @@ export const Board = () => {
           )
         )}
         <BoardButtonGroup>
-          {isVerified ? (
+          {isVerified && !isVerifyLoading ? (
             <VerifyButton>Verified</VerifyButton>
           ) : (
             <VerifyButton type='submit' disabled={isDisableVerifyButton || isVerifyLoading}>
@@ -163,7 +163,7 @@ export const Board = () => {
             </VerifyButton>
           )}
 
-          {isVerified && <ResetButton type='reset'>Reset</ResetButton>}
+          {isVerified && !isVerifyLoading && <ResetButton type='reset'>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>
     </BoardSection>

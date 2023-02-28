@@ -1,0 +1,11 @@
+FROM gradle:8.0.1-jdk19 AS build
+LABEL app=Heartbeat
+# Install Stubby4j
+ENV STUBBY_VERSION 7.0.0
+RUN curl -L "<https://search.maven.org/remotecontent?filepath=io/github/azagniotov/stubby4j/$STUBBY_VERSION/stubby4j-$STUBBY_VERSION.jar>" -o /app/stubby4j.jar
+WORKDIR /app
+# Copy stubs.yaml to container
+COPY stubs/stubs.yaml .
+EXPOSE 4323
+# Set command to run Stubby4j
+CMD ["java", "-jar", "/app/stubby4j.jar", "-d", "stubs.yaml", "-l", "0.0.0.0", "-s", "4323"]

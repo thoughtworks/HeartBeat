@@ -39,11 +39,12 @@ public class JiraService {
 			List<String> doneColumns = new ArrayList<>();
 
 			return BoardConfigResponse.builder()
-				.jiraColumns(jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
-					.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, baseUrl, boardRequest.getToken(), doneColumns))
-					.toList())
-				.users(getUsers(baseUrl, doneColumns, boardRequest))
-				.build();
+					.jiraColumns(
+							jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
+									.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, baseUrl,
+											boardRequest.getToken(), doneColumns))
+									.toList())
+					.users(getUsers(baseUrl, doneColumns, boardRequest)).build();
 		}
 		catch (FeignException e) {
 			log.error("Failed when call Jira to get board config", e);
@@ -87,7 +88,7 @@ public class JiraService {
 				.reduce((pre, last) -> last).orElse(StatusSelf.builder().build()).getStatusCategory().getName();
 	}
 
-	private List<String> getUsers (URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
+	private List<String> getUsers(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
 		if (doneColumns.isEmpty()) {
 			throw new RequestFailedException(404, "There is no done column.");
 		}
@@ -99,8 +100,8 @@ public class JiraService {
 		}
 
 		List<Mono<List<String>>> assigneeSetMonos = doneCards.stream()
-			.map(doneCard -> Mono.just(getAssigneeSet(baseUrl, doneCard, boardRequest.getToken())))
-			.collect(Collectors.toList());
+				.map(doneCard -> Mono.just(getAssigneeSet(baseUrl, doneCard, boardRequest.getToken())))
+				.collect(Collectors.toList());
 
 		List<List<String>> assigneeSet = Flux.merge(assigneeSetMonos).collectList().block();
 
@@ -108,9 +109,7 @@ public class JiraService {
 			return Collections.emptyList();
 		}
 
-		return assigneeSet.stream()
-			.flatMap(Collection::stream)
-			.toList();
+		return assigneeSet.stream().flatMap(Collection::stream).toList();
 	}
 
 	private List<DoneCard> getAllDoneCards(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
@@ -118,21 +117,24 @@ public class JiraService {
 			return null;
 		}
 
-		String jql = String.format("status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
-		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(), QUERY_COUNT, 0, jql, boardRequest.getToken());
+		String jql = String.format(
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
+				String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
+		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
+				QUERY_COUNT, 0, jql, boardRequest.getToken());
 		log.info(allDoneCardsResponse);
 		List<DoneCard> doneCards = new ArrayList<>(allDoneCardsResponse.getIssues());
 
 		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponse.getTotal()) * 1.0 / QUERY_COUNT);
-		if ( pages == 1 ) {
+		if (pages == 1) {
 			return doneCards;
 		}
 
-		List<Integer> range = IntStream.rangeClosed(1, pages - 1)
-			.boxed().toList();
+		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
 		List<Mono<AllDoneCardsResponse>> doneCardsResponseMonos = range.stream()
-			.map(startFrom -> Mono.just(jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(), QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequest.getToken())))
-			.collect(Collectors.toList());
+				.map(startFrom -> Mono.just(jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
+						QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequest.getToken())))
+				.collect(Collectors.toList());
 		List<AllDoneCardsResponse> doneCardsResponses = Flux.merge(doneCardsResponseMonos).collectList().block();
 
 		if (isNull(doneCardsResponses)) {
@@ -140,25 +142,27 @@ public class JiraService {
 		}
 
 		List<DoneCard> moreDoneCards = doneCardsResponses.stream()
-				.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
-				.toList();
+				.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream()).toList();
 
 		doneCards.addAll(moreDoneCards);
 
 		return doneCards;
 	}
 
-	private List<String> getAssigneeSet (URI baseUrl, DoneCard donecard, String jiraToken) {
-		CardHistoryResponse cardHistoryResponse = jiraFeignClient.getJiraCardHistory(baseUrl, donecard.getKey(), jiraToken);
+	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {
+		CardHistoryResponse cardHistoryResponse = jiraFeignClient.getJiraCardHistory(baseUrl, donecard.getKey(),
+				jiraToken);
 
 		List<String> assigneeSet = cardHistoryResponse.getItems().stream()
-			.filter(assignee -> Objects.equals(assignee.getFieldId(), "assignee") && assignee.getTo().getDisplayValue() != null)
-			.map(assignee -> assignee.getTo().getDisplayValue())
-			.toList();
+				.filter(assignee -> Objects.equals(assignee.getFieldId(), "assignee")
+						&& assignee.getTo().getDisplayValue() != null)
+				.map(assignee -> assignee.getTo().getDisplayValue()).toList();
 
-		if (assigneeSet.isEmpty() && nonNull(donecard.getFields().getAssignee()) && nonNull(donecard.getFields().getAssignee().getDisplayName())) {
+		if (assigneeSet.isEmpty() && nonNull(donecard.getFields().getAssignee())
+				&& nonNull(donecard.getFields().getAssignee().getDisplayName())) {
 			return List.of(donecard.getFields().getAssignee().getDisplayName());
 		}
 		return assigneeSet;
 	}
+
 }

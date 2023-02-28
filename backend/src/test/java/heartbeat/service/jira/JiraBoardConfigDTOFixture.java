@@ -36,13 +36,12 @@ public class JiraBoardConfigDTOFixture {
 	}
 
 	public static AllDoneCardsResponse.AllDoneCardsResponseBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponse.builder()
-			.total("2")
-			.issues(List.of(new DoneCard("1", new Fields(new Assignee("Zhang San")))));
+		return AllDoneCardsResponse.builder().total("2")
+				.issues(List.of(new DoneCard("1", new Fields(new Assignee("Zhang San")))));
 	}
 
 	public static CardHistoryResponse.CardHistoryResponseBuilder CARD_HISTORY_RESPONSE_BUILDER() {
-		return CardHistoryResponse.builder()
-			.items(List.of(new Item("assignee", new To("San Zhang"))));
+		return CardHistoryResponse.builder().items(List.of(new Item("assignee", new To("San Zhang"))));
 	}
+
 }

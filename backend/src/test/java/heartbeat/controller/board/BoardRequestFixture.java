@@ -19,8 +19,8 @@ public class BoardRequestFixture {
 			.projectKey("project key")
 			.site("site")
 			.token("token")
-			.startTime(OffsetDateTime.of(LocalDateTime.of(2023, 1, 1, 1, 1), ZoneOffset.UTC))
-			.endTime(OffsetDateTime.of(LocalDateTime.of(2023, 2, 1, 1, 1), ZoneOffset.UTC));
+			.startTime("1672556350000")
+			.endTime("1676908799000");
 	}
 
 }

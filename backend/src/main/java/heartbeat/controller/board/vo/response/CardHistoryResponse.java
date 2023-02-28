@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class CardHistoryResponse {
+public class CardHistoryResponse implements Serializable {
 
 	private List<Item> items;
 

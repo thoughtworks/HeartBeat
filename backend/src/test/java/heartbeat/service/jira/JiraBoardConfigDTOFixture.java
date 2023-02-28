@@ -38,7 +38,7 @@ public class JiraBoardConfigDTOFixture {
 	public static AllDoneCardsResponse.AllDoneCardsResponseBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
 		return AllDoneCardsResponse.builder()
 			.total("2")
-			.issues(new DoneCard("1", new Fields(new Assignee("Zhang San"))));
+			.issues(List.of(new DoneCard("1", new Fields(new Assignee("Zhang San")))));
 	}
 
 	public static CardHistoryResponse.CardHistoryResponseBuilder CARD_HISTORY_RESPONSE_BUILDER() {

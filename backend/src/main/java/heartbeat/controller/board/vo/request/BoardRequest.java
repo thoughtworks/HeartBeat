@@ -26,8 +26,8 @@ public class BoardRequest {
 	@NotBlank(message = "Token cannot be empty.")
 	private String token;
 
-	private OffsetDateTime startTime;
+	private String startTime;
 
-	private OffsetDateTime endTime;
+	private String endTime;
 
 }

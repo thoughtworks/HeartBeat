@@ -118,10 +118,10 @@ public class JiraService {
 			return null;
 		}
 
-		List<DoneCard> doneCards = new ArrayList<>();
-		String jql = String.format("status in '%s' AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", String.join(",", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
+		String jql = String.format("status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
 		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(), QUERY_COUNT, 0, jql, boardRequest.getToken());
-		doneCards.add(allDoneCardsResponse.getIssues());
+		log.info(allDoneCardsResponse);
+		List<DoneCard> doneCards = new ArrayList<>(allDoneCardsResponse.getIssues());
 
 		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponse.getTotal()) * 1.0 / QUERY_COUNT);
 		if ( pages == 1 ) {
@@ -140,8 +140,9 @@ public class JiraService {
 		}
 
 		List<DoneCard> moreDoneCards = doneCardsResponses.stream()
-			.map(AllDoneCardsResponse::getIssues)
-			.toList();
+				.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
+				.toList();
+
 		doneCards.addAll(moreDoneCards);
 
 		return doneCards;

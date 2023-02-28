@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @Data
 @Builder
-public class StatusSelf {
+public class StatusSelf implements Serializable {
 
 	private String untranslatedName;
 

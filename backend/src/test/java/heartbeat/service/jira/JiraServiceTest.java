@@ -45,7 +45,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format("status in '%s' AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE", boardRequest.getStartTime(), boardRequest.getEndTime());
+		String jql = String.format("status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE", boardRequest.getStartTime(), boardRequest.getEndTime());
 
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
@@ -73,7 +73,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format("status in '%s' AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE", boardRequest.getStartTime(), boardRequest.getEndTime());
+		String jql = String.format("status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE", boardRequest.getStartTime(), boardRequest.getEndTime());
 
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);

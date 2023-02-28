@@ -20,7 +20,7 @@ public interface JiraFeignClient {
 			@RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraStatusCategory")
-	@GetMapping(path = "/status/{statusNum}")
+	@GetMapping(path = "rest/api/2/status/{statusNum}")
 	StatusSelf getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
 			@RequestHeader String authorization);
 

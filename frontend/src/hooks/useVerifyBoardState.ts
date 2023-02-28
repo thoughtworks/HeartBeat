@@ -1,7 +1,9 @@
 import { useState } from 'react'
+
+import { boardClient } from '@src/clients/BoardClient'
 import { changeBoardVerifyState } from '@src/features/board/boardSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { boardClient } from '@src/clients/BoardClient'
+import { updateJiraVerifyResponse } from '@src/features/jiraVerifyResponse/jiraVerifyResponseSlice'
 
 export interface useVerifyBoardStateInterface {
   verifyJira: () => Promise<void>
@@ -11,27 +13,48 @@ export interface useVerifyBoardStateInterface {
 }
 
 export const useVerifyBoardState = (): useVerifyBoardStateInterface => {
-  const [isVerifyLoading, setIsVerifyLoading] = useState(false)
-  const [isErrorNotification, setIsErrorNotification] = useState(false)
-  const [showErrorMessage, setShowErrorMessage] = useState('')
   const dispatch = useAppDispatch()
+  const [isVerifyLoading, setIsLoading] = useState(false)
+  const [isErrorNotification, setIsShowErrorNotification] = useState(false)
+  const [showErrorMessage, setShowErrorMessage] = useState('')
 
-  const verifyJira = async (): Promise<void> => {
-    setIsVerifyLoading(true)
+  const verifyJira = async () => {
+    setIsLoading(true)
     try {
-      const response = await boardClient.getVerifyBoard().then((res) => res)
-      console.log('response', response)
-      dispatch(changeBoardVerifyState(true))
+      const response = await boardClient.getVerifyBoard()
+      console.log(response)
+      if (response.status === 444) {
+        handleBoardNoDoneCard()
+      } else if (response.status == 200) {
+        handleBoardVerifySucceed(response.data)
+      } else {
+        handleBoardVerifyFailed()
+      }
     } catch (e) {
-      setShowErrorMessage('Jira verify failed')
-      setIsErrorNotification(true)
+      handleBoardVerifyFailed()
+      // throw new Error('error')
     } finally {
-      setIsVerifyLoading(false)
+      setIsLoading(false)
       setTimeout(() => {
-        setIsErrorNotification(false)
+        setIsShowErrorNotification(false)
       }, 2000)
     }
   }
+
+  const handleBoardNoDoneCard = () => {
+    console.log('404')
+  }
+
+  const handleBoardVerifySucceed = (res: Array<object>) => {
+    dispatch(changeBoardVerifyState(true))
+    dispatch(updateJiraVerifyResponse(res))
+  }
+
+  const handleBoardVerifyFailed = () => {
+    setShowErrorMessage('Jira verify failed')
+    setIsShowErrorNotification(true)
+  }
+
   return {
     verifyJira,
     isVerifyLoading,

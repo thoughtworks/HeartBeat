@@ -1,12 +1,11 @@
 import { HttpClient } from '@src/clients/Httpclient'
 
 export class PipelineToolClient extends HttpClient {
-  public async post(path: string) {
+  verifyPipelineTool = async () => {
     try {
-      return await this.axiosInstance.post(path)
-    } catch (e) {
-      //TODO: handle error
-      return e
+      return await this.axiosInstance.post('/pipeline/fetch').then((res) => res)
+    } catch (error) {
+      throw new Error('error')
     }
   }
 }

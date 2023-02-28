@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
 import { useVerifyBoardState } from '@src/hooks/useVerifyBoardState'
+import { ErrorNotification } from '@src/components/ErrorNotifaction'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -54,7 +55,7 @@ export const Board = () => {
       isValid: true,
     },
   ])
-  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
+  const { verifyJira, isVerifyLoading, isErrorNotification, showErrorMessage } = useVerifyBoardState()
 
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {
@@ -102,7 +103,6 @@ export const Board = () => {
       })
     )
     await verifyJira()
-    dispatch(changeBoardVerifyState(true))
   }
 
   const handleResetBoardFields = () => {
@@ -113,6 +113,7 @@ export const Board = () => {
 
   return (
     <BoardSection>
+      {isErrorNotification && <ErrorNotification message={showErrorMessage} />}
       {isVerifyLoading && (
         <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />
@@ -154,7 +155,7 @@ export const Board = () => {
           )
         )}
         <BoardButtonGroup>
-          {isVerified ? (
+          {isVerified && !isVerifyLoading ? (
             <VerifyButton>Verified</VerifyButton>
           ) : (
             <VerifyButton type='submit' disabled={isDisableVerifyButton || isVerifyLoading}>
@@ -162,7 +163,7 @@ export const Board = () => {
             </VerifyButton>
           )}
 
-          {isVerified && <ResetButton type='reset'>Reset</ResetButton>}
+          {isVerified && !isVerifyLoading && <ResetButton type='reset'>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>
     </BoardSection>

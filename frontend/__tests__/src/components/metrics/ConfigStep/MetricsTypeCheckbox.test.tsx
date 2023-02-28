@@ -58,7 +58,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(errorMessage).toBeInTheDocument()
   })
 
-  it('should board component when click MetricsTypeCheckbox selection velocity ', () => {
+  it('should show board component when click MetricsTypeCheckbox selection velocity ', () => {
     const { getByRole } = setup()
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))

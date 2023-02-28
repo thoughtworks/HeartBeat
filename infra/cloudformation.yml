@@ -126,6 +126,26 @@ Resources:
               - ecr:InitiateLayerUpload
               - ecr:UploadLayerPart
               - ecr:CompleteLayerUpload
+  EcrStubs:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "heartbeat_stub"
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - "*"
+            Action:
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
+              - ecr:PutImage
+              - ecr:InitiateLayerUpload
+              - ecr:UploadLayerPart
+              - ecr:CompleteLayerUpload
   EcrFrontend:
     Type: AWS::ECR::Repository
     Properties:
@@ -215,6 +235,15 @@ Resources:
         FromPort: 4321
         ToPort: 4321
         CidrIp: 0.0.0.0/0
+  EC2Stubby4jGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Stub mock server
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 4323
+          ToPort: 4323
+          CidrIp: 0.0.0.0/0
 
   WebPortAddress:
     Type: AWS::EC2::EIP

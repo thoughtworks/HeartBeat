@@ -1,6 +1,6 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -25,6 +25,8 @@ export const Board = () => {
   const boardFields = useAppSelector(selectBoardFields)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
+  const [isShowErrorNotification, setIsShowErrorNotification] = useState(false)
+  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
   const [fields, setFields] = useState([
     {
       key: 'board',
@@ -57,8 +59,13 @@ export const Board = () => {
       isValid: true,
     },
   ])
-  const [isShowErrorNotification, setIsShowErrorNotification] = useState(false)
-  const { verifyJira, isVerifyLoading, showErrorMessage } = useVerifyBoardState()
+
+  useEffect(() => {
+    if (isShowErrorNotification)
+      setTimeout(() => {
+        setIsShowErrorNotification(false)
+      }, 2000)
+  }, [isShowErrorNotification])
 
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {
@@ -106,10 +113,12 @@ export const Board = () => {
       })
     )
     await verifyJira().then((res) => {
-      dispatch(changeBoardVerifyState(res.isBoardVerify))
-      dispatch(updateBoardFields(res.response))
-      setIsNoDoneCard(res.isNoDoneCard)
-      setIsShowErrorNotification(res.isShowErrorNotification)
+      if (res) {
+        dispatch(changeBoardVerifyState(res.isBoardVerify))
+        dispatch(updateBoardFields(res.response))
+        setIsNoDoneCard(res.isNoDoneCard)
+        setIsShowErrorNotification(res.isShowErrorNotification)
+      }
     })
   }
 
@@ -122,7 +131,7 @@ export const Board = () => {
   return (
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
-      {isShowErrorNotification && <ErrorNotification message={showErrorMessage} />}
+      {isShowErrorNotification && <ErrorNotification message={'Jira verify failed'} />}
       {isVerifyLoading && (
         <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

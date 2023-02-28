@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -109,7 +110,7 @@ public class JiraService {
 			return Collections.emptyList();
 		}
 
-		return assigneeSet.stream().flatMap(Collection::stream).toList();
+		return assigneeSet.stream().flatMap(Collection::stream).distinct().toList();
 	}
 
 	private List<DoneCard> getAllDoneCards(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
@@ -122,8 +123,7 @@ public class JiraService {
 				String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
 		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
 				QUERY_COUNT, 0, jql, boardRequest.getToken());
-		log.info(allDoneCardsResponse);
-		List<DoneCard> doneCards = new ArrayList<>(allDoneCardsResponse.getIssues());
+		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponse.getIssues()));
 
 		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponse.getTotal()) * 1.0 / QUERY_COUNT);
 		if (pages == 1) {
@@ -144,9 +144,7 @@ public class JiraService {
 		List<DoneCard> moreDoneCards = doneCardsResponses.stream()
 				.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream()).toList();
 
-		doneCards.addAll(moreDoneCards);
-
-		return doneCards;
+		return Stream.concat(doneCards.stream(), moreDoneCards.stream()).toList();
 	}
 
 	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {

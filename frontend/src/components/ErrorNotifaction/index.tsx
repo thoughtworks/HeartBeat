@@ -10,7 +10,7 @@ export const ErrorNotification = (props: { message: string }) => {
   const { message } = props
   const [isOpen, setIsOpen] = useState(true)
   return (
-    <ErrorBar open={isOpen} autoHideDuration={2000} onClose={() => setIsOpen(false)}>
+    <ErrorBar data-testid='errorNotification' open={isOpen} autoHideDuration={2000} onClose={() => setIsOpen(false)}>
       <Alert severity='error'>{message}</Alert>
     </ErrorBar>
   )

@@ -21,7 +21,7 @@ export enum CONFIG_TITLE {
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
 
-export const REQUIRED_DATA_LISTS = [
+export const REQUIRED_DATA_LIST = [
   'Velocity',
   'Cycle time',
   'Classification',

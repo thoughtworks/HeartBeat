@@ -1,5 +1,5 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { REQUIRED_DATA_LISTS } from '@src/constants'
+import { REQUIRED_DATA_LIST } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
@@ -19,9 +19,9 @@ export const MetricsTypeCheckbox = () => {
     dispatch(updateRequiredData(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     setIsShowBoard(
-      value.includes(REQUIRED_DATA_LISTS[0]) ||
-        value.includes(REQUIRED_DATA_LISTS[1]) ||
-        value.includes(REQUIRED_DATA_LISTS[2])
+      value.includes(REQUIRED_DATA_LIST[0]) ||
+        value.includes(REQUIRED_DATA_LIST[1]) ||
+        value.includes(REQUIRED_DATA_LIST[2])
     )
   }
   return (
@@ -35,7 +35,7 @@ export const MetricsTypeCheckbox = () => {
           onChange={handleRequireDataChange}
           renderValue={(selected) => selected.join(',')}
         >
-          {REQUIRED_DATA_LISTS.map((data) => (
+          {REQUIRED_DATA_LIST.map((data) => (
             <MenuItem key={data} value={data}>
               <Checkbox checked={requireData.indexOf(data) > -1} />
               <ListItemText primary={data} />

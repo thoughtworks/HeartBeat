@@ -13,13 +13,13 @@ export interface useVerifyBoardStateInterface {
       }
     | undefined
   >
-  isVerifyLoading: boolean
+  isLoading: boolean
   showError: boolean
   errorMessage: string
 }
 
 export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
-  const [isVerifyLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [showError, setShowError] = useState(false)
 
@@ -47,7 +47,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
 
   return {
     verifyJira,
-    isVerifyLoading,
+    isLoading,
     showError,
     errorMessage,
   }

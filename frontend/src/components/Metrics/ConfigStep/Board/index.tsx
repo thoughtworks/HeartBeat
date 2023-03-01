@@ -25,7 +25,7 @@ export const Board = () => {
   const boardFields = useAppSelector(selectBoardFields)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
-  const { verifyJira, isVerifyLoading, showError, errorMessage } = useVerifyBoardEffect()
+  const { verifyJira, isLoading, showError, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
     {
       key: 'board',
@@ -123,8 +123,8 @@ export const Board = () => {
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {showError && <ErrorNotification message={errorMessage} />}
-      {isVerifyLoading && (
-        <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
+      {isLoading && (
+        <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />
         </BoardLoadingDrop>
       )}
@@ -164,15 +164,15 @@ export const Board = () => {
           )
         )}
         <BoardButtonGroup>
-          {isVerified && !isVerifyLoading ? (
+          {isVerified && !isLoading ? (
             <VerifyButton>Verified</VerifyButton>
           ) : (
-            <VerifyButton type='submit' disabled={isDisableVerifyButton || isVerifyLoading}>
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
               Verify
             </VerifyButton>
           )}
 
-          {isVerified && !isVerifyLoading && <ResetButton type='reset'>Reset</ResetButton>}
+          {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
         </BoardButtonGroup>
       </BoardForm>
     </BoardSection>

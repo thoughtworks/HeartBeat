@@ -5,6 +5,7 @@ import configReducer, {
   updatePipelineToolFields,
   updateProjectName,
   updateRequiredData,
+  updateSourceControlFields,
 } from '@src/features/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
@@ -196,5 +197,34 @@ describe('config reducer', () => {
       updatePipelineToolFields({ token: 'abcd' })
     )
     expect(config.pipelineToolFields.token).toEqual('abcd')
+  })
+
+  it('should update sourceControl fields when change sourceControl fields input', () => {
+    const config = configReducer(
+      {
+        projectName: '',
+        calendarType: REGULAR_CALENDAR,
+        dateRange: { startDate: null, endDate: null },
+        requiredData: [],
+        boardFields: {
+          board: BOARD_TYPES.JIRA,
+          boardId: '',
+          email: '',
+          projectKey: '',
+          site: '',
+          token: '',
+        },
+        pipelineToolFields: {
+          pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
+        sourceControlFields: {
+          sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
+          token: '',
+        },
+      },
+      updateSourceControlFields({ token: 'abcd' })
+    )
+    expect(config.sourceControlFields.token).toEqual('abcd')
   })
 })

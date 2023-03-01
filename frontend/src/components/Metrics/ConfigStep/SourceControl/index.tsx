@@ -1,24 +1,18 @@
 import React, { useState } from 'react'
 import { CONFIG_TITLE, SOURCE_CONTROL_TYPES } from '@src/constants'
 import {
-  ResetButton,
-  SourceControlButtonGroup,
   SourceControlForm,
   SourceControlSection,
   SourceControlTextField,
   SourceControlTitle,
   SourceControlTypeSelections,
-  VerifyButton,
 } from '@src/components/Metrics/ConfigStep/SourceControl/style'
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectSourceControlFields } from '@src/features/config/configSlice'
-import { isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
 
 export const SourceControl = () => {
   const sourceControlFields = useAppSelector(selectSourceControlFields)
-  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
-  const isVerified = useAppSelector(isSourceControlVerified)
   const [fields, setFields] = useState([
     {
       key: 'sourceControl',
@@ -52,15 +46,7 @@ export const SourceControl = () => {
           label={fields[1].key}
           variant='standard'
           type='password'
-          error={!fields[1].isValid}
-          helperText={!fields[1].isValid ? 'token is required' : ''}
         />
-        <SourceControlButtonGroup>
-          <VerifyButton type='submit' disabled={isDisableVerifyButton}>
-            {isVerified ? 'Verified' : 'Verify'}
-          </VerifyButton>
-          {isVerified && <ResetButton type='reset'>Reset</ResetButton>}
-        </SourceControlButtonGroup>
       </SourceControlForm>
     </SourceControlSection>
   )

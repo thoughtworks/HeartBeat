@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -30,7 +31,7 @@ public class JiraService {
 
 	public static final int QUERY_COUNT = 100;
 
-	public static final List<String> fieldsIgnore = List.of("summary", "description", "attachment", "duedate", "issuelinks");
+	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate", "issuelinks");
 
 	public BoardConfigResponse getJiraConfiguration(BoardRequest boardRequest) {
 		URI baseUrl = URI.create("https://" + boardRequest.getSite() + ".atlassian.net");
@@ -180,9 +181,9 @@ public class JiraService {
 	}
 
 	private List<TargetField> getTargetIssueField(Map<String, IssueField> fields, List<TargetField> targetFields) {
-		fields.forEach(( key, value ) -> {
-			if (!fieldsIgnore.contains(value.getKey())) {
-				targetFields.add(new TargetField(value.getKey(), value.getName(), false));
+		fields.values().forEach(issueField -> {
+			if (!FIELDS_IGNORE.contains(issueField.getKey())) {
+				targetFields.add(new TargetField(issueField.getKey(), issueField.getName(), false));
 			}
 		});
 

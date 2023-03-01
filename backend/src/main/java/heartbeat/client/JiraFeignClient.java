@@ -15,28 +15,28 @@ import java.net.URI;
 @FeignClient(value = "jiraFeignClient", url = "https://demo.atlassian.net")
 public interface JiraFeignClient {
 
-	@Cacheable(cacheNames = "jiraConfig")
+	@Cacheable(cacheNames = "jiraConfig",key = "#boardId")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/configuration")
 	JiraBoardConfigDTO getJiraBoardConfiguration(URI baseUrl, @PathVariable String boardId,
 			@RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "jiraStatusCategory")
+	@Cacheable(cacheNames = "jiraStatusCategory",key = "#statusNum")
 	@GetMapping(path = "/rest/api/2/status/{statusNum}")
 	StatusSelf getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
 			@RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "jiraAllDoneCards")
+	@Cacheable(cacheNames = "jiraAllDoneCards",key = "#boardId+'-'+#queryCount+'-'+#jql")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
 	AllDoneCardsResponse getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "jiraActivityfeed")
+	@Cacheable(cacheNames = "jiraActivityfeed",key = "#jiraCardKey")
 	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")
 	CardHistoryResponse getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
 			@RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "targetFeild")
-	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={model.projectKey}&expand=projects.issuetypes.fields")
+	@Cacheable(cacheNames = "targetFeild",key = "#projectKey")
+	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields")
 	FieldResponse getTargetField(URI baseUrl, @PathVariable String projectKey,
 								 @RequestHeader String authorization);
 

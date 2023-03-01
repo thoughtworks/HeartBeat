@@ -115,6 +115,7 @@ class JiraServiceTest {
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		FeignException mockException = mock(FeignException.class);
+		System.out.println(Math.ceil(0));
 
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn("exception");

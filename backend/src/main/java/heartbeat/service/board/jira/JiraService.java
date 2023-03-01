@@ -2,8 +2,7 @@ package heartbeat.service.board.jira;
 
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
-import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.JiraColumn;
+import heartbeat.client.dto.*;
 import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.*;
 import heartbeat.exception.RequestFailedException;
@@ -29,7 +28,9 @@ public class JiraService {
 
 	private final JiraFeignClient jiraFeignClient;
 
-	public final static int QUERY_COUNT = 100;
+	public static final int QUERY_COUNT = 100;
+
+	public static final List<String> fieldsIgnore = List.of("summary", "description", "attachment", "duedate", "issuelinks");
 
 	public BoardConfigResponse getJiraConfiguration(BoardRequest boardRequest) {
 		URI baseUrl = URI.create("https://" + boardRequest.getSite() + ".atlassian.net");
@@ -45,7 +46,9 @@ public class JiraService {
 									.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, baseUrl,
 											boardRequest.getToken(), doneColumns))
 									.toList())
-					.users(getUsers(baseUrl, doneColumns, boardRequest)).build();
+					.users(getUsers(baseUrl, doneColumns, boardRequest))
+					.targetFields(getTargetField(baseUrl, boardRequest))
+				.build();
 		}
 		catch (FeignException e) {
 			log.error("Failed when call Jira to get board config", e);
@@ -90,14 +93,14 @@ public class JiraService {
 	}
 
 	private List<String> getUsers(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
-		if (doneColumns.isEmpty()) {
-			throw new RequestFailedException(404, "There is no done column.");
+		if ( doneColumns.isEmpty() ) {
+			throw new RequestFailedException(204, "There is no done column.");
 		}
 
 		List<DoneCard> doneCards = getAllDoneCards(baseUrl, doneColumns, boardRequest);
 
-		if (isNull(doneCards)) {
-			throw new RequestFailedException(404, "There is no done column.");
+		if (isNull(doneCards) || doneCards.isEmpty()) {
+			throw new RequestFailedException(204, "There is no done cards.");
 		}
 
 		List<Mono<List<String>>> assigneeSetMonos = doneCards.stream()
@@ -114,19 +117,16 @@ public class JiraService {
 	}
 
 	private List<DoneCard> getAllDoneCards(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
-		if (doneColumns.isEmpty()) {
-			return null;
-		}
-
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
 				String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
 		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
 				QUERY_COUNT, 0, jql, boardRequest.getToken());
+
 		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponse.getIssues()));
 
 		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponse.getTotal()) * 1.0 / QUERY_COUNT);
-		if (pages == 1) {
+		if (pages <= 1) {
 			return doneCards;
 		}
 
@@ -163,4 +163,30 @@ public class JiraService {
 		return assigneeSet;
 	}
 
+	private List<TargetField> getTargetField(URI baseUrl, BoardRequest boardRequest) {
+		FieldResponse fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(), boardRequest.getToken());
+
+		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
+			throw new RequestFailedException(404, "There is no target field.");
+		}
+
+		List<Issuetype> issuetypes = fieldResponse.getProjects().get(0).getIssuetypes();
+		List<TargetField> targetFields = new ArrayList<>();
+
+		return issuetypes.stream()
+			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields(), targetFields).stream())
+			.distinct()
+			.toList();
+	}
+
+	private List<TargetField> getTargetIssueField(Map<String, IssueField> fields, List<TargetField> targetFields) {
+		fields.forEach(( key, value ) -> {
+			if (!fieldsIgnore.contains(value.getKey())) {
+				targetFields.add(new TargetField(value.getKey(), value.getName(), false));
+			}
+		});
+
+		return targetFields;
+	}
 }
+

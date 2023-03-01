@@ -1,5 +1,6 @@
 package heartbeat.client;
 
+import heartbeat.client.dto.FieldResponse;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.controller.board.vo.response.AllDoneCardsResponse;
 import heartbeat.controller.board.vo.response.CardHistoryResponse;
@@ -20,18 +21,23 @@ public interface JiraFeignClient {
 			@RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraStatusCategory")
-	@GetMapping(path = "rest/api/2/status/{statusNum}")
+	@GetMapping(path = "/rest/api/2/status/{statusNum}")
 	StatusSelf getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
 			@RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraAllDoneCards")
-	@GetMapping(path = "rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
+	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
 	AllDoneCardsResponse getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraActivityfeed")
-	@GetMapping(path = "rest/internal/2/issue/{jiraCardKey}/activityfeed")
+	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")
 	CardHistoryResponse getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
 			@RequestHeader String authorization);
+
+	@Cacheable(cacheNames = "targetFeild")
+	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={model.projectKey}&expand=projects.issuetypes.fields")
+	FieldResponse getTargetField(URI baseUrl, @PathVariable String projectKey,
+								 @RequestHeader String authorization);
 
 }

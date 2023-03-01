@@ -1,0 +1,34 @@
+# User Organizations
+- request:
+    method: GET
+    url: /user/orgs
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./github/jsons/github.user.orgs.json
+
+# User Repos
+- request:
+    method: GET
+    url: /user/repos
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./github/jsons/github.user.repos.json
+
+# Org Repos
+# Example: /orgs/XXXX-tw/repos
+- request:
+    method: GET
+    url: ^/orgs/(XXXX-[a-zA-Z]+)/repos$
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./github/jsons/github.orgs.<% url.1 %>.repos.json
+

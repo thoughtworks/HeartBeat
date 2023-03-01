@@ -42,7 +42,7 @@ export enum CONFIG_TITLE {
   BOARD = 'Board',
 }
 
-export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
+export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
 
 export const MOCK_URL = '/api/v1/kanban/verify'
 

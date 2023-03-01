@@ -28,32 +28,32 @@ export const Board = () => {
   const { verifyJira, isLoading, showError, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
     {
-      key: 'board',
+      key: 'Board',
       value: boardFields.board,
       isValid: true,
     },
     {
-      key: 'boardId',
+      key: 'BoardId',
       value: boardFields.boardId,
       isValid: true,
     },
     {
-      key: 'email',
+      key: 'Email',
       value: boardFields.email,
       isValid: true,
     },
     {
-      key: 'projectKey',
+      key: 'Project Key',
       value: boardFields.projectKey,
       isValid: true,
     },
     {
-      key: 'site',
+      key: 'Site',
       value: boardFields.site,
       isValid: true,
     },
     {
-      key: 'token',
+      key: 'Token',
       value: boardFields.token,
       isValid: true,
     },
@@ -133,7 +133,7 @@ export const Board = () => {
         {fields.map((filed, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={index}>
-              <InputLabel id='board-type-checkbox-label'>board</InputLabel>
+              <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
                 labelId='board-type-checkbox-label'
                 value={filed.value}
@@ -160,7 +160,7 @@ export const Board = () => {
                 onFormUpdate(index, e.target.value)
               }}
               error={!filed.isValid}
-              type={filed.key === 'token' ? 'password' : 'text'}
+              type={filed.key === 'Token' ? 'password' : 'text'}
               helperText={!filed.isValid ? `${filed.key} is required` : ''}
             />
           )

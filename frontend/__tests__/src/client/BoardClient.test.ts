@@ -27,8 +27,8 @@ describe('error notification', () => {
     expect(result.isBoardVerify).toEqual(false)
   })
 
-  it('should throw error when board verify response status 400', async () => {
-    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(400))))
+  it('should throw error when board verify response status 404', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(404))))
 
     try {
       await boardClient.getVerifyBoard()

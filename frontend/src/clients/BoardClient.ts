@@ -14,11 +14,11 @@ export class BoardClient extends HttpClient {
       result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result)
     } catch (e) {
       this.isBoardVerify = false
-      const err = e as AxiosError
-      if (err.response?.status === 400) {
+      const code = (e as AxiosError).response?.status
+      if (code === 404) {
         throw new BadRequestException('jira', 'bad request')
       }
-      if (err.response?.status === 500) {
+      if (code === 500) {
         throw new BadServerException('jira', 'bad server')
       }
     }

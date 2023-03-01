@@ -1,8 +1,5 @@
 import { useState } from 'react'
-
 import { boardClient } from '@src/clients/BoardClient'
-import { BadRequestException } from '../exceptions/BadRequestException'
-import { BadServerException } from '@src/exceptions/BasServerException'
 
 export interface useVerifyBoardStateInterface {
   verifyJira: () => Promise<
@@ -27,15 +24,10 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
     setIsLoading(true)
     try {
       return await boardClient.getVerifyBoard()
-    } catch (ex: unknown) {
-      if (ex instanceof BadRequestException) {
-        setErrorMessage(ex.message)
-        setShowError(true)
-      }
-      if (ex instanceof BadServerException) {
-        setErrorMessage(ex.message)
-        setShowError(true)
-      }
+    } catch (e) {
+      const err = e as Error
+      setErrorMessage(err.message)
+      setShowError(true)
       setTimeout(() => {
         setShowError(false)
         setErrorMessage('')

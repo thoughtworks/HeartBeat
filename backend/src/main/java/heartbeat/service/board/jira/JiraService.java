@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -83,21 +82,25 @@ public class JiraService {
 
 	private String handleColumKey(List<String> doneColumn, List<StatusSelf> statusSelfList) {
 		String doneTag = "done";
-		return statusSelfList.stream().map(statusSelf -> {
+		List<String> keyList =  statusSelfList.stream().map(statusSelf -> {
 			if (statusSelf.getStatusCategory().getKey().equalsIgnoreCase(doneTag)) {
 				doneColumn.add(statusSelf.getUntranslatedName().toUpperCase());
 			}
 			return statusSelf.getStatusCategory().getKey();
-		}).anyMatch(statusSelf -> statusSelf.equals(doneTag)) ? doneTag : statusSelfList.stream()
-				.reduce((pre, last) -> last).orElse(StatusSelf.builder().build()).getStatusCategory().getName();
+		}).toList();
+
+		return (keyList.contains(doneTag)) ? doneTag : statusSelfList.stream()
+			.reduce((pre, last) -> last).orElse(StatusSelf.builder().build()).getStatusCategory().getName();
 	}
 
 	private List<String> getUsers(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
+		log.info(doneColumns);
 		if (doneColumns.isEmpty()) {
 			throw new RequestFailedException(204, "There is no done column.");
 		}
 
 		List<DoneCard> doneCards = getAllDoneCards(baseUrl, doneColumns, boardRequest);
+		log.info(doneCards);
 
 		if (isNull(doneCards) || doneCards.isEmpty()) {
 			throw new RequestFailedException(204, "There is no done cards.");
@@ -122,6 +125,7 @@ public class JiraService {
 				String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
 		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
 				QUERY_COUNT, 0, jql, boardRequest.getToken());
+		log.info(allDoneCardsResponse);
 
 		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponse.getIssues()));
 

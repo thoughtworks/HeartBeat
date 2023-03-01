@@ -34,7 +34,7 @@ describe('error notification', () => {
       await boardClient.getVerifyBoard()
     } catch (e) {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch('Failed to request to jira, message: bad request')
+      expect((e as Error).message).toMatch('Jira verify failed: Bad Request')
     }
   })
 
@@ -45,7 +45,7 @@ describe('error notification', () => {
       await boardClient.getVerifyBoard()
     } catch (e) {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch('Failed to request to jira, message: bad server')
+      expect((e as Error).message).toMatch('Jira verify failed: Bad Server')
     }
   })
 })

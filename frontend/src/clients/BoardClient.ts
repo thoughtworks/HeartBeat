@@ -16,10 +16,10 @@ export class BoardClient extends HttpClient {
       this.isBoardVerify = false
       const code = (e as AxiosError).response?.status
       if (code === 404) {
-        throw new BadRequestException('jira', 'bad request')
+        throw new BadRequestException('Jira', 'Bad Request')
       }
       if (code === 500) {
-        throw new BadServerException('jira', 'bad server')
+        throw new BadServerException('Jira', 'Bad Server')
       }
     }
     return {

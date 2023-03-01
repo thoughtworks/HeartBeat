@@ -6,6 +6,7 @@ import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectRequiredData, updateRequiredData } from '@src/features/config/configSlice'
+import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -13,6 +14,7 @@ export const MetricsTypeCheckbox = () => {
   const [isShowBoard, setIsShowBoard] = useState(false)
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const [isShowPipelineTool, setIsShowPipelineTool] = useState(false)
+  const [isSourceControl, setIsSourceControl] = useState(false)
 
   const handleRequireDataChange = (event: SelectChangeEvent<typeof requireData>) => {
     const {
@@ -29,6 +31,7 @@ export const MetricsTypeCheckbox = () => {
         value.includes(REQUIRED_DATAS[5]) ||
         value.includes(REQUIRED_DATAS[6])
     )
+    setIsSourceControl(value.includes(REQUIRED_DATAS[3]))
   }
   return (
     <>
@@ -52,6 +55,7 @@ export const MetricsTypeCheckbox = () => {
       </RequireDataSelections>
       {isShowBoard && <Board />}
       {isShowPipelineTool && <PipelineTool />}
+      {isSourceControl && <SourceControl />}
     </>
   )
 }

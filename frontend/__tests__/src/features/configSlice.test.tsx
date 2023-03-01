@@ -7,7 +7,7 @@ import configReducer, {
   updateRequiredData,
 } from '@src/features/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
-import { BOARD_TYPES, PIPELINE_TOOL_TYPES } from '@src/constants'
+import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 describe('config reducer', () => {
   it('should be default value when init render config page', () => {
@@ -37,6 +37,10 @@ describe('config reducer', () => {
           pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
           token: '',
         },
+        sourceControlFields: {
+          sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
+          token: '',
+        },
       },
       updateProjectName('mock project name')
     )
@@ -61,6 +65,10 @@ describe('config reducer', () => {
         },
         pipelineToolFields: {
           pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
+        sourceControlFields: {
+          sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
           token: '',
         },
       },
@@ -90,6 +98,10 @@ describe('config reducer', () => {
           pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
           token: '',
         },
+        sourceControlFields: {
+          sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
+          token: '',
+        },
       },
       updateDateRange({ startDate: today, endDate: null })
     )
@@ -115,6 +127,10 @@ describe('config reducer', () => {
         },
         pipelineToolFields: {
           pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
+        sourceControlFields: {
+          sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
           token: '',
         },
       },
@@ -143,6 +159,10 @@ describe('config reducer', () => {
           pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
           token: '',
         },
+        sourceControlFields: {
+          sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
+          token: '',
+        },
       },
       updateBoardFields({ boardId: '1' })
     )
@@ -166,6 +186,10 @@ describe('config reducer', () => {
         },
         pipelineToolFields: {
           pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
+        sourceControlFields: {
+          sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
           token: '',
         },
       },

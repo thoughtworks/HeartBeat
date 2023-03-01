@@ -186,6 +186,7 @@ Resources:
         - !Ref EC2SSHSecurityGroup
         - !Ref EC2AppSecurityGroup
         - !Ref EC2OldAppSecurityGroup
+        - !Ref EC2Stubby4jGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
       UserData:

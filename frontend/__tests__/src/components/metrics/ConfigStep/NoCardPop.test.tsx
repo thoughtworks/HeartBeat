@@ -10,6 +10,7 @@ describe('NoCardPop', () => {
     expect(getByText(NO_CARD_MESSAGE)).toBeInTheDocument()
     expect(getByRole('button', { name: 'Ok' })).toBeInTheDocument()
   })
+
   it('should call onClose function when click Ok button given isOpen param is true', () => {
     const handleClose = jest.fn()
     const { getByRole } = render(<NoDoneCardPop isOpen={true} onClose={handleClose} />)

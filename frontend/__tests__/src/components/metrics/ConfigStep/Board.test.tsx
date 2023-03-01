@@ -187,4 +187,19 @@ describe('Board', () => {
       expect(getByTestId('circularProgress')).not.toBeVisible()
     }, 1000)
   })
+
+  it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(204))))
+    const { getByText, getByRole } = setup()
+    fillBoardFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: 'Verify' }))
+
+    await waitFor(() => {
+      expect(getByText('Sorry there is no card has been done, please change your collection date!')).toBeInTheDocument()
+    })
+
+    fireEvent.click(getByRole('button', { name: 'Ok' }))
+    expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
+  })
 })

@@ -1,11 +1,17 @@
 package heartbeat.service.jira;
 
+import heartbeat.client.dto.FieldResponse;
+import heartbeat.client.dto.IssueField;
+import heartbeat.client.dto.Issuetype;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.JiraColumnConfig;
 import heartbeat.client.dto.JiraColumnStatus;
+import heartbeat.client.dto.Project;
 import heartbeat.controller.board.vo.response.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class JiraBoardConfigDTOFixture {
@@ -19,7 +25,6 @@ public class JiraBoardConfigDTOFixture {
 	public static final String COLUM_SELF_ID_2 = "2";
 
 	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
-
 		return JiraBoardConfigDTO.builder().id(BOARD_ID).name(BOARD_NAME).columnConfig(JiraColumnConfig.builder()
 				.columns(List.of(JiraColumn.builder().name("TODO")
 						.statuses(List.of(new JiraColumnStatus(COLUM_SELF_ID_1), new JiraColumnStatus(COLUM_SELF_ID_2)))
@@ -44,4 +49,12 @@ public class JiraBoardConfigDTOFixture {
 		return CardHistoryResponse.builder().items(List.of(new Item("assignee", new To("San Zhang"))));
 	}
 
+	public static FieldResponse.FieldResponseBuilder FIELD_RESPONSE_BUILDER(){
+		IssueField issueField1 = new IssueField("summary","Summary");
+		IssueField issueField2 = new IssueField("assignee","Assignee");
+		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
+		issueFieldMap.put("issuetype",issueField1);
+		issueFieldMap.put("issuetype",issueField2);
+		return FieldResponse.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
+	}
 }

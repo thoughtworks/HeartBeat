@@ -82,15 +82,15 @@ public class JiraService {
 
 	private String handleColumKey(List<String> doneColumn, List<StatusSelf> statusSelfList) {
 		String doneTag = "done";
-		List<String> keyList =  statusSelfList.stream().map(statusSelf -> {
+		List<String> keyList = statusSelfList.stream().map(statusSelf -> {
 			if (statusSelf.getStatusCategory().getKey().equalsIgnoreCase(doneTag)) {
 				doneColumn.add(statusSelf.getUntranslatedName().toUpperCase());
 			}
 			return statusSelf.getStatusCategory().getKey();
 		}).toList();
 
-		return (keyList.contains(doneTag)) ? doneTag : statusSelfList.stream()
-			.reduce((pre, last) -> last).orElse(StatusSelf.builder().build()).getStatusCategory().getName();
+		return (keyList.contains(doneTag)) ? doneTag : statusSelfList.stream().reduce((pre, last) -> last)
+				.orElse(StatusSelf.builder().build()).getStatusCategory().getName();
 	}
 
 	private List<String> getUsers(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
@@ -175,15 +175,13 @@ public class JiraService {
 			throw new RequestFailedException(404, "There is no target field.");
 		}
 
-		List<Issuetype> issuetypes = fieldResponse.getProjects().get(0).getIssuetypes();
-		List<TargetField> targetFields = new ArrayList<>();
-
-		return issuetypes.stream()
-				.flatMap(issuetype -> getTargetIssueField(issuetype.getFields(), targetFields).stream()).distinct()
+		List<Issuetype> issueTypes = fieldResponse.getProjects().get(0).getIssuetypes();
+		return issueTypes.stream().flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream()).distinct()
 				.toList();
 	}
 
-	private List<TargetField> getTargetIssueField(Map<String, IssueField> fields, List<TargetField> targetFields) {
+	private List<TargetField> getTargetIssueField(Map<String, IssueField> fields) {
+		List<TargetField> targetFields = new ArrayList<>();
 		fields.values().forEach(issueField -> {
 			if (!FIELDS_IGNORE.contains(issueField.getKey())) {
 				targetFields.add(new TargetField(issueField.getKey(), issueField.getName(), false));

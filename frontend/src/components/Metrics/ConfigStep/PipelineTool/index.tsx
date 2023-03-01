@@ -25,12 +25,12 @@ export const PipelineTool = () => {
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [fields, setFields] = useState([
     {
-      key: 'pipelineTool',
+      key: 'PipelineTool',
       value: pipelineToolFields.pipelineTool,
       isValid: true,
     },
     {
-      key: 'token',
+      key: 'Token',
       value: pipelineToolFields.token,
       isValid: true,
     },
@@ -108,7 +108,7 @@ export const PipelineTool = () => {
       <PipelineToolTitle>{CONFIG_TITLE.PIPELINE_TOOL}</PipelineToolTitle>
       <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetBPipelineToolFields}>
         <PipelineToolTypeSelections variant='standard' required>
-          <InputLabel id='pipelineTool-type-checkbox-label'>pipelineTool</InputLabel>
+          <InputLabel id='pipelineTool-type-checkbox-label'>PipelineTool</InputLabel>
           <Select
             labelId='pipelineTool-type-checkbox-label'
             value={fields[0].value}

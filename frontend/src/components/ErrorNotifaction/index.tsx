@@ -1,5 +1,5 @@
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
-import { forwardRef, useState } from 'react'
+import { forwardRef } from 'react'
 import { ErrorBar } from './style'
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
@@ -8,9 +8,8 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) 
 
 export const ErrorNotification = (props: { message: string }) => {
   const { message } = props
-  const [isOpen, setIsOpen] = useState(true)
   return (
-    <ErrorBar data-testid='errorNotification' open={isOpen} autoHideDuration={2000} onClose={() => setIsOpen(false)}>
+    <ErrorBar data-testid='errorNotification' open={true}>
       <Alert severity='error'>{message}</Alert>
     </ErrorBar>
   )

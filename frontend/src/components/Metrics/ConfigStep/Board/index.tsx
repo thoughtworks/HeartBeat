@@ -1,6 +1,6 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -15,7 +15,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
 import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
-import { useVerifyBoardState } from '@src/hooks/useVerifyBoardState'
+import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 
@@ -25,8 +25,7 @@ export const Board = () => {
   const boardFields = useAppSelector(selectBoardFields)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
-  const [isShowErrorNotification, setIsShowErrorNotification] = useState(false)
-  const { verifyJira, isVerifyLoading } = useVerifyBoardState()
+  const { verifyJira, isVerifyLoading, showError, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
     {
       key: 'board',
@@ -59,13 +58,6 @@ export const Board = () => {
       isValid: true,
     },
   ])
-
-  useEffect(() => {
-    if (isShowErrorNotification)
-      setTimeout(() => {
-        setIsShowErrorNotification(false)
-      }, 2000)
-  }, [isShowErrorNotification])
 
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {
@@ -117,7 +109,6 @@ export const Board = () => {
         dispatch(changeBoardVerifyState(res.isBoardVerify))
         dispatch(updateBoardFields(res.response))
         setIsNoDoneCard(res.isNoDoneCard)
-        setIsShowErrorNotification(res.isShowErrorNotification)
       }
     })
   }
@@ -131,7 +122,7 @@ export const Board = () => {
   return (
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
-      {isShowErrorNotification && <ErrorNotification message={'Jira verify failed'} />}
+      {showError && <ErrorNotification message={errorMessage} />}
       {isVerifyLoading && (
         <BoardLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

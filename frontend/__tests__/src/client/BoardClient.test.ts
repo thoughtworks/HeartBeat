@@ -18,14 +18,6 @@ describe('error notification', () => {
     expect(result.isBoardVerify).toEqual(true)
   })
 
-  it('should throw error when board verify response status 404', async () => {
-    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(404))))
-
-    const result = await boardClient.getVerifyBoard()
-    expect(result.isBoardVerify).toEqual(false)
-    expect(result.isShowErrorNotification).toEqual(true)
-  })
-
   it('should isNoDoneCard is true when board verify response status 204', async () => {
     server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(204))))
 
@@ -33,5 +25,27 @@ describe('error notification', () => {
 
     expect(result.isNoDoneCard).toEqual(true)
     expect(result.isBoardVerify).toEqual(false)
+  })
+
+  it('should throw error when board verify response status 400', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(400))))
+
+    try {
+      await boardClient.getVerifyBoard()
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error)
+      expect((e as Error).message).toMatch('Failed to request to jira, message: bad request')
+    }
+  })
+
+  it('should throw error when board verify response status 500', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(500))))
+
+    try {
+      await boardClient.getVerifyBoard()
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error)
+      expect((e as Error).message).toMatch('Failed to request to jira, message: bad server')
+    }
   })
 })

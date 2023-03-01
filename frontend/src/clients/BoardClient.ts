@@ -1,23 +1,31 @@
 import { HttpClient } from '@src/clients/Httpclient'
+import { BadRequestException } from '../exceptions/BadRequestException'
+import { BadServerException } from '@src/exceptions/BasServerException'
+import { AxiosError } from 'axios'
 
 export class BoardClient extends HttpClient {
   isBoardVerify = false
   isNoDoneCard = false
-  isShowErrorNotification = false
   response = {}
 
   getVerifyBoard = async () => {
     try {
       const result = await this.axiosInstance.get('/kanban/verify').then((res) => res)
-      result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result.data)
+      result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result)
     } catch (e) {
-      this.handleBoardVerifyFailed()
+      this.isBoardVerify = false
+      const err = e as AxiosError
+      if (err.response?.status === 400) {
+        throw new BadRequestException('jira', 'bad request')
+      }
+      if (err.response?.status === 500) {
+        throw new BadServerException('jira', 'bad server')
+      }
     }
     return {
       response: this.response,
       isBoardVerify: this.isBoardVerify,
       isNoDoneCard: this.isNoDoneCard,
-      isShowErrorNotification: this.isShowErrorNotification,
     }
   }
 
@@ -29,11 +37,6 @@ export class BoardClient extends HttpClient {
   handleBoardVerifySucceed = (res: object) => {
     this.isBoardVerify = true
     this.response = res
-  }
-
-  handleBoardVerifyFailed = () => {
-    this.isBoardVerify = false
-    this.isShowErrorNotification = true
   }
 }
 

@@ -10,15 +10,16 @@ describe('error notification', () => {
   })
 
   it('should close when the error notation show 2 seconds', () => {
-    const { getByText, getByTestId } = render(<ErrorNotification message={JIRA_VERIFY_FAILED_MESSAGE} />)
-    expect(getByTestId('errorNotification')).toBeVisible()
+    const { getByText } = render(<ErrorNotification message={JIRA_VERIFY_FAILED_MESSAGE} />)
+    expect(getByText(JIRA_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
 
     const handleClose = jest.fn()
 
     expect(getByText(JIRA_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
+
     setTimeout(() => {
       expect(handleClose).toBeCalledTimes(1)
-      expect(getByTestId('errorNotification')).not.toBeVisible()
+      expect(getByText(JIRA_VERIFY_FAILED_MESSAGE)).not.toBeInTheDocument()
     }, 2000)
   })
 })

@@ -11,14 +11,14 @@ export class BoardClient extends HttpClient {
   getVerifyBoard = async () => {
     try {
       const result = await this.axiosInstance.get('/kanban/verify').then((res) => res)
-      result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result.data)
+      result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result)
     } catch (e) {
       this.isBoardVerify = false
       const err = e as AxiosError
-      if (err.status === 400) {
+      if (err.response?.status === 400) {
         throw new BadRequestException('jira', 'bad request')
       }
-      if (err.status === 500) {
+      if (err.response?.status === 500) {
         throw new BadServerException('jira', 'bad server')
       }
     }

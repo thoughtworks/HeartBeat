@@ -1,17 +1,15 @@
-# Stage 1: Copy files into build context
-FROM gradle:8.0.1-jdk19 AS build
+FROM gradle:8.0.1-jdk19 AS builder
 COPY ./stubs /app
-
-# Stage 2: Copy files from build context into final image
-FROM gradle:8.0.1-jdk19
-
-# Install Stubby4j
 WORKDIR /app
 RUN curl -L "https://search.maven.org/remotecontent?filepath=io/github/azagniotov/stubby4j/7.5.2/stubby4j-7.5.2.jar" -o /app/stubby4j.jar
 
-# Copy stubs.yaml to container
-COPY --from=build /app /app
+
+FROM openjdk:19-jdk-slim-buster
+LABEL app=Heartbeat
+LABEL arch=stubs
+WORKDIR /app
 
 EXPOSE 4323
+COPY --from=builder /app /app
 # Set command to run Stubby4j
 CMD ["java", "-jar", "stubby4j.jar", "-d", "stubs.yaml", "-l", "0.0.0.0", "-s", "4323"]

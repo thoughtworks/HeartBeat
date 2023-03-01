@@ -31,4 +31,11 @@ describe('SourceControl', () => {
 
     expect(sourceControlType).toBeInTheDocument()
   })
+
+  it('should enable verify button when all fields checked correctly given disable verify button', () => {
+    const { getByRole } = setup()
+    const verifyButton = getByRole('button', { name: 'Verify' })
+
+    expect(verifyButton).toBeDisabled()
+  })
 })

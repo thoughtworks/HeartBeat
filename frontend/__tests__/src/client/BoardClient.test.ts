@@ -1,6 +1,6 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { MOCK_URL } from '../fixtures'
+import { BOARD_TYPES, MOCK_URL } from '../fixtures'
 import { boardClient } from '@src/clients/BoardClient'
 
 const server = setupServer(
@@ -10,7 +10,7 @@ const server = setupServer(
 )
 export const mockParams = {
   token: 'mockToken',
-  type: 'jira',
+  type: BOARD_TYPES.JIRA,
   site: '1',
   projectKey: '1',
   startTime: '1613664000000',

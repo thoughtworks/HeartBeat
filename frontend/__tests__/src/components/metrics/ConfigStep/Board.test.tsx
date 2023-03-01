@@ -194,4 +194,15 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: 'Ok' }))
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
   })
+  it('should check error notification show and disappear when board verify response status is 404', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(404))))
+    const { getByText, getByRole } = setup()
+    fillBoardFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: 'Verify' }))
+
+    await waitFor(() => {
+      expect(getByText('Jira verify failed: Bad Request')).toBeInTheDocument()
+    })
+  })
 })

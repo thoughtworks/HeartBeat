@@ -19,4 +19,5 @@ public class IssueField implements Serializable {
 	private String key;
 
 	private String name;
+
 }

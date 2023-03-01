@@ -31,7 +31,8 @@ public class JiraService {
 
 	public static final int QUERY_COUNT = 100;
 
-	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate", "issuelinks");
+	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
+			"issuelinks");
 
 	public BoardConfigResponse getJiraConfiguration(BoardRequest boardRequest) {
 		URI baseUrl = URI.create("https://" + boardRequest.getSite() + ".atlassian.net");
@@ -42,14 +43,12 @@ public class JiraService {
 			List<String> doneColumns = new ArrayList<>();
 
 			return BoardConfigResponse.builder()
-					.jiraColumns(
-							jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
-									.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, baseUrl,
-											boardRequest.getToken(), doneColumns))
-									.toList())
+					.jiraColumns(jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
+							.map(jiraColumn -> getColumnNameAndStatus(jiraColumn, baseUrl, boardRequest.getToken(),
+									doneColumns))
+							.toList())
 					.users(getUsers(baseUrl, doneColumns, boardRequest))
-					.targetFields(getTargetField(baseUrl, boardRequest))
-				.build();
+					.targetFields(getTargetField(baseUrl, boardRequest)).build();
 		}
 		catch (FeignException e) {
 			log.error("Failed when call Jira to get board config", e);
@@ -85,7 +84,7 @@ public class JiraService {
 	private String handleColumKey(List<String> doneColumn, List<StatusSelf> statusSelfList) {
 		String doneTag = "done";
 		return statusSelfList.stream().map(statusSelf -> {
-			if (statusSelf.getStatusCategory().getKey().equals(doneTag)) {
+			if (statusSelf.getStatusCategory().getKey().equalsIgnoreCase(doneTag)) {
 				doneColumn.add(statusSelf.getUntranslatedName().toUpperCase());
 			}
 			return statusSelf.getStatusCategory().getKey();
@@ -94,7 +93,7 @@ public class JiraService {
 	}
 
 	private List<String> getUsers(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
-		if ( doneColumns.isEmpty() ) {
+		if (doneColumns.isEmpty()) {
 			throw new RequestFailedException(204, "There is no done column.");
 		}
 
@@ -165,7 +164,8 @@ public class JiraService {
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequest boardRequest) {
-		FieldResponse fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(), boardRequest.getToken());
+		FieldResponse fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
+				boardRequest.getToken());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
 			throw new RequestFailedException(404, "There is no target field.");
@@ -175,9 +175,8 @@ public class JiraService {
 		List<TargetField> targetFields = new ArrayList<>();
 
 		return issuetypes.stream()
-			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields(), targetFields).stream())
-			.distinct()
-			.toList();
+				.flatMap(issuetype -> getTargetIssueField(issuetype.getFields(), targetFields).stream()).distinct()
+				.toList();
 	}
 
 	private List<TargetField> getTargetIssueField(Map<String, IssueField> fields, List<TargetField> targetFields) {
@@ -189,5 +188,5 @@ public class JiraService {
 
 		return targetFields;
 	}
-}
 
+}

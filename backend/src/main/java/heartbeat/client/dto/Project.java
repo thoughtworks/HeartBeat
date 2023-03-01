@@ -17,4 +17,5 @@ import java.util.List;
 public class Project implements Serializable {
 
 	private List<Issuetype> issuetypes;
+
 }

@@ -17,4 +17,5 @@ public class TargetField implements Serializable {
 	private String name;
 
 	private boolean flag;
+
 }

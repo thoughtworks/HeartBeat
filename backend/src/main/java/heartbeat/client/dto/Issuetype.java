@@ -18,4 +18,5 @@ import java.util.Map;
 public class Issuetype implements Serializable {
 
 	private Map<String, IssueField> fields;
+
 }

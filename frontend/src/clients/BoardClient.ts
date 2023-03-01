@@ -3,23 +3,32 @@ import { BadRequestException } from '../exceptions/BadRequestException'
 import { BadServerException } from '@src/exceptions/BasServerException'
 import { AxiosError } from 'axios'
 
+export interface getVerifyBoardParams {
+  token: string
+  type: string
+  site: string
+  projectKey: string
+  startTime: string | null
+  endTime: string | null
+  boardId: string
+}
 export class BoardClient extends HttpClient {
   isBoardVerify = false
   isNoDoneCard = false
   response = {}
 
-  getVerifyBoard = async () => {
+  getVerifyBoard = async (params: getVerifyBoardParams) => {
     try {
-      const result = await this.axiosInstance.get('/kanban/verify').then((res) => res)
-      result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result.data)
+      const result = await this.axiosInstance.get('/kanban/verify', { params: { ...params } }).then((res) => res)
+      result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result)
     } catch (e) {
       this.isBoardVerify = false
       const code = (e as AxiosError).response?.status
       if (code === 404) {
-        throw new BadRequestException('Jira', 'Bad Request')
+        throw new BadRequestException(params.type, 'Bad Request')
       }
       if (code === 500) {
-        throw new BadServerException('Jira', 'Bad Server')
+        throw new BadServerException(params.type, 'Bad Server')
       }
     }
     return {

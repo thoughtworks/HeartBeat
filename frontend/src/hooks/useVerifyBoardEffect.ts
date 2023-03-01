@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { boardClient } from '@src/clients/BoardClient'
+import { boardClient, getVerifyBoardParams } from '@src/clients/BoardClient'
 
 export interface useVerifyBoardStateInterface {
-  verifyJira: () => Promise<
+  verifyJira: (params: getVerifyBoardParams) => Promise<
     | {
         isBoardVerify: boolean
         isNoDoneCard: boolean
@@ -20,10 +20,10 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
   const [errorMessage, setErrorMessage] = useState('')
   const [showError, setShowError] = useState(false)
 
-  const verifyJira = async () => {
+  const verifyJira = async (params: getVerifyBoardParams) => {
     setIsLoading(true)
     try {
-      return await boardClient.getVerifyBoard()
+      return await boardClient.getVerifyBoard(params)
     } catch (e) {
       const err = e as Error
       setErrorMessage(err.message)

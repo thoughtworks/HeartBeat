@@ -14,7 +14,7 @@ import {
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
-import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
+import { selectBoardFields, selectDateRange, updateBoardFields } from '@src/features/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
@@ -23,6 +23,7 @@ export const Board = () => {
   const dispatch = useAppDispatch()
   const isVerified = useAppSelector(isBoardVerified)
   const boardFields = useAppSelector(selectBoardFields)
+  const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
   const { verifyJira, isLoading, showError, errorMessage } = useVerifyBoardEffect()
@@ -104,7 +105,16 @@ export const Board = () => {
         token: fields[5].value,
       })
     )
-    await verifyJira().then((res) => {
+    const params = {
+      type: fields[0].value,
+      boardId: fields[1].value,
+      projectKey: fields[3].value,
+      site: fields[4].value,
+      token: fields[5].value,
+      startTime: DateRange.startDate,
+      endTime: DateRange.endDate,
+    }
+    await verifyJira(params).then((res) => {
       if (res) {
         dispatch(changeBoardVerifyState(res.isBoardVerify))
         dispatch(updateBoardFields(res.response))

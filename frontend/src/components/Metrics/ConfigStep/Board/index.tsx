@@ -150,6 +150,7 @@ export const Board = () => {
             </BoardTypeSelections>
           ) : (
             <BoardTextField
+              data-testid={filed.key}
               key={index}
               required
               label={filed.key}
@@ -159,6 +160,7 @@ export const Board = () => {
                 onFormUpdate(index, e.target.value)
               }}
               error={!filed.isValid}
+              type={filed.key === 'token' ? 'password' : 'text'}
               helperText={!filed.isValid ? `${filed.key} is required` : ''}
             />
           )

@@ -9,13 +9,7 @@ import { rest } from 'msw'
 export const fillBoardFieldsInformation = () => {
   const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
-  const fieldInputs = fields.map(
-    (label) =>
-      screen.getByRole('textbox', {
-        name: label,
-        hidden: true,
-      }) as HTMLInputElement
-  )
+  const fieldInputs = fields.map((label) => screen.getByTestId(label).querySelector('input') as HTMLInputElement)
   fieldInputs.map((input, index) => {
     fireEvent.change(input, { target: { value: mockInfo[index] } })
   })

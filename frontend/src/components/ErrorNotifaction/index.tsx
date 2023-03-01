@@ -9,7 +9,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) 
 export const ErrorNotification = (props: { message: string }) => {
   const { message } = props
   return (
-    <ErrorBar data-testid='errorNotification' open={true}>
+    <ErrorBar open={true}>
       <Alert severity='error'>{message}</Alert>
     </ErrorBar>
   )

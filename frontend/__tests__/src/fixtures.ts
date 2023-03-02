@@ -44,6 +44,10 @@ export const PIPELINE_TOOL_TYPES = {
   GO_CD: 'GoCD',
 }
 
+export const SOURCE_CONTROL_TYPES = {
+  GIT_HUB: 'Github',
+}
+
 export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'PipelineTool',

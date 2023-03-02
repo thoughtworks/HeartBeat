@@ -21,6 +21,6 @@ describe('pipelineToolVerifyResponse reducer', () => {
       })
     )
 
-    expect(jiraVerifyResponse.pipelineTool).toEqual(mockPipelineToolVerifyResponse)
+    expect(jiraVerifyResponse.pipelineTool).toEqual(mockPipelineToolVerifyResponse.pipelineTool)
   })
 })

@@ -16,7 +16,8 @@ export class PipelineToolClient extends HttpClient {
   verifyPipelineTool = async (params: getVerifyPipelineToolParams) => {
     try {
       const result = await this.axiosInstance.post('/pipeline/fetch', { params: { ...params } }).then((res) => res)
-      this.handlePipelineToolVerifySucceed(result)
+      this.isPipelineToolVerified = true
+      this.response = result
     } catch (e) {
       this.isPipelineToolVerified = false
       const code = (e as AxiosError).response?.status
@@ -31,11 +32,6 @@ export class PipelineToolClient extends HttpClient {
       response: this.response,
       isPipelineToolVerified: this.isPipelineToolVerified,
     }
-  }
-
-  handlePipelineToolVerifySucceed = (res: object) => {
-    this.isPipelineToolVerified = true
-    this.response = res
   }
 }
 

@@ -16,7 +16,5 @@ describe('Create a new project', () => {
     metricsPage.selectVelocityAndCycleTime()
 
     metricsPage.fillBoardFieldsInfo('2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken')
-
-    metricsPage.resetBoardInfo()
   })
 })

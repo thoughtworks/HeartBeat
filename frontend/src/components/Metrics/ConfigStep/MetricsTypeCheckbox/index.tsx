@@ -28,12 +28,12 @@ export const MetricsTypeCheckbox = () => {
         value.includes(REQUIRED_DATA_LIST[2])
     )
     setIsShowPipelineTool(
-      value.includes(REQUIRED_DATAS[3]) ||
-        value.includes(REQUIRED_DATAS[4]) ||
-        value.includes(REQUIRED_DATAS[5]) ||
-        value.includes(REQUIRED_DATAS[6])
+      value.includes(REQUIRED_DATA_LIST[3]) ||
+        value.includes(REQUIRED_DATA_LIST[4]) ||
+        value.includes(REQUIRED_DATA_LIST[5]) ||
+        value.includes(REQUIRED_DATA_LIST[6])
     )
-    setIsSourceControl(value.includes(REQUIRED_DATAS[3]))
+    setIsSourceControl(value.includes(REQUIRED_DATA_LIST[3]))
   }
   return (
     <>

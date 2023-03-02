@@ -1,17 +1,16 @@
-import {
-  fireEvent,
-  getByLabelText,
-  getByRole,
-  getByText,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
-import { PIPELINE_TOOL_FIELDS, CONFIG_TITLE, PIPELINE_TOOL_TYPES, ERROR_MESSAGE_COLOR } from '../../../fixtures'
+import {
+  PIPELINE_TOOL_FIELDS,
+  CONFIG_TITLE,
+  PIPELINE_TOOL_TYPES,
+  ERROR_MESSAGE_COLOR,
+  MOCK_PIPELINE_URL,
+} from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
 
 export const fillPipelineToolFieldsInformation = () => {
   const mockInfo = 'mockToken'
@@ -30,7 +29,16 @@ const setup = () => {
   )
 }
 
+const server = setupServer(
+  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => {
+    return res(ctx.status(200))
+  })
+)
+
 describe('PipelineTool', () => {
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
+
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
     const { getByRole, getByLabelText } = setup()
 
@@ -55,7 +63,7 @@ describe('PipelineTool', () => {
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
     fireEvent.change(tokenInput, { target: { value: 'abcd' } })
-    fireEvent.mouseDown(getByRole('button', { name: 'pipelineTool' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'PipelineTool' }))
     fireEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD))
 
     expect(tokenInput.value).toEqual('')
@@ -79,7 +87,7 @@ describe('PipelineTool', () => {
 
   it('should show detail options when click pipelineTool fields', () => {
     const { getByRole } = setup()
-    fireEvent.mouseDown(getByRole('button', { name: 'pipelineTool' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'PipelineTool' }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionValue = options.map((li) => li.getAttribute('data-value'))

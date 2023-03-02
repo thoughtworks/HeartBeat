@@ -10,14 +10,12 @@ export interface useVerifyPipeLineToolStateInterface {
     | undefined
   >
   isLoading: boolean
-  showError: boolean
   errorMessage: string
 }
 
 export const useVerifyPipelineToolEffect = (): useVerifyPipeLineToolStateInterface => {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [showError, setShowError] = useState(false)
 
   const verifyPipelineTool = async (params: getVerifyPipelineToolParams) => {
     setIsLoading(true)
@@ -26,9 +24,7 @@ export const useVerifyPipelineToolEffect = (): useVerifyPipeLineToolStateInterfa
     } catch (e) {
       const err = e as Error
       setErrorMessage(err.message)
-      setShowError(true)
       setTimeout(() => {
-        setShowError(false)
         setErrorMessage('')
       }, 2000)
     } finally {
@@ -39,7 +35,6 @@ export const useVerifyPipelineToolEffect = (): useVerifyPipeLineToolStateInterfa
   return {
     verifyPipelineTool,
     isLoading,
-    showError,
     errorMessage,
   }
 }

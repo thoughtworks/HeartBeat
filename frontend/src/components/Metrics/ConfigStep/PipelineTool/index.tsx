@@ -23,7 +23,7 @@ export const PipelineTool = () => {
   const pipelineToolFields = useAppSelector(selectPipelineToolFields)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
-  const { verifyPipelineTool, isLoading, showError, errorMessage } = useVerifyPipelineToolEffect()
+  const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect()
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [fields, setFields] = useState([
     {
@@ -101,7 +101,7 @@ export const PipelineTool = () => {
 
   return (
     <PipelineToolSection>
-      {showError && <ErrorNotification message={errorMessage} />}
+      {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && (
         <PipelineToolLoadingDrop open={isLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

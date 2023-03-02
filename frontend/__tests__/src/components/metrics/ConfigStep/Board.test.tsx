@@ -1,6 +1,13 @@
 import { fireEvent, render, within, screen, waitFor } from '@testing-library/react'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
-import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR, MOCK_URL } from '../../../fixtures'
+import {
+  BOARD_FIELDS,
+  BOARD_TYPES,
+  CONFIG_TITLE,
+  ERROR_MESSAGE_COLOR,
+  JIRA_VERIFY_FAILED_MESSAGE,
+  MOCK_URL,
+} from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
@@ -202,7 +209,7 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
     await waitFor(() => {
-      expect(getByText('Jira verify failed: Bad Request')).toBeInTheDocument()
+      expect(getByText(JIRA_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
     })
   })
 })

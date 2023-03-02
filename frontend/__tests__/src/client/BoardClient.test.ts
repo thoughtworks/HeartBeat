@@ -1,6 +1,6 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { BOARD_TYPES, MOCK_URL } from '../fixtures'
+import { BOARD_TYPES, JIRA_VERIFY_FAILED_MESSAGE, MOCK_URL } from '../fixtures'
 import { boardClient } from '@src/clients/BoardClient'
 
 const server = setupServer(
@@ -43,7 +43,7 @@ describe('error notification', () => {
       await boardClient.getVerifyBoard(mockParams)
     } catch (e) {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch('Jira verify failed: Bad Request')
+      expect((e as Error).message).toMatch(JIRA_VERIFY_FAILED_MESSAGE)
     }
   })
 
@@ -54,7 +54,7 @@ describe('error notification', () => {
       await boardClient.getVerifyBoard(mockParams)
     } catch (e) {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch('Jira verify failed: Bad Server')
+      expect((e as Error).message).toMatch(JIRA_VERIFY_FAILED_MESSAGE)
     }
   })
 })

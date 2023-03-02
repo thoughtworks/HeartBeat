@@ -1,6 +1,6 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { MOCK_URL } from '../fixtures'
+import { BOARD_TYPES, MOCK_URL } from '../fixtures'
 import { boardClient } from '@src/clients/BoardClient'
 
 const server = setupServer(
@@ -8,22 +8,53 @@ const server = setupServer(
     return res(ctx.status(200))
   })
 )
+export const mockParams = {
+  token: 'mockToken',
+  type: BOARD_TYPES.JIRA,
+  site: '1',
+  projectKey: '1',
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+  boardId: '1',
+}
 describe('error notification', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
 
-  it('should return 200 status when verify board success', async () => {
-    const result = await boardClient.getVerifyBoard()
+  it('should isBoardVerify is true when board verify response status 200', async () => {
+    const result = await boardClient.getVerifyBoard(mockParams)
 
-    expect(result.status).toEqual(200)
+    expect(result.isBoardVerify).toEqual(true)
   })
-  it('should throw error when verify board failed', async () => {
+
+  it('should isNoDoneCard is true when board verify response status 204', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(204))))
+
+    const result = await boardClient.getVerifyBoard(mockParams)
+
+    expect(result.isNoDoneCard).toEqual(true)
+    expect(result.isBoardVerify).toEqual(false)
+  })
+
+  it('should throw error when board verify response status 404', async () => {
     server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(404))))
 
     try {
-      await boardClient.getVerifyBoard()
-    } catch (error) {
-      expect((error as Error).message).toEqual('error')
+      await boardClient.getVerifyBoard(mockParams)
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error)
+      expect((e as Error).message).toMatch('Jira verify failed: Bad Request')
+    }
+  })
+
+  it('should throw error when board verify response status 500', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(500))))
+
+    try {
+      await boardClient.getVerifyBoard(mockParams)
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error)
+      expect((e as Error).message).toMatch('Jira verify failed: Bad Server')
     }
   })
 })

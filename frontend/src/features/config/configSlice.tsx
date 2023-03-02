@@ -6,8 +6,8 @@ export interface configState {
   projectName: string
   calendarType: string
   dateRange: {
-    startDate: number | null
-    endDate: number | null
+    startDate: string
+    endDate: string
   }
   requiredData: string[]
   boardFields: { board: string; boardId: string; email: string; projectKey: string; site: string; token: string }
@@ -19,8 +19,8 @@ const initialState: configState = {
   projectName: '',
   calendarType: REGULAR_CALENDAR,
   dateRange: {
-    startDate: null,
-    endDate: null,
+    startDate: '',
+    endDate: '',
   },
   requiredData: [],
   boardFields: {

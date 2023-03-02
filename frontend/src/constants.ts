@@ -23,7 +23,7 @@ export enum CONFIG_TITLE {
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
 
-export const REQUIRED_DATAS = [
+export const REQUIRED_DATA_LIST = [
   'Velocity',
   'Cycle time',
   'Classification',
@@ -50,4 +50,4 @@ export const SOURCE_CONTROL_TYPES = {
 
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
-export const EMAIL = 'email'
+export const EMAIL = 'Email'

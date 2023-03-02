@@ -93,7 +93,7 @@ export const PipelineTool = () => {
     })
   }
 
-  const handleResetBPipelineToolFields = () => {
+  const handleResetPipelineToolFields = () => {
     initPipeLineFields()
     setIsDisableVerifyButton(true)
     dispatch(changePipelineToolVerifyState(false))
@@ -108,7 +108,7 @@ export const PipelineTool = () => {
         </PipelineToolLoadingDrop>
       )}
       <PipelineToolTitle>{CONFIG_TITLE.PIPELINE_TOOL}</PipelineToolTitle>
-      <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetBPipelineToolFields}>
+      <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>
         <PipelineToolTypeSelections variant='standard' required>
           <InputLabel id='pipelineTool-type-checkbox-label'>PipelineTool</InputLabel>
           <Select

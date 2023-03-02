@@ -14,12 +14,14 @@ import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectSourceControlFields, updateSourceControlFields } from '@src/features/config/configSlice'
 import { changeSourceControlVerifyState, isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
+import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
   const sourceControlFields = useAppSelector(selectSourceControlFields)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const isVerified = useAppSelector(isSourceControlVerified)
+  const { verifyGithub, isLoading, errorMessage } = useVerifySourceControlEffect()
   const [fields, setFields] = useState([
     {
       key: 'sourceControl',
@@ -42,7 +44,7 @@ export const SourceControl = () => {
     dispatch(changeSourceControlVerifyState(false))
   }
 
-  const handleSubmitSourceControlFields = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
       updateSourceControlFields({
@@ -50,7 +52,16 @@ export const SourceControl = () => {
         token: fields[1].value,
       })
     )
-    dispatch(changeSourceControlVerifyState(true))
+    const params = {
+      type: fields[0].value,
+      token: fields[1].value,
+    }
+    await verifyGithub(params).then((res) => {
+      if (res) {
+        dispatch(changeSourceControlVerifyState(res.isSourceControlVerify))
+        dispatch(updateSourceControlFields(res.response))
+      }
+    })
   }
 
   const handleResetSourceControlFields = () => {

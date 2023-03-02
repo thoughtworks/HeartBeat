@@ -1,4 +1,4 @@
-package heartbeat.controller.board.vo.response;
+package heartbeat.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FieldResponse implements Serializable {
+public class FieldResponseDTO implements Serializable {
 
 	private List<Project> projects;
 

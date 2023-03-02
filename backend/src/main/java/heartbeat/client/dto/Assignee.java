@@ -1,7 +1,6 @@
-package heartbeat.controller.board.vo.response;
+package heartbeat.client.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +9,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Fields implements Serializable {
+public class Assignee implements Serializable {
 
-	private Assignee assignee;
+	private String displayName;
 
 }

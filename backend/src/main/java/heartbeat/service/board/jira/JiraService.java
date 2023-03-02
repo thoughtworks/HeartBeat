@@ -57,7 +57,7 @@ public class JiraService {
 
 	private ColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, String token,
 			List<String> doneColumn) {
-		List<StatusSelf> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
+		List<StatusSelfDTO> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
 		String key = handleColumKey(doneColumn, statusSelfList);
 
 		return ColumnResponse.builder().key(key)
@@ -68,19 +68,19 @@ public class JiraService {
 				.build();
 	}
 
-	private List<StatusSelf> getStatusSelfList(URI baseUrl, JiraColumn jiraColumn, String token) {
-		List<Mono<StatusSelf>> statusSelfMonos = jiraColumn.getStatuses().stream()
+	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, JiraColumn jiraColumn, String token) {
+		List<Mono<StatusSelfDTO>> statusSelfMonos = jiraColumn.getStatuses().stream()
 				.map(jiraColumnStatus -> getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token))
 				.collect(Collectors.toList());
 
 		return Flux.merge(statusSelfMonos).collectList().block();
 	}
 
-	private Mono<StatusSelf> getColumnStatusCategory(URI baseUrl, String jiraStatusId, String token) {
+	private Mono<StatusSelfDTO> getColumnStatusCategory(URI baseUrl, String jiraStatusId, String token) {
 		return Mono.just(jiraFeignClient.getColumnStatusCategory(baseUrl, jiraStatusId, token));
 	}
 
-	private String handleColumKey(List<String> doneColumn, List<StatusSelf> statusSelfList) {
+	private String handleColumKey(List<String> doneColumn, List<StatusSelfDTO> statusSelfList) {
 		String doneTag = "done";
 		List<String> keyList = statusSelfList.stream().map(statusSelf -> {
 			if (statusSelf.getStatusCategory().getKey().equalsIgnoreCase(doneTag)) {
@@ -90,7 +90,7 @@ public class JiraService {
 		}).toList();
 
 		return (keyList.contains(doneTag)) ? doneTag : statusSelfList.stream().reduce((pre, last) -> last)
-				.orElse(StatusSelf.builder().build()).getStatusCategory().getName();
+				.orElse(StatusSelfDTO.builder().build()).getStatusCategory().getName();
 	}
 
 	private List<String> getUsers(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
@@ -123,23 +123,23 @@ public class JiraService {
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
 				String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
-		AllDoneCardsResponse allDoneCardsResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
+		AllDoneCardsResponseDTO allDoneCardsResponseDTO = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
 				QUERY_COUNT, 0, jql, boardRequest.getToken());
-		log.info(allDoneCardsResponse);
+		log.info(allDoneCardsResponseDTO);
 
-		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponse.getIssues()));
+		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 
-		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponse.getTotal()) * 1.0 / QUERY_COUNT);
+		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponseDTO.getTotal()) * 1.0 / QUERY_COUNT);
 		if (pages <= 1) {
 			return doneCards;
 		}
 
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
-		List<Mono<AllDoneCardsResponse>> doneCardsResponseMonos = range.stream()
+		List<Mono<AllDoneCardsResponseDTO>> doneCardsResponseMonos = range.stream()
 				.map(startFrom -> Mono.just(jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
 						QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequest.getToken())))
 				.collect(Collectors.toList());
-		List<AllDoneCardsResponse> doneCardsResponses = Flux.merge(doneCardsResponseMonos).collectList().block();
+		List<AllDoneCardsResponseDTO> doneCardsResponses = Flux.merge(doneCardsResponseMonos).collectList().block();
 
 		if (isNull(doneCardsResponses)) {
 			throw new RequestFailedException(404, "Cannot get more done cards information.");
@@ -152,10 +152,10 @@ public class JiraService {
 	}
 
 	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {
-		CardHistoryResponse cardHistoryResponse = jiraFeignClient.getJiraCardHistory(baseUrl, donecard.getKey(),
+		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, donecard.getKey(),
 				jiraToken);
 
-		List<String> assigneeSet = cardHistoryResponse.getItems().stream()
+		List<String> assigneeSet = cardHistoryResponseDTO.getItems().stream()
 				.filter(assignee -> Objects.equals(assignee.getFieldId(), "assignee")
 						&& assignee.getTo().getDisplayValue() != null)
 				.map(assignee -> assignee.getTo().getDisplayValue()).toList();
@@ -168,7 +168,7 @@ public class JiraService {
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequest boardRequest) {
-		FieldResponse fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
+		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
 				boardRequest.getToken());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {

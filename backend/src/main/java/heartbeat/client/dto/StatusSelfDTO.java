@@ -1,4 +1,4 @@
-package heartbeat.controller.board.vo.response;
+package heartbeat.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Builder
-public class StatusSelf implements Serializable {
+public class StatusSelfDTO implements Serializable {
 
 	private String untranslatedName;
 
 	private StatusCategory statusCategory;
 
 }
+

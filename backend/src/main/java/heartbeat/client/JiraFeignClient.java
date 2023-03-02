@@ -1,10 +1,10 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.FieldResponse;
+import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.controller.board.vo.response.AllDoneCardsResponse;
-import heartbeat.controller.board.vo.response.CardHistoryResponse;
-import heartbeat.controller.board.vo.response.StatusSelf;
+import heartbeat.client.dto.StatusSelfDTO;
+import heartbeat.client.dto.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.CardHistoryResponseDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,21 +22,21 @@ public interface JiraFeignClient {
 
 	@Cacheable(cacheNames = "jiraStatusCategory", key = "#statusNum")
 	@GetMapping(path = "/rest/api/2/status/{statusNum}")
-	StatusSelf getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
-			@RequestHeader String authorization);
+	StatusSelfDTO getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
+										  @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraAllDoneCards", key = "#boardId+'-'+#queryCount+'-'+#jql")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
-	AllDoneCardsResponse getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
-			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
+	AllDoneCardsResponseDTO getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
+											@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraActivityfeed", key = "#jiraCardKey")
 	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")
-	CardHistoryResponse getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
-			@RequestHeader String authorization);
+	CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
+											  @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "targetFeild", key = "#projectKey")
 	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields")
-	FieldResponse getTargetField(URI baseUrl, @PathVariable String projectKey, @RequestHeader String authorization);
+	FieldResponseDTO getTargetField(URI baseUrl, @PathVariable String projectKey, @RequestHeader String authorization);
 
 }

@@ -1,4 +1,4 @@
-package heartbeat.controller.board.vo.response;
+package heartbeat.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardHistoryResponse implements Serializable {
+public class CardHistoryResponseDTO implements Serializable {
 
 	private List<Item> items;
 

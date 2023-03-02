@@ -1,7 +1,6 @@
-package heartbeat.controller.board.vo.response;
+package heartbeat.client.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +13,6 @@ public class DoneCard implements Serializable {
 
 	private String key;
 
-	private Fields fields;
+	private DoneCardFields fields;
 
 }

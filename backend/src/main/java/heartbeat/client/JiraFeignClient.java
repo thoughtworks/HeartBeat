@@ -23,17 +23,17 @@ public interface JiraFeignClient {
 	@Cacheable(cacheNames = "jiraStatusCategory", key = "#statusNum")
 	@GetMapping(path = "/rest/api/2/status/{statusNum}")
 	StatusSelfDTO getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
-										  @RequestHeader String authorization);
+			@RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraAllDoneCards", key = "#boardId+'-'+#queryCount+'-'+#jql")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
 	AllDoneCardsResponseDTO getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
-											@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
+			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraActivityfeed", key = "#jiraCardKey")
 	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")
 	CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
-											  @RequestHeader String authorization);
+			@RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "targetFeild", key = "#projectKey")
 	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields")

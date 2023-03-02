@@ -16,4 +16,3 @@ public class StatusSelfDTO implements Serializable {
 	private StatusCategory statusCategory;
 
 }
-

@@ -55,22 +55,20 @@ class JiraServiceTest {
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
-			"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
-			boardRequest.getStartTime(), boardRequest.getEndTime());
-		List<TargetField> expectTargetField = List.of(
-			new TargetField("priority", "Priority", false),
-			new TargetField("timetracking", "Time tracking", false)
-		);
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequest.getStartTime(), boardRequest.getEndTime());
+		List<TargetField> expectTargetField = List.of(new TargetField("priority", "Priority", false),
+				new TargetField("timetracking", "Time tracking", false));
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
-			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+				.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+				.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
-			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+				.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
@@ -93,18 +91,18 @@ class JiraServiceTest {
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
-			"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
-			boardRequest.getStartTime(), boardRequest.getEndTime());
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequest.getStartTime(), boardRequest.getEndTime());
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
-			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+				.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+				.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
-			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+				.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
@@ -112,33 +110,42 @@ class JiraServiceTest {
 		assertThat(boardConfigResponse.getUsers().get(0)).isEqualTo("Zhang San");
 	}
 
-//	@Test
-//	void shouldReturnFilteredTargetFieldsWhenGetTargetFieldSuccess() {
-//		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-//		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-//		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
-//		FieldResponseDTO targetFields = FIELD_RESPONSE_BUILDER().build();
-//		URI baseUrl = URI.create("https://site.atlassian.net");
-//		String token = "token";
-//		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-//		String jql = String.format(
-//			"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
-//			boardRequest.getStartTime(), boardRequest.getEndTime());
-//
-//		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
-//		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
-//		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
-//		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
-//			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
-//		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-//			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
-//		when(jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(), token)).thenReturn(targetFields);
-//
-//		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
-//
-//		assertThat(boardConfigResponse.getTargetFields()).hasSize(1);
-//		assertThat(boardConfigResponse.getTargetFields().get(0)).isEqualTo(new TargetField("assignee", "Assignee", false));
-//	}
+	// @Test
+	// void shouldReturnFilteredTargetFieldsWhenGetTargetFieldSuccess() {
+	// JiraBoardConfigDTO jiraBoardConfigDTO =
+	// JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+	// StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+	// StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+	// FieldResponseDTO targetFields = FIELD_RESPONSE_BUILDER().build();
+	// URI baseUrl = URI.create("https://site.atlassian.net");
+	// String token = "token";
+	// BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+	// String jql = String.format(
+	// "status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate
+	// <= %s", "DONE",
+	// boardRequest.getStartTime(), boardRequest.getEndTime());
+	//
+	// when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID,
+	// token)).thenReturn(jiraBoardConfigDTO);
+	// when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1,
+	// token)).thenReturn(doneStatusSelf);
+	// when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2,
+	// token)).thenReturn(doingStatusSelf);
+	// when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql,
+	// token))
+	// .thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+	// when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+	// .thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+	// when(jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
+	// token)).thenReturn(targetFields);
+	//
+	// BoardConfigResponse boardConfigResponse =
+	// jiraService.getJiraConfiguration(boardRequest);
+	//
+	// assertThat(boardConfigResponse.getTargetFields()).hasSize(1);
+	// assertThat(boardConfigResponse.getTargetFields().get(0)).isEqualTo(new
+	// TargetField("assignee", "Assignee", false));
+	// }
 
 	@Test
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
@@ -154,8 +161,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenThrow(mockException);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status code 400, error: exception");
+				.isInstanceOf(RequestFailedException.class)
+				.hasMessageContaining("Request failed with status code 400, error: exception");
 	}
 
 	@Test
@@ -168,7 +175,8 @@ class JiraServiceTest {
 		when(mockException.status()).thenReturn(400);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status code 400, error: ", "");
+				.isInstanceOf(RequestFailedException.class)
+				.hasMessageContaining("Request failed with status code 400, error: ", "");
 	}
+
 }

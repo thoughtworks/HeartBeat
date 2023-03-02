@@ -47,11 +47,12 @@ public class JiraBoardConfigDTOFixture {
 		IssueField descriptionIssueField = new IssueField("description", "Description");
 		IssueField priorityIssueField = new IssueField("priority", "Priority");
 		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
-		issueFieldMap.put("timetracking",timetrackingIssueField);
-		issueFieldMap.put("summary",summaryIssueField);
-		issueFieldMap.put("description",descriptionIssueField);
-		issueFieldMap.put("priority",priorityIssueField);
+		issueFieldMap.put("timetracking", timetrackingIssueField);
+		issueFieldMap.put("summary", summaryIssueField);
+		issueFieldMap.put("description", descriptionIssueField);
+		issueFieldMap.put("priority", priorityIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}
+
 }

@@ -123,8 +123,8 @@ public class JiraService {
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
 				String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
-		AllDoneCardsResponseDTO allDoneCardsResponseDTO = jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
-				QUERY_COUNT, 0, jql, boardRequest.getToken());
+		AllDoneCardsResponseDTO allDoneCardsResponseDTO = jiraFeignClient.getAllDoneCards(baseUrl,
+				boardRequest.getBoardId(), QUERY_COUNT, 0, jql, boardRequest.getToken());
 		log.info(allDoneCardsResponseDTO);
 
 		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));

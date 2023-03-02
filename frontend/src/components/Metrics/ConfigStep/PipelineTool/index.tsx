@@ -1,6 +1,6 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO } from '@src/constants'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 import {
   PipelineToolButtonGroup,
   PipelineToolForm,
@@ -14,14 +14,16 @@ import {
 } from '@src/components/Metrics/ConfigStep/PipelineTool/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changePipelineToolVerifyState, isPipelineToolVerified } from '@src/features/pipelineTool/pipelineToolSlice'
-import { selectPipelineToolFields, updatePipelineToolFields } from '@src/features/config/configSlice'
-import { useVerifyPipelineToolState } from '@src/hooks/useVerifyPipelineToolState'
+import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } from '@src/features/config/configSlice'
+import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
   const pipelineToolFields = useAppSelector(selectPipelineToolFields)
+  const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
+  const { verifyPipelineTool, isLoading, showError, errorMessage } = useVerifyPipelineToolEffect()
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [fields, setFields] = useState([
     {
@@ -35,17 +37,6 @@ export const PipelineTool = () => {
       isValid: true,
     },
   ])
-  const { verifyPipelineTool, isVerifyLoading, isErrorNotification, showErrorMessage } = useVerifyPipelineToolState()
-  useEffect(() => {
-    dispatch(
-      updatePipelineToolFields({
-        pipelineTool: pipelineToolFields.pipelineTool,
-        token: '',
-      })
-    )
-    setIsDisableVerifyButton(true)
-    dispatch(changePipelineToolVerifyState(false))
-  }, [pipelineToolFields.pipelineTool, dispatch])
 
   const initPipeLineFields = () => {
     const newFields = fields.map((field, index) => {
@@ -87,8 +78,19 @@ export const PipelineTool = () => {
         token: fields[1].value,
       })
     )
-    await verifyPipelineTool()
-    dispatch(changePipelineToolVerifyState(true))
+    const params = {
+      type: fields[0].value,
+      token: fields[1].value,
+      startTime: DateRange.startDate,
+      endTime: DateRange.endDate,
+    }
+
+    await verifyPipelineTool(params).then((res) => {
+      if (res) {
+        dispatch(changePipelineToolVerifyState(res.isPipelineToolVerified))
+        dispatch(updatePipelineToolFields(res.response))
+      }
+    })
   }
 
   const handleResetBPipelineToolFields = () => {
@@ -99,9 +101,9 @@ export const PipelineTool = () => {
 
   return (
     <PipelineToolSection>
-      {isErrorNotification && <ErrorNotification message={showErrorMessage} />}
-      {isVerifyLoading && (
-        <PipelineToolLoadingDrop open={isVerifyLoading} data-testid='circularProgress'>
+      {showError && <ErrorNotification message={errorMessage} />}
+      {isLoading && (
+        <PipelineToolLoadingDrop open={isLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />
         </PipelineToolLoadingDrop>
       )}
@@ -134,10 +136,14 @@ export const PipelineTool = () => {
           helperText={!fields[1].isValid ? 'token is required' : ''}
         />
         <PipelineToolButtonGroup>
-          <VerifyButton type='submit' disabled={isDisableVerifyButton || isVerifyLoading}>
-            {isVerified ? 'Verified' : 'Verify'}
-          </VerifyButton>
-          {isVerified && <ResetButton type='reset'>Reset</ResetButton>}
+          {isVerified && !isLoading ? (
+            <VerifyButton>Verified</VerifyButton>
+          ) : (
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
+              Verify
+            </VerifyButton>
+          )}
+          {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
         </PipelineToolButtonGroup>
       </PipelineToolForm>
     </PipelineToolSection>

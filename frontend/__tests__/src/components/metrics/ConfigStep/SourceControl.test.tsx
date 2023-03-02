@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 import { CONFIG_TITLE, ERROR_MESSAGE_COLOR, SOURCE_CONTROL_FIELDS, SOURCE_CONTROL_TYPES } from '../../../fixtures'
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
 
 export const fillSourceControlFieldsInformation = () => {
   const mockInfo = 'mockToken'
@@ -21,7 +23,15 @@ const setup = () => {
   )
 }
 
+const server = setupServer(
+  rest.get('/api/v1/codebase/fetch/repos', (req, res, ctx) => {
+    return res(ctx.status(200))
+  })
+)
+
 describe('SourceControl', () => {
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
   it('should show sourceControl title and fields when render sourceControl component', () => {
     const { getByRole, getByLabelText } = setup()
 
@@ -44,7 +54,9 @@ describe('SourceControl', () => {
     fillSourceControlFieldsInformation()
 
     fireEvent.click(getByText('Verify'))
+
     await waitFor(() => {
+      expect(getByRole('button', { name: 'Reset' })).toBeInTheDocument()
       fireEvent.click(getByRole('button', { name: 'Reset' }))
     })
 

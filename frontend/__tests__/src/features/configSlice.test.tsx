@@ -15,7 +15,7 @@ describe('config reducer', () => {
 
     expect(config.projectName).toEqual('')
     expect(config.calendarType).toEqual(REGULAR_CALENDAR)
-    expect(config.dateRange).toEqual({ startDate: null, endDate: null })
+    expect(config.dateRange).toEqual({ startDate: '', endDate: '' })
   })
 
   it('should update project name when change project name input', () => {
@@ -23,7 +23,7 @@ describe('config reducer', () => {
       {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
-        dateRange: { startDate: null, endDate: null },
+        dateRange: { startDate: '', endDate: '' },
         requiredData: [],
         boardFields: {
           board: BOARD_TYPES.JIRA,
@@ -49,7 +49,7 @@ describe('config reducer', () => {
       {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
-        dateRange: { startDate: null, endDate: null },
+        dateRange: { startDate: '', endDate: '' },
         requiredData: [],
         boardFields: {
           board: BOARD_TYPES.JIRA,
@@ -76,7 +76,7 @@ describe('config reducer', () => {
       {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
-        dateRange: { startDate: null, endDate: null },
+        dateRange: { startDate: '', endDate: '' },
         requiredData: [],
         boardFields: {
           board: BOARD_TYPES.JIRA,
@@ -91,11 +91,11 @@ describe('config reducer', () => {
           token: '',
         },
       },
-      updateDateRange({ startDate: today, endDate: null })
+      updateDateRange({ startDate: today, endDate: '' })
     )
 
     expect(config.dateRange.startDate).toEqual(today)
-    expect(config.dateRange.endDate).toEqual(null)
+    expect(config.dateRange.endDate).toEqual('')
   })
 
   it('should update required data when change require data selections', () => {
@@ -103,7 +103,7 @@ describe('config reducer', () => {
       {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
-        dateRange: { startDate: null, endDate: null },
+        dateRange: { startDate: '', endDate: '' },
         requiredData: [],
         boardFields: {
           board: BOARD_TYPES.JIRA,
@@ -129,7 +129,7 @@ describe('config reducer', () => {
       {
         projectName: '',
         calendarType: REGULAR_CALENDAR,
-        dateRange: { startDate: null, endDate: null },
+        dateRange: { startDate: '', endDate: '' },
         requiredData: [],
         boardFields: {
           board: BOARD_TYPES.JIRA,

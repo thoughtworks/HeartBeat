@@ -22,18 +22,6 @@
       "functions": 100,
       "lines": 100,
       "statements": 100
-    },
-    "./src/components/ErrorNotifaction": {
-      "branches": 100,
-      "functions": 50,
-      "lines": 90,
-      "statements": 90
-    },
-    "./src/components/Metrics/ConfigStep/Board": {
-      "branches": 90,
-      "functions": 90,
-      "lines": 90,
-      "statements": 90
     }
   }
 }

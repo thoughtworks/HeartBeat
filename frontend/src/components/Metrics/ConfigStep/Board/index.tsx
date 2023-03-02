@@ -14,7 +14,7 @@ import {
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
-import { selectBoardFields, updateBoardFields } from '@src/features/config/configSlice'
+import { selectBoardFields, selectDateRange, updateBoardFields } from '@src/features/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
@@ -23,37 +23,38 @@ export const Board = () => {
   const dispatch = useAppDispatch()
   const isVerified = useAppSelector(isBoardVerified)
   const boardFields = useAppSelector(selectBoardFields)
+  const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
   const { verifyJira, isLoading, showError, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
     {
-      key: 'board',
+      key: 'Board',
       value: boardFields.board,
       isValid: true,
     },
     {
-      key: 'boardId',
+      key: 'BoardId',
       value: boardFields.boardId,
       isValid: true,
     },
     {
-      key: 'email',
+      key: 'Email',
       value: boardFields.email,
       isValid: true,
     },
     {
-      key: 'projectKey',
+      key: 'Project Key',
       value: boardFields.projectKey,
       isValid: true,
     },
     {
-      key: 'site',
+      key: 'Site',
       value: boardFields.site,
       isValid: true,
     },
     {
-      key: 'token',
+      key: 'Token',
       value: boardFields.token,
       isValid: true,
     },
@@ -104,7 +105,16 @@ export const Board = () => {
         token: fields[5].value,
       })
     )
-    await verifyJira().then((res) => {
+    const params = {
+      type: fields[0].value,
+      boardId: fields[1].value,
+      projectKey: fields[3].value,
+      site: fields[4].value,
+      token: fields[5].value,
+      startTime: DateRange.startDate,
+      endTime: DateRange.endDate,
+    }
+    await verifyJira(params).then((res) => {
       if (res) {
         dispatch(changeBoardVerifyState(res.isBoardVerify))
         dispatch(updateBoardFields(res.response))
@@ -133,7 +143,7 @@ export const Board = () => {
         {fields.map((filed, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={index}>
-              <InputLabel id='board-type-checkbox-label'>board</InputLabel>
+              <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
                 labelId='board-type-checkbox-label'
                 value={filed.value}
@@ -150,6 +160,7 @@ export const Board = () => {
             </BoardTypeSelections>
           ) : (
             <BoardTextField
+              data-testid={filed.key}
               key={index}
               required
               label={filed.key}
@@ -159,6 +170,7 @@ export const Board = () => {
                 onFormUpdate(index, e.target.value)
               }}
               error={!filed.isValid}
+              type={filed.key === 'Token' ? 'password' : 'text'}
               helperText={!filed.isValid ? `${filed.key} is required` : ''}
             />
           )

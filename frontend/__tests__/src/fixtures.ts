@@ -49,7 +49,8 @@ export enum CONFIG_TITLE {
   PIPELINE_TOOL = 'PipelineTool',
 }
 
-export const BOARD_FIELDS = ['board', 'boardId', 'email', 'projectKey', 'site', 'token']
 export const PIPELINE_TOOL_FIELDS = ['pipelineTool', 'token']
+export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
+
 export const MOCK_URL = '/api/v1/kanban/verify'
 export const JIRA_VERIFY_FAILED_MESSAGE = 'Jira verify failed'

@@ -1,6 +1,7 @@
-import { renderHook } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { boardClient } from '@src/clients/BoardClient'
+import { mockParams } from '../client/BoardClient.test'
 
 describe('use verify board state', () => {
   it('should initial data state when render hook', async () => {
@@ -17,8 +18,10 @@ describe('use verify board state', () => {
 
     expect(result.current.isLoading).toEqual(false)
 
-    await result.current.verifyJira()
-    jest.advanceTimersByTime(2000)
+    act(() => {
+      result.current.verifyJira(mockParams)
+      jest.advanceTimersByTime(2000)
+    })
 
     expect(result.current.showError).toEqual(false)
     expect(result.current.errorMessage).toEqual('')

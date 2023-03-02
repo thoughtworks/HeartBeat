@@ -1,21 +1,22 @@
 import { fireEvent, render, within, screen, waitFor } from '@testing-library/react'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
-import { BOARD_FIELDS, BOARD_TYPES, CONFIG_TITLE, ERROR_MESSAGE_COLOR, MOCK_URL } from '../../../fixtures'
+import {
+  BOARD_FIELDS,
+  BOARD_TYPES,
+  CONFIG_TITLE,
+  ERROR_MESSAGE_COLOR,
+  JIRA_VERIFY_FAILED_MESSAGE,
+  MOCK_URL,
+} from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 
 export const fillBoardFieldsInformation = () => {
-  const fields = ['boardId', 'email', 'projectKey', 'site', 'token']
+  const fields = ['BoardId', 'Email', 'Project Key', 'Site', 'Token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
-  const fieldInputs = fields.map(
-    (label) =>
-      screen.getByRole('textbox', {
-        name: label,
-        hidden: true,
-      }) as HTMLInputElement
-  )
+  const fieldInputs = fields.map((label) => screen.getByTestId(label).querySelector('input') as HTMLInputElement)
   fieldInputs.map((input, index) => {
     fireEvent.change(input, { target: { value: mockInfo[index] } })
   })
@@ -64,7 +65,7 @@ describe('Board', () => {
 
   it('should show detail options when click board field', () => {
     const { getByRole } = setup()
-    fireEvent.mouseDown(getByRole('button', { name: 'board' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'Board' }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionValue = options.map((li) => li.getAttribute('data-value'))
@@ -75,14 +76,14 @@ describe('Board', () => {
   it('should show different board type when select different board field value ', async () => {
     const { getByRole, getByText } = setup()
 
-    fireEvent.mouseDown(getByRole('button', { name: 'board' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'Board' }))
     fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
 
     await waitFor(() => {
       expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
     })
 
-    fireEvent.mouseDown(getByRole('button', { name: 'board' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'Board' }))
     fireEvent.click(getByText(BOARD_TYPES.LINEAR))
 
     await waitFor(() => {
@@ -90,12 +91,10 @@ describe('Board', () => {
     })
   })
 
-  it('should show error message when input a wrong type email ', () => {
-    const { getByRole, getByText } = setup()
-    const EMAil_ERROR_MESSAGE = 'email is required'
-    const emailInput = getByRole('textbox', {
-      name: 'email',
-    })
+  it('should show error message when input a wrong type email ', async () => {
+    const { getByTestId, getByText } = setup()
+    const EMAil_ERROR_MESSAGE = 'Email is required'
+    const emailInput = getByTestId('Email').querySelector('input') as HTMLInputElement
 
     fireEvent.change(emailInput, { target: { value: 'wrong type email' } })
     expect(getByText(EMAil_ERROR_MESSAGE)).toBeVisible()
@@ -105,15 +104,15 @@ describe('Board', () => {
   it('should clear other fields information when change board field selection', () => {
     const { getByRole, getByText } = setup()
     const boardIdInput = getByRole('textbox', {
-      name: 'boardId',
+      name: 'BoardId',
     }) as HTMLInputElement
     const emailInput = getByRole('textbox', {
-      name: 'email',
+      name: 'Email',
     }) as HTMLInputElement
 
     fireEvent.change(boardIdInput, { target: { value: 2 } })
     fireEvent.change(emailInput, { target: { value: 'mockEmail@qq.com' } })
-    fireEvent.mouseDown(getByRole('button', { name: 'board' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'Board' }))
     fireEvent.click(getByText(BOARD_TYPES.CLASSIC_JIRA))
 
     expect(emailInput.value).toEqual('')
@@ -201,5 +200,16 @@ describe('Board', () => {
 
     fireEvent.click(getByRole('button', { name: 'Ok' }))
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
+  })
+  it('should check error notification show and disappear when board verify response status is 404', async () => {
+    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(404))))
+    const { getByText, getByRole } = setup()
+    fillBoardFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: 'Verify' }))
+
+    await waitFor(() => {
+      expect(getByText(JIRA_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
+    })
   })
 })

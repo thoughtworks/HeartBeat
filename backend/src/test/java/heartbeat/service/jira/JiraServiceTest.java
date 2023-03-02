@@ -151,7 +151,6 @@ class JiraServiceTest {
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
-		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		String token = "token";
 		FeignException mockException = mock(FeignException.class);
 
@@ -160,7 +159,7 @@ class JiraServiceTest {
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenThrow(mockException);
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest))
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
 				.isInstanceOf(RequestFailedException.class)
 				.hasMessageContaining("Request failed with status code 400, error: exception");
 	}

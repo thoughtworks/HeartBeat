@@ -26,9 +26,11 @@ import static java.util.Objects.nonNull;
 @Log4j2
 public class JiraService {
 
+	public static final int QUERY_COUNT = 100;
+
 	private final JiraFeignClient jiraFeignClient;
 
-	public static final int QUERY_COUNT = 100;
+	private static final String DONE_CARD_TAG = "done";
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
@@ -81,16 +83,19 @@ public class JiraService {
 	}
 
 	private String handleColumKey(List<String> doneColumn, List<StatusSelfDTO> statusSelfList) {
-		String doneTag = "done";
-		List<String> keyList = statusSelfList.stream().map(statusSelf -> {
-			if (statusSelf.getStatusCategory().getKey().equalsIgnoreCase(doneTag)) {
+		List<String> keyList = new ArrayList<>();
+		statusSelfList.forEach(statusSelf -> {
+			if (statusSelf.getStatusCategory().getKey().equalsIgnoreCase(DONE_CARD_TAG)) {
 				doneColumn.add(statusSelf.getUntranslatedName().toUpperCase());
+				keyList.add(DONE_CARD_TAG);
 			}
-			return statusSelf.getStatusCategory().getKey();
-		}).toList();
+			else {
+				keyList.add(statusSelf.getStatusCategory().getName());
+			}
+		});
 
-		return (keyList.contains(doneTag)) ? doneTag : statusSelfList.stream().reduce((pre, last) -> last)
-				.orElse(StatusSelfDTO.builder().build()).getStatusCategory().getName();
+		return keyList.contains(DONE_CARD_TAG) ? DONE_CARD_TAG : keyList.stream().reduce((pre, last) -> last)
+				.orElse(StatusSelfDTO.builder().build().getStatusCategory().getName());
 	}
 
 	private List<String> getUsers(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
@@ -119,6 +124,7 @@ public class JiraService {
 		return assigneeSet.stream().flatMap(Collection::stream).distinct().toList();
 	}
 
+	@SuppressWarnings("PMD")
 	private List<DoneCard> getAllDoneCards(URI baseUrl, List<String> doneColumns, BoardRequest boardRequest) {
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
@@ -129,7 +135,7 @@ public class JiraService {
 
 		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 
-		int pages = (int) Math.ceil(Integer.parseInt(allDoneCardsResponseDTO.getTotal()) * 1.0 / QUERY_COUNT);
+		int pages = (int) Math.ceil(Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
 		if (pages <= 1) {
 			return doneCards;
 		}

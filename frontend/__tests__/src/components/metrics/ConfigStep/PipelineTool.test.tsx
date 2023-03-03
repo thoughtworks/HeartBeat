@@ -6,6 +6,7 @@ import {
   PIPELINE_TOOL_TYPES,
   ERROR_MESSAGE_COLOR,
   MOCK_PIPELINE_URL,
+  BUILD_KITE_VERIFY_FAILED_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -145,5 +146,17 @@ describe('PipelineTool', () => {
     setTimeout(() => {
       expect(getByTestId('circularProgress')).not.toBeVisible()
     }, 1000)
+  })
+
+  it('should check error notification show and disappear when board verify response status is 404', async () => {
+    server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    const { getByText, getByRole } = setup()
+    fillPipelineToolFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: 'Verify' }))
+
+    await waitFor(() => {
+      expect(getByText(BUILD_KITE_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
+    })
   })
 })

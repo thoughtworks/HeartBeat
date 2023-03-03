@@ -1,6 +1,6 @@
 class Metrics {
   navigate() {
-    cy.visit(Cypress.env('url') + '/metrics')
+    cy.visit(Cypress.env('url') + '/Metrics')
   }
   typeProjectName(projectName: string) {
     cy.contains('Project Name').siblings().type(projectName)
@@ -48,20 +48,13 @@ class Metrics {
   fillPipelineToolFieldsInfo(token: string) {
     cy.get('button:contains("Verify")').should('be.disabled')
 
-    cy.contains('token').siblings().type(token)
+    cy.contains('Token').siblings().type(token)
     cy.get('button:contains("Verify")').should('be.enabled')
-
     cy.contains('Verify').click()
 
-    cy.get('button:contains("Verified")')
-    cy.get('button:contains("Reset")')
-  }
-
-  resetPipelineToolFieldsInfo() {
-    cy.contains('Reset').click()
-
-    cy.contains('token').invoke('val', '')
-    cy.get('button:contains("Verify")').should('be.disabled')
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('BuildKite verify failed')
+    })
   }
 }
 

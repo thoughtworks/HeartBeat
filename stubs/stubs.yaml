@@ -1,0 +1,5 @@
+includes:
+  - ./stub-service.yaml
+  - ./jira/jira-stubs.yaml
+  - ./github/github-stubs.yaml
+  - ./buildkite/buildkite-stubs.yaml

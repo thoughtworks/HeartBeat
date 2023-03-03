@@ -128,7 +128,11 @@ export const SourceControl = () => {
               <ResetButton type='reset'>Reset</ResetButton>
             </>
           ) : (
-            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
+            <VerifyButton
+              data-test-id='sourceControlVerifyButton'
+              type='submit'
+              disabled={isDisableVerifyButton || isLoading}
+            >
               Verify
             </VerifyButton>
           )}

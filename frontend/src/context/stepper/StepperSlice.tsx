@@ -3,11 +3,11 @@ import type { RootState } from '@src/store'
 import { ZERO } from '@src/constants'
 
 export interface StepState {
-  value: number
+  stepNumber: number
 }
 
 const initialState: StepState = {
-  value: 0,
+  stepNumber: 0,
 }
 
 export const stepperSlice = createSlice({
@@ -15,16 +15,16 @@ export const stepperSlice = createSlice({
   initialState,
   reducers: {
     nextStep: (state) => {
-      state.value += 1
+      state.stepNumber += 1
     },
     backStep: (state) => {
-      state.value = state.value === ZERO ? ZERO : state.value - 1
+      state.stepNumber = state.stepNumber === ZERO ? ZERO : state.stepNumber - 1
     },
   },
 })
 
 export const { nextStep, backStep } = stepperSlice.actions
 
-export const selectStep = (state: RootState) => state.stepper.value
+export const selectStep = (state: RootState) => state.stepper.stepNumber
 
 export default stepperSlice.reducer

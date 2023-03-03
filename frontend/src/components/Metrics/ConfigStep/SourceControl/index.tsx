@@ -13,7 +13,7 @@ import {
 } from '@src/components/Metrics/ConfigStep/SourceControl/style'
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectSourceControlFields, updateSourceControlFields } from '@src/features/config/configSlice'
+import { selectDateRange, selectSourceControlFields, updateSourceControlFields } from '@src/features/config/configSlice'
 import { changeSourceControlVerifyState, isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
@@ -21,6 +21,7 @@ import { ErrorNotification } from '@src/components/ErrorNotifaction'
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
   const sourceControlFields = useAppSelector(selectSourceControlFields)
+  const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const isVerified = useAppSelector(isSourceControlVerified)
   const { verifyGithub, isLoading, errorMessage } = useVerifySourceControlEffect()
@@ -57,6 +58,8 @@ export const SourceControl = () => {
     const params = {
       type: fields[0].value,
       token: fields[1].value,
+      startTime: DateRange.startDate,
+      endTime: DateRange.endDate,
     }
     await verifyGithub(params).then((res) => {
       if (res) {

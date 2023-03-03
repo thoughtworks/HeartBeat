@@ -17,12 +17,12 @@ describe('HomeGuide', () => {
     expect(getByText(CREATE_NEW_PROJECT)).toBeInTheDocument()
   })
 
-  it('should go to Metrics page when click create a new project button', async () => {
+  it('should go to metrics page when click create a new project button', async () => {
     const { getByText } = render(<HomeGuide />)
 
     fireEvent.click(getByText(CREATE_NEW_PROJECT))
 
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/Metrics')
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/metrics')
   })
 })

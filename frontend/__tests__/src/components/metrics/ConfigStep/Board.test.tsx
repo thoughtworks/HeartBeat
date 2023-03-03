@@ -5,10 +5,10 @@ import {
   BOARD_TYPES,
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  JIRA_VERIFY_FAILED_MESSAGE,
   MOCK_BOARD_URL,
   REST_BUTTON,
   VERIFY_BUTTON,
+  ERROR_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -211,7 +211,7 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: VERIFY_BUTTON }))
 
     await waitFor(() => {
-      expect(getByText(JIRA_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
+      expect(getByText(ERROR_MESSAGE[404])).toBeInTheDocument()
     })
   })
 })

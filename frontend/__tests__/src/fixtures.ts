@@ -48,7 +48,11 @@ export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site',
 
 export const MOCK_BOARD_URL = '/api/v1/kanban/verify'
 
-export const JIRA_VERIFY_FAILED_MESSAGE = 'Jira verify failed'
+export const ERROR_MESSAGE = {
+  400: 'Jira verify failed: bad request',
+  404: 'Jira verify failed: 404 not found',
+  500: 'Jira verify failed: bad server',
+}
 
 export const VERIFY_BUTTON = 'Verify'
 export const REST_BUTTON = 'Reset'

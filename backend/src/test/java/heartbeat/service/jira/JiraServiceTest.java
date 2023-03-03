@@ -72,11 +72,11 @@ class JiraServiceTest {
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
-		assertThat(boardConfigResponse.getJiraColumns()).hasSize(1);
-		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
-		assertThat(boardConfigResponse.getJiraColumns().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
-		assertThat(boardConfigResponse.getJiraColumns().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
+		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigResponse.getUsers()).hasSize(1);
 		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
 		assertThat(boardConfigResponse.getTargetFields()).isEqualTo(expectTargetField);
@@ -160,7 +160,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenThrow(mockException);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
-				.isInstanceOf(RequestFailedException.class)
+				.isInstanceOf(FeignException.class)
 				.hasMessageContaining("Request failed with status code 400, error: exception");
 	}
 

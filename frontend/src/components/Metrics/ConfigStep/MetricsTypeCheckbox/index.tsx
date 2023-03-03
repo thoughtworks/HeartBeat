@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectRequiredData, updateRequiredData } from '@src/features/config/configSlice'
+import { selectRequiredData, updateRequiredData } from '@src/context/config/configSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()

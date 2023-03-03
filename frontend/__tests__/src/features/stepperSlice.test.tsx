@@ -1,4 +1,4 @@
-import stepperReducer, { nextStep, backStep } from '@src/features/stepper/StepperSlice'
+import stepperReducer, { nextStep, backStep } from '@src/context/stepper/StepperSlice'
 import { ZERO } from '../fixtures'
 
 describe('stepper reducer', () => {

@@ -13,8 +13,8 @@ import {
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
-import { selectBoardFields, selectDateRange, updateBoardFields } from '@src/features/config/configSlice'
+import { changeBoardVerifyState, isBoardVerified } from '@src/context/board/boardSlice'
+import { selectBoardFields, selectDateRange, updateBoardFields } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'

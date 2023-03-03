@@ -4,7 +4,7 @@ import configReducer, {
   updateDateRange,
   updateProjectName,
   updateRequiredData,
-} from '@src/features/config/configSlice'
+} from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 import { BOARD_TYPES } from '@src/constants'
 

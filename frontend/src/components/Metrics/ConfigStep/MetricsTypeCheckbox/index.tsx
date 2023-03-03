@@ -4,11 +4,11 @@ import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectRequiredData, updateRequiredData } from '@src/context/config/configSlice'
+import { selectMetrics, updateRequiredData } from '@src/context/config/configSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
-  const requireData = useAppSelector(selectRequiredData)
+  const requireData = useAppSelector(selectMetrics)
   const [isShowBoard, setIsShowBoard] = useState(false)
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
 

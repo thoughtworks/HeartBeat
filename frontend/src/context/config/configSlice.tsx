@@ -9,8 +9,8 @@ export interface configState {
     startDate: string
     endDate: string
   }
-  requiredData: string[]
-  boardFields: { board: string; boardId: string; email: string; projectKey: string; site: string; token: string }
+  metrics: string[]
+  board: { type: string; boardId: string; email: string; projectKey: string; site: string; token: string }
 }
 
 const initialState: configState = {
@@ -20,9 +20,9 @@ const initialState: configState = {
     startDate: '',
     endDate: '',
   },
-  requiredData: [],
-  boardFields: {
-    board: BOARD_TYPES.JIRA,
+  metrics: [],
+  board: {
+    type: BOARD_TYPES.JIRA,
     boardId: '',
     email: '',
     projectKey: '',
@@ -46,21 +46,21 @@ export const configSlice = createSlice({
       state.dateRange = { startDate, endDate }
     },
     updateRequiredData: (state, action) => {
-      state.requiredData = action.payload
+      state.metrics = action.payload
     },
-    updateBoardFields: (state, action) => {
-      state.boardFields = action.payload
+    updateBoard: (state, action) => {
+      state.board = action.payload
     },
   },
 })
 
-export const { updateProjectName, updateCalendarType, updateDateRange, updateRequiredData, updateBoardFields } =
+export const { updateProjectName, updateCalendarType, updateDateRange, updateRequiredData, updateBoard } =
   configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.projectName
 export const selectCalendarType = (state: RootState) => state.config.calendarType
 export const selectDateRange = (state: RootState) => state.config.dateRange
-export const selectRequiredData = (state: RootState) => state.config.requiredData
-export const selectBoardFields = (state: RootState) => state.config.boardFields
+export const selectMetrics = (state: RootState) => state.config.metrics
+export const selectBoard = (state: RootState) => state.config.board
 
 export default configSlice.reducer

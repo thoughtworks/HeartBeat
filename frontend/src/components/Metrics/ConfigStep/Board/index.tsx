@@ -14,7 +14,7 @@ import {
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changeBoardVerifyState, isBoardVerified } from '@src/context/board/boardSlice'
-import { selectBoardFields, selectDateRange, updateBoardFields } from '@src/context/config/configSlice'
+import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
@@ -22,7 +22,7 @@ import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 export const Board = () => {
   const dispatch = useAppDispatch()
   const isVerified = useAppSelector(isBoardVerified)
-  const boardFields = useAppSelector(selectBoardFields)
+  const boardFields = useAppSelector(selectBoard)
   const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
@@ -30,7 +30,7 @@ export const Board = () => {
   const [fields, setFields] = useState([
     {
       key: 'Board',
-      value: boardFields.board,
+      value: boardFields.type,
       isValid: true,
     },
     {
@@ -96,7 +96,7 @@ export const Board = () => {
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
-      updateBoardFields({
+      updateBoard({
         board: fields[0].value,
         boardId: fields[1].value,
         email: fields[2].value,
@@ -117,7 +117,7 @@ export const Board = () => {
     await verifyJira(params).then((res) => {
       if (res) {
         dispatch(changeBoardVerifyState(res.isBoardVerify))
-        dispatch(updateBoardFields(res.response))
+        dispatch(updateBoard(res.response))
         setIsNoDoneCard(res.isNoDoneCard)
       }
     })

@@ -2,6 +2,7 @@ import { HttpClient } from '@src/clients/Httpclient'
 import { BadRequestException } from '../exceptions/BadRequestException'
 import { BadServerException } from '@src/exceptions/BasServerException'
 import { AxiosError } from 'axios'
+import { NotFoundException } from '@src/exceptions/NotFoundException'
 
 export interface getVerifyBoardParams {
   token: string
@@ -24,11 +25,14 @@ export class BoardClient extends HttpClient {
     } catch (e) {
       this.isBoardVerify = false
       const code = (e as AxiosError).response?.status
+      if (code === 400) {
+        throw new BadRequestException(params.type, 'bad request')
+      }
       if (code === 404) {
-        throw new BadRequestException(params.type, 'verify failed')
+        throw new NotFoundException(params.type, '404 not found')
       }
       if (code === 500) {
-        throw new BadServerException(params.type, 'verify failed')
+        throw new BadServerException(params.type, 'bad server')
       }
     }
     return {

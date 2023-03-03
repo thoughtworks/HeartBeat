@@ -13,13 +13,13 @@ export const boardSlice = createSlice({
   name: 'board',
   initialState,
   reducers: {
-    changeBoardVerifyState: (state, action) => {
+    updateBoardVerifyState: (state, action) => {
       state.isBoardVerified = action.payload
     },
   },
 })
 
-export const { changeBoardVerifyState } = boardSlice.actions
+export const { updateBoardVerifyState } = boardSlice.actions
 
 export const selectIsBoardVerified = (state: RootState) => state.board.isBoardVerified
 

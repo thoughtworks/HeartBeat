@@ -13,7 +13,7 @@ import {
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { changeBoardVerifyState, selectIsBoardVerified } from '@src/context/board/boardSlice'
+import { updateBoardVerifyState, selectIsBoardVerified } from '@src/context/board/boardSlice'
 import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
@@ -66,7 +66,7 @@ export const Board = () => {
       return field
     })
     setFields(newFields)
-    dispatch(changeBoardVerifyState(false))
+    dispatch(updateBoardVerifyState(false))
   }
 
   const checkFiledValid = (type: string, value: string): boolean =>
@@ -79,7 +79,7 @@ export const Board = () => {
         return field
       })
       setFields(newFieldsValue)
-      dispatch(changeBoardVerifyState(false))
+      dispatch(updateBoardVerifyState(false))
       return
     }
     const newFieldsValue = fields.map((field, fieldIndex) => {
@@ -116,7 +116,7 @@ export const Board = () => {
     }
     await verifyJira(params).then((res) => {
       if (res) {
-        dispatch(changeBoardVerifyState(res.isBoardVerify))
+        dispatch(updateBoardVerifyState(res.isBoardVerify))
         dispatch(updateBoard(res.response))
         setIsNoDoneCard(res.isNoDoneCard)
       }
@@ -126,7 +126,7 @@ export const Board = () => {
   const handleResetBoardFields = () => {
     initBoardFields()
     setIsDisableVerifyButton(true)
-    dispatch(changeBoardVerifyState(false))
+    dispatch(updateBoardVerifyState(false))
   }
 
   return (

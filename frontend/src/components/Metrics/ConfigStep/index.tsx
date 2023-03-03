@@ -6,7 +6,7 @@ import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, P
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
-import { changeBoardVerifyState } from '@src/context/board/boardSlice'
+import { updateBoardVerifyState } from '@src/context/board/boardSlice'
 import {
   selectCalendarType,
   selectProjectName,
@@ -51,7 +51,7 @@ export const ConfigStep = () => {
       <RadioGroup
         value={calendarType}
         onChange={(e) => {
-          dispatch(changeBoardVerifyState(false))
+          dispatch(updateBoardVerifyState(false))
           dispatch(updateCalendarType(e.target.value))
         }}
       >

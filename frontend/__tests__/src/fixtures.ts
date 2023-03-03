@@ -75,5 +75,5 @@ export enum CONFIG_TITLE {
 
 export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
 
-export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
+export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed'
 export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'

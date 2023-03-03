@@ -25,10 +25,10 @@ export class BoardClient extends HttpClient {
       this.isBoardVerify = false
       const code = (e as AxiosError).response?.status
       if (code === 404) {
-        throw new BadRequestException(params.type, 'Bad Request')
+        throw new BadRequestException(params.type, 'verify failed')
       }
       if (code === 500) {
-        throw new BadServerException(params.type, 'Bad Server')
+        throw new BadServerException(params.type, 'verify failed')
       }
     }
     return {

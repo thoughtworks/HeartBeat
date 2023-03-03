@@ -5,6 +5,7 @@ import boardReducer from './features/board/boardSlice'
 import pipelineReducer from './features/pipelineTool/pipelineToolSlice'
 import sourceControlReducer from './features/sourceControl/sourceControlSlice'
 import jiraVerifyResponseReducer from './features/jiraVerifyResponse/jiraVerifyResponseSlice'
+import pipelineToolResponseReducer from './features/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
 export const store = configureStore({
   reducer: {
     stepper: stepperReducer,
@@ -13,6 +14,7 @@ export const store = configureStore({
     pipelineTool: pipelineReducer,
     sourceControl: sourceControlReducer,
     jiraVerifyResponse: jiraVerifyResponseReducer,
+    pipelineToolVerifyResponse: pipelineToolResponseReducer,
   },
 })
 

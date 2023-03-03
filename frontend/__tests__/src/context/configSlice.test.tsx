@@ -3,10 +3,10 @@ import configReducer, {
   updateCalendarType,
   updateDateRange,
   updateProjectName,
-  updateRequiredData,
+  updateMetrics,
 } from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
-import { BOARD_TYPES } from '@src/constants'
+import { BOARD_TYPES, PIPELINE_TOOL_TYPES } from '@src/constants'
 
 const initState = {
   projectName: '',
@@ -22,6 +22,10 @@ const initState = {
     email: '',
     projectKey: '',
     site: '',
+    token: '',
+  },
+  pipelineToolFields: {
+    pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',
   },
 }
@@ -56,7 +60,7 @@ describe('config reducer', () => {
   })
 
   it('should update required data when change require data selections', () => {
-    const config = configReducer(initState, updateRequiredData([VELOCITY]))
+    const config = configReducer(initState, updateMetrics([VELOCITY]))
 
     expect(config.metrics).toEqual([VELOCITY])
   })

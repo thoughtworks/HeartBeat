@@ -1,6 +1,6 @@
 class Metrics {
   navigate() {
-    cy.visit(Cypress.env('url') + '/Metrics')
+    cy.visit(Cypress.env('url') + '/metrics')
   }
   typeProjectName(projectName: string) {
     cy.contains('Project Name').siblings().type(projectName)
@@ -33,6 +33,28 @@ class Metrics {
     cy.contains('Token').siblings().type(token)
 
     cy.get('button:contains("Verify")').should('be.enabled')
+  }
+
+  selectLeadTimeForChangesAndDeploymentFrequency() {
+    cy.contains('Required Data').siblings().click()
+    cy.get("[type='checkbox']").uncheck()
+
+    cy.contains('Lead time for changes').click()
+    cy.contains('Deployment frequency').click()
+
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+  }
+
+  fillPipelineToolFieldsInfo(token: string) {
+    cy.get('button:contains("Verify")').should('be.disabled')
+
+    cy.contains('Token').siblings().type(token)
+    cy.get('button:contains("Verify")').should('be.enabled')
+    cy.contains('Verify').click()
+
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('BuildKite verify failed')
+    })
   }
 }
 

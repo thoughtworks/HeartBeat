@@ -1,4 +1,4 @@
-import { CONFIG_TITLE, REQUIRED_DATA, REQUIRED_DATA_LIST, VELOCITY } from '../../../fixtures'
+import { CONFIG_TITLE, REQUIRED_DATA, REQUIRED_DATA_LIST, VELOCITY, LEAD_TIME_FOR_CHANGES } from '../../../fixtures'
 import { fireEvent, render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import { Provider } from 'react-redux'
@@ -76,5 +76,25 @@ describe('MetricsTypeCheckbox', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
 
     expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull()
+  })
+
+  it('should pipelineTool component when click MetricsTypeCheckbox selection Lead time for changes ', () => {
+    const { getByRole } = setup()
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const listBox = within(getByRole('listbox'))
+    fireEvent.click(listBox.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
+
+    expect(getByRole('heading', { name: CONFIG_TITLE.PIPELINE_TOOL, hidden: true })).toBeInTheDocument()
+  })
+
+  it('should hidden pipelineTool component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is Lead time for changes ', () => {
+    const { getByRole, queryByText } = setup()
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
+
+    expect(queryByText(CONFIG_TITLE.PIPELINE_TOOL)).toBeNull()
   })
 })

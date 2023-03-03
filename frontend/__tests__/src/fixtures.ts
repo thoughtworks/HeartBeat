@@ -33,6 +33,7 @@ export const REQUIRED_DATA_LIST = [
 ]
 export const VELOCITY = 'Velocity'
 export const REQUIRED_DATA = 'Required Data'
+export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
@@ -43,11 +44,6 @@ export const BOARD_TYPES = {
   JIRA: 'Jira',
   LINEAR: 'Linear',
 }
-
-export enum CONFIG_TITLE {
-  BOARD = 'Board',
-}
-
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/kanban/verify'
@@ -67,3 +63,17 @@ export const mockBoardVerifyRequestParams = {
   endTime: '1614873600000',
   boardId: '1',
 }
+export const PIPELINE_TOOL_TYPES = {
+  BUILD_KITE: 'BuildKite',
+  GO_CD: 'GoCD',
+}
+
+export enum CONFIG_TITLE {
+  BOARD = 'Board',
+  PIPELINE_TOOL = 'PipelineTool',
+}
+
+export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
+
+export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
+export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'

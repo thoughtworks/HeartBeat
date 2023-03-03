@@ -23,7 +23,6 @@ describe('use verify board state', () => {
       jest.advanceTimersByTime(2000)
     })
 
-    expect(result.current.showError).toEqual(false)
     expect(result.current.errorMessage).toEqual('')
   })
 })

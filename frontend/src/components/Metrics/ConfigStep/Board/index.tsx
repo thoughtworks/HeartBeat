@@ -26,7 +26,7 @@ export const Board = () => {
   const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
-  const { verifyJira, isLoading, showError, errorMessage } = useVerifyBoardEffect()
+  const { verifyJira, isLoading, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
     {
       key: 'Board',
@@ -132,7 +132,7 @@ export const Board = () => {
   return (
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
-      {showError && <ErrorNotification message={errorMessage} />}
+      {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && (
         <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

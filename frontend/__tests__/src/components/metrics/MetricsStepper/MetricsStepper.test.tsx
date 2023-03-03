@@ -17,7 +17,7 @@ describe('MetricsStepper', () => {
       </Provider>
     )
 
-  it('should show metrics stepper', () => {
+  it('should show Metrics stepper', () => {
     const { getByText } = setup()
 
     STEPS.map((label) => {
@@ -27,7 +27,7 @@ describe('MetricsStepper', () => {
     expect(getByText(BACK)).toBeInTheDocument()
   })
 
-  it('should show metrics config step when click back button given config step ', () => {
+  it('should show Metrics config step when click back button given config step ', () => {
     const { getByText } = setup()
 
     fireEvent.click(getByText(BACK))
@@ -35,7 +35,7 @@ describe('MetricsStepper', () => {
     expect(getByText('Project Name')).toBeInTheDocument()
   })
 
-  it('should show metrics metrics step when click next button given config step', async () => {
+  it('should show Metrics Metrics step when click next button given config step', async () => {
     const { getByText } = setup()
 
     fireEvent.click(getByText(NEXT))
@@ -43,7 +43,7 @@ describe('MetricsStepper', () => {
     expect(getByText('Project Name')).toBeInTheDocument()
   })
 
-  it('should show metrics config step when click back button given metrics step', async () => {
+  it('should show Metrics config step when click back button given Metrics step', async () => {
     const { getByText } = setup()
 
     fireEvent.click(getByText(NEXT))
@@ -51,7 +51,7 @@ describe('MetricsStepper', () => {
     expect(getByText('Project Name')).toBeInTheDocument()
   })
 
-  it('should show metrics export step when click next button given export step', async () => {
+  it('should show Metrics export step when click next button given export step', async () => {
     const { getByText } = setup()
 
     fireEvent.click(getByText(NEXT))

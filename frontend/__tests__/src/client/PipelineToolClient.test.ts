@@ -1,6 +1,6 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { BUILD_KITE_VERIFY_FAILED_MESSAGE, MOCK_PIPELINE_URL, MOCK_URL, PIPELINE_TOOL_TYPES } from '../fixtures'
+import { BUILD_KITE_VERIFY_FAILED_MESSAGE, MOCK_PIPELINE_URL, PIPELINE_TOOL_TYPES } from '../fixtures'
 import { pipelineToolClient } from '@src/clients/PipelineToolClient'
 
 const server = setupServer(

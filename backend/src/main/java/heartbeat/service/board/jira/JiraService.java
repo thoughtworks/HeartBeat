@@ -9,11 +9,12 @@ import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.IssueField;
 import heartbeat.client.dto.Issuetype;
 import heartbeat.client.dto.JiraBoardConfigDTO;
+import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
-import heartbeat.controller.board.vo.response.JiraColumnResponse;
 import heartbeat.controller.board.vo.response.ColumnValue;
+import heartbeat.controller.board.vo.response.JiraColumnResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,10 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiFunction;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -41,6 +45,11 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 @Log4j2
 public class JiraService {
+
+	// Todo: close pool.
+	private static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 60, 60, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<>(100), Executors.defaultThreadFactory(),
+			new ThreadPoolExecutor.CallerRunsPolicy());
 
 	public static final int QUERY_COUNT = 100;
 
@@ -56,46 +65,52 @@ public class JiraService {
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardRequest.getBoardId(),
-				boardRequest.getToken());
+					boardRequest.getToken());
 
 			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequest, baseUrl,
-				jiraBoardConfigDTO);
+					jiraBoardConfigDTO);
 			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequest);
 
-			return jiraColumnsFuture.thenCompose(jiraColumnResult ->
-				getUserAsync(baseUrl, boardRequest, jiraColumnResult.getDoneColumns()).thenApply(users ->
-					BoardConfigResponse.builder()
-						.jiraColumnResponses(jiraColumnResult.getJiraColumnResponses())
-						.targetFields(targetFieldFuture.join())
-						.users(users)
-						.build()
-				)
-			).join();
-		} catch (FeignException e) {
+			return jiraColumnsFuture.thenCompose(
+					jiraColumnResult -> getUserAsync(baseUrl, boardRequest, jiraColumnResult.getDoneColumns())
+							.thenApply(users -> BoardConfigResponse.builder()
+									.jiraColumnResponses(jiraColumnResult.getJiraColumnResponses())
+									.targetFields(targetFieldFuture.join()).users(users).build()))
+					.join();
+		}
+		catch (FeignException e) {
 			log.error("Failed when call Jira to get board config", e);
 			throw new RequestFailedException(e);
+		}
+		catch (CompletionException e) {
+			if (e.getCause() instanceof FeignException feignException) {
+				throw new RequestFailedException(feignException);
+			}
+			throw e;
 		}
 	}
 
 	private CompletableFuture<JiraColumnResult> getJiraColumnsAsync(BoardRequest boardRequest, URI baseUrl,
-																	JiraBoardConfigDTO jiraBoardConfigDTO) {
-		return CompletableFuture
-				.supplyAsync(() -> getJiraColumns(boardRequest, baseUrl, jiraBoardConfigDTO));
+			JiraBoardConfigDTO jiraBoardConfigDTO) {
+		return CompletableFuture.supplyAsync(() -> getJiraColumns(boardRequest, baseUrl, jiraBoardConfigDTO), executor);
 	}
 
 	private JiraColumnResult getJiraColumns(BoardRequest boardRequest, URI baseUrl,
-											JiraBoardConfigDTO jiraBoardConfigDTO) {
+			JiraBoardConfigDTO jiraBoardConfigDTO) {
 		List<String> doneColumns = new CopyOnWriteArrayList<>();
 		List<CompletableFuture<JiraColumnResponse>> futures = jiraBoardConfigDTO.getColumnConfig().getColumns().stream()
-			.map(jiraColumn -> CompletableFuture.supplyAsync(
-				() -> getColumnNameAndStatus(jiraColumn, baseUrl, boardRequest.getToken(), doneColumns)))
-			.toList();
+				.map(jiraColumn -> CompletableFuture.supplyAsync(
+						() -> getColumnNameAndStatus(jiraColumn, baseUrl, boardRequest.getToken(), doneColumns),
+						executor))
+				.toList();
 
-		List<JiraColumnResponse> columnRespons = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+		List<JiraColumnResponse> columnRespons = futures.stream().map(CompletableFuture::join)
+				.collect(Collectors.toList());
 		return JiraColumnResult.builder().jiraColumnResponses(columnRespons).doneColumns(doneColumns).build();
 	}
 
-	private JiraColumnResponse getColumnNameAndStatus(heartbeat.client.dto.JiraColumn jiraColumn, URI baseUrl, String token, List<String> doneColumns) {
+	private JiraColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, String token,
+			List<String> doneColumns) {
 		List<StatusSelfDTO> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
 		String key = handleColumKey(doneColumns, statusSelfList);
 
@@ -106,11 +121,12 @@ public class JiraService {
 				.build();
 	}
 
-	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, heartbeat.client.dto.JiraColumn jiraColumn, String token) {
+	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, heartbeat.client.dto.JiraColumn jiraColumn,
+			String token) {
 		List<CompletableFuture<StatusSelfDTO>> futures = jiraColumn.getStatuses().stream()
-				.map(jiraColumnStatus -> CompletableFuture.supplyAsync(
-						() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token)))
-				.toList();
+				.map(jiraColumnStatus -> CompletableFuture.supplyAsync(() -> {
+					return jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token);
+				}, executor)).toList();
 
 		return futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 	}
@@ -131,11 +147,12 @@ public class JiraService {
 				: keyList.stream().reduce((pre, last) -> last).orElse("");
 	}
 
-	private CompletableFuture<List<String>> getUserAsync(URI baseUrl, BoardRequest boardRequest, List<String> doneColumns) {
-		return CompletableFuture.supplyAsync(() -> getUsers(baseUrl, boardRequest, doneColumns));
+	private CompletableFuture<List<String>> getUserAsync(URI baseUrl, BoardRequest boardRequest,
+			List<String> doneColumns) {
+		return CompletableFuture.supplyAsync(() -> getUsers(baseUrl, boardRequest, doneColumns), executor);
 	}
 
-	private List<String> getUsers(URI baseUrl,BoardRequest boardRequest, List<String> doneColumns) {
+	private List<String> getUsers(URI baseUrl, BoardRequest boardRequest, List<String> doneColumns) {
 		log.info(doneColumns);
 		if (doneColumns.isEmpty()) {
 			throw new RequestFailedException(204, "There is no done column.");
@@ -148,8 +165,10 @@ public class JiraService {
 			throw new RequestFailedException(204, "There is no done cards.");
 		}
 
-		List<CompletableFuture<List<String>>> futures = doneCards.stream().map(doneCard -> CompletableFuture
-				.supplyAsync(() -> getAssigneeSet(baseUrl, doneCard, boardRequest.getToken()))).toList();
+		List<CompletableFuture<List<String>>> futures = doneCards.stream()
+				.map(doneCard -> CompletableFuture
+						.supplyAsync(() -> getAssigneeSet(baseUrl, doneCard, boardRequest.getToken()), executor))
+				.toList();
 
 		List<List<String>> assigneeList = futures.stream().map(CompletableFuture::join).toList();
 		return assigneeList.stream().flatMap(Collection::stream).distinct().toList();
@@ -173,9 +192,9 @@ public class JiraService {
 
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
 		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
-				.map(startFrom -> CompletableFuture
-						.supplyAsync(() -> (jiraFeignClient.getAllDoneCards(baseUrl, boardRequest.getBoardId(),
-								QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequest.getToken()))))
+				.map(startFrom -> CompletableFuture.supplyAsync(() -> (jiraFeignClient.getAllDoneCards(baseUrl,
+						boardRequest.getBoardId(), QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequest.getToken())),
+						executor))
 				.toList();
 
 		List<AllDoneCardsResponseDTO> doneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
@@ -202,7 +221,7 @@ public class JiraService {
 	}
 
 	private CompletableFuture<List<TargetField>> getTargetFieldAsync(URI baseUrl, BoardRequest boardRequest) {
-		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequest));
+		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequest), executor);
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequest boardRequest) {

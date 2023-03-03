@@ -1,6 +1,6 @@
 class Metrics {
   navigate() {
-    cy.visit(Cypress.env('url') + '/metrics')
+    cy.visit(Cypress.env('url') + '/Metrics')
   }
   typeProjectName(projectName: string) {
     cy.contains('Project Name').siblings().type(projectName)

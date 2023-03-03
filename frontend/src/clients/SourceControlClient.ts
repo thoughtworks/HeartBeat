@@ -14,21 +14,19 @@ export class SourceControlClient extends HttpClient {
 
   getVerifySourceControl = async (params: getVerifySourceControlParams) => {
     try {
-      const result = await this.axiosInstance
-        .get('https://jsonplaceholder.typicode.com/posts', { params: { ...params } })
-        .then((res) => res)
-      // const result = await this.axiosInstance.get('/codebase/fetch/repos', { params: { ...params } }).then((res) => res)
-      if (result.status === 200) {
-        this.handleSourceControlVerifySucceed(result.data)
-      }
+      // const result = await this.axiosInstance
+      //   .get('https://jsonplaceholder.typicode.com/posts', { params: { ...params } })
+      //   .then((res) => res)
+      const result = await this.axiosInstance.get('/codebase/fetch/repos', { params: { ...params } }).then((res) => res)
+      this.handleSourceControlVerifySucceed(result.data)
     } catch (e) {
       this.isSourceControlVerify = false
       const code = (e as AxiosError).response?.status
       if (code === 404) {
-        throw new BadRequestException(params.type, 'Bad Request')
+        throw new BadRequestException(params.type, 'verify failed')
       }
       if (code === 500) {
-        throw new BadServerException(params.type, 'Bad Server')
+        throw new BadServerException(params.type, 'verify failed')
       }
     }
     return {

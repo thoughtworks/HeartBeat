@@ -34,6 +34,28 @@ class Metrics {
 
     cy.get('button:contains("Verify")').should('be.enabled')
   }
+
+  selectLeadTimeForChangesAndDeploymentFrequency() {
+    cy.contains('Required Data').siblings().click()
+    cy.get("[type='checkbox']").uncheck()
+
+    cy.contains('Lead time for changes').click()
+    cy.contains('Deployment frequency').click()
+
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+  }
+
+  fillPipelineToolFieldsInfo(token: string) {
+    cy.get('button:contains("Verify")').should('be.disabled')
+
+    cy.contains('Token').siblings().type(token)
+    cy.get('button:contains("Verify")').should('be.enabled')
+    cy.contains('Verify').click()
+
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('BuildKite verify failed')
+    })
+  }
 }
 
 const metricsPage = new Metrics()

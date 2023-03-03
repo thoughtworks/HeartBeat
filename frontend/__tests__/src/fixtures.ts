@@ -54,7 +54,7 @@ export const ERROR_MESSAGE = {
   500: 'Jira verify failed: bad server',
 }
 
-export const mockBoardVerifyRequestParams = {
+export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: BOARD_TYPES.JIRA,
   site: '1',

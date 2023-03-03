@@ -6,8 +6,6 @@ import {
   PIPELINE_TOOL_TYPES,
   ERROR_MESSAGE_COLOR,
   MOCK_PIPELINE_URL,
-  MOCK_URL,
-  JIRA_VERIFY_FAILED_MESSAGE,
   BUILD_KITE_VERIFY_FAILED_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'

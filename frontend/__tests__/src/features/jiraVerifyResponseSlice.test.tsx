@@ -1,6 +1,6 @@
 import jiraVerifyResponseReducer, {
   updateJiraVerifyResponse,
-} from '@src/features/jiraVerifyResponse/jiraVerifyResponseSlice'
+} from '@src/features/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 
 describe('jiraVerifyResponse reducer', () => {
   it('should show empty array when handle initial state', () => {

@@ -12,6 +12,10 @@ export const NEXT = 'Next'
 
 export const BACK = 'Back'
 
+export const VERIFY = 'Verify'
+
+export const REST = 'Reset'
+
 export const PROJECT_NAME_LABEL = 'Project Name'
 
 export const EXPORT_BOARD_DATA = 'Export board data'
@@ -54,5 +58,12 @@ export const ERROR_MESSAGE = {
   500: 'Jira verify failed: bad server',
 }
 
-export const VERIFY_BUTTON = 'Verify'
-export const REST_BUTTON = 'Reset'
+export const mockBoardVerifyRequestParams = {
+  token: 'mockToken',
+  type: BOARD_TYPES.JIRA,
+  site: '1',
+  projectKey: '1',
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+  boardId: '1',
+}

@@ -6,8 +6,8 @@ import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
   MOCK_BOARD_URL,
-  REST_BUTTON,
-  VERIFY_BUTTON,
+  REST,
+  VERIFY,
   ERROR_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
@@ -132,22 +132,22 @@ describe('Board', () => {
     )
     fillBoardFieldsInformation()
 
-    fireEvent.click(getByText(VERIFY_BUTTON))
+    fireEvent.click(getByText(VERIFY))
     await waitFor(() => {
-      fireEvent.click(getByRole('button', { name: REST_BUTTON }))
+      fireEvent.click(getByRole('button', { name: REST }))
     })
 
     fieldInputs.map((input) => {
       expect(input.value).toEqual('')
     })
     expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
-    expect(queryByRole('button', { name: REST_BUTTON })).not.toBeTruthy()
-    expect(queryByRole('button', { name: VERIFY_BUTTON })).toBeDisabled()
+    expect(queryByRole('button', { name: REST })).not.toBeTruthy()
+    expect(queryByRole('button', { name: VERIFY })).toBeDisabled()
   })
 
   it('should enabled verify button when all fields checked correctly given disable verify button', () => {
     const { getByRole } = setup()
-    const verifyButton = getByRole('button', { name: VERIFY_BUTTON })
+    const verifyButton = getByRole('button', { name: VERIFY })
 
     expect(verifyButton).toBeDisabled()
 
@@ -160,17 +160,17 @@ describe('Board', () => {
     const { getByText } = setup()
     fillBoardFieldsInformation()
 
-    fireEvent.click(getByText(VERIFY_BUTTON))
+    fireEvent.click(getByText(VERIFY))
 
     await waitFor(() => {
-      expect(getByText(REST_BUTTON)).toBeVisible()
+      expect(getByText(REST)).toBeVisible()
     })
   })
 
   it('should called verifyBoard method once when click verify button', async () => {
     const { getByRole, getByText } = setup()
     fillBoardFieldsInformation()
-    fireEvent.click(getByRole('button', { name: VERIFY_BUTTON }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(getByText('Verified')).toBeInTheDocument()
@@ -180,7 +180,7 @@ describe('Board', () => {
   it('should check loading animation when click verify button', async () => {
     const { getByRole, getByTestId } = setup()
     fillBoardFieldsInformation()
-    fireEvent.click(getByRole('button', { name: VERIFY_BUTTON }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     expect(getByTestId('circularProgress')).toBeVisible()
 
@@ -194,7 +194,7 @@ describe('Board', () => {
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: VERIFY_BUTTON }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(getByText('Sorry there is no card has been done, please change your collection date!')).toBeInTheDocument()
@@ -208,7 +208,7 @@ describe('Board', () => {
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: VERIFY_BUTTON }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(getByText(ERROR_MESSAGE[404])).toBeInTheDocument()

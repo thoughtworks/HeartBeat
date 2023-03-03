@@ -6,10 +6,10 @@ import {
   PROJECT_NAME_LABEL,
   REGULAR_CALENDAR,
   REQUIRED_DATA,
-  REST_BUTTON,
+  REST,
   TEST_PROJECT_NAME,
   VELOCITY,
-  VERIFY_BUTTON,
+  VERIFY,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -128,12 +128,12 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fillBoardFieldsInformation()
-    fireEvent.click(getByText(VERIFY_BUTTON))
+    fireEvent.click(getByText(VERIFY))
     fireEvent.click(getByText(CHINA_CALENDAR))
 
-    expect(queryByText(VERIFY_BUTTON)).toBeVisible()
+    expect(queryByText(VERIFY)).toBeVisible()
     expect(queryByText('Verified')).toBeNull()
-    expect(queryByText(REST_BUTTON)).toBeNull()
+    expect(queryByText(REST)).toBeNull()
   })
 
   it('should verify again when date picker is changed given board fields are filled and verified', () => {
@@ -145,11 +145,11 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fillBoardFieldsInformation()
-    fireEvent.click(getByText(VERIFY_BUTTON))
+    fireEvent.click(getByText(VERIFY))
     fireEvent.change(startDateInput, { target: { value: today } })
 
-    expect(queryByText(VERIFY_BUTTON)).toBeVisible()
+    expect(queryByText(VERIFY)).toBeVisible()
     expect(queryByText('Verified')).toBeNull()
-    expect(queryByText(REST_BUTTON)).toBeNull()
+    expect(queryByText(REST)).toBeNull()
   })
 })

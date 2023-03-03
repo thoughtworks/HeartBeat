@@ -2,7 +2,13 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
-import { CONFIG_TITLE, ERROR_MESSAGE_COLOR, SOURCE_CONTROL_FIELDS, SOURCE_CONTROL_TYPES } from '../../../fixtures'
+import {
+  CONFIG_TITLE,
+  ERROR_MESSAGE_COLOR,
+  MOCK_SOURCE_CONTROL_URL,
+  SOURCE_CONTROL_FIELDS,
+  SOURCE_CONTROL_TYPES,
+} from '../../../fixtures'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 
@@ -24,7 +30,7 @@ const setup = () => {
 }
 
 const server = setupServer(
-  rest.get('/api/v1/codebase/fetch/repos', (req, res, ctx) => {
+  rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => {
     return res(ctx.status(200))
   })
 )
@@ -97,5 +103,17 @@ describe('SourceControl', () => {
     fireEvent.change(tokenInput, { target: { value: '' } })
     expect(getByText(TOKEN_ERROR_MESSAGE)).toBeVisible()
     expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+  })
+
+  it('should show error notification when sourceControl verify response status is 404', async () => {
+    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(404))))
+    const { getByText, getByRole } = setup()
+    fillSourceControlFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: 'Verify' }))
+
+    await waitFor(() => {
+      expect(getByText('Github verify failed')).toBeInTheDocument()
+    })
   })
 })

@@ -27,12 +27,12 @@ export const SourceControl = () => {
   const { verifyGithub, isLoading, errorMessage } = useVerifySourceControlEffect()
   const [fields, setFields] = useState([
     {
-      key: 'sourceControl',
+      key: 'SourceControl',
       value: sourceControlFields.sourceControl,
       isValid: true,
     },
     {
-      key: 'token',
+      key: 'Token',
       value: sourceControlFields.token,
       isValid: true,
     },
@@ -100,7 +100,7 @@ export const SourceControl = () => {
       <SourceControlTitle>{CONFIG_TITLE.SOURCE_CONTROL}</SourceControlTitle>
       <SourceControlForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
         <SourceControlTypeSelections variant='standard' required>
-          <InputLabel id='sourceControl-type-checkbox-label'>sourceControl</InputLabel>
+          <InputLabel id='sourceControl-type-checkbox-label'>SourceControl</InputLabel>
           <Select labelId='sourceControl-type-checkbox-label' value={fields[0].value}>
             {Object.values(SOURCE_CONTROL_TYPES).map((toolType) => (
               <MenuItem key={toolType} value={toolType}>

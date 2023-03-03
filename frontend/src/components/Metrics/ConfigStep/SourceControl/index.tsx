@@ -3,6 +3,7 @@ import { CONFIG_TITLE, SOURCE_CONTROL_TYPES } from '@src/constants'
 import {
   ResetButton,
   SourceControlButtonGroup,
+  SourceControlDrop,
   SourceControlForm,
   SourceControlSection,
   SourceControlTextField,
@@ -10,7 +11,7 @@ import {
   SourceControlTypeSelections,
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/SourceControl/style'
-import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectSourceControlFields, updateSourceControlFields } from '@src/features/config/configSlice'
 import { changeSourceControlVerifyState, isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
@@ -88,6 +89,11 @@ export const SourceControl = () => {
   return (
     <SourceControlSection>
       {errorMessage && <ErrorNotification message={errorMessage} />}
+      {isLoading && (
+        <SourceControlDrop open={isLoading} data-testid='circularProgress'>
+          <CircularProgress size='8rem' />
+        </SourceControlDrop>
+      )}
       <SourceControlTitle>{CONFIG_TITLE.SOURCE_CONTROL}</SourceControlTitle>
       <SourceControlForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
         <SourceControlTypeSelections variant='standard' required>
@@ -113,10 +119,16 @@ export const SourceControl = () => {
           helperText={!fields[1].isValid ? 'token is required' : ''}
         />
         <SourceControlButtonGroup>
-          <VerifyButton type='submit' disabled={isDisableVerifyButton}>
-            {isVerified ? 'Verified' : 'Verify'}
-          </VerifyButton>
-          {isVerified && <ResetButton type='reset'>Reset</ResetButton>}
+          {isVerified && !isLoading ? (
+            <>
+              <VerifyButton>Verified</VerifyButton>
+              <ResetButton type='reset'>Reset</ResetButton>
+            </>
+          ) : (
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
+              Verify
+            </VerifyButton>
+          )}
         </SourceControlButtonGroup>
       </SourceControlForm>
     </SourceControlSection>

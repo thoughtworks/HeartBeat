@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
-import { Button, FormControl, TextField } from '@mui/material'
+import { Backdrop, Button, FormControl, TextField } from '@mui/material'
+import { theme } from '@src/theme'
 
 export const SourceControlSection = styled('div')({
   position: 'relative',
@@ -31,6 +32,13 @@ export const SourceControlTextField = styled(TextField)({
   width: '20rem',
   margin: '0 4rem 1rem 0',
   padding: '0.5rem 0',
+})
+
+export const SourceControlDrop = styled(Backdrop)({
+  position: 'absolute',
+  zIndex: '999',
+  backgroundColor: 'rgba(199,199,199,0.43)',
+  color: theme.main.backgroundColor,
 })
 
 export const SourceControlButtonGroup = styled('div')({

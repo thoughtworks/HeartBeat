@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectSourceControlFields, updateSourceControlFields } from '@src/features/config/configSlice'
 import { changeSourceControlVerifyState, isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
+import { ErrorNotification } from '@src/components/ErrorNotifaction'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
@@ -86,6 +87,7 @@ export const SourceControl = () => {
 
   return (
     <SourceControlSection>
+      {errorMessage && <ErrorNotification message={errorMessage} />}
       <SourceControlTitle>{CONFIG_TITLE.SOURCE_CONTROL}</SourceControlTitle>
       <SourceControlForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
         <SourceControlTypeSelections variant='standard' required>

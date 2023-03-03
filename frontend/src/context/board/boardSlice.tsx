@@ -21,6 +21,6 @@ export const boardSlice = createSlice({
 
 export const { changeBoardVerifyState } = boardSlice.actions
 
-export const isBoardVerified = (state: RootState) => state.board.isBoardVerified
+export const selectIsBoardVerified = (state: RootState) => state.board.isBoardVerified
 
 export default boardSlice.reducer

@@ -25,6 +25,6 @@ export const stepperSlice = createSlice({
 
 export const { nextStep, backStep } = stepperSlice.actions
 
-export const selectStep = (state: RootState) => state.stepper.stepNumber
+export const selectStepNumber = (state: RootState) => state.stepper.stepNumber
 
 export default stepperSlice.reducer

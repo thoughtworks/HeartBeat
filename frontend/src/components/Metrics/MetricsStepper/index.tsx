@@ -4,12 +4,12 @@ import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
 import { MetricsStepperContent, MetricsStepLabel } from './style'
 import { useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectStep } from '@src/context/stepper/StepperSlice'
+import { selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import { STEPS } from '@src/constants'
 
 const MetricsStepper = () => {
-  const activeStep = useAppSelector(selectStep)
+  const activeStep = useAppSelector(selectStepNumber)
 
   return (
     <Box>

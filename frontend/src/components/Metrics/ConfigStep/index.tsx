@@ -4,7 +4,7 @@ import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS } from '@src/constants'
 import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
 import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { backStep, nextStep, selectStep } from '@src/context/stepper/StepperSlice'
+import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import { changeBoardVerifyState } from '@src/context/board/boardSlice'
 import {
@@ -16,7 +16,7 @@ import {
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
-  const activeStep = useAppSelector(selectStep)
+  const activeStep = useAppSelector(selectStepNumber)
   const projectName = useAppSelector(selectProjectName)
   const calendarType = useAppSelector(selectCalendarType)
 

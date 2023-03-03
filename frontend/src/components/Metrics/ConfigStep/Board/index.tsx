@@ -13,7 +13,7 @@ import {
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { changeBoardVerifyState, isBoardVerified } from '@src/context/board/boardSlice'
+import { changeBoardVerifyState, selectIsBoardVerified } from '@src/context/board/boardSlice'
 import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
@@ -21,7 +21,7 @@ import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
-  const isVerified = useAppSelector(isBoardVerified)
+  const isVerified = useAppSelector(selectIsBoardVerified)
   const boardFields = useAppSelector(selectBoard)
   const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)

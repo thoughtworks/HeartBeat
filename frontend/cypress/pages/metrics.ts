@@ -56,6 +56,18 @@ class Metrics {
       expect(str).to.equal('BuildKite verify failed')
     })
   }
+
+  fillSourceControlFieldsInfo(token: string) {
+    cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.disabled')
+
+    cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
+    cy.get('button:contains("Verify")').should('be.enabled')
+    cy.contains('[data-test-id="sourceControlVerifyButton"]', 'Verify').click()
+
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('Github verify failed')
+    })
+  }
 }
 
 const metricsPage = new Metrics()

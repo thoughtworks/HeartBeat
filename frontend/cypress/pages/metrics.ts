@@ -22,6 +22,18 @@ class Metrics {
 
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
+
+  fillBoardFieldsInfo(boardId: string, email: string, projectKey: string, site: string, token: string) {
+    cy.get('button:contains("Verify")').should('be.disabled')
+
+    cy.contains('BoardId').siblings().type(boardId)
+    cy.contains('Email').siblings().type(email)
+    cy.contains('Project Key').siblings().type(projectKey)
+    cy.contains('Site').siblings().type(site)
+    cy.contains('Token').siblings().type(token)
+
+    cy.get('button:contains("Verify")').should('be.enabled')
+  }
 }
 
 const metricsPage = new Metrics()

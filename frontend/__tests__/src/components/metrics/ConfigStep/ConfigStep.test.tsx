@@ -1,28 +1,39 @@
 import { fireEvent, Matcher, render, within } from '@testing-library/react'
-import { ConfigStep } from '@src/components/metrics/ConfigStep'
+import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import {
   CHINA_CALENDAR,
+  CONFIG_TITLE,
   REGULAR_CALENDAR,
-  REQUIRE_DATA,
-  REQUIRE_DATAS,
+  REQUIRED_DATA,
   TEST_PROJECT_NAME,
   VELOCITY,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
-import { store } from '@src/store/store'
+import { setupStore } from '../../../utils/setupStoreUtil'
+import dayjs from 'dayjs'
+import { fillBoardFieldsInformation } from './Board.test'
 
+let store = null
 describe('ConfigStep', () => {
-  const setup = () =>
-    render(
+  const setup = () => {
+    store = setupStore()
+    return render(
       <Provider store={store}>
         <ConfigStep />
       </Provider>
     )
+  }
+
+  afterEach(() => {
+    store = null
+  })
+
   it('should show project name when render configStep', () => {
     const { getByText } = setup()
 
     expect(getByText('Project Name')).toBeInTheDocument()
   })
+
   it('should show project name when input some letters', () => {
     const { getByRole, getByDisplayValue } = setup()
     const hasInputValue = (e: HTMLElement, inputValue: Matcher) => {
@@ -36,6 +47,7 @@ describe('ConfigStep', () => {
 
     expect(hasInputValue(input, TEST_PROJECT_NAME)).toBe(true)
   })
+
   it('should show error message when project name is Empty', () => {
     const { getByRole, getByText } = setup()
     const input = getByRole('textbox', { name: 'Project Name' })
@@ -45,6 +57,16 @@ describe('ConfigStep', () => {
 
     expect(getByText('Project Name is required')).toBeInTheDocument()
   })
+
+  it('should show error message when click project name input with no letter', () => {
+    const { getByRole, getByText } = setup()
+    const input = getByRole('textbox', { name: 'Project Name' })
+
+    fireEvent.focus(input)
+
+    expect(getByText('Project Name is required')).toBeInTheDocument()
+  })
+
   it('should select Regular calendar by default when rendering the radioGroup', () => {
     const { getByRole } = setup()
     const defaultValue = getByRole('radio', { name: REGULAR_CALENDAR })
@@ -53,6 +75,7 @@ describe('ConfigStep', () => {
     expect(defaultValue).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
   })
+
   it('should switch the radio when any radioLabel is selected', () => {
     const { getByRole } = setup()
     const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR })
@@ -67,44 +90,63 @@ describe('ConfigStep', () => {
     expect(regularCalendar).toBeChecked()
     expect(chinaCalendar).not.toBeChecked()
   })
-  it('should show require data and do not display specific options when init', async () => {
-    const { getByText, queryByText } = setup()
-    const require = getByText(REQUIRE_DATA)
 
-    expect(require).toBeInTheDocument()
+  it('should not show board component when init ConfigStep component ', () => {
+    const { queryByText } = setup()
 
-    const option = queryByText(VELOCITY)
-    expect(option).not.toBeTruthy()
+    expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull()
   })
-  it('should show detail options when click require data button', async () => {
+
+  it('should show board component when MetricsTypeCheckbox select Velocity,Cycle time', () => {
     const { getByRole } = setup()
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
-    const listBox = within(getByRole('listbox'))
-    const options = listBox.getAllByRole('option')
-    const optionValue = options.map((li) => li.getAttribute('data-value'))
 
-    expect(optionValue).toEqual(REQUIRE_DATAS)
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: 'Cycle time' }))
+
+    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
-  it('should show multiple selections when multiple options are selected', async () => {
-    const { getByRole, getByText } = setup()
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
 
-    const listBox = within(getByRole('listbox'))
-    fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    fireEvent.click(listBox.getByRole('option', { name: 'Cycle time' }))
+  it('should show board component when MetricsTypeCheckbox select  Classification, ', () => {
+    const { getByRole } = setup()
 
-    expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: 'Classification' }))
+
+    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })
-  it('should show error message when require data is null', async () => {
-    const { getByRole, getByText } = setup()
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRE_DATA }))
-    const listBox = within(getByRole('listbox'))
-    fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    fireEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    fireEvent.mouseDown(getByRole('listbox', { name: REQUIRE_DATA }))
+  it('should verify again when calendar type is changed given board fields are filled and verified', () => {
+    const { getByRole, getByText, queryByText } = setup()
 
-    const errorMessage = getByText('Metrics is required')
-    expect(errorMessage).toBeInTheDocument()
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fillBoardFieldsInformation()
+    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(CHINA_CALENDAR))
+
+    expect(queryByText('Verify')).toBeVisible()
+    expect(queryByText('Verified')).toBeNull()
+    expect(queryByText('Reset')).toBeNull()
+  })
+
+  it('should verify again when date picker is changed given board fields are filled and verified', () => {
+    const { getByRole, getByText, queryByText, getByLabelText } = setup()
+    const today = dayjs().format('MM/DD/YYYY')
+    const startDateInput = getByLabelText('From *')
+
+    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
+    const requireDateSelection = within(getByRole('listbox'))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
+    fillBoardFieldsInformation()
+    fireEvent.click(getByText('Verify'))
+    fireEvent.change(startDateInput, { target: { value: today } })
+
+    expect(queryByText('Verify')).toBeVisible()
+    expect(queryByText('Verified')).toBeNull()
+    expect(queryByText('Reset')).toBeNull()
   })
 })

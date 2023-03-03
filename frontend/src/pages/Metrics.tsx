@@ -1,5 +1,5 @@
 import Header from '@src/layouts/Header'
-import MetricsStepper from '@src/components/metrics/MetricsStepper'
+import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 
 const Metrics = () => (
   <>

@@ -34,8 +34,8 @@ describe('router', () => {
     })
   })
 
-  it('should show metrics page when go metrics page', () => {
-    const metricsRoute = '/metrics'
+  it('should show Metrics page when go Metrics page', () => {
+    const metricsRoute = '/Metrics'
     const steps = ['Config', 'Metrics', 'Export']
 
     const { findByText } = setup(metricsRoute)

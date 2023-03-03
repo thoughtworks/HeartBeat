@@ -12,6 +12,8 @@ export const NEXT = 'Next'
 
 export const BACK = 'Back'
 
+export const PROJECT_NAME_LABEL = 'Project Name'
+
 export const EXPORT_BOARD_DATA = 'Export board data'
 
 export const STEPS = ['Config', 'Metrics', 'Export']
@@ -44,6 +46,9 @@ export enum CONFIG_TITLE {
 
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
 
-export const MOCK_URL = '/api/v1/kanban/verify'
+export const MOCK_BOARD_URL = '/api/v1/kanban/verify'
 
 export const JIRA_VERIFY_FAILED_MESSAGE = 'Jira verify failed'
+
+export const VERIFY_BUTTON = 'Verify'
+export const REST_BUTTON = 'Reset'

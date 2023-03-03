@@ -1,10 +1,10 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { BOARD_TYPES, JIRA_VERIFY_FAILED_MESSAGE, MOCK_URL } from '../fixtures'
+import { BOARD_TYPES, JIRA_VERIFY_FAILED_MESSAGE, MOCK_BOARD_URL } from '../fixtures'
 import { boardClient } from '@src/clients/BoardClient'
 
 const server = setupServer(
-  rest.get(MOCK_URL, (req, res, ctx) => {
+  rest.get(MOCK_BOARD_URL, (req, res, ctx) => {
     return res(ctx.status(200))
   })
 )
@@ -28,7 +28,7 @@ describe('error notification', () => {
   })
 
   it('should isNoDoneCard is true when board verify response status 204', async () => {
-    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(204))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(204))))
 
     const result = await boardClient.getVerifyBoard(mockParams)
 
@@ -37,7 +37,7 @@ describe('error notification', () => {
   })
 
   it('should throw error when board verify response status 404', async () => {
-    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(404))))
 
     try {
       await boardClient.getVerifyBoard(mockParams)
@@ -48,7 +48,7 @@ describe('error notification', () => {
   })
 
   it('should throw error when board verify response status 500', async () => {
-    server.use(rest.get(MOCK_URL, (req, res, ctx) => res(ctx.status(500))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(500))))
 
     try {
       await boardClient.getVerifyBoard(mockParams)

@@ -1,5 +1,4 @@
 {
-  "maxWorkers": "50%",
   "transform": {
     "^.+\\.tsx?$": "ts-jest",
     ".+\\.svg": "<rootDir>/__tests__/__mocks__/svgTransformer.ts"

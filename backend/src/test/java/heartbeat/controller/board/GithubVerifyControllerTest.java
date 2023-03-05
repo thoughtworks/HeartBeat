@@ -31,7 +31,7 @@ class GithubVerifyControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	void shouldReturnCorrectResponseWithRepos() throws Exception {
+	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
 		GithubResponse githubReposResponse = GithubResponse.builder().githubRepos(
 			List.of("https://github.com/xxxx1/repo1","https://github.com/xxxx2/repo2")).build();
 
@@ -43,5 +43,14 @@ class GithubVerifyControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
 			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));
+	}
+
+	@Test
+	void shouldReturnBadRequestWhenRequestParamIsBlank() throws Exception {
+		mockMvc
+			.perform(get("/codebase/fetch/repos?githubToken=   ")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("getRepos.githubToken: must not be blank"));
 	}
 }

@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { sourceControlClient } from '@src/clients/SourceControlClient'
-import { mockParams } from '../client/SourceControlClient.test'
+import { MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS } from '../fixtures'
 
 describe('use verify sourceControl state', () => {
   it('should initial data state when render hook', async () => {
@@ -20,7 +20,7 @@ describe('use verify sourceControl state', () => {
     expect(result.current.isLoading).toEqual(false)
 
     act(() => {
-      result.current.verifyGithub(mockParams)
+      result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
       jest.advanceTimersByTime(2000)
     })
 

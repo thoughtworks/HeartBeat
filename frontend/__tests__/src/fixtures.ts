@@ -54,6 +54,13 @@ export enum CONFIG_TITLE {
   SOURCE_CONTROL = 'SourceControl',
 }
 
+export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
+  token: 'mockToken',
+  type: SOURCE_CONTROL_TYPES.GIT_HUB,
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+}
+
 export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['SourceControl', 'Token']

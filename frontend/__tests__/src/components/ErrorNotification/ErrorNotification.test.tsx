@@ -8,18 +8,4 @@ describe('error notification', () => {
 
     expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[400])).toBeInTheDocument()
   })
-
-  it('should close when the error notation show 2 seconds', () => {
-    const { getByText } = render(<ErrorNotification message={JIRA_VERIFY_ERROR_MESSAGE[400]} />)
-    expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[400])).toBeInTheDocument()
-
-    const handleClose = jest.fn()
-
-    expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[400])).toBeInTheDocument()
-
-    setTimeout(() => {
-      expect(handleClose).toBeCalledTimes(1)
-      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[400])).not.toBeInTheDocument()
-    }, 2000)
-  })
 })

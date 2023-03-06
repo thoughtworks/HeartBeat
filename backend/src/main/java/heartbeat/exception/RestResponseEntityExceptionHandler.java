@@ -15,7 +15,8 @@ public class RestResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = RequestFailedException.class)
 	protected ResponseEntity<Object> handleRequestFailedException(RequestFailedException ex) {
-		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)

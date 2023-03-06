@@ -10,12 +10,14 @@ public class RequestFailedException extends RuntimeException {
 	private final int status;
 
 	public RequestFailedException(FeignException e) {
-		super(String.format("Request failed with status code %d, error: %s", e.status(), e.getMessage()));
+		super(String.format("Request failed with status code %d, error: %s", e.status(),
+			e.getMessage()));
 		this.status = e.status();
 	}
 
 	public RequestFailedException(int statusCode, String message) {
-		super(String.format("Request failed with status statusCode %d, error: %s", statusCode, message));
+		super(String.format("Request failed with status statusCode %d, error: %s", statusCode,
+			message));
 		this.status = statusCode;
 	}
 

@@ -1,6 +1,15 @@
 package heartbeat.controller.board;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
+import static heartbeat.controller.board.BoardRequestFixture.buildParameter;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.exception.RequestFailedException;
@@ -14,16 +23,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.MultiValueMap;
-
-import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_CONFIG_RESPONSE_BUILDER;
-import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
-import static heartbeat.controller.board.BoardRequestFixture.buildParameter;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(JiraController.class)
 @ExtendWith(SpringExtension.class)
@@ -72,7 +71,8 @@ public class JiraControllerTest {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token("").build();
 		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
 
-		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters)).andExpect(status().isBadRequest());
+		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters))
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test

@@ -35,7 +35,7 @@ public interface JiraFeignClient {
 	CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
 			@RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "targetFeild", key = "#projectKey")
+	@Cacheable(cacheNames = "targetField", key = "#projectKey")
 	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields")
 	FieldResponseDTO getTargetField(URI baseUrl, @PathVariable String projectKey, @RequestHeader String authorization);
 

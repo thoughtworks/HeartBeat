@@ -35,7 +35,7 @@ public class CacheConfig {
 		cacheManager.createCache("jiraStatusCategory", stringDoubleConfiguration);
 		cacheManager.createCache("jiraAllDoneCards", stringDoubleConfiguration);
 		cacheManager.createCache("jiraActivityfeed", stringDoubleConfiguration);
-		cacheManager.createCache("targetFeild", stringDoubleConfiguration);
+		cacheManager.createCache("targetField", stringDoubleConfiguration);
 		return cacheManager;
 	}
 

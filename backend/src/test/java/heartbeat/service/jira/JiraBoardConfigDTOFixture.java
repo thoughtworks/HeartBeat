@@ -2,8 +2,11 @@ package heartbeat.service.jira;
 
 import heartbeat.client.dto.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JiraBoardConfigDTOFixture {
 
@@ -35,6 +38,10 @@ public class JiraBoardConfigDTOFixture {
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
 		return AllDoneCardsResponseDTO.builder().total("2")
 				.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee("Zhang San")))));
+	}
+
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER() {
+		return AllDoneCardsResponseDTO.builder().total("1").issues(Collections.emptyList());
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {

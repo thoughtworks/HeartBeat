@@ -31,6 +31,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DOING_STATUS_SELF
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DONE_STATUS_SELF_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.FIELD_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -86,6 +87,28 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldCallJiraFeignClientAndThrowNonContentCodeWhenGetJiraBoardConfig() {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create("https://site.atlassian.net");
+		String token = "token";
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequest.getStartTime(), boardRequest.getEndTime());
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
+				.thenReturn(ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER().build());
+
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest))
+				.isInstanceOf(RequestFailedException.class)
+				.hasMessageContaining("Request failed with status statusCode 204, error: There is no done cards.");
+	}
+
+	@Test
 	void shouldReturnAssigneeNameFromDoneCardWhenGetAssigneeSet() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -115,37 +138,31 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowExceptionWhenGetTargetFieldFailed() {
-		JiraBoardConfigDTO jiraBoardConfigDTO =
-			JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
 		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create("https://site.atlassian.net");
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
-			"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
-			boardRequest.getStartTime(), boardRequest.getEndTime());
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequest.getStartTime(), boardRequest.getEndTime());
 
-		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID,
-			token)).thenReturn(jiraBoardConfigDTO);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1,
-			token)).thenReturn(doneStatusSelf);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2,
-			token)).thenReturn(doingStatusSelf);
-		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql,
-			token))
-			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
+				.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+				.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
 		FeignException mockException = mock(FeignException.class);
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(500);
-		when(jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
-			token)).thenThrow(mockException);
+		when(jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(), token)).thenThrow(mockException);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status code 500, error: exception");
+				.isInstanceOf(RequestFailedException.class)
+				.hasMessageContaining("Request failed with status code 500, error: exception");
 	}
 
 	@Test
@@ -168,7 +185,6 @@ class JiraServiceTest {
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		FeignException mockException = mock(FeignException.class);
-		System.out.println(Math.ceil(0));
 
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn("exception");

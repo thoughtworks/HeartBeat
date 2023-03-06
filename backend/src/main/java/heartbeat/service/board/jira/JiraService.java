@@ -83,8 +83,12 @@ public class JiraService {
 			throw new RequestFailedException(e);
 		}
 		catch (CompletionException e) {
-			if (e.getCause() instanceof FeignException feignException) {
+			Throwable cause = e.getCause();
+			if (cause instanceof FeignException feignException) {
 				throw new RequestFailedException(feignException);
+			}
+			else if (cause instanceof RequestFailedException requestFailedException) {
+				throw requestFailedException;
 			}
 			throw e;
 		}
@@ -124,9 +128,10 @@ public class JiraService {
 	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, heartbeat.client.dto.JiraColumn jiraColumn,
 			String token) {
 		List<CompletableFuture<StatusSelfDTO>> futures = jiraColumn.getStatuses().stream()
-				.map(jiraColumnStatus -> CompletableFuture.supplyAsync(() -> {
-					return jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token);
-				}, executor)).toList();
+				.map(jiraColumnStatus -> CompletableFuture.supplyAsync(
+						() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
+						executor))
+				.toList();
 
 		return futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 	}
@@ -153,13 +158,11 @@ public class JiraService {
 	}
 
 	private List<String> getUsers(URI baseUrl, BoardRequest boardRequest, List<String> doneColumns) {
-		log.info(doneColumns);
 		if (doneColumns.isEmpty()) {
 			throw new RequestFailedException(204, "There is no done column.");
 		}
 
 		List<DoneCard> doneCards = getAllDoneCards(baseUrl, doneColumns, boardRequest);
-		log.info(doneCards);
 
 		if (isNull(doneCards) || doneCards.isEmpty()) {
 			throw new RequestFailedException(204, "There is no done cards.");
@@ -181,7 +184,6 @@ public class JiraService {
 				String.join("','", doneColumns), boardRequest.getStartTime(), boardRequest.getEndTime());
 		AllDoneCardsResponseDTO allDoneCardsResponseDTO = jiraFeignClient.getAllDoneCards(baseUrl,
 				boardRequest.getBoardId(), QUERY_COUNT, 0, jql, boardRequest.getToken());
-		log.info(allDoneCardsResponseDTO);
 
 		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 

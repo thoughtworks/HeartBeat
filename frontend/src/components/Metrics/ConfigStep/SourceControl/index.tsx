@@ -119,7 +119,7 @@ export const SourceControl = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}
-          helperText={!fields[1].isValid ? 'token is required' : ''}
+          helperText={!fields[1].isValid ? 'Token is required' : ''}
         />
         <SourceControlButtonGroup>
           {isVerified && !isLoading ? (

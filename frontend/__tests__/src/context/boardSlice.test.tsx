@@ -1,4 +1,4 @@
-import boardReducer, { changeBoardVerifyState } from '@src/features/board/boardSlice'
+import boardReducer, { updateBoardVerifyState } from '@src/context/board/boardSlice'
 
 describe('board reducer', () => {
   it('should return false when handle initial state', () => {
@@ -12,7 +12,7 @@ describe('board reducer', () => {
       {
         isBoardVerified: false,
       },
-      changeBoardVerifyState(true)
+      updateBoardVerifyState(true)
     )
 
     expect(steeper.isBoardVerified).toEqual(true)

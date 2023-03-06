@@ -9,8 +9,8 @@ export interface configState {
     startDate: string
     endDate: string
   }
-  requiredData: string[]
-  boardFields: { board: string; boardId: string; email: string; projectKey: string; site: string; token: string }
+  metrics: string[]
+  board: { type: string; boardId: string; email: string; projectKey: string; site: string; token: string }
   pipelineToolFields: { pipelineTool: string; token: string }
   sourceControlFields: { sourceControl: string; token: string }
 }
@@ -22,9 +22,9 @@ const initialState: configState = {
     startDate: '',
     endDate: '',
   },
-  requiredData: [],
-  boardFields: {
-    board: BOARD_TYPES.JIRA,
+  metrics: [],
+  board: {
+    type: BOARD_TYPES.JIRA,
     boardId: '',
     email: '',
     projectKey: '',
@@ -55,11 +55,11 @@ export const configSlice = createSlice({
       const { startDate, endDate } = action.payload
       state.dateRange = { startDate, endDate }
     },
-    updateRequiredData: (state, action) => {
-      state.requiredData = action.payload
+    updateMetrics: (state, action) => {
+      state.metrics = action.payload
     },
-    updateBoardFields: (state, action) => {
-      state.boardFields = action.payload
+    updateBoard: (state, action) => {
+      state.board = action.payload
     },
     updatePipelineToolFields: (state, action) => {
       state.pipelineToolFields = action.payload
@@ -74,8 +74,8 @@ export const {
   updateProjectName,
   updateCalendarType,
   updateDateRange,
-  updateRequiredData,
-  updateBoardFields,
+  updateMetrics,
+  updateBoard,
   updatePipelineToolFields,
   updateSourceControlFields,
 } = configSlice.actions
@@ -83,8 +83,9 @@ export const {
 export const selectProjectName = (state: RootState) => state.config.projectName
 export const selectCalendarType = (state: RootState) => state.config.calendarType
 export const selectDateRange = (state: RootState) => state.config.dateRange
-export const selectRequiredData = (state: RootState) => state.config.requiredData
-export const selectBoardFields = (state: RootState) => state.config.boardFields
+export const selectMetrics = (state: RootState) => state.config.metrics
+export const selectBoard = (state: RootState) => state.config.board
 export const selectPipelineToolFields = (state: RootState) => state.config.pipelineToolFields
 export const selectSourceControlFields = (state: RootState) => state.config.sourceControlFields
+
 export default configSlice.reducer

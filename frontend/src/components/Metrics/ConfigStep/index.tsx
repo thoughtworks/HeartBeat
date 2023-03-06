@@ -4,19 +4,19 @@ import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS } from '@src/constants'
 import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
 import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
+import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
-import { changeBoardVerifyState } from '@src/features/board/boardSlice'
+import { updateBoardVerifyState } from '@src/context/board/boardSlice'
 import {
   selectCalendarType,
   selectProjectName,
   updateCalendarType,
   updateProjectName,
-} from '@src/features/config/configSlice'
+} from '@src/context/config/configSlice'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
-  const activeStep = useAppSelector(selectStep)
+  const activeStep = useAppSelector(selectStepNumber)
   const projectName = useAppSelector(selectProjectName)
   const calendarType = useAppSelector(selectCalendarType)
 
@@ -51,7 +51,7 @@ export const ConfigStep = () => {
       <RadioGroup
         value={calendarType}
         onChange={(e) => {
-          dispatch(changeBoardVerifyState(false))
+          dispatch(updateBoardVerifyState(false))
           dispatch(updateCalendarType(e.target.value))
         }}
       >

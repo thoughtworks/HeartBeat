@@ -1,4 +1,4 @@
-FROM gradle:8.0.1-jdk19 AS build
+FROM gradle:8.0.2-jdk19 AS build
 COPY --chown=gradle:gradle ./backend /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build --no-daemon

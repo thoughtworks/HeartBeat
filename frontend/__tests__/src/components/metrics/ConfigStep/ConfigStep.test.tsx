@@ -3,10 +3,13 @@ import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import {
   CHINA_CALENDAR,
   CONFIG_TITLE,
+  PROJECT_NAME_LABEL,
   REGULAR_CALENDAR,
   REQUIRED_DATA,
+  RESET,
   TEST_PROJECT_NAME,
   VELOCITY,
+  VERIFY,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -31,7 +34,7 @@ describe('ConfigStep', () => {
   it('should show project name when render configStep', () => {
     const { getByText } = setup()
 
-    expect(getByText('Project Name')).toBeInTheDocument()
+    expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
   })
 
   it('should show project name when input some letters', () => {
@@ -39,7 +42,7 @@ describe('ConfigStep', () => {
     const hasInputValue = (e: HTMLElement, inputValue: Matcher) => {
       return getByDisplayValue(inputValue) === e
     }
-    const input = getByRole('textbox', { name: 'Project Name' })
+    const input = getByRole('textbox', { name: PROJECT_NAME_LABEL })
 
     expect(input).toBeInTheDocument()
 
@@ -50,7 +53,7 @@ describe('ConfigStep', () => {
 
   it('should show error message when project name is Empty', () => {
     const { getByRole, getByText } = setup()
-    const input = getByRole('textbox', { name: 'Project Name' })
+    const input = getByRole('textbox', { name: PROJECT_NAME_LABEL })
 
     fireEvent.change(input, { target: { value: TEST_PROJECT_NAME } })
     fireEvent.change(input, { target: { value: '' } })
@@ -60,7 +63,7 @@ describe('ConfigStep', () => {
 
   it('should show error message when click project name input with no letter', () => {
     const { getByRole, getByText } = setup()
-    const input = getByRole('textbox', { name: 'Project Name' })
+    const input = getByRole('textbox', { name: PROJECT_NAME_LABEL })
 
     fireEvent.focus(input)
 
@@ -125,12 +128,12 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fillBoardFieldsInformation()
-    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(VERIFY))
     fireEvent.click(getByText(CHINA_CALENDAR))
 
-    expect(queryByText('Verify')).toBeVisible()
+    expect(queryByText(VERIFY)).toBeVisible()
     expect(queryByText('Verified')).toBeNull()
-    expect(queryByText('Reset')).toBeNull()
+    expect(queryByText(RESET)).toBeNull()
   })
 
   it('should verify again when date picker is changed given board fields are filled and verified', () => {
@@ -142,11 +145,11 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fillBoardFieldsInformation()
-    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(VERIFY))
     fireEvent.change(startDateInput, { target: { value: today } })
 
-    expect(queryByText('Verify')).toBeVisible()
+    expect(queryByText(VERIFY)).toBeVisible()
     expect(queryByText('Verified')).toBeNull()
-    expect(queryByText('Reset')).toBeNull()
+    expect(queryByText(RESET)).toBeNull()
   })
 })

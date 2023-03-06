@@ -23,6 +23,6 @@ describe('HomeGuide', () => {
     fireEvent.click(getByText(CREATE_NEW_PROJECT))
 
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/Metrics')
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/metrics')
   })
 })

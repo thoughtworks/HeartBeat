@@ -6,7 +6,7 @@ import {
   PIPELINE_TOOL_TYPES,
   ERROR_MESSAGE_COLOR,
   MOCK_PIPELINE_URL,
-  BUILD_KITE_VERIFY_FAILED_MESSAGE,
+  PIPELINE_TOOL_VERIFY_ERROR_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -158,7 +158,7 @@ describe('PipelineTool', () => {
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
     await waitFor(() => {
-      expect(getByText(BUILD_KITE_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
+      expect(getByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
     })
   })
 
@@ -171,7 +171,7 @@ describe('PipelineTool', () => {
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
     await waitFor(() => {
-      expect(screen.queryByText(BUILD_KITE_VERIFY_FAILED_MESSAGE)).not.toBeInTheDocument()
+      expect(screen.queryByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[404])).not.toBeInTheDocument()
     })
   })
 })

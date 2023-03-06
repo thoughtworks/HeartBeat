@@ -27,22 +27,18 @@ describe('error notification', () => {
   it('should throw error when pipelineTool verify response status 404', async () => {
     server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
 
-    try {
-      await pipelineToolClient.verifyPipelineTool(mockParams)
-    } catch (e) {
+    await pipelineToolClient.verifyPipelineTool(mockParams).catch((e) => {
       expect(e).toBeInstanceOf(Error)
       expect((e as Error).message).toMatch(BUILD_KITE_VERIFY_FAILED_MESSAGE)
-    }
+    })
   })
 
   it('should throw error when pipelineTool verify response status 500', async () => {
     server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(500))))
 
-    try {
-      await pipelineToolClient.verifyPipelineTool(mockParams)
-    } catch (e) {
+    await pipelineToolClient.verifyPipelineTool(mockParams).catch((e) => {
       expect(e).toBeInstanceOf(Error)
       expect((e as Error).message).toMatch(BUILD_KITE_VERIFY_FAILED_MESSAGE)
-    }
+    })
   })
 })

@@ -1,5 +1,5 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO } from '@src/constants'
+import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO, TOKEN_ERROR_MESSAGE } from '@src/constants'
 import React, { FormEvent, useState } from 'react'
 import {
   PipelineToolButtonGroup,
@@ -133,7 +133,7 @@ export const PipelineTool = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}
-          helperText={!fields[1].isValid ? 'token is required' : ''}
+          helperText={!fields[1].isValid ? TOKEN_ERROR_MESSAGE : ''}
         />
         <PipelineToolButtonGroup>
           {isVerified && !isLoading ? (

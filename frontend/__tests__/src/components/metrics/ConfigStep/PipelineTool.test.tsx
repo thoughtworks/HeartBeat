@@ -12,6 +12,7 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
+import { TOKEN_ERROR_MESSAGE } from '@src/constants'
 
 export const fillPipelineToolFieldsInformation = () => {
   const mockInfo = 'mockToken'
@@ -109,7 +110,6 @@ describe('PipelineTool', () => {
 
   it('should show error message and error style when token is empty', () => {
     const { getByText } = setup()
-    const TOKEN_ERROR_MESSAGE = 'token is required'
     fillPipelineToolFieldsInformation()
 
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement

@@ -60,6 +60,7 @@ public class JiraService {
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
 
+	@SuppressWarnings("PMD")
 	public BoardConfigResponse getJiraConfiguration(BoardRequest boardRequest) {
 		URI baseUrl = URI.create("https://" + boardRequest.getSite() + ".atlassian.net");
 		JiraBoardConfigDTO jiraBoardConfigDTO;
@@ -231,7 +232,7 @@ public class JiraService {
 				boardRequest.getToken());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
-			throw new RequestFailedException(404, "There is no target field.");
+			throw new RequestFailedException(204, "There is no target field.");
 		}
 
 		List<Issuetype> issueTypes = fieldResponse.getProjects().get(0).getIssuetypes();

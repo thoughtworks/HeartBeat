@@ -1,12 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { pipelineToolClient } from '@src/clients/PipelineToolClient'
-const mockParams = {
-  type: 'pipeLine',
-  token: 'mockToken',
-  startTime: '1613664000000',
-  endTime: '1614873600000',
-}
+import { MOCK_PIPELINE_VERIFY_REQUEST_PARAMS } from '../fixtures'
+
 describe('use verify pipelineTool state', () => {
   it('should initial data state when render hook', async () => {
     const { result } = renderHook(() => useVerifyPipelineToolEffect())
@@ -23,7 +19,7 @@ describe('use verify pipelineTool state', () => {
     expect(result.current.isLoading).toEqual(false)
 
     act(() => {
-      result.current.verifyPipelineTool(mockParams)
+      result.current.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)
       jest.advanceTimersByTime(2000)
     })
 

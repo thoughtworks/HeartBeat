@@ -8,7 +8,7 @@ import {
   MOCK_BOARD_URL,
   REST,
   VERIFY,
-  ERROR_MESSAGE,
+  JIRA_VERIFY_ERROR_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -203,6 +203,7 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: 'Ok' }))
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
   })
+
   it('should check error notification show and disappear when board verify response status is 404', async () => {
     server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(404))))
     const { getByText, getByRole } = setup()
@@ -211,7 +212,7 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(ERROR_MESSAGE[404])).toBeInTheDocument()
+      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
     })
   })
 })

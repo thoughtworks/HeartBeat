@@ -1,6 +1,6 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { BadRequestException } from '../exceptions/BadRequestException'
-import { BadServerException } from '@src/exceptions/BasServerException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { AxiosError } from 'axios'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
 
@@ -26,13 +26,13 @@ export class BoardClient extends HttpClient {
       this.isBoardVerify = false
       const code = (e as AxiosError).response?.status
       if (code === 400) {
-        throw new BadRequestException(params.type, 'bad request')
+        throw new BadRequestException(params.type, 'Bad request')
       }
       if (code === 404) {
-        throw new NotFoundException(params.type, '404 not found')
+        throw new NotFoundException(params.type, 'Page not found')
       }
       if (code === 500) {
-        throw new BadServerException(params.type, 'bad server')
+        throw new InternalServerException(params.type, 'Internal server error')
       }
     }
     return {

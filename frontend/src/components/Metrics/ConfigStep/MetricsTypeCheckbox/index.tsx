@@ -1,11 +1,12 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { REQUIRED_DATA_LIST } from '@src/constants'
+import { PIPELINE_TOOL_TYPES, REQUIRED_DATA_LIST } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectRequiredData, updateRequiredData } from '@src/features/config/configSlice'
+import { selectRequiredData, updatePipelineToolFields, updateRequiredData } from '@src/features/config/configSlice'
+import { changePipelineToolVerifyState } from '@src/features/pipelineTool/pipelineToolSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -19,6 +20,8 @@ export const MetricsTypeCheckbox = () => {
       target: { value },
     } = event
     dispatch(updateRequiredData(value))
+    dispatch(updatePipelineToolFields({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
+    dispatch(changePipelineToolVerifyState(false))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     setIsShowBoard(
       value.includes(REQUIRED_DATA_LIST[0]) ||

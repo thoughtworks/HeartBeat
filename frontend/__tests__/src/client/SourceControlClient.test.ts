@@ -22,22 +22,18 @@ describe('verify sourceControl request', () => {
   it('should throw error when sourceControl verify response status is 404', async () => {
     server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(404))))
 
-    try {
-      await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
-    } catch (e) {
+    sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
       expect((e as Error).message).toMatch('Github verify failed')
-    }
+    })
   })
 
   it('should throw error when sourceControl verify response status 500', async () => {
     server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(500))))
 
-    try {
-      await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
-    } catch (e) {
+    sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
       expect((e as Error).message).toMatch('Github verify failed')
-    }
+    })
   })
 })

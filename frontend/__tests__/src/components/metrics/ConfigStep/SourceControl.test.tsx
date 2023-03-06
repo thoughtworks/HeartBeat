@@ -99,7 +99,7 @@ describe('SourceControl', () => {
 
   it('should show error message and error style when token is empty', () => {
     const { getByText } = setup()
-    const TOKEN_ERROR_MESSAGE = 'token is required'
+    const TOKEN_ERROR_MESSAGE = 'Token is required'
     fillSourceControlFieldsInformation()
 
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement

@@ -57,7 +57,7 @@ export const SOURCE_CONTROL_TYPES = {
 export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'PipelineTool',
-  SOURCE_CONTROL = 'SourceControl',
+  SOURCE_CONTROL = 'Source Control',
 }
 
 export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
@@ -69,7 +69,7 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
 
 export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
-export const SOURCE_CONTROL_FIELDS = ['SourceControl', 'Token']
+export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 export const MOCK_URL = '/api/v1/kanban/verify'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 export const JIRA_VERIFY_FAILED_MESSAGE = 'Jira verify failed'

@@ -141,11 +141,13 @@ describe('PipelineTool', () => {
     fillPipelineToolFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
-    expect(getByTestId('circularProgress')).toBeVisible()
+    const circularProgress = getByTestId('circularProgress')
 
-    setTimeout(() => {
-      expect(getByTestId('circularProgress')).not.toBeVisible()
-    }, 1000)
+    expect(circularProgress).toBeVisible()
+
+    await waitFor(() => {
+      expect(circularProgress).not.toBeVisible()
+    })
   })
 
   it('should check error notification show and disappear when board verify response status is 404', async () => {

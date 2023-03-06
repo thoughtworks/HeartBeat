@@ -48,3 +48,5 @@ export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 export const EMAIL = 'Email'
 
 export const TOKEN_ERROR_MESSAGE = 'Token is required'
+
+export const ERROR_MESSAGE_TIME_DURATION = 2000

@@ -11,12 +11,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Log4j2
 public class GithubService {
+
 	private final GithubFeignClient githubFeignClient;
+
 	public GithubResponse verifyToken(String githubToken) {
 		String token = "token " + githubToken;
 		final var githubRepos = githubFeignClient.getAllRepos(token);
 
 		return GithubResponse.builder()
-			.githubRepos(githubRepos.stream().map(GithubRepos::getHtml_url).toList()).build();
+			.githubRepos(githubRepos.stream().map(GithubRepos::getHtml_url).toList())
+			.build();
 	}
+
 }

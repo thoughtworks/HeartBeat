@@ -21,4 +21,5 @@ public class GithubController {
 	public GithubResponse getRepos(@RequestParam @NotBlank String githubToken) {
 		return githubVerifyService.verifyToken(githubToken);
 	}
+
 }

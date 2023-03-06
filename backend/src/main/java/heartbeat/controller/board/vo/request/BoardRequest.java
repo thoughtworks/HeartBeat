@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
-
 @Data
 @Builder
 public class BoardRequest {

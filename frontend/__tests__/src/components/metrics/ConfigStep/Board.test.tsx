@@ -6,7 +6,7 @@ import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
   MOCK_BOARD_URL,
-  REST,
+  RESET,
   VERIFY,
   JIRA_VERIFY_ERROR_MESSAGE,
 } from '../../../fixtures'
@@ -134,14 +134,14 @@ describe('Board', () => {
 
     fireEvent.click(getByText(VERIFY))
     await waitFor(() => {
-      fireEvent.click(getByRole('button', { name: REST }))
+      fireEvent.click(getByRole('button', { name: RESET }))
     })
 
     fieldInputs.map((input) => {
       expect(input.value).toEqual('')
     })
     expect(getByText(BOARD_TYPES.JIRA)).toBeInTheDocument()
-    expect(queryByRole('button', { name: REST })).not.toBeTruthy()
+    expect(queryByRole('button', { name: RESET })).not.toBeTruthy()
     expect(queryByRole('button', { name: VERIFY })).toBeDisabled()
   })
 
@@ -163,7 +163,7 @@ describe('Board', () => {
     fireEvent.click(getByText(VERIFY))
 
     await waitFor(() => {
-      expect(getByText(REST)).toBeVisible()
+      expect(getByText(RESET)).toBeVisible()
     })
   })
 

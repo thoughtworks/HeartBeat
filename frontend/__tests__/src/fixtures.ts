@@ -14,7 +14,7 @@ export const BACK = 'Back'
 
 export const VERIFY = 'Verify'
 
-export const REST = 'Reset'
+export const RESET = 'Reset'
 
 export const PROJECT_NAME_LABEL = 'Project Name'
 

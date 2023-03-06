@@ -6,7 +6,7 @@ import {
   PROJECT_NAME_LABEL,
   REGULAR_CALENDAR,
   REQUIRED_DATA,
-  REST,
+  RESET,
   TEST_PROJECT_NAME,
   VELOCITY,
   VERIFY,
@@ -133,7 +133,7 @@ describe('ConfigStep', () => {
 
     expect(queryByText(VERIFY)).toBeVisible()
     expect(queryByText('Verified')).toBeNull()
-    expect(queryByText(REST)).toBeNull()
+    expect(queryByText(RESET)).toBeNull()
   })
 
   it('should verify again when date picker is changed given board fields are filled and verified', () => {
@@ -150,6 +150,6 @@ describe('ConfigStep', () => {
 
     expect(queryByText(VERIFY)).toBeVisible()
     expect(queryByText('Verified')).toBeNull()
-    expect(queryByText(REST)).toBeNull()
+    expect(queryByText(RESET)).toBeNull()
   })
 })

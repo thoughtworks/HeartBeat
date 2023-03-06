@@ -1,4 +1,4 @@
-package heartbeat.controller.board.vo.response;
+package heartbeat.controller.source.vo;
 
 import lombok.Builder;
 import lombok.Data;

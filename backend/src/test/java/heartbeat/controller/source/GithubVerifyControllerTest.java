@@ -1,7 +1,7 @@
-package heartbeat.controller.board;
+package heartbeat.controller.source;
 
-import heartbeat.controller.board.vo.response.GithubResponse;
-import heartbeat.service.board.github.GithubVerifyService;
+import heartbeat.controller.source.vo.GithubResponse;
+import heartbeat.service.source.github.GithubVerifyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ class GithubVerifyControllerTest {
 		when(githubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 
 		mockMvc
-			.perform(get("/codebase/fetch/repos?githubToken=123456")
+			.perform(get("/sourceControl?githubToken=123456")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
@@ -48,7 +48,7 @@ class GithubVerifyControllerTest {
 	@Test
 	void shouldReturnBadRequestWhenRequestParamIsBlank() throws Exception {
 		mockMvc
-			.perform(get("/codebase/fetch/repos?githubToken=   ")
+			.perform(get("/sourceControl?githubToken=   ")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("getRepos.githubToken: must not be blank"));

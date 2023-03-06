@@ -38,4 +38,5 @@ public class RestResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
 		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
 	}
+
 }

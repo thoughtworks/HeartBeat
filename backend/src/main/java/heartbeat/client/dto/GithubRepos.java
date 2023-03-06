@@ -12,5 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GithubRepos {
+
 	private String html_url;
+
 }

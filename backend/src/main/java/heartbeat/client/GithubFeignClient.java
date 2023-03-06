@@ -24,7 +24,7 @@ public interface GithubFeignClient {
 
 	@GetMapping(path = "/orgs/{organizationName}/repos")
 	@ResponseStatus(HttpStatus.OK)
-	GithubRepos getReposByOrganizationName(
-		@PathVariable String organizationName,
-		@RequestHeader("Authorization") String token);
+	GithubRepos getReposByOrganizationName(@PathVariable String organizationName,
+			@RequestHeader("Authorization") String token);
+
 }

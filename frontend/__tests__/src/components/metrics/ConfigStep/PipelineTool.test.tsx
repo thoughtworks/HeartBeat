@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, getByTestId, queryByText, render, screen, waitFor, within } from '@testing-library/react'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import {
   PIPELINE_TOOL_FIELDS,
@@ -60,7 +60,7 @@ describe('PipelineTool', () => {
     expect(option).not.toBeTruthy()
   })
 
-  it('should clear other fields information when change board field selection', () => {
+  it('should clear other fields information when change pipelineTool Field selection', () => {
     const { getByRole, getByText } = setup()
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
@@ -150,7 +150,7 @@ describe('PipelineTool', () => {
     })
   })
 
-  it('should check error notification show and disappear when board verify response status is 404', async () => {
+  it('should check error notification show when pipelineTool verify response status is 404', async () => {
     server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
     const { getByText, getByRole } = setup()
     fillPipelineToolFieldsInformation()
@@ -159,6 +159,19 @@ describe('PipelineTool', () => {
 
     await waitFor(() => {
       expect(getByText(BUILD_KITE_VERIFY_FAILED_MESSAGE)).toBeInTheDocument()
+    })
+  })
+
+  it('should check error notification disappear when pipelineTool verify response status is 404', async () => {
+    expect.assertions(2)
+    server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    const { getByRole } = setup()
+    fillPipelineToolFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: 'Verify' }))
+
+    await waitFor(() => {
+      expect(screen.queryByText(BUILD_KITE_VERIFY_FAILED_MESSAGE)).not.toBeInTheDocument()
     })
   })
 })

@@ -60,7 +60,7 @@ export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site',
 
 export const MOCK_BOARD_URL = '/api/v1/kanban/verify'
 
-export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed'
+export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
 
 export const JIRA_VERIFY_ERROR_MESSAGE = {

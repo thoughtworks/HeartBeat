@@ -58,7 +58,7 @@ export enum CONFIG_TITLE {
 export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
 
-export const MOCK_BOARD_URL = '/api/v1/kanban/verify'
+export const MOCK_BOARD_URL = '/api/v1/boards'
 
 export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'

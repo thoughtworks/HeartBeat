@@ -20,7 +20,7 @@ export class BoardClient extends HttpClient {
 
   getVerifyBoard = async (params: getVerifyBoardParams) => {
     try {
-      const result = await this.axiosInstance.get('/kanban/verify', { params: { ...params } }).then((res) => res)
+      const result = await this.axiosInstance.get('/boards', { params: { ...params } }).then((res) => res)
       result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result.data)
     } catch (e) {
       this.isBoardVerify = false

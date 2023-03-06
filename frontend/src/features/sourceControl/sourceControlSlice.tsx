@@ -13,12 +13,12 @@ export const sourceControlSlice = createSlice({
   name: 'sourceControl',
   initialState,
   reducers: {
-    changeSourceControlVerifyState: (state, action) => {
+    updateSourceControlVerifyState: (state, action) => {
       state.isSourceControlVerified = action.payload
     },
   },
 })
-export const { changeSourceControlVerifyState } = sourceControlSlice.actions
+export const { updateSourceControlVerifyState } = sourceControlSlice.actions
 
 export const isSourceControlVerified = (state: RootState) => state.sourceControl.isSourceControlVerified
 

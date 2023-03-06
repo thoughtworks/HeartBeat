@@ -14,7 +14,7 @@ import {
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectDateRange, selectSourceControlFields, updateSourceControlFields } from '@src/features/config/configSlice'
-import { changeSourceControlVerifyState, isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
+import { updateSourceControlVerifyState, isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 
@@ -44,7 +44,7 @@ export const SourceControl = () => {
       return field
     })
     setFields(newFields)
-    dispatch(changeSourceControlVerifyState(false))
+    dispatch(updateSourceControlVerifyState(false))
   }
 
   const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
@@ -63,7 +63,7 @@ export const SourceControl = () => {
     }
     await verifyGithub(params).then((res) => {
       if (res) {
-        dispatch(changeSourceControlVerifyState(res.isSourceControlVerify))
+        dispatch(updateSourceControlVerifyState(res.isSourceControlVerify))
         dispatch(updateSourceControlFields(res.response))
       }
     })
@@ -72,7 +72,7 @@ export const SourceControl = () => {
   const handleResetSourceControlFields = () => {
     initSourceControlFields()
     setIsDisableVerifyButton(true)
-    dispatch(changeSourceControlVerifyState(false))
+    dispatch(updateSourceControlVerifyState(false))
   }
 
   const checkFieldValid = (value: string): boolean => value !== ''

@@ -41,14 +41,17 @@ public class JiraControllerTest {
 	@Test
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
 		BoardConfigResponse boardConfigResponse = BOARD_CONFIG_RESPONSE_BUILDER().build();
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+
 		when(jiraService.getJiraConfiguration(any())).thenReturn(boardConfigResponse);
 
-		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		mockMvc
 			.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(boardRequestJson.write(boardRequest).getJson()))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"));
+			.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"))
+			.andExpect(jsonPath("$.users[0]").value("Zhang San"))
+			.andExpect(jsonPath("$.targetFields[0].name").value("Priority"));
 	}
 
 	@Test

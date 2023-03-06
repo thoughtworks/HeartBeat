@@ -18,7 +18,7 @@ export enum DATE_RANGE {
 export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'PipelineTool',
-  SOURCE_CONTROL = 'SourceControl',
+  SOURCE_CONTROL = 'Source Control',
 }
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'

@@ -100,7 +100,7 @@ export const SourceControl = () => {
       <SourceControlTitle>{CONFIG_TITLE.SOURCE_CONTROL}</SourceControlTitle>
       <SourceControlForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
         <SourceControlTypeSelections variant='standard' required>
-          <InputLabel id='sourceControl-type-checkbox-label'>SourceControl</InputLabel>
+          <InputLabel id='sourceControl-type-checkbox-label'>Source Control</InputLabel>
           <Select labelId='sourceControl-type-checkbox-label' value={fields[0].value}>
             {Object.values(SOURCE_CONTROL_TYPES).map((toolType) => (
               <MenuItem key={toolType} value={toolType}>

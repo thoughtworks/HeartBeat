@@ -2,6 +2,7 @@ package heartbeat.service.jira;
 
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
+import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequest;
@@ -112,42 +113,40 @@ class JiraServiceTest {
 		assertThat(boardConfigResponse.getUsers().get(0)).isEqualTo("Zhang San");
 	}
 
-	// @Test
-	// void shouldReturnFilteredTargetFieldsWhenGetTargetFieldSuccess() {
-	// JiraBoardConfigDTO jiraBoardConfigDTO =
-	// JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-	// StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-	// StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
-	// FieldResponseDTO targetFields = FIELD_RESPONSE_BUILDER().build();
-	// URI baseUrl = URI.create("https://site.atlassian.net");
-	// String token = "token";
-	// BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-	// String jql = String.format(
-	// "status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate
-	// <= %s", "DONE",
-	// boardRequest.getStartTime(), boardRequest.getEndTime());
-	//
-	// when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID,
-	// token)).thenReturn(jiraBoardConfigDTO);
-	// when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1,
-	// token)).thenReturn(doneStatusSelf);
-	// when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2,
-	// token)).thenReturn(doingStatusSelf);
-	// when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql,
-	// token))
-	// .thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
-	// when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-	// .thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
-	// when(jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
-	// token)).thenReturn(targetFields);
-	//
-	// BoardConfigResponse boardConfigResponse =
-	// jiraService.getJiraConfiguration(boardRequest);
-	//
-	// assertThat(boardConfigResponse.getTargetFields()).hasSize(1);
-	// assertThat(boardConfigResponse.getTargetFields().get(0)).isEqualTo(new
-	// TargetField("assignee", "Assignee", false));
-	// }
+	@Test
+	void shouldThrowExceptionWhenGetTargetFieldFailed() {
+		JiraBoardConfigDTO jiraBoardConfigDTO =
+			JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create("https://site.atlassian.net");
+		String token = "token";
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(
+			"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+			boardRequest.getStartTime(), boardRequest.getEndTime());
+
+		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID,
+			token)).thenReturn(jiraBoardConfigDTO);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1,
+			token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2,
+			token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql,
+			token))
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+		FeignException mockException = mock(FeignException.class);
+		when(mockException.getMessage()).thenReturn("exception");
+		when(mockException.status()).thenReturn(500);
+		when(jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
+			token)).thenThrow(mockException);
+
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status code 500, error: exception");
+	}
 
 	@Test
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {

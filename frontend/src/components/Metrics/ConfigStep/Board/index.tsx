@@ -13,24 +13,24 @@ import {
   VerifyButton,
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { changeBoardVerifyState, isBoardVerified } from '@src/features/board/boardSlice'
-import { selectBoardFields, selectDateRange, updateBoardFields } from '@src/features/config/configSlice'
+import { updateBoardVerifyState, selectIsBoardVerified } from '@src/context/board/boardSlice'
+import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
-  const isVerified = useAppSelector(isBoardVerified)
-  const boardFields = useAppSelector(selectBoardFields)
+  const isVerified = useAppSelector(selectIsBoardVerified)
+  const boardFields = useAppSelector(selectBoard)
   const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
-  const { verifyJira, isLoading, showError, errorMessage } = useVerifyBoardEffect()
+  const { verifyJira, isLoading, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
     {
       key: 'Board',
-      value: boardFields.board,
+      value: boardFields.type,
       isValid: true,
     },
     {
@@ -66,7 +66,7 @@ export const Board = () => {
       return field
     })
     setFields(newFields)
-    dispatch(changeBoardVerifyState(false))
+    dispatch(updateBoardVerifyState(false))
   }
 
   const checkFiledValid = (type: string, value: string): boolean =>
@@ -79,7 +79,7 @@ export const Board = () => {
         return field
       })
       setFields(newFieldsValue)
-      dispatch(changeBoardVerifyState(false))
+      dispatch(updateBoardVerifyState(false))
       return
     }
     const newFieldsValue = fields.map((field, fieldIndex) => {
@@ -96,7 +96,7 @@ export const Board = () => {
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
-      updateBoardFields({
+      updateBoard({
         board: fields[0].value,
         boardId: fields[1].value,
         email: fields[2].value,
@@ -116,8 +116,8 @@ export const Board = () => {
     }
     await verifyJira(params).then((res) => {
       if (res) {
-        dispatch(changeBoardVerifyState(res.isBoardVerify))
-        dispatch(updateBoardFields(res.response))
+        dispatch(updateBoardVerifyState(res.isBoardVerify))
+        dispatch(updateBoard(res.response))
         setIsNoDoneCard(res.isNoDoneCard)
       }
     })
@@ -126,13 +126,13 @@ export const Board = () => {
   const handleResetBoardFields = () => {
     initBoardFields()
     setIsDisableVerifyButton(true)
-    dispatch(changeBoardVerifyState(false))
+    dispatch(updateBoardVerifyState(false))
   }
 
   return (
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
-      {showError && <ErrorNotification message={errorMessage} />}
+      {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && (
         <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />

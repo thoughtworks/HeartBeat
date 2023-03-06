@@ -13,7 +13,7 @@ export const routes = [
     name: 'Home',
   },
   {
-    path: '/Metrics',
+    path: '/metrics',
     component: lazy(() => import('../pages/Metrics')),
     name: 'Metrics',
   },

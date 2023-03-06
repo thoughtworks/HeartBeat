@@ -1,4 +1,4 @@
-import pipelineToolReducer, { changePipelineToolVerifyState } from '@src/features/pipelineTool/pipelineToolSlice'
+import pipelineToolReducer, { changePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
 
 describe('pipelineTool reducer', () => {
   it('should set isPipelineToolVerified false when handle initial state', () => {

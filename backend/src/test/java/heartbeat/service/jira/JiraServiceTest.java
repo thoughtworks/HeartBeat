@@ -66,20 +66,20 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
-				.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-				.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
-				.thenReturn(FIELD_RESPONSE_BUILDER().build());
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
 		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
 		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
 		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0))
-				.isEqualTo("DONE");
+			.isEqualTo("DONE");
 		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1))
-				.isEqualTo("DOING");
+			.isEqualTo("DOING");
 		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigResponse.getUsers()).hasSize(1);
 		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
@@ -101,11 +101,11 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
-				.thenReturn(ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER().build());
+			.thenReturn(ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER().build());
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest))
-				.isInstanceOf(RequestFailedException.class)
-				.hasMessageContaining("Request failed with status statusCode 204, error: There is no done cards.");
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status statusCode 204, error: There is no done cards.");
 	}
 
 	@Test
@@ -124,11 +124,11 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
-				.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-				.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
-				.thenReturn(FIELD_RESPONSE_BUILDER().build());
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequest);
 
@@ -152,17 +152,17 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
-				.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
-				.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
 		FeignException mockException = mock(FeignException.class);
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(500);
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(), token)).thenThrow(mockException);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
-				.isInstanceOf(RequestFailedException.class)
-				.hasMessageContaining("Request failed with status code 500, error: exception");
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status code 500, error: exception");
 	}
 
 	@Test
@@ -178,21 +178,22 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenThrow(mockException);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
-				.isInstanceOf(RequestFailedException.class)
-				.hasMessageContaining("Request failed with status code 400, error: exception");
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status code 400, error: exception");
 	}
 
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		FeignException mockException = mock(FeignException.class);
+		System.out.println(Math.ceil(0));
 
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(400);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequest.builder().build()))
-				.isInstanceOf(RequestFailedException.class)
-				.hasMessageContaining("Request failed with status code 400, error: ", "");
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status code 400, error: ", "");
 	}
 
 }

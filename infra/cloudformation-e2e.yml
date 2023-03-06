@@ -3,7 +3,7 @@ Parameters:
     Type: String
   RepositoryName:
     Type: String
-  OIDCProviderArn:
+  OIDCProviderMockServerArn:
     Description: Arn for the GitHub OIDC Provider.
     Default: ""
     Type: String
@@ -29,8 +29,8 @@ Parameters:
     Type: String
 
 Conditions:
-  CreateOIDCProvider: !Equals
-    - !Ref OIDCProviderArn
+  CreateOIDCProviderMockServer: !Equals
+    - !Ref OIDCProviderMockServerArn
     - ""
 
 Resources:
@@ -62,7 +62,7 @@ Resources:
                 Resource: "*"
             Version: "2012-10-17"
 
-  AWSGitHubActionRole:
+  AWSGitHubActionMockServerRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -71,9 +71,9 @@ Resources:
             Action: sts:AssumeRoleWithWebIdentity
             Principal:
               Federated: !If
-                - CreateOIDCProvider
-                - !Ref GithubOidc
-                - !Ref OIDCProviderArn
+                - CreateOIDCProviderMockServer
+                - !Ref GitOidc
+                - !Ref OIDCProviderMockServerArn
             Condition:
               StringLike:
                 token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:*
@@ -97,19 +97,19 @@ Resources:
                 Effect: Allow
                 Resource: "*"
 
-  GithubOidc:
+  GitOidc:
     Type: AWS::IAM::OIDCProvider
-    Condition: CreateOIDCProvider
+    Condition: CreateOIDCProviderMockServer
     Properties:
-      Url: https://token.actions.githubusercontent.com
+#      Url: https://token.actions.githubusercontent.com
       ClientIdList:
         - sts.amazonaws.com
       ThumbprintList:
         - 6938fd4d98bab03faadb97b34396831e3780aea1
-  EcrStubs:
+  MockServerECR:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: "heartbeat_stub"
+      RepositoryName: "mock_server"
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -209,6 +209,6 @@ Resources:
       Domain: vpc
 Outputs:
   Role:
-    Value: !GetAtt AWSGitHubActionRole.Arn
+    Value: !GetAtt AWSGitHubActionMockServerRole.Arn
   EIP:
     Value: !GetAtt WebPortAddress.PublicIp

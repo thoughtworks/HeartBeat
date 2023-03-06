@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
-import { mockParams } from '../client/BoardClient.test'
+import { mockParams } from '../client/PipelineToolClient.test'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { pipelineToolClient } from '@src/clients/PipelineToolClient'
 

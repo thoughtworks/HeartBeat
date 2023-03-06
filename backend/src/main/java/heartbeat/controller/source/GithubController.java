@@ -1,7 +1,7 @@
 package heartbeat.controller.source;
 
 import heartbeat.controller.source.vo.GithubResponse;
-import heartbeat.service.source.github.GithubVerifyService;
+import heartbeat.service.source.github.GithubService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/sourceControl")
 @Validated
-public class GithubVerifyController {
+public class GithubController {
 
-	private final GithubVerifyService githubVerifyService;
+	private final GithubService githubVerifyService;
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)

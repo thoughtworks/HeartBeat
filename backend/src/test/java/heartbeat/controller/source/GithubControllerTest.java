@@ -1,7 +1,7 @@
 package heartbeat.controller.source;
 
 import heartbeat.controller.source.vo.GithubResponse;
-import heartbeat.service.source.github.GithubVerifyService;
+import heartbeat.service.source.github.GithubService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(GithubVerifyController.class)
+@WebMvcTest(GithubController.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
-class GithubVerifyControllerTest {
+class GithubControllerTest {
 	@MockBean
-	private GithubVerifyService githubVerifyService;
+	private GithubService githubVerifyService;
 
 	@Autowired
 	private MockMvc mockMvc;

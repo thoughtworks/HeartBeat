@@ -6,8 +6,11 @@ import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
   MOCK_SOURCE_CONTROL_URL,
+  RESET,
   SOURCE_CONTROL_FIELDS,
   SOURCE_CONTROL_TYPES,
+  VERIFIED,
+  VERIFY,
 } from '../../../fixtures'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
@@ -59,22 +62,22 @@ describe('SourceControl', () => {
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
     fillSourceControlFieldsInformation()
 
-    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(VERIFY))
 
     await waitFor(() => {
-      expect(getByRole('button', { name: 'Reset' })).toBeInTheDocument()
-      fireEvent.click(getByRole('button', { name: 'Reset' }))
+      expect(getByRole('button', { name: RESET })).toBeInTheDocument()
+      fireEvent.click(getByRole('button', { name: RESET }))
     })
 
     expect(tokenInput.value).toEqual('')
     expect(getByText(SOURCE_CONTROL_TYPES.GIT_HUB)).toBeInTheDocument()
-    expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
-    expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
+    expect(queryByRole('button', { name: RESET })).not.toBeTruthy()
+    expect(queryByRole('button', { name: VERIFY })).toBeDisabled()
   })
 
   it('should enable verify button when all fields checked correctly given disable verify button', () => {
     const { getByRole } = setup()
-    const verifyButton = getByRole('button', { name: 'Verify' })
+    const verifyButton = getByRole('button', { name: VERIFY })
 
     expect(verifyButton).toBeDisabled()
 
@@ -85,12 +88,12 @@ describe('SourceControl', () => {
   it('should show reset button  and verified button when verify successfully', async () => {
     const { getByText } = setup()
     fillSourceControlFieldsInformation()
-    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(VERIFY))
     await waitFor(() => {
-      expect(getByText('Reset')).toBeVisible()
+      expect(getByText(RESET)).toBeVisible()
     })
     await waitFor(() => {
-      expect(getByText('Verified')).toBeInTheDocument()
+      expect(getByText(VERIFIED)).toBeInTheDocument()
     })
   })
 
@@ -110,7 +113,7 @@ describe('SourceControl', () => {
     const { getByText, getByRole } = setup()
     fillSourceControlFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: 'Verify' }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(getByText('Github verify failed')).toBeInTheDocument()

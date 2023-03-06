@@ -12,6 +12,12 @@ export const NEXT = 'Next'
 
 export const BACK = 'Back'
 
+export const VERIFY = 'Verify'
+
+export const RESET = 'Reset'
+
+export const VERIFIED = 'Verified'
+
 export const EXPORT_BOARD_DATA = 'Export board data'
 
 export const STEPS = ['Config', 'Metrics', 'Export']

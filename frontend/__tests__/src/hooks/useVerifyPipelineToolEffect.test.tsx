@@ -1,8 +1,12 @@
 import { act, renderHook } from '@testing-library/react'
-import { mockParams } from '../client/BoardClient.test'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { pipelineToolClient } from '@src/clients/PipelineToolClient'
-
+const mockParams = {
+  type: 'pipeLine',
+  token: 'mockToken',
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+}
 describe('use verify pipelineTool state', () => {
   it('should initial data state when render hook', async () => {
     const { result } = renderHook(() => useVerifyPipelineToolEffect())

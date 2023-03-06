@@ -1,7 +1,8 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { BadRequestException } from '../exceptions/BadRequestException'
-import { BadServerException } from '@src/exceptions/BasServerException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { AxiosError } from 'axios'
+import { NotFoundException } from '@src/exceptions/NotFoundException'
 
 export interface getVerifyBoardParams {
   token: string
@@ -19,16 +20,19 @@ export class BoardClient extends HttpClient {
 
   getVerifyBoard = async (params: getVerifyBoardParams) => {
     try {
-      const result = await this.axiosInstance.get('/kanban/verify', { params: { ...params } }).then((res) => res)
+      const result = await this.axiosInstance.get('/boards', { params: { ...params } }).then((res) => res)
       result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result.data)
     } catch (e) {
       this.isBoardVerify = false
       const code = (e as AxiosError).response?.status
+      if (code === 400) {
+        throw new BadRequestException(params.type, 'Bad request')
+      }
       if (code === 404) {
-        throw new BadRequestException(params.type, 'verify failed')
+        throw new NotFoundException(params.type, 'Page not found')
       }
       if (code === 500) {
-        throw new BadServerException(params.type, 'verify failed')
+        throw new InternalServerException(params.type, 'Internal server error')
       }
     }
     return {

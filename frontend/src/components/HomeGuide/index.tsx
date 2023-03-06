@@ -34,7 +34,7 @@ export const HomeGuide = () => {
       <GuideButton>
         <span>Import project from file</span>
       </GuideButton>
-      <GuideButton onClick={() => navigate('/Metrics')}>Create a new project</GuideButton>
+      <GuideButton onClick={() => navigate('/metrics')}>Create a new project</GuideButton>
     </Stack>
   )
 }

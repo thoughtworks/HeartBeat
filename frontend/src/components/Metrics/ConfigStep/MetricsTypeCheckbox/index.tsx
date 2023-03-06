@@ -1,15 +1,16 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { REQUIRED_DATA_LIST } from '@src/constants'
+import { BOARD_TYPES, REQUIRED_DATA_LIST } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
-import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectRequiredData, updateRequiredData } from '@src/features/config/configSlice'
+import { selectMetrics, updateBoard, updateMetrics } from '@src/context/config/configSlice'
+import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
+import { updateBoardVerifyState } from '@src/context/board/boardSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
-  const requireData = useAppSelector(selectRequiredData)
+  const requireData = useAppSelector(selectMetrics)
   const [isShowBoard, setIsShowBoard] = useState(false)
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const [isShowPipelineTool, setIsShowPipelineTool] = useState(false)
@@ -18,7 +19,18 @@ export const MetricsTypeCheckbox = () => {
     const {
       target: { value },
     } = event
-    dispatch(updateRequiredData(value))
+    dispatch(updateBoardVerifyState(false))
+    dispatch(
+      updateBoard({
+        type: BOARD_TYPES.JIRA,
+        boardId: '',
+        email: '',
+        projectKey: '',
+        site: '',
+        token: '',
+      })
+    )
+    dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     setIsShowBoard(
       value.includes(REQUIRED_DATA_LIST[0]) ||

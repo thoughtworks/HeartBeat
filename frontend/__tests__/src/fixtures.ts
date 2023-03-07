@@ -62,21 +62,21 @@ export enum CONFIG_TITLE {
   SOURCE_CONTROL = 'Source Control',
 }
 
-export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
+export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
+export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/boards'
-export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
-
-export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
-export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
+export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
 export const JIRA_VERIFY_ERROR_MESSAGE = {
   400: 'Jira verify failed: Bad request',
   404: 'Jira verify failed: Page not found',
   500: 'Jira verify failed: Internal server error',
 }
+
+export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 
 export const GITHUB_VERIFY_ERROR_MESSAGE = {
   400: 'Github verify failed: Bad request',

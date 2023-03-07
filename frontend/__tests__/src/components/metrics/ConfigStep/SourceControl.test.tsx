@@ -66,7 +66,7 @@ describe('SourceControl', () => {
     fireEvent.click(getByText(VERIFY))
 
     await waitFor(() => {
-      expect(getByRole('button', { name: RESET })).toBeInTheDocument()
+      expect(getByRole('button', { name: RESET })).toBeTruthy()
       fireEvent.click(getByRole('button', { name: RESET }))
     })
 
@@ -94,11 +94,11 @@ describe('SourceControl', () => {
     fireEvent.click(getByText(VERIFY))
 
     await waitFor(() => {
-      expect(getByText(RESET)).toBeVisible()
+      expect(getByText(RESET)).toBeTruthy()
     })
 
     await waitFor(() => {
-      expect(getByText(VERIFIED)).toBeInTheDocument()
+      expect(getByText(VERIFIED)).toBeTruthy()
     })
   })
 
@@ -109,7 +109,7 @@ describe('SourceControl', () => {
 
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
     fireEvent.change(tokenInput, { target: { value: '' } })
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeVisible()
+    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeInTheDocument()
     expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 

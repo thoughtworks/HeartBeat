@@ -17,7 +17,7 @@ import { rest } from 'msw'
 import { INVALID_TOKEN_MESSAGE } from '@src/constants'
 
 export const fillPipelineToolFieldsInformation = () => {
-  const mockInfo = 'mockToken'
+  const mockInfo = 'mockTokenMockTokenMockTokenMockToken1234'
   const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
   fireEvent.change(tokenInput, { target: { value: mockInfo } })
   expect(tokenInput.value).toEqual(mockInfo)

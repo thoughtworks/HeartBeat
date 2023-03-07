@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectMetrics, updateBoard, updateMetrics, updatePipelineToolFields } from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { updateBoardVerifyState } from '@src/context/board/boardSlice'
-import { changePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
+import { updatePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -21,7 +21,7 @@ export const MetricsTypeCheckbox = () => {
       target: { value },
     } = event
     dispatch(updatePipelineToolFields({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
-    dispatch(changePipelineToolVerifyState(false))
+    dispatch(updatePipelineToolVerifyState(false))
     dispatch(updateBoardVerifyState(false))
     dispatch(
       updateBoard({

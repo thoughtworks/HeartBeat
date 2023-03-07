@@ -10,7 +10,7 @@ import {
   PipelineToolTypeSelections,
 } from '@src/components/Metrics/ConfigStep/PipelineTool/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { changePipelineToolVerifyState, isPipelineToolVerified } from '@src/context/pipelineTool/pipelineToolSlice'
+import { updatePipelineToolVerifyState, isPipelineToolVerified } from '@src/context/pipelineTool/pipelineToolSlice'
 import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } from '@src/context/config/configSlice'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
@@ -41,7 +41,7 @@ export const PipelineTool = () => {
       return field
     })
     setFields(newFields)
-    dispatch(changePipelineToolVerifyState(false))
+    dispatch(updatePipelineToolVerifyState(false))
   }
 
   const checkFieldValid = (value: string): boolean => value !== ''
@@ -53,7 +53,7 @@ export const PipelineTool = () => {
         return field
       })
       setFields(newFieldsValue)
-      dispatch(changePipelineToolVerifyState(false))
+      dispatch(updatePipelineToolVerifyState(false))
       return
     }
     const newFieldsValue = fields.map((field, fieldIndex) => {
@@ -84,7 +84,7 @@ export const PipelineTool = () => {
 
     await verifyPipelineTool(params).then((res) => {
       if (res) {
-        dispatch(changePipelineToolVerifyState(res.isPipelineToolVerified))
+        dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified))
         dispatch(updatePipelineToolFields(res.response))
       }
     })
@@ -93,7 +93,7 @@ export const PipelineTool = () => {
   const handleResetPipelineToolFields = () => {
     initPipeLineFields()
     setIsDisableVerifyButton(true)
-    dispatch(changePipelineToolVerifyState(false))
+    dispatch(updatePipelineToolVerifyState(false))
   }
 
   return (

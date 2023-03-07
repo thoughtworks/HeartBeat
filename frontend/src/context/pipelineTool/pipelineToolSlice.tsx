@@ -13,13 +13,13 @@ export const pipelineToolSlice = createSlice({
   name: 'pipelineTool',
   initialState,
   reducers: {
-    changePipelineToolVerifyState: (state, action) => {
+    updatePipelineToolVerifyState: (state, action) => {
       state.isPipelineToolVerified = action.payload
     },
   },
 })
 
-export const { changePipelineToolVerifyState } = pipelineToolSlice.actions
+export const { updatePipelineToolVerifyState } = pipelineToolSlice.actions
 
 export const isPipelineToolVerified = (state: RootState) => state.pipelineTool.isPipelineToolVerified
 

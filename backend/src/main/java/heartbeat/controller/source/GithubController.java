@@ -3,6 +3,7 @@ package heartbeat.controller.source;
 import heartbeat.controller.source.vo.GithubResponse;
 import heartbeat.service.source.github.GithubService;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -22,8 +23,11 @@ public class GithubController {
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public GithubResponse getRepos(@RequestParam @NotBlank String githubToken) {
-		//log
+	public GithubResponse getRepos(
+		@RequestParam
+		@NotBlank(message = "token must not be blank")
+		@Pattern(regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$", message = "token's pattern is incorrect")
+		String githubToken) {
 		return githubService.verifyToken(githubToken);
 	}
 

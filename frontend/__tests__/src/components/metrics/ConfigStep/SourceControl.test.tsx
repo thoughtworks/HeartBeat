@@ -73,7 +73,7 @@ describe('SourceControl', () => {
     expect(tokenInput.value).toEqual('')
     expect(getByText(SOURCE_CONTROL_TYPES.GIT_HUB)).toBeInTheDocument()
     expect(queryByRole('button', { name: RESET })).not.toBeTruthy()
-    expect(queryByRole('button', { name: VERIFY })).toBeDisabled()
+    expect(getByRole('button', { name: VERIFY })).toBeDisabled()
   })
 
   it('should enable verify button when all fields checked correctly given disable verify button', () => {

@@ -83,6 +83,7 @@ describe('SourceControl', () => {
     expect(verifyButton).toBeDisabled()
 
     fillSourceControlFieldsInformation()
+
     expect(verifyButton).toBeEnabled()
   })
 

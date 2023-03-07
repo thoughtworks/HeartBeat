@@ -1,15 +1,12 @@
 import React, { FormEvent, useState } from 'react'
 import { CONFIG_TITLE, SOURCE_CONTROL_TYPES } from '@src/constants'
 import {
-  ResetButton,
   SourceControlButtonGroup,
-  SourceControlDrop,
   SourceControlForm,
   SourceControlSection,
   SourceControlTextField,
   SourceControlTitle,
   SourceControlTypeSelections,
-  VerifyButton,
 } from '@src/components/Metrics/ConfigStep/SourceControl/style'
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
@@ -18,6 +15,7 @@ import { updateSourceControlVerifyState, isSourceControlVerified } from '@src/co
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { updateSourceControlVerifyResponse } from '@src/context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
+import { LoadingDrop, ResetButton, VerifyButton } from '@src/theme'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
@@ -94,9 +92,9 @@ export const SourceControl = () => {
     <SourceControlSection>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && (
-        <SourceControlDrop open={isLoading} data-testid='circularProgress'>
+        <LoadingDrop open={isLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />
-        </SourceControlDrop>
+        </LoadingDrop>
       )}
       <SourceControlTitle>{CONFIG_TITLE.SOURCE_CONTROL}</SourceControlTitle>
       <SourceControlForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>

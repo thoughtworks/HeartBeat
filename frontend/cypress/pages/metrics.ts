@@ -56,6 +56,11 @@ class Metrics {
       expect(str).to.equal('BuildKite verify failed')
     })
   }
+
+  goMetricsStep() {
+    cy.contains('Next').click()
+    cy.contains('Crews Setting').should('exist')
+  }
 }
 
 const metricsPage = new Metrics()

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { sourceControlClient, getVerifySourceControlParams } from '@src/clients/SourceControlClient'
+import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 
 export interface useVerifySourceControlStateInterface {
   verifyGithub: (params: getVerifySourceControlParams) => Promise<
@@ -26,7 +27,7 @@ export const useVerifySourceControlEffect = (): useVerifySourceControlStateInter
       setErrorMessage(err.message)
       setTimeout(() => {
         setErrorMessage('')
-      }, 2000)
+      }, ERROR_MESSAGE_TIME_DURATION)
     } finally {
       setIsLoading(false)
     }

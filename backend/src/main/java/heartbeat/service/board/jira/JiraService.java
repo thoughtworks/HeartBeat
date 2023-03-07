@@ -1,13 +1,5 @@
 package heartbeat.service.board.jira;
 
-import java.util.*;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.CopyOnWriteArrayList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -23,7 +15,6 @@ import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
-import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.controller.board.vo.response.ColumnValue;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;

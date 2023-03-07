@@ -90,10 +90,13 @@ describe('SourceControl', () => {
   it('should show reset button  and verified button when verify successfully', async () => {
     const { getByText } = setup()
     fillSourceControlFieldsInformation()
+
     fireEvent.click(getByText(VERIFY))
+
     await waitFor(() => {
       expect(getByText(RESET)).toBeVisible()
     })
+
     await waitFor(() => {
       expect(getByText(VERIFIED)).toBeInTheDocument()
     })

@@ -1,4 +1,4 @@
-import { fireEvent, getByTestId, queryByText, render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import {
   PIPELINE_TOOL_FIELDS,

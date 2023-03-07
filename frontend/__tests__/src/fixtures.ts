@@ -52,10 +52,10 @@ export const PIPELINE_TOOL_TYPES = {
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
-  PIPELINE_TOOL = 'PipelineTool',
+  PIPELINE_TOOL = 'Pipeline Tool',
 }
 
-export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
+export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/boards'

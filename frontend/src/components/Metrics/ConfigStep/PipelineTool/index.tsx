@@ -107,7 +107,7 @@ export const PipelineTool = () => {
       <PipelineToolTitle>{CONFIG_TITLE.PIPELINE_TOOL}</PipelineToolTitle>
       <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>
         <PipelineToolTypeSelections variant='standard' required>
-          <InputLabel id='pipelineTool-type-checkbox-label'>PipelineTool</InputLabel>
+          <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
           <Select
             labelId='pipelineTool-type-checkbox-label'
             value={fields[0].value}

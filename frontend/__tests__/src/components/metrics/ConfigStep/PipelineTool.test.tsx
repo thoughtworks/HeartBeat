@@ -67,7 +67,7 @@ describe('PipelineTool', () => {
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
     fireEvent.change(tokenInput, { target: { value: 'abcd' } })
-    fireEvent.mouseDown(getByRole('button', { name: 'PipelineTool' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'Pipeline Tool' }))
     fireEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD))
 
     expect(tokenInput.value).toEqual('')
@@ -91,7 +91,7 @@ describe('PipelineTool', () => {
 
   it('should show detail options when click pipelineTool fields', () => {
     const { getByRole } = setup()
-    fireEvent.mouseDown(getByRole('button', { name: 'PipelineTool' }))
+    fireEvent.mouseDown(getByRole('button', { name: 'Pipeline Tool' }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionValue = options.map((li) => li.getAttribute('data-value'))

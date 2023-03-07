@@ -1,11 +1,9 @@
 package heartbeat.controller.board.vo.response;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor

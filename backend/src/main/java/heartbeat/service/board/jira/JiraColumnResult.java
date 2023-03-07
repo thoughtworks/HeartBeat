@@ -1,7 +1,7 @@
 package heartbeat.service.board.jira;
 
-import java.util.List;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 

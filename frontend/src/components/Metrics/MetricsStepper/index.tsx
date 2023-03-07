@@ -24,13 +24,11 @@ const MetricsStepper = () => {
   return (
     <Box>
       <Stepper activeStep={activeStep}>
-        {STEPS.map((label) => {
-          return (
-            <Step key={label}>
-              <MetricsStepLabel>{label}</MetricsStepLabel>
-            </Step>
-          )
-        })}
+        {STEPS.map((label) => (
+          <Step key={label}>
+            <MetricsStepLabel>{label}</MetricsStepLabel>
+          </Step>
+        ))}
       </Stepper>
       <MetricsStepperContent>
         {activeStep === 0 && <ConfigStep />}

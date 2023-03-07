@@ -19,7 +19,9 @@ import { rest } from 'msw'
 export const fillSourceControlFieldsInformation = () => {
   const mockInfo = 'mockToken'
   const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
+
   fireEvent.change(tokenInput, { target: { value: mockInfo } })
+
   expect(tokenInput.value).toEqual(mockInfo)
 }
 
@@ -61,6 +63,7 @@ describe('SourceControl', () => {
   it('should clear all fields information when click reset button', async () => {
     const { getByRole, getByText, queryByRole } = setup()
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
+
     fillSourceControlFieldsInformation()
 
     fireEvent.click(getByText(VERIFY))
@@ -105,10 +108,13 @@ describe('SourceControl', () => {
   it('should show error message and error style when token is empty', () => {
     const { getByText } = setup()
     const TOKEN_ERROR_MESSAGE = 'Token is required'
+
     fillSourceControlFieldsInformation()
 
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
+
     fireEvent.change(tokenInput, { target: { value: '' } })
+
     expect(getByText(TOKEN_ERROR_MESSAGE)).toBeInTheDocument()
     expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
@@ -116,6 +122,7 @@ describe('SourceControl', () => {
   it('should show error notification when sourceControl verify response status is 404', async () => {
     server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(404))))
     const { getByText, getByRole } = setup()
+
     fillSourceControlFieldsInformation()
 
     fireEvent.click(getByRole('button', { name: VERIFY }))

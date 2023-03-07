@@ -35,11 +35,7 @@ const setup = () => {
   )
 }
 
-const server = setupServer(
-  rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => {
-    return res(ctx.status(200))
-  })
-)
+const server = setupServer(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))))
 
 describe('SourceControl', () => {
   beforeAll(() => server.listen())

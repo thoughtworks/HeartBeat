@@ -7,11 +7,7 @@ import {
 } from '../fixtures'
 import { sourceControlClient } from '@src/clients/SourceControlClient'
 
-const server = setupServer(
-  rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => {
-    return res(ctx.status(200))
-  })
-)
+const server = setupServer(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))))
 
 describe('verify sourceControl request', () => {
   beforeAll(() => server.listen())

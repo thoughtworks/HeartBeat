@@ -17,6 +17,7 @@ import { selectDateRange, selectSourceControlFields, updateSourceControlFields }
 import { updateSourceControlVerifyState, isSourceControlVerified } from '@src/context/sourceControl/sourceControlSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
+import { updateSourceControlVerifyResponse } from '@src/context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
@@ -64,7 +65,7 @@ export const SourceControl = () => {
     await verifyGithub(params).then((res) => {
       if (res) {
         dispatch(updateSourceControlVerifyState(res.isSourceControlVerify))
-        dispatch(updateSourceControlFields(res.response))
+        dispatch(updateSourceControlVerifyResponse(res.response))
       }
     })
   }

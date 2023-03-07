@@ -6,6 +6,7 @@ import jiraVerifyResponseReducer from './context/board/jiraVerifyResponse/jiraVe
 import pipelineReducer from './context/pipelineTool/pipelineToolSlice'
 import pipelineToolResponseReducer from './context/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
 import sourceControlReducer from './context/sourceControl/sourceControlSlice'
+import sourceControlVerifyResponseReducer from './context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     sourceControl: sourceControlReducer,
     jiraVerifyResponse: jiraVerifyResponseReducer,
     pipelineToolVerifyResponse: pipelineToolResponseReducer,
+    sourceControlVerifyResponse: sourceControlVerifyResponseReducer,
   },
 })
 

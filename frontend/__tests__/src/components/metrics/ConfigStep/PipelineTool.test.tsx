@@ -33,11 +33,7 @@ const setup = () => {
   )
 }
 
-const server = setupServer(
-  rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => {
-    return res(ctx.status(200))
-  })
-)
+const server = setupServer(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(200))))
 
 describe('PipelineTool', () => {
   beforeAll(() => server.listen())

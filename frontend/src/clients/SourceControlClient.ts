@@ -1,11 +1,14 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { AxiosError } from 'axios'
 import { BadRequestException } from '@src/exceptions/BadRequestException'
-import { BadServerException } from '@src/exceptions/BasServerException'
+import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 export interface getVerifySourceControlParams {
   type: string
   token: string
+  startTime: string | null
+  endTime: string | null
 }
 
 export class SourceControlClient extends HttpClient {
@@ -19,11 +22,14 @@ export class SourceControlClient extends HttpClient {
     } catch (e) {
       this.isSourceControlVerify = false
       const code = (e as AxiosError).response?.status
+      if (code === 400) {
+        throw new BadRequestException(params.type, 'Bad request')
+      }
       if (code === 404) {
-        throw new BadRequestException(params.type, 'verify failed')
+        throw new NotFoundException(params.type, 'Page not found')
       }
       if (code === 500) {
-        throw new BadServerException(params.type, 'verify failed')
+        throw new InternalServerException(params.type, 'Internal server error')
       }
     }
     return {

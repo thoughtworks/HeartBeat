@@ -11,8 +11,8 @@ import lombok.Data;
 @Builder
 public class AllDoneCardsResponseDTO implements Serializable {
 
-    private String total;
+	private String total;
 
-    private List<DoneCard> issues;
+	private List<DoneCard> issues;
 
 }

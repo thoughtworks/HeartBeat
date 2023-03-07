@@ -16,22 +16,22 @@ import org.springframework.boot.actuate.health.Status;
 @ExtendWith(MockitoExtension.class)
 class HealthControllerTest {
 
-    @Mock
-    private static HealthEndpoint healthEndpoint;
+	@Mock
+	private static HealthEndpoint healthEndpoint;
 
-    @InjectMocks
-    private static HealthController healthController;
+	@InjectMocks
+	private static HealthController healthController;
 
-    @Test
-    void shouldReturnHealthStatus() {
+	@Test
+	void shouldReturnHealthStatus() {
 
-        HealthComponent mockHealth = mock(HealthComponent.class);
-        when(healthEndpoint.health()).thenReturn(mockHealth);
-        when(mockHealth.getStatus()).thenReturn(Status.UP);
+		HealthComponent mockHealth = mock(HealthComponent.class);
+		when(healthEndpoint.health()).thenReturn(mockHealth);
+		when(mockHealth.getStatus()).thenReturn(Status.UP);
 
-        Status healthStatus = healthController.getHealthStatus();
+		Status healthStatus = healthController.getHealthStatus();
 
-        assertThat(healthStatus).isEqualTo(Status.UP);
-    }
+		assertThat(healthStatus).isEqualTo(Status.UP);
+	}
 
 }

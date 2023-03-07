@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Issuetype implements Serializable {
 
-    private Map<String, IssueField> fields;
+	private Map<String, IssueField> fields;
 
 }

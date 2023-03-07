@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JiraColumnStatus implements Serializable {
 
-    private String id;
+	private String id;
 
 }

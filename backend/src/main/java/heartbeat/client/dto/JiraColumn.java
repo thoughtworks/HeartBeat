@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JiraColumn implements Serializable {
 
-    private String name;
+	private String name;
 
-    private List<JiraColumnStatus> statuses;
+	private List<JiraColumnStatus> statuses;
 
 }

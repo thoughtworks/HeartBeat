@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class StatusCategory implements Serializable {
 
-    private String key;
+	private String key;
 
-    private String name;
+	private String name;
 
 }

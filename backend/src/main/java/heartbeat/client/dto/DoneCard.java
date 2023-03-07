@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DoneCard implements Serializable {
 
-    private String key;
+	private String key;
 
-    private DoneCardFields fields;
+	private DoneCardFields fields;
 
 }

@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FieldResponseDTO implements Serializable {
 
-    private List<Project> projects;
+	private List<Project> projects;
 
 }

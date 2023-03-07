@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IssueField implements Serializable {
 
-    private String key;
+	private String key;
 
-    private String name;
+	private String name;
 
 }

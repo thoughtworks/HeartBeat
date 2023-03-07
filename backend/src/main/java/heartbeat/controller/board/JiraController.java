@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/boards")
 public class JiraController {
 
-    private final JiraService jiraService;
+	private final JiraService jiraService;
 
-    @GetMapping("/{boardType}")
-    public BoardConfigResponse getBoard(@PathVariable @NotBlank BoardType boardType,
-                                        @RequestBody @Valid BoardRequest boardRequest) {
-        return jiraService.getJiraConfiguration(boardRequest);
-    }
+	@GetMapping("/{boardType}")
+	public BoardConfigResponse getBoard(@PathVariable @NotBlank BoardType boardType,
+		@RequestBody @Valid BoardRequest boardRequest) {
+		return jiraService.getJiraConfiguration(boardRequest);
+	}
 
 }

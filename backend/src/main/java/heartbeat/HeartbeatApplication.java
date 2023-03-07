@@ -14,8 +14,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @OpenAPIDefinition(info = @Info(title = "Heartbeat API", description = "Heartbeat Information"))
 public class HeartbeatApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(HeartbeatApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(HeartbeatApplication.class, args);
+	}
 
 }

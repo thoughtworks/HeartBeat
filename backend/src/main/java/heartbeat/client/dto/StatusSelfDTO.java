@@ -10,8 +10,8 @@ import lombok.Data;
 @Builder
 public class StatusSelfDTO implements Serializable {
 
-    private String untranslatedName;
+	private String untranslatedName;
 
-    private StatusCategory statusCategory;
+	private StatusCategory statusCategory;
 
 }

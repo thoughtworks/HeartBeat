@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DoneCardFields implements Serializable {
 
-    private Assignee assignee;
+	private Assignee assignee;
 
 }

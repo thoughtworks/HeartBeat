@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CardHistoryResponseDTO implements Serializable {
 
-    private List<Item> items;
+	private List<Item> items;
 
 }

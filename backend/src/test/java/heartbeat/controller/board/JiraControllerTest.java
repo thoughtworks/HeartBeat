@@ -29,65 +29,65 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureJsonTesters
 public class JiraControllerTest {
 
-    @MockBean
-    private JiraService jiraService;
+	@MockBean
+	private JiraService jiraService;
 
-    @Autowired
-    private JacksonTester<BoardRequest> boardRequestJson;
+	@Autowired
+	private JacksonTester<BoardRequest> boardRequestJson;
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Test
-    void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
-        BoardConfigResponse boardConfigResponse = BOARD_CONFIG_RESPONSE_BUILDER().build();
-        BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+	@Test
+	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
+		BoardConfigResponse boardConfigResponse = BOARD_CONFIG_RESPONSE_BUILDER().build();
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 
-        when(jiraService.getJiraConfiguration(any())).thenReturn(boardConfigResponse);
+		when(jiraService.getJiraConfiguration(any())).thenReturn(boardConfigResponse);
 
-        mockMvc
-                .perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-                        .content(boardRequestJson.write(boardRequest).getJson()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"))
-                .andExpect(jsonPath("$.users[0]").value("Zhang San"))
-                .andExpect(jsonPath("$.targetFields[0].name").value("Priority"));
-    }
+		mockMvc
+			.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"))
+			.andExpect(jsonPath("$.users[0]").value("Zhang San"))
+			.andExpect(jsonPath("$.targetFields[0].name").value("Priority"));
+	}
 
-    @Test
-    void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
-        RequestFailedException mockException = mock(RequestFailedException.class);
-        String message = "message";
-        when(jiraService.getJiraConfiguration(any())).thenThrow(mockException);
-        when(mockException.getMessage()).thenReturn(message);
-        when(mockException.getStatus()).thenReturn(400);
+	@Test
+	void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
+		RequestFailedException mockException = mock(RequestFailedException.class);
+		String message = "message";
+		when(jiraService.getJiraConfiguration(any())).thenThrow(mockException);
+		when(mockException.getMessage()).thenReturn(message);
+		when(mockException.getStatus()).thenReturn(400);
 
-        BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-        mockMvc
-                .perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-                        .content(boardRequestJson.write(boardRequest).getJson()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(message));
-    }
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
+		mockMvc
+			.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value(message));
+	}
 
-    @Test
-    void shouldVerifyRequestTokenNotBlank() throws Exception {
-        BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
-        mockMvc
-                .perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
-                        .content(boardRequestJson.write(boardRequest).getJson()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.token").value("Token cannot be empty."));
-    }
+	@Test
+	void shouldVerifyRequestTokenNotBlank() throws Exception {
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
+		mockMvc
+			.perform(get("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.token").value("Token cannot be empty."));
+	}
 
-    @Test
-    void shouldThrowExceptionWhenBoardTypeNotSupported() throws Exception {
-        BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
-        mockMvc
-                .perform(get("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
-                        .content(boardRequestJson.write(boardRequest).getJson()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").isNotEmpty());
-    }
+	@Test
+	void shouldThrowExceptionWhenBoardTypeNotSupported() throws Exception {
+		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().token("").build();
+		mockMvc
+			.perform(get("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
+				.content(boardRequestJson.write(boardRequest).getJson()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").isNotEmpty());
+	}
 
 }

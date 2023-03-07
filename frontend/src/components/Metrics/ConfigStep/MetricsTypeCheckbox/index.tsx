@@ -16,7 +16,7 @@ export const MetricsTypeCheckbox = () => {
   const [isShowBoard, setIsShowBoard] = useState(false)
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const [isShowPipelineTool, setIsShowPipelineTool] = useState(false)
-  const [isSourceControl, setIsSourceControl] = useState(false)
+  const [isShowSourceControl, setIsShowSourceControl] = useState(false)
 
   const handleRequireDataChange = (event: SelectChangeEvent<typeof requireData>) => {
     const {
@@ -48,7 +48,7 @@ export const MetricsTypeCheckbox = () => {
         value.includes(REQUIRED_DATA_LIST[5]) ||
         value.includes(REQUIRED_DATA_LIST[6])
     )
-    setIsSourceControl(value.includes(REQUIRED_DATA_LIST[3]))
+    setIsShowSourceControl(value.includes(REQUIRED_DATA_LIST[3]))
   }
   return (
     <>
@@ -72,7 +72,7 @@ export const MetricsTypeCheckbox = () => {
       </RequireDataSelections>
       {isShowBoard && <Board />}
       {isShowPipelineTool && <PipelineTool />}
-      {isSourceControl && <SourceControl />}
+      {isShowSourceControl && <SourceControl />}
     </>
   )
 }

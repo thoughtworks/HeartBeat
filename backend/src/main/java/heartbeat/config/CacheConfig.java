@@ -24,7 +24,7 @@ public class CacheConfig {
 
 		CacheConfigurationBuilder<Object, Object> configuration = CacheConfigurationBuilder
 			.newCacheConfigurationBuilder(Object.class, Object.class,
-				ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(1, MemoryUnit.MB))
+					ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(1, MemoryUnit.MB))
 			.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(20)));
 
 		javax.cache.configuration.Configuration<Object, Object> stringDoubleConfiguration = Eh107Configuration

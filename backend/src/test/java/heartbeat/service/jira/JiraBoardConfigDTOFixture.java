@@ -39,20 +39,17 @@ public class JiraBoardConfigDTOFixture {
 			.columnConfig(JiraColumnConfig.builder()
 				.columns(List.of(JiraColumn.builder()
 					.name("TODO")
-					.statuses(List.of(new JiraColumnStatus(COLUM_SELF_ID_1),
-						new JiraColumnStatus(COLUM_SELF_ID_2)))
+					.statuses(List.of(new JiraColumnStatus(COLUM_SELF_ID_1), new JiraColumnStatus(COLUM_SELF_ID_2)))
 					.build()))
 				.build());
 	}
 
 	public static StatusSelfDTO.StatusSelfDTOBuilder DONE_STATUS_SELF_RESPONSE_BUILDER() {
-		return StatusSelfDTO.builder().untranslatedName("done")
-			.statusCategory(new StatusCategory("done", "done"));
+		return StatusSelfDTO.builder().untranslatedName("done").statusCategory(new StatusCategory("done", "done"));
 	}
 
 	public static StatusSelfDTO.StatusSelfDTOBuilder DOING_STATUS_SELF_RESPONSE_BUILDER() {
-		return StatusSelfDTO.builder().untranslatedName("doing")
-			.statusCategory(new StatusCategory("doing", "doing"));
+		return StatusSelfDTO.builder().untranslatedName("doing").statusCategory(new StatusCategory("doing", "doing"));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
@@ -66,8 +63,7 @@ public class JiraBoardConfigDTOFixture {
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {
-		return CardHistoryResponseDTO.builder()
-			.items(List.of(new Item("assignee", new To("San Zhang"))));
+		return CardHistoryResponseDTO.builder().items(List.of(new Item("assignee", new To("San Zhang"))));
 	}
 
 	public static FieldResponseDTO.FieldResponseDTOBuilder FIELD_RESPONSE_BUILDER() {
@@ -81,8 +77,7 @@ public class JiraBoardConfigDTOFixture {
 		issueFieldMap.put("description", descriptionIssueField);
 		issueFieldMap.put("priority", priorityIssueField);
 
-		return FieldResponseDTO.builder()
-			.projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
+		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}
 
 }

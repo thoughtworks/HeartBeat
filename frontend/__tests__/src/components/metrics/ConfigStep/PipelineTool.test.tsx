@@ -34,7 +34,7 @@ const setup = () => {
 }
 
 const server = setupServer(
-  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => {
+  rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => {
     return res(ctx.status(200))
   })
 )
@@ -153,7 +153,7 @@ describe('PipelineTool', () => {
   })
 
   it('should check error notification show when pipelineTool verify response status is 404', async () => {
-    server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
     const { getByText, getByRole } = setup()
     fillPipelineToolFieldsInformation()
 
@@ -166,7 +166,7 @@ describe('PipelineTool', () => {
 
   it('should check error notification disappear when pipelineTool verify response status is 404', async () => {
     expect.assertions(2)
-    server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
     const { getByRole } = setup()
     fillPipelineToolFieldsInformation()
 

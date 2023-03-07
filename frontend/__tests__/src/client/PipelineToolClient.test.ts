@@ -4,7 +4,7 @@ import { MOCK_PIPELINE_URL, MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, PIPELINE_TOOL_V
 import { pipelineToolClient } from '@src/clients/PipelineToolClient'
 
 const server = setupServer(
-  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => {
+  rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => {
     return res(ctx.status(200))
   })
 )
@@ -20,7 +20,7 @@ describe('error notification', () => {
   })
 
   it('should throw error when pipelineTool verify response status 400', async () => {
-    server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(400))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(400))))
 
     pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
@@ -28,7 +28,7 @@ describe('error notification', () => {
     })
   })
   it('should throw error when pipelineTool verify response status 404', async () => {
-    server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
 
     pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
@@ -37,7 +37,7 @@ describe('error notification', () => {
   })
 
   it('should throw error when pipelineTool verify response status 500', async () => {
-    server.use(rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(500))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(500))))
 
     pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)

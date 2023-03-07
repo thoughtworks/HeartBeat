@@ -257,6 +257,7 @@
       <property name="arrayInitIndent" value="4"/>
     </module>
     <module name="AbbreviationAsWordInName">
+      <property name="ignoreWords" value="DTO" />
       <property name="ignoreFinal" value="false"/>
       <property name="allowedAbbreviationLength" value="0"/>
       <property name="tokens"
@@ -318,6 +319,7 @@
                value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
     </module>
     <module name="MethodName">
+      <property name="excludeModifiers" value="static"/>
       <property name="format" value="^[a-z][a-z0-9]\w*$"/>
       <message key="name.invalidPattern"
              value="Method name ''{0}'' must match pattern ''{1}''."/>

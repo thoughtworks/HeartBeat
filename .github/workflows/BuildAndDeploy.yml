@@ -210,6 +210,30 @@ jobs:
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
             docker-compose up -d frontend
+
+  deploy-stub:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-push-image
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        env:
+          REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+          IMAGE_TAG: ${{ github.run_number }}
+        with:
+          host: ${{ secrets.AWS_EC2_IP_MOCKSERVER }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          script: |
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+            docker rmi -f $(docker images -f label=app=Heartbeat -q)
+            docker pull $REGISTRY/heartbeat_stub:$IMAGE_TAG
+            docker run --name mockserver -d -p 4323:4323 $REGISTRY/heartbeat_stub:$IMAGE_TAG
   e2e:
     runs-on: ubuntu-latest
     defaults:

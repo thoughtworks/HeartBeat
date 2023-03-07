@@ -1,10 +1,14 @@
 import React from 'react'
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
-const options = ['Oliver Hansen', 'Van Henry']
+import { useAppSelector } from '@src/hooks'
+import { selectUsers } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+
 export const MetricsStep = () => {
+  const users = useAppSelector(selectUsers)
+
   return (
     <>
-      <Crews options={options} title={'Crews Setting'} label={'Included Crews'} />
+      <Crews options={users} title={'Crews Setting'} label={'Included Crews'} />
     </>
   )
 }

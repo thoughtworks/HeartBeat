@@ -20,9 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
@@ -46,6 +43,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class JiraServiceTest {
 
+	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
+	public static final String JIRA_JQL = "status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s";
 	@Mock
 	JiraFeignClient jiraFeignClient;
 
@@ -79,7 +78,7 @@ class JiraServiceTest {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
 		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
-		URI baseUrl = URI.create("https://site.atlassian.net");
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
@@ -117,7 +116,7 @@ class JiraServiceTest {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
 		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
-		URI baseUrl = URI.create("https://site.atlassian.net");
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
@@ -139,7 +138,7 @@ class JiraServiceTest {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
 		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
-		URI baseUrl = URI.create("https://site.atlassian.net");
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
@@ -167,12 +166,10 @@ class JiraServiceTest {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
 		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
-		URI baseUrl = URI.create("https://site.atlassian.net");
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequest boardRequest = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format(
-				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
-				boardRequest.getStartTime(), boardRequest.getEndTime());
+		String jql = String.format(JIRA_JQL, "DONE", boardRequest.getStartTime(), boardRequest.getEndTime());
 
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
@@ -194,7 +191,7 @@ class JiraServiceTest {
 	@Test
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		URI baseUrl = URI.create("https://site.atlassian.net");
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		FeignException mockException = mock(FeignException.class);
 

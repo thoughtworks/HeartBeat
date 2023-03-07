@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Assignee implements Serializable {
 
-	private String displayName;
+    private String displayName;
 
 }

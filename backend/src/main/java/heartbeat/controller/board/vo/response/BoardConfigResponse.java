@@ -9,11 +9,11 @@ import lombok.Data;
 @Builder
 public class BoardConfigResponse {
 
-	@JsonProperty("jiraColumns")
-	private List<JiraColumnResponse> jiraColumnResponses;
+    @JsonProperty("jiraColumns")
+    private List<JiraColumnResponse> jiraColumnResponses;
 
-	private List<String> users;
+    private List<String> users;
 
-	private List<TargetField> targetFields;
+    private List<TargetField> targetFields;
 
 }

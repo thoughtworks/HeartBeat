@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JiraBoardConfigDTO implements Serializable {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private JiraColumnConfig columnConfig;
+    private JiraColumnConfig columnConfig;
 
 }

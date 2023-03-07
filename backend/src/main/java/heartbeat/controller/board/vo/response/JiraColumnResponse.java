@@ -7,8 +7,8 @@ import lombok.Data;
 @Builder
 public class JiraColumnResponse {
 
-	private String key;
+    private String key;
 
-	private ColumnValue value;
+    private ColumnValue value;
 
 }

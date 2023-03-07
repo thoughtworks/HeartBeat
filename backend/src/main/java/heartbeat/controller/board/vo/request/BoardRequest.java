@@ -9,22 +9,22 @@ import lombok.Data;
 @Builder
 public class BoardRequest {
 
-	private String boardName;
+    private String boardName;
 
-	private String boardId;
+    private String boardId;
 
-	private String email;
+    private String email;
 
-	private String projectKey;
+    private String projectKey;
 
-	private String site;
+    private String site;
 
-	@Valid
-	@NotBlank(message = "Token cannot be empty.")
-	private String token;
+    @Valid
+    @NotBlank(message = "Token cannot be empty.")
+    private String token;
 
-	private String startTime;
+    private String startTime;
 
-	private String endTime;
+    private String endTime;
 
 }

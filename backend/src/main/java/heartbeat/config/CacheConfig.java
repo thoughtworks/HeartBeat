@@ -17,25 +17,25 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class CacheConfig {
 
-	@Bean
-	public CacheManager ehCacheManager() {
-		CachingProvider provider = Caching.getCachingProvider();
-		CacheManager cacheManager = provider.getCacheManager();
+    @Bean
+    public CacheManager ehCacheManager() {
+        CachingProvider provider = Caching.getCachingProvider();
+        CacheManager cacheManager = provider.getCacheManager();
 
-		CacheConfigurationBuilder<Object, Object> configuration = CacheConfigurationBuilder
-			.newCacheConfigurationBuilder(Object.class, Object.class,
-					ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(1, MemoryUnit.MB))
-			.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(20)));
+        CacheConfigurationBuilder<Object, Object> configuration = CacheConfigurationBuilder
+                .newCacheConfigurationBuilder(Object.class, Object.class,
+                        ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(1, MemoryUnit.MB))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(20)));
 
-		javax.cache.configuration.Configuration<Object, Object> stringDoubleConfiguration = Eh107Configuration
-			.fromEhcacheCacheConfiguration(configuration);
+        javax.cache.configuration.Configuration<Object, Object> stringDoubleConfiguration = Eh107Configuration
+                .fromEhcacheCacheConfiguration(configuration);
 
-		cacheManager.createCache("jiraConfig", stringDoubleConfiguration);
-		cacheManager.createCache("jiraStatusCategory", stringDoubleConfiguration);
-		cacheManager.createCache("jiraAllDoneCards", stringDoubleConfiguration);
-		cacheManager.createCache("jiraActivityfeed", stringDoubleConfiguration);
-		cacheManager.createCache("targetField", stringDoubleConfiguration);
-		return cacheManager;
-	}
+        cacheManager.createCache("jiraConfig", stringDoubleConfiguration);
+        cacheManager.createCache("jiraStatusCategory", stringDoubleConfiguration);
+        cacheManager.createCache("jiraAllDoneCards", stringDoubleConfiguration);
+        cacheManager.createCache("jiraActivityfeed", stringDoubleConfiguration);
+        cacheManager.createCache("targetField", stringDoubleConfiguration);
+        return cacheManager;
+    }
 
 }

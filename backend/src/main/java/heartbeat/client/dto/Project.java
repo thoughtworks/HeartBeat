@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Project implements Serializable {
 
-	private List<Issuetype> issuetypes;
+    private List<Issuetype> issuetypes;
 
 }

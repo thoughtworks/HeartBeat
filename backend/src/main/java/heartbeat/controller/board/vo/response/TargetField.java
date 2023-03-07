@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TargetField implements Serializable {
 
-	private String key;
+    private String key;
 
-	private String name;
+    private String name;
 
-	private boolean flag;
+    private boolean flag;
 
 }

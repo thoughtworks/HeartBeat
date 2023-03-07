@@ -8,8 +8,8 @@ import lombok.Data;
 @Builder
 public class ColumnValue {
 
-	private String name;
+    private String name;
 
-	private List<String> statuses;
+    private List<String> statuses;
 
 }

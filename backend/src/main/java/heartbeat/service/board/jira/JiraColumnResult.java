@@ -9,8 +9,8 @@ import lombok.Data;
 @Builder
 public class JiraColumnResult {
 
-	private List<JiraColumnResponse> jiraColumnResponses;
+    private List<JiraColumnResponse> jiraColumnResponses;
 
-	private List<String> doneColumns;
+    private List<String> doneColumns;
 
 }

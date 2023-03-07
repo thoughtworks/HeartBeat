@@ -7,6 +7,8 @@ import {
   ERROR_MESSAGE_COLOR,
   MOCK_PIPELINE_URL,
   PIPELINE_TOOL_VERIFY_ERROR_MESSAGE,
+  VERIFY,
+  RESET,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -57,7 +59,7 @@ describe('PipelineTool', () => {
     expect(pipelineToolType).toBeInTheDocument()
 
     const option = queryByText(PIPELINE_TOOL_TYPES.GO_CD)
-    expect(option).not.toBeTruthy()
+    expect(option).not.toBeInTheDocument()
   })
 
   it('should clear other fields information when change pipelineTool Field selection', () => {
@@ -76,15 +78,15 @@ describe('PipelineTool', () => {
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
     fillPipelineToolFieldsInformation()
 
-    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(VERIFY))
     await waitFor(() => {
-      fireEvent.click(getByRole('button', { name: 'Reset' }))
+      fireEvent.click(getByRole('button', { name: RESET }))
     })
 
     expect(tokenInput.value).toEqual('')
     expect(getByText(PIPELINE_TOOL_TYPES.BUILD_KITE)).toBeInTheDocument()
-    expect(queryByRole('button', { name: 'Reset' })).not.toBeTruthy()
-    expect(queryByRole('button', { name: 'Verify' })).toBeDisabled()
+    expect(queryByRole('button', { name: RESET })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: VERIFY })).toBeDisabled()
   })
 
   it('should show detail options when click pipelineTool fields', () => {
@@ -99,7 +101,7 @@ describe('PipelineTool', () => {
 
   it('should enabled verify button when all fields checked correctly given disable verify button', () => {
     const { getByRole } = setup()
-    const verifyButton = getByRole('button', { name: 'Verify' })
+    const verifyButton = getByRole('button', { name: VERIFY })
 
     expect(verifyButton).toBeDisabled()
 
@@ -121,16 +123,16 @@ describe('PipelineTool', () => {
   it('should show reset button when verify succeed ', async () => {
     const { getByText } = setup()
     fillPipelineToolFieldsInformation()
-    fireEvent.click(getByText('Verify'))
+    fireEvent.click(getByText(VERIFY))
     await waitFor(() => {
-      expect(getByText('Reset')).toBeVisible()
+      expect(getByText(RESET)).toBeVisible()
     })
   })
 
   it('should called verifyPipelineTool method once when click verify button', async () => {
     const { getByRole, getByText } = setup()
     fillPipelineToolFieldsInformation()
-    fireEvent.click(getByRole('button', { name: 'Verify' }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
     await waitFor(() => {
       expect(getByText('Verified')).toBeInTheDocument()
     })
@@ -139,7 +141,7 @@ describe('PipelineTool', () => {
   it('should check loading animation when click verify button', async () => {
     const { getByRole, getByTestId } = setup()
     fillPipelineToolFieldsInformation()
-    fireEvent.click(getByRole('button', { name: 'Verify' }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     const circularProgress = getByTestId('circularProgress')
 
@@ -155,7 +157,7 @@ describe('PipelineTool', () => {
     const { getByText, getByRole } = setup()
     fillPipelineToolFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: 'Verify' }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(getByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
@@ -168,7 +170,7 @@ describe('PipelineTool', () => {
     const { getByRole } = setup()
     fillPipelineToolFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: 'Verify' }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(screen.queryByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[404])).not.toBeInTheDocument()

@@ -21,7 +21,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(require).toBeInTheDocument()
 
     const option = queryByText(VELOCITY)
-    expect(option).not.toBeTruthy()
+    expect(option).not.toBeInTheDocument()
   })
 
   it('should show detail options when click require data button', () => {
@@ -75,7 +75,7 @@ describe('MetricsTypeCheckbox', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
 
-    expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull()
+    expect(queryByText(CONFIG_TITLE.BOARD)).not.toBeInTheDocument()
   })
 
   it('should pipelineTool component when click MetricsTypeCheckbox selection Lead time for changes ', () => {
@@ -95,6 +95,6 @@ describe('MetricsTypeCheckbox', () => {
     fireEvent.click(requireDateSelection.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
     fireEvent.click(requireDateSelection.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
 
-    expect(queryByText(CONFIG_TITLE.PIPELINE_TOOL)).toBeNull()
+    expect(queryByText(CONFIG_TITLE.PIPELINE_TOOL)).not.toBeInTheDocument()
   })
 })

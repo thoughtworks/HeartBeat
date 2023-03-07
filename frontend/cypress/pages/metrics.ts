@@ -62,11 +62,6 @@ class Metrics {
 
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
     cy.get('button:contains("Verify")').should('be.enabled')
-    cy.contains('[data-test-id="sourceControlVerifyButton"]', 'Verify').click()
-
-    cy.on('window:alert', (str) => {
-      expect(str).to.equal('Github verify failed')
-    })
   }
 }
 

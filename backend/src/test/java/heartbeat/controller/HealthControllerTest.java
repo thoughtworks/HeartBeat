@@ -1,5 +1,9 @@
 package heartbeat.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,29 +13,25 @@ import org.springframework.boot.actuate.health.HealthComponent;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.health.Status;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class HealthControllerTest {
 
-	@Mock
-	private static HealthEndpoint healthEndpoint;
+    @Mock
+    private static HealthEndpoint healthEndpoint;
 
-	@InjectMocks
-	private static HealthController healthController;
+    @InjectMocks
+    private static HealthController healthController;
 
-	@Test
-	void shouldReturnHealthStatus() {
+    @Test
+    void shouldReturnHealthStatus() {
 
-		HealthComponent mockHealth = mock(HealthComponent.class);
-		when(healthEndpoint.health()).thenReturn(mockHealth);
-		when(mockHealth.getStatus()).thenReturn(Status.UP);
+        HealthComponent mockHealth = mock(HealthComponent.class);
+        when(healthEndpoint.health()).thenReturn(mockHealth);
+        when(mockHealth.getStatus()).thenReturn(Status.UP);
 
-		Status healthStatus = healthController.getHealthStatus();
+        Status healthStatus = healthController.getHealthStatus();
 
-		assertThat(healthStatus).isEqualTo(Status.UP);
-	}
+        assertThat(healthStatus).isEqualTo(Status.UP);
+    }
 
 }

@@ -132,7 +132,7 @@ class JiraServiceTest {
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequest))
 			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: There is no done cards.");
+			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no done cards.");
 	}
 
 	@Test

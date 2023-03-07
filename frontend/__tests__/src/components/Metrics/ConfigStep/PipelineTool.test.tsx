@@ -137,15 +137,11 @@ describe('PipelineTool', () => {
   })
 
   it('should check loading animation when click verify button', async () => {
-    const { getByRole, getByTestId } = setup()
+    const { getByRole, container } = setup()
     fillPipelineToolFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))
 
-    expect(getByTestId('circularProgress')).toBeVisible()
-
-    setTimeout(() => {
-      expect(getByTestId('circularProgress')).not.toBeVisible()
-    }, 1000)
+    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
   })
 
   it('should check error notification show and disappear when board verify response status is 404', async () => {

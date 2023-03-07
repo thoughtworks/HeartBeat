@@ -13,7 +13,7 @@ describe('verify sourceControl request', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
 
-  it('should isSourceControlVerify is true when sourceControl verify response status is 200', async () => {
+  it('should return isSourceControlVerify true when sourceControl verify response status is 200', async () => {
     const result = await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
 
     expect(result.isSourceControlVerify).toEqual(true)

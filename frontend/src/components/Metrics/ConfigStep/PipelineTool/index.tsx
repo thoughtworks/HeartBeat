@@ -4,20 +4,17 @@ import React, { FormEvent, useState } from 'react'
 import {
   PipelineToolButtonGroup,
   PipelineToolForm,
-  PipelineToolLoadingDrop,
   PipelineToolSection,
   PipelineToolTextField,
   PipelineToolTitle,
   PipelineToolTypeSelections,
-  ResetButton,
-  VerifyButton,
 } from '@src/components/Metrics/ConfigStep/PipelineTool/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { changePipelineToolVerifyState, isPipelineToolVerified } from '@src/context/pipelineTool/pipelineToolSlice'
 import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } from '@src/context/config/configSlice'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
-
+import { LoadingDrop, VerifyButton, ResetButton } from '@src/theme'
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
   const pipelineToolFields = useAppSelector(selectPipelineToolFields)
@@ -103,9 +100,9 @@ export const PipelineTool = () => {
     <PipelineToolSection>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && (
-        <PipelineToolLoadingDrop open={isLoading} data-testid='circularProgress'>
+        <LoadingDrop open={isLoading} data-testid='circularProgress'>
           <CircularProgress size='8rem' />
-        </PipelineToolLoadingDrop>
+        </LoadingDrop>
       )}
       <PipelineToolTitle>{CONFIG_TITLE.PIPELINE_TOOL}</PipelineToolTitle>
       <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>

@@ -5,6 +5,7 @@ import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
+  GITHUB_VERIFY_ERROR_MESSAGE,
   MOCK_SOURCE_CONTROL_URL,
   RESET,
   SOURCE_CONTROL_FIELDS,
@@ -116,7 +117,7 @@ describe('SourceControl', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText('Github verify failed')).toBeInTheDocument()
+      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
     })
   })
 })

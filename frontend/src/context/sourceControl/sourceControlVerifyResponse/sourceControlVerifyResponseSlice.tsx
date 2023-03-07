@@ -9,7 +9,7 @@ const initialState: sourceControlVerifyResponseState = {
 }
 
 export const sourceControlVerifyResponseSlice = createSlice({
-  name: 'sourceControl verify response',
+  name: 'sourceControlVerifyResponse',
   initialState,
   reducers: {
     updateSourceControlVerifyResponse: (state, action) => {

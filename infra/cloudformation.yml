@@ -21,7 +21,11 @@ Parameters:
     Type: String
   EC2ImageId:
     Description: AMI ID
-    Default: "ami-0bf2183ba2c3b50f9"
+    Default: ""ami-0bf2183ba2c3b50f9
+    Type: String
+  MockServerEC2ImageId:
+    Description: AMI ID
+    Default: "ami-039cd3c91ddfff810"
     Type: String
   SSHPublicKey:
     Description: Public key to connect EC2
@@ -146,6 +150,26 @@ Resources:
               - ecr:InitiateLayerUpload
               - ecr:UploadLayerPart
               - ecr:CompleteLayerUpload
+  EcrMockServer:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "mock_server"
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - "*"
+            Action:
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
+              - ecr:PutImage
+              - ecr:InitiateLayerUpload
+              - ecr:UploadLayerPart
+              - ecr:CompleteLayerUpload
   EcrFrontend:
     Type: AWS::ECR::Repository
     Properties:
@@ -202,6 +226,33 @@ Resources:
             - sudo curl -SL https://github.com/docker/compose/releases/download/v2.14.2/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
             - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
             - sudo chmod +x /usr/local/bin/docker-compose
+            - sudo `aws ecr get-login-password --region ${AwsRegion} | docker login --username AWS --password-stdin ${AwsAccountId}.dkr.ecr.${AwsHost}`
+  MockServerEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Sub ${MockServerEC2ImageId}
+      InstanceType: "t2.micro"
+      Tags:
+        - Key: "Name"
+          Value: "MockServerEC2"
+        - Key: "app"
+          Value: "MockServer"
+      SecurityGroups:
+        - !Ref EC2SSHSecurityGroup
+        - !Ref EC2OldAppSecurityGroup
+        - !Ref EC2Stubby4jGroup
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      KeyName: !Ref EC2KeyPair
+      UserData:
+        "Fn::Base64": !Sub |
+          #cloud-config
+          cloud_final_modules:
+          - [scripts-user, always]
+          runcmd:
+            - sudo yum -y install docker
+            - sudo systemctl enable docker.service
+            - sudo systemctl start docker.service
+            - sudo chmod 666 /var/run/docker.sock
             - sudo `aws ecr get-login-password --region ${AwsRegion} | docker login --username AWS --password-stdin ${AwsAccountId}.dkr.ecr.${AwsHost}`
 
   EC2KeyPair:

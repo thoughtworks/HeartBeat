@@ -60,5 +60,7 @@ export const ExportButton = styled(Button)({
 export const ButtonGroup = styled('div')({
   display: 'flex',
   justifyContent: 'flex-end',
+  width: '60%',
+  margin: '0 auto',
   padding: '1rem',
 })

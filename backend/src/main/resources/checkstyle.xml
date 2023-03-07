@@ -257,7 +257,7 @@
       <property name="arrayInitIndent" value="2"/>
     </module>
     <module name="AbbreviationAsWordInName">
-      <property name="ignoreWords" value="DTO" />
+      <property name="ignoreWordsRegex" value=".*DTO$" />
       <property name="ignoreFinal" value="false"/>
       <property name="allowedAbbreviationLength" value="0"/>
       <property name="tokens"

@@ -22,7 +22,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
   const isAllSelected = options.length > 0 && selectedCrews.length === options.length
 
   useEffect(() => {
-    selectedCrews.length === 0 ? setIsEmptyCrewData(true) : setIsEmptyCrewData(false)
+    setIsEmptyCrewData(selectedCrews.length === 0)
   }, [selectedCrews])
 
   const handleCrewChange = (event: SelectChangeEvent<string[]>) => {

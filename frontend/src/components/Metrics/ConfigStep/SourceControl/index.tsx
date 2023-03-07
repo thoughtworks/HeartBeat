@@ -13,8 +13,8 @@ import {
 } from '@src/components/Metrics/ConfigStep/SourceControl/style'
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectDateRange, selectSourceControlFields, updateSourceControlFields } from '@src/features/config/configSlice'
-import { updateSourceControlVerifyState, isSourceControlVerified } from '@src/features/sourceControl/sourceControlSlice'
+import { selectDateRange, selectSourceControlFields, updateSourceControlFields } from '@src/context/config/configSlice'
+import { updateSourceControlVerifyState, isSourceControlVerified } from '@src/context/sourceControl/sourceControlSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 

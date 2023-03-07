@@ -44,6 +44,7 @@ const server = setupServer(
 describe('SourceControl', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
+
   it('should show sourceControl title and fields when render sourceControl component', () => {
     const { getByRole, getByLabelText } = setup()
 

@@ -1,4 +1,4 @@
-import sourceControlReducer, { updateSourceControlVerifyState } from '@src/features/sourceControl/sourceControlSlice'
+import sourceControlReducer, { updateSourceControlVerifyState } from '@src/context/sourceControl/sourceControlSlice'
 describe('sourceControl reducer', () => {
   it('should set isSourceControlVerified false when handle initial state', () => {
     const stepper = sourceControlReducer(undefined, { type: 'unknown' })

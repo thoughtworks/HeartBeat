@@ -5,7 +5,7 @@ import boardReducer from './context/board/boardSlice'
 import jiraVerifyResponseReducer from './context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import pipelineReducer from './context/pipelineTool/pipelineToolSlice'
 import pipelineToolResponseReducer from './context/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
-import pipelineToolResponseReducer from './features/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
+import sourceControlReducer from './context/sourceControl/sourceControlSlice'
 
 export const store = configureStore({
   reducer: {

@@ -27,6 +27,7 @@ describe('error notification', () => {
       expect((e as Error).message).toMatch(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[400])
     })
   })
+
   it('should throw error when pipelineTool verify response status 404', async () => {
     server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
 

@@ -69,9 +69,9 @@ public class JiraService {
 		try {
 			log.info("[Jira] Start to get configuration for board, name: " + boardRequest.getBoardName());
 			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardRequest.getBoardId(),
-				boardRequest.getToken());
-			log.info("[Jira] Successfully get configuration_data, name: {}, id: {}",
-				jiraBoardConfigDTO.getName(), jiraBoardConfigDTO.getId());
+					boardRequest.getToken());
+			log.info("[Jira] Successfully get configuration_data, name: {}, id: {}", jiraBoardConfigDTO.getName(),
+					jiraBoardConfigDTO.getId());
 
 			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequest, baseUrl,
 					jiraBoardConfigDTO);
@@ -111,8 +111,8 @@ public class JiraService {
 
 	private JiraColumnResult getJiraColumns(BoardRequest boardRequest, URI baseUrl,
 			JiraBoardConfigDTO jiraBoardConfigDTO) {
-		log.info("[Jira] Start to get jira columns,boardName: {} column size: {}",
-			boardRequest.getBoardName(), jiraBoardConfigDTO.getColumnConfig().getColumns().size());
+		log.info("[Jira] Start to get jira columns,boardName: {} column size: {}", boardRequest.getBoardName(),
+				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		List<String> doneColumns = new CopyOnWriteArrayList<>();
 		List<CompletableFuture<JiraColumnResponse>> futures = jiraBoardConfigDTO.getColumnConfig()
 			.getColumns()
@@ -126,16 +126,19 @@ public class JiraService {
 			.map(CompletableFuture::join)
 			.collect(Collectors.toList());
 
-		JiraColumnResult jiraColumnResult = JiraColumnResult.builder().jiraColumnResponses(columnResponse).doneColumns(doneColumns).build();
+		JiraColumnResult jiraColumnResult = JiraColumnResult.builder()
+			.jiraColumnResponses(columnResponse)
+			.doneColumns(doneColumns)
+			.build();
 		log.info("[Jira] Successfully to get jira columns,boardName: {}, column result size: {}, done columns: {}",
-			boardRequest.getBoardName(), jiraColumnResult.getJiraColumnResponses().size(), doneColumns);
+				boardRequest.getBoardName(), jiraColumnResult.getJiraColumnResponses().size(), doneColumns);
 		return jiraColumnResult;
 	}
 
 	private JiraColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, String token,
 			List<String> doneColumns) {
-		log.info("[Jira] Start to get column and status, the column name: {} column status: {}",
-			jiraColumn.getName(), jiraColumn.getStatuses());
+		log.info("[Jira] Start to get column and status, the column name: {} column status: {}", jiraColumn.getName(),
+				jiraColumn.getStatuses());
 		List<StatusSelfDTO> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
 		String key = handleColumKey(doneColumns, statusSelfList);
 
@@ -149,7 +152,7 @@ public class JiraService {
 				.build())
 			.build();
 		log.info("[Jira] Successfully get column and status, the column key: {}, status: {}",
-			jiraColumnResponse.getKey(), jiraColumnResponse.getValue().getStatuses());
+				jiraColumnResponse.getKey(), jiraColumnResponse.getValue().getStatuses());
 		return jiraColumnResponse;
 	}
 
@@ -243,10 +246,11 @@ public class JiraService {
 	}
 
 	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {
-		log.info("[Jira] Start to get jira card history, key: {},done cards: {}", donecard.getKey(),donecard);
+		log.info("[Jira] Start to get jira card history, key: {},done cards: {}", donecard.getKey(), donecard);
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, donecard.getKey(),
 				jiraToken);
-		log.info("[Jira] Successfully get jira card history, key: {},items: {}", donecard.getKey(), cardHistoryResponseDTO.getItems());
+		log.info("[Jira] Successfully get jira card history, key: {},items: {}", donecard.getKey(),
+				cardHistoryResponseDTO.getItems());
 
 		List<String> assigneeSet = cardHistoryResponseDTO.getItems()
 			.stream()
@@ -268,10 +272,10 @@ public class JiraService {
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequest boardRequest) {
-		log.info("[Jira] Start to get target field, board name: {}",boardRequest.getBoardName());
+		log.info("[Jira] Start to get target field, board name: {}", boardRequest.getBoardName());
 		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequest.getProjectKey(),
 				boardRequest.getToken());
-		log.info("[Jira] Successfully get target field, board name: {}",boardRequest.getBoardName());
+		log.info("[Jira] Successfully get target field, board name: {}", boardRequest.getBoardName());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no target field.");

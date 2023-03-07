@@ -44,7 +44,9 @@ import static org.mockito.Mockito.when;
 class JiraServiceTest {
 
 	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
+
 	public static final String JIRA_JQL = "status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s";
+
 	@Mock
 	JiraFeignClient jiraFeignClient;
 
@@ -53,12 +55,12 @@ class JiraServiceTest {
 	ThreadPoolTaskExecutor executor;
 
 	@BeforeEach
-	public void setUp(){
+	public void setUp() {
 		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient);
 	}
 
 	@AfterEach
-	public void tearDown(){
+	public void tearDown() {
 		executor.shutdown();
 	}
 

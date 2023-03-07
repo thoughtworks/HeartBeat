@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
 class GithubControllerTest {
+
 	@MockBean
 	private GithubService githubVerifyService;
 
@@ -32,14 +33,13 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
-		GithubResponse githubReposResponse = GithubResponse.builder().githubRepos(
-			List.of("https://github.com/xxxx1/repo1","https://github.com/xxxx2/repo2")).build();
+		GithubResponse githubReposResponse = GithubResponse.builder()
+			.githubRepos(List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"))
+			.build();
 
 		when(githubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 
-		mockMvc
-			.perform(get("/sourceControl?githubToken=123456")
-				.contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/sourceControl?githubToken=123456").contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
 			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));
@@ -47,10 +47,9 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnBadRequestWhenRequestParamIsBlank() throws Exception {
-		mockMvc
-			.perform(get("/sourceControl?githubToken=   ")
-				.contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/sourceControl?githubToken=   ").contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("getRepos.githubToken: must not be blank"));
 	}
+
 }

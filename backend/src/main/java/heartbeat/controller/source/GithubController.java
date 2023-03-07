@@ -23,11 +23,9 @@ public class GithubController {
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public GithubResponse getRepos(
-		@RequestParam
-		@NotBlank(message = "token must not be blank")
-		@Pattern(regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$", message = "token's pattern is incorrect")
-		String githubToken) {
+	public GithubResponse getRepos(@RequestParam @NotBlank(message = "token must not be blank") @Pattern(
+			regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$",
+			message = "token's pattern is incorrect") String githubToken) {
 		return githubService.verifyToken(githubToken);
 	}
 

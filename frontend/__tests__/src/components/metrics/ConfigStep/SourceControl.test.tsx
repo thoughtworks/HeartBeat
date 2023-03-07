@@ -52,7 +52,7 @@ describe('SourceControl', () => {
 
   it('should show default value gitHub when init sourceControl component', () => {
     const { getByText } = setup()
-    const sourceControlType = getByText(SOURCE_CONTROL_TYPES.GIT_HUB)
+    const sourceControlType = getByText(SOURCE_CONTROL_TYPES.GITHUB)
 
     expect(sourceControlType).toBeInTheDocument()
   })
@@ -71,7 +71,7 @@ describe('SourceControl', () => {
     })
 
     expect(tokenInput.value).toEqual('')
-    expect(getByText(SOURCE_CONTROL_TYPES.GIT_HUB)).toBeInTheDocument()
+    expect(getByText(SOURCE_CONTROL_TYPES.GITHUB)).toBeInTheDocument()
     expect(queryByRole('button', { name: RESET })).not.toBeTruthy()
     expect(getByRole('button', { name: VERIFY })).toBeDisabled()
   })

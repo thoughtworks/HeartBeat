@@ -53,7 +53,7 @@ export const PIPELINE_TOOL_TYPES = {
 }
 
 export const SOURCE_CONTROL_TYPES = {
-  GIT_HUB: 'Github',
+  GITHUB: 'Github',
 }
 
 export enum CONFIG_TITLE {
@@ -96,7 +96,7 @@ export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
 
 export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
-  type: SOURCE_CONTROL_TYPES.GIT_HUB,
+  type: SOURCE_CONTROL_TYPES.GITHUB,
   startTime: '1613664000000',
   endTime: '1614873600000',
 }

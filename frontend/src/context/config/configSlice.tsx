@@ -36,7 +36,7 @@ const initialState: configState = {
     token: '',
   },
   sourceControlFields: {
-    sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB,
+    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
 }

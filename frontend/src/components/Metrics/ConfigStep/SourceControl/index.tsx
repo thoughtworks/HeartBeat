@@ -39,7 +39,7 @@ export const SourceControl = () => {
 
   const initSourceControlFields = () => {
     const newFields = fields.map((field, index) => {
-      field.value = index === 1 ? '' : SOURCE_CONTROL_TYPES.GIT_HUB
+      field.value = index === 1 ? '' : SOURCE_CONTROL_TYPES.GITHUB
       return field
     })
     setFields(newFields)

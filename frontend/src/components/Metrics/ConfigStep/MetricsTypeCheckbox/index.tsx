@@ -33,7 +33,7 @@ export const MetricsTypeCheckbox = () => {
         token: '',
       })
     )
-    dispatch(updateSourceControlFields({ sourceControl: SOURCE_CONTROL_TYPES.GIT_HUB, token: '' }))
+    dispatch(updateSourceControlFields({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
     dispatch(updateSourceControlVerifyState(false))
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)

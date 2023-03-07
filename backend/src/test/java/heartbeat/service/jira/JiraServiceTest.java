@@ -5,19 +5,24 @@ import java.util.Collections;
 import java.util.List;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
+import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
-import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
@@ -44,8 +49,30 @@ class JiraServiceTest {
 	@Mock
 	JiraFeignClient jiraFeignClient;
 
-	@InjectMocks
 	JiraService jiraService;
+
+	ThreadPoolTaskExecutor executor;
+
+	@BeforeEach
+	public void setUp(){
+		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient);
+	}
+
+	@AfterEach
+	public void tearDown(){
+		executor.shutdown();
+	}
+
+	public ThreadPoolTaskExecutor getTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(10);
+		executor.setMaxPoolSize(100);
+		executor.setQueueCapacity(500);
+		executor.setKeepAliveSeconds(60);
+		executor.setThreadNamePrefix("Heartbeat-");
+		executor.initialize();
+		return executor;
+	}
 
 	@Test
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() {

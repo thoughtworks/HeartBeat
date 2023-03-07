@@ -57,7 +57,7 @@ import static java.util.Objects.nonNull;
 public class JiraService {
 
 	@Autowired
-	private ThreadPoolTaskExecutor taskExecutor;
+	private final ThreadPoolTaskExecutor taskExecutor;
 
 	public static final int QUERY_COUNT = 100;
 

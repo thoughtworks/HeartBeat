@@ -44,9 +44,10 @@ export const PIPELINE_TOOL_TYPES = {
 }
 
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+export const BUILDKITE_TOKEN_REGEXP = /^[A-Za-z0-9]{40}$/
 
 export const EMAIL = 'Email'
 
-export const TOKEN_ERROR_MESSAGE = 'Token is required'
+export const INVALID_TOKEN_MESSAGE = 'Invalid token'
 
 export const ERROR_MESSAGE_TIME_DURATION = 2000

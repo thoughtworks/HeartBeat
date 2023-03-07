@@ -14,7 +14,7 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { TOKEN_ERROR_MESSAGE } from '@src/constants'
+import { INVALID_TOKEN_MESSAGE } from '@src/constants'
 
 export const fillPipelineToolFieldsInformation = () => {
   const mockInfo = 'mockToken'
@@ -116,8 +116,8 @@ describe('PipelineTool', () => {
 
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
     fireEvent.change(tokenInput, { target: { value: '' } })
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeVisible()
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+    expect(getByText(INVALID_TOKEN_MESSAGE)).toBeVisible()
+    expect(getByText(INVALID_TOKEN_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show reset button when verify succeed ', async () => {

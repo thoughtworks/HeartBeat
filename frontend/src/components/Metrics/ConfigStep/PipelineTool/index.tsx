@@ -1,5 +1,5 @@
 import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO, TOKEN_ERROR_MESSAGE } from '@src/constants'
+import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO, INVALID_TOKEN_MESSAGE, BUILDKITE_TOKEN_REGEXP } from '@src/constants'
 import React, { FormEvent, useState } from 'react'
 import {
   PipelineToolButtonGroup,
@@ -44,7 +44,7 @@ export const PipelineTool = () => {
     dispatch(updatePipelineToolVerifyState(false))
   }
 
-  const checkFieldValid = (value: string): boolean => value !== ''
+  const checkFieldValid = (value: string): boolean => BUILDKITE_TOKEN_REGEXP.test(value)
 
   const onFormUpdate = (index: number, value: string) => {
     if (index === ZERO) {
@@ -130,7 +130,7 @@ export const PipelineTool = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}
-          helperText={!fields[1].isValid ? TOKEN_ERROR_MESSAGE : ''}
+          helperText={!fields[1].isValid ? INVALID_TOKEN_MESSAGE : ''}
         />
         <PipelineToolButtonGroup>
           {isVerified && !isLoading ? (

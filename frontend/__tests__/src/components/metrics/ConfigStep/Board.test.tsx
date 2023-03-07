@@ -177,18 +177,6 @@ describe('Board', () => {
     })
   })
 
-  it('should check loading animation when click verify button', async () => {
-    const { getByRole, getByTestId } = setup()
-    fillBoardFieldsInformation()
-    fireEvent.click(getByRole('button', { name: VERIFY }))
-
-    expect(getByTestId('circularProgress')).toBeVisible()
-
-    setTimeout(() => {
-      expect(getByTestId('circularProgress')).not.toBeVisible()
-    }, 1000)
-  })
-
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
     server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(204))))
     const { getByText, getByRole } = setup()

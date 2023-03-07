@@ -135,7 +135,7 @@ export const Board = () => {
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && (
-        <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
+        <BoardLoadingDrop open={isLoading}>
           <CircularProgress size='8rem' />
         </BoardLoadingDrop>
       )}

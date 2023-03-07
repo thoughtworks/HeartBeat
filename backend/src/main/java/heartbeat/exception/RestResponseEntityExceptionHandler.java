@@ -1,5 +1,6 @@
 package heartbeat.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -31,6 +32,11 @@ public class RestResponseEntityExceptionHandler {
 			.stream()
 			.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
 		return ResponseEntity.badRequest().body(fieldErrors);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
 }

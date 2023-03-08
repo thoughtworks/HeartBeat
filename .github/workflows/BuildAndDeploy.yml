@@ -263,4 +263,3 @@ jobs:
           name: cypress-videos
           path: frontend/cypress/videos/
           retention-days: ${{ vars.RETENTION_DAYS }}
-

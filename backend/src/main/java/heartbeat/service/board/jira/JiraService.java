@@ -290,7 +290,8 @@ public class JiraService {
 	}
 
 	private List<TargetField> getTargetIssueField(Map<String, IssueField> fields) {
-		return fields.values().stream()
+		return fields.values()
+			.stream()
 			.filter(issueField -> !FIELDS_IGNORE.contains(issueField.getKey()))
 			.map(issueField -> new TargetField(issueField.getKey(), issueField.getName(), false))
 			.collect(Collectors.toList());

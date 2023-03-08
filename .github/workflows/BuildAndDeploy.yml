@@ -207,7 +207,7 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             cp "./infra/docker-compose.yml" ./
             # docker-compose down
-            docker rmi -f $(docker images -f label=app=Heartbeat -q)
+            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
             docker-compose up -d frontend
@@ -233,7 +233,7 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            docker rmi -f $(docker images -f label=app=Heartbeat -q)
+            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull $REGISTRY/mock_server:$IMAGE_TAG
             docker run --name mockserver -d -p 4323:4323 $REGISTRY/mock_server:$IMAGE_TAG
   e2e:

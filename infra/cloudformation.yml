@@ -277,8 +277,16 @@ Resources:
     Properties:
       InstanceId: !Ref EC2Instance
       Domain: vpc
+  MockServerPortAddress:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MockServerEC2Instance
+      Domain: vpc
 Outputs:
   Role:
     Value: !GetAtt AWSGitHubActionRole.Arn
   EIP:
     Value: !GetAtt WebPortAddress.PublicIp
+  MockServerEIP:
+    Value: !GetAtt MockServerPortAddress.PublicIp
+

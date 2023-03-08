@@ -3,6 +3,9 @@ package heartbeat.service.source.github;
 import heartbeat.client.GithubFeignClient;
 import heartbeat.client.dto.GithubOrgsInfo;
 import heartbeat.client.dto.GithubRepos;
+import heartbeat.exception.CustomFeignClientException;
+import heartbeat.exception.RequestFailedException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,6 +50,19 @@ class GithubServiceTest {
 		assertThat(response.getGithubRepos().get(1)).isEqualTo("22222");
 		assertThat(response.getGithubRepos().get(2)).isEqualTo("33333");
 		assertThat(response.getGithubRepos().get(3)).isEqualTo("44444");
+	}
+
+	@Test
+	void shouldReturnUnauthorizedStatusWhenCallGithubFeignClientApiWithWrongToken() {
+		String wrongGithubToken = "123456";
+		String token = "token " + wrongGithubToken;
+
+		when(githubFeignClient.getAllRepos(token)).thenThrow(new CustomFeignClientException(401, "Bad credentials"));
+
+		final var thrown = Assertions.assertThrows(RequestFailedException.class,
+				() -> githubService.verifyToken(wrongGithubToken));
+
+		assertThat(thrown.getMessage()).isEqualTo("Request failed with status code 401, error: Bad credentials");
 	}
 
 }

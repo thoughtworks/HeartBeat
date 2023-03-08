@@ -159,6 +159,7 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
       - name: Build, tag, and push for Stub
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: mock_server
@@ -213,7 +214,7 @@ jobs:
 
   deploy-stub:
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.head_commit.modified, 'stubs') }}
+    if: ${{ contains(github.event.head_commit.message, '[stub]') }}
     needs:
       - build-and-push-image
     steps:

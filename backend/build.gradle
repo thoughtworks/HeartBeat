@@ -2,7 +2,6 @@ plugins {
   id 'java'
   id 'jacoco'
   id 'pmd'
-  id 'checkstyle'
   id 'org.springframework.boot' version '3.0.4'
   id 'io.spring.dependency-management' version '1.1.0'
   id "io.spring.javaformat" version "0.0.38"
@@ -46,11 +45,6 @@ tasks.named('test') {
     events "passed", "skipped", "failed"
   }
   finalizedBy jacocoTestReport
-}
-
-checkstyle {
-  toolVersion = "10.8.0"
-  configFile = file("src/main/resources/checkstyle.xml")
 }
 
 pmd {

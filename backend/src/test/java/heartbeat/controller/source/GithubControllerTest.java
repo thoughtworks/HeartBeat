@@ -64,9 +64,14 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnBadRequestWhenRequestParamPatternIsIncorrect() throws Exception {
-		mockMvc.perform(get("/source-control?token=12345").contentType(MediaType.APPLICATION_JSON))
+		final var response = mockMvc.perform(get("/source-control?token=12345").contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("getRepos.token: token's pattern is incorrect"));
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.message").toString();
+		assertThat(result).isEqualTo("getRepos.token: token's pattern is incorrect");
 	}
 
 }

@@ -38,8 +38,8 @@ describe('Crew', () => {
     await userEvent.click(getByRole('button', { name: mockLabel }))
     await userEvent.click(getByText('All'))
 
-    const errorMessage = getByText(`${mockLabel} is required`)
-    expect(errorMessage).toBeInTheDocument()
+    const requiredText = getByText('required')
+    expect(requiredText.tagName).toBe('STRONG')
   })
 
   it('should show other selections when cancel one option given default all selections in crews', async () => {

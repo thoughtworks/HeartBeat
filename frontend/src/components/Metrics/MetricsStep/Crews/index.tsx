@@ -58,7 +58,11 @@ export const Crews = ({ options, title, label }: crewsProps) => {
             </MenuItem>
           ))}
         </Select>
-        {isEmptyCrewData && <FormHelperText>{label} is required</FormHelperText>}
+        {isEmptyCrewData && (
+          <FormHelperText>
+            {label} is <strong>required</strong>
+          </FormHelperText>
+        )}
       </FormControl>
     </>
   )

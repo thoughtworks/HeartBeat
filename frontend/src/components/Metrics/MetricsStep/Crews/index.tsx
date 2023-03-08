@@ -45,7 +45,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
           multiple
           value={selectedCrews}
           onChange={handleCrewChange}
-          renderValue={(selectedCrews: string[]) => selectedCrews.join(',')}
+          renderValue={(selectedCrews: string[]) => selectedCrews.join(', ')}
         >
           <MenuItem value='All'>
             <Checkbox checked={isAllSelected} />

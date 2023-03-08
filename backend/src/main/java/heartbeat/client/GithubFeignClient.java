@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@FeignClient(value = "githubFeignClient", url = "https://api.github.com")
+@FeignClient(name = "githubFeignClient", url = "${githubFeignClient.url}")
 public interface GithubFeignClient {
 
 	@GetMapping(path = "/user/orgs")

@@ -20,5 +20,7 @@ describe('Create a new project', () => {
     metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
 
     metricsPage.fillPipelineToolFieldsInfo('mockTokenMockTokenMockTokenMockToken1234')
+
+    metricsPage.goMetricsStep()
   })
 })

@@ -51,6 +51,11 @@ class Metrics {
     cy.contains('Token').siblings().type(token)
     cy.get('button:contains("Verify")').should('be.enabled')
   }
+
+  goMetricsStep() {
+    cy.contains('Next').click()
+    cy.contains('Crews Setting').should('exist')
+  }
 }
 
 const metricsPage = new Metrics()

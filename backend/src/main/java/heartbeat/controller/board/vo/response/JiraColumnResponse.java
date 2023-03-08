@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ColumnResponse {
+public class JiraColumnResponse {
 
 	private String key;
 

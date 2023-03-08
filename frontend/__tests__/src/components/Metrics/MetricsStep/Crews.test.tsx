@@ -12,12 +12,13 @@ const setup = () => {
 describe('Crew', () => {
   it('should show Crews when render Crews component', () => {
     const { getByText } = setup()
+
     expect(getByText(mockTitle)).toBeInTheDocument()
   })
 
   it('should selected all options by default when initializing', () => {
     const { getByText } = setup()
-    const require = getByText('user one,user two')
+    const require = getByText('user one, user two')
 
     expect(require).toBeInTheDocument()
   })

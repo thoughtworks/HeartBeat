@@ -1,0 +1,6 @@
+export class BadRequestException extends Error {
+  constructor(type: string, message: string) {
+    super()
+    throw new Error(`${type} verify failed: ${message}`)
+  }
+}

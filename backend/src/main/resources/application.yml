@@ -9,3 +9,5 @@ logging:
 githubFeignClient:
   url: https://api.github.com
 
+jira:
+  url: https://demo.atlassian.net

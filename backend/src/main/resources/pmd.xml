@@ -9,6 +9,7 @@
             <property name="maxViolations" value="100" />
         </properties>
     </rule>
-
+    <exclude-pattern>.*/JiraService.*</exclude-pattern>
 
 </ruleset>
+

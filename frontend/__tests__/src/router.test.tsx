@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Router from '@src/router'
 import { Provider } from 'react-redux'
-import { store } from '@src/store/store'
+import { store } from '@src/store'
 
 describe('router', () => {
   const setup = (routeUrl: string) =>
@@ -34,8 +34,8 @@ describe('router', () => {
     })
   })
 
-  it('should show metrics page when go metrics page', () => {
-    const metricsRoute = '/metrics'
+  it('should show Metrics page when go Metrics page', () => {
+    const metricsRoute = '/Metrics'
     const steps = ['Config', 'Metrics', 'Export']
 
     const { findByText } = setup(metricsRoute)

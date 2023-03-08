@@ -1,0 +1,33 @@
+import { createSlice } from '@reduxjs/toolkit'
+import { RootState } from '@src/store'
+
+export interface jiraVerifyResponseState {
+  jiraColumns: []
+  targetFields: []
+  users: string[]
+}
+
+const initialState: jiraVerifyResponseState = {
+  jiraColumns: [],
+  targetFields: [],
+  users: [],
+}
+
+export const jiraVerifyResponseSlice = createSlice({
+  name: 'jiraVerifyResponse',
+  initialState,
+  reducers: {
+    updateJiraVerifyResponse: (state, action) => {
+      const { jiraColumns, targetFields, users } = action.payload
+      state.jiraColumns = jiraColumns
+      state.targetFields = targetFields
+      state.users = users
+    },
+  },
+})
+
+export const { updateJiraVerifyResponse } = jiraVerifyResponseSlice.actions
+
+export const selectUsers = (state: RootState) => state.jiraVerifyResponse.users
+
+export default jiraVerifyResponseSlice.reducer

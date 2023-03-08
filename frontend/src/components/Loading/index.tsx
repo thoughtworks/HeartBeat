@@ -1,10 +1,10 @@
 import { CircularProgress } from '@mui/material'
-import { BoardLoadingDrop } from './style'
+import { LoadingDrop } from './style'
 
 export const Loading = () => {
   return (
-    <BoardLoadingDrop open>
+    <LoadingDrop open>
       <CircularProgress size='8rem' />
-    </BoardLoadingDrop>
+    </LoadingDrop>
   )
 }

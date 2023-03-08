@@ -177,7 +177,7 @@ describe('Board', () => {
     })
   })
 
-  it('should check loading animation when click verify button', async () => {
+  it('should check loading animation when click verify button', () => {
     const { getByRole, container } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))

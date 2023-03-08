@@ -136,7 +136,7 @@ describe('PipelineTool', () => {
     })
   })
 
-  it('should check loading animation when click verify button', async () => {
+  it('should check loading animation when click verify button', () => {
     const { getByRole, container } = setup()
     fillPipelineToolFieldsInformation()
     fireEvent.click(getByRole('button', { name: 'Verify' }))

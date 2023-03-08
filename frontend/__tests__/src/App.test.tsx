@@ -4,13 +4,12 @@ import { Provider } from 'react-redux'
 import { store } from '@src/store'
 
 describe('render app', () => {
-  const setup = (): RenderResult => {
-    return render(
+  const setup = (): RenderResult =>
+    render(
       <Provider store={store}>
         <App />
       </Provider>
     )
-  }
   it('should show hello World when render app', () => {
     const { rerender, container } = setup()
 

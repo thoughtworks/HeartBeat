@@ -21,11 +21,7 @@ Parameters:
     Type: String
   EC2ImageId:
     Description: AMI ID
-    Default: ""ami-0bf2183ba2c3b50f9
-    Type: String
-  MockServerEC2ImageId:
-    Description: AMI ID
-    Default: "ami-039cd3c91ddfff810"
+    Default: "ami-0bf2183ba2c3b50f9"
     Type: String
   SSHPublicKey:
     Description: Public key to connect EC2
@@ -130,26 +126,6 @@ Resources:
               - ecr:InitiateLayerUpload
               - ecr:UploadLayerPart
               - ecr:CompleteLayerUpload
-  EcrStubs:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: "heartbeat_stub"
-      RepositoryPolicyText:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: AllowPushPull
-            Effect: Allow
-            Principal:
-              AWS:
-                - "*"
-            Action:
-              - ecr:GetDownloadUrlForLayer
-              - ecr:BatchGetImage
-              - ecr:BatchCheckLayerAvailability
-              - ecr:PutImage
-              - ecr:InitiateLayerUpload
-              - ecr:UploadLayerPart
-              - ecr:CompleteLayerUpload
   EcrMockServer:
     Type: AWS::ECR::Repository
     Properties:
@@ -230,7 +206,7 @@ Resources:
   MockServerEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !Sub ${MockServerEC2ImageId}
+      ImageId: !Sub ${EC2ImageId}
       InstanceType: "t2.micro"
       Tags:
         - Key: "Name"
@@ -239,7 +215,6 @@ Resources:
           Value: "MockServer"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
-        - !Ref EC2OldAppSecurityGroup
         - !Ref EC2Stubby4jGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair

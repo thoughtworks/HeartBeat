@@ -243,6 +243,7 @@ jobs:
         working-directory: ./frontend
     needs:
       - deploy
+      - deploy-stub
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

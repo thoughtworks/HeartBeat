@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(value = "jiraFeignClient", url = "https://demo.atlassian.net")
+@FeignClient(value = "jiraFeignClient", url = "${jira.url}")
 public interface JiraFeignClient {
 
 	@Cacheable(cacheNames = "jiraConfig", key = "#boardId")

@@ -158,7 +158,7 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.frontend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
-      - name: Build, tag, and push for Stub
+      - name: Build, tag, and push for MockServer
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}

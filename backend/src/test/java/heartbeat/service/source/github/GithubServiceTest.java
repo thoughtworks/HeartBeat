@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,10 +48,8 @@ class GithubServiceTest {
 		final var response = githubService.verifyToken(githubToken);
 
 		assertThat(response.getGithubRepos()).hasSize(4);
-		assertThat(response.getGithubRepos().get(0)).isEqualTo("11111");
-		assertThat(response.getGithubRepos().get(1)).isEqualTo("22222");
-		assertThat(response.getGithubRepos().get(2)).isEqualTo("33333");
-		assertThat(response.getGithubRepos().get(3)).isEqualTo("44444");
+		assertThat(response.getGithubRepos())
+			.isEqualTo(new LinkedHashSet<>(List.of("11111", "22222", "33333", "44444")));
 	}
 
 	@Test

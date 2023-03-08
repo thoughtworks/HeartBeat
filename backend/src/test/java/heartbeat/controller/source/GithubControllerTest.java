@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,9 +37,10 @@ class GithubControllerTest {
 	@Test
 	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
 		String token = "ghp_12345jhgyui987654rdef43567yhu7654321";
-		GithubResponse githubReposResponse = GithubResponse.builder()
-			.githubRepos(List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"))
-			.build();
+		LinkedHashSet<String> repos = new LinkedHashSet<>(
+				List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"));
+
+		GithubResponse githubReposResponse = GithubResponse.builder().githubRepos(repos).build();
 
 		when(githubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 

@@ -5,3 +5,6 @@ server:
 logging:
   level:
     root: INFO
+jira:
+  url: https://demo.atlassian.net
+

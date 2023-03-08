@@ -12,12 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JiraBoardConfigDTO implements Serializable {
+public class IssueField implements Serializable {
 
-	private String id;
+	private String key;
 
 	private String name;
-
-	private JiraColumnConfig columnConfig;
 
 }

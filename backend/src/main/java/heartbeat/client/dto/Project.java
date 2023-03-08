@@ -2,6 +2,7 @@ package heartbeat.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JiraBoardConfigDTO implements Serializable {
+public class Project implements Serializable {
 
-	private String id;
-
-	private String name;
-
-	private JiraColumnConfig columnConfig;
+	private List<Issuetype> issuetypes;
 
 }

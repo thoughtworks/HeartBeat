@@ -2,7 +2,7 @@ package heartbeat.service.source.github;
 
 import feign.FeignException;
 import heartbeat.client.GithubFeignClient;
-import heartbeat.client.dto.GithubOrgsInfo;
+import heartbeat.client.dto.GithubOrganizationsInfo;
 import heartbeat.client.dto.GithubRepos;
 import heartbeat.controller.source.vo.GithubResponse;
 import heartbeat.exception.RequestFailedException;
@@ -25,14 +25,14 @@ public class GithubService {
 		String token = "token " + githubToken;
 		try {
 			log.info("[Github] Start to query repository_url by token: https://api.github.com/user/repos");
-			final var githubReposByUser = githubFeignClient.getAllRepos(token)
+			List<String> githubReposByUser = githubFeignClient.getAllRepos(token)
 				.stream()
 				.map(GithubRepos::getHtml_url)
 				.toList();
 			log.info("[Github] Successfully queried repository_data by token");
 			log.info("[Github] Start to query organization_url by token: https://api.github.com/user/orgs");
 
-			final var githubOrganizations = githubFeignClient.getGithubOrgsInfo(token);
+			List<GithubOrganizationsInfo> githubOrganizations = githubFeignClient.getGithubOrganizationsInfo(token);
 			log.info("[Github] Successfully queried organization_data by token");
 
 			List<String> githubRepos = new ArrayList<>(githubReposByUser);
@@ -53,10 +53,10 @@ public class GithubService {
 		}
 	}
 
-	private void getGithubReposByOrganizations(String token, List<GithubOrgsInfo> githubOrganizations,
+	private void getGithubReposByOrganizations(String token, List<GithubOrganizationsInfo> githubOrganizations,
 			List<String> githubRepos) {
 		githubRepos.addAll(githubOrganizations.stream()
-			.map(GithubOrgsInfo::getLogin)
+			.map(GithubOrganizationsInfo::getLogin)
 			.flatMap(org -> githubFeignClient.getReposByOrganizationName(org, token)
 				.stream()
 				.map(GithubRepos::getHtml_url))

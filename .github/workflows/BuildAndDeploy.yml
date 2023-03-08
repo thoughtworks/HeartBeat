@@ -229,7 +229,7 @@ jobs:
             fi
 
       - name: Deploy
-        if: steps.check_changes.outputs.changed == 'true'
+        if: ${{ contains(github.event.head_commit.modified, 'stubs/to/file') }}
         uses: appleboy/ssh-action@master
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}

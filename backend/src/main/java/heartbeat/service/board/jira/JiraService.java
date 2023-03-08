@@ -54,9 +54,8 @@ public class JiraService {
 
 	private static final String DONE_CARD_TAG = "done";
 
-	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment",
-		"duedate",
-		"issuelinks");
+	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
+			"issuelinks");
 
 	@PreDestroy
 	public void shutdownExecutor() {
@@ -67,66 +66,59 @@ public class JiraService {
 		URI baseUrl = URI.create("https://" + boardRequestParam.getSite() + ".atlassian.net");
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
-			log.info("[Jira] Start to get configuration for board, name: "
-				+ boardRequestParam.getBoardName());
-			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl,
-				boardRequestParam.getBoardId(),
-				boardRequestParam.getToken());
-			log.info("[Jira] Successfully get configuration_data, name: {}, id: {}",
-				jiraBoardConfigDTO.getName(),
-				jiraBoardConfigDTO.getId());
+			log.info("[Jira] Start to get configuration for board, board info: " + boardRequestParam);
+			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardRequestParam.getBoardId(),
+					boardRequestParam.getToken());
+			log.info("[Jira] Successfully get configuration for board: " + boardRequestParam.getBoardId() + "response: "
+					+ jiraBoardConfigDTO);
 
-			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(
-				boardRequestParam, baseUrl,
-				jiraBoardConfigDTO);
-			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl,
-				boardRequestParam);
+			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequestParam, baseUrl,
+					jiraBoardConfigDTO);
+			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
 
 			return jiraColumnsFuture.thenCompose(
-					jiraColumnResult -> getUserAsync(baseUrl, boardRequestParam,
-						jiraColumnResult.getDoneColumns())
+					jiraColumnResult -> getUserAsync(baseUrl, boardRequestParam, jiraColumnResult.getDoneColumns())
 						.thenApply(users -> BoardConfigResponse.builder()
 							.jiraColumnResponses(jiraColumnResult.getJiraColumnResponses())
 							.targetFields(targetFieldFuture.join())
 							.users(users)
 							.build()))
 				.join();
-		} catch (FeignException e) {
+		}
+		catch (FeignException e) {
 			log.error("[Jira] Failed when call Jira to get board config", e);
 			throw new RequestFailedException(e);
-		} catch (CompletionException e) {
+		}
+		catch (CompletionException e) {
 			Throwable cause = e.getCause();
 			log.error("[Jira] Failed when call Jira to get board config", cause);
 			if (cause instanceof FeignException feignException) {
 				throw new RequestFailedException(feignException);
-			} else if (cause instanceof RequestFailedException requestFailedException) {
+			}
+			else if (cause instanceof RequestFailedException requestFailedException) {
 				throw requestFailedException;
 			}
 			throw e;
 		}
 	}
 
-	private CompletableFuture<JiraColumnResult> getJiraColumnsAsync(
-		BoardRequestParam boardRequestParam, URI baseUrl,
-		JiraBoardConfigDTO jiraBoardConfigDTO) {
-		return CompletableFuture.supplyAsync(
-			() -> getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO),
-			taskExecutor);
+	private CompletableFuture<JiraColumnResult> getJiraColumnsAsync(BoardRequestParam boardRequestParam, URI baseUrl,
+			JiraBoardConfigDTO jiraBoardConfigDTO) {
+		return CompletableFuture.supplyAsync(() -> getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO),
+				taskExecutor);
 	}
 
 	private JiraColumnResult getJiraColumns(BoardRequestParam boardRequestParam, URI baseUrl,
-		JiraBoardConfigDTO jiraBoardConfigDTO) {
-		log.info("[Jira] Start to get jira columns,boardName: {} column size: {}",
-			boardRequestParam.getBoardName(),
-			jiraBoardConfigDTO.getColumnConfig().getColumns().size());
+			JiraBoardConfigDTO jiraBoardConfigDTO) {
+		log.info("[Jira] Start to get jira columns,boardName: {} column size: {}", boardRequestParam.getBoardName(),
+				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		List<String> doneColumns = new CopyOnWriteArrayList<>();
 		List<CompletableFuture<JiraColumnResponse>> futures = jiraBoardConfigDTO.getColumnConfig()
 			.getColumns()
 			.stream()
 			.map(jiraColumn -> CompletableFuture.supplyAsync(
-				() -> getColumnNameAndStatus(jiraColumn, baseUrl, doneColumns,
-					boardRequestParam.getToken()),
-				taskExecutor))
+					() -> getColumnNameAndStatus(jiraColumn, baseUrl, doneColumns, boardRequestParam.getToken()),
+					taskExecutor))
 			.toList();
 
 		List<JiraColumnResponse> columnResponse = futures.stream()
@@ -137,19 +129,16 @@ public class JiraService {
 			.jiraColumnResponses(columnResponse)
 			.doneColumns(doneColumns)
 			.build();
-		log.info(
-			"[Jira] Successfully to get jira columns,boardName: {}, column result size: {}, done columns: {}",
-			boardRequestParam.getBoardName(), jiraColumnResult.getJiraColumnResponses().size(),
-			doneColumns);
+		log.info("[Jira] Successfully to get jira columns,boardName: {}, column result size: {}, done columns: {}",
+				boardRequestParam.getBoardName(), jiraColumnResult.getJiraColumnResponses().size(), doneColumns);
 		return jiraColumnResult;
 	}
 
 	private JiraColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl,
 
-		List<String> doneColumns, String token) {
-		log.info("[Jira] Start to get column and status, the column name: {} column status: {}",
-			jiraColumn.getName(),
-			jiraColumn.getStatuses());
+			List<String> doneColumns, String token) {
+		log.info("[Jira] Start to get column and status, the column name: {} column status: {}", jiraColumn.getName(),
+				jiraColumn.getStatuses());
 		List<StatusSelfDTO> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
 		String key = handleColumKey(doneColumns, statusSelfList);
 
@@ -163,19 +152,17 @@ public class JiraService {
 				.build())
 			.build();
 		log.info("[Jira] Successfully get column and status, the column key: {}, status: {}",
-			jiraColumnResponse.getKey(), jiraColumnResponse.getValue().getStatuses());
+				jiraColumnResponse.getKey(), jiraColumnResponse.getValue().getStatuses());
 		return jiraColumnResponse;
 	}
 
-	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, JiraColumn jiraColumn,
-		String token) {
+	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, JiraColumn jiraColumn, String token) {
 		log.info("[Jira] Start to get columns status self list");
 		List<CompletableFuture<StatusSelfDTO>> futures = jiraColumn.getStatuses()
 			.stream()
 			.map(jiraColumnStatus -> CompletableFuture.supplyAsync(
-				() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(),
-					token),
-				taskExecutor))
+					() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
+					taskExecutor))
 			.toList();
 		log.info("[Jira] Successfully get columns status self list");
 
@@ -188,24 +175,22 @@ public class JiraService {
 			if (statusSelf.getStatusCategory().getKey().equalsIgnoreCase(DONE_CARD_TAG)) {
 				doneColumn.add(statusSelf.getUntranslatedName().toUpperCase());
 				keyList.add(DONE_CARD_TAG);
-			} else {
+			}
+			else {
 				keyList.add(statusSelf.getStatusCategory().getName());
 			}
 		});
 
 		return keyList.contains(DONE_CARD_TAG) ? DONE_CARD_TAG
-			: keyList.stream().reduce((pre, last) -> last).orElse("");
+				: keyList.stream().reduce((pre, last) -> last).orElse("");
 	}
 
-	private CompletableFuture<List<String>> getUserAsync(URI baseUrl,
-		BoardRequestParam boardRequestParam,
-		List<String> doneColumns) {
-		return CompletableFuture.supplyAsync(
-			() -> getUsers(baseUrl, boardRequestParam, doneColumns), taskExecutor);
+	private CompletableFuture<List<String>> getUserAsync(URI baseUrl, BoardRequestParam boardRequestParam,
+			List<String> doneColumns) {
+		return CompletableFuture.supplyAsync(() -> getUsers(baseUrl, boardRequestParam, doneColumns), taskExecutor);
 	}
 
-	private List<String> getUsers(URI baseUrl, BoardRequestParam boardRequestParam,
-		List<String> doneColumns) {
+	private List<String> getUsers(URI baseUrl, BoardRequestParam boardRequestParam, List<String> doneColumns) {
 		if (doneColumns.isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no done column.");
 		}
@@ -218,31 +203,26 @@ public class JiraService {
 
 		List<CompletableFuture<List<String>>> futures = doneCards.stream()
 			.map(doneCard -> CompletableFuture
-				.supplyAsync(() -> getAssigneeSet(baseUrl, doneCard, boardRequestParam.getToken()),
-					taskExecutor))
+				.supplyAsync(() -> getAssigneeSet(baseUrl, doneCard, boardRequestParam.getToken()), taskExecutor))
 			.toList();
 
 		List<List<String>> assigneeList = futures.stream().map(CompletableFuture::join).toList();
 		return assigneeList.stream().flatMap(Collection::stream).distinct().toList();
 	}
 
-	private List<DoneCard> getAllDoneCards(URI baseUrl, List<String> doneColumns,
-		BoardRequestParam boardRequestParam) {
+	private List<DoneCard> getAllDoneCards(URI baseUrl, List<String> doneColumns, BoardRequestParam boardRequestParam) {
 		String jql = String.format(
-			"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
-			String.join("','", doneColumns), boardRequestParam.getStartTime(),
-			boardRequestParam.getEndTime());
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
+				String.join("','", doneColumns), boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 
 		log.info("[Jira] Start to get first-page done card information");
 		AllDoneCardsResponseDTO allDoneCardsResponseDTO = jiraFeignClient.getAllDoneCards(baseUrl,
-			boardRequestParam.getBoardId(), QUERY_COUNT, 0, jql, boardRequestParam.getToken());
+				boardRequestParam.getBoardId(), QUERY_COUNT, 0, jql, boardRequestParam.getToken());
 		log.info("[Jira] Successfully get first-page done card information");
 
-		List<DoneCard> doneCards = new ArrayList<>(
-			new HashSet<>(allDoneCardsResponseDTO.getIssues()));
+		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 
-		int pages = (int) Math.ceil(
-			Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
+		int pages = (int) Math.ceil(Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
 		if (pages <= 1) {
 			return doneCards;
 		}
@@ -251,15 +231,12 @@ public class JiraService {
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
 		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
 			.map(startFrom -> CompletableFuture
-				.supplyAsync(
-					() -> (jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
-						QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken())),
-					taskExecutor))
+				.supplyAsync(() -> (jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
+						QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken())), taskExecutor))
 			.toList();
 		log.info("[Jira] Successfully get more done card information");
 
-		List<AllDoneCardsResponseDTO> doneCardsResponses = futures.stream()
-			.map(CompletableFuture::join).toList();
+		List<AllDoneCardsResponseDTO> doneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
 		List<DoneCard> moreDoneCards = doneCardsResponses.stream()
 			.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
 			.toList();
@@ -268,43 +245,36 @@ public class JiraService {
 	}
 
 	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {
-		log.info("[Jira] Start to get jira card history, key: {},done cards: {}", donecard.getKey(),
-			donecard);
-		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl,
-			donecard.getKey(),
-			jiraToken);
+		log.info("[Jira] Start to get jira card history, key: {},done cards: {}", donecard.getKey(), donecard);
+		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, donecard.getKey(),
+				jiraToken);
 		log.info("[Jira] Successfully get jira card history, key: {},items: {}", donecard.getKey(),
-			cardHistoryResponseDTO.getItems());
+				cardHistoryResponseDTO.getItems());
 
 		List<String> assigneeSet = cardHistoryResponseDTO.getItems()
 			.stream()
 			.filter(assignee -> Objects.equals(assignee.getFieldId(), "assignee")
-				&& assignee.getTo().getDisplayValue() != null)
+					&& assignee.getTo().getDisplayValue() != null)
 			.map(assignee -> assignee.getTo().getDisplayValue())
 			.toList();
 
 		if (assigneeSet.isEmpty() && nonNull(donecard.getFields().getAssignee())
-			&& nonNull(donecard.getFields().getAssignee().getDisplayName())) {
+				&& nonNull(donecard.getFields().getAssignee().getDisplayName())) {
 			return List.of(donecard.getFields().getAssignee().getDisplayName());
 		}
 		log.info("[Jira] Successfully get assigneeSet:{}", assigneeSet);
 		return assigneeSet;
 	}
 
-	private CompletableFuture<List<TargetField>> getTargetFieldAsync(URI baseUrl,
-		BoardRequestParam boardRequestParam) {
-		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequestParam),
-			taskExecutor);
+	private CompletableFuture<List<TargetField>> getTargetFieldAsync(URI baseUrl, BoardRequestParam boardRequestParam) {
+		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequestParam), taskExecutor);
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
-		log.info("[Jira] Start to get target field, board name: {}",
-			boardRequestParam.getBoardName());
-		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl,
-			boardRequestParam.getProjectKey(),
-			boardRequestParam.getToken());
-		log.info("[Jira] Successfully get target field, board name: {}",
-			boardRequestParam.getBoardName());
+		log.info("[Jira] Start to get target field, board name: {}", boardRequestParam.getBoardName());
+		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(),
+				boardRequestParam.getToken());
+		log.info("[Jira] Successfully get target field, board name: {}", boardRequestParam.getBoardName());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no target field.");

@@ -71,8 +71,7 @@ public class JiraControllerTest {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token("").build();
 		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
 
-		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters)).andExpect(status().isBadRequest());
 	}
 
 	@Test

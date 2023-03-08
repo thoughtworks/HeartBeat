@@ -24,13 +24,11 @@ public class BoardRequestFixture {
 			.endTime("1676908799000");
 	}
 
-	public static MultiValueMap<String, String> buildParameter(
-		BoardRequestParam boardRequestParam) {
+	public static MultiValueMap<String, String> buildParameter(BoardRequestParam boardRequestParam) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-		Map<String, String> maps = objectMapper.convertValue(boardRequestParam,
-			new TypeReference<>() {
-			});
+		Map<String, String> maps = objectMapper.convertValue(boardRequestParam, new TypeReference<>() {
+		});
 		parameters.setAll(maps);
 		return parameters;
 	}

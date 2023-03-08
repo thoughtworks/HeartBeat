@@ -213,23 +213,14 @@ jobs:
 
   deploy-stub:
     runs-on: ubuntu-latest
+    if: ${{ contains(github.event.head_commit.modified, 'stubs') }}
     needs:
       - build-and-push-image
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Check for changes
-        id: check_changes
-        run: |
-            if git diff HEAD@{1} --name-only | grep 'stubs'; then
-              echo "::set-output name=changed::true"
-            else
-              echo "::set-output name=changed::false"
-            fi
-
       - name: Deploy
-        if: ${{ contains(github.event.head_commit.modified, 'stubs/to/file') }}
         uses: appleboy/ssh-action@master
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}

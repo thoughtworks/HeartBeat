@@ -1,34 +1,24 @@
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import React, { useState } from 'react'
-import { CHINA_CALENDAR, REGULAR_CALENDAR, STEPS } from '@src/constants'
+import { CHINA_CALENDAR, REGULAR_CALENDAR } from '@src/constants'
 import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
-import { BackButton, ButtonGroup, ConfigStepWrapper, ExportButton, NextButton, ProjectNameInput } from './style'
+import { ConfigStepWrapper, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { backStep, nextStep, selectStep } from '@src/features/stepper/StepperSlice'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
-import { changeBoardVerifyState } from '@src/features/board/boardSlice'
+import { updateBoardVerifyState } from '@src/context/board/boardSlice'
 import {
   selectCalendarType,
   selectProjectName,
   updateCalendarType,
   updateProjectName,
-} from '@src/features/config/configSlice'
+} from '@src/context/config/configSlice'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
-  const activeStep = useAppSelector(selectStep)
   const projectName = useAppSelector(selectProjectName)
   const calendarType = useAppSelector(selectCalendarType)
 
   const [isEmptyProjectName, setIsEmptyProjectName] = useState<boolean>(false)
-
-  const handleNext = () => {
-    dispatch(nextStep())
-  }
-
-  const handleBack = () => {
-    dispatch(backStep())
-  }
 
   return (
     <ConfigStepWrapper>
@@ -51,7 +41,7 @@ export const ConfigStep = () => {
       <RadioGroup
         value={calendarType}
         onChange={(e) => {
-          dispatch(changeBoardVerifyState(false))
+          dispatch(updateBoardVerifyState(false))
           dispatch(updateCalendarType(e.target.value))
         }}
       >
@@ -60,14 +50,6 @@ export const ConfigStep = () => {
       </RadioGroup>
       <DateRangePicker />
       <MetricsTypeCheckbox />
-      <ButtonGroup>
-        <BackButton onClick={handleBack}>Back</BackButton>
-        {activeStep === STEPS.length - 1 ? (
-          <ExportButton>Export board data</ExportButton>
-        ) : (
-          <NextButton onClick={handleNext}>Next</NextButton>
-        )}
-      </ButtonGroup>
     </ConfigStepWrapper>
   )
 }

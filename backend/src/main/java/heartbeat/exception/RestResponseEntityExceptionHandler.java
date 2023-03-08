@@ -1,7 +1,6 @@
 package heartbeat.exception;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -9,6 +8,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
@@ -30,6 +32,11 @@ public class RestResponseEntityExceptionHandler {
 			.stream()
 			.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
 		return ResponseEntity.badRequest().body(fieldErrors);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
 }

@@ -1,6 +1,6 @@
 class Metrics {
   navigate() {
-    cy.visit(Cypress.env('url') + '/Metrics')
+    cy.visit(Cypress.env('url') + '/metrics')
   }
   typeProjectName(projectName: string) {
     cy.contains('Project Name').siblings().type(projectName)
@@ -55,6 +55,11 @@ class Metrics {
     cy.on('window:alert', (str) => {
       expect(str).to.equal('BuildKite verify failed')
     })
+  }
+
+  goMetricsStep() {
+    cy.contains('Next').click()
+    cy.contains('Crews Setting').should('exist')
   }
 }
 

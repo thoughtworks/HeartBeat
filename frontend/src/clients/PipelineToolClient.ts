@@ -1,7 +1,7 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { AxiosError } from 'axios'
 import { BadRequestException } from '@src/exceptions/BadRequestException'
-import { BadServerException } from '@src/exceptions/BasServerException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 export interface getVerifyPipelineToolParams {
   type: string
@@ -25,7 +25,7 @@ export class PipelineToolClient extends HttpClient {
         throw new BadRequestException(params.type, 'verify failed')
       }
       if (code === 500) {
-        throw new BadServerException(params.type, 'verify failed')
+        throw new InternalServerException(params.type, 'verify failed')
       }
     }
     return {

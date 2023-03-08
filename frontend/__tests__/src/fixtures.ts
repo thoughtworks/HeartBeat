@@ -12,6 +12,12 @@ export const NEXT = 'Next'
 
 export const BACK = 'Back'
 
+export const VERIFY = 'Verify'
+
+export const RESET = 'Reset'
+
+export const PROJECT_NAME_LABEL = 'Project Name'
+
 export const EXPORT_BOARD_DATA = 'Export board data'
 
 export const STEPS = ['Config', 'Metrics', 'Export']
@@ -26,8 +32,8 @@ export const REQUIRED_DATA_LIST = [
   'Mean time to recovery',
 ]
 export const VELOCITY = 'Velocity'
-export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 export const REQUIRED_DATA = 'Required Data'
+export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
@@ -52,7 +58,23 @@ export enum CONFIG_TITLE {
 export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
 
-export const MOCK_URL = '/api/v1/kanban/verify'
-export const JIRA_VERIFY_FAILED_MESSAGE = 'Jira verify failed'
-export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed'
+export const MOCK_BOARD_URL = '/api/v1/boards'
+
+export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
+
+export const JIRA_VERIFY_ERROR_MESSAGE = {
+  400: 'Jira verify failed: Bad request',
+  404: 'Jira verify failed: Page not found',
+  500: 'Jira verify failed: Internal server error',
+}
+
+export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
+  token: 'mockToken',
+  type: BOARD_TYPES.JIRA,
+  site: '1',
+  projectKey: '1',
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+  boardId: '1',
+}

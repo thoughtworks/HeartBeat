@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import stepperReducer from './features/stepper/StepperSlice'
-import configReducer from './features/config/configSlice'
-import boardReducer from './features/board/boardSlice'
-import pipelineReducer from './features/pipelineTool/pipelineToolSlice'
-import jiraVerifyResponseReducer from './features/jiraVerifyResponse/jiraVerifyResponseSlice'
-import pipelineToolResponseReducer from './features/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
+import stepperReducer from './context/stepper/StepperSlice'
+import configReducer from './context/config/configSlice'
+import boardReducer from './context/board/boardSlice'
+import jiraVerifyResponseReducer from './context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+import pipelineReducer from './context/pipelineTool/pipelineToolSlice'
+import pipelineToolResponseReducer from './context/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
+
 export const store = configureStore({
   reducer: {
     stepper: stepperReducer,

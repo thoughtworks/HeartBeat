@@ -46,3 +46,28 @@ export const PIPELINE_TOOL_TYPES = {
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 export const EMAIL = 'Email'
+
+export const METRICS_CONSTANTS = {
+  cycleTimeEmptyStr: '----',
+  doneValue: 'Done',
+  doneKeyFromBackend: 'done',
+  todoValue: 'To do',
+  analysisValue: 'Analysis',
+  inDevValue: 'In Dev',
+  blockValue: 'Block',
+  waitingValue: 'Waiting for testing',
+  testingValue: 'Testing',
+  reviewValue: 'Review',
+}
+
+export const CYCLETIME_LIST = [
+  METRICS_CONSTANTS.cycleTimeEmptyStr,
+  METRICS_CONSTANTS.todoValue,
+  METRICS_CONSTANTS.analysisValue,
+  METRICS_CONSTANTS.inDevValue,
+  METRICS_CONSTANTS.blockValue,
+  METRICS_CONSTANTS.waitingValue,
+  METRICS_CONSTANTS.testingValue,
+  METRICS_CONSTANTS.reviewValue,
+  METRICS_CONSTANTS.doneValue,
+]

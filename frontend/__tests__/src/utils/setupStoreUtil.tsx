@@ -4,6 +4,7 @@ import { configSlice } from '@src/context/config/configSlice'
 import { boardSlice } from '@src/context/board/boardSlice'
 import { pipelineToolSlice } from '@src/context/pipelineTool/pipelineToolSlice'
 import { jiraVerifyResponseSlice } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+import { sourceControlSlice } from '@src/context/sourceControl/sourceControlSlice'
 
 export const setupStore = () => {
   return configureStore({
@@ -13,6 +14,7 @@ export const setupStore = () => {
       [boardSlice.name]: boardSlice.reducer,
       [pipelineToolSlice.name]: pipelineToolSlice.reducer,
       [jiraVerifyResponseSlice.name]: jiraVerifyResponseSlice.reducer,
+      [sourceControlSlice.name]: sourceControlSlice.reducer,
     },
   })
 }

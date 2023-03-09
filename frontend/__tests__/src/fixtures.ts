@@ -16,6 +16,8 @@ export const VERIFY = 'Verify'
 
 export const RESET = 'Reset'
 
+export const VERIFIED = 'Verified'
+
 export const PROJECT_NAME_LABEL = 'Project Name'
 
 export const EXPORT_BOARD_DATA = 'Export board data'
@@ -50,17 +52,23 @@ export const PIPELINE_TOOL_TYPES = {
   GO_CD: 'GoCD',
 }
 
+export const SOURCE_CONTROL_TYPES = {
+  GITHUB: 'Github',
+}
+
 export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'Pipeline Tool',
+  SOURCE_CONTROL = 'Source Control',
 }
 
-export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
+export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
+export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/boards'
-
 export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
+export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
 export const JIRA_VERIFY_ERROR_MESSAGE = {
   400: 'Jira verify failed: Bad request',
@@ -72,6 +80,14 @@ export const PIPELINE_TOOL_VERIFY_ERROR_MESSAGE = {
   400: 'BuildKite verify failed: Bad request',
   404: 'BuildKite verify failed: Page not found',
   500: 'BuildKite verify failed: Internal server error',
+}
+
+export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
+
+export const GITHUB_VERIFY_ERROR_MESSAGE = {
+  400: 'Github verify failed: Bad request',
+  404: 'Github verify failed: Page not found',
+  500: 'Github verify failed: Internal server error',
 }
 
 export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
@@ -87,6 +103,13 @@ export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
 export const MOCK_PIPELINE_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+}
+
+export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
+  token: 'mockToken',
+  type: SOURCE_CONTROL_TYPES.GITHUB,
   startTime: '1613664000000',
   endTime: '1614873600000',
 }

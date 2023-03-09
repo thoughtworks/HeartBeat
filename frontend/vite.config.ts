@@ -6,6 +6,9 @@ import { resolve } from 'path/posix'
 export default defineConfig({
   server: {
     port: 4321,
+    proxy: {
+      '/api/v1': 'http://localhost:4322',
+    },
   },
   plugins: [react()],
   resolve: {

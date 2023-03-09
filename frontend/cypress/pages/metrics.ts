@@ -52,6 +52,13 @@ class Metrics {
     cy.get('button:contains("Verify")').should('be.enabled')
   }
 
+  fillSourceControlFieldsInfo(token: string) {
+    cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.disabled')
+
+    cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
+    cy.get('button:contains("Verify")').should('be.enabled')
+  }
+
   goMetricsStep() {
     cy.contains('Next').click()
     cy.contains('Crews Setting').should('exist')

@@ -49,12 +49,14 @@ export const SOURCE_CONTROL_TYPES = {
 }
 
 export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+export const BUILDKITE_TOKEN_REGEXP = /^[A-Za-z0-9]{40}$/
+export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 
 export const EMAIL = 'Email'
 
-export const ERROR_MESSAGE_TIME_DURATION = 2000
+export const INVALID_TOKEN_MESSAGE = 'Invalid token'
 
-export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
+export const ERROR_MESSAGE_TIME_DURATION = 2000
 
 export const TOKEN_HELPER_TEXT = {
   emptyTokenText: 'Token is required',

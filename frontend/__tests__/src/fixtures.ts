@@ -76,6 +76,12 @@ export const JIRA_VERIFY_ERROR_MESSAGE = {
   500: 'Jira verify failed: Internal server error',
 }
 
+export const PIPELINE_TOOL_VERIFY_ERROR_MESSAGE = {
+  400: 'BuildKite verify failed: Bad request',
+  404: 'BuildKite verify failed: Page not found',
+  500: 'BuildKite verify failed: Internal server error',
+}
+
 export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 
 export const GITHUB_VERIFY_ERROR_MESSAGE = {
@@ -92,6 +98,13 @@ export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
   startTime: '1613664000000',
   endTime: '1614873600000',
   boardId: '1',
+}
+
+export const MOCK_PIPELINE_VERIFY_REQUEST_PARAMS = {
+  token: 'mockToken',
+  type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+  startTime: '1613664000000',
+  endTime: '1614873600000',
 }
 
 export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {

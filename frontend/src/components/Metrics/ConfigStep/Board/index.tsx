@@ -1,10 +1,9 @@
-import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
 import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
-  BoardLoadingDrop,
   BoardSection,
   BoardTextField,
   BoardTitle,
@@ -19,6 +18,7 @@ import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+import { Loading } from '@src/components/Loading'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -106,12 +106,14 @@ export const Board = () => {
         token: fields[5].value,
       })
     )
+    const msg = `${fields[2].value}:${fields[5].value}`
+    const encodeToken = `Basic ${btoa(msg)}`
     const params = {
       type: fields[0].value,
       boardId: fields[1].value,
       projectKey: fields[3].value,
       site: fields[4].value,
-      token: fields[5].value,
+      token: encodeToken,
       startTime: DateRange.startDate,
       endTime: DateRange.endDate,
     }
@@ -134,11 +136,7 @@ export const Board = () => {
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
-      {isLoading && (
-        <BoardLoadingDrop open={isLoading}>
-          <CircularProgress size='8rem' />
-        </BoardLoadingDrop>
-      )}
+      {isLoading && <Loading />}
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {fields.map((filed, index) =>

@@ -1,12 +1,21 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { BOARD_TYPES, REQUIRED_DATA_LIST } from '@src/constants'
+import { BOARD_TYPES, REQUIRED_DATA_LIST, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 import React, { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectMetrics, updateBoard, updateMetrics } from '@src/context/config/configSlice'
+import {
+  selectMetrics,
+  updateBoard,
+  updateMetrics,
+  updatePipelineToolFields,
+  updateSourceControlFields,
+} from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { updateBoardVerifyState } from '@src/context/board/boardSlice'
+import { updatePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
+import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
+import { updateSourceControlVerifyState } from '@src/context/sourceControl/sourceControlSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -14,11 +23,14 @@ export const MetricsTypeCheckbox = () => {
   const [isShowBoard, setIsShowBoard] = useState(false)
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const [isShowPipelineTool, setIsShowPipelineTool] = useState(false)
+  const [isShowSourceControl, setIsShowSourceControl] = useState(false)
 
   const handleRequireDataChange = (event: SelectChangeEvent<typeof requireData>) => {
     const {
       target: { value },
     } = event
+    dispatch(updatePipelineToolFields({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
+    dispatch(updatePipelineToolVerifyState(false))
     dispatch(updateBoardVerifyState(false))
     dispatch(
       updateBoard({
@@ -30,6 +42,8 @@ export const MetricsTypeCheckbox = () => {
         token: '',
       })
     )
+    dispatch(updateSourceControlFields({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
+    dispatch(updateSourceControlVerifyState(false))
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     setIsShowBoard(
@@ -43,6 +57,7 @@ export const MetricsTypeCheckbox = () => {
         value.includes(REQUIRED_DATA_LIST[5]) ||
         value.includes(REQUIRED_DATA_LIST[6])
     )
+    setIsShowSourceControl(value.includes(REQUIRED_DATA_LIST[3]))
   }
   return (
     <>
@@ -66,6 +81,7 @@ export const MetricsTypeCheckbox = () => {
       </RequireDataSelections>
       {isShowBoard && <Board />}
       {isShowPipelineTool && <PipelineTool />}
+      {isShowSourceControl && <SourceControl />}
     </>
   )
 }

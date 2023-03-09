@@ -18,6 +18,7 @@ import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
+import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -117,7 +118,7 @@ export const Board = () => {
     await verifyJira(params).then((res) => {
       if (res) {
         dispatch(updateBoardVerifyState(res.isBoardVerify))
-        dispatch(updateBoard(res.response))
+        dispatch(updateJiraVerifyResponse(res.response))
         setIsNoDoneCard(res.isNoDoneCard)
       }
     })

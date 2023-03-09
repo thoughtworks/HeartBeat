@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { boardClient, getVerifyBoardParams } from '@src/clients/BoardClient'
+import { sourceControlClient, getVerifySourceControlParams } from '@src/clients/SourceControlClient'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 
-export interface useVerifyBoardStateInterface {
-  verifyJira: (params: getVerifyBoardParams) => Promise<
+export interface useVerifySourceControlStateInterface {
+  verifyGithub: (params: getVerifySourceControlParams) => Promise<
     | {
-        isBoardVerify: boolean
-        isNoDoneCard: boolean
+        isSourceControlVerify: boolean
         response: object
       }
     | undefined
@@ -15,14 +14,14 @@ export interface useVerifyBoardStateInterface {
   errorMessage: string
 }
 
-export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
+export const useVerifySourceControlEffect = (): useVerifySourceControlStateInterface => {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  const verifyJira = async (params: getVerifyBoardParams) => {
+  const verifyGithub = async (params: getVerifySourceControlParams) => {
     setIsLoading(true)
     try {
-      return await boardClient.getVerifyBoard(params)
+      return await sourceControlClient.getVerifySourceControl(params)
     } catch (e) {
       const err = e as Error
       setErrorMessage(err.message)
@@ -35,7 +34,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
   }
 
   return {
-    verifyJira,
+    verifyGithub,
     isLoading,
     errorMessage,
   }

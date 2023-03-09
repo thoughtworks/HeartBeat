@@ -41,7 +41,7 @@ public class JiraControllerTest {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
 
-		when(jiraService.getJiraConfiguration(any())).thenReturn(boardConfigResponse);
+		when(jiraService.getJiraConfiguration(any(), any())).thenReturn(boardConfigResponse);
 
 		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters))
 			.andExpect(status().isOk())
@@ -54,7 +54,7 @@ public class JiraControllerTest {
 	void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";
-		when(jiraService.getJiraConfiguration(any())).thenThrow(mockException);
+		when(jiraService.getJiraConfiguration(any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn(message);
 		when(mockException.getStatus()).thenReturn(400);
 

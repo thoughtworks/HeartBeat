@@ -25,6 +25,7 @@ import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
+import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
@@ -46,6 +47,8 @@ class JiraServiceTest {
 	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
 
 	public static final String JIRA_JQL = "status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s";
+
+	private final BoardType boardType = BoardType.JIRA;
 
 	@Mock
 	JiraFeignClient jiraFeignClient;
@@ -99,7 +102,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequestParam);
+		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardType, boardRequestParam);
 
 		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
 		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
@@ -130,7 +133,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
 			.thenReturn(ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER().build());
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardRequestParam))
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardType, boardRequestParam))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no done cards.");
 	}
@@ -157,7 +160,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardRequestParam);
+		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardType, boardRequestParam);
 
 		assertThat(boardConfigResponse.getUsers()).hasSize(1);
 		assertThat(boardConfigResponse.getUsers().get(0)).isEqualTo("Zhang San");
@@ -186,7 +189,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token))
 			.thenThrow(mockException);
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardType, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Request failed with status code 500, error: exception");
 	}
@@ -203,7 +206,7 @@ class JiraServiceTest {
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenThrow(mockException);
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BOARD_REQUEST_BUILDER().build()))
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardType, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Request failed with status code 400, error: exception");
 	}
@@ -217,7 +220,7 @@ class JiraServiceTest {
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(400);
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(BoardRequestParam.builder().build()))
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardType, BoardRequestParam.builder().build()))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Request failed with status code 400, error: ", "");
 	}

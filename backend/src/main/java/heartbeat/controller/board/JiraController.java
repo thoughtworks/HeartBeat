@@ -22,7 +22,7 @@ public class JiraController {
 	@GetMapping("/{boardType}")
 	public BoardConfigResponse getBoard(@PathVariable @NotBlank BoardType boardType,
 			@Valid BoardRequestParam boardRequestParam) {
-		return jiraService.getJiraConfiguration(boardRequestParam);
+		return jiraService.getJiraConfiguration(boardType, boardRequestParam);
 	}
 
 }

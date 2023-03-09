@@ -9,7 +9,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { Divider } from '@src/components/Metrics/MetricsStep/Crews/style'
+import { Divider, Title } from './style'
 
 interface crewsProps {
   options: string[]
@@ -36,7 +36,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
   return (
     <>
       <Divider>
-        <span>{title}</span>
+        <Title>{title}</Title>
       </Divider>
       <FormControl variant='standard' required error={isEmptyCrewData}>
         <InputLabel id='crew-data-multiple-checkbox-label'>{label}</InputLabel>
@@ -45,7 +45,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
           multiple
           value={selectedCrews}
           onChange={handleCrewChange}
-          renderValue={(selectedCrews: string[]) => selectedCrews.join(',')}
+          renderValue={(selectedCrews: string[]) => selectedCrews.join(', ')}
         >
           <MenuItem value='All'>
             <Checkbox checked={isAllSelected} />
@@ -58,7 +58,11 @@ export const Crews = ({ options, title, label }: crewsProps) => {
             </MenuItem>
           ))}
         </Select>
-        {isEmptyCrewData && <FormHelperText>{label} is required</FormHelperText>}
+        {isEmptyCrewData && (
+          <FormHelperText>
+            {label} is <strong>required</strong>
+          </FormHelperText>
+        )}
       </FormControl>
     </>
   )

@@ -233,9 +233,10 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+            docker rm -f mockserver
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
-            docker pull $REGISTRY/mock_server:$IMAGE_TAG
-            docker run --name mockserver -d -p 4323:4323 $REGISTRY/mock_server:$IMAGE_TAG
+            docker pull $REGISTRY/mock_server:latest
+            docker run --name mockserver -d -p 4323:4323 $REGISTRY/mock_server:latest
   e2e:
     runs-on: ubuntu-latest
     defaults:
@@ -263,3 +264,4 @@ jobs:
           name: cypress-videos
           path: frontend/cypress/videos/
           retention-days: ${{ vars.RETENTION_DAYS }}
+

@@ -1,4 +1,4 @@
-import pipelineToolReducer, { changePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
+import pipelineToolReducer, { updatePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
 
 describe('pipelineTool reducer', () => {
   it('should set isPipelineToolVerified false when handle initial state', () => {
@@ -7,12 +7,12 @@ describe('pipelineTool reducer', () => {
     expect(STEPPER.isPipelineToolVerified).toEqual(false)
   })
 
-  it('should set isPipelineToolVerified true when handle changePipelineToolVerifyState given isPipelineToolVerified is true', () => {
+  it('should set isPipelineToolVerified true when handle updatePipelineToolVerifyState given isPipelineToolVerified is true', () => {
     const STEPPER = pipelineToolReducer(
       {
         isPipelineToolVerified: false,
       },
-      changePipelineToolVerifyState(true)
+      updatePipelineToolVerifyState(true)
     )
 
     expect(STEPPER.isPipelineToolVerified).toEqual(true)

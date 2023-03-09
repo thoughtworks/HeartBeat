@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles'
-import { Backdrop, Button, FormControl, TextField } from '@mui/material'
-import { theme } from '@src/theme'
+import { FormControl, TextField } from '@mui/material'
 
 export const PipelineToolSection = styled('div')({
   position: 'relative',
@@ -33,28 +32,9 @@ export const PipelineToolTextField = styled(TextField)({
   padding: '0.5rem 0',
 })
 
-export const PipelineToolLoadingDrop = styled(Backdrop)({
-  position: 'absolute',
-  zIndex: '999',
-  backgroundColor: 'rgba(199,199,199,0.43)',
-  color: theme.main.backgroundColor,
-})
-
 export const PipelineToolButtonGroup = styled('div')({
   display: 'flex',
   justifyContent: 'flex-end',
   padding: '1rem',
   gap: '1rem',
-})
-
-export const VerifyButton = styled(Button)({
-  width: '3rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
-})
-export const ResetButton = styled(Button)({
-  width: '3rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
-  color: '#f44336',
 })

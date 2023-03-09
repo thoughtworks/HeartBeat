@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { boardClient, getVerifyBoardParams } from '@src/clients/BoardClient'
+import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 
 export interface useVerifyBoardStateInterface {
   verifyJira: (params: getVerifyBoardParams) => Promise<
@@ -27,7 +28,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
       setErrorMessage(err.message)
       setTimeout(() => {
         setErrorMessage('')
-      }, 2000)
+      }, ERROR_MESSAGE_TIME_DURATION)
     } finally {
       setIsLoading(false)
     }

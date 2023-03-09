@@ -1,6 +1,6 @@
-import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO, INVALID_TOKEN_MESSAGE, BUILDKITE_TOKEN_REGEXP } from '@src/constants'
-import React, { FormEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import {
   PipelineToolButtonGroup,
   PipelineToolForm,
@@ -14,7 +14,9 @@ import { updatePipelineToolVerifyState, isPipelineToolVerified } from '@src/cont
 import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } from '@src/context/config/configSlice'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
-import { LoadingDrop, VerifyButton, ResetButton } from '@src/theme'
+import { VerifyButton, ResetButton } from '@src/theme'
+import { Loading } from '@src/components/Loading'
+
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
   const pipelineToolFields = useAppSelector(selectPipelineToolFields)
@@ -99,11 +101,7 @@ export const PipelineTool = () => {
   return (
     <PipelineToolSection>
       {errorMessage && <ErrorNotification message={errorMessage} />}
-      {isLoading && (
-        <LoadingDrop open={isLoading} data-testid='circularProgress'>
-          <CircularProgress size='8rem' />
-        </LoadingDrop>
-      )}
+      {isLoading && <Loading />}
       <PipelineToolTitle>{CONFIG_TITLE.PIPELINE_TOOL}</PipelineToolTitle>
       <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>
         <PipelineToolTypeSelections variant='standard' required>

@@ -1,7 +1,7 @@
 import { createTheme, styled } from '@mui/material/styles'
 import { indigo } from '@mui/material/colors'
 import { FIVE_HUNDRED } from '@src/constants'
-import { Backdrop, Button } from '@mui/material'
+import { Button } from '@mui/material'
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -44,13 +44,6 @@ export const theme = createTheme({
       textTransform: 'none',
     },
   },
-})
-
-export const LoadingDrop = styled(Backdrop)({
-  position: 'absolute',
-  zIndex: '999',
-  backgroundColor: 'rgba(199,199,199,0.43)',
-  color: theme.main.backgroundColor,
 })
 
 export const VerifyButton = styled(Button)({

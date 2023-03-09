@@ -30,11 +30,13 @@ public class GithubService {
 				.stream()
 				.map(GithubRepos::getHtml_url)
 				.toList();
-			log.info("[Github] Successfully get repository_url by token, token: " + partialToken + " repos: " + githubReposByUser);
+			log.info("[Github] Successfully get repository_url by token, token: " + partialToken + " repos: "
+					+ githubReposByUser);
 
 			log.info("[Github] Start to query organization_url by token, token: " + partialToken);
 			List<GithubOrganizationsInfo> githubOrganizations = githubFeignClient.getGithubOrganizationsInfo(token);
-			log.info("[Github] Successfully get organizations by token, token: " + partialToken + " organizations: " + githubOrganizations);
+			log.info("[Github] Successfully get organizations by token, token: " + partialToken + " organizations: "
+					+ githubOrganizations);
 
 			LinkedHashSet<String> githubRepos = new LinkedHashSet<>(githubReposByUser);
 

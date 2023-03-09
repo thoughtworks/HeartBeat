@@ -84,8 +84,8 @@ describe('config reducer', () => {
   })
 
   it('should update sourceControl fields when change sourceControl fields input', () => {
-    const config = configReducer(initState, updateSourceControlFields({ token: 'abcd' }))
+    const config = configReducer(initState, updateSourceControlFields({ token: 'token' }))
 
-    expect(config.sourceControlFields.token).toEqual('abcd')
+    expect(config.sourceControlFields.token).toEqual('token')
   })
 })

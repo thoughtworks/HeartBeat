@@ -17,7 +17,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 
 export const fillSourceControlFieldsInformation = () => {
-  const mockInfo = 'mockToken'
+  const mockInfo = 'ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b'
   const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
 
   fireEvent.change(tokenInput, { target: { value: mockInfo } })

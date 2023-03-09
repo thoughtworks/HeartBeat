@@ -29,11 +29,11 @@ describe('verify sourceControl request', () => {
   })
 
   it('should throw error when sourceControl verify response status is 404', async () => {
-    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(401))))
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE[404])
+      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE[401])
     })
   })
 

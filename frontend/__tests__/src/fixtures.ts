@@ -86,7 +86,7 @@ export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify
 
 export const GITHUB_VERIFY_ERROR_MESSAGE = {
   400: 'Github verify failed: Bad request',
-  404: 'Github verify failed: Page not found',
+  401: 'Github verify failed: Token is incorrect',
   500: 'Github verify failed: Internal server error',
 }
 

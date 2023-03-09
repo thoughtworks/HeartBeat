@@ -63,6 +63,11 @@ class Metrics {
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
     cy.get('button:contains("Verify")').should('be.enabled')
   }
+
+  goMetricsStep() {
+    cy.contains('Next').click()
+    cy.contains('Crews Setting').should('exist')
+  }
 }
 
 const metricsPage = new Metrics()

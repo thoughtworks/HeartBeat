@@ -17,7 +17,7 @@ export enum DATE_RANGE {
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
-  PIPELINE_TOOL = 'PipelineTool',
+  PIPELINE_TOOL = 'Pipeline Tool',
   SOURCE_CONTROL = 'Source Control',
 }
 

@@ -58,12 +58,12 @@ export const SOURCE_CONTROL_TYPES = {
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
-  PIPELINE_TOOL = 'PipelineTool',
+  PIPELINE_TOOL = 'Pipeline Tool',
   SOURCE_CONTROL = 'Source Control',
 }
 
 export const BOARD_FIELDS = ['Board', 'BoardId', 'Email', 'Project Key', 'Site', 'Token']
-export const PIPELINE_TOOL_FIELDS = ['PipelineTool', 'Token']
+export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/boards'

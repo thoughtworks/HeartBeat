@@ -21,6 +21,8 @@ describe('Create a new project', () => {
 
     metricsPage.fillPipelineToolFieldsInfo('mockTokenMockTokenMockTokenMockToken1234')
 
+    metricsPage.fillSourceControlFieldsInfo('ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b')
+
     metricsPage.goMetricsStep()
   })
 })

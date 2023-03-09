@@ -1,4 +1,4 @@
-import { Divider } from '@src/components/Metrics/MetricsStep/Crews/style'
+import { Divider } from '@src/components/common/MetricsSettingTitle/style'
 import React from 'react'
 
 const MetricsSettingTitle = (props: { title: string }) => (

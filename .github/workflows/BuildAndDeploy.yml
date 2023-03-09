@@ -235,8 +235,10 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             docker rm -f mockserver
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
-            docker pull $REGISTRY/mock_server:latest
-            docker run --name mockserver -d -p 4323:4323 $REGISTRY/mock_server:latest
+#            docker pull $REGISTRY/mock_server:latest
+            docker pull 301683686648.dkr.ecr.cn-north-1.amazonaws.com.cn/mock_server:latest
+            docker run --name mockserver -d -p 4323:4323 301683686648.dkr.ecr.cn-north-1.amazonaws.com.cn/mock_server:latest
+#            docker run --name mockserver -d -p 4323:4323 $REGISTRY/mock_server:latest
   e2e:
     runs-on: ubuntu-latest
     defaults:

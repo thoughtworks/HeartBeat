@@ -56,6 +56,11 @@ class Metrics {
     cy.contains('Next').click()
     cy.contains('Crews Setting').should('exist')
   }
+
+  goMetricsStep() {
+    cy.contains('Next').click()
+    cy.contains('Crews Setting').should('exist')
+  }
 }
 
 const metricsPage = new Metrics()

@@ -1,5 +1,6 @@
 package heartbeat.controller.source;
 
+import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.source.vo.GithubResponse;
 import heartbeat.service.source.github.GithubService;
 import org.junit.jupiter.api.Test;
@@ -12,8 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,13 +36,15 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
-		GithubResponse githubReposResponse = GithubResponse.builder()
-			.githubRepos(List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"))
-			.build();
+		String token = "ghp_12345jhgyui987654rdef43567yhu7654321";
+		LinkedHashSet<String> repos = new LinkedHashSet<>(
+				List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"));
+
+		GithubResponse githubReposResponse = GithubResponse.builder().githubRepos(repos).build();
 
 		when(githubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 
-		mockMvc.perform(get("/sourceControl?githubToken=123456").contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/source-control").param("token", token).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
 			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));
@@ -47,9 +52,26 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnBadRequestWhenRequestParamIsBlank() throws Exception {
-		mockMvc.perform(get("/sourceControl?githubToken=   ").contentType(MediaType.APPLICATION_JSON))
+		final var response = mockMvc.perform(get("/source-control?token=   ").contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("getRepos.githubToken: must not be blank"));
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.message").toString();
+		assertThat(result).contains("getRepos.token: token must not be blank");
+	}
+
+	@Test
+	void shouldReturnBadRequestWhenRequestParamPatternIsIncorrect() throws Exception {
+		final var response = mockMvc.perform(get("/source-control?token=12345").contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.message").toString();
+		assertThat(result).isEqualTo("getRepos.token: token's pattern is incorrect");
 	}
 
 }

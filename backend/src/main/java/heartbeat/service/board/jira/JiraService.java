@@ -250,10 +250,30 @@ public class JiraService {
 		return Stream.concat(doneCards.stream(), moreDoneCards.stream()).toList();
 	}
 
-	private static String parseJiraJql(BoardType boardType, List<String> doneColumns,
-			BoardRequestParam boardRequestParam) {
-		return String.format("status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
-				String.join("','", doneColumns), boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+	private String parseJiraJql(BoardType boardType, List<String> doneColumns,
+		BoardRequestParam boardRequestParam) {
+		switch (boardType) {
+			case JIRA -> {
+				return String.format(
+					"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
+					String.join("','", doneColumns), boardRequestParam.getStartTime(),
+					boardRequestParam.getEndTime());
+			}
+			case CLASSIC_JIRA -> {
+				StringBuilder subJql = new StringBuilder();
+				for (int index = 0; index < doneColumns.size() - 1; index++) {
+					subJql.append(String.format("status changed to '%s' during (%s, %s) or ",
+						doneColumns.get(index), boardRequestParam.getStartTime(),
+						boardRequestParam.getEndTime()));
+				}
+				subJql.append(String.format("status changed to '%s' during (%s, %s)",
+					doneColumns.get(doneColumns.size() - 1), boardRequestParam.getStartTime(),
+					boardRequestParam.getEndTime()));
+				return String.format("status in ('%s') AND (%s)", String.join("', '", doneColumns),
+					subJql);
+			}
+			default -> throw new RequestFailedException(400,"[Jira] boardType param is not correct");
+		}
 	}
 
 	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {

@@ -1,5 +1,5 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
+import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE, BOARD_TOKEN, BoardTokenRegExp } from '@src/constants'
 import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
@@ -32,31 +32,37 @@ export const Board = () => {
     {
       key: 'Board',
       value: boardFields.type,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'BoardId',
       value: boardFields.boardId,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Email',
       value: boardFields.email,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Project Key',
       value: boardFields.projectKey,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Site',
       value: boardFields.site,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Token',
       value: boardFields.token,
+      isRequired: true,
       isValid: true,
     },
   ])
@@ -70,9 +76,6 @@ export const Board = () => {
     dispatch(updateBoardVerifyState(false))
   }
 
-  const checkFiledValid = (type: string, value: string): boolean =>
-    type === EMAIL ? emailRegExp.test(value) : value !== ''
-
   const onFormUpdate = (index: number, value: string) => {
     if (index === ZERO) {
       const newFieldsValue = fields.map((field, index) => {
@@ -84,13 +87,21 @@ export const Board = () => {
       return
     }
     const newFieldsValue = fields.map((field, fieldIndex) => {
-      if (fieldIndex === index) {
-        field.value = value
-        field.isValid = checkFiledValid(fields[index].key, value)
+      if (fieldIndex !== index) {
+        return field
+      }
+      field.value = value
+      field.isRequired = value !== ''
+      if (fields[index].key === EMAIL) {
+        field.isValid = emailRegExp.test(value)
+      }
+      if (fields[index].key === BOARD_TOKEN) {
+        field.isValid = BoardTokenRegExp.test(value)
       }
       return field
     })
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
+
+    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isRequired && field.value != ''))
     setFields(newFieldsValue)
   }
 
@@ -132,6 +143,17 @@ export const Board = () => {
     dispatch(updateBoardVerifyState(false))
   }
 
+  const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
+    const { key, isRequired, isValid } = field
+    if (!isRequired) {
+      return `${key} is required`
+    }
+    if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
+      return `${key} is invalid`
+    }
+    return ''
+  }
+
   return (
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
@@ -168,9 +190,9 @@ export const Board = () => {
               onChange={(e) => {
                 onFormUpdate(index, e.target.value)
               }}
-              error={!filed.isValid}
+              error={!filed.isRequired || !filed.isValid}
               type={filed.key === 'Token' ? 'password' : 'text'}
-              helperText={!filed.isValid ? `${filed.key} is required` : ''}
+              helperText={updateFieldHelpText(filed)}
             />
           )
         )}

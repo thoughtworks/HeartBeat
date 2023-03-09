@@ -3,12 +3,12 @@ package heartbeat.controller.source.vo;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
+import java.util.LinkedHashSet;
 
 @Data
 @Builder
 public class GithubResponse {
 
-	private List<String> githubRepos;
+	private LinkedHashSet<String> githubRepos;
 
 }

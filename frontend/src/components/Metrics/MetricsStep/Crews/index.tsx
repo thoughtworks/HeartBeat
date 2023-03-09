@@ -9,7 +9,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import MetricsSettingTitle from '@src/components/common/metricsSettingTitle'
+import MetricsSettingTitle from '@src/components/common/MetricsSettingTitle'
 
 interface crewsProps {
   options: string[]

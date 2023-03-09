@@ -40,7 +40,7 @@ describe('MetricsStepper', () => {
     expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
   })
 
-  it('should show metrics metrics step when click next button given config step', async () => {
+  it('should show metrics step when click next button given config step', async () => {
     const { getByText } = setup()
 
     fireEvent.click(getByText(NEXT))

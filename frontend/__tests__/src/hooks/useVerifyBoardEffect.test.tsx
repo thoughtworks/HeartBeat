@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { boardClient } from '@src/clients/BoardClient'
 import { MOCK_BOARD_VERIFY_REQUEST_PARAMS } from '../fixtures'
+import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 
 describe('use verify board state', () => {
   it('should initial data state when render hook', async () => {
@@ -20,7 +21,7 @@ describe('use verify board state', () => {
 
     act(() => {
       result.current.verifyJira(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-      jest.advanceTimersByTime(2000)
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
     })
 
     expect(result.current.errorMessage).toEqual('')

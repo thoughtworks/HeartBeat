@@ -21,6 +21,7 @@ export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'mockTokenMockTokenMockTokenMockToken1234'
   const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
   await userEvent.type(tokenInput, mockInfo)
+
   expect(tokenInput.value).toEqual(mockInfo)
 }
 
@@ -46,6 +47,7 @@ describe('PipelineTool', () => {
     PIPELINE_TOOL_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
     })
+
     expect(getByRole('heading', { name: CONFIG_TITLE.PIPELINE_TOOL })).toBeInTheDocument()
   })
 
@@ -120,6 +122,7 @@ describe('PipelineTool', () => {
     const { getByText } = setup()
     await fillPipelineToolFieldsInformation()
     await userEvent.click(getByText(VERIFY))
+
     expect(getByText(RESET)).toBeVisible()
   })
 
@@ -131,17 +134,11 @@ describe('PipelineTool', () => {
     expect(getByText('Verified')).toBeInTheDocument()
   })
 
-  it('should check loading animation when click verify button', () => {
-    const { getByRole, container } = setup()
-    fillPipelineToolFieldsInformation()
-    fireEvent.click(getByRole('button', { name: VERIFY }))
-
-    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
-
   it('should check loading animation when click verify button', async () => {
     const { getByRole, container } = setup()
     await fillPipelineToolFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))
+
     expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
   })
 

@@ -10,13 +10,14 @@ import {
 } from '@mui/material'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
-import { Divider, Title } from './style'
+import MetricsSettingTitle from '@src/components/common/metricsSettingTitle'
 
 interface crewsProps {
   options: string[]
   title: string
   label: string
 }
+
 export const Crews = ({ options, title, label }: crewsProps) => {
   const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false)
   const [selectedCrews, setSelectedCrews] = useState(options)
@@ -36,9 +37,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
   }
   return (
     <>
-      <Divider>
-        <Title>{title}</Title>
-      </Divider>
+      <MetricsSettingTitle title={title} />
       <FormControl variant='standard' required error={isEmptyCrewData}>
         <InputLabel id='crew-data-multiple-checkbox-label'>{label}</InputLabel>
         <Select

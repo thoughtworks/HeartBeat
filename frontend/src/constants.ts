@@ -53,3 +53,10 @@ export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 export const EMAIL = 'Email'
 
 export const ERROR_MESSAGE_TIME_DURATION = 2000
+
+export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
+
+export const TOKEN_HELPER_TEXT = {
+  emptyTokenText: 'Token is required',
+  InvalidTokenText: 'Invalid token',
+}

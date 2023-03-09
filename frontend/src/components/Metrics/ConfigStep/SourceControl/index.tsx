@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react'
-import { CONFIG_TITLE, SOURCE_CONTROL_TYPES } from '@src/constants'
+import { CONFIG_TITLE, GITHUB_TOKEN_REGEXP, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants'
 import {
   SourceControlButtonGroup,
   SourceControlForm,
@@ -36,6 +36,7 @@ export const SourceControl = () => {
       isValid: true,
     },
   ])
+  const [sourceControlHelperText, setSourceControlHelperText] = useState('')
 
   const initSourceControlFields = () => {
     const newFields = fields.map((field, index) => {
@@ -74,7 +75,17 @@ export const SourceControl = () => {
     dispatch(updateSourceControlVerifyState(false))
   }
 
-  const checkFieldValid = (value: string): boolean => value !== ''
+  const checkFieldValid = (value: string): boolean => {
+    let helperText = ''
+
+    if (value === '') {
+      helperText = TOKEN_HELPER_TEXT.emptyTokenText
+    } else if (!GITHUB_TOKEN_REGEXP.test(value)) {
+      helperText = TOKEN_HELPER_TEXT.InvalidTokenText
+    }
+    setSourceControlHelperText(helperText)
+    return helperText === ''
+  }
 
   const onFormUpdate = (index: number, value: string) => {
     const newFieldsValue = fields.map((field, fieldIndex) => {
@@ -118,7 +129,7 @@ export const SourceControl = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}
-          helperText={!fields[1].isValid ? 'Token is required' : ''}
+          helperText={sourceControlHelperText}
         />
         <SourceControlButtonGroup>
           {isVerified && !isLoading ? (

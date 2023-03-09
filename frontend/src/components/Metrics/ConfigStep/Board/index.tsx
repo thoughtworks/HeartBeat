@@ -1,10 +1,9 @@
-import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
-import React, { FormEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
-  BoardLoadingDrop,
   BoardSection,
   BoardTextField,
   BoardTitle,
@@ -18,6 +17,7 @@ import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/c
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
+import { Loading } from '@src/components/Loading'
 import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 
 export const Board = () => {
@@ -134,11 +134,7 @@ export const Board = () => {
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
-      {isLoading && (
-        <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
-          <CircularProgress size='8rem' />
-        </BoardLoadingDrop>
-      )}
+      {isLoading && <Loading />}
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {fields.map((filed, index) =>

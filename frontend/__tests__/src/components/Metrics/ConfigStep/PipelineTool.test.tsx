@@ -21,6 +21,7 @@ export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'mockTokenMockTokenMockTokenMockToken1234'
   const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
   await userEvent.type(tokenInput, mockInfo)
+
   expect(tokenInput.value).toEqual(mockInfo)
 }
 
@@ -46,6 +47,7 @@ describe('PipelineTool', () => {
     PIPELINE_TOOL_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
     })
+
     expect(getByRole('heading', { name: CONFIG_TITLE.PIPELINE_TOOL })).toBeInTheDocument()
   })
 
@@ -120,6 +122,7 @@ describe('PipelineTool', () => {
     const { getByText } = setup()
     await fillPipelineToolFieldsInformation()
     await userEvent.click(getByText(VERIFY))
+
     expect(getByText(RESET)).toBeVisible()
   })
 
@@ -127,6 +130,7 @@ describe('PipelineTool', () => {
     const { getByRole, getByText } = setup()
     await fillPipelineToolFieldsInformation()
     await userEvent.click(getByRole('button', { name: VERIFY }))
+
     expect(getByText('Verified')).toBeInTheDocument()
   })
 
@@ -134,6 +138,7 @@ describe('PipelineTool', () => {
     const { getByRole, container } = setup()
     await fillPipelineToolFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))
+
     expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
   })
 

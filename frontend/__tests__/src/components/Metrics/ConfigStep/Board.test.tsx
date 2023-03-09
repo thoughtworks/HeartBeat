@@ -177,16 +177,12 @@ describe('Board', () => {
     })
   })
 
-  it('should check loading animation when click verify button', async () => {
-    const { getByRole, getByTestId } = setup()
+  it('should check loading animation when click verify button', () => {
+    const { getByRole, container } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
-    expect(getByTestId('circularProgress')).toBeVisible()
-
-    setTimeout(() => {
-      expect(getByTestId('circularProgress')).not.toBeVisible()
-    }, 1000)
+    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
   })
 
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {

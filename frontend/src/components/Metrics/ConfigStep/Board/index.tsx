@@ -152,7 +152,7 @@ export const Board = () => {
     if (!isRequired) {
       return `${key} is required`
     }
-    if (!isValid && (key === EMAIL || key === BOARD_TOKEN)) {
+    if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
       return `${key} is invalid`
     }
     return ''

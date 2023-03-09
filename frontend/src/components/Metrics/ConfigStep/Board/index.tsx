@@ -1,5 +1,5 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE, BOARD_TOKEN, BoardTokenRegExp } from '@src/constants'
+import { BOARD_TYPES, EMAIL_REG_EXP, ZERO, EMAIL, CONFIG_TITLE, BOARD_TOKEN, BOARD_TOKEN_REG_EXP } from '@src/constants'
 import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
@@ -79,7 +79,11 @@ export const Board = () => {
   const onFormUpdate = (index: number, value: string) => {
     if (index === ZERO) {
       const newFieldsValue = fields.map((field, index) => {
-        if (index !== ZERO) field.value = ''
+        if (index !== ZERO) {
+          field.value = ''
+          field.isValid = true
+          field.isRequired = true
+        }
         return field
       })
       setFields(newFieldsValue)
@@ -93,15 +97,15 @@ export const Board = () => {
       field.value = value
       field.isRequired = value !== ''
       if (fields[index].key === EMAIL) {
-        field.isValid = emailRegExp.test(value)
+        field.isValid = EMAIL_REG_EXP.test(value)
       }
       if (fields[index].key === BOARD_TOKEN) {
-        field.isValid = BoardTokenRegExp.test(value)
+        field.isValid = BOARD_TOKEN_REG_EXP.test(value)
       }
       return field
     })
 
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isRequired && field.value != ''))
+    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isRequired && field.isValid && field.value != ''))
     setFields(newFieldsValue)
   }
 
@@ -148,7 +152,7 @@ export const Board = () => {
     if (!isRequired) {
       return `${key} is required`
     }
-    if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
+    if (!isValid && (key === EMAIL || key === BOARD_TOKEN)) {
       return `${key} is invalid`
     }
     return ''
@@ -161,13 +165,13 @@ export const Board = () => {
       {isLoading && <Loading />}
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
-        {fields.map((filed, index) =>
+        {fields.map((field, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
                 labelId='board-type-checkbox-label'
-                value={filed.value}
+                value={field.value}
                 onChange={(e) => {
                   onFormUpdate(index, e.target.value)
                 }}
@@ -181,18 +185,18 @@ export const Board = () => {
             </BoardTypeSelections>
           ) : (
             <BoardTextField
-              data-testid={filed.key}
+              data-testid={field.key}
               key={index}
               required
-              label={filed.key}
+              label={field.key}
               variant='standard'
-              value={filed.value}
+              value={field.value}
               onChange={(e) => {
                 onFormUpdate(index, e.target.value)
               }}
-              error={!filed.isRequired || !filed.isValid}
-              type={filed.key === 'Token' ? 'password' : 'text'}
-              helperText={updateFieldHelpText(filed)}
+              error={!field.isRequired || !field.isValid}
+              type={field.key === 'Token' ? 'password' : 'text'}
+              helperText={updateFieldHelpText(field)}
             />
           )
         )}

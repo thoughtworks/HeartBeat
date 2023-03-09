@@ -14,9 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BoardRequestParam {
 
-	@NotBlank(message = "Board name cannot be empty.")
-	private String boardName;
-
 	@NotBlank(message = "Board Id cannot be empty.")
 	private String boardId;
 

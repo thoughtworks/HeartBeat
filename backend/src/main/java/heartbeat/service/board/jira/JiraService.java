@@ -110,7 +110,8 @@ public class JiraService {
 
 	private JiraColumnResult getJiraColumns(BoardRequestParam boardRequestParam, URI baseUrl,
 			JiraBoardConfigDTO jiraBoardConfigDTO) {
-		log.info("[Jira] Start to get jira columns,boardName: {} column size: {}", boardRequestParam.getBoardName(),
+		log.info("[Jira] Start to get jira columns, project key: {}, board id: {}, column size: {}",
+				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
 				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		List<String> doneColumns = new CopyOnWriteArrayList<>();
 		List<CompletableFuture<JiraColumnResponse>> futures = jiraBoardConfigDTO.getColumnConfig()
@@ -129,8 +130,10 @@ public class JiraService {
 			.jiraColumnResponses(columnResponse)
 			.doneColumns(doneColumns)
 			.build();
-		log.info("[Jira] Successfully to get jira columns,boardName: {}, column result size: {}, done columns: {}",
-				boardRequestParam.getBoardName(), jiraColumnResult.getJiraColumnResponses().size(), doneColumns);
+		log.info(
+				"[Jira] Successfully to get jira columns, project key: {}, board id: {}, column result size: {}, done columns: {}",
+				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
+				jiraColumnResult.getJiraColumnResponses().size(), doneColumns);
 		return jiraColumnResult;
 	}
 
@@ -271,10 +274,12 @@ public class JiraService {
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
-		log.info("[Jira] Start to get target field, board name: {}", boardRequestParam.getBoardName());
+		log.info("[Jira] Start to get target field, project key: {}, board id: {},", boardRequestParam.getProjectKey(),
+				boardRequestParam.getBoardId());
 		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(),
 				boardRequestParam.getToken());
-		log.info("[Jira] Successfully get target field, board name: {}", boardRequestParam.getBoardName());
+		log.info("[Jira] Successfully get target field, project key: {}, board id: {},",
+				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no target field.");

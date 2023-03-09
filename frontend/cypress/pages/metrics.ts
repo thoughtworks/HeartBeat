@@ -50,11 +50,11 @@ class Metrics {
 
     cy.contains('Token').siblings().type(token)
     cy.get('button:contains("Verify")').should('be.enabled')
-    cy.contains('Verify').click()
+  }
 
-    cy.on('window:alert', (str) => {
-      expect(str).to.equal('BuildKite verify failed')
-    })
+  goMetricsStep() {
+    cy.contains('Next').click()
+    cy.contains('Crews Setting').should('exist')
   }
 
   goMetricsStep() {

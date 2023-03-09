@@ -5,3 +5,9 @@ server:
 logging:
   level:
     root: INFO
+
+githubFeignClient:
+  url: https://api.github.com
+
+jira:
+  url: https://demo.atlassian.net

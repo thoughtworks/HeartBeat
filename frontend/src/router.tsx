@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { routes } from './config/routes'
-import { Loading } from './pages/Loading'
+import { Loading } from './components/Loading'
 
 const Router = () => {
   const appRoutes = routes.map((item) => {

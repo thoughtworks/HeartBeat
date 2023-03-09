@@ -4,6 +4,7 @@ import configReducer, {
   updateDateRange,
   updateProjectName,
   updateMetrics,
+  updatePipelineToolFields,
 } from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES } from '@src/constants'
@@ -68,5 +69,10 @@ describe('config reducer', () => {
   it('should update board fields when change board fields input', () => {
     const config = configReducer(initState, updateBoard({ boardId: '1' }))
     expect(config.board.boardId).toEqual('1')
+  })
+
+  it('should update pipelineTool fields when change pipelineTool fields input', () => {
+    const config = configReducer(initState, updatePipelineToolFields({ token: 'abcd' }))
+    expect(config.pipelineToolFields.token).toEqual('abcd')
   })
 })

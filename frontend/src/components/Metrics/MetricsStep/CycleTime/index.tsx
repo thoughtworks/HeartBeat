@@ -1,12 +1,8 @@
-import { Divider } from '@src/components/Metrics/MetricsStep/Crews/style'
 import React from 'react'
+import MetricsSettingTitle from '@src/components/common/metricsSettingTitle'
 
 interface cycletimeProps {
   title: string
 }
 
-export const CycleTime = ({ title }: cycletimeProps) => (
-  <Divider>
-    <span>{title}</span>
-  </Divider>
-)
+export const CycleTime = ({ title }: cycletimeProps) => <MetricsSettingTitle title={title} />

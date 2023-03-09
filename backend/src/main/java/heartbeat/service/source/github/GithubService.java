@@ -23,7 +23,7 @@ public class GithubService {
 
 	public GithubResponse verifyToken(String githubToken) {
 		String token = "token " + githubToken;
-		String partialToken = githubToken.substring(0, 10);
+		String partialToken = githubToken.substring(0, 6);
 		try {
 			log.info("[Github] Start to query repository_url by token, token: " + partialToken);
 			List<String> githubReposByUser = githubFeignClient.getAllRepos(token)

@@ -130,8 +130,8 @@ describe('SourceControl', () => {
     expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
-  it('should show error notification when sourceControl verify response status is 404', async () => {
-    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(404))))
+  it('should show error notification when sourceControl verify response status is 401', async () => {
+    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(401))))
     const { getByText, getByRole } = setup()
 
     fillSourceControlFieldsInformation()
@@ -139,7 +139,7 @@ describe('SourceControl', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
+      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE[401])).toBeInTheDocument()
     })
   })
 })

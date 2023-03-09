@@ -48,9 +48,9 @@ export const SOURCE_CONTROL_TYPES = {
   GITHUB: 'Github',
 }
 
-export const emailRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+export const EMAIL_REG_EXP = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-export const BoardTokenRegExp = /^[a-zA-Z0-9\-=_]+$/
+export const BOARD_TOKEN_REG_EXP = /^[a-zA-Z0-9\-=_]{1,500}$/
 
 export const BUILDKITE_TOKEN_REGEXP = /^[A-Za-z0-9]{40}$/
 

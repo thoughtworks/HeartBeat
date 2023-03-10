@@ -11,3 +11,6 @@ githubFeignClient:
 
 jira:
   url: https://demo.atlassian.net
+
+buildKite:
+  url: https://api.buildkite.com/v2

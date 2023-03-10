@@ -62,11 +62,17 @@ class Metrics {
   goMetricsStep() {
     cy.contains('Next').click()
     cy.contains('Crews Setting').should('exist')
+    cy.contains('Real Done').should('exist')
   }
 
-  goMetricsStep() {
-    cy.contains('Next').click()
-    cy.contains('Crews Setting').should('exist')
+  checkRealDoneOption() {
+    cy.contains('Consider as Done').siblings().click()
+    cy.get("[type='checkbox']").uncheck()
+
+    cy.contains('DONE').click()
+    cy.contains('CANCELLED').click()
+
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 }
 

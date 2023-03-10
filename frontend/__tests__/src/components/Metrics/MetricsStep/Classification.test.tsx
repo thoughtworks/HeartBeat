@@ -1,4 +1,4 @@
-import { getByText, queryByText, render, within } from '@testing-library/react'
+import { render, within } from '@testing-library/react'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import userEvent from '@testing-library/user-event'
 

@@ -8,17 +8,16 @@ import {
   BoardTextField,
   BoardTitle,
   BoardTypeSelections,
-  ResetButton,
-  VerifyButton,
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { updateBoardVerifyState, selectIsBoardVerified } from '@src/context/board/boardSlice'
 import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
-import { ErrorNotification } from '@src/components/ErrorNotifaction'
+import { ErrorNotification } from '@src/components/ErrorNotification'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
 import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 
 export const Board = () => {
   const dispatch = useAppDispatch()

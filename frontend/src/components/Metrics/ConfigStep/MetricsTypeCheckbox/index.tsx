@@ -1,6 +1,6 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import { BOARD_TYPES, REQUIRED_DATA_LIST, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'

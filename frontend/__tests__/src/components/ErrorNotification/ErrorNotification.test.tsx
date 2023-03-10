@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { ErrorNotification } from '@src/components/ErrorNotifaction'
+import { ErrorNotification } from '@src/components/ErrorNotification'
 import { JIRA_VERIFY_ERROR_MESSAGE } from '../../fixtures'
 
 describe('error notification', () => {

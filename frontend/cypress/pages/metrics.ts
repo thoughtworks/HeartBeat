@@ -26,7 +26,7 @@ class Metrics {
   fillBoardFieldsInfo(boardId: string, email: string, projectKey: string, site: string, token: string) {
     cy.get('button:contains("Verify")').should('be.disabled')
 
-    cy.contains('BoardId').siblings().type(boardId)
+    cy.contains('Board Id').siblings().type(boardId)
     cy.contains('Email').siblings().type(email)
     cy.contains('Project Key').siblings().type(projectKey)
     cy.contains('Site').siblings().type(site)
@@ -57,11 +57,6 @@ class Metrics {
 
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
     cy.get('button:contains("Verify")').should('be.enabled')
-  }
-
-  goMetricsStep() {
-    cy.contains('Next').click()
-    cy.contains('Crews Setting').should('exist')
   }
 
   goMetricsStep() {

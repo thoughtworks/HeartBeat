@@ -62,11 +62,11 @@ class Metrics {
   goMetricsStep() {
     cy.contains('Next').click()
     cy.contains('Crews Setting').should('exist')
+    cy.contains('Classification Setting').should('exist')
   }
 
-  goMetricsStep() {
-    cy.contains('Next').click()
-    cy.contains('Crews Setting').should('exist')
+  selectTargetFields() {
+    cy.contains('Distinguished By').siblings().click()
   }
 }
 

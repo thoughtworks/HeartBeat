@@ -20,7 +20,9 @@ export class BoardClient extends HttpClient {
 
   getVerifyBoard = async (params: getVerifyBoardParams) => {
     try {
-      const result = await this.axiosInstance.get('/boards', { params: { ...params } }).then((res) => res)
+      const result = await this.axiosInstance
+        .get(`/boards/${params.type}`, { params: { ...params } })
+        .then((res) => res)
       result.status === 204 ? this.handleBoardNoDoneCard() : this.handleBoardVerifySucceed(result.data)
     } catch (e) {
       this.isBoardVerify = false
@@ -29,7 +31,7 @@ export class BoardClient extends HttpClient {
         throw new BadRequestException(params.type, 'Bad request')
       }
       if (code === 404) {
-        throw new NotFoundException(params.type, 'Page not found')
+        throw new NotFoundException(params.type, 'Token is incorrect')
       }
       if (code === 500) {
         throw new InternalServerException(params.type, 'Internal server error')

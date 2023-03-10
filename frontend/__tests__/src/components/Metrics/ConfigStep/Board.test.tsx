@@ -93,14 +93,20 @@ describe('Board', () => {
     })
   })
 
-  it('should show error message when input a wrong type email ', async () => {
+  it('should show error message when input a wrong type or empty email ', async () => {
     const { getByTestId, getByText } = setup()
-    const EMAil_ERROR_MESSAGE = 'Email is required'
+    const EMAil_INVALID_ERROR_MESSAGE = 'Email is invalid'
     const emailInput = getByTestId('Email').querySelector('input') as HTMLInputElement
 
     fireEvent.change(emailInput, { target: { value: 'wrong type email' } })
-    expect(getByText(EMAil_ERROR_MESSAGE)).toBeVisible()
-    expect(getByText(EMAil_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+
+    expect(getByText(EMAil_INVALID_ERROR_MESSAGE)).toBeVisible()
+    expect(getByText(EMAil_INVALID_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+
+    fireEvent.change(emailInput, { target: { value: '' } })
+
+    const EMAIL_REQUIRE_ERROR_MESSAGE = 'Email is required'
+    expect(getByText(EMAIL_REQUIRE_ERROR_MESSAGE)).toBeVisible()
   })
 
   it('should clear other fields information when change board field selection', () => {
@@ -177,16 +183,12 @@ describe('Board', () => {
     })
   })
 
-  it('should check loading animation when click verify button', async () => {
-    const { getByRole, getByTestId } = setup()
+  it('should check loading animation when click verify button', () => {
+    const { getByRole, container } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
-    expect(getByTestId('circularProgress')).toBeVisible()
-
-    setTimeout(() => {
-      expect(getByTestId('circularProgress')).not.toBeVisible()
-    }, 1000)
+    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
   })
 
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {

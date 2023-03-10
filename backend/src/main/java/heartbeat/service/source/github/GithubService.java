@@ -23,28 +23,26 @@ public class GithubService {
 
 	public GithubResponse verifyToken(String githubToken) {
 		String token = "token " + githubToken;
+		String partialToken = githubToken.substring(0, 6);
 		try {
-			log.info("[Github] Start to query repository_url by token: https://api.github.com/user/repos");
+			log.info("[Github] Start to query repository_url by token, token: " + partialToken);
 			List<String> githubReposByUser = githubFeignClient.getAllRepos(token)
 				.stream()
 				.map(GithubRepos::getHtml_url)
 				.toList();
-			log.info("[Github] Successfully queried repository_data by token");
-			log.info("[Github] Start to query organization_url by token: https://api.github.com/user/orgs");
+			log.info("[Github] Successfully get repository_url by token, token: " + partialToken + " repos: "
+					+ githubReposByUser);
 
+			log.info("[Github] Start to query organization_url by token, token: " + partialToken);
 			List<GithubOrganizationsInfo> githubOrganizations = githubFeignClient.getGithubOrganizationsInfo(token);
-			log.info("[Github] Successfully queried organization_data by token");
+			log.info("[Github] Successfully get organizations by token, token: " + partialToken + " organizations: "
+					+ githubOrganizations);
 
 			LinkedHashSet<String> githubRepos = new LinkedHashSet<>(githubReposByUser);
-			log.info(
-					"[Github] Start to query repository_url by organization_name and token: https://api.github.com/orgs/{organization-name}/repos");
-			log.info(githubRepos);
 
-			getGithubReposByOrganizations(token, githubOrganizations, githubRepos);
-			log.info("[Github] Successfully queried repository_data by organizations and token");
-			log.info("[Github] Start to remove duplicate githubRepos list");
-
-			log.info("[Github] Successfully remove duplicate githubRepos list");
+			log.info("[Github] Start to query repository_url by organization_name and token, token: " + partialToken);
+			getAllGithubRepos(token, githubOrganizations, githubRepos);
+			log.info("[Github] Successfully get all repository_url, token: " + partialToken + " repos: " + githubRepos);
 
 			return GithubResponse.builder().githubRepos(githubRepos).build();
 		}
@@ -54,7 +52,7 @@ public class GithubService {
 		}
 	}
 
-	private void getGithubReposByOrganizations(String token, List<GithubOrganizationsInfo> githubOrganizations,
+	private void getAllGithubRepos(String token, List<GithubOrganizationsInfo> githubOrganizations,
 			LinkedHashSet<String> githubRepos) {
 		githubRepos.addAll(githubOrganizations.stream()
 			.map(GithubOrganizationsInfo::getLogin)

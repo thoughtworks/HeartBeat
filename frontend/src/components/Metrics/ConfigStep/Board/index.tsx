@@ -1,10 +1,9 @@
-import { CircularProgress, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_TYPES, emailRegExp, ZERO, EMAIL, CONFIG_TITLE } from '@src/constants'
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { BOARD_TYPES, EMAIL_REG_EXP, ZERO, EMAIL, CONFIG_TITLE, BOARD_TOKEN, BOARD_TOKEN_REG_EXP } from '@src/constants'
 import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
-  BoardLoadingDrop,
   BoardSection,
   BoardTextField,
   BoardTitle,
@@ -18,6 +17,7 @@ import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/c
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
+import { Loading } from '@src/components/Loading'
 import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 
 export const Board = () => {
@@ -32,31 +32,37 @@ export const Board = () => {
     {
       key: 'Board',
       value: boardFields.type,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'BoardId',
       value: boardFields.boardId,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Email',
       value: boardFields.email,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Project Key',
       value: boardFields.projectKey,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Site',
       value: boardFields.site,
+      isRequired: true,
       isValid: true,
     },
     {
       key: 'Token',
       value: boardFields.token,
+      isRequired: true,
       isValid: true,
     },
   ])
@@ -70,13 +76,14 @@ export const Board = () => {
     dispatch(updateBoardVerifyState(false))
   }
 
-  const checkFiledValid = (type: string, value: string): boolean =>
-    type === EMAIL ? emailRegExp.test(value) : value !== ''
-
   const onFormUpdate = (index: number, value: string) => {
     if (index === ZERO) {
       const newFieldsValue = fields.map((field, index) => {
-        if (index !== ZERO) field.value = ''
+        if (index !== ZERO) {
+          field.value = ''
+          field.isValid = true
+          field.isRequired = true
+        }
         return field
       })
       setFields(newFieldsValue)
@@ -84,13 +91,21 @@ export const Board = () => {
       return
     }
     const newFieldsValue = fields.map((field, fieldIndex) => {
-      if (fieldIndex === index) {
-        field.value = value
-        field.isValid = checkFiledValid(fields[index].key, value)
+      if (fieldIndex !== index) {
+        return field
+      }
+      field.value = value
+      field.isRequired = value !== ''
+      if (fields[index].key === EMAIL) {
+        field.isValid = EMAIL_REG_EXP.test(value)
+      }
+      if (fields[index].key === BOARD_TOKEN) {
+        field.isValid = BOARD_TOKEN_REG_EXP.test(value)
       }
       return field
     })
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
+
+    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isRequired && field.isValid && field.value != ''))
     setFields(newFieldsValue)
   }
 
@@ -106,12 +121,14 @@ export const Board = () => {
         token: fields[5].value,
       })
     )
+    const msg = `${fields[2].value}:${fields[5].value}`
+    const encodeToken = `Basic ${btoa(msg)}`
     const params = {
       type: fields[0].value,
       boardId: fields[1].value,
       projectKey: fields[3].value,
       site: fields[4].value,
-      token: fields[5].value,
+      token: encodeToken,
       startTime: DateRange.startDate,
       endTime: DateRange.endDate,
     }
@@ -130,24 +147,31 @@ export const Board = () => {
     dispatch(updateBoardVerifyState(false))
   }
 
+  const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
+    const { key, isRequired, isValid } = field
+    if (!isRequired) {
+      return `${key} is required`
+    }
+    if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
+      return `${key} is invalid`
+    }
+    return ''
+  }
+
   return (
     <BoardSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
-      {isLoading && (
-        <BoardLoadingDrop open={isLoading} data-testid='circularProgress'>
-          <CircularProgress size='8rem' />
-        </BoardLoadingDrop>
-      )}
+      {isLoading && <Loading />}
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
-        {fields.map((filed, index) =>
+        {fields.map((field, index) =>
           index === ZERO ? (
             <BoardTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
                 labelId='board-type-checkbox-label'
-                value={filed.value}
+                value={field.value}
                 onChange={(e) => {
                   onFormUpdate(index, e.target.value)
                 }}
@@ -161,18 +185,18 @@ export const Board = () => {
             </BoardTypeSelections>
           ) : (
             <BoardTextField
-              data-testid={filed.key}
+              data-testid={field.key}
               key={index}
               required
-              label={filed.key}
+              label={field.key}
               variant='standard'
-              value={filed.value}
+              value={field.value}
               onChange={(e) => {
                 onFormUpdate(index, e.target.value)
               }}
-              error={!filed.isValid}
-              type={filed.key === 'Token' ? 'password' : 'text'}
-              helperText={!filed.isValid ? `${filed.key} is required` : ''}
+              error={!field.isRequired || !field.isValid}
+              type={field.key === 'Token' ? 'password' : 'text'}
+              helperText={updateFieldHelpText(field)}
             />
           )
         )}

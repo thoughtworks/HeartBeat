@@ -37,12 +37,12 @@ describe('error notification', () => {
     })
   })
 
-  it('should throw error when board verify response status 404', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(404))))
+  it('should throw error when board verify response status 401', async () => {
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(401))))
 
     await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE[404])
+      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE[401])
     })
   })
 

@@ -30,7 +30,7 @@ export class BoardClient extends HttpClient {
       if (code === 400) {
         throw new BadRequestException(params.type, 'Bad request')
       }
-      if (code === 404) {
+      if (code === 401) {
         throw new NotFoundException(params.type, 'Token is incorrect')
       }
       if (code === 500) {

@@ -72,7 +72,7 @@ export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
 export const JIRA_VERIFY_ERROR_MESSAGE = {
   400: 'Jira verify failed: Bad request',
-  404: 'Jira verify failed: Token is incorrect',
+  401: 'Jira verify failed: Token is incorrect',
   500: 'Jira verify failed: Internal server error',
 }
 

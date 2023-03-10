@@ -1,9 +1,17 @@
-import { CONFIG_TITLE, REQUIRED_DATA, REQUIRED_DATA_LIST, VELOCITY, LEAD_TIME_FOR_CHANGES } from '../../../fixtures'
+import {
+  CONFIG_TITLE,
+  REQUIRED_DATA,
+  REQUIRED_DATA_LIST,
+  VELOCITY,
+  LEAD_TIME_FOR_CHANGES,
+  CYCLE_TIME,
+} from '../../../fixtures'
 import { render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import userEvent from '@testing-library/user-event'
+import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 let store = null
 const setup = () => {
   store = setupStore()
@@ -41,9 +49,9 @@ describe('MetricsTypeCheckbox', () => {
 
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    await userEvent.click(listBox.getByRole('option', { name: 'Cycle time' }))
+    await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }))
 
-    expect(getByText('Velocity,Cycle time')).toBeInTheDocument()
+    expect(getByText([VELOCITY, CYCLE_TIME].join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
   })
 
   it('should show error message when require data is null', async () => {

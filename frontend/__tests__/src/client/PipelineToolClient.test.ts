@@ -2,10 +2,11 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { MOCK_PIPELINE_URL, MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, PIPELINE_TOOL_VERIFY_ERROR_MESSAGE } from '../fixtures'
 import { pipelineToolClient } from '@src/clients/PipelineToolClient'
+import { HttpStatusCode } from 'axios'
 
 const server = setupServer(
   rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => {
-    return res(ctx.status(200))
+    return res(ctx.status(HttpStatusCode.Ok))
   })
 )
 
@@ -20,23 +21,23 @@ describe('error notification', () => {
   })
 
   it('should throw error when pipelineTool verify response status 400', async () => {
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(400))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.BadRequest))))
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
-      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[400]
+      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.BAD_REQUEST
     )
   })
 
   it('should throw error when pipelineTool verify response status 404', async () => {
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
-      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[404]
+      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NOT_FOUND
     )
   })
 
   it('should throw error when pipelineTool verify response status 500', async () => {
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(500))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
-      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[500]
+      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR
     )
   })
 })

@@ -2,10 +2,11 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { JIRA_VERIFY_ERROR_MESSAGE, MOCK_BOARD_URL, MOCK_BOARD_VERIFY_REQUEST_PARAMS } from '../fixtures'
 import { boardClient } from '@src/clients/BoardClient'
+import { HttpStatusCode } from 'axios'
 
 const server = setupServer(
   rest.get(MOCK_BOARD_URL, (req, res, ctx) => {
-    return res(ctx.status(200))
+    return res(ctx.status(HttpStatusCode.Ok))
   })
 )
 
@@ -20,7 +21,7 @@ describe('error notification', () => {
   })
 
   it('should isNoDoneCard is true when board verify response status 204', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(204))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
 
     const result = await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
 
@@ -29,29 +30,27 @@ describe('error notification', () => {
   })
 
   it('should throw error when board verify response status 400', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(400))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.BadRequest))))
 
     boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE[400])
+      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE.BAD_REQUEST)
     })
   })
 
   it('should throw error when board verify response status 404', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
 
-    await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE[404])
-    })
+    await expect(async () => {
+      await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.NOT_FOUND)
   })
 
   it('should throw error when board verify response status 500', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(500))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
 
-    boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE[500])
-    })
+    await expect(async () => {
+      await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
   })
 })

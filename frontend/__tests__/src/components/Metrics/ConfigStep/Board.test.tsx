@@ -17,7 +17,7 @@ import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
 
 export const fillBoardFieldsInformation = () => {
-  const fields = ['BoardId', 'Email', 'Project Key', 'Site', 'Token']
+  const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
   const fieldInputs = fields.map((label) => screen.getByTestId(label).querySelector('input') as HTMLInputElement)
   fieldInputs.map((input, index) => {
@@ -113,7 +113,7 @@ describe('Board', () => {
   it('should clear other fields information when change board field selection', () => {
     const { getByRole, getByText } = setup()
     const boardIdInput = getByRole('textbox', {
-      name: 'BoardId',
+      name: 'Board Id',
     }) as HTMLInputElement
     const emailInput = getByRole('textbox', {
       name: 'Email',
@@ -215,7 +215,7 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.NotFound)).toBeInTheDocument()
+      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.NOT_FOUND)).toBeInTheDocument()
     })
   })
 })

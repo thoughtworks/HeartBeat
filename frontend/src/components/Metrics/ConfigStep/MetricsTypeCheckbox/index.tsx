@@ -1,5 +1,11 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { BOARD_TYPES, REQUIRED_DATA_LIST, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
+import {
+  BOARD_TYPES,
+  REQUIRED_DATA_LIST,
+  PIPELINE_TOOL_TYPES,
+  SOURCE_CONTROL_TYPES,
+  SELECTED_VALUE_SEPARATOR,
+} from '@src/constants'
 import { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
@@ -68,7 +74,7 @@ export const MetricsTypeCheckbox = () => {
           multiple
           value={requireData}
           onChange={handleRequireDataChange}
-          renderValue={(selected) => selected.join(',')}
+          renderValue={(selected) => selected.join(SELECTED_VALUE_SEPARATOR)}
         >
           {REQUIRED_DATA_LIST.map((data) => (
             <MenuItem key={data} value={data}>

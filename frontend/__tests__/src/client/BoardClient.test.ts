@@ -34,7 +34,7 @@ describe('error notification', () => {
 
     boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE.BadRequest)
+      expect((e as Error).message).toMatch(JIRA_VERIFY_ERROR_MESSAGE.BAD_REQUEST)
     })
   })
 
@@ -43,7 +43,7 @@ describe('error notification', () => {
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.NotFound)
+    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.NOT_FOUND)
   })
 
   it('should throw error when board verify response status 500', async () => {
@@ -51,6 +51,6 @@ describe('error notification', () => {
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.InternalServerError)
+    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
   })
 })

@@ -35,7 +35,7 @@ export const Board = () => {
       isValid: true,
     },
     {
-      key: 'BoardId',
+      key: 'Board Id',
       value: boardFields.boardId,
       isRequired: true,
       isValid: true,

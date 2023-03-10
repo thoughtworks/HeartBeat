@@ -25,7 +25,7 @@ describe('verify sourceControl request', () => {
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.BadRequest)
+      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.BAD_REQUEST)
     })
   })
 
@@ -34,7 +34,7 @@ describe('verify sourceControl request', () => {
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.Unauthorized)
+      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)
     })
   })
 
@@ -45,7 +45,7 @@ describe('verify sourceControl request', () => {
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.InternalServerError)
+      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
     })
   })
 })

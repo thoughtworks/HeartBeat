@@ -140,7 +140,7 @@ describe('SourceControl', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE.Unauthorized)).toBeInTheDocument()
+      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)).toBeInTheDocument()
     })
   })
 })

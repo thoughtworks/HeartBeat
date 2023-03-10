@@ -149,7 +149,7 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation()
 
     await userEvent.click(getByRole('button', { name: VERIFY }))
-    expect(getByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NotFound)).toBeInTheDocument()
+    expect(getByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NOT_FOUND)).toBeInTheDocument()
   })
 
   it('should check error notification disappear when pipelineTool verify response status is 404', async () => {
@@ -161,7 +161,7 @@ describe('PipelineTool', () => {
     userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(screen.queryByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NotFound)).not.toBeInTheDocument()
+      expect(screen.queryByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NOT_FOUND)).not.toBeInTheDocument()
     })
   })
 })

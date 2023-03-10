@@ -70,24 +70,24 @@ export const MOCK_BOARD_URL = '/api/v1/boards/jira'
 export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
-export const JIRA_VERIFY_ERROR_MESSAGE = {
-  400: 'Jira verify failed: Bad request',
-  404: 'Jira verify failed: Token is incorrect',
-  500: 'Jira verify failed: Internal server error',
+export enum JIRA_VERIFY_ERROR_MESSAGE {
+  BadRequest = 'Jira verify failed: Bad request',
+  NotFound = 'Jira verify failed: Token is incorrect',
+  InternalServerError = 'Jira verify failed: Internal server error',
 }
 
-export const PIPELINE_TOOL_VERIFY_ERROR_MESSAGE = {
-  400: 'BuildKite verify failed: Bad request',
-  404: 'BuildKite verify failed: Page not found',
-  500: 'BuildKite verify failed: Internal server error',
+export enum PIPELINE_TOOL_VERIFY_ERROR_MESSAGE {
+  BadRequest = 'BuildKite verify failed: Bad request',
+  NotFound = 'BuildKite verify failed: Page not found',
+  InternalServerError = 'BuildKite verify failed: Internal server error',
 }
 
 export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 
-export const GITHUB_VERIFY_ERROR_MESSAGE = {
-  400: 'Github verify failed: Bad request',
-  401: 'Github verify failed: Token is incorrect',
-  500: 'Github verify failed: Internal server error',
+export enum GITHUB_VERIFY_ERROR_MESSAGE {
+  BadRequest = 'Github verify failed: Bad request',
+  Unauthorized = 'Github verify failed: Token is incorrect',
+  InternalServerError = 'Github verify failed: Internal server error',
 }
 
 export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {

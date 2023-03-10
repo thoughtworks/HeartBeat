@@ -14,6 +14,7 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
+import { HttpStatusCode } from 'axios'
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['BoardId', 'Email', 'Project Key', 'Site', 'Token']
@@ -192,7 +193,7 @@ describe('Board', () => {
   })
 
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(204))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
@@ -207,14 +208,14 @@ describe('Board', () => {
   })
 
   it('should check error notification show and disappear when board verify response status is 404', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
+      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.NotFound)).toBeInTheDocument()
     })
   })
 })

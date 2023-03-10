@@ -15,6 +15,7 @@ import {
 } from '../../../fixtures'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
+import { HttpStatusCode } from 'axios'
 
 export const fillSourceControlFieldsInformation = () => {
   const mockInfo = 'ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b'
@@ -131,7 +132,7 @@ describe('SourceControl', () => {
   })
 
   it('should show error notification when sourceControl verify response status is 401', async () => {
-    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(401))))
+    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
     const { getByText, getByRole } = setup()
 
     fillSourceControlFieldsInformation()
@@ -139,7 +140,7 @@ describe('SourceControl', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE[401])).toBeInTheDocument()
+      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE.Unauthorized)).toBeInTheDocument()
     })
   })
 })

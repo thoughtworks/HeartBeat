@@ -19,7 +19,6 @@ import { ErrorNotification } from '@src/components/ErrorNotifaction'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
 import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
-import { Loading } from '@src/components/Loading'
 
 export const Board = () => {
   const dispatch = useAppDispatch()

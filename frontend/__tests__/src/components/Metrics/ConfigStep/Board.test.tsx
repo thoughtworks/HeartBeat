@@ -14,9 +14,10 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
+import { HttpStatusCode } from 'axios'
 
 export const fillBoardFieldsInformation = () => {
-  const fields = ['BoardId', 'Email', 'Project Key', 'Site', 'Token']
+  const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
   const fieldInputs = fields.map((label) => screen.getByTestId(label).querySelector('input') as HTMLInputElement)
   fieldInputs.map((input, index) => {
@@ -112,7 +113,7 @@ describe('Board', () => {
   it('should clear other fields information when change board field selection', () => {
     const { getByRole, getByText } = setup()
     const boardIdInput = getByRole('textbox', {
-      name: 'BoardId',
+      name: 'Board Id',
     }) as HTMLInputElement
     const emailInput = getByRole('textbox', {
       name: 'Email',
@@ -192,7 +193,7 @@ describe('Board', () => {
   })
 
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(204))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
@@ -206,15 +207,15 @@ describe('Board', () => {
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
   })
 
-  it('should check error notification show and disappear when board verify response status is 401', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(401))))
+  it('should check error notification show and disappear when board verify response status is 404', async () => {
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[401])).toBeInTheDocument()
+      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.NOT_FOUND)).toBeInTheDocument()
     })
   })
 })

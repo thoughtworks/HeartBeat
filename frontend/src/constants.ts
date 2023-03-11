@@ -68,3 +68,5 @@ export const TOKEN_HELPER_TEXT = {
   emptyTokenText: 'Token is required',
   InvalidTokenText: 'Invalid token',
 }
+
+export const SELECTED_VALUE_SEPARATOR = ', '

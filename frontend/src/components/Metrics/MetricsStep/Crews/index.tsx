@@ -8,6 +8,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
+import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import { Divider, Title } from './style'
 
@@ -45,7 +46,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
           multiple
           value={selectedCrews}
           onChange={handleCrewChange}
-          renderValue={(selectedCrews: string[]) => selectedCrews.join(', ')}
+          renderValue={(selectedCrews: string[]) => selectedCrews.join(SELECTED_VALUE_SEPARATOR)}
         >
           <MenuItem value='All'>
             <Checkbox checked={isAllSelected} />

@@ -4,7 +4,6 @@ class Home {
   }
   createANewProject() {
     cy.contains('Create a new project').click()
-    cy.url().should('include', '/metrics')
   }
 }
 

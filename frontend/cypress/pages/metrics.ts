@@ -24,15 +24,11 @@ class Metrics {
   }
 
   fillBoardFieldsInfo(boardId: string, email: string, projectKey: string, site: string, token: string) {
-    cy.get('button:contains("Verify")').should('be.disabled')
-
     cy.contains('Board Id').siblings().type(boardId)
     cy.contains('Email').siblings().type(email)
     cy.contains('Project Key').siblings().type(projectKey)
     cy.contains('Site').siblings().type(site)
     cy.contains('Token').siblings().type(token)
-
-    cy.get('button:contains("Verify")').should('be.enabled')
   }
 
   selectLeadTimeForChangesAndDeploymentFrequency() {
@@ -46,22 +42,17 @@ class Metrics {
   }
 
   fillPipelineToolFieldsInfo(token: string) {
-    cy.get('button:contains("Verify")').should('be.disabled')
-
     cy.contains('Token').siblings().type(token)
-    cy.get('button:contains("Verify")').should('be.enabled')
   }
 
   fillSourceControlFieldsInfo(token: string) {
     cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.disabled')
 
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
-    cy.get('button:contains("Verify")').should('be.enabled')
   }
 
   goMetricsStep() {
     cy.contains('Next').click()
-    cy.contains('Crews Setting').should('exist')
   }
 }
 

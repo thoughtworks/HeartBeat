@@ -7,7 +7,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./buildkite/jsons/buildkite.organizations.json
+    file: ./backend/buildkite/jsons/buildkite.organizations.json
 
 # Pipelines
 - request:
@@ -23,4 +23,4 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./buildkite/jsons/buildkite.organizations.XXXX.pipelines.json
+    file: ./backend/buildkite/jsons/buildkite.organizations.XXXX.pipelines.json

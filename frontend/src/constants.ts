@@ -60,12 +60,10 @@ export const EMAIL = 'Email'
 
 export const BOARD_TOKEN = 'Token'
 
-export const INVALID_TOKEN_MESSAGE = 'Invalid token'
-
 export const ERROR_MESSAGE_TIME_DURATION = 2000
 
 export const TOKEN_HELPER_TEXT = {
-  emptyTokenText: 'Token is required',
+  EmptyTokenText: 'Token is required',
   InvalidTokenText: 'Invalid token',
 }
 

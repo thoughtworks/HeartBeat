@@ -1,5 +1,5 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO, INVALID_TOKEN_MESSAGE, BUILDKITE_TOKEN_REGEXP } from '@src/constants'
+import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO, BUILDKITE_TOKEN_REGEXP, TOKEN_HELPER_TEXT } from '@src/constants'
 import { FormEvent, useState } from 'react'
 import {
   PipelineToolButtonGroup,
@@ -36,6 +36,7 @@ export const PipelineTool = () => {
       isValid: true,
     },
   ])
+  const [pipelineToolHelperText, setPipelineToolHelperText] = useState('')
 
   const initPipeLineFields = () => {
     const newFields = fields.map((field, index) => {
@@ -46,7 +47,17 @@ export const PipelineTool = () => {
     dispatch(updatePipelineToolVerifyState(false))
   }
 
-  const checkFieldValid = (value: string): boolean => BUILDKITE_TOKEN_REGEXP.test(value)
+  const checkFieldValid = (value: string): boolean => {
+    let helperText = ''
+
+    if (value === '') {
+      helperText = TOKEN_HELPER_TEXT.EmptyTokenText
+    } else if (!BUILDKITE_TOKEN_REGEXP.test(value)) {
+      helperText = TOKEN_HELPER_TEXT.InvalidTokenText
+    }
+    setPipelineToolHelperText(helperText)
+    return helperText === ''
+  }
 
   const onFormUpdate = (index: number, value: string) => {
     if (index === ZERO) {
@@ -128,7 +139,7 @@ export const PipelineTool = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}
-          helperText={!fields[1].isValid ? INVALID_TOKEN_MESSAGE : ''}
+          helperText={pipelineToolHelperText}
         />
         <PipelineToolButtonGroup>
           {isVerified && !isLoading ? (

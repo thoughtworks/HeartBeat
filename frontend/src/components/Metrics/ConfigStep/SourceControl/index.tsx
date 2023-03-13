@@ -80,7 +80,7 @@ export const SourceControl = () => {
     let helperText = ''
 
     if (value === '') {
-      helperText = TOKEN_HELPER_TEXT.emptyTokenText
+      helperText = TOKEN_HELPER_TEXT.EmptyTokenText
     } else if (!GITHUB_TOKEN_REGEXP.test(value)) {
       helperText = TOKEN_HELPER_TEXT.InvalidTokenText
     }

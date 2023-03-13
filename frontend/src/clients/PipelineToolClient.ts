@@ -25,8 +25,8 @@ export class PipelineToolClient extends HttpClient {
       if (code === 400) {
         throw new BadRequestException(params.type, 'Bad request')
       }
-      if (code === 404) {
-        throw new NotFoundException(params.type, 'Page not found')
+      if (code === 401) {
+        throw new NotFoundException(params.type, 'Token is incorrect')
       }
       if (code === 500) {
         throw new InternalServerException(params.type, 'Internal server error')

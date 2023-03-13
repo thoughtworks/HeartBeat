@@ -54,7 +54,7 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
           {options.map((data) => (
             <MenuItem key={data} value={data}>
               <Checkbox checked={selectedRealDone.includes(data)} />
-              <ListItemText primary={data} />
+              <ListItemText primary={data} id={data} />
             </MenuItem>
           ))}
         </Select>

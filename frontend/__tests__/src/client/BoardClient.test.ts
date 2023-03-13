@@ -38,12 +38,12 @@ describe('error notification', () => {
     })
   })
 
-  it('should throw error when board verify response status 404', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
+  it('should throw error when board verify response status 401', async () => {
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.NOT_FOUND)
+    }).rejects.toThrow(JIRA_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)
   })
 
   it('should throw error when board verify response status 500', async () => {

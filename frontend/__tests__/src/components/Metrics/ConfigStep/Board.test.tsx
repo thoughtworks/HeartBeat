@@ -207,15 +207,15 @@ describe('Board', () => {
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
   })
 
-  it('should check error notification show and disappear when board verify response status is 404', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
+  it('should check error notification show and disappear when board verify response status is 401', async () => {
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.NOT_FOUND)).toBeInTheDocument()
+      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)).toBeInTheDocument()
     })
   })
 })

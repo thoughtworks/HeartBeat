@@ -30,9 +30,9 @@ export class BoardClient extends HttpClient {
       this.isBoardVerify = false
       const code = (e as AxiosError).response?.status
       if (code === HttpStatusCode.BadRequest) {
-        throw new BadRequestException(params.type, 'Bad request')
+        throw new BadRequestException(params.type, 'Please reconfirm the input')
       }
-      if (code === HttpStatusCode.NotFound) {
+      if (code === HttpStatusCode.Unauthorized) {
         throw new NotFoundException(params.type, 'Token is incorrect')
       }
       if (code === HttpStatusCode.InternalServerError) {

@@ -72,8 +72,8 @@ export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
 export enum JIRA_VERIFY_ERROR_MESSAGE {
-  BAD_REQUEST = 'Jira verify failed: Bad request',
-  NOT_FOUND = 'Jira verify failed: Token is incorrect',
+  BAD_REQUEST = 'Jira verify failed: Please reconfirm the input',
+  UNAUTHORIZED = 'Jira verify failed: Token is incorrect',
   INTERNAL_SERVER_ERROR = 'Jira verify failed: Internal server error',
 }
 

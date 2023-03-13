@@ -4,7 +4,44 @@ import userEvent from '@testing-library/user-event'
 
 const title = 'Cycle Time Settings'
 const defaultSelected = '----'
-const mockColumnsList = ['Done', 'Blocked', 'Doing', 'TODO', 'Testing']
+const mockColumnsList = [
+  {
+    key: 'indeterminate',
+    value: {
+      name: 'Doing',
+      statuses: ['DOING'],
+    },
+  },
+  {
+    key: 'indeterminate',
+    value: {
+      name: 'Testing',
+      statuses: ['TESTING'],
+    },
+  },
+  {
+    key: 'indeterminate',
+    value: {
+      name: 'TODO',
+      statuses: ['TODO'],
+    },
+  },
+  {
+    key: 'done',
+    value: {
+      name: 'Done',
+      statuses: ['DONE', 'CANCELLED'],
+    },
+  },
+  {
+    key: 'indeterminate',
+    value: {
+      name: 'Blocked',
+      statuses: ['BLOCKED'],
+    },
+  },
+]
+
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
 
 const setup = () => render(<CycleTime title={title} columns={mockColumnsList} />)
@@ -21,11 +58,11 @@ describe('CycleTime', () => {
     it('should show selectors title when render Crews component', () => {
       const { getByText } = setup()
 
-      expect(getByText(mockColumnsList[0])).toBeInTheDocument()
-      expect(getByText(mockColumnsList[1])).toBeInTheDocument()
-      expect(getByText(mockColumnsList[2])).toBeInTheDocument()
-      expect(getByText(mockColumnsList[3])).toBeInTheDocument()
-      expect(getByText(mockColumnsList[4])).toBeInTheDocument()
+      expect(getByText(mockColumnsList[0].value.name)).toBeInTheDocument()
+      expect(getByText(mockColumnsList[1].value.name)).toBeInTheDocument()
+      expect(getByText(mockColumnsList[2].value.name)).toBeInTheDocument()
+      expect(getByText(mockColumnsList[3].value.name)).toBeInTheDocument()
+      expect(getByText(mockColumnsList[4].value.name)).toBeInTheDocument()
     })
 
     it('should show "----" in selector by create default when initializing', () => {
@@ -35,7 +72,7 @@ describe('CycleTime', () => {
 
     it('should show detail options when click included button', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Done' })
+      const columnsArray = getAllByRole('button', { name: 'Doing' })
       await userEvent.click(columnsArray[0])
       const listBox = within(getByRole('listbox'))
       const options = listBox.getAllByRole('option')
@@ -56,7 +93,7 @@ describe('CycleTime', () => {
 
     it('should show other selections when change option', async () => {
       const { getAllByRole, getByRole, getByText } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Done' })
+      const columnsArray = getAllByRole('button', { name: 'Doing' })
       await userEvent.click(columnsArray[3])
       const listBox = within(getByRole('listbox'))
       const mockOption = listBox.getByRole('option', { name: 'To do' })

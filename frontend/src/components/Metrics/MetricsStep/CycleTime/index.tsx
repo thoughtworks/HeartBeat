@@ -4,7 +4,7 @@ import FlagCard from '@src/components/Metrics/MetricsStep/CycleTime/FlagCard'
 import { FormSelectPart } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelectPart'
 
 interface cycletimeProps {
-  columns: string[]
+  columns: { key: string; value: { name: string; statuses: string[] } }[]
   title: string
 }
 

@@ -6,17 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BuildKiteOrganizationsInfo implements Serializable {
+public class PipelineInfo {
+
+	private String id;
 
 	private String name;
 
-	private String slug;
+	private String[] steps;
+
+	private String repository;
+
+	private String orgId;
+
+	private String orgName;
 
 }

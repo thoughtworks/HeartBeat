@@ -10,7 +10,8 @@ import java.util.List;
 
 @FeignClient(name = "buildKiteFeignClient", url = "${buildKite.url}")
 public interface BuildKiteFeignClient {
-	@GetMapping(path = "/organizations")
+
+	@GetMapping(path = "v2/organizations")
 	@ResponseStatus(HttpStatus.OK)
 	List<BuildKiteOrganizationsInfo> getBuildKiteOrganizationsInfo();
 }

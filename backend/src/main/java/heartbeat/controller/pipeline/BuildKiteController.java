@@ -1,6 +1,7 @@
 package heartbeat.controller.pipeline;
 
 import heartbeat.controller.pipeline.vo.BuildKiteResponse;
+import heartbeat.service.pipeline.buildKite.BuildKiteService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class BuildKiteController {
 
-	@GetMapping("/{pipelineType}")
+	private final BuildKiteService buildKiteService;
+
+	@GetMapping
 	@CrossOrigin
 	@ResponseStatus(HttpStatus.OK)
-	public BuildKiteResponse getBuildKiteInfo(@RequestParam @NotBlank(message = "type must not be blank") String type, String token) {
-		return null;
+	public BuildKiteResponse getBuildKiteInfo() {
+		return buildKiteService.fetchPipelineInfo();
 	}
 
 }

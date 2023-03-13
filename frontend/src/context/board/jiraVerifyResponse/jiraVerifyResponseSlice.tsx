@@ -8,43 +8,7 @@ export interface jiraVerifyResponseState {
 }
 
 const initialState: jiraVerifyResponseState = {
-  jiraColumns: [
-    {
-      key: 'done',
-      value: {
-        name: 'Done',
-        statuses: ['DONE', 'CANCELLED'],
-      },
-    },
-    {
-      key: 'indeterminate',
-      value: {
-        name: 'Blocked',
-        statuses: ['BLOCKED'],
-      },
-    },
-    {
-      key: 'indeterminate',
-      value: {
-        name: 'Doing',
-        statuses: ['DOING'],
-      },
-    },
-    {
-      key: 'indeterminate',
-      value: {
-        name: 'TODO',
-        statuses: ['TODO'],
-      },
-    },
-    {
-      key: 'indeterminate',
-      value: {
-        name: 'Testing',
-        statuses: ['TESTING'],
-      },
-    },
-  ],
+  jiraColumns: [],
   targetFields: [],
   users: [],
 }

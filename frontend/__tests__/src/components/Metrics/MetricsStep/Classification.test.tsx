@@ -1,6 +1,8 @@
 import { render, within } from '@testing-library/react'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import userEvent from '@testing-library/user-event'
+import { setupStore } from '../../../utils/setupStoreUtil'
+import { Provider } from 'react-redux'
 
 const mockTitle = 'Classification Setting'
 const mockLabel = 'Distinguished By'
@@ -8,8 +10,14 @@ const mockTargetField = [
   { flag: false, key: 'issue', name: 'Issue' },
   { flag: false, key: 'type', name: 'Type' },
 ]
+
+const store = setupStore()
 const setup = () => {
-  return render(<Classification title={mockTitle} label={mockLabel} options={mockTargetField} />)
+  return render(
+    <Provider store={store}>
+      <Classification title={mockTitle} label={mockLabel} options={mockTargetField} />
+    </Provider>
+  )
 }
 
 describe('Classification', () => {

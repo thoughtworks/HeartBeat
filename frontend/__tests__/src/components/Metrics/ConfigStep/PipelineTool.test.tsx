@@ -16,6 +16,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { INVALID_TOKEN_MESSAGE } from '@src/constants'
 import userEvent from '@testing-library/user-event'
+import { HttpStatusCode } from 'axios'
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'mockTokenMockTokenMockTokenMockToken1234'
@@ -143,24 +144,24 @@ describe('PipelineTool', () => {
   })
 
   it('should check error notification show when pipelineTool verify response status is 404', async () => {
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
     const { getByText, getByRole } = setup()
     await fillPipelineToolFieldsInformation()
 
     await userEvent.click(getByRole('button', { name: VERIFY }))
-    expect(getByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
+    expect(getByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NOT_FOUND)).toBeInTheDocument()
   })
 
   it('should check error notification disappear when pipelineTool verify response status is 404', async () => {
     expect.assertions(2)
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(404))))
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
     const { getByRole } = setup()
     await fillPipelineToolFieldsInformation()
 
     userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(screen.queryByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE[404])).not.toBeInTheDocument()
+      expect(screen.queryByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NOT_FOUND)).not.toBeInTheDocument()
     })
   })
 })

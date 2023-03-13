@@ -1,5 +1,5 @@
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { CHINA_CALENDAR, REGULAR_CALENDAR } from '@src/constants'
 import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
 import { ConfigStepWrapper, ProjectNameInput } from './style'

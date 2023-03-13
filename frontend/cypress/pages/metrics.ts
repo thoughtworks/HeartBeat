@@ -24,15 +24,11 @@ class Metrics {
   }
 
   fillBoardFieldsInfo(boardId: string, email: string, projectKey: string, site: string, token: string) {
-    cy.get('button:contains("Verify")').should('be.disabled')
-
-    cy.contains('BoardId').siblings().type(boardId)
+    cy.contains('Board Id').siblings().type(boardId)
     cy.contains('Email').siblings().type(email)
     cy.contains('Project Key').siblings().type(projectKey)
     cy.contains('Site').siblings().type(site)
     cy.contains('Token').siblings().type(token)
-
-    cy.get('button:contains("Verify")').should('be.enabled')
   }
 
   selectLeadTimeForChangesAndDeploymentFrequency() {
@@ -46,17 +42,16 @@ class Metrics {
   }
 
   fillPipelineToolFieldsInfo(token: string) {
-    cy.get('button:contains("Verify")').should('be.disabled')
-
     cy.contains('Token').siblings().type(token)
-    cy.get('button:contains("Verify")').should('be.enabled')
   }
 
   fillSourceControlFieldsInfo(token: string) {
-    cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.disabled')
+    cy.intercept(Cypress.env('url') + '/api/v1/source-control*', (req) => {
+      req.url = req.url.replace('/v1/', '/v2/')
+    })
 
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
-    cy.get('button:contains("Verify")').should('be.enabled')
+    cy.get('[data-test-id="sourceControlVerifyButton"]').click()
   }
 
   goMetricsStep() {
@@ -71,6 +66,12 @@ class Metrics {
     cy.get('#CANCELLED').click()
 
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+  }
+
+  checkClassification() {
+    cy.contains('Distinguished By').siblings().click()
+
+    cy.contains('All').click()
   }
 }
 

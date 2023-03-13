@@ -7,7 +7,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./github/jsons/github.user.orgs.json
+    file: ./backend/github/jsons/github.user.orgs.json
 
 # User Repos
 - request:
@@ -18,7 +18,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./github/jsons/github.user.repos.json
+    file: ./backend/github/jsons/github.user.repos.json
 
 # Org Repos
 # Example: /orgs/XXXX-tw/repos
@@ -30,5 +30,5 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./github/jsons/github.orgs.<% url.1 %>.repos.json
+    file: ./backend/github/jsons/github.orgs.<% url.1 %>.repos.json
 

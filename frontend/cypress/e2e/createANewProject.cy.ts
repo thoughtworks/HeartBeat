@@ -6,6 +6,7 @@ describe('Create a new project', () => {
     homePage.navigate()
 
     homePage.createANewProject()
+    cy.url().should('include', '/metrics')
 
     metricsPage.typeProjectName('E2E Project')
 
@@ -15,16 +16,25 @@ describe('Create a new project', () => {
 
     metricsPage.selectVelocityAndCycleTime()
 
+    cy.get('button:contains("Verify")').should('be.disabled')
     metricsPage.fillBoardFieldsInfo('2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken')
+    cy.get('button:contains("Verify")').should('be.enabled')
 
     metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
 
+    cy.get('button:contains("Verify")').should('be.disabled')
     metricsPage.fillPipelineToolFieldsInfo('mockTokenMockTokenMockTokenMockToken1234')
+    cy.get('button:contains("Verify")').should('be.enabled')
 
-    metricsPage.fillSourceControlFieldsInfo('ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b')
+    cy.get('button:contains("Verify")').should('be.enabled')
+    metricsPage.fillSourceControlFieldsInfo('ghp_TSCfmn4H187rDN7JGgp5RAe7mM6YPp0xz987')
 
     metricsPage.goMetricsStep()
 
     metricsPage.checkRealDoneOption()
+    cy.contains('Crews Setting').should('exist')
+
+    metricsPage.checkClassification()
+    cy.contains('Classification Setting').should('exist')
   })
 })

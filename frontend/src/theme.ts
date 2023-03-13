@@ -1,7 +1,6 @@
-import { createTheme, styled } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles'
 import { indigo } from '@mui/material/colors'
 import { FIVE_HUNDRED } from '@src/constants'
-import { Button } from '@mui/material'
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -44,26 +43,4 @@ export const theme = createTheme({
       textTransform: 'none',
     },
   },
-})
-
-export const VerifyButton = styled(Button)({
-  width: '3rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
-})
-export const ResetButton = styled(Button)({
-  width: '3rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
-  color: '#f44336',
-})
-
-export const Divider = styled('div')({
-  padding: '0.4rem',
-  borderLeft: `0.4rem solid ${theme.main.backgroundColor}`,
-  margin: '1rem 0',
-})
-
-export const Title = styled('span')({
-  fontFamily: theme.typography.fontFamily,
 })

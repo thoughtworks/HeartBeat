@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { CONFIG_TITLE, GITHUB_TOKEN_REGEXP, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants'
 import {
   SourceControlButtonGroup,
@@ -13,10 +13,10 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectDateRange, selectSourceControlFields, updateSourceControlFields } from '@src/context/config/configSlice'
 import { updateSourceControlVerifyState, isSourceControlVerified } from '@src/context/sourceControl/sourceControlSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
-import { ErrorNotification } from '@src/components/ErrorNotifaction'
+import { ErrorNotification } from '@src/components/ErrorNotification'
 import { updateSourceControlVerifyResponse } from '@src/context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
-import { ResetButton, VerifyButton } from '@src/theme'
 import { Loading } from '@src/components/Loading'
+import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()

@@ -49,6 +49,7 @@ class Metrics {
     cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.disabled')
 
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
+    cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.enabled').click()
   }
 
   goMetricsStep() {

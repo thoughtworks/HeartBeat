@@ -3,6 +3,9 @@ import metricsPage from '../pages/metrics'
 
 describe('Create a new project', () => {
   it('Should create a new project manually', () => {
+    cy.intercept(Cypress.env('url') + '/api/v1/*', (req) => {
+      req.url = req.url.replace('/v1/', '/v2/')
+    })
     homePage.navigate()
 
     homePage.createANewProject()
@@ -27,7 +30,7 @@ describe('Create a new project', () => {
     cy.get('button:contains("Verify")').should('be.enabled')
 
     cy.get('button:contains("Verify")').should('be.enabled')
-    metricsPage.fillSourceControlFieldsInfo('ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b')
+    metricsPage.fillSourceControlFieldsInfo('ghp_TSCfmn4H187rDN7JGgp5RAe7mM6YPp0xz987')
 
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')

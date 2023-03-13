@@ -3,9 +3,6 @@ import metricsPage from '../pages/metrics'
 
 describe('Create a new project', () => {
   it('Should create a new project manually', () => {
-    cy.intercept(Cypress.env('url') + '/api/v1/*', (req) => {
-      req.url = req.url.replace('/v1/', '/v2/')
-    })
     homePage.navigate()
 
     homePage.createANewProject()

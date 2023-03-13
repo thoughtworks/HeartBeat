@@ -1,6 +1,8 @@
 import { Divider, Title } from '../Crews/style'
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, ListItemText, SelectChangeEvent } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import { updateTargetFields } from '@src/context/Metrics/metricsSlice'
 
 interface classificationProps {
   title: string
@@ -9,6 +11,7 @@ interface classificationProps {
 }
 
 export const Classification = ({ options, title, label }: classificationProps) => {
+  const dispatch = useAppDispatch()
   const [selectedTargetField, setSelectedTargetField] = useState<string[]>([])
   const isAllSelected = selectedTargetField.length > 0 && selectedTargetField.length === options.length
   const handleTargetFieldChange = (event: SelectChangeEvent<string[]>) => {
@@ -20,6 +23,14 @@ export const Classification = ({ options, title, label }: classificationProps) =
     }
     setSelectedTargetField([...value])
   }
+
+  useEffect(() => {
+    const updatedTargetFields = options.map((option) => ({
+      ...option,
+      flag: selectedTargetField.includes(option.name),
+    }))
+    dispatch(updateTargetFields(updatedTargetFields))
+  }, [selectedTargetField, dispatch, options])
 
   return (
     <>

@@ -3,13 +3,17 @@ import React from 'react'
 import { METRICS_CONSTANTS } from '@src/constants'
 
 interface FormSelectPartProps {
-  columns: string[]
+  columns: { key: string; value: { name: string; statuses: string[] } }[]
 }
 
-export const FormSelectPart = ({ columns }: FormSelectPartProps) => (
-  <>
-    {columns.map((item) => (
-      <FormSelect key={item} label={item} defaultSelected={[METRICS_CONSTANTS.cycleTimeEmptyStr]} />
-    ))}
-  </>
-)
+export const FormSelectPart = ({ columns }: FormSelectPartProps) => {
+  const names = Object.values(columns).map((item) => item.value.name)
+
+  return (
+    <>
+      {names.map((item) => (
+        <FormSelect key={item} label={item} defaultSelected={[METRICS_CONSTANTS.cycleTimeEmptyStr]} />
+      ))}
+    </>
+  )
+}

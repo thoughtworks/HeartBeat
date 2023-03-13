@@ -35,6 +35,7 @@ describe('Create a new project', () => {
     metricsPage.fillSourceControlFieldsInfo('ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b')
 
     metricsPage.goMetricsStep()
+    cy.contains('Crews Setting').should('exist')
 
     metricsPage.selectCrewSetting()
   })

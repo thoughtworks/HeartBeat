@@ -31,7 +31,9 @@ class Metrics {
     cy.intercept(Cypress.env('url') + '/api/v1/boards/*', (req) => {
       req.url = req.url.replace('/v1/', '/v2/')
     }).as('verifyJira')
+
     cy.contains('Verify').click()
+
     cy.contains('Verified').should('exist')
     cy.contains('Reset').should('exist')
   }
@@ -64,6 +66,7 @@ class Metrics {
     cy.wait('@verifyJira').then((currentSubject) => {
       cy.contains(`${currentSubject.response.body.users.join(', ')}`).should('exist')
     })
+
     cy.contains('Included Crews').siblings().click()
 
     cy.get("[type='checkbox']").should('be.checked')

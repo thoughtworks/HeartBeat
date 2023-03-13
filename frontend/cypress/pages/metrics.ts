@@ -54,6 +54,12 @@ class Metrics {
   goMetricsStep() {
     cy.contains('Next').click()
   }
+
+  checkClassification() {
+    cy.contains('Distinguished By').siblings().click()
+
+    cy.contains('All').click()
+  }
 }
 
 const metricsPage = new Metrics()

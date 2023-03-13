@@ -14,4 +14,5 @@ public interface BuildKiteFeignClient {
 	@GetMapping(path = "v2/organizations")
 	@ResponseStatus(HttpStatus.OK)
 	List<BuildKiteOrganizationsInfo> getBuildKiteOrganizationsInfo();
+
 }

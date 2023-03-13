@@ -1,4 +1,4 @@
-import { Divider, Title } from '@src/theme'
+import { Divider, Title } from '../Crews/style'
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, ListItemText, SelectChangeEvent } from '@mui/material'
 import { useState } from 'react'
 

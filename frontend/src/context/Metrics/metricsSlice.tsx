@@ -1,23 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export interface updatedJiraVerifyResponseState {
+export interface savedMetricsSettingState {
   jiraColumns: []
   targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
 }
 
-const initialState: updatedJiraVerifyResponseState = {
+const initialState: savedMetricsSettingState = {
   jiraColumns: [],
   targetFields: [],
   users: [],
 }
 
 export const metricsSlice = createSlice({
-  name: 'updatedJiraVerifyResponse',
+  name: 'saveMetricsSetting',
   initialState,
   reducers: {
     updateTargetFields: (state, action) => {
-      state.targetFields = [...action.payload]
+      state.targetFields = action.payload
     },
   },
 })

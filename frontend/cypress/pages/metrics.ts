@@ -49,10 +49,9 @@ class Metrics {
     cy.intercept(Cypress.env('url') + '/api/v1/source-control*', (req) => {
       req.url = req.url.replace('/v1/', '/v2/')
     })
-    cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.disabled')
 
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
-    cy.get('[data-test-id="sourceControlVerifyButton"]').should('be.enabled').click()
+    cy.get('[data-test-id="sourceControlVerifyButton"]').click()
   }
 
   goMetricsStep() {

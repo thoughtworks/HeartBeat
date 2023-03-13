@@ -60,6 +60,9 @@ class Metrics {
   goMetricsStep() {
     cy.contains('Next').click()
     cy.contains('Crews Setting').should('exist')
+    cy.contains('Cycle Time Setting').should('exist')
+    cy.contains('Consider the "Flag" as "Block"').should('exist')
+    cy.get("[type='checkbox']").should('be.checked')
   }
 }
 

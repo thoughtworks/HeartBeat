@@ -51,7 +51,7 @@ export const PipelineTool = () => {
     let helperText = ''
 
     if (value === '') {
-      helperText = TOKEN_HELPER_TEXT.EmptyTokenText
+      helperText = TOKEN_HELPER_TEXT.RequiredTokenText
     } else if (!BUILDKITE_TOKEN_REGEXP.test(value)) {
       helperText = TOKEN_HELPER_TEXT.InvalidTokenText
     }

@@ -63,7 +63,7 @@ export const BOARD_TOKEN = 'Token'
 export const ERROR_MESSAGE_TIME_DURATION = 2000
 
 export const TOKEN_HELPER_TEXT = {
-  EmptyTokenText: 'Token is required',
+  RequiredTokenText: 'Token is required',
   InvalidTokenText: 'Invalid token',
 }
 

@@ -1,14 +1,14 @@
 import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlSelection } from '@src/components/common/FormSelect/style'
+import { CYCLETIME_LIST } from '@src/constants'
 
 interface formSelectProps {
   label: string
   defaultSelected: string[]
-  options: string[]
 }
 
-export const FormSelect = ({ label, defaultSelected, options }: formSelectProps) => {
+export const FormSelect = ({ label, defaultSelected }: formSelectProps) => {
   const [selectedCycleTime, setSelectedCycleTime] = useState([...defaultSelected])
 
   const handleCycleTimeChange = (event: SelectChangeEvent<string[]>) => {
@@ -25,7 +25,7 @@ export const FormSelect = ({ label, defaultSelected, options }: formSelectProps)
         onChange={handleCycleTimeChange}
         renderValue={(selectedCycleTime: string[]) => selectedCycleTime}
       >
-        {options.map((data) => (
+        {CYCLETIME_LIST.map((data) => (
           <MenuItem key={data} value={data}>
             <ListItemText primary={data} />
           </MenuItem>

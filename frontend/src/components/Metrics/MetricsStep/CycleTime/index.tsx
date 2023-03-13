@@ -4,14 +4,14 @@ import FlagCard from '@src/components/Metrics/MetricsStep/CycleTime/FlagCard'
 import { FormSelectPart } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelectPart'
 
 interface cycletimeProps {
-  options: string[]
+  columns: string[]
   title: string
 }
 
-export const CycleTime = ({ options, title }: cycletimeProps) => (
+export const CycleTime = ({ columns, title }: cycletimeProps) => (
   <>
     <MetricsSettingTitle title={title} />
-    <FormSelectPart options={options} />
+    <FormSelectPart columns={columns} />
     <FlagCard />
   </>
 )

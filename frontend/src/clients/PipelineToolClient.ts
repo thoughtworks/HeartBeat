@@ -2,7 +2,7 @@ import { HttpClient } from '@src/clients/Httpclient'
 import { AxiosError } from 'axios'
 import { BadRequestException } from '@src/exceptions/BadRequestException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
-import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnauthorizedException } from '@src/exceptions/UnauthorizedException'
 
 export interface getVerifyPipelineToolParams {
   type: string
@@ -26,7 +26,7 @@ export class PipelineToolClient extends HttpClient {
         throw new BadRequestException(params.type, 'Bad request')
       }
       if (code === 401) {
-        throw new NotFoundException(params.type, 'Token is incorrect')
+        throw new UnauthorizedException(params.type, 'Token is incorrect')
       }
       if (code === 500) {
         throw new InternalServerException(params.type, 'Internal server error')

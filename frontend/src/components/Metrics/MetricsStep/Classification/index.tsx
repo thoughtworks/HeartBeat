@@ -10,7 +10,7 @@ interface classificationProps {
 
 export const Classification = ({ options, title, label }: classificationProps) => {
   const [selectedTargetField, setSelectedTargetField] = useState<string[]>([])
-  const isAllSelected = selectedTargetField.length === options.length
+  const isAllSelected = selectedTargetField.length > 0 && selectedTargetField.length === options.length
   const handleTargetFieldChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value
     const targetFieldNames = options.map((item) => item.name)

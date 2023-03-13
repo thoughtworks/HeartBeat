@@ -6,12 +6,8 @@ class Metrics {
     cy.contains('Project Name').siblings().type(projectName)
   }
 
-  selectDateRange(from: string, to: string) {
-    cy.contains('From').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(from).click()
-
-    cy.contains('To').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(to).click()
+  selectDateRange() {
+    cy.contains('From').parent().type('02052023')
   }
 
   selectVelocityAndCycleTime() {
@@ -29,6 +25,15 @@ class Metrics {
     cy.contains('Project Key').siblings().type(projectKey)
     cy.contains('Site').siblings().type(site)
     cy.contains('Token').siblings().type(token)
+  }
+
+  verifyJiraBoard() {
+    cy.intercept(Cypress.env('url') + '/api/v1/boards/*', (req) => {
+      req.url = req.url.replace('/v1/', '/v2/')
+    }).as('verifyJira')
+    cy.contains('Verify').click()
+    cy.contains('Verified').should('exist')
+    cy.contains('Reset').should('exist')
   }
 
   selectLeadTimeForChangesAndDeploymentFrequency() {
@@ -53,6 +58,16 @@ class Metrics {
 
   goMetricsStep() {
     cy.contains('Next').click()
+  }
+
+  selectCrewSetting() {
+    cy.wait('@verifyJira').then((currentSubject) => {
+      cy.contains(`${currentSubject.response.body.users.join(', ')}`).should('exist')
+    })
+    cy.contains('Included Crews').siblings().click()
+
+    cy.get("[type='checkbox']").should('be.checked')
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 }
 

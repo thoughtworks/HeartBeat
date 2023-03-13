@@ -10,15 +10,20 @@ describe('Create a new project', () => {
 
     metricsPage.typeProjectName('E2E Project')
 
-    const today = new Date()
-    const day = today.getDate()
-    metricsPage.selectDateRange(`${day}`, `${day + 1}`)
+    metricsPage.selectDateRange()
 
     metricsPage.selectVelocityAndCycleTime()
 
     cy.get('button:contains("Verify")').should('be.disabled')
-    metricsPage.fillBoardFieldsInfo('2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken')
-    cy.get('button:contains("Verify")').should('be.enabled')
+    metricsPage.fillBoardFieldsInfo(
+      '2',
+      'yichen.wang@thoughtworks.com',
+      'ADM',
+      'dorametrics',
+      'ATATT3xFfGF0nGqjCtadnxemCi2iYSertctaJCUH_ABcvChLFTRTCYKJKueXmOgcsRiemkigwCxbS25ueamOB7k36bt-ogNKvb4avXlteOoggQDVAj52FUPq7adbsbQLR5Jv3OnG2fOkzukWJtbCHxjTFFNhuQNRyqP5cZtHLy4UM9-WoPtMQ1E=93739245'
+    )
+
+    metricsPage.verifyJiraBoard()
 
     metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
 
@@ -30,6 +35,7 @@ describe('Create a new project', () => {
     metricsPage.fillSourceControlFieldsInfo('ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b')
 
     metricsPage.goMetricsStep()
-    cy.contains('Crews Setting').should('exist')
+
+    metricsPage.selectCrewSetting()
   })
 })

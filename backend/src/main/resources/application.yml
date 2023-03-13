@@ -1,8 +1,6 @@
 spring:
   profiles:
     active: default
-# connect to MockServer
-#    active: e2e
 
 server:
   port: 4322

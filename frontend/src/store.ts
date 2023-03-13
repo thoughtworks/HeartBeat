@@ -7,6 +7,7 @@ import pipelineReducer from './context/pipelineTool/pipelineToolSlice'
 import pipelineToolResponseReducer from './context/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
 import sourceControlReducer from './context/sourceControl/sourceControlSlice'
 import sourceControlVerifyResponseReducer from './context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
+import saveMetricsSettingReducer from './context/Metrics/metricsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     jiraVerifyResponse: jiraVerifyResponseReducer,
     pipelineToolVerifyResponse: pipelineToolResponseReducer,
     sourceControlVerifyResponse: sourceControlVerifyResponseReducer,
+    saveMetricsSetting: saveMetricsSettingReducer,
   },
 })
 

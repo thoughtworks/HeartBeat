@@ -26,10 +26,14 @@ describe('Create a new project', () => {
     cy.get('button:contains("Verify")').should('be.enabled')
     metricsPage.fillSourceControlFieldsInfo('ghp_TSCfmn4H187rDN7JGgp5RAe7mM6YPp0xz987')
 
-    metricsPage.selectClassification()
+    metricsPage.selectClassificationAndCycleTime()
 
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
+
+    metricsPage.checkCycleTime()
+    cy.contains('Cycle Time Setting').should('exist')
+    cy.contains('Consider the "Flag" as "Block"').should('exist')
 
     metricsPage.checkClassification()
     cy.contains('Classification Setting').should('exist')

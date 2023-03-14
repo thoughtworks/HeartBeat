@@ -46,17 +46,22 @@ class Metrics {
     cy.get('[data-test-id="sourceControlVerifyButton"]').click()
   }
 
-  selectClassification() {
+  selectClassificationAndCycleTime() {
     cy.contains('Required Data').siblings().click()
     cy.get("[type='checkbox']").uncheck()
 
     cy.contains('Classification').click()
+    cy.contains('Cycle time').click()
 
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 
   goMetricsStep() {
     cy.contains('Next').click()
+  }
+
+  checkCycleTime() {
+    cy.get("[type='checkbox']").should('be.checked')
   }
 
   checkClassification() {

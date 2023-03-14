@@ -3,15 +3,17 @@ import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
 import { useAppSelector } from '@src/hooks'
 import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
 import {
-  selectDoneColumn,
+  selectedJiraColumns,
   selectTargetFields,
   selectUsers,
 } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
+import { DONE } from '@src/constants'
 
 export const MetricsStep = () => {
   const users = useAppSelector(selectUsers)
-  const doneColumn = useAppSelector(selectDoneColumn) ?? []
+  const jiraColumns = useAppSelector(selectedJiraColumns)
+  const doneColumn = jiraColumns.find((jiraColumn) => jiraColumn.key === DONE)?.value.statuses ?? []
   const targetFields = useAppSelector(selectTargetFields)
   return (
     <>

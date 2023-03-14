@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '@src/store'
-import { DONE } from '@src/constants'
 
 export interface jiraVerifyResponseState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
@@ -33,7 +32,6 @@ export const selectUsers = (state: RootState) => state.jiraVerifyResponse.users
 
 export const selectTargetFields = (state: RootState) => state.jiraVerifyResponse.targetFields
 
-export const selectDoneColumn = (state: RootState) =>
-  state.jiraVerifyResponse.jiraColumns.find((jiraColumn) => jiraColumn.key === DONE)?.value.statuses
+export const selectedJiraColumns = (state: RootState) => state.jiraVerifyResponse.jiraColumns
 
 export default jiraVerifyResponseSlice.reducer

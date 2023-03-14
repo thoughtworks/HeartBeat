@@ -24,12 +24,14 @@ public class BuildKiteService {
 			.getBuildKiteOrganizationsInfo();
 		log.info("[BuildKite] Successfully get organizations slug:" + buildKiteOrganizationsInfo);
 
-		log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:" + buildKiteOrganizationsInfo);
+		log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:"
+				+ buildKiteOrganizationsInfo);
 		List<PipelineDTO> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
 			.map(org -> buildKiteFeignClient.getPipelineInfo(org.getSlug(), "1", "100"))
 			.flatMap(List::stream)
 			.toList();
-		log.info("[BuildKite] Successfully get buildKite pipelineInfo, pipelineInfoList size is:" + buildKiteInfoList.size());
+		log.info("[BuildKite] Successfully get buildKite pipelineInfo, pipelineInfoList size is:"
+				+ buildKiteInfoList.size());
 
 		return BuildKiteResponse.builder().pipelineList(buildKiteInfoList).build();
 	}

@@ -14,7 +14,7 @@ export const MetricsStep = () => {
   return (
     <>
       <Crews options={users} title={'Crews Setting'} label={'Included Crews'} />
-      {requiredData.length > 0 && requiredData.includes(REQUIRED_DATA_LIST[2]) && (
+      {requiredData.includes(REQUIRED_DATA_LIST[2]) && (
         <Classification options={targetFields} title={'Classification Setting'} label={'Distinguished By'} />
       )}
     </>

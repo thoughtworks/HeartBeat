@@ -46,6 +46,15 @@ class Metrics {
     cy.get('[data-test-id="sourceControlVerifyButton"]').click()
   }
 
+  selectClassification() {
+    cy.contains('Required Data').siblings().click()
+    cy.get("[type='checkbox']").uncheck()
+
+    cy.contains('Classification').click()
+
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+  }
+
   goMetricsStep() {
     cy.contains('Next').click()
   }
@@ -54,6 +63,7 @@ class Metrics {
     cy.contains('Distinguished By').siblings().click()
 
     cy.contains('All').click()
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 }
 

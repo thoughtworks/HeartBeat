@@ -1,12 +1,19 @@
 import { render, within } from '@testing-library/react'
 import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
 import userEvent from '@testing-library/user-event'
+import { setupStore } from '../../../utils/setupStoreUtil'
+import { Provider } from 'react-redux'
 
 const options = ['DONE', 'CANCELLED']
 const mockTitle = 'RealDone'
 const mockLabel = 'Consider as Done'
+const store = setupStore()
 const setup = () => {
-  return render(<RealDone options={options} title={mockTitle} label={mockLabel} />)
+  return render(
+    <Provider store={store}>
+      <RealDone options={options} label={mockLabel} title={mockTitle} />
+    </Provider>
+  )
 }
 
 describe('RealDone', () => {

@@ -20,12 +20,12 @@ describe('Create a new project', () => {
       'fengxin.hou@thoughtworks.com',
       'ADM',
       'dorametrics',
-      'gBEhWpvsCTcs5gtIC8T4A299'
+      'ATATT3xFfGF0unTtNR5KRKX8vphOU-gIQuA58BamZ5kmNiH02PH3bgf3kX6Q3zfhzX1kI550aBikflwEVHRf4WZIhj2ZePpXz0Bs9prL_zHfSHgpc1mqyOZu0L4Cnd3rAv5IAyEKtSkHKDDsIjYyS8ABs2E2kdMT-Cv8kUzecb-SnLixAC6Agy0=13633F73'
     )
 
     metricsPage.verifyJiraBoard()
-    // cy.contains('Verified').should('exist')
-    // cy.contains('Reset').should('exist')
+    cy.contains('Verified').should('exist')
+    cy.contains('Reset').should('exist')
 
     metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
 

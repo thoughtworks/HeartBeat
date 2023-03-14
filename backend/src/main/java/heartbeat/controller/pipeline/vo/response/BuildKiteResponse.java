@@ -11,8 +11,6 @@ import java.util.List;
 @Builder
 public class BuildKiteResponse {
 
-	private List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfoList;
-
 	private List<PipelineDTO> pipelineList;
 
 }

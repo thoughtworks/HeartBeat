@@ -7,7 +7,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./jira/jsons/jira.board.1963.configuration.json
+    file: ./backend/jira/jsons/jira.board.1963.configuration.json
 
 # Status
 - request:

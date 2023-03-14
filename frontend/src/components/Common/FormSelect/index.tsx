@@ -6,7 +6,7 @@ import { CYCLETIME_LIST } from '@src/constants'
 interface formSelectProps {
   label: string
   defaultSelected: string[]
-  saveCycleTimeOptions: (label: string, value: string) => void
+  saveCycleTimeOptions: (name: string, value: string) => void
 }
 
 export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: formSelectProps) => {

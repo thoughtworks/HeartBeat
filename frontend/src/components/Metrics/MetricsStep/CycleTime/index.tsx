@@ -12,11 +12,11 @@ interface cycletimeProps {
 export const CycleTime = ({ columns, title }: cycletimeProps) => {
   const [isError, setIsError] = useState(false)
   const names = Object.values(columns).map((item) => item.value.name)
-  const [cycleTimeOptions, setCycleTimeOptions] = useState(names.map((item) => ({ label: item, value: '' })))
-  const saveCycleTimeOptions = (label: string, value: string) =>
+  const [cycleTimeOptions, setCycleTimeOptions] = useState(names.map((item) => ({ name: item, value: '' })))
+  const saveCycleTimeOptions = (name: string, value: string) =>
     setCycleTimeOptions(
       cycleTimeOptions.map((item) => {
-        item.label === label && (item.value = value)
+        item.name === name && (item.value = value)
         return item
       })
     )

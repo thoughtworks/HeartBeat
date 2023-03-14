@@ -41,6 +41,7 @@ const mockColumnsList = [
     },
   },
 ]
+const errorMessage = 'Should only select One "Done"'
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
 
@@ -120,6 +121,42 @@ describe('CycleTime', () => {
       expect(getByRole('checkbox')).toHaveProperty('checked', false)
       await userEvent.click(getByRole('checkbox'))
       expect(getByRole('checkbox')).toHaveProperty('checked', true)
+    })
+  })
+
+  describe('Error message ', () => {
+    it('should show error message when select more than one Done option', async () => {
+      const { getAllByRole, getByRole, getByText } = setup()
+      const columnsArray = getAllByRole('button', { name: 'Doing' })
+      await userEvent.click(columnsArray[0])
+      const listBoxZero = within(getByRole('listbox'))
+      const mockOptionDone = listBoxZero.getByRole('option', { name: 'Done' })
+      await userEvent.click(mockOptionDone)
+      await userEvent.click(columnsArray[1])
+      const listBoxOne = within(getByRole('listbox'))
+      const mockOptionOneDone = listBoxOne.getByRole('option', { name: 'Done' })
+      await userEvent.click(mockOptionOneDone)
+
+      expect(getByText(errorMessage)).toBeInTheDocument()
+    })
+
+    it('should not show error message when select less than one Done option', async () => {
+      const { getAllByRole, getByRole, queryByText } = setup()
+      const columnsArray = getAllByRole('button', { name: 'Doing' })
+      await userEvent.click(columnsArray[0])
+      const listBoxZero = within(getByRole('listbox'))
+      const mockOptionDone = listBoxZero.getByRole('option', { name: 'Done' })
+      await userEvent.click(mockOptionDone)
+      await userEvent.click(columnsArray[1])
+      const listBoxOne = within(getByRole('listbox'))
+      const mockOptionOneDone = listBoxOne.getByRole('option', { name: 'Done' })
+      await userEvent.click(mockOptionOneDone)
+      await userEvent.click(columnsArray[0])
+      const listBoxTwo = within(getByRole('listbox'))
+      const mockOptionTwoDone = listBoxTwo.getByRole('option', { name: 'To do' })
+      await userEvent.click(mockOptionTwoDone)
+
+      expect(queryByText(errorMessage)).not.toBeInTheDocument()
     })
   })
 })

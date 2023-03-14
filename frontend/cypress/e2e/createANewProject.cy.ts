@@ -20,7 +20,7 @@ describe('Create a new project', () => {
       'yichen.wang@thoughtworks.com',
       'ADM',
       'dorametrics',
-      'ATATT3xFfGF0l6-5kYk1njoYNCYUp26y57ItyW3pjyt2UpmD_-CZmCPG2AD1ZpK1yPRceD2wJKXMnTI1J2TLyOceT4qxNu9tB3m49-owSU4Fc8EsmognR5PBHoXRQ9uiMW6e4TOsOjPDzrwNO-UKZ0WZo9vYQp9K8jzTS3gWk8qV1EqtV5dHpA0=F154B9B0'
+      'ATATT3xFfGF03OlHSTc8WWEjk6T0NapBqrdUHBgHj9Vo2Ph93i4iUWvtdyG5XN_SHFBxvk9L6RFkTTsQOtUiFWSy_Cs_Z42W4AiV-3X6mrmPmoGlUw9Fn7e59f2xDABePfRPBu0fMdr6V2EUe3WEmbWa30ycrekrx_qPcu__shUyjMZa7qyWKE8=A3605AD8'
     )
 
     metricsPage.verifyJiraBoard()

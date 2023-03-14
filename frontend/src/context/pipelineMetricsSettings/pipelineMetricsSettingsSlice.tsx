@@ -13,13 +13,26 @@ export const pipelineMetricsSettingsSlice = createSlice({
   name: 'pipelineMetricsSettings',
   initialState,
   reducers: {
+    addADeploymentFrequencySetting: (state) => {
+      state.deploymentFrequencySettings = [
+        ...state.deploymentFrequencySettings,
+        { organization: '', pipelineName: '', steps: '' },
+      ]
+    },
     updateDeploymentFrequencySettings: (state, action) => {
       state.deploymentFrequencySettings = action.payload
+    },
+    deleteADeploymentFrequencySetting: (state, action) => {
+      const deleteIndex = action.payload
+      state.deploymentFrequencySettings = [
+        ...state.deploymentFrequencySettings.filter((deploymentFrequencySetting, index) => index !== deleteIndex),
+      ]
     },
   },
 })
 
-export const { updateDeploymentFrequencySettings } = pipelineMetricsSettingsSlice.actions
+export const { addADeploymentFrequencySetting, updateDeploymentFrequencySettings, deleteADeploymentFrequencySetting } =
+  pipelineMetricsSettingsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) =>
   state.pipelineMetricsSettings.deploymentFrequencySettings

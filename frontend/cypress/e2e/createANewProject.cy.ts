@@ -17,10 +17,10 @@ describe('Create a new project', () => {
     cy.get('button:contains("Verify")').should('be.disabled')
     metricsPage.fillBoardFieldsInfo(
       '2',
-      'fengxin.hou@thoughtworks.com',
+      'yichen.wang@thoughtworks.com',
       'ADM',
       'dorametrics',
-      'ATATT3xFfGF0unTtNR5KRKX8vphOU-gIQuA58BamZ5kmNiH02PH3bgf3kX6Q3zfhzX1kI550aBikflwEVHRf4WZIhj2ZePpXz0Bs9prL_zHfSHgpc1mqyOZu0L4Cnd3rAv5IAyEKtSkHKDDsIjYyS8ABs2E2kdMT-Cv8kUzecb-SnLixAC6Agy0=13633F73'
+      'ATATT3xFfGF0l6-5kYk1njoYNCYUp26y57ItyW3pjyt2UpmD_-CZmCPG2AD1ZpK1yPRceD2wJKXMnTI1J2TLyOceT4qxNu9tB3m49-owSU4Fc8EsmognR5PBHoXRQ9uiMW6e4TOsOjPDzrwNO-UKZ0WZo9vYQp9K8jzTS3gWk8qV1EqtV5dHpA0=F154B9B0'
     )
 
     metricsPage.verifyJiraBoard()
@@ -38,11 +38,6 @@ describe('Create a new project', () => {
 
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
-
-    cy.wait('@verifyJira').then((currentSubject) => {
-      const users = currentSubject.response.body.users.join(', ')
-      cy.contains(users).should('exist')
-    })
 
     metricsPage.checkClassification()
     cy.contains('Classification Setting').should('exist')

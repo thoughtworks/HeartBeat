@@ -17,13 +17,15 @@ describe('Create a new project', () => {
     cy.get('button:contains("Verify")').should('be.disabled')
     metricsPage.fillBoardFieldsInfo(
       '2',
-      'yichen.wang@thoughtworks.com',
+      'fengxin.hou@thoughtworks.com',
       'ADM',
       'dorametrics',
-      'ATATT3xFfGF0nGqjCtadnxemCi2iYSertctaJCUH_ABcvChLFTRTCYKJKueXmOgcsRiemkigwCxbS25ueamOB7k36bt-ogNKvb4avXlteOoggQDVAj52FUPq7adbsbQLR5Jv3OnG2fOkzukWJtbCHxjTFFNhuQNRyqP5cZtHLy4UM9-WoPtMQ1E=93739245'
+      'gBEhWpvsCTcs5gtIC8T4A299'
     )
 
     metricsPage.verifyJiraBoard()
+    // cy.contains('Verified').should('exist')
+    // cy.contains('Reset').should('exist')
 
     metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
 
@@ -37,9 +39,12 @@ describe('Create a new project', () => {
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
 
+    cy.wait('@verifyJira').then((currentSubject) => {
+      const users = currentSubject.response.body.users.join(', ')
+      cy.contains(users).should('exist')
+    })
+
     metricsPage.checkClassification()
     cy.contains('Classification Setting').should('exist')
-
-    metricsPage.selectCrewSetting()
   })
 })

@@ -32,6 +32,4 @@ export const selectUsers = (state: RootState) => state.jiraVerifyResponse.users
 
 export const selectTargetFields = (state: RootState) => state.jiraVerifyResponse.targetFields
 
-export const selectedJiraColumns = (state: RootState) => state.jiraVerifyResponse.jiraColumns
-
 export default jiraVerifyResponseSlice.reducer

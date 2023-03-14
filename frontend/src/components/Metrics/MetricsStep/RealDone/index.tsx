@@ -10,6 +10,8 @@ import {
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Divider, Title } from './style'
+import { updateDoneColumn } from '@src/context/Metrics/metricsSlice'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
 
 interface realDoneProps {
   options: string[]
@@ -17,22 +19,28 @@ interface realDoneProps {
   label: string
 }
 export const RealDone = ({ options, title, label }: realDoneProps) => {
+  const dispatch = useAppDispatch()
   const [isEmptyRealDoneData, setIsEmptyRealDoneData] = useState<boolean>(false)
-  const [selectedRealDone, setSelectedRealDone] = useState(options)
-  const isAllSelected = options.length > 0 && selectedRealDone.length === options.length
+  const [selectedDoneColumn, setSelectedDoneColumn] = useState(options)
+  const isAllSelected = options.length > 0 && selectedDoneColumn.length === options.length
 
   useEffect(() => {
-    setIsEmptyRealDoneData(selectedRealDone.length === 0)
-  }, [selectedRealDone])
+    setIsEmptyRealDoneData(selectedDoneColumn.length === 0)
+  }, [selectedDoneColumn])
 
   const handleRealDoneChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value
     if (value[value.length - 1] === 'All') {
-      setSelectedRealDone(selectedRealDone.length === options.length ? [] : options)
+      setSelectedDoneColumn(selectedDoneColumn.length === options.length ? [] : options)
       return
     }
-    setSelectedRealDone([...value])
+    setSelectedDoneColumn([...value])
   }
+
+  useEffect(() => {
+    dispatch(updateDoneColumn(selectedDoneColumn))
+  }, [selectedDoneColumn, dispatch])
+
   return (
     <>
       <Divider>
@@ -43,9 +51,9 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
         <Select
           labelId='real-done-data-multiple-checkbox-label'
           multiple
-          value={selectedRealDone}
+          value={selectedDoneColumn}
           onChange={handleRealDoneChange}
-          renderValue={(selectedRealDone: string[]) => selectedRealDone.join(', ')}
+          renderValue={(selectedDoneColumn: string[]) => selectedDoneColumn.join(', ')}
         >
           <MenuItem value='All'>
             <Checkbox checked={isAllSelected} />
@@ -53,7 +61,7 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
           </MenuItem>
           {options.map((data) => (
             <MenuItem key={data} value={data}>
-              <Checkbox checked={selectedRealDone.includes(data)} />
+              <Checkbox checked={selectedDoneColumn.includes(data)} />
               <ListItemText primary={data} id={data} />
             </MenuItem>
           ))}

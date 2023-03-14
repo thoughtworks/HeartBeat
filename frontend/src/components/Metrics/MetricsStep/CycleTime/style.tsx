@@ -12,3 +12,7 @@ export const ItemText = styled('div')({
 export const ItemCheckbox = styled(Checkbox)({
   paddingLeft: '0',
 })
+
+export const ErrorDone = styled('div')({
+  color: '#ff0000',
+})

@@ -6,13 +6,14 @@ import { CYCLETIME_LIST } from '@src/constants'
 interface formSelectProps {
   label: string
   defaultSelected: string[]
+  saveCycleTimeOptions: (label: string, value: string) => void
 }
 
-export const FormSelect = ({ label, defaultSelected }: formSelectProps) => {
+export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: formSelectProps) => {
   const [selectedCycleTime, setSelectedCycleTime] = useState([...defaultSelected])
-
   const handleCycleTimeChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value
+    const value = event.target.value.toString()
+    saveCycleTimeOptions(label, value)
     setSelectedCycleTime([...value])
   }
 

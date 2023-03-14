@@ -1,8 +1,8 @@
-import { Divider, Title } from '../Crews/style'
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, ListItemText, SelectChangeEvent } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateTargetFields } from '@src/context/Metrics/metricsSlice'
+import MetricsSettingTitle from '@src/components/common/MetricsSettingTitle'
 
 interface classificationProps {
   title: string
@@ -34,9 +34,7 @@ export const Classification = ({ options, title, label }: classificationProps) =
 
   return (
     <>
-      <Divider>
-        <Title>{title}</Title>
-      </Divider>
+      <MetricsSettingTitle title={title} />
       <FormControl variant='standard'>
         <InputLabel id='classification-check-box'>{label}</InputLabel>
         <Select

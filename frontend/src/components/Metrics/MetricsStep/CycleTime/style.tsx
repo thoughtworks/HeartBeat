@@ -15,4 +15,5 @@ export const ItemCheckbox = styled(Checkbox)({
 
 export const ErrorDone = styled('div')({
   color: '#ff0000',
+  paddingBottom: '1rem',
 })

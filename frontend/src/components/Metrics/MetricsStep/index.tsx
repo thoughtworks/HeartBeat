@@ -12,13 +12,12 @@ import { Classification } from '@src/components/Metrics/MetricsStep/Classificati
 export const MetricsStep = () => {
   const users = useAppSelector(selectUsers)
   const jiraColumns = useAppSelector(selectJiraColumns)
-  const jiraColumnsList = Object.values(jiraColumns).map((item) => item.value.name)
-
   const targetFields = useAppSelector(selectTargetFields)
+
   return (
     <>
       <Crews options={users} title={'Crews Setting'} label={'Included Crews'} />
-      <CycleTime columns={jiraColumnsList} title={'Cycle Time Setting'} />
+      <CycleTime columns={jiraColumns} title={'Cycle Time Setting'} />
       <Classification options={targetFields} title={'Classification Setting'} label={'Distinguished By'} />
     </>
   )

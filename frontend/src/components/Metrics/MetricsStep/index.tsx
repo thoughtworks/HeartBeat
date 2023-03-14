@@ -12,8 +12,9 @@ import { DONE } from '@src/constants'
 
 export const MetricsStep = () => {
   const users = useAppSelector(selectUsers)
-  const jiraColumns = useAppSelector(selectedJiraColumns)
-  const doneColumn = jiraColumns.find((jiraColumn) => jiraColumn.key === DONE)?.value.statuses ?? []
+  // const jiraColumns = useAppSelector(selectedJiraColumns)
+  // const doneColumn = jiraColumns.find((jiraColumn) => jiraColumn.key === DONE)?.value.statuses ?? []
+  const doneColumn = ['DONE', 'CANCELLED']
   const targetFields = useAppSelector(selectTargetFields)
   return (
     <>

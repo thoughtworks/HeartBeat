@@ -27,10 +27,6 @@ class Metrics {
     cy.contains('Token').siblings().type(token)
   }
 
-  verifyJiraBoard() {
-    cy.contains('Verify').click()
-  }
-
   selectLeadTimeForChangesAndDeploymentFrequency() {
     cy.contains('Required Data').siblings().click()
     cy.get("[type='checkbox']").uncheck()

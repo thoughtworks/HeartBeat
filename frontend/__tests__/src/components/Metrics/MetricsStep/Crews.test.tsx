@@ -1,12 +1,20 @@
 import { render, within } from '@testing-library/react'
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
 import userEvent from '@testing-library/user-event'
+import { setupStore } from '../../../utils/setupStoreUtil'
+import { Provider } from 'react-redux'
 
-const options = ['user one', 'user two']
+const mockOptions = ['user one', 'user two']
 const mockTitle = 'Crews Setting'
 const mockLabel = 'Included Crews'
+
+const store = setupStore()
 const setup = () => {
-  return render(<Crews options={options} title={mockTitle} label={mockLabel} />)
+  return render(
+    <Provider store={store}>
+      <Crews title={mockTitle} label={mockLabel} options={mockOptions} />
+    </Provider>
+  )
 }
 
 describe('Crew', () => {
@@ -48,10 +56,10 @@ describe('Crew', () => {
     await userEvent.click(getByRole('button', { name: mockLabel }))
 
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByRole('option', { name: options[0] }))
+    await userEvent.click(listBox.getByRole('option', { name: mockOptions[0] }))
 
-    expect(listBox.getByRole('option', { name: options[0] })).toHaveProperty('selected', false)
-    expect(listBox.getByRole('option', { name: options[1] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockOptions[0] })).toHaveProperty('selected', false)
+    expect(listBox.getByRole('option', { name: mockOptions[1] })).toHaveProperty('selected', true)
   })
 
   it('should clear crews data when check all option', async () => {
@@ -62,12 +70,12 @@ describe('Crew', () => {
     const allOption = listBox.getByRole('option', { name: 'All' })
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: options[0] })).toHaveProperty('selected', false)
-    expect(listBox.getByRole('option', { name: options[1] })).toHaveProperty('selected', false)
+    expect(listBox.getByRole('option', { name: mockOptions[0] })).toHaveProperty('selected', false)
+    expect(listBox.getByRole('option', { name: mockOptions[1] })).toHaveProperty('selected', false)
 
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: options[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: options[1] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockOptions[0] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockOptions[1] })).toHaveProperty('selected', true)
   })
 })

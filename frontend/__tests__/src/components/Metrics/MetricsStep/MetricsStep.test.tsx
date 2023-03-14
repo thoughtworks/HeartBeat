@@ -5,7 +5,12 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 
 import { updateMetrics } from '@src/context/config/configSlice'
 
-const store = setupStore()
+let store = setupStore()
+
+beforeEach(() => {
+  store = setupStore()
+})
+
 const setup = () =>
   render(
     <Provider store={store}>
@@ -14,10 +19,10 @@ const setup = () =>
   )
 
 describe('MetricsStep', () => {
-  it('should show default crews setting', () => {
+  it('should render Crews and CycleTime components', () => {
     const { getByText, queryByText } = setup()
-
     expect(getByText('Crews Setting')).toBeInTheDocument()
+    expect(getByText('Cycle Time Setting')).toBeInTheDocument()
     expect(queryByText('Classification Setting')).not.toBeInTheDocument()
   })
 

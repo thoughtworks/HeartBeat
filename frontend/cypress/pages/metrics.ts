@@ -6,12 +6,8 @@ class Metrics {
     cy.contains('Project Name').siblings().type(projectName)
   }
 
-  selectDateRange(from: string, to: string) {
-    cy.contains('From').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(from).click()
-
-    cy.contains('To').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(to).click()
+  selectDateRange() {
+    cy.contains('From').parent().type('02052023')
   }
 
   selectVelocityAndCycleTime() {
@@ -29,6 +25,14 @@ class Metrics {
     cy.contains('Project Key').siblings().type(projectKey)
     cy.contains('Site').siblings().type(site)
     cy.contains('Token').siblings().type(token)
+  }
+
+  verifyJiraBoard() {
+    cy.intercept(Cypress.env('url') + '/api/v1/boards/*', (req) => {
+      req.url = req.url.replace('/v1/', '/v2/')
+    }).as('verifyJira')
+
+    cy.contains('Verify').click()
   }
 
   selectLeadTimeForChangesAndDeploymentFrequency() {
@@ -52,6 +56,12 @@ class Metrics {
 
   goMetricsStep() {
     cy.contains('Next').click()
+  }
+
+  checkClassification() {
+    cy.contains('Distinguished By').siblings().click()
+
+    cy.contains('All').click()
   }
 }
 

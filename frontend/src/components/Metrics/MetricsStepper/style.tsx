@@ -16,7 +16,7 @@ export const MetricsStepperContent = styled('div')({
   textAlign: 'left',
 })
 
-const basicButtonStyle = {
+export const basicButtonStyle = {
   boxShadow: theme.main.boxShadow,
   height: '2rem',
   padding: '0 1rem',

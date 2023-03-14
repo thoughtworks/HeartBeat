@@ -8,13 +8,12 @@ const options = ['DONE', 'CANCELLED']
 const mockTitle = 'RealDone'
 const mockLabel = 'Consider as Done'
 const store = setupStore()
-const setup = () => {
-  return render(
+const setup = () =>
+  render(
     <Provider store={store}>
       <RealDone options={options} label={mockLabel} title={mockTitle} />
     </Provider>
   )
-}
 
 describe('RealDone', () => {
   it('should show RealDone when render RealDone component', () => {

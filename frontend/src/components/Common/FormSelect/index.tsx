@@ -1,6 +1,6 @@
 import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
-import { FormControlSelection } from '@src/components/common/FormSelect/style'
+import { FormControlSelection } from '@src/components/Common/FormSelect/style'
 import { CYCLETIME_LIST } from '@src/constants'
 
 interface formSelectProps {

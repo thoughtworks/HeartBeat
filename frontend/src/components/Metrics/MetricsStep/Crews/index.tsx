@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
-import MetricsSettingTitle from '@src/components/common/MetricsSettingTitle'
+import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 
 interface crewsProps {
   options: string[]

@@ -1,4 +1,4 @@
-import { FormSelect } from '@src/components/common/FormSelect'
+import { FormSelect } from '@src/components/Common/FormSelect'
 import React from 'react'
 import { METRICS_CONSTANTS } from '@src/constants'
 

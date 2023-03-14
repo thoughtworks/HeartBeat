@@ -2,7 +2,7 @@ import { Checkbox, FormControl, InputLabel, MenuItem, Select, ListItemText, Sele
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateTargetFields } from '@src/context/Metrics/metricsSlice'
-import MetricsSettingTitle from '@src/components/common/MetricsSettingTitle'
+import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 
 interface classificationProps {
   title: string

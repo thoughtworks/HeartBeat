@@ -17,7 +17,7 @@ import { ErrorNotification } from '@src/components/ErrorNotification'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
 import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
-import { ResetButton, VerifyButton } from '@src/components/common/Buttons'
+import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 
 export const Board = () => {
   const dispatch = useAppDispatch()

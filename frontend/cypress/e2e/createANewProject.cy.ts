@@ -32,10 +32,13 @@ describe('Create a new project', () => {
     cy.get('button:contains("Verify")').should('be.enabled')
 
     cy.get('button:contains("Verify")').should('be.enabled')
-    metricsPage.fillSourceControlFieldsInfo('ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b')
+    metricsPage.fillSourceControlFieldsInfo('ghp_TSCfmn4H187rDN7JGgp5RAe7mM6YPp0xz987')
 
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
+
+    metricsPage.checkClassification()
+    cy.contains('Classification Setting').should('exist')
 
     metricsPage.selectCrewSetting()
   })

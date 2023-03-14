@@ -30,9 +30,10 @@ describe('Create a new project', () => {
     metricsPage.fillSourceControlFieldsInfo('ghp_TSCfmn4H187rDN7JGgp5RAe7mM6YPp0xz987')
 
     metricsPage.goMetricsStep()
+    cy.contains('Crews Setting').should('exist')
 
     metricsPage.checkRealDoneOption()
-    cy.contains('Crews Setting').should('exist')
+    cy.contains('Real Done').should('exist')
 
     metricsPage.checkClassification()
     cy.contains('Classification Setting').should('exist')

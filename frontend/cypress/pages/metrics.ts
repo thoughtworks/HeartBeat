@@ -62,9 +62,7 @@ class Metrics {
     cy.contains('Consider as Done').siblings().click()
     cy.get("[type='checkbox']").uncheck()
 
-    cy.get('#DONE').click()
-    cy.get('#CANCELLED').click()
-
+    cy.contains('ALL').click()
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 

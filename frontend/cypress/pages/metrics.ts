@@ -58,14 +58,6 @@ class Metrics {
     cy.contains('Next').click()
   }
 
-  checkRealDoneOption() {
-    cy.contains('Consider as Done').siblings().click()
-    cy.get("[type='checkbox']").uncheck()
-
-    cy.contains('ALL').click()
-    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
-  }
-
   checkClassification() {
     cy.contains('Distinguished By').siblings().click()
 

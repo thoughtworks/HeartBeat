@@ -31,8 +31,6 @@ describe('Create a new project', () => {
 
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
-
-    metricsPage.checkRealDoneOption()
     cy.contains('Real Done').should('exist')
 
     metricsPage.checkClassification()

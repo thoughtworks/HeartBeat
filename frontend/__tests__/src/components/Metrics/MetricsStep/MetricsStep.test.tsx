@@ -6,13 +6,12 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { updateMetrics } from '@src/context/config/configSlice'
 
 const store = setupStore()
-const setup = () => {
-  return render(
+const setup = () =>
+  render(
     <Provider store={store}>
       <MetricsStep />
     </Provider>
   )
-}
 
 describe('MetricsStep', () => {
   it('should show default crews setting', () => {

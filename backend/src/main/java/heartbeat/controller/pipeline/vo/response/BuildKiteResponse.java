@@ -1,4 +1,4 @@
-package heartbeat.controller.pipeline.vo;
+package heartbeat.controller.pipeline.vo.response;
 
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.PipelineDTO;

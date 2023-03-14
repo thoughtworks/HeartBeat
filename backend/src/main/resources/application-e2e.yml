@@ -1,0 +1,10 @@
+server:
+  port: 4324
+  servlet:
+    context-path: /api/v1
+logging:
+  level:
+    root: INFO
+
+buildKite:
+  url: 54.223.108.141:4323

@@ -1,6 +1,6 @@
 package heartbeat.controller.pipeline;
 
-import heartbeat.controller.pipeline.vo.BuildKiteResponse;
+import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.service.pipeline.buildKite.BuildKiteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

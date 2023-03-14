@@ -8,7 +8,6 @@ export default defineConfig({
     port: 4321,
     proxy: {
       '/api/v1': 'http://localhost:4322',
-      '/api/v2': 'http://localhost:4324',
     },
   },
   plugins: [react()],

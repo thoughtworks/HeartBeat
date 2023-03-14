@@ -4,9 +4,11 @@ import configReducer, {
   updateDateRange,
   updateProjectName,
   updateMetrics,
+  updatePipelineToolFields,
+  updateSourceControlFields,
 } from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
-import { BOARD_TYPES, PIPELINE_TOOL_TYPES } from '@src/constants'
+import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 const initState = {
   projectName: '',
@@ -26,6 +28,10 @@ const initState = {
   },
   pipelineToolFields: {
     pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    token: '',
+  },
+  sourceControlFields: {
+    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
 }
@@ -67,6 +73,19 @@ describe('config reducer', () => {
 
   it('should update board fields when change board fields input', () => {
     const config = configReducer(initState, updateBoard({ boardId: '1' }))
+
     expect(config.board.boardId).toEqual('1')
+  })
+
+  it('should update pipelineTool fields when change pipelineTool fields input', () => {
+    const config = configReducer(initState, updatePipelineToolFields({ token: 'abcd' }))
+
+    expect(config.pipelineToolFields.token).toEqual('abcd')
+  })
+
+  it('should update sourceControl fields when change sourceControl fields input', () => {
+    const config = configReducer(initState, updateSourceControlFields({ token: 'token' }))
+
+    expect(config.sourceControlFields.token).toEqual('token')
   })
 })

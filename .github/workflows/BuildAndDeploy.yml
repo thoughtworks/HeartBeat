@@ -112,7 +112,7 @@ jobs:
         run: |
           npm run license-compliance
 
-  build-and-push-image:
+  build-backend:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - frontend-check
@@ -148,6 +148,33 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.backend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
+
+  build-frontend:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - frontend-check
+      - backend-check
+      - security-check
+      - frontend-license-check
+      - backend-license-check
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Build, tag, and push for Frontend
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -159,10 +186,49 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
 
+  build-mock-server:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - frontend-check
+      - backend-check
+      - security-check
+      - frontend-license-check
+      - backend-license-check
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push for MockServer
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: mock_server
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.stub
+          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.stub
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
+
   deploy:
     runs-on: ubuntu-latest
     needs:
-      - build-and-push-image
+      - build-backend
+      - build-frontend
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -196,10 +262,36 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             cp "./infra/docker-compose.yml" ./
             # docker-compose down
-            docker rmi -f $(docker images -f label=app=Heartbeat -q)
+            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
             docker-compose up -d frontend
+
+  deploy-stub:
+    runs-on: ubuntu-latest
+    needs:
+      - build-mock-server
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Deploy
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+        uses: appleboy/ssh-action@master
+        env:
+          REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+          IMAGE_TAG: ${{ github.run_number }}
+        with:
+          host: ${{ secrets.AWS_EC2_IP_MOCKSERVER }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          script: |
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+            docker rm -f mockserver
+            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
+            docker run --name mockserver -d -p 4323:4323 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
   e2e:
     runs-on: ubuntu-latest
     defaults:
@@ -207,6 +299,7 @@ jobs:
         working-directory: ./frontend
     needs:
       - deploy
+      - deploy-stub
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

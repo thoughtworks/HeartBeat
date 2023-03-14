@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { BOARD_TYPES, PIPELINE_TOOL_TYPES, REGULAR_CALENDAR } from '@src/constants'
+import { BOARD_TYPES, REGULAR_CALENDAR, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 export interface configState {
   projectName: string
@@ -12,6 +12,7 @@ export interface configState {
   metrics: string[]
   board: { type: string; boardId: string; email: string; projectKey: string; site: string; token: string }
   pipelineToolFields: { pipelineTool: string; token: string }
+  sourceControlFields: { sourceControl: string; token: string }
 }
 
 const initialState: configState = {
@@ -32,6 +33,10 @@ const initialState: configState = {
   },
   pipelineToolFields: {
     pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    token: '',
+  },
+  sourceControlFields: {
+    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
 }
@@ -59,6 +64,9 @@ export const configSlice = createSlice({
     updatePipelineToolFields: (state, action) => {
       state.pipelineToolFields = action.payload
     },
+    updateSourceControlFields: (state, action) => {
+      state.sourceControlFields = action.payload
+    },
   },
 })
 
@@ -69,6 +77,7 @@ export const {
   updateMetrics,
   updateBoard,
   updatePipelineToolFields,
+  updateSourceControlFields,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.projectName
@@ -77,5 +86,6 @@ export const selectDateRange = (state: RootState) => state.config.dateRange
 export const selectMetrics = (state: RootState) => state.config.metrics
 export const selectBoard = (state: RootState) => state.config.board
 export const selectPipelineToolFields = (state: RootState) => state.config.pipelineToolFields
+export const selectSourceControlFields = (state: RootState) => state.config.sourceControlFields
 
 export default configSlice.reducer

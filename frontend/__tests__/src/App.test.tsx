@@ -1,26 +1,24 @@
-import { render } from '@testing-library/react'
+import { render, RenderResult } from '@testing-library/react'
 import App from '@src/App'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
 
 describe('render app', () => {
-  const setup = () => {
-    return render(
+  const setup = (): RenderResult =>
+    render(
       <Provider store={store}>
         <App />
       </Provider>
     )
-  }
   it('should show hello World when render app', () => {
-    const { getByText, rerender } = setup()
+    const { rerender, container } = setup()
 
     rerender(
       <Provider store={store}>
         <App />
       </Provider>
     )
-    const loadText = getByText('Loading...')
 
-    expect(loadText).toBeInTheDocument()
+    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
   })
 })

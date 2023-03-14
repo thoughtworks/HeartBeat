@@ -17,7 +17,8 @@ export enum DATE_RANGE {
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
-  PIPELINE_TOOL = 'PipelineTool',
+  PIPELINE_TOOL = 'Pipeline Tool',
+  SOURCE_CONTROL = 'Source Control',
 }
 
 export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
@@ -43,9 +44,32 @@ export const PIPELINE_TOOL_TYPES = {
   GO_CD: 'GoCD',
 }
 
-export const emailRegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+export const SOURCE_CONTROL_TYPES = {
+  GITHUB: 'Github',
+}
+
+export const EMAIL_REG_EXP = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+export const BOARD_TOKEN_REG_EXP = /^[a-zA-Z0-9\-=_]{1,500}$/
+
+export const BUILDKITE_TOKEN_REGEXP = /^[A-Za-z0-9]{40}$/
+
+export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 
 export const EMAIL = 'Email'
+
+export const BOARD_TOKEN = 'Token'
+
+export const INVALID_TOKEN_MESSAGE = 'Invalid token'
+
+export const ERROR_MESSAGE_TIME_DURATION = 2000
+
+export const TOKEN_HELPER_TEXT = {
+  emptyTokenText: 'Token is required',
+  InvalidTokenText: 'Invalid token',
+}
+
+export const SELECTED_VALUE_SEPARATOR = ', '
 
 export const METRICS_CONSTANTS = {
   cycleTimeEmptyStr: '----',

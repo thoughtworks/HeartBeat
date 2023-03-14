@@ -6,12 +6,8 @@ class Metrics {
     cy.contains('Project Name').siblings().type(projectName)
   }
 
-  selectDateRange(from: string, to: string) {
-    cy.contains('From').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(from).click()
-
-    cy.contains('To').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(to).click()
+  selectDateRange() {
+    cy.contains('From').parent().type('02052023')
   }
 
   selectVelocityAndCycleTime() {
@@ -24,15 +20,19 @@ class Metrics {
   }
 
   fillBoardFieldsInfo(boardId: string, email: string, projectKey: string, site: string, token: string) {
-    cy.get('button:contains("Verify")').should('be.disabled')
-
-    cy.contains('BoardId').siblings().type(boardId)
+    cy.contains('Board Id').siblings().type(boardId)
     cy.contains('Email').siblings().type(email)
     cy.contains('Project Key').siblings().type(projectKey)
     cy.contains('Site').siblings().type(site)
     cy.contains('Token').siblings().type(token)
+  }
 
-    cy.get('button:contains("Verify")').should('be.enabled')
+  verifyJiraBoard() {
+    cy.intercept(Cypress.env('url') + '/api/v1/boards/*', (req) => {
+      req.url = req.url.replace('/v1/', '/v2/')
+    }).as('verifyJira')
+
+    cy.contains('Verify').click()
   }
 
   selectLeadTimeForChangesAndDeploymentFrequency() {
@@ -46,23 +46,26 @@ class Metrics {
   }
 
   fillPipelineToolFieldsInfo(token: string) {
-    cy.get('button:contains("Verify")').should('be.disabled')
-
     cy.contains('Token').siblings().type(token)
-    cy.get('button:contains("Verify")').should('be.enabled')
-    cy.contains('Verify').click()
+  }
 
-    cy.on('window:alert', (str) => {
-      expect(str).to.equal('BuildKite verify failed')
+  fillSourceControlFieldsInfo(token: string) {
+    cy.intercept(Cypress.env('url') + '/api/v1/source-control*', (req) => {
+      req.url = req.url.replace('/v1/', '/v2/')
     })
+
+    cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
+    cy.get('[data-test-id="sourceControlVerifyButton"]').click()
   }
 
   goMetricsStep() {
     cy.contains('Next').click()
-    cy.contains('Crews Setting').should('exist')
-    cy.contains('Cycle Time Setting').should('exist')
-    cy.contains('Consider the "Flag" as "Block"').should('exist')
-    cy.get("[type='checkbox']").should('be.checked')
+  }
+
+  checkClassification() {
+    cy.contains('Distinguished By').siblings().click()
+
+    cy.contains('All').click()
   }
 }
 

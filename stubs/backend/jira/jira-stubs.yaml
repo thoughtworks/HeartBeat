@@ -18,7 +18,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./jira/jsons/jira.status.<% url.1 %>.json
+    file: ./backend/jira/jsons/jira.status.<% url.1 %>.json
 
 # All Done issue
 - request:
@@ -32,7 +32,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./jira/jsons/jira.board.1963.issue.alldone.json
+    file: ./backend/jira/jsons/jira.board.1963.issue.alldone.json
 
 # target Fields
 - request:
@@ -46,7 +46,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./jira/jsons/jira.issue.createmeta.targetfields.json
+    file: ./backend/jira/jsons/jira.issue.createmeta.targetfields.json
 
 # History
 - request:
@@ -57,5 +57,5 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./jira/jsons/jira.issue.<% url.1 %>.activityfeed.json
+    file: ./backend/jira/jsons/jira.issue.<% url.1 %>.activityfeed.json
 

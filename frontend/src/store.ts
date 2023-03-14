@@ -5,6 +5,9 @@ import boardReducer from './context/board/boardSlice'
 import jiraVerifyResponseReducer from './context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import pipelineReducer from './context/pipelineTool/pipelineToolSlice'
 import pipelineToolResponseReducer from './context/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
+import sourceControlReducer from './context/sourceControl/sourceControlSlice'
+import sourceControlVerifyResponseReducer from './context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
+import saveMetricsSettingReducer from './context/Metrics/metricsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,8 +15,11 @@ export const store = configureStore({
     config: configReducer,
     board: boardReducer,
     pipelineTool: pipelineReducer,
+    sourceControl: sourceControlReducer,
     jiraVerifyResponse: jiraVerifyResponseReducer,
     pipelineToolVerifyResponse: pipelineToolResponseReducer,
+    sourceControlVerifyResponse: sourceControlVerifyResponseReducer,
+    saveMetricsSetting: saveMetricsSettingReducer,
   },
 })
 

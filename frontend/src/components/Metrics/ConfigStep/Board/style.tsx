@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import { Backdrop, Button, FormControl, TextField } from '@mui/material'
+import { Backdrop, FormControl, TextField } from '@mui/material'
 import { theme } from '@src/theme'
 
 export const BoardSection = styled('div')({
@@ -45,16 +45,4 @@ export const BoardButtonGroup = styled('div')({
   justifyContent: 'flex-end',
   padding: '1rem',
   gap: '1rem',
-})
-
-export const VerifyButton = styled(Button)({
-  width: '3rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
-})
-export const ResetButton = styled(Button)({
-  width: '3rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
-  color: '#f44336',
 })

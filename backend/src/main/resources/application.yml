@@ -1,3 +1,7 @@
+spring:
+  profiles:
+    active: default
+
 server:
   port: 4322
   servlet:
@@ -5,3 +9,9 @@ server:
 logging:
   level:
     root: INFO
+
+githubFeignClient:
+  url: https://api.github.com
+
+jira:
+  url: https://demo.atlassian.net

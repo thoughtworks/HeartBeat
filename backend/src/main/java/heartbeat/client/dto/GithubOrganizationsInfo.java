@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GithubOrgsInfo {
+public class GithubOrganizationsInfo {
 
 	private String login;
 

@@ -3,6 +3,7 @@ import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import {
   CHINA_CALENDAR,
   CONFIG_TITLE,
+  CYCLE_TIME,
   PROJECT_NAME_LABEL,
   REGULAR_CALENDAR,
   REQUIRED_DATA,
@@ -106,7 +107,7 @@ describe('ConfigStep', () => {
     fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }))
     const requireDateSelection = within(getByRole('listbox'))
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
-    fireEvent.click(requireDateSelection.getByRole('option', { name: 'Cycle time' }))
+    fireEvent.click(requireDateSelection.getByRole('option', { name: CYCLE_TIME }))
 
     expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
   })

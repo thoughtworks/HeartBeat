@@ -14,9 +14,10 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
+import { HttpStatusCode } from 'axios'
 
 export const fillBoardFieldsInformation = () => {
-  const fields = ['BoardId', 'Email', 'Project Key', 'Site', 'Token']
+  const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']
   const fieldInputs = fields.map((label) => screen.getByTestId(label).querySelector('input') as HTMLInputElement)
   fieldInputs.map((input, index) => {
@@ -93,20 +94,26 @@ describe('Board', () => {
     })
   })
 
-  it('should show error message when input a wrong type email ', async () => {
+  it('should show error message when input a wrong type or empty email ', async () => {
     const { getByTestId, getByText } = setup()
-    const EMAil_ERROR_MESSAGE = 'Email is required'
+    const EMAil_INVALID_ERROR_MESSAGE = 'Email is invalid'
     const emailInput = getByTestId('Email').querySelector('input') as HTMLInputElement
 
     fireEvent.change(emailInput, { target: { value: 'wrong type email' } })
-    expect(getByText(EMAil_ERROR_MESSAGE)).toBeVisible()
-    expect(getByText(EMAil_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+
+    expect(getByText(EMAil_INVALID_ERROR_MESSAGE)).toBeVisible()
+    expect(getByText(EMAil_INVALID_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+
+    fireEvent.change(emailInput, { target: { value: '' } })
+
+    const EMAIL_REQUIRE_ERROR_MESSAGE = 'Email is required'
+    expect(getByText(EMAIL_REQUIRE_ERROR_MESSAGE)).toBeVisible()
   })
 
   it('should clear other fields information when change board field selection', () => {
     const { getByRole, getByText } = setup()
     const boardIdInput = getByRole('textbox', {
-      name: 'BoardId',
+      name: 'Board Id',
     }) as HTMLInputElement
     const emailInput = getByRole('textbox', {
       name: 'Email',
@@ -177,20 +184,16 @@ describe('Board', () => {
     })
   })
 
-  it('should check loading animation when click verify button', async () => {
-    const { getByRole, getByTestId } = setup()
+  it('should check loading animation when click verify button', () => {
+    const { getByRole, container } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
-    expect(getByTestId('circularProgress')).toBeVisible()
-
-    setTimeout(() => {
-      expect(getByTestId('circularProgress')).not.toBeVisible()
-    }, 1000)
+    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
   })
 
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(204))))
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
@@ -204,15 +207,15 @@ describe('Board', () => {
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
   })
 
-  it('should check error notification show and disappear when board verify response status is 404', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(404))))
+  it('should check error notification show and disappear when board verify response status is 401', async () => {
+    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE[404])).toBeInTheDocument()
+      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)).toBeInTheDocument()
     })
   })
 })

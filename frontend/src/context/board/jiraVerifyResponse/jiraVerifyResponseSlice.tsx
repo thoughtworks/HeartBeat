@@ -3,7 +3,7 @@ import { RootState } from '@src/store'
 
 export interface jiraVerifyResponseState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
-  targetFields: []
+  targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
 }
 
@@ -29,6 +29,8 @@ export const jiraVerifyResponseSlice = createSlice({
 export const { updateJiraVerifyResponse } = jiraVerifyResponseSlice.actions
 
 export const selectUsers = (state: RootState) => state.jiraVerifyResponse.users
+
+export const selectTargetFields = (state: RootState) => state.jiraVerifyResponse.targetFields
 
 export const selectJiraColumns = (state: RootState) => state.jiraVerifyResponse.jiraColumns
 

@@ -11,6 +11,8 @@ import {
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import { updateUsers } from '@src/context/Metrics/metricsSlice'
 
 interface crewsProps {
   options: string[]
@@ -19,6 +21,7 @@ interface crewsProps {
 }
 
 export const Crews = ({ options, title, label }: crewsProps) => {
+  const dispatch = useAppDispatch()
   const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false)
   const [selectedCrews, setSelectedCrews] = useState(options)
   const isAllSelected = options.length > 0 && selectedCrews.length === options.length
@@ -35,6 +38,11 @@ export const Crews = ({ options, title, label }: crewsProps) => {
     }
     setSelectedCrews([...value])
   }
+
+  useEffect(() => {
+    dispatch(updateUsers(selectedCrews))
+  }, [selectedCrews, dispatch])
+
   return (
     <>
       <MetricsSettingTitle title={title} />

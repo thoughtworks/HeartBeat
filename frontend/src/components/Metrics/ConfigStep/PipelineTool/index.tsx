@@ -15,7 +15,7 @@ import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } f
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
-import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
+import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()

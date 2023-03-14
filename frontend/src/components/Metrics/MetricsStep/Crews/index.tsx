@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
-import { Divider, Title } from './style'
+import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateUsers } from '@src/context/Metrics/metricsSlice'
 
@@ -19,6 +19,7 @@ interface crewsProps {
   title: string
   label: string
 }
+
 export const Crews = ({ options, title, label }: crewsProps) => {
   const dispatch = useAppDispatch()
   const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false)
@@ -44,9 +45,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
 
   return (
     <>
-      <Divider>
-        <Title>{title}</Title>
-      </Divider>
+      <MetricsSettingTitle title={title} />
       <FormControl variant='standard' required error={isEmptyCrewData}>
         <InputLabel id='crew-data-multiple-checkbox-label'>{label}</InputLabel>
         <Select

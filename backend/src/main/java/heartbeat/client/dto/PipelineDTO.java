@@ -38,15 +38,15 @@ public class PipelineDTO {
 
 	private String default_branch;
 
-	private boolean skip_queued_branch_builds;
+	private String skip_queued_branch_builds;
 
-	private boolean skip_queued_branch_builds_filter;
+	private String skip_queued_branch_builds_filter;
 
-	private boolean cancel_running_branch_builds;
+	private String cancel_running_branch_builds;
 
-	private boolean cancel_running_branch_builds_filter;
+	private String cancel_running_branch_builds_filter;
 
-	private boolean allow_rebuilds;
+	private String allow_rebuilds;
 
 	private ProviderDTO provider;
 
@@ -60,7 +60,7 @@ public class PipelineDTO {
 
 	private Date archived_at;
 
-	private List<String> env;
+	private EnvDTO env;
 
 	private int scheduled_builds_count;
 

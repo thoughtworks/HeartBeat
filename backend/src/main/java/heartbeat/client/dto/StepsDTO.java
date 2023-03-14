@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -25,7 +23,7 @@ public class StepsDTO {
 
 	private String branch_configuration;
 
-	private List<String> env;
+	private EnvDTO env;
 
 	private Integer timeout_in_minutes;
 

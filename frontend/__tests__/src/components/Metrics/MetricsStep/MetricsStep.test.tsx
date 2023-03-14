@@ -21,9 +21,17 @@ const setup = () =>
 describe('MetricsStep', () => {
   it('should render Crews and CycleTime components', () => {
     const { getByText, queryByText } = setup()
+
     expect(getByText('Crews Setting')).toBeInTheDocument()
-    expect(getByText('Cycle Time Setting')).toBeInTheDocument()
+    expect(queryByText('Cycle Time Setting')).not.toBeInTheDocument()
     expect(queryByText('Classification Setting')).not.toBeInTheDocument()
+  })
+
+  it('should show Classification Setting when select classification in config page', async () => {
+    await store.dispatch(updateMetrics(['Cycle time']))
+    const { getByText } = setup()
+
+    expect(getByText('Cycle Time Setting')).toBeInTheDocument()
   })
 
   it('should show Classification Setting when select classification in config page', async () => {

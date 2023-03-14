@@ -110,11 +110,11 @@ describe('PipelineTool', () => {
   it('should show error message and error style when token is empty', async () => {
     const { getByText } = setup()
     const TOKEN_ERROR_MESSAGE = 'Token is required'
-
     await fillPipelineToolFieldsInformation()
-
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
-    fireEvent.change(tokenInput, { target: { value: '' } })
+
+    await userEvent.type(tokenInput, 'abcd')
+    await userEvent.clear(tokenInput)
 
     expect(getByText(TOKEN_ERROR_MESSAGE)).toBeVisible()
     expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)

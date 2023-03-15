@@ -29,14 +29,15 @@ export const PipelineTool = () => {
       key: 'PipelineTool',
       value: pipelineToolFields.pipelineTool,
       isValid: true,
+      isRequired: true,
     },
     {
       key: 'Token',
       value: pipelineToolFields.token,
       isValid: true,
+      isRequired: true,
     },
   ])
-  const [pipelineToolHelperText, setPipelineToolHelperText] = useState('')
 
   const initPipeLineFields = () => {
     const newFields = fields.map((field, index) => {
@@ -48,36 +49,45 @@ export const PipelineTool = () => {
   }
 
   const checkFieldValid = (value: string): boolean => {
-    const helperText = !value
-      ? TOKEN_HELPER_TEXT.RequiredTokenText
-      : !BUILDKITE_TOKEN_REGEXP.test(value)
-      ? TOKEN_HELPER_TEXT.InvalidTokenText
-      : ''
-    setPipelineToolHelperText(helperText)
-    return !helperText
+    return BUILDKITE_TOKEN_REGEXP.test(value)
   }
-
   const onFormUpdate = (index: number, value: string) => {
+    let newFieldsValue
     if (index === ZERO) {
-      const newFieldsValue = fields.map((field, index) => {
-        if (index !== ZERO) field.value = ''
+      newFieldsValue = fields.map((field, index) => {
+        field.value = value
+        if (index !== ZERO) {
+          field.value = ''
+          field.isRequired = true
+          field.isValid = true
+        }
         return field
       })
-      setFields(newFieldsValue)
-      dispatch(updatePipelineToolVerifyState(false))
-      return
+    } else {
+      newFieldsValue = fields.map((field, fieldIndex) => {
+        if (fieldIndex === 1) {
+          field.value = value
+          field.isValid = checkFieldValid(value)
+          field.isRequired = value !== ''
+        }
+        return field
+      })
     }
-    const newFieldsValue = fields.map((field, fieldIndex) => {
-      if (fieldIndex === index) {
-        field.value = value
-        field.isValid = checkFieldValid(value)
-      }
-      return field
-    })
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
+    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.isRequired && field.value !== ''))
     setFields(newFieldsValue)
+    dispatch(updatePipelineToolVerifyState(false))
   }
 
+  const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
+    const { isRequired, isValid } = field
+    if (!isRequired) {
+      return TOKEN_HELPER_TEXT.RequiredTokenText
+    }
+    if (!isValid) {
+      return TOKEN_HELPER_TEXT.InvalidTokenText
+    }
+    return ''
+  }
   const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
@@ -137,7 +147,7 @@ export const PipelineTool = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}
-          helperText={pipelineToolHelperText}
+          helperText={updateFieldHelpText(fields[1])}
         />
         <PipelineToolButtonGroup>
           {isVerified && !isLoading ? (

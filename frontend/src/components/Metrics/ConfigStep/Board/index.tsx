@@ -75,37 +75,47 @@ export const Board = () => {
     dispatch(updateBoardVerifyState(false))
   }
 
-  const onFormUpdate = (index: number, value: string) => {
-    if (index === ZERO) {
-      const newFieldsValue = fields.map((field, index) => {
-        if (index !== ZERO) {
-          field.value = ''
-          field.isValid = true
-          field.isRequired = true
-        }
-        return field
-      })
-      setFields(newFieldsValue)
-      dispatch(updateBoardVerifyState(false))
-      return
-    }
-    const newFieldsValue = fields.map((field, fieldIndex) => {
+  const updateFields = (
+    fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[],
+    index: number,
+    value: string
+  ) => {
+    return fields.map((field, fieldIndex) => {
       if (fieldIndex !== index) {
         return field
       }
-      field.value = value
-      field.isRequired = value !== ''
-      if (fields[index].key === EMAIL) {
-        field.isValid = EMAIL_REG_EXP.test(value)
+      const newValue = value.trim()
+      const isValueEmpty = newValue === ''
+      const isValueValid =
+        field.key === EMAIL
+          ? EMAIL_REG_EXP.test(newValue)
+          : field.key === BOARD_TOKEN
+          ? BOARD_TOKEN_REG_EXP.test(newValue)
+          : true
+      return {
+        ...field,
+        value: newValue,
+        isRequired: !isValueEmpty,
+        isValid: isValueValid,
       }
-      if (fields[index].key === BOARD_TOKEN) {
-        field.isValid = BOARD_TOKEN_REG_EXP.test(value)
-      }
-      return field
     })
+  }
 
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isRequired && field.isValid && field.value != ''))
+  const onFormUpdate = (index: number, value: string) => {
+    const newFieldsValue =
+      index === ZERO
+        ? updateFields(fields, index, value).map((field, index) => {
+            return {
+              ...field,
+              value: index === 0 ? value : '',
+              isValid: true,
+              isRequired: true,
+            }
+          })
+        : updateFields(fields, index, value)
+    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isRequired && field.isValid && field.value !== ''))
     setFields(newFieldsValue)
+    dispatch(updateBoardVerifyState(false))
   }
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {

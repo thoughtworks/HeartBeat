@@ -16,7 +16,10 @@ export const CycleTime = ({ columns, title }: cycletimeProps) => {
   const saveCycleTimeOptions = (name: string, value: string) =>
     setCycleTimeOptions(
       cycleTimeOptions.map((item) => {
-        item.name === name && (item.value = value)
+        if (item.name === name) {
+          item = JSON.parse(JSON.stringify(item))
+          item.value = value
+        }
         return item
       })
     )

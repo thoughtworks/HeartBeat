@@ -3,7 +3,7 @@ import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/Dep
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
 import userEvent from '@testing-library/user-event'
-import { deleteADeploymentFrequencySetting } from '@src/context/pipelineMetricsSettings/pipelineMetricsSettingsSlice'
+import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 
 jest.mock('@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection', () => ({
   SingleSelection: () => <div>mock SingleSelection</div>,
@@ -13,7 +13,7 @@ jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
 }))
 
-jest.mock('@src/context/pipelineMetricsSettings/pipelineMetricsSettingsSlice', () => ({
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
   deleteADeploymentFrequencySetting: jest.fn(),
 }))
 

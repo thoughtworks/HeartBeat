@@ -2,7 +2,7 @@ import { RemoveButton } from '@src/components/Metrics/MetricsStep/DeploymentFreq
 import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
-import { deleteADeploymentFrequencySetting } from '@src/context/pipelineMetricsSettings/pipelineMetricsSettingsSlice'
+import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 
 interface pipelineMetricSelectionProps {
   deploymentFrequencySetting: {

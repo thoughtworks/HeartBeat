@@ -114,3 +114,7 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   startTime: '1613664000000',
   endTime: '1614873600000',
 }
+
+export const CREWS_SETTING = 'Crews Setting'
+export const CYCLE_TIME_SETTING = 'Cycle Time Setting'
+export const CLASSIFICATION_SETTING = 'Classification Setting'

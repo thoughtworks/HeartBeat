@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
+import camelCase from 'lodash.camelCase'
 
 export interface pipelineMetricsSettingsState {
   deploymentFrequencySettings: { organization: string; pipelineName: string; steps: string }[]
@@ -19,9 +20,20 @@ export const pipelineMetricsSettingsSlice = createSlice({
         { organization: '', pipelineName: '', steps: '' },
       ]
     },
+
     updateDeploymentFrequencySettings: (state, action) => {
-      state.deploymentFrequencySettings = action.payload
+      const { updateIndex, label, value } = action.payload
+
+      state.deploymentFrequencySettings = state.deploymentFrequencySettings.map((deploymentFrequencySetting, index) => {
+        return index === updateIndex
+          ? {
+              ...deploymentFrequencySetting,
+              [camelCase(label)]: value,
+            }
+          : deploymentFrequencySetting
+      })
     },
+
     deleteADeploymentFrequencySetting: (state, action) => {
       const deleteIndex = action.payload
       state.deploymentFrequencySettings = [

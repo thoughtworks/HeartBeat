@@ -27,10 +27,10 @@ describe('error notification', () => {
     )
   })
 
-  it('should throw error when pipelineTool verify response status 404', async () => {
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
+  it('should throw error when pipelineTool verify response status is 401', async () => {
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
-      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.NOT_FOUND
+      PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.UNAUTHORIZED
     )
   })
 

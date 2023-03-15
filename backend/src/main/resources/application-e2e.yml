@@ -1,10 +1,13 @@
 server:
-  port: 4324
+  port: 4322
   servlet:
     context-path: /api/v1
 logging:
   level:
     root: INFO
 
-buildKite:
+githubFeignClient:
+  url: 54.223.108.141:4323
+
+jira:
   url: 54.223.108.141:4323

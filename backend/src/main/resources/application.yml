@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: e2e
+    active: default
 
 server:
   port: 4322
@@ -15,6 +15,3 @@ githubFeignClient:
 
 jira:
   url: https://demo.atlassian.net
-
-buildKite:
-  url: https://api.buildkite.com/v2

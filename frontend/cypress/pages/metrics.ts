@@ -6,12 +6,8 @@ class Metrics {
     cy.contains('Project Name').siblings().type(projectName)
   }
 
-  selectDateRange(from: string, to: string) {
-    cy.contains('From').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(from).click()
-
-    cy.contains('To').parent().find('button').click()
-    cy.get('.MuiPickersPopper-root').find('button').contains(to).click()
+  selectDateRange() {
+    cy.contains('From').parent().type('02052023')
   }
 
   selectVelocityAndCycleTime() {
@@ -46,12 +42,17 @@ class Metrics {
   }
 
   fillSourceControlFieldsInfo(token: string) {
-    cy.intercept(Cypress.env('url') + '/api/v1/source-control*', (req) => {
-      req.url = req.url.replace('/v1/', '/v2/')
-    })
-
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
     cy.get('[data-test-id="sourceControlVerifyButton"]').click()
+  }
+
+  selectClassification() {
+    cy.contains('Required Data').siblings().click()
+    cy.get("[type='checkbox']").uncheck()
+
+    cy.contains('Classification').click()
+
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 
   goMetricsStep() {
@@ -62,6 +63,7 @@ class Metrics {
     cy.contains('Distinguished By').siblings().click()
 
     cy.contains('All').click()
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 }
 

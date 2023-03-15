@@ -30,6 +30,8 @@ export const { updateJiraVerifyResponse } = jiraVerifyResponseSlice.actions
 
 export const selectUsers = (state: RootState) => state.jiraVerifyResponse.users
 
+export const selectJiraColumns = (state: RootState) => state.jiraVerifyResponse.jiraColumns
+
 export const selectTargetFields = (state: RootState) => state.jiraVerifyResponse.targetFields
 
 export default jiraVerifyResponseSlice.reducer

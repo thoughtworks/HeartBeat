@@ -79,11 +79,9 @@ export enum JIRA_VERIFY_ERROR_MESSAGE {
 
 export enum PIPELINE_TOOL_VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'BuildKite verify failed: Bad request',
-  NOT_FOUND = 'BuildKite verify failed: Page not found',
+  UNAUTHORIZED = 'BuildKite verify failed: Token is incorrect',
   INTERNAL_SERVER_ERROR = 'BuildKite verify failed: Internal server error',
 }
-
-export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 
 export enum GITHUB_VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Github verify failed: Bad request',
@@ -114,3 +112,7 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   startTime: '1613664000000',
   endTime: '1614873600000',
 }
+
+export const CREWS_SETTING = 'Crews Setting'
+export const CYCLE_TIME_SETTING = 'Cycle Time Setting'
+export const CLASSIFICATION_SETTING = 'Classification Setting'

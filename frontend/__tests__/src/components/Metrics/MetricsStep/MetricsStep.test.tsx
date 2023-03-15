@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 
 import { updateMetrics } from '@src/context/config/configSlice'
+import { CLASSIFICATION_SETTING, CREWS_SETTING, CYCLE_TIME_SETTING, REQUIRED_DATA_LIST } from '../../../fixtures'
 
 let store = setupStore()
 
@@ -22,22 +23,22 @@ describe('MetricsStep', () => {
   it('should render Crews and CycleTime components', () => {
     const { getByText, queryByText } = setup()
 
-    expect(getByText('Crews Setting')).toBeInTheDocument()
-    expect(queryByText('Cycle Time Setting')).not.toBeInTheDocument()
-    expect(queryByText('Classification Setting')).not.toBeInTheDocument()
+    expect(getByText(CREWS_SETTING)).toBeInTheDocument()
+    expect(getByText(CYCLE_TIME_SETTING)).toBeInTheDocument()
+    expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument()
+  })
+
+  it('should show Cycle Time Setting when select classification in config page', async () => {
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
+    const { getByText } = setup()
+
+    expect(getByText(CYCLE_TIME_SETTING)).toBeInTheDocument()
   })
 
   it('should show Classification Setting when select classification in config page', async () => {
-    await store.dispatch(updateMetrics(['Cycle time']))
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[2]]))
     const { getByText } = setup()
 
-    expect(getByText('Cycle Time Setting')).toBeInTheDocument()
-  })
-
-  it('should show Classification Setting when select classification in config page', async () => {
-    await store.dispatch(updateMetrics(['Classification']))
-    const { getByText } = setup()
-
-    expect(getByText('Classification Setting')).toBeInTheDocument()
+    expect(getByText(CLASSIFICATION_SETTING)).toBeInTheDocument()
   })
 })

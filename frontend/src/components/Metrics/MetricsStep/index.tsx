@@ -22,8 +22,10 @@ export const MetricsStep = () => {
   return (
     <>
       <Crews options={users} title={'Crews Setting'} label={'Included Crews'} />
+      {requiredData.includes(REQUIRED_DATA_LIST[1]) && (
+        <CycleTime columns={jiraColumns} title={'Cycle Time Settings'} />
+      )}
       <RealDone options={doneColumn} title={'Real Done'} label={'Consider as Done'} />
-      <CycleTime columns={jiraColumns} title={'Cycle Time Setting'} />
       {requiredData.includes(REQUIRED_DATA_LIST[2]) && (
         <Classification options={targetFields} title={'Classification Setting'} label={'Distinguished By'} />
       )}

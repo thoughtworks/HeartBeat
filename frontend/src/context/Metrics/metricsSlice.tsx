@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 export interface savedMetricsSettingState {
-  jiraColumns: []
+  jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
   targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
   doneColumn: string[]
+  boardColumns: { name: string; value: string }[]
 }
 
 const initialState: savedMetricsSettingState = {
@@ -12,24 +13,28 @@ const initialState: savedMetricsSettingState = {
   targetFields: [],
   users: [],
   doneColumn: [],
+  boardColumns: [],
 }
 
 export const metricsSlice = createSlice({
   name: 'saveMetricsSetting',
   initialState,
   reducers: {
-    updateTargetFields: (state, action) => {
+    saveTargetFields: (state, action) => {
       state.targetFields = action.payload
     },
-    updateDoneColumn: (state, action) => {
+    saveDoneColumn: (state, action) => {
       state.doneColumn = action.payload
     },
-    updateUsers: (state, action) => {
+    saveUsers: (state, action) => {
       state.users = action.payload
+    },
+    saveBoardColumns: (state, action) => {
+      state.boardColumns = action.payload
     },
   },
 })
 
-export const { updateTargetFields, updateDoneColumn, updateUsers } = metricsSlice.actions
+export const { saveTargetFields, saveDoneColumn, saveUsers, saveBoardColumns } = metricsSlice.actions
 
 export default metricsSlice.reducer

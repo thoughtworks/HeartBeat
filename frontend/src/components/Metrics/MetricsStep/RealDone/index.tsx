@@ -9,7 +9,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { updateDoneColumn } from '@src/context/Metrics/metricsSlice'
+import { saveDoneColumn } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
@@ -39,7 +39,7 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
   }
 
   useEffect(() => {
-    dispatch(updateDoneColumn(selectedDoneColumn))
+    dispatch(saveDoneColumn(selectedDoneColumn))
   }, [selectedDoneColumn, dispatch])
 
   return (

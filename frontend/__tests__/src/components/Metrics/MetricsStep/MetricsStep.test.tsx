@@ -7,7 +7,7 @@ import { updateMetrics } from '@src/context/config/configSlice'
 import {
   CLASSIFICATION_SETTING,
   CREWS_SETTING,
-  CYCLE_TIME_SETTING,
+  CYCLE_TIME_SETTINGS,
   REAL_DONE,
   REQUIRED_DATA_LIST,
 } from '../../../fixtures'
@@ -26,12 +26,20 @@ const setup = () =>
   )
 
 describe('MetricsStep', () => {
-  it('should render Crews and CycleTime, RealDone components', () => {
+  it('should render Crews and RealDone components', () => {
     const { getByText, queryByText } = setup()
+
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()
-    expect(getByText(CYCLE_TIME_SETTING)).toBeInTheDocument()
     expect(getByText(REAL_DONE)).toBeInTheDocument()
+    expect(queryByText(CYCLE_TIME_SETTINGS)).not.toBeInTheDocument()
     expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument()
+  })
+
+  it('should show Cycle Time Settings when select cycle time in config page', async () => {
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
+    const { getByText } = setup()
+
+    expect(getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument()
   })
 
   it('should show Classification Setting when select classification in config page', async () => {

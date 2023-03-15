@@ -1,8 +1,17 @@
 import { render, within } from '@testing-library/react'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import userEvent from '@testing-library/user-event'
+import { Provider } from 'react-redux'
+import { setupStore } from '../../../utils/setupStoreUtil'
+import { CYCLE_TIME_SETTINGS } from '../../../fixtures'
 
-const title = 'Cycle Time Settings'
+let store = setupStore()
+
+beforeEach(() => {
+  store = setupStore()
+})
+
+const title = CYCLE_TIME_SETTINGS
 const defaultSelected = '----'
 const mockColumnsList = [
   {
@@ -45,7 +54,12 @@ const errorMessage = 'Should only select One "Done"'
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
 
-const setup = () => render(<CycleTime title={title} columns={mockColumnsList} />)
+const setup = () =>
+  render(
+    <Provider store={store}>
+      <CycleTime title={title} columns={mockColumnsList} />
+    </Provider>
+  )
 
 describe('CycleTime', () => {
   describe('CycleTime Title', () => {

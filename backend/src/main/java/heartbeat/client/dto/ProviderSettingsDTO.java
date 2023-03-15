@@ -1,6 +1,7 @@
 package heartbeat.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,43 +14,62 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProviderSettingsDTO {
 
-	private String trigger_mode;
+	@JsonProperty("trigger_mode")
+	private String triggerMode;
 
-	private boolean build_pull_requests;
+	@JsonProperty("build_pull_requests")
+	private boolean buildPullRequests;
 
-	private boolean pull_request_branch_filter_enabled;
+	@JsonProperty("pull_request_branch_filter_enabled")
+	private boolean pullRequestBranchFilterEnabled;
 
-	private boolean skip_builds_for_existing_commits;
+	@JsonProperty("skip_builds_for_existing_commits")
+	private boolean skipBuildsForExistingCommits;
 
-	private boolean skip_pull_request_builds_for_existing_commits;
+	@JsonProperty("skip_pull_request_builds_for_existing_commits")
+	private boolean skipPullRequestBuildsForExistingCommits;
 
-	private boolean build_pull_request_ready_for_review;
+	@JsonProperty("build_pull_request_ready_for_review")
+	private boolean buildPullRequestReadyForReview;
 
-	private boolean build_pull_request_labels_changed;
+	@JsonProperty("build_pull_request_labels_changed")
+	private boolean buildPullRequestLabelsChanged;
 
-	private boolean build_pull_request_base_branch_changed;
+	@JsonProperty("build_pull_request_base_branch_changed")
+	private boolean buildPullRequestBaseBranchChanged;
 
-	private boolean build_pull_request_forks;
+	@JsonProperty("build_pull_request_forks")
+	private boolean buildPullRequestForks;
 
-	private boolean prefix_pull_request_fork_branch_names;
+	@JsonProperty("prefix_pull_request_fork_branch_names")
+	private boolean prefixPullRequestForkBranchNames;
 
-	private boolean build_branches;
+	@JsonProperty("build_branches")
+	private boolean buildBranches;
 
-	private boolean build_tags;
+	@JsonProperty("build_tags")
+	private boolean buildTags;
 
-	private boolean cancel_deleted_branch_builds;
+	@JsonProperty("cancel_deleted_branch_builds")
+	private boolean cancelDeletedBranchBuilds;
 
-	private boolean publish_commit_status;
+	@JsonProperty("publish_commit_status")
+	private boolean publishCommitStatus;
 
-	private boolean publish_commit_status_per_step;
+	@JsonProperty("publish_commit_status_per_step")
+	private boolean publishCommitStatusPerStep;
 
-	private boolean separate_pull_request_statuses;
+	@JsonProperty("separate_pull_request_statuses")
+	private boolean separatePullRequestStatuses;
 
-	private boolean publish_blocked_as_pending;
+	@JsonProperty("publish_blocked_as_pending")
+	private boolean publishBlockedAsPending;
 
-	private boolean use_step_key_as_commit_status;
+	@JsonProperty("use_step_key_as_commit_status")
+	private boolean useStepKeyAsCommitStatus;
 
-	private boolean filter_enabled;
+	@JsonProperty("filter_enabled")
+	private boolean filterEnabled;
 
 	private String repository;
 

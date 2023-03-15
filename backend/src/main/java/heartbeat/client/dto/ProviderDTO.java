@@ -1,6 +1,7 @@
 package heartbeat.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class ProviderDTO {
 
 	private ProviderSettingsDTO settings;
 
-	private String webhook_url;
+	@JsonProperty("webhook_url")
+	private String webhookUrl;
 
 }

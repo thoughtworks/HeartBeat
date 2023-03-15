@@ -1,6 +1,7 @@
 package heartbeat.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,15 +20,19 @@ public class StepsDTO {
 
 	private String command;
 
-	private String artifact_paths;
+	@JsonProperty("artifact_paths")
+	private String artifactPaths;
 
-	private String branch_configuration;
+	@JsonProperty("branch_configuration")
+	private String branchConfiguration;
 
 	private EnvDTO env;
 
-	private Integer timeout_in_minutes;
+	@JsonProperty("timeout_in_minutes")
+	private Integer timeoutInMinutes;
 
-	private String[] agent_query_rules;
+	@JsonProperty("agent_query_rules")
+	private String[] agentQueryRules;
 
 	private Integer concurrency;
 

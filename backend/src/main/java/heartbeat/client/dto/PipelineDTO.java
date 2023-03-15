@@ -1,6 +1,7 @@
 package heartbeat.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,11 +19,13 @@ public class PipelineDTO {
 
 	private String id;
 
-	private String graphql_id;
+	@JsonProperty("graphql_id")
+	private String graphqlId;
 
 	private String url;
 
-	private String web_url;
+	@JsonProperty("web_url")
+	private String webUrl;
 
 	private String name;
 
@@ -32,45 +35,62 @@ public class PipelineDTO {
 
 	private String repository;
 
-	private String cluster_id;
+	@JsonProperty("cluster_id")
+	private String clusterId;
 
-	private String branch_configuration;
+	@JsonProperty("branch_configuration")
+	private String branchConfiguration;
 
-	private String default_branch;
+	@JsonProperty("default_branch")
+	private String defaultBranch;
 
-	private String skip_queued_branch_builds;
+	@JsonProperty("skip_queued_branch_builds")
+	private String skipQueuedBranchBuilds;
 
-	private String skip_queued_branch_builds_filter;
+	@JsonProperty("skip_queued_branch_builds_filter")
+	private String skipQueuedBranchBuildsFilter;
 
-	private String cancel_running_branch_builds;
+	@JsonProperty("cancel_running_branch_builds")
+	private String cancelRunningBranchBuilds;
 
-	private String cancel_running_branch_builds_filter;
+	@JsonProperty("cancel_running_branch_builds_filter")
+	private String cancelRunningBranchBuildsFilter;
 
-	private String allow_rebuilds;
+	@JsonProperty("allow_rebuilds")
+	private String allowRebuilds;
 
 	private ProviderDTO provider;
 
-	private String builds_url;
+	@JsonProperty("builds_url")
+	private String buildsUrl;
 
-	private String badge_url;
+	@JsonProperty("badge_url")
+	private String badgeUrl;
 
-	private CreatedByDTO created_by;
+	private CreatedByDTO createdBy;
 
-	private Date created_at;
+	@JsonProperty("created_at")
+	private Date createdAt;
 
-	private Date archived_at;
+	@JsonProperty("archived_at")
+	private Date archivedAt;
 
 	private EnvDTO env;
 
-	private int scheduled_builds_count;
+	@JsonProperty("scheduled_builds_count")
+	private int scheduledBuildsCount;
 
-	private int running_builds_count;
+	@JsonProperty("running_builds_count")
+	private int runningBuildsCount;
 
-	private int scheduled_jobs_count;
+	@JsonProperty("scheduled_jobs_count")
+	private int scheduledJobsCount;
 
-	private int running_jobs_count;
+	@JsonProperty("running_jobs_count")
+	private int runningJobsCount;
 
-	private int waiting_jobs_count;
+	@JsonProperty("waiting_jobs_count")
+	private int waitingJobsCount;
 
 	private String visibility;
 

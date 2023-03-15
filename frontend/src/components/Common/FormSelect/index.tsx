@@ -16,13 +16,14 @@ export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: for
     saveCycleTimeOptions(label, value)
     setSelectedCycleTime([...value])
   }
+  const selectedValue = selectedCycleTime.toString().replace(/,/g, '')
 
   return (
     <FormControlSelection variant='standard' required>
       <InputLabel id='cycletime-data-checkbox-label'>{label}</InputLabel>
       <Select
         labelId='cycletime-data-checkbox-label'
-        value={selectedCycleTime}
+        value={[selectedValue]}
         onChange={handleCycleTimeChange}
         renderValue={(selectedCycleTime: string[]) => selectedCycleTime}
       >

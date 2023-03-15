@@ -3,7 +3,7 @@ import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { CYCLE_TIME_SETTING } from '../../../fixtures'
+import { CYCLE_TIME_SETTINGS } from '../../../fixtures'
 
 let store = setupStore()
 
@@ -11,7 +11,7 @@ beforeEach(() => {
   store = setupStore()
 })
 
-const title = CYCLE_TIME_SETTING
+const title = CYCLE_TIME_SETTINGS
 const defaultSelected = '----'
 const mockColumnsList = [
   {

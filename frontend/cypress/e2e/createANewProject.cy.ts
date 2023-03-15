@@ -33,7 +33,7 @@ describe('Create a new project', () => {
     cy.contains('Real Done').should('exist')
 
     metricsPage.checkCycleTime()
-    cy.contains('Cycle Time Setting').should('exist')
+    cy.contains('Cycle Time Settings').should('exist')
     cy.contains('Consider the "Flag" as "Block"').should('exist')
 
     metricsPage.checkClassification()

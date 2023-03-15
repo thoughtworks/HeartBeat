@@ -2,6 +2,7 @@ import saveMetricsSettingReducer, {
   saveBoardColumns,
   saveTargetFields,
   saveUsers,
+  saveDoneColumn,
 } from '@src/context/Metrics/metricsSlice'
 
 describe('saveMetricsSetting reducer', () => {
@@ -11,6 +12,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.users).toEqual([])
     expect(savedMetricsSetting.targetFields).toEqual([])
     expect(savedMetricsSetting.jiraColumns).toEqual([])
+    expect(savedMetricsSetting.doneColumn).toEqual([])
     expect(savedMetricsSetting.boardColumns).toEqual([])
   })
 
@@ -23,7 +25,7 @@ describe('saveMetricsSetting reducer', () => {
       ],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [], boardColumns: [] },
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
       saveTargetFields({
         targetFields: mockUpdatedTargetFields.targetFields,
       })
@@ -34,12 +36,26 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([])
   })
 
+  it('should store updated doneColumn when its value changed', () => {
+    const mockUpdatedDoneColumn = {
+      doneColumn: ['DONE', 'CANCELLED'],
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
+      saveDoneColumn({
+        doneColumn: mockUpdatedDoneColumn.doneColumn,
+      })
+    )
+
+    expect(savedMetricsSetting.doneColumn).toEqual(mockUpdatedDoneColumn)
+  })
+
   it('should store updated users when its value changed', () => {
     const mockUpdatedUsers = {
       users: ['userOne', 'userTwo', 'userThree'],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [], boardColumns: [] },
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
       saveUsers({
         users: mockUpdatedUsers.users,
       })
@@ -53,7 +69,7 @@ describe('saveMetricsSetting reducer', () => {
       boardColumns: [{ name: 'TODO', value: 'To do' }],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [], boardColumns: [] },
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
       saveBoardColumns({
         boardColumns: mockSavedBoardColumns.boardColumns,
       })

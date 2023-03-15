@@ -116,3 +116,4 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
 export const CREWS_SETTING = 'Crews Setting'
 export const CYCLE_TIME_SETTING = 'Cycle Time Setting'
 export const CLASSIFICATION_SETTING = 'Classification Setting'
+export const REAL_DONE = 'Real Done'

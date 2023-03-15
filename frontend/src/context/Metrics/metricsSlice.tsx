@@ -4,6 +4,7 @@ export interface savedMetricsSettingState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
   targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
+  doneColumn: string[]
   boardColumns: { name: string; value: string }[]
 }
 
@@ -11,6 +12,7 @@ const initialState: savedMetricsSettingState = {
   jiraColumns: [],
   targetFields: [],
   users: [],
+  doneColumn: [],
   boardColumns: [],
 }
 
@@ -21,6 +23,9 @@ export const metricsSlice = createSlice({
     saveTargetFields: (state, action) => {
       state.targetFields = action.payload
     },
+    saveDoneColumn: (state, action) => {
+      state.doneColumn = action.payload
+    },
     saveUsers: (state, action) => {
       state.users = action.payload
     },
@@ -30,6 +35,6 @@ export const metricsSlice = createSlice({
   },
 })
 
-export const { saveTargetFields, saveUsers, saveBoardColumns } = metricsSlice.actions
+export const { saveTargetFields, saveDoneColumn, saveUsers, saveBoardColumns } = metricsSlice.actions
 
 export default metricsSlice.reducer

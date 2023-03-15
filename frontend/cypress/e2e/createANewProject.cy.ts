@@ -30,6 +30,7 @@ describe('Create a new project', () => {
 
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
+    cy.contains('Real Done').should('exist')
 
     metricsPage.checkCycleTime()
     cy.contains('Cycle Time Setting').should('exist')

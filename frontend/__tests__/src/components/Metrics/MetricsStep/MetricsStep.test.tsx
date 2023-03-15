@@ -4,7 +4,13 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 
 import { updateMetrics } from '@src/context/config/configSlice'
-import { CLASSIFICATION_SETTING, CREWS_SETTING, CYCLE_TIME_SETTING, REQUIRED_DATA_LIST } from '../../../fixtures'
+import {
+  CLASSIFICATION_SETTING,
+  CREWS_SETTING,
+  CYCLE_TIME_SETTING,
+  REAL_DONE,
+  REQUIRED_DATA_LIST,
+} from '../../../fixtures'
 
 let store = setupStore()
 
@@ -20,10 +26,11 @@ const setup = () =>
   )
 
 describe('MetricsStep', () => {
-  it('should render Crews and CycleTime components', () => {
+  it('should render Crews and CycleTime, RealDone components', () => {
     const { getByText, queryByText } = setup()
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()
     expect(getByText(CYCLE_TIME_SETTING)).toBeInTheDocument()
+    expect(getByText(REAL_DONE)).toBeInTheDocument()
     expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument()
   })
 

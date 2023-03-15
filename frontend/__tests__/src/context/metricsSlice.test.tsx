@@ -1,4 +1,8 @@
-import saveMetricsSettingReducer, { updateTargetFields, updateUsers, updateDoneColumn} from '@src/context/Metrics/metricsSlice'
+import saveMetricsSettingReducer, {
+  updateTargetFields,
+  updateUsers,
+  updateDoneColumn,
+} from '@src/context/Metrics/metricsSlice'
 
 describe('saveMetricsSetting reducer', () => {
   it('should show empty array when handle initial state', () => {
@@ -57,15 +61,15 @@ describe('saveMetricsSetting reducer', () => {
       })
     )
 
-      expect(savedMetricsSetting.doneColumn).toEqual(mockUpdatedDoneColumn)
-    })
-    
-it('should store updated users when its value changed', () => {
+    expect(savedMetricsSetting.doneColumn).toEqual(mockUpdatedDoneColumn)
+  })
+
+  it('should store updated users when its value changed', () => {
     const mockUpdatedUsers = {
       users: ['userOne', 'userTwo', 'userThree'],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [] },
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [] },
       updateUsers({
         users: mockUpdatedUsers.users,
       })

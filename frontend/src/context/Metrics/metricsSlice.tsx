@@ -23,13 +23,13 @@ export const metricsSlice = createSlice({
     },
     updateDoneColumn: (state, action) => {
       state.doneColumn = action.payload
+    },
     updateUsers: (state, action) => {
       state.users = action.payload
     },
   },
 })
 
-export const { updateTargetFields, updateDoneColumn } = metricsSlice.actions
-export const { updateTargetFields, updateUsers } = metricsSlice.actions
+export const { updateTargetFields, updateDoneColumn, updateUsers } = metricsSlice.actions
 
 export default metricsSlice.reducer

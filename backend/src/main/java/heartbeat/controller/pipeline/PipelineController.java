@@ -1,7 +1,7 @@
 package heartbeat.controller.pipeline;
 
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
-import heartbeat.service.pipeline.buildKite.BuildKiteService;
+import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

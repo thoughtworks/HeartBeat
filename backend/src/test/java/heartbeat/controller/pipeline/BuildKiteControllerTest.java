@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.client.dto.PipelineDTO;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
-import heartbeat.service.pipeline.buildKite.BuildKiteService;
+import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

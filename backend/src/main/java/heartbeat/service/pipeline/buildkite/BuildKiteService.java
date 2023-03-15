@@ -1,4 +1,4 @@
-package heartbeat.service.pipeline.buildKite;
+package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;

@@ -9,9 +9,9 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { Divider, Title } from './style'
 import { updateDoneColumn } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 
 interface realDoneProps {
   options: string[]
@@ -43,9 +43,7 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
 
   return (
     <>
-      <Divider>
-        <Title>{title}</Title>
-      </Divider>
+      <MetricsSettingTitle title={title} />
       <FormControl variant='standard' required error={isEmptyRealDoneData}>
         <InputLabel id='real-done-data-multiple-checkbox-label'>{label}</InputLabel>
         <Select

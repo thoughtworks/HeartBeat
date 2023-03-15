@@ -17,7 +17,7 @@ export const RemoveButton = styled(Button)({
   ...basicButtonStyle,
   width: '15rem',
   color: theme.main.secondColor,
-  marginBottom: '1rem',
+  margin: '0.5rem 0',
 })
 
 export const AddButton = styled(Button)({
@@ -30,5 +30,6 @@ export const AddButton = styled(Button)({
     ...basicButtonStyle,
     backgroundColor: theme.main.backgroundColor,
     color: theme.main.color,
+    marginTop: '0.5rem',
   },
 })

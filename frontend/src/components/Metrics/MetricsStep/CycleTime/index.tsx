@@ -6,12 +6,12 @@ import { ErrorDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveBoardColumns } from '@src/context/Metrics/metricsSlice'
 
-interface cycletimeProps {
+interface cycleTimeProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[]
   title: string
 }
 
-export const CycleTime = ({ columns, title }: cycletimeProps) => {
+export const CycleTime = ({ columns, title }: cycleTimeProps) => {
   const dispatch = useAppDispatch()
   const [isError, setIsError] = useState(false)
   const names = Object.values(columns).map((item) => item.value.name)

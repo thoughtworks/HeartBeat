@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateTargetFields } from '@src/context/Metrics/metricsSlice'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 
 interface classificationProps {
   title: string
@@ -42,7 +43,7 @@ export const Classification = ({ options, title, label }: classificationProps) =
           labelId='classification-check-box'
           value={selectedTargetField}
           onChange={handleTargetFieldChange}
-          renderValue={(selectedTargetField: string[]) => selectedTargetField.join(',')}
+          renderValue={(selectedTargetField: string[]) => selectedTargetField.join(SELECTED_VALUE_SEPARATOR)}
         >
           <MenuItem value='All'>
             <Checkbox checked={isAllSelected} />

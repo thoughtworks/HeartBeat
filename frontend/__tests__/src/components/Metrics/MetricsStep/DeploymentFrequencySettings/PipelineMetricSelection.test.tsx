@@ -25,7 +25,7 @@ const deploymentFrequencySetting = {
   steps: 'mock steps',
 }
 
-const setUp = async (mockIndex: number, isShowRemoveButton: boolean) => {
+const setUp = (mockIndex: number, isShowRemoveButton: boolean) => {
   return render(
     <Provider store={store}>
       <PipelineMetricSelection
@@ -39,7 +39,7 @@ const setUp = async (mockIndex: number, isShowRemoveButton: boolean) => {
 
 describe('PipelineMetricSelection', () => {
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {

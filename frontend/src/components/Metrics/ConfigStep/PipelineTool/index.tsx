@@ -52,27 +52,19 @@ export const PipelineTool = () => {
     return BUILDKITE_TOKEN_REGEXP.test(value)
   }
   const onFormUpdate = (index: number, value: string) => {
-    let newFieldsValue
-    if (index === ZERO) {
-      newFieldsValue = fields.map((field, index) => {
-        field.value = value
-        if (index !== ZERO) {
-          field.value = ''
-          field.isRequired = true
-          field.isValid = true
+    const newFieldsValue = fields.map((field, fieldIndex) => {
+      if (index === 0) {
+        field.value = fieldIndex === 0 ? value : ''
+      } else if (index === 1 && fieldIndex === 1) {
+        return {
+          ...field,
+          value,
+          isRequired: value !== '',
+          isValid: checkFieldValid(value),
         }
-        return field
-      })
-    } else {
-      newFieldsValue = fields.map((field, fieldIndex) => {
-        if (fieldIndex === 1) {
-          field.value = value
-          field.isValid = checkFieldValid(value)
-          field.isRequired = value !== ''
-        }
-        return field
-      })
-    }
+      }
+      return field
+    })
     setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.isRequired && field.value !== ''))
     setFields(newFieldsValue)
     dispatch(updatePipelineToolVerifyState(false))

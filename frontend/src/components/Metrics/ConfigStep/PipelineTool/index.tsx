@@ -48,15 +48,13 @@ export const PipelineTool = () => {
   }
 
   const checkFieldValid = (value: string): boolean => {
-    let helperText = ''
-
-    if (value === '') {
-      helperText = TOKEN_HELPER_TEXT.RequiredTokenText
-    } else if (!BUILDKITE_TOKEN_REGEXP.test(value)) {
-      helperText = TOKEN_HELPER_TEXT.InvalidTokenText
-    }
+    const helperText = !value
+      ? TOKEN_HELPER_TEXT.RequiredTokenText
+      : !BUILDKITE_TOKEN_REGEXP.test(value)
+      ? TOKEN_HELPER_TEXT.InvalidTokenText
+      : ''
     setPipelineToolHelperText(helperText)
-    return helperText === ''
+    return !helperText
   }
 
   const onFormUpdate = (index: number, value: string) => {

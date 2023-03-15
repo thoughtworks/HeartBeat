@@ -3,6 +3,8 @@ import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import FlagCard from '@src/components/Metrics/MetricsStep/CycleTime/FlagCard'
 import { FormSelectPart } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelectPart'
 import { ErrorDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import { savedBoardColumns } from '@src/context/Metrics/metricsSlice'
 
 interface cycletimeProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[]
@@ -10,6 +12,7 @@ interface cycletimeProps {
 }
 
 export const CycleTime = ({ columns, title }: cycletimeProps) => {
+  const dispatch = useAppDispatch()
   const [isError, setIsError] = useState(false)
   const names = Object.values(columns).map((item) => item.value.name)
   const [cycleTimeOptions, setCycleTimeOptions] = useState(names.map((item) => ({ name: item, value: '' })))
@@ -26,7 +29,8 @@ export const CycleTime = ({ columns, title }: cycletimeProps) => {
 
   useEffect(() => {
     setIsError(cycleTimeOptions.filter((item) => item.value === 'Done').length > 1)
-  }, [cycleTimeOptions])
+    dispatch(savedBoardColumns(cycleTimeOptions))
+  }, [cycleTimeOptions, dispatch])
 
   return (
     <>

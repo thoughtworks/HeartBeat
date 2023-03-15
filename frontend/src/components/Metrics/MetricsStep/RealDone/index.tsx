@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react'
 import { updateDoneColumn } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 
 interface realDoneProps {
   options: string[]
@@ -51,7 +52,7 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
           multiple
           value={selectedDoneColumn}
           onChange={handleRealDoneChange}
-          renderValue={(selectedDoneColumn: string[]) => selectedDoneColumn.join(', ')}
+          renderValue={(selectedDoneColumn: string[]) => selectedDoneColumn.join(SELECTED_VALUE_SEPARATOR)}
         >
           <MenuItem value='All'>
             <Checkbox checked={isAllSelected} />

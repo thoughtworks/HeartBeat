@@ -1,7 +1,7 @@
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, ListItemText, SelectChangeEvent } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { updateTargetFields } from '@src/context/Metrics/metricsSlice'
+import { saveTargetFields } from '@src/context/Metrics/metricsSlice'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 
@@ -30,7 +30,7 @@ export const Classification = ({ options, title, label }: classificationProps) =
       ...option,
       flag: selectedTargetField.includes(option.name),
     }))
-    dispatch(updateTargetFields(updatedTargetFields))
+    dispatch(saveTargetFields(updatedTargetFields))
   }, [selectedTargetField, dispatch, options])
 
   return (

@@ -1,7 +1,7 @@
 import saveMetricsSettingReducer, {
-  savedBoardColumns,
-  updateTargetFields,
-  updateUsers,
+  saveBoardColumns,
+  saveTargetFields,
+  saveUsers,
 } from '@src/context/Metrics/metricsSlice'
 
 describe('saveMetricsSetting reducer', () => {
@@ -24,7 +24,7 @@ describe('saveMetricsSetting reducer', () => {
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
       { jiraColumns: [], targetFields: [], users: [], boardColumns: [] },
-      updateTargetFields({
+      saveTargetFields({
         targetFields: mockUpdatedTargetFields.targetFields,
       })
     )
@@ -40,7 +40,7 @@ describe('saveMetricsSetting reducer', () => {
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
       { jiraColumns: [], targetFields: [], users: [], boardColumns: [] },
-      updateUsers({
+      saveUsers({
         users: mockUpdatedUsers.users,
       })
     )
@@ -54,7 +54,7 @@ describe('saveMetricsSetting reducer', () => {
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
       { jiraColumns: [], targetFields: [], users: [], boardColumns: [] },
-      savedBoardColumns({
+      saveBoardColumns({
         boardColumns: mockSavedBoardColumns.boardColumns,
       })
     )

@@ -18,18 +18,18 @@ export const metricsSlice = createSlice({
   name: 'saveMetricsSetting',
   initialState,
   reducers: {
-    updateTargetFields: (state, action) => {
+    saveTargetFields: (state, action) => {
       state.targetFields = action.payload
     },
-    updateUsers: (state, action) => {
+    saveUsers: (state, action) => {
       state.users = action.payload
     },
-    savedBoardColumns: (state, action) => {
+    saveBoardColumns: (state, action) => {
       state.boardColumns = action.payload
     },
   },
 })
 
-export const { updateTargetFields, updateUsers, savedBoardColumns } = metricsSlice.actions
+export const { saveTargetFields, saveUsers, saveBoardColumns } = metricsSlice.actions
 
 export default metricsSlice.reducer

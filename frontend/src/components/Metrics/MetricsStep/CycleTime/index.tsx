@@ -4,7 +4,7 @@ import FlagCard from '@src/components/Metrics/MetricsStep/CycleTime/FlagCard'
 import { FormSelectPart } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelectPart'
 import { ErrorDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { savedBoardColumns } from '@src/context/Metrics/metricsSlice'
+import { saveBoardColumns } from '@src/context/Metrics/metricsSlice'
 
 interface cycletimeProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[]
@@ -29,7 +29,7 @@ export const CycleTime = ({ columns, title }: cycletimeProps) => {
 
   useEffect(() => {
     setIsError(cycleTimeOptions.filter((item) => item.value === 'Done').length > 1)
-    dispatch(savedBoardColumns(cycleTimeOptions))
+    dispatch(saveBoardColumns(cycleTimeOptions))
   }, [cycleTimeOptions, dispatch])
 
   return (

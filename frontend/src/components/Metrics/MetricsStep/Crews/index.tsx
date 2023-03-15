@@ -12,7 +12,7 @@ import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { updateUsers } from '@src/context/Metrics/metricsSlice'
+import { saveUsers } from '@src/context/Metrics/metricsSlice'
 
 interface crewsProps {
   options: string[]
@@ -40,7 +40,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
   }
 
   useEffect(() => {
-    dispatch(updateUsers(selectedCrews))
+    dispatch(saveUsers(selectedCrews))
   }, [selectedCrews, dispatch])
 
   return (

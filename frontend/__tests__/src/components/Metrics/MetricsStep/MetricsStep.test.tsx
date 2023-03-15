@@ -24,7 +24,7 @@ describe('MetricsStep', () => {
     const { getByText, queryByText } = setup()
 
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()
-    expect(getByText(CYCLE_TIME_SETTING)).toBeInTheDocument()
+    expect(queryByText(CYCLE_TIME_SETTING)).not.toBeInTheDocument()
     expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument()
   })
 

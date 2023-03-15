@@ -1,4 +1,8 @@
-import saveMetricsSettingReducer, { updateTargetFields, updateUsers } from '@src/context/Metrics/metricsSlice'
+import saveMetricsSettingReducer, {
+  updateTargetFields,
+  updateUsers,
+  updateDoneColumn,
+} from '@src/context/Metrics/metricsSlice'
 
 describe('saveMetricsSetting reducer', () => {
   it('should show empty array when handle initial state', () => {
@@ -7,6 +11,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.users).toEqual([])
     expect(savedMetricsSetting.targetFields).toEqual([])
     expect(savedMetricsSetting.jiraColumns).toEqual([])
+    expect(savedMetricsSetting.doneColumn).toEqual([])
   })
 
   it('should store updated targetFields when its value changed', () => {
@@ -34,7 +39,7 @@ describe('saveMetricsSetting reducer', () => {
       ],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [] },
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [] },
       updateTargetFields({
         targetFields: mockUpdatedTargetFields.targetFields,
       })
@@ -45,12 +50,26 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([])
   })
 
+  it('should store updated doneColumn when its value changed', () => {
+    const mockUpdatedDoneColumn = {
+      doneColumn: ['DONE', 'CANCELLED'],
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [] },
+      updateDoneColumn({
+        doneColumn: mockUpdatedDoneColumn.doneColumn,
+      })
+    )
+
+    expect(savedMetricsSetting.doneColumn).toEqual(mockUpdatedDoneColumn)
+  })
+
   it('should store updated users when its value changed', () => {
     const mockUpdatedUsers = {
       users: ['userOne', 'userTwo', 'userThree'],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [] },
+      { jiraColumns: [], targetFields: [], users: [], doneColumn: [] },
       updateUsers({
         users: mockUpdatedUsers.users,
       })

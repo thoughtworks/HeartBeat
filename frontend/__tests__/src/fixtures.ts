@@ -72,7 +72,7 @@ export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/boards/jira'
-export const MOCK_PIPELINE_URL = '/api/v1/pipelines/buildKite'
+export const MOCK_PIPELINE_URL = '/api/v1/pipelines/buildkite'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
 export enum JIRA_VERIFY_ERROR_MESSAGE {

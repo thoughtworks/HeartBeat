@@ -16,9 +16,7 @@ export class PipelineToolClient extends HttpClient {
 
   verifyPipelineTool = async (params: getVerifyPipelineToolParams) => {
     try {
-      const result = await this.axiosInstance
-        .get(`/pipelines/${params.type}`, { params: { ...params } })
-        .then((res) => res)
+      const result = await this.axiosInstance.get(`/pipelines/${params.type}`, { params: { ...params } })
       this.isPipelineToolVerified = true
       this.response = result
     } catch (e) {

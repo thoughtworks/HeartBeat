@@ -1,6 +1,6 @@
 import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
-import { FormControlSelection } from '@src/components/Common/FormSelect/style'
+import { FormControlSelection } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelect/style'
 import { CYCLETIME_LIST } from '@src/constants'
 
 interface formSelectProps {
@@ -21,12 +21,7 @@ export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: for
   return (
     <FormControlSelection variant='standard' required>
       <InputLabel id='cycletime-data-checkbox-label'>{label}</InputLabel>
-      <Select
-        labelId='cycletime-data-checkbox-label'
-        value={[selectedValue]}
-        onChange={handleCycleTimeChange}
-        renderValue={(selectedCycleTime: string[]) => selectedCycleTime}
-      >
+      <Select labelId='cycletime-data-checkbox-label' value={[selectedValue]} onChange={handleCycleTimeChange}>
         {CYCLETIME_LIST.map((data) => (
           <MenuItem key={data} value={data}>
             <ListItemText primary={data} />

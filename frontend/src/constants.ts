@@ -64,7 +64,7 @@ export const METRICS_CONSTANTS = {
   doneKeyFromBackend: 'done',
   todoValue: 'To do',
   analysisValue: 'Analysis',
-  inDevValue: 'In Dev',
+  inDevValue: 'In dev',
   blockValue: 'Block',
   waitingValue: 'Waiting for testing',
   testingValue: 'Testing',

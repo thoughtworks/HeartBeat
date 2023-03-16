@@ -4,6 +4,8 @@ export const FIVE_HUNDRED = 500
 
 export const ZERO = 0
 
+export const EMPTY_STRING = ''
+
 export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
 
 export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'

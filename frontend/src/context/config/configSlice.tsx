@@ -3,7 +3,7 @@ import type { RootState } from '@src/store'
 import { PIPELINE_TOOL_TYPES, REGULAR_CALENDAR, SOURCE_CONTROL_TYPES } from '@src/constants'
 import { boardSlice as boardReducer, initialBoardState } from '@src/context/config/board/boardSlice'
 
-export interface configState {
+export interface basicConfigState {
   projectName: string
   calendarType: string
   dateRange: {
@@ -15,7 +15,7 @@ export interface configState {
   sourceControlFields: { sourceControl: string; token: string }
 }
 
-const initialBasicConfigState: configState = {
+const initialBasicConfigState: basicConfigState = {
   projectName: '',
   calendarType: REGULAR_CALENDAR,
   dateRange: {

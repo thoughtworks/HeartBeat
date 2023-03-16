@@ -5,10 +5,10 @@ import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePic
 import { ConfigStepWrapper, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
-import { updateBoardVerifyState } from '@src/context/board/boardSlice'
 import {
   selectCalendarType,
   selectProjectName,
+  updateBoardVerifyState,
   updateCalendarType,
   updateProjectName,
 } from '@src/context/config/configSlice'

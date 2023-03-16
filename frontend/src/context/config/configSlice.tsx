@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { BOARD_TYPES, REGULAR_CALENDAR, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
+import { PIPELINE_TOOL_TYPES, REGULAR_CALENDAR, SOURCE_CONTROL_TYPES } from '@src/constants'
+import { boardSlice as boardReducer, initialBoardState } from '@src/context/board/boardSlice'
 
 export interface configState {
   projectName: string
@@ -10,7 +11,6 @@ export interface configState {
     endDate: string
   }
   metrics: string[]
-  board: { type: string; boardId: string; email: string; projectKey: string; site: string; token: string }
   pipelineToolFields: { pipelineTool: string; token: string }
   sourceControlFields: { sourceControl: string; token: string }
 }
@@ -23,14 +23,6 @@ const initialState: configState = {
     endDate: '',
   },
   metrics: [],
-  board: {
-    type: BOARD_TYPES.JIRA,
-    boardId: '',
-    email: '',
-    projectKey: '',
-    site: '',
-    token: '',
-  },
   pipelineToolFields: {
     pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',
@@ -43,7 +35,10 @@ const initialState: configState = {
 
 export const configSlice = createSlice({
   name: 'config',
-  initialState,
+  initialState: {
+    ...initialBoardState,
+    ...initialState,
+  },
   reducers: {
     updateProjectName: (state, action) => {
       state.projectName = action.payload
@@ -58,34 +53,33 @@ export const configSlice = createSlice({
     updateMetrics: (state, action) => {
       state.metrics = action.payload
     },
-    updateBoard: (state, action) => {
-      state.board = action.payload
-    },
     updatePipelineToolFields: (state, action) => {
       state.pipelineToolFields = action.payload
     },
     updateSourceControlFields: (state, action) => {
       state.sourceControlFields = action.payload
     },
+    ...boardReducer.caseReducers,
   },
 })
-
 export const {
   updateProjectName,
   updateCalendarType,
   updateDateRange,
   updateMetrics,
-  updateBoard,
   updatePipelineToolFields,
   updateSourceControlFields,
+  updateBoard,
+  updateBoardVerifyState,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.projectName
 export const selectCalendarType = (state: RootState) => state.config.calendarType
 export const selectDateRange = (state: RootState) => state.config.dateRange
 export const selectMetrics = (state: RootState) => state.config.metrics
-export const selectBoard = (state: RootState) => state.config.board
 export const selectPipelineToolFields = (state: RootState) => state.config.pipelineToolFields
 export const selectSourceControlFields = (state: RootState) => state.config.sourceControlFields
+export const selectIsBoardVerified = (state: RootState) => state.config.isBoardVerified
+export const selectBoard = (state: RootState) => state.config.boardConfig
 
 export default configSlice.reducer

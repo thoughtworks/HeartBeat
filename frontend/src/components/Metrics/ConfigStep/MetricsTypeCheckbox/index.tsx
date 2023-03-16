@@ -13,12 +13,12 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectMetrics,
   updateBoard,
+  updateBoardVerifyState,
   updateMetrics,
   updatePipelineToolFields,
   updateSourceControlFields,
 } from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
-import { updateBoardVerifyState } from '@src/context/board/boardSlice'
 import { updatePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 import { updateSourceControlVerifyState } from '@src/context/sourceControl/sourceControlSlice'

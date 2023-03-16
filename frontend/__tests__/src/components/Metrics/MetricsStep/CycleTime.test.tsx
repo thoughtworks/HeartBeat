@@ -96,7 +96,7 @@ describe('CycleTime', () => {
         '----',
         'To do',
         'Analysis',
-        'In Dev',
+        'In dev',
         'Block',
         'Waiting for testing',
         'Testing',

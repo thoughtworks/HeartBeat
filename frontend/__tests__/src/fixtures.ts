@@ -18,7 +18,7 @@ export const RESET = 'Reset'
 
 export const VERIFIED = 'Verified'
 
-export const mockInfo = 'mockToken'
+export const MOCK_INFO = 'mockToken'
 
 export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required']
 

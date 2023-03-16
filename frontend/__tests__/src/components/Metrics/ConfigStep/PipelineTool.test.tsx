@@ -9,7 +9,7 @@ import {
   PIPELINE_TOOL_VERIFY_ERROR_MESSAGE,
   VERIFY,
   RESET,
-  mockInfo,
+  MOCK_INFO,
   TOKEN_ERROR_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
@@ -114,7 +114,7 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation()
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
-    await userEvent.type(tokenInput, mockInfo)
+    await userEvent.type(tokenInput, MOCK_INFO)
     await userEvent.clear(tokenInput)
 
     expect(getByText(TOKEN_ERROR_MESSAGE[1])).toBeVisible()
@@ -125,9 +125,9 @@ describe('PipelineTool', () => {
     const { getByText } = setup()
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
-    await userEvent.type(tokenInput, mockInfo)
+    await userEvent.type(tokenInput, MOCK_INFO)
 
-    expect(tokenInput.value).toEqual(mockInfo)
+    expect(tokenInput.value).toEqual(MOCK_INFO)
 
     expect(getByText(TOKEN_ERROR_MESSAGE[0])).toBeInTheDocument()
     expect(getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR)

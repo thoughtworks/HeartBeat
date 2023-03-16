@@ -7,7 +7,7 @@ import {
   ERROR_MESSAGE_COLOR,
   GITHUB_VERIFY_ERROR_MESSAGE,
   MOCK_SOURCE_CONTROL_URL,
-  mockInfo,
+  MOCK_INFO,
   RESET,
   SOURCE_CONTROL_FIELDS,
   SOURCE_CONTROL_TYPES,
@@ -122,9 +122,9 @@ describe('SourceControl', () => {
     const { getByText } = setup()
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
 
-    fireEvent.change(tokenInput, { target: { value: mockInfo } })
+    fireEvent.change(tokenInput, { target: { value: MOCK_INFO } })
 
-    expect(tokenInput.value).toEqual(mockInfo)
+    expect(tokenInput.value).toEqual(MOCK_INFO)
     expect(getByText(TOKEN_ERROR_MESSAGE[0])).toBeInTheDocument()
     expect(getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR)
   })

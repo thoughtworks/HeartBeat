@@ -16,8 +16,6 @@
     query:
       page: 1
       per_page: 100
-      finished_from: 2022-08-28T16:00:00.000Z
-      created_to: 2022-09-09T15:59:59.000Z
 
   response:
     headers:

@@ -22,7 +22,7 @@ import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } f
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
-import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
+import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -92,6 +92,7 @@ export const PipelineTool = () => {
     }
     return EMPTY_STRING
   }
+
   const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
@@ -150,7 +151,6 @@ export const PipelineTool = () => {
           type='password'
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
-          // onChange={(e) => handleChangePipelineToken(e.target.value)}
           error={!fields[1].isValid}
           helperText={updateFieldHelpText(fields[1])}
         />

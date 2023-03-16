@@ -10,15 +10,12 @@ describe('Create a new project', () => {
 
     metricsPage.typeProjectName('E2E Project')
 
-    const today = new Date()
-    const day = today.getDate()
-    metricsPage.selectDateRange(`${day}`, `${day + 1}`)
+    metricsPage.selectDateRange()
 
     metricsPage.selectVelocityAndCycleTime()
 
     cy.get('button:contains("Verify")').should('be.disabled')
-    metricsPage.fillBoardFieldsInfo('2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken')
-    cy.get('button:contains("Verify")').should('be.enabled')
+    metricsPage.fillBoardFieldsInfo('2', 'mockEmail', 'mockProjectKey', 'mockSite', 'mockToken')
 
     metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
 
@@ -27,9 +24,19 @@ describe('Create a new project', () => {
     cy.get('button:contains("Verify")').should('be.enabled')
 
     cy.get('button:contains("Verify")').should('be.enabled')
-    metricsPage.fillSourceControlFieldsInfo('ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b')
+    metricsPage.fillSourceControlFieldsInfo('ghp_TSCfmn4H187rDN7JGgp5RAe7mM6YPp0xz987')
+
+    metricsPage.selectClassificationAndCycleTime()
 
     metricsPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
+    cy.contains('Real Done').should('exist')
+
+    metricsPage.checkCycleTime()
+    cy.contains('Cycle Time Settings').should('exist')
+    cy.contains('Consider the "Flag" as "Block"').should('exist')
+
+    metricsPage.checkClassification()
+    cy.contains('Classification Setting').should('exist')
   })
 })

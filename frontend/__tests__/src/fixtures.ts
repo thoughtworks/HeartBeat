@@ -68,7 +68,7 @@ export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/boards/jira'
-export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
+export const MOCK_PIPELINE_URL = '/api/v1/pipelines/buildKite'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
 export enum JIRA_VERIFY_ERROR_MESSAGE {
@@ -112,3 +112,8 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   startTime: '1613664000000',
   endTime: '1614873600000',
 }
+
+export const CREWS_SETTING = 'Crews Setting'
+export const CYCLE_TIME_SETTINGS = 'Cycle Time Settings'
+export const CLASSIFICATION_SETTING = 'Classification Setting'
+export const REAL_DONE = 'Real Done'

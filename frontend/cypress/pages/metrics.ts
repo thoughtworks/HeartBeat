@@ -60,10 +60,6 @@ class Metrics {
     cy.contains('Next').click()
   }
 
-  checkCycleTime() {
-    cy.get("[type='checkbox']").should('be.checked')
-  }
-
   checkClassification() {
     cy.contains('Distinguished By').siblings().click()
 

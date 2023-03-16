@@ -89,7 +89,7 @@ export const ERROR_MESSAGE_TIME_DURATION = 2000
 
 export const TOKEN_HELPER_TEXT = {
   RequiredTokenText: 'Token is required',
-  InvalidTokenText: 'Invalid token',
+  InvalidTokenText: 'Token is invalid',
 }
 
 export const DONE = 'Done'

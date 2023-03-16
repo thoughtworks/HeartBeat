@@ -16,7 +16,7 @@ export const FormSelectPart = ({ columns, saveCycleTimeOptions }: FormSelectPart
         <FormSelect
           key={item}
           label={item}
-          defaultSelected={[METRICS_CONSTANTS.cycleTimeEmptyStr]}
+          defaultSelected={METRICS_CONSTANTS.cycleTimeEmptyStr}
           saveCycleTimeOptions={saveCycleTimeOptions}
         />
       ))}

@@ -4,8 +4,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { DateRangeBox } from '@src/components/Metrics/ConfigStep/DateRangePicker/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { updateBoardVerifyState } from '@src/context/board/boardSlice'
-import { selectDateRange, updateDateRange } from '@src/context/config/configSlice'
+import { selectDateRange, updateBoardVerifyState, updateDateRange } from '@src/context/config/configSlice'
 
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch()

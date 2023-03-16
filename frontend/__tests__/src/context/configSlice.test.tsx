@@ -1,5 +1,4 @@
 import configReducer, {
-  updateBoard,
   updateCalendarType,
   updateDateRange,
   updateProjectName,
@@ -18,7 +17,7 @@ const initState = {
     endDate: '',
   },
   metrics: [],
-  board: {
+  boardConfig: {
     type: BOARD_TYPES.JIRA,
     boardId: '',
     email: '',
@@ -26,6 +25,7 @@ const initState = {
     site: '',
     token: '',
   },
+  isBoardVerified: false,
   pipelineToolFields: {
     pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',
@@ -69,12 +69,6 @@ describe('config reducer', () => {
     const config = configReducer(initState, updateMetrics([VELOCITY]))
 
     expect(config.metrics).toEqual([VELOCITY])
-  })
-
-  it('should update board fields when change board fields input', () => {
-    const config = configReducer(initState, updateBoard({ boardId: '1' }))
-
-    expect(config.board.boardId).toEqual('1')
   })
 
   it('should update pipelineTool fields when change pipelineTool fields input', () => {

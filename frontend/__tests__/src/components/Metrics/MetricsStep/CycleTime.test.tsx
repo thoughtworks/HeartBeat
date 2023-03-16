@@ -11,8 +11,7 @@ beforeEach(() => {
   store = setupStore()
 })
 
-const title = CYCLE_TIME_SETTINGS
-const defaultSelected = '----'
+const DEFAULT_SELECTED = '----'
 const mockColumnsList = [
   {
     key: 'indeterminate',
@@ -57,7 +56,7 @@ const FlagAsBlock = 'Consider the "Flag" as "Block"'
 const setup = () =>
   render(
     <Provider store={store}>
-      <CycleTime title={title} columns={mockColumnsList} />
+      <CycleTime title={CYCLE_TIME_SETTINGS} columns={mockColumnsList} />
     </Provider>
   )
 
@@ -65,7 +64,7 @@ describe('CycleTime', () => {
   describe('CycleTime Title', () => {
     it('should show Cycle Time title when render Crews component', () => {
       const { getByText } = setup()
-      expect(getByText(title)).toBeInTheDocument()
+      expect(getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument()
     })
   })
 
@@ -82,7 +81,7 @@ describe('CycleTime', () => {
 
     it('should show "----" in selector by create default when initializing', () => {
       const { getAllByText } = setup()
-      expect(getAllByText(defaultSelected)).toHaveLength(5)
+      expect(getAllByText(DEFAULT_SELECTED)).toHaveLength(5)
     })
 
     it('should show detail options when click included button', async () => {

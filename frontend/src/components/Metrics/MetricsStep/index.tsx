@@ -6,7 +6,7 @@ import {
   selectJiraColumns,
   selectTargetFields,
   selectUsers,
-} from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+} from '@src/context/config/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectMetrics } from '@src/context/config/configSlice'

@@ -7,9 +7,11 @@ import {
   ERROR_MESSAGE_COLOR,
   GITHUB_VERIFY_ERROR_MESSAGE,
   MOCK_SOURCE_CONTROL_URL,
+  mockInfo,
   RESET,
   SOURCE_CONTROL_FIELDS,
   SOURCE_CONTROL_TYPES,
+  TOKEN_ERROR_MESSAGE,
   VERIFIED,
   VERIFY,
 } from '../../../fixtures'
@@ -105,7 +107,6 @@ describe('SourceControl', () => {
 
   it('should show error message and error style when token is empty', () => {
     const { getByText } = setup()
-    const TOKEN_ERROR_MESSAGE = 'Token is required'
 
     fillSourceControlFieldsInformation()
 
@@ -113,22 +114,19 @@ describe('SourceControl', () => {
 
     fireEvent.change(tokenInput, { target: { value: '' } })
 
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeInTheDocument()
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+    expect(getByText(TOKEN_ERROR_MESSAGE[1])).toBeInTheDocument()
+    expect(getByText(TOKEN_ERROR_MESSAGE[1])).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show error message and error style when token is invalid', () => {
     const { getByText } = setup()
-    const TOKEN_ERROR_MESSAGE = 'Invalid token'
-    const mockInfo = 'mockToken'
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
 
     fireEvent.change(tokenInput, { target: { value: mockInfo } })
 
     expect(tokenInput.value).toEqual(mockInfo)
-
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeInTheDocument()
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+    expect(getByText(TOKEN_ERROR_MESSAGE[0])).toBeInTheDocument()
+    expect(getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show error notification when sourceControl verify response status is 401', async () => {

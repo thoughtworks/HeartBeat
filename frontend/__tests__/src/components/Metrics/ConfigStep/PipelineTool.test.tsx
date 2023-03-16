@@ -9,6 +9,8 @@ import {
   PIPELINE_TOOL_VERIFY_ERROR_MESSAGE,
   VERIFY,
   RESET,
+  mockInfo,
+  TOKEN_ERROR_MESSAGE,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -109,30 +111,26 @@ describe('PipelineTool', () => {
 
   it('should show error message and error style when token is empty', async () => {
     const { getByText } = setup()
-    const TOKEN_ERROR_MESSAGE = 'Token is required'
-    const mockInfo = 'mockToken'
     await fillPipelineToolFieldsInformation()
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
     await userEvent.type(tokenInput, mockInfo)
     await userEvent.clear(tokenInput)
 
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeVisible()
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+    expect(getByText(TOKEN_ERROR_MESSAGE[1])).toBeVisible()
+    expect(getByText(TOKEN_ERROR_MESSAGE[1])).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show error message and error style when token is invalid', async () => {
     const { getByText } = setup()
-    const TOKEN_ERROR_MESSAGE = 'Invalid token'
-    const mockInfo = 'mockToken'
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
 
     await userEvent.type(tokenInput, mockInfo)
 
     expect(tokenInput.value).toEqual(mockInfo)
 
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toBeInTheDocument()
-    expect(getByText(TOKEN_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR)
+    expect(getByText(TOKEN_ERROR_MESSAGE[0])).toBeInTheDocument()
+    expect(getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
   it('should show reset button when verify succeed ', async () => {

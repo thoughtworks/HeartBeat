@@ -1,4 +1,4 @@
-import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlWrapper } from './style'
 import { useAppDispatch } from '@src/hooks'
@@ -14,7 +14,6 @@ interface Props {
 export const SingleSelection = ({ options, label, value, id }: Props) => {
   const dispatch = useAppDispatch()
   const [selectedValue, setSelectedValue] = useState(value)
-  const errorMessage = `${label} is required`
 
   const handleChange = (event: SelectChangeEvent) => {
     const value = event.target.value
@@ -24,7 +23,7 @@ export const SingleSelection = ({ options, label, value, id }: Props) => {
 
   return (
     <>
-      <FormControlWrapper variant='standard' required error>
+      <FormControlWrapper variant='standard' required>
         <InputLabel id='single-selection-label'>{label}</InputLabel>
         <Select labelId='single-selection-label' value={selectedValue} onChange={handleChange}>
           {options.map((data) => (
@@ -33,8 +32,6 @@ export const SingleSelection = ({ options, label, value, id }: Props) => {
             </MenuItem>
           ))}
         </Select>
-
-        {errorMessage && <FormHelperText>{errorMessage}</FormHelperText>}
       </FormControlWrapper>
     </>
   )

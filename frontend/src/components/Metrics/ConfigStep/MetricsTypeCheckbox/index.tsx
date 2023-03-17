@@ -15,11 +15,11 @@ import {
   updateBoard,
   updateBoardVerifyState,
   updateMetrics,
-  updatePipelineToolFields,
+  updatePipelineTool,
+  updatePipelineToolVerifyState,
   updateSourceControlFields,
 } from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
-import { updatePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 import { updateSourceControlVerifyState } from '@src/context/sourceControl/sourceControlSlice'
 
@@ -35,7 +35,7 @@ export const MetricsTypeCheckbox = () => {
     const {
       target: { value },
     } = event
-    dispatch(updatePipelineToolFields({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
+    dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     dispatch(updatePipelineToolVerifyState(false))
     dispatch(updateBoardVerifyState(false))
     dispatch(

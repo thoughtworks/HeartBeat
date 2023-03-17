@@ -20,10 +20,11 @@ describe('board reducer', () => {
       token: '',
     },
     isBoardVerified: false,
-    pipelineToolFields: {
+    pipelineToolConfig: {
       pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
       token: '',
     },
+    isPipelineToolVerified: false,
     sourceControlFields: {
       sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
       token: '',

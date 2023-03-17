@@ -17,8 +17,13 @@ import {
   PipelineToolTypeSelections,
 } from '@src/components/Metrics/ConfigStep/PipelineTool/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { updatePipelineToolVerifyState, isPipelineToolVerified } from '@src/context/pipelineTool/pipelineToolSlice'
-import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } from '@src/context/config/configSlice'
+import {
+  isPipelineToolVerified,
+  selectDateRange,
+  selectPipelineTool,
+  updatePipelineTool,
+  updatePipelineToolVerifyState,
+} from '@src/context/config/configSlice'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
@@ -26,7 +31,7 @@ import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
-  const pipelineToolFields = useAppSelector(selectPipelineToolFields)
+  const pipelineToolFields = useAppSelector(selectPipelineTool)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
   const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect()
@@ -96,7 +101,7 @@ export const PipelineTool = () => {
   const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
-      updatePipelineToolFields({
+      updatePipelineTool({
         pipelineTool: fields[0].value,
         token: fields[1].value,
       })
@@ -111,7 +116,7 @@ export const PipelineTool = () => {
     await verifyPipelineTool(params).then((res) => {
       if (res) {
         dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified))
-        dispatch(updatePipelineToolFields(res.response))
+        dispatch(updatePipelineTool(res.response))
       }
     })
   }

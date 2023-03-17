@@ -1,6 +1,6 @@
 import pipelineVerifyResponseReducer, {
   updatePipelineToolVerifyResponse,
-} from '@src/context/pipelineTool/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
+} from '@src/context/config/pipelineTool/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
 
 describe('pipelineToolVerifyResponse reducer', () => {
   it('should show empty array when handle initial state', () => {

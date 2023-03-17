@@ -8,6 +8,7 @@ import {
   CLASSIFICATION_SETTING,
   CREWS_SETTING,
   CYCLE_TIME_SETTINGS,
+  DEPLOYMENT_FREQUENCY_SETTINGS,
   REAL_DONE,
   REQUIRED_DATA_LIST,
 } from '../../../fixtures'
@@ -47,5 +48,12 @@ describe('MetricsStep', () => {
     const { getByText } = setup()
 
     expect(getByText(CLASSIFICATION_SETTING)).toBeInTheDocument()
+  })
+
+  it('should show DeploymentFrequencySettings component when select deployment frequency in config page', async () => {
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[4]]))
+    const { getByText } = setup()
+
+    expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
   })
 })

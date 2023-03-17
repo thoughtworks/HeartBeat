@@ -1,11 +1,9 @@
 import React from 'react'
-import { AddButton, Divider, Title } from './style'
+import { AddButton } from './style'
 import { PipelineMetricSelection } from './PipelineMetricSelection'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
-import {
-  addADeploymentFrequencySetting,
-  selectDeploymentFrequencySettings,
-} from '@src/context/pipelineMetricsSettings/pipelineMetricsSettingsSlice'
+import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { addADeploymentFrequencySetting, selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch()
@@ -17,14 +15,11 @@ export const DeploymentFrequencySettings = () => {
 
   return (
     <>
-      <Divider>
-        <Title>Deployment frequency settings</Title>
-      </Divider>
-      {deploymentFrequencySettings.map((deploymentFrequencySetting, index) => (
+      <MetricsSettingTitle title={'Deployment frequency settings'} />
+      {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
         <PipelineMetricSelection
-          key={(Math.random() + 1).toString(36)}
+          key={deploymentFrequencySetting.id}
           deploymentFrequencySetting={deploymentFrequencySetting}
-          index={index}
           isShowRemoveButton={deploymentFrequencySettings.length > 1}
         />
       ))}

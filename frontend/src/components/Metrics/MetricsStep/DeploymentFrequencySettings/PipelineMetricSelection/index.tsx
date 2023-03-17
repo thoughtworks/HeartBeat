@@ -6,41 +6,31 @@ import { deleteADeploymentFrequencySetting } from '@src/context/pipelineMetricsS
 
 interface pipelineMetricSelectionProps {
   deploymentFrequencySetting: {
+    id: number
     organization: string
     pipelineName: string
     steps: string
   }
-  index: number
   isShowRemoveButton: boolean
 }
 
 export const PipelineMetricSelection = ({
   deploymentFrequencySetting,
-  index,
   isShowRemoveButton,
 }: pipelineMetricSelectionProps) => {
   const dispatch = useAppDispatch()
+  const { id, organization, pipelineName, steps } = deploymentFrequencySetting
 
   const handleClick = () => {
-    dispatch(deleteADeploymentFrequencySetting(index))
+    dispatch(deleteADeploymentFrequencySetting(id))
   }
 
   return (
     <>
       {isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove this pipeline</RemoveButton>}
-      <SingleSelection
-        options={['o1', 'o2']}
-        label={'Organization'}
-        value={deploymentFrequencySetting.organization}
-        index={index}
-      />
-      <SingleSelection
-        options={['p1', 'p2']}
-        label={'Pipeline Name'}
-        value={deploymentFrequencySetting.pipelineName}
-        index={index}
-      />
-      <SingleSelection options={['s1', 's2']} label={'Steps'} value={deploymentFrequencySetting.steps} index={index} />
+      <SingleSelection id={id} options={['o1', 'o2']} label={'Organization'} value={organization} />
+      <SingleSelection id={id} options={['p1', 'p2']} label={'Pipeline Name'} value={pipelineName} />
+      <SingleSelection id={id} options={['s1', 's2']} label={'Steps'} value={steps} />
     </>
   )
 }

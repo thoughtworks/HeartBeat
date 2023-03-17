@@ -11,6 +11,7 @@ import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectMetrics } from '@src/context/config/configSlice'
 import { REQUIRED_DATA_LIST } from '@src/constants'
+import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 
 export const MetricsStep = () => {
   const requiredData = useAppSelector(selectMetrics)
@@ -29,6 +30,7 @@ export const MetricsStep = () => {
       {requiredData.includes(REQUIRED_DATA_LIST[2]) && (
         <Classification options={targetFields} title={'Classification Setting'} label={'Distinguished By'} />
       )}
+      {requiredData.includes(REQUIRED_DATA_LIST[4]) && <DeploymentFrequencySettings />}
     </>
   )
 }

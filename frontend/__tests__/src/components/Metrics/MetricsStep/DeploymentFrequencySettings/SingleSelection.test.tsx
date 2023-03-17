@@ -11,7 +11,7 @@ describe('SingleSelection', () => {
   const setUp = () =>
     render(
       <Provider store={store}>
-        <SingleSelection options={mockOptions} label={mockLabel} value={mockValue} index={0} />
+        <SingleSelection options={mockOptions} label={mockLabel} value={mockValue} id={0} />
       </Provider>
     )
 

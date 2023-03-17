@@ -3,7 +3,21 @@ import saveMetricsSettingReducer, {
   saveTargetFields,
   saveUsers,
   saveDoneColumn,
+  updateDeploymentFrequencySettings,
+  addADeploymentFrequencySetting,
+  deleteADeploymentFrequencySetting,
+  selectDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice'
+import { store } from '@src/store'
+
+const initState = {
+  jiraColumns: [],
+  targetFields: [],
+  users: [],
+  doneColumn: [],
+  boardColumns: [],
+  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+}
 
 describe('saveMetricsSetting reducer', () => {
   it('should show empty array when handle initial state', () => {
@@ -14,6 +28,9 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([])
     expect(savedMetricsSetting.doneColumn).toEqual([])
     expect(savedMetricsSetting.boardColumns).toEqual([])
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
+      { id: 0, organization: '', pipelineName: '', steps: '' },
+    ])
   })
 
   it('should store updated targetFields when its value changed', () => {
@@ -25,7 +42,7 @@ describe('saveMetricsSetting reducer', () => {
       ],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
+      initState,
       saveTargetFields({
         targetFields: mockUpdatedTargetFields.targetFields,
       })
@@ -41,7 +58,7 @@ describe('saveMetricsSetting reducer', () => {
       doneColumn: ['DONE', 'CANCELLED'],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
+      initState,
       saveDoneColumn({
         doneColumn: mockUpdatedDoneColumn.doneColumn,
       })
@@ -55,7 +72,7 @@ describe('saveMetricsSetting reducer', () => {
       users: ['userOne', 'userTwo', 'userThree'],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
+      initState,
       saveUsers({
         users: mockUpdatedUsers.users,
       })
@@ -69,12 +86,64 @@ describe('saveMetricsSetting reducer', () => {
       boardColumns: [{ name: 'TODO', value: 'To do' }],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
-      { jiraColumns: [], targetFields: [], users: [], doneColumn: [], boardColumns: [] },
+      initState,
       saveBoardColumns({
         boardColumns: mockSavedBoardColumns.boardColumns,
       })
     )
 
     expect(savedMetricsSetting.boardColumns).toEqual(mockSavedBoardColumns)
+  })
+
+  it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      initState,
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' })
+    )
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
+      { id: 0, organization: 'mock new organization', pipelineName: '', steps: '' },
+    ])
+  })
+
+  it('should update a deploymentFrequencySetting when handle updateDeploymentFrequencySettings given multiple deploymentFrequencySettings', () => {
+    const multipleDeploymentFrequencySettingsInitState = {
+      ...initState,
+      deploymentFrequencySettings: [
+        { id: 0, organization: '', pipelineName: '', steps: '' },
+        { id: 1, organization: '', pipelineName: '', steps: '' },
+      ],
+    }
+    const updatedDeploymentFrequencySettings = [
+      { id: 0, organization: 'mock new organization', pipelineName: '', steps: '' },
+      { id: 1, organization: '', pipelineName: '', steps: '' },
+    ]
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      multipleDeploymentFrequencySettingsInitState,
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' })
+    )
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(updatedDeploymentFrequencySettings)
+  })
+
+  it('should add a deploymentFrequencySetting when handle addADeploymentFrequencySettings given initial state', () => {
+    const addedDeploymentFrequencySettings = [
+      { id: 0, organization: '', pipelineName: '', steps: '' },
+      { id: 1, organization: '', pipelineName: '', steps: '' },
+    ]
+
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, addADeploymentFrequencySetting())
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings)
+  })
+
+  it('should delete a deploymentFrequencySetting when handle deleteADeploymentFrequencySettings given initial state', () => {
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, deleteADeploymentFrequencySetting(0))
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([])
+  })
+
+  it('should return deploymentFrequencySettings when call selectDeploymentFrequencySettings functions', () => {
+    expect(selectDeploymentFrequencySettings(store.getState())).toEqual(initState.deploymentFrequencySettings)
   })
 })

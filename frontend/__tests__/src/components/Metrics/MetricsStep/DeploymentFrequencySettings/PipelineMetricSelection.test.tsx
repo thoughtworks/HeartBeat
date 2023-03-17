@@ -20,6 +20,7 @@ jest.mock('@src/context/pipelineMetricsSettings/pipelineMetricsSettingsSlice', (
 const mockIndex = 0
 
 const deploymentFrequencySetting = {
+  id: 0,
   organization: 'mock organization',
   pipelineName: 'mock pipelineName',
   steps: 'mock steps',
@@ -30,7 +31,6 @@ const setUp = (mockIndex: number, isShowRemoveButton: boolean) => {
     <Provider store={store}>
       <PipelineMetricSelection
         deploymentFrequencySetting={deploymentFrequencySetting}
-        index={mockIndex}
         isShowRemoveButton={isShowRemoveButton}
       />
     </Provider>

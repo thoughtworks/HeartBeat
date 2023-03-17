@@ -26,10 +26,11 @@ describe('pipelineTool reducer', () => {
       token: '',
     },
     isPipelineToolVerified: false,
-    sourceControlFields: {
+    sourceControlConfig: {
       sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
       token: '',
     },
+    isSourceControlVerified: false,
   }
   it('should set isPipelineToolVerified false when handle initial state', () => {
     const STEPPER = pipelineToolReducer(undefined, { type: 'unknown' })

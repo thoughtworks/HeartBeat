@@ -10,8 +10,13 @@ import {
 } from '@src/components/Metrics/ConfigStep/SourceControl/style'
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectDateRange, selectSourceControlFields, updateSourceControlFields } from '@src/context/config/configSlice'
-import { updateSourceControlVerifyState, isSourceControlVerified } from '@src/context/sourceControl/sourceControlSlice'
+import {
+  isSourceControlVerified,
+  selectDateRange,
+  selectSourceControl,
+  updateSourceControl,
+  updateSourceControlVerifyState,
+} from '@src/context/config/configSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { updateSourceControlVerifyResponse } from '@src/context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
@@ -20,7 +25,7 @@ import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
-  const sourceControlFields = useAppSelector(selectSourceControlFields)
+  const sourceControlFields = useAppSelector(selectSourceControl)
   const DateRange = useAppSelector(selectDateRange)
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const isVerified = useAppSelector(isSourceControlVerified)
@@ -51,7 +56,7 @@ export const SourceControl = () => {
   const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
-      updateSourceControlFields({
+      updateSourceControl({
         sourceControl: fields[0].value,
         token: fields[1].value,
       })

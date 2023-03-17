@@ -3,7 +3,6 @@ import configReducer, {
   updateDateRange,
   updateProjectName,
   updateMetrics,
-  updateSourceControlFields,
 } from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
@@ -30,10 +29,11 @@ const initState = {
     token: '',
   },
   isPipelineToolVerified: false,
-  sourceControlFields: {
+  sourceControlConfig: {
     sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
+  isSourceControlVerified: false,
 }
 
 describe('config reducer', () => {
@@ -69,11 +69,5 @@ describe('config reducer', () => {
     const config = configReducer(initState, updateMetrics([VELOCITY]))
 
     expect(config.metrics).toEqual([VELOCITY])
-  })
-
-  it('should update sourceControl fields when change sourceControl fields input', () => {
-    const config = configReducer(initState, updateSourceControlFields({ token: 'token' }))
-
-    expect(config.sourceControlFields.token).toEqual('token')
   })
 })

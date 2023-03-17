@@ -25,10 +25,11 @@ describe('board reducer', () => {
       token: '',
     },
     isPipelineToolVerified: false,
-    sourceControlFields: {
+    sourceControlConfig: {
       sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
       token: '',
     },
+    isSourceControlVerified: false,
   }
 
   it('should return false when handle initial state', () => {

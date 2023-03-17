@@ -9,7 +9,7 @@ import {
 import {
   sourceControlSlice as sourceControlReducer,
   initialSourceControlState,
-} from '@src/context/sourceControl/sourceControlSlice'
+} from '@src/context/config/sourceControl/sourceControlSlice'
 
 export interface basicConfigState {
   projectName: string

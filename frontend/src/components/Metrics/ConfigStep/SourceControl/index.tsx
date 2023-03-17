@@ -19,7 +19,7 @@ import {
 } from '@src/context/config/configSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
-import { updateSourceControlVerifyResponse } from '@src/context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
+import { updateSourceControlVerifyResponse } from '@src/context/config/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
 import { Loading } from '@src/components/Loading'
 import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
 

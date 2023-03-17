@@ -124,9 +124,6 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format(
-				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
-				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);

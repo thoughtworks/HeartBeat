@@ -7,7 +7,6 @@ import {
   ERROR_MESSAGE_COLOR,
   GITHUB_VERIFY_ERROR_MESSAGE,
   MOCK_SOURCE_CONTROL_URL,
-  MOCK_INFO,
   RESET,
   SOURCE_CONTROL_FIELDS,
   SOURCE_CONTROL_TYPES,
@@ -120,11 +119,12 @@ describe('SourceControl', () => {
 
   it('should show error message and error style when token is invalid', () => {
     const { getByText } = setup()
+    const mockInfo = 'mockToken'
     const tokenInput = screen.getByTestId('sourceControlTextField').querySelector('input') as HTMLInputElement
 
-    fireEvent.change(tokenInput, { target: { value: MOCK_INFO } })
+    fireEvent.change(tokenInput, { target: { value: mockInfo } })
 
-    expect(tokenInput.value).toEqual(MOCK_INFO)
+    expect(tokenInput.value).toEqual(mockInfo)
     expect(getByText(TOKEN_ERROR_MESSAGE[0])).toBeInTheDocument()
     expect(getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR)
   })

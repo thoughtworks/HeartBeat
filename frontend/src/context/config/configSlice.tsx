@@ -5,7 +5,7 @@ import { boardSlice as boardReducer, initialBoardState } from '@src/context/conf
 import {
   pipelineToolSlice as pipelineToolReducer,
   initialPipelineToolState,
-} from '@src/context/pipelineTool/pipelineToolSlice'
+} from '@src/context/config/pipelineTool/pipelineToolSlice'
 
 export interface basicConfigState {
   projectName: string

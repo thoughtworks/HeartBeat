@@ -4,7 +4,7 @@ import { configSlice } from '@src/context/config/configSlice'
 import { boardSlice } from '@src/context/config/board/boardSlice'
 import { pipelineToolSlice } from '@src/context/config/pipelineTool/pipelineToolSlice'
 import { jiraVerifyResponseSlice } from '@src/context/config/board/jiraVerifyResponse/jiraVerifyResponseSlice'
-import { sourceControlSlice } from '@src/context/sourceControl/sourceControlSlice'
+import { sourceControlSlice } from '@src/context/config/sourceControl/sourceControlSlice'
 import { metricsSlice } from '@src/context/Metrics/metricsSlice'
 
 export const setupStore = () => {

@@ -17,11 +17,11 @@ import {
   updateMetrics,
   updatePipelineTool,
   updatePipelineToolVerifyState,
-  updateSourceControlFields,
+  updateSourceControl,
+  updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
-import { updateSourceControlVerifyState } from '@src/context/sourceControl/sourceControlSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -48,7 +48,7 @@ export const MetricsTypeCheckbox = () => {
         token: '',
       })
     )
-    dispatch(updateSourceControlFields({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
+    dispatch(updateSourceControl({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
     dispatch(updateSourceControlVerifyState(false))
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)

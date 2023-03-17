@@ -1,6 +1,6 @@
 import sourceControlVerifyResponseReducer, {
   updateSourceControlVerifyResponse,
-} from '@src/context/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
+} from '@src/context/config/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
 
 describe('sourceControlVerifyResponse reducer', () => {
   it('should show empty array when handle initial state', () => {

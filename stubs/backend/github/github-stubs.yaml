@@ -32,23 +32,3 @@
     status: 200
     file: ./backend/github/jsons/github.orgs.<% url.1 %>.repos.json
 
-# GitHub Pulls
-- request:
-    method: GET
-    path: /repos/(\w+\/[\w.-]+)/commits/(\b[0-9a-f]+\b)/pulls
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    file: ./backend/github/jsons/github.user.repos.pulls.json
-
-# GitHub Pull Reuqest Commit
-- request:
-      method: GET
-      path: /repos/(\w+\/[\w.-]+)/pulls/(\d+)/commits
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    file: ./backend/github/jsons/github.user.repos.pull.request.commits.json

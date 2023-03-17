@@ -32,6 +32,9 @@ describe('Create a new project', () => {
     cy.contains('Crews Setting').should('exist')
     cy.contains('Real Done').should('exist')
 
+    cy.contains('Cycle Time Settings').should('exist')
+    cy.contains('Consider the "Flag" as "Block"').should('exist')
+
     metricsPage.checkClassification()
     cy.contains('Classification Setting').should('exist')
   })

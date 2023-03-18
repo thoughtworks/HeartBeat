@@ -1,5 +1,7 @@
+import { BOARD_PROJECT_KEY, BOARD_TOKEN, MOCK_EMAIL, WEB_SITE } from '../fixtures/fixtures'
 import homePage from '../pages/home'
-import metricsPage from '../pages/metrics'
+import configPage from '../pages/metrics/config'
+import metricsPage from '../pages/metrics/metrics'
 
 describe('Create a new project', () => {
   it('Should create a new project manually', () => {
@@ -8,27 +10,28 @@ describe('Create a new project', () => {
     homePage.createANewProject()
     cy.url().should('include', '/metrics')
 
-    metricsPage.typeProjectName('E2E Project')
+    configPage.typeProjectName('E2E Project')
 
-    metricsPage.selectDateRange()
+    configPage.selectDateRange()
 
-    metricsPage.selectVelocityAndCycleTime()
+    configPage.selectVelocityAndCycleTime()
 
-    cy.get('button:contains("Verify")').should('be.disabled')
-    metricsPage.fillBoardFieldsInfo('2', 'test@test.com', 'mockProjectKey', 'mockSite', 'mockToken')
+    const verifyButton = () => cy.get('button:contains("Verify")')
+    verifyButton().should('be.disabled')
+    configPage.fillBoardFieldsInfo('2', MOCK_EMAIL, BOARD_PROJECT_KEY, WEB_SITE, BOARD_TOKEN)
 
-    metricsPage.selectLeadTimeForChangesAndDeploymentFrequency()
+    configPage.selectLeadTimeForChangesAndDeploymentFrequency()
 
-    cy.get('button:contains("Verify")').should('be.disabled')
-    metricsPage.fillPipelineToolFieldsInfo('mock1234'.repeat(5))
-    cy.get('button:contains("Verify")').should('be.enabled')
+    verifyButton().should('be.disabled')
+    configPage.fillPipelineToolFieldsInfo('mock1234'.repeat(5))
+    verifyButton().should('be.enabled')
 
-    cy.get('button:contains("Verify")').should('be.enabled')
-    metricsPage.fillSourceControlFieldsInfo(`ghp_${'Abc123'.repeat(6)}`)
+    verifyButton().should('be.enabled')
+    configPage.fillSourceControlFieldsInfo(`ghp_${'Abc123'.repeat(6)}`)
 
-    metricsPage.selectClassificationAndCycleTime()
+    configPage.selectClassificationAndCycleTime()
 
-    metricsPage.goMetricsStep()
+    configPage.goMetricsStep()
     cy.contains('Crews Setting').should('exist')
     cy.contains('Real Done').should('exist')
 

@@ -1,4 +1,4 @@
-class Metrics {
+class Config {
   navigate() {
     cy.visit(Cypress.env('url') + '/metrics')
   }
@@ -59,14 +59,7 @@ class Metrics {
   goMetricsStep() {
     cy.contains('Next').click()
   }
-
-  checkClassification() {
-    cy.contains('Distinguished By').siblings().click()
-
-    cy.contains('All').click()
-    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
-  }
 }
 
-const metricsPage = new Metrics()
-export default metricsPage
+const configPage = new Config()
+export default configPage

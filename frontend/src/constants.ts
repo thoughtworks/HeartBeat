@@ -4,6 +4,8 @@ export const FIVE_HUNDRED = 500
 
 export const ZERO = 0
 
+export const EMPTY_STRING = ''
+
 export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
 
 export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
@@ -58,15 +60,40 @@ export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 
 export const EMAIL = 'Email'
 
-export const BOARD_TOKEN = 'Token'
+export const METRICS_CONSTANTS = {
+  cycleTimeEmptyStr: '----',
+  doneValue: 'Done',
+  doneKeyFromBackend: 'done',
+  todoValue: 'To do',
+  analysisValue: 'Analysis',
+  inDevValue: 'In dev',
+  blockValue: 'Block',
+  waitingValue: 'Waiting for testing',
+  testingValue: 'Testing',
+  reviewValue: 'Review',
+}
 
-export const INVALID_TOKEN_MESSAGE = 'Invalid token'
+export const CYCLETIME_LIST = [
+  METRICS_CONSTANTS.cycleTimeEmptyStr,
+  METRICS_CONSTANTS.todoValue,
+  METRICS_CONSTANTS.analysisValue,
+  METRICS_CONSTANTS.inDevValue,
+  METRICS_CONSTANTS.blockValue,
+  METRICS_CONSTANTS.waitingValue,
+  METRICS_CONSTANTS.testingValue,
+  METRICS_CONSTANTS.reviewValue,
+  METRICS_CONSTANTS.doneValue,
+]
+
+export const BOARD_TOKEN = 'Token'
 
 export const ERROR_MESSAGE_TIME_DURATION = 2000
 
 export const TOKEN_HELPER_TEXT = {
-  emptyTokenText: 'Token is required',
-  InvalidTokenText: 'Invalid token',
+  RequiredTokenText: 'Token is required',
+  InvalidTokenText: 'Token is invalid',
 }
+
+export const DONE = 'Done'
 
 export const SELECTED_VALUE_SEPARATOR = ', '

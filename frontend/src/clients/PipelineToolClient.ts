@@ -1,8 +1,8 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { AxiosError } from 'axios'
+import { AxiosError, HttpStatusCode } from 'axios'
 import { BadRequestException } from '@src/exceptions/BadRequestException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
-import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnauthorizedException } from '@src/exceptions/UnauthorizedException'
 
 export interface getVerifyPipelineToolParams {
   type: string
@@ -16,19 +16,19 @@ export class PipelineToolClient extends HttpClient {
 
   verifyPipelineTool = async (params: getVerifyPipelineToolParams) => {
     try {
-      const result = await this.axiosInstance.get('/pipeline/fetch', { params: { ...params } }).then((res) => res)
+      const result = await this.axiosInstance.get(`/pipelines/${params.type}`, { params: { ...params } })
       this.isPipelineToolVerified = true
       this.response = result
     } catch (e) {
       this.isPipelineToolVerified = false
       const code = (e as AxiosError).response?.status
-      if (code === 400) {
+      if (code === HttpStatusCode.BadRequest) {
         throw new BadRequestException(params.type, 'Bad request')
       }
-      if (code === 404) {
-        throw new NotFoundException(params.type, 'Page not found')
+      if (code === HttpStatusCode.Unauthorized) {
+        throw new UnauthorizedException(params.type, 'Token is incorrect')
       }
-      if (code === 500) {
+      if (code === HttpStatusCode.InternalServerError) {
         throw new InternalServerException(params.type, 'Internal server error')
       }
     }

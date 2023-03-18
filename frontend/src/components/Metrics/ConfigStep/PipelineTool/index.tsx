@@ -1,5 +1,12 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { PIPELINE_TOOL_TYPES, CONFIG_TITLE, ZERO, INVALID_TOKEN_MESSAGE, BUILDKITE_TOKEN_REGEXP } from '@src/constants'
+import {
+  PIPELINE_TOOL_TYPES,
+  CONFIG_TITLE,
+  ZERO,
+  BUILDKITE_TOKEN_REGEXP,
+  TOKEN_HELPER_TEXT,
+  EMPTY_STRING,
+} from '@src/constants'
 import { FormEvent, useState } from 'react'
 import {
   PipelineToolButtonGroup,
@@ -10,16 +17,21 @@ import {
   PipelineToolTypeSelections,
 } from '@src/components/Metrics/ConfigStep/PipelineTool/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { updatePipelineToolVerifyState, isPipelineToolVerified } from '@src/context/pipelineTool/pipelineToolSlice'
-import { selectDateRange, selectPipelineToolFields, updatePipelineToolFields } from '@src/context/config/configSlice'
+import {
+  isPipelineToolVerified,
+  selectDateRange,
+  selectPipelineTool,
+  updatePipelineTool,
+  updatePipelineToolVerifyState,
+} from '@src/context/config/configSlice'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
-import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
+import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
-  const pipelineToolFields = useAppSelector(selectPipelineToolFields)
+  const pipelineToolFields = useAppSelector(selectPipelineTool)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
   const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect()
@@ -29,50 +41,67 @@ export const PipelineTool = () => {
       key: 'PipelineTool',
       value: pipelineToolFields.pipelineTool,
       isValid: true,
+      isRequired: true,
     },
     {
       key: 'Token',
       value: pipelineToolFields.token,
       isValid: true,
+      isRequired: true,
     },
   ])
 
   const initPipeLineFields = () => {
     const newFields = fields.map((field, index) => {
-      field.value = index === ZERO ? PIPELINE_TOOL_TYPES.BUILD_KITE : ''
+      field.value = !index ? PIPELINE_TOOL_TYPES.BUILD_KITE : EMPTY_STRING
       return field
     })
     setFields(newFields)
     dispatch(updatePipelineToolVerifyState(false))
   }
 
-  const checkFieldValid = (value: string): boolean => BUILDKITE_TOKEN_REGEXP.test(value)
+  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
+    return field.isRequired && field.isValid && !!field.value
+  }
+
+  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
+    return fields.some((field) => !isFieldInvalid(field))
+  }
 
   const onFormUpdate = (index: number, value: string) => {
-    if (index === ZERO) {
-      const newFieldsValue = fields.map((field, index) => {
-        if (index !== ZERO) field.value = ''
-        return field
-      })
-      setFields(newFieldsValue)
-      dispatch(updatePipelineToolVerifyState(false))
-      return
-    }
     const newFieldsValue = fields.map((field, fieldIndex) => {
-      if (fieldIndex === index) {
-        field.value = value
-        field.isValid = checkFieldValid(value)
+      if (!index) {
+        field.value = !fieldIndex ? value : EMPTY_STRING
+      } else if (!!index && !!fieldIndex) {
+        return {
+          ...field,
+          value,
+          isRequired: !!value,
+          isValid: BUILDKITE_TOKEN_REGEXP.test(value),
+        }
       }
       return field
     })
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
+    setIsDisableVerifyButton(isAllFieldsValid(newFieldsValue))
     setFields(newFieldsValue)
+    dispatch(updatePipelineToolVerifyState(false))
+  }
+
+  const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
+    const { isRequired, isValid } = field
+    if (!isRequired) {
+      return TOKEN_HELPER_TEXT.RequiredTokenText
+    }
+    if (!isValid) {
+      return TOKEN_HELPER_TEXT.InvalidTokenText
+    }
+    return EMPTY_STRING
   }
 
   const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
-      updatePipelineToolFields({
+      updatePipelineTool({
         pipelineTool: fields[0].value,
         token: fields[1].value,
       })
@@ -87,7 +116,7 @@ export const PipelineTool = () => {
     await verifyPipelineTool(params).then((res) => {
       if (res) {
         dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified))
-        dispatch(updatePipelineToolFields(res.response))
+        dispatch(updatePipelineTool(res.response))
       }
     })
   }
@@ -128,7 +157,7 @@ export const PipelineTool = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid}
-          helperText={!fields[1].isValid ? INVALID_TOKEN_MESSAGE : ''}
+          helperText={updateFieldHelpText(fields[1])}
         />
         <PipelineToolButtonGroup>
           {isVerified && !isLoading ? (

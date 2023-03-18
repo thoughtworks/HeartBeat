@@ -1,40 +1,11 @@
 import configReducer, {
-  updateBoard,
   updateCalendarType,
   updateDateRange,
   updateProjectName,
   updateMetrics,
-  updatePipelineToolFields,
-  updateSourceControlFields,
 } from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
-import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
-
-const initState = {
-  projectName: '',
-  calendarType: REGULAR_CALENDAR,
-  dateRange: {
-    startDate: '',
-    endDate: '',
-  },
-  metrics: [],
-  board: {
-    type: BOARD_TYPES.JIRA,
-    boardId: '',
-    email: '',
-    projectKey: '',
-    site: '',
-    token: '',
-  },
-  pipelineToolFields: {
-    pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
-    token: '',
-  },
-  sourceControlFields: {
-    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
-    token: '',
-  },
-}
+import initialConfigState from '../initialConfigState'
 
 describe('config reducer', () => {
   it('should be default value when init render config page', () => {
@@ -46,46 +17,28 @@ describe('config reducer', () => {
   })
 
   it('should update project name when change project name input', () => {
-    const config = configReducer(initState, updateProjectName('mock project name'))
+    const config = configReducer(initialConfigState, updateProjectName('mock project name'))
 
     expect(config.projectName).toEqual('mock project name')
   })
 
   it('should update calendar when change calendar types', () => {
-    const config = configReducer(initState, updateCalendarType(CHINA_CALENDAR))
+    const config = configReducer(initialConfigState, updateCalendarType(CHINA_CALENDAR))
 
     expect(config.calendarType).toEqual(CHINA_CALENDAR)
   })
 
   it('should update date range when change date', () => {
     const today = new Date().getMilliseconds()
-    const config = configReducer(initState, updateDateRange({ startDate: today, endDate: '' }))
+    const config = configReducer(initialConfigState, updateDateRange({ startDate: today, endDate: '' }))
 
     expect(config.dateRange.startDate).toEqual(today)
     expect(config.dateRange.endDate).toEqual('')
   })
 
   it('should update required data when change require data selections', () => {
-    const config = configReducer(initState, updateMetrics([VELOCITY]))
+    const config = configReducer(initialConfigState, updateMetrics([VELOCITY]))
 
     expect(config.metrics).toEqual([VELOCITY])
-  })
-
-  it('should update board fields when change board fields input', () => {
-    const config = configReducer(initState, updateBoard({ boardId: '1' }))
-
-    expect(config.board.boardId).toEqual('1')
-  })
-
-  it('should update pipelineTool fields when change pipelineTool fields input', () => {
-    const config = configReducer(initState, updatePipelineToolFields({ token: 'abcd' }))
-
-    expect(config.pipelineToolFields.token).toEqual('abcd')
-  })
-
-  it('should update sourceControl fields when change sourceControl fields input', () => {
-    const config = configReducer(initState, updateSourceControlFields({ token: 'token' }))
-
-    expect(config.sourceControlFields.token).toEqual('token')
   })
 })

@@ -1,8 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { BOARD_TYPES, REGULAR_CALENDAR, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
+import { REGULAR_CALENDAR } from '@src/constants'
+import { boardSlice as boardReducer, initialBoardState } from '@src/context/config/board/boardSlice'
+import {
+  pipelineToolSlice as pipelineToolReducer,
+  initialPipelineToolState,
+} from '@src/context/config/pipelineTool/pipelineToolSlice'
+import {
+  sourceControlSlice as sourceControlReducer,
+  initialSourceControlState,
+} from '@src/context/config/sourceControl/sourceControlSlice'
 
-export interface configState {
+export interface basicConfigState {
   projectName: string
   calendarType: string
   dateRange: {
@@ -10,12 +19,9 @@ export interface configState {
     endDate: string
   }
   metrics: string[]
-  board: { type: string; boardId: string; email: string; projectKey: string; site: string; token: string }
-  pipelineToolFields: { pipelineTool: string; token: string }
-  sourceControlFields: { sourceControl: string; token: string }
 }
 
-const initialState: configState = {
+const initialBasicConfigState: basicConfigState = {
   projectName: '',
   calendarType: REGULAR_CALENDAR,
   dateRange: {
@@ -23,27 +29,16 @@ const initialState: configState = {
     endDate: '',
   },
   metrics: [],
-  board: {
-    type: BOARD_TYPES.JIRA,
-    boardId: '',
-    email: '',
-    projectKey: '',
-    site: '',
-    token: '',
-  },
-  pipelineToolFields: {
-    pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
-    token: '',
-  },
-  sourceControlFields: {
-    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
-    token: '',
-  },
 }
 
 export const configSlice = createSlice({
   name: 'config',
-  initialState,
+  initialState: {
+    ...initialBasicConfigState,
+    ...initialBoardState,
+    ...initialPipelineToolState,
+    ...initialSourceControlState,
+  },
   reducers: {
     updateProjectName: (state, action) => {
       state.projectName = action.payload
@@ -58,34 +53,33 @@ export const configSlice = createSlice({
     updateMetrics: (state, action) => {
       state.metrics = action.payload
     },
-    updateBoard: (state, action) => {
-      state.board = action.payload
-    },
-    updatePipelineToolFields: (state, action) => {
-      state.pipelineToolFields = action.payload
-    },
-    updateSourceControlFields: (state, action) => {
-      state.sourceControlFields = action.payload
-    },
+    ...boardReducer.caseReducers,
+    ...pipelineToolReducer.caseReducers,
+    ...sourceControlReducer.caseReducers,
   },
 })
-
 export const {
   updateProjectName,
   updateCalendarType,
   updateDateRange,
   updateMetrics,
   updateBoard,
-  updatePipelineToolFields,
-  updateSourceControlFields,
+  updateBoardVerifyState,
+  updatePipelineToolVerifyState,
+  updatePipelineTool,
+  updateSourceControl,
+  updateSourceControlVerifyState,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.projectName
 export const selectCalendarType = (state: RootState) => state.config.calendarType
 export const selectDateRange = (state: RootState) => state.config.dateRange
 export const selectMetrics = (state: RootState) => state.config.metrics
-export const selectBoard = (state: RootState) => state.config.board
-export const selectPipelineToolFields = (state: RootState) => state.config.pipelineToolFields
-export const selectSourceControlFields = (state: RootState) => state.config.sourceControlFields
+export const selectIsBoardVerified = (state: RootState) => state.config.isBoardVerified
+export const selectBoard = (state: RootState) => state.config.boardConfig
+export const isPipelineToolVerified = (state: RootState) => state.config.isPipelineToolVerified
+export const selectPipelineTool = (state: RootState) => state.config.pipelineToolConfig
+export const isSourceControlVerified = (state: RootState) => state.config.isSourceControlVerified
+export const selectSourceControl = (state: RootState) => state.config.sourceControlConfig
 
 export default configSlice.reducer

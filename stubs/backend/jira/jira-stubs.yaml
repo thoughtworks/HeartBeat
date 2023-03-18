@@ -7,7 +7,7 @@
     headers:
       content-type: application/json
     status: 200
-    file: ./jira/jsons/jira.board.1963.configuration.json
+    file: ./backend/jira/jsons/jira.board.1963.configuration.json
 
 # Status
 - request:
@@ -33,6 +33,20 @@
       content-type: application/json
     status: 200
     file: ./backend/jira/jsons/jira.board.1963.issue.alldone.json
+
+# All Non Done issue
+- request:
+    method: GET
+    url: /rest/agile/1.0/board/1963/issue
+    query:
+      maxResults: 100
+      jql: sprint in openSprints() AND status not in (%27DONE%27,%27CANCELLED%27)
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.board.1963.issue.allnondone.json
 
 # target Fields
 - request:

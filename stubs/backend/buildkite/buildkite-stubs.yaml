@@ -16,11 +16,24 @@
     query:
       page: 1
       per_page: 100
-      finished_from: 2022-08-28T16:00:00.000Z
-      created_to: 2022-09-09T15:59:59.000Z
 
   response:
     headers:
       content-type: application/json
     status: 200
     file: ./backend/buildkite/jsons/buildkite.organizations.XXXX.pipelines.json
+
+# Pipeline builds
+- request:
+    method: GET
+    url: /v2/organizations/XXXX/pipelines/(.*)/builds
+    query:
+      page: 1
+      per_page: 100
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    file: ./backend/buildkite/jsons/buildkite.organizations.XXXX.pipelines.builds.json
+

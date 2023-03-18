@@ -34,3 +34,9 @@ Then you can use health endpoint to check the app status.
 cd HearBeat/backend
 ./gradlew clean test
 ```
+
+## 4. Run the e2e environment
+```shell script
+cd HearBeat/backend
+./gradlew bootRun --args='--spring.profiles.active=e2e'
+```

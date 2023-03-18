@@ -13,15 +13,15 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectMetrics,
   updateBoard,
+  updateBoardVerifyState,
   updateMetrics,
-  updatePipelineToolFields,
-  updateSourceControlFields,
+  updatePipelineTool,
+  updatePipelineToolVerifyState,
+  updateSourceControl,
+  updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
-import { updateBoardVerifyState } from '@src/context/board/boardSlice'
-import { updatePipelineToolVerifyState } from '@src/context/pipelineTool/pipelineToolSlice'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
-import { updateSourceControlVerifyState } from '@src/context/sourceControl/sourceControlSlice'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -35,7 +35,7 @@ export const MetricsTypeCheckbox = () => {
     const {
       target: { value },
     } = event
-    dispatch(updatePipelineToolFields({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
+    dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     dispatch(updatePipelineToolVerifyState(false))
     dispatch(updateBoardVerifyState(false))
     dispatch(
@@ -48,7 +48,7 @@ export const MetricsTypeCheckbox = () => {
         token: '',
       })
     )
-    dispatch(updateSourceControlFields({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
+    dispatch(updateSourceControl({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
     dispatch(updateSourceControlVerifyState(false))
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)

@@ -18,6 +18,8 @@ export const RESET = 'Reset'
 
 export const VERIFIED = 'Verified'
 
+export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required']
+
 export const PROJECT_NAME_LABEL = 'Project Name'
 
 export const EXPORT_BOARD_DATA = 'Export board data'
@@ -68,7 +70,7 @@ export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
 export const MOCK_BOARD_URL = '/api/v1/boards/jira'
-export const MOCK_PIPELINE_URL = '/api/v1/pipeline/fetch'
+export const MOCK_PIPELINE_URL = '/api/v1/pipelines/buildkite'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
 
 export enum JIRA_VERIFY_ERROR_MESSAGE {
@@ -79,11 +81,9 @@ export enum JIRA_VERIFY_ERROR_MESSAGE {
 
 export enum PIPELINE_TOOL_VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'BuildKite verify failed: Bad request',
-  NOT_FOUND = 'BuildKite verify failed: Page not found',
+  UNAUTHORIZED = 'BuildKite verify failed: Token is incorrect',
   INTERNAL_SERVER_ERROR = 'BuildKite verify failed: Internal server error',
 }
-
-export const BUILD_KITE_VERIFY_FAILED_MESSAGE = 'BuildKite verify failed: verify failed'
 
 export enum GITHUB_VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Github verify failed: Bad request',
@@ -114,3 +114,9 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   startTime: '1613664000000',
   endTime: '1614873600000',
 }
+
+export const CREWS_SETTING = 'Crews Setting'
+export const CYCLE_TIME_SETTINGS = 'Cycle Time Settings'
+export const CLASSIFICATION_SETTING = 'Classification Setting'
+export const REAL_DONE = 'Real Done'
+export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'

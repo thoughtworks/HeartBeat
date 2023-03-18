@@ -1,5 +1,13 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import { BOARD_TYPES, EMAIL_REG_EXP, ZERO, EMAIL, CONFIG_TITLE, BOARD_TOKEN, BOARD_TOKEN_REG_EXP } from '@src/constants'
+import {
+  BOARD_TYPES,
+  EMAIL_REG_EXP,
+  EMAIL,
+  CONFIG_TITLE,
+  BOARD_TOKEN,
+  BOARD_TOKEN_REG_EXP,
+  EMPTY_STRING,
+} from '@src/constants'
 import React, { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
@@ -10,13 +18,18 @@ import {
   BoardTypeSelections,
 } from '@src/components/Metrics/ConfigStep/Board/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { updateBoardVerifyState, selectIsBoardVerified } from '@src/context/board/boardSlice'
-import { selectBoard, selectDateRange, updateBoard } from '@src/context/config/configSlice'
+import {
+  selectBoard,
+  selectDateRange,
+  selectIsBoardVerified,
+  updateBoard,
+  updateBoardVerifyState,
+} from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
-import { updateJiraVerifyResponse } from '@src/context/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+import { updateJiraVerifyResponse } from '@src/context/config/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 
 export const Board = () => {
@@ -68,44 +81,61 @@ export const Board = () => {
 
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {
-      field.value = index === ZERO ? BOARD_TYPES.JIRA : ''
+      field.value = !index ? BOARD_TYPES.JIRA : EMPTY_STRING
       return field
     })
     setFields(newFields)
     dispatch(updateBoardVerifyState(false))
   }
 
-  const onFormUpdate = (index: number, value: string) => {
-    if (index === ZERO) {
-      const newFieldsValue = fields.map((field, index) => {
-        if (index !== ZERO) {
-          field.value = ''
-          field.isValid = true
-          field.isRequired = true
-        }
-        return field
-      })
-      setFields(newFieldsValue)
-      dispatch(updateBoardVerifyState(false))
-      return
-    }
-    const newFieldsValue = fields.map((field, fieldIndex) => {
+  const updateFields = (
+    fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[],
+    index: number,
+    value: string
+  ) => {
+    return fields.map((field, fieldIndex) => {
       if (fieldIndex !== index) {
         return field
       }
-      field.value = value
-      field.isRequired = value !== ''
-      if (fields[index].key === EMAIL) {
-        field.isValid = EMAIL_REG_EXP.test(value)
+      const newValue = value.trim()
+      const isValueEmpty = !!newValue
+      const isValueValid =
+        field.key === EMAIL
+          ? EMAIL_REG_EXP.test(newValue)
+          : field.key === BOARD_TOKEN
+          ? BOARD_TOKEN_REG_EXP.test(newValue)
+          : true
+      return {
+        ...field,
+        value: newValue,
+        isRequired: isValueEmpty,
+        isValid: isValueValid,
       }
-      if (fields[index].key === BOARD_TOKEN) {
-        field.isValid = BOARD_TOKEN_REG_EXP.test(value)
-      }
-      return field
     })
+  }
 
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isRequired && field.isValid && field.value != ''))
+  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
+    return field.isRequired && field.isValid && !!field.value
+  }
+
+  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
+    return fields.some((field) => !isFieldInvalid(field))
+  }
+
+  const onFormUpdate = (index: number, value: string) => {
+    const newFieldsValue = !index
+      ? updateFields(fields, index, value).map((field, index) => {
+          return {
+            ...field,
+            value: !index ? value : EMPTY_STRING,
+            isValid: true,
+            isRequired: true,
+          }
+        })
+      : updateFields(fields, index, value)
+    setIsDisableVerifyButton(isAllFieldsValid(newFieldsValue))
     setFields(newFieldsValue)
+    dispatch(updateBoardVerifyState(false))
   }
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
@@ -154,7 +184,7 @@ export const Board = () => {
     if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
       return `${key} is invalid`
     }
-    return ''
+    return EMPTY_STRING
   }
 
   return (
@@ -165,7 +195,7 @@ export const Board = () => {
       <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
       <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {fields.map((field, index) =>
-          index === ZERO ? (
+          !index ? (
             <BoardTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select

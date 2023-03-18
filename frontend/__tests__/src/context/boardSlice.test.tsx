@@ -1,20 +1,22 @@
-import boardReducer, { updateBoardVerifyState } from '@src/context/board/boardSlice'
+import boardReducer, { updateBoard, updateBoardVerifyState } from '@src/context/config/configSlice'
+import initialConfigState from '../initialConfigState'
 
 describe('board reducer', () => {
   it('should return false when handle initial state', () => {
-    const steeper = boardReducer(undefined, { type: 'unknown' })
+    const board = boardReducer(undefined, { type: 'unknown' })
 
-    expect(steeper.isBoardVerified).toEqual(false)
+    expect(board.isBoardVerified).toEqual(false)
   })
 
   it('should return true when handle changeBoardVerifyState given isBoardVerified is true', () => {
-    const steeper = boardReducer(
-      {
-        isBoardVerified: false,
-      },
-      updateBoardVerifyState(true)
-    )
+    const board = boardReducer(initialConfigState, updateBoardVerifyState(true))
 
-    expect(steeper.isBoardVerified).toEqual(true)
+    expect(board.isBoardVerified).toEqual(true)
+  })
+
+  it('should update board fields when change board fields input', () => {
+    const board = boardReducer(initialConfigState, updateBoard({ boardId: '1' }))
+
+    expect(board.boardConfig.boardId).toEqual('1')
   })
 })

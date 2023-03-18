@@ -15,6 +15,7 @@ import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
+import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.controller.board.vo.response.ColumnValue;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
@@ -62,7 +63,7 @@ public class JiraService {
 		taskExecutor.shutdown();
 	}
 
-	public BoardConfigResponse getJiraConfiguration(BoardRequestParam boardRequestParam) {
+	public BoardConfigResponse getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = URI.create("https://" + boardRequestParam.getSite() + ".atlassian.net");
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
@@ -76,13 +77,14 @@ public class JiraService {
 					jiraBoardConfigDTO);
 			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
 
-			return jiraColumnsFuture.thenCompose(
-					jiraColumnResult -> getUserAsync(baseUrl, boardRequestParam, jiraColumnResult.getDoneColumns())
-						.thenApply(users -> BoardConfigResponse.builder()
-							.jiraColumnResponses(jiraColumnResult.getJiraColumnResponses())
-							.targetFields(targetFieldFuture.join())
-							.users(users)
-							.build()))
+			return jiraColumnsFuture
+				.thenCompose(jiraColumnResult -> getUserAsync(boardType, baseUrl, boardRequestParam,
+						jiraColumnResult.getDoneColumns())
+					.thenApply(users -> BoardConfigResponse.builder()
+						.jiraColumnResponses(jiraColumnResult.getJiraColumnResponses())
+						.targetFields(targetFieldFuture.join())
+						.users(users)
+						.build()))
 				.join();
 		}
 		catch (FeignException e) {
@@ -188,17 +190,19 @@ public class JiraService {
 				: keyList.stream().reduce((pre, last) -> last).orElse("");
 	}
 
-	private CompletableFuture<List<String>> getUserAsync(URI baseUrl, BoardRequestParam boardRequestParam,
-			List<String> doneColumns) {
-		return CompletableFuture.supplyAsync(() -> getUsers(baseUrl, boardRequestParam, doneColumns), taskExecutor);
+	private CompletableFuture<List<String>> getUserAsync(BoardType boardType, URI baseUrl,
+			BoardRequestParam boardRequestParam, List<String> doneColumns) {
+		return CompletableFuture.supplyAsync(() -> getUsers(boardType, baseUrl, boardRequestParam, doneColumns),
+				taskExecutor);
 	}
 
-	private List<String> getUsers(URI baseUrl, BoardRequestParam boardRequestParam, List<String> doneColumns) {
+	private List<String> getUsers(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam,
+			List<String> doneColumns) {
 		if (doneColumns.isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no done column.");
 		}
 
-		List<DoneCard> doneCards = getAllDoneCards(baseUrl, doneColumns, boardRequestParam);
+		List<DoneCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam);
 
 		if (isNull(doneCards) || doneCards.isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no done cards.");
@@ -213,10 +217,9 @@ public class JiraService {
 		return assigneeList.stream().flatMap(Collection::stream).distinct().toList();
 	}
 
-	private List<DoneCard> getAllDoneCards(URI baseUrl, List<String> doneColumns, BoardRequestParam boardRequestParam) {
-		String jql = String.format(
-				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
-				String.join("','", doneColumns), boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+	private List<DoneCard> getAllDoneCards(BoardType boardType, URI baseUrl, List<String> doneColumns,
+			BoardRequestParam boardRequestParam) {
+		String jql = parseJiraJql(boardType, doneColumns, boardRequestParam);
 
 		log.info("[Jira] Start to get first-page done card information");
 		AllDoneCardsResponseDTO allDoneCardsResponseDTO = jiraFeignClient.getAllDoneCards(baseUrl,
@@ -245,6 +248,28 @@ public class JiraService {
 			.toList();
 
 		return Stream.concat(doneCards.stream(), moreDoneCards.stream()).toList();
+	}
+
+	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
+		if (boardType == BoardType.JIRA) {
+			return String.format(
+					"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
+					String.join("','", doneColumns), boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		}
+		else if (boardType == BoardType.CLASSIC_JIRA) {
+			StringBuilder subJql = new StringBuilder();
+			for (int index = 0; index < doneColumns.size() - 1; index++) {
+				subJql.append(String.format("status changed to '%s' during (%s, %s) or ", doneColumns.get(index),
+						boardRequestParam.getStartTime(), boardRequestParam.getEndTime()));
+			}
+			subJql
+				.append(String.format("status changed to '%s' during (%s, %s)", doneColumns.get(doneColumns.size() - 1),
+						boardRequestParam.getStartTime(), boardRequestParam.getEndTime()));
+			return String.format("status in ('%s') AND (%s)", String.join("', '", doneColumns), subJql);
+		}
+		else {
+			throw new RequestFailedException(400, "[Jira] boardType param is not correct");
+		}
 	}
 
 	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {

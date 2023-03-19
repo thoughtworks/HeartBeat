@@ -10,7 +10,7 @@ import {
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectMetrics } from '@src/context/config/configSlice'
-import { REQUIRED_DATA_LIST } from '@src/constants'
+import { REQUIRED_DATA } from '@src/constants'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 
 export const MetricsStep = () => {
@@ -23,14 +23,14 @@ export const MetricsStep = () => {
   return (
     <>
       <Crews options={users} title={'Crews Setting'} label={'Included Crews'} />
-      {requiredData.includes(REQUIRED_DATA_LIST[1]) && (
+      {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && (
         <CycleTime columns={jiraColumns} title={'Cycle Time Settings'} />
       )}
       <RealDone options={doneColumn} title={'Real Done'} label={'Consider as Done'} />
-      {requiredData.includes(REQUIRED_DATA_LIST[2]) && (
+      {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
         <Classification options={targetFields} title={'Classification Setting'} label={'Distinguished By'} />
       )}
-      {requiredData.includes(REQUIRED_DATA_LIST[4]) && <DeploymentFrequencySettings />}
+      {requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) && <DeploymentFrequencySettings />}
     </>
   )
 }

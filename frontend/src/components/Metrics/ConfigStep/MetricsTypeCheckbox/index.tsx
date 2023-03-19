@@ -1,10 +1,10 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import {
   BOARD_TYPES,
-  REQUIRED_DATA_LIST,
   PIPELINE_TOOL_TYPES,
   SOURCE_CONTROL_TYPES,
   SELECTED_VALUE_SEPARATOR,
+  REQUIRED_DATA,
 } from '@src/constants'
 import { useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
@@ -53,17 +53,17 @@ export const MetricsTypeCheckbox = () => {
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     setIsShowBoard(
-      value.includes(REQUIRED_DATA_LIST[0]) ||
-        value.includes(REQUIRED_DATA_LIST[1]) ||
-        value.includes(REQUIRED_DATA_LIST[2])
+      value.includes(REQUIRED_DATA.VELOCITY) ||
+        value.includes(REQUIRED_DATA.CYCLE_TIME) ||
+        value.includes(REQUIRED_DATA.CLASSIFICATION)
     )
     setIsShowPipelineTool(
-      value.includes(REQUIRED_DATA_LIST[3]) ||
-        value.includes(REQUIRED_DATA_LIST[4]) ||
-        value.includes(REQUIRED_DATA_LIST[5]) ||
-        value.includes(REQUIRED_DATA_LIST[6])
+      value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
+        value.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
+        value.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
+        value.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
     )
-    setIsShowSourceControl(value.includes(REQUIRED_DATA_LIST[3]))
+    setIsShowSourceControl(value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES))
   }
   return (
     <>
@@ -76,7 +76,7 @@ export const MetricsTypeCheckbox = () => {
           onChange={handleRequireDataChange}
           renderValue={(selected) => selected.join(SELECTED_VALUE_SEPARATOR)}
         >
-          {REQUIRED_DATA_LIST.map((data) => (
+          {Object.values(REQUIRED_DATA).map((data) => (
             <MenuItem key={data} value={data}>
               <Checkbox checked={requireData.indexOf(data) > -1} />
               <ListItemText primary={data} />

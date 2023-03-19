@@ -23,17 +23,15 @@ export enum CONFIG_TITLE {
   SOURCE_CONTROL = 'Source Control',
 }
 
-export const SELECT_OR_WRITE_DATE = 'Select Or Write Date'
-
-export const REQUIRED_DATA_LIST = [
-  'Velocity',
-  'Cycle time',
-  'Classification',
-  'Lead time for changes',
-  'Deployment frequency',
-  'Change failure rate',
-  'Mean time to recovery',
-]
+export enum REQUIRED_DATA {
+  VELOCITY = 'Velocity',
+  CYCLE_TIME = 'Cycle time',
+  CLASSIFICATION = 'Classification',
+  LEAD_TIME_FOR_CHANGES = 'Lead time for changes',
+  DEPLOYMENT_FREQUENCY = 'Deployment frequency',
+  CHANGE_FAILURE_RATE = 'Change failure rate',
+  MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
+}
 
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',
@@ -73,7 +71,7 @@ export const METRICS_CONSTANTS = {
   reviewValue: 'Review',
 }
 
-export const CYCLETIME_LIST = [
+export const CYCLE_TIME_LIST = [
   METRICS_CONSTANTS.cycleTimeEmptyStr,
   METRICS_CONSTANTS.todoValue,
   METRICS_CONSTANTS.analysisValue,

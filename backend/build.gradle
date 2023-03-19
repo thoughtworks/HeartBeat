@@ -81,8 +81,8 @@ jacocoTestCoverageVerification {
     }
   }
 }
+check.dependsOn jacocoTestCoverageVerification
 
 licenseReport {
   allowedLicensesFile = new File("src/main/resources/allowed-licenses.json")
 }
-

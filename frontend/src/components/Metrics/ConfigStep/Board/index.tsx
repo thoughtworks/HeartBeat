@@ -7,8 +7,9 @@ import {
   BOARD_TOKEN,
   BOARD_TOKEN_REG_EXP,
   EMPTY_STRING,
+  DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import React, { FormEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -184,7 +185,7 @@ export const Board = () => {
     if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
       return `${key} is invalid`
     }
-    return EMPTY_STRING
+    return DEFAULT_HELPER_TEXT
   }
 
   return (

@@ -1,5 +1,12 @@
 import { FormEvent, useState } from 'react'
-import { CONFIG_TITLE, GITHUB_TOKEN_REGEXP, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants'
+import {
+  CONFIG_TITLE,
+  DEFAULT_HELPER_TEXT,
+  EMPTY_STRING,
+  GITHUB_TOKEN_REGEXP,
+  SOURCE_CONTROL_TYPES,
+  TOKEN_HELPER_TEXT,
+} from '@src/constants'
 import {
   SourceControlButtonGroup,
   SourceControlForm,
@@ -82,15 +89,15 @@ export const SourceControl = () => {
   }
 
   const checkFieldValid = (value: string): boolean => {
-    let helperText = ''
+    let helperText = DEFAULT_HELPER_TEXT
 
-    if (value === '') {
+    if (value === EMPTY_STRING) {
       helperText = TOKEN_HELPER_TEXT.RequiredTokenText
     } else if (!GITHUB_TOKEN_REGEXP.test(value)) {
       helperText = TOKEN_HELPER_TEXT.InvalidTokenText
     }
     setSourceControlHelperText(helperText)
-    return helperText === ''
+    return helperText === DEFAULT_HELPER_TEXT
   }
 
   const onFormUpdate = (index: number, value: string) => {

@@ -3,7 +3,7 @@ import React from 'react'
 
 const MetricsSettingTitle = (props: { title: string }) => (
   <Divider>
-    <span>{props.title}</span>
+    <h4>{props.title}</h4>
   </Divider>
 )
 

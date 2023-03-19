@@ -1,6 +1,6 @@
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import { useState } from 'react'
-import { CHINA_CALENDAR, REGULAR_CALENDAR } from '@src/constants'
+import { CHINA_CALENDAR, DEFAULT_HELPER_TEXT, REGULAR_CALENDAR } from '@src/constants'
 import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
 import { ConfigStepWrapper, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
@@ -35,7 +35,7 @@ export const ConfigStep = () => {
           setIsEmptyProjectName(e.target.value === '')
         }}
         error={isEmptyProjectName}
-        helperText={isEmptyProjectName ? 'Project Name is required' : ''}
+        helperText={isEmptyProjectName ? 'Project Name is required' : DEFAULT_HELPER_TEXT}
       />
       <h3>Collection Date</h3>
       <RadioGroup

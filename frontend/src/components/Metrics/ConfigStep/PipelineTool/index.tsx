@@ -6,6 +6,7 @@ import {
   BUILDKITE_TOKEN_REGEXP,
   TOKEN_HELPER_TEXT,
   EMPTY_STRING,
+  DEFAULT_HELPER_TEXT,
 } from '@src/constants'
 import { FormEvent, useState } from 'react'
 import {
@@ -95,7 +96,7 @@ export const PipelineTool = () => {
     if (!isValid) {
       return TOKEN_HELPER_TEXT.InvalidTokenText
     }
-    return EMPTY_STRING
+    return DEFAULT_HELPER_TEXT
   }
 
   const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {

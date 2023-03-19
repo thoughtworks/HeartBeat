@@ -3,7 +3,7 @@ class Config {
     cy.visit(Cypress.env('url') + '/metrics')
   }
   typeProjectName(projectName: string) {
-    cy.contains('Project Name *').siblings().type(projectName)
+    cy.contains('Project Name *').siblings().first().type(projectName)
   }
 
   selectDateRange() {
@@ -20,15 +20,15 @@ class Config {
   }
 
   fillBoardFieldsInfo(boardId: string, email: string, projectKey: string, site: string, token: string) {
-    cy.contains('Board Id').siblings().type(boardId)
-    cy.contains('Email').siblings().type(email)
-    cy.contains('Project Key').siblings().type(projectKey)
-    cy.contains('Site').siblings().type(site)
-    cy.contains('Token').siblings().type(token)
+    cy.contains('Board Id').siblings().first().type(boardId)
+    cy.contains('Email').siblings().first().type(email)
+    cy.contains('Project Key').siblings().first().type(projectKey)
+    cy.contains('Site').siblings().first().type(site)
+    cy.contains('Token').siblings().first().type(token)
   }
 
   selectLeadTimeForChangesAndDeploymentFrequency() {
-    cy.contains('Required Data').siblings().click()
+    cy.contains('Required Data').siblings().first().click()
     cy.get("[type='checkbox']").uncheck()
 
     cy.contains('Lead time for changes').click()
@@ -38,7 +38,7 @@ class Config {
   }
 
   fillPipelineToolFieldsInfo(token: string) {
-    cy.contains('Token').siblings().type(token)
+    cy.contains('Token').siblings().first().type(token)
   }
 
   fillSourceControlFieldsInfo(token: string) {
@@ -47,7 +47,7 @@ class Config {
   }
 
   selectClassificationAndCycleTime() {
-    cy.contains('Required Data').siblings().click()
+    cy.contains('Required Data').siblings().first().click()
     cy.get("[type='checkbox']").uncheck()
 
     cy.contains('Classification').click()

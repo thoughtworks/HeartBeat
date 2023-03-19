@@ -8,7 +8,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
-import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import { DEFAULT_HELPER_TEXT, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
@@ -66,10 +66,12 @@ export const Crews = ({ options, title, label }: crewsProps) => {
             </MenuItem>
           ))}
         </Select>
-        {isEmptyCrewData && (
+        {isEmptyCrewData ? (
           <FormHelperText>
             {label} is <strong>required</strong>
           </FormHelperText>
+        ) : (
+          DEFAULT_HELPER_TEXT
         )}
       </FormControl>
     </>

@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react'
 import { saveDoneColumn } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
-import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import { DEFAULT_HELPER_TEXT, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 
 interface realDoneProps {
   options: string[]
@@ -42,6 +42,11 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
     dispatch(saveDoneColumn(selectedDoneColumn))
   }, [selectedDoneColumn, dispatch])
 
+  const errorHelperText = () => (
+    <>
+      Must select which you want to <strong>consider as Done</strong>
+    </>
+  )
   return (
     <>
       <MetricsSettingTitle title={title} />
@@ -65,11 +70,7 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
             </MenuItem>
           ))}
         </Select>
-        {isEmptyRealDoneData && (
-          <FormHelperText>
-            Must select which you want to <strong>consider as Done</strong>
-          </FormHelperText>
-        )}
+        <FormHelperText>{isEmptyRealDoneData ? errorHelperText() : DEFAULT_HELPER_TEXT}</FormHelperText>
       </FormControl>
     </>
   )

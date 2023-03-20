@@ -9,12 +9,13 @@ import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import { STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
+import { useNavigate } from 'react-router-dom'
 
 const MetricsStepper = () => {
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStepNumber)
   const [isDialogShowing, setIsDialogShowing] = useState(false)
-
+  const navigate = useNavigate()
   const handleNext = () => {
     dispatch(nextStep())
   }
@@ -22,6 +23,15 @@ const MetricsStepper = () => {
   const handleBack = () => {
     setIsDialogShowing(true)
     dispatch(backStep())
+  }
+
+  const confirmDialog = () => {
+    navigate('/home')
+    setIsDialogShowing(false)
+  }
+
+  const CancelDialog = () => {
+    setIsDialogShowing(false)
   }
 
   return (
@@ -45,7 +55,9 @@ const MetricsStepper = () => {
           <NextButton onClick={handleNext}>Next</NextButton>
         )}
       </ButtonGroup>
-      {isDialogShowing && <ConfirmDialog />}
+      {isDialogShowing && (
+        <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={confirmDialog} onClose={CancelDialog} />
+      )}
     </Box>
   )
 }

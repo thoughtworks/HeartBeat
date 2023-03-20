@@ -5,6 +5,12 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { BACK, EXPORT_BOARD_DATA, NEXT, PROJECT_NAME_LABEL, STEPS } from '../../../fixtures'
 import userEvent from '@testing-library/user-event'
 
+const mockedUsedNavigate = jest.fn()
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate,
+}))
+
 const METRICS = 'Metrics'
 const EXPORT = 'Export'
 const stepperColor = 'rgba(0, 0, 0, 0.87)'
@@ -73,5 +79,25 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(BACK))
 
     expect(getByText('All the filled data will be cleared. Continue to Home page?')).toBeInTheDocument()
+  })
+
+  it('should close confirm dialog when click cancel button', async () => {
+    const { getByText, queryByText } = setup()
+    await userEvent.click(getByText(BACK))
+    await userEvent.click(getByText('Cancel'))
+
+    expect(queryByText('All the filled data will be cleared. Continue to Home page?')).not.toBeInTheDocument()
+  })
+
+  it('should go to home page when click Yes button', async () => {
+    const { getByText } = setup()
+    await userEvent.click(getByText(BACK))
+
+    expect(getByText('Yes')).toBeVisible()
+
+    await userEvent.click(getByText('Yes'))
+
+    expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/home')
   })
 })

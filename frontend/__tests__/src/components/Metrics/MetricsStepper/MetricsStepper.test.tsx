@@ -3,6 +3,7 @@ import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { BACK, EXPORT_BOARD_DATA, NEXT, PROJECT_NAME_LABEL, STEPS } from '../../../fixtures'
+import userEvent from '@testing-library/user-event'
 
 const METRICS = 'Metrics'
 const EXPORT = 'Export'
@@ -65,5 +66,12 @@ describe('MetricsStepper', () => {
     fireEvent.click(getByText(EXPORT_BOARD_DATA))
 
     expect(getByText(EXPORT)).toHaveStyle(`color:${stepperColor}`)
+  })
+
+  it('should show confirm dialog when click back button', async () => {
+    const { getByText } = setup()
+    await userEvent.click(getByText(BACK))
+
+    expect(getByText('All the filled data will be cleared. Continue to Home page?')).toBeInTheDocument()
   })
 })

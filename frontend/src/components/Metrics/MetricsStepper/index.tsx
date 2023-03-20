@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
@@ -8,16 +8,19 @@ import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/Stepp
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import { STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
+import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 
 const MetricsStepper = () => {
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStepNumber)
+  const [isDialogShowing, setIsDialogShowing] = useState(false)
 
   const handleNext = () => {
     dispatch(nextStep())
   }
 
   const handleBack = () => {
+    setIsDialogShowing(true)
     dispatch(backStep())
   }
 
@@ -42,6 +45,7 @@ const MetricsStepper = () => {
           <NextButton onClick={handleNext}>Next</NextButton>
         )}
       </ButtonGroup>
+      {isDialogShowing && <ConfirmDialog />}
     </Box>
   )
 }

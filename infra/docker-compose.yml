@@ -9,6 +9,9 @@ services:
     restart: always
     networks:
       - default
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default}
+      - MOCKSERVER_URL=${MOCKSERVER_URL:-localhost:4323}
   frontend:
     image: heartbeat_frontend:latest
     container_name: frontend

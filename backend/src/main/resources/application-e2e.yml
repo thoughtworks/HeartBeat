@@ -7,7 +7,8 @@ logging:
     root: INFO
 
 githubFeignClient:
-  url: 54.223.108.141:4323
+  url: ${MOCKSERVER_URL}
 
 jira:
-  url: 54.223.108.141:4323
+  url: ${MOCKSERVER_URL}
+

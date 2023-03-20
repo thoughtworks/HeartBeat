@@ -6,7 +6,6 @@ describe('ProjectDescription', () => {
   it('should show project description', () => {
     const { getByRole } = render(<ProjectDescription />)
 
-    // expect(queryByText(PROJECT_DESCRIPTION)).not.toBeInTheDocument();
     expect(getByRole('description').textContent).toContain(PROJECT_DESCRIPTION)
   })
 })

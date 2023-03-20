@@ -1,7 +1,7 @@
 package heartbeat.service.source.github;
 
 import heartbeat.client.GithubFeignClient;
-import heartbeat.client.dto.GithubOrgsInfo;
+import heartbeat.client.dto.GithubOrganizationsInfo;
 import heartbeat.client.dto.GithubRepos;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.RequestFailedException;
@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,8 +37,9 @@ class GithubServiceTest {
 		when(githubFeignClient.getAllRepos(token)).thenReturn(List.of(GithubRepos.builder().html_url("11111").build(),
 				GithubRepos.builder().html_url("22222").build(), GithubRepos.builder().html_url("33333").build()));
 
-		when(githubFeignClient.getGithubOrgsInfo(token)).thenReturn(List
-			.of(GithubOrgsInfo.builder().login("org1").build(), GithubOrgsInfo.builder().login("org2").build()));
+		when(githubFeignClient.getGithubOrganizationsInfo(token))
+			.thenReturn(List.of(GithubOrganizationsInfo.builder().login("org1").build(),
+					GithubOrganizationsInfo.builder().login("org2").build()));
 
 		when(githubFeignClient.getReposByOrganizationName("org1", token))
 			.thenReturn(List.of(GithubRepos.builder().html_url("22222").build(),
@@ -46,10 +48,8 @@ class GithubServiceTest {
 		final var response = githubService.verifyToken(githubToken);
 
 		assertThat(response.getGithubRepos()).hasSize(4);
-		assertThat(response.getGithubRepos().get(0)).isEqualTo("11111");
-		assertThat(response.getGithubRepos().get(1)).isEqualTo("22222");
-		assertThat(response.getGithubRepos().get(2)).isEqualTo("33333");
-		assertThat(response.getGithubRepos().get(3)).isEqualTo("44444");
+		assertThat(response.getGithubRepos())
+			.isEqualTo(new LinkedHashSet<>(List.of("11111", "22222", "33333", "44444")));
 	}
 
 	@Test

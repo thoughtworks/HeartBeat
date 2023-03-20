@@ -1,6 +1,6 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.GithubOrgsInfo;
+import heartbeat.client.dto.GithubOrganizationsInfo;
 import heartbeat.client.dto.GithubRepos;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ public interface GithubFeignClient {
 
 	@GetMapping(path = "/user/orgs")
 	@ResponseStatus(HttpStatus.OK)
-	List<GithubOrgsInfo> getGithubOrgsInfo(@RequestHeader("Authorization") String token);
+	List<GithubOrganizationsInfo> getGithubOrganizationsInfo(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "/user/repos")
 	@ResponseStatus(HttpStatus.OK)

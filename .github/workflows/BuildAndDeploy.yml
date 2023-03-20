@@ -112,7 +112,7 @@ jobs:
         run: |
           npm run license-compliance
 
-  build-and-push-image:
+  build-backend:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - frontend-check
@@ -129,7 +129,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
           aws-region: ${{ secrets.AWS_REGION}}
@@ -148,6 +148,33 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.backend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
+
+  build-frontend:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - frontend-check
+      - backend-check
+      - security-check
+      - frontend-license-check
+      - backend-license-check
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Build, tag, and push for Frontend
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -159,10 +186,144 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
 
+  build-mock-server:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - frontend-check
+      - backend-check
+      - security-check
+      - frontend-license-check
+      - backend-license-check
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push for MockServer
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: mock_server
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.stub
+          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.stub
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
+
+  deploy-e2e:
+    runs-on: ubuntu-latest
+    needs:
+      - build-backend
+      - build-frontend
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Update docker-compose.yaml
+        run: |
+          sed -i -e 's/heartbeat_backend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_backend:${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/heartbeat_frontend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_frontend:${{ github.run_number }}/g' infra/docker-compose.yml
+
+      - name: Copy docker-compose to ec2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_IP_E2E }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          source: "./infra/docker-compose.yml"
+          target: "./"
+          strip_components: 1
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        env:
+          REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+          IMAGE_TAG: ${{ github.run_number }}
+        with:
+          host: ${{ secrets.AWS_EC2_IP_E2E }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          script: |
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+            cp "./infra/docker-compose.yml" ./
+            # docker-compose down
+            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
+            docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
+            docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
+            SPRING_PROFILES_ACTIVE=e2e MOCK_SERVER_URL=${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} docker-compose up -d frontend
+
+  deploy-stub:
+    runs-on: ubuntu-latest
+    needs:
+      - build-mock-server
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Deploy
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+        uses: appleboy/ssh-action@master
+        env:
+          REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+          IMAGE_TAG: ${{ github.run_number }}
+        with:
+          host: ${{ secrets.AWS_EC2_IP_MOCK_SERVER }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          script: |
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
+            docker rm -f mockserver
+            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
+            docker run --name mockserver -d -p ${{ secrets.AWS_EC2_IP_E2E_PORT }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    needs:
+      - deploy-e2e
+      - deploy-stub
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+      - name: Install dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
+      - name: Run E2E
+        env:
+          APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP }}:${{ secrets.APP_PORT }}
+        run: pnpm run e2e
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: frontend/cypress/videos/
+          retention-days: ${{ vars.RETENTION_DAYS }}
+
   deploy:
     runs-on: ubuntu-latest
     needs:
-      - build-and-push-image
+      - e2e
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -196,34 +357,8 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             cp "./infra/docker-compose.yml" ./
             # docker-compose down
-            docker rmi -f $(docker images -f label=app=Heartbeat -q)
+            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
             docker-compose up -d frontend
-  e2e:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
-    needs:
-      - deploy
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          node-version: ${{ vars.NODE_VERSION }}
-      - name: Install dependencies
-        run: |
-          npm install -g pnpm
-          pnpm install
-      - name: Run E2E
-        env:
-          APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP }}:${{ secrets.APP_PORT }}
-        run: pnpm run e2e
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: cypress-videos
-          path: frontend/cypress/videos/
-          retention-days: ${{ vars.RETENTION_DAYS }}
 

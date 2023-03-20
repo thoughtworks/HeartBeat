@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,11 +23,12 @@ public class GithubController {
 	private final GithubService githubService;
 
 	@GetMapping
+	@CrossOrigin
 	@ResponseStatus(HttpStatus.OK)
 	public GithubResponse getRepos(@RequestParam @NotBlank(message = "token must not be blank") @Pattern(
 			regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$",
-			message = "token's pattern is incorrect") String githubToken) {
-		return githubService.verifyToken(githubToken);
+			message = "token's pattern is incorrect") String token) {
+		return githubService.verifyToken(token);
 	}
 
 }

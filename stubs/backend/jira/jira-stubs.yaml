@@ -1,7 +1,7 @@
 # Board Configuration
 - request:
     method: GET
-    url: /rest/agile/1.0/board/1963/configuration
+    url: ./backend/rest/agile/1.0/board/1963/configuration
 
   response:
     headers:

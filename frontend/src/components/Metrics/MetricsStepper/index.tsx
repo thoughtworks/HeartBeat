@@ -12,16 +12,17 @@ import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDia
 import { useNavigate } from 'react-router-dom'
 
 const MetricsStepper = () => {
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStepNumber)
   const [isDialogShowing, setIsDialogShowing] = useState(false)
-  const navigate = useNavigate()
+
   const handleNext = () => {
     dispatch(nextStep())
   }
 
   const handleBack = () => {
-    setIsDialogShowing(true)
+    setIsDialogShowing(!activeStep)
     dispatch(backStep())
   }
 

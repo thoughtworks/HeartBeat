@@ -17,16 +17,13 @@ export const YesButton = styled(Button)({
   boxShadow: theme.main.boxShadow,
   padding: '0 1rem',
   margin: '0 1rem',
-  width: '3rem',
   color: theme.main.color,
   backgroundColor: theme.main.backgroundColor,
   '&:hover': {
     backgroundColor: theme.main.backgroundColor,
-    color: theme.main.color,
   },
 })
 
 export const CancelButton = styled(Button)({
-  width: '3rem',
   color: theme.main.secondColor,
 })

@@ -1,14 +1,14 @@
 package heartbeat.controller.board;
 
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_NAME;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
-import java.util.Map;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.Map;
+
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
 
 public class BoardRequestFixture {
 

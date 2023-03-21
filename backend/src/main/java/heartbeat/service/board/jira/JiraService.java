@@ -1,8 +1,5 @@
 package heartbeat.service.board.jira;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
@@ -21,7 +18,12 @@ import heartbeat.controller.board.vo.response.ColumnValue;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
-import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,11 +37,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -57,11 +57,6 @@ public class JiraService {
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
-
-	@PreDestroy
-	public void shutdownExecutor() {
-		taskExecutor.shutdown();
-	}
 
 	public BoardConfigResponse getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = URI.create("https://" + boardRequestParam.getSite() + ".atlassian.net");

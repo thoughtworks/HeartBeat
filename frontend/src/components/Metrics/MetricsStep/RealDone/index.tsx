@@ -12,41 +12,37 @@ import React, { useEffect, useState } from 'react'
 import { saveDoneColumn } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
-import { DEFAULT_HELPER_TEXT, SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import { METRICS_CONSTANTS, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 
 interface realDoneProps {
-  options: string[]
+  columns: { key: string; value: { name: string; statuses: string[] } }[]
   title: string
   label: string
 }
-export const RealDone = ({ options, title, label }: realDoneProps) => {
+
+export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const dispatch = useAppDispatch()
   const [isEmptyRealDoneData, setIsEmptyRealDoneData] = useState<boolean>(false)
-  const [selectedDoneColumn, setSelectedDoneColumn] = useState(options)
-  const isAllSelected = options.length > 0 && selectedDoneColumn.length === options.length
-
-  useEffect(() => {
-    setIsEmptyRealDoneData(selectedDoneColumn.length === 0)
-  }, [selectedDoneColumn])
-
-  const handleRealDoneChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value
-    if (value[value.length - 1] === 'All') {
-      setSelectedDoneColumn(selectedDoneColumn.length === options.length ? [] : options)
-      return
-    }
-    setSelectedDoneColumn([...value])
-  }
+  const doneColumns =
+    columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
+  const [selectedDoneColumn, setSelectedDoneColumn] = useState(doneColumns)
+  const isAllSelected = doneColumns.length > 0 && selectedDoneColumn.length === doneColumns.length
 
   useEffect(() => {
     dispatch(saveDoneColumn(selectedDoneColumn))
+    setIsEmptyRealDoneData(!selectedDoneColumn.length)
   }, [selectedDoneColumn, dispatch])
 
-  const errorHelperText = () => (
-    <>
-      Must select which you want to <strong>consider as Done</strong>
-    </>
-  )
+  const handleRealDoneChange = (event: SelectChangeEvent<string[]>) => {
+    const { value } = event.target
+
+    if (value.includes('All')) {
+      setSelectedDoneColumn(selectedDoneColumn.length === doneColumns.length ? [] : doneColumns)
+    } else {
+      setSelectedDoneColumn([...value])
+    }
+  }
+
   return (
     <>
       <MetricsSettingTitle title={title} />
@@ -63,14 +59,21 @@ export const RealDone = ({ options, title, label }: realDoneProps) => {
             <Checkbox checked={isAllSelected} />
             <ListItemText primary='All' />
           </MenuItem>
-          {options.map((data) => (
-            <MenuItem key={data} value={data}>
-              <Checkbox checked={selectedDoneColumn.includes(data)} />
-              <ListItemText primary={data} id={data} />
-            </MenuItem>
-          ))}
+          {doneColumns.map((column) => {
+            const isChecked = selectedDoneColumn.includes(column)
+            return (
+              <MenuItem key={column} value={column}>
+                <Checkbox checked={isChecked} />
+                <ListItemText primary={column} />
+              </MenuItem>
+            )
+          })}
         </Select>
-        <FormHelperText>{isEmptyRealDoneData ? errorHelperText() : DEFAULT_HELPER_TEXT}</FormHelperText>
+        {isEmptyRealDoneData && (
+          <FormHelperText>
+            Must select which you want to <strong>consider as Done</strong>
+          </FormHelperText>
+        )}
       </FormControl>
     </>
   )

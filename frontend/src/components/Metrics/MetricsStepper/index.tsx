@@ -71,6 +71,7 @@ const MetricsStepper = () => {
   const confirmDialog = () => {
     navigate('/home')
     setIsDialogShowing(false)
+    window.location.reload()
   }
 
   const CancelDialog = () => {

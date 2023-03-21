@@ -26,28 +26,18 @@ const MetricsStepper = () => {
     isPipelineToolVerified,
     isShowSourceControl,
     isSourceControlVerified,
+    metrics,
   } = config
   useEffect(() => {
     if (!activeStep) {
+      const hasMetrics = metrics.length
       const showNextButtonParams = [
-        {
-          key: isShowBoard,
-          value: isBoardVerified,
-        },
-        {
-          key: isShowPipeline,
-          value: isPipelineToolVerified,
-        },
-        {
-          key: isShowSourceControl,
-          value: isSourceControlVerified,
-        },
+        { key: isShowBoard, value: isBoardVerified },
+        { key: isShowPipeline, value: isPipelineToolVerified },
+        { key: isShowSourceControl, value: isSourceControlVerified },
       ]
-      const result: { key: boolean; value: boolean }[] = []
-      showNextButtonParams.map((target) => {
-        if (target.key) result.push(target)
-      })
-      setIsDisableNextButton(!result.every((item) => item.value))
+      const activeParams = showNextButtonParams.filter(({ key }) => key)
+      hasMetrics ? setIsDisableNextButton(!activeParams.every(({ value }) => value)) : setIsDisableNextButton(true)
     }
   }, [
     activeStep,
@@ -57,6 +47,7 @@ const MetricsStepper = () => {
     isShowSourceControl,
     isShowPipeline,
     isSourceControlVerified,
+    metrics,
   ])
 
   const handleNext = () => {

@@ -33,12 +33,16 @@ export const BackButton = styled(Button)({
 })
 
 export const NextButton = styled(Button)({
-  ...basicButtonStyle,
   width: '3rem',
+  fontSize: '0.8rem',
+  fontWeight: '550',
   backgroundColor: theme.main.backgroundColor,
   color: theme.main.color,
+  '&:disabled': {
+    backgroundColor: 'rgba(0, 0, 0, 0.12)',
+    color: 'rgba(0,0,0,0.35)',
+  },
   '&:hover': {
-    ...basicButtonStyle,
     backgroundColor: theme.main.backgroundColor,
     color: theme.main.color,
   },

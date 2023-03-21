@@ -29,7 +29,7 @@ import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
   const configData = useAppSelector(selectConfig)
-  const { isShowBoard, metrics, isShowPipeline, isShowSourceControl } = configData
+  const { metrics, isShowBoard, isShowPipeline, isShowSourceControl } = configData
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
 
   const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {

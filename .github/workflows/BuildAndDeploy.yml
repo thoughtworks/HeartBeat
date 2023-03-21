@@ -265,7 +265,7 @@ jobs:
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
-            SPRING_PROFILES_ACTIVE=e2e MOCK_SERVER_URL=${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} docker-compose up -d frontend
+            SPRING_PROFILES_ACTIVE=e2e MOCK_SERVER_URL=${{ secrets.AWS_EC2_IP_MOCK_SERVER }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} docker-compose up -d frontend
 
   deploy-stub:
     runs-on: ubuntu-latest

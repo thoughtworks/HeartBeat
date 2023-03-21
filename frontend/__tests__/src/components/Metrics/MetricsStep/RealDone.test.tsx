@@ -20,6 +20,7 @@ const mockColumnsList = [
     },
   },
 ]
+
 const mockTitle = 'RealDone'
 const mockLabel = 'Consider as Done'
 const store = setupStore()

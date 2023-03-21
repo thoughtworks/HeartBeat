@@ -20,6 +20,7 @@ export const MetricsStep = () => {
   const jiraColumns = useAppSelector(selectJiraColumns)
   const targetFields = useAppSelector(selectTargetFields)
   const selectedBoardColumns = useAppSelector(selectBoardColumns)
+
   return (
     <>
       <Crews options={users} title={'Crews Setting'} label={'Included Crews'} />

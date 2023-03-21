@@ -199,7 +199,7 @@ Resources:
             - sudo systemctl enable docker.service
             - sudo systemctl start docker.service
             - sudo chmod 666 /var/run/docker.sock
-            - sudo curl -SL https://github.com/docker/compose/releases/download/v2.14.2/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+            - sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
             - sudo chmod +x /usr/local/bin/docker-compose
             - sudo `aws ecr get-login-password --region ${AwsRegion} | docker login --username AWS --password-stdin ${AwsAccountId}.dkr.ecr.${AwsHost}`
@@ -254,7 +254,7 @@ Resources:
             - sudo systemctl enable docker.service
             - sudo systemctl start docker.service
             - sudo chmod 666 /var/run/docker.sock
-            - sudo curl -SL https://github.com/docker/compose/releases/download/v2.14.2/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+            - sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
             - sudo chmod +x /usr/local/bin/docker-compose
             - sudo `aws ecr get-login-password --region ${AwsRegion} | docker login --username AWS --password-stdin ${AwsAccountId}.dkr.ecr.${AwsHost}`

@@ -11,7 +11,7 @@ services:
       - default
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default}
-      - MOCKSERVER_URL=${MOCKSERVER_URL:-localhost:4323}
+      - MOCK_SERVER_URL=${MOCK_SERVER_URL:-localhost:4323}
   frontend:
     image: heartbeat_frontend:latest
     container_name: frontend
@@ -39,4 +39,3 @@ services:
 networks:
   default:
     driver: bridge
-

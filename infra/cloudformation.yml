@@ -27,6 +27,10 @@ Parameters:
     Description: Public key to connect EC2
     Default: ""
     Type: String
+  OIDCAudience:
+    Description: Audience supplied to configure-aws-credentials.
+    Default: "sts.amazonaws.com"
+    Type: String
 
 Conditions:
   CreateOIDCProvider: !Equals
@@ -75,9 +79,19 @@ Resources:
                 - !Ref GithubOidc
                 - !Ref OIDCProviderArn
             Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: !Ref OIDCAudience
               StringLike:
                 token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:*
       Policies:
+        - PolicyName: IAMAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                  - iam:GetRole
+                Effect: Allow
+                Resource: "*"
         - PolicyName: GitHubAccess
           PolicyDocument:
             Version: "2012-10-17"
@@ -94,6 +108,18 @@ Resources:
                   - ecr:InitiateLayerUpload
                   - ecr:PutImage
                   - ecr:UploadLayerPart
+                  - cloudformation:CreateStack
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:ListStacks
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:GetTemplateSummary
+                  - ec2:*
                 Effect: Allow
                 Resource: "*"
 

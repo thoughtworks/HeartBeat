@@ -112,7 +112,7 @@ jobs:
         run: |
           npm run license-compliance
 
-  build-backend:
+  deploy-infra:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - frontend-check
@@ -120,6 +120,35 @@ jobs:
       - security-check
       - frontend-license-check
       - backend-license-check
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        if: ${{ contains(github.event.head_commit.message, '[infra]') }}
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION}}
+          role-session-name: MySessionName
+
+      - name: Deploy infra
+        if: ${{ contains(github.event.head_commit.message, '[infra]') }}
+        env:
+          SSHPublicKey: ${{ secrets.AWS_EC2_SSH_PUBLIC_KEY}}
+          AWSHost: ${{ secrets.AWS_HOST }}
+          AWSAccountId: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          sh ./infra/updateAwsResource
+
+  build-backend:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - deploy-infra
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -152,11 +181,7 @@ jobs:
   build-frontend:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
-      - frontend-check
-      - backend-check
-      - security-check
-      - frontend-license-check
-      - backend-license-check
+      - deploy-infra
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -189,11 +214,7 @@ jobs:
   build-mock-server:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
-      - frontend-check
-      - backend-check
-      - security-check
-      - frontend-license-check
-      - backend-license-check
+      - deploy-infra
     runs-on: ubuntu-latest
     permissions:
       id-token: write

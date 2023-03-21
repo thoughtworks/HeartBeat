@@ -182,6 +182,8 @@ Resources:
           Value: "HeartBeatEC2"
         - Key: "app"
           Value: "HeartBeat"
+        - key: "env"
+          Value: "SIT"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
         - !Ref EC2AppSecurityGroup
@@ -213,6 +215,8 @@ Resources:
           Value: "MockServerEC2"
         - Key: "app"
           Value: "MockServer"
+        - key: "env"
+          Value: "SIT"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
         - !Ref EC2Stubby4jGroup
@@ -239,6 +243,8 @@ Resources:
           Value: "HeartBeatE2EEC2"
         - Key: "app"
           Value: "HeartBeatE2E"
+        - key: "env"
+          Value: "SIT"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
         - !Ref EC2AppSecurityGroup

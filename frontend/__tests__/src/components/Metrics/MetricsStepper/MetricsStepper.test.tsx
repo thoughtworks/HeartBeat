@@ -1,9 +1,17 @@
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { BACK, CONFIRM_DIALOG_DESCRIPTION, EXPORT_BOARD_DATA, NEXT, PROJECT_NAME_LABEL, STEPS } from '../../../fixtures'
 import userEvent from '@testing-library/user-event'
+import {
+  updateBoardVerifyState,
+  updatePipelineToolVerifyState,
+  updateShowBoard,
+  updateShowPipeline,
+  updateShowSourceControl,
+  updateSourceControlVerifyState,
+} from '@src/context/config/configSlice'
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
@@ -103,5 +111,19 @@ describe('MetricsStepper', () => {
 
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/home')
+  })
+
+  it('should enable next when every selected component is show and verified', async () => {
+    const { getByText } = setup()
+    await act(async () => {
+      await store.dispatch(updateShowBoard(true))
+      await store.dispatch(updateShowPipeline(true))
+      await store.dispatch(updateShowSourceControl(true))
+      await store.dispatch(updateBoardVerifyState(true))
+      await store.dispatch(updatePipelineToolVerifyState(true))
+      await store.dispatch(updateSourceControlVerifyState(true))
+    })
+
+    expect(getByText(NEXT)).toBeEnabled()
   })
 })

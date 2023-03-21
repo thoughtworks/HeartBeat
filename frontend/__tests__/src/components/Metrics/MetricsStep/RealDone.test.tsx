@@ -4,14 +4,29 @@ import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 
-const options = ['DONE', 'CANCELLED']
+const mockColumnsList = [
+  {
+    key: 'done',
+    value: {
+      name: 'Done',
+      statuses: ['DONE', 'CANCELLED'],
+    },
+  },
+  {
+    key: 'indeterminate',
+    value: {
+      name: 'Blocked',
+      statuses: ['BLOCKED'],
+    },
+  },
+]
 const mockTitle = 'RealDone'
 const mockLabel = 'Consider as Done'
 const store = setupStore()
 const setup = () =>
   render(
     <Provider store={store}>
-      <RealDone options={options} label={mockLabel} title={mockTitle} />
+      <RealDone columns={mockColumnsList} label={mockLabel} title={mockTitle} />
     </Provider>
   )
 
@@ -54,10 +69,13 @@ describe('RealDone', () => {
     await userEvent.click(getByRole('button', { name: mockLabel }))
 
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByRole('option', { name: options[0] }))
+    await userEvent.click(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] }))
 
-    expect(listBox.getByRole('option', { name: options[0] })).toHaveProperty('selected', false)
-    expect(listBox.getByRole('option', { name: options[1] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] })).toHaveProperty(
+      'selected',
+      false
+    )
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[1] })).toHaveProperty('selected', true)
   })
 
   it('should clear RealDone data when check all option', async () => {
@@ -68,13 +86,19 @@ describe('RealDone', () => {
     const allOption = listBox.getByRole('option', { name: 'All' })
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: options[0] })).toHaveProperty('selected', false)
-    expect(listBox.getByRole('option', { name: options[1] })).toHaveProperty('selected', false)
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] })).toHaveProperty(
+      'selected',
+      false
+    )
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[1] })).toHaveProperty(
+      'selected',
+      false
+    )
 
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: options[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: options[1] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[1] })).toHaveProperty('selected', true)
   })
 
   it('should check RealDone data when click all option', async () => {
@@ -87,7 +111,7 @@ describe('RealDone', () => {
 
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: options[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: options[1] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] })).toHaveProperty('selected', true)
+    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[1] })).toHaveProperty('selected', true)
   })
 })

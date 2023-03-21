@@ -34,8 +34,6 @@ export const BackButton = styled(Button)({
 
 export const NextButton = styled(Button)({
   width: '3rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
   backgroundColor: theme.main.backgroundColor,
   color: theme.main.color,
   '&:disabled': {
@@ -44,7 +42,6 @@ export const NextButton = styled(Button)({
   },
   '&:hover': {
     backgroundColor: theme.main.backgroundColor,
-    color: theme.main.color,
   },
 })
 

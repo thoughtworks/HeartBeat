@@ -18,6 +18,7 @@ import heartbeat.controller.board.vo.response.ColumnValue;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,11 @@ public class JiraService {
 	public static final int QUERY_COUNT = 100;
 
 	private final JiraFeignClient jiraFeignClient;
+
+	@PreDestroy
+	public void shutdownExecutor() {
+		taskExecutor.shutdown();
+	}
 
 	private static final String DONE_CARD_TAG = "done";
 

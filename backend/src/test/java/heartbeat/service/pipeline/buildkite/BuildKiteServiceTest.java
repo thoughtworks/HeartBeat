@@ -2,10 +2,12 @@ package heartbeat.service.pipeline.buildkite;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.PipelineDTO;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
+import heartbeat.exception.RequestFailedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +21,9 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +51,19 @@ class BuildKiteServiceTest {
 		assertThat(buildKiteResponse.getPipelineList().size()).isEqualTo(1);
 		List<PipelineDTO> pipelineList = buildKiteResponse.getPipelineList();
 		assertThat(pipelineList.get(0).getId()).isEqualTo("0186104b-aa31-458c-a58c-63266806f2fe");
+	}
 
+	@Test
+	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
+		// Mock Feign Client
+		FeignException feignException = mock(FeignException.class);
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo()).thenThrow(feignException);
+
+		// Call method under test
+		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo());
+
+		// Verify that feign client method was called
+		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo();
 	}
 
 }

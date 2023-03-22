@@ -4,6 +4,7 @@ import { PIPELINE_TOOL_TYPES } from '@src/constants'
 export interface pipelineToolState {
   pipelineToolConfig: { pipelineTool: string; token: string }
   isPipelineToolVerified: boolean
+  isShowPipeline: boolean
 }
 
 export const initialPipelineToolState: pipelineToolState = {
@@ -12,6 +13,7 @@ export const initialPipelineToolState: pipelineToolState = {
     token: '',
   },
   isPipelineToolVerified: false,
+  isShowPipeline: false,
 }
 
 export const pipelineToolSlice = createSlice({
@@ -23,6 +25,9 @@ export const pipelineToolSlice = createSlice({
     },
     updatePipelineTool: (state, action) => {
       state.pipelineToolConfig = action.payload
+    },
+    updateShowPipeline: (state, action) => {
+      state.isShowPipeline = action.payload
     },
   },
 })

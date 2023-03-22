@@ -20,9 +20,8 @@ export class BoardClient extends HttpClient {
 
   getVerifyBoard = async (params: getVerifyBoardParams) => {
     try {
-      const result = await this.axiosInstance
-        .get(`/boards/${params.type}`, { params: { ...params } })
-        .then((res) => res)
+      const boardType = params.type === 'Classic Jira' ? '/boards/Classic_Jira' : `/boards/${params.type}`
+      const result = await this.axiosInstance.get(boardType, { params }).then((res) => res)
       result.status === HttpStatusCode.NoContent
         ? this.handleBoardNoDoneCard()
         : this.handleBoardVerifySucceed(result.data)

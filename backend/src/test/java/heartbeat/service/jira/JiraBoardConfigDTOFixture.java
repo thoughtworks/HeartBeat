@@ -25,17 +25,21 @@ public class JiraBoardConfigDTOFixture {
 
 	public static final String BOARD_ID = "123";
 
-	public static final String BOARD_NAME = "jira";
+	public static final String BOARD_NAME_JIRA = "jira";
+
+	public static final String BOARD_NAME_CLASSIC_JIRA = "classic_jira";
 
 	public static final String COLUM_SELF_ID_1 = "1";
 
 	public static final String COLUM_SELF_ID_2 = "2";
 
+	public static final String COLUM_SELF_ID_3 = "3";
+
 	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
 
 		return JiraBoardConfigDTO.builder()
 			.id(BOARD_ID)
-			.name(BOARD_NAME)
+			.name(BOARD_NAME_JIRA)
 			.columnConfig(JiraColumnConfig.builder()
 				.columns(List.of(JiraColumn.builder()
 					.name("TODO")
@@ -44,8 +48,32 @@ public class JiraBoardConfigDTOFixture {
 				.build());
 	}
 
+	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
+
+		return JiraBoardConfigDTO.builder()
+			.id(BOARD_ID)
+			.name(BOARD_NAME_CLASSIC_JIRA)
+			.columnConfig(JiraColumnConfig.builder()
+				.columns(List.of(JiraColumn.builder()
+					.name("TODO")
+					.statuses(List.of(new JiraColumnStatus(COLUM_SELF_ID_1), new JiraColumnStatus(COLUM_SELF_ID_2),
+							new JiraColumnStatus(COLUM_SELF_ID_3)))
+					.build()))
+				.build());
+	}
+
 	public static StatusSelfDTO.StatusSelfDTOBuilder DONE_STATUS_SELF_RESPONSE_BUILDER() {
 		return StatusSelfDTO.builder().untranslatedName("done").statusCategory(new StatusCategory("done", "done"));
+	}
+
+	public static StatusSelfDTO.StatusSelfDTOBuilder COMPLETE_STATUS_SELF_RESPONSE_BUILDER() {
+		return StatusSelfDTO.builder()
+			.untranslatedName("complete")
+			.statusCategory(new StatusCategory("done", "complete"));
+	}
+
+	public static StatusSelfDTO.StatusSelfDTOBuilder NONE_STATUS_SELF_RESPONSE_BUILDER() {
+		return StatusSelfDTO.builder().untranslatedName("").statusCategory(new StatusCategory("", ""));
 	}
 
 	public static StatusSelfDTO.StatusSelfDTOBuilder DOING_STATUS_SELF_RESPONSE_BUILDER() {
@@ -55,6 +83,12 @@ public class JiraBoardConfigDTOFixture {
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
+			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee("Zhang San")))));
+	}
+
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
+		return AllDoneCardsResponseDTO.builder()
+			.total("200")
 			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee("Zhang San")))));
 	}
 

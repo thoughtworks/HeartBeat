@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Stepper from '@mui/material/Stepper'
 import Step from '@mui/material/Step'
@@ -10,12 +10,45 @@ import { STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
+import { selectConfig } from '@src/context/config/configSlice'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStepNumber)
   const [isDialogShowing, setIsDialogShowing] = useState(false)
+  const config = useAppSelector(selectConfig)
+  const [isDisableNextButton, setIsDisableNextButton] = useState(true)
+  const {
+    isShowBoard,
+    isBoardVerified,
+    isShowPipeline,
+    isPipelineToolVerified,
+    isShowSourceControl,
+    isSourceControlVerified,
+    metrics,
+  } = config
+  useEffect(() => {
+    if (!activeStep) {
+      const hasMetrics = metrics.length
+      const showNextButtonParams = [
+        { key: isShowBoard, value: isBoardVerified },
+        { key: isShowPipeline, value: isPipelineToolVerified },
+        { key: isShowSourceControl, value: isSourceControlVerified },
+      ]
+      const activeParams = showNextButtonParams.filter(({ key }) => key)
+      hasMetrics ? setIsDisableNextButton(!activeParams.every(({ value }) => value)) : setIsDisableNextButton(true)
+    }
+  }, [
+    activeStep,
+    isBoardVerified,
+    isPipelineToolVerified,
+    isShowBoard,
+    isShowSourceControl,
+    isShowPipeline,
+    isSourceControlVerified,
+    metrics,
+  ])
 
   const handleNext = () => {
     dispatch(nextStep())
@@ -26,9 +59,10 @@ const MetricsStepper = () => {
     dispatch(backStep())
   }
 
-  const confirmDialog = () => {
+  const backToHomePage = () => {
     navigate('/home')
     setIsDialogShowing(false)
+    window.location.reload()
   }
 
   const CancelDialog = () => {
@@ -53,11 +87,13 @@ const MetricsStepper = () => {
         {activeStep === STEPS.length - 1 ? (
           <ExportButton>Export board data</ExportButton>
         ) : (
-          <NextButton onClick={handleNext}>Next</NextButton>
+          <NextButton onClick={handleNext} disabled={isDisableNextButton}>
+            Next
+          </NextButton>
         )}
       </ButtonGroup>
       {isDialogShowing && (
-        <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={confirmDialog} onClose={CancelDialog} />
+        <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={backToHomePage} onClose={CancelDialog} />
       )}
     </Box>
   )

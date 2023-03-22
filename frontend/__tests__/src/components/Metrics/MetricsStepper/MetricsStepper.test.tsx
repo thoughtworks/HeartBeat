@@ -1,9 +1,27 @@
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { BACK, CONFIRM_DIALOG_DESCRIPTION, EXPORT_BOARD_DATA, NEXT, PROJECT_NAME_LABEL, STEPS } from '../../../fixtures'
+import {
+  BACK,
+  CONFIRM_DIALOG_DESCRIPTION,
+  EXPORT_BOARD_DATA,
+  LEAD_TIME_FOR_CHANGES,
+  NEXT,
+  PROJECT_NAME_LABEL,
+  STEPS,
+  VELOCITY,
+} from '../../../fixtures'
 import userEvent from '@testing-library/user-event'
+import {
+  updateBoardVerifyState,
+  updateMetrics,
+  updatePipelineToolVerifyState,
+  updateShowBoard,
+  updateShowPipeline,
+  updateShowSourceControl,
+  updateSourceControlVerifyState,
+} from '@src/context/config/configSlice'
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
@@ -48,14 +66,6 @@ describe('MetricsStepper', () => {
     expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
   })
 
-  it('should show metrics step when click next button given config step', async () => {
-    const { getByText } = setup()
-
-    fireEvent.click(getByText(NEXT))
-
-    expect(getByText(METRICS)).toHaveStyle(`color:${stepperColor}`)
-  })
-
   it('should show metrics config step when click back button given metrics step', () => {
     const { getByText } = setup()
 
@@ -63,16 +73,6 @@ describe('MetricsStepper', () => {
     fireEvent.click(getByText(BACK))
 
     expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
-  })
-
-  it('should show metrics export step when click next button given export step', () => {
-    const { getByText } = setup()
-
-    fireEvent.click(getByText(NEXT))
-    fireEvent.click(getByText(NEXT))
-    fireEvent.click(getByText(EXPORT_BOARD_DATA))
-
-    expect(getByText(EXPORT)).toHaveStyle(`color:${stepperColor}`)
   })
 
   it('should show confirm dialog when click back button in config page', async () => {
@@ -103,5 +103,68 @@ describe('MetricsStepper', () => {
 
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/home')
+  })
+
+  it('should disable next when required data is empty ', async () => {
+    const { getByText } = setup()
+    await act(async () => {
+      await store.dispatch(updateMetrics([]))
+    })
+
+    expect(getByText(NEXT)).toBeDisabled()
+  })
+
+  it('should enable next when every selected component is show and verified', async () => {
+    const { getByText } = setup()
+    await act(async () => {
+      await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
+      await store.dispatch(updateShowBoard(true))
+      await store.dispatch(updateShowPipeline(true))
+      await store.dispatch(updateShowSourceControl(true))
+      await store.dispatch(updateBoardVerifyState(true))
+      await store.dispatch(updatePipelineToolVerifyState(true))
+      await store.dispatch(updateSourceControlVerifyState(true))
+    })
+
+    expect(getByText(NEXT)).toBeEnabled()
+  })
+
+  it('should disable next when board component is exist but not verified successfully', async () => {
+    const { getByText } = setup()
+    await act(async () => {
+      await store.dispatch(updateMetrics([VELOCITY]))
+      await store.dispatch(updateShowBoard(true))
+      await store.dispatch(updateBoardVerifyState(false))
+    })
+
+    expect(getByText(NEXT)).toBeDisabled()
+  })
+
+  it('should go metrics page when click next button given next button enabled', async () => {
+    const { getByText } = setup()
+
+    await act(async () => {
+      await store.dispatch(updateMetrics([VELOCITY]))
+      await store.dispatch(updateShowBoard(true))
+      await store.dispatch(updateBoardVerifyState(true))
+    })
+    fireEvent.click(getByText(NEXT))
+
+    expect(getByText(METRICS)).toHaveStyle(`color:${stepperColor}`)
+  })
+
+  it('should show metrics export step when click next button given export step', async () => {
+    const { getByText } = setup()
+
+    await act(async () => {
+      await store.dispatch(updateMetrics([VELOCITY]))
+      await store.dispatch(updateShowBoard(true))
+      await store.dispatch(updateBoardVerifyState(true))
+    })
+    fireEvent.click(getByText(NEXT))
+    fireEvent.click(getByText(NEXT))
+    fireEvent.click(getByText(EXPORT_BOARD_DATA))
+
+    expect(getByText(EXPORT)).toHaveStyle(`color:${stepperColor}`)
   })
 })

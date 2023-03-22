@@ -65,10 +65,13 @@ export const {
   updateMetrics,
   updateBoard,
   updateBoardVerifyState,
+  updateShowBoard,
   updatePipelineToolVerifyState,
   updatePipelineTool,
+  updateShowPipeline,
   updateSourceControl,
   updateSourceControlVerifyState,
+  updateShowSourceControl,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.projectName
@@ -81,5 +84,6 @@ export const isPipelineToolVerified = (state: RootState) => state.config.isPipel
 export const selectPipelineTool = (state: RootState) => state.config.pipelineToolConfig
 export const isSourceControlVerified = (state: RootState) => state.config.isSourceControlVerified
 export const selectSourceControl = (state: RootState) => state.config.sourceControlConfig
+export const selectConfig = (state: RootState) => state.config
 
 export default configSlice.reducer

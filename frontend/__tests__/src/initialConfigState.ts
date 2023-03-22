@@ -18,16 +18,19 @@ const initialConfigState = {
     token: '',
   },
   isBoardVerified: false,
+  isShowBoard: false,
   pipelineToolConfig: {
     pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',
   },
   isPipelineToolVerified: false,
+  isShowPipeline: false,
   sourceControlConfig: {
     sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
   isSourceControlVerified: false,
+  isShowSourceControl: false,
 }
 
 export default initialConfigState

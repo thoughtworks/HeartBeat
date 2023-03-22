@@ -11,12 +11,15 @@ import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/Metric
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
-  selectMetrics,
+  selectConfig,
   updateBoard,
   updateBoardVerifyState,
   updateMetrics,
   updatePipelineTool,
   updatePipelineToolVerifyState,
+  updateShowBoard,
+  updateShowPipeline,
+  updateShowSourceControl,
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
@@ -25,13 +28,11 @@ import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
-  const requireData = useAppSelector(selectMetrics)
-  const [isShowBoard, setIsShowBoard] = useState(false)
+  const configData = useAppSelector(selectConfig)
+  const { metrics, isShowBoard, isShowPipeline, isShowSourceControl } = configData
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
-  const [isShowPipelineTool, setIsShowPipelineTool] = useState(false)
-  const [isShowSourceControl, setIsShowSourceControl] = useState(false)
 
-  const handleRequireDataChange = (event: SelectChangeEvent<typeof requireData>) => {
+  const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
     const {
       target: { value },
     } = event
@@ -52,18 +53,22 @@ export const MetricsTypeCheckbox = () => {
     dispatch(updateSourceControlVerifyState(false))
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
-    setIsShowBoard(
-      value.includes(REQUIRED_DATA.VELOCITY) ||
-        value.includes(REQUIRED_DATA.CYCLE_TIME) ||
-        value.includes(REQUIRED_DATA.CLASSIFICATION)
+    dispatch(
+      updateShowBoard(
+        value.includes(REQUIRED_DATA.VELOCITY) ||
+          value.includes(REQUIRED_DATA.CYCLE_TIME) ||
+          value.includes(REQUIRED_DATA.CLASSIFICATION)
+      )
     )
-    setIsShowPipelineTool(
-      value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
-        value.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
-        value.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
-        value.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
+    dispatch(
+      updateShowPipeline(
+        value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
+          value.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
+          value.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
+          value.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
+      )
     )
-    setIsShowSourceControl(value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES))
+    dispatch(updateShowSourceControl(value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)))
   }
   return (
     <>
@@ -72,13 +77,13 @@ export const MetricsTypeCheckbox = () => {
         <Select
           labelId='require-data-multiple-checkbox-label'
           multiple
-          value={requireData}
+          value={metrics}
           onChange={handleRequireDataChange}
           renderValue={(selected) => selected.join(SELECTED_VALUE_SEPARATOR)}
         >
           {Object.values(REQUIRED_DATA).map((data) => (
             <MenuItem key={data} value={data}>
-              <Checkbox checked={requireData.indexOf(data) > -1} />
+              <Checkbox checked={metrics.indexOf(data) > -1} />
               <ListItemText primary={data} />
             </MenuItem>
           ))}
@@ -86,7 +91,7 @@ export const MetricsTypeCheckbox = () => {
         {isEmptyRequireData && <FormHelperText>Metrics is required</FormHelperText>}
       </RequireDataSelections>
       {isShowBoard && <Board />}
-      {isShowPipelineTool && <PipelineTool />}
+      {isShowPipeline && <PipelineTool />}
       {isShowSourceControl && <SourceControl />}
     </>
   )

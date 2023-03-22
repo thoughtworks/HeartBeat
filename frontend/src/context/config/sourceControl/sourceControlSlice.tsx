@@ -3,8 +3,8 @@ import { SOURCE_CONTROL_TYPES } from '@src/constants'
 
 export interface sourceControlState {
   sourceControlConfig: { sourceControl: string; token: string }
-
   isSourceControlVerified: boolean
+  isShowSourceControl: boolean
 }
 
 export const initialSourceControlState: sourceControlState = {
@@ -13,6 +13,7 @@ export const initialSourceControlState: sourceControlState = {
     token: '',
   },
   isSourceControlVerified: false,
+  isShowSourceControl: false,
 }
 
 export const sourceControlSlice = createSlice({
@@ -24,6 +25,9 @@ export const sourceControlSlice = createSlice({
     },
     updateSourceControl: (state, action) => {
       state.sourceControlConfig = action.payload
+    },
+    updateShowSourceControl: (state, action) => {
+      state.isShowSourceControl = action.payload
     },
   },
 })

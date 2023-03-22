@@ -26,7 +26,7 @@
 # Pipeline builds
 - request:
     method: GET
-    url: /v2/organizations/XXXX/pipelines/(fs-[a-zA-Z-]+)/builds
+    url: /v2/organizations/(.*)/pipelines/(fs-[a-zA-Z-]+)/builds
     query:
       page: "(\\d+)"
       per_page: 100
@@ -35,5 +35,5 @@
     status: 200
     headers:
       content-type: application/json
-    file: ./backend/buildkite/jsons/buildkite.organizations.XXXX.pipelines.<% url.1 %>.page<% query.page.1 %>.builds.json
+    file: ./backend/buildkite/jsons/buildkite.organizations.XXXX.pipelines.<% url.2 %>.page<% query.page.1 %>.builds.json
 

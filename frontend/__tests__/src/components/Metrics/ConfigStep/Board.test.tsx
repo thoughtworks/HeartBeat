@@ -37,11 +37,7 @@ const setup = () => {
     </Provider>
   )
 }
-const server = setupServer(
-  rest.get(MOCK_BOARD_URL_FOR_VERIFY_JIRA, (req, res, ctx) => {
-    return res(ctx.status(200))
-  })
-)
+const server = setupServer(rest.get(MOCK_BOARD_URL_FOR_VERIFY_JIRA, (req, res, ctx) => res(ctx.status(200))))
 
 describe('Board', () => {
   beforeAll(() => server.listen())

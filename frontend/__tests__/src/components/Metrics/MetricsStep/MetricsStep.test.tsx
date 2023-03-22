@@ -32,6 +32,7 @@ describe('MetricsStep', () => {
     const { getByText, queryByText } = setup()
 
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()
+    expect(getByText(REAL_DONE)).toBeInTheDocument()
     expect(queryByText(CYCLE_TIME_SETTINGS)).not.toBeInTheDocument()
     expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument()
   })
@@ -43,7 +44,7 @@ describe('MetricsStep', () => {
     expect(getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument()
   })
 
-  it('should show Real Done when select selectedColumns include done column', async () => {
+  it('should show Real Done when selectedColumns include done column', async () => {
     const mockColumnsList = [
       {
         key: 'done',
@@ -57,6 +58,18 @@ describe('MetricsStep', () => {
     const { getByText } = setup()
 
     expect(getByText(REAL_DONE)).toBeInTheDocument()
+  })
+
+  it('should hide Real Done when select two "Done" in cycleTime settings', async () => {
+    await store.dispatch(
+      saveBoardColumns([
+        { name: 'Testing', value: 'Done' },
+        { name: 'TODO', value: 'Done' },
+      ])
+    )
+    const { queryByText } = setup()
+
+    expect(queryByText('Real Done')).not.toBeInTheDocument()
   })
 
   it('should show Classification Setting when select classification in config page', async () => {

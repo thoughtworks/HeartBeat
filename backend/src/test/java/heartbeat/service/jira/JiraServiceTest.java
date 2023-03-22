@@ -287,11 +287,9 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
 			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
 
-		Throwable exception = assertThrows(CompletionException.class,
-				() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam));
-
-		assertTrue(exception.getCause() instanceof Exception);
-		assertEquals("UnExpected Exception", exception.getCause().getMessage());
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
+			.isInstanceOf(CompletionException.class)
+			.hasMessageContaining("UnExpected Exception");
 	}
 
 	@Test

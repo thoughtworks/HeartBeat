@@ -59,7 +59,7 @@ const MetricsStepper = () => {
     dispatch(backStep())
   }
 
-  const confirmDialog = () => {
+  const backToHomePage = () => {
     navigate('/home')
     setIsDialogShowing(false)
     window.location.reload()
@@ -93,7 +93,7 @@ const MetricsStepper = () => {
         )}
       </ButtonGroup>
       {isDialogShowing && (
-        <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={confirmDialog} onClose={CancelDialog} />
+        <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={backToHomePage} onClose={CancelDialog} />
       )}
     </Box>
   )

@@ -37,7 +37,7 @@ export const CycleTime = ({ columns, title }: cycleTimeProps) => {
       <MetricsSettingTitle title={title} />
       {isError && (
         <ErrorDone>
-          <span>Should only select One &quot;Done&quot;</span>
+          <span>Only one column can be selected as &quot;Done&quot;</span>
         </ErrorDone>
       )}
       <FormSelectPart columns={columns} saveCycleTimeOptions={saveCycleTimeOptions} />

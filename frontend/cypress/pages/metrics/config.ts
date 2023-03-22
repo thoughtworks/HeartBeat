@@ -2,6 +2,14 @@ class Config {
   navigate() {
     cy.visit(Cypress.env('url') + '/metrics')
   }
+
+  goHomePage() {
+    cy.contains('Back').click()
+    cy.contains('Yes').click()
+
+    cy.url().should('include', '/home')
+  }
+
   typeProjectName(projectName: string) {
     cy.contains('Project Name *').siblings().first().type(projectName)
   }
@@ -10,26 +18,8 @@ class Config {
     cy.contains('From').parent().type('02052023')
   }
 
-  selectVelocityAndCycleTime() {
+  selectMetricsData() {
     cy.contains('Required Data').siblings().click()
-
-    cy.contains('Velocity').click()
-    cy.contains('Cycle time').click()
-
-    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
-  }
-
-  fillBoardFieldsInfo(boardId: string, email: string, projectKey: string, site: string, token: string) {
-    cy.contains('Board Id').siblings().first().type(boardId)
-    cy.contains('Email').siblings().first().type(email)
-    cy.contains('Project Key').siblings().first().type(projectKey)
-    cy.contains('Site').siblings().first().type(site)
-    cy.contains('Token').siblings().first().type(token)
-  }
-
-  selectLeadTimeForChangesAndDeploymentFrequency() {
-    cy.contains('Required Data').siblings().first().click()
-    cy.get("[type='checkbox']").uncheck()
 
     cy.contains('Lead time for changes').click()
     cy.contains('Deployment frequency').click()
@@ -37,23 +27,21 @@ class Config {
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
 
-  fillPipelineToolFieldsInfo(token: string) {
-    cy.contains('Token').siblings().first().type(token)
+  fillPipelineToolFieldsInfoAndVerify(token: string) {
+    cy.contains("[data-testid='pipelineToolTextField']", 'Token').type(token)
+
+    cy.get('[data-test-id="pipelineVerifyButton"]').click()
   }
 
-  fillSourceControlFieldsInfo(token: string) {
+  fillSourceControlFieldsInfoAndVerify(token: string) {
     cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
+
     cy.get('[data-test-id="sourceControlVerifyButton"]').click()
   }
 
-  selectClassificationAndCycleTime() {
-    cy.contains('Required Data').siblings().first().click()
-    cy.get("[type='checkbox']").uncheck()
-
-    cy.contains('Classification').click()
-    cy.contains('Cycle time').click()
-
-    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+  CancelBackToHomePage() {
+    cy.contains('Back').click()
+    cy.contains('Cancel').click()
   }
 
   goMetricsStep() {

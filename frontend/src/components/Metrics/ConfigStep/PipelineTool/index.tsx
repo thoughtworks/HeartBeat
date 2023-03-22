@@ -164,7 +164,11 @@ export const PipelineTool = () => {
           {isVerified && !isLoading ? (
             <VerifyButton>Verified</VerifyButton>
           ) : (
-            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
+            <VerifyButton
+              data-test-id='pipelineVerifyButton'
+              type='submit'
+              disabled={isDisableVerifyButton || isLoading}
+            >
               Verify
             </VerifyButton>
           )}

@@ -2,9 +2,16 @@ package heartbeat.service.jira;
 
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
+import heartbeat.client.dto.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.Assignee;
 import heartbeat.client.dto.CardHistoryResponseDTO;
+import heartbeat.client.dto.DoneCard;
+import heartbeat.client.dto.DoneCardFields;
+import heartbeat.client.dto.FieldResponseDTO;
+import heartbeat.client.dto.Item;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.StatusSelfDTO;
+import heartbeat.client.dto.To;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
@@ -20,14 +27,33 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.*;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COLUM_SELF_ID_1;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COLUM_SELF_ID_2;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COLUM_SELF_ID_3;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COMPLETE_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DOING_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DONE_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.FIELD_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.NONE_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -155,17 +181,21 @@ class JiraServiceTest {
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetClassicJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO completeStatusSelf = COMPLETE_STATUS_SELF_RESPONSE_BUILDER().build();
 		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format("status in ('%s') AND (status changed to '%s' during (%s, %s))", "DONE", "DONE",
-				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		String jql = String.format(
+				"status in ('%s', '%s') AND (status changed to '%s' during (%s, %s) or status changed to '%s' during (%s, %s))",
+				"DONE", "COMPLETE", "DONE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime(),
+				"COMPLETE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		List<TargetField> expectTargetField = List.of(new TargetField("priority", "Priority", false),
 				new TargetField("timetracking", "Time tracking", false));
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
 			.thenReturn(ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER().build());
@@ -252,6 +282,19 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldThrowExceptionWhenGetJiraConfigurationThrowsUnExpectedException() {
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
+			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+
+		Throwable exception = assertThrows(CompletionException.class,
+				() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam));
+
+		assertTrue(exception.getCause() instanceof Exception);
+		assertEquals("UnExpected Exception", exception.getCause().getMessage());
+	}
+
+	@Test
 	void shouldReturnAssigneeNameFromDoneCardWhenGetAssigneeSet() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -305,6 +348,70 @@ class JiraServiceTest {
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Request failed with status code 500, error: exception");
+	}
+
+	@Test
+	void shouldThrowExceptionWhenGetTargetFieldReturnNull() {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(JIRA_JQL, "DONE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		List<Item> items = Collections.singletonList(new Item("", new To("")));
+		CardHistoryResponseDTO cardHistoryResponse = CardHistoryResponseDTO.builder().items(items).build();
+
+		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
+			.total("2")
+			.issues(List.of(new DoneCard("1", new DoneCardFields(null))))
+			.build();
+
+		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
+			.thenReturn(allDoneCardsResponse);
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token)).thenReturn(cardHistoryResponse);
+		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token)).thenReturn(null);
+
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no target field.");
+	}
+
+	@Test
+	void shouldThrowExceptionWhenGetTargetFieldReturnEmpty() {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(JIRA_JQL, "DONE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		FieldResponseDTO emptyProjectFieldResponse = FieldResponseDTO.builder()
+			.projects(Collections.emptyList())
+			.build();
+		List<Item> items = Collections.singletonList(new Item("assignee", new To(null)));
+		CardHistoryResponseDTO cardHistoryResponse = CardHistoryResponseDTO.builder().items(items).build();
+
+		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
+			.total("2")
+			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee(null)))))
+			.build();
+
+		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
+			.thenReturn(allDoneCardsResponse);
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token)).thenReturn(cardHistoryResponse);
+		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token))
+			.thenReturn(emptyProjectFieldResponse);
+
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
+			.isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no target field.");
 	}
 
 	@Test

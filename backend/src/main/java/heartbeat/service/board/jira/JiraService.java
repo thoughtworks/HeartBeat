@@ -134,9 +134,8 @@ public class JiraService {
 		return jiraColumnResult;
 	}
 
-	private JiraColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl,
-
-			List<String> doneColumns, String token) {
+	private JiraColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, List<String> doneColumns,
+			String token) {
 		log.info("[Jira] Start to get column and status, the column name: {} column status: {}", jiraColumn.getName(),
 				jiraColumn.getStatuses());
 		List<StatusSelfDTO> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
@@ -199,7 +198,7 @@ public class JiraService {
 
 		List<DoneCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam);
 
-		if (isNull(doneCards) || doneCards.isEmpty()) {
+		if (doneCards.isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no done cards.");
 		}
 
@@ -280,6 +279,8 @@ public class JiraService {
 					&& assignee.getTo().getDisplayValue() != null)
 			.map(assignee -> assignee.getTo().getDisplayValue())
 			.toList();
+
+		log.info("[assigneeSet] assigneeSet.isEmpty():{}", assigneeSet.isEmpty());
 
 		if (assigneeSet.isEmpty() && nonNull(donecard.getFields().getAssignee())
 				&& nonNull(donecard.getFields().getAssignee().getDisplayName())) {

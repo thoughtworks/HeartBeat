@@ -33,6 +33,8 @@ public class JiraBoardConfigDTOFixture {
 
 	public static final String COLUM_SELF_ID_2 = "2";
 
+	public static final String COLUM_SELF_ID_3 = "3";
+
 	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
 
 		return JiraBoardConfigDTO.builder()
@@ -54,13 +56,20 @@ public class JiraBoardConfigDTOFixture {
 			.columnConfig(JiraColumnConfig.builder()
 				.columns(List.of(JiraColumn.builder()
 					.name("TODO")
-					.statuses(List.of(new JiraColumnStatus(COLUM_SELF_ID_1), new JiraColumnStatus(COLUM_SELF_ID_2)))
+					.statuses(List.of(new JiraColumnStatus(COLUM_SELF_ID_1), new JiraColumnStatus(COLUM_SELF_ID_2),
+							new JiraColumnStatus(COLUM_SELF_ID_3)))
 					.build()))
 				.build());
 	}
 
 	public static StatusSelfDTO.StatusSelfDTOBuilder DONE_STATUS_SELF_RESPONSE_BUILDER() {
 		return StatusSelfDTO.builder().untranslatedName("done").statusCategory(new StatusCategory("done", "done"));
+	}
+
+	public static StatusSelfDTO.StatusSelfDTOBuilder COMPLETE_STATUS_SELF_RESPONSE_BUILDER() {
+		return StatusSelfDTO.builder()
+			.untranslatedName("complete")
+			.statusCategory(new StatusCategory("done", "complete"));
 	}
 
 	public static StatusSelfDTO.StatusSelfDTOBuilder NONE_STATUS_SELF_RESPONSE_BUILDER() {

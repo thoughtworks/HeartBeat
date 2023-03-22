@@ -69,7 +69,7 @@ export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site'
 export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
-export const MOCK_BOARD_URL_FOR_VERIFY_JIRA = '/api/v1/boards/jira'
+export const MOCK_BOARD_URL_FOR_VERIFY_JIRA = '/api/v1/boards/Jira'
 export const MOCK_BOARD_URL_FOR_VERIFY_CLASSIC_JIRA = '/api/v1/boards/Classic_Jira'
 export const MOCK_PIPELINE_URL = '/api/v1/pipelines/buildkite'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'

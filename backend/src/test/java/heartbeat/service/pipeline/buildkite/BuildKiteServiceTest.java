@@ -55,14 +55,11 @@ class BuildKiteServiceTest {
 
 	@Test
 	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
-		// Mock Feign Client
 		FeignException feignException = mock(FeignException.class);
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo()).thenThrow(feignException);
 
-		// Call method under test
 		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo());
 
-		// Verify that feign client method was called
 		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo();
 	}
 

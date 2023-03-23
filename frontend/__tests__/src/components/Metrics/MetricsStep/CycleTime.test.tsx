@@ -49,7 +49,7 @@ const mockColumnsList = [
     },
   },
 ]
-const errorMessage = 'Should only select One "Done"'
+const errorMessage = 'Only one column can be selected as "Done"'
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
 

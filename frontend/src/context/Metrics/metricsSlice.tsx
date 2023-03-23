@@ -82,4 +82,6 @@ export const {
 export const selectDeploymentFrequencySettings = (state: RootState) =>
   state.saveMetricsSetting.deploymentFrequencySettings
 
+export const selectBoardColumns = (state: RootState) => state.saveMetricsSetting.boardColumns
+
 export default metricsSlice.reducer

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PipelineStepsRequest {
+public class PipelineStepsParam {
 
 	@NotBlank(message = "pipelineId is required")
 	private String pipelineId;
@@ -24,9 +24,6 @@ public class PipelineStepsRequest {
 
 	@NotBlank(message = "orgName is required")
 	private String orgName;
-
-	@NotBlank(message = "token is required")
-	private String token;
 
 	@NotBlank(message = "type is required")
 	private String type;

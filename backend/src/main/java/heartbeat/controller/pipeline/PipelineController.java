@@ -1,6 +1,7 @@
 package heartbeat.controller.pipeline;
 
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
+import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,11 @@ public class PipelineController {
 	@GetMapping("/{pipelineType}")
 	public BuildKiteResponse getBuildKiteInfo(@PathVariable String pipelineType) {
 		return buildKiteService.fetchPipelineInfo();
+	}
+
+	@GetMapping("/{org}/pipelines/{pipelineId}/steps")
+	public PipelineStepsResponse getPipelineSteps(@PathVariable String org, @PathVariable String pipelineId) {
+		return buildKiteService.fetchPipelineSteps();
 	}
 
 }

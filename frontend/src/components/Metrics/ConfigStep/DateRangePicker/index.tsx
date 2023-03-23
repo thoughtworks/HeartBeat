@@ -9,31 +9,49 @@ import { selectDateRange, updateBoardVerifyState, updateDateRange } from '@src/c
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch()
   const { startDate, endDate } = useAppSelector(selectDateRange)
+  const changeStartDate = (value: dayjs.Dayjs | null) => {
+    if (value === null) {
+      dispatch(
+        updateDateRange({
+          startDate: '',
+          endDate: '',
+        })
+      )
+    } else {
+      dispatch(
+        updateDateRange({
+          startDate: value.valueOf(),
+          endDate: value.add(14, 'day').valueOf(),
+        })
+      )
+    }
+    dispatch(updateBoardVerifyState(false))
+  }
+
+  const changeEndDate = (value: dayjs.Dayjs | null) => {
+    if (value === null) {
+      dispatch(
+        updateDateRange({
+          startDate: startDate,
+          endDate: '',
+        })
+      )
+    } else {
+      dispatch(updateDateRange({ startDate: startDate, endDate: value.valueOf() }))
+    }
+    dispatch(updateBoardVerifyState(false))
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateRangeBox>
-        <DatePicker
-          label='From *'
-          value={dayjs(startDate)}
-          onChange={(newValue) => {
-            newValue &&
-              dispatch(
-                updateDateRange({
-                  startDate: newValue.valueOf(),
-                  endDate: newValue.add(14, 'day').valueOf(),
-                })
-              )
-            dispatch(updateBoardVerifyState(false))
-          }}
-        />
+        <DatePicker label='From *' value={dayjs(startDate)} onChange={(newValue) => changeStartDate(newValue)} />
         <DatePicker
           label='To *'
           value={dayjs(endDate)}
           minDate={dayjs(startDate)}
           onChange={(newValue) => {
-            newValue && dispatch(updateDateRange({ startDate: startDate, endDate: newValue.valueOf() }))
-            dispatch(updateBoardVerifyState(false))
+            changeEndDate(newValue)
           }}
         />
       </DateRangeBox>

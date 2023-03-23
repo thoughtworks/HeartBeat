@@ -1,15 +1,15 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import {
   BACK,
   CONFIRM_DIALOG_DESCRIPTION,
-  EXPORT_BOARD_DATA,
   LEAD_TIME_FOR_CHANGES,
   NEXT,
   PROJECT_NAME_LABEL,
   STEPS,
+  TEST_PROJECT_NAME,
   VELOCITY,
 } from '../../../fixtures'
 import userEvent from '@testing-library/user-event'
@@ -22,12 +22,14 @@ import {
   updateShowSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
+import dayjs from 'dayjs'
+import { navigateMock } from '../../../../setupTests'
 
-const mockedUsedNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}))
+const START_DATE_LABEL = 'From *'
+const TODAY = dayjs()
+const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY')
+const END_DATE_LABEL = 'To *'
+
 const YES = 'Yes'
 const CANCEL = 'Cancel'
 const METRICS = 'Metrics'
@@ -46,6 +48,23 @@ const setup = () =>
     </Provider>
   )
 
+const fillConfigPageData = async () => {
+  const input = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL })
+  fireEvent.change(input, { target: { value: TEST_PROJECT_NAME } })
+
+  const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
+  fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
+  await act(async () => {
+    await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
+    await store.dispatch(updateShowBoard(true))
+    await store.dispatch(updateShowPipeline(true))
+    await store.dispatch(updateShowSourceControl(true))
+    await store.dispatch(updateBoardVerifyState(true))
+    await store.dispatch(updatePipelineToolVerifyState(true))
+    await store.dispatch(updateSourceControlVerifyState(true))
+  })
+}
+
 describe('MetricsStepper', () => {
   it('should show metrics stepper', () => {
     const { getByText } = setup()
@@ -58,19 +77,10 @@ describe('MetricsStepper', () => {
     expect(getByText(BACK)).toBeInTheDocument()
   })
 
-  it('should show metrics config step when click back button given config step ', () => {
+  it('should show metrics config step when click back button given config step ', async () => {
     const { getByText } = setup()
 
-    fireEvent.click(getByText(BACK))
-
-    expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
-  })
-
-  it('should show metrics config step when click back button given metrics step', () => {
-    const { getByText } = setup()
-
-    fireEvent.click(getByText(NEXT))
-    fireEvent.click(getByText(BACK))
+    await userEvent.click(getByText(BACK))
 
     expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
   })
@@ -101,8 +111,8 @@ describe('MetricsStepper', () => {
 
     await userEvent.click(getByText(YES))
 
-    expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/home')
+    expect(navigateMock).toHaveBeenCalledTimes(1)
+    expect(navigateMock).toHaveBeenCalledWith('/home')
   })
 
   it('should disable next when required data is empty ', async () => {
@@ -114,17 +124,35 @@ describe('MetricsStepper', () => {
     expect(getByText(NEXT)).toBeDisabled()
   })
 
+  it('should disable next when dataRange is empty ', async () => {
+    const { getByText, getByRole } = setup()
+    await fillConfigPageData()
+
+    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
+    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
+
+    fireEvent.change(startDateInput, { target: { value: null } })
+    fireEvent.change(endDateInput, { target: { value: null } })
+
+    expect(getByText(NEXT)).toBeDisabled()
+  })
+
+  it('should disable next when endDate is empty ', async () => {
+    const { getByText, getByRole } = setup()
+    await fillConfigPageData()
+
+    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
+    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
+
+    fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
+    fireEvent.change(endDateInput, { target: { value: null } })
+
+    expect(getByText(NEXT)).toBeDisabled()
+  })
+
   it('should enable next when every selected component is show and verified', async () => {
     const { getByText } = setup()
-    await act(async () => {
-      await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
-      await store.dispatch(updateShowBoard(true))
-      await store.dispatch(updateShowPipeline(true))
-      await store.dispatch(updateShowSourceControl(true))
-      await store.dispatch(updateBoardVerifyState(true))
-      await store.dispatch(updatePipelineToolVerifyState(true))
-      await store.dispatch(updateSourceControlVerifyState(true))
-    })
+    await fillConfigPageData()
 
     expect(getByText(NEXT)).toBeEnabled()
   })
@@ -143,27 +171,17 @@ describe('MetricsStepper', () => {
   it('should go metrics page when click next button given next button enabled', async () => {
     const { getByText } = setup()
 
-    await act(async () => {
-      await store.dispatch(updateMetrics([VELOCITY]))
-      await store.dispatch(updateShowBoard(true))
-      await store.dispatch(updateBoardVerifyState(true))
-    })
-    fireEvent.click(getByText(NEXT))
+    await fillConfigPageData()
+    await userEvent.click(getByText(NEXT))
 
     expect(getByText(METRICS)).toHaveStyle(`color:${stepperColor}`)
   })
 
   it('should show metrics export step when click next button given export step', async () => {
     const { getByText } = setup()
-
-    await act(async () => {
-      await store.dispatch(updateMetrics([VELOCITY]))
-      await store.dispatch(updateShowBoard(true))
-      await store.dispatch(updateBoardVerifyState(true))
-    })
-    fireEvent.click(getByText(NEXT))
-    fireEvent.click(getByText(NEXT))
-    fireEvent.click(getByText(EXPORT_BOARD_DATA))
+    await fillConfigPageData()
+    await userEvent.click(getByText(NEXT))
+    await userEvent.click(getByText(NEXT))
 
     expect(getByText(EXPORT)).toHaveStyle(`color:${stepperColor}`)
   })

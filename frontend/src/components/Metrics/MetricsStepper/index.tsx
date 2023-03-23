@@ -27,6 +27,8 @@ const MetricsStepper = () => {
     isShowSourceControl,
     isSourceControlVerified,
     metrics,
+    projectName,
+    dateRange,
   } = config
   useEffect(() => {
     if (!activeStep) {
@@ -37,7 +39,9 @@ const MetricsStepper = () => {
         { key: isShowSourceControl, value: isSourceControlVerified },
       ]
       const activeParams = showNextButtonParams.filter(({ key }) => key)
-      hasMetrics ? setIsDisableNextButton(!activeParams.every(({ value }) => value)) : setIsDisableNextButton(true)
+      projectName && dateRange.startDate && dateRange.endDate && hasMetrics
+        ? setIsDisableNextButton(!activeParams.every(({ value }) => value))
+        : setIsDisableNextButton(true)
     }
   }, [
     activeStep,
@@ -48,6 +52,8 @@ const MetricsStepper = () => {
     isShowPipeline,
     isSourceControlVerified,
     metrics,
+    projectName,
+    dateRange,
   ])
 
   const handleNext = () => {

@@ -21,7 +21,7 @@ interface realDoneProps {
   label: string
 }
 
-function getSelectedDoneColumns(selectedBoardColumns: { name: string; value: any }[]) {
+function getSelectedDoneColumns(selectedBoardColumns: { name: string; value: string }[]) {
   const selectedDoneColumns = selectedBoardColumns
     .filter(({ value }) => value === METRICS_CONSTANTS.doneValue)
     .map(({ name }) => name)
@@ -29,7 +29,7 @@ function getSelectedDoneColumns(selectedBoardColumns: { name: string; value: any
 }
 
 function getFilteredStatuses(
-  columns: { key: string; value: { name: string; statuses: any[] } }[],
+  columns: { key: string; value: { name: string; statuses: string[] } }[],
   selectedDoneColumns: string[]
 ) {
   const filteredStatuses = columns
@@ -38,7 +38,7 @@ function getFilteredStatuses(
   return filteredStatuses
 }
 
-function getDoneStatuses(columns: { key: string; value: { name: string; statuses: any[] } }[]) {
+function getDoneStatuses(columns: { key: string; value: { name: string; statuses: string[] } }[]) {
   const doneStatuses =
     columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
   return doneStatuses

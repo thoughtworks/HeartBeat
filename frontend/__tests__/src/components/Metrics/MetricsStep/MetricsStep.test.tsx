@@ -28,7 +28,7 @@ const setup = () =>
   )
 
 describe('MetricsStep', () => {
-  it('should render Crews components', () => {
+  it('should render Crews and Real Done components', () => {
     const { getByText, queryByText } = setup()
 
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()

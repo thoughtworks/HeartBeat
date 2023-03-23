@@ -21,18 +21,35 @@ interface realDoneProps {
   label: string
 }
 
-export const RealDone = ({ columns, title, label }: realDoneProps) => {
-  const dispatch = useAppDispatch()
+function getSelectedDoneColumns(selectedBoardColumns: { name: string; value: any }[]) {
+  const selectedDoneColumns = selectedBoardColumns
+    .filter(({ value }) => value === METRICS_CONSTANTS.doneValue)
+    .map(({ name }) => name)
+  return selectedDoneColumns
+}
+
+function getFilteredStatuses(
+  columns: { key: string; value: { name: string; statuses: any[] } }[],
+  selectedDoneColumns: string[]
+) {
+  const filteredStatuses = columns
+    .filter(({ value }) => selectedDoneColumns.includes(value.name))
+    .flatMap(({ value }) => value.statuses)
+  return filteredStatuses
+}
+
+function getDoneStatuses(columns: { key: string; value: { name: string; statuses: any[] } }[]) {
   const doneStatuses =
     columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
+  return doneStatuses
+}
+
+export const RealDone = ({ columns, title, label }: realDoneProps) => {
+  const dispatch = useAppDispatch()
   const selectedBoardColumns = useAppSelector(selectBoardColumns)
-  const selectedDoneColumns = selectedBoardColumns
-    .filter((element) => element.value === METRICS_CONSTANTS.doneValue)
-    .map((element) => element.name)
-  const filteredStatuses = columns
-    .filter((column) => selectedDoneColumns.includes(column.value.name))
-    .map((column) => column.value.statuses)
-    .flat()
+  const doneStatuses = getDoneStatuses(columns)
+  const selectedDoneColumns = getSelectedDoneColumns(selectedBoardColumns)
+  const filteredStatuses = getFilteredStatuses(columns, selectedDoneColumns)
   const statuses = selectedDoneColumns.length < 1 ? doneStatuses : filteredStatuses
   const [selectedDoneStatuses, setSelectedDoneStatuses] = useState([] as string[])
   const isAllSelected = selectedDoneStatuses.length === statuses.length

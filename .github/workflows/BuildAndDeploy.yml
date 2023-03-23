@@ -332,7 +332,7 @@ jobs:
           pnpm install
       - name: Run E2E
         env:
-          APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_PORT }}
+          APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_FRONTEND_PORT }}
         run: pnpm run e2e
       - uses: actions/upload-artifact@v3
         if: always()

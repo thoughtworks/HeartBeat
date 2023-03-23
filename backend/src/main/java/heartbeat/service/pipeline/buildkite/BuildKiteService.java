@@ -6,6 +6,7 @@ import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineTransformer;
+import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.exception.RequestFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -45,6 +46,10 @@ public class BuildKiteService {
 			log.error("[BuildKite] Failed when call BuildKite", e);
 			throw new RequestFailedException(e);
 		}
+	}
+
+	public PipelineStepsResponse fetchPipelineSteps() {
+		return null;
 	}
 
 }

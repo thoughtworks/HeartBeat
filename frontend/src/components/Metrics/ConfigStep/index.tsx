@@ -6,11 +6,14 @@ import { ConfigStepWrapper, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import {
+  isPipelineToolVerified,
   selectCalendarType,
   selectProjectName,
   updateBoardVerifyState,
   updateCalendarType,
+  updatePipelineToolVerifyState,
   updateProjectName,
+  updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
 
 export const ConfigStep = () => {
@@ -42,6 +45,8 @@ export const ConfigStep = () => {
         value={calendarType}
         onChange={(e) => {
           dispatch(updateBoardVerifyState(false))
+          dispatch(updatePipelineToolVerifyState(false))
+          dispatch(updateSourceControlVerifyState(false))
           dispatch(updateCalendarType(e.target.value))
         }}
       >

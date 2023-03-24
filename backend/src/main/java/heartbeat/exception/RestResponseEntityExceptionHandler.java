@@ -26,7 +26,7 @@ public class RestResponseEntityExceptionHandler {
 		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
-	@ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
+	@ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class })
 	public ResponseEntity<Object> handleMethodArgumentNotValid(BindException ex) {
 		BindingResult result = ex.getBindingResult();
 		Map<String, String> fieldErrors = result.getFieldErrors()

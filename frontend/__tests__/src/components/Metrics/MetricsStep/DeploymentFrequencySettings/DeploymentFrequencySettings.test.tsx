@@ -5,17 +5,28 @@ import userEvent from '@testing-library/user-event'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import { addADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 
+const mockValidationCheckContext = {
+  errorMessages: [{ id: 1, error: 'error' }],
+  clearErrorMessage: jest.fn(),
+  checkDuplicatedPipeLine: jest.fn(),
+  checkPipelineValidation: jest.fn(),
+}
+
 jest.mock('@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection', () => ({
-  PipelineMetricSelection: () => <div>mock PipelineMetricSelection</div>,
+  PipelineMetricSelection: ({ errorMessages }: { errorMessages: string }) => <div>errorMessages: {errorMessages}</div>,
 }))
 
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
-  useAppSelector: jest.fn().mockReturnValue([{ organization: '', pipelineName: '', steps: '' }]),
+  useAppSelector: jest.fn().mockReturnValue([{ id: 1, organization: '', pipelineName: '', steps: '' }]),
 }))
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   addADeploymentFrequencySetting: jest.fn(),
+}))
+
+jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
+  useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
 }))
 
 const setUp = () => {
@@ -35,7 +46,7 @@ describe('DeploymentFrequencySettings', () => {
     const { getByText, getByRole } = setUp()
 
     expect(getByText('Deployment frequency settings')).toBeInTheDocument()
-    expect(getByText('mock PipelineMetricSelection')).toBeInTheDocument()
+    expect(getByText('errorMessages: error')).toBeInTheDocument()
     expect(getByRole('button', { name: 'Add another pipeline' })).toBeInTheDocument()
   })
 

@@ -1,10 +1,13 @@
 import Header from '@src/layouts/Header'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
+import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext'
 
 const Metrics = () => (
   <>
     <Header />
-    <MetricsStepper />
+    <ContextProvider>
+      <MetricsStepper />
+    </ContextProvider>
   </>
 )
 

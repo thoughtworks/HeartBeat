@@ -32,6 +32,7 @@ const setUp = (mockIndex: number, isShowRemoveButton: boolean) => {
       <PipelineMetricSelection
         deploymentFrequencySetting={deploymentFrequencySetting}
         isShowRemoveButton={isShowRemoveButton}
+        errorMessages={{ organization: '', pipelineName: '', steps: '' }}
       />
     </Provider>
   )

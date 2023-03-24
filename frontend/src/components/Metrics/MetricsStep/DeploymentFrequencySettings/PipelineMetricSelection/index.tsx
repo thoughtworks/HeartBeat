@@ -12,13 +12,17 @@ interface pipelineMetricSelectionProps {
     steps: string
   }
   isShowRemoveButton: boolean
+
+  errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
 }
 
 export const PipelineMetricSelection = ({
   deploymentFrequencySetting,
   isShowRemoveButton,
+  errorMessages,
 }: pipelineMetricSelectionProps) => {
   const dispatch = useAppDispatch()
+
   const { id, organization, pipelineName, steps } = deploymentFrequencySetting
 
   const handleClick = () => {
@@ -28,9 +32,27 @@ export const PipelineMetricSelection = ({
   return (
     <>
       {isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove this pipeline</RemoveButton>}
-      <SingleSelection id={id} options={['o1', 'o2']} label={'Organization'} value={organization} />
-      <SingleSelection id={id} options={['p1', 'p2']} label={'Pipeline Name'} value={pipelineName} />
-      <SingleSelection id={id} options={['s1', 's2']} label={'Steps'} value={steps} />
+      <SingleSelection
+        id={id}
+        options={['o1', 'o2']}
+        label={'Organization'}
+        value={organization}
+        errorMessage={errorMessages?.organization}
+      />
+      <SingleSelection
+        id={id}
+        options={['p1', 'p2']}
+        label={'Pipeline Name'}
+        value={pipelineName}
+        errorMessage={errorMessages?.pipelineName}
+      />
+      <SingleSelection
+        id={id}
+        options={['s1', 's2']}
+        label={'Steps'}
+        value={steps}
+        errorMessage={errorMessages?.steps}
+      />
     </>
   )
 }

@@ -40,6 +40,8 @@ let store = setupStore()
 beforeEach(() => {
   store = setupStore()
 })
+const mockLocation = { reload: jest.fn() }
+Object.defineProperty(window, 'location', { value: mockLocation })
 
 const setup = () =>
   render(
@@ -49,8 +51,8 @@ const setup = () =>
   )
 
 const fillConfigPageData = async () => {
-  const input = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL })
-  fireEvent.change(input, { target: { value: TEST_PROJECT_NAME } })
+  const projectNameInput = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL })
+  await userEvent.type(projectNameInput, TEST_PROJECT_NAME)
 
   const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
   fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
@@ -66,6 +68,9 @@ const fillConfigPageData = async () => {
 }
 
 describe('MetricsStepper', () => {
+  afterEach(() => {
+    navigateMock.mockClear()
+  })
   it('should show metrics stepper', () => {
     const { getByText } = setup()
 
@@ -131,8 +136,8 @@ describe('MetricsStepper', () => {
     const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
     const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
 
-    fireEvent.change(startDateInput, { target: { value: null } })
-    fireEvent.change(endDateInput, { target: { value: null } })
+    await userEvent.clear(startDateInput)
+    await userEvent.clear(endDateInput)
 
     expect(getByText(NEXT)).toBeDisabled()
   })
@@ -141,11 +146,9 @@ describe('MetricsStepper', () => {
     const { getByText, getByRole } = setup()
     await fillConfigPageData()
 
-    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
     const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
 
-    fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
-    fireEvent.change(endDateInput, { target: { value: null } })
+    await userEvent.clear(endDateInput)
 
     expect(getByText(NEXT)).toBeDisabled()
   })

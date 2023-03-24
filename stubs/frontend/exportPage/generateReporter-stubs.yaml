@@ -1,0 +1,10 @@
+- request:
+    method: POST
+    url: /api/v1/generateReporter
+
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./frontend/exportPage/jsons/exportData.json

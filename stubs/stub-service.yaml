@@ -7,3 +7,13 @@
       {"status": "OK"}
     headers:
       content-type: application/json
+
+- request:
+    method: POST
+    url: /health1
+  response:
+    status: 200
+    body: >
+      {"status": "OK"}
+    headers:
+      content-type: application/json

@@ -1,7 +1,6 @@
 package heartbeat.client;
 
 import heartbeat.client.dto.BuildKiteBuildInfo;
-import heartbeat.client.dto.BuildKiteBuildsRequest;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.PipelineDTO;
 import java.util.List;
@@ -29,7 +28,9 @@ public interface BuildKiteFeignClient {
 
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds")
 	@ResponseStatus(HttpStatus.OK)
-	ResponseEntity<BuildKiteBuildInfo> getPipelineSteps(@RequestHeader("Authorization") String token,
-			@PathVariable String orgId, @PathVariable String pipelineId, @RequestParam BuildKiteBuildsRequest request);
+	ResponseEntity<List<BuildKiteBuildInfo>> getPipelineSteps(@RequestHeader("Authorization") String token,
+			@PathVariable String organizationId, @PathVariable String pipelineId, @RequestParam String page,
+			@RequestParam("per_page") String perPage, @RequestParam("created_to") String createdTo,
+			@RequestParam("finished_from") String finishedFrom);
 
 }

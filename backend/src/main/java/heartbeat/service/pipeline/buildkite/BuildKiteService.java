@@ -2,14 +2,20 @@ package heartbeat.service.pipeline.buildkite;
 
 import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
+import heartbeat.client.dto.BuildKiteBuildInfo;
+import heartbeat.client.dto.BuildKiteBuildsRequest;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
+import heartbeat.client.dto.PipelineDTO;
+import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineTransformer;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.exception.RequestFailedException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,7 +54,21 @@ public class BuildKiteService {
 		}
 	}
 
-	public PipelineStepsResponse fetchPipelineSteps() {
+	public PipelineStepsResponse fetchPipelineSteps(String token, String organizationId, String pipelineId,
+			PipelineStepsParam stepsParam) {
+		String partialToken = token.substring(0, token.length() / 2);
+		BuildKiteBuildsRequest kiteBuildsRequest = BuildKiteBuildsRequest.builder()
+			.page("1")
+			.perPage("100")
+			.createdTo(stepsParam.getStartTime())
+			.finishedFrom(stepsParam.getEndTime())
+			.build();
+		log.info("[BuildKite] Start to fetch pipeline steps, token: {},orgId: {},pipelineId: {},params: {}",
+				partialToken, organizationId, pipelineId, stepsParam);
+		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(token,
+				organizationId, pipelineId, "1", "100", stepsParam.getStartTime(), stepsParam.getEndTime());
+		log.info("[BuildKite] Successfully get pipeline steps info, token: {},orgId: {},pipelineId: {},result: {}",
+				partialToken, organizationId, pipelineId, pipelineStepsInfo);
 		return null;
 	}
 

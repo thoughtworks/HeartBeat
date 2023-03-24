@@ -3,6 +3,7 @@ package heartbeat.controller.pipeline;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import heartbeat.client.dto.BuildKitePipelineDTO;
 import heartbeat.client.dto.PipelineDTO;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;

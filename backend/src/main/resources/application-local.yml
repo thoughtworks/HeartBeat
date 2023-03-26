@@ -1,0 +1,16 @@
+server:
+  port: 4322
+  servlet:
+    context-path: /api/v1
+logging:
+  level:
+    root: DEBUG
+
+githubFeignClient:
+  url: ${Mock_Server_URL}
+
+jira:
+  url: ${Mock_Server_URL}
+
+buildKite:
+  url: ${Mock_Server_URL}

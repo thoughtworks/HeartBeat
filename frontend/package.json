@@ -69,7 +69,7 @@
     "license-compliance": "^1.2.5",
     "lint-staged": "^13.1.0",
     "msw": "^1.0.1",
-    "prettier": "2.8.4",
+    "prettier": "2.8.7",
     "ts-jest": "^29.0.3",
     "typescript": "*",
     "vite": "^4.0.0"

@@ -40,3 +40,12 @@ cd HearBeat/backend
 cd HearBeat/backend
 ./gradlew bootRun --args='--spring.profiles.active=e2e'
 ```
+
+## 5. How to run the local environment
+```shell script
+cd HearBeat/backend
+./gradlew bootRun --args='--spring.profiles.active=local --Mock_Server_URL=${MOCK_SERVER_IP}:${MOCK_SERVER_PORT}' 
+```
+The values of MOCK_SERVER_IP and MOCK_SERVER_PORT are defined in group file.
+
+you can add Run/Debug Configuration in IDEA to achieve the same purpose as this command

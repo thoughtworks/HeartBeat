@@ -4,7 +4,7 @@ server:
     context-path: /api/v1
 logging:
   level:
-    root: INFO
+    root: DEBUG
 
 githubFeignClient:
   url: ${Mock_Server_URL}

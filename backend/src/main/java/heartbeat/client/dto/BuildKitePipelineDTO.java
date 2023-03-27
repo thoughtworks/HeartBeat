@@ -2,6 +2,7 @@ package heartbeat.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import heartbeat.controller.pipeline.vo.response.Pipeline;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -98,19 +99,5 @@ public class BuildKitePipelineDTO {
 	private List<String> tags;
 
 	private List<StepsDTO> steps;
-
-	public PipelineDTO toPipeline(String orgId, String orgName) {
-		return PipelineDTO.builder()
-			.orgId(orgId)
-			.orgName(orgName)
-			.id(this.id)
-			.name(this.name)
-			.repository(this.repository)
-			.steps(this.steps.stream()
-				.map(StepsDTO::getName)
-				.filter(name -> name.length() > 0)
-				.collect(Collectors.toList()))
-			.build();
-	}
 
 }

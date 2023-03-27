@@ -3,9 +3,9 @@ package heartbeat.service.pipeline.buildkite;
 import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
-import heartbeat.client.dto.BuildKitePipelineDTO;
-import heartbeat.client.dto.PipelineDTO;
+import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
+import heartbeat.controller.pipeline.vo.response.PipelineTransformer;
 import heartbeat.exception.RequestFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,10 +30,11 @@ public class BuildKiteService {
 
 			log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:"
 					+ buildKiteOrganizationsInfo);
-			List<PipelineDTO> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
+			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
 				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(org.getSlug(), "1", "100")
 					.stream()
-					.map(pipeline -> pipeline.toPipeline(org.getSlug(), org.getName())))
+					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
+							org.getName())))
 				.collect(Collectors.toList());
 			log.info("[BuildKite] Successfully get buildKite pipelineInfo, pipelineInfoList size is:"
 					+ buildKiteInfoList.size());

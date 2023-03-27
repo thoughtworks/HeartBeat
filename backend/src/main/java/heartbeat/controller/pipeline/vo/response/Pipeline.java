@@ -1,4 +1,4 @@
-package heartbeat.client.dto;
+package heartbeat.controller.pipeline.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PipelineDTO {
+public class Pipeline {
 
 	String id;
 

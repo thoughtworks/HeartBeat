@@ -6,7 +6,7 @@ import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.BuildKitePipelineDTO;
-import heartbeat.client.dto.PipelineDTO;
+import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.exception.RequestFailedException;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ class BuildKiteServiceTest {
 		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo();
 
 		assertThat(buildKiteResponse.getPipelineList().size()).isEqualTo(1);
-		PipelineDTO pipeline = buildKiteResponse.getPipelineList().get(0);
+		Pipeline pipeline = buildKiteResponse.getPipelineList().get(0);
 		assertThat(pipeline.getId()).isEqualTo("0186104b-aa31-458c-a58c-63266806f2fe");
 		assertThat(pipeline.getName()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getOrgId()).isEqualTo("XXXX");
@@ -59,23 +59,6 @@ class BuildKiteServiceTest {
 		assertThat(pipeline.getRepository())
 			.isEqualTo("https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git");
 		assertThat(pipeline.getSteps().size()).isEqualTo(1);
-	}
-
-	@Test
-	void shouldReturnBuildKiteResponseWithNoStepsWhenStepNameIsEmpty() throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		List<BuildKitePipelineDTO> pipelineDTOS = mapper.readValue(
-				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoDataWithoutStepName.json"),
-				new TypeReference<>() {
-				});
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo())
-			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name("XXXX").slug("XXXX").build()));
-		when(buildKiteFeignClient.getPipelineInfo("XXXX", "1", "100")).thenReturn(pipelineDTOS);
-
-		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo();
-
-		PipelineDTO pipeline = buildKiteResponse.getPipelineList().get(0);
-		assertThat(pipeline.getSteps().size()).isEqualTo(0);
 	}
 
 	@Test

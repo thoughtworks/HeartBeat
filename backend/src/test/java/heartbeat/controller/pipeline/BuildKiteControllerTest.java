@@ -3,7 +3,7 @@ package heartbeat.controller.pipeline;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.client.dto.PipelineDTO;
+import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import org.junit.jupiter.api.Test;
@@ -39,10 +39,10 @@ public class BuildKiteControllerTest {
 	@Test
 	void shouldReturnCorrectPipelineInfoWhenCallBuildKiteMockServer() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
-		List<PipelineDTO> pipelineDTOS = mapper.readValue(
+		List<Pipeline> pipelines = mapper.readValue(
 				new File("src/test/java/heartbeat/controller/pipeline/pipelineInfoData.json"), new TypeReference<>() {
 				});
-		BuildKiteResponse buildKiteResponse = BuildKiteResponse.builder().pipelineList(pipelineDTOS).build();
+		BuildKiteResponse buildKiteResponse = BuildKiteResponse.builder().pipelineList(pipelines).build();
 		when(buildKiteService.fetchPipelineInfo()).thenReturn(buildKiteResponse);
 
 		MockHttpServletResponse response = mockMvc

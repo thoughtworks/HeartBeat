@@ -1,4 +1,8 @@
-import { RemoveButton } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/style'
+import {
+  ButtonWrapper,
+  PipelineMetricSelectionWrapper,
+  RemoveButton,
+} from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/style'
 import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
@@ -30,8 +34,7 @@ export const PipelineMetricSelection = ({
   }
 
   return (
-    <>
-      {isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove this pipeline</RemoveButton>}
+    <PipelineMetricSelectionWrapper>
       <SingleSelection
         id={id}
         options={['o1', 'o2']}
@@ -53,6 +56,7 @@ export const PipelineMetricSelection = ({
         value={steps}
         errorMessage={errorMessages?.steps}
       />
-    </>
+      <ButtonWrapper>{isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove</RemoveButton>}</ButtonWrapper>
+    </PipelineMetricSelectionWrapper>
   )
 }

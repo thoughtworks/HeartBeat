@@ -25,7 +25,7 @@ export const DeploymentFrequencySettings = () => {
 
   return (
     <>
-      <MetricsSettingTitle title={'Deployment frequency settings'} />
+      <MetricsSettingTitle title={'Deployment Frequency Settings'} />
       {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
         <PipelineMetricSelection
           key={deploymentFrequencySetting.id}
@@ -34,7 +34,7 @@ export const DeploymentFrequencySettings = () => {
           errorMessages={getErrorMessage(deploymentFrequencySetting.id)}
         />
       ))}
-      <AddButton onClick={handleClick}> Add another pipeline</AddButton>
+      <AddButton onClick={handleClick}> Add </AddButton>
     </>
   )
 }

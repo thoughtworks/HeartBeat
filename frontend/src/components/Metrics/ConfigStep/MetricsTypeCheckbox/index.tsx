@@ -6,20 +6,18 @@ import {
   SELECTED_VALUE_SEPARATOR,
   REQUIRED_DATA,
 } from '@src/constants'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectConfig,
+  selectMetrics,
   updateBoard,
   updateBoardVerifyState,
   updateMetrics,
   updatePipelineTool,
   updatePipelineToolVerifyState,
-  updateShowBoard,
-  updateShowPipeline,
-  updateShowSourceControl,
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
@@ -29,13 +27,19 @@ import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
   const configData = useAppSelector(selectConfig)
-  const { metrics, isShowBoard, isShowPipeline, isShowSourceControl } = configData
+  const metrics = useAppSelector(selectMetrics)
+  const { isShowBoard, isShowPipeline, isShowSourceControl } = configData
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
+
+  useEffect(() => {
+    metrics && dispatch(updateMetrics(metrics))
+  }, [metrics, dispatch])
 
   const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
     const {
       target: { value },
     } = event
+
     dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     dispatch(updatePipelineToolVerifyState(false))
     dispatch(updateBoardVerifyState(false))
@@ -53,22 +57,6 @@ export const MetricsTypeCheckbox = () => {
     dispatch(updateSourceControlVerifyState(false))
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
-    dispatch(
-      updateShowBoard(
-        value.includes(REQUIRED_DATA.VELOCITY) ||
-          value.includes(REQUIRED_DATA.CYCLE_TIME) ||
-          value.includes(REQUIRED_DATA.CLASSIFICATION)
-      )
-    )
-    dispatch(
-      updateShowPipeline(
-        value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
-          value.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
-          value.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
-          value.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
-      )
-    )
-    dispatch(updateShowSourceControl(value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)))
   }
   return (
     <>

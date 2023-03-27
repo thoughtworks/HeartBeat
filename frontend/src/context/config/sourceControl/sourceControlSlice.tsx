@@ -26,10 +26,5 @@ export const sourceControlSlice = createSlice({
     updateSourceControl: (state, action) => {
       state.sourceControlConfig = action.payload
     },
-    updateShowSourceControl: (state, action) => {
-      state.isShowSourceControl = action.payload
-    },
   },
 })
-
-export default sourceControlSlice.reducer

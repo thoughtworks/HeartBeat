@@ -30,12 +30,6 @@ const TODAY = dayjs()
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY')
 const END_DATE_LABEL = 'To *'
 
-const mockedUsedNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}))
-
 const mockValidationCheckContext = {
   errorMessages: [],
   clearErrorMessage: jest.fn(),

@@ -4,6 +4,7 @@ import { store } from '@src/store'
 import userEvent from '@testing-library/user-event'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import { addADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
+import { DEPLOYMENT_FREQUENCY_SETTINGS } from '../../../../fixtures'
 
 const mockValidationCheckContext = {
   errorMessages: [{ id: 1, error: 'error' }],
@@ -38,6 +39,8 @@ const setUp = () => {
 }
 
 describe('DeploymentFrequencySettings', () => {
+  const ADD_BUTTON = 'Add'
+
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -45,15 +48,15 @@ describe('DeploymentFrequencySettings', () => {
   it('should render DeploymentFrequencySettings component', () => {
     const { getByText, getByRole } = setUp()
 
-    expect(getByText('Deployment frequency settings')).toBeInTheDocument()
+    expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
     expect(getByText('errorMessages: error')).toBeInTheDocument()
-    expect(getByRole('button', { name: 'Add another pipeline' })).toBeInTheDocument()
+    expect(getByRole('button', { name: ADD_BUTTON })).toBeInTheDocument()
   })
 
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
     const { getByRole } = await setUp()
 
-    await userEvent.click(getByRole('button', { name: 'Add another pipeline' }))
+    await userEvent.click(getByRole('button', { name: ADD_BUTTON }))
 
     expect(addADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
   })

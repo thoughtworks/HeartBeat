@@ -39,13 +39,15 @@ const setUp = (mockIndex: number, isShowRemoveButton: boolean) => {
 }
 
 describe('PipelineMetricSelection', () => {
+  const REMOVE_BUTTON = 'Remove'
+
   afterEach(() => {
     jest.clearAllMocks()
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
     const { getAllByText, getByText } = await setUp(mockIndex, true)
-    expect(getByText('Remove this pipeline')).toBeInTheDocument()
+    expect(getByText(REMOVE_BUTTON)).toBeInTheDocument()
     expect(getAllByText('mock SingleSelection').length).toEqual(3)
   })
 
@@ -58,7 +60,7 @@ describe('PipelineMetricSelection', () => {
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
     const { getByRole } = await setUp(mockIndex, true)
 
-    await userEvent.click(getByRole('button', { name: 'Remove this pipeline' }))
+    await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 
     expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
     expect(deleteADeploymentFrequencySetting).toHaveBeenCalledWith(mockIndex)

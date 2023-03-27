@@ -246,6 +246,10 @@ describe('useMetricsStepValidationCheckContext', () => {
       expect(result.current?.isPipelineValid()).toBe(false)
     })
 
+    await waitFor(() => {
+      store.dispatch(addADeploymentFrequencySetting())
+    })
+
     act(() => {
       result.current?.checkDuplicatedPipeLine()
     })
@@ -259,6 +263,14 @@ describe('useMetricsStepValidationCheckContext', () => {
             organization: 'organization is required',
             pipelineName: 'pipelineName is required',
             steps: 'steps is required',
+          },
+        },
+        {
+          id: 3,
+          error: {
+            organization: '',
+            pipelineName: '',
+            steps: '',
           },
         },
       ])

@@ -17,9 +17,6 @@ import {
   updateBoardVerifyState,
   updateMetrics,
   updatePipelineToolVerifyState,
-  updateShowBoard,
-  updateShowPipeline,
-  updateShowSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
 import dayjs from 'dayjs'
@@ -69,9 +66,6 @@ const fillConfigPageData = async () => {
   fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
   await act(async () => {
     await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
-    await store.dispatch(updateShowBoard(true))
-    await store.dispatch(updateShowPipeline(true))
-    await store.dispatch(updateShowSourceControl(true))
     await store.dispatch(updateBoardVerifyState(true))
     await store.dispatch(updatePipelineToolVerifyState(true))
     await store.dispatch(updateSourceControlVerifyState(true))
@@ -175,7 +169,6 @@ describe('MetricsStepper', () => {
     const { getByText } = setup()
     await act(async () => {
       await store.dispatch(updateMetrics([VELOCITY]))
-      await store.dispatch(updateShowBoard(true))
       await store.dispatch(updateBoardVerifyState(false))
     })
 

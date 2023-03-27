@@ -30,13 +30,12 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
 }))
 
-const setUp = () => {
-  return render(
+const setup = () =>
+  render(
     <Provider store={store}>
       <DeploymentFrequencySettings />
     </Provider>
   )
-}
 
 describe('DeploymentFrequencySettings', () => {
   const ADD_BUTTON = 'Add'
@@ -46,7 +45,7 @@ describe('DeploymentFrequencySettings', () => {
   })
 
   it('should render DeploymentFrequencySettings component', () => {
-    const { getByText, getByRole } = setUp()
+    const { getByText, getByRole } = setup()
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
     expect(getByText('errorMessages: error')).toBeInTheDocument()
@@ -54,7 +53,7 @@ describe('DeploymentFrequencySettings', () => {
   })
 
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
-    const { getByRole } = await setUp()
+    const { getByRole } = await setup()
 
     await userEvent.click(getByRole('button', { name: ADD_BUTTON }))
 

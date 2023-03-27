@@ -17,28 +17,26 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   deleteADeploymentFrequencySetting: jest.fn(),
 }))
 
-const mockIndex = 0
-
-const deploymentFrequencySetting = {
-  id: 0,
-  organization: 'mock organization',
-  pipelineName: 'mock pipelineName',
-  steps: 'mock steps',
-}
-
-const setup = (mockIndex: number, isShowRemoveButton: boolean) =>
-  render(
-    <Provider store={store}>
-      <PipelineMetricSelection
-        deploymentFrequencySetting={deploymentFrequencySetting}
-        isShowRemoveButton={isShowRemoveButton}
-        errorMessages={{ organization: '', pipelineName: '', steps: '' }}
-      />
-    </Provider>
-  )
-
 describe('PipelineMetricSelection', () => {
   const REMOVE_BUTTON = 'Remove'
+  const mockIndex = 0
+  const deploymentFrequencySetting = {
+    id: 0,
+    organization: 'mock organization',
+    pipelineName: 'mock pipelineName',
+    steps: 'mock steps',
+  }
+
+  const setup = (mockIndex: number, isShowRemoveButton: boolean) =>
+    render(
+      <Provider store={store}>
+        <PipelineMetricSelection
+          deploymentFrequencySetting={deploymentFrequencySetting}
+          isShowRemoveButton={isShowRemoveButton}
+          errorMessages={{ organization: '', pipelineName: '', steps: '' }}
+        />
+      </Provider>
+    )
 
   afterEach(() => {
     jest.clearAllMocks()
@@ -46,12 +44,14 @@ describe('PipelineMetricSelection', () => {
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
     const { getAllByText, getByText } = await setup(mockIndex, true)
+
     expect(getByText(REMOVE_BUTTON)).toBeInTheDocument()
     expect(getAllByText('mock SingleSelection').length).toEqual(3)
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is false', async () => {
     const { getAllByText, queryByText } = await setup(mockIndex, false)
+
     expect(queryByText('Remove this pipeline')).not.toBeInTheDocument()
     expect(getAllByText('mock SingleSelection').length).toEqual(3)
   })

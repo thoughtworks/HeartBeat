@@ -26,8 +26,8 @@ const deploymentFrequencySetting = {
   steps: 'mock steps',
 }
 
-const setUp = (mockIndex: number, isShowRemoveButton: boolean) => {
-  return render(
+const setup = (mockIndex: number, isShowRemoveButton: boolean) =>
+  render(
     <Provider store={store}>
       <PipelineMetricSelection
         deploymentFrequencySetting={deploymentFrequencySetting}
@@ -36,7 +36,6 @@ const setUp = (mockIndex: number, isShowRemoveButton: boolean) => {
       />
     </Provider>
   )
-}
 
 describe('PipelineMetricSelection', () => {
   const REMOVE_BUTTON = 'Remove'
@@ -46,19 +45,19 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
-    const { getAllByText, getByText } = await setUp(mockIndex, true)
+    const { getAllByText, getByText } = await setup(mockIndex, true)
     expect(getByText(REMOVE_BUTTON)).toBeInTheDocument()
     expect(getAllByText('mock SingleSelection').length).toEqual(3)
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is false', async () => {
-    const { getAllByText, queryByText } = await setUp(mockIndex, false)
+    const { getAllByText, queryByText } = await setup(mockIndex, false)
     expect(queryByText('Remove this pipeline')).not.toBeInTheDocument()
     expect(getAllByText('mock SingleSelection').length).toEqual(3)
   })
 
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
-    const { getByRole } = await setUp(mockIndex, true)
+    const { getByRole } = await setup(mockIndex, true)
 
     await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 

@@ -1,12 +1,8 @@
-import {
-  ButtonWrapper,
-  PipelineMetricSelectionWrapper,
-  RemoveButton,
-} from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/style'
 import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
+import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './style'
 
 interface pipelineMetricSelectionProps {
   deploymentFrequencySetting: {

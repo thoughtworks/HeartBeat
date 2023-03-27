@@ -30,6 +30,17 @@ const TODAY = dayjs()
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY')
 const END_DATE_LABEL = 'To *'
 
+const mockValidationCheckContext = {
+  errorMessages: [],
+  clearErrorMessage: jest.fn(),
+  checkDuplicatedPipeLine: jest.fn(),
+  isPipelineValid: jest.fn().mockReturnValue(true),
+}
+
+jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
+  useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
+}))
+
 const YES = 'Yes'
 const CANCEL = 'Cancel'
 const METRICS = 'Metrics'

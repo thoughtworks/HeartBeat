@@ -312,7 +312,7 @@ jobs:
             docker rm -f mockserver
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
-            docker run --name mockserver -d -p ${{ secrets.AWS_EC2_IP_E2E_PORT }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
+            docker run --name mockserver -d -p ${{ secrets.AWS_EC2_IP_E2E_PORT }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} --restart always ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
   e2e:
     runs-on: ubuntu-latest
     defaults:

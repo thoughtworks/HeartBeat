@@ -43,6 +43,8 @@ export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
 export const PAST_DATE = '08/02/2022'
+export const CREATE_NEW_PROJECT = 'Create a new project'
+export const IMPORT_PROJECT_FROM_FILE = 'Import project from file'
 
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',
@@ -113,6 +115,19 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   type: SOURCE_CONTROL_TYPES.GITHUB,
   startTime: '1613664000000',
   endTime: '1614873600000',
+}
+
+export const MOCK_IMPORT_FILE = {
+  basicConfigState: {
+    isProjectCreated: true,
+    projectName: 'Mock Project Name',
+    calendarType: CHINA_CALENDAR,
+    dateRange: {
+      startDate: '',
+      endDate: '',
+    },
+    metrics: [],
+  },
 }
 
 export const CREWS_SETTING = 'Crews Setting'

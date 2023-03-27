@@ -83,7 +83,7 @@ export const configSlice = createSlice({
       )
     },
     updateBasicConfigState: (state, action) => {
-      state.basicConfigState = action.payload || state.basicConfigState
+      state.basicConfigState = action.payload.basicConfigState || state.basicConfigState
       state.boardConfig = action.payload.board || state.boardConfig
       state.pipelineToolConfig = action.payload.pipelineToolConfig || state.pipelineToolConfig
       state.sourceControlConfig = action.payload.sourceControlConfig || state.sourceControlConfig

@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import {
   CONFIG_TITLE,
   DEFAULT_HELPER_TEXT,
@@ -42,11 +42,13 @@ export const SourceControl = () => {
       key: 'SourceControl',
       value: sourceControlFields.sourceControl,
       isValid: true,
+      isRequired: true,
     },
     {
       key: 'Token',
       value: sourceControlFields.token,
       isValid: true,
+      isRequired: true,
     },
   ])
   const [sourceControlHelperText, setSourceControlHelperText] = useState('')
@@ -59,6 +61,15 @@ export const SourceControl = () => {
     setFields(newFields)
     dispatch(updateSourceControlVerifyState(false))
   }
+
+  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
+    return field.isRequired && field.isValid && !!field.value
+  }
+  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
+    return fields.some((field) => !isFieldInvalid(field))
+  }
+
+  useEffect(() => sourceControlFields && setIsDisableVerifyButton(isAllFieldsValid(fields)))
 
   const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -108,7 +119,7 @@ export const SourceControl = () => {
       }
       return field
     })
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
+    setIsDisableVerifyButton(isAllFieldsValid(newFieldsValue))
     setFields(newFieldsValue)
   }
 

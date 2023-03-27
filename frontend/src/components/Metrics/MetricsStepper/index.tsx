@@ -27,10 +27,8 @@ const MetricsStepper = () => {
     isPipelineToolVerified,
     isShowSourceControl,
     isSourceControlVerified,
-    metrics,
-    projectName,
-    dateRange,
   } = config
+  const { metrics, projectName, dateRange } = config.basicConfigState
   useEffect(() => {
     if (!activeStep) {
       const hasMetrics = metrics.length

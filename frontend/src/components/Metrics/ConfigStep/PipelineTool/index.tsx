@@ -8,7 +8,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import {
   PipelineToolButtonGroup,
   PipelineToolForm,
@@ -60,6 +60,8 @@ export const PipelineTool = () => {
     setFields(newFields)
     dispatch(updatePipelineToolVerifyState(false))
   }
+
+  useEffect(() => pipelineToolFields && setIsDisableVerifyButton(isAllFieldsValid(fields)))
 
   const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
     return field.isRequired && field.isValid && !!field.value

@@ -9,7 +9,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import {
   BoardButtonGroup,
   BoardForm,
@@ -138,6 +138,7 @@ export const Board = () => {
     setFields(newFieldsValue)
     dispatch(updateBoardVerifyState(false))
   }
+  useEffect(() => boardFields && setIsDisableVerifyButton(isAllFieldsValid(fields)))
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

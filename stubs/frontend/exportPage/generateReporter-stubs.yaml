@@ -2,7 +2,6 @@
     method: POST
     url: /api/v1/generateReporter
 
-
   response:
     headers:
       content-type: application/json

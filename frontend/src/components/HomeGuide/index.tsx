@@ -34,7 +34,6 @@ export const HomeGuide = () => {
 
   const importProject = (e: { target: any }) => {
     const input = e.target
-    console.log(input.files)
     const reader = new FileReader()
     reader.onload = () => {
       if (reader.result && typeof reader.result === 'string') {

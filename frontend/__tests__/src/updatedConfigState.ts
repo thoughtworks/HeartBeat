@@ -1,7 +1,7 @@
 import { CHINA_CALENDAR } from './fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
-const initialConfigState = {
+const updatedConfigState = {
   isProjectCreated: true,
   basic: {
     projectName: 'Mock Project Name',
@@ -36,4 +36,4 @@ const initialConfigState = {
   isShowSourceControl: false,
 }
 
-export default initialConfigState
+export default updatedConfigState

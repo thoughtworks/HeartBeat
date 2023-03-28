@@ -44,7 +44,7 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
 const YES = 'Yes'
 const CANCEL = 'Cancel'
 const METRICS = 'Metrics'
-const EXPORT = 'Export'
+const REPORT = 'Report'
 const stepperColor = 'rgba(0, 0, 0, 0.87)'
 let store = setupStore()
 
@@ -197,6 +197,6 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(NEXT))
     await userEvent.click(getByText(NEXT))
 
-    expect(getByText(EXPORT)).toHaveStyle(`color:${stepperColor}`)
+    expect(getByText(REPORT)).toHaveStyle(`color:${stepperColor}`)
   })
 })

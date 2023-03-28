@@ -24,7 +24,7 @@ export const PROJECT_NAME_LABEL = 'Project Name'
 
 export const EXPORT_BOARD_DATA = 'Export board data'
 
-export const STEPS = ['Config', 'Metrics', 'Export']
+export const STEPS = ['Config', 'Metrics', 'Report']
 
 export const REQUIRED_DATA_LIST = [
   'Velocity',

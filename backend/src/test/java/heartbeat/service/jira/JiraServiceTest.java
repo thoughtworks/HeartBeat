@@ -12,6 +12,7 @@ import heartbeat.client.dto.Item;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.client.dto.To;
+import heartbeat.component.UrlGenerator;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
@@ -48,9 +49,9 @@ class JiraServiceTest {
 
 	public static final String JIRA_JQL = "status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s";
 
-	private final BoardType boardTypeJira = BoardType.JIRA;
+	private final BoardType boardTypeJira = BoardType.fromValue("jira");
 
-	private final BoardType boardTypeClassicJira = BoardType.CLASSIC_JIRA;
+	private final BoardType boardTypeClassicJira = BoardType.fromValue("classic-jira");
 
 	@Mock
 
@@ -58,11 +59,14 @@ class JiraServiceTest {
 
 	JiraService jiraService;
 
+	@Mock
+	UrlGenerator urlGenerator;
+
 	ThreadPoolTaskExecutor executor;
 
 	@BeforeEach
 	public void setUp() {
-		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient);
+		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator);
 	}
 
 	@AfterEach
@@ -96,6 +100,7 @@ class JiraServiceTest {
 				new TargetField("timetracking", "Time tracking", false));
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
@@ -134,6 +139,7 @@ class JiraServiceTest {
 				new TargetField("timetracking", "Time tracking", false));
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
@@ -176,6 +182,7 @@ class JiraServiceTest {
 				new TargetField("timetracking", "Time tracking", false));
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
@@ -211,6 +218,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
@@ -232,6 +240,7 @@ class JiraServiceTest {
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
@@ -251,6 +260,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(noneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
@@ -265,6 +275,7 @@ class JiraServiceTest {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
 			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
 			.isInstanceOf(CompletionException.class)
@@ -284,6 +295,7 @@ class JiraServiceTest {
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
@@ -309,6 +321,7 @@ class JiraServiceTest {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(JIRA_JQL, "DONE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
@@ -344,6 +357,7 @@ class JiraServiceTest {
 			.issues(List.of(new DoneCard("1", new DoneCardFields(null))))
 			.build();
 
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
@@ -376,7 +390,7 @@ class JiraServiceTest {
 			.total("2")
 			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee(null)))))
 			.build();
-
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
@@ -400,6 +414,7 @@ class JiraServiceTest {
 
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(400);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenThrow(mockException);
 
@@ -413,6 +428,7 @@ class JiraServiceTest {
 		FeignException mockException = mock(FeignException.class);
 		System.out.println(Math.ceil(0));
 
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.status()).thenReturn(400);

@@ -33,6 +33,7 @@
 - request:
     method: GET
     url: /api/v1/source-control.*
+
   response:
     headers:
       content-type: application/json

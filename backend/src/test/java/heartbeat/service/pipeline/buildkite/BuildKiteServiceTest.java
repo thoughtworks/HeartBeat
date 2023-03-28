@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.BuildKiteBuildInfo;
+import heartbeat.client.dto.BuildKiteJob;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.BuildKitePipelineDTO;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
@@ -90,8 +91,9 @@ class BuildKiteServiceTest {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
 		stepsParam.setStartTime("2023-01-01T00:00:00Z");
 		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		buildKiteBuildInfoList.add(new BuildKiteBuildInfo());
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(
 			buildKiteBuildInfoList, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(),
@@ -101,6 +103,7 @@ class BuildKiteServiceTest {
 			organizationId, pipelineId, stepsParam);
 
 		assertNotNull(pipelineStepsResponse);
+		assertThat(pipelineStepsResponse.getSteps().get(0)).isEqualTo("testJob");
 	}
 
 	@Test
@@ -125,22 +128,26 @@ class BuildKiteServiceTest {
 		stepsParam.setStartTime("2023-01-01T00:00:00Z");
 		stepsParam.setEndTime("2023-09-01T00:00:00Z");
 		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(
-			"<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel=\"first\"");
-		linkHeader.add(
-			"<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel=\"prev\"");
-		linkHeader.add(
-			"<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel=\"next\"");
-		linkHeader.add(
-			"<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=3&per_page=100>; rel=\"last\"");
+		linkHeader.add("""
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel=\\"first\\",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel=\\"prev\\",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel=\\"next\\",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=3&per_page=100>; rel=\\"last\\"
+			""");
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		buildKiteBuildInfoList.add(new BuildKiteBuildInfo());
+		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		BuildKiteJob testJob2 = BuildKiteJob.builder().name("testJob2").build();
+		BuildKiteJob testJob3 = BuildKiteJob.builder().name("testJob3").build();
+		buildKiteBuildInfoList.add(
+			BuildKiteBuildInfo.builder().jobs(List.of(testJob, testJob2, testJob3)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(
 			buildKiteBuildInfoList, httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(),
 			anyString(), anyString(), anyString(), anyString())).thenReturn(responseEntity);
+		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(),
+			anyString(), anyString(), anyString(), anyString())).thenReturn(buildKiteBuildInfoList);
 
 		PipelineStepsResponse pipelineStepsResponse = buildKiteService.fetchPipelineSteps(
 			"test_token", "test_org_id",
@@ -148,6 +155,8 @@ class BuildKiteServiceTest {
 			stepsParam);
 
 		assertNotNull(pipelineStepsResponse);
+		assertThat(pipelineStepsResponse.getSteps().get(0)).isEqualTo("testJob");
+		assertThat(pipelineStepsResponse.getSteps().get(1)).isEqualTo("testJob2");
 	}
 
 }

@@ -33,4 +33,11 @@ public interface BuildKiteFeignClient {
 			@RequestParam("per_page") String perPage, @RequestParam("created_to") String createdTo,
 			@RequestParam("finished_from") String finishedFrom);
 
+	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds")
+	@ResponseStatus(HttpStatus.OK)
+	List<BuildKiteBuildInfo> getPipelineStepsInfo(@RequestHeader("Authorization") String token,
+		@PathVariable String organizationId, @PathVariable String pipelineId, @RequestParam String page,
+		@RequestParam("per_page") String perPage, @RequestParam("created_to") String createdTo,
+		@RequestParam("finished_from") String finishedFrom);
+
 }

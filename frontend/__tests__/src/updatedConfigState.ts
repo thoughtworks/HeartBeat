@@ -2,8 +2,8 @@ import { CHINA_CALENDAR } from './fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 const initialConfigState = {
-  basicConfigState: {
-    isProjectCreated: true,
+  isProjectCreated: true,
+  basic: {
     projectName: 'Mock Project Name',
     calendarType: CHINA_CALENDAR,
     dateRange: {

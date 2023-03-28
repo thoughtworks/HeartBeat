@@ -79,7 +79,7 @@ export const configSlice = createSlice({
       state.isShowSourceControl = [LEAD_TIME_FOR_CHANGES].some((metric) => state.basic.metrics.includes(metric))
     },
     updateBasicConfigState: (state, action) => {
-      state.basic = action.payload || state.basic
+      state.basic = action.payload
       state.boardConfig = action.payload.board || state.boardConfig
       state.pipelineToolConfig = action.payload.pipelineTool || state.pipelineToolConfig
       state.sourceControlConfig = action.payload.sourceControl || state.sourceControlConfig

@@ -6,6 +6,6 @@ export const ConfigStepWrapper = styled('div')({
 })
 
 export const ProjectNameInput = styled(TextField)({
-  minWidth: '30rem',
-  maxWidth: '40rem',
+  width: '90%',
+  maxWidth: '30rem',
 })

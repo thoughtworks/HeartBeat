@@ -1,11 +1,23 @@
 import { styled } from '@mui/material/styles'
-import StepLabel from '@mui/material/StepLabel'
-import Button from '@mui/material/Button'
+import { Button, Stepper, Step, StepLabel } from '@mui/material'
 import { theme } from '@src/theme'
 
-export const MetricsStepLabel = styled(StepLabel)({
-  padding: '0 2rem',
-  height: '4rem',
+export const StyledStepper = styled(Stepper)({
+  margin: '1rem',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+  },
+})
+
+export const StyledStep = styled(Step)({
+  [theme.breakpoints.down('md')]: {
+    marginBottom: '1rem',
+  },
+})
+
+export const StyledStepLabel = styled(StepLabel)({
+  width: '5rem',
+  padding: '0 1rem',
 })
 
 export const MetricsStepperContent = styled('div')({

@@ -118,15 +118,13 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
 }
 
 export const MOCK_IMPORT_FILE = {
-  basic: {
-    projectName: 'Mock Project Name',
-    calendarType: CHINA_CALENDAR,
-    dateRange: {
-      startDate: '',
-      endDate: '',
-    },
-    metrics: [],
+  projectName: 'Mock Project Name',
+  calendarType: CHINA_CALENDAR,
+  dateRange: {
+    startDate: '',
+    endDate: '',
   },
+  metrics: [],
 }
 
 export const CREWS_SETTING = 'Crews Setting'

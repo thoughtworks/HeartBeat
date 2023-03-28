@@ -1,0 +1,11 @@
+{
+  "jiraColumns": [{"value": {"name": "TODO"}}],
+  "users": [
+    "Zhang San"
+  ],
+  "targetFields": [
+    {
+      "name": "Priority"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ jobs:
       - name: Install & Lint
         run: |
           npm install -g pnpm
-          pnpm install
+          pnpm install --no-frozen-lockfile
           pnpm lint
       - name: Build docs
         run: pnpm build

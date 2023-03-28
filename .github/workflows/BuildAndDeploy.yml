@@ -83,7 +83,7 @@ jobs:
       - name: Install & Lint
         run: |
           npm install -g pnpm
-          pnpm install
+          pnpm install --no-frozen-lockfile
           pnpm lint
       - name: Testing and coverage
         run: |
@@ -347,7 +347,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install -g pnpm
-          pnpm install
+          pnpm install --no-frozen-lockfile
       - name: Run E2E
         env:
           APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_FRONTEND_PORT }}

@@ -2,6 +2,7 @@
     method: POST
     url: /api/v1/report
 
+
   response:
     headers:
       content-type: application/json

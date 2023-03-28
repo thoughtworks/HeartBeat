@@ -274,6 +274,8 @@ jobs:
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
           IMAGE_TAG: ${{ github.run_number }}
+          SPRING_PROFILES_ACTIVE: "e2e"
+          MOCK_SERVER_URL: ${{ secrets.AWS_EC2_IP_MOCK_SERVER }}:${{ secrets.AWS_EC2_IP_E2E_PORT }}
         with:
           host: ${{ secrets.AWS_EC2_IP_E2E }}
           username: ${{ secrets.AWS_USERNAME }}
@@ -286,7 +288,7 @@ jobs:
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
-            SPRING_PROFILES_ACTIVE=e2e MOCK_SERVER_URL=${{ secrets.AWS_EC2_IP_MOCK_SERVER }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} docker-compose up -d frontend
+            docker-compose up -d frontend
 
   deploy-stub:
     runs-on: ubuntu-latest
@@ -296,12 +298,28 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Update docker-compose.yaml
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+        run: |
+          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:${{ github.run_number }}/g' infra/docker-compose.yml
+      - name: Copy docker-compose to ec2
+        uses: appleboy/scp-action@master
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+        with:
+          host: ${{ secrets.AWS_EC2_IP_MOCK_SERVER }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          source: "./infra/docker-compose.yml"
+          target: "./"
+          strip_components: 1
       - name: Deploy
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         uses: appleboy/ssh-action@master
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
           IMAGE_TAG: ${{ github.run_number }}
+          MOCK_SERVER_PORT: ${{ secrets.AWS_EC2_IP_E2E_PORT }}
         with:
           host: ${{ secrets.AWS_EC2_IP_MOCK_SERVER }}
           username: ${{ secrets.AWS_USERNAME }}
@@ -309,10 +327,10 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            docker rm -f mockserver
-            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
+            cp "./infra/docker-compose.yml" ./
+            if [[ -n $(docker images -f label=arch=stubs -q) ]]; then docker rmi -f $(docker images -f label=arch=stubs -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
-            docker run --name mockserver -d -p ${{ secrets.AWS_EC2_IP_E2E_PORT }}:${{ secrets.AWS_EC2_IP_E2E_PORT }} --restart always ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
+            docker-compose up -d mockServer
   e2e:
     runs-on: ubuntu-latest
     defaults:

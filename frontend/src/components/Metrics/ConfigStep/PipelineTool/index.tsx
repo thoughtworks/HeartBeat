@@ -29,6 +29,7 @@ import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEff
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
+import { updatePipelineToolVerifyResponse } from '@src/context/config/pipelineTool/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -36,7 +37,6 @@ export const PipelineTool = () => {
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
   const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect()
-  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [fields, setFields] = useState([
     {
       key: 'PipelineTool',
@@ -51,6 +51,7 @@ export const PipelineTool = () => {
       isRequired: true,
     },
   ])
+  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(!(fields[1].isValid && fields[1].value))
 
   const initPipeLineFields = () => {
     const newFields = fields.map((field, index) => {
@@ -117,7 +118,7 @@ export const PipelineTool = () => {
     await verifyPipelineTool(params).then((res) => {
       if (res) {
         dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified))
-        dispatch(updatePipelineTool(res.response))
+        dispatch(updatePipelineToolVerifyResponse(res.response))
       }
     })
   }
@@ -139,6 +140,7 @@ export const PipelineTool = () => {
           <Select
             labelId='pipelineTool-type-checkbox-label'
             value={fields[0].value}
+            defaultValue={PIPELINE_TOOL_TYPES.BUILD_KITE}
             onChange={(e) => onFormUpdate(ZERO, e.target.value)}
           >
             {Object.values(PIPELINE_TOOL_TYPES).map((toolType) => (
@@ -157,7 +159,7 @@ export const PipelineTool = () => {
           type='password'
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
-          error={!fields[1].isValid}
+          error={!fields[1].isValid || !fields[1].isRequired}
           helperText={updateFieldHelpText(fields[1])}
         />
         <PipelineToolButtonGroup>

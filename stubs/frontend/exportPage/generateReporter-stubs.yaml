@@ -1,6 +1,6 @@
 - request:
     method: POST
-    url: /api/v1/generateReporter
+    url: /generateReporter
 
   response:
     headers:

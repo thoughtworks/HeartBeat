@@ -4,30 +4,53 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
 
+const mockValidationCheckContext = {
+  errorMessages: [],
+  clearErrorMessage: jest.fn(),
+  checkDuplicatedPipeLine: jest.fn(),
+  checkPipelineValidation: jest.fn(),
+}
+
+jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
+  useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
+}))
+
 describe('SingleSelection', () => {
   const mockOptions = ['mockOptions 1', 'mockOptions 2', 'mockOptions 3']
   const mockLabel = 'mockLabel'
   const mockValue = 'mockOptions 1'
-  const setUp = () =>
+  const mockError = 'error message'
+
+  const setup = (errorMessage: string) =>
     render(
       <Provider store={store}>
-        <SingleSelection options={mockOptions} label={mockLabel} value={mockValue} id={0} />
+        <SingleSelection options={mockOptions} label={mockLabel} value={mockValue} id={0} errorMessage={errorMessage} />
       </Provider>
     )
 
   it('should render SingleSelection', () => {
-    const { getByText } = setUp()
+    const { getByText, queryByText } = setup('')
 
     expect(getByText(mockLabel)).toBeInTheDocument()
     expect(getByText(mockValue)).toBeInTheDocument()
+    expect(queryByText(mockError)).not.toBeInTheDocument()
+  })
+
+  it('should render SingleSelection given error message', () => {
+    const { getByText } = setup(mockError)
+
+    expect(getByText(mockLabel)).toBeInTheDocument()
+    expect(getByText(mockValue)).toBeInTheDocument()
+    expect(getByText(mockError)).toBeInTheDocument()
   })
 
   it('should call update option function when change option given mockValue as default', async () => {
-    const { getByText, getByRole } = setUp()
+    const { getByText, getByRole } = setup(mockError)
 
     await userEvent.click(getByRole('button', { name: mockLabel }))
     await userEvent.click(getByText(mockOptions[1]))
 
     expect(getByText(mockOptions[1])).toBeInTheDocument()
+    expect(mockValidationCheckContext.clearErrorMessage).toHaveBeenCalledTimes(1)
   })
 })

@@ -3,3 +3,4 @@ includes:
   - ./backend/jira/jira-stubs.yaml
   - ./backend/github/github-stubs.yaml
   - ./backend/buildkite/buildkite-stubs.yaml
+  - ./frontend/exportPage/generateReporter-stubs.yaml

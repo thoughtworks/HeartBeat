@@ -24,7 +24,7 @@ export const PROJECT_NAME_LABEL = 'Project Name'
 
 export const EXPORT_BOARD_DATA = 'Export board data'
 
-export const STEPS = ['Config', 'Metrics', 'Export']
+export const STEPS = ['Config', 'Metrics', 'Report']
 
 export const REQUIRED_DATA_LIST = [
   'Velocity',
@@ -119,5 +119,5 @@ export const CREWS_SETTING = 'Crews Setting'
 export const CYCLE_TIME_SETTINGS = 'Cycle Time Settings'
 export const CLASSIFICATION_SETTING = 'Classification Setting'
 export const REAL_DONE = 'Real Done'
-export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'
+export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'

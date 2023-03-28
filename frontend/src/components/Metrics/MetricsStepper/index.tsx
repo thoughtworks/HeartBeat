@@ -11,6 +11,7 @@ import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
 import { selectConfig } from '@src/context/config/configSlice'
+import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -55,9 +56,14 @@ const MetricsStepper = () => {
     projectName,
     dateRange,
   ])
+  const { isPipelineValid } = useMetricsStepValidationCheckContext()
 
   const handleNext = () => {
-    dispatch(nextStep())
+    if (activeStep === 0) dispatch(nextStep())
+
+    if (activeStep === 1) {
+      isPipelineValid() && dispatch(nextStep())
+    }
   }
 
   const handleBack = () => {

@@ -13,7 +13,7 @@ describe('Metrics', () => {
         </MemoryRouter>
       </Provider>
     )
-    const steps = ['Config', 'Metrics', 'Export']
+    const steps = ['Config', 'Metrics', 'Report']
 
     steps.map((label) => {
       expect(getByText(label)).toBeVisible()

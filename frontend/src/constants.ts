@@ -11,7 +11,7 @@ export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
 
 export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
 
-export const STEPS = ['Config', 'Metrics', 'Export']
+export const STEPS = ['Config', 'Metrics', 'Report']
 
 export enum DATE_RANGE {
   START_DATE = 0,

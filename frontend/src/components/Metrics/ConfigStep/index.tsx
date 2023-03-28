@@ -6,7 +6,6 @@ import { ConfigStepWrapper, ProjectNameInput } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import {
-  isPipelineToolVerified,
   selectCalendarType,
   selectProjectName,
   updateBoardVerifyState,

@@ -200,6 +200,7 @@ export const Board = () => {
             <BoardTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
+                defaultValue={BOARD_TYPES.JIRA}
                 labelId='board-type-checkbox-label'
                 value={field.value}
                 onChange={(e) => {

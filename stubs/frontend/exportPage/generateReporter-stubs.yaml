@@ -2,10 +2,9 @@
     method: POST
     url: /api/v1/generate-reporter
 
-
   response:
     headers:
       content-type: application/json
-      Access-Control-Allow-Origin: ‘*'
+      Access-Control-Allow-Origin: '*'
     status: 200
     file: ./frontend/exportPage/jsons/exportData.json

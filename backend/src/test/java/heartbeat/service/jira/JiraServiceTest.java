@@ -54,7 +54,6 @@ class JiraServiceTest {
 	private final BoardType boardTypeClassicJira = BoardType.fromValue("classic-jira");
 
 	@Mock
-
 	JiraFeignClient jiraFeignClient;
 
 	JiraService jiraService;

@@ -11,6 +11,7 @@ import heartbeat.client.dto.Issuetype;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
+import heartbeat.component.UrlGenerator;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
@@ -54,6 +55,8 @@ public class JiraService {
 
 	private final JiraFeignClient jiraFeignClient;
 
+	private final UrlGenerator urlGenerator;
+
 	@PreDestroy
 	public void shutdownExecutor() {
 		taskExecutor.shutdown();
@@ -65,7 +68,7 @@ public class JiraService {
 			"issuelinks");
 
 	public BoardConfigResponse getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
-		URI baseUrl = URI.create("https://" + boardRequestParam.getSite() + ".atlassian.net");
+		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
 			log.info("[Jira] Start to get configuration for board, board info: " + boardRequestParam);

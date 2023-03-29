@@ -8,7 +8,7 @@ export const PipelineMetricSelectionWrapper = styled('div')({
   borderRadius: '0.25rem',
   width: '85%',
   margin: '1rem 0',
-  padding: '1rem',
+  padding: '0.5rem 1rem 1.5rem 1rem',
   fontSize: '1rem',
   lineHeight: '2rem',
 })
@@ -19,6 +19,7 @@ export const ButtonWrapper = styled('div')({
 })
 
 export const RemoveButton = styled(Button)({
+  marginTop: '0.25rem',
   width: '5rem',
   fontSize: '0.8rem',
   fontWeight: '550',

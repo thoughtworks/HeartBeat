@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
 import {
   CONFIG_TITLE,
   DEFAULT_HELPER_TEXT,
@@ -62,14 +62,21 @@ export const SourceControl = () => {
     dispatch(updateSourceControlVerifyState(false))
   }
 
-  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
+  const isFieldInvalid = useCallback((field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
     return field.isRequired && field.isValid && !!field.value
-  }
-  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
-    return fields.some((field) => !isFieldInvalid(field))
-  }
+  }, [])
 
-  useEffect(() => sourceControlFields && setIsDisableVerifyButton(isAllFieldsValid(fields)))
+  const isAllFieldsValid = useCallback(
+    (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
+      return fields.some((field) => !isFieldInvalid(field))
+    },
+    [isFieldInvalid]
+  )
+
+  useEffect(
+    () => sourceControlFields && setIsDisableVerifyButton(isAllFieldsValid(fields)),
+    [sourceControlFields, isAllFieldsValid, fields]
+  )
 
   const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

@@ -8,7 +8,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
 import {
   StyledButtonGroup,
   StyledForm,
@@ -61,15 +61,21 @@ export const PipelineTool = () => {
     dispatch(updatePipelineToolVerifyState(false))
   }
 
-  useEffect(() => pipelineToolFields && setIsDisableVerifyButton(isAllFieldsValid(fields)))
-
-  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
+  const isFieldInvalid = useCallback((field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
     return field.isRequired && field.isValid && !!field.value
-  }
+  }, [])
 
-  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
-    return fields.some((field) => !isFieldInvalid(field))
-  }
+  const isAllFieldsValid = useCallback(
+    (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
+      return fields.some((field) => !isFieldInvalid(field))
+    },
+    [isFieldInvalid]
+  )
+
+  useEffect(
+    () => pipelineToolFields && setIsDisableVerifyButton(isAllFieldsValid(fields)),
+    [pipelineToolFields, isAllFieldsValid, fields]
+  )
 
   const onFormUpdate = (index: number, value: string) => {
     const newFieldsValue = fields.map((field, fieldIndex) => {

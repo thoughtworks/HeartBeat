@@ -9,7 +9,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useState, useEffect } from 'react'
+import { FormEvent, useState, useEffect, useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectBoard,
@@ -115,13 +115,16 @@ export const Board = () => {
     })
   }
 
-  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
+  const isFieldInvalid = useCallback((field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
     return field.isRequired && field.isValid && !!field.value
-  }
+  }, [])
 
-  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
-    return fields.some((field) => !isFieldInvalid(field))
-  }
+  const isAllFieldsValid = useCallback(
+    (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
+      return fields.some((field) => !isFieldInvalid(field))
+    },
+    [isFieldInvalid]
+  )
 
   const onFormUpdate = (index: number, value: string) => {
     const newFieldsValue = !index
@@ -138,7 +141,10 @@ export const Board = () => {
     setFields(newFieldsValue)
     dispatch(updateBoardVerifyState(false))
   }
-  useEffect(() => boardFields && setIsDisableVerifyButton(isAllFieldsValid(fields)))
+  useEffect(
+    () => boardFields && setIsDisableVerifyButton(isAllFieldsValid(fields)),
+    [boardFields, isAllFieldsValid, fields]
+  )
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

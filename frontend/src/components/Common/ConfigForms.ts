@@ -25,18 +25,18 @@ export const StyledForm = styled('form')({
 export const StyledTypeSelections = styled(FormControl)({
   width: '45%',
   marginLeft: '2.5%',
+  marginTop: '-0.4rem',
   [theme.breakpoints.down('md')]: {
-    width: '100%',
-    padding: '0.5rem 0',
+    width: '90%',
+    padding: '0.5rem 0 1rem 0',
   },
 })
 
 export const StyledTextField = styled(TextField)({
   width: '45%',
   marginLeft: '2.5%',
-  padding: '0.5rem 0',
   [theme.breakpoints.down('md')]: {
-    width: '100%',
+    width: '90%',
   },
 })
 

@@ -140,7 +140,6 @@ export const PipelineTool = () => {
           <Select
             labelId='pipelineTool-type-checkbox-label'
             value={fields[0].value}
-            defaultValue={PIPELINE_TOOL_TYPES.BUILD_KITE}
             onChange={(e) => onFormUpdate(ZERO, e.target.value)}
           >
             {Object.values(PIPELINE_TOOL_TYPES).map((toolType) => (

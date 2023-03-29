@@ -38,7 +38,6 @@ export const Board = () => {
   const isVerified = useAppSelector(selectIsBoardVerified)
   const boardFields = useAppSelector(selectBoard)
   const DateRange = useAppSelector(selectDateRange)
-  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
   const { verifyJira, isLoading, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
@@ -79,6 +78,9 @@ export const Board = () => {
       isValid: true,
     },
   ])
+  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(
+    !fields.every((field) => field.value && field.isValid)
+  )
 
   const initBoardFields = () => {
     const newFields = fields.map((field, index) => {
@@ -143,7 +145,7 @@ export const Board = () => {
     e.preventDefault()
     dispatch(
       updateBoard({
-        board: fields[0].value,
+        type: fields[0].value,
         boardId: fields[1].value,
         email: fields[2].value,
         projectKey: fields[3].value,
@@ -200,7 +202,6 @@ export const Board = () => {
             <BoardTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
-                defaultValue={BOARD_TYPES.JIRA}
                 labelId='board-type-checkbox-label'
                 value={field.value}
                 onChange={(e) => {

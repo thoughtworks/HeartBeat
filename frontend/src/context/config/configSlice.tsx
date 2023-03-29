@@ -15,8 +15,8 @@ export interface basicConfigState {
   projectName: string
   calendarType: string
   dateRange: {
-    startDate: string
-    endDate: string
+    startDate: string | null
+    endDate: string | null
   }
   metrics: string[]
 }
@@ -25,8 +25,8 @@ const initialBasicConfigState: basicConfigState = {
   projectName: '',
   calendarType: REGULAR_CALENDAR,
   dateRange: {
-    startDate: '',
-    endDate: '',
+    startDate: null,
+    endDate: null,
   },
   metrics: [],
 }

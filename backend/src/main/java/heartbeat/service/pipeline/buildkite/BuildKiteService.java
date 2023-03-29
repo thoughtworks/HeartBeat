@@ -78,7 +78,7 @@ public class BuildKiteService {
 			.map(BuildKiteJob::getName)
 			.distinct()
 			.toList();
-		log.info("[BuildKite] Successfully get pipeline steps, finally build steps:{}", buildSteps);
+		log.info("[BuildKite] Successfully get pipeline steps, finally build steps_buildSteps:{}", buildSteps);
 		return PipelineStepsResponse.builder()
 			.steps(buildSteps)
 			.name(stepsParam.getOrgName())
@@ -88,20 +88,21 @@ public class BuildKiteService {
 			.build();
 	}
 
-	private List<BuildKiteBuildInfo> fetchPipelineStepsByPage(String token, String organizationId, String pipelineId,
+	private List<BuildKiteBuildInfo> fetchPipelineStepsByPage(String token, String orgId, String pipelineId,
 			PipelineStepsParam stepsParam, String partialToken) {
 		String page = "1";
 		String perPage = "100";
-		log.info("[BuildKite] Start to fetch page:{} pipeline steps, token: {},orgId: {},pipelineId: {},params: {}",
-				page, partialToken, organizationId, pipelineId, stepsParam);
-		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(token,
-				organizationId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime());
 		log.info(
-				"[BuildKite] Successfully get page:{} pipeline steps info, token: {},orgId: {},pipelineId: {},result status code: {}",
-				page, partialToken, organizationId, pipelineId, pipelineStepsInfo.getStatusCode());
+				"[BuildKite] Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+				partialToken, orgId, pipelineId, stepsParam, page);
+		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(token, orgId,
+				pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime());
+		log.info(
+				"[BuildKite] Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},result status code: {},page:{}",
+				partialToken, orgId, pipelineId, pipelineStepsInfo.getStatusCode(), page);
 
 		int totalPage = parseTotalPage(pipelineStepsInfo.getHeaders().get(BUILD_KITE_LINK_HEADER));
-		log.info("[BuildKite] Successfully parse the total page: {}", totalPage);
+		log.info("[BuildKite] Successfully parse the total page_total page: {}", totalPage);
 
 		List<BuildKiteBuildInfo> firstPageStepsInfo = pipelineStepsInfo.getBody();
 		List<BuildKiteBuildInfo> pageStepsInfo = new ArrayList<>();
@@ -110,7 +111,7 @@ public class BuildKiteService {
 		}
 		if (totalPage != 1) {
 			Stream<CompletableFuture<List<BuildKiteBuildInfo>>> futureStream = IntStream.range(1, totalPage + 1)
-				.mapToObj(currentPage -> getBuildKiteStepsAsync(token, organizationId, pipelineId, stepsParam, perPage,
+				.mapToObj(currentPage -> getBuildKiteStepsAsync(token, orgId, pipelineId, stepsParam, perPage,
 						currentPage, partialToken));
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = futureStream.map(CompletableFuture::join)
 				.flatMap(Collection::stream)
@@ -123,19 +124,20 @@ public class BuildKiteService {
 	private CompletableFuture<List<BuildKiteBuildInfo>> getBuildKiteStepsAsync(String token, String organizationId,
 			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, String partialToken) {
 		return CompletableFuture.supplyAsync(() -> {
-			log.info("[BuildKite] Start to fetch page:{} pipeline steps, token: {},orgId: {},pipelineId: {},params: {}",
-					page, partialToken, organizationId, pipelineId, stepsParam);
+			log.info(
+					"[BuildKite] Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+					partialToken, organizationId, pipelineId, stepsParam, page);
 			List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
 					organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
 					stepsParam.getEndTime());
 			log.info(
-					"[BuildKite] Successfully get page:{} pipeline steps info, token: {},orgId: {},pipelineId: {},pipelineStepsInfo size: {}",
-					page, partialToken, organizationId, pipelineId, pipelineStepsInfo.size());
+					"[BuildKite] Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},pipeline steps size: {},page:{}",
+					partialToken, organizationId, pipelineId, pipelineStepsInfo.size(), page);
 			return pipelineStepsInfo;
 		}).exceptionally(e -> {
 			log.error(
-					"[BuildKite] Failed to get build kite steps page: {}, token: {},orgId: {},pipelineId: {}, exception occurred: {}",
-					page, token, organizationId, pipelineId, e.getMessage());
+					"[BuildKite] Failed get build kite steps page_token: {},orgId: {},pipelineId: {}, exception occurred: {},page: {}",
+					token, organizationId, pipelineId, e.getMessage(), page);
 			return Collections.emptyList();
 		});
 	}

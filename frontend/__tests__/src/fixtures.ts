@@ -77,6 +77,7 @@ export const MOCK_BOARD_URL_FOR_JIRA = '/api/v1/boards/jira'
 export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = '/api/v1/boards/classic-jira'
 export const MOCK_PIPELINE_URL = '/api/v1/pipelines/buildkite'
 export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
+export const MOCK_REPORT_URL = '/api/v1/report'
 
 export enum JIRA_VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Jira verify failed: Please reconfirm the input',

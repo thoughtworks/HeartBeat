@@ -115,14 +115,15 @@ export const Board = () => {
     })
   }
 
-  const isFieldInvalid = useCallback((field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
-    return field.isRequired && field.isValid && !!field.value
-  }, [])
+  const isFieldInvalid = useCallback(
+    (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
+      field.isRequired && field.isValid && !!field.value,
+    []
+  )
 
   const isAllFieldsValid = useCallback(
-    (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
-      return fields.some((field) => !isFieldInvalid(field))
-    },
+    (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) =>
+      fields.some((field) => !isFieldInvalid(field)),
     [isFieldInvalid]
   )
 

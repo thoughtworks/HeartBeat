@@ -2,7 +2,6 @@ package heartbeat.client;
 
 import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
-import heartbeat.client.dto.PipelineDTO;
 import heartbeat.config.BuildKiteFeignClientConfiguration;
 import java.util.List;
 import heartbeat.client.dto.BuildKitePipelineDTO;

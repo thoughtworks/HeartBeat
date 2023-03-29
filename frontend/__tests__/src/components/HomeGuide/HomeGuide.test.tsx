@@ -3,6 +3,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react'
 import { setupStore } from '../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import { CREATE_NEW_PROJECT, IMPORT_PROJECT_FROM_FILE } from '../../fixtures'
+import userEvent from '@testing-library/user-event'
 
 const mockedUsedNavigate = jest.fn()
 const mockedUseAppDispatch = jest.fn()
@@ -41,13 +42,23 @@ describe('HomeGuide', () => {
     expect(getByText(CREATE_NEW_PROJECT)).toBeInTheDocument()
   })
 
+  it('should render input when click guide button', async () => {
+    const { getByText, getByTestId } = setup()
+    const fileInput = getByTestId('testInput')
+
+    const clickSpy = jest.spyOn(fileInput, 'click')
+    await userEvent.click(getByText(IMPORT_PROJECT_FROM_FILE))
+
+    expect(clickSpy).toHaveBeenCalled()
+  })
+
   it('should go to Metrics page and read file when click import file button', async () => {
-    const { getByLabelText } = setup()
+    const { getByTestId } = setup()
 
     const file = new File(['{"projectName": "Heartbeat test"}'], 'test.json', {
       type: 'file',
     })
-    const input = getByLabelText('Import project from file')
+    const input = getByTestId('testInput')
 
     Object.defineProperty(input, 'files', {
       value: [file],
@@ -63,7 +74,7 @@ describe('HomeGuide', () => {
   it('should go to Metrics page when click create a new project button', async () => {
     const { getByText } = setup()
 
-    fireEvent.click(getByText(CREATE_NEW_PROJECT))
+    await userEvent.click(getByText(CREATE_NEW_PROJECT))
 
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/metrics')

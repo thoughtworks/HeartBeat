@@ -6,6 +6,7 @@ import { theme } from '@src/theme'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { isProjectCreated, updateBasicConfigState } from '@src/context/config/configSlice'
+import React from 'react'
 
 const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -32,18 +33,26 @@ export const HomeGuide = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  const importProject = (e: { target: any }) => {
-    const input = e.target
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.files?.[0]
     const reader = new FileReader()
-    reader.onload = () => {
-      if (reader.result && typeof reader.result === 'string') {
-        dispatch(isProjectCreated(false))
-        dispatch(updateBasicConfigState(JSON.parse(reader.result)))
-        navigate('/metrics')
+    if (input) {
+      reader.onload = () => {
+        if (reader.result && typeof reader.result === 'string') {
+          dispatch(isProjectCreated(false))
+          dispatch(updateBasicConfigState(JSON.parse(reader.result)))
+          navigate('/metrics')
+        }
       }
+      reader.readAsText(input, 'utf-8')
     }
-    reader.readAsText(input.files[0], 'utf-8')
   }
+
+  const importProject = () => {
+    const fileInput = document.getElementById('importJson') as HTMLInputElement
+    fileInput.click()
+  }
+
   const createNewProject = () => {
     dispatch(isProjectCreated(true))
     navigate('/metrics')
@@ -51,10 +60,8 @@ export const HomeGuide = () => {
 
   return (
     <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
-      <GuideButton>
-        <label htmlFor='importJson'>Import project from file</label>
-      </GuideButton>
-      <input hidden type='file' id='importJson' accept='.json' onChange={importProject} />
+      <GuideButton onClick={importProject}>Import project from file</GuideButton>
+      <input type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleImport} />
       <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
     </Stack>
   )

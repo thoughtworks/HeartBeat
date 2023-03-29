@@ -4,7 +4,7 @@ import configReducer, {
   updateProjectName,
   updateMetrics,
   updateBasicConfigState,
-  isProjectCreated,
+  updateProjectCreatedState,
 } from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, MOCK_IMPORT_FILE, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 import initialConfigState from '../initialConfigState'
@@ -46,7 +46,7 @@ describe('config reducer', () => {
   })
 
   it('should update config when import file', () => {
-    const config = configReducer(initialConfigState, isProjectCreated(false))
+    const config = configReducer(initialConfigState, updateProjectCreatedState(false))
 
     expect(config.isProjectCreated).toEqual(false)
   })

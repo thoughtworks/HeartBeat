@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles'
 import { theme } from '@src/theme'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { isProjectCreated, updateBasicConfigState } from '@src/context/config/configSlice'
+import { updateProjectCreatedState, updateBasicConfigState } from '@src/context/config/configSlice'
 import React from 'react'
 
 const basicStyle = {
@@ -43,7 +43,7 @@ export const HomeGuide = () => {
     if (input) {
       reader.onload = () => {
         if (reader.result && typeof reader.result === 'string') {
-          dispatch(isProjectCreated(false))
+          dispatch(updateProjectCreatedState(false))
           dispatch(updateBasicConfigState(JSON.parse(reader.result)))
           navigate('/metrics')
         }

@@ -84,7 +84,7 @@ export const configSlice = createSlice({
       state.pipelineToolConfig = action.payload.pipelineToolConfig || state.pipelineToolConfig
       state.sourceControlConfig = action.payload.sourceControlConfig || state.sourceControlConfig
     },
-    isProjectCreated: (state, action) => {
+    updateProjectCreatedState: (state, action) => {
       state.isProjectCreated = action.payload
     },
 
@@ -94,7 +94,7 @@ export const configSlice = createSlice({
   },
 })
 export const {
-  isProjectCreated,
+  updateProjectCreatedState,
   updateProjectName,
   updateCalendarType,
   updateDateRange,

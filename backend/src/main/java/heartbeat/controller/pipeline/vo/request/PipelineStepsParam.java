@@ -1,8 +1,6 @@
 package heartbeat.controller.pipeline.vo.request;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

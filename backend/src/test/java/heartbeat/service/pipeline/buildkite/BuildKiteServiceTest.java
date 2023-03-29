@@ -41,6 +41,19 @@ import org.springframework.http.ResponseEntity;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class BuildKiteServiceTest {
 
+	public static final String TOTAL_PAGE_HEADER = """
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="first",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="prev",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=3&per_page=100>; rel="last"
+			""";
+
+	public static final String NONE_TOTAL_PAGE_HEADER = """
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="first",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="prev",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next"
+			""";
+
 	@Mock
 	BuildKiteFeignClient buildKiteFeignClient;
 
@@ -126,13 +139,7 @@ class BuildKiteServiceTest {
 		stepsParam.setStartTime("2023-01-01T00:00:00Z");
 		stepsParam.setEndTime("2023-09-01T00:00:00Z");
 		List<String> linkHeader = new ArrayList<>();
-		linkHeader
-			.add("""
-					<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="first",
-					<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="prev",
-					<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next",
-					<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=3&per_page=100>; rel="last"
-					""");
+		linkHeader.add(TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
@@ -145,8 +152,9 @@ class BuildKiteServiceTest {
 				anyString(), anyString()))
 			.thenReturn(responseEntity);
 		BuildKiteJob testJob3 = BuildKiteJob.builder().name("testJob3").build();
+		BuildKiteJob testJob4 = BuildKiteJob.builder().name("").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList2 = new ArrayList<>();
-		buildKiteBuildInfoList2.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob3)).build());
+		buildKiteBuildInfoList2.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob3, testJob4)).build());
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString()))
 			.thenReturn(buildKiteBuildInfoList2);
@@ -162,23 +170,65 @@ class BuildKiteServiceTest {
 	}
 
 	@Test
+	public void shouldRThrowServerErrorWhenPageFetchPipelineStepsAndFetchNextPage404Exception() {
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
+		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
+				httpHeaders, HttpStatus.OK);
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				any(), any()))
+			.thenReturn(responseEntity);
+		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+				any(), any()))
+			.thenThrow(new RequestFailedException(404, "Client Error"));
+
+		assertThrows(
+				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
+						"test_pipeline_id", new PipelineStepsParam()),
+				"Request failed with status statusCode 500, error: Server Error");
+	}
+
+	@Test
+	public void shouldThrowServerErrorWhenPageFetchPipelineStepsAndFetchNextPage500Exception() {
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
+		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
+				httpHeaders, HttpStatus.OK);
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				any(), any()))
+			.thenReturn(responseEntity);
+		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+				any(), any()))
+			.thenThrow(new RequestFailedException(500, "Server Error"));
+
+		assertThrows(
+				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
+						"test_pipeline_id", new PipelineStepsParam()),
+				"Request failed with status statusCode 500, error: Server Error");
+	}
+
+	@Test
 	public void shouldReturnOnePageStepsWhenPageFetchPipelineStepsAndHeaderParseOnePage() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
 		stepsParam.setStartTime("2023-01-01T00:00:00Z");
 		stepsParam.setEndTime("2023-09-01T00:00:00Z");
 		List<String> linkHeader = new ArrayList<>();
-		linkHeader
-			.add("""
-					<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="first",
-					<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="prev",
-					<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next"
-					""");
+		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
-		BuildKiteJob testJob2 = BuildKiteJob.builder().name("testJob2").build();
-		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob, testJob2)).build());
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
@@ -189,9 +239,30 @@ class BuildKiteServiceTest {
 				"test_pipeline_id", stepsParam);
 
 		assertNotNull(pipelineStepsResponse);
-		assertThat(pipelineStepsResponse.getSteps().size()).isEqualTo(2);
+		assertThat(pipelineStepsResponse.getSteps().size()).isEqualTo(1);
 		assertThat(pipelineStepsResponse.getSteps().get(0)).isEqualTo("testJob");
-		assertThat(pipelineStepsResponse.getSteps().get(1)).isEqualTo("testJob2");
+	}
+
+	@Test
+	public void shouldReturnOnePageStepsWhenPageFetchPipelineStep() {
+		PipelineStepsParam stepsParam = new PipelineStepsParam();
+		stepsParam.setStartTime("2023-01-01T00:00:00Z");
+		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
+				HttpStatus.OK);
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString()))
+			.thenReturn(responseEntity);
+
+		PipelineStepsResponse pipelineStepsResponse = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
+				"test_pipeline_id", stepsParam);
+
+		assertNotNull(pipelineStepsResponse);
+		assertThat(pipelineStepsResponse.getSteps().size()).isEqualTo(0);
 	}
 
 }

@@ -65,7 +65,7 @@ export const HomeGuide = () => {
   return (
     <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
       <GuideButton onClick={importProject}>Import project from file</GuideButton>
-      <input type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleImport} />
+      <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleImport} />
       <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
     </Stack>
   )

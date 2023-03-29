@@ -37,7 +37,7 @@ export const HomeGuide = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.files?.[0]
     const reader = new FileReader()
     if (input) {
@@ -64,7 +64,7 @@ export const HomeGuide = () => {
   return (
     <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
       <GuideButton onClick={openFileImportBox}>Import project from file</GuideButton>
-      <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleImportFile} />
+      <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange} />
       <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
     </Stack>
   )

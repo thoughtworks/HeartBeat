@@ -3,6 +3,7 @@ package heartbeat.client;
 import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.PipelineDTO;
+import heartbeat.config.BuildKiteFeignClientConfiguration;
 import java.util.List;
 import heartbeat.client.dto.BuildKitePipelineDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@FeignClient(name = "buildKiteFeignClient", url = "${buildKite.url}")
+@FeignClient(name = "buildKiteFeignClient", url = "${buildKite.url}",
+		configuration = BuildKiteFeignClientConfiguration.class)
 public interface BuildKiteFeignClient {
 
 	@GetMapping(path = "v2/organizations")
@@ -36,8 +38,8 @@ public interface BuildKiteFeignClient {
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds")
 	@ResponseStatus(HttpStatus.OK)
 	List<BuildKiteBuildInfo> getPipelineStepsInfo(@RequestHeader("Authorization") String token,
-		@PathVariable String organizationId, @PathVariable String pipelineId, @RequestParam String page,
-		@RequestParam("per_page") String perPage, @RequestParam("created_to") String createdTo,
-		@RequestParam("finished_from") String finishedFrom);
+			@PathVariable String organizationId, @PathVariable String pipelineId, @RequestParam String page,
+			@RequestParam("per_page") String perPage, @RequestParam("created_to") String createdTo,
+			@RequestParam("finished_from") String finishedFrom);
 
 }

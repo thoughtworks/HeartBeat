@@ -34,7 +34,6 @@ export const SourceControl = () => {
   const dispatch = useAppDispatch()
   const sourceControlFields = useAppSelector(selectSourceControl)
   const DateRange = useAppSelector(selectDateRange)
-  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(true)
   const isVerified = useAppSelector(isSourceControlVerified)
   const { verifyGithub, isLoading, errorMessage } = useVerifySourceControlEffect()
   const [fields, setFields] = useState([
@@ -49,6 +48,7 @@ export const SourceControl = () => {
       isValid: true,
     },
   ])
+  const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(!(fields[1].isValid && fields[1].value))
   const [sourceControlHelperText, setSourceControlHelperText] = useState('')
 
   const initSourceControlFields = () => {

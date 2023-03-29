@@ -9,7 +9,7 @@ const initialState: pipelineToolVerifyResponseState = {
 }
 
 export const pipelineToolVerifyResponseSlice = createSlice({
-  name: 'pipelineTool verify response',
+  name: 'pipelineToolVerifyResponse',
   initialState,
   reducers: {
     updatePipelineToolVerifyResponse: (state, action) => {

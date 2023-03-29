@@ -11,8 +11,10 @@ import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/Metric
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
+  isPipelineToolVerified,
+  isSourceControlVerified,
   selectConfig,
-  selectMetrics,
+  selectIsBoardVerified,
   updateBoard,
   updateBoardVerifyState,
   updateMetrics,
@@ -27,22 +29,13 @@ import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
   const configData = useAppSelector(selectConfig)
-  const metrics = useAppSelector(selectMetrics)
+  const isBoardVerify = useAppSelector(selectIsBoardVerified)
+  const isPipelineToolVerify = useAppSelector(isPipelineToolVerified)
+  const isSourceControlVerify = useAppSelector(isSourceControlVerified)
   const { isShowBoard, isShowPipeline, isShowSourceControl } = configData
+  const { metrics } = configData.basic
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
-
-  useEffect(() => {
-    metrics && dispatch(updateMetrics(metrics))
-  }, [metrics, dispatch])
-
-  const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
-    const {
-      target: { value },
-    } = event
-
-    dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
-    dispatch(updatePipelineToolVerifyState(false))
-    dispatch(updateBoardVerifyState(false))
+  const updateBoardState = () => {
     dispatch(
       updateBoard({
         type: BOARD_TYPES.JIRA,
@@ -53,10 +46,39 @@ export const MetricsTypeCheckbox = () => {
         token: '',
       })
     )
+    isShowBoard ? dispatch(updateBoardVerifyState(isBoardVerify)) : dispatch(updateBoardVerifyState(false))
+  }
+
+  useEffect(() => {
+    metrics && dispatch(updateMetrics(metrics))
+  }, [metrics, dispatch])
+
+  const updatePipelineToolState = () => {
+    dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
+    dispatch(updatePipelineToolVerifyState(false))
+    isShowPipeline
+      ? dispatch(updatePipelineToolVerifyState(isPipelineToolVerify))
+      : dispatch(updatePipelineToolVerifyState(false))
+  }
+
+  const updateSourceControlState = () => {
     dispatch(updateSourceControl({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
     dispatch(updateSourceControlVerifyState(false))
+    isShowSourceControl
+      ? dispatch(updateSourceControlVerifyState(isSourceControlVerify))
+      : dispatch(updateSourceControlVerifyState(false))
+  }
+
+  const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
+    const {
+      target: { value },
+    } = event
+
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
+    updateBoardState()
+    updatePipelineToolState()
+    updateSourceControlState()
   }
   return (
     <>

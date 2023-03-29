@@ -24,8 +24,8 @@ export const DateRangePicker = () => {
     if (value === null) {
       dispatch(
         updateDateRange({
-          startDate: '',
-          endDate: '',
+          startDate: null,
+          endDate: null,
         })
       )
     } else {
@@ -44,7 +44,7 @@ export const DateRangePicker = () => {
       dispatch(
         updateDateRange({
           startDate: startDate,
-          endDate: '',
+          endDate: null,
         })
       )
     } else {
@@ -56,14 +56,16 @@ export const DateRangePicker = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateRangeBox>
-        <DatePicker label='From *' value={dayjs(startDate)} onChange={(newValue) => changeStartDate(newValue)} />
+        <DatePicker
+          label='From *'
+          value={startDate ? dayjs(startDate) : null}
+          onChange={(newValue) => changeStartDate(newValue)}
+        />
         <DatePicker
           label='To *'
-          value={dayjs(endDate)}
+          value={endDate ? dayjs(endDate) : null}
           minDate={dayjs(startDate)}
-          onChange={(newValue) => {
-            changeEndDate(newValue)
-          }}
+          onChange={(newValue) => changeEndDate(newValue)}
         />
       </DateRangeBox>
     </LocalizationProvider>

@@ -26,7 +26,7 @@
     url: /rest/agile/1.0/board/1963/issue
     query:
       maxResults: 100
-      jql: status in (%27DONE%27,%27CLOSED%27) AND (status changed to %27DONE%27 during (1661702400000, 1662739199000) or status changed to %27CLOSED%27 during (1661702400000, 1662739199000))
+      jql: status in %28%27DONE%27%2C %27CLOSED%27%29 AND %28status changed to %27DONE%27 during %281678896000000%2C 1680105600000%29 or status changed to %27CLOSED%27 during %281678896000000%2C 1680105600000%29%29
 
   response:
     headers:

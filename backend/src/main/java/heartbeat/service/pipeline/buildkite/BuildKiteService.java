@@ -155,16 +155,15 @@ public class BuildKiteService {
 	}
 
 	private int parseTotalPage(@Nullable List<String> linkHeader) {
-		int currentPage = 1;
 		if (linkHeader == null) {
-			return currentPage;
+			return 1;
 		}
 		String lastLink = linkHeader.stream().map(link -> link.replaceAll("per_page=\\d+", "")).findFirst().orElse("");
 		Matcher matcher = Pattern.compile("page=(\\d+)[^>]*>;\\s*rel=\"last\"").matcher(lastLink);
 		if (matcher.find()) {
 			return Integer.parseInt(matcher.group(1));
 		}
-		return currentPage;
+		return 1;
 	}
 
 }

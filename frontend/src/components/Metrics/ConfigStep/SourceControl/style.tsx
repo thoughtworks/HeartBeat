@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { FormControl, TextField } from '@mui/material'
+import { theme } from '@src/theme'
 
 export const SourceControlSection = styled('div')({
   position: 'relative',
@@ -19,18 +20,25 @@ export const SourceControlTitle = styled('h2')({
 })
 
 export const SourceControlForm = styled('form')({
-  margin: '1rem',
+  marginTop: '1rem',
 })
 
 export const SourceControlTypeSelections = styled(FormControl)({
-  width: '20rem',
-  margin: '0 4rem 1rem 0',
+  width: '45%',
+  marginLeft: '2.5%',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    padding: '0.5rem 0',
+  },
 })
 
 export const SourceControlTextField = styled(TextField)({
-  width: '20rem',
-  margin: '0 4rem 1rem 0',
+  width: '45%',
+  marginLeft: '2.5%',
   padding: '0.5rem 0',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+  },
 })
 
 export const SourceControlButtonGroup = styled('div')({

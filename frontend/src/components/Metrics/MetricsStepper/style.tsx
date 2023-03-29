@@ -3,21 +3,25 @@ import { Button, Stepper, Step, StepLabel } from '@mui/material'
 import { theme } from '@src/theme'
 
 export const StyledStepper = styled(Stepper)({
-  margin: '1rem',
-  [theme.breakpoints.down('md')]: {
+  marginTop: '1rem',
+  [theme.breakpoints.down('sm')]: {
     flexDirection: 'column',
+    fontSize: '0.5rem',
   },
 })
 
 export const StyledStep = styled(Step)({
   [theme.breakpoints.down('md')]: {
-    marginBottom: '1rem',
+    padding: '0.25rem 0',
   },
 })
 
 export const StyledStepLabel = styled(StepLabel)({
   width: '5rem',
   padding: '0 1rem',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.5rem',
+  },
 })
 
 export const MetricsStepperContent = styled('div')({
@@ -26,6 +30,9 @@ export const MetricsStepperContent = styled('div')({
   width: '60%',
   margin: '0 auto',
   textAlign: 'left',
+  [theme.breakpoints.down('md')]: {
+    width: '80%',
+  },
 })
 
 export const basicButtonStyle = {
@@ -75,4 +82,7 @@ export const ButtonGroup = styled('div')({
   width: '60%',
   margin: '0 auto',
   padding: '1rem',
+  [theme.breakpoints.down('md')]: {
+    width: '80%',
+  },
 })

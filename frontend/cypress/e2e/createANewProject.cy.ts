@@ -24,6 +24,8 @@ describe('Create a new project', () => {
 
     configPage.selectMetricsData()
 
+    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
+
     configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
 
     configPage.fillSourceControlFieldsInfoAndVerify(`ghp_${'Abc123'.repeat(6)}`)

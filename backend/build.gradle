@@ -55,6 +55,7 @@ pmd {
 
 def testIgnoreList = [
   "**/HeartbeatApplication**",
+  "**/CacheConfig**",
 ]
 
 jacocoTestReport {

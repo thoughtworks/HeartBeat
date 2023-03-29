@@ -17,4 +17,4 @@ jira:
   url: https://demo.atlassian.net
 
 buildKite:
-  url: ${MOCK_SERVER_URL}
+  url: ${MOCK_SERVER_URL:http//localhost:4323}

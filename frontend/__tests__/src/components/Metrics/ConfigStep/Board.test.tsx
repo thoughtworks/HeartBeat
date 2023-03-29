@@ -5,7 +5,7 @@ import {
   BOARD_TYPES,
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  MOCK_BOARD_URL,
+  MOCK_BOARD_URL_FOR_JIRA,
   RESET,
   VERIFY,
   JIRA_VERIFY_ERROR_MESSAGE,
@@ -37,11 +37,7 @@ const setup = () => {
     </Provider>
   )
 }
-const server = setupServer(
-  rest.get(MOCK_BOARD_URL, (req, res, ctx) => {
-    return res(ctx.status(200))
-  })
-)
+const server = setupServer(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(200))))
 
 describe('Board', () => {
   beforeAll(() => server.listen())
@@ -193,7 +189,7 @@ describe('Board', () => {
   })
 
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
+    server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
@@ -208,7 +204,7 @@ describe('Board', () => {
   })
 
   it('should check error notification show and disappear when board verify response status is 401', async () => {
-    server.use(rest.get(MOCK_BOARD_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
+    server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 

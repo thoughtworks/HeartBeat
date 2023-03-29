@@ -7,7 +7,7 @@ public class StringToEnumConverter implements Converter<String, BoardType> {
 
 	@Override
 	public BoardType convert(String source) {
-		return BoardType.valueOf(source.toUpperCase());
+		return BoardType.fromValue(source.toLowerCase());
 	}
 
 }

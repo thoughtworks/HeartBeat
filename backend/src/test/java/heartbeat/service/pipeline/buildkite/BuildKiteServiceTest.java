@@ -17,7 +17,6 @@ import heartbeat.client.dto.BuildKiteJob;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.BuildKitePipelineDTO;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
-import heartbeat.client.dto.PipelineDTO;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;

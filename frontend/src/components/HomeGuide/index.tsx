@@ -58,7 +58,6 @@ export const HomeGuide = () => {
   }
 
   const createNewProject = () => {
-    dispatch(isProjectCreated(true))
     navigate('/metrics')
   }
 

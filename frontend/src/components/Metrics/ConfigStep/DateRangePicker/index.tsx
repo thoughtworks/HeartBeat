@@ -2,7 +2,6 @@ import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { DateRangeBox } from '@src/components/Metrics/ConfigStep/DateRangePicker/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectDateRange,
@@ -11,6 +10,7 @@ import {
   updatePipelineToolVerifyState,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
+import { StyledDateRangePicker } from './style'
 
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch()
@@ -31,8 +31,8 @@ export const DateRangePicker = () => {
     } else {
       dispatch(
         updateDateRange({
-          startDate: value.valueOf(),
-          endDate: value.add(14, 'day').valueOf(),
+          startDate: value.startOf('date').valueOf(),
+          endDate: value.add(14, 'day').startOf('date').valueOf(),
         })
       )
     }
@@ -48,26 +48,22 @@ export const DateRangePicker = () => {
         })
       )
     } else {
-      dispatch(updateDateRange({ startDate: startDate, endDate: value.valueOf() }))
+      dispatch(updateDateRange({ startDate: startDate, endDate: value.startOf('date').valueOf() }))
     }
     updateVerifyStates()
   }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateRangeBox>
-        <DatePicker
-          label='From *'
-          value={startDate ? dayjs(startDate) : null}
-          onChange={(newValue) => changeStartDate(newValue)}
-        />
+      <StyledDateRangePicker>
+        <DatePicker label='From *' value={dayjs(startDate)} onChange={(newValue) => changeStartDate(newValue)} />
         <DatePicker
           label='To *'
           value={endDate ? dayjs(endDate) : null}
           minDate={dayjs(startDate)}
           onChange={(newValue) => changeEndDate(newValue)}
         />
-      </DateRangeBox>
+      </StyledDateRangePicker>
     </LocalizationProvider>
   )
 }

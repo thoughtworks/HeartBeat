@@ -1,11 +1,22 @@
-import { styled } from '@mui/material/styles'
-import { TextField } from '@mui/material'
+import { styled, css } from '@mui/material/styles'
+import { FormControlLabel, TextField } from '@mui/material'
+import { theme } from '@src/theme'
 
 export const ConfigStepWrapper = styled('div')({
   width: '100%',
 })
 
 export const ProjectNameInput = styled(TextField)({
-  minWidth: '30rem',
-  maxWidth: '40rem',
+  width: '90%',
+  maxWidth: '30rem',
 })
+
+export const StyledFormControlLabel = styled(FormControlLabel)`
+  ${css`
+    ${theme.breakpoints.down('sm')} {
+      & .MuiFormControlLabel-label {
+        font-size: 0.8rem;
+      }
+    }
+  `}
+`

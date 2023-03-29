@@ -15,6 +15,10 @@ const basicStyle = {
   width: '15rem',
   minWidth: '10rem',
   minHeight: '3rem',
+  [theme.breakpoints.down('md')]: {
+    width: '80%',
+    maxWidth: '15rem',
+  },
 }
 const GuideButton = styled(Button)<ButtonProps>({
   ...basicStyle,

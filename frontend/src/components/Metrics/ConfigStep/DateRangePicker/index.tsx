@@ -2,9 +2,9 @@ import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { DateRangeBox } from '@src/components/Metrics/ConfigStep/DateRangePicker/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectDateRange, updateBoardVerifyState, updateDateRange } from '@src/context/config/configSlice'
+import { StyledDateRangePicker } from './style'
 
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch()
@@ -13,8 +13,8 @@ export const DateRangePicker = () => {
     if (value === null) {
       dispatch(
         updateDateRange({
-          startDate: '',
-          endDate: '',
+          startDate: null,
+          endDate: null,
         })
       )
     } else {
@@ -33,7 +33,7 @@ export const DateRangePicker = () => {
       dispatch(
         updateDateRange({
           startDate: startDate,
-          endDate: '',
+          endDate: null,
         })
       )
     } else {
@@ -44,17 +44,15 @@ export const DateRangePicker = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateRangeBox>
+      <StyledDateRangePicker>
         <DatePicker label='From *' value={dayjs(startDate)} onChange={(newValue) => changeStartDate(newValue)} />
         <DatePicker
           label='To *'
-          value={dayjs(endDate)}
+          value={endDate ? dayjs(endDate) : null}
           minDate={dayjs(startDate)}
-          onChange={(newValue) => {
-            changeEndDate(newValue)
-          }}
+          onChange={(newValue) => changeEndDate(newValue)}
         />
-      </DateRangeBox>
+      </StyledDateRangePicker>
     </LocalizationProvider>
   )
 }

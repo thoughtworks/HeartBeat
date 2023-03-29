@@ -8,13 +8,13 @@ import {
   TOKEN_HELPER_TEXT,
 } from '@src/constants'
 import {
-  SourceControlButtonGroup,
-  SourceControlForm,
-  SourceControlSection,
-  SourceControlTextField,
-  SourceControlTitle,
-  SourceControlTypeSelections,
-} from '@src/components/Metrics/ConfigStep/SourceControl/style'
+  StyledButtonGroup,
+  StyledForm,
+  StyledSection,
+  StyledTextField,
+  StyledTitle,
+  StyledTypeSelections,
+} from '@src/components/Common/ConfigForms'
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
@@ -124,12 +124,12 @@ export const SourceControl = () => {
   }
 
   return (
-    <SourceControlSection>
+    <StyledSection>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
-      <SourceControlTitle>{CONFIG_TITLE.SOURCE_CONTROL}</SourceControlTitle>
-      <SourceControlForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
-        <SourceControlTypeSelections variant='standard' required>
+      <StyledTitle>{CONFIG_TITLE.SOURCE_CONTROL}</StyledTitle>
+      <StyledForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
+        <StyledTypeSelections variant='standard' required>
           <InputLabel id='sourceControl-type-checkbox-label'>Source Control</InputLabel>
           <Select labelId='sourceControl-type-checkbox-label' value={fields[0].value}>
             {Object.values(SOURCE_CONTROL_TYPES).map((toolType) => (
@@ -138,8 +138,8 @@ export const SourceControl = () => {
               </MenuItem>
             ))}
           </Select>
-        </SourceControlTypeSelections>
-        <SourceControlTextField
+        </StyledTypeSelections>
+        <StyledTextField
           data-testid='sourceControlTextField'
           key={fields[1].key}
           required
@@ -151,7 +151,7 @@ export const SourceControl = () => {
           error={!fields[1].isValid}
           helperText={sourceControlHelperText}
         />
-        <SourceControlButtonGroup>
+        <StyledButtonGroup>
           {isVerified && !isLoading ? (
             <>
               <VerifyButton>Verified</VerifyButton>
@@ -166,8 +166,8 @@ export const SourceControl = () => {
               Verify
             </VerifyButton>
           )}
-        </SourceControlButtonGroup>
-      </SourceControlForm>
-    </SourceControlSection>
+        </StyledButtonGroup>
+      </StyledForm>
+    </StyledSection>
   )
 }

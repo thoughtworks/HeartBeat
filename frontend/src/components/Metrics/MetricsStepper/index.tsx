@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import Box from '@mui/material/Box'
-import Stepper from '@mui/material/Stepper'
-import Step from '@mui/material/Step'
-import { MetricsStepperContent, MetricsStepLabel, ButtonGroup, NextButton, ExportButton, BackButton } from './style'
+import {
+  MetricsStepperContent,
+  ButtonGroup,
+  NextButton,
+  ExportButton,
+  BackButton,
+  StyledStepper,
+  StyledStep,
+  StyledStepLabel,
+} from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
@@ -80,14 +86,14 @@ const MetricsStepper = () => {
   }
 
   return (
-    <Box>
-      <Stepper activeStep={activeStep}>
+    <>
+      <StyledStepper activeStep={activeStep}>
         {STEPS.map((label) => (
-          <Step key={label}>
-            <MetricsStepLabel>{label}</MetricsStepLabel>
-          </Step>
+          <StyledStep key={label}>
+            <StyledStepLabel>{label}</StyledStepLabel>
+          </StyledStep>
         ))}
-      </Stepper>
+      </StyledStepper>
       <MetricsStepperContent>
         {activeStep === 0 && <ConfigStep />}
         {activeStep === 1 && <MetricsStep />}
@@ -105,7 +111,7 @@ const MetricsStepper = () => {
       {isDialogShowing && (
         <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={backToHomePage} onClose={CancelDialog} />
       )}
-    </Box>
+    </>
   )
 }
 

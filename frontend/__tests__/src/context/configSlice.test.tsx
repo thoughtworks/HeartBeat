@@ -16,7 +16,7 @@ describe('config reducer', () => {
 
     expect(config.projectName).toEqual('')
     expect(config.calendarType).toEqual(REGULAR_CALENDAR)
-    expect(config.dateRange).toEqual({ startDate: '', endDate: '' })
+    expect(config.dateRange).toEqual({ startDate: null, endDate: null })
   })
 
   it('should update project name when change project name input', () => {

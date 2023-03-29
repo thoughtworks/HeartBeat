@@ -10,13 +10,13 @@ import {
 } from '@src/constants'
 import { FormEvent, useEffect, useState } from 'react'
 import {
-  PipelineToolButtonGroup,
-  PipelineToolForm,
-  PipelineToolSection,
-  PipelineToolTextField,
-  PipelineToolTitle,
-  PipelineToolTypeSelections,
-} from '@src/components/Metrics/ConfigStep/PipelineTool/style'
+  StyledButtonGroup,
+  StyledForm,
+  StyledSection,
+  StyledTextField,
+  StyledTitle,
+  StyledTypeSelections,
+} from '@src/components/Common/ConfigForms'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   isPipelineToolVerified,
@@ -131,12 +131,12 @@ export const PipelineTool = () => {
   }
 
   return (
-    <PipelineToolSection>
+    <StyledSection>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
-      <PipelineToolTitle>{CONFIG_TITLE.PIPELINE_TOOL}</PipelineToolTitle>
-      <PipelineToolForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>
-        <PipelineToolTypeSelections variant='standard' required>
+      <StyledTitle>{CONFIG_TITLE.PIPELINE_TOOL}</StyledTitle>
+      <StyledForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>
+        <StyledTypeSelections variant='standard' required>
           <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
           <Select
             labelId='pipelineTool-type-checkbox-label'
@@ -149,8 +149,8 @@ export const PipelineTool = () => {
               </MenuItem>
             ))}
           </Select>
-        </PipelineToolTypeSelections>
-        <PipelineToolTextField
+        </StyledTypeSelections>
+        <StyledTextField
           data-testid='pipelineToolTextField'
           key={fields[1].key}
           required
@@ -162,7 +162,7 @@ export const PipelineTool = () => {
           error={!fields[1].isValid}
           helperText={updateFieldHelpText(fields[1])}
         />
-        <PipelineToolButtonGroup>
+        <StyledButtonGroup>
           {isVerified && !isLoading ? (
             <VerifyButton>Verified</VerifyButton>
           ) : (
@@ -175,8 +175,8 @@ export const PipelineTool = () => {
             </VerifyButton>
           )}
           {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
-        </PipelineToolButtonGroup>
-      </PipelineToolForm>
-    </PipelineToolSection>
+        </StyledButtonGroup>
+      </StyledForm>
+    </StyledSection>
   )
 }

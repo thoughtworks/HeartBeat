@@ -9,15 +9,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useEffect, useState } from 'react'
-import {
-  BoardButtonGroup,
-  BoardForm,
-  BoardSection,
-  BoardTextField,
-  BoardTitle,
-  BoardTypeSelections,
-} from '@src/components/Metrics/ConfigStep/Board/style'
+import { FormEvent, useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectBoard,
@@ -32,6 +24,14 @@ import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
 import { updateJiraVerifyResponse } from '@src/context/config/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
+import {
+  StyledButtonGroup,
+  StyledForm,
+  StyledSection,
+  StyledTextField,
+  StyledTitle,
+  StyledTypeSelections,
+} from '@src/components/Common/ConfigForms'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -190,15 +190,15 @@ export const Board = () => {
   }
 
   return (
-    <BoardSection>
+    <StyledSection>
       <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
-      <BoardTitle>{CONFIG_TITLE.BOARD}</BoardTitle>
-      <BoardForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
+      <StyledTitle>{CONFIG_TITLE.BOARD}</StyledTitle>
+      <StyledForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
         {fields.map((field, index) =>
           !index ? (
-            <BoardTypeSelections variant='standard' required key={index}>
+            <StyledTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
                 labelId='board-type-checkbox-label'
@@ -213,9 +213,9 @@ export const Board = () => {
                   </MenuItem>
                 ))}
               </Select>
-            </BoardTypeSelections>
+            </StyledTypeSelections>
           ) : (
-            <BoardTextField
+            <StyledTextField
               data-testid={field.key}
               key={index}
               required
@@ -231,7 +231,7 @@ export const Board = () => {
             />
           )
         )}
-        <BoardButtonGroup>
+        <StyledButtonGroup>
           {isVerified && !isLoading ? (
             <VerifyButton>Verified</VerifyButton>
           ) : (
@@ -241,8 +241,8 @@ export const Board = () => {
           )}
 
           {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
-        </BoardButtonGroup>
-      </BoardForm>
-    </BoardSection>
+        </StyledButtonGroup>
+      </StyledForm>
+    </StyledSection>
   )
 }

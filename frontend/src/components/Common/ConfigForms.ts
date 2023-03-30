@@ -4,13 +4,11 @@ import { theme } from '@src/theme'
 
 export const StyledSection = styled('div')({
   position: 'relative',
-  boxShadow:
-    '0 0.125rem 0.0625rem -0.0625rem rgb(0 0 0 / 20%), 0 0.125rem 0.25rem 0 rgb(0 0 0 / 14%), 0 0.0625rem 0.1875px 0 rgb(0 0 0 / 12%);',
+  boxShadow: theme.main.boxShadow,
   borderRadius: '0.25rem',
   width: '85%',
   margin: '1rem 0',
   padding: '1rem',
-  fontSize: '1rem',
   lineHeight: '2rem',
 })
 

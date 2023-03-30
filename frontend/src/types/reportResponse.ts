@@ -1,3 +1,6 @@
+export interface reportResponseProps {
+  velocity: VelocityInterface
+}
 export interface VelocityInterface {
   velocityForSP: string
   velocityForCards: string

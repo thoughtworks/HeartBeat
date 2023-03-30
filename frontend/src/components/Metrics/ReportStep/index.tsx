@@ -15,6 +15,7 @@ export const ReportStep = () => {
         setVelocityData(res.response?.velocity)
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
     <>

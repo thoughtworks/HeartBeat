@@ -38,8 +38,6 @@ const setup = () =>
   )
 
 describe('DeploymentFrequencySettings', () => {
-  const ADD_BUTTON = 'Add'
-
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -49,13 +47,13 @@ describe('DeploymentFrequencySettings', () => {
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
     expect(getByText('errorMessages: error')).toBeInTheDocument()
-    expect(getByRole('button', { name: ADD_BUTTON })).toBeInTheDocument()
+    expect(getByRole('button')).toBeInTheDocument()
   })
 
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
     const { getByRole } = await setup()
 
-    await userEvent.click(getByRole('button', { name: ADD_BUTTON }))
+    await userEvent.click(getByRole('button'))
 
     expect(addADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
   })

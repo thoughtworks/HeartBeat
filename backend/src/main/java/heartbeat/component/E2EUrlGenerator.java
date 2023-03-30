@@ -22,7 +22,7 @@ public class E2EUrlGenerator implements UrlGenerator {
 			return URI.create(url);
 		}
 		else {
-			throw new NullPointerException("jira.url is empty");
+			throw new IllegalArgumentException("jira.url is empty");
 		}
 
 	}

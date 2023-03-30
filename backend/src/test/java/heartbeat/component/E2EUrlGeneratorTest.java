@@ -1,8 +1,6 @@
 package heartbeat.component;
 
-import heartbeat.exception.RequestFailedException;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.ReflectionUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.URI;
@@ -48,7 +46,7 @@ class E2EUrlGeneratorTest {
 	public void shouldThrowExceptionWhenUrlIsNull() {
 		ReflectionTestUtils.setField(e2EUrlGenerator, "url", null);
 
-		assertThatThrownBy(() -> e2EUrlGenerator.getUri("test")).isInstanceOf(NullPointerException.class)
+		assertThatThrownBy(() -> e2EUrlGenerator.getUri("test")).isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("jira.url is empty");
 	}
 
@@ -56,7 +54,7 @@ class E2EUrlGeneratorTest {
 	public void shouldThrowExceptionWhenUrlIsEmpty() {
 		ReflectionTestUtils.setField(e2EUrlGenerator, "url", "");
 
-		assertThatThrownBy(() -> e2EUrlGenerator.getUri("test")).isInstanceOf(NullPointerException.class)
+		assertThatThrownBy(() -> e2EUrlGenerator.getUri("test")).isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("jira.url is empty");
 	}
 

@@ -4,13 +4,9 @@ import { setupStore } from '../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import { CREATE_NEW_PROJECT, IMPORT_PROJECT_FROM_FILE } from '../../fixtures'
 import userEvent from '@testing-library/user-event'
+import { navigateMock } from '../../../setupTests'
 
-const mockedUsedNavigate = jest.fn()
 const mockedUseAppDispatch = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}))
 
 jest.mock('@src/hooks/useAppDispatch', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -27,14 +23,16 @@ const setup = () => {
     </Provider>
   )
 }
-beforeEach(() => {
-  store = setupStore()
-})
-afterEach(() => {
-  jest.clearAllMocks()
-})
 
 describe('HomeGuide', () => {
+  beforeEach(() => {
+    store = setupStore()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should show 2 buttons', () => {
     const { getByText } = setup()
 
@@ -65,9 +63,10 @@ describe('HomeGuide', () => {
     })
 
     fireEvent.change(input)
+
     await waitFor(() => {
       expect(mockedUseAppDispatch).toHaveBeenCalledTimes(2)
-      expect(mockedUsedNavigate).toHaveBeenCalledWith('/metrics')
+      expect(navigateMock).toHaveBeenCalledWith('/metrics')
     })
   })
 
@@ -76,7 +75,7 @@ describe('HomeGuide', () => {
 
     await userEvent.click(getByText(CREATE_NEW_PROJECT))
 
-    expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/metrics')
+    expect(navigateMock).toHaveBeenCalledTimes(1)
+    expect(navigateMock).toHaveBeenCalledWith('/metrics')
   })
 })

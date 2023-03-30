@@ -6,9 +6,8 @@ export const PipelineMetricSelectionWrapper = styled('div')({
   boxShadow:
     '0 0.125rem 0.0625rem -0.0625rem rgb(0 0 0 / 20%), 0 0.125rem 0.25rem 0 rgb(0 0 0 / 14%), 0 0.0625rem 0.1875px 0 rgb(0 0 0 / 12%);',
   borderRadius: '0.25rem',
-  width: '85%',
   margin: '1rem 0',
-  padding: '0.5rem 1rem 1.5rem 1rem',
+  padding: '0.5rem 2.5%',
   fontSize: '1rem',
   lineHeight: '2rem',
 })

@@ -1,11 +1,11 @@
-import { REGULAR_CALENDAR } from './fixtures'
+import { CHINA_CALENDAR } from './fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
-const initialConfigState = {
+const updatedConfigState = {
   isProjectCreated: true,
   basic: {
-    projectName: '',
-    calendarType: REGULAR_CALENDAR,
+    projectName: 'Mock Project Name',
+    calendarType: CHINA_CALENDAR,
     dateRange: {
       startDate: '',
       endDate: '',
@@ -36,4 +36,4 @@ const initialConfigState = {
   isShowSourceControl: false,
 }
 
-export default initialConfigState
+export default updatedConfigState

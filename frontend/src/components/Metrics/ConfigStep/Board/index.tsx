@@ -9,7 +9,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectBoard,
@@ -117,13 +117,14 @@ export const Board = () => {
     })
   }
 
-  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
-    return field.isRequired && field.isValid && !!field.value
-  }
+  useEffect(() => {
+    const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
+      field.isRequired && field.isValid && !!field.value
 
-  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
-    return fields.some((field) => !isFieldInvalid(field))
-  }
+    const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) =>
+      fields.some((field) => !isFieldInvalid(field))
+    setIsDisableVerifyButton(isAllFieldsValid(fields))
+  }, [fields])
 
   const onFormUpdate = (index: number, value: string) => {
     const newFieldsValue = !index
@@ -136,7 +137,6 @@ export const Board = () => {
           }
         })
       : updateFields(fields, index, value)
-    setIsDisableVerifyButton(isAllFieldsValid(newFieldsValue))
     setFields(newFieldsValue)
     dispatch(updateBoardVerifyState(false))
   }

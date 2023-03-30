@@ -6,7 +6,7 @@ import {
   SELECTED_VALUE_SEPARATOR,
   REQUIRED_DATA,
 } from '@src/constants'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
@@ -20,9 +20,6 @@ import {
   updateMetrics,
   updatePipelineTool,
   updatePipelineToolVerifyState,
-  updateShowBoard,
-  updateShowPipeline,
-  updateShowSourceControl,
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
@@ -35,7 +32,8 @@ export const MetricsTypeCheckbox = () => {
   const isBoardVerify = useAppSelector(selectIsBoardVerified)
   const isPipelineToolVerify = useAppSelector(isPipelineToolVerified)
   const isSourceControlVerify = useAppSelector(isSourceControlVerified)
-  const { metrics, isShowBoard, isShowPipeline, isShowSourceControl } = configData
+  const { isShowBoard, isShowPipeline, isShowSourceControl } = configData
+  const { metrics } = configData.basic
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const updateBoardState = () => {
     dispatch(
@@ -50,6 +48,10 @@ export const MetricsTypeCheckbox = () => {
     )
     isShowBoard ? dispatch(updateBoardVerifyState(isBoardVerify)) : dispatch(updateBoardVerifyState(false))
   }
+
+  useEffect(() => {
+    metrics && dispatch(updateMetrics(metrics))
+  }, [metrics, dispatch])
 
   const updatePipelineToolState = () => {
     dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
@@ -74,24 +76,8 @@ export const MetricsTypeCheckbox = () => {
 
     dispatch(updateMetrics(value))
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
-    dispatch(
-      updateShowBoard(
-        value.includes(REQUIRED_DATA.VELOCITY) ||
-          value.includes(REQUIRED_DATA.CYCLE_TIME) ||
-          value.includes(REQUIRED_DATA.CLASSIFICATION)
-      )
-    )
     updateBoardState()
-    dispatch(
-      updateShowPipeline(
-        value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
-          value.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
-          value.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
-          value.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
-      )
-    )
     updatePipelineToolState()
-    dispatch(updateShowSourceControl(value.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)))
     updateSourceControlState()
   }
   return (

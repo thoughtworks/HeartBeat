@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
-import { AddButton } from './style'
 import { PipelineMetricSelection } from './PipelineMetricSelection'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { addADeploymentFrequencySetting, selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
+import { IconButton } from '@mui/material'
+import { Add } from '@mui/icons-material'
 
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch()
@@ -34,7 +35,9 @@ export const DeploymentFrequencySettings = () => {
           errorMessages={getErrorMessage(deploymentFrequencySetting.id)}
         />
       ))}
-      <AddButton onClick={handleClick}> Add </AddButton>
+      <IconButton onClick={handleClick}>
+        <Add />
+      </IconButton>
     </>
   )
 }

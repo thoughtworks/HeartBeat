@@ -67,7 +67,8 @@ public class BuildKiteControllerTest {
 			.thenReturn(pipelineStepsResponse);
 
 		MockHttpServletResponse response = mockMvc
-			.perform(get("/pipelines/XXXX/pipelines/fs-platform-onboarding/steps").header("Authorization", "token")
+			.perform(get("/pipelines/buildkite/XXXX/pipelines/fs-platform-onboarding/steps")
+				.header("Authorization", "token")
 				.queryParam("pipelineName", "fs-platform-onboarding")
 				.queryParam("repository", "XXXX-repo")
 				.queryParam("orgName", "XXXX")

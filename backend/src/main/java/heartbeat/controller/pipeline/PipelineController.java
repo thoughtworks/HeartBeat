@@ -31,8 +31,8 @@ public class PipelineController {
 	@GetMapping("/{pipelineType}/{organizationId}/pipelines/{buildId}/steps")
 	public PipelineStepsResponse getPipelineSteps(
 			@RequestHeader("Authorization") @NotBlank(message = "Token must not be blank") String token,
-			@PathVariable String pipelineType, @PathVariable String organizationId, @PathVariable("buildId") String pipelineId,
-			@Valid @ModelAttribute PipelineStepsParam params) {
+			@PathVariable String pipelineType, @PathVariable String organizationId,
+			@PathVariable("buildId") String pipelineId, @Valid @ModelAttribute PipelineStepsParam params) {
 		return buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId, params);
 	}
 

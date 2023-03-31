@@ -2,6 +2,7 @@ package heartbeat.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,8 +26,8 @@ public class RestResponseEntityExceptionHandler {
 		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+	@ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class })
+	public ResponseEntity<Object> handleMethodArgumentNotValid(BindException ex) {
 		BindingResult result = ex.getBindingResult();
 		Map<String, String> fieldErrors = result.getFieldErrors()
 			.stream()

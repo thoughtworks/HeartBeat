@@ -12,3 +12,6 @@ githubFeignClient:
 jira:
   url: ${MOCK_SERVER_URL:http://localhost:4323}
 
+buildKite:
+  url: ${MOCK_SERVER_URL:http://localhost:4323}
+

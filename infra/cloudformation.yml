@@ -262,9 +262,9 @@ Resources:
       InstanceType: "t2.micro"
       Tags:
         - Key: "Name"
-          Value: "HeartBeatEC2"
+          Value: "HeartbeatEC2"
         - Key: "app"
-          Value: "HeartBeat"
+          Value: "Heartbeat"
         - Key: "env"
           Value: "SIT"
       SecurityGroups:
@@ -326,9 +326,9 @@ Resources:
       InstanceType: "t2.micro"
       Tags:
         - Key: "Name"
-          Value: "HeartBeatE2EEC2"
+          Value: "HeartbeatE2EEC2"
         - Key: "app"
-          Value: "HeartBeatE2E"
+          Value: "HeartbeatE2E"
         - Key: "env"
           Value: "E2E"
       SecurityGroups:
@@ -354,7 +354,7 @@ Resources:
   EC2KeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: HeartBeatKeyPair
+      KeyName: HeartbeatKeyPair
       PublicKeyMaterial: !Ref SSHPublicKey
   EC2SSHSecurityGroup:
     Type: AWS::EC2::SecurityGroup

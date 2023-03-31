@@ -29,7 +29,7 @@ import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEff
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
-import { updatePipelineToolVerifyResponse } from '@src/context/config/pipelineTool/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
+import { updatePipelineToolVerifyResponse } from '@src/context/response/responseSlice'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()

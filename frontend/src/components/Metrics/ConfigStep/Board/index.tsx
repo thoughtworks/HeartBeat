@@ -22,7 +22,6 @@ import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
-import { updateJiraVerifyResponse } from '@src/context/config/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 import {
   StyledButtonGroup,
@@ -32,6 +31,7 @@ import {
   StyledTitle,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
+import { updateJiraVerifyResponse } from '@src/context/response/responseSlice'
 
 export const Board = () => {
   const dispatch = useAppDispatch()

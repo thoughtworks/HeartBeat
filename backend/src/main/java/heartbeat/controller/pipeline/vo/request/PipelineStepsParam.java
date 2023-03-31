@@ -10,19 +10,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PipelineStepsParam {
 
-	@NotBlank(message = "pipelineName is required")
+	@NotBlank(message = "PipelineName is required")
 	private String pipelineName;
 
-	@NotBlank(message = "repository is required")
+	@NotBlank(message = "Repository is required")
 	private String repository;
 
-	@NotBlank(message = "orgName is required")
+	@NotBlank(message = "OrgName is required")
 	private String orgName;
 
-	@NotBlank(message = "startTime is required")
+	@NotBlank(message = "StartTime is required")
 	private String startTime;
 
-	@NotBlank(message = "endTime is required")
+	@NotBlank(message = "EndTime is required")
 	private String endTime;
 
 }

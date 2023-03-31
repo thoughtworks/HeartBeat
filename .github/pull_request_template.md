@@ -6,13 +6,15 @@
 
 _Description_
 
-![Before](Image_path.png)
+**Screenshots**
+If applicable, add screenshots to help explain behavior of your code.
 
 ## After
 
 _Description_
 
-![After](Image_path.png)
+**Screenshots**
+If applicable, add screenshots to help explain behavior of your code.
 
 ## Note
 

@@ -20,6 +20,7 @@ import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDia
 import { useNavigate } from 'react-router-dom'
 import { selectConfig } from '@src/context/config/configSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
+import { ExportStep } from '@src/components/Metrics/ExportStep'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
 
@@ -117,6 +118,7 @@ const MetricsStepper = () => {
       <MetricsStepperContent>
         {activeStep === 0 && <ConfigStep />}
         {activeStep === 1 && <MetricsStep />}
+        {activeStep === 2 && <ExportStep />}
       </MetricsStepperContent>
       <ButtonContainer>
         <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>

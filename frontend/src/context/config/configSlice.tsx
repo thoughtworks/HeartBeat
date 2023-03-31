@@ -77,6 +77,7 @@ export const configSlice = createSlice({
         MEAN_TIME_TO_RECOVERY,
       ].some((metric) => state.basic.metrics.includes(metric))
       state.isShowSourceControl = [LEAD_TIME_FOR_CHANGES].some((metric) => state.basic.metrics.includes(metric))
+      state.basic.metrics = action.payload
     },
     updateBasicConfigState: (state, action) => {
       state.basic = action.payload

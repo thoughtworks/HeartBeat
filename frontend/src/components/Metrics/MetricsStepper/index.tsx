@@ -8,16 +8,20 @@ import {
   StyledStepper,
   StyledStep,
   StyledStepLabel,
+  SaveButton,
+  ButtonContainer,
 } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
-import { STEPS } from '@src/constants'
+import { SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
 import { selectConfig } from '@src/context/config/configSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
+import { Tooltip } from '@mui/material'
+import { exportToJsonFile } from '@src/utils/util'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -61,6 +65,22 @@ const MetricsStepper = () => {
     dateRange,
   ])
   const { isPipelineValid } = useMetricsStepValidationCheckContext()
+  const basicConfig = {
+    ...config.basic,
+    dateRange: {
+      startDate: dateRange.startDate ? new Date(dateRange.startDate) : null,
+      endDate: dateRange.endDate ? new Date(dateRange.endDate) : null,
+    },
+  }
+  const handleSave = () => {
+    const configData = {
+      ...basicConfig,
+      board: isShowBoard ? config.boardConfig : undefined,
+      pipelineTool: isShowPipeline ? config.pipelineToolConfig : undefined,
+      sourceControl: isShowSourceControl ? config.sourceControlConfig : undefined,
+    }
+    exportToJsonFile('config', configData)
+  }
 
   const handleNext = () => {
     if (activeStep === 0) dispatch(nextStep())
@@ -98,16 +118,21 @@ const MetricsStepper = () => {
         {activeStep === 0 && <ConfigStep />}
         {activeStep === 1 && <MetricsStep />}
       </MetricsStepperContent>
-      <ButtonGroup>
-        <BackButton onClick={handleBack}>Back</BackButton>
-        {activeStep === STEPS.length - 1 ? (
-          <ExportButton>Export board data</ExportButton>
-        ) : (
-          <NextButton onClick={handleNext} disabled={isDisableNextButton}>
-            Next
-          </NextButton>
-        )}
-      </ButtonGroup>
+      <ButtonContainer>
+        <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
+          <SaveButton onClick={handleSave}>Save</SaveButton>
+        </Tooltip>
+        <ButtonGroup>
+          <BackButton onClick={handleBack}>Back</BackButton>
+          {activeStep === STEPS.length - 1 ? (
+            <ExportButton>Export board data</ExportButton>
+          ) : (
+            <NextButton onClick={handleNext} disabled={isDisableNextButton}>
+              Next
+            </NextButton>
+          )}
+        </ButtonGroup>
+      </ButtonContainer>
       {isDialogShowing && (
         <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={backToHomePage} onClose={CancelDialog} />
       )}

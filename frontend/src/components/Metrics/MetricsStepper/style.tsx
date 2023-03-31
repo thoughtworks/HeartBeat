@@ -45,6 +45,16 @@ export const basicButtonStyle = {
   textTransform: theme.typography.button.textTransform,
 }
 
+export const SaveButton = styled(Button)({
+  ...basicButtonStyle,
+  width: '3rem',
+  backgroundColor: theme.main.backgroundColor,
+  color: 'white',
+  '&:hover': {
+    background: theme.main.backgroundColor,
+  },
+})
+
 export const BackButton = styled(Button)({
   ...basicButtonStyle,
   width: '3rem',
@@ -52,6 +62,7 @@ export const BackButton = styled(Button)({
 })
 
 export const NextButton = styled(Button)({
+  ...basicButtonStyle,
   width: '3rem',
   backgroundColor: theme.main.backgroundColor,
   color: theme.main.color,
@@ -85,4 +96,12 @@ export const ButtonGroup = styled('div')({
   [theme.breakpoints.down('md')]: {
     width: '80%',
   },
+})
+
+export const ButtonContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  width: '60%',
+  margin: '0 auto',
+  padding: '1rem',
 })

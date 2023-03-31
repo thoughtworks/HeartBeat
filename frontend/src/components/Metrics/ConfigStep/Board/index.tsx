@@ -141,7 +141,7 @@ export const Board = () => {
     dispatch(updateBoardVerifyState(false))
   }
 
-  const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
+  const updateBoardFields = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
       updateBoard({
@@ -153,6 +153,10 @@ export const Board = () => {
         token: fields[5].value,
       })
     )
+  }
+
+  const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
+    updateBoardFields(e)
     const msg = `${fields[2].value}:${fields[5].value}`
     const encodeToken = `Basic ${btoa(msg)}`
     const params = {
@@ -196,7 +200,11 @@ export const Board = () => {
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <StyledTitle>{CONFIG_TITLE.BOARD}</StyledTitle>
-      <StyledForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
+      <StyledForm
+        onSubmit={(e) => handleSubmitBoardFields(e)}
+        onChange={(e) => updateBoardFields(e)}
+        onReset={handleResetBoardFields}
+      >
         {fields.map((field, index) =>
           !index ? (
             <StyledTypeSelections variant='standard' required key={index}>

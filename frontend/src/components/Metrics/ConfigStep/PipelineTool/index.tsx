@@ -100,7 +100,7 @@ export const PipelineTool = () => {
     return DEFAULT_HELPER_TEXT
   }
 
-  const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
+  const updatePipelineToolFields = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
       updatePipelineTool({
@@ -108,6 +108,10 @@ export const PipelineTool = () => {
         token: fields[1].value,
       })
     )
+  }
+
+  const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
+    updatePipelineToolFields(e)
     const params = {
       type: fields[0].value,
       token: fields[1].value,
@@ -134,7 +138,11 @@ export const PipelineTool = () => {
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <StyledTitle>{CONFIG_TITLE.PIPELINE_TOOL}</StyledTitle>
-      <StyledForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>
+      <StyledForm
+        onSubmit={handleSubmitPipelineToolFields}
+        onChange={updatePipelineToolFields}
+        onReset={handleResetPipelineToolFields}
+      >
         <StyledTypeSelections variant='standard' required>
           <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
           <Select

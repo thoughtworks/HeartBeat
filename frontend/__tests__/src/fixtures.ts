@@ -12,6 +12,8 @@ export const NEXT = 'Next'
 
 export const BACK = 'Back'
 
+export const SAVE = 'Save'
+
 export const VERIFY = 'Verify'
 
 export const RESET = 'Reset'

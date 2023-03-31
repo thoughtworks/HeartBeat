@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
+import { exportToJsonFile } from '@src/utils/util'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -8,6 +9,7 @@ import {
   LEAD_TIME_FOR_CHANGES,
   NEXT,
   PROJECT_NAME_LABEL,
+  SAVE,
   STEPS,
   TEST_PROJECT_NAME,
   VELOCITY,
@@ -36,6 +38,13 @@ const mockValidationCheckContext = {
 
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
+}))
+
+jest.mock('@src/utils/util', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  exportToJsonFile: jest.fn((_filename: string, _json: object) => {
+    //Mock for test
+  }),
 }))
 
 const YES = 'Yes'
@@ -69,6 +78,12 @@ const fillConfigPageData = async () => {
     await store.dispatch(updateBoardVerifyState(true))
     await store.dispatch(updatePipelineToolVerifyState(true))
     await store.dispatch(updateSourceControlVerifyState(true))
+  })
+}
+
+const fillMetricsData = async () => {
+  await act(async () => {
+    await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
   })
 }
 
@@ -191,5 +206,49 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(NEXT))
 
     expect(getByText(REPORT)).toHaveStyle(`color:${stepperColor}`)
+  })
+
+  it('should export json when click save button', async () => {
+    const expectedFileName = 'config'
+    const expectedJson = {
+      board: undefined,
+      calendarType: 'Regular Calendar(Weekend Considered)',
+      dateRange: {
+        endDate: null,
+        startDate: null,
+      },
+      metrics: [],
+      pipelineTool: undefined,
+      projectName: '',
+      sourceControl: undefined,
+    }
+    const { getByText } = setup()
+
+    await userEvent.click(getByText(SAVE))
+
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
+  })
+
+  it('should export json when click save button when pipelineTool, sourceControl, and board is not empty', async () => {
+    const expectedFileName = 'config'
+    const expectedJson = {
+      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
+      calendarType: 'Regular Calendar(Weekend Considered)',
+      dateRange: {
+        endDate: null,
+        startDate: null,
+      },
+      metrics: ['Velocity', 'Lead time for changes'],
+      pipelineTool: { pipelineTool: 'BuildKite', token: '' },
+      projectName: '',
+      sourceControl: { sourceControl: 'Github', token: '' },
+    }
+
+    const { getByText } = setup()
+    await fillMetricsData()
+
+    await userEvent.click(getByText(SAVE))
+
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
   })
 })

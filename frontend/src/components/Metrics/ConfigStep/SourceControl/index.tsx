@@ -71,7 +71,7 @@ export const SourceControl = () => {
     setIsDisableVerifyButton(isAllFieldsValid(fields))
   }, [fields])
 
-  const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
+  const updateSourceControlFields = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
       updateSourceControl({
@@ -79,6 +79,10 @@ export const SourceControl = () => {
         token: fields[1].value,
       })
     )
+  }
+
+  const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
+    updateSourceControlFields(e)
     const params = {
       type: fields[0].value,
       token: fields[1].value,
@@ -127,7 +131,11 @@ export const SourceControl = () => {
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <StyledTitle>{CONFIG_TITLE.SOURCE_CONTROL}</StyledTitle>
-      <StyledForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
+      <StyledForm
+        onSubmit={(e) => handleSubmitSourceControlFields(e)}
+        onChange={(e) => updateSourceControlFields(e)}
+        onReset={handleResetSourceControlFields}
+      >
         <StyledTypeSelections variant='standard' required>
           <InputLabel id='sourceControl-type-checkbox-label'>Source Control</InputLabel>
           <Select labelId='sourceControl-type-checkbox-label' value={fields[0].value}>

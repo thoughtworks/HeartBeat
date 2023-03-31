@@ -3,8 +3,8 @@ import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { reportClient } from '@src/clients/ReportClient'
 import { VelocityInterface } from '@src/types/reportResponse'
 
-export interface useGeneratorReportEffectInterface {
-  generatorReport: () => Promise<
+export interface useGenerateReportEffectInterface {
+  generateReport: () => Promise<
     | {
         response: {
           velocity: VelocityInterface
@@ -16,11 +16,11 @@ export interface useGeneratorReportEffectInterface {
   errorMessage: string
 }
 
-export const useGeneratorReportEffect = (): useGeneratorReportEffectInterface => {
+export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  const generatorReport = async () => {
+  const generateReport = async () => {
     setIsLoading(true)
     try {
       return await reportClient.generateReporter()
@@ -36,7 +36,7 @@ export const useGeneratorReportEffect = (): useGeneratorReportEffectInterface =>
   }
 
   return {
-    generatorReport,
+    generateReport,
     isLoading,
     errorMessage,
   }

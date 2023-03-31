@@ -2,9 +2,9 @@ import { render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { REQUIRED_DATA_LIST } from '../../../fixtures'
 
-jest.mock('@src/hooks/useGeneratorReportEffect', () => ({
-  useGeneratorReportEffect: () => ({
-    generatorReport: jest.fn(() =>
+jest.mock('@src/hooks/useGenerateReportEffect', () => ({
+  useGenerateReportEffect: () => ({
+    generateReport: jest.fn(() =>
       Promise.resolve({ response: { velocity: { velocityForSP: '3', velocityForCards: '4' } } })
     ),
     isLoading: false,

@@ -10,7 +10,7 @@ const mockValidationCheckContext = {
   errorMessages: [{ id: 1, error: 'error' }],
   clearErrorMessage: jest.fn(),
   checkDuplicatedPipeLine: jest.fn(),
-  checkPipelineValidation: jest.fn(),
+  isPipelineValid: () => true,
 }
 
 jest.mock('@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection', () => ({

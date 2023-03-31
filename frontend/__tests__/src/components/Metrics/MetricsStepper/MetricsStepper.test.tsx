@@ -7,6 +7,7 @@ import {
   BACK,
   CONFIRM_DIALOG_DESCRIPTION,
   LEAD_TIME_FOR_CHANGES,
+  MOCK_REPORT_URL,
   NEXT,
   PROJECT_NAME_LABEL,
   SAVE,
@@ -23,11 +24,19 @@ import {
 } from '@src/context/config/configSlice'
 import dayjs from 'dayjs'
 import { navigateMock } from '../../../../setupTests'
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
+import { HttpStatusCode } from 'axios'
 
 const START_DATE_LABEL = 'From *'
 const TODAY = dayjs()
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY')
 const END_DATE_LABEL = 'To *'
+const YES = 'Yes'
+const CANCEL = 'Cancel'
+const METRICS = 'Metrics'
+const REPORT = 'Report'
+const stepperColor = 'rgba(0, 0, 0, 0.87)'
 
 const mockValidationCheckContext = {
   errorMessages: [],
@@ -47,26 +56,12 @@ jest.mock('@src/utils/util', () => ({
   }),
 }))
 
-const YES = 'Yes'
-const CANCEL = 'Cancel'
-const METRICS = 'Metrics'
-const REPORT = 'Report'
-const stepperColor = 'rgba(0, 0, 0, 0.87)'
-let store = setupStore()
+const server = setupServer(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
 
-beforeEach(() => {
-  store = setupStore()
-})
 const mockLocation = { reload: jest.fn() }
 Object.defineProperty(window, 'location', { value: mockLocation })
 
-const setup = () =>
-  render(
-    <Provider store={store}>
-      <MetricsStepper />
-    </Provider>
-  )
-
+let store = setupStore()
 const fillConfigPageData = async () => {
   const projectNameInput = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL })
   await userEvent.type(projectNameInput, TEST_PROJECT_NAME)
@@ -88,9 +83,20 @@ const fillMetricsData = async () => {
 }
 
 describe('MetricsStepper', () => {
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
+  beforeEach(() => {
+    store = setupStore()
+  })
   afterEach(() => {
     navigateMock.mockClear()
   })
+  const setup = () =>
+    render(
+      <Provider store={store}>
+        <MetricsStepper />
+      </Provider>
+    )
   it('should show metrics stepper', () => {
     const { getByText } = setup()
 

@@ -1,6 +1,6 @@
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { TableBody, TableCell, TableHead, TableRow, Table } from '@mui/material'
-import { Container, Row } from '@src/components/Metrics/ExportStep/Velocity/style'
+import { Container, Row } from '@src/components/Metrics/ReportStep/Velocity/style'
 import { VelocityInterface } from '@src/types/reportResponse'
 
 interface VelocityProps {

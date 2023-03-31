@@ -136,6 +136,25 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "heartbeat_backend"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+            {
+                "rules": [
+                    {
+                        "rulePriority": 1,
+                        "description": "Delete old images",
+                        "selection": {
+                            "tagStatus": "tagged",
+                            "tagPrefixList": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+                            "countType": "imageCountMoreThan",
+                            "countNumber": 2
+                        },
+                        "action": {
+                            "type": "expire"
+                        }
+                    }
+                ]
+            }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -156,6 +175,25 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "mock_server"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+            {
+                "rules": [
+                    {
+                        "rulePriority": 1,
+                        "description": "Delete old images",
+                        "selection": {
+                            "tagStatus": "tagged",
+                            "tagPrefixList": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+                            "countType": "imageCountMoreThan",
+                            "countNumber": 2
+                        },
+                        "action": {
+                            "type": "expire"
+                        }
+                    }
+                ]
+            }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -176,6 +214,25 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "heartbeat_frontend"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+            {
+                "rules": [
+                    {
+                        "rulePriority": 1,
+                        "description": "Delete old images",
+                        "selection": {
+                            "tagStatus": "tagged",
+                            "tagPrefixList": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+                            "countType": "imageCountMoreThan",
+                            "countNumber": 2
+                        },
+                        "action": {
+                            "type": "expire"
+                        }
+                    }
+                ]
+            }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:

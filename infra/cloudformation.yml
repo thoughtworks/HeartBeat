@@ -408,6 +408,7 @@ Resources:
     Properties:
       InstanceId: !Ref E2EEC2Instance
       Domain: vpc
+
 Outputs:
   Role:
     Value: !GetAtt AWSGitHubActionRole.Arn

@@ -17,11 +17,11 @@ Parameters:
     Type: String
   AwsRegion:
     Description: AWS region
-    Default: "cn-north-1"
+    Default: "ap-southeast-1"
     Type: String
   EC2ImageId:
     Description: AMI ID
-    Default: "ami-0bf2183ba2c3b50f9"
+    Default: "ami-0bf97847fcd5c9f57"
     Type: String
   SSHPublicKey:
     Description: Public key to connect EC2

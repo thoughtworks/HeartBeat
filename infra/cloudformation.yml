@@ -371,8 +371,8 @@ Resources:
       GroupDescription: Enable access application
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 3000
-        ToPort: 3000
+        FromPort: 4325
+        ToPort: 4325
         CidrIp: 0.0.0.0/0
   EC2AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup

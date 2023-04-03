@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PipelineStepsResponse {
 
-	private String id;
+	private String pipelineId;
 
 	private String name;
 

@@ -16,14 +16,6 @@ body:
 
       Also try to search for your issue - it may have already been answered or even fixed in the development branch. However, if you find that an old, closed issue still persists in the latest version, you should open a new issue using the form below instead of commenting on the old issue.
 
-# - type: checkboxes
-#   attributes:
-#     label: Is there an existing issue for this?
-#     description: Please search to see if an issue already exists for the bug you encountered.
-#     options:
-#     - label: I have searched the existing issues
-#       required: true
-
 - type: input
   attributes:
     label: Version

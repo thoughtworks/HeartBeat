@@ -81,6 +81,7 @@ public class BuildKiteService {
 				.toList();
 			log.info("[BuildKite] Successfully get pipeline steps, finally build steps_buildSteps:{}", buildSteps);
 			return PipelineStepsResponse.builder()
+				.pipelineId(pipelineId)
 				.steps(buildSteps)
 				.name(stepsParam.getOrgName())
 				.orgName(stepsParam.getOrgName())

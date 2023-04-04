@@ -2,6 +2,7 @@ package heartbeat.service.jira;
 
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
+import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.Assignee;
 import heartbeat.client.dto.CardHistoryResponseDTO;
@@ -12,7 +13,6 @@ import heartbeat.client.dto.Item;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.client.dto.To;
-import heartbeat.component.UrlGenerator;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
@@ -59,7 +59,7 @@ class JiraServiceTest {
 	JiraService jiraService;
 
 	@Mock
-	UrlGenerator urlGenerator;
+	JiraUriGenerator urlGenerator;
 
 	ThreadPoolTaskExecutor executor;
 

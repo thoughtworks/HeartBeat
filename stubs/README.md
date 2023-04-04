@@ -27,3 +27,4 @@ all 3rd party services are stubbed within one stub server.
 1. Create json file with json response in the `stub/xxx/jsons` folder, `xxx` is the 3rd party server(jira, buildkite or github).
 2. Add yaml configuration in `stub/xxx/xxx-stubs.yaml` to map stubbed request and response
 3. Create new folder when new 3rd party server is introduced
+4. Finally, when creating a PR, please add the tag `[stub]` to the title information, merged to the main branch, which will trigger the redeployment of the mockserver.

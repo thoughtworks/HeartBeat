@@ -71,7 +71,7 @@ describe('DateRangePicker', () => {
 
     fireEvent.change(startDateInput, { target: { value: ERROR_DATE } })
 
-    expect(startDateInput.value).toEqual('')
-    expect(endDateInput.value).toEqual('')
+    expect(startDateInput.valueAsDate).toEqual(null)
+    expect(endDateInput.valueAsDate).toEqual(null)
   })
 })

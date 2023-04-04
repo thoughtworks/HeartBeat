@@ -53,7 +53,7 @@ export const EMAIL_REG_EXP = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 export const BOARD_TOKEN_REG_EXP = /^[a-zA-Z0-9\-=_]{1,500}$/
 
-export const BUILDKITE_TOKEN_REGEXP = /^[A-Za-z0-9]{40}$/
+export const BUILDKITE_TOKEN_REGEXP = /^(bkua)+_+([a-zA-Z0-9]{40})$/
 
 export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 

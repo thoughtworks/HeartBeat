@@ -9,7 +9,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectBoard,
@@ -22,7 +22,6 @@ import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
-import { updateJiraVerifyResponse } from '@src/context/config/board/jiraVerifyResponse/jiraVerifyResponseSlice'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 import {
   StyledButtonGroup,
@@ -32,6 +31,7 @@ import {
   StyledTitle,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
+import { updateJiraVerifyResponse } from '@src/context/response/responseSlice'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -117,13 +117,14 @@ export const Board = () => {
     })
   }
 
-  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
-    return field.isRequired && field.isValid && !!field.value
-  }
+  useEffect(() => {
+    const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
+      field.isRequired && field.isValid && !!field.value
 
-  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
-    return fields.some((field) => !isFieldInvalid(field))
-  }
+    const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) =>
+      fields.some((field) => !isFieldInvalid(field))
+    setIsDisableVerifyButton(isAllFieldsValid(fields))
+  }, [fields])
 
   const onFormUpdate = (index: number, value: string) => {
     const newFieldsValue = !index
@@ -136,12 +137,11 @@ export const Board = () => {
           }
         })
       : updateFields(fields, index, value)
-    setIsDisableVerifyButton(isAllFieldsValid(newFieldsValue))
     setFields(newFieldsValue)
     dispatch(updateBoardVerifyState(false))
   }
 
-  const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
+  const updateBoardFields = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
       updateBoard({
@@ -153,6 +153,10 @@ export const Board = () => {
         token: fields[5].value,
       })
     )
+  }
+
+  const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
+    updateBoardFields(e)
     const msg = `${fields[2].value}:${fields[5].value}`
     const encodeToken = `Basic ${btoa(msg)}`
     const params = {
@@ -196,7 +200,11 @@ export const Board = () => {
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <StyledTitle>{CONFIG_TITLE.BOARD}</StyledTitle>
-      <StyledForm onSubmit={(e) => handleSubmitBoardFields(e)} onReset={handleResetBoardFields}>
+      <StyledForm
+        onSubmit={(e) => handleSubmitBoardFields(e)}
+        onChange={(e) => updateBoardFields(e)}
+        onReset={handleResetBoardFields}
+      >
         {fields.map((field, index) =>
           !index ? (
             <StyledTypeSelections variant='standard' required key={index}>

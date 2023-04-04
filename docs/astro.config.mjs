@@ -10,7 +10,7 @@ export default defineConfig({
     // Enable React for the Algolia search component.
     react(),
   ],
-  site: `https://thoughtworks.github.io/HeartBeat`,
-  base: '/HeartBeat',
-  publicDir: '/HeartBeat',
+  site: `https://thoughtworks.github.io/Heartbeat`,
+  base: '/Heartbeat',
+  publicDir: '/Heartbeat',
 });

@@ -12,6 +12,8 @@ export const NEXT = 'Next'
 
 export const BACK = 'Back'
 
+export const SAVE = 'Save'
+
 export const VERIFY = 'Verify'
 
 export const RESET = 'Reset'
@@ -43,6 +45,8 @@ export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
 export const PAST_DATE = '08/02/2022'
+export const CREATE_NEW_PROJECT = 'Create a new project'
+export const IMPORT_PROJECT_FROM_FILE = 'Import project from file'
 
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',
@@ -69,10 +73,12 @@ export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site'
 export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
-export const MOCK_BOARD_URL_FOR_JIRA = '/api/v1/boards/jira'
-export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = '/api/v1/boards/classic-jira'
-export const MOCK_PIPELINE_URL = '/api/v1/pipelines/buildkite'
-export const MOCK_SOURCE_CONTROL_URL = '/api/v1/source-control'
+const BASE_URL = 'api/v1'
+export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`
+export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
+export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
+export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`
+export const MOCK_REPORT_URL = `${BASE_URL}/report`
 
 export enum JIRA_VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Jira verify failed: Please reconfirm the input',
@@ -124,6 +130,82 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   type: SOURCE_CONTROL_TYPES.GITHUB,
   startTime: '1613664000000',
   endTime: '1614873600000',
+}
+
+export const MOCK_IMPORT_FILE = {
+  projectName: 'Mock Project Name',
+  calendarType: CHINA_CALENDAR,
+  dateRange: {
+    startDate: '',
+    endDate: '',
+  },
+  metrics: [],
+}
+
+export const MOCK_RESPONSE_SLICE_INIT_STATE = {
+  board: {
+    jira: {
+      jiraColumns: [],
+      users: [],
+      targetFields: [],
+    },
+  },
+  pipelineTool: {
+    buildKite: {
+      pipelineList: [],
+    },
+  },
+  sourceControl: {
+    github: {
+      githubRepos: [],
+    },
+  },
+}
+
+export const MOCK_JIRA_VERIFY_RESPONSE = {
+  jiraColumns: [
+    { key: 'indeterminate', value: { name: 'Doing', statuses: ['DOING'] } },
+    { key: 'indeterminate', value: { name: 'TODO', statuses: ['TODO'] } },
+    { key: 'indeterminate', value: { name: 'Testing', statuses: ['TESTING'] } },
+    { key: 'indeterminate', value: { name: 'Blocked', statuses: ['BLOCKED'] } },
+    { key: 'done', value: { name: 'Done', statuses: ['DONE', 'CANCELLED'] } },
+  ],
+  users: ['user 1', 'user 2', 'user 3'],
+  targetFields: [
+    { key: 'issuetype', name: '事务类型', flag: false },
+    { key: 'parent', name: '父级', flag: false },
+    { key: 'customfield_10020', name: 'Sprint', flag: false },
+    { key: 'project', name: '项目', flag: false },
+    { key: 'customfield_10021', name: 'Flagged', flag: false },
+    { key: 'fixVersions', name: '修复版本', flag: false },
+    { key: 'customfield_10000', name: 'development', flag: false },
+    { key: 'priority', name: '优先级', flag: false },
+    { key: 'customfield_10037', name: 'Partner', flag: false },
+    { key: 'labels', name: '标签', flag: false },
+    { key: 'timetracking', name: '时间跟踪', flag: false },
+    { key: 'customfield_10015', name: 'Start date', flag: false },
+    { key: 'customfield_10016', name: 'Story point estimate', flag: false },
+    { key: 'customfield_10038', name: 'QA', flag: false },
+    { key: 'customfield_10019', name: 'Rank', flag: false },
+    { key: 'assignee', name: '经办人', flag: false },
+    { key: 'customfield_10017', name: 'Issue color', flag: false },
+    { key: 'customfield_10027', name: 'Feature/Operation', flag: false },
+  ],
+}
+
+export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
+  pipelineList: {
+    id: 'mock id',
+    name: 'mock name',
+    orgId: 'mock id',
+    orgName: 'mock orgName',
+    repository: 'mock repository url',
+    steps: [],
+  },
+}
+
+export const MOCK_GITHUB_VERIFY_RESPONSE = {
+  githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
 }
 
 export const CREWS_SETTING = 'Crews Setting'

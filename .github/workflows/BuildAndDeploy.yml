@@ -142,6 +142,7 @@ jobs:
           SSHPublicKey: ${{ secrets.AWS_EC2_SSH_PUBLIC_KEY}}
           AWSHost: ${{ secrets.AWS_HOST }}
           AWSAccountId: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWSRegion: ${{ secrets.AWS_REGION }}
         run: |
           sh ./infra/updateAwsResource
 

@@ -2,11 +2,7 @@ import React from 'react'
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
 import { useAppSelector } from '@src/hooks'
 import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
-import {
-  selectJiraColumns,
-  selectTargetFields,
-  selectUsers,
-} from '@src/context/config/board/jiraVerifyResponse/jiraVerifyResponseSlice'
+import { selectJiraColumns, selectTargetFields, selectUsers } from '@src/context/response/responseSlice'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectMetrics } from '@src/context/config/configSlice'

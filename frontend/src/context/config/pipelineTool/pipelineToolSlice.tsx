@@ -26,10 +26,5 @@ export const pipelineToolSlice = createSlice({
     updatePipelineTool: (state, action) => {
       state.pipelineToolConfig = action.payload
     },
-    updateShowPipeline: (state, action) => {
-      state.isShowPipeline = action.payload
-    },
   },
 })
-
-export default pipelineToolSlice.reducer

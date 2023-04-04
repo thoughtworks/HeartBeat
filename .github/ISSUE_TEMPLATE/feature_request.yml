@@ -1,0 +1,40 @@
+name: Feature Request
+description: Request a new feature from Heartbeat
+title: "[Feature] "
+labels: [new-feature]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The issue list is reserved exclusively for bug reports and feature requests.
+
+        For usage questions, please use the following resources:
+
+        - Read the [docs](https://au-heartbeat.github.io/Heartbeat)
+
+        For non-technical support or general questions, you can email [heartbeat-dev@thoughtworks.com](mailto:heartbeat-dev@thoughtworks.com).
+
+              Also try to search for your issue - it may have already been answered or even fixed in the development branch. However, if you find that an old, closed issue still persists in the latest version, you should open a new issue using the form below instead of commenting on the old issue.
+
+  - type: textarea
+    attributes:
+      label: Summary - What problem does this feature solve?
+      description: |
+        Explain your use case, context, and rationale behind this feature request. More importantly, what is the end user experience you are trying to build that led to the need for this feature?
+
+        An important design goal of Heartbeat is keeping the API surface small and straightforward. In general, we only consider adding new features that solve a problem that cannot be easily dealt with using existing APIs (i.e. not just an alternative way of doing things that can already be done). The problem should also be common enough to justify the addition.
+
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expectations
+      description: |
+        Explain your expectations
+      placeholder: |
+        1. Show data with chart
+        2. Can see the calculation method
+        3. ......
+    validations:
+      required: true

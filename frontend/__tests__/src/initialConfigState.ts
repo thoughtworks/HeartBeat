@@ -2,13 +2,16 @@ import { REGULAR_CALENDAR } from './fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 const initialConfigState = {
-  projectName: '',
-  calendarType: REGULAR_CALENDAR,
-  dateRange: {
-    startDate: '',
-    endDate: '',
+  isProjectCreated: true,
+  basic: {
+    projectName: '',
+    calendarType: REGULAR_CALENDAR,
+    dateRange: {
+      startDate: '',
+      endDate: '',
+    },
+    metrics: [],
   },
-  metrics: [],
   boardConfig: {
     type: BOARD_TYPES.JIRA,
     boardId: '',

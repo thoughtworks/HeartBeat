@@ -1,4 +1,4 @@
-import { render, RenderResult } from '@testing-library/react'
+import { render, RenderResult, waitFor } from '@testing-library/react'
 import App from '@src/App'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
@@ -10,15 +10,11 @@ describe('render app', () => {
         <App />
       </Provider>
     )
-  it('should show hello World when render app', () => {
-    const { rerender, container } = setup()
+  it('should show hello World when render app', async () => {
+    const { container } = setup()
 
-    rerender(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    )
-
-    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
+    await waitFor(() => {
+      expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
+    })
   })
 })

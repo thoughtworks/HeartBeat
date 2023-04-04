@@ -10,7 +10,7 @@ const server = setupServer(
   })
 )
 
-describe('error notification', () => {
+describe('verify pipelineTool request', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
 

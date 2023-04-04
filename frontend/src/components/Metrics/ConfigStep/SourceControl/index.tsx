@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import {
   CONFIG_TITLE,
   DEFAULT_HELPER_TEXT,
@@ -26,9 +26,9 @@ import {
 } from '@src/context/config/configSlice'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
-import { updateSourceControlVerifyResponse } from '@src/context/config/sourceControl/sourceControlVerifyResponse/sourceControlVerifyResponseSlice'
 import { Loading } from '@src/components/Loading'
 import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
+import { updateSourceControlVerifyResponse } from '@src/context/response/responseSlice'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
@@ -41,11 +41,13 @@ export const SourceControl = () => {
       key: 'SourceControl',
       value: sourceControlFields.sourceControl,
       isValid: true,
+      isRequired: true,
     },
     {
       key: 'Token',
       value: sourceControlFields.token,
       isValid: true,
+      isRequired: true,
     },
   ])
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(!(fields[1].isValid && fields[1].value))
@@ -60,7 +62,16 @@ export const SourceControl = () => {
     dispatch(updateSourceControlVerifyState(false))
   }
 
-  const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
+      field.isRequired && field.isValid && !!field.value
+
+    const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) =>
+      fields.some((field) => !isFieldInvalid(field))
+    setIsDisableVerifyButton(isAllFieldsValid(fields))
+  }, [fields])
+
+  const updateSourceControlFields = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
       updateSourceControl({
@@ -68,6 +79,10 @@ export const SourceControl = () => {
         token: fields[1].value,
       })
     )
+  }
+
+  const handleSubmitSourceControlFields = async (e: FormEvent<HTMLFormElement>) => {
+    updateSourceControlFields(e)
     const params = {
       type: fields[0].value,
       token: fields[1].value,
@@ -108,7 +123,6 @@ export const SourceControl = () => {
       }
       return field
     })
-    setIsDisableVerifyButton(!newFieldsValue.every((field) => field.isValid && field.value != ''))
     setFields(newFieldsValue)
   }
 
@@ -117,7 +131,11 @@ export const SourceControl = () => {
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <StyledTitle>{CONFIG_TITLE.SOURCE_CONTROL}</StyledTitle>
-      <StyledForm onSubmit={(e) => handleSubmitSourceControlFields(e)} onReset={handleResetSourceControlFields}>
+      <StyledForm
+        onSubmit={(e) => handleSubmitSourceControlFields(e)}
+        onChange={(e) => updateSourceControlFields(e)}
+        onReset={handleResetSourceControlFields}
+      >
         <StyledTypeSelections variant='standard' required>
           <InputLabel id='sourceControl-type-checkbox-label'>Source Control</InputLabel>
           <Select labelId='sourceControl-type-checkbox-label' value={fields[0].value}>

@@ -17,11 +17,11 @@ Parameters:
     Type: String
   AwsRegion:
     Description: AWS region
-    Default: "cn-north-1"
+    Default: "ap-southeast-1"
     Type: String
   EC2ImageId:
     Description: AMI ID
-    Default: "ami-0bf2183ba2c3b50f9"
+    Default: "ami-0bf97847fcd5c9f57"
     Type: String
   SSHPublicKey:
     Description: Public key to connect EC2
@@ -136,6 +136,25 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "heartbeat_backend"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+            {
+                "rules": [
+                    {
+                        "rulePriority": 1,
+                        "description": "Delete old images",
+                        "selection": {
+                            "tagStatus": "tagged",
+                            "tagPrefixList": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+                            "countType": "imageCountMoreThan",
+                            "countNumber": 2
+                        },
+                        "action": {
+                            "type": "expire"
+                        }
+                    }
+                ]
+            }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -156,6 +175,25 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "mock_server"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+            {
+                "rules": [
+                    {
+                        "rulePriority": 1,
+                        "description": "Delete old images",
+                        "selection": {
+                            "tagStatus": "tagged",
+                            "tagPrefixList": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+                            "countType": "imageCountMoreThan",
+                            "countNumber": 2
+                        },
+                        "action": {
+                            "type": "expire"
+                        }
+                    }
+                ]
+            }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -176,6 +214,25 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "heartbeat_frontend"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+            {
+                "rules": [
+                    {
+                        "rulePriority": 1,
+                        "description": "Delete old images",
+                        "selection": {
+                            "tagStatus": "tagged",
+                            "tagPrefixList": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+                            "countType": "imageCountMoreThan",
+                            "countNumber": 2
+                        },
+                        "action": {
+                            "type": "expire"
+                        }
+                    }
+                ]
+            }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -205,9 +262,9 @@ Resources:
       InstanceType: "t2.micro"
       Tags:
         - Key: "Name"
-          Value: "HeartBeatEC2"
+          Value: "HeartbeatEC2"
         - Key: "app"
-          Value: "HeartBeat"
+          Value: "Heartbeat"
         - Key: "env"
           Value: "SIT"
       SecurityGroups:
@@ -258,6 +315,9 @@ Resources:
             - sudo systemctl enable docker.service
             - sudo systemctl start docker.service
             - sudo chmod 666 /var/run/docker.sock
+            - sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+            - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            - sudo chmod +x /usr/local/bin/docker-compose
             - sudo `aws ecr get-login-password --region ${AwsRegion} | docker login --username AWS --password-stdin ${AwsAccountId}.dkr.ecr.${AwsHost}`
   E2EEC2Instance:
     Type: AWS::EC2::Instance
@@ -266,9 +326,9 @@ Resources:
       InstanceType: "t2.micro"
       Tags:
         - Key: "Name"
-          Value: "HeartBeatE2EEC2"
+          Value: "HeartbeatE2EEC2"
         - Key: "app"
-          Value: "HeartBeatE2E"
+          Value: "HeartbeatE2E"
         - Key: "env"
           Value: "E2E"
       SecurityGroups:
@@ -294,7 +354,7 @@ Resources:
   EC2KeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: HeartBeatKeyPair
+      KeyName: HeartbeatKeyPair
       PublicKeyMaterial: !Ref SSHPublicKey
   EC2SSHSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -311,8 +371,8 @@ Resources:
       GroupDescription: Enable access application
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 3000
-        ToPort: 3000
+        FromPort: 4325
+        ToPort: 4325
         CidrIp: 0.0.0.0/0
   EC2AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -348,6 +408,7 @@ Resources:
     Properties:
       InstanceId: !Ref E2EEC2Instance
       Domain: vpc
+
 Outputs:
   Role:
     Value: !GetAtt AWSGitHubActionRole.Arn

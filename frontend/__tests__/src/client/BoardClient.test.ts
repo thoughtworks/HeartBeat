@@ -15,7 +15,7 @@ const server = setupServer(
   rest.get(MOCK_BOARD_URL_FOR_CLASSIC_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok)))
 )
 
-describe('error notification', () => {
+describe('verify board request', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
 

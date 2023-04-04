@@ -8,7 +8,7 @@ import {
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
 } from '@src/constants'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import {
   StyledButtonGroup,
   StyledForm,
@@ -29,7 +29,7 @@ import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEff
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
-import { updatePipelineToolVerifyResponse } from '@src/context/config/pipelineTool/pipelineToolVerifyResponse/pipelineToolVerifyResponseSlice'
+import { updatePipelineToolVerifyResponse } from '@src/context/response/responseSlice'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -62,13 +62,14 @@ export const PipelineTool = () => {
     dispatch(updatePipelineToolVerifyState(false))
   }
 
-  const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) => {
-    return field.isRequired && field.isValid && !!field.value
-  }
+  useEffect(() => {
+    const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
+      field.isRequired && field.isValid && !!field.value
 
-  const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) => {
-    return fields.some((field) => !isFieldInvalid(field))
-  }
+    const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) =>
+      fields.some((field) => !isFieldInvalid(field))
+    setIsDisableVerifyButton(isAllFieldsValid(fields))
+  }, [fields])
 
   const onFormUpdate = (index: number, value: string) => {
     const newFieldsValue = fields.map((field, fieldIndex) => {
@@ -84,7 +85,6 @@ export const PipelineTool = () => {
       }
       return field
     })
-    setIsDisableVerifyButton(isAllFieldsValid(newFieldsValue))
     setFields(newFieldsValue)
     dispatch(updatePipelineToolVerifyState(false))
   }
@@ -100,7 +100,7 @@ export const PipelineTool = () => {
     return DEFAULT_HELPER_TEXT
   }
 
-  const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
+  const updatePipelineToolFields = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     dispatch(
       updatePipelineTool({
@@ -108,6 +108,10 @@ export const PipelineTool = () => {
         token: fields[1].value,
       })
     )
+  }
+
+  const handleSubmitPipelineToolFields = async (e: FormEvent<HTMLFormElement>) => {
+    updatePipelineToolFields(e)
     const params = {
       type: fields[0].value,
       token: fields[1].value,
@@ -134,7 +138,11 @@ export const PipelineTool = () => {
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <StyledTitle>{CONFIG_TITLE.PIPELINE_TOOL}</StyledTitle>
-      <StyledForm onSubmit={handleSubmitPipelineToolFields} onReset={handleResetPipelineToolFields}>
+      <StyledForm
+        onSubmit={handleSubmitPipelineToolFields}
+        onChange={updatePipelineToolFields}
+        onReset={handleResetPipelineToolFields}
+      >
         <StyledTypeSelections variant='standard' required>
           <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
           <Select

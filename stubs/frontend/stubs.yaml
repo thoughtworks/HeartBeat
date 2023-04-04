@@ -2,7 +2,6 @@
     method: POST
     url: /api/v1/report
 
-
   response:
     headers:
       content-type: application/json
@@ -13,6 +12,7 @@
 - request:
     method: GET
     url: /api/v1/pipelines/.*
+
   response:
     headers:
       content-type: application/json
@@ -23,6 +23,7 @@
 - request:
     method: GET
     url: /api/v1/boards/.*
+
   response:
     headers:
       content-type: application/json

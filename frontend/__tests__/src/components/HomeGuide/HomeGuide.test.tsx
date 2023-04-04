@@ -1,28 +1,81 @@
 import { HomeGuide } from '@src/components/HomeGuide'
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
+import { setupStore } from '../../utils/setupStoreUtil'
+import { Provider } from 'react-redux'
+import { CREATE_NEW_PROJECT, IMPORT_PROJECT_FROM_FILE } from '../../fixtures'
+import userEvent from '@testing-library/user-event'
+import { navigateMock } from '../../../setupTests'
 
-const CREATE_NEW_PROJECT = 'Create a new project'
-const mockedUsedNavigate = jest.fn()
+const mockedUseAppDispatch = jest.fn()
 
-jest.mock('react-router-dom', () => ({
+jest.mock('@src/hooks/useAppDispatch', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
+  useAppDispatch: () => mockedUseAppDispatch,
 }))
 
-describe('HomeGuide', () => {
-  it('should show 2 buttons', () => {
-    const { getByText } = render(<HomeGuide />)
+let store = setupStore()
 
-    expect(getByText('Import project from file')).toBeInTheDocument()
+const setup = () => {
+  store = setupStore()
+  return render(
+    <Provider store={store}>
+      <HomeGuide />
+    </Provider>
+  )
+}
+
+describe('HomeGuide', () => {
+  beforeEach(() => {
+    store = setupStore()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should show 2 buttons', () => {
+    const { getByText } = setup()
+
+    expect(getByText(IMPORT_PROJECT_FROM_FILE)).toBeInTheDocument()
     expect(getByText(CREATE_NEW_PROJECT)).toBeInTheDocument()
   })
 
+  it('should render input when click guide button', async () => {
+    const { getByText, getByTestId } = setup()
+    const fileInput = getByTestId('testInput')
+
+    const clickSpy = jest.spyOn(fileInput, 'click')
+    await userEvent.click(getByText(IMPORT_PROJECT_FROM_FILE))
+
+    expect(clickSpy).toHaveBeenCalled()
+  })
+
+  it('should go to Metrics page and read file when click import file button', async () => {
+    const { getByTestId } = setup()
+
+    const file = new File(['{"projectName": "Heartbeat test"}'], 'test.json', {
+      type: 'file',
+    })
+    const input = getByTestId('testInput')
+
+    Object.defineProperty(input, 'files', {
+      value: [file],
+    })
+
+    fireEvent.change(input)
+
+    await waitFor(() => {
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(2)
+      expect(navigateMock).toHaveBeenCalledWith('/metrics')
+    })
+  })
+
   it('should go to Metrics page when click create a new project button', async () => {
-    const { getByText } = render(<HomeGuide />)
+    const { getByText } = setup()
 
-    fireEvent.click(getByText(CREATE_NEW_PROJECT))
+    await userEvent.click(getByText(CREATE_NEW_PROJECT))
 
-    expect(mockedUsedNavigate).toHaveBeenCalledTimes(1)
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/metrics')
+    expect(navigateMock).toHaveBeenCalledTimes(1)
+    expect(navigateMock).toHaveBeenCalledWith('/metrics')
   })
 })

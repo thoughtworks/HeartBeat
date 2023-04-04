@@ -23,10 +23,5 @@ export const boardSlice = createSlice({
     updateBoard: (state, action) => {
       state.boardConfig = action.payload
     },
-    updateShowBoard: (state, action) => {
-      state.isShowBoard = action.payload
-    },
   },
 })
-
-export default boardSlice.reducer

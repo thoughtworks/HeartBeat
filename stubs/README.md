@@ -12,11 +12,11 @@ all 3rd party services are stubbed within one stub server.
     ```shell
     java -jar stubby4j-x.x.xx.jar -d <PATH_TO_LOCAL_YAML_CONFIG>
     ```
-    Replace PATH_TO_LOCAL_YAML_CONFIG with the path to /HeartBeat/stubs/stubs.yaml.
+    Replace PATH_TO_LOCAL_YAML_CONFIG with the path to /Heartbeat/stubs/stubs.yaml.
 3. Navigate to the stubbed urls that start with http://localhost:4323/. (e.g. http://localhost:4323/health )
 
 ### Run with docker-compose
-1. Navigate to the `/HeartBeat/stubs` folder
+1. Navigate to the `/Heartbeat/stubs` folder
 2. Run the following command:
     ```shell
     docker-compose up -d

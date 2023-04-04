@@ -10,25 +10,31 @@ import {
   sourceControlSlice as sourceControlReducer,
   initialSourceControlState,
 } from '@src/context/config/sourceControl/sourceControlSlice'
-
-export interface basicConfigState {
-  projectName: string
-  calendarType: string
-  dateRange: {
-    startDate: string | null
-    endDate: string | null
+import { REQUIRED_DATA } from '@src/constants'
+export interface BasicConfigState {
+  isProjectCreated: boolean
+  basic: {
+    projectName: string
+    calendarType: string
+    dateRange: {
+      startDate: string | null
+      endDate: string | null
+    }
+    metrics: string[]
   }
-  metrics: string[]
 }
 
-const initialBasicConfigState: basicConfigState = {
-  projectName: '',
-  calendarType: REGULAR_CALENDAR,
-  dateRange: {
-    startDate: null,
-    endDate: null,
+const initialBasicConfigState: BasicConfigState = {
+  isProjectCreated: true,
+  basic: {
+    projectName: '',
+    calendarType: REGULAR_CALENDAR,
+    dateRange: {
+      startDate: null,
+      endDate: null,
+    },
+    metrics: [],
   },
-  metrics: [],
 }
 
 export const configSlice = createSlice({
@@ -41,43 +47,72 @@ export const configSlice = createSlice({
   },
   reducers: {
     updateProjectName: (state, action) => {
-      state.projectName = action.payload
+      state.basic.projectName = action.payload
     },
     updateCalendarType: (state, action) => {
-      state.calendarType = action.payload
+      state.basic.calendarType = action.payload
     },
     updateDateRange: (state, action) => {
       const { startDate, endDate } = action.payload
-      state.dateRange = { startDate, endDate }
+      state.basic.dateRange = { startDate, endDate }
     },
     updateMetrics: (state, action) => {
-      state.metrics = action.payload
+      const {
+        VELOCITY,
+        CYCLE_TIME,
+        CLASSIFICATION,
+        LEAD_TIME_FOR_CHANGES,
+        DEPLOYMENT_FREQUENCY,
+        CHANGE_FAILURE_RATE,
+        MEAN_TIME_TO_RECOVERY,
+      } = REQUIRED_DATA
+
+      state.basic.metrics = action.payload
+
+      state.isShowBoard = [VELOCITY, CYCLE_TIME, CLASSIFICATION].some((metric) => state.basic.metrics.includes(metric))
+      state.isShowPipeline = [
+        LEAD_TIME_FOR_CHANGES,
+        DEPLOYMENT_FREQUENCY,
+        CHANGE_FAILURE_RATE,
+        MEAN_TIME_TO_RECOVERY,
+      ].some((metric) => state.basic.metrics.includes(metric))
+      state.isShowSourceControl = [LEAD_TIME_FOR_CHANGES].some((metric) => state.basic.metrics.includes(metric))
+      state.basic.metrics = action.payload
     },
+    updateBasicConfigState: (state, action) => {
+      state.basic = action.payload
+      state.boardConfig = action.payload.boardConfig || state.boardConfig
+      state.pipelineToolConfig = action.payload.pipelineToolConfig || state.pipelineToolConfig
+      state.sourceControlConfig = action.payload.sourceControlConfig || state.sourceControlConfig
+    },
+    updateProjectCreatedState: (state, action) => {
+      state.isProjectCreated = action.payload
+    },
+
     ...boardReducer.caseReducers,
     ...pipelineToolReducer.caseReducers,
     ...sourceControlReducer.caseReducers,
   },
 })
 export const {
+  updateProjectCreatedState,
   updateProjectName,
   updateCalendarType,
   updateDateRange,
   updateMetrics,
   updateBoard,
   updateBoardVerifyState,
-  updateShowBoard,
+  updateBasicConfigState,
   updatePipelineToolVerifyState,
   updatePipelineTool,
-  updateShowPipeline,
   updateSourceControl,
   updateSourceControlVerifyState,
-  updateShowSourceControl,
 } = configSlice.actions
 
-export const selectProjectName = (state: RootState) => state.config.projectName
-export const selectCalendarType = (state: RootState) => state.config.calendarType
-export const selectDateRange = (state: RootState) => state.config.dateRange
-export const selectMetrics = (state: RootState) => state.config.metrics
+export const selectProjectName = (state: RootState) => state.config.basic.projectName
+export const selectCalendarType = (state: RootState) => state.config.basic.calendarType
+export const selectDateRange = (state: RootState) => state.config.basic.dateRange
+export const selectMetrics = (state: RootState) => state.config.basic.metrics
 export const selectIsBoardVerified = (state: RootState) => state.config.isBoardVerified
 export const selectBoard = (state: RootState) => state.config.boardConfig
 export const isPipelineToolVerified = (state: RootState) => state.config.isPipelineToolVerified

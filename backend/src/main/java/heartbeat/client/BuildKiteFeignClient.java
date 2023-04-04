@@ -2,6 +2,7 @@ package heartbeat.client;
 
 import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
+import heartbeat.client.dto.BuildKiteTokenInfo;
 import heartbeat.config.BuildKiteFeignClientConfiguration;
 import java.util.List;
 import heartbeat.client.dto.BuildKitePipelineDTO;
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @FeignClient(name = "buildKiteFeignClient", url = "${buildKite.url}",
 		configuration = BuildKiteFeignClientConfiguration.class)
 public interface BuildKiteFeignClient {
+
+	@GetMapping(path = "/access-token")
+	@ResponseStatus(HttpStatus.OK)
+	BuildKiteTokenInfo getTokenInfo(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "v2/organizations")
 	@ResponseStatus(HttpStatus.OK)

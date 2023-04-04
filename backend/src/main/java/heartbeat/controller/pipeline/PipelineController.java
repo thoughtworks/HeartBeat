@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.naming.NoPermissionException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pipelines")
@@ -24,8 +26,10 @@ public class PipelineController {
 	private final BuildKiteService buildKiteService;
 
 	@GetMapping("/{pipelineType}")
-	public BuildKiteResponse getBuildKiteInfo(@PathVariable String pipelineType) {
-		return buildKiteService.fetchPipelineInfo();
+	public BuildKiteResponse getBuildKiteInfo(@PathVariable String pipelineType,
+			@RequestHeader("Authorization") @NotBlank(message = "Token must not be blank") String token)
+			throws NoPermissionException {
+		return buildKiteService.fetchPipelineInfo(token);
 	}
 
 	@GetMapping("/{pipelineType}/{organizationId}/pipelines/{buildId}/steps")

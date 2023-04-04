@@ -17,6 +17,7 @@ import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteJob;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.BuildKitePipelineDTO;
+import heartbeat.client.dto.BuildKiteTokenInfo;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
@@ -36,6 +37,8 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import javax.naming.NoPermissionException;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -61,17 +64,20 @@ class BuildKiteServiceTest {
 	BuildKiteService buildKiteService;
 
 	@Test
-	void shouldReturnBuildKiteResponseWhenCallBuildKiteApi() throws IOException {
+	void shouldReturnBuildKiteResponseWhenCallBuildKiteApi() throws IOException, NoPermissionException {
 		ObjectMapper mapper = new ObjectMapper();
 		List<BuildKitePipelineDTO> pipelineDTOS = mapper.readValue(
 				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
 				new TypeReference<>() {
 				});
+		String[] scopes = { "read_builds", "read_organizations", "read_pipelines" };
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo())
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name("XXXX").slug("XXXX").build()));
 		when(buildKiteFeignClient.getPipelineInfo("XXXX", "1", "100")).thenReturn(pipelineDTOS);
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo();
+		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo(any());
 
 		assertThat(buildKiteResponse.getPipelineList().size()).isEqualTo(1);
 		Pipeline pipeline = buildKiteResponse.getPipelineList().get(0);
@@ -87,11 +93,23 @@ class BuildKiteServiceTest {
 	@Test
 	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
 		FeignException feignException = mock(FeignException.class);
+		String[] scopes = { "read_builds", "read_organizations", "read_pipelines" };
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo()).thenThrow(feignException);
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo());
+		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo(any()));
 
 		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo();
+	}
+
+	@Test
+	void shouldThrowNoPermissionExceptionWhenTokenPermissionDeny() {
+		String[] scopes = { "mock" };
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
+
+		assertThrows(NoPermissionException.class, () -> buildKiteService.fetchPipelineInfo(any()));
 	}
 
 	@Test

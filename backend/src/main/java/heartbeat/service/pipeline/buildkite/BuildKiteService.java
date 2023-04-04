@@ -5,13 +5,16 @@ import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteJob;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
+import heartbeat.client.dto.BuildKiteTokenInfo;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineTransformer;
 import heartbeat.exception.RequestFailedException;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +25,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
@@ -30,17 +34,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import javax.naming.NoPermissionException;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class BuildKiteService {
 
+	private static final String[] permissions = { "read_builds", "read_organizations", "read_pipelines" };
+
 	public static final String BUILD_KITE_LINK_HEADER = HttpHeaders.LINK;
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
-	public BuildKiteResponse fetchPipelineInfo() {
+	public BuildKiteResponse fetchPipelineInfo(String token) throws NoPermissionException {
 		try {
+			log.info("[BuildKite] Start to query token permissions");
+			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(token);
+			log.info("[BuildKite] Successfully get permissions" + buildKiteTokenInfo);
+
+			if (!verifyToken(buildKiteTokenInfo))
+				throw new NoPermissionException("Permission deny!");
+
 			log.info("[BuildKite] Start to query organizations");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
 				.getBuildKiteOrganizationsInfo();
@@ -63,6 +78,15 @@ public class BuildKiteService {
 			log.error("[BuildKite] Failed when call BuildKite", e);
 			throw new RequestFailedException(e);
 		}
+	}
+
+	private Boolean verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
+		for (String permission : permissions) {
+			if (!Arrays.asList(buildKiteTokenInfo.getScopes()).contains(permission)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public PipelineStepsResponse fetchPipelineSteps(String token, String organizationId, String pipelineId,

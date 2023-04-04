@@ -23,10 +23,12 @@ import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.exception.RequestFailedException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -70,8 +72,9 @@ class BuildKiteServiceTest {
 				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
 				new TypeReference<>() {
 				});
-		String[] scopes = { "read_builds", "read_organizations", "read_pipelines" };
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
+			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
+			.build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo())
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name("XXXX").slug("XXXX").build()));
 		when(buildKiteFeignClient.getPipelineInfo("XXXX", "1", "100", "startTime", "endTime")).thenReturn(pipelineDTOS);
@@ -93,8 +96,9 @@ class BuildKiteServiceTest {
 	@Test
 	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
 		FeignException feignException = mock(FeignException.class);
-		String[] scopes = { "read_builds", "read_organizations", "read_pipelines" };
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
+			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
+			.build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo()).thenThrow(feignException);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
@@ -106,8 +110,7 @@ class BuildKiteServiceTest {
 
 	@Test
 	void shouldThrowNoPermissionExceptionWhenTokenPermissionDeny() {
-		String[] scopes = { "mock" };
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(List.of("mock")).build();
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
 		assertThrows(NoPermissionException.class,

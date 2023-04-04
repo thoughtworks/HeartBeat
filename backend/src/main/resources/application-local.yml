@@ -6,11 +6,12 @@ logging:
   level:
     root: DEBUG
 
-githubFeignClient:
-  url: ${Mock_Server_URL}
+github:
+  url: ${MOCK_SERVER_URL:https://api.github.com}
 
 jira:
-  url: ${Mock_Server_URL}
+  url: ${MOCK_SERVER_URL:https://%s.atlassian.net}
 
 buildKite:
-  url: ${Mock_Server_URL}
+  url: ${MOCK_SERVER_URL:https://api.buildkite.com}
+

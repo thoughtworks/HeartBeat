@@ -10,11 +10,11 @@ logging:
   level:
     root: INFO
 
-githubFeignClient:
+github:
   url: https://api.github.com
 
 jira:
-  url: https://demo.atlassian.net
+  url: https://%s.atlassian.net
 
 buildKite:
-  url: ${MOCK_SERVER_URL:http://localhost:4323}
+  url: https://api.buildkite.com

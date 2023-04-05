@@ -16,7 +16,7 @@ describe('Export Step', () => {
     const { getByText } = setup()
 
     await waitFor(() => {
-      expect(getByText(REQUIRED_DATA_LIST[0])).toBeInTheDocument()
+      expect(getByText(REQUIRED_DATA_LIST[1])).toBeInTheDocument()
     })
   })
 

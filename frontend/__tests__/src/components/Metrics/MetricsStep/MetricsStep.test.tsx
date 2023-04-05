@@ -38,7 +38,7 @@ describe('MetricsStep', () => {
   })
 
   it('should show Cycle Time Settings when select cycle time in config page', async () => {
-    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[2]]))
     const { getByText } = setup()
 
     expect(getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument()
@@ -73,14 +73,14 @@ describe('MetricsStep', () => {
   })
 
   it('should show Classification Setting when select classification in config page', async () => {
-    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[2]]))
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[3]]))
     const { getByText } = setup()
 
     expect(getByText(CLASSIFICATION_SETTING)).toBeInTheDocument()
   })
 
   it('should show DeploymentFrequencySettings component when select deployment frequency in config page', async () => {
-    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[4]]))
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[5]]))
     const { getByText } = setup()
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()

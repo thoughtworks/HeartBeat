@@ -5,6 +5,7 @@ import {
   SOURCE_CONTROL_TYPES,
   SELECTED_VALUE_SEPARATOR,
   REQUIRED_DATA,
+  ALL_SELECT_OPTIONS,
 } from '@src/constants'
 import { useEffect, useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
@@ -53,6 +54,8 @@ export const MetricsTypeCheckbox = () => {
     metrics && dispatch(updateMetrics(metrics))
   }, [metrics, dispatch])
 
+  const [AllSelect, setAllSelect] = useState(false)
+
   const updatePipelineToolState = () => {
     dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     dispatch(updatePipelineToolVerifyState(false))
@@ -74,7 +77,16 @@ export const MetricsTypeCheckbox = () => {
       target: { value },
     } = event
 
-    dispatch(updateMetrics(value))
+    if (value.includes('All') && !AllSelect) {
+      setAllSelect(true)
+      dispatch(updateMetrics(ALL_SELECT_OPTIONS))
+    } else if (!value.includes('All') && AllSelect) {
+      setAllSelect(false)
+      dispatch(updateMetrics([]))
+    } else {
+      dispatch(updateMetrics(value))
+    }
+
     value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     updateBoardState()
     updatePipelineToolState()

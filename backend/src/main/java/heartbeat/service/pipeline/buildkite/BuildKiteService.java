@@ -47,7 +47,8 @@ public class BuildKiteService {
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
-	public BuildKiteResponse fetchPipelineInfo(String token) throws NoPermissionException {
+	public BuildKiteResponse fetchPipelineInfo(String token, String startTime, String endTime)
+			throws NoPermissionException {
 		try {
 			log.info("[BuildKite] Start to query token permissions");
 			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(token);
@@ -64,7 +65,7 @@ public class BuildKiteService {
 			log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:"
 					+ buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(org.getSlug(), "1", "100")
+				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(org.getSlug(), "1", "100", startTime, endTime)
 					.stream()
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))

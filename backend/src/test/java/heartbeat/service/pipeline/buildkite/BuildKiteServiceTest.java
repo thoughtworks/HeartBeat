@@ -74,10 +74,10 @@ class BuildKiteServiceTest {
 		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo())
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name("XXXX").slug("XXXX").build()));
-		when(buildKiteFeignClient.getPipelineInfo("XXXX", "1", "100")).thenReturn(pipelineDTOS);
+		when(buildKiteFeignClient.getPipelineInfo("XXXX", "1", "100", "startTime", "endTime")).thenReturn(pipelineDTOS);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo(any());
+		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo("mockToken", "startTime", "endTime");
 
 		assertThat(buildKiteResponse.getPipelineList().size()).isEqualTo(1);
 		Pipeline pipeline = buildKiteResponse.getPipelineList().get(0);
@@ -98,7 +98,8 @@ class BuildKiteServiceTest {
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo()).thenThrow(feignException);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo(any()));
+		assertThrows(RequestFailedException.class,
+				() -> buildKiteService.fetchPipelineInfo(any(), "startTime", "endTime"));
 
 		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo();
 	}
@@ -109,7 +110,8 @@ class BuildKiteServiceTest {
 		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(scopes).build();
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		assertThrows(NoPermissionException.class, () -> buildKiteService.fetchPipelineInfo(any()));
+		assertThrows(NoPermissionException.class,
+				() -> buildKiteService.fetchPipelineInfo(any(), "startTime", "endTime"));
 	}
 
 	@Test

@@ -30,7 +30,7 @@ public interface BuildKiteFeignClient {
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}")
 	@ResponseStatus(HttpStatus.OK)
 	List<BuildKitePipelineDTO> getPipelineInfo(@PathVariable String organizationId, @PathVariable String page,
-			@PathVariable String perPage);
+			@PathVariable String perPage, @RequestParam String startTime, @RequestParam String endTime);
 
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds")
 	@ResponseStatus(HttpStatus.OK)

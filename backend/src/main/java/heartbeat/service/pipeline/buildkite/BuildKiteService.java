@@ -33,6 +33,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import heartbeat.util.TokenUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
+
+import javax.naming.NoPermissionException;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -47,7 +58,7 @@ public class BuildKiteService {
 	public BuildKiteResponse fetchPipelineInfo(String token, String startTime, String endTime)
 			throws NoPermissionException {
 		try {
-			log.info("[BuildKite] Start to query token permissions");
+			log.info("[BuildKite] Start to query token permissions" + TokenUtil.maskToken(token));
 			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(token);
 			log.info("[BuildKite] Successfully get permissions" + buildKiteTokenInfo);
 

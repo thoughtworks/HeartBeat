@@ -82,6 +82,10 @@ export const MetricsTypeCheckbox = () => {
       setAllSelect(true)
       selectList = ALL_SELECT_OPTIONS
       dispatch(updateMetrics(selectList))
+    } else if (value.includes('All')) {
+      setAllSelect(false)
+      selectList = value.slice(1, value.length)
+      dispatch(updateMetrics(selectList))
     } else if (!value.includes('All') && AllSelect) {
       setAllSelect(false)
       selectList = []

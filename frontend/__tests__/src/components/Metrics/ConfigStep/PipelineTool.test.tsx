@@ -21,7 +21,7 @@ import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
 
 export const fillPipelineToolFieldsInformation = async () => {
-  const mockInfo = 'mockTokenMockTokenMockTokenMockToken1234'
+  const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
   const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
   await userEvent.type(tokenInput, mockInfo)
 

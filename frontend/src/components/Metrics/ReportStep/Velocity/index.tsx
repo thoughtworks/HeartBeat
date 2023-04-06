@@ -1,18 +1,28 @@
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { TableBody, TableCell, TableHead, TableRow, Table } from '@mui/material'
 import { Container, Row } from '@src/components/Metrics/ReportStep/Velocity/style'
-import { VelocityInterface } from '@src/types/reportResponse'
+import { VelocityRes } from '@src/types/reportRes'
+import { VelocityMetric } from '@src/constants'
 
 interface VelocityProps {
   title: string
-  velocityData: VelocityInterface
+  velocityData: VelocityRes
+}
+interface VelocityMetricRow {
+  name: VelocityMetric
+  value: string
 }
 
 export const Velocity = ({ title, velocityData }: VelocityProps) => {
-  const velocities = Object.entries(velocityData).map(([name, value]) => ({
-    name,
+  const velocityValues = {
+    [VelocityMetric.VELOCITY_SP]: velocityData.velocityForSP,
+    [VelocityMetric.THROUGHPUT_CARDS_COUNT]: velocityData.velocityForCards,
+  }
+  const velocityRows: VelocityMetricRow[] = Object.entries(velocityValues).map(([name, value]) => ({
+    name: name as VelocityMetric,
     value,
   }))
+
   return (
     <>
       <MetricsSettingTitle title={title} />
@@ -25,7 +35,7 @@ export const Velocity = ({ title, velocityData }: VelocityProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {velocities.map(({ name, value }) => (
+            {velocityRows.map(({ name, value }) => (
               <Row key={name}>
                 <TableCell align='left'>{name}</TableCell>
                 <TableCell align='center'>{value}</TableCell>

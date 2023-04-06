@@ -1,10 +1,6 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import {
-  GITHUB_VERIFY_ERROR_MESSAGE,
-  MOCK_SOURCE_CONTROL_URL,
-  MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS,
-} from '../fixtures'
+import { MOCK_SOURCE_CONTROL_URL, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures'
 import { sourceControlClient } from '@src/clients/SourceControlClient'
 import { HttpStatusCode } from 'axios'
 
@@ -25,16 +21,16 @@ describe('verify sourceControl request', () => {
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.BAD_REQUEST)
+      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.BAD_REQUEST)
     })
   })
 
   it('should throw error when sourceControl verify response status is 404', async () => {
-    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
+    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.NotFound))))
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)
+      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.NOT_FOUND)
     })
   })
 
@@ -45,7 +41,15 @@ describe('verify sourceControl request', () => {
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
       expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(GITHUB_VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
+      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
     })
+  })
+
+  it('should throw error when sourceControl verify response status is 300', async () => {
+    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))))
+
+    await expect(async () => {
+      await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 })

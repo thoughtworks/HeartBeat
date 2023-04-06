@@ -2,14 +2,14 @@ import { createSlice } from '@reduxjs/toolkit'
 import { PIPELINE_TOOL_TYPES } from '@src/constants'
 
 export interface pipelineToolState {
-  pipelineToolConfig: { pipelineTool: string; token: string }
+  pipelineToolConfig: { type: string; token: string }
   isPipelineToolVerified: boolean
   isShowPipeline: boolean
 }
 
 export const initialPipelineToolState: pipelineToolState = {
   pipelineToolConfig: {
-    pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    type: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',
   },
   isPipelineToolVerified: false,

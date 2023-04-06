@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { sourceControlClient, getVerifySourceControlParams } from '@src/clients/SourceControlClient'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION, VERIFY_FAILED_ERROR_MESSAGE } from '@src/constants'
 
 export interface useVerifySourceControlStateInterface {
   verifyGithub: (params: getVerifySourceControlParams) => Promise<
@@ -24,7 +24,7 @@ export const useVerifySourceControlEffect = (): useVerifySourceControlStateInter
       return await sourceControlClient.getVerifySourceControl(params)
     } catch (e) {
       const err = e as Error
-      setErrorMessage(err.message)
+      setErrorMessage(`${params.type} ${VERIFY_FAILED_ERROR_MESSAGE}: ${err.message}`)
       setTimeout(() => {
         setErrorMessage('')
       }, ERROR_MESSAGE_TIME_DURATION)

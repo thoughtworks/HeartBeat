@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { boardClient, getVerifyBoardParams } from '@src/clients/BoardClient'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION, VERIFY_FAILED_ERROR_MESSAGE } from '@src/constants'
 
 export interface useVerifyBoardStateInterface {
   verifyJira: (params: getVerifyBoardParams) => Promise<
@@ -25,7 +25,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
       return await boardClient.getVerifyBoard(params)
     } catch (e) {
       const err = e as Error
-      setErrorMessage(err.message)
+      setErrorMessage(`${params.type} ${VERIFY_FAILED_ERROR_MESSAGE}: ${err.message}`)
       setTimeout(() => {
         setErrorMessage('')
       }, ERROR_MESSAGE_TIME_DURATION)

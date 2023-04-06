@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react'
 import { Velocity } from '@src/components/Metrics/ReportStep/Velocity'
+import { VelocityMetric } from '../../../fixtures'
 
 describe('Velocity component', () => {
   const mockTitle = 'Test Velocity'
@@ -11,7 +12,7 @@ describe('Velocity component', () => {
     const { getByText } = setup()
 
     expect(getByText(mockTitle)).toBeInTheDocument()
-    expect(getByText(mockVelocityData.velocityForSP)).toBeInTheDocument()
-    expect(getByText(mockVelocityData.velocityForSP)).toBeInTheDocument()
+    expect(getByText(VelocityMetric.VELOCITY_SP)).toBeInTheDocument()
+    expect(getByText(VelocityMetric.THROUGHPUT_CARDS_COUNT)).toBeInTheDocument()
   })
 })

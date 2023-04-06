@@ -5,7 +5,6 @@ import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  GITHUB_VERIFY_ERROR_MESSAGE,
   MOCK_SOURCE_CONTROL_URL,
   RESET,
   SOURCE_CONTROL_FIELDS,
@@ -13,6 +12,8 @@ import {
   TOKEN_ERROR_MESSAGE,
   VERIFIED,
   VERIFY,
+  VERIFY_ERROR_MESSAGE,
+  VERIFY_FAILED,
 } from '../../../fixtures'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
@@ -27,21 +28,25 @@ export const fillSourceControlFieldsInformation = () => {
   expect(tokenInput.value).toEqual(mockInfo)
 }
 
-let store = setupStore()
-const setup = () => {
-  store = setupStore()
-  return render(
-    <Provider store={store}>
-      <SourceControl />
-    </Provider>
-  )
-}
+let store = null
 
 const server = setupServer(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))))
 
 describe('SourceControl', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
+  store = setupStore()
+  const setup = () => {
+    store = setupStore()
+    return render(
+      <Provider store={store}>
+        <SourceControl />
+      </Provider>
+    )
+  }
+  afterEach(() => {
+    store = null
+  })
 
   it('should show sourceControl title and fields when render sourceControl component', () => {
     const { getByRole, getByLabelText } = setup()
@@ -89,7 +94,7 @@ describe('SourceControl', () => {
     expect(verifyButton).toBeEnabled()
   })
 
-  it('should show reset button  and verified button when verify successfully', async () => {
+  it('should show reset button and verified button when verify successfully', async () => {
     const { getByText } = setup()
     fillSourceControlFieldsInformation()
 
@@ -138,7 +143,9 @@ describe('SourceControl', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(GITHUB_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)).toBeInTheDocument()
+      expect(
+        getByText(`${SOURCE_CONTROL_TYPES.GITHUB} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
+      ).toBeInTheDocument()
     })
   })
 })

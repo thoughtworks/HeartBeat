@@ -245,9 +245,9 @@ describe('MetricsStepper', () => {
         startDate: null,
       },
       metrics: ['Velocity', 'Lead time for changes'],
-      pipelineTool: { pipelineTool: 'BuildKite', token: '' },
+      pipelineTool: { type: 'BuildKite', token: '' },
       projectName: '',
-      sourceControl: { sourceControl: 'Github', token: '' },
+      sourceControl: { type: 'GitHub', token: '' },
     }
 
     const { getByText } = setup()

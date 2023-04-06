@@ -8,7 +8,8 @@ import {
   MOCK_BOARD_URL_FOR_JIRA,
   RESET,
   VERIFY,
-  JIRA_VERIFY_ERROR_MESSAGE,
+  VERIFY_ERROR_MESSAGE,
+  VERIFY_FAILED,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -28,20 +29,27 @@ export const fillBoardFieldsInformation = () => {
   })
 }
 
-let store = setupStore()
-const setup = () => {
-  store = setupStore()
-  return render(
-    <Provider store={store}>
-      <Board />
-    </Provider>
-  )
-}
+let store = null
+
 const server = setupServer(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(200))))
 
 describe('Board', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
+
+  store = setupStore()
+  const setup = () => {
+    store = setupStore()
+    return render(
+      <Provider store={store}>
+        <Board />
+      </Provider>
+    )
+  }
+
+  afterEach(() => {
+    store = null
+  })
 
   it('should show board title and fields when render board component ', () => {
     const { getByRole, getByLabelText } = setup()
@@ -180,12 +188,14 @@ describe('Board', () => {
     })
   })
 
-  it('should check loading animation when click verify button', () => {
+  it('should check loading animation when click verify button', async () => {
     const { getByRole, container } = setup()
     fillBoardFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
-    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
+    await waitFor(() => {
+      expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
+    })
   })
 
   it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
@@ -211,7 +221,9 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText(JIRA_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)).toBeInTheDocument()
+      expect(
+        getByText(`${BOARD_TYPES.JIRA} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
+      ).toBeInTheDocument()
     })
   })
 })

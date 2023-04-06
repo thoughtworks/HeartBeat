@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { pipelineToolClient, getVerifyPipelineToolParams } from '@src/clients/PipelineToolClient'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION, VERIFY_FAILED_ERROR_MESSAGE } from '@src/constants'
 
 export interface useVerifyPipeLineToolStateInterface {
   verifyPipelineTool: (params: getVerifyPipelineToolParams) => Promise<
@@ -24,7 +24,7 @@ export const useVerifyPipelineToolEffect = (): useVerifyPipeLineToolStateInterfa
       return await pipelineToolClient.verifyPipelineTool(params)
     } catch (e) {
       const err = e as Error
-      setErrorMessage(err.message)
+      setErrorMessage(`${params.type} ${VERIFY_FAILED_ERROR_MESSAGE}: ${err.message}`)
       setTimeout(() => {
         setErrorMessage('')
       }, ERROR_MESSAGE_TIME_DURATION)

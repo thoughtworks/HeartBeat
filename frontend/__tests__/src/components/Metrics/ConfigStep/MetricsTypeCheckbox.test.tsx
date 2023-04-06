@@ -13,16 +13,19 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import userEvent from '@testing-library/user-event'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 let store = null
-const setup = () => {
-  store = setupStore()
-  return render(
-    <Provider store={store}>
-      <MetricsTypeCheckbox />
-    </Provider>
-  )
-}
 
 describe('MetricsTypeCheckbox', () => {
+  const setup = () => {
+    store = setupStore()
+    return render(
+      <Provider store={store}>
+        <MetricsTypeCheckbox />
+      </Provider>
+    )
+  }
+  afterEach(() => {
+    store = null
+  })
   it('should show require data and do not display specific options when init', () => {
     const { getByText, queryByText } = setup()
     const require = getByText(REQUIRED_DATA)

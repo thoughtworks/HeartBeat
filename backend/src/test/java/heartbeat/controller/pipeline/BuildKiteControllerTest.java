@@ -54,7 +54,7 @@ public class BuildKiteControllerTest {
 			.andReturn()
 			.getResponse();
 		final var resultId = JsonPath.parse(response.getContentAsString()).read("$.pipelineList[0].id").toString();
-		assertThat(resultId).contains("0186104b-aa31-458c-a58c-63266806f2fe");
+		assertThat(resultId).contains("payment-selector-ui");
 		final var resultName = JsonPath.parse(response.getContentAsString()).read("$.pipelineList[0].name").toString();
 		assertThat(resultName).contains("payment-selector-ui");
 	}

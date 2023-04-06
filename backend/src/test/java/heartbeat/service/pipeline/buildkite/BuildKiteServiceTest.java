@@ -103,7 +103,7 @@ class BuildKiteServiceTest {
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
 		assertThrows(RequestFailedException.class,
-				() -> buildKiteService.fetchPipelineInfo(any(), "startTime", "endTime"));
+				() -> buildKiteService.fetchPipelineInfo("test_token", "startTime", "endTime"));
 
 		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo();
 	}
@@ -114,7 +114,7 @@ class BuildKiteServiceTest {
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
 		assertThrows(NoPermissionException.class,
-				() -> buildKiteService.fetchPipelineInfo(any(), "startTime", "endTime"));
+				() -> buildKiteService.fetchPipelineInfo("test_token", "startTime", "endTime"));
 	}
 
 	@Test

@@ -12,6 +12,7 @@ import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineTransformer;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;

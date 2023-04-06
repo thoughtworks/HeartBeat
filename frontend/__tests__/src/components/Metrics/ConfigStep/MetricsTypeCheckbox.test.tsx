@@ -5,6 +5,8 @@ import {
   VELOCITY,
   LEAD_TIME_FOR_CHANGES,
   CYCLE_TIME,
+  ALL,
+  MEAN_TIME_TO_RECOVERY,
 } from '../../../fixtures'
 import { render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
@@ -52,6 +54,52 @@ describe('MetricsTypeCheckbox', () => {
     await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }))
 
     expect(getByText([VELOCITY, CYCLE_TIME].join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+  })
+
+  it('should show all selections when all option are select', async () => {
+    const { getByRole, getByText } = setup()
+    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
+
+    const listBox = within(getByRole('listbox'))
+    await userEvent.click(listBox.getByRole('option', { name: ALL }))
+
+    expect(getByText(REQUIRED_DATA_LIST.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+  })
+
+  it('should show all selections when click velocity selection and then click all selection', async () => {
+    const { getByRole, getByText } = setup()
+    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
+
+    const listBox = within(getByRole('listbox'))
+    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))
+    await userEvent.click(listBox.getByRole('option', { name: ALL }))
+
+    expect(getByText(REQUIRED_DATA_LIST.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+  })
+
+  it('should show some selections when click all option and then click velocity selection', async () => {
+    const { getByRole, getByText } = setup()
+    REQUIRED_DATA_LIST.pop()
+
+    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
+
+    const listBox = within(getByRole('listbox'))
+    await userEvent.click(listBox.getByRole('option', { name: ALL }))
+    await userEvent.click(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }))
+
+    expect(getByText(REQUIRED_DATA_LIST.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+  })
+
+  it('should show none selection when double click all option', async () => {
+    const { getByRole, getByText } = setup()
+    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
+
+    const listBox = within(getByRole('listbox'))
+    await userEvent.dblClick(listBox.getByRole('option', { name: ALL }))
+    await userEvent.click(getByRole('listbox', { name: REQUIRED_DATA }))
+
+    const errorMessage = getByText('Metrics is required')
+    expect(errorMessage).toBeInTheDocument()
   })
 
   it('should show error message when require data is null', async () => {

@@ -76,18 +76,22 @@ export const MetricsTypeCheckbox = () => {
     const {
       target: { value },
     } = event
+    let select: string | string[]
 
     if (value.includes('All') && !AllSelect) {
       setAllSelect(true)
-      dispatch(updateMetrics(ALL_SELECT_OPTIONS))
+      select = ALL_SELECT_OPTIONS
+      dispatch(updateMetrics(select))
     } else if (!value.includes('All') && AllSelect) {
       setAllSelect(false)
-      dispatch(updateMetrics([]))
+      select = []
+      dispatch(updateMetrics(select))
     } else {
-      dispatch(updateMetrics(value))
+      select = value
+      dispatch(updateMetrics(select))
     }
 
-    value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
+    select.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     updateBoardState()
     updatePipelineToolState()
     updateSourceControlState()

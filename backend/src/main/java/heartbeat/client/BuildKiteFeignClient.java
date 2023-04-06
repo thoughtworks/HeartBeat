@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 		configuration = BuildKiteFeignClientConfiguration.class)
 public interface BuildKiteFeignClient {
 
-	@GetMapping(path = "/access-token")
+	@GetMapping(path = "v2/access-token")
 	@ResponseStatus(HttpStatus.OK)
 	BuildKiteTokenInfo getTokenInfo(@RequestHeader("Authorization") String token);
 

@@ -50,10 +50,7 @@ public class BuildKiteService {
 			log.info("[BuildKite] Start to query token permissions" + TokenUtil.maskToken(token));
 			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(token);
 			log.info("[BuildKite] Successfully get permissions" + buildKiteTokenInfo);
-
-			if (!verifyToken(buildKiteTokenInfo))
-				throw new NoPermissionException("Permission deny!");
-
+			verifyToken(buildKiteTokenInfo);
 			log.info("[BuildKite] Start to query organizations");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
 				.getBuildKiteOrganizationsInfo();
@@ -81,13 +78,12 @@ public class BuildKiteService {
 		}
 	}
 
-	private Boolean verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
+	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) throws NoPermissionException {
 		for (String permission : permissions) {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
-				return false;
+				throw new NoPermissionException("Permission deny!");
 			}
 		}
-		return true;
 	}
 
 	public PipelineStepsResponse fetchPipelineSteps(String token, String organizationId, String pipelineId,

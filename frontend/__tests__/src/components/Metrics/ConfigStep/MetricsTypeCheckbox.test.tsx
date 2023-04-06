@@ -79,15 +79,15 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show some selections when click all option and then click velocity selection', async () => {
     const { getByRole, getByText } = setup()
-    REQUIRED_DATA_LIST.pop()
+    const partOfDataList = REQUIRED_DATA_LIST.slice(0, 7)
 
     await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByRole('option', { name: ALL }))
+
     await userEvent.click(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }))
 
-    expect(getByText(REQUIRED_DATA_LIST.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+    expect(getByText(partOfDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
   })
 
   it('should show none selection when double click all option', async () => {

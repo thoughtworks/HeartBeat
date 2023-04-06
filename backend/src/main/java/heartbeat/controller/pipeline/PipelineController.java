@@ -1,5 +1,6 @@
 package heartbeat.controller.pipeline;
 
+import heartbeat.controller.pipeline.vo.request.PipelineParam;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
@@ -13,10 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.naming.NoPermissionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,10 +25,8 @@ public class PipelineController {
 	private final BuildKiteService buildKiteService;
 
 	@GetMapping("/{pipelineType}")
-	public BuildKiteResponse getBuildKiteInfo(@PathVariable String pipelineType,
-			@RequestHeader("Authorization") @NotBlank(message = "Token must not be blank") String token,
-			@RequestParam String startTime, @RequestParam String endTime) throws NoPermissionException {
-		return buildKiteService.fetchPipelineInfo(token, startTime, endTime);
+	public BuildKiteResponse getBuildKiteInfo(@PathVariable String pipelineType, @Valid PipelineParam pipelineParam) {
+		return buildKiteService.fetchPipelineInfo(pipelineParam);
 	}
 
 	@GetMapping("/{pipelineType}/{organizationId}/pipelines/{buildId}/steps")

@@ -6,6 +6,7 @@ import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteJob;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.BuildKiteTokenInfo;
+import heartbeat.controller.pipeline.vo.request.PipelineParam;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
@@ -45,16 +46,12 @@ public class BuildKiteService {
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
-	public BuildKiteResponse fetchPipelineInfo(String token, String startTime, String endTime)
-			throws NoPermissionException {
+	public BuildKiteResponse fetchPipelineInfo(PipelineParam pipelineParam) {
 		try {
-			log.info("[BuildKite] Start to query token permissions" + TokenUtil.maskToken(token));
-			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(token);
+			log.info("[BuildKite] Start to query token permissions" + TokenUtil.maskToken(pipelineParam.getToken()));
+			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(pipelineParam.getToken());
 			log.info("[BuildKite] Successfully get permissions" + buildKiteTokenInfo);
-
-			if (!verifyToken(buildKiteTokenInfo))
-				throw new NoPermissionException("Permission deny!");
-
+			verifyToken(buildKiteTokenInfo);
 			log.info("[BuildKite] Start to query organizations");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
 				.getBuildKiteOrganizationsInfo();
@@ -63,7 +60,9 @@ public class BuildKiteService {
 			log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:"
 					+ buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(org.getSlug(), "1", "100", startTime, endTime)
+				.flatMap(org -> buildKiteFeignClient
+					.getPipelineInfo(org.getSlug(), "1", "100", pipelineParam.getStartTime(),
+							pipelineParam.getEndTime())
 					.stream()
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))
@@ -77,15 +76,17 @@ public class BuildKiteService {
 			log.error("[BuildKite] Failed when call BuildKite", e);
 			throw new RequestFailedException(e);
 		}
+		catch (NoPermissionException e) {
+			throw new RequestFailedException(403, e.getMessage());
+		}
 	}
 
-	private Boolean verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
+	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) throws NoPermissionException {
 		for (String permission : permissions) {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
-				return false;
+				throw new NoPermissionException("Permission deny!");
 			}
 		}
-		return true;
 	}
 
 	public PipelineStepsResponse fetchPipelineSteps(String token, String organizationId, String pipelineId,

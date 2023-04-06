@@ -46,10 +46,10 @@ public class BuildKiteControllerTest {
 				new File("src/test/java/heartbeat/controller/pipeline/pipelineInfoData.json"), new TypeReference<>() {
 				});
 		BuildKiteResponse buildKiteResponse = BuildKiteResponse.builder().pipelineList(pipelines).build();
-		when(buildKiteService.fetchPipelineInfo(any(), any(), any())).thenReturn(buildKiteResponse);
+		when(buildKiteService.fetchPipelineInfo(any())).thenReturn(buildKiteResponse);
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/pipelines/buildKite").contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", "token")
+				.queryParam("token", "test_token")
 				.queryParam("startTime", "16737733")
 				.queryParam("endTime", "17657557"))
 			.andExpect(status().isOk())

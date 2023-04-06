@@ -1,6 +1,8 @@
 import { render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { REQUIRED_DATA_LIST } from '../../../fixtures'
+import { setupStore } from '../../../utils/setupStoreUtil'
+import { Provider } from 'react-redux'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: () => ({
@@ -10,8 +12,21 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
     isLoading: false,
   }),
 }))
+let store = null
+
 describe('Export Step', () => {
-  const setup = () => render(<ReportStep />)
+  store = setupStore()
+  const setup = () => {
+    store = setupStore()
+    return render(
+      <Provider store={store}>
+        <ReportStep />
+      </Provider>
+    )
+  }
+  afterEach(() => {
+    store = null
+  })
   it('should render export page', async () => {
     const { getByText } = setup()
 

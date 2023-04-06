@@ -11,7 +11,7 @@ public interface PipelineTransformer {
 		return Pipeline.builder()
 			.orgId(orgId)
 			.orgName(orgName)
-			.id(dto.getId())
+			.id(dto.getSlug())
 			.name(dto.getName())
 			.repository(dto.getRepository())
 			.steps(dto.getSteps()

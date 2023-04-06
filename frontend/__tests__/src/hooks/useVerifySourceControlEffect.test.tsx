@@ -1,7 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { sourceControlClient } from '@src/clients/SourceControlClient'
-import { MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS } from '../fixtures'
+import { MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 describe('use verify sourceControl state', () => {
   it('should initial data state when render hook', async () => {
@@ -25,5 +26,20 @@ describe('use verify sourceControl state', () => {
     })
 
     expect(result.current.errorMessage).toEqual('')
+  })
+
+  it('should set error message when get verify sourceControl response status 500', async () => {
+    sourceControlClient.getVerifySourceControl = jest.fn().mockImplementation(() => {
+      throw new InternalServerException('error message')
+    })
+    const { result } = renderHook(() => useVerifySourceControlEffect())
+
+    act(() => {
+      result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+    })
+
+    expect(result.current.errorMessage).toEqual(
+      `${MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`
+    )
   })
 })

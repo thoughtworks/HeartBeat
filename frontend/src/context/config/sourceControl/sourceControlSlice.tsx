@@ -2,14 +2,14 @@ import { createSlice } from '@reduxjs/toolkit'
 import { SOURCE_CONTROL_TYPES } from '@src/constants'
 
 export interface sourceControlState {
-  sourceControlConfig: { sourceControl: string; token: string }
+  sourceControlConfig: { type: string; token: string }
   isSourceControlVerified: boolean
   isShowSourceControl: boolean
 }
 
 export const initialSourceControlState: sourceControlState = {
   sourceControlConfig: {
-    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
+    type: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
   isSourceControlVerified: false,

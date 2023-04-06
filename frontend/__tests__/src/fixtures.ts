@@ -60,7 +60,7 @@ export const PIPELINE_TOOL_TYPES = {
 }
 
 export const SOURCE_CONTROL_TYPES = {
-  GITHUB: 'Github',
+  GITHUB: 'GitHub',
 }
 
 export enum CONFIG_TITLE {
@@ -80,23 +80,14 @@ export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
 export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`
 export const MOCK_REPORT_URL = `${BASE_URL}/report`
 
-export enum JIRA_VERIFY_ERROR_MESSAGE {
-  BAD_REQUEST = 'Jira verify failed: Please reconfirm the input',
-  UNAUTHORIZED = 'Jira verify failed: Token is incorrect',
-  INTERNAL_SERVER_ERROR = 'Jira verify failed: Internal server error',
+export enum VERIFY_ERROR_MESSAGE {
+  BAD_REQUEST = 'Please reconfirm the input',
+  UNAUTHORIZED = 'Token is incorrect',
+  INTERNAL_SERVER_ERROR = 'Internal server error',
+  NOT_FOUND = '404 Not Found',
+  UNKNOWN = 'Unknown',
 }
-
-export enum PIPELINE_TOOL_VERIFY_ERROR_MESSAGE {
-  BAD_REQUEST = 'BuildKite verify failed: Bad request',
-  UNAUTHORIZED = 'BuildKite verify failed: Token is incorrect',
-  INTERNAL_SERVER_ERROR = 'BuildKite verify failed: Internal server error',
-}
-
-export enum GITHUB_VERIFY_ERROR_MESSAGE {
-  BAD_REQUEST = 'Github verify failed: Bad request',
-  UNAUTHORIZED = 'Github verify failed: Token is incorrect',
-  INTERNAL_SERVER_ERROR = 'Github verify failed: Internal server error',
-}
+export const VERIFY_FAILED = 'verify failed'
 
 export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
@@ -128,6 +119,29 @@ export const MOCK_PIPELINE_VERIFY_REQUEST_PARAMS = {
 export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: SOURCE_CONTROL_TYPES.GITHUB,
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+}
+
+export const MOCK_GENERATE_REPORT_REQUEST_PARAMS = {
+  metrics: [],
+  pipeline: {
+    token: 'mockToken',
+    type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+  },
+  board: {
+    token: 'mockToken',
+    type: BOARD_TYPES.CLASSIC_JIRA,
+    site: '2',
+    email: '1@qq.com',
+    projectKey: '2',
+    boardId: '2',
+  },
+  sourceControl: {
+    token: 'mockToken',
+    type: SOURCE_CONTROL_TYPES.GITHUB,
+  },
+  calendarType: REGULAR_CALENDAR,
   startTime: '1613664000000',
   endTime: '1614873600000',
 }
@@ -214,3 +228,8 @@ export const CLASSIFICATION_SETTING = 'Classification Setting'
 export const REAL_DONE = 'Real Done'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
+
+export enum VelocityMetric {
+  VELOCITY_SP = 'Velocity(SP)',
+  THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
+}

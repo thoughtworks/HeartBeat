@@ -23,13 +23,13 @@ const initialConfigState = {
   isBoardVerified: false,
   isShowBoard: false,
   pipelineToolConfig: {
-    pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    type: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',
   },
   isPipelineToolVerified: false,
   isShowPipeline: false,
   sourceControlConfig: {
-    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
+    type: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
   isSourceControlVerified: false,

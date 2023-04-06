@@ -1,9 +1,9 @@
-FROM gradle:8.0.2-jdk19 AS build
+FROM gradle:8.0.2-jdk17 AS build
 COPY --chown=gradle:gradle ./backend /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build --no-daemon
 
-FROM openjdk:19-jdk-slim-buster
+FROM openjdk:17-jdk-slim-buster
 LABEL app=Heartbeat
 LABEL arch=Backend
 RUN groupadd -r nonroot && useradd --no-log-init -r -g nonroot nonroot

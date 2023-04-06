@@ -75,7 +75,7 @@ class BuildKiteServiceTest {
 
 		assertThat(buildKiteResponse.getPipelineList().size()).isEqualTo(1);
 		Pipeline pipeline = buildKiteResponse.getPipelineList().get(0);
-		assertThat(pipeline.getId()).isEqualTo("0186104b-aa31-458c-a58c-63266806f2fe");
+		assertThat(pipeline.getId()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getName()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getOrgId()).isEqualTo("XXXX");
 		assertThat(pipeline.getOrgName()).isEqualTo("XXXX");

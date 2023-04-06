@@ -2,6 +2,7 @@ package heartbeat.service.board.jira;
 
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
+import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.client.dto.DoneCard;
@@ -11,7 +12,6 @@ import heartbeat.client.dto.Issuetype;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
-import heartbeat.component.UrlGenerator;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
@@ -55,7 +55,7 @@ public class JiraService {
 
 	private final JiraFeignClient jiraFeignClient;
 
-	private final UrlGenerator urlGenerator;
+	private final JiraUriGenerator urlGenerator;
 
 	@PreDestroy
 	public void shutdownExecutor() {

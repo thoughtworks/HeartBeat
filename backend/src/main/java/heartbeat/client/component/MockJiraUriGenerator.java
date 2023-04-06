@@ -1,4 +1,4 @@
-package heartbeat.component;
+package heartbeat.client.component;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -8,7 +8,7 @@ import java.net.URI;
 
 @Component
 @Profile(value = "e2e")
-public class E2EUrlGenerator implements UrlGenerator {
+public class MockJiraUriGenerator implements JiraUriGenerator {
 
 	@Value("${jira.url}")
 	private String url;
@@ -16,7 +16,7 @@ public class E2EUrlGenerator implements UrlGenerator {
 	@Override
 	public URI getUri(String site) {
 		if (url != null && url.length() > 0) {
-			if (!url.contains("http") && !url.contains("https")) {
+			if (!url.startsWith("http")) {
 				url = String.format("http://%s", url);
 			}
 			return URI.create(url);

@@ -6,12 +6,12 @@ logging:
   level:
     root: INFO
 
-githubFeignClient:
-  url: ${MOCK_SERVER_URL:http://localhost:4323}
+github:
+  url: ${MOCK_SERVER_URL}
 
 jira:
-  url: ${MOCK_SERVER_URL:http://localhost:4323}
+  url: ${MOCK_SERVER_URL}
 
 buildKite:
-  url: ${MOCK_SERVER_URL:http://localhost:4323}
+  url: ${MOCK_SERVER_URL}
 

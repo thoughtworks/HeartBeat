@@ -45,8 +45,7 @@ public class BuildKiteService {
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
-	public BuildKiteResponse fetchPipelineInfo(String token, String startTime, String endTime)
-			throws NoPermissionException {
+	public BuildKiteResponse fetchPipelineInfo(String token, String startTime, String endTime) {
 		try {
 			log.info("[BuildKite] Start to query token permissions" + TokenUtil.maskToken(token));
 			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(token);
@@ -76,6 +75,9 @@ public class BuildKiteService {
 		catch (FeignException e) {
 			log.error("[BuildKite] Failed when call BuildKite", e);
 			throw new RequestFailedException(e);
+		}
+		catch (NoPermissionException e) {
+			throw new RequestFailedException(401, e.getMessage());
 		}
 	}
 

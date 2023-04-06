@@ -58,28 +58,31 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show all selections when all option are select', async () => {
     const { getByRole, getByText } = setup()
+    const displayedDataList = REQUIRED_DATA_LIST.slice(1, 8)
     await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
 
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByRole('option', { name: ALL }))
 
-    expect(getByText(REQUIRED_DATA_LIST.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+    expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
   })
 
   it('should show all selections when click velocity selection and then click all selection', async () => {
     const { getByRole, getByText } = setup()
+    const displayedDataList = REQUIRED_DATA_LIST.slice(1, 8)
+
     await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
 
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))
     await userEvent.click(listBox.getByRole('option', { name: ALL }))
 
-    expect(getByText(REQUIRED_DATA_LIST.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+    expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
   })
 
   it('should show some selections when click all option and then click velocity selection', async () => {
     const { getByRole, getByText } = setup()
-    const partOfDataList = REQUIRED_DATA_LIST.slice(0, 7)
+    const displayedDataList = REQUIRED_DATA_LIST.slice(1, 7)
 
     await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
@@ -87,7 +90,7 @@ describe('MetricsTypeCheckbox', () => {
 
     await userEvent.click(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }))
 
-    expect(getByText(partOfDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
+    expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
   })
 
   it('should show none selection when double click all option', async () => {

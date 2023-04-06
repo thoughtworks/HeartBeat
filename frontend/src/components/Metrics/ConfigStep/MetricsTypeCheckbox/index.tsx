@@ -96,6 +96,14 @@ export const MetricsTypeCheckbox = () => {
     updatePipelineToolState()
     updateSourceControlState()
   }
+
+  const handleRenderSelectOptions = (selected: string[]) => {
+    if (selected.includes('All')) {
+      return selected.slice(1, 8).join(SELECTED_VALUE_SEPARATOR)
+    }
+    return selected.join(SELECTED_VALUE_SEPARATOR)
+  }
+
   return (
     <>
       <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
@@ -105,7 +113,7 @@ export const MetricsTypeCheckbox = () => {
           multiple
           value={metrics}
           onChange={handleRequireDataChange}
-          renderValue={(selected) => selected.join(SELECTED_VALUE_SEPARATOR)}
+          renderValue={handleRenderSelectOptions}
         >
           {Object.values(REQUIRED_DATA).map((data) => (
             <MenuItem key={data} value={data}>

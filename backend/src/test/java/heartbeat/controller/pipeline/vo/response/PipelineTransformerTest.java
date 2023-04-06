@@ -17,7 +17,7 @@ class PipelineTransformerTest {
 		List<StepsDTO> steps = List.of(StepsDTO.builder().name("Name1").build(), StepsDTO.builder().name("").build(),
 				StepsDTO.builder().build());
 		BuildKitePipelineDTO dto = BuildKitePipelineDTO.builder()
-			.id("ID")
+			.slug("SLUG")
 			.name("Name")
 			.repository("repository")
 			.steps(steps)
@@ -25,7 +25,7 @@ class PipelineTransformerTest {
 
 		Pipeline pipeline = PipelineTransformer.fromBuildKitePipelineDto(dto, orgId, orgName);
 
-		assertEquals(pipeline.id, "ID");
+		assertEquals(pipeline.id, "SLUG");
 		assertEquals(pipeline.name, "Name");
 		assertEquals(pipeline.repository, "repository");
 		assertEquals(pipeline.orgId, orgId);

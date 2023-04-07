@@ -72,13 +72,13 @@ export const MetricsTypeCheckbox = () => {
       : dispatch(updateSourceControlVerifyState(false))
   }
 
-  const handleSelectOptionsChange = (value: any) => {
+  const handleSelectOptionsChange = (value: string | string[]) => {
     if (value.includes(REQUIRED_DATA.All) && !AllSelectStatus) {
       setAllSelectStatus(true)
       value = ALL_SELECT_OPTIONS
     } else if (value.includes(REQUIRED_DATA.All)) {
       setAllSelectStatus(false)
-      value.shift()
+      value = value.slice(1)
     } else if (!value.includes(REQUIRED_DATA.All) && AllSelectStatus) {
       setAllSelectStatus(false)
       value = []

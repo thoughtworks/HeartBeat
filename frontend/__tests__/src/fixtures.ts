@@ -85,6 +85,7 @@ export enum VERIFY_ERROR_MESSAGE {
   UNAUTHORIZED = 'Token is incorrect',
   INTERNAL_SERVER_ERROR = 'Internal server error',
   NOT_FOUND = '404 Not Found',
+  PERMISSION_DENIED = 'Permission denied',
   UNKNOWN = 'Unknown',
 }
 export const VERIFY_FAILED = 'verify failed'

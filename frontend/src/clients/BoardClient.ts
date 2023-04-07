@@ -6,8 +6,8 @@ export interface getVerifyBoardParams {
   type: string
   site: string
   projectKey: string
-  startTime: string | null
-  endTime: string | null
+  startTime: string | number | null
+  endTime: string | number | null
   boardId: string
 }
 

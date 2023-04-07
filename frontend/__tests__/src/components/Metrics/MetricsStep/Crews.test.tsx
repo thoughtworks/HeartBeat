@@ -4,11 +4,19 @@ import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 
-const mockOptions = ['user one', 'user two']
+const mockOptions = ['crew A', 'crew B']
 const mockTitle = 'Crews Setting'
 const mockLabel = 'Included Crews'
 
-const store = setupStore()
+jest.mock('@src/hooks', () => ({
+  useAppSelector: jest.fn().mockReturnValue({
+    users: ['crew A', 'crew B'],
+    isProjectCreated: false,
+  }),
+}))
+
+let store = setupStore()
+
 const setup = () => {
   return render(
     <Provider store={store}>
@@ -18,6 +26,14 @@ const setup = () => {
 }
 
 describe('Crew', () => {
+  beforeEach(() => {
+    store = setupStore()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should show Crews when render Crews component', () => {
     const { getByText } = setup()
 
@@ -26,7 +42,7 @@ describe('Crew', () => {
 
   it('should selected all options by default when initializing', () => {
     const { getByText } = setup()
-    const require = getByText('user one, user two')
+    const require = getByText('crew A, crew B')
 
     expect(require).toBeInTheDocument()
   })
@@ -38,7 +54,7 @@ describe('Crew', () => {
     const options = listBox.getAllByRole('option')
     const optionValue = options.map((li) => li.getAttribute('data-value'))
 
-    expect(optionValue).toEqual(['All', 'user one', 'user two'])
+    expect(optionValue).toEqual(['All', 'crew A', 'crew B'])
   })
 
   it('should show error message when crews is null', async () => {

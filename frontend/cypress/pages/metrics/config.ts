@@ -61,6 +61,12 @@ class Config {
     cy.get('[data-test-id="sourceControlVerifyButton"]').click()
   }
 
+  verifyAndClickNextToMetrics() {
+    cy.contains('Verify').click()
+    cy.get('[data-test-id="pipelineVerifyButton"]').click()
+    cy.get('[data-test-id="sourceControlVerifyButton"]').click()
+  }
+
   CancelBackToHomePage() {
     cy.contains('Back').click()
     cy.contains('Cancel').click()

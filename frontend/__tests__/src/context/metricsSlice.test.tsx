@@ -17,6 +17,9 @@ const initState = {
   doneColumn: [],
   boardColumns: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+  importFile: [],
+  isProjectCreated: true,
+  classification: [],
 }
 
 describe('saveMetricsSetting reducer', () => {

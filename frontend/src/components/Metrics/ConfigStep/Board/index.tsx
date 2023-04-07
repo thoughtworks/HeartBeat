@@ -32,6 +32,7 @@ import {
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
 import { updateJiraVerifyResponse } from '@src/context/response/responseSlice'
+import dayjs from 'dayjs'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -165,8 +166,8 @@ export const Board = () => {
       projectKey: fields[3].value,
       site: fields[4].value,
       token: encodeToken,
-      startTime: DateRange.startDate,
-      endTime: DateRange.endDate,
+      startTime: dayjs(DateRange.startDate).startOf('date').valueOf(),
+      endTime: dayjs(DateRange.endDate).startOf('date').valueOf(),
     }
     await verifyJira(params).then((res) => {
       if (res) {

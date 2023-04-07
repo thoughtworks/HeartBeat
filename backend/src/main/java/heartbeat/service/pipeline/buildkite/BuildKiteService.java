@@ -5,12 +5,23 @@ import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteJob;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
+import heartbeat.client.dto.BuildKiteTokenInfo;
+import heartbeat.controller.pipeline.vo.request.PipelineParam;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineTransformer;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.util.TokenUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -22,34 +33,36 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class BuildKiteService {
 
+	private static final List<String> permissions = List.of("read_builds", "read_organizations", "read_pipelines");
+
 	public static final String BUILD_KITE_LINK_HEADER = HttpHeaders.LINK;
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
-	public BuildKiteResponse fetchPipelineInfo() {
+	public BuildKiteResponse fetchPipelineInfo(PipelineParam pipelineParam) {
 		try {
+			String buildKiteToken = "Bearer " + pipelineParam.getToken();
+			log.info("[BuildKite] Start to query token permissions" + TokenUtil.maskToken(pipelineParam.getToken()));
+			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
+			log.info("[BuildKite] Successfully get permissions" + buildKiteTokenInfo);
+			verifyToken(buildKiteTokenInfo);
 			log.info("[BuildKite] Start to query organizations");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
-				.getBuildKiteOrganizationsInfo();
+				.getBuildKiteOrganizationsInfo(buildKiteToken);
 			log.info("[BuildKite] Successfully get organizations slug:" + buildKiteOrganizationsInfo);
 
 			log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:"
 					+ buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(org.getSlug(), "1", "100")
+				.flatMap(org -> buildKiteFeignClient
+					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
+							pipelineParam.getEndTime())
 					.stream()
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))
@@ -62,6 +75,14 @@ public class BuildKiteService {
 		catch (FeignException e) {
 			log.error("[BuildKite] Failed when call BuildKite", e);
 			throw new RequestFailedException(e);
+		}
+	}
+
+	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
+		for (String permission : permissions) {
+			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
+				throw new RequestFailedException(403, "Permission deny!");
+			}
 		}
 	}
 

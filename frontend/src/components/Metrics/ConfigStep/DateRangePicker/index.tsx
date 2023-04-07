@@ -31,8 +31,8 @@ export const DateRangePicker = () => {
     } else {
       dispatch(
         updateDateRange({
-          startDate: value.startOf('date').valueOf(),
-          endDate: value.add(14, 'day').startOf('date').valueOf(),
+          startDate: value.format(),
+          endDate: value.add(14, 'day').format(),
         })
       )
     }
@@ -48,7 +48,7 @@ export const DateRangePicker = () => {
         })
       )
     } else {
-      dispatch(updateDateRange({ startDate: startDate, endDate: value.startOf('date').valueOf() }))
+      dispatch(updateDateRange({ startDate: startDate, endDate: value.format() }))
     }
     updateVerifyStates()
   }

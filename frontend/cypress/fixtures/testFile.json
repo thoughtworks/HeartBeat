@@ -1,0 +1,31 @@
+{
+  "projectName": "importConfigFile",
+  "metrics": ["Velocity", "Cycle time", "Classification", "Lead time for changes"],
+  "dateRange": {
+    "startDate": "2023-03-15T16:00:00.000Z",
+    "endDate": "2023-03-29T16:00:00.000Z"
+  },
+  "calendarType": "Calendar with Chinese Holiday",
+  "boardConfig": {
+    "type": "Classic Jira",
+    "verifyToken": "mockVerifyToken",
+    "boardId": "1963",
+    "token": "mockToken",
+    "site": "mockSite",
+    "email": "test@test.com",
+    "projectKey": "PLL"
+  },
+  "pipelineConfig": "mockToken",
+  "pipelineToolConfig": { "pipelineTool": "BuildKite", "token": "mockToken" },
+  "sourceControlConfig": { "sourceControl": "Github", "token": "ghp_Abc123Abc123Abc123Abc123Abc123Abc123" },
+  "crews": ["lucy", "hi hi", "Yu Zhang"],
+  "classification": ["type", "Parent"],
+  "cycleTime": [
+    {
+      "In Analysis": "To do"
+    },
+    {
+      "Ready For Dev": "Analysis"
+    }
+  ]
+}

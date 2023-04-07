@@ -7,8 +7,8 @@ const updatedConfigState = {
     projectName: 'Mock Project Name',
     calendarType: CHINA_CALENDAR,
     dateRange: {
-      startDate: '',
-      endDate: '',
+      startDate: '2023-03-15T16:00:00.000Z',
+      endDate: '2023-03-29T16:00:00.000Z',
     },
     metrics: [],
   },

@@ -22,6 +22,16 @@ declare module '@mui/material/styles' {
       boxShadow: string
     }
   }
+
+  interface Components {
+    errorMessage: {
+      color: string
+      paddingBottom: string
+    }
+    waringMessage: {
+      color: string
+    }
+  }
 }
 
 export const theme = createTheme({
@@ -52,5 +62,14 @@ export const theme = createTheme({
       xl: 1920,
     },
     keys: ['xs', 'sm', 'md', 'lg', 'xl'],
+  },
+  components: {
+    errorMessage: {
+      color: '#ff0000',
+      paddingBottom: '1rem',
+    },
+    waringMessage: {
+      color: '#cd5e32',
+    },
   },
 })

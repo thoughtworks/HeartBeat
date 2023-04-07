@@ -1,15 +1,9 @@
-import { render, within } from '@testing-library/react'
+import { render, waitFor, within } from '@testing-library/react'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { CYCLE_TIME_SETTINGS } from '../../../fixtures'
-
-let store = setupStore()
-
-beforeEach(() => {
-  store = setupStore()
-})
 
 const DEFAULT_SELECTED = '----'
 const mockColumnsList = [
@@ -17,7 +11,7 @@ const mockColumnsList = [
     key: 'indeterminate',
     value: {
       name: 'Doing',
-      statuses: ['DOING'],
+      statuses: ['ANALYSIS'],
     },
   },
   {
@@ -53,6 +47,21 @@ const errorMessage = 'Only one column can be selected as "Done"'
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
 
+let store = setupStore()
+jest.mock('@src/hooks', () => ({
+  useAppSelector: jest.fn().mockReturnValue({
+    boardColumns: [
+      {
+        Doing: 'Analysis',
+      },
+      {
+        Testing: 'Review',
+      },
+    ],
+    isProjectCreated: false,
+  }),
+}))
+
 const setup = () =>
   render(
     <Provider store={store}>
@@ -61,6 +70,14 @@ const setup = () =>
   )
 
 describe('CycleTime', () => {
+  beforeEach(() => {
+    store = setupStore()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('CycleTime Title', () => {
     it('should show Cycle Time title when render Crews component', () => {
       const { getByText } = setup()
@@ -81,7 +98,8 @@ describe('CycleTime', () => {
 
     it('should show "----" in selector by create default when initializing', () => {
       const { getAllByText } = setup()
-      expect(getAllByText(DEFAULT_SELECTED)).toHaveLength(5)
+
+      expect(getAllByText(DEFAULT_SELECTED)).toHaveLength(3)
     })
 
     it('should show detail options when click included button', async () => {
@@ -150,7 +168,7 @@ describe('CycleTime', () => {
       const mockOptionOneDone = listBoxOne.getByRole('option', { name: 'Done' })
       await userEvent.click(mockOptionOneDone)
 
-      expect(getByText(errorMessage)).toBeInTheDocument()
+      await waitFor(() => expect(getByText(errorMessage)).toBeInTheDocument())
     })
 
     it('should not show error message when select less than one Done option', async () => {

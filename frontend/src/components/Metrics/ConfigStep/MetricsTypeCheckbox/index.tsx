@@ -54,7 +54,7 @@ export const MetricsTypeCheckbox = () => {
     metrics && dispatch(updateMetrics(metrics))
   }, [metrics, dispatch])
 
-  const [AllSelect, setAllSelect] = useState(false)
+  const [AllSelectStatus, setAllSelectStatus] = useState(false)
 
   const updatePipelineToolState = () => {
     dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
@@ -72,30 +72,28 @@ export const MetricsTypeCheckbox = () => {
       : dispatch(updateSourceControlVerifyState(false))
   }
 
+  const handleSelectOptionsChange = (value: any) => {
+    if (value.includes(REQUIRED_DATA.All) && !AllSelectStatus) {
+      setAllSelectStatus(true)
+      return ALL_SELECT_OPTIONS
+    } else if (value.includes(REQUIRED_DATA.All)) {
+      setAllSelectStatus(false)
+      return value.slice(1)
+    } else if (!value.includes(REQUIRED_DATA.All) && AllSelectStatus) {
+      setAllSelectStatus(false)
+      return []
+    } else {
+      return value
+    }
+  }
+
   const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
     const {
       target: { value },
     } = event
-    let selectList: string | string[]
 
-    if (value.includes(REQUIRED_DATA.All) && !AllSelect) {
-      setAllSelect(true)
-      selectList = ALL_SELECT_OPTIONS
-      dispatch(updateMetrics(selectList))
-    } else if (value.includes(REQUIRED_DATA.All)) {
-      setAllSelect(false)
-      selectList = value.slice(1)
-      dispatch(updateMetrics(selectList))
-    } else if (!value.includes(REQUIRED_DATA.All) && AllSelect) {
-      setAllSelect(false)
-      selectList = []
-      dispatch(updateMetrics(selectList))
-    } else {
-      selectList = value
-      dispatch(updateMetrics(selectList))
-    }
-
-    selectList.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
+    dispatch(updateMetrics(handleSelectOptionsChange(value)))
+    handleSelectOptionsChange(value).length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     updateBoardState()
     updatePipelineToolState()
     updateSourceControlState()

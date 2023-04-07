@@ -75,16 +75,15 @@ export const MetricsTypeCheckbox = () => {
   const handleSelectOptionsChange = (value: any) => {
     if (value.includes(REQUIRED_DATA.All) && !AllSelectStatus) {
       setAllSelectStatus(true)
-      return ALL_SELECT_OPTIONS
+      value = ALL_SELECT_OPTIONS
     } else if (value.includes(REQUIRED_DATA.All)) {
       setAllSelectStatus(false)
-      return value.slice(1)
+      value.shift()
     } else if (!value.includes(REQUIRED_DATA.All) && AllSelectStatus) {
       setAllSelectStatus(false)
-      return []
-    } else {
-      return value
+      value = []
     }
+    return value
   }
 
   const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {

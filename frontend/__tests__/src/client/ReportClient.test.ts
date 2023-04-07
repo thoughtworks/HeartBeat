@@ -1,6 +1,6 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { MOCK_REPORT_URL } from '../fixtures'
+import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_URL, VERIFY_ERROR_MESSAGE } from '../fixtures'
 import { HttpStatusCode } from 'axios'
 import { reportClient } from '@src/clients/ReportClient'
 
@@ -11,7 +11,7 @@ describe('report client', () => {
   afterAll(() => server.close())
 
   it('should get response when generate report request status 200', async () => {
-    const result = await reportClient.generateReporter()
+    const result = await reportClient.report(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
 
     expect(result.response).not.toBeNull()
   })
@@ -20,7 +20,15 @@ describe('report client', () => {
     server.use(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
 
     await expect(async () => {
-      await reportClient.generateReporter()
-    }).rejects.toThrow('report verify failed: Internal server error')
+      await reportClient.report(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
+  })
+
+  it('should throw error when generate report response status 400', async () => {
+    server.use(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.BadRequest))))
+
+    await expect(async () => {
+      await reportClient.report(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.BAD_REQUEST)
   })
 })

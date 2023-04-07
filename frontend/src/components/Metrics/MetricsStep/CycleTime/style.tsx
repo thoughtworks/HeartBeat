@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Checkbox } from '@mui/material'
+import { theme } from '@src/theme'
 
 export const FlagCardItem = styled('div')({
   display: 'flex',
@@ -14,6 +15,11 @@ export const ItemCheckbox = styled(Checkbox)({
 })
 
 export const ErrorDone = styled('div')({
-  color: '#ff0000',
-  paddingBottom: '1rem',
+  color: theme.components?.errorMessage.color,
+  paddingBottom: theme.components?.errorMessage.paddingBottom,
+})
+
+export const WaringDone = styled('div')({
+  color: theme.components?.waringMessage.color,
+  paddingBottom: theme.components?.errorMessage.paddingBottom,
 })

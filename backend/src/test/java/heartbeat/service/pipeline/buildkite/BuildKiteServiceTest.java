@@ -1,14 +1,5 @@
 package heartbeat.service.pipeline.buildkite;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
@@ -17,15 +8,13 @@ import heartbeat.client.dto.BuildKiteBuildInfo;
 import heartbeat.client.dto.BuildKiteJob;
 import heartbeat.client.dto.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.BuildKitePipelineDTO;
+import heartbeat.client.dto.BuildKiteTokenInfo;
+import heartbeat.controller.pipeline.vo.request.PipelineParam;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.exception.RequestFailedException;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +25,20 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -67,15 +70,25 @@ class BuildKiteServiceTest {
 				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
 				new TypeReference<>() {
 				});
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo())
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
+			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
+			.build();
+		PipelineParam pipelineParam = PipelineParam.builder()
+			.token("test_token")
+			.startTime("startTime")
+			.endTime("endTime")
+			.build();
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name("XXXX").slug("XXXX").build()));
-		when(buildKiteFeignClient.getPipelineInfo("XXXX", "1", "100")).thenReturn(pipelineDTOS);
+		when(buildKiteFeignClient.getPipelineInfo("Bearer test_token", "XXXX", "1", "100", "startTime", "endTime"))
+			.thenReturn(pipelineDTOS);
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo();
+		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo(pipelineParam);
 
 		assertThat(buildKiteResponse.getPipelineList().size()).isEqualTo(1);
 		Pipeline pipeline = buildKiteResponse.getPipelineList().get(0);
-		assertThat(pipeline.getId()).isEqualTo("0186104b-aa31-458c-a58c-63266806f2fe");
+		assertThat(pipeline.getId()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getName()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getOrgId()).isEqualTo("XXXX");
 		assertThat(pipeline.getOrgName()).isEqualTo("XXXX");
@@ -87,11 +100,25 @@ class BuildKiteServiceTest {
 	@Test
 	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
 		FeignException feignException = mock(FeignException.class);
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo()).thenThrow(feignException);
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
+			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
+			.build();
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any())).thenThrow(feignException);
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo());
+		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo(
+				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()));
 
-		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo();
+		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo(any());
+	}
+
+	@Test
+	void shouldThrowNoPermissionExceptionWhenTokenPermissionDeny() {
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(List.of("mock")).build();
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
+
+		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo(
+				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()));
 	}
 
 	@Test

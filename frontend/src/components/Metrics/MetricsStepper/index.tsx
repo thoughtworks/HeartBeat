@@ -23,6 +23,7 @@ import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepV
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
+import { updateMetricsState } from '@src/context/Metrics/metricsSlice'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -66,16 +67,13 @@ const MetricsStepper = () => {
     dateRange,
   ])
   const { isPipelineValid } = useMetricsStepValidationCheckContext()
-  const basicConfig = {
-    ...config.basic,
-    dateRange: {
-      startDate: dateRange.startDate ? new Date(dateRange.startDate) : null,
-      endDate: dateRange.endDate ? new Date(dateRange.endDate) : null,
-    },
-  }
   const handleSave = () => {
+    const { projectName, dateRange, calendarType, metrics } = config.basic
     const configData = {
-      ...basicConfig,
+      projectName: projectName,
+      dateRange: dateRange,
+      calendarType: calendarType,
+      metrics: metrics,
       board: isShowBoard ? config.boardConfig : undefined,
       pipelineTool: isShowPipeline ? config.pipelineToolConfig : undefined,
       sourceControl: isShowSourceControl ? config.sourceControlConfig : undefined,
@@ -84,7 +82,10 @@ const MetricsStepper = () => {
   }
 
   const handleNext = () => {
-    if (activeStep === 0) dispatch(nextStep())
+    if (activeStep === 0) {
+      dispatch(updateMetricsState(config))
+      dispatch(nextStep())
+    }
 
     if (activeStep === 1) {
       isPipelineValid() && dispatch(nextStep())

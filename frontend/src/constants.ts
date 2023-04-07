@@ -58,18 +58,26 @@ export const PIPELINE_TOOL_TYPES = {
 }
 
 export const SOURCE_CONTROL_TYPES = {
-  GITHUB: 'Github',
+  GITHUB: 'GitHub',
 }
 
 export const EMAIL_REG_EXP = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 export const BOARD_TOKEN_REG_EXP = /^[a-zA-Z0-9\-=_]{1,500}$/
 
-export const BUILDKITE_TOKEN_REGEXP = /^[A-Za-z0-9]{40}$/
+export const BUILDKITE_TOKEN_REGEXP = /^(bkua)?_?([a-zA-Z0-9]{40})$/
 
 export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 
 export const EMAIL = 'Email'
+
+export const VERIFY_FAILED_ERROR_MESSAGE = 'verify failed'
+export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal server error'
+export const INVALID_TOKEN_ERROR_MESSAGE = 'Token is incorrect'
+export const BAD_REQUEST_ERROR_MESSAGE = 'Please reconfirm the input'
+export const NOT_FOUND_ERROR_MESSAGE = '404 Not Found'
+export const PERMISSION_DENIED_ERROR_MESSAGE = 'Permission denied'
+export const UNKNOWN_ERROR_MESSAGE = 'Unknown'
 
 export const METRICS_CONSTANTS = {
   cycleTimeEmptyStr: '----',
@@ -111,3 +119,8 @@ export const SELECTED_VALUE_SEPARATOR = ', '
 
 export const SAVE_CONFIG_TIPS =
   'Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)'
+
+export enum VelocityMetric {
+  VELOCITY_SP = 'Velocity(SP)',
+  THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
+}

@@ -7,8 +7,8 @@ const updatedConfigState = {
     projectName: 'Mock Project Name',
     calendarType: CHINA_CALENDAR,
     dateRange: {
-      startDate: '',
-      endDate: '',
+      startDate: '2023-03-15T16:00:00.000Z',
+      endDate: '2023-03-29T16:00:00.000Z',
     },
     metrics: [],
   },
@@ -23,13 +23,13 @@ const updatedConfigState = {
   isBoardVerified: false,
   isShowBoard: false,
   pipelineToolConfig: {
-    pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    type: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',
   },
   isPipelineToolVerified: false,
   isShowPipeline: false,
   sourceControlConfig: {
-    sourceControl: SOURCE_CONTROL_TYPES.GITHUB,
+    type: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
   isSourceControlVerified: false,

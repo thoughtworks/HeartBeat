@@ -10,8 +10,14 @@ const mockTargetField = [
   { flag: false, key: 'issue', name: 'Issue' },
   { flag: false, key: 'type', name: 'Type' },
 ]
+jest.mock('@src/hooks', () => ({
+  useAppSelector: jest.fn().mockReturnValue({
+    classification: ['Issue', 'Parent'],
+    isProjectCreated: false,
+  }),
+}))
 
-const store = setupStore()
+let store = setupStore()
 const setup = () => {
   return render(
     <Provider store={store}>
@@ -21,6 +27,14 @@ const setup = () => {
 }
 
 describe('Classification', () => {
+  beforeEach(() => {
+    store = setupStore()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should show Classification when render Classification component', () => {
     const { getByText } = setup()
 
@@ -28,10 +42,10 @@ describe('Classification', () => {
     expect(getByText(mockLabel)).toBeInTheDocument()
   })
 
-  it('should not show options when initialization', () => {
-    const { queryByText } = setup()
+  it('should show default options when initialization', () => {
+    const { queryByText, getByText } = setup()
 
-    expect(queryByText('Issue')).not.toBeInTheDocument()
+    expect(getByText('Issue')).toBeInTheDocument()
     expect(queryByText('Type')).not.toBeInTheDocument()
   })
 
@@ -39,7 +53,6 @@ describe('Classification', () => {
     const { getByRole, getByText } = setup()
     await userEvent.click(getByRole('button', { name: mockLabel }))
 
-    expect(getByText('Issue')).toBeInTheDocument()
     expect(getByText('Type')).toBeInTheDocument()
   })
 
@@ -60,10 +73,15 @@ describe('Classification', () => {
   })
 
   it('should show selected targetField when click selected field', async () => {
-    const { getByRole } = setup()
+    const { getByRole, getByText } = setup()
     const names = mockTargetField.map((item) => item.name)
+
     await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByText('All'))
+    await userEvent.click(getByText('All'))
+
     const listBox = within(getByRole('listbox'))
+
     await userEvent.click(listBox.getByRole('option', { name: names[0] }))
 
     expect(listBox.getByRole('option', { name: names[0] })).toHaveProperty('selected', true)

@@ -11,6 +11,7 @@ import {
   initialSourceControlState,
 } from '@src/context/config/sourceControl/sourceControlSlice'
 import { REQUIRED_DATA } from '@src/constants'
+
 export interface BasicConfigState {
   isProjectCreated: boolean
   basic: {

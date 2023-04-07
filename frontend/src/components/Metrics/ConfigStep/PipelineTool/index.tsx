@@ -40,7 +40,7 @@ export const PipelineTool = () => {
   const [fields, setFields] = useState([
     {
       key: 'PipelineTool',
-      value: pipelineToolFields.pipelineTool,
+      value: pipelineToolFields.type,
       isValid: true,
       isRequired: true,
     },

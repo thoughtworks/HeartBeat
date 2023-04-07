@@ -57,7 +57,7 @@ export const MetricsTypeCheckbox = () => {
   const [AllSelectStatus, setAllSelectStatus] = useState(false)
 
   const updatePipelineToolState = () => {
-    dispatch(updatePipelineTool({ pipelineTool: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
+    dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     dispatch(updatePipelineToolVerifyState(false))
     isShowPipeline
       ? dispatch(updatePipelineToolVerifyState(isPipelineToolVerify))
@@ -65,7 +65,7 @@ export const MetricsTypeCheckbox = () => {
   }
 
   const updateSourceControlState = () => {
-    dispatch(updateSourceControl({ sourceControl: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
+    dispatch(updateSourceControl({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
     dispatch(updateSourceControlVerifyState(false))
     isShowSourceControl
       ? dispatch(updateSourceControlVerifyState(isSourceControlVerify))

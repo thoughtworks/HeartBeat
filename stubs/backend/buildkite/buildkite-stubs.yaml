@@ -1,3 +1,14 @@
+#Verify Token
+- request:
+    method: GET
+    url: /v2/access-token
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/buildkite/jsons/buildkite.access-token.json
+
 # Organizations
 - request:
     method: GET

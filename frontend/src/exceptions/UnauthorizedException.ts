@@ -1,6 +1,6 @@
 export class UnauthorizedException extends Error {
-  constructor(type: string, message: string) {
+  constructor(message: string) {
     super()
-    throw new Error(`${type} verify failed: ${message}`)
+    throw new Error(message)
   }
 }

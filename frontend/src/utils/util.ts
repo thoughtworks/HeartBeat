@@ -8,3 +8,6 @@ export const exportToJsonFile = (filename: string, json: object) => {
   linkElement.setAttribute('download', exportFileDefaultName)
   linkElement.click()
 }
+
+export const getArrayIntersection = (currentArray: string[], newArray: string[]) =>
+  currentArray.filter((item) => newArray.includes(item))

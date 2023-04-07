@@ -1,5 +1,6 @@
 package heartbeat.controller.pipeline;
 
+import heartbeat.controller.pipeline.vo.request.PipelineParam;
 import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
@@ -24,8 +25,8 @@ public class PipelineController {
 	private final BuildKiteService buildKiteService;
 
 	@GetMapping("/{pipelineType}")
-	public BuildKiteResponse getBuildKiteInfo(@PathVariable String pipelineType) {
-		return buildKiteService.fetchPipelineInfo();
+	public BuildKiteResponse getBuildKiteInfo(@PathVariable String pipelineType, @Valid PipelineParam pipelineParam) {
+		return buildKiteService.fetchPipelineInfo(pipelineParam);
 	}
 
 	@GetMapping("/{pipelineType}/{organizationId}/pipelines/{buildId}/steps")

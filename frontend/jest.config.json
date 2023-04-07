@@ -3,6 +3,7 @@
     "^.+\\.tsx?$": "ts-jest",
     ".+\\.svg": "<rootDir>/__tests__/__mocks__/svgTransformer.ts"
   },
+  "globalSetup": "./global-setup.ts",
   "setupFilesAfterEnv": ["<rootDir>/__tests__/setupTests.ts"],
   "testEnvironment": "jsdom",
   "testRegex": "/__tests__/.*(test|spec)\\.(jsx?|tsx?|ts?)$",

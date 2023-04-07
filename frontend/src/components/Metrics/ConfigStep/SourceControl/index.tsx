@@ -39,7 +39,7 @@ export const SourceControl = () => {
   const [fields, setFields] = useState([
     {
       key: 'SourceControl',
-      value: sourceControlFields.sourceControl,
+      value: sourceControlFields.type,
       isValid: true,
       isRequired: true,
     },

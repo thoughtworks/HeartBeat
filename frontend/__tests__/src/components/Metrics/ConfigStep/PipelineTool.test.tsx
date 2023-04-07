@@ -6,10 +6,12 @@ import {
   PIPELINE_TOOL_TYPES,
   ERROR_MESSAGE_COLOR,
   MOCK_PIPELINE_URL,
-  PIPELINE_TOOL_VERIFY_ERROR_MESSAGE,
+  VERIFY_ERROR_MESSAGE,
   VERIFY,
   RESET,
   TOKEN_ERROR_MESSAGE,
+  MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
+  VERIFY_FAILED,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -19,28 +21,32 @@ import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
 
 export const fillPipelineToolFieldsInformation = async () => {
-  const mockInfo = 'mockTokenMockTokenMockTokenMockToken1234'
+  const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
   const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement
   await userEvent.type(tokenInput, mockInfo)
 
   expect(tokenInput.value).toEqual(mockInfo)
 }
 
-let store = setupStore()
-const setup = () => {
-  store = setupStore()
-  return render(
-    <Provider store={store}>
-      <PipelineTool />
-    </Provider>
-  )
-}
+let store = null
 
 const server = setupServer(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(200))))
 
 describe('PipelineTool', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
+  store = setupStore()
+  const setup = () => {
+    store = setupStore()
+    return render(
+      <Provider store={store}>
+        <PipelineTool />
+      </Provider>
+    )
+  }
+  afterEach(() => {
+    store = null
+  })
 
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
     const { getByRole, getByLabelText } = setup()
@@ -59,6 +65,7 @@ describe('PipelineTool', () => {
     expect(pipelineToolType).toBeInTheDocument()
 
     const option = queryByText(PIPELINE_TOOL_TYPES.GO_CD)
+
     expect(option).not.toBeInTheDocument()
   })
 
@@ -155,7 +162,9 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation()
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
-    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
+    await waitFor(() => {
+      expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar')
+    })
   })
 
   it('should check error notification show when pipelineTool verify response status is 401', async () => {
@@ -164,19 +173,8 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation()
 
     await userEvent.click(getByRole('button', { name: VERIFY }))
-    expect(getByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)).toBeInTheDocument()
-  })
-
-  it('should check error notification disappear when pipelineTool verify response status is 401', async () => {
-    expect.assertions(2)
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
-    const { getByRole } = setup()
-    await fillPipelineToolFieldsInformation()
-
-    userEvent.click(getByRole('button', { name: VERIFY }))
-
-    await waitFor(() => {
-      expect(screen.queryByText(PIPELINE_TOOL_VERIFY_ERROR_MESSAGE.UNAUTHORIZED)).not.toBeInTheDocument()
-    })
+    expect(
+      getByText(`${MOCK_PIPELINE_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
+    ).toBeInTheDocument()
   })
 })

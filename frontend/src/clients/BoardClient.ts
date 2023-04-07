@@ -1,18 +1,16 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { BadRequestException } from '../exceptions/BadRequestException'
-import { InternalServerException } from '@src/exceptions/InternalServerException'
-import { AxiosError, HttpStatusCode } from 'axios'
-import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { HttpStatusCode } from 'axios'
 
 export interface getVerifyBoardParams {
   token: string
   type: string
   site: string
   projectKey: string
-  startTime: string | null
-  endTime: string | null
+  startTime: string | number | null
+  endTime: string | number | null
   boardId: string
 }
+
 export class BoardClient extends HttpClient {
   isBoardVerify = false
   isNoDoneCard = false
@@ -21,22 +19,13 @@ export class BoardClient extends HttpClient {
   getVerifyBoard = async (params: getVerifyBoardParams) => {
     try {
       const boardType = params.type === 'Classic Jira' ? 'classic-jira' : params.type.toLowerCase()
-      const result = await this.axiosInstance.get(`/boards/${boardType}`, { params }).then((res) => res)
+      const result = await this.axiosInstance.get(`/boards/${boardType}`, { params })
       result.status === HttpStatusCode.NoContent
         ? this.handleBoardNoDoneCard()
         : this.handleBoardVerifySucceed(result.data)
     } catch (e) {
       this.isBoardVerify = false
-      const code = (e as AxiosError).response?.status
-      if (code === HttpStatusCode.BadRequest) {
-        throw new BadRequestException(params.type, 'Please reconfirm the input')
-      }
-      if (code === HttpStatusCode.Unauthorized) {
-        throw new NotFoundException(params.type, 'Token is incorrect')
-      }
-      if (code === HttpStatusCode.InternalServerError) {
-        throw new InternalServerException(params.type, 'Internal server error')
-      }
+      throw e
     }
     return {
       response: this.response,

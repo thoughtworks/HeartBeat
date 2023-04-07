@@ -5,11 +5,13 @@ import {
   INTERNAL_SERVER_ERROR_MESSAGE,
   INVALID_TOKEN_ERROR_MESSAGE,
   NOT_FOUND_ERROR_MESSAGE,
+  PERMISSION_DENIED_ERROR_MESSAGE,
 } from '@src/constants'
 import { UnauthorizedException } from '@src/exceptions/UnauthorizedException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { ForbiddenException } from '@src/exceptions/ForbiddenException'
 
 export class HttpClient {
   protected httpTimeout = 20000
@@ -34,6 +36,8 @@ export class HttpClient {
               throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
             case HttpStatusCode.NotFound:
               throw new NotFoundException(NOT_FOUND_ERROR_MESSAGE)
+            case HttpStatusCode.Forbidden:
+              throw new ForbiddenException(PERMISSION_DENIED_ERROR_MESSAGE)
             default:
               throw new UnknownException()
           }

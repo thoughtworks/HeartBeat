@@ -10,7 +10,7 @@ describe('Import project from file', () => {
     cy.get('.MuiInput-input')
       .invoke('val')
       .then((value) => {
-        expect(value).to.equal('importConfigFile')
+        expect(value).to.equal('mockProjectName')
       })
 
     configPage.verifyAndClickNextToMetrics()

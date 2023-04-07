@@ -13,7 +13,6 @@ interface pipelineMetricSelectionProps {
     steps: string
   }
   isShowRemoveButton: boolean
-
   errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
 }
 
@@ -23,39 +22,36 @@ export const PipelineMetricSelection = ({
   errorMessages,
 }: pipelineMetricSelectionProps) => {
   const dispatch = useAppDispatch()
-
+  const pipelineList = useAppSelector(selectPipelineList)
   const { id, organization, pipelineName, steps } = deploymentFrequencySetting
+  const organizationNameOptions = [...new Set(pipelineList.map((item) => item.orgName))]
+  const pipelineNameOptions = pipelineList
+    .filter((pipeline) => pipeline.orgName === organization)
+    .map((item) => item.name)
 
   const handleClick = () => {
     dispatch(deleteADeploymentFrequencySetting(id))
   }
 
-  const pipelineList = useAppSelector(selectPipelineList)
-
-  const getOrganizationNameOptions = () => pipelineList.map((item) => item.orgName)
-
-  const getPipelineNameOptions = () =>
-    pipelineList.filter((pipeline) => pipeline.orgName === organization).map((item) => item.name)
-
   return (
     <PipelineMetricSelectionWrapper>
       <SingleSelection
         id={id}
-        options={getOrganizationNameOptions()}
+        options={organizationNameOptions}
         label={'Organization'}
         value={organization}
         errorMessage={errorMessages?.organization}
       />
-      {deploymentFrequencySetting.organization && (
+      {organization && (
         <SingleSelection
           id={id}
-          options={getPipelineNameOptions()}
+          options={pipelineNameOptions}
           label={'Pipeline Name'}
           value={pipelineName}
           errorMessage={errorMessages?.pipelineName}
         />
       )}
-      {deploymentFrequencySetting.organization && deploymentFrequencySetting.pipelineName && (
+      {organization && pipelineName && (
         <SingleSelection
           id={id}
           options={['s1', 's2']}

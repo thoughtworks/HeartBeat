@@ -78,15 +78,15 @@ export const MetricsTypeCheckbox = () => {
     } = event
     let selectList: string | string[]
 
-    if (value.includes('All') && !AllSelect) {
+    if (value.includes(REQUIRED_DATA.All) && !AllSelect) {
       setAllSelect(true)
       selectList = ALL_SELECT_OPTIONS
       dispatch(updateMetrics(selectList))
-    } else if (value.includes('All')) {
+    } else if (value.includes(REQUIRED_DATA.All)) {
       setAllSelect(false)
-      selectList = value.slice(1, value.length)
+      selectList = value.slice(1)
       dispatch(updateMetrics(selectList))
-    } else if (!value.includes('All') && AllSelect) {
+    } else if (!value.includes(REQUIRED_DATA.All) && AllSelect) {
       setAllSelect(false)
       selectList = []
       dispatch(updateMetrics(selectList))
@@ -102,8 +102,8 @@ export const MetricsTypeCheckbox = () => {
   }
 
   const handleRenderSelectOptions = (selected: string[]) => {
-    if (selected.includes('All')) {
-      return selected.slice(1, 8).join(SELECTED_VALUE_SEPARATOR)
+    if (selected.includes(REQUIRED_DATA.All)) {
+      return selected.slice(1).join(SELECTED_VALUE_SEPARATOR)
     }
     return selected.join(SELECTED_VALUE_SEPARATOR)
   }

@@ -5,6 +5,7 @@ import {
   SOURCE_CONTROL_TYPES,
   SELECTED_VALUE_SEPARATOR,
   REQUIRED_DATA,
+  ALL_SELECT_OPTIONS,
 } from '@src/constants'
 import { useEffect, useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
@@ -53,6 +54,8 @@ export const MetricsTypeCheckbox = () => {
     metrics && dispatch(updateMetrics(metrics))
   }, [metrics, dispatch])
 
+  const [AllSelectStatus, setAllSelectStatus] = useState(false)
+
   const updatePipelineToolState = () => {
     dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     dispatch(updatePipelineToolVerifyState(false))
@@ -69,17 +72,39 @@ export const MetricsTypeCheckbox = () => {
       : dispatch(updateSourceControlVerifyState(false))
   }
 
+  const handleSelectOptionsChange = (value: string | string[]) => {
+    if (value.includes(REQUIRED_DATA.All) && !AllSelectStatus) {
+      setAllSelectStatus(true)
+      value = ALL_SELECT_OPTIONS
+    } else if (value.includes(REQUIRED_DATA.All)) {
+      setAllSelectStatus(false)
+      value = value.slice(1)
+    } else if (!value.includes(REQUIRED_DATA.All) && AllSelectStatus) {
+      setAllSelectStatus(false)
+      value = []
+    }
+    return value
+  }
+
   const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
     const {
       target: { value },
     } = event
 
-    dispatch(updateMetrics(value))
-    value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
+    dispatch(updateMetrics(handleSelectOptionsChange(value)))
+    handleSelectOptionsChange(value).length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     updateBoardState()
     updatePipelineToolState()
     updateSourceControlState()
   }
+
+  const handleRenderSelectOptions = (selected: string[]) => {
+    if (selected.includes(REQUIRED_DATA.All)) {
+      return selected.slice(1).join(SELECTED_VALUE_SEPARATOR)
+    }
+    return selected.join(SELECTED_VALUE_SEPARATOR)
+  }
+
   return (
     <>
       <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
@@ -89,7 +114,7 @@ export const MetricsTypeCheckbox = () => {
           multiple
           value={metrics}
           onChange={handleRequireDataChange}
-          renderValue={(selected) => selected.join(SELECTED_VALUE_SEPARATOR)}
+          renderValue={handleRenderSelectOptions}
         >
           {Object.values(REQUIRED_DATA).map((data) => (
             <MenuItem key={data} value={data}>

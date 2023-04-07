@@ -29,6 +29,7 @@ export const EXPORT_BOARD_DATA = 'Export board data'
 export const STEPS = ['Config', 'Metrics', 'Report']
 
 export const REQUIRED_DATA_LIST = [
+  'All',
   'Velocity',
   'Cycle time',
   'Classification',
@@ -37,8 +38,10 @@ export const REQUIRED_DATA_LIST = [
   'Change failure rate',
   'Mean time to recovery',
 ]
+export const ALL = 'All'
 export const VELOCITY = 'Velocity'
 export const CYCLE_TIME = 'Cycle time'
+export const MEAN_TIME_TO_RECOVERY = 'Mean time to recovery'
 export const REQUIRED_DATA = 'Required Data'
 export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 export const TEST_PROJECT_NAME = 'test project Name'

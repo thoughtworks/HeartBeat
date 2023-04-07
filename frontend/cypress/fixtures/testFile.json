@@ -16,8 +16,8 @@
     "projectKey": "PLL"
   },
   "pipelineConfig": "mockToken",
-  "pipelineToolConfig": { "pipelineTool": "BuildKite", "token": "mockToken" },
-  "sourceControlConfig": { "sourceControl": "Github", "token": "ghp_Abc123Abc123Abc123Abc123Abc123Abc123" },
+  "pipelineToolConfig": { "type": "BuildKite", "token": "mockToken" },
+  "sourceControlConfig": { "type": "Github", "token": "ghp_Abc123Abc123Abc123Abc123Abc123Abc123" },
   "crews": ["lucy", "hi hi", "Yu Zhang"],
   "classification": ["type", "Parent"],
   "cycleTime": [

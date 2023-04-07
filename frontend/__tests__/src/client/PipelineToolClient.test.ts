@@ -34,6 +34,13 @@ describe('verify pipelineTool request', () => {
     )
   })
 
+  it('should throw error when pipelineTool verify response status is 403', async () => {
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Forbidden))))
+    await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
+      VERIFY_ERROR_MESSAGE.PERMISSION_DENIED
+    )
+  })
+
   it('should throw error when pipelineTool verify response status 500', async () => {
     server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(

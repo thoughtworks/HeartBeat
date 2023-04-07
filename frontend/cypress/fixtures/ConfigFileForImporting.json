@@ -1,5 +1,5 @@
 {
-  "projectName": "importConfigFile",
+  "projectName": "ConfigFileForImporting",
   "metrics": ["Velocity", "Cycle time", "Classification", "Lead time for changes"],
   "dateRange": {
     "startDate": "2023-03-15T16:00:00.000Z",

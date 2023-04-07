@@ -8,10 +8,12 @@ class Home {
   }
 
   importProjectFromFile() {
+    const configFixtureName = 'ConfigFileForImporting.json'
+
     cy.contains('Import project from file').click()
-    cy.fixture('testFile.json').then((fileContent) => {
+    cy.fixture(configFixtureName).then((fileContent) => {
       cy.get<HTMLInputElement>('#importJson').then((e) => {
-        const testFile = new File([JSON.stringify(fileContent)], 'testFile.json', {
+        const testFile = new File([JSON.stringify(fileContent)], configFixtureName, {
           type: 'application/json',
         })
         const dataTransfer = new DataTransfer()

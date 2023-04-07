@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import javax.naming.NoPermissionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -48,20 +47,21 @@ public class BuildKiteService {
 
 	public BuildKiteResponse fetchPipelineInfo(PipelineParam pipelineParam) {
 		try {
-			log.info("[BuildKite] Start to query token permissions" + TokenUtil.maskToken(pipelineParam.getToken()));
-			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(pipelineParam.getToken());
+			String buildKiteToken = "Bearer " + pipelineParam.getToken();
+			log.info("[BuildKite] Start to query token permissions" + TokenUtil.mask(pipelineParam.getToken()));
+			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
 			log.info("[BuildKite] Successfully get permissions" + buildKiteTokenInfo);
 			verifyToken(buildKiteTokenInfo);
 			log.info("[BuildKite] Start to query organizations");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
-				.getBuildKiteOrganizationsInfo();
+				.getBuildKiteOrganizationsInfo(buildKiteToken);
 			log.info("[BuildKite] Successfully get organizations slug:" + buildKiteOrganizationsInfo);
 
 			log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:"
 					+ buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
 				.flatMap(org -> buildKiteFeignClient
-					.getPipelineInfo(org.getSlug(), "1", "100", pipelineParam.getStartTime(),
+					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
 							pipelineParam.getEndTime())
 					.stream()
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
@@ -76,15 +76,12 @@ public class BuildKiteService {
 			log.error("[BuildKite] Failed when call BuildKite", e);
 			throw new RequestFailedException(e);
 		}
-		catch (NoPermissionException e) {
-			throw new RequestFailedException(403, e.getMessage());
-		}
 	}
 
-	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) throws NoPermissionException {
+	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
 		for (String permission : permissions) {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
-				throw new NoPermissionException("Permission deny!");
+				throw new RequestFailedException(403, "Permission deny!");
 			}
 		}
 	}

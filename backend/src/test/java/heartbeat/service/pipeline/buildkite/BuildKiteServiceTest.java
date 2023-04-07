@@ -78,9 +78,10 @@ class BuildKiteServiceTest {
 			.startTime("startTime")
 			.endTime("endTime")
 			.build();
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo())
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name("XXXX").slug("XXXX").build()));
-		when(buildKiteFeignClient.getPipelineInfo("XXXX", "1", "100", "startTime", "endTime")).thenReturn(pipelineDTOS);
+		when(buildKiteFeignClient.getPipelineInfo("Bearer test_token", "XXXX", "1", "100", "startTime", "endTime"))
+			.thenReturn(pipelineDTOS);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
 		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo(pipelineParam);
@@ -102,13 +103,13 @@ class BuildKiteServiceTest {
 		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
 			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
 			.build();
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo()).thenThrow(feignException);
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any())).thenThrow(feignException);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
 		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo(
 				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()));
 
-		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo();
+		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo(any());
 	}
 
 	@Test

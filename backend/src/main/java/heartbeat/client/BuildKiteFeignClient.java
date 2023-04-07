@@ -25,12 +25,13 @@ public interface BuildKiteFeignClient {
 
 	@GetMapping(path = "v2/organizations")
 	@ResponseStatus(HttpStatus.OK)
-	List<BuildKiteOrganizationsInfo> getBuildKiteOrganizationsInfo();
+	List<BuildKiteOrganizationsInfo> getBuildKiteOrganizationsInfo(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}")
 	@ResponseStatus(HttpStatus.OK)
-	List<BuildKitePipelineDTO> getPipelineInfo(@PathVariable String organizationId, @PathVariable String page,
-			@PathVariable String perPage, @RequestParam String startTime, @RequestParam String endTime);
+	List<BuildKitePipelineDTO> getPipelineInfo(@RequestHeader("Authorization") String token,
+			@PathVariable String organizationId, @PathVariable String page, @PathVariable String perPage,
+			@RequestParam String startTime, @RequestParam String endTime);
 
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds")
 	@ResponseStatus(HttpStatus.OK)

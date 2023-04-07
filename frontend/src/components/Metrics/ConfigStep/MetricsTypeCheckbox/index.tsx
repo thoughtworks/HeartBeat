@@ -5,7 +5,6 @@ import {
   SOURCE_CONTROL_TYPES,
   SELECTED_VALUE_SEPARATOR,
   REQUIRED_DATA,
-  ALL_SELECT_OPTIONS,
 } from '@src/constants'
 import { useEffect, useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox/style'
@@ -54,7 +53,7 @@ export const MetricsTypeCheckbox = () => {
     metrics && dispatch(updateMetrics(metrics))
   }, [metrics, dispatch])
 
-  const [AllSelectStatus, setAllSelectStatus] = useState(false)
+  const [isAllSelected, setIsAllSelected] = useState(false)
 
   const updatePipelineToolState = () => {
     dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
@@ -73,14 +72,14 @@ export const MetricsTypeCheckbox = () => {
   }
 
   const handleSelectOptionsChange = (value: string | string[]) => {
-    if (value.includes(REQUIRED_DATA.All) && !AllSelectStatus) {
-      setAllSelectStatus(true)
-      value = ALL_SELECT_OPTIONS
+    if (value.includes(REQUIRED_DATA.All) && !isAllSelected) {
+      setIsAllSelected(true)
+      value = Object.values(REQUIRED_DATA)
     } else if (value.includes(REQUIRED_DATA.All)) {
-      setAllSelectStatus(false)
+      setIsAllSelected(false)
       value = value.slice(1)
-    } else if (!value.includes(REQUIRED_DATA.All) && AllSelectStatus) {
-      setAllSelectStatus(false)
+    } else if (!value.includes(REQUIRED_DATA.All) && isAllSelected) {
+      setIsAllSelected(false)
       value = []
     }
     return value

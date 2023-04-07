@@ -13,17 +13,6 @@ export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
 
 export const STEPS = ['Config', 'Metrics', 'Report']
 
-export const ALL_SELECT_OPTIONS = [
-  'All',
-  'Velocity',
-  'Cycle time',
-  'Classification',
-  'Lead time for changes',
-  'Deployment frequency',
-  'Change failure rate',
-  'Mean time to recovery',
-]
-
 export enum REQUIRED_DATA {
   All = 'All',
   VELOCITY = 'Velocity',

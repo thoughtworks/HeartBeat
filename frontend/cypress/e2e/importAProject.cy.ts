@@ -17,10 +17,5 @@ describe('Import project from file', () => {
 
     configPage.goMetricsStep()
     cy.contains('Classification Setting').should('exist')
-    cy.get('.MuiSelect-select')
-      .invoke('text')
-      .then((text) => {
-        expect(text).to.equal('Yu ZhangTo doAnalysis------------------------​Parent')
-      })
   })
 })

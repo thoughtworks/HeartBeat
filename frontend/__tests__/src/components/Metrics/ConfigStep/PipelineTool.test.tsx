@@ -31,7 +31,21 @@ export const fillPipelineToolFieldsInformation = async () => {
 
 let store = null
 
-const server = setupServer(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(200))))
+const server = setupServer(
+  rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+    res(
+      ctx.json({
+        pipelineList: [
+          {
+            name: 'pipelineName',
+            id: '0186104b-aa31-458c-a58c-63266806f2fe',
+          },
+        ],
+      }),
+      ctx.status(200)
+    )
+  )
+)
 
 describe('PipelineTool', () => {
   beforeAll(() => server.listen())

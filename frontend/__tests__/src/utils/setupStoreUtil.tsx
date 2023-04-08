@@ -10,5 +10,6 @@ export const setupStore = () => {
       [configSlice.name]: configSlice.reducer,
       [metricsSlice.name]: metricsSlice.reducer,
     },
+    middleware: [],
   })
 }

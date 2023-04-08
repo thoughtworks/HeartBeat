@@ -27,10 +27,8 @@ const initialState: savedMetricsSettingState = {
 }
 
 export const metricsSlice = createSlice({
-  name: 'saveMetricsSetting',
-  initialState: {
-    ...initialState,
-  },
+  name: 'metrics',
+  initialState,
   reducers: {
     saveTargetFields: (state, action) => {
       state.targetFields = action.payload

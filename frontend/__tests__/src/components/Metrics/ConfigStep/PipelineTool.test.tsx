@@ -19,6 +19,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
+import { act } from 'react-dom/test-utils'
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
@@ -146,7 +147,9 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation()
     await userEvent.click(getByText(VERIFY))
 
-    expect(getByText(RESET)).toBeVisible()
+    act(() => {
+      expect(getByText(RESET)).toBeVisible()
+    })
   })
 
   it('should called verifyPipelineTool method once when click verify button', async () => {

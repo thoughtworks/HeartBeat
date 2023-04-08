@@ -3,9 +3,8 @@ import type { RootState } from '@src/store'
 import { REGULAR_CALENDAR } from '@src/constants'
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice'
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
-import { initialSourceControlState } from '@src/context/config/sourceControl/sourceControlSlice'
+import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
 import { REQUIRED_DATA } from '@src/constants'
-import { initSourceControlVerifyResponseState, ISourceControlVerifyResponse } from './sourceControl/verifyResponseSlice'
 
 export interface BasicConfigState {
   isProjectCreated: boolean
@@ -20,7 +19,7 @@ export interface BasicConfigState {
   }
   board: IBoardState
   pipelineTool: IPipelineToolState
-  sourceControl: ISourceControlVerifyResponse
+  sourceControl: ISourceControl
 }
 
 export const initialBasicConfigState: BasicConfigState = {
@@ -36,7 +35,7 @@ export const initialBasicConfigState: BasicConfigState = {
   },
   board: initialBoardState,
   pipelineTool: initialPipelineToolState,
-  sourceControl: initSourceControlVerifyResponseState,
+  sourceControl: initialSourceControlState,
 }
 
 export const configSlice = createSlice({
@@ -121,7 +120,7 @@ export const configSlice = createSlice({
     updateSourceControl: (state, action) => {
       state.sourceControl.config = action.payload
     },
-    updateSourceControlVerifyResponse: (state, action) => {
+    updateSourceControlVerifiedResponse: (state, action) => {
       const { githubRepos } = action.payload
       state.sourceControl.verifiedResponse.repoList = githubRepos
     },
@@ -139,8 +138,10 @@ export const {
   updateBasicConfigState,
   updatePipelineToolVerifyState,
   updatePipelineTool,
+  updatePipelineToolVerifyResponse,
   updateSourceControl,
   updateSourceControlVerifyState,
+  updateSourceControlVerifiedResponse,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.basic.projectName

@@ -32,14 +32,10 @@ const MetricsStepper = () => {
   const [isDialogShowing, setIsDialogShowing] = useState(false)
   const config = useAppSelector(selectConfig)
   const [isDisableNextButton, setIsDisableNextButton] = useState(true)
-  const {
-    isShowBoard,
-    isBoardVerified,
-    isShowPipeline,
-    isPipelineToolVerified,
-    isShowSourceControl,
-    isSourceControlVerified,
-  } = config
+
+  const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board
+  const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool
+  const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl
   const { metrics, projectName, dateRange } = config.basic
   useEffect(() => {
     if (!activeStep) {
@@ -74,9 +70,9 @@ const MetricsStepper = () => {
       dateRange: dateRange,
       calendarType: calendarType,
       metrics: metrics,
-      board: isShowBoard ? config.boardConfig : undefined,
-      pipelineTool: isShowPipeline ? config.pipelineToolConfig : undefined,
-      sourceControl: isShowSourceControl ? config.sourceControlConfig : undefined,
+      board: isShowBoard ? config.board.config : undefined,
+      pipelineTool: isShowPipeline ? config.pipelineTool.config : undefined,
+      sourceControl: isShowSourceControl ? config.sourceControl.config : undefined,
     }
     exportToJsonFile('config', configData)
   }

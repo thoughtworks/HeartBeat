@@ -13,12 +13,12 @@ export const ReportStep = () => {
   })
   const configData = useAppSelector(selectConfig)
   const { metrics, calendarType, dateRange } = configData.basic
-  const { boardConfig, pipelineToolConfig, sourceControlConfig } = configData
+  const { board, pipelineTool, sourceControl } = configData
   const params = {
     metrics: metrics,
-    pipeline: pipelineToolConfig,
-    board: boardConfig,
-    sourceControl: sourceControlConfig,
+    pipeline: pipelineTool.config,
+    board: board.config,
+    sourceControl: sourceControl.config,
     calendarType: calendarType,
     startTime: dateRange.startDate,
     endTime: dateRange.endDate,

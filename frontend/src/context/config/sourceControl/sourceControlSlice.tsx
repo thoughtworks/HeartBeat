@@ -1,30 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit'
 import { SOURCE_CONTROL_TYPES } from '@src/constants'
+import { initSourceControlVerifyResponseState, ISourceControlVerifyResponse } from './verifyResponseSlice'
 
-export interface sourceControlState {
-  sourceControlConfig: { type: string; token: string }
-  isSourceControlVerified: boolean
-  isShowSourceControl: boolean
+export interface ISourceControl {
+  config: { type: string; token: string }
+  isVerified: boolean
+  isShow: boolean
+  verifiedResponse: ISourceControlVerifyResponse
 }
 
-export const initialSourceControlState: sourceControlState = {
-  sourceControlConfig: {
+export const initialSourceControlState: ISourceControl = {
+  config: {
     type: SOURCE_CONTROL_TYPES.GITHUB,
     token: '',
   },
-  isSourceControlVerified: false,
-  isShowSourceControl: false,
+  isVerified: false,
+  isShow: false,
+  verifiedResponse: initSourceControlVerifyResponseState,
 }
-
-export const sourceControlSlice = createSlice({
-  name: 'sourceControl',
-  initialState: initialSourceControlState,
-  reducers: {
-    updateSourceControlVerifyState: (state, action) => {
-      state.isSourceControlVerified = action.payload
-    },
-    updateSourceControl: (state, action) => {
-      state.sourceControlConfig = action.payload
-    },
-  },
-})

@@ -162,11 +162,9 @@ export const MOCK_IMPORT_FILE = {
 
 export const MOCK_RESPONSE_SLICE_INIT_STATE = {
   board: {
-    jira: {
-      jiraColumns: [],
-      users: [],
-      targetFields: [],
-    },
+    jiraColumns: [],
+    users: [],
+    targetFields: [],
   },
   pipelineTool: {
     buildKite: {

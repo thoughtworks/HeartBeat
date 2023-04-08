@@ -32,7 +32,9 @@ export const MetricsTypeCheckbox = () => {
   const isBoardVerify = useAppSelector(selectIsBoardVerified)
   const isPipelineToolVerify = useAppSelector(isPipelineToolVerified)
   const isSourceControlVerify = useAppSelector(isSourceControlVerified)
-  const { isShowBoard, isShowPipeline, isShowSourceControl } = configData
+  const { isShow: isShowBoard } = configData.board
+  const { isShow: isShowPipeline } = configData.pipelineTool
+  const { isShow: isShowSourceControl } = configData.sourceControl
   const { metrics } = configData.basic
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const updateBoardState = () => {

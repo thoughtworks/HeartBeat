@@ -94,10 +94,9 @@ export const {
   updateMetricsState,
 } = metricsSlice.actions
 
-export const selectDeploymentFrequencySettings = (state: RootState) =>
-  state.saveMetricsSetting.deploymentFrequencySettings
+export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
 
-export const selectBoardColumns = (state: RootState) => state.saveMetricsSetting.boardColumns
-export const selectMetricsContent = (state: RootState) => state.saveMetricsSetting
+export const selectBoardColumns = (state: RootState) => state.metrics.boardColumns
+export const selectMetricsContent = (state: RootState) => state.metrics
 
 export default metricsSlice.reducer

@@ -22,6 +22,11 @@ const initialConfigState = {
   },
   isBoardVerified: false,
   isShowBoard: false,
+  verifiedBoard: {
+    jiraColumns: [],
+    targetFields: [],
+    users: [],
+  },
   pipelineToolConfig: {
     type: PIPELINE_TOOL_TYPES.BUILD_KITE,
     token: '',

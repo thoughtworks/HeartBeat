@@ -12,6 +12,7 @@ import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
 import heartbeat.controller.pipeline.vo.response.Pipeline;
 import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
 import heartbeat.controller.pipeline.vo.response.PipelineTransformer;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +82,9 @@ public class BuildKiteService {
 	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
 		for (String permission : permissions) {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
-				throw new RequestFailedException(403, "Permission deny!");
+				log.error("Failed to call BuildKite, because of insufficient permission, current permissions: {}",
+						buildKiteTokenInfo.getScopes());
+				throw new PermissionDenyException(403, "Permission deny!");
 			}
 		}
 	}

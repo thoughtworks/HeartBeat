@@ -1,12 +1,15 @@
 package heartbeat.exception;
 
-import javax.naming.NoPermissionException;
+import lombok.Getter;
 
-public class PermissionDenyException extends NoPermissionException {
+@Getter
+public class PermissionDenyException extends RequestFailedException {
+
 	private final int status;
 
-	public PermissionDenyException(NoPermissionException e) {
-		super(String.format("Request failed with status code %d, error: %s", 403, e.getMessage()));
-		this.status = 403;
+	public PermissionDenyException(int status, String message) {
+		super(status, message);
+		this.status = status;
 	}
+
 }

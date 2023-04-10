@@ -25,6 +25,7 @@ import {
 } from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
+import { REQUIRED_DATA_LIST } from '../../../../../__tests__/src/fixtures'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -75,6 +76,9 @@ export const MetricsTypeCheckbox = () => {
 
   const handleSelectOptionsChange = (value: string | string[]) => {
     if (value.includes(REQUIRED_DATA.All) && !isAllSelected) {
+      setIsAllSelected(true)
+      value = Object.values(REQUIRED_DATA)
+    } else if (value.length == REQUIRED_DATA_LIST.length - 1 && !isAllSelected) {
       setIsAllSelected(true)
       value = Object.values(REQUIRED_DATA)
     } else if (value.includes(REQUIRED_DATA.All)) {

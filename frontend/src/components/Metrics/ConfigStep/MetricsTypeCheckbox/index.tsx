@@ -25,6 +25,7 @@ import {
 } from '@src/context/config/configSlice'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
+import { REQUIRED_DATA_LIST } from '../../../../../__tests__/src/fixtures'
 
 export const MetricsTypeCheckbox = () => {
   const dispatch = useAppDispatch()
@@ -73,18 +74,21 @@ export const MetricsTypeCheckbox = () => {
       : dispatch(updateSourceControlVerifyState(false))
   }
 
-  const handleSelectOptionsChange = (value: string | string[]) => {
-    if (value.includes(REQUIRED_DATA.All) && !isAllSelected) {
+  const handleSelectOptionsChange = (selectOptions: string | string[]) => {
+    if (selectOptions.includes(REQUIRED_DATA.All) && !isAllSelected) {
       setIsAllSelected(true)
-      value = Object.values(REQUIRED_DATA)
-    } else if (value.includes(REQUIRED_DATA.All)) {
+      selectOptions = Object.values(REQUIRED_DATA)
+    } else if (selectOptions.length == REQUIRED_DATA_LIST.length - 1 && !isAllSelected) {
+      setIsAllSelected(true)
+      selectOptions = Object.values(REQUIRED_DATA)
+    } else if (selectOptions.includes(REQUIRED_DATA.All)) {
       setIsAllSelected(false)
-      value = value.slice(1)
-    } else if (!value.includes(REQUIRED_DATA.All) && isAllSelected) {
+      selectOptions = selectOptions.slice(1)
+    } else if (!selectOptions.includes(REQUIRED_DATA.All) && isAllSelected) {
       setIsAllSelected(false)
-      value = []
+      selectOptions = []
     }
-    return value
+    return selectOptions
   }
 
   const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {

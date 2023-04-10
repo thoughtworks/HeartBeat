@@ -76,7 +76,7 @@ export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site'
 export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
-const BASE_URL = 'api/v1'
+export const BASE_URL = 'api/v1'
 export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`
 export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`

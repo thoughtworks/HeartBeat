@@ -40,9 +40,7 @@ export const PipelineMetricSelection = ({
     if (organization && pipelineName) {
       const { params, buildId, organizationId, pipelineType, token } = getStepsParams()
       getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-        if (res) {
-          setStepsForSelection([...Object.values(res)])
-        }
+        res && setStepsForSelection([...Object.values(res)])
       })
     }
   }, [organization, pipelineName])

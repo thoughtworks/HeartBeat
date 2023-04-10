@@ -5,56 +5,69 @@ import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
+import { BASE_URL } from '../../../../fixtures'
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
+import { HttpStatusCode } from 'axios'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
   deleteADeploymentFrequencySetting: jest.fn().mockReturnValue({ type: 'DELETE_DEPLOYMENT_FREQUENCY_SETTING' }),
 }))
 
-beforeEach(() => {
-  jest.clearAllMocks()
-})
-
-const REMOVE_BUTTON = 'Remove'
-const mockId = 0
-const deploymentFrequencySetting = {
-  id: 0,
-  organization: '',
-  pipelineName: '',
-  steps: '',
-}
-const store = setupStore()
-
-const setup = async (
-  deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
-  isShowRemoveButton: boolean
-) => {
-  await store.dispatch(
-    updatePipelineToolVerifyResponse({
-      pipelineList: [
-        {
-          id: 'mockId',
-          name: 'mockName',
-          orgId: 'mockOrgId',
-          orgName: 'mockOrgName',
-          repository: 'mockRepository',
-          steps: ['step1', 'step2'],
-        },
-      ],
+describe('PipelineMetricSelection', () => {
+  const getStepsUrl = `${BASE_URL}/pipelines/buildKite/:org/pipelines/:buildId/steps`
+  const server = setupServer(
+    rest.get(getStepsUrl, (req, res, ctx) => {
+      return res(ctx.status(HttpStatusCode.Ok), ctx.json({ steps: ['step1'] }))
     })
   )
-  return render(
-    <Provider store={store}>
-      <PipelineMetricSelection
-        deploymentFrequencySetting={deploymentFrequencySetting}
-        isShowRemoveButton={isShowRemoveButton}
-        errorMessages={{ organization: '', pipelineName: '', steps: '' }}
-      />
-    </Provider>
-  )
-}
 
-describe('PipelineMetricSelection', () => {
+  const REMOVE_BUTTON = 'Remove'
+  const mockId = 0
+  const deploymentFrequencySetting = {
+    id: 0,
+    organization: '',
+    pipelineName: '',
+    steps: '',
+  }
+  const store = setupStore()
+
+  const setup = async (
+    deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
+    isShowRemoveButton: boolean
+  ) => {
+    await store.dispatch(
+      updatePipelineToolVerifyResponse({
+        pipelineList: [
+          {
+            id: 'mockId',
+            name: 'mockName',
+            orgId: 'mockOrgId',
+            orgName: 'mockOrgName',
+            repository: 'mockRepository',
+            steps: ['step1', 'step2'],
+          },
+        ],
+      })
+    )
+    return render(
+      <Provider store={store}>
+        <PipelineMetricSelection
+          deploymentFrequencySetting={deploymentFrequencySetting}
+          isShowRemoveButton={isShowRemoveButton}
+          errorMessages={{ organization: '', pipelineName: '', steps: '' }}
+        />
+      </Provider>
+    )
+  }
+
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
     const { getByText } = await setup(deploymentFrequencySetting, true)
 

@@ -41,7 +41,7 @@
     status: 200
     headers:
       content-type: application/json
-    file: ./backend/github/jsons/github.user.repos.pulls.json
+    file: ./backend/github/jsons/github.repos.pulls.json
 
 # GitHub Pull Request Commit
 - request:
@@ -52,4 +52,16 @@
     status: 200
     headers:
       content-type: application/json
-    file: ./backend/github/jsons/github.user.repos.pull.request.commits.json
+    file: ./backend/github/jsons/github.repos.pull.request.commits.json
+
+# GitHub Commit Data
+# Example: repos/xxx/xxx/commits/commit-sha
+- request:
+    method: GET
+    url: /repos/([\w.-]+\/[\w.-]+)/commits/(\b[0-9a-z]+\b)
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    file: ./backend/github/jsons/github.repos.commits.<% url.2 %>.json

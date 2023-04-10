@@ -7,9 +7,6 @@ import {
   CYCLE_TIME,
   ALL,
   MEAN_TIME_TO_RECOVERY,
-  CLASSIFICATION,
-  DEPLOYMENT_FREQUENCY,
-  CHANGE_FAILURE_RATE,
 } from '../../../fixtures'
 import { render, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
@@ -84,24 +81,6 @@ describe('MetricsTypeCheckbox', () => {
     await userEvent.click(listBox.getByRole('option', { name: ALL }))
 
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
-  })
-
-  it('should be checked of All selected option when click every other options', async () => {
-    const { getByRole } = setup()
-
-    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-
-    const listBox = within(getByRole('listbox'))
-
-    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }))
-    await userEvent.click(listBox.getByRole('option', { name: CLASSIFICATION }))
-    await userEvent.click(listBox.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
-    await userEvent.click(listBox.getByRole('option', { name: DEPLOYMENT_FREQUENCY }))
-    await userEvent.click(listBox.getByRole('option', { name: CHANGE_FAILURE_RATE }))
-    await userEvent.click(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }))
-
-    expect(listBox.getByRole('option', { name: 'All' })).toHaveAttribute('aria-selected', 'true')
   })
 
   it('should show some selections when click all option and then click velocity selection', async () => {

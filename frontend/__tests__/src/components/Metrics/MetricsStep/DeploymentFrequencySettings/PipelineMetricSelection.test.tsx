@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
-import { updatePipelineToolVerifyResponse } from '@src/context/response/responseSlice'
+import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),

@@ -3,7 +3,6 @@ import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentF
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './style'
-import { selectPipelineList } from '@src/context/response/responseSlice'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
@@ -26,17 +25,16 @@ export const PipelineMetricSelection = ({
   isShowRemoveButton,
   errorMessages,
 }: pipelineMetricSelectionProps) => {
+  const [stepsForSelection, setStepsForSelection] = useState<string[]>([])
   const dispatch = useAppDispatch()
-  const pipelineList = useAppSelector(selectPipelineList)
   const config = useAppSelector(selectConfig)
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
+  const { pipelineList } = config.pipelineTool.verifiedResponse
   const { id, organization, pipelineName, steps } = deploymentFrequencySetting
   const organizationNameOptions = [...new Set(pipelineList.map((item) => item.orgName))]
   const pipelineNameOptions = pipelineList
     .filter((pipeline) => pipeline.orgName === organization)
     .map((item) => item.name)
-
-  const [stepsForSelection, setStepsForSelection] = useState<string[]>([])
 
   useEffect(() => {
     if (organization && pipelineName) {
@@ -54,20 +52,21 @@ export const PipelineMetricSelection = ({
   }
 
   const getStepsParams = () => {
-    const item = pipelineList.find((pipeline) => pipeline.name === pipelineName)!
+    const item = pipelineList.find((pipeline) => pipeline.name === pipelineName)
+
     const { startDate, endDate } = config.basic.dateRange
-    const pipelineType = config.pipelineToolConfig.type
-    const token = config.pipelineToolConfig.token
+    const pipelineType = config.pipelineTool.config.type
+    const token = config.pipelineTool.config.token
     return {
       params: {
-        pipelineName: item.name,
-        repository: item.repository,
-        orgName: item.orgName,
+        pipelineName: item?.name ?? '',
+        repository: item?.repository ?? '',
+        orgName: item?.orgName ?? '',
         startTime: dayjs(startDate).startOf('date').valueOf(),
         endTime: dayjs(endDate).startOf('date').valueOf(),
       },
-      buildId: item.id,
-      organizationId: item.orgId,
+      buildId: item?.id ?? '',
+      organizationId: item?.orgId ?? '',
       pipelineType,
       token,
     }

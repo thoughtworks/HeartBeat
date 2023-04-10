@@ -23,6 +23,7 @@ import {
   selectDateRange,
   selectPipelineTool,
   updatePipelineTool,
+  updatePipelineToolVerifyResponse,
   updatePipelineToolVerifyState,
 } from '@src/context/config/configSlice'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
@@ -127,7 +128,7 @@ export const PipelineTool = () => {
     await verifyPipelineTool(params).then((res) => {
       if (res) {
         dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified))
-        dispatch(updatePipelineToolVerifyState(res.response))
+        dispatch(updatePipelineToolVerifyResponse(res.response))
       }
     })
   }

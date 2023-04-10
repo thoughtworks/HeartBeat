@@ -32,7 +32,9 @@ export const MetricsTypeCheckbox = () => {
   const isBoardVerify = useAppSelector(selectIsBoardVerified)
   const isPipelineToolVerify = useAppSelector(isPipelineToolVerified)
   const isSourceControlVerify = useAppSelector(isSourceControlVerified)
-  const { isShowBoard, isShowPipeline, isShowSourceControl } = configData
+  const { isShow: isShowBoard } = configData.board
+  const { isShow: isShowPipeline } = configData.pipelineTool
+  const { isShow: isShowSourceControl } = configData.sourceControl
   const { metrics } = configData.basic
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const updateBoardState = () => {
@@ -53,6 +55,8 @@ export const MetricsTypeCheckbox = () => {
     metrics && dispatch(updateMetrics(metrics))
   }, [metrics, dispatch])
 
+  const [isAllSelected, setIsAllSelected] = useState(false)
+
   const updatePipelineToolState = () => {
     dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     dispatch(updatePipelineToolVerifyState(false))
@@ -69,17 +73,39 @@ export const MetricsTypeCheckbox = () => {
       : dispatch(updateSourceControlVerifyState(false))
   }
 
+  const handleSelectOptionsChange = (value: string | string[]) => {
+    if (value.includes(REQUIRED_DATA.All) && !isAllSelected) {
+      setIsAllSelected(true)
+      value = Object.values(REQUIRED_DATA)
+    } else if (value.includes(REQUIRED_DATA.All)) {
+      setIsAllSelected(false)
+      value = value.slice(1)
+    } else if (!value.includes(REQUIRED_DATA.All) && isAllSelected) {
+      setIsAllSelected(false)
+      value = []
+    }
+    return value
+  }
+
   const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
     const {
       target: { value },
     } = event
 
-    dispatch(updateMetrics(value))
-    value.length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
+    dispatch(updateMetrics(handleSelectOptionsChange(value)))
+    handleSelectOptionsChange(value).length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     updateBoardState()
     updatePipelineToolState()
     updateSourceControlState()
   }
+
+  const handleRenderSelectOptions = (selected: string[]) => {
+    if (selected.includes(REQUIRED_DATA.All)) {
+      return selected.slice(1).join(SELECTED_VALUE_SEPARATOR)
+    }
+    return selected.join(SELECTED_VALUE_SEPARATOR)
+  }
+
   return (
     <>
       <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
@@ -89,7 +115,7 @@ export const MetricsTypeCheckbox = () => {
           multiple
           value={metrics}
           onChange={handleRequireDataChange}
-          renderValue={(selected) => selected.join(SELECTED_VALUE_SEPARATOR)}
+          renderValue={handleRenderSelectOptions}
         >
           {Object.values(REQUIRED_DATA).map((data) => (
             <MenuItem key={data} value={data}>

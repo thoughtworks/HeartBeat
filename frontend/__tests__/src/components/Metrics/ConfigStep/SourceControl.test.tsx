@@ -30,7 +30,16 @@ export const fillSourceControlFieldsInformation = () => {
 
 let store = null
 
-const server = setupServer(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))))
+const server = setupServer(
+  rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+    res(
+      ctx.json({
+        githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
+      }),
+      ctx.status(200)
+    )
+  )
+)
 
 describe('SourceControl', () => {
   beforeAll(() => server.listen())

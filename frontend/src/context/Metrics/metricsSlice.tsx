@@ -9,6 +9,9 @@ export interface savedMetricsSettingState {
   doneColumn: string[]
   boardColumns: { name: string; value: string }[]
   deploymentFrequencySettings: { id: number; organization: string; pipelineName: string; steps: string }[]
+  importFile: string[]
+  isProjectCreated: boolean
+  classification: string[]
 }
 
 const initialState: savedMetricsSettingState = {
@@ -18,13 +21,14 @@ const initialState: savedMetricsSettingState = {
   doneColumn: [],
   boardColumns: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+  importFile: [],
+  isProjectCreated: true,
+  classification: [],
 }
 
 export const metricsSlice = createSlice({
-  name: 'saveMetricsSetting',
-  initialState: {
-    ...initialState,
-  },
+  name: 'metrics',
+  initialState,
   reducers: {
     saveTargetFields: (state, action) => {
       state.targetFields = action.payload
@@ -60,6 +64,16 @@ export const metricsSlice = createSlice({
       })
     },
 
+    updateMetricsState: (state, action) => {
+      const { isProjectCreated, basic } = action.payload
+      state.isProjectCreated = isProjectCreated
+      state.importFile = basic
+      state.users = basic.crews || state.users
+      state.boardColumns = basic.cycleTime || state.boardColumns
+      state.doneColumn = basic.realDone || state.doneColumn
+      state.classification = basic.classification || state.classification
+    },
+
     deleteADeploymentFrequencySetting: (state, action) => {
       const deleteId = action.payload
       state.deploymentFrequencySettings = [...state.deploymentFrequencySettings.filter(({ id }) => id !== deleteId)]
@@ -75,11 +89,12 @@ export const {
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,
+  updateMetricsState,
 } = metricsSlice.actions
 
-export const selectDeploymentFrequencySettings = (state: RootState) =>
-  state.saveMetricsSetting.deploymentFrequencySettings
+export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
 
-export const selectBoardColumns = (state: RootState) => state.saveMetricsSetting.boardColumns
+export const selectBoardColumns = (state: RootState) => state.metrics.boardColumns
+export const selectMetricsContent = (state: RootState) => state.metrics
 
 export default metricsSlice.reducer

@@ -19,6 +19,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
+import { act } from 'react-dom/test-utils'
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
@@ -30,7 +31,21 @@ export const fillPipelineToolFieldsInformation = async () => {
 
 let store = null
 
-const server = setupServer(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(200))))
+const server = setupServer(
+  rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+    res(
+      ctx.json({
+        pipelineList: [
+          {
+            name: 'pipelineName',
+            id: '0186104b-aa31-458c-a58c-63266806f2fe',
+          },
+        ],
+      }),
+      ctx.status(200)
+    )
+  )
+)
 
 describe('PipelineTool', () => {
   beforeAll(() => server.listen())
@@ -146,7 +161,9 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation()
     await userEvent.click(getByText(VERIFY))
 
-    expect(getByText(RESET)).toBeVisible()
+    act(() => {
+      expect(getByText(RESET)).toBeVisible()
+    })
   })
 
   it('should called verifyPipelineTool method once when click verify button', async () => {

@@ -11,13 +11,7 @@ import {
 } from '@src/constants'
 import { FormEvent, useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import {
-  selectBoard,
-  selectDateRange,
-  selectIsBoardVerified,
-  updateBoard,
-  updateBoardVerifyState,
-} from '@src/context/config/configSlice'
+import { selectBoard, selectDateRange } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
@@ -31,7 +25,13 @@ import {
   StyledTitle,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
-import { updateJiraVerifyResponse } from '@src/context/response/responseSlice'
+import dayjs from 'dayjs'
+import {
+  updateBoardVerifyState,
+  updateBoard,
+  selectIsBoardVerified,
+  updateJiraVerifyResponse,
+} from '@src/context/config/configSlice'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -165,8 +165,8 @@ export const Board = () => {
       projectKey: fields[3].value,
       site: fields[4].value,
       token: encodeToken,
-      startTime: DateRange.startDate,
-      endTime: DateRange.endDate,
+      startTime: dayjs(DateRange.startDate).startOf('date').valueOf(),
+      endTime: dayjs(DateRange.endDate).startOf('date').valueOf(),
     }
     await verifyJira(params).then((res) => {
       if (res) {

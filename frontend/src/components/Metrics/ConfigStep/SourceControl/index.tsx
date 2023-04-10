@@ -28,7 +28,6 @@ import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlE
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
-import { updateSourceControlVerifyResponse } from '@src/context/response/responseSlice'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
@@ -92,7 +91,7 @@ export const SourceControl = () => {
     await verifyGithub(params).then((res) => {
       if (res) {
         dispatch(updateSourceControlVerifyState(res.isSourceControlVerify))
-        dispatch(updateSourceControlVerifyResponse(res.response))
+        dispatch(updateSourceControlVerifyState(res.response))
       }
     })
   }

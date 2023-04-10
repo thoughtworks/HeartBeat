@@ -1,9 +1,12 @@
 import { Checkbox, FormControl, InputLabel, MenuItem, Select, ListItemText, SelectChangeEvent } from '@mui/material'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveTargetFields } from '@src/context/Metrics/metricsSlice'
+import { saveTargetFields, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import { useAppSelector } from '@src/hooks'
+import { WaringDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
+import { getArrayIntersection } from '@src/utils/util'
 
 interface classificationProps {
   title: string
@@ -13,8 +16,14 @@ interface classificationProps {
 
 export const Classification = ({ options, title, label }: classificationProps) => {
   const dispatch = useAppDispatch()
-  const [selectedTargetField, setSelectedTargetField] = useState<string[]>([])
+  const importClassification = useAppSelector(selectMetricsContent).classification
+  const isProjectCreated = useAppSelector(selectMetricsContent).isProjectCreated
+  const optionsName = options.map((e) => e.name)
+
+  const defaultInput = getArrayIntersection(optionsName, importClassification)
+  const [selectedTargetField, setSelectedTargetField] = useState(isProjectCreated ? [] : defaultInput)
   const isAllSelected = selectedTargetField.length > 0 && selectedTargetField.length === options.length
+
   const handleTargetFieldChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value
     const targetFieldNames = options.map((item) => item.name)
@@ -36,6 +45,11 @@ export const Classification = ({ options, title, label }: classificationProps) =
   return (
     <>
       <MetricsSettingTitle title={title} />
+      {!isProjectCreated && (
+        <WaringDone>
+          <span>Warning: Some classifications in import data might be removed now.</span>
+        </WaringDone>
+      )}
       <FormControl variant='standard'>
         <InputLabel id='classification-check-box'>{label}</InputLabel>
         <Select

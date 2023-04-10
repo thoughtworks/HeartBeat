@@ -1,7 +1,8 @@
 import { REGULAR_CALENDAR } from './fixtures'
 import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
+import { BasicConfigState } from '@src/context/config/configSlice'
 
-const initialConfigState = {
+const initialConfigState: BasicConfigState = {
   isProjectCreated: true,
   basic: {
     projectName: '',
@@ -12,28 +13,45 @@ const initialConfigState = {
     },
     metrics: [],
   },
-  boardConfig: {
-    type: BOARD_TYPES.JIRA,
-    boardId: '',
-    email: '',
-    projectKey: '',
-    site: '',
-    token: '',
+  board: {
+    config: {
+      type: BOARD_TYPES.JIRA,
+      boardId: '',
+      email: '',
+      projectKey: '',
+      site: '',
+      token: '',
+    },
+    isVerified: false,
+    isShow: false,
+    verifiedResponse: {
+      jiraColumns: [],
+      targetFields: [],
+      users: [],
+    },
   },
-  isBoardVerified: false,
-  isShowBoard: false,
-  pipelineToolConfig: {
-    type: PIPELINE_TOOL_TYPES.BUILD_KITE,
-    token: '',
+  pipelineTool: {
+    config: {
+      type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+      token: '',
+    },
+    isVerified: false,
+    isShow: false,
+    verifiedResponse: {
+      pipelineList: [],
+    },
   },
-  isPipelineToolVerified: false,
-  isShowPipeline: false,
-  sourceControlConfig: {
-    type: SOURCE_CONTROL_TYPES.GITHUB,
-    token: '',
+  sourceControl: {
+    config: {
+      type: SOURCE_CONTROL_TYPES.GITHUB,
+      token: '',
+    },
+    isVerified: false,
+    isShow: false,
+    verifiedResponse: {
+      repoList: [],
+    },
   },
-  isSourceControlVerified: false,
-  isShowSourceControl: false,
 }
 
 export default initialConfigState

@@ -22,7 +22,20 @@ body:
     description: |
       Check if the issue is reproducible with the latest stable version of Heartbeat.
     placeholder: |
-      e.g. 5.2.2
+      e.g. latest
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Summary
+    description: |
+      Please give us some info about your bug.
+
+    placeholder: |
+      1. I want to get the metrics report, but failed.
+      2. ......
 
   validations:
     required: true

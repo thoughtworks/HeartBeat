@@ -13,6 +13,17 @@ export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
 
 export const STEPS = ['Config', 'Metrics', 'Report']
 
+export enum REQUIRED_DATA {
+  All = 'All',
+  VELOCITY = 'Velocity',
+  CYCLE_TIME = 'Cycle time',
+  CLASSIFICATION = 'Classification',
+  LEAD_TIME_FOR_CHANGES = 'Lead time for changes',
+  DEPLOYMENT_FREQUENCY = 'Deployment frequency',
+  CHANGE_FAILURE_RATE = 'Change failure rate',
+  MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
+}
+
 export enum DATE_RANGE {
   START_DATE = 0,
   END_DATE = 1,
@@ -22,16 +33,6 @@ export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'Pipeline Tool',
   SOURCE_CONTROL = 'Source Control',
-}
-
-export enum REQUIRED_DATA {
-  VELOCITY = 'Velocity',
-  CYCLE_TIME = 'Cycle time',
-  CLASSIFICATION = 'Classification',
-  LEAD_TIME_FOR_CHANGES = 'Lead time for changes',
-  DEPLOYMENT_FREQUENCY = 'Deployment frequency',
-  CHANGE_FAILURE_RATE = 'Change failure rate',
-  MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
 }
 
 export const BOARD_TYPES = {

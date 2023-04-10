@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import { saveDoneColumn, selectBoardColumns } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { DEFAULT_HELPER_TEXT, METRICS_CONSTANTS, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
 

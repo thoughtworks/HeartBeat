@@ -1,4 +1,4 @@
-import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { TableBody, TableCell, TableHead, TableRow, Table } from '@mui/material'
 import { Container, Row } from '@src/components/Metrics/ReportStep/Velocity/style'
 import { VelocityRes } from '@src/types/reportRes'

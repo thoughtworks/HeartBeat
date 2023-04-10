@@ -2,7 +2,7 @@ import { Checkbox, FormControl, InputLabel, MenuItem, Select, ListItemText, Sele
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveTargetFields, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
-import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
 import { WaringDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'

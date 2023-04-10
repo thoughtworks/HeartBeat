@@ -68,6 +68,8 @@ export const NOT_FOUND_ERROR_MESSAGE = '404 Not Found'
 export const PERMISSION_DENIED_ERROR_MESSAGE = 'Permission denied'
 export const UNKNOWN_ERROR_MESSAGE = 'Unknown'
 
+export const GET_STEPS_FAILED = 'Get steps failed'
+
 export const METRICS_CONSTANTS = {
   cycleTimeEmptyStr: '----',
   doneValue: 'Done',

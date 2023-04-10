@@ -86,6 +86,12 @@ export const PipelineTool = () => {
     })
     setFields(newFieldsValue)
     dispatch(updatePipelineToolVerifyState(false))
+    dispatch(
+      updatePipelineTool({
+        type: fields[0].value,
+        token: fields[1].value,
+      })
+    )
   }
 
   const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
@@ -103,7 +109,7 @@ export const PipelineTool = () => {
     e.preventDefault()
     dispatch(
       updatePipelineTool({
-        pipelineTool: fields[0].value,
+        type: fields[0].value,
         token: fields[1].value,
       })
     )

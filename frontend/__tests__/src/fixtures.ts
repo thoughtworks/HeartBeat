@@ -235,3 +235,17 @@ export enum VelocityMetric {
   VELOCITY_SP = 'Velocity(SP)',
   THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
 }
+
+export const MOCK_GET_STEPS_PARAMS = {
+  params: {
+    pipelineName: 'mock pipeline name',
+    repository: 'mock repository',
+    orgName: 'mock orgName',
+    startTime: 1212112121212,
+    endTime: 1313131313131,
+  },
+  buildId: 'mockBuildId',
+  organizationId: 'mockOrganizationId',
+  pipelineType: 'BuildKite',
+  token: 'mockToken',
+}

@@ -1,24 +1,11 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { metricsClient } from '@src/clients/MetricsClient'
-import { BASE_URL, VERIFY_ERROR_MESSAGE } from '../fixtures'
+import { BASE_URL, MOCK_GET_STEPS_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures'
 import { HttpStatusCode } from 'axios'
 
 describe('get steps from metrics response', () => {
-  const mockGetStepsParams = {
-    params: {
-      pipelineName: 'mock pipeline name',
-      repository: 'mock repository',
-      orgName: 'mock orgName',
-      startTime: 1212112121212,
-      endTime: 1313131313131,
-    },
-    buildId: 'mockBuildId',
-    organizationId: 'mockOrganizationId',
-    pipelineType: 'BuildKite',
-    token: 'mockToken',
-  }
-  const { params, buildId, organizationId, pipelineType, token } = mockGetStepsParams
+  const { params, buildId, organizationId, pipelineType, token } = MOCK_GET_STEPS_PARAMS
   const getStepsUrl = `${BASE_URL}/pipelines/:type/:orgId/pipelines/:buildId/steps`
   const server = setupServer(
     rest.get(getStepsUrl, (req, res, ctx) => {

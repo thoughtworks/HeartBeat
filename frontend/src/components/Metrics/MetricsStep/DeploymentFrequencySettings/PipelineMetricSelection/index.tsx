@@ -25,7 +25,7 @@ export const PipelineMetricSelection = ({
   isShowRemoveButton,
   errorMessages,
 }: pipelineMetricSelectionProps) => {
-  const [stepsForSelection, setStepsForSelection] = useState<string[]>([])
+  const [stepsOptions, setStepsOptions] = useState<string[]>([])
   const dispatch = useAppDispatch()
   const config = useAppSelector(selectConfig)
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
@@ -40,7 +40,7 @@ export const PipelineMetricSelection = ({
     if (organization && pipelineName) {
       const { params, buildId, organizationId, pipelineType, token } = getStepsParams()
       getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-        res && setStepsForSelection([...Object.values(res)])
+        res && setStepsOptions([...Object.values(res)])
       })
     }
   }, [organization, pipelineName])
@@ -50,21 +50,21 @@ export const PipelineMetricSelection = ({
   }
 
   const getStepsParams = () => {
-    const item = pipelineList.find((pipeline) => pipeline.name === pipelineName)
-
+    const pipeline = pipelineList.find((pipeline) => pipeline.name === pipelineName)!
     const { startDate, endDate } = config.basic.dateRange
     const pipelineType = config.pipelineTool.config.type
     const token = config.pipelineTool.config.token
+
     return {
       params: {
-        pipelineName: item?.name ?? '',
-        repository: item?.repository ?? '',
-        orgName: item?.orgName ?? '',
+        pipelineName: pipeline.name,
+        repository: pipeline.repository,
+        orgName: pipeline.orgName,
         startTime: dayjs(startDate).startOf('date').valueOf(),
         endTime: dayjs(endDate).startOf('date').valueOf(),
       },
-      buildId: item?.id ?? '',
-      organizationId: item?.orgId ?? '',
+      buildId: pipeline.id,
+      organizationId: pipeline.orgId,
       pipelineType,
       token,
     }
@@ -93,7 +93,7 @@ export const PipelineMetricSelection = ({
       {organization && pipelineName && (
         <SingleSelection
           id={id}
-          options={stepsForSelection}
+          options={stepsOptions}
           label={'Steps'}
           value={steps}
           errorMessage={errorMessages?.steps}

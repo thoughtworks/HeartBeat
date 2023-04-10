@@ -26,6 +26,9 @@ describe('Create a new project', () => {
 
     configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
 
+    cy.contains('Verified').should('exist')
+    cy.contains('Reset').should('exist')
+
     configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
 
     configPage.fillSourceControlFieldsInfoAndVerify(`ghp_${'Abc123'.repeat(6)}`)

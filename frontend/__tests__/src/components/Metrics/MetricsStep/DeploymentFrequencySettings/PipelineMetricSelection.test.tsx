@@ -111,7 +111,7 @@ describe('PipelineMetricSelection', () => {
     )
 
     await waitFor(() => {
-      expect(getByText('BuildKite Get steps failed: error message')).toBeInTheDocument()
+      expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument()
     })
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()

@@ -12,7 +12,7 @@ class Metrics {
     cy.contains('XXXX').click()
     cy.contains('Pipeline Name').siblings().click()
     cy.contains('payment-selector-ui').click()
-    cy.contains('BuildKite Get steps failed: 404 Not Found').should('exist')
+    cy.contains('BuildKite get steps failed: 404 Not Found').should('exist')
 
     cy.contains('Pipeline Name').siblings().click()
     cy.contains('fs-platform-payment-selector').click()

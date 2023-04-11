@@ -14,6 +14,9 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
 
 describe('PipelineMetricSelection', () => {
   const REMOVE_BUTTON = 'Remove'
+  const ORGANIZATION = 'Organization'
+  const PIPELINE_NAME = 'Pipeline Name'
+  const STEPS = 'Steps'
   const mockId = 0
   const deploymentFrequencySetting = {
     id: 0,
@@ -60,14 +63,14 @@ describe('PipelineMetricSelection', () => {
     const { getByText } = await setup(deploymentFrequencySetting, true)
 
     expect(getByText(REMOVE_BUTTON)).toBeInTheDocument()
-    expect(getByText('Organization')).toBeInTheDocument()
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is false', async () => {
     const { getByText, queryByText } = await setup(deploymentFrequencySetting, false)
 
     expect(queryByText(REMOVE_BUTTON)).not.toBeInTheDocument()
-    expect(getByText('Organization')).toBeInTheDocument()
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
@@ -82,8 +85,8 @@ describe('PipelineMetricSelection', () => {
   it('should show pipelineName selection when select organization', async () => {
     const { getByText } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false)
 
-    expect(getByText('Organization')).toBeInTheDocument()
-    expect(getByText('Pipeline Name')).toBeInTheDocument()
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
+    expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
   })
 
   it('should show step selection when select organization and pipelineName', async () => {
@@ -93,9 +96,9 @@ describe('PipelineMetricSelection', () => {
       false
     )
 
-    expect(getByText('Organization')).toBeInTheDocument()
-    expect(getByText('Pipeline Name')).toBeInTheDocument()
-    expect(getByText('Steps')).toBeInTheDocument()
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
+    expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
+    expect(getByText(STEPS)).toBeInTheDocument()
   })
 
   it('should show error message pop when getSteps failed', async () => {
@@ -111,8 +114,8 @@ describe('PipelineMetricSelection', () => {
       expect(getByText('BuildKite Get steps failed: error message')).toBeInTheDocument()
     })
 
-    expect(getByText('Organization')).toBeInTheDocument()
-    expect(getByText('Pipeline Name')).toBeInTheDocument()
-    expect(getByText('Steps')).toBeInTheDocument()
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
+    expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
+    expect(getByText(STEPS)).toBeInTheDocument()
   })
 })

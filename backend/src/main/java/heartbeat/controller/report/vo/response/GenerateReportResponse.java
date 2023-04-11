@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GenerateReporterResponse {
-	private int velocity;
+public class GenerateReportResponse {
+
+	private Velocity velocity;
+
 }

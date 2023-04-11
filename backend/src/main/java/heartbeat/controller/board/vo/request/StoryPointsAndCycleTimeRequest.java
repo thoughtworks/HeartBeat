@@ -24,7 +24,7 @@ public class StoryPointsAndCycleTimeRequest {
 
 	private String boardId;
 
-	private String  startTime;
+	private String startTime;
 
 	private String endTime;
 

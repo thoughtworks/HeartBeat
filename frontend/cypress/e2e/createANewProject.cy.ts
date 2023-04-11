@@ -1,5 +1,6 @@
 import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
+import metricsPage from '../pages/metrics/metrics'
 
 describe('Create a new project', () => {
   it('Should create a new project manually', () => {
@@ -38,5 +39,11 @@ describe('Create a new project', () => {
 
     cy.contains('Crews Setting').should('exist')
     cy.contains('Real Done').should('exist')
+
+    metricsPage.checkClassification()
+
+    metricsPage.checkDeploymentFrequencySettings()
+
+    nextButton().should('be.enabled')
   })
 })

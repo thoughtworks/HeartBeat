@@ -61,7 +61,7 @@ describe('pipelineTool reducer', () => {
         },
       ],
     }
-    //TODO:where should set this
+
     it('should return PipelineNames when call selectPipelineNames function', async () => {
       const store = setupStore()
       await store.dispatch(updatePipelineToolVerifyResponse(mockPipelineToolVerifyResponse))

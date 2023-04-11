@@ -5,6 +5,7 @@ import { IBoardState, initialBoardState } from '@src/context/config/board/boardS
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
 import { REQUIRED_DATA } from '@src/constants'
+import dayjs from 'dayjs'
 
 export interface BasicConfigState {
   isProjectCreated: boolean
@@ -159,5 +160,37 @@ export const selectIsBoardVerified = (state: RootState) => state.config.board.is
 export const selectUsers = (state: RootState) => state.config.board.verifiedResponse.users
 export const selectJiraColumns = (state: RootState) => state.config.board.verifiedResponse.jiraColumns
 export const selectTargetFields = (state: RootState) => state.config.board.verifiedResponse.targetFields
+
+export const selectPipelineOrganizations = (state: RootState) => [
+  ...new Set(state.config.pipelineTool.verifiedResponse.pipelineList.map((item) => item.orgName)),
+]
+
+export const selectPipelineNames = (state: RootState, organization: string) =>
+  state.config.pipelineTool.verifiedResponse.pipelineList
+    .filter((pipeline) => pipeline.orgName === organization)
+    .map((item) => item.name)
+
+export const selectStepsParams = (state: RootState, organizationName: string, pipelineName: string) => {
+  const pipeline = state.config.pipelineTool.verifiedResponse.pipelineList.find(
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+  )
+  const { startDate, endDate } = state.config.basic.dateRange
+  const pipelineType = state.config.pipelineTool.config.type
+  const token = state.config.pipelineTool.config.token
+
+  return {
+    params: {
+      pipelineName: pipeline?.name ?? '',
+      repository: pipeline?.repository ?? '',
+      orgName: pipeline?.orgName ?? '',
+      startTime: dayjs(startDate).startOf('date').valueOf(),
+      endTime: dayjs(endDate).startOf('date').valueOf(),
+    },
+    buildId: pipeline?.id ?? '',
+    organizationId: pipeline?.orgId ?? '',
+    pipelineType,
+    token,
+  }
+}
 
 export default configSlice.reducer

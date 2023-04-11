@@ -5,10 +5,7 @@ import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
-import { BASE_URL } from '../../../../fixtures'
-import { setupServer } from 'msw/node'
-import { rest } from 'msw'
-import { HttpStatusCode } from 'axios'
+import { metricsClient } from '@src/clients/MetricsClient'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -16,13 +13,6 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
 }))
 
 describe('PipelineMetricSelection', () => {
-  const getStepsUrl = `${BASE_URL}/pipelines/buildKite/:org/pipelines/:buildId/steps`
-  const server = setupServer(
-    rest.get(getStepsUrl, (req, res, ctx) => {
-      return res(ctx.status(HttpStatusCode.Ok), ctx.json({ steps: ['step1'] }))
-    })
-  )
-
   const REMOVE_BUTTON = 'Remove'
   const mockId = 0
   const deploymentFrequencySetting = {
@@ -62,8 +52,6 @@ describe('PipelineMetricSelection', () => {
     )
   }
 
-  beforeAll(() => server.listen())
-  afterAll(() => server.close())
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -99,25 +87,28 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should show step selection when select organization and pipelineName', async () => {
+    metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps1', 'steps2'])
     const { getByText } = await setup(
       { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
       false
     )
+
     expect(getByText('Organization')).toBeInTheDocument()
     expect(getByText('Pipeline Name')).toBeInTheDocument()
     expect(getByText('Steps')).toBeInTheDocument()
   })
 
   it('should show error message pop when getSteps failed', async () => {
-    server.use(rest.get(getStepsUrl, (req, res, ctx) => res(ctx.status(HttpStatusCode.BadRequest))))
-
+    metricsClient.getSteps = jest.fn().mockImplementation(() => {
+      throw new Error('error message')
+    })
     const { getByText } = await setup(
       { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
       false
     )
 
     await waitFor(() => {
-      expect(getByText('BuildKite Get steps failed: Please reconfirm the input')).toBeInTheDocument()
+      expect(getByText('BuildKite Get steps failed: error message')).toBeInTheDocument()
     })
 
     expect(getByText('Organization')).toBeInTheDocument()

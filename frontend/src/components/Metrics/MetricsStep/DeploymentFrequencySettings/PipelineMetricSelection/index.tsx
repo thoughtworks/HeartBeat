@@ -6,8 +6,8 @@ import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './s
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
-import { selectConfig } from '@src/context/config/configSlice'
-import dayjs from 'dayjs'
+import { selectPipelineNames, selectPipelineOrganizations, selectStepsParams } from '@src/context/config/configSlice'
+import { store } from '@src/store'
 
 interface pipelineMetricSelectionProps {
   deploymentFrequencySetting: {
@@ -25,49 +25,30 @@ export const PipelineMetricSelection = ({
   isShowRemoveButton,
   errorMessages,
 }: pipelineMetricSelectionProps) => {
+  const { id, organization, pipelineName, steps } = deploymentFrequencySetting
   const [stepsOptions, setStepsOptions] = useState<string[]>([])
   const dispatch = useAppDispatch()
-  const config = useAppSelector(selectConfig)
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
-  const { pipelineList } = config.pipelineTool.verifiedResponse
-  const { id, organization, pipelineName, steps } = deploymentFrequencySetting
-  const organizationNameOptions = [...new Set(pipelineList.map((item) => item.orgName))]
-  const pipelineNameOptions = pipelineList
-    .filter((pipeline) => pipeline.orgName === organization)
-    .map((item) => item.name)
+  const organizationNameOptions = useAppSelector(selectPipelineOrganizations)
+  const pipelineNameOptions = useAppSelector(() => selectPipelineNames(store.getState(), organization))
 
   useEffect(() => {
-    if (organization && pipelineName) {
-      const { params, buildId, organizationId, pipelineType, token } = getStepsParams()
-      getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-        res && setStepsOptions([...Object.values(res)])
-      })
-    }
+    organization && pipelineName && handleGetSteps()
   }, [organization, pipelineName])
 
   const handleClick = () => {
     dispatch(deleteADeploymentFrequencySetting(id))
   }
 
-  const getStepsParams = () => {
-    const pipeline = pipelineList.find((pipeline) => pipeline.name === pipelineName)!
-    const { startDate, endDate } = config.basic.dateRange
-    const pipelineType = config.pipelineTool.config.type
-    const token = config.pipelineTool.config.token
-
-    return {
-      params: {
-        pipelineName: pipeline.name,
-        repository: pipeline.repository,
-        orgName: pipeline.orgName,
-        startTime: dayjs(startDate).startOf('date').valueOf(),
-        endTime: dayjs(endDate).startOf('date').valueOf(),
-      },
-      buildId: pipeline.id,
-      organizationId: pipeline.orgId,
-      pipelineType,
-      token,
-    }
+  const handleGetSteps = () => {
+    const { params, buildId, organizationId, pipelineType, token } = selectStepsParams(
+      store.getState(),
+      organization,
+      pipelineName
+    )
+    getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
+      res && setStepsOptions([...Object.values(res)])
+    })
   }
 
   return (

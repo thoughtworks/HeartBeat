@@ -1,6 +1,7 @@
 import {
   selectPipelineNames,
   selectStepsParams,
+  updateDateRange,
   updatePipelineTool,
   updatePipelineToolVerifyResponse,
   updatePipelineToolVerifyState,
@@ -61,26 +62,32 @@ describe('pipelineTool reducer', () => {
         },
       ],
     }
+    const mockDateRange = {
+      startDate: '2023-04-04T00:00:00+08:00',
+      endDate: '2023-04-18T00:00:00+08:00',
+    }
+
+    let store = setupStore()
+    beforeEach(async () => {
+      store = setupStore()
+      await store.dispatch(updatePipelineToolVerifyResponse(mockPipelineToolVerifyResponse))
+      await store.dispatch(updateDateRange(mockDateRange))
+    })
 
     it('should return PipelineNames when call selectPipelineNames function', async () => {
-      const store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(mockPipelineToolVerifyResponse))
       expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName'])
     })
 
     it('should return true StepsParams when call selectStepsParams function given right organization name and pipeline name', async () => {
-      const store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(mockPipelineToolVerifyResponse))
-
       expect(selectStepsParams(store.getState(), 'mockOrgName', 'mockName')).toEqual({
         buildId: 'mockId',
         organizationId: 'mockOrgId',
         params: {
-          endTime: NaN,
+          endTime: 1681747200000,
           orgName: 'mockOrgName',
           pipelineName: 'mockName',
           repository: 'mockRepository',
-          startTime: NaN,
+          startTime: 1680537600000,
         },
         pipelineType: 'BuildKite',
         token: '',
@@ -88,18 +95,15 @@ describe('pipelineTool reducer', () => {
     })
 
     it('should return StepsParams when call selectStepsParams function given empty organization name and empty pipeline name', async () => {
-      const store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(mockPipelineToolVerifyResponse))
-
       expect(selectStepsParams(store.getState(), '', '')).toEqual({
         buildId: '',
         organizationId: '',
         params: {
-          endTime: NaN,
+          endTime: 1681747200000,
           orgName: '',
           pipelineName: '',
           repository: '',
-          startTime: NaN,
+          startTime: 1680537600000,
         },
         pipelineType: 'BuildKite',
         token: '',

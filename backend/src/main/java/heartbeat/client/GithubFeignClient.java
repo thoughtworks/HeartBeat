@@ -33,4 +33,9 @@ public interface GithubFeignClient {
 	CommitInfo getCommitInfo(@PathVariable String repository, @PathVariable String commitId,
 			@RequestHeader("Authorization") String token);
 
+	@GetMapping(path = "/repos/{repository}/pulls/{mergedPullNumber}/commits")
+	@ResponseStatus(HttpStatus.OK)
+	List<CommitInfo> getPullRequestCommitInfo(@PathVariable String repository, @PathVariable String mergedPullNumber,
+			@RequestHeader("Authorization") String token);
+
 }

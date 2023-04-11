@@ -1,7 +1,8 @@
 package heartbeat.controller.report;
 
+import heartbeat.controller.report.vo.request.GenerateReportRequest;
+import heartbeat.controller.report.vo.response.GenerateReportResponse;
 import heartbeat.service.generateReporter.GenerateReporterService;
-import heartbeat.controller.report.vo.response.GenerateReporterResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/report")
 @Validated
-public class GenerateReporterController {
+public class GenerateReportController {
+
 	private final GenerateReporterService generateReporterService;
 
 	@GetMapping
-	public GenerateReporterResponse getReport() {
-		return generateReporterService.calculateVelocity();
+	public GenerateReportResponse getReport(GenerateReportRequest request) {
+		return generateReporterService.generateReporter(request);
 	}
+
 }

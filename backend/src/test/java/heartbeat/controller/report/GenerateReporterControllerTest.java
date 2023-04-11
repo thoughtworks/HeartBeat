@@ -1,7 +1,8 @@
 package heartbeat.controller.report;
 
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.report.vo.response.GenerateReporterResponse;
+import heartbeat.controller.report.vo.response.GenerateReportResponse;
+import heartbeat.controller.report.vo.response.Velocity;
 import heartbeat.service.generateReporter.GenerateReporterService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,14 +15,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(GenerateReporterController.class)
+@WebMvcTest(GenerateReportController.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
 class GenerateReporterControllerTest {
+
 	@MockBean
 	private GenerateReporterService generateReporterService;
 
@@ -30,16 +33,20 @@ class GenerateReporterControllerTest {
 
 	@Test
 	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
-		GenerateReporterResponse expectedResponse = GenerateReporterResponse.builder().velocity(10).build();
+		GenerateReportResponse expectedResponse = GenerateReportResponse.builder()
+			.velocity(Velocity.builder().velocityForSP("10").build())
+			.build();
 
-		when(generateReporterService.calculateVelocity()).thenReturn(expectedResponse);
+		when(generateReporterService.generateReporter(any())).thenReturn(expectedResponse);
 
-		MockHttpServletResponse response = mockMvc
-			.perform(get("/report"))
+		MockHttpServletResponse response = mockMvc.perform(get("/report"))
 			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();
-		final var resultVelocity = JsonPath.parse(response.getContentAsString()).read("$.velocity").toString();
+		final var resultVelocity = JsonPath.parse(response.getContentAsString())
+			.read("$.velocity.velocityForSP")
+			.toString();
 		assertThat(resultVelocity).contains("10");
 	}
+
 }

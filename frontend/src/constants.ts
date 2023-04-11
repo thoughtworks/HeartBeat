@@ -113,3 +113,5 @@ export enum VelocityMetric {
   VELOCITY_SP = 'Velocity(SP)',
   THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
 }
+
+export const GET_STEPS_FAILED = 'get steps failed'

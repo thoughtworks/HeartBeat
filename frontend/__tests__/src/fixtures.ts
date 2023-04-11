@@ -79,7 +79,7 @@ export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site'
 export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
-const BASE_URL = 'api/v1'
+export const BASE_URL = 'api/v1'
 export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`
 export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
@@ -237,4 +237,18 @@ export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. 
 export enum VelocityMetric {
   VELOCITY_SP = 'Velocity(SP)',
   THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
+}
+
+export const MOCK_GET_STEPS_PARAMS = {
+  params: {
+    pipelineName: 'mock pipeline name',
+    repository: 'mock repository',
+    orgName: 'mock orgName',
+    startTime: 1212112121212,
+    endTime: 1313131313131,
+  },
+  buildId: 'mockBuildId',
+  organizationId: 'mockOrganizationId',
+  pipelineType: 'BuildKite',
+  token: 'mockToken',
 }

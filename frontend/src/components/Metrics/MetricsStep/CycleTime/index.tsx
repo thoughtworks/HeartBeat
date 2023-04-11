@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import FlagCard from '@src/components/Metrics/MetricsStep/CycleTime/FlagCard'
 import { FormSelectPart } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelectPart'
 import { ErrorDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'

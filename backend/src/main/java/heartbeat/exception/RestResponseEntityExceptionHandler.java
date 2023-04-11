@@ -21,6 +21,11 @@ public class RestResponseEntityExceptionHandler {
 		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
+	@ExceptionHandler(value = PermissionDenyException.class)
+	protected ResponseEntity<Object> handlePermissionDenyException(PermissionDenyException ex) {
+		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
+	}
+
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<Object> handleConflict(RuntimeException ex) {
 		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));

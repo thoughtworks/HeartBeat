@@ -41,6 +41,19 @@ class RestResponseEntityExceptionHandlerTest {
 	}
 
 	@Test
+	public void shouldHandlePermissionDenyException() {
+		PermissionDenyException ex = new PermissionDenyException(403, "Permission deny!");
+
+		ResponseEntity<Object> response = restExceptionHandler.handlePermissionDenyException(ex);
+
+		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Request failed with status statusCode 403, error: Permission deny!", errorResponse.getMessage());
+	}
+
+	@Test
 	public void shouldHandleConflict() {
 		RuntimeException ex = new RuntimeException("Invalid argument type");
 

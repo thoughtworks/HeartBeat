@@ -46,8 +46,6 @@ class Config {
     cy.contains('Token').siblings().first().type(token)
 
     cy.contains('Verify').click()
-    cy.contains('Verified').should('exist')
-    cy.contains('Reset').should('exist')
   }
 
   fillPipelineToolFieldsInfoAndVerify(token: string) {

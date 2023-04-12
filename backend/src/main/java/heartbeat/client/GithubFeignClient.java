@@ -3,6 +3,7 @@ package heartbeat.client;
 import heartbeat.client.dto.CommitInfo;
 import heartbeat.client.dto.GithubOrganizationsInfo;
 import heartbeat.client.dto.GithubRepos;
+import heartbeat.client.dto.PullRequestInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,11 @@ public interface GithubFeignClient {
 	@GetMapping(path = "/repos/{repository}/pulls/{mergedPullNumber}/commits")
 	@ResponseStatus(HttpStatus.OK)
 	List<CommitInfo> getPullRequestCommitInfo(@PathVariable String repository, @PathVariable String mergedPullNumber,
+			@RequestHeader("Authorization") String token);
+
+	@GetMapping(path = "/repos/{repository}/commits/{deployId}/pulls")
+	@ResponseStatus(HttpStatus.OK)
+	List<PullRequestInfo> getPullRequestListInfo(@PathVariable String repository, @PathVariable String deployId,
 			@RequestHeader("Authorization") String token);
 
 }

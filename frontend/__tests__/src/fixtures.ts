@@ -94,6 +94,7 @@ export enum VERIFY_ERROR_MESSAGE {
   PERMISSION_DENIED = 'Permission denied',
   UNKNOWN = 'Unknown',
 }
+
 export const VERIFY_FAILED = 'verify failed'
 
 export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
@@ -234,7 +235,7 @@ export const REAL_DONE = 'Real Done'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
-export enum VelocityMetric {
+export enum VelocityMetricName {
   VELOCITY_SP = 'Velocity(SP)',
   THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
 }

@@ -1,17 +1,11 @@
 import { HttpClient } from '@src/clients/Httpclient'
-
-export interface getVerifySourceControlParams {
-  type: string
-  token: string
-  startTime: string | number | null
-  endTime: string | number | null
-}
+import { VerifySourceControlReq } from '@src/models/request/sourceControlReq'
 
 export class SourceControlClient extends HttpClient {
   isSourceControlVerify = false
   response = {}
 
-  getVerifySourceControl = async (params: getVerifySourceControlParams) => {
+  getVerifySourceControl = async (params: VerifySourceControlReq) => {
     try {
       const result = await this.axiosInstance.get('/source-control', { params: { ...params } })
       this.handleSourceControlVerifySucceed(result.data)

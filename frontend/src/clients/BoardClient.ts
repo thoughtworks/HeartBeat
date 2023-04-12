@@ -1,22 +1,13 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { HttpStatusCode } from 'axios'
-
-export interface getVerifyBoardParams {
-  token: string
-  type: string
-  site: string
-  projectKey: string
-  startTime: string | number | null
-  endTime: string | number | null
-  boardId: string
-}
+import { VerifyBoardReq } from '@src/models/request/boardReq'
 
 export class BoardClient extends HttpClient {
   isBoardVerify = false
   isNoDoneCard = false
   response = {}
 
-  getVerifyBoard = async (params: getVerifyBoardParams) => {
+  getVerifyBoard = async (params: VerifyBoardReq) => {
     try {
       const boardType = params.type === 'Classic Jira' ? 'classic-jira' : params.type.toLowerCase()
       const result = await this.axiosInstance.get(`/boards/${boardType}`, { params })

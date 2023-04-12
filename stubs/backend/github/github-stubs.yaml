@@ -35,7 +35,7 @@
 # GitHub Pulls
 - request:
     method: GET
-    url: /repos/([\w.-]+\/[\w.-]+)/commits/(\b[0-9a-f]+\b)/pulls
+    url: /repos/([\w.-]+\/[\w.-]+)/commits/(\b[0-9a-f]+\b)/pulls  OK
 
   response:
     status: 200
@@ -46,7 +46,7 @@
 # GitHub Pull Request Commit
 - request:
     method: GET
-    url: /repos/([\w.-]+\/[\w.-]+)/pulls/(\d+)/commits
+    url: /repos/([\w.-]+\/[\w.-]+)/pulls/(\d+)/commits  OK
 
   response:
     status: 200
@@ -56,6 +56,7 @@
 
 # GitHub Commit Data
 # Example: repos/xxx/xxx/commits/commit-sha
+# commit-sha must be fb1b445a113ef2d1ed465732a5dd02c2e07ca1c4 in this api
 - request:
     method: GET
     url: /repos/([\w.-]+\/[\w.-]+)/commits/(\b[0-9a-z]+\b)

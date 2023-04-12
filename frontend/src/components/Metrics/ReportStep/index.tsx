@@ -27,7 +27,6 @@ export const ReportStep = () => {
   useEffect(() => {
     generateReport(params).then((res) => {
       if (res) {
-        console.log(res.response.classification)
         const reportData = reportResponseMapper(res.response)
         setVelocityData(reportData.velocityValues)
         setCycleTimeData(reportData.cycleValues)

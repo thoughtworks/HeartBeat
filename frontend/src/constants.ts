@@ -133,10 +133,18 @@ export enum Unit {
   PER_CARD = '(days/card)',
 }
 
-export const INIT_VELOCITY_METRICS: { name: string; id: number; value: string[] }[] = [
+export const INIT_VELOCITY_METRICS: { id: number; name: string; value: string[] }[] = [
   {
     id: 1,
     name: '2',
     value: ['dhjejh'],
+  },
+]
+
+export const INIT_CYCLETIME_METRICS: { id: number; name: string; value: string[] }[] = [
+  {
+    id: 1,
+    name: 'Cycle Time',
+    value: ['40'],
   },
 ]

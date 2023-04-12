@@ -1,7 +1,15 @@
-export interface ReportRes {
-  velocity: VelocityRes
+export interface ReportResp {
+  velocity?: VelocityResp
+  cycleTime?: CycleTimeResp
+  deploymentFrequency?: DeploymentFrequency
+  leadTimeForChanges?: LeadTime
+  changeFailureRate?: FailureRate
+  classification?: Array<ClassificationResp>
+  hasExportCsvData?: string
+  meanTimeToRecovery?: MeanTimeToRecovery
 }
-export interface VelocityRes {
+
+export interface VelocityResp {
   velocityForSP: string
   velocityForCards: string
 }
@@ -13,7 +21,7 @@ export interface Swimlane {
   totalTime: string
 }
 
-export interface CycleTime {
+export interface CycleTimeResp {
   totalTimeForCards: number
   averageCircleTimePerCard: string
   averageCycleTimePerSP: string
@@ -102,18 +110,8 @@ export interface Pair {
   name: string
   value: string
 }
-export interface Classification {
+
+export interface ClassificationResp {
   fieldName: string
   pairs: Array<Pair>
-}
-
-export interface ReportResponse {
-  velocity?: VelocityRes
-  cycleTime?: CycleTime
-  deploymentFrequency?: DeploymentFrequency
-  leadTimeForChanges?: LeadTime
-  changeFailureRate?: FailureRate
-  classification?: Array<Classification>
-  hasExportCsvData?: string
-  meanTimeToRecovery?: MeanTimeToRecovery
 }

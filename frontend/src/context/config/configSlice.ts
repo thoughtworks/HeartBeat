@@ -1,10 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { REGULAR_CALENDAR } from '@src/constants'
+import { REGULAR_CALENDAR, REQUIRED_DATA } from '@src/constants'
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice'
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
-import { REQUIRED_DATA } from '@src/constants'
 import dayjs from 'dayjs'
 
 export interface BasicConfigState {

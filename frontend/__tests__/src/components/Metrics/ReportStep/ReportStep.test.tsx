@@ -7,14 +7,37 @@ import { Provider } from 'react-redux'
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: () => ({
     generateReport: jest.fn(() =>
-      Promise.resolve({ response: { velocity: { velocityForSP: '3', velocityForCards: '4' } } })
+      Promise.resolve({
+        response: {
+          velocity: { velocityForSP: '3', velocityForCards: '4' },
+          cycleTime: {
+            averageCircleTimePerCard: '',
+            averageCycleTimePerSP: '',
+            totalTimeForCards: 0,
+            swimlaneList: [
+              {
+                optionalItemName: '',
+                averageTimeForSP: '',
+                averageTimeForCards: '',
+                totalTime: '',
+              },
+            ],
+          },
+          classification: [
+            {
+              fieldName: '',
+              pairs: [],
+            },
+          ],
+        },
+      })
     ),
     isLoading: false,
   }),
 }))
 let store = null
 
-describe('Export Step', () => {
+describe('Report Step', () => {
   store = setupStore()
   const setup = () => {
     store = setupStore()
@@ -27,7 +50,7 @@ describe('Export Step', () => {
   afterEach(() => {
     store = null
   })
-  it('should render export page', async () => {
+  it('should render report page', async () => {
     const { getByText } = setup()
 
     await waitFor(() => {

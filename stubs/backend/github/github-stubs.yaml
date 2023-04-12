@@ -35,7 +35,7 @@
 # GitHub Pulls
 - request:
     method: GET
-    url: /repos/([\w.-]+\/[\w.-]+)/commits/(\b[0-9a-f]+\b)/pulls
+    url: /repos/([\w.-]+\/[\w.-]+)/commits/(\b[0-9a-f]+\b)/pulls  OK
 
   response:
     status: 200
@@ -46,7 +46,7 @@
 # GitHub Pull Request Commit
 - request:
     method: GET
-    url: /repos/([\w.-]+\/[\w.-]+)/pulls/(\d+)/commits
+    url: /repos/([\w.-]+\/[\w.-]+)/pulls/(\d+)/commits  OK
 
   response:
     status: 200

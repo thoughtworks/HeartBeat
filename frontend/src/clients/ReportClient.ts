@@ -1,35 +1,31 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { ReportRes } from '@src/types/reportRes'
-
-export interface ReportReq {
-  metrics: string[]
-  pipeline?: {
-    type: string
-    token: string
-  }
-  board?: {
-    token: string
-    type: string
-    site: string
-    email: string
-    projectKey: string
-    boardId: string
-  }
-  sourceControl?: {
-    type: string
-    token: string
-  }
-  calendarType: string
-  startTime: string | null
-  endTime: string | null
-}
+import { ReportReq } from '@src/models/request/reportReq'
 
 export class ReportClient extends HttpClient {
-  reportResponse: ReportRes = {
+  reportResponse = {
     velocity: {
       velocityForSP: '',
       velocityForCards: '',
     },
+    cycleTime: {
+      averageCircleTimePerCard: '',
+      averageCycleTimePerSP: '',
+      totalTimeForCards: 0,
+      swimlaneList: [
+        {
+          optionalItemName: '',
+          averageTimeForSP: '',
+          averageTimeForCards: '',
+          totalTime: '',
+        },
+      ],
+    },
+    classification: [
+      {
+        fieldName: '',
+        pairs: [],
+      },
+    ],
   }
 
   report = async (params: ReportReq) => {

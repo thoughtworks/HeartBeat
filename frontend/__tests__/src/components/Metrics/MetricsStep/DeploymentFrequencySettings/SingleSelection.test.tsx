@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
-import { store } from '@src/store'
+import { setupStore } from '../../../../utils/setupStoreUtil'
 
 const mockValidationCheckContext = {
   errorMessages: [],
@@ -20,6 +20,12 @@ describe('SingleSelection', () => {
   const mockLabel = 'mockLabel'
   const mockValue = 'mockOptions 1'
   const mockError = 'error message'
+
+  let store = setupStore()
+
+  beforeEach(() => {
+    store = setupStore()
+  })
 
   const setup = (errorMessage: string) =>
     render(

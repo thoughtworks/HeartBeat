@@ -1,34 +1,50 @@
-import { render } from '@testing-library/react'
-import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
-import { Provider } from 'react-redux'
-import { store } from '@src/store'
+import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Provider } from 'react-redux'
+import { setupStore } from '../../../../utils/setupStoreUtil'
+import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
-
-jest.mock('@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection', () => ({
-  SingleSelection: () => <div>mock SingleSelection</div>,
-}))
-
-jest.mock('@src/hooks', () => ({
-  useAppDispatch: () => jest.fn(),
-}))
+import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
+import { metricsClient } from '@src/clients/MetricsClient'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
-  deleteADeploymentFrequencySetting: jest.fn(),
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  deleteADeploymentFrequencySetting: jest.fn().mockReturnValue({ type: 'DELETE_DEPLOYMENT_FREQUENCY_SETTING' }),
 }))
 
 describe('PipelineMetricSelection', () => {
   const REMOVE_BUTTON = 'Remove'
-  const mockIndex = 0
+  const ORGANIZATION = 'Organization'
+  const PIPELINE_NAME = 'Pipeline Name'
+  const STEPS = 'Steps'
+  const mockId = 0
   const deploymentFrequencySetting = {
     id: 0,
-    organization: 'mock organization',
-    pipelineName: 'mock pipelineName',
-    steps: 'mock steps',
+    organization: '',
+    pipelineName: '',
+    steps: '',
   }
+  const store = setupStore()
 
-  const setup = (mockIndex: number, isShowRemoveButton: boolean) =>
-    render(
+  const setup = async (
+    deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
+    isShowRemoveButton: boolean
+  ) => {
+    await store.dispatch(
+      updatePipelineToolVerifyResponse({
+        pipelineList: [
+          {
+            id: 'mockId',
+            name: 'mockName',
+            orgId: 'mockOrgId',
+            orgName: 'mockOrgName',
+            repository: 'mockRepository',
+            steps: ['step1', 'step2'],
+          },
+        ],
+      })
+    )
+    return render(
       <Provider store={store}>
         <PipelineMetricSelection
           deploymentFrequencySetting={deploymentFrequencySetting}
@@ -37,31 +53,69 @@ describe('PipelineMetricSelection', () => {
         />
       </Provider>
     )
+  }
 
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
-    const { getAllByText, getByText } = await setup(mockIndex, true)
+    const { getByText } = await setup(deploymentFrequencySetting, true)
 
     expect(getByText(REMOVE_BUTTON)).toBeInTheDocument()
-    expect(getAllByText('mock SingleSelection').length).toEqual(3)
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is false', async () => {
-    const { getAllByText, queryByText } = await setup(mockIndex, false)
+    const { getByText, queryByText } = await setup(deploymentFrequencySetting, false)
 
-    expect(queryByText('Remove this pipeline')).not.toBeInTheDocument()
-    expect(getAllByText('mock SingleSelection').length).toEqual(3)
+    expect(queryByText(REMOVE_BUTTON)).not.toBeInTheDocument()
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
-    const { getByRole } = await setup(mockIndex, true)
+    const { getByRole } = await setup(deploymentFrequencySetting, true)
 
     await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 
     expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
-    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledWith(mockIndex)
+    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledWith(mockId)
+  })
+
+  it('should show pipelineName selection when select organization', async () => {
+    const { getByText } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false)
+
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
+    expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
+  })
+
+  it('should show step selection when select organization and pipelineName', async () => {
+    metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps1', 'steps2'])
+    const { getByText } = await setup(
+      { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
+      false
+    )
+
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
+    expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
+    expect(getByText(STEPS)).toBeInTheDocument()
+  })
+
+  it('should show error message pop when getSteps failed', async () => {
+    metricsClient.getSteps = jest.fn().mockImplementation(() => {
+      throw new Error('error message')
+    })
+    const { getByText } = await setup(
+      { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
+      false
+    )
+
+    await waitFor(() => {
+      expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument()
+    })
+
+    expect(getByText(ORGANIZATION)).toBeInTheDocument()
+    expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
+    expect(getByText(STEPS)).toBeInTheDocument()
   })
 })

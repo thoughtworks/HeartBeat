@@ -74,7 +74,7 @@ export const METRICS_CONSTANTS = {
   doneKeyFromBackend: 'done',
   todoValue: 'To do',
   analysisValue: 'Analysis',
-  inDevValue: 'In dev',
+  inDevValue: 'In Dev',
   blockValue: 'Block',
   waitingValue: 'Waiting for testing',
   testingValue: 'Testing',
@@ -109,7 +109,34 @@ export const SELECTED_VALUE_SEPARATOR = ', '
 export const SAVE_CONFIG_TIPS =
   'Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)'
 
-export enum VelocityMetric {
+export enum VelocityMetricsName {
   VELOCITY_SP = 'Velocity(SP)',
   THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
 }
+
+export enum CycleTimeMetricsName {
+  AVERAGE_CYCLE_TIME = 'Average Cycle Time',
+  DEVELOPMENT_PROPORTION = 'Total Development Time/Total Cycle Time',
+  WAITING_PROPORTION = 'Total Waiting Time/Total Cycle Time',
+  BLOCK_PROPORTION = 'Total Block Time/Total Cycle Time',
+  REVIEW_PROPORTION = 'Total Review Time/Total Cycle Time',
+  TESTING_PROPORTION = 'Total Testing Time/Total Cycle Time',
+  AVERAGE_DEVELOPMENT_TIME = 'Average Development Time',
+  AVERAGE_WAITING_TIME = 'Average Waiting Time',
+  AVERAGE_BLOCK_TIME = 'Average Block Time',
+  AVERAGE_REVIEW_TIME = 'Average Review Time',
+  AVERAGE_TESTING_TIME = 'Average Testing Time',
+}
+export const GET_STEPS_FAILED = 'get steps failed'
+export enum Unit {
+  PER_SP = '(days/SP)',
+  PER_CARD = '(days/card)',
+}
+
+export const INIT_VELOCITY_METRICS: { name: string; id: number; value: string[] }[] = [
+  {
+    id: 1,
+    name: '2',
+    value: ['dhjejh'],
+  },
+]

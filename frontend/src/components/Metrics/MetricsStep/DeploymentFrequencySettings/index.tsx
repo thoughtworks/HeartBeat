@@ -10,12 +10,12 @@ import { Add } from '@mui/icons-material'
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch()
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings)
-
   const { errorMessages, checkDuplicatedPipeLine } = useMetricsStepValidationCheckContext()
 
   useEffect(() => {
     checkDuplicatedPipeLine()
   }, [checkDuplicatedPipeLine, deploymentFrequencySettings])
+
   const handleClick = () => {
     dispatch(addADeploymentFrequencySetting())
   }

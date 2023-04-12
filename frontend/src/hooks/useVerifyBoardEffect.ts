@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { boardClient, getVerifyBoardParams } from '@src/clients/BoardClient'
+import { boardClient } from '@src/clients/BoardClient'
 import { ERROR_MESSAGE_TIME_DURATION, VERIFY_FAILED_ERROR_MESSAGE } from '@src/constants'
+import { VerifyBoardReq } from '@src/models/request/boardReq'
 
 export interface useVerifyBoardStateInterface {
-  verifyJira: (params: getVerifyBoardParams) => Promise<
+  verifyJira: (params: VerifyBoardReq) => Promise<
     | {
         isBoardVerify: boolean
         isNoDoneCard: boolean
@@ -19,7 +20,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  const verifyJira = async (params: getVerifyBoardParams) => {
+  const verifyJira = async (params: VerifyBoardReq) => {
     setIsLoading(true)
     try {
       return await boardClient.getVerifyBoard(params)

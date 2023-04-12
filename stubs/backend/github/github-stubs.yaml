@@ -56,6 +56,7 @@
 
 # GitHub Commit Data
 # Example: repos/xxx/xxx/commits/commit-sha
+# commit-sha must be fb1b445a113ef2d1ed465732a5dd02c2e07ca1c4 in this api
 - request:
     method: GET
     url: /repos/([\w.-]+\/[\w.-]+)/commits/(\b[0-9a-z]+\b)

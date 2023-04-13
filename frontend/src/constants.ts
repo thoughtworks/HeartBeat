@@ -144,7 +144,7 @@ export const INIT_VELOCITY_METRICS: { id: number; name: string; value: string[] 
 export const INIT_CYCLETIME_METRICS: { id: number; name: string; value: string[] }[] = [
   {
     id: 1,
-    name: 'Cycle Time',
+    name: 'Cycle time',
     value: ['40'],
   },
 ]

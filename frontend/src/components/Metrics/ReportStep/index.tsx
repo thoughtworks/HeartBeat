@@ -38,7 +38,7 @@ export const ReportStep = () => {
     <>
       (isLoading ? <Loading />) :
       <Velocity title={'Velocity'} velocityData={velocityData} />
-      <CycleTimeReport title={'Cycle Time'} cycleTimeData={cycleTimeData}></CycleTimeReport>
+      <CycleTimeReport title={'Cycle time'} cycleTimeData={cycleTimeData} />
     </>
   )
 }

@@ -51,18 +51,16 @@ export const PipelineMetricSelection = ({
       _pipelineName
     )
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-      if (res) {
-        const newPipelineToolVerifyResponse = pipelineList.map((pipeline) => {
-          if (pipeline.name === _pipelineName && pipeline.orgName === organization) {
-            return {
-              ...pipeline,
-              steps: [...Object.values(res)],
-            }
+      const newPipelineToolVerifyResponse = pipelineList.map((pipeline) => {
+        if (pipeline.name === _pipelineName && pipeline.orgName === organization) {
+          return {
+            ...pipeline,
+            steps: res ? Object.values(res) : [],
           }
-          return pipeline
-        })
-        dispatch(updatePipelineToolVerifyResponse({ pipelineList: newPipelineToolVerifyResponse }))
-      }
+        }
+        return pipeline
+      })
+      dispatch(updatePipelineToolVerifyResponse({ pipelineList: newPipelineToolVerifyResponse }))
     })
   }
 

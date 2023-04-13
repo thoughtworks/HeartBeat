@@ -7,7 +7,7 @@ describe('velocity data mapper', () => {
       velocityForCards: '15',
     }
     const expectedVelocityValues = [
-      { id: 1, name: 'Velocity(SP)', value: ['20'] },
+      { id: 1, name: 'Velocity(Story Point)', value: ['20'] },
       { id: 2, name: 'ThroughPut(Cards Count)', value: ['15'] },
     ]
 

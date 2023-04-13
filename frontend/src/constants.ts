@@ -110,7 +110,7 @@ export const SAVE_CONFIG_TIPS =
   'Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)'
 
 export enum VelocityMetricsName {
-  VELOCITY_SP = 'Velocity(SP)',
+  VELOCITY_SP = 'Velocity(Story Point)',
   THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
 }
 
@@ -133,10 +133,18 @@ export enum Unit {
   PER_CARD = '(days/card)',
 }
 
-export const INIT_VELOCITY_METRICS: { name: string; id: number; value: string[] }[] = [
+export const INIT_VELOCITY_METRICS: { id: number; name: string; value: string[] }[] = [
   {
     id: 1,
     name: '2',
     value: ['dhjejh'],
+  },
+]
+
+export const INIT_CYCLETIME_METRICS: { id: number; name: string; value: string[] }[] = [
+  {
+    id: 1,
+    name: 'Cycle time',
+    value: ['40'],
   },
 ]

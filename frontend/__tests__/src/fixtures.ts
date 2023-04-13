@@ -236,8 +236,22 @@ export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
 export enum VelocityMetricName {
-  VELOCITY_SP = 'Velocity(SP)',
+  VELOCITY_SP = 'Velocity(Story Point)',
   THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
+}
+
+export enum CycleTimeMetricsName {
+  AVERAGE_CYCLE_TIME = 'Average cycle time',
+  DEVELOPMENT_PROPORTION = 'Total development time/Total cycle time',
+  WAITING_PROPORTION = 'Total waiting time/Total cycle time',
+  BLOCK_PROPORTION = 'Total block time/Total cycle time',
+  REVIEW_PROPORTION = 'Total review time/Total cycle time',
+  TESTING_PROPORTION = 'Total testing time/Total cycle time',
+  AVERAGE_DEVELOPMENT_TIME = 'Average development time',
+  AVERAGE_WAITING_TIME = 'Average waiting time',
+  AVERAGE_BLOCK_TIME = 'Average block time',
+  AVERAGE_REVIEW_TIME = 'Average review time',
+  AVERAGE_TESTING_TIME = 'Average testing time',
 }
 
 export const MOCK_GET_STEPS_PARAMS = {

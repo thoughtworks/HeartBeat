@@ -16,7 +16,7 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
             totalTimeForCards: 423,
             swimlaneList: [
               {
-                optionalItemName: 'Average waiting time',
+                optionalItemName: 'Waiting for testing',
                 averageTimeForSP: '0.16',
                 averageTimeForCards: '0.23',
                 totalTime: '3.21',
@@ -74,8 +74,8 @@ describe('Report Step', () => {
     await waitFor(() => {
       expect(getByText('30.26(days/card)')).toBeInTheDocument()
       expect(getByText('21.18(days/SP)')).toBeInTheDocument()
-      expect(getByText('0.16')).toBeInTheDocument()
-      expect(getByText('0.23')).toBeInTheDocument()
+      expect(getByText('0.16(days/SP)')).toBeInTheDocument()
+      expect(getByText('0.23(days/card)')).toBeInTheDocument()
     })
   })
 })

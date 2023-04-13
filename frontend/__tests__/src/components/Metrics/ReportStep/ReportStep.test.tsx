@@ -11,15 +11,15 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
         response: {
           velocity: { velocityForSP: '3', velocityForCards: '4' },
           cycleTime: {
-            averageCircleTimePerCard: '',
-            averageCycleTimePerSP: '',
-            totalTimeForCards: 0,
+            averageCircleTimePerCard: '30.26',
+            averageCycleTimePerSP: '21.18',
+            totalTimeForCards: 423,
             swimlaneList: [
               {
-                optionalItemName: '',
-                averageTimeForSP: '',
-                averageTimeForCards: '',
-                totalTime: '',
+                optionalItemName: 'Average waiting time',
+                averageTimeForSP: '0.16',
+                averageTimeForCards: '0.23',
+                totalTime: '3.21',
               },
             ],
           },
@@ -55,6 +55,7 @@ describe('Report Step', () => {
 
     await waitFor(() => {
       expect(getByText(REQUIRED_DATA_LIST[1])).toBeInTheDocument()
+      expect(getByText(REQUIRED_DATA_LIST[2])).toBeInTheDocument()
     })
   })
 
@@ -64,6 +65,17 @@ describe('Report Step', () => {
     await waitFor(() => {
       expect(getByText('3')).toBeInTheDocument()
       expect(getByText('4')).toBeInTheDocument()
+    })
+  })
+
+  it('should renders the CycleTime component with correct props', async () => {
+    const { getByText } = setup()
+
+    await waitFor(() => {
+      expect(getByText('30.26(days/card)')).toBeInTheDocument()
+      expect(getByText('21.18(days/SP)')).toBeInTheDocument()
+      expect(getByText('0.16')).toBeInTheDocument()
+      expect(getByText('0.23')).toBeInTheDocument()
     })
   })
 })

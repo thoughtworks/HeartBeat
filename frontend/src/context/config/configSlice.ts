@@ -161,6 +161,8 @@ export const selectUsers = (state: RootState) => state.config.board.verifiedResp
 export const selectJiraColumns = (state: RootState) => state.config.board.verifiedResponse.jiraColumns
 export const selectTargetFields = (state: RootState) => state.config.board.verifiedResponse.targetFields
 
+export const selectPipelineList = (state: RootState) => state.config.pipelineTool.verifiedResponse.pipelineList
+
 export const selectPipelineOrganizations = (state: RootState) => [
   ...new Set(state.config.pipelineTool.verifiedResponse.pipelineList.map((item) => item.orgName)),
 ]
@@ -192,5 +194,10 @@ export const selectStepsParams = (state: RootState, organizationName: string, pi
     token,
   }
 }
+
+export const selectSteps = (state: RootState, organizationName: string, pipelineName: string) =>
+  state.config.pipelineTool.verifiedResponse.pipelineList.find(
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+  )?.steps ?? []
 
 export default configSlice.reducer

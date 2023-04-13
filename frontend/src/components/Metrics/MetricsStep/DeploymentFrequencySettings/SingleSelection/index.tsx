@@ -12,15 +12,17 @@ interface Props {
   value: string
   id: number
   errorMessage: string | undefined
+  onGetSteps?: (pipelineName: string) => void
 }
 
-export const SingleSelection = ({ options, label, value, id, errorMessage }: Props) => {
+export const SingleSelection = ({ options, label, value, id, errorMessage, onGetSteps }: Props) => {
   const dispatch = useAppDispatch()
   const [selectedValue, setSelectedValue] = useState(value)
   const { clearErrorMessage } = useMetricsStepValidationCheckContext()
 
   const handleChange = (event: SelectChangeEvent) => {
     const value = event.target.value
+    if (onGetSteps) onGetSteps(value)
     setSelectedValue(value)
     dispatch(updateDeploymentFrequencySettings({ updateId: id, label, value }))
     !!errorMessage && clearErrorMessage(id, camelCase(label))

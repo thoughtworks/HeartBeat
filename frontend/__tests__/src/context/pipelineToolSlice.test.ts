@@ -1,5 +1,6 @@
 import {
   selectPipelineNames,
+  selectSteps,
   selectStepsParams,
   updateDateRange,
   updatePipelineTool,
@@ -12,6 +13,23 @@ import { MOCK_BUILD_KITE_VERIFY_RESPONSE } from '../fixtures'
 import { setupStore } from '../utils/setupStoreUtil'
 
 describe('pipelineTool reducer', () => {
+  const MOCK_PIPElINE_TOOL_VERIFY_RESPONSE = {
+    pipelineList: [
+      {
+        id: 'mockId',
+        name: 'mockName',
+        orgId: 'mockOrgId',
+        orgName: 'mockOrgName',
+        repository: 'mockRepository',
+        steps: ['step1', 'step2'],
+      },
+    ],
+  }
+  const MOCK_DATE_RANGE = {
+    startDate: '2023-04-04T00:00:00+08:00',
+    endDate: '2023-04-18T00:00:00+08:00',
+  }
+
   it('should set isPipelineToolVerified false when handle initial state', () => {
     const result = configReducer(undefined, { type: 'unknown' })
 
@@ -49,33 +67,20 @@ describe('pipelineTool reducer', () => {
     })
   })
 
-  describe('selectParams from store', () => {
-    const mockPipelineToolVerifyResponse = {
-      pipelineList: [
-        {
-          id: 'mockId',
-          name: 'mockName',
-          orgId: 'mockOrgId',
-          orgName: 'mockOrgName',
-          repository: 'mockRepository',
-          steps: ['step1', 'step2'],
-        },
-      ],
-    }
-    const mockDateRange = {
-      startDate: '2023-04-04T00:00:00+08:00',
-      endDate: '2023-04-18T00:00:00+08:00',
-    }
+  describe('selectPipelineNames', () => {
+    it('should return PipelineNames when call selectPipelineNames function', async () => {
+      const store = setupStore()
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
+      expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName'])
+    })
+  })
 
+  describe('selectStepsParams', () => {
     let store = setupStore()
     beforeEach(async () => {
       store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(mockPipelineToolVerifyResponse))
-      await store.dispatch(updateDateRange(mockDateRange))
-    })
-
-    it('should return PipelineNames when call selectPipelineNames function', async () => {
-      expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName'])
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
+      await store.dispatch(updateDateRange(MOCK_DATE_RANGE))
     })
 
     it('should return true StepsParams when call selectStepsParams function given right organization name and pipeline name', async () => {
@@ -108,6 +113,14 @@ describe('pipelineTool reducer', () => {
         pipelineType: 'BuildKite',
         token: '',
       })
+    })
+  })
+
+  describe('selectSteps', () => {
+    it('should return steps when call selectSteps function', async () => {
+      const store = setupStore()
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
+      expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual(['step1', 'step2'])
     })
   })
 })

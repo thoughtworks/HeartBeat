@@ -113,7 +113,18 @@ export const configSlice = createSlice({
       const { pipelineList } = action.payload
       state.pipelineTool.verifiedResponse.pipelineList = pipelineList
     },
-
+    updatePipelineToolVerifyResponseSteps: (state, action) => {
+      const { organization, pipelineName, steps } = action.payload
+      state.pipelineTool.verifiedResponse.pipelineList = state.pipelineTool.verifiedResponse.pipelineList.map(
+        (pipeline) =>
+          pipeline.name === pipelineName && pipeline.orgName === organization
+            ? {
+                ...pipeline,
+                steps: steps,
+              }
+            : pipeline
+      )
+    },
     updateSourceControlVerifyState: (state, action) => {
       state.sourceControl.isVerified = action.payload
     },
@@ -142,6 +153,7 @@ export const {
   updateSourceControl,
   updateSourceControlVerifyState,
   updateSourceControlVerifiedResponse,
+  updatePipelineToolVerifyResponseSteps,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.basic.projectName
@@ -159,8 +171,6 @@ export const selectIsBoardVerified = (state: RootState) => state.config.board.is
 export const selectUsers = (state: RootState) => state.config.board.verifiedResponse.users
 export const selectJiraColumns = (state: RootState) => state.config.board.verifiedResponse.jiraColumns
 export const selectTargetFields = (state: RootState) => state.config.board.verifiedResponse.targetFields
-
-export const selectPipelineList = (state: RootState) => state.config.pipelineTool.verifiedResponse.pipelineList
 
 export const selectPipelineOrganizations = (state: RootState) => [
   ...new Set(state.config.pipelineTool.verifiedResponse.pipelineList.map((item) => item.orgName)),

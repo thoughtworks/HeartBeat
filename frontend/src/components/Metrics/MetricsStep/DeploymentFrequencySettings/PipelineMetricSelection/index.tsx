@@ -7,12 +7,11 @@ import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import {
-  selectPipelineList,
   selectPipelineNames,
   selectPipelineOrganizations,
   selectSteps,
   selectStepsParams,
-  updatePipelineToolVerifyResponse,
+  updatePipelineToolVerifyResponseSteps,
 } from '@src/context/config/configSlice'
 import { store } from '@src/store'
 
@@ -37,7 +36,6 @@ export const PipelineMetricSelection = ({
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
   const organizationNameOptions = useAppSelector(selectPipelineOrganizations)
   const pipelineNameOptions = useAppSelector(() => selectPipelineNames(store.getState(), organization))
-  const pipelineList = useAppSelector(selectPipelineList)
   const stepsOptions = useAppSelector(() => selectSteps(store.getState(), organization, pipelineName))
 
   const handleClick = () => {
@@ -51,16 +49,8 @@ export const PipelineMetricSelection = ({
       _pipelineName
     )
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-      const newPipelineToolVerifyResponse = pipelineList.map((pipeline) => {
-        if (pipeline.name === _pipelineName && pipeline.orgName === organization) {
-          return {
-            ...pipeline,
-            steps: res ? Object.values(res) : [],
-          }
-        }
-        return pipeline
-      })
-      dispatch(updatePipelineToolVerifyResponse({ pipelineList: newPipelineToolVerifyResponse }))
+      const steps = res ? Object.values(res) : []
+      dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps }))
     })
   }
 

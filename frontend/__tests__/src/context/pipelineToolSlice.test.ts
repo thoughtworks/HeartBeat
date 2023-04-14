@@ -5,12 +5,14 @@ import {
   updateDateRange,
   updatePipelineTool,
   updatePipelineToolVerifyResponse,
+  updatePipelineToolVerifyResponseSteps,
   updatePipelineToolVerifyState,
 } from '@src/context/config/configSlice'
 import configReducer from '@src/context/config/configSlice'
 import initialConfigState from '../initialConfigState'
 import { MOCK_BUILD_KITE_VERIFY_RESPONSE } from '../fixtures'
 import { setupStore } from '../utils/setupStoreUtil'
+import { PIPELINE_TOOL_TYPES } from '@src/constants'
 
 describe('pipelineTool reducer', () => {
   const MOCK_PIPElINE_TOOL_VERIFY_RESPONSE = {
@@ -46,6 +48,112 @@ describe('pipelineTool reducer', () => {
     const config = configReducer(initialConfigState, updatePipelineTool({ token: 'abcd' }))
 
     expect(config.pipelineTool.config.token).toEqual('abcd')
+  })
+
+  it('should update pipelineList when get pipelineTool steps given pipelineList and right params', () => {
+    const mockConfigStateHasPipelineList = {
+      ...initialConfigState,
+      pipelineTool: {
+        config: {
+          type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
+        isVerified: false,
+        isShow: false,
+        verifiedResponse: {
+          pipelineList: [
+            {
+              id: 'mock id',
+              name: 'mock name',
+              orgId: 'mock id',
+              orgName: 'mock orgName',
+              repository: 'mock repository url',
+              steps: [],
+            },
+          ],
+        },
+      },
+    }
+    const mockParams = {
+      organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.orgName,
+      pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.name,
+      steps: ['mock steps'],
+    }
+    const pipelineVerifiedResponse = configReducer(
+      mockConfigStateHasPipelineList,
+      updatePipelineToolVerifyResponseSteps(mockParams)
+    )
+
+    expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
+      {
+        id: 'mock id',
+        name: 'mock name',
+        orgId: 'mock id',
+        orgName: 'mock orgName',
+        repository: 'mock repository url',
+        steps: ['mock steps'],
+      },
+    ])
+  })
+
+  it('should not update pipelineList when get pipelineTool steps given pipelineList and wrong params', () => {
+    const mockConfigStateHasPipelineList = {
+      ...initialConfigState,
+      pipelineTool: {
+        config: {
+          type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+          token: '',
+        },
+        isVerified: false,
+        isShow: false,
+        verifiedResponse: {
+          pipelineList: [
+            {
+              id: 'mock id',
+              name: 'mock name',
+              orgId: 'mock id',
+              orgName: 'mock orgName',
+              repository: 'mock repository url',
+              steps: [],
+            },
+          ],
+        },
+      },
+    }
+    const mockParams = {
+      organization: '',
+      pipelineName: '',
+      steps: ['mock steps'],
+    }
+    const pipelineVerifiedResponse = configReducer(
+      mockConfigStateHasPipelineList,
+      updatePipelineToolVerifyResponseSteps(mockParams)
+    )
+
+    expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
+      {
+        id: 'mock id',
+        name: 'mock name',
+        orgId: 'mock id',
+        orgName: 'mock orgName',
+        repository: 'mock repository url',
+        steps: [],
+      },
+    ])
+  })
+
+  it('should return empty pipelineList when get pipelineTool steps given pipelineList is empty', () => {
+    const mockParams = {
+      organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.orgName,
+      pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.name,
+      steps: ['mock steps'],
+    }
+    const pipelineVerifiedResponse = configReducer(
+      initialConfigState,
+      updatePipelineToolVerifyResponseSteps(mockParams)
+    )
+
+    expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([])
   })
 
   describe('pipelineToolVerifyResponse reducer', () => {

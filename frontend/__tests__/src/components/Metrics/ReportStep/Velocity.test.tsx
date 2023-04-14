@@ -6,8 +6,8 @@ describe('Velocity component', () => {
   const mockTitle = 'Test Velocity'
 
   const mockVelocityData = [
-    { id: 1, name: 'Velocity(Story Point)', value: ['20'] },
-    { id: 2, name: 'ThroughPut(Cards Count)', value: ['15'] },
+    { id: 0, name: 'Velocity(Story Point)', valueList: ['20'] },
+    { id: 1, name: 'Throughput(Cards Count)', valueList: ['15'] },
   ]
   const setup = () => render(<Velocity title={mockTitle} velocityData={mockVelocityData} />)
 

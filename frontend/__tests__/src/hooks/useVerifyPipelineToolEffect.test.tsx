@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect'
-import { pipelineToolClient } from '@src/clients/PipelineToolClient'
+import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient'
 import { MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { InternalServerException } from '@src/exceptions/InternalServerException'

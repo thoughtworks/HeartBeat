@@ -1,5 +1,5 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { ReportReq } from '@src/models/request/reportReq'
+import { ReportRequestDTO } from '@src/clients/report/dto/request'
 
 export class ReportClient extends HttpClient {
   reportResponse = {
@@ -26,9 +26,32 @@ export class ReportClient extends HttpClient {
         pairs: [],
       },
     ],
+    deploymentFrequency: {
+      avgDeploymentFrequency: {
+        name: '',
+        deploymentFrequency: '',
+      },
+      deploymentFrequencyOfPipelines: [],
+    },
+    leadTimeForChanges: {
+      leadTimeForChangesOfPipelines: [],
+      avgLeadTimeForChanges: {
+        name: '',
+        mergeDelayTime: 1,
+        pipelineDelayTime: 1,
+        totalDelayTime: 1,
+      },
+    },
+    changeFailureRate: {
+      avgChangeFailureRate: {
+        name: '',
+        failureRate: '',
+      },
+      changeFailureRateOfPipelines: [],
+    },
   }
 
-  report = async (params: ReportReq) => {
+  report = async (params: ReportRequestDTO) => {
     // eslint-disable-next-line no-useless-catch
     try {
       await this.axiosInstance

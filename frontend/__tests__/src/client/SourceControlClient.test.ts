@@ -1,7 +1,7 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { MOCK_SOURCE_CONTROL_URL, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures'
-import { sourceControlClient } from '@src/clients/SourceControlClient'
+import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient'
 import { HttpStatusCode } from 'axios'
 
 const server = setupServer(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))))

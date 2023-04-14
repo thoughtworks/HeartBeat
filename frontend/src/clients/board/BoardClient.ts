@@ -1,13 +1,13 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { HttpStatusCode } from 'axios'
-import { VerifyBoardReq } from '@src/models/request/boardReq'
+import { BoardRequestDTO } from '@src/clients/board/dto/request'
 
 export class BoardClient extends HttpClient {
   isBoardVerify = false
   isNoDoneCard = false
   response = {}
 
-  getVerifyBoard = async (params: VerifyBoardReq) => {
+  getVerifyBoard = async (params: BoardRequestDTO) => {
     try {
       const boardType = params.type === 'Classic Jira' ? 'classic-jira' : params.type.toLowerCase()
       const result = await this.axiosInstance.get(`/boards/${boardType}`, { params })

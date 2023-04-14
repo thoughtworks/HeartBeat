@@ -1,4 +1,4 @@
-export interface ReportReq {
+export interface ReportRequestDTO {
   metrics: string[]
   pipeline?: {
     type: string

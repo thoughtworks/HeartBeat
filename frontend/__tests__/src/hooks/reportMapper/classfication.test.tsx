@@ -1,4 +1,4 @@
-import { classificationMapper } from '@src/mapper/ClassificationMapper'
+import { classificationMapper } from '@src/hooks/reportMapper/classification'
 
 describe('classification data mapper', () => {
   const mockClassificationRes = [
@@ -23,9 +23,9 @@ describe('classification data mapper', () => {
   it('maps response Classification values to ui display value', () => {
     const expectedClassificationValues = [
       {
-        id: 1,
+        id: 0,
         name: 'FS Work Type',
-        values: [
+        valuesList: [
           { name: 'Feature Work - Planned', value: '57.14%' },
           { name: 'Operational Work - Planned', value: '35.71%' },
           { name: 'Feature Work - Unplanned', value: '7.14%' },

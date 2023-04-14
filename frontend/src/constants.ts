@@ -1,3 +1,5 @@
+import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+
 export const PROJECT_NAME = 'Heartbeat'
 export const DEFAULT_HELPER_TEXT = ' '
 
@@ -109,42 +111,40 @@ export const SELECTED_VALUE_SEPARATOR = ', '
 export const SAVE_CONFIG_TIPS =
   'Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)'
 
-export enum VelocityMetricsName {
+export enum VELOCITY_METRICS_NAME {
   VELOCITY_SP = 'Velocity(Story Point)',
-  THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
+  THROUGHPUT_CARDS_COUNT = 'Throughput(Cards Count)',
 }
 
-export enum CycleTimeMetricsName {
-  AVERAGE_CYCLE_TIME = 'Average Cycle Time',
-  DEVELOPMENT_PROPORTION = 'Total Development Time/Total Cycle Time',
-  WAITING_PROPORTION = 'Total Waiting Time/Total Cycle Time',
-  BLOCK_PROPORTION = 'Total Block Time/Total Cycle Time',
-  REVIEW_PROPORTION = 'Total Review Time/Total Cycle Time',
-  TESTING_PROPORTION = 'Total Testing Time/Total Cycle Time',
-  AVERAGE_DEVELOPMENT_TIME = 'Average Development Time',
-  AVERAGE_WAITING_TIME = 'Average Waiting Time',
-  AVERAGE_BLOCK_TIME = 'Average Block Time',
-  AVERAGE_REVIEW_TIME = 'Average Review Time',
-  AVERAGE_TESTING_TIME = 'Average Testing Time',
+export enum CYCLE_TIME_METRICS_NAME {
+  AVERAGE_CYCLE_TIME = 'Average cycle time',
+  DEVELOPMENT_PROPORTION = 'Total development time / Total cycle time',
+  WAITING_PROPORTION = 'Total waiting for testing time / Total cycle time',
+  BLOCK_PROPORTION = 'Total block time / Total cycle time',
+  REVIEW_PROPORTION = 'Total review time / Total cycle time',
+  TESTING_PROPORTION = 'Total testing time / Total cycle time',
+  AVERAGE_DEVELOPMENT_TIME = 'Average development time',
+  AVERAGE_WAITING_TIME = 'Average waiting for testing time',
+  AVERAGE_BLOCK_TIME = 'Average block time',
+  AVERAGE_REVIEW_TIME = 'Average review time',
+  AVERAGE_TESTING_TIME = 'Average testing time',
 }
-export const GET_STEPS_FAILED = 'get steps failed'
+
+export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency(deployments/day)'
+
+export const FAILURE_RATE_NAME = 'Failure rate'
+
 export enum Unit {
   PER_SP = '(days/SP)',
   PER_CARD = '(days/card)',
 }
 
-export const INIT_VELOCITY_METRICS: { id: number; name: string; value: string[] }[] = [
+export const INIT_REPORT_DATA_WITH_TWO_COLUMNS: ReportDataWithTwoColumns[] = [
   {
     id: 1,
-    name: '2',
-    value: ['dhjejh'],
+    name: '',
+    valueList: [],
   },
 ]
 
-export const INIT_CYCLETIME_METRICS: { id: number; name: string; value: string[] }[] = [
-  {
-    id: 1,
-    name: 'Cycle time',
-    value: ['40'],
-  },
-]
+export const GET_STEPS_FAILED_MESSAGE = 'get steps failed'

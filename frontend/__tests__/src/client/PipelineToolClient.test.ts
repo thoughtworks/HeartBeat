@@ -1,7 +1,7 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { MOCK_PIPELINE_URL, MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures'
-import { pipelineToolClient } from '@src/clients/PipelineToolClient'
+import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient'
 import { HttpStatusCode } from 'axios'
 
 const server = setupServer(

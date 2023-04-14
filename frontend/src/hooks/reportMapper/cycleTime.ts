@@ -1,13 +1,13 @@
-import { CycleTimeResp, Swimlane } from '../models/response/reportResp'
-import { CycleTimeMetricsName, METRICS_CONSTANTS, Unit } from '@src/constants'
-import { ReportDataWithTwoColumns } from '@src/models/reportUIDataStructure'
+import { CYCLE_TIME_METRICS_NAME, METRICS_CONSTANTS, Unit } from '@src/constants'
+import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+import { CycleTimeResponse, Swimlane } from '@src/clients/report/dto/response'
 
 export const cycleTimeMapper = ({
   swimlaneList,
   totalTimeForCards,
   averageCycleTimePerSP,
   averageCircleTimePerCard,
-}: CycleTimeResp) => {
+}: CycleTimeResponse) => {
   const mappedCycleTimeValue: ReportDataWithTwoColumns[] = []
 
   const getSwimlaneByItemName = (itemName: string) => {
@@ -38,8 +38,8 @@ export const cycleTimeMapper = ({
     AVERAGE_TESTING_TIME: getAverageTimeForPerColumn(METRICS_CONSTANTS.testingValue),
   }
 
-  Object.entries(CycleTimeMetricsName).map(([key, cycleName]) => {
-    mappedCycleTimeValue.push({ id: mappedCycleTimeValue.length + 1, name: cycleName, value: cycleTimeValue[key] })
+  Object.entries(CYCLE_TIME_METRICS_NAME).map(([key, cycleName], index) => {
+    mappedCycleTimeValue.push({ id: index, name: cycleName, valueList: cycleTimeValue[key] })
   })
 
   return mappedCycleTimeValue

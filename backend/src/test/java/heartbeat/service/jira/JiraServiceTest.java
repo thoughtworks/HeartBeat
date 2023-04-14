@@ -15,6 +15,9 @@ import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.client.dto.To;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
+import heartbeat.controller.board.vo.request.Cards;
+import heartbeat.controller.board.vo.request.RequestJiraBoardColumnSetting;
+import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
@@ -435,6 +438,16 @@ class JiraServiceTest {
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BoardRequestParam.builder().build()))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Request failed with status code 400, error: ", "");
+	}
+
+	@Test
+	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() {
+		StoryPointsAndCycleTimeRequest request = StoryPointsAndCycleTimeRequest.builder().build();
+		RequestJiraBoardColumnSetting requestJiraBoardColumnSetting = RequestJiraBoardColumnSetting.builder().build();
+		Cards cards = jiraService.getStoryPointsAndCycleTime(request, List.of(requestJiraBoardColumnSetting),
+				List.of("Zhang"));
+
+		assertThat(cards.equals(Cards.builder().build()));
 	}
 
 }

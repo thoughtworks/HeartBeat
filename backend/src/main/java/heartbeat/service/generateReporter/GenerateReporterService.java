@@ -57,7 +57,7 @@ public class GenerateReporterService {
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
 			.build();
 		this.cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
-			jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
+				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 
 	}
 

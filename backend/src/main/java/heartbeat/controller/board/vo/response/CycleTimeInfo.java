@@ -9,6 +9,6 @@ public class CycleTimeInfo {
 
 	private String column;
 
-	private String day;
+	private Double day;
 
 }

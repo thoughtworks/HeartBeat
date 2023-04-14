@@ -8,7 +8,7 @@ import heartbeat.client.dto.DoneCardFields;
 import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.IssueField;
 import heartbeat.client.dto.Issuetype;
-import heartbeat.client.dto.Item;
+import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.JiraColumnConfig;
@@ -16,7 +16,7 @@ import heartbeat.client.dto.JiraColumnStatus;
 import heartbeat.client.dto.Project;
 import heartbeat.client.dto.StatusCategory;
 import heartbeat.client.dto.StatusSelfDTO;
-import heartbeat.client.dto.To;
+import heartbeat.client.dto.Status;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +97,8 @@ public class JiraBoardConfigDTOFixture {
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {
-		return CardHistoryResponseDTO.builder().items(List.of(new Item("assignee", new To("San Zhang"))));
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(new HistoryDetail(1, "assignee", new Status("San Zhang"), new Status("San Zhang"))));
 	}
 
 	public static FieldResponseDTO.FieldResponseDTOBuilder FIELD_RESPONSE_BUILDER() {

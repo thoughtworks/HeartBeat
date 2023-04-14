@@ -7,10 +7,10 @@ import lombok.Data;
 @Builder
 public class CardCustomFieldKey {
 
-	public static final String STORY_POINTS = "";
+	private String STORY_POINTS;
 
-	public static final String SPRINT = "";
+	private String SPRINT;
 
-	public static final String FLAGGED = "";
+	private String FLAGGED;
 
 }

@@ -5,12 +5,12 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CardCycleTime {
+public class JiraProject {
 
-	private String name;
+	public String id;
 
-	private StepsDay steps;
+	public String key;
 
-	private int total;
+	public String name;
 
 }

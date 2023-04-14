@@ -3,14 +3,14 @@ package heartbeat.controller.board.vo.response;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
-public class CardCycleTime {
+public class JiraCards {
 
-	private String name;
+	public Integer total;
 
-	private StepsDay steps;
-
-	private int total;
+	public List<JiraCard> issues;
 
 }

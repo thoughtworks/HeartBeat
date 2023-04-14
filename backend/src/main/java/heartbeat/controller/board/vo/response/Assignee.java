@@ -5,12 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CardCycleTime {
+public class Assignee {
 
-	private String name;
+	public String accountId;
 
-	private StepsDay steps;
-
-	private int total;
+	public String displayName;
 
 }

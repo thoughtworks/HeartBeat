@@ -5,12 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CardCycleTime {
+public class FixVersion {
 
-	private String name;
-
-	private StepsDay steps;
-
-	private int total;
+	public String name;
 
 }

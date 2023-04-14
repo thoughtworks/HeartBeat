@@ -7,7 +7,7 @@ import {
   MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS,
   VERIFY_ERROR_MESSAGE,
 } from '../fixtures'
-import { boardClient } from '@src/clients/BoardClient'
+import { boardClient } from '@src/clients/board/BoardClient'
 import { HttpStatusCode } from 'axios'
 
 const server = setupServer(

@@ -1,9 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
-import { Row } from '@src/components/Common/ReportForTwoColumns/style'
-import { Container } from '@src/components/Common/ReportForTwoColumns/style'
-import { ReportDataWithTwoColumns } from '@src/models/reportUIDataStructure'
+import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style'
 import { Fragment } from 'react'
+import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 
 interface ReportForTwoColumnsProps {
   title: string
@@ -15,10 +14,10 @@ export const ReportForTwoColumns = ({ title, data }: ReportForTwoColumnsProps) =
     return data.map((row) => (
       <Fragment key={row.id}>
         <Row>
-          <TableCell rowSpan={row.value.length}>{row.name}</TableCell>
-          <TableCell>{row.value[0]}</TableCell>
+          <TableCell rowSpan={row.valueList.length}>{row.name}</TableCell>
+          <TableCell>{row.valueList[0]}</TableCell>
         </Row>
-        {row.value.slice(1).map((value) => (
+        {row.valueList.slice(1).map((value) => (
           <Row key={row.id}>
             <TableCell>{value}</TableCell>
           </Row>

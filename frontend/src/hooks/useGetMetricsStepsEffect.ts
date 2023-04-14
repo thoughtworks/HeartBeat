@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ERROR_MESSAGE_TIME_DURATION, GET_STEPS_FAILED } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION, GET_STEPS_FAILED_MESSAGE } from '@src/constants'
 import { getStepsParams, metricsClient } from '@src/clients/MetricsClient'
 
 export interface useGetMetricsStepsEffectInterface {
@@ -30,7 +30,7 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
       return await metricsClient.getSteps(params, organizationId, buildId, pipelineType, token)
     } catch (e) {
       const err = e as Error
-      setErrorMessage(`${pipelineType} ${GET_STEPS_FAILED}: ${err.message}`)
+      setErrorMessage(`${pipelineType} ${GET_STEPS_FAILED_MESSAGE}: ${err.message}`)
       setTimeout(() => {
         setErrorMessage('')
       }, ERROR_MESSAGE_TIME_DURATION)

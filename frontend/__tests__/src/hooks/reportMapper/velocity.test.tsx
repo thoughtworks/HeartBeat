@@ -1,4 +1,4 @@
-import { velocityMapper } from '@src/mapper/VelocityMapper'
+import { velocityMapper } from '@src/hooks/reportMapper/velocity'
 
 describe('velocity data mapper', () => {
   it('maps response velocity values to ui display value', () => {
@@ -7,8 +7,8 @@ describe('velocity data mapper', () => {
       velocityForCards: '15',
     }
     const expectedVelocityValues = [
-      { id: 1, name: 'Velocity(Story Point)', value: ['20'] },
-      { id: 2, name: 'ThroughPut(Cards Count)', value: ['15'] },
+      { id: 0, name: 'Velocity(Story Point)', valueList: ['20'] },
+      { id: 1, name: 'Throughput(Cards Count)', valueList: ['15'] },
     ]
 
     const mappedVelocityValues = velocityMapper(mockVelocityRes)

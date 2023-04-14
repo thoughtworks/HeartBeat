@@ -1,6 +1,6 @@
 import { ReportForTwoColumns } from '@src/components/Common/ReportForTwoColumns'
 import React from 'react'
-import { ReportDataWithTwoColumns } from '@src/models/reportUIDataStructure'
+import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 
 interface CycleTimeProps {
   title: string

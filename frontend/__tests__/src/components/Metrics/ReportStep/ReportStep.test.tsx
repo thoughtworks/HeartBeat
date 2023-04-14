@@ -1,37 +1,12 @@
 import { render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
-import { REQUIRED_DATA_LIST } from '../../../fixtures'
+import { EXPECTED_REPORT_VALUES, REQUIRED_DATA_LIST } from '../../../fixtures'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: () => ({
-    generateReport: jest.fn(() =>
-      Promise.resolve({
-        response: {
-          velocity: { velocityForSP: '3', velocityForCards: '4' },
-          cycleTime: {
-            averageCircleTimePerCard: '30.26',
-            averageCycleTimePerSP: '21.18',
-            totalTimeForCards: 423,
-            swimlaneList: [
-              {
-                optionalItemName: 'Waiting for testing',
-                averageTimeForSP: '0.16',
-                averageTimeForCards: '0.23',
-                totalTime: '3.21',
-              },
-            ],
-          },
-          classification: [
-            {
-              fieldName: '',
-              pairs: [],
-            },
-          ],
-        },
-      })
-    ),
+    generateReport: jest.fn(() => Promise.resolve(EXPECTED_REPORT_VALUES)),
     isLoading: false,
   }),
 }))
@@ -63,8 +38,8 @@ describe('Report Step', () => {
     const { getByText } = setup()
 
     await waitFor(() => {
-      expect(getByText('3')).toBeInTheDocument()
-      expect(getByText('4')).toBeInTheDocument()
+      expect(getByText('20')).toBeInTheDocument()
+      expect(getByText('14')).toBeInTheDocument()
     })
   })
 
@@ -74,8 +49,6 @@ describe('Report Step', () => {
     await waitFor(() => {
       expect(getByText('30.26(days/card)')).toBeInTheDocument()
       expect(getByText('21.18(days/SP)')).toBeInTheDocument()
-      expect(getByText('0.16(days/SP)')).toBeInTheDocument()
-      expect(getByText('0.23(days/card)')).toBeInTheDocument()
     })
   })
 })

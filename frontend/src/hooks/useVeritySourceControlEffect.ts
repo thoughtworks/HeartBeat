@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { sourceControlClient } from '@src/clients/SourceControlClient'
+import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient'
 import { ERROR_MESSAGE_TIME_DURATION, VERIFY_FAILED_ERROR_MESSAGE } from '@src/constants'
-import { VerifySourceControlReq } from '@src/models/request/sourceControlReq'
+import { SourceControlRequestDTO } from '@src/clients/sourceControl/dto/request'
 
 export interface useVerifySourceControlStateInterface {
-  verifyGithub: (params: VerifySourceControlReq) => Promise<
+  verifyGithub: (params: SourceControlRequestDTO) => Promise<
     | {
         isSourceControlVerify: boolean
         response: object
@@ -19,7 +19,7 @@ export const useVerifySourceControlEffect = (): useVerifySourceControlStateInter
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  const verifyGithub = async (params: VerifySourceControlReq) => {
+  const verifyGithub = async (params: SourceControlRequestDTO) => {
     setIsLoading(true)
     try {
       return await sourceControlClient.getVerifySourceControl(params)

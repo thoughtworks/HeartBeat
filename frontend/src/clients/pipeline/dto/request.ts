@@ -1,4 +1,4 @@
-export interface VerifySourceControlReq {
+export interface PipelineRequestDTO {
   type: string
   token: string
   startTime: string | number | null

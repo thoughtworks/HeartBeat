@@ -1,11 +1,11 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { VerifySourceControlReq } from '@src/models/request/sourceControlReq'
+import { SourceControlRequestDTO } from '@src/clients/sourceControl/dto/request'
 
 export class SourceControlClient extends HttpClient {
   isSourceControlVerify = false
   response = {}
 
-  getVerifySourceControl = async (params: VerifySourceControlReq) => {
+  getVerifySourceControl = async (params: SourceControlRequestDTO) => {
     try {
       const result = await this.axiosInstance.get('/source-control', { params: { ...params } })
       this.handleSourceControlVerifySucceed(result.data)

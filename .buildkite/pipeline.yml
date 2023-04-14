@@ -8,16 +8,11 @@ steps:
       docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
   
   - label: ":rocket: Backend Check"
-    command: >
-      docker run
-      --rm
-      -v $(pwd)/backend:/app
-      gradle:jdk${{ JAVA_VERSION }}
-      ./gradlew clean check build
-  # - label: ":chart_with_upwards_trend: Upload Test Report to Codacy"
-  #   command: >
-  #     bash <(curl -Ls https://coverage.codacy.com/get.sh)
-  #   plugins:
-  #     - "codacy#v2.0.0":
-  #         coverage_report_path: "backend/build/reports/jacoco/test/jacocoTestReport.xml"
+    command: |
+      cd /app/backend
+      ./gradlew clean check
+      ./gradlew clean build
+      export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
+      bash <(curl -Ls https://coverage.codacy.com/get.sh)
+    workdir: /app/backend
 

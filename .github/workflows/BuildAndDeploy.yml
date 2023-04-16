@@ -187,6 +187,7 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
 
   build-frontend:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -229,6 +230,7 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
 
   build-mock-server:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -273,6 +275,7 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
 
   deploy-e2e:
     runs-on: ubuntu-latest

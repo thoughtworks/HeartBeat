@@ -34,9 +34,9 @@ export const PipelineMetricSelection = ({
   const { id, organization, pipelineName, steps } = deploymentFrequencySetting
   const dispatch = useAppDispatch()
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
-  const organizationNameOptions = useAppSelector(selectPipelineOrganizations)
-  const pipelineNameOptions = useAppSelector(() => selectPipelineNames(store.getState(), organization))
-  const stepsOptions = useAppSelector(() => selectSteps(store.getState(), organization, pipelineName))
+  const organizationNameOptions = selectPipelineOrganizations(store.getState())
+  const pipelineNameOptions = selectPipelineNames(store.getState(), organization)
+  const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
 
   const handleClick = () => {
     dispatch(deleteADeploymentFrequencySetting(id))

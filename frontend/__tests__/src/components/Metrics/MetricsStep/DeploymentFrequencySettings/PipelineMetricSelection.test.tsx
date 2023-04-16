@@ -4,11 +4,8 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
-
 import { metricsClient } from '@src/clients/MetricsClient'
-import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
-
-const store = setupStore()
+import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -33,6 +30,9 @@ jest.mock('@src/context/config/configSlice', () => ({
     pipelineType: 'BuildKite',
     token: '',
   }),
+  updatePipelineToolVerifyResponseSteps: jest
+    .fn()
+    .mockReturnValue({ type: 'UPDATE_PIPELINE_TOOL_VERIFY_RESPONSE_STEPS' }),
 }))
 
 describe('PipelineMetricSelection', () => {
@@ -52,20 +52,7 @@ describe('PipelineMetricSelection', () => {
     deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
     isShowRemoveButton: boolean
   ) => {
-    await store.dispatch(
-      updatePipelineToolVerifyResponse({
-        pipelineList: [
-          {
-            id: 'mockId',
-            name: 'mockName',
-            orgId: 'mockOrgId',
-            orgName: 'mockOrgName',
-            repository: 'mockRepository',
-            steps: ['step1', 'step2'],
-          },
-        ],
-      })
-    )
+    const store = setupStore()
     return render(
       <Provider store={store}>
         <PipelineMetricSelection
@@ -154,6 +141,7 @@ describe('PipelineMetricSelection', () => {
 
     await userEvent.click(listBox.getByText('mockName2'))
 
+    expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
     expect(getByText('Steps')).toBeInTheDocument()
   })
 })

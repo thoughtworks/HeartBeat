@@ -1,9 +1,9 @@
-FROM gradle:8.0.2-jdk17 AS builder
+FROM gradle:8.1.0-jdk17 AS builder
 COPY ./stubs /app
 WORKDIR /app
 RUN curl -L "https://search.maven.org/remotecontent?filepath=io/github/azagniotov/stubby4j/7.5.2/stubby4j-7.5.2.jar" -o /app/stubby4j.jar
 
-FROM openjdk:17.0.2-jdk-slim-buster
+FROM mcr.microsoft.com/java/jre:17-zulu-alpine
 LABEL app=Heartbeat
 LABEL arch=stubs
 WORKDIR /app

@@ -1,4 +1,4 @@
-import { fireEvent, getAllByRole, getByRole, render, waitFor, within } from '@testing-library/react'
+import { render, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../../utils/setupStoreUtil'
@@ -114,14 +114,13 @@ describe('PipelineMetricSelection', () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => {
       throw new Error('error message')
     })
-    const { getByText, getByRole, getAllByRole } = await setup(
+    const { getByText, getByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', steps: '' },
       false
     )
 
-    fireEvent.mouseDown(getAllByRole('button', { name: 'Organization' })[1])
+    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
     const listBox = within(getByRole('listbox'))
-
     await userEvent.click(listBox.getByText('mockName2'))
 
     await waitFor(() => {
@@ -131,17 +130,16 @@ describe('PipelineMetricSelection', () => {
 
   it('should show steps selection when getSteps succeed ', async () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps'])
-    const { getByText, getByRole, getAllByRole } = await setup(
+    const { getByRole, getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', steps: '' },
       false
     )
 
-    fireEvent.mouseDown(getAllByRole('button', { name: 'Organization' })[1])
+    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
     const listBox = within(getByRole('listbox'))
-
     await userEvent.click(listBox.getByText('mockName2'))
 
     expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
-    expect(getByText('Steps')).toBeInTheDocument()
+    expect(getByText(STEPS)).toBeInTheDocument()
   })
 })

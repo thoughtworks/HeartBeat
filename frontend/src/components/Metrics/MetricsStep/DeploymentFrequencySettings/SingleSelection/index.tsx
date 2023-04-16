@@ -19,6 +19,7 @@ export const SingleSelection = ({ options, label, value, id, errorMessage, onGet
   const dispatch = useAppDispatch()
   const [selectedValue, setSelectedValue] = useState(value)
   const { clearErrorMessage } = useMetricsStepValidationCheckContext()
+  const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
 
   const handleChange = (event: SelectChangeEvent) => {
     const value = event.target.value
@@ -31,8 +32,8 @@ export const SingleSelection = ({ options, label, value, id, errorMessage, onGet
   return (
     <>
       <FormControlWrapper variant='standard' required error={!!errorMessage}>
-        <InputLabel id='single-selection-label'>{label}</InputLabel>
-        <Select labelId='single-selection-label' value={selectedValue} onChange={handleChange}>
+        <InputLabel id={labelId}>{label}</InputLabel>
+        <Select labelId={labelId} value={selectedValue} onChange={handleChange}>
           {options.map((data) => (
             <MenuItem key={data} value={data}>
               <ListItemText primary={data} />

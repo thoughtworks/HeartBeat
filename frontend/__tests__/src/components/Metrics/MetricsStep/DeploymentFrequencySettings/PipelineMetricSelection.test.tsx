@@ -6,7 +6,7 @@ import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/Dep
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 
 import { metricsClient } from '@src/clients/MetricsClient'
-import { selectStepsParams, updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
+import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
 
 const store = setupStore()
 

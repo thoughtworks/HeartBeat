@@ -1,6 +1,6 @@
 import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { useAppDispatch } from '@src/hooks'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './style'
 import { Loading } from '@src/components/Loading'

@@ -1,5 +1,6 @@
 import {
   selectPipelineNames,
+  selectPipelineOrganizations,
   selectSteps,
   selectStepsParams,
   updateDateRange,
@@ -229,6 +230,14 @@ describe('pipelineTool reducer', () => {
       const store = setupStore()
       await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
       expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual(['step1', 'step2'])
+    })
+  })
+
+  describe('selectPipelineOrganizations', () => {
+    it('should return organizations when call selectPipelineOrganizations function', async () => {
+      const store = setupStore()
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
+      expect(selectPipelineOrganizations(store.getState())).toEqual(['mockOrgName'])
     })
   })
 })

@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class CardParent {
 
-	public CardParentFields fields;
+	private CardParentFields fields;
 
 }

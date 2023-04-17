@@ -9,6 +9,8 @@ import java.util.List;
 
 @FeignClient(value = "holidayFeignClient", url = "https://raw.githubusercontent.com/NateScarlet/holiday-cn/master")
 public interface HolidayFeignClient {
-	@GetMapping(path = "/${year}.json")
+
+	@GetMapping(path = "/{year}.json")
 	List<HolidayDTO> getHoliday(@PathVariable String year);
+
 }

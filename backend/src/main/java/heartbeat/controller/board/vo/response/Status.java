@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class Status {
 
-	public String name;
+	private String name;
 
 }

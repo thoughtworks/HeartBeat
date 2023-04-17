@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class Priority {
 
-	public String name;
+	private String name;
 
 }

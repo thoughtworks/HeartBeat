@@ -13,6 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CycleTimeInfoDTO {
+
 	private List<CycleTimeInfo> cycleTimeInfos;
+
 	private List<CycleTimeInfo> originCycleTimeInfos;
+
 }

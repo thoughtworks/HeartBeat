@@ -1,4 +1,4 @@
-package heartbeat.service.generateReporter;
+package heartbeat.service.report;
 
 import heartbeat.controller.board.vo.request.Cards;
 import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
@@ -24,14 +24,40 @@ public class GenerateReporterService {
 
 	private final JiraService jiraService;
 
+	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> KanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
 		.map(RequireDataEnum::getValue)
 		.toList();
 
 	public GenerateReportResponse generateReporter(GenerateReportRequest request) {
+		// fetch data for calculate
 		this.fetchOriginalData(request);
+
+		// calculate all required data
+		calculateClassification();
+		calculateDeployment();
+		calculateCycleTime();
+		calculateLeadTime();
+
+		// combined data to GenerateReportResponse
 		return GenerateReportResponse.builder().build();
+	}
+
+	private void calculateClassification() {
+		// todo:add calculate classification logic
+	}
+
+	private void calculateDeployment() {
+		// todo:add calculate Deployment logic
+	}
+
+	private void calculateCycleTime() {
+		// todo:add calculate CycleTime logic
+	}
+
+	private void calculateLeadTime() {
+		// todo:add calculate LeadTime logic
 	}
 
 	public void fetchOriginalData(GenerateReportRequest request) {
@@ -40,6 +66,11 @@ public class GenerateReporterService {
 		if (lowMetrics.stream().anyMatch(this.KanbanMetrics::contains)) {
 			fetchDataFromKanban(request);
 		}
+
+		fetchGithubData();
+
+		fetchBuildKiteData();
+
 	}
 
 	private void fetchDataFromKanban(GenerateReportRequest request) {
@@ -59,6 +90,14 @@ public class GenerateReporterService {
 		this.cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 
+	}
+
+	private void fetchGithubData() {
+		// todo:add fetchGithubData logic
+	}
+
+	private void fetchBuildKiteData() {
+		// todo:add fetchBuildKiteData logic
 	}
 
 }

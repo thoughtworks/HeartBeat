@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class Sprint {
 
-	public String name;
+	private String name;
 
 }

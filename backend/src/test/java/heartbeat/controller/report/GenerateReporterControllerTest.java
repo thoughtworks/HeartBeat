@@ -3,7 +3,7 @@ package heartbeat.controller.report;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.vo.response.GenerateReportResponse;
 import heartbeat.controller.report.vo.response.Velocity;
-import heartbeat.service.generateReporter.GenerateReporterService;
+import heartbeat.service.report.GenerateReporterService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

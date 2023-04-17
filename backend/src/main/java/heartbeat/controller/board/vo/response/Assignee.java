@@ -7,8 +7,8 @@ import lombok.Data;
 @Builder
 public class Assignee {
 
-	public String accountId;
+	private String accountId;
 
-	public String displayName;
+	private String displayName;
 
 }

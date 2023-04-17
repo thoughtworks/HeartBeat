@@ -10,7 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HolidayDTO {
+
 	private String name;
+
 	private String date;
+
 	private Boolean isOffDay;
+
 }

@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class Reporter {
 
-	public String displayName;
+	private String displayName;
 
 }

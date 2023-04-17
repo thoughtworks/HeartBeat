@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class HistoryDetail implements Serializable {
 
-	private int timeStamp ;
+	private int timeStamp;
 
 	private String fieldId;
 

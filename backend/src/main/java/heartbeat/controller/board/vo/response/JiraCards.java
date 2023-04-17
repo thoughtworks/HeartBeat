@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class JiraCards {
 
-	public Integer total;
+	private Integer total;
 
-	public List<JiraCard> issues;
+	private List<JiraCard> issues;
 
 }

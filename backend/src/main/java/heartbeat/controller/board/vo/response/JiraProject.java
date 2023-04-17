@@ -7,10 +7,10 @@ import lombok.Data;
 @Builder
 public class JiraProject {
 
-	public String id;
+	private String id;
 
-	public String key;
+	private String key;
 
-	public String name;
+	private String name;
 
 }

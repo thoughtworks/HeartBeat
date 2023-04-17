@@ -21,4 +21,15 @@ public class JiraBoardConfigDTO implements Serializable {
 
 	private JiraColumnConfig columnConfig;
 
+	@AllArgsConstructor
+	@Data
+	@Builder
+	public static class AllDoneCardsResponseDTO implements Serializable {
+
+		private String total;
+
+		private List<DoneCard> issues;
+
+	}
+
 }

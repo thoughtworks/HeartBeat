@@ -1,11 +1,20 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
-import { reportClient } from '@src/clients/ReportClient'
-import { MOCK_GENERATE_REPORT_REQUEST_PARAMS } from '../fixtures'
+import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
+import { reportClient } from '@src/clients/report/ReportClient'
+import { reportMapper } from '@src/hooks/reportMapper/report'
+
+jest.mock('@src/hooks/reportMapper/report', () => ({
+  reportMapper: jest.fn(),
+}))
 
 describe('use generate report effect', () => {
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   it('should init data state when render hook', async () => {
     const { result } = renderHook(() => useGenerateReportEffect())
 
@@ -39,5 +48,19 @@ describe('use generate report effect', () => {
     })
 
     expect(result.current.errorMessage).toEqual('generate report: error message')
+  })
+
+  it('should call reportMapper method when generate report response status 200', async () => {
+    reportClient.report = jest.fn().mockReturnValue(MOCK_REPORT_RESPONSE)
+
+    const { result } = renderHook(() => useGenerateReportEffect())
+
+    act(() => {
+      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    })
+
+    await waitFor(() => {
+      expect(reportMapper).toHaveBeenCalledTimes(1)
+    })
   })
 })

@@ -2,7 +2,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_URL, VERIFY_ERROR_MESSAGE } from '../fixtures'
 import { HttpStatusCode } from 'axios'
-import { reportClient } from '@src/clients/ReportClient'
+import { reportClient } from '@src/clients/report/ReportClient'
 
 const server = setupServer(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
 

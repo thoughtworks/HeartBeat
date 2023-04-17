@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { PipelineMetricSelection } from './PipelineMetricSelection'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
-import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { MetricsSettingTitle, MetricsSettingButtonContainer } from '@src/components/Common/MetricsSettingTitle'
 import { addADeploymentFrequencySetting, selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { IconButton } from '@mui/material'
@@ -10,12 +10,12 @@ import { Add } from '@mui/icons-material'
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch()
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings)
-
   const { errorMessages, checkDuplicatedPipeLine } = useMetricsStepValidationCheckContext()
 
   useEffect(() => {
     checkDuplicatedPipeLine()
-  }, [checkDuplicatedPipeLine, deploymentFrequencySettings])
+  }, [deploymentFrequencySettings])
+
   const handleClick = () => {
     dispatch(addADeploymentFrequencySetting())
   }
@@ -35,9 +35,11 @@ export const DeploymentFrequencySettings = () => {
           errorMessages={getErrorMessage(deploymentFrequencySetting.id)}
         />
       ))}
-      <IconButton onClick={handleClick}>
-        <Add />
-      </IconButton>
+      <MetricsSettingButtonContainer>
+        <IconButton onClick={handleClick}>
+          <Add />
+        </IconButton>
+      </MetricsSettingButtonContainer>
     </>
   )
 }

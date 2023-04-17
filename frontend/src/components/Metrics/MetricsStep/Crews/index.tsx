@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { DEFAULT_HELPER_TEXT, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
-import MetricsSettingTitle from '@src/components/Common/MetricsSettingTitle'
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveUsers, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'

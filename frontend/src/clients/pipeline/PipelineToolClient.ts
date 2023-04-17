@@ -1,17 +1,11 @@
 import { HttpClient } from '@src/clients/Httpclient'
-
-export interface getVerifyPipelineToolParams {
-  type: string
-  token: string
-  startTime: string | number | null
-  endTime: string | number | null
-}
+import { PipelineRequestDTO } from '@src/clients/pipeline/dto/request'
 
 export class PipelineToolClient extends HttpClient {
   isPipelineToolVerified = false
   response = {}
 
-  verifyPipelineTool = async (params: getVerifyPipelineToolParams) => {
+  verifyPipelineTool = async (params: PipelineRequestDTO) => {
     try {
       const result = await this.axiosInstance.get(`/pipelines/${params.type}`, { params: { ...params } })
       this.handlePipelineToolVerifySucceed(result.data)

@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { REGULAR_CALENDAR } from '@src/constants'
+import { REGULAR_CALENDAR, REQUIRED_DATA } from '@src/constants'
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice'
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
-import { REQUIRED_DATA } from '@src/constants'
+import dayjs from 'dayjs'
+import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 
 export interface BasicConfigState {
   isProjectCreated: boolean
@@ -111,9 +112,23 @@ export const configSlice = createSlice({
     },
     updatePipelineToolVerifyResponse: (state, action) => {
       const { pipelineList } = action.payload
-      state.pipelineTool.verifiedResponse.pipelineList = pipelineList
+      state.pipelineTool.verifiedResponse.pipelineList = pipelineList.map((pipeline: pipeline) => ({
+        ...pipeline,
+        steps: [],
+      }))
     },
-
+    updatePipelineToolVerifyResponseSteps: (state, action) => {
+      const { organization, pipelineName, steps } = action.payload
+      state.pipelineTool.verifiedResponse.pipelineList = state.pipelineTool.verifiedResponse.pipelineList.map(
+        (pipeline) =>
+          pipeline.name === pipelineName && pipeline.orgName === organization
+            ? {
+                ...pipeline,
+                steps: steps,
+              }
+            : pipeline
+      )
+    },
     updateSourceControlVerifyState: (state, action) => {
       state.sourceControl.isVerified = action.payload
     },
@@ -142,6 +157,7 @@ export const {
   updateSourceControl,
   updateSourceControlVerifyState,
   updateSourceControlVerifiedResponse,
+  updatePipelineToolVerifyResponseSteps,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.basic.projectName
@@ -159,5 +175,42 @@ export const selectIsBoardVerified = (state: RootState) => state.config.board.is
 export const selectUsers = (state: RootState) => state.config.board.verifiedResponse.users
 export const selectJiraColumns = (state: RootState) => state.config.board.verifiedResponse.jiraColumns
 export const selectTargetFields = (state: RootState) => state.config.board.verifiedResponse.targetFields
+
+export const selectPipelineOrganizations = (state: RootState) => [
+  ...new Set(state.config.pipelineTool.verifiedResponse.pipelineList.map((item) => item.orgName)),
+]
+
+export const selectPipelineNames = (state: RootState, organization: string) =>
+  state.config.pipelineTool.verifiedResponse.pipelineList
+    .filter((pipeline) => pipeline.orgName === organization)
+    .map((item) => item.name)
+
+export const selectStepsParams = (state: RootState, organizationName: string, pipelineName: string) => {
+  const pipeline = state.config.pipelineTool.verifiedResponse.pipelineList.find(
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+  )
+  const { startDate, endDate } = state.config.basic.dateRange
+  const pipelineType = state.config.pipelineTool.config.type
+  const token = state.config.pipelineTool.config.token
+
+  return {
+    params: {
+      pipelineName: pipeline?.name ?? '',
+      repository: pipeline?.repository ?? '',
+      orgName: pipeline?.orgName ?? '',
+      startTime: dayjs(startDate).startOf('date').valueOf(),
+      endTime: dayjs(endDate).startOf('date').valueOf(),
+    },
+    buildId: pipeline?.id ?? '',
+    organizationId: pipeline?.orgId ?? '',
+    pipelineType,
+    token,
+  }
+}
+
+export const selectSteps = (state: RootState, organizationName: string, pipelineName: string) =>
+  state.config.pipelineTool.verifiedResponse.pipelineList.find(
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+  )?.steps ?? []
 
 export default configSlice.reducer

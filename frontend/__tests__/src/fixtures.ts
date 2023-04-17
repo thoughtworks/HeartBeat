@@ -41,9 +41,12 @@ export const REQUIRED_DATA_LIST = [
 export const ALL = 'All'
 export const VELOCITY = 'Velocity'
 export const CYCLE_TIME = 'Cycle time'
+export const CLASSIFICATION = 'Classification'
+export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
+export const DEPLOYMENT_FREQUENCY = 'Deployment frequency'
+export const CHANGE_FAILURE_RATE = 'Change failure rate'
 export const MEAN_TIME_TO_RECOVERY = 'Mean time to recovery'
 export const REQUIRED_DATA = 'Required Data'
-export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
@@ -76,7 +79,7 @@ export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site'
 export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
 
-const BASE_URL = 'api/v1'
+export const BASE_URL = 'api/v1'
 export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`
 export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
@@ -91,6 +94,7 @@ export enum VERIFY_ERROR_MESSAGE {
   PERMISSION_DENIED = 'Permission denied',
   UNKNOWN = 'Unknown',
 }
+
 export const VERIFY_FAILED = 'verify failed'
 
 export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
@@ -98,8 +102,8 @@ export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
   type: BOARD_TYPES.JIRA,
   site: '1',
   projectKey: '1',
-  startTime: '1613664000000',
-  endTime: '1614873600000',
+  startTime: 1613664000000,
+  endTime: 1614873600000,
   boardId: '1',
 }
 
@@ -108,23 +112,23 @@ export const MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS = {
   type: BOARD_TYPES.CLASSIC_JIRA,
   site: '2',
   projectKey: '2',
-  startTime: '1613664000000',
-  endTime: '1614873600000',
+  startTime: 1613664000000,
+  endTime: 1614873600000,
   boardId: '2',
 }
 
 export const MOCK_PIPELINE_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: PIPELINE_TOOL_TYPES.BUILD_KITE,
-  startTime: '1613664000000',
-  endTime: '1614873600000',
+  startTime: 1613664000000,
+  endTime: 1614873600000,
 }
 
 export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: SOURCE_CONTROL_TYPES.GITHUB,
-  startTime: '1613664000000',
-  endTime: '1614873600000',
+  startTime: 1613664000000,
+  endTime: 1614873600000,
 }
 
 export const MOCK_GENERATE_REPORT_REQUEST_PARAMS = {
@@ -210,14 +214,16 @@ export const MOCK_JIRA_VERIFY_RESPONSE = {
 }
 
 export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
-  pipelineList: {
-    id: 'mock id',
-    name: 'mock name',
-    orgId: 'mock id',
-    orgName: 'mock orgName',
-    repository: 'mock repository url',
-    steps: [],
-  },
+  pipelineList: [
+    {
+      id: 'mock id',
+      name: 'mock name',
+      orgId: 'mock id',
+      orgName: 'mock orgName',
+      repository: 'mock repository url',
+      steps: [],
+    },
+  ],
 }
 
 export const MOCK_GITHUB_VERIFY_RESPONSE = {
@@ -231,7 +237,204 @@ export const REAL_DONE = 'Real Done'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
-export enum VelocityMetric {
-  VELOCITY_SP = 'Velocity(SP)',
-  THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
+export enum VelocityMetricName {
+  VELOCITY_SP = 'Velocity(Story Point)',
+  THROUGHPUT_CARDS_COUNT = 'Throughput(Cards Count)',
+}
+
+export enum CycleTimeMetricsName {
+  AVERAGE_CYCLE_TIME = 'Average cycle time',
+  DEVELOPMENT_PROPORTION = 'Total development time/Total cycle time',
+  WAITING_PROPORTION = 'Total waiting for testing time/Total cycle time',
+  BLOCK_PROPORTION = 'Total block time/Total cycle time',
+  REVIEW_PROPORTION = 'Total review time/Total cycle time',
+  TESTING_PROPORTION = 'Total testing time/Total cycle time',
+  AVERAGE_DEVELOPMENT_TIME = 'Average development time',
+  AVERAGE_WAITING_TIME = 'Average waiting for testing time',
+  AVERAGE_BLOCK_TIME = 'Average block time',
+  AVERAGE_REVIEW_TIME = 'Average review time',
+  AVERAGE_TESTING_TIME = 'Average testing time',
+}
+
+export const MOCK_GET_STEPS_PARAMS = {
+  params: {
+    pipelineName: 'mock pipeline name',
+    repository: 'mock repository',
+    orgName: 'mock orgName',
+    startTime: 1212112121212,
+    endTime: 1313131313131,
+  },
+  buildId: 'mockBuildId',
+  organizationId: 'mockOrganizationId',
+  pipelineType: 'BuildKite',
+  token: 'mockToken',
+}
+export const MOCK_REPORT_RESPONSE = {
+  velocity: {
+    velocityForSP: '20',
+    velocityForCards: '14',
+  },
+  cycleTime: {
+    averageCircleTimePerCard: '30.26',
+    averageCycleTimePerSP: '21.18',
+    totalTimeForCards: 423.59,
+    swimlaneList: [
+      {
+        optionalItemName: 'Analysis',
+        averageTimeForSP: '8.36',
+        averageTimeForCards: '11.95',
+        totalTime: '167.27',
+      },
+    ],
+  },
+  deploymentFrequency: {
+    avgDeploymentFrequency: {
+      name: 'Average',
+      deploymentFrequency: '0.40',
+    },
+    deploymentFrequencyOfPipelines: [
+      {
+        name: 'fs-platform-onboarding',
+        step: ' :shipit: deploy to PROD',
+        deploymentFrequency: '0.30',
+        items: [
+          {
+            date: '9/9/2022',
+            count: 1,
+          },
+        ],
+      },
+    ],
+  },
+  leadTimeForChanges: {
+    leadTimeForChangesOfPipelines: [
+      {
+        name: 'fs-platform-payment-selector',
+        step: 'RECORD RELEASE TO PROD',
+        mergeDelayTime: 2702.53,
+        pipelineDelayTime: 2587.42,
+        totalDelayTime: 5289.95,
+      },
+    ],
+    avgLeadTimeForChanges: {
+      name: 'Average',
+      mergeDelayTime: 3647.51,
+      pipelineDelayTime: 2341.72,
+      totalDelayTime: 5989.22,
+    },
+  },
+  changeFailureRate: {
+    avgChangeFailureRate: {
+      name: 'Average',
+      failureRate: '0.00% (0/12)',
+    },
+    changeFailureRateOfPipelines: [
+      {
+        name: 'fs-platform-onboarding',
+        step: ' :shipit: deploy to PROD',
+        failureRate: '0.00% (0/3)',
+      },
+    ],
+  },
+  classification: [
+    {
+      fieldName: 'FS Work Type',
+      pairs: [
+        {
+          name: 'Feature Work - Planned',
+          value: '57.14%',
+        },
+      ],
+    },
+  ],
+}
+export const EXPECTED_REPORT_VALUES = {
+  velocityList: [
+    { id: 0, name: 'Velocity(Story Point)', valueList: ['20'] },
+    { id: 1, name: 'Throughput(Cards Count)', valueList: ['14'] },
+  ],
+  cycleTimeList: [
+    { id: 0, name: 'Average cycle time', valueList: ['21.18(days/SP)', '30.26(days/card)'] },
+    { id: 1, name: 'Total development time / Total cycle time', valueList: [] },
+    { id: 2, name: 'Total waiting for testing time / Total cycle time', valueList: [] },
+    { id: 3, name: 'Total block time / Total cycle time', valueList: [] },
+    { id: 4, name: 'Total review time / Total cycle time', valueList: [] },
+    { id: 5, name: 'Total testing time / Total cycle time', valueList: [] },
+    { id: 6, name: 'Average development time', valueList: [] },
+    { id: 7, name: 'Average waiting for testing time', valueList: [] },
+    { id: 8, name: 'Average block time', valueList: [] },
+    { id: 9, name: 'Average review time', valueList: [] },
+    { id: 10, name: 'Average testing time', valueList: [] },
+  ],
+  classificationList: [
+    {
+      id: 0,
+      name: 'FS Work Type',
+      valuesList: [{ name: 'Feature Work - Planned', value: '57.14%' }],
+    },
+  ],
+  deploymentFrequencyList: [
+    {
+      id: 0,
+      name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
+      valuesList: [
+        {
+          name: 'Deployment frequency(deployments/day)',
+          value: '0.30',
+        },
+      ],
+    },
+    {
+      id: 1,
+      name: 'Average/',
+      valuesList: [
+        {
+          name: 'Deployment frequency(deployments/day)',
+          value: '0.40',
+        },
+      ],
+    },
+  ],
+  leadTimeForChangesList: [
+    {
+      id: 0,
+      name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
+      valuesList: [
+        { name: 'mergeDelayTime', value: '2702.53' },
+        { name: 'pipelineDelayTime', value: '2587.42' },
+        { name: 'totalDelayTime', value: '5289.95' },
+      ],
+    },
+    {
+      id: 1,
+      name: 'Average/',
+      valuesList: [
+        { name: 'mergeDelayTime', value: '3647.51' },
+        { name: 'pipelineDelayTime', value: '2341.72' },
+        { name: 'totalDelayTime', value: '5989.22' },
+      ],
+    },
+  ],
+  changeFailureRateList: [
+    {
+      id: 0,
+      name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
+      valuesList: [
+        {
+          name: 'Failure rate',
+          value: '0.00% (0/3)',
+        },
+      ],
+    },
+    {
+      id: 1,
+      name: 'Average/',
+      valuesList: [
+        {
+          name: 'Failure rate',
+          value: '0.00% (0/12)',
+        },
+      ],
+    },
+  ],
 }

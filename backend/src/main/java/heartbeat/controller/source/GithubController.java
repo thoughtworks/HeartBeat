@@ -1,6 +1,6 @@
 package heartbeat.controller.source;
 
-import heartbeat.controller.source.vo.GithubResponse;
+import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.service.source.github.GithubService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -25,7 +25,7 @@ public class GithubController {
 	@GetMapping
 	@CrossOrigin
 	@ResponseStatus(HttpStatus.OK)
-	public GithubResponse getRepos(@RequestParam @NotBlank(message = "token must not be blank") @Pattern(
+	public GitHubResponse getRepos(@RequestParam @NotBlank(message = "token must not be blank") @Pattern(
 			regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$",
 			message = "token's pattern is incorrect") String token) {
 		return githubService.verifyToken(token);

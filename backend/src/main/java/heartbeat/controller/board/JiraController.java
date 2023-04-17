@@ -1,8 +1,8 @@
 package heartbeat.controller.board;
 
-import heartbeat.controller.board.vo.request.BoardRequestParam;
-import heartbeat.controller.board.vo.request.BoardType;
-import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.request.BoardRequestParam;
+import heartbeat.controller.board.dto.request.BoardType;
+import heartbeat.controller.board.dto.response.BoardConfigResponse;
 import heartbeat.service.board.jira.JiraService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

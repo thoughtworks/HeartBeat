@@ -2,9 +2,9 @@ package heartbeat.service.source.github;
 
 import feign.FeignException;
 import heartbeat.client.GithubFeignClient;
-import heartbeat.client.dto.GithubOrganizationsInfo;
-import heartbeat.client.dto.GithubRepos;
-import heartbeat.controller.source.vo.GithubResponse;
+import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
+import heartbeat.client.dto.codebase.github.GitHubRepos;
+import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.exception.RequestFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,20 +21,20 @@ public class GithubService {
 
 	private final GithubFeignClient githubFeignClient;
 
-	public GithubResponse verifyToken(String githubToken) {
+	public GitHubResponse verifyToken(String githubToken) {
 		String token = "token " + githubToken;
 		String partialToken = githubToken.substring(0, 6);
 		try {
 			log.info("[Github] Start to query repository_url by token, token: " + partialToken);
 			List<String> githubReposByUser = githubFeignClient.getAllRepos(token)
 				.stream()
-				.map(GithubRepos::getHtml_url)
+				.map(GitHubRepos::getHtml_url)
 				.toList();
 			log.info("[Github] Successfully get repository_url by token, token: " + partialToken + " repos: "
 					+ githubReposByUser);
 
 			log.info("[Github] Start to query organization_url by token, token: " + partialToken);
-			List<GithubOrganizationsInfo> githubOrganizations = githubFeignClient.getGithubOrganizationsInfo(token);
+			List<GitHubOrganizationsInfo> githubOrganizations = githubFeignClient.getGithubOrganizationsInfo(token);
 			log.info("[Github] Successfully get organizations by token, token: " + partialToken + " organizations: "
 					+ githubOrganizations);
 
@@ -44,7 +44,7 @@ public class GithubService {
 			getAllGithubRepos(token, githubOrganizations, githubRepos);
 			log.info("[Github] Successfully get all repository_url, token: " + partialToken + " repos: " + githubRepos);
 
-			return GithubResponse.builder().githubRepos(githubRepos).build();
+			return GitHubResponse.builder().githubRepos(githubRepos).build();
 		}
 		catch (FeignException e) {
 			log.error("Failed when call Github with token", e);
@@ -52,13 +52,13 @@ public class GithubService {
 		}
 	}
 
-	private void getAllGithubRepos(String token, List<GithubOrganizationsInfo> githubOrganizations,
+	private void getAllGithubRepos(String token, List<GitHubOrganizationsInfo> githubOrganizations,
 			LinkedHashSet<String> githubRepos) {
 		githubRepos.addAll(githubOrganizations.stream()
-			.map(GithubOrganizationsInfo::getLogin)
+			.map(GitHubOrganizationsInfo::getLogin)
 			.flatMap(org -> githubFeignClient.getReposByOrganizationName(org, token)
 				.stream()
-				.map(GithubRepos::getHtml_url))
+				.map(GitHubRepos::getHtml_url))
 			.collect(Collectors.toSet()));
 	}
 

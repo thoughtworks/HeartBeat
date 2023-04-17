@@ -1,7 +1,7 @@
 package heartbeat.controller.report;
 
-import heartbeat.controller.report.vo.request.GenerateReportRequest;
-import heartbeat.controller.report.vo.response.GenerateReportResponse;
+import heartbeat.controller.report.dto.request.GenerateReportRequest;
+import heartbeat.controller.report.dto.response.GenerateReportResponse;
 import heartbeat.service.report.GenerateReporterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;

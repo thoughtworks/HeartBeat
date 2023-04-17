@@ -214,14 +214,16 @@ export const MOCK_JIRA_VERIFY_RESPONSE = {
 }
 
 export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
-  pipelineList: {
-    id: 'mock id',
-    name: 'mock name',
-    orgId: 'mock id',
-    orgName: 'mock orgName',
-    repository: 'mock repository url',
-    steps: [],
-  },
+  pipelineList: [
+    {
+      id: 'mock id',
+      name: 'mock name',
+      orgId: 'mock id',
+      orgName: 'mock orgName',
+      repository: 'mock repository url',
+      steps: [],
+    },
+  ],
 }
 
 export const MOCK_GITHUB_VERIFY_RESPONSE = {

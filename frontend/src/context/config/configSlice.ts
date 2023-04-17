@@ -5,6 +5,7 @@ import { IBoardState, initialBoardState } from '@src/context/config/board/boardS
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
 import dayjs from 'dayjs'
+import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 
 export interface BasicConfigState {
   isProjectCreated: boolean
@@ -111,7 +112,10 @@ export const configSlice = createSlice({
     },
     updatePipelineToolVerifyResponse: (state, action) => {
       const { pipelineList } = action.payload
-      state.pipelineTool.verifiedResponse.pipelineList = pipelineList
+      state.pipelineTool.verifiedResponse.pipelineList = pipelineList.map((pipeline: pipeline) => ({
+        ...pipeline,
+        steps: [],
+      }))
     },
     updatePipelineToolVerifyResponseSteps: (state, action) => {
       const { organization, pipelineName, steps } = action.payload

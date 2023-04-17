@@ -76,8 +76,8 @@ describe('pipelineTool reducer', () => {
       },
     }
     const mockParams = {
-      organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.orgName,
-      pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.name,
+      organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].orgName,
+      pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].name,
       steps: ['mock steps'],
     }
     const pipelineVerifiedResponse = configReducer(
@@ -145,8 +145,8 @@ describe('pipelineTool reducer', () => {
 
   it('should return empty pipelineList when get pipelineTool steps given pipelineList is empty', () => {
     const mockParams = {
-      organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.orgName,
-      pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList.name,
+      organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].orgName,
+      pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].name,
       steps: ['mock steps'],
     }
     const pipelineVerifiedResponse = configReducer(
@@ -170,9 +170,16 @@ describe('pipelineTool reducer', () => {
         updatePipelineToolVerifyResponse(MOCK_BUILD_KITE_VERIFY_RESPONSE)
       )
 
-      expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual(
-        MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList
-      )
+      expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
+        {
+          id: 'mock id',
+          name: 'mock name',
+          orgId: 'mock id',
+          orgName: 'mock orgName',
+          repository: 'mock repository url',
+          steps: [],
+        },
+      ])
     })
   })
 
@@ -229,7 +236,7 @@ describe('pipelineTool reducer', () => {
     it('should return steps when call selectSteps function', async () => {
       const store = setupStore()
       await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
-      expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual(['step1', 'step2'])
+      expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual([])
     })
   })
 

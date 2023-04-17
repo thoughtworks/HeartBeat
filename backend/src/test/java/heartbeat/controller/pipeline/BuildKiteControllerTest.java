@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
-import heartbeat.controller.pipeline.vo.response.Pipeline;
-import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
+import heartbeat.controller.pipeline.dto.response.BuildKiteResponse;
+import heartbeat.controller.pipeline.dto.response.Pipeline;
+import heartbeat.controller.pipeline.dto.response.PipelineStepsResponse;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import java.io.File;
 import java.util.List;

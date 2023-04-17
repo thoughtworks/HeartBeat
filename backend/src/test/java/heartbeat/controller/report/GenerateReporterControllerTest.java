@@ -1,8 +1,8 @@
 package heartbeat.controller.report;
 
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.report.vo.response.GenerateReportResponse;
-import heartbeat.controller.report.vo.response.Velocity;
+import heartbeat.controller.report.dto.response.GenerateReportResponse;
+import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.report.GenerateReporterService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

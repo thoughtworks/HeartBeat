@@ -1,10 +1,9 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.FieldResponseDTO;
-import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.StatusSelfDTO;
+import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
+import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import java.net.URI;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,8 +26,9 @@ public interface JiraFeignClient {
 
 	@Cacheable(cacheNames = "jiraAllDoneCards", key = "#boardId+'-'+#queryCount+'-'+#startAt+'-'+#jql")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
-	AllDoneCardsResponseDTO getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
-			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
+	JiraBoardConfigDTO.AllDoneCardsResponseDTO getAllDoneCards(URI baseUrl, @PathVariable String boardId,
+			@PathVariable int queryCount, @PathVariable int startAt, @PathVariable String jql,
+			@RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraActivityfeed", key = "#jiraCardKey")
 	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")

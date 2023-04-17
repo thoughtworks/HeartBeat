@@ -1,22 +1,21 @@
 package heartbeat.service.jira;
 
-import heartbeat.client.dto.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.Assignee;
-import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.DoneCard;
-import heartbeat.client.dto.DoneCardFields;
-import heartbeat.client.dto.FieldResponseDTO;
-import heartbeat.client.dto.IssueField;
-import heartbeat.client.dto.Issuetype;
-import heartbeat.client.dto.HistoryDetail;
-import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.JiraColumn;
-import heartbeat.client.dto.JiraColumnConfig;
-import heartbeat.client.dto.JiraColumnStatus;
-import heartbeat.client.dto.Project;
-import heartbeat.client.dto.StatusCategory;
-import heartbeat.client.dto.StatusSelfDTO;
-import heartbeat.client.dto.Status;
+import heartbeat.client.dto.board.jira.HistoryDetail;
+import heartbeat.client.dto.board.jira.Status;
+import heartbeat.client.dto.board.jira.Assignee;
+import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
+import heartbeat.client.dto.board.jira.DoneCard;
+import heartbeat.client.dto.board.jira.DoneCardFields;
+import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.IssueField;
+import heartbeat.client.dto.board.jira.Issuetype;
+import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraColumn;
+import heartbeat.client.dto.board.jira.JiraColumnConfig;
+import heartbeat.client.dto.board.jira.JiraColumnStatus;
+import heartbeat.client.dto.board.jira.Project;
+import heartbeat.client.dto.board.jira.StatusCategory;
+import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -80,20 +79,20 @@ public class JiraBoardConfigDTOFixture {
 		return StatusSelfDTO.builder().untranslatedName("doing").statusCategory(new StatusCategory("doing", "doing"));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
+	public static JiraBoardConfigDTO.AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
+		return JiraBoardConfigDTO.AllDoneCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee("Zhang San")))));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
+	public static JiraBoardConfigDTO.AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
+		return JiraBoardConfigDTO.AllDoneCardsResponseDTO.builder()
 			.total("200")
 			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee("Zhang San")))));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponseDTO.builder().total("1").issues(Collections.emptyList());
+	public static JiraBoardConfigDTO.AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER() {
+		return JiraBoardConfigDTO.AllDoneCardsResponseDTO.builder().total("1").issues(Collections.emptyList());
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {

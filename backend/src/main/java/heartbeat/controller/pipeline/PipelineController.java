@@ -1,9 +1,9 @@
 package heartbeat.controller.pipeline;
 
-import heartbeat.controller.pipeline.vo.request.PipelineParam;
-import heartbeat.controller.pipeline.vo.request.PipelineStepsParam;
-import heartbeat.controller.pipeline.vo.response.BuildKiteResponse;
-import heartbeat.controller.pipeline.vo.response.PipelineStepsResponse;
+import heartbeat.controller.pipeline.dto.request.PipelineParam;
+import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
+import heartbeat.controller.pipeline.dto.response.BuildKiteResponse;
+import heartbeat.controller.pipeline.dto.response.PipelineStepsResponse;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

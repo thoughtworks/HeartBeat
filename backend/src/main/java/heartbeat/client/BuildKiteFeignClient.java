@@ -1,11 +1,11 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.BuildKiteBuildInfo;
-import heartbeat.client.dto.BuildKiteOrganizationsInfo;
-import heartbeat.client.dto.BuildKiteTokenInfo;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import heartbeat.config.BuildKiteFeignClientConfiguration;
 import java.util.List;
-import heartbeat.client.dto.BuildKitePipelineDTO;
+import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

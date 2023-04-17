@@ -1,9 +1,9 @@
 package heartbeat.controller.board;
 
-import heartbeat.controller.board.vo.response.BoardConfigResponse;
-import heartbeat.controller.board.vo.response.ColumnValue;
-import heartbeat.controller.board.vo.response.JiraColumnResponse;
-import heartbeat.controller.board.vo.response.TargetField;
+import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.ColumnValue;
+import heartbeat.controller.board.dto.response.JiraColumnResponse;
+import heartbeat.controller.board.dto.response.TargetField;
 import java.util.List;
 
 public class BoardConfigResponseFixture {

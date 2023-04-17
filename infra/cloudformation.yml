@@ -145,7 +145,7 @@ Resources:
                         "description": "Delete old images",
                         "selection": {
                             "tagStatus": "tagged",
-                            "tagPrefixList": ["hp-"],
+                            "tagPrefixList": ["hp"],
                             "countType": "imageCountMoreThan",
                             "countNumber": 2
                         },
@@ -184,7 +184,7 @@ Resources:
                         "description": "Delete old images",
                         "selection": {
                             "tagStatus": "tagged",
-                            "tagPrefixList": ["hp-"],
+                            "tagPrefixList": ["hp"],
                             "countType": "imageCountMoreThan",
                             "countNumber": 2
                         },
@@ -223,7 +223,7 @@ Resources:
                         "description": "Delete old images",
                         "selection": {
                             "tagStatus": "tagged",
-                            "tagPrefixList": ["hp-"],
+                            "tagPrefixList": ["hp"],
                             "countType": "imageCountMoreThan",
                             "countNumber": 2
                         },

@@ -353,7 +353,7 @@ jobs:
       - name: Update docker-compose.yaml
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         run: |
-          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:${{ github.run_number }}/g' infra/docker-compose-mock-server.yml
       - name: Copy docker-compose to ec2
         uses: appleboy/scp-action@master
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
@@ -362,7 +362,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
-          source: "./infra/docker-compose.yml"
+          source: "./infra/docker-compose-mock-server.yml"
           target: "./"
           strip_components: 1
       - name: Deploy
@@ -378,12 +378,12 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            cp "./infra/docker-compose.yml" ./
-            docker-compose down
+            cp "./infra/docker-compose-mock-server.yml" ./
+            # docker-compose down mockServer
             if [[ -n $(docker images -f label=arch=stubs -q) ]]; then docker rmi -f $(docker images -f label=arch=stubs -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
             export MOCK_SERVER_PORT=${{ secrets.AWS_EC2_IP_E2E_PORT }}
-            docker-compose up -d mockServer
+            docker-compose -f docker-compose-mock-server.yml up -d mockServer
   e2e:
     runs-on: ubuntu-latest
     defaults:
@@ -448,7 +448,7 @@ jobs:
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             cp "./infra/docker-compose.yml" ./
-            docker-compose down
+            # docker-compose down
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_backend:$IMAGE_TAG
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_frontend:$IMAGE_TAG

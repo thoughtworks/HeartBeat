@@ -1,7 +1,9 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.GithubOrganizationsInfo;
-import heartbeat.client.dto.GithubRepos;
+import heartbeat.client.dto.codebase.github.CommitInfo;
+import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
+import heartbeat.client.dto.codebase.github.GitHubRepos;
+import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,15 +18,30 @@ public interface GithubFeignClient {
 
 	@GetMapping(path = "/user/orgs")
 	@ResponseStatus(HttpStatus.OK)
-	List<GithubOrganizationsInfo> getGithubOrganizationsInfo(@RequestHeader("Authorization") String token);
+	List<GitHubOrganizationsInfo> getGithubOrganizationsInfo(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "/user/repos")
 	@ResponseStatus(HttpStatus.OK)
-	List<GithubRepos> getAllRepos(@RequestHeader("Authorization") String token);
+	List<GitHubRepos> getAllRepos(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "/orgs/{organizationName}/repos")
 	@ResponseStatus(HttpStatus.OK)
-	List<GithubRepos> getReposByOrganizationName(@PathVariable String organizationName,
+	List<GitHubRepos> getReposByOrganizationName(@PathVariable String organizationName,
+			@RequestHeader("Authorization") String token);
+
+	@GetMapping(path = "/repos/{repository}/commits/{commitId}")
+	@ResponseStatus(HttpStatus.OK)
+	CommitInfo getCommitInfo(@PathVariable String repository, @PathVariable String commitId,
+			@RequestHeader("Authorization") String token);
+
+	@GetMapping(path = "/repos/{repository}/pulls/{mergedPullNumber}/commits")
+	@ResponseStatus(HttpStatus.OK)
+	List<CommitInfo> getPullRequestCommitInfo(@PathVariable String repository, @PathVariable String mergedPullNumber,
+			@RequestHeader("Authorization") String token);
+
+	@GetMapping(path = "/repos/{repository}/commits/{deployId}/pulls")
+	@ResponseStatus(HttpStatus.OK)
+	List<PullRequestInfo> getPullRequestListInfo(@PathVariable String repository, @PathVariable String deployId,
 			@RequestHeader("Authorization") String token);
 
 }

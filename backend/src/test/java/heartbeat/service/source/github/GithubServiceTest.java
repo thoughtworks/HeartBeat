@@ -1,8 +1,8 @@
 package heartbeat.service.source.github;
 
 import heartbeat.client.GithubFeignClient;
-import heartbeat.client.dto.GithubOrganizationsInfo;
-import heartbeat.client.dto.GithubRepos;
+import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
+import heartbeat.client.dto.codebase.github.GitHubRepos;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.RequestFailedException;
 import org.junit.jupiter.api.Assertions;
@@ -34,16 +34,16 @@ class GithubServiceTest {
 	void shouldReturnNonRedundantGithubReposWhenCallGithubFeignClientApi() {
 		String githubToken = "123456";
 		String token = "token " + githubToken;
-		when(githubFeignClient.getAllRepos(token)).thenReturn(List.of(GithubRepos.builder().html_url("11111").build(),
-				GithubRepos.builder().html_url("22222").build(), GithubRepos.builder().html_url("33333").build()));
+		when(githubFeignClient.getAllRepos(token)).thenReturn(List.of(GitHubRepos.builder().html_url("11111").build(),
+				GitHubRepos.builder().html_url("22222").build(), GitHubRepos.builder().html_url("33333").build()));
 
 		when(githubFeignClient.getGithubOrganizationsInfo(token))
-			.thenReturn(List.of(GithubOrganizationsInfo.builder().login("org1").build(),
-					GithubOrganizationsInfo.builder().login("org2").build()));
+			.thenReturn(List.of(GitHubOrganizationsInfo.builder().login("org1").build(),
+					GitHubOrganizationsInfo.builder().login("org2").build()));
 
 		when(githubFeignClient.getReposByOrganizationName("org1", token))
-			.thenReturn(List.of(GithubRepos.builder().html_url("22222").build(),
-					GithubRepos.builder().html_url("33333").build(), GithubRepos.builder().html_url("44444").build()));
+			.thenReturn(List.of(GitHubRepos.builder().html_url("22222").build(),
+					GitHubRepos.builder().html_url("33333").build(), GitHubRepos.builder().html_url("44444").build()));
 
 		final var response = githubService.verifyToken(githubToken);
 

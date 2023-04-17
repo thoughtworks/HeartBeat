@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import heartbeat.controller.board.vo.request.BoardRequestParam;
-import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.request.BoardRequestParam;
+import heartbeat.controller.board.dto.response.BoardConfigResponse;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.Test;

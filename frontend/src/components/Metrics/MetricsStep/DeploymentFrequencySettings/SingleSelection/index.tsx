@@ -33,7 +33,7 @@ export const SingleSelection = ({ options, label, value, id, errorMessage, onGet
     <>
       <FormControlWrapper variant='standard' required error={!!errorMessage}>
         <InputLabel id={labelId}>{label}</InputLabel>
-        <Select labelId={labelId} value={selectedValue} onChange={handleChange}>
+        <Select labelId={labelId} value={options.length > 0 ? selectedValue : ''} onChange={handleChange}>
           {options.map((data) => (
             <MenuItem key={data} value={data}>
               <ListItemText primary={data} />

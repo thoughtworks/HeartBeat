@@ -353,7 +353,7 @@ jobs:
       - name: Update docker-compose.yaml
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         run: |
-          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:${{ github.run_number }}/g' infra/docker-compose-mock-server.yml
+          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:${{ github.run_number }}/g' infra/docker-compose.yml
       - name: Copy docker-compose to ec2
         uses: appleboy/scp-action@master
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
@@ -362,8 +362,8 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
-          source: "./infra/docker-compose-mock-server.yml"
-          target: "./"
+          source: "./infra/docker-compose.yml"
+          target: "./infra/docker-compose-mock-server.yml"
           strip_components: 1
       - name: Deploy
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}

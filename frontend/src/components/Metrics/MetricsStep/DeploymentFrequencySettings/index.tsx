@@ -14,7 +14,7 @@ export const DeploymentFrequencySettings = () => {
 
   useEffect(() => {
     checkDuplicatedPipeLine()
-  }, [checkDuplicatedPipeLine, deploymentFrequencySettings])
+  }, [deploymentFrequencySettings])
 
   const handleClick = () => {
     dispatch(addADeploymentFrequencySetting())

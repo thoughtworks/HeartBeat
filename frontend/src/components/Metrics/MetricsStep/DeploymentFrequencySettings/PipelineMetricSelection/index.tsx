@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
+import { useAppDispatch } from '@src/hooks'
 import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './style'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
-import { selectPipelineNames, selectPipelineOrganizations, selectStepsParams } from '@src/context/config/configSlice'
+import {
+  selectPipelineNames,
+  selectPipelineOrganizations,
+  selectSteps,
+  selectStepsParams,
+  updatePipelineToolVerifyResponseSteps,
+} from '@src/context/config/configSlice'
 import { store } from '@src/store'
 
 interface pipelineMetricSelectionProps {
@@ -26,28 +32,25 @@ export const PipelineMetricSelection = ({
   errorMessages,
 }: pipelineMetricSelectionProps) => {
   const { id, organization, pipelineName, steps } = deploymentFrequencySetting
-  const [stepsOptions, setStepsOptions] = useState<string[]>([])
   const dispatch = useAppDispatch()
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
-  const organizationNameOptions = useAppSelector(selectPipelineOrganizations)
-  const pipelineNameOptions = useAppSelector(() => selectPipelineNames(store.getState(), organization))
-
-  useEffect(() => {
-    organization && pipelineName && handleGetSteps()
-  }, [organization, pipelineName])
+  const organizationNameOptions = selectPipelineOrganizations(store.getState())
+  const pipelineNameOptions = selectPipelineNames(store.getState(), organization)
+  const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
 
   const handleClick = () => {
     dispatch(deleteADeploymentFrequencySetting(id))
   }
 
-  const handleGetSteps = () => {
+  const handleGetSteps = (_pipelineName: string) => {
     const { params, buildId, organizationId, pipelineType, token } = selectStepsParams(
       store.getState(),
       organization,
-      pipelineName
+      _pipelineName
     )
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-      res && setStepsOptions([...Object.values(res)])
+      const steps = res ? Object.values(res) : []
+      dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps }))
     })
   }
 
@@ -69,6 +72,7 @@ export const PipelineMetricSelection = ({
           label={'Pipeline Name'}
           value={pipelineName}
           errorMessage={errorMessages?.pipelineName}
+          onGetSteps={handleGetSteps}
         />
       )}
       {organization && pipelineName && (

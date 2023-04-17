@@ -20,6 +20,7 @@ describe('SingleSelection', () => {
   const mockLabel = 'mockLabel'
   const mockValue = 'mockOptions 1'
   const mockError = 'error message'
+  const mockOnGetSteps = jest.fn()
 
   let store = setupStore()
 
@@ -30,7 +31,14 @@ describe('SingleSelection', () => {
   const setup = (errorMessage: string) =>
     render(
       <Provider store={store}>
-        <SingleSelection options={mockOptions} label={mockLabel} value={mockValue} id={0} errorMessage={errorMessage} />
+        <SingleSelection
+          options={mockOptions}
+          label={mockLabel}
+          value={mockValue}
+          id={0}
+          errorMessage={errorMessage}
+          onGetSteps={mockOnGetSteps}
+        />
       </Provider>
     )
 
@@ -50,7 +58,7 @@ describe('SingleSelection', () => {
     expect(getByText(mockError)).toBeInTheDocument()
   })
 
-  it('should call update option function when change option given mockValue as default', async () => {
+  it('should call update option function and OnGetSteps function when change option given mockValue as default', async () => {
     const { getByText, getByRole } = setup(mockError)
 
     await userEvent.click(getByRole('button', { name: mockLabel }))
@@ -58,5 +66,6 @@ describe('SingleSelection', () => {
 
     expect(getByText(mockOptions[1])).toBeInTheDocument()
     expect(mockValidationCheckContext.clearErrorMessage).toHaveBeenCalledTimes(1)
+    expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
   })
 })

@@ -271,38 +271,6 @@ Resources:
         - !Ref EC2SSHSecurityGroup
         - !Ref EC2AppSecurityGroup
         - !Ref EC2OldAppSecurityGroup
-        - !Ref EC2Stubby4jGroup
-      IamInstanceProfile: !Ref EC2InstanceProfile
-      KeyName: !Ref EC2KeyPair
-      UserData:
-        "Fn::Base64": !Sub |
-          #cloud-config
-          cloud_final_modules:
-          - [scripts-user, always]
-          runcmd:
-            - sudo yum -y install docker
-            - sudo systemctl enable docker.service
-            - sudo systemctl start docker.service
-            - sudo chmod 666 /var/run/docker.sock
-            - sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-            - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-            - sudo chmod +x /usr/local/bin/docker-compose
-            - sudo `aws ecr get-login-password --region ${AwsRegion} | docker login --username AWS --password-stdin ${AwsAccountId}.dkr.ecr.${AwsHost}`
-  MockServerEC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: !Sub ${EC2ImageId}
-      InstanceType: "t2.micro"
-      Tags:
-        - Key: "Name"
-          Value: "MockServerEC2"
-        - Key: "app"
-          Value: "MockServer"
-        - Key: "env"
-          Value: "E2E"
-      SecurityGroups:
-        - !Ref EC2SSHSecurityGroup
-        - !Ref EC2Stubby4jGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
       UserData:
@@ -326,14 +294,15 @@ Resources:
       InstanceType: "t2.micro"
       Tags:
         - Key: "Name"
-          Value: "HeartbeatE2EEC2"
+          Value: "Heartbeat E2E and MockServer"
         - Key: "app"
-          Value: "HeartbeatE2E"
+          Value: "Heartbeat E2E & MockServer"
         - Key: "env"
           Value: "E2E"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
         - !Ref EC2AppSecurityGroup
+        - !Ref EC2Stubby4jGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
       UserData:
@@ -398,11 +367,6 @@ Resources:
     Properties:
       InstanceId: !Ref EC2Instance
       Domain: vpc
-  MockServerPortAddress:
-    Type: AWS::EC2::EIP
-    Properties:
-      InstanceId: !Ref MockServerEC2Instance
-      Domain: vpc
   E2EWebPortAddress:
     Type: AWS::EC2::EIP
     Properties:
@@ -414,8 +378,6 @@ Outputs:
     Value: !GetAtt AWSGitHubActionRole.Arn
   EIP:
     Value: !GetAtt WebPortAddress.PublicIp
-  MockServerEIP:
-    Value: !GetAtt MockServerPortAddress.PublicIp
   E2EEIP:
     Value: !GetAtt E2EWebPortAddress.PublicIp
 

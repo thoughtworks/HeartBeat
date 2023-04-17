@@ -1,18 +1,25 @@
 env:
-    JAVA_VERSION: "19"
+    JAVA_VERSION: "17"
     GRADLE_VERSION: "7.2"
+    CODACY_PROJECT_TOKEN: "rewrewrewrewrewrewrew"
 
 steps:
   - label: ":lock: Security Check"
     command: >
       docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
-  
-  - label: ":rocket: Backend Check"
-    command: |
-      cd /app/backend
-      ./gradlew clean check
-      ./gradlew clean build
-      export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
-      bash <(curl -Ls https://coverage.codacy.com/get.sh)
-    workdir: /app/backend
 
+  - label: ":rocket: Backend Check"
+    
+    commands:
+      - echo "--- Setting up JDK"
+      - docker run --rm -v "$PWD:/pwd" -w /pwd openjdk:17 /bin/sh -c 'export JAVA_HOME=/usr/local/openjdk-17 && export PATH=$JAVA_HOME/bin:$PATH && java -version'
+      - echo "--- Building with Gradle"
+      - docker version
+      - docker run --rm \
+        -v "$PWD:/pwd" \
+        -v "$HOME/.gradle:/home/gradle/.gradle" \
+        gradle:${GRADLE_VERSION}-jdk${JAVA_VERSION}/ \
+        /bin/sh -c './gradlew clean build'
+      - echo "--- Uploading Test Report to Codacy"
+      - export CODACY_PROJECT_TOKEN=${CODACY_PROJECT_TOKEN}
+      - bash <(curl -Ls https://coverage.codacy.com/get.sh)

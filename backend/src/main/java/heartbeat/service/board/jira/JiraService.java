@@ -7,21 +7,31 @@ import heartbeat.client.dto.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.client.dto.DoneCard;
 import heartbeat.client.dto.FieldResponseDTO;
+import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.IssueField;
 import heartbeat.client.dto.Issuetype;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
+import heartbeat.controller.board.vo.CycleTimeInfoDTO;
+import heartbeat.controller.board.vo.StatusChangedArrayItem;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
+import heartbeat.controller.board.vo.request.CardStepsEnum;
 import heartbeat.controller.board.vo.request.Cards;
 import heartbeat.controller.board.vo.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.controller.board.vo.response.CardCustomFieldKey;
 import heartbeat.controller.board.vo.response.ColumnValue;
+import heartbeat.controller.board.vo.response.CycleTimeInfo;
+import heartbeat.controller.board.vo.response.JiraCard;
+import heartbeat.controller.board.vo.response.JiraCardResponse;
+import heartbeat.controller.board.vo.response.JiraCards;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -337,7 +347,128 @@ public class JiraService {
 
 	public Cards getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
-		return Cards.builder().build();
+		this.saveCustomFieldKey(request);
+		int storyPointSum = 0;
+		BoardType boardType = BoardType.fromValue(request.getType());
+		URI baseUrl = urlGenerator.getUri(request.getSite());
+		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
+			.boardId(request.getBoardId())
+			.email("")
+			.projectKey(request.getProject())
+			.site(request.getSite())
+			.token(request.getToken())
+			.startTime(request.getStartTime())
+			.endTime(request.getEndTime())
+			.build();
+
+		List<DoneCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
+
+		List<JiraCardResponse> matchedCards = new ArrayList<>();
+
+		allDoneCards.stream().map(doneCard -> {
+			getCycleTime(baseUrl, doneCard.getKey(), request.getToken(), request.getSite(),
+					request.isTreatFlagCardAsBlock());
+			List<String> assigneeSet = getAssigneeSet(baseUrl, doneCard, request.getToken());
+
+			// TODO: add calculate logic
+			return null;
+		});
+
+		return Cards.builder().storyPointSum(storyPointSum).cardsNumber(0).build();
 	}
+
+	private void saveCustomFieldKey(StoryPointsAndCycleTimeRequest model) {
+		for (TargetField value : model.getTargetFields()) {
+			switch (value.getName()) {
+				case "Story Points", "Story point estimate" ->
+					CardCustomFieldKey.builder().STORY_POINTS(value.getKey()).build();
+				case "Sprint" -> CardCustomFieldKey.builder().SPRINT(value.getKey()).build();
+				case "Flagged" -> CardCustomFieldKey.builder().FLAGGED(value.getKey()).build();
+				default ->{ }
+			}
+		}
+	}
+
+	// TODO origin function name is:getCycleTimeAndAssignee
+	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, String site,
+			Boolean treatFlagCardAsBlock) {
+		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
+
+		List<StatusChangedArrayItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
+				treatFlagCardAsBlock);
+		List<StatusChangedArrayItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(
+				cardHistoryResponseDTO, true);
+
+		BoardUtil boardUtil = new BoardUtil();
+		List<CycleTimeInfo> cycleTimeInfos = boardUtil
+			.getCardTimeForEachStep(boardUtil.reformTimeLineForFlaggedCards(statusChangedArray));
+		List<CycleTimeInfo> originCycleTimeInfos = boardUtil
+			.getCardTimeForEachStep(boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag));
+
+		return CycleTimeInfoDTO.builder()
+			.cycleTimeInfos(cycleTimeInfos)
+			.originCycleTimeInfos(originCycleTimeInfos)
+			.build();
+	}
+
+	private List<StatusChangedArrayItem> putStatusChangeEventsIntoAnArray(CardHistoryResponseDTO jiraCardHistory,
+			Boolean treatFlagCardAsBlock) {
+		List<StatusChangedArrayItem> statusChangedArray = new ArrayList<>();
+		List<HistoryDetail> statusActivities = jiraCardHistory.getItems()
+			.stream()
+			.filter(activity -> "status".equals(activity.getFieldId()))
+			.toList();
+
+		if (jiraCardHistory.getItems().size() > 0 && statusActivities.size() > 0) {
+			statusChangedArray.add(StatusChangedArrayItem.builder()
+				.timestamp(jiraCardHistory.getItems().get(0).getTimeStamp() - 1)
+				.status(statusActivities.get(0).getFrom().getDisplayValue())
+				.build());
+
+			jiraCardHistory.getItems()
+				.stream()
+				.filter(activity -> "status".equals(activity.getFieldId()))
+				.forEach(activity -> statusChangedArray.add(StatusChangedArrayItem.builder()
+					.timestamp(activity.getTimeStamp())
+					.status(activity.getTo().getDisplayValue())
+					.build()));
+		}
+
+		if (treatFlagCardAsBlock) {
+			jiraCardHistory.getItems()
+				.stream()
+				.filter(activity -> "flagged".equals(activity.getFieldId()))
+				.forEach(activity -> {
+					if ("Impediment".equals(activity.getTo().getDisplayValue())) {
+						statusChangedArray.add(StatusChangedArrayItem.builder()
+							.timestamp(activity.getTimeStamp())
+							.status(CardStepsEnum.FLAG.getValue())
+							.build());
+					}
+					else {
+						statusChangedArray.add(StatusChangedArrayItem.builder()
+							.timestamp(activity.getTimeStamp())
+							.status(CardStepsEnum.REMOVEFLAG.getValue())
+							.build());
+					}
+				});
+		}
+		return statusChangedArray;
+
+	}
+
+//	 private DoneCard processCustomFieldsForCard(DoneCard doneCard) {
+//	 for (key : doneCard.getFields()) {
+//	 switch (key) {
+//	 case "storyPoints":
+//	 fields.put("storyPoints", fields.get(key));
+//	 break;
+//	 case "sprint":
+//	 fields.put("sprint", Jira.generateSprintName(fields.get(key)));
+//	 break;
+//	 }
+//	 }
+//	 return doneCard;
+//	 }
 
 }

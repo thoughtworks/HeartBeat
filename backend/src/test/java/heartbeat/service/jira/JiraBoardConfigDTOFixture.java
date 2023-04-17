@@ -83,13 +83,13 @@ public class JiraBoardConfigDTOFixture {
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee("Zhang San")))));
+			.issues(List.of(new DoneCard("1", DoneCardFields.builder().assignee(new Assignee("Zhang San")).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("200")
-			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee("Zhang San")))));
+			.issues(List.of(new DoneCard("1",DoneCardFields.builder().assignee(new Assignee("Zhang San")).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER() {

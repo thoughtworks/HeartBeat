@@ -4,15 +4,14 @@ import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.Assignee;
 import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.client.dto.DoneCard;
 import heartbeat.client.dto.DoneCardFields;
 import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.client.dto.Status;
+import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.request.Cards;
@@ -356,7 +355,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new DoneCard("1", new DoneCardFields(null))))
+			.issues(List.of(new DoneCard("1", new DoneCardFields())))
 			.build();
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -391,7 +390,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee(null)))))
+			.issues(List.of(new DoneCard("1", new DoneCardFields())))
 			.build();
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
@@ -443,12 +442,16 @@ class JiraServiceTest {
 
 	@Test
 	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() {
-		StoryPointsAndCycleTimeRequest request = StoryPointsAndCycleTimeRequest.builder().build();
+		StoryPointsAndCycleTimeRequest request = StoryPointsAndCycleTimeRequest.builder()
+			.targetFields(List.of(TargetField.builder().name("").build()))
+			.type("jira")
+			.status(List.of(""))
+			.build();
 		RequestJiraBoardColumnSetting requestJiraBoardColumnSetting = RequestJiraBoardColumnSetting.builder().build();
 		Cards cards = jiraService.getStoryPointsAndCycleTime(request, List.of(requestJiraBoardColumnSetting),
 				List.of("Zhang"));
 
-		assertThat(cards.equals(Cards.builder().build()));
+		assertThat(cards.equals(null));
 	}
 
 }

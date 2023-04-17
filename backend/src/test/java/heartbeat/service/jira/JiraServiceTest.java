@@ -9,12 +9,15 @@ import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.client.dto.DoneCard;
 import heartbeat.client.dto.DoneCardFields;
 import heartbeat.client.dto.FieldResponseDTO;
-import heartbeat.client.dto.Item;
+import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.JiraBoardConfigDTO;
 import heartbeat.client.dto.StatusSelfDTO;
-import heartbeat.client.dto.To;
+import heartbeat.client.dto.Status;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
+import heartbeat.controller.board.vo.request.Cards;
+import heartbeat.controller.board.vo.request.RequestJiraBoardColumnSetting;
+import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
@@ -348,7 +351,7 @@ class JiraServiceTest {
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(JIRA_JQL, "DONE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
-		List<Item> items = Collections.singletonList(new Item("", new To("")));
+		List<HistoryDetail> items = Collections.singletonList(new HistoryDetail(1, "", new Status(""), new Status("")));
 		CardHistoryResponseDTO cardHistoryResponse = CardHistoryResponseDTO.builder().items(items).build();
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
@@ -382,7 +385,8 @@ class JiraServiceTest {
 		FieldResponseDTO emptyProjectFieldResponse = FieldResponseDTO.builder()
 			.projects(Collections.emptyList())
 			.build();
-		List<Item> items = Collections.singletonList(new Item("assignee", new To(null)));
+		List<HistoryDetail> items = Collections
+			.singletonList(new HistoryDetail(1, "assignee", new Status(null), new Status(null)));
 		CardHistoryResponseDTO cardHistoryResponse = CardHistoryResponseDTO.builder().items(items).build();
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
@@ -435,6 +439,16 @@ class JiraServiceTest {
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BoardRequestParam.builder().build()))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Request failed with status code 400, error: ", "");
+	}
+
+	@Test
+	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() {
+		StoryPointsAndCycleTimeRequest request = StoryPointsAndCycleTimeRequest.builder().build();
+		RequestJiraBoardColumnSetting requestJiraBoardColumnSetting = RequestJiraBoardColumnSetting.builder().build();
+		Cards cards = jiraService.getStoryPointsAndCycleTime(request, List.of(requestJiraBoardColumnSetting),
+				List.of("Zhang"));
+
+		assertThat(cards.equals(Cards.builder().build()));
 	}
 
 }

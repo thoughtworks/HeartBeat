@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class To implements Serializable {
+public class Status implements Serializable {
 
 	private String displayValue;
 

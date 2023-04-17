@@ -6,10 +6,14 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Item implements Serializable {
+public class HistoryDetail implements Serializable {
+
+	private int timeStamp;
 
 	private String fieldId;
 
-	private To to;
+	private Status to;
+
+	private Status from;
 
 }

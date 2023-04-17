@@ -14,6 +14,9 @@ import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
+import heartbeat.controller.board.vo.request.Cards;
+import heartbeat.controller.board.vo.request.RequestJiraBoardColumnSetting;
+import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.controller.board.vo.response.ColumnValue;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
@@ -330,6 +333,11 @@ public class JiraService {
 			.filter(issueField -> !FIELDS_IGNORE.contains(issueField.getKey()))
 			.map(issueField -> new TargetField(issueField.getKey(), issueField.getName(), false))
 			.collect(Collectors.toList());
+	}
+
+	public Cards getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
+			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
+		return Cards.builder().build();
 	}
 
 }

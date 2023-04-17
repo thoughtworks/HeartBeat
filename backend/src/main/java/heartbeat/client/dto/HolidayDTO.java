@@ -1,7 +1,5 @@
 package heartbeat.client.dto;
 
-import java.io.Serializable;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardHistoryResponseDTO implements Serializable {
+public class HolidayDTO {
 
-	private List<HistoryDetail> items;
+	private String name;
+
+	private String date;
+
+	private Boolean isOffDay;
 
 }

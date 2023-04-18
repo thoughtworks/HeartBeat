@@ -8,6 +8,7 @@ import saveMetricsSettingReducer, {
   deleteADeploymentFrequencySetting,
   selectDeploymentFrequencySettings,
   addALeadTimeForChanges,
+  deleteALeadTimeForChange,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -162,5 +163,11 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(initState, addALeadTimeForChanges())
 
     expect(savedMetricsSetting.leadTimeForChanges).toEqual(addedLeadTimeForChanges)
+  })
+
+  it('should delete a leadTimeForChange when handle deleteALeadTimeForChange given initial state', async () => {
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, deleteALeadTimeForChange(0))
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([])
   })
 })

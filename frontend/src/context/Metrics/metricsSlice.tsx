@@ -88,6 +88,11 @@ export const metricsSlice = createSlice({
         { id: newId, organization: '', pipelineName: '', steps: '' },
       ]
     },
+
+    deleteALeadTimeForChange: (state, action) => {
+      const deleteId = action.payload
+      state.leadTimeForChanges = [...state.leadTimeForChanges.filter(({ id }) => id !== deleteId)]
+    },
   },
 })
 
@@ -101,9 +106,11 @@ export const {
   deleteADeploymentFrequencySetting,
   updateMetricsState,
   addALeadTimeForChanges,
+  deleteALeadTimeForChange,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
+export const selectLeadTimeForChanges = (state: RootState) => state.metrics.leadTimeForChanges
 
 export const selectBoardColumns = (state: RootState) => state.metrics.boardColumns
 export const selectMetricsContent = (state: RootState) => state.metrics

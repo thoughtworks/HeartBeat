@@ -2,7 +2,11 @@ import React, { useEffect } from 'react'
 import { PipelineMetricSelection } from './PipelineMetricSelection'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
-import { addADeploymentFrequencySetting, selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
+import {
+  addADeploymentFrequencySetting,
+  deleteADeploymentFrequencySetting,
+  selectDeploymentFrequencySettings,
+} from '@src/context/Metrics/metricsSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton'
 
@@ -15,8 +19,12 @@ export const DeploymentFrequencySettings = () => {
     checkDuplicatedPipeLine()
   }, [deploymentFrequencySettings])
 
-  const handleClick = () => {
+  const handleClickAddButton = () => {
     dispatch(addADeploymentFrequencySetting())
+  }
+
+  const handleClickRemoveButton = (id: number) => {
+    dispatch(deleteADeploymentFrequencySetting(id))
   }
 
   const getErrorMessage = (deploymentFrequencySettingId: number) => {
@@ -29,12 +37,13 @@ export const DeploymentFrequencySettings = () => {
       {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
         <PipelineMetricSelection
           key={deploymentFrequencySetting.id}
-          deploymentFrequencySetting={deploymentFrequencySetting}
+          pipelineSetting={deploymentFrequencySetting}
           isShowRemoveButton={deploymentFrequencySettings.length > 1}
           errorMessages={getErrorMessage(deploymentFrequencySetting.id)}
+          handleClickRemoveButton={(id) => handleClickRemoveButton(id)}
         />
       ))}
-      <MetricsSettingAddButton handleClick={handleClick} />
+      <MetricsSettingAddButton handleClickAddButton={handleClickAddButton} />
     </>
   )
 }

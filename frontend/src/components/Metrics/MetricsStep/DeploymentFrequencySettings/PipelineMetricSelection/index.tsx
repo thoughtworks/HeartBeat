@@ -1,7 +1,6 @@
 import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
-import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './style'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
@@ -16,7 +15,7 @@ import {
 import { store } from '@src/store'
 
 interface pipelineMetricSelectionProps {
-  deploymentFrequencySetting: {
+  pipelineSetting: {
     id: number
     organization: string
     pipelineName: string
@@ -24,14 +23,16 @@ interface pipelineMetricSelectionProps {
   }
   isShowRemoveButton: boolean
   errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
+  handleClickRemoveButton: (id: number) => void
 }
 
 export const PipelineMetricSelection = ({
-  deploymentFrequencySetting,
+  pipelineSetting,
   isShowRemoveButton,
   errorMessages,
+  handleClickRemoveButton,
 }: pipelineMetricSelectionProps) => {
-  const { id, organization, pipelineName, steps } = deploymentFrequencySetting
+  const { id, organization, pipelineName, steps } = pipelineSetting
   const dispatch = useAppDispatch()
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
@@ -39,7 +40,7 @@ export const PipelineMetricSelection = ({
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
 
   const handleClick = () => {
-    dispatch(deleteADeploymentFrequencySetting(id))
+    handleClickRemoveButton(id)
   }
 
   const handleGetSteps = (_pipelineName: string) => {

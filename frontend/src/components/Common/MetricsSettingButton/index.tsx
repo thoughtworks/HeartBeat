@@ -4,13 +4,13 @@ import { MetricsSettingButtonContainer } from '@src/components/Common/MetricsSet
 import React from 'react'
 
 interface metricsSettingAddButtonProps {
-  handleClick: () => void
+  handleClickAddButton: () => void
 }
 
-export const MetricsSettingAddButton = ({ handleClick }: metricsSettingAddButtonProps) => {
+export const MetricsSettingAddButton = ({ handleClickAddButton }: metricsSettingAddButtonProps) => {
   return (
     <MetricsSettingButtonContainer>
-      <IconButton onClick={handleClick}>
+      <IconButton onClick={handleClickAddButton}>
         <Add />
       </IconButton>
     </MetricsSettingButtonContainer>

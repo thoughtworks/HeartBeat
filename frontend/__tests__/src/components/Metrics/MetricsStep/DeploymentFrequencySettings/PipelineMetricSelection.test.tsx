@@ -47,6 +47,7 @@ describe('PipelineMetricSelection', () => {
     pipelineName: '',
     steps: '',
   }
+  const mockHandleClickRemoveButton = jest.fn()
 
   const setup = async (
     deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
@@ -56,9 +57,10 @@ describe('PipelineMetricSelection', () => {
     return render(
       <Provider store={store}>
         <PipelineMetricSelection
-          deploymentFrequencySetting={deploymentFrequencySetting}
+          pipelineSetting={deploymentFrequencySetting}
           isShowRemoveButton={isShowRemoveButton}
           errorMessages={{ organization: '', pipelineName: '', steps: '' }}
+          handleClickRemoveButton={mockHandleClickRemoveButton}
         />
       </Provider>
     )
@@ -87,8 +89,10 @@ describe('PipelineMetricSelection', () => {
 
     await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 
-    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
-    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledWith(mockId)
+    // expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
+    // expect(deleteADeploymentFrequencySetting).toHaveBeenCalledWith(mockId)
+    expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(1)
+    expect(mockHandleClickRemoveButton).toHaveBeenCalledWith(mockId)
   })
 
   it('should show pipelineName selection when select organization', async () => {

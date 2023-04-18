@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class GithubControllerTest {
 
 	@MockBean
-	private GitHubService githubVerifyService;
+	private GitHubService gitHubVerifyService;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -42,7 +42,7 @@ class GithubControllerTest {
 
 		GitHubResponse githubReposResponse = GitHubResponse.builder().githubRepos(repos).build();
 
-		when(githubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
+		when(gitHubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 
 		mockMvc.perform(get("/source-control").param("token", token).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())

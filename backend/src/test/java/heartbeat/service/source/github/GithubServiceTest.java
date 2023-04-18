@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class GithubServiceTest {
 
 	@Mock
-	GitHubFeignClient githubFeignClient;
+	GitHubFeignClient gitHubFeignClient;
 
 	@InjectMocks
 	GitHubService githubService;
@@ -34,14 +34,14 @@ class GithubServiceTest {
 	void shouldReturnNonRedundantGithubReposWhenCallGithubFeignClientApi() {
 		String githubToken = "123456";
 		String token = "token " + githubToken;
-		when(githubFeignClient.getAllRepos(token)).thenReturn(List.of(GitHubRepos.builder().html_url("11111").build(),
+		when(gitHubFeignClient.getAllRepos(token)).thenReturn(List.of(GitHubRepos.builder().html_url("11111").build(),
 				GitHubRepos.builder().html_url("22222").build(), GitHubRepos.builder().html_url("33333").build()));
 
-		when(githubFeignClient.getGithubOrganizationsInfo(token))
+		when(gitHubFeignClient.getGithubOrganizationsInfo(token))
 			.thenReturn(List.of(GitHubOrganizationsInfo.builder().login("org1").build(),
 					GitHubOrganizationsInfo.builder().login("org2").build()));
 
-		when(githubFeignClient.getReposByOrganizationName("org1", token))
+		when(gitHubFeignClient.getReposByOrganizationName("org1", token))
 			.thenReturn(List.of(GitHubRepos.builder().html_url("22222").build(),
 					GitHubRepos.builder().html_url("33333").build(), GitHubRepos.builder().html_url("44444").build()));
 
@@ -57,7 +57,7 @@ class GithubServiceTest {
 		String wrongGithubToken = "123456";
 		String token = "token " + wrongGithubToken;
 
-		when(githubFeignClient.getAllRepos(token)).thenThrow(new CustomFeignClientException(401, "Bad credentials"));
+		when(gitHubFeignClient.getAllRepos(token)).thenThrow(new CustomFeignClientException(401, "Bad credentials"));
 
 		final var thrown = Assertions.assertThrows(RequestFailedException.class,
 				() -> githubService.verifyToken(wrongGithubToken));

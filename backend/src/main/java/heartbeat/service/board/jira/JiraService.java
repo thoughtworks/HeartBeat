@@ -23,11 +23,11 @@ import heartbeat.controller.board.vo.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
 import heartbeat.controller.board.vo.response.CardCustomFieldKey;
+import heartbeat.controller.board.vo.response.CardCycleTime;
 import heartbeat.controller.board.vo.response.ColumnValue;
 import heartbeat.controller.board.vo.response.CycleTimeInfo;
 import heartbeat.controller.board.vo.response.JiraCard;
 import heartbeat.controller.board.vo.response.JiraCardResponse;
-import heartbeat.controller.board.vo.response.JiraCards;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
@@ -365,16 +365,40 @@ public class JiraService {
 
 		List<JiraCardResponse> matchedCards = new ArrayList<>();
 
-		allDoneCards.stream().map(doneCard -> {
-			getCycleTime(baseUrl, doneCard.getKey(), request.getToken(), request.getSite(),
-					request.isTreatFlagCardAsBlock());
+		allDoneCards.forEach(doneCard -> {
+			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
+					request.getSite(), request.isTreatFlagCardAsBlock());
 			List<String> assigneeSet = getAssigneeSet(baseUrl, doneCard, request.getToken());
 
-			// TODO: add calculate logic
-			return null;
+			// fix the assignee not in the card history, only in the card field issue.
+			if (doneCard.getFields().getAssignee() != null
+					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
+				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
+			}
+
+			if (users.stream().anyMatch(assigneeSet::contains)) {
+				DoneCard matchedCard = doneCard;
+				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
+				// doneCard.getFields().setSprint(generateSprintName(doneCard.getFields().getSprint()));
+				matchedCard.getFields().setLabel(String.join(",", matchedCard.getFields().getLabel()));
+
+				JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
+					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
+					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
+					.cardCycleTime(calculateCardCycleTime(cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns))
+					.build();
+
+				matchedCards.add(jiraCardResponse);
+			}
 		});
 
-		return Cards.builder().storyPointSum(storyPointSum).cardsNumber(0).build();
+		storyPointSum = matchedCards.stream().mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints()).sum();
+
+		return Cards.builder()
+			.storyPointSum(storyPointSum)
+			.cardsNumber(matchedCards.size())
+			.jiraCardResponseList(matchedCards)
+			.build();
 	}
 
 	private void saveCustomFieldKey(StoryPointsAndCycleTimeRequest model) {
@@ -384,7 +408,8 @@ public class JiraService {
 					CardCustomFieldKey.builder().STORY_POINTS(value.getKey()).build();
 				case "Sprint" -> CardCustomFieldKey.builder().SPRINT(value.getKey()).build();
 				case "Flagged" -> CardCustomFieldKey.builder().FLAGGED(value.getKey()).build();
-				default ->{ }
+				default -> {
+				}
 			}
 		}
 	}
@@ -457,18 +482,11 @@ public class JiraService {
 
 	}
 
-//	 private DoneCard processCustomFieldsForCard(DoneCard doneCard) {
-//	 for (key : doneCard.getFields()) {
-//	 switch (key) {
-//	 case "storyPoints":
-//	 fields.put("storyPoints", fields.get(key));
-//	 break;
-//	 case "sprint":
-//	 fields.put("sprint", Jira.generateSprintName(fields.get(key)));
-//	 break;
-//	 }
-//	 }
-//	 return doneCard;
-//	 }
+	// TODO
+	private CardCycleTime calculateCardCycleTime(List<CycleTimeInfo> cycleTimeInfos,
+			List<RequestJiraBoardColumnSetting> boardColumns) {
+
+		return CardCycleTime.builder().build();
+	}
 
 }

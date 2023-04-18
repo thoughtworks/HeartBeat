@@ -8,14 +8,14 @@ export interface ReportResponseDTO {
 }
 
 export interface VelocityResponse {
-  velocityForSP: string
-  velocityForCards: string
+  velocityForSP: number
+  velocityForCards: number
 }
 
 export interface CycleTimeResponse {
   totalTimeForCards: number
-  averageCircleTimePerCard: string
-  averageCycleTimePerSP: string
+  averageCycleTimePerCard: number
+  averageCycleTimePerSP: number
   swimlaneList: Array<Swimlane>
 }
 
@@ -41,15 +41,15 @@ export interface ChangeFailureRateResponse {
 
 export interface Swimlane {
   optionalItemName: string
-  averageTimeForSP: string
-  averageTimeForCards: string
-  totalTime: string
+  averageTimeForSP: number
+  averageTimeForCards: number
+  totalTime: number
 }
 
 export interface AVGDeploymentFrequency {
   name: string
   step?: string
-  deploymentFrequency: string
+  deploymentFrequency: number
 }
 
 export interface DeploymentDateCount {
@@ -60,7 +60,7 @@ export interface DeploymentDateCount {
 export interface DeploymentFrequencyOfPipeline {
   name: string
   step: string
-  deploymentFrequency: string
+  deploymentFrequency: number
   items: DeploymentDateCount[]
 }
 

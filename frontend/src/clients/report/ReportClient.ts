@@ -4,19 +4,19 @@ import { ReportRequestDTO } from '@src/clients/report/dto/request'
 export class ReportClient extends HttpClient {
   reportResponse = {
     velocity: {
-      velocityForSP: '',
-      velocityForCards: '',
+      velocityForSP: 0,
+      velocityForCards: 0,
     },
     cycleTime: {
-      averageCircleTimePerCard: '',
-      averageCycleTimePerSP: '',
+      averageCycleTimePerCard: 0,
+      averageCycleTimePerSP: 0,
       totalTimeForCards: 0,
       swimlaneList: [
         {
           optionalItemName: '',
-          averageTimeForSP: '',
-          averageTimeForCards: '',
-          totalTime: '',
+          averageTimeForSP: 0,
+          averageTimeForCards: 0,
+          totalTime: 0,
         },
       ],
     },
@@ -29,7 +29,7 @@ export class ReportClient extends HttpClient {
     deploymentFrequency: {
       avgDeploymentFrequency: {
         name: '',
-        deploymentFrequency: '',
+        deploymentFrequency: 0,
       },
       deploymentFrequencyOfPipelines: [],
     },

@@ -21,10 +21,7 @@ class Config {
   selectMetricsData() {
     cy.contains('Required Data').siblings().click()
 
-    cy.contains('Velocity').click()
-    cy.contains('Lead time for changes').click()
-    cy.contains('Deployment frequency').click()
-    cy.contains('Classification').click()
+    cy.contains('All').click()
 
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }

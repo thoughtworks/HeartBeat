@@ -21,46 +21,47 @@ import java.util.stream.Collectors;
 @Log4j2
 public class GitHubService {
 
-	private final GitHubFeignClient githubFeignClient;
+	private final GitHubFeignClient gitHubFeignClient;
 
 	public GitHubResponse verifyToken(String githubToken) {
 		String token = "token " + githubToken;
 		String maskToken = TokenUtil.mask(token);
 		try {
-			log.info("Start to query repository_url by token, token: " + maskToken);
-			List<String> githubReposByUser = githubFeignClient.getAllRepos(token)
+			log.info("Start to query repository_url by token, token: {}", maskToken);
+			List<String> githubReposByUser = gitHubFeignClient.getAllRepos(token)
 				.stream()
 				.map(GitHubRepos::getHtml_url)
 				.toList();
-			log.info("Successfully get repository_url by token, token: " + maskToken + " repos: " + githubReposByUser);
+			log.info("Successfully get repository_token: {}, githubReposByUser: {}", maskToken, githubReposByUser);
 
-			log.info("Start to query organization_url by token, token: " + maskToken);
-			List<GitHubOrganizationsInfo> githubOrganizations = githubFeignClient.getGithubOrganizationsInfo(token);
-			log.info("Successfully get organizations by token, token: " + maskToken + " organizations: "
-					+ githubOrganizations);
+			log.info("Start to query organizations_token: {}", maskToken);
+			List<GitHubOrganizationsInfo> githubOrganizations = gitHubFeignClient.getGithubOrganizationsInfo(token);
+			log.info("Successfully get organizations_token: {} organizations: {}", maskToken, githubOrganizations);
 
 			LinkedHashSet<String> githubRepos = new LinkedHashSet<>(githubReposByUser);
-
-			log.info("Start to query repository_url by organization_name and token, token: " + maskToken);
-			Set<String> githubReposByOrganizations = getAllGithubRepos(token, githubOrganizations);
+			Set<String> githubReposByOrganizations = getAllGitHubRepos(token, githubOrganizations);
 			githubRepos.addAll(githubReposByOrganizations);
-			log.info("Successfully get all repository_url, token: " + maskToken + " repos: " + githubRepos);
-
 			return GitHubResponse.builder().githubRepos(githubRepos).build();
 		}
 		catch (FeignException e) {
-			log.error("Failed when call Github with token", e);
+			log.error("Failed to call Github with token_error: {}", e);
 			throw new RequestFailedException(e);
 		}
 	}
 
-	private Set<String> getAllGithubRepos(String token, List<GitHubOrganizationsInfo> githubOrganizations) {
-		return githubOrganizations.stream()
+	private Set<String> getAllGitHubRepos(String token, List<GitHubOrganizationsInfo> gitHubOrganizations) {
+		String maskToken = TokenUtil.mask(token);
+		log.info("Start to query repository by organization_token: {}, gitHubOrganizations: {}", maskToken,
+				gitHubOrganizations);
+		Set<String> allGitHubRepos = gitHubOrganizations.stream()
 			.map(GitHubOrganizationsInfo::getLogin)
-			.flatMap(org -> githubFeignClient.getReposByOrganizationName(org, token)
+			.flatMap(org -> gitHubFeignClient.getReposByOrganizationName(org, token)
 				.stream()
 				.map(GitHubRepos::getHtml_url))
 			.collect(Collectors.toSet());
+		log.info("Successfully get all repositories_token: {}, repos: {}", maskToken, allGitHubRepos);
+		return allGitHubRepos;
+
 	}
 
 }

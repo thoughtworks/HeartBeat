@@ -48,5 +48,11 @@ describe('Create a new project', () => {
     metricsPage.checkDeploymentFrequencySettings()
 
     nextButton().should('be.enabled')
+
+    metricsPage.goReportStep()
+
+    cy.contains('Subtitle').should('exist')
+    cy.contains('Velocity').should('exist')
+    cy.contains('Change failure rate').should('exist')
   })
 })

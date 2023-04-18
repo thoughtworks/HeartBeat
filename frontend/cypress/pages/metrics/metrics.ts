@@ -19,6 +19,10 @@ class Metrics {
     cy.contains('Steps').siblings().click()
     cy.contains('RECORD RELEASE TO PROD').click()
   }
+
+  goReportStep() {
+    cy.contains('Next').click()
+  }
 }
 
 const metricsPage = new Metrics()

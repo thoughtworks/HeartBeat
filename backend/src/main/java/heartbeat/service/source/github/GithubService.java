@@ -25,28 +25,26 @@ public class GithubService {
 
 	public GitHubResponse verifyToken(String githubToken) {
 		String token = "token " + githubToken;
+		String maskToken = TokenUtil.mask(token);
 		try {
-			log.info("[Github] Start to query repository_url by token, token: " + TokenUtil.mask(token));
+			log.info("Start to query repository_url by token, token: " + maskToken);
 			List<String> githubReposByUser = githubFeignClient.getAllRepos(token)
 				.stream()
 				.map(GitHubRepos::getHtml_url)
 				.toList();
-			log.info("[Github] Successfully get repository_url by token, token: " + TokenUtil.mask(token) + " repos: "
-					+ githubReposByUser);
+			log.info("Successfully get repository_url by token, token: " + maskToken + " repos: " + githubReposByUser);
 
-			log.info("[Github] Start to query organization_url by token, token: " + TokenUtil.mask(token));
+			log.info("Start to query organization_url by token, token: " + maskToken);
 			List<GitHubOrganizationsInfo> githubOrganizations = githubFeignClient.getGithubOrganizationsInfo(token);
-			log.info("[Github] Successfully get organizations by token, token: " + TokenUtil.mask(token)
-					+ " organizations: " + githubOrganizations);
+			log.info("Successfully get organizations by token, token: " + maskToken + " organizations: "
+					+ githubOrganizations);
 
 			LinkedHashSet<String> githubRepos = new LinkedHashSet<>(githubReposByUser);
 
-			log.info("[Github] Start to query repository_url by organization_name and token, token: "
-					+ TokenUtil.mask(token));
+			log.info("Start to query repository_url by organization_name and token, token: " + maskToken);
 			Set<String> githubReposByOrganizations = getAllGithubRepos(token, githubOrganizations);
 			githubRepos.addAll(githubReposByOrganizations);
-			log.info("[Github] Successfully get all repository_url, token: " + TokenUtil.mask(token) + " repos: "
-					+ githubRepos);
+			log.info("Successfully get all repository_url, token: " + maskToken + " repos: " + githubRepos);
 
 			return GitHubResponse.builder().githubRepos(githubRepos).build();
 		}

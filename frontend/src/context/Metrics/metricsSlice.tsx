@@ -9,6 +9,7 @@ export interface savedMetricsSettingState {
   doneColumn: string[]
   boardColumns: { name: string; value: string }[]
   deploymentFrequencySettings: { id: number; organization: string; pipelineName: string; steps: string }[]
+  leadTimeForChanges: { id: number; organization: string; pipelineName: string; steps: string }[]
   importFile: string[]
   isProjectCreated: boolean
   classification: string[]
@@ -21,6 +22,7 @@ const initialState: savedMetricsSettingState = {
   doneColumn: [],
   boardColumns: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
   importFile: [],
   isProjectCreated: true,
   classification: [],
@@ -78,6 +80,14 @@ export const metricsSlice = createSlice({
       const deleteId = action.payload
       state.deploymentFrequencySettings = [...state.deploymentFrequencySettings.filter(({ id }) => id !== deleteId)]
     },
+
+    addALeadTimeForChanges: (state) => {
+      const newId = state.leadTimeForChanges[state.leadTimeForChanges.length - 1].id + 1
+      state.leadTimeForChanges = [
+        ...state.leadTimeForChanges,
+        { id: newId, organization: '', pipelineName: '', steps: '' },
+      ]
+    },
   },
 })
 
@@ -90,6 +100,7 @@ export const {
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,
   updateMetricsState,
+  addALeadTimeForChanges,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings

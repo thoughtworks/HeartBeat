@@ -7,6 +7,7 @@ import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   selectDeploymentFrequencySettings,
+  addALeadTimeForChanges,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -17,6 +18,7 @@ const initState = {
   doneColumn: [],
   boardColumns: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
   importFile: [],
   isProjectCreated: true,
   classification: [],
@@ -34,6 +36,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', steps: '' },
     ])
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', steps: '' }])
   })
 
   it('should store updated targetFields when its value changed', () => {
@@ -148,5 +151,16 @@ describe('saveMetricsSetting reducer', () => {
 
   it('should return deploymentFrequencySettings when call selectDeploymentFrequencySettings functions', () => {
     expect(selectDeploymentFrequencySettings(store.getState())).toEqual(initState.deploymentFrequencySettings)
+  })
+
+  it('should add a leadTimeForChange when handle leadTimeForChanges given initial state', () => {
+    const addedLeadTimeForChanges = [
+      { id: 0, organization: '', pipelineName: '', steps: '' },
+      { id: 1, organization: '', pipelineName: '', steps: '' },
+    ]
+
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, addALeadTimeForChanges())
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual(addedLeadTimeForChanges)
   })
 })

@@ -9,7 +9,3 @@ steps:
 
   - label: ":rocket: Backend Check"
     command: ./infra/buildkite/app-check && echo 'Backend Check complete'
-    plugins:
-      - docker-compose#v3.5.0:
-          run: gradle
-          config: .buildkite/docker-compose.yml

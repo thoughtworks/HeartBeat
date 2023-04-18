@@ -60,7 +60,7 @@ public class GenerateReporterService {
 		// todo:add calculate LeadTime logic
 	}
 
-	public void fetchOriginalData(GenerateReportRequest request) {
+	private void fetchOriginalData(GenerateReportRequest request) {
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
 
 		if (lowMetrics.stream().anyMatch(this.kanbanMetrics::contains)) {

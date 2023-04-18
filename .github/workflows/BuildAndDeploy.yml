@@ -2,9 +2,9 @@ name: Build and Deploy
 
 on:
   push:
-    branches: ["*"]
+    branches: [ "*" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -17,6 +17,29 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: trufflehog-actions-scan
         uses: edplato/trufflehog-actions-scan@master
+      - name: Scan fs
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy fs \
+          --severity HIGH,CRITICAL \
+          --exit-code 1 \
+          ./
+      - name: Scan repo
+        run: |
+          docker run --rm -v\
+              /var/run/docker.sock:/var/run/docker.sock \
+              aquasec/trivy repo \
+             --severity HIGH,CRITICAL \
+             https://github.com/au-heartbeat/Heartbeat
+      - name: pwd
+        run: ls ../
+      - name: Scan config
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+             aquasec/trivy fs \
+             --security-checks vuln,config \
+             --severity HIGH,CRITICAL \
+           ./
   backend-check:
     runs-on: ubuntu-latest
     defaults:

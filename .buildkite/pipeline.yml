@@ -1,7 +1,6 @@
 env:
   JAVA_VERSION: "17"
   GRADLE_VERSION: "7.2"
-  CODACY_PROJECT_TOKEN: "rewrewrewrewrewrewrew"
 
 steps:
   - label: ":lock: Security Check"
@@ -10,7 +9,6 @@ steps:
 
   - label: ":rocket: Backend Check"
     command: ./infra/buildkite/app-check && echo 'Backend Check complete'
-    artifact_paths: "project/build/libs/*.jar"
     plugins:
       - docker-compose#v3.5.0:
           run: gradle

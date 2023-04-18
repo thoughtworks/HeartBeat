@@ -89,8 +89,6 @@ describe('PipelineMetricSelection', () => {
 
     await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 
-    // expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
-    // expect(deleteADeploymentFrequencySetting).toHaveBeenCalledWith(mockId)
     expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(1)
     expect(mockHandleClickRemoveButton).toHaveBeenCalledWith(mockId)
   })

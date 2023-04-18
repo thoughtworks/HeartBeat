@@ -11,6 +11,6 @@ public class CardCycleTime {
 
 	private StepsDay steps;
 
-	private int total;
+	private double total;
 
 }

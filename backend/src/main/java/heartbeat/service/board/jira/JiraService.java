@@ -26,9 +26,9 @@ import heartbeat.controller.board.vo.response.CardCustomFieldKey;
 import heartbeat.controller.board.vo.response.CardCycleTime;
 import heartbeat.controller.board.vo.response.ColumnValue;
 import heartbeat.controller.board.vo.response.CycleTimeInfo;
-import heartbeat.controller.board.vo.response.JiraCard;
 import heartbeat.controller.board.vo.response.JiraCardResponse;
 import heartbeat.controller.board.vo.response.JiraColumnResponse;
+import heartbeat.controller.board.vo.response.StepsDay;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -348,7 +349,7 @@ public class JiraService {
 	public Cards getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
 		this.saveCustomFieldKey(request);
-		int storyPointSum = 0;
+		int storyPointSum;
 		BoardType boardType = BoardType.fromValue(request.getType());
 		URI baseUrl = urlGenerator.getUri(request.getSite());
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
@@ -377,15 +378,14 @@ public class JiraService {
 			}
 
 			if (users.stream().anyMatch(assigneeSet::contains)) {
-				DoneCard matchedCard = doneCard;
 				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
-				// doneCard.getFields().setSprint(generateSprintName(doneCard.getFields().getSprint()));
-				matchedCard.getFields().setLabel(String.join(",", matchedCard.getFields().getLabel()));
+				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
+
 
 				JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
 					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
 					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
-					.cardCycleTime(calculateCardCycleTime(cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns))
+					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(),cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns))
 					.build();
 
 				matchedCards.add(jiraCardResponse);
@@ -482,11 +482,54 @@ public class JiraService {
 
 	}
 
-	// TODO
-	private CardCycleTime calculateCardCycleTime(List<CycleTimeInfo> cycleTimeInfos,
+	private CardCycleTime calculateCardCycleTime(String cardId,
+												 List<CycleTimeInfo> cycleTimeInfos,
 			List<RequestJiraBoardColumnSetting> boardColumns) {
+		Map<String, CardStepsEnum> boardMap = selectedStepsArrayToMap(boardColumns);
+		StepsDay stepsDay =  StepsDay.builder().build();
+		double total = 0;
+		for (CycleTimeInfo cycleTimeInfo : cycleTimeInfos) {
+			String swimLane = cycleTimeInfo.getColumn();
+			if (swimLane.equals("FLAG")) {
+				boardMap.put(swimLane.toUpperCase(), CardStepsEnum.BLOCK);
+			}
+			if (boardMap.containsKey(swimLane.toUpperCase())) {
+				CardStepsEnum cardStep = boardMap.get(swimLane);
+				switch (cardStep) {
+					case DEVELOPMENT -> {
+						stepsDay.setDevelopment(stepsDay.getDevelopment() + cycleTimeInfo.getDay());
+						total += cycleTimeInfo.getDay();
+					}
+					case WAITING -> {
+						stepsDay.setWaiting(stepsDay.getWaiting() + cycleTimeInfo.getDay());
+						total += cycleTimeInfo.getDay();
+					}
+					case TESTING -> {
+						stepsDay.setTesting(stepsDay.getTesting() + cycleTimeInfo.getDay());
+						total += cycleTimeInfo.getDay();
+					}
+					case BLOCK -> {
+						stepsDay.setBlocked(stepsDay.getBlocked() + cycleTimeInfo.getDay());
+						total += cycleTimeInfo.getDay();
+					}
+					case REVIEW -> {
+						stepsDay.setReview(stepsDay.getReview() + cycleTimeInfo.getDay());
+						total += cycleTimeInfo.getDay();
+					}
+					default -> {
+					}
+				}
+			}
+		}
+		return CardCycleTime.builder().name(cardId).steps(stepsDay).total(total).build();
+	}
 
-		return CardCycleTime.builder().build();
+	private Map<String, CardStepsEnum> selectedStepsArrayToMap(List<RequestJiraBoardColumnSetting> boardColumns) {
+		Map<String, CardStepsEnum> map = new HashMap<>();
+		for (RequestJiraBoardColumnSetting boardColumn : boardColumns) {
+			map.put(boardColumn.getName().toUpperCase(), CardStepsEnum.valueOf(boardColumn.getValue()));
+		}
+		return map;
 	}
 
 }

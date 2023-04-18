@@ -7,16 +7,16 @@ import lombok.Data;
 @Builder
 public class StepsDay {
 
-	private int analyse;
+	private double analyse;
 
-	private int development;
+	private double development;
 
-	private int waiting;
+	private double waiting;
 
-	private int testing;
+	private double testing;
 
-	private int blocked;
+	private double blocked;
 
-	private int review;
+	private double review;
 
 }

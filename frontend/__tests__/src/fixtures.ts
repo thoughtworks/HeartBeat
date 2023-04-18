@@ -271,32 +271,38 @@ export const MOCK_GET_STEPS_PARAMS = {
 }
 export const MOCK_REPORT_RESPONSE = {
   velocity: {
-    velocityForSP: '20',
-    velocityForCards: '14',
+    velocityForSP: 20,
+    velocityForCards: 14,
   },
   cycleTime: {
-    averageCircleTimePerCard: '30.26',
-    averageCycleTimePerSP: '21.18',
+    averageCycleTimePerCard: 30.26,
+    averageCycleTimePerSP: 21.18,
     totalTimeForCards: 423.59,
     swimlaneList: [
       {
         optionalItemName: 'Analysis',
-        averageTimeForSP: '8.36',
-        averageTimeForCards: '11.95',
-        totalTime: '167.27',
+        averageTimeForSP: 8.36,
+        averageTimeForCards: 11.95,
+        totalTime: 167.27,
+      },
+      {
+        optionalItemName: 'In Dev',
+        averageTimeForSP: 12.13,
+        averageTimeForCards: 17.32,
+        totalTime: 242.51,
       },
     ],
   },
   deploymentFrequency: {
     avgDeploymentFrequency: {
       name: 'Average',
-      deploymentFrequency: '0.40',
+      deploymentFrequency: 0.4,
     },
     deploymentFrequencyOfPipelines: [
       {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
-        deploymentFrequency: '0.30',
+        deploymentFrequency: 0.3,
         items: [
           {
             date: '9/9/2022',
@@ -350,21 +356,31 @@ export const MOCK_REPORT_RESPONSE = {
 }
 export const EXPECTED_REPORT_VALUES = {
   velocityList: [
-    { id: 0, name: 'Velocity(Story Point)', valueList: ['20'] },
-    { id: 1, name: 'Throughput(Cards Count)', valueList: ['14'] },
+    { id: 0, name: 'Velocity(Story Point)', valueList: [{ value: 20 }] },
+    { id: 1, name: 'Throughput(Cards Count)', valueList: [{ value: 14 }] },
   ],
   cycleTimeList: [
-    { id: 0, name: 'Average cycle time', valueList: ['21.18(days/SP)', '30.26(days/card)'] },
-    { id: 1, name: 'Total development time / Total cycle time', valueList: [] },
-    { id: 2, name: 'Total waiting for testing time / Total cycle time', valueList: [] },
-    { id: 3, name: 'Total block time / Total cycle time', valueList: [] },
-    { id: 4, name: 'Total review time / Total cycle time', valueList: [] },
-    { id: 5, name: 'Total testing time / Total cycle time', valueList: [] },
-    { id: 6, name: 'Average development time', valueList: [] },
-    { id: 7, name: 'Average waiting for testing time', valueList: [] },
-    { id: 8, name: 'Average block time', valueList: [] },
-    { id: 9, name: 'Average review time', valueList: [] },
-    { id: 10, name: 'Average testing time', valueList: [] },
+    {
+      id: 0,
+      name: 'Average cycle time',
+      valueList: [
+        { value: 21.18, unit: '(days/SP)' },
+        { value: 30.26, unit: '(days/card)' },
+      ],
+    },
+    {
+      id: 1,
+      name: 'Total development time / Total cycle time',
+      valueList: [{ value: 0.57 }],
+    },
+    {
+      id: 2,
+      name: 'Average development time',
+      valueList: [
+        { value: 12.13, unit: '(days/SP)' },
+        { value: 17.32, unit: '(days/card)' },
+      ],
+    },
   ],
   classificationList: [
     {
@@ -380,7 +396,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Deployment frequency(deployments/day)',
-          value: '0.30',
+          value: '30.00%',
         },
       ],
     },
@@ -390,7 +406,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Deployment frequency(deployments/day)',
-          value: '0.40',
+          value: '40.00%',
         },
       ],
     },
@@ -400,18 +416,18 @@ export const EXPECTED_REPORT_VALUES = {
       id: 0,
       name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
       valuesList: [
-        { name: 'mergeDelayTime', value: '2702.53' },
-        { name: 'pipelineDelayTime', value: '2587.42' },
-        { name: 'totalDelayTime', value: '5289.95' },
+        { name: 'mergeDelayTime', value: '1day 21hours 2minutes' },
+        { name: 'pipelineDelayTime', value: '1day 19hours 7minutes' },
+        { name: 'totalDelayTime', value: '3day 16hours 9minutes' },
       ],
     },
     {
       id: 1,
       name: 'Average/',
       valuesList: [
-        { name: 'mergeDelayTime', value: '3647.51' },
-        { name: 'pipelineDelayTime', value: '2341.72' },
-        { name: 'totalDelayTime', value: '5989.22' },
+        { name: 'mergeDelayTime', value: '2day 12hours 47minutes' },
+        { name: 'pipelineDelayTime', value: '1day 15hours 1minutes' },
+        { name: 'totalDelayTime', value: '4day 3hours 49minutes' },
       ],
     },
   ],

@@ -4,13 +4,13 @@ describe('deployment frequency data mapper', () => {
   const mockDeploymentFrequencyRes = {
     avgDeploymentFrequency: {
       name: 'Average',
-      deploymentFrequency: '0.40',
+      deploymentFrequency: 0.4,
     },
     deploymentFrequencyOfPipelines: [
       {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
-        deploymentFrequency: '0.30',
+        deploymentFrequency: 0.3,
         items: [
           {
             date: '9/9/2022',
@@ -36,7 +36,7 @@ describe('deployment frequency data mapper', () => {
         valuesList: [
           {
             name: 'Deployment frequency(deployments/day)',
-            value: '0.30',
+            value: '30.00%',
           },
         ],
       },
@@ -46,7 +46,7 @@ describe('deployment frequency data mapper', () => {
         valuesList: [
           {
             name: 'Deployment frequency(deployments/day)',
-            value: '0.40',
+            value: '40.00%',
           },
         ],
       },

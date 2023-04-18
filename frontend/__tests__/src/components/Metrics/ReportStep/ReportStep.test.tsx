@@ -38,8 +38,8 @@ describe('Report Step', () => {
     const { getByText } = setup()
 
     await waitFor(() => {
-      expect(getByText('20')).toBeInTheDocument()
-      expect(getByText('14')).toBeInTheDocument()
+      expect(getByText(20)).toBeInTheDocument()
+      expect(getByText(14)).toBeInTheDocument()
     })
   })
 
@@ -49,6 +49,8 @@ describe('Report Step', () => {
     await waitFor(() => {
       expect(getByText('30.26(days/card)')).toBeInTheDocument()
       expect(getByText('21.18(days/SP)')).toBeInTheDocument()
+      expect(getByText('0.57')).toBeInTheDocument()
+      expect(getByText('12.13(days/SP)')).toBeInTheDocument()
     })
   })
 })

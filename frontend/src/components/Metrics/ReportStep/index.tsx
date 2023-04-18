@@ -6,6 +6,7 @@ import { selectConfig } from '@src/context/config/configSlice'
 import {
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
+  INIT_REPORT_DATA_WITH_TWO_COLUMNS_CYCLE,
   NAME,
   PIPELINE_STEP,
 } from '@src/constants'
@@ -15,7 +16,7 @@ import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 export const ReportStep = () => {
   const { generateReport, isLoading } = useGenerateReportEffect()
   const [velocityData, setVelocityData] = useState(INIT_REPORT_DATA_WITH_TWO_COLUMNS)
-  const [cycleTimeData, setCycleTimeData] = useState(INIT_REPORT_DATA_WITH_TWO_COLUMNS)
+  const [cycleTimeData, setCycleTimeData] = useState(INIT_REPORT_DATA_WITH_TWO_COLUMNS_CYCLE)
   const [classificationData, setClassificationData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
   const [deploymentFrequencyData, setDeploymentFrequencyData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
   const [leadTimeForChangesData, setLeadTimeForChangesData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)

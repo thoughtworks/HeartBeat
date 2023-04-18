@@ -7,6 +7,24 @@ export const leadTimeForChangesMapper = ({
 }: LeadTimeForChangesResponse) => {
   const mappedLeadTimeForChangesValue: ReportDataWithThreeColumns[] = []
 
+  const formatDuration = (duration: number) => {
+    const minutesPerDay = 1440
+    const minutesPerHour = 60
+    const days = Math.floor(duration / minutesPerDay)
+    const hours = Math.floor((duration % minutesPerDay) / minutesPerHour)
+    const minutes = Math.floor(duration % minutesPerHour)
+    let result = ''
+    if (days > 0) {
+      result += days + 'day '
+    }
+    if (hours > 0) {
+      result += hours + 'hours '
+    }
+    if (minutes > 0) {
+      result += minutes + 'minutes'
+    }
+    return result.trim()
+  }
   leadTimeForChangesOfPipelines.map((item, index) => {
     const deploymentFrequencyValue: ReportDataWithThreeColumns = {
       id: index,
@@ -15,7 +33,7 @@ export const leadTimeForChangesMapper = ({
         .slice(-3)
         .map(([name, value]) => ({
           name: name,
-          value: value.toString(),
+          value: formatDuration(value),
         })),
     }
     mappedLeadTimeForChangesValue.push(deploymentFrequencyValue)
@@ -27,7 +45,7 @@ export const leadTimeForChangesMapper = ({
       .slice(-3)
       .map(([name, value]) => ({
         name: name,
-        value: value.toString(),
+        value: formatDuration(value),
       })),
   })
 

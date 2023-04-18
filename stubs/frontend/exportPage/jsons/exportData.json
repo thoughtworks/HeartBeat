@@ -1,67 +1,67 @@
 {
   "velocity": {
-    "velocityForSP": "20",
-    "velocityForCards": "14"
+    "velocityForSP": 20,
+    "velocityForCards": 14
   },
   "cycleTime": {
-    "averageCircleTimePerCard": "30.26",
-    "averageCycleTimePerSP": "21.18",
+    "averageCycleTimePerCard": 30.26,
+    "averageCycleTimePerSP": 21.18,
     "totalTimeForCards": 423.59,
     "swimlaneList": [
       {
         "optionalItemName": "Analysis",
-        "averageTimeForSP": "8.36",
-        "averageTimeForCards": "11.95",
-        "totalTime": "167.27"
+        "averageTimeForSP": 8.36,
+        "averageTimeForCards": 11.95,
+        "totalTime": 167.27
       },
       {
         "optionalItemName": "In Dev",
-        "averageTimeForSP": "12.13",
-        "averageTimeForCards": "17.32",
-        "totalTime": "242.51"
+        "averageTimeForSP": 12.13,
+        "averageTimeForCards": 17.32,
+        "totalTime": 242.51
       },
       {
         "optionalItemName": "Waiting for testing",
-        "averageTimeForSP": "0.16",
-        "averageTimeForCards": "0.23",
-        "totalTime": "3.21"
+        "averageTimeForSP": 0.16,
+        "averageTimeForCards": 0.23,
+        "totalTime": 3.21
       },
       {
         "optionalItemName": "Done",
-        "averageTimeForSP": "86.20",
-        "averageTimeForCards": "123.14",
-        "totalTime": "1723.99"
+        "averageTimeForSP": 86.2,
+        "averageTimeForCards": 123.14,
+        "totalTime": 1723.99
       },
       {
         "optionalItemName": "Block",
-        "averageTimeForSP": "8.54",
-        "averageTimeForCards": "12.20",
-        "totalTime": "170.80"
+        "averageTimeForSP": 8.54,
+        "averageTimeForCards": 12.2,
+        "totalTime": 170.8
       },
       {
         "optionalItemName": "Review",
-        "averageTimeForSP": "0.26",
-        "averageTimeForCards": "0.36",
-        "totalTime": "5.10"
+        "averageTimeForSP": 0.26,
+        "averageTimeForCards": 0.36,
+        "totalTime": 5.1
       },
       {
         "optionalItemName": "Testing",
-        "averageTimeForSP": "0.10",
-        "averageTimeForCards": "0.14",
-        "totalTime": "1.97"
+        "averageTimeForSP": 0.1,
+        "averageTimeForCards": 0.14,
+        "totalTime": 1.97
       }
     ]
   },
   "deploymentFrequency": {
     "avgDeploymentFrequency": {
       "name": "Average",
-      "deploymentFrequency": "0.40"
+      "deploymentFrequency": 0.4
     },
     "deploymentFrequencyOfPipelines": [
       {
         "name": "fs-platform-onboarding",
         "step": " :shipit: deploy to PROD",
-        "deploymentFrequency": "0.30",
+        "deploymentFrequency": 0.3,
         "items": [
           {
             "date": "9/9/2022",
@@ -80,7 +80,7 @@
       {
         "name": "fs-platform-environment-devops",
         "step": "RECORD RELEASE TO PROD",
-        "deploymentFrequency": "0.50",
+        "deploymentFrequency": 0.5,
         "items": [
           {
             "date": "9/9/2022",
@@ -103,7 +103,7 @@
       {
         "name": "fs-platform-payment-selector",
         "step": "RECORD RELEASE TO PROD",
-        "deploymentFrequency": "0.40",
+        "deploymentFrequency": 0.4,
         "items": [
           {
             "date": "9/6/2022",

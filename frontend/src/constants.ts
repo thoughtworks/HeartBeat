@@ -147,7 +147,14 @@ export const INIT_REPORT_DATA_WITH_TWO_COLUMNS: ReportDataWithTwoColumns[] = [
   {
     id: 1,
     name: '',
-    valueList: [],
+    valueList: [{ value: 0 }],
+  },
+]
+export const INIT_REPORT_DATA_WITH_TWO_COLUMNS_CYCLE: ReportDataWithTwoColumns[] = [
+  {
+    id: 1,
+    name: '',
+    valueList: [{ value: 0, unit: '' }],
   },
 ]
 

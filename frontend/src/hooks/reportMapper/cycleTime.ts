@@ -1,31 +1,43 @@
 import { CYCLE_TIME_METRICS_NAME, METRICS_CONSTANTS, Unit } from '@src/constants'
-import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+import { ReportDataWithTwoColumns, ValueWithUnits } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { CycleTimeResponse, Swimlane } from '@src/clients/report/dto/response'
 
 export const cycleTimeMapper = ({
   swimlaneList,
   totalTimeForCards,
   averageCycleTimePerSP,
-  averageCircleTimePerCard,
+  averageCycleTimePerCard,
 }: CycleTimeResponse) => {
   const mappedCycleTimeValue: ReportDataWithTwoColumns[] = []
 
   const getSwimlaneByItemName = (itemName: string) => {
     return swimlaneList.find((item: Swimlane) => item.optionalItemName === itemName)
   }
-  const calPerColumnTotalTimeDivTotalTime = (itemName: string) => {
+  const calPerColumnTotalTimeDivTotalTime = (itemName: string): ValueWithUnits[] => {
     const swimlane = getSwimlaneByItemName(itemName)
-    return swimlane ? [(parseFloat(swimlane.totalTime) / totalTimeForCards).toFixed(2)] : []
+    return swimlane ? [{ value: parseFloat((swimlane.totalTime / totalTimeForCards).toFixed(2)) }] : []
   }
   const getAverageTimeForPerColumn = (itemName: string) => {
     const swimlane = getSwimlaneByItemName(itemName)
     return swimlane
-      ? [`${swimlane.averageTimeForSP}${Unit.PER_SP}`, `${swimlane.averageTimeForCards}${Unit.PER_CARD}`]
+      ? [
+          { value: swimlane.averageTimeForSP, unit: Unit.PER_SP },
+          {
+            value: swimlane.averageTimeForCards,
+            unit: Unit.PER_CARD,
+          },
+        ]
       : []
   }
 
-  const cycleTimeValue: { [key: string]: string[] } = {
-    AVERAGE_CYCLE_TIME: [`${averageCycleTimePerSP}${Unit.PER_SP}`, `${averageCircleTimePerCard}${Unit.PER_CARD}`],
+  const cycleTimeValue: { [key: string]: ValueWithUnits[] } = {
+    AVERAGE_CYCLE_TIME: [
+      { value: averageCycleTimePerSP, unit: Unit.PER_SP },
+      {
+        value: averageCycleTimePerCard,
+        unit: Unit.PER_CARD,
+      },
+    ],
     DEVELOPMENT_PROPORTION: calPerColumnTotalTimeDivTotalTime(METRICS_CONSTANTS.inDevValue),
     WAITING_PROPORTION: calPerColumnTotalTimeDivTotalTime(METRICS_CONSTANTS.waitingValue),
     BLOCK_PROPORTION: calPerColumnTotalTimeDivTotalTime(METRICS_CONSTANTS.blockValue),
@@ -38,8 +50,10 @@ export const cycleTimeMapper = ({
     AVERAGE_TESTING_TIME: getAverageTimeForPerColumn(METRICS_CONSTANTS.testingValue),
   }
 
-  Object.entries(CYCLE_TIME_METRICS_NAME).map(([key, cycleName], index) => {
-    mappedCycleTimeValue.push({ id: index, name: cycleName, valueList: cycleTimeValue[key] })
+  Object.entries(CYCLE_TIME_METRICS_NAME).map(([key, cycleName]) => {
+    if (cycleTimeValue[key].length > 0) {
+      mappedCycleTimeValue.push({ id: mappedCycleTimeValue.length, name: cycleName, valueList: cycleTimeValue[key] })
+    }
   })
 
   return mappedCycleTimeValue

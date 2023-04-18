@@ -17,6 +17,7 @@ jest.mock('@src/hooks', () => ({
     { id: 2, organization: '', pipelineName: '', steps: '' },
   ]),
 }))
+
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   addADeploymentFrequencySetting: jest.fn(),
   deleteADeploymentFrequencySetting: jest.fn(),

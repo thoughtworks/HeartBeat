@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +42,8 @@ public class GithubService {
 			LinkedHashSet<String> githubRepos = new LinkedHashSet<>(githubReposByUser);
 
 			log.info("[Github] Start to query repository_url by organization_name and token, token: " + partialToken);
-			getAllGithubRepos(token, githubOrganizations, githubRepos);
+			Set<String> githubReposByOrganizations = getAllGithubRepos(token, githubOrganizations);
+			githubRepos.addAll(githubReposByOrganizations);
 			log.info("[Github] Successfully get all repository_url, token: " + partialToken + " repos: " + githubRepos);
 
 			return GitHubResponse.builder().githubRepos(githubRepos).build();
@@ -52,14 +54,13 @@ public class GithubService {
 		}
 	}
 
-	private void getAllGithubRepos(String token, List<GitHubOrganizationsInfo> githubOrganizations,
-			LinkedHashSet<String> githubRepos) {
-		githubRepos.addAll(githubOrganizations.stream()
+	private Set<String> getAllGithubRepos(String token, List<GitHubOrganizationsInfo> githubOrganizations) {
+		return githubOrganizations.stream()
 			.map(GitHubOrganizationsInfo::getLogin)
 			.flatMap(org -> githubFeignClient.getReposByOrganizationName(org, token)
 				.stream()
 				.map(GitHubRepos::getHtml_url))
-			.collect(Collectors.toSet()));
+			.collect(Collectors.toSet());
 	}
 
 }

@@ -1,7 +1,7 @@
 package heartbeat.service.source.github;
 
 import feign.FeignException;
-import heartbeat.client.GithubFeignClient;
+import heartbeat.client.GitHubFeignClient;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepos;
 import heartbeat.controller.source.dto.GitHubResponse;
@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class GithubService {
+public class GitHubService {
 
-	private final GithubFeignClient githubFeignClient;
+	private final GitHubFeignClient githubFeignClient;
 
 	public GitHubResponse verifyToken(String githubToken) {
 		String token = "token " + githubToken;

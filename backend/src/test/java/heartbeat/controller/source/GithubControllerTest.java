@@ -2,7 +2,7 @@ package heartbeat.controller.source;
 
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.source.dto.GitHubResponse;
-import heartbeat.service.source.github.GithubService;
+import heartbeat.service.source.github.GitHubService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class GithubControllerTest {
 
 	@MockBean
-	private GithubService githubVerifyService;
+	private GitHubService githubVerifyService;
 
 	@Autowired
 	private MockMvc mockMvc;

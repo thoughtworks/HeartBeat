@@ -1,7 +1,7 @@
 package heartbeat.controller.source;
 
 import heartbeat.controller.source.dto.GitHubResponse;
-import heartbeat.service.source.github.GithubService;
+import heartbeat.service.source.github.GitHubService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Validated
 public class GithubController {
 
-	private final GithubService githubService;
+	private final GitHubService githubService;
 
 	@GetMapping
 	@CrossOrigin

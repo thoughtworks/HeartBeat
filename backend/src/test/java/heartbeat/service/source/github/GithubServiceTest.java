@@ -1,6 +1,6 @@
 package heartbeat.service.source.github;
 
-import heartbeat.client.GithubFeignClient;
+import heartbeat.client.GitHubFeignClient;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepos;
 import heartbeat.exception.CustomFeignClientException;
@@ -25,10 +25,10 @@ import static org.mockito.Mockito.when;
 class GithubServiceTest {
 
 	@Mock
-	GithubFeignClient githubFeignClient;
+	GitHubFeignClient githubFeignClient;
 
 	@InjectMocks
-	GithubService githubService;
+	GitHubService githubService;
 
 	@Test
 	void shouldReturnNonRedundantGithubReposWhenCallGithubFeignClientApi() {

@@ -48,6 +48,9 @@ export const SIDEBAR: Sidebar = {
       { text: 'Page 2', link: '/en/page-2' },
       { text: 'Page 3', link: '/en/page-3' },
     ],
-    'Dev Center': [{ text: 'Report Calculation Method', link: '/en/report-calculation-method' }],
+    'Dev Center': [
+      { text: 'Report Calculation Method', link: '/en/report-calculation-method' },
+      { text: 'Sequence Diagram', link: '/en/dev-center/sequence-diagram' },
+    ],
   },
 };

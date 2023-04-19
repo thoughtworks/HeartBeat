@@ -1,5 +1,5 @@
 export const SITE = {
-  title: 'HeartBeat Docs',
+  title: 'Heartbeat Docs',
   description: 'Your website description.',
   defaultLanguage: 'en_US',
 };

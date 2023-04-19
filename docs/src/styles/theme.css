@@ -20,8 +20,8 @@
   --color-base-white: 0, 0%;
   --color-base-black: 240, 100%;
   --color-base-gray: 215, 14%;
-  --color-base-blue: 212, 100%;
-  --color-base-blue-dark: 212, 72%;
+  --color-base-blue: 240, 80%;
+  --color-base-blue-dark: 240, 72%;
   --color-base-green: 158, 79%;
   --color-base-orange: 22, 100%;
   --color-base-purple: 269, 79%;
@@ -29,7 +29,7 @@
   --color-base-yellow: 41, 100%;
 
   /*
-   * Color palettes are made using --color-base 
+   * Color palettes are made using --color-base
    * variables, along with a lightness value to
    * define different variants.
    *

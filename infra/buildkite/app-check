@@ -5,8 +5,10 @@ run_backend_check() {
   cd backend
   echo "--- Gradle Version"
   ./gradlew -v
-  echo "--- Test and Check"
-  ./gradlew clean check
+  echo "--- Clean"
+  ./gradlew clean
+  echo "--- Check"
+  ./gradlew check
   echo "--- Build "
   ./gradlew clean build
   # echo "--- Uploading Test Report to Codacy"

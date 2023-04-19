@@ -114,7 +114,7 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should show step selection when select organization and pipelineName', async () => {
-    metricsClient.getSteps = jest.fn().mockImplementation(() => ['step1', 'step2'])
+    metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps1', 'steps2'])
     const { getByText } = await setup(
       { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
       false

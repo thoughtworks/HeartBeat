@@ -6,6 +6,7 @@ import heartbeat.controller.report.vo.request.GenerateReportRequest;
 import heartbeat.controller.report.vo.request.JiraBoardSetting;
 import heartbeat.controller.report.vo.request.RequireDataEnum;
 import heartbeat.controller.report.vo.response.GenerateReportResponse;
+import heartbeat.controller.report.vo.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,13 +36,21 @@ public class GenerateReporterService {
 		this.fetchOriginalData(request);
 
 		// calculate all required data
+		Velocity velocity = calculateVelocity();
 		calculateClassification();
 		calculateDeployment();
 		calculateCycleTime();
 		calculateLeadTime();
 
 		// combined data to GenerateReportResponse
-		return GenerateReportResponse.builder().build();
+		return GenerateReportResponse.builder().velocity(velocity).build();
+	}
+
+	private Velocity calculateVelocity() {
+		return Velocity.builder()
+			.velocityForSP(String.valueOf(cards.getStoryPointSum()))
+			.velocityForCards(String.valueOf(cards.getCardsNumber()))
+			.build();
 	}
 
 	private void calculateClassification() {
@@ -89,7 +98,6 @@ public class GenerateReporterService {
 			.build();
 		this.cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
-
 	}
 
 	private void fetchGithubData() {

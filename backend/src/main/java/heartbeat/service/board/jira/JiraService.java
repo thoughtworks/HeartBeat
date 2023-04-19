@@ -78,6 +78,8 @@ public class JiraService {
 
 	private static final String DONE_CARD_TAG = "done";
 
+	private CardCustomFieldKey cardCustomFieldKey;
+
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
 
@@ -348,8 +350,7 @@ public class JiraService {
 
 	public Cards getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
-		this.saveCustomFieldKey(request);
-		int storyPointSum;
+		cardCustomFieldKey = saveCustomFieldKey(request);
 		BoardType boardType = BoardType.fromValue(request.getType());
 		URI baseUrl = urlGenerator.getUri(request.getSite());
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
@@ -361,38 +362,34 @@ public class JiraService {
 			.startTime(request.getStartTime())
 			.endTime(request.getEndTime())
 			.build();
-
 		List<DoneCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
 
 		List<JiraCardResponse> matchedCards = new ArrayList<>();
-
 		allDoneCards.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-					request.getSite(), request.isTreatFlagCardAsBlock());
+					request.isTreatFlagCardAsBlock());
 			List<String> assigneeSet = getAssigneeSet(baseUrl, doneCard, request.getToken());
-
-			// fix the assignee not in the card history, only in the card field issue.
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
 			}
-
 			if (users.stream().anyMatch(assigneeSet::contains)) {
 				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
 				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
 
-
 				JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
 					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
 					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
-					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(),cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns))
+					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(),
+							boardColumns))
 					.build();
-
 				matchedCards.add(jiraCardResponse);
 			}
 		});
 
-		storyPointSum = matchedCards.stream().mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints()).sum();
+		int storyPointSum = matchedCards.stream()
+			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
+			.sum();
 
 		return Cards.builder()
 			.storyPointSum(storyPointSum)
@@ -401,24 +398,22 @@ public class JiraService {
 			.build();
 	}
 
-	private void saveCustomFieldKey(StoryPointsAndCycleTimeRequest model) {
+	private CardCustomFieldKey saveCustomFieldKey(StoryPointsAndCycleTimeRequest model) {
+		CardCustomFieldKey cardCustomFieldKey = CardCustomFieldKey.builder().build();
 		for (TargetField value : model.getTargetFields()) {
 			switch (value.getName()) {
-				case "Story Points", "Story point estimate" ->
-					CardCustomFieldKey.builder().STORY_POINTS(value.getKey()).build();
-				case "Sprint" -> CardCustomFieldKey.builder().SPRINT(value.getKey()).build();
-				case "Flagged" -> CardCustomFieldKey.builder().FLAGGED(value.getKey()).build();
+				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setSTORY_POINTS(value.getKey());
+				case "Sprint" -> cardCustomFieldKey.setSPRINT(value.getKey());
+				case "Flagged" -> cardCustomFieldKey.setFLAGGED(value.getKey());
 				default -> {
 				}
 			}
 		}
+		return cardCustomFieldKey;
 	}
 
-	// TODO origin function name is:getCycleTimeAndAssignee
-	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, String site,
-			Boolean treatFlagCardAsBlock) {
+	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock) {
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
-
 		List<StatusChangedArrayItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				treatFlagCardAsBlock);
 		List<StatusChangedArrayItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(
@@ -462,7 +457,7 @@ public class JiraService {
 		if (treatFlagCardAsBlock) {
 			jiraCardHistory.getItems()
 				.stream()
-				.filter(activity -> "flagged".equals(activity.getFieldId()))
+				.filter(activity -> cardCustomFieldKey.getFLAGGED().equals(activity.getFieldId()))
 				.forEach(activity -> {
 					if ("Impediment".equals(activity.getTo().getDisplayValue())) {
 						statusChangedArray.add(StatusChangedArrayItem.builder()
@@ -482,12 +477,12 @@ public class JiraService {
 
 	}
 
-	private CardCycleTime calculateCardCycleTime(String cardId,
-												 List<CycleTimeInfo> cycleTimeInfos,
+	private CardCycleTime calculateCardCycleTime(String cardId, List<CycleTimeInfo> cycleTimeInfos,
 			List<RequestJiraBoardColumnSetting> boardColumns) {
 		Map<String, CardStepsEnum> boardMap = selectedStepsArrayToMap(boardColumns);
-		StepsDay stepsDay =  StepsDay.builder().build();
+		StepsDay stepsDay = StepsDay.builder().build();
 		double total = 0;
+
 		for (CycleTimeInfo cycleTimeInfo : cycleTimeInfos) {
 			String swimLane = cycleTimeInfo.getColumn();
 			if (swimLane.equals("FLAG")) {

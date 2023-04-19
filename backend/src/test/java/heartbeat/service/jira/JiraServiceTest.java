@@ -5,8 +5,8 @@ import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.DoneCard;
-import heartbeat.client.dto.DoneCardFields;
+import heartbeat.client.dto.JiraCard;
+import heartbeat.client.dto.JiraCardFields;
 import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.JiraBoardConfigDTO;
@@ -15,10 +15,11 @@ import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
 import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.request.Cards;
-import heartbeat.controller.board.vo.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.controller.board.vo.response.CardCustomFieldKey;
 import heartbeat.controller.board.vo.response.TargetField;
+import heartbeat.controller.report.vo.request.JiraBoardSetting;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.AfterEach;
@@ -355,7 +356,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new DoneCard("1", new DoneCardFields())))
+			.issues(List.of(new JiraCard("1", new JiraCardFields())))
 			.build();
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -390,7 +391,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new DoneCard("1", new DoneCardFields())))
+			.issues(List.of(new JiraCard("1", new JiraCardFields())))
 			.build();
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
@@ -442,14 +443,49 @@ class JiraServiceTest {
 
 	@Test
 	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() {
-		StoryPointsAndCycleTimeRequest request = StoryPointsAndCycleTimeRequest.builder()
-			.targetFields(List.of(TargetField.builder().name("").build()))
+		String token = "token";
+
+		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
+			.boardId("123")
+			.boardColumns(List.of())
+			.token(token)
+			.site("site")
+			.doneColumn(List.of("DONE"))
+			.treatFlagCardAsBlock(true)
 			.type("jira")
-			.status(List.of(""))
+			.projectKey("PLL")
+			.teamId("HB")
+			.teamName("HB")
+			.targetFields(List.of(
+				TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
+				TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
+				TargetField.builder().key("testKey").name("Flagged").flag(true).build()))
 			.build();
-		RequestJiraBoardColumnSetting requestJiraBoardColumnSetting = RequestJiraBoardColumnSetting.builder().build();
-		Cards cards = jiraService.getStoryPointsAndCycleTime(request, List.of(requestJiraBoardColumnSetting),
-				List.of("Zhang"));
+
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = StoryPointsAndCycleTimeRequest.builder()
+			.token("token")
+			.type(jiraBoardSetting.getType())
+			.site(jiraBoardSetting.getSite())
+			.project(jiraBoardSetting.getProjectKey())
+			.boardId(jiraBoardSetting.getBoardId())
+			.status(jiraBoardSetting.getDoneColumn())
+			.startTime("1672556350000")
+			.endTime("1676908799000")
+			.targetFields(jiraBoardSetting.getTargetFields())
+			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
+			.build();
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		Cards cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting.getBoardColumns(), List.of("San Zhang"));
 
 		assertThat(cards.equals(null));
 	}

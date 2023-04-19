@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DoneCard implements Serializable {
+public class JiraCard implements Serializable {
 
 	private String key;
 
-	private DoneCardFields fields;
+	private JiraCardFields fields;
 
 }

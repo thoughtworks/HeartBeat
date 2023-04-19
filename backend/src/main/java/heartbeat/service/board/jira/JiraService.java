@@ -5,7 +5,7 @@ import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.DoneCard;
+import heartbeat.client.dto.JiraCard;
 import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.IssueField;
@@ -221,7 +221,7 @@ public class JiraService {
 			throw new RequestFailedException(204, "[Jira] There is no done column.");
 		}
 
-		List<DoneCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam);
+		List<JiraCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam);
 
 		if (doneCards.isEmpty()) {
 			throw new RequestFailedException(204, "[Jira] There is no done cards.");
@@ -236,7 +236,7 @@ public class JiraService {
 		return assigneeList.stream().flatMap(Collection::stream).distinct().toList();
 	}
 
-	private List<DoneCard> getAllDoneCards(BoardType boardType, URI baseUrl, List<String> doneColumns,
+	private List<JiraCard> getAllDoneCards(BoardType boardType, URI baseUrl, List<String> doneColumns,
 			BoardRequestParam boardRequestParam) {
 		String jql = parseJiraJql(boardType, doneColumns, boardRequestParam);
 
@@ -245,7 +245,7 @@ public class JiraService {
 				boardRequestParam.getBoardId(), QUERY_COUNT, 0, jql, boardRequestParam.getToken());
 		log.info("[Jira] Successfully get first-page done card information");
 
-		List<DoneCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
+		List<JiraCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 
 		int pages = (int) Math.ceil(Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
 		if (pages <= 1) {
@@ -262,7 +262,7 @@ public class JiraService {
 		log.info("[Jira] Successfully get more done card information");
 
 		List<AllDoneCardsResponseDTO> doneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
-		List<DoneCard> moreDoneCards = doneCardsResponses.stream()
+		List<JiraCard> moreDoneCards = doneCardsResponses.stream()
 			.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
 			.toList();
 
@@ -291,7 +291,7 @@ public class JiraService {
 		}
 	}
 
-	private List<String> getAssigneeSet(URI baseUrl, DoneCard donecard, String jiraToken) {
+	private List<String> getAssigneeSet(URI baseUrl, JiraCard donecard, String jiraToken) {
 		log.info("[Jira] Start to get jira card history, key: {},done cards: {}", donecard.getKey(), donecard);
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, donecard.getKey(),
 				jiraToken);
@@ -362,13 +362,13 @@ public class JiraService {
 			.startTime(request.getStartTime())
 			.endTime(request.getEndTime())
 			.build();
-		List<DoneCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
+		List<JiraCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
 
 		List<JiraCardResponse> matchedCards = new ArrayList<>();
 		allDoneCards.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock());
-			List<String> assigneeSet = getAssigneeSet(baseUrl, doneCard, request.getToken());
+			ArrayList<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
@@ -378,6 +378,7 @@ public class JiraService {
 				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
 
 				JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
+					.baseInfo(doneCard)
 					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
 					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
 					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(),
@@ -457,7 +458,7 @@ public class JiraService {
 		if (treatFlagCardAsBlock) {
 			jiraCardHistory.getItems()
 				.stream()
-				.filter(activity -> cardCustomFieldKey.getFLAGGED().equals(activity.getFieldId()))
+				.filter(activity -> "flogged".equals(activity.getFieldId()))
 				.forEach(activity -> {
 					if ("Impediment".equals(activity.getTo().getDisplayValue())) {
 						statusChangedArray.add(StatusChangedArrayItem.builder()

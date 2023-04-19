@@ -96,7 +96,7 @@ public class GenerateReporterService {
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
 			.build();
-		this.cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+		cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 	}
 

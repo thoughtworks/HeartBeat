@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class DoneCardFields implements Serializable {
+public class JiraCardFields implements Serializable {
 
 	private Assignee assignee;
 

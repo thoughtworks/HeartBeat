@@ -24,6 +24,7 @@ interface pipelineMetricSelectionProps {
   isShowRemoveButton: boolean
   errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
   handleClickRemoveButton: (id: number) => void
+  onUpdatePipeline: (id: number, label: string, value: string) => void
 }
 
 export const PipelineMetricSelection = ({
@@ -31,6 +32,7 @@ export const PipelineMetricSelection = ({
   isShowRemoveButton,
   errorMessages,
   handleClickRemoveButton,
+  onUpdatePipeline,
 }: pipelineMetricSelectionProps) => {
   const { id, organization, pipelineName, steps } = pipelineSetting
   const dispatch = useAppDispatch()
@@ -65,6 +67,7 @@ export const PipelineMetricSelection = ({
         label={'Organization'}
         value={organization}
         errorMessage={errorMessages?.organization}
+        onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
       />
       {organization && (
         <SingleSelection
@@ -74,6 +77,7 @@ export const PipelineMetricSelection = ({
           value={pipelineName}
           errorMessage={errorMessages?.pipelineName}
           onGetSteps={handleGetSteps}
+          onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
         />
       )}
       {organization && pipelineName && (
@@ -83,6 +87,7 @@ export const PipelineMetricSelection = ({
           label={'Steps'}
           value={steps}
           errorMessage={errorMessages?.steps}
+          onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
         />
       )}
       <ButtonWrapper>{isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove</RemoveButton>}</ButtonWrapper>

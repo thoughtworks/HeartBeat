@@ -1,8 +1,12 @@
-import { render } from '@testing-library/react'
+import { render, within } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
 import { LeadTimeForChanges } from '@src/components/Metrics/MetricsStep/LeadTimeForChanges'
-import { addALeadTimeForChanges, deleteALeadTimeForChange } from '@src/context/Metrics/metricsSlice'
+import {
+  addALeadTimeForChanges,
+  deleteALeadTimeForChange,
+  updateLeadTimeForChanges,
+} from '@src/context/Metrics/metricsSlice'
 import userEvent from '@testing-library/user-event'
 
 export const LEAD_TIME_FOR_CHANGES = 'Lead Time for Changes'
@@ -18,6 +22,14 @@ jest.mock('@src/hooks', () => ({
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   addALeadTimeForChanges: jest.fn(),
   deleteALeadTimeForChange: jest.fn(),
+  updateLeadTimeForChanges: jest.fn(),
+}))
+
+jest.mock('@src/context/config/configSlice', () => ({
+  ...jest.requireActual('@src/context/config/configSlice'),
+  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
+  selectPipelineNames: jest.fn().mockReturnValue(['']),
+  selectSteps: jest.fn().mockReturnValue(['']),
 }))
 
 const setup = () =>
@@ -52,5 +64,15 @@ describe('LeadTimeForChanges', () => {
     await userEvent.click(getAllByRole('button', { name: 'Remove' })[0])
 
     expect(deleteALeadTimeForChange).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call updateLeadTimeForChanges function when select organization', async () => {
+    const { getAllByRole, getByRole } = setup()
+
+    await userEvent.click(getAllByRole('button', { name: 'Organization' })[0])
+    const listBox = within(getByRole('listbox'))
+    await userEvent.click(listBox.getByText('mockOrgName'))
+
+    expect(updateLeadTimeForChanges).toHaveBeenCalledTimes(1)
   })
 })

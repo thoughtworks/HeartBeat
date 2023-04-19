@@ -6,6 +6,7 @@ import {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   selectDeploymentFrequencySettings,
+  updateDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton'
@@ -27,6 +28,10 @@ export const DeploymentFrequencySettings = () => {
     dispatch(deleteADeploymentFrequencySetting(id))
   }
 
+  const UpdatePipeline = (id: number, label: string, value: string) => {
+    dispatch(updateDeploymentFrequencySettings({ updateId: id, label, value }))
+  }
+
   const getErrorMessage = (deploymentFrequencySettingId: number) => {
     return errorMessages.filter(({ id }) => id === deploymentFrequencySettingId)[0]?.error
   }
@@ -41,6 +46,7 @@ export const DeploymentFrequencySettings = () => {
           isShowRemoveButton={deploymentFrequencySettings.length > 1}
           errorMessages={getErrorMessage(deploymentFrequencySetting.id)}
           handleClickRemoveButton={(id) => handleClickRemoveButton(id)}
+          onUpdatePipeline={(id, label, value) => UpdatePipeline(id, label, value)}
         />
       ))}
       <MetricsSettingAddButton handleClickAddButton={handleClickAddButton} />

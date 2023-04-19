@@ -4,6 +4,7 @@ import {
   addALeadTimeForChanges,
   deleteALeadTimeForChange,
   selectLeadTimeForChanges,
+  updateLeadTimeForChanges,
 } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch, useAppSelector } from '@src/hooks'
 import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton'
@@ -23,6 +24,10 @@ export const LeadTimeForChanges = () => {
     dispatch(deleteALeadTimeForChange(id))
   }
 
+  const UpdatePipeline = (id: number, label: string, value: string) => {
+    dispatch(updateLeadTimeForChanges({ updateId: id, label, value }))
+  }
+
   const getErrorMessage = (leadTimeForChangeId: number) => {
     return errorMessages.filter(({ id }) => id === leadTimeForChangeId)[0]?.error
   }
@@ -37,6 +42,7 @@ export const LeadTimeForChanges = () => {
           isShowRemoveButton={leadTimeForChanges.length > 1}
           errorMessages={getErrorMessage(leadTimeForChange.id)}
           handleClickRemoveButton={(id) => handleClickRemoveButton(id)}
+          onUpdatePipeline={(id, label, value) => UpdatePipeline(id, label, value)}
         />
       ))}
       <MetricsSettingAddButton handleClickAddButton={handleClickAddButton} />

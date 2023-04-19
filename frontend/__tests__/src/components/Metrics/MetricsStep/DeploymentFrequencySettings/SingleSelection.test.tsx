@@ -21,6 +21,7 @@ describe('SingleSelection', () => {
   const mockValue = 'mockOptions 1'
   const mockError = 'error message'
   const mockOnGetSteps = jest.fn()
+  const mockUpdatePipeline = jest.fn()
 
   let store = setupStore()
 
@@ -38,6 +39,7 @@ describe('SingleSelection', () => {
           id={0}
           errorMessage={errorMessage}
           onGetSteps={mockOnGetSteps}
+          onUpDatePipeline={mockUpdatePipeline}
         />
       </Provider>
     )
@@ -67,5 +69,6 @@ describe('SingleSelection', () => {
     expect(getByText(mockOptions[1])).toBeInTheDocument()
     expect(mockValidationCheckContext.clearErrorMessage).toHaveBeenCalledTimes(1)
     expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
   })
 })

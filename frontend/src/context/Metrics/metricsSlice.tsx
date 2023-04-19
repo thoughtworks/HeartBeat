@@ -89,6 +89,19 @@ export const metricsSlice = createSlice({
       ]
     },
 
+    updateLeadTimeForChanges: (state, action) => {
+      const { updateId, label, value } = action.payload
+
+      state.leadTimeForChanges = state.leadTimeForChanges.map((leadTimeForChange) => {
+        return leadTimeForChange.id === updateId
+          ? {
+              ...leadTimeForChange,
+              [camelCase(label)]: value,
+            }
+          : leadTimeForChange
+      })
+    },
+
     deleteALeadTimeForChange: (state, action) => {
       const deleteId = action.payload
       state.leadTimeForChanges = [...state.leadTimeForChanges.filter(({ id }) => id !== deleteId)]
@@ -106,6 +119,7 @@ export const {
   deleteADeploymentFrequencySetting,
   updateMetricsState,
   addALeadTimeForChanges,
+  updateLeadTimeForChanges,
   deleteALeadTimeForChange,
 } = metricsSlice.actions
 

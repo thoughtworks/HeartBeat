@@ -1,8 +1,6 @@
 import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlWrapper } from './style'
-import { useAppDispatch } from '@src/hooks'
-import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import camelCase from 'lodash.camelcase'
 
@@ -13,10 +11,10 @@ interface Props {
   id: number
   errorMessage: string | undefined
   onGetSteps?: (pipelineName: string) => void
+  onUpDatePipeline: (id: number, label: string, value: string) => void
 }
 
-export const SingleSelection = ({ options, label, value, id, errorMessage, onGetSteps }: Props) => {
-  const dispatch = useAppDispatch()
+export const SingleSelection = ({ options, label, value, id, errorMessage, onGetSteps, onUpDatePipeline }: Props) => {
   const [selectedValue, setSelectedValue] = useState(value)
   const { clearErrorMessage } = useMetricsStepValidationCheckContext()
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
@@ -25,7 +23,7 @@ export const SingleSelection = ({ options, label, value, id, errorMessage, onGet
     const value = event.target.value
     if (onGetSteps) onGetSteps(value)
     setSelectedValue(value)
-    dispatch(updateDeploymentFrequencySettings({ updateId: id, label, value }))
+    onUpDatePipeline(id, label, value)
     !!errorMessage && clearErrorMessage(id, camelCase(label))
   }
 

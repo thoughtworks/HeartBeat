@@ -8,6 +8,7 @@ layout: ../../../layouts/MainLayout.astro
 
 ```plantuml
 @startuml
+skin rose
 title C3 - Heartbeat - Generate Report
 participant Frontend
 participant GenerateReportController

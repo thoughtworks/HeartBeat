@@ -78,6 +78,10 @@ export const metricsSlice = createSlice({
       const deleteId = action.payload
       state.deploymentFrequencySettings = [...state.deploymentFrequencySettings.filter(({ id }) => id !== deleteId)]
     },
+
+    initDeploymentFrequencySettings: (state) => {
+      state.deploymentFrequencySettings = initialState.deploymentFrequencySettings
+    },
   },
 })
 
@@ -86,6 +90,7 @@ export const {
   saveDoneColumn,
   saveUsers,
   saveBoardColumns,
+  initDeploymentFrequencySettings,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,

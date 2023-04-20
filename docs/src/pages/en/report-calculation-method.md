@@ -4,14 +4,11 @@ description: Report calculation method
 layout: ../../layouts/MainLayout.astro
 ---
 
-This is a fully-featured page, written in Markdown!
+> Note: All metrics are calculated in the selected time range.
 
 ## Velocity
 
-### velocityForSP:
-
-sum of story points of all done cards in selected time
-
-### velocityForCards:
-
-sum of all done cards in selected time
+| Metrics                 | Calculate method                         | Note |
+| :---------------------- | :--------------------------------------- | :--- |
+| Velocity for Storypoint | Sum of the storypoints of all done cards |      |
+| Velocity for cards      | Sum of all done cards                    |      |

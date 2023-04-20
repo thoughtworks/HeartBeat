@@ -3,11 +3,18 @@ package heartbeat.util;
 import heartbeat.controller.board.vo.StatusChangedArrayItem;
 import heartbeat.controller.board.vo.request.CardStepsEnum;
 import heartbeat.controller.board.vo.response.CycleTimeInfo;
+import heartbeat.service.report.WorkDayUtil;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class BoardUtil {
+
+	WorkDayUtil workDayUtil;
 
 	public List<StatusChangedArrayItem> reformTimeLineForFlaggedCards(List<StatusChangedArrayItem> statusChangedArray) {
 		List<Integer> needToFilterArray = new ArrayList<>();
@@ -55,19 +62,13 @@ public class BoardUtil {
 		return cycleTimeInfos;
 	}
 
-	public static double getThisStepCostTime(int index, List<StatusChangedArrayItem> statusChangedArrayItems) {
+	public double getThisStepCostTime(int index, List<StatusChangedArrayItem> statusChangedArrayItems) {
 		if (index < statusChangedArrayItems.size() - 1) {
-			return WorkDayUtil.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
+			return workDayUtil.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
 					statusChangedArrayItems.get(index + 1).getTimestamp());
 		}
-		return WorkDayUtil.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
+		return workDayUtil.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
 				System.currentTimeMillis());
-	}
-
-	public static String convertTimeToDateString(long time) {
-		Date date = new Date(time);
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		return formatter.format(date);
 	}
 
 }

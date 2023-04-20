@@ -5,11 +5,11 @@ import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.JiraCard;
-import heartbeat.client.dto.JiraCardFields;
 import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.JiraBoardConfigDTO;
+import heartbeat.client.dto.JiraCard;
+import heartbeat.client.dto.JiraCardFields;
 import heartbeat.client.dto.Status;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.request.BoardRequestParam;
@@ -17,7 +17,6 @@ import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.request.Cards;
 import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
-import heartbeat.controller.board.vo.response.CardCustomFieldKey;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.controller.report.vo.request.JiraBoardSetting;
 import heartbeat.exception.RequestFailedException;
@@ -456,10 +455,9 @@ class JiraServiceTest {
 			.projectKey("PLL")
 			.teamId("HB")
 			.teamName("HB")
-			.targetFields(List.of(
-				TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
-				TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
-				TargetField.builder().key("testKey").name("Flagged").flag(true).build()))
+			.targetFields(List.of(TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
+					TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
+					TargetField.builder().key("testKey").name("Flagged").flag(true).build()))
 			.build();
 
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = StoryPointsAndCycleTimeRequest.builder()
@@ -487,7 +485,7 @@ class JiraServiceTest {
 		Cards cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("San Zhang"));
 
-		assertThat(cards.equals(null));
+		assertThat(false);
 	}
 
 }

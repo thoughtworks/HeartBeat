@@ -30,6 +30,7 @@ import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEff
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
+import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -129,6 +130,7 @@ export const PipelineTool = () => {
       if (res) {
         dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified))
         dispatch(updatePipelineToolVerifyResponse(res.response))
+        dispatch(initDeploymentFrequencySettings())
       }
     })
   }

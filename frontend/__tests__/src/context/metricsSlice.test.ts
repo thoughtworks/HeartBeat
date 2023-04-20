@@ -7,6 +7,7 @@ import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   selectDeploymentFrequencySettings,
+  initDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -148,5 +149,22 @@ describe('saveMetricsSetting reducer', () => {
 
   it('should return deploymentFrequencySettings when call selectDeploymentFrequencySettings functions', () => {
     expect(selectDeploymentFrequencySettings(store.getState())).toEqual(initState.deploymentFrequencySettings)
+  })
+
+  it('should init deploymentFrequencySettings when handle initDeploymentFrequencySettings given multiple deploymentFrequencySettings', () => {
+    const multipleDeploymentFrequencySettingsInitState = {
+      ...initState,
+      deploymentFrequencySettings: [
+        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', steps: 'step1' },
+        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', steps: 'step2' },
+      ],
+    }
+
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      multipleDeploymentFrequencySettingsInitState,
+      initDeploymentFrequencySettings()
+    )
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(initState.deploymentFrequencySettings)
   })
 })

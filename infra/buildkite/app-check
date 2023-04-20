@@ -3,8 +3,6 @@ set +x
 run_backend_check() {
   # docker run --rm -v "$PWD/backend":/home/gradle/project -v /var/cache/gradle:/home/gradle/.gradle -w /home/gradle/project gradle:8-jdk17-alpine gradle clean check
   cd backend
-  echo "--- Gradle Version"
-  ./gradlew -v
   echo "--- Check"
   ./gradlew clean check
   echo "--- Build "

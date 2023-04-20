@@ -5,13 +5,12 @@ run_backend_check() {
   cd backend
   echo "--- Gradle Version"
   ./gradlew -v
-  echo "--- Clean"
-  ./gradlew clean
   echo "--- Check"
-  ./gradlew check
+  ./gradlew clean check
   echo "--- Build "
   ./gradlew clean build
-  # echo "--- Uploading Test Report to Codacy"
+  echo "--- Uploading Test Report to Codacy"
+  bash <(curl -Ls https://coverage.codacy.com/get.sh)
   # docker run --rm -v "$PWD/backend":/coverage -w /coverage codacy/coverage-reporter:latest report -l Java -r build/reports/tests/test/index.html --projectToken $CODACY_PROJECT_TOKEN
 }
 run_backend_check

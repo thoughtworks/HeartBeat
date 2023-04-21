@@ -6,4 +6,22 @@ run_backend_check() {
   ./gradlew clean build
   bash <(curl -Ls https://coverage.codacy.com/get.sh)
 }
-run_backend_check
+
+run_frontend_check(){
+  cd frontend
+  npm install -g pnpm
+  pnpm install --no-frozen-lockfile
+  pnpm lint
+  pnpm coverage
+  pnpm build
+  bash <(curl -Ls https://coverage.codacy.com/get.sh)
+}
+
+if [[ "$1" == "backend" ]]; then
+  run_backend_check
+elif [[ "$1" == "frontend" ]]; then
+  run_frontend_check
+else
+  echo "Invalid command: $1"
+  exit 1
+fi

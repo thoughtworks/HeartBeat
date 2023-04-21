@@ -9,7 +9,6 @@ run_backend_check() {
 
 run_frontend_check(){
   cd frontend
-  npm install -g pnpm
   pnpm install --no-frozen-lockfile
   pnpm lint
   pnpm coverage

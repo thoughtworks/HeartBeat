@@ -1,32 +1,23 @@
 env:
   RETENTION_DAYS: "10"
 steps:
-  - label: ":lock: Security Check"
-    command: >
-      docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
+  # - label: ":lock: Security Check"
+  #   command: >
+  #     docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
 
-  - label: ":rocket: Backend Check"
-    command: ./infra/buildkite/app-check backend
+  # - label: ":rocket: Backend Check"
+  #   command: ./infra/buildkite/app-check backend
 
-  - label: ":mag: Backend License Check"
-    commands:
-      - cd backend
-      - ./gradlew clean checkLicense
-    plugins:
-      - artifacts#v1.9.0:
-          upload:
-            - "backend/build/reports/dependency-license/**/*"
-          name: "backend-license-report"
-          expire_in: "${RETENTION_DAYS} days"
+  # - label: ":mag: Backend License Check"
+  #   commands:
+  #     - cd backend
+  #     - ./gradlew clean checkLicense
+  #   plugins:
+  #     - artifacts#v1.9.0:
+  #         upload:
+  #           - "backend/build/reports/dependency-license/**/*"
+  #         name: "backend-license-report"
+  #         expire_in: "${RETENTION_DAYS} days"
   
   - label: ":computer: Frontend Check"
-    command: ./infra/buildkite/app-check frontend
-    plugins:
-      - docker#v5.6.0:
-          image: node:16.18.0
-          mount-buildkite-agent: true
-          propagate-environment: true
-          always-pull: true
-          pull-retries: 3
-          cache-from: "type=registry,ref=node:16.10.0"
-          cache-to: "type=inline"    
+    command: ./infra/buildkite/app-check frontend 

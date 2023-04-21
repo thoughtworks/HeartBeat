@@ -18,6 +18,6 @@ steps:
   #           - "backend/build/reports/dependency-license/**/*"
   #         name: "backend-license-report"
   #         expire_in: "${RETENTION_DAYS} days"
-  
+
   - label: ":computer: Frontend Check"
-    command: ./infra/buildkite/app-check frontend 
+    command: ./.buildkite/app-check frontend

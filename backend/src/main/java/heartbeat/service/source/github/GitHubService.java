@@ -14,12 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -37,9 +38,9 @@ public class GitHubService {
 	}
 
 	public GitHubResponse verifyToken(String githubToken) {
-		String token = "token " + githubToken;
-		String maskToken = TokenUtil.mask(token);
 		try {
+			String token = "token " + githubToken;
+			String maskToken = TokenUtil.mask(token);
 			log.info("Start to query repository_url by token, token: {}", maskToken);
 			CompletableFuture<List<GitHubRepos>> githubReposByUserFuture = CompletableFuture
 				.supplyAsync(() -> gitHubFeignClient.getAllRepos(token), taskExecutor);
@@ -48,7 +49,7 @@ public class GitHubService {
 			CompletableFuture<List<GitHubOrganizationsInfo>> githubOrganizationsFuture = CompletableFuture
 				.supplyAsync(() -> gitHubFeignClient.getGithubOrganizationsInfo(token), taskExecutor);
 
-			CompletableFuture<GitHubResponse> combinedFuture = githubReposByUserFuture
+			return githubReposByUserFuture
 				.thenCombineAsync(githubOrganizationsFuture, (githubReposByUser, githubOrganizations) -> {
 					log.info("Successfully get repository_token: {}, githubReposByUser: {}", maskToken,
 							githubReposByUser);
@@ -62,31 +63,40 @@ public class GitHubService {
 					log.info("Successfully get all repositories_token: {}, repos: {}", maskToken, allGitHubRepos);
 					githubRepos.addAll(allGitHubRepos);
 					return GitHubResponse.builder().githubRepos(githubRepos).build();
-				}, taskExecutor);
-			return combinedFuture.join();
+				}, taskExecutor)
+				.join();
 		}
-		catch (FeignException e) {
-			log.error("Failed to call Github with token_error: {}", e);
-			throw new RequestFailedException(e);
+		catch (CompletionException e) {
+			Throwable cause = e.getCause();
+			log.error("Failed to call GitHub with token_error ", cause);
+			if (cause instanceof FeignException feignException) {
+				throw new RequestFailedException(feignException);
+			}
+			throw e;
 		}
 	}
 
 	private CompletableFuture<Set<String>> getAllGitHubReposAsync(String token,
 			List<GitHubOrganizationsInfo> gitHubOrganizations) {
 		String maskToken = TokenUtil.mask(token);
-		List<CompletableFuture<Stream<String>>> repoFutures = gitHubOrganizations.stream()
+		List<CompletableFuture<List<String>>> repoFutures = gitHubOrganizations.stream()
 			.map(GitHubOrganizationsInfo::getLogin)
 			.map(org -> CompletableFuture.supplyAsync(() -> {
 				log.info("Start to query repository by organization_token: {}, gitHubOrganization: {}", maskToken, org);
-				Stream<String> stringStream = gitHubFeignClient.getReposByOrganizationName(org, token)
+				List<String> repos = gitHubFeignClient.getReposByOrganizationName(org, token)
 					.stream()
-					.map(GitHubRepos::getHtml_url);
+					.map(GitHubRepos::getHtml_url)
+					.toList();
 				log.info("End to queried repository by organization_token: {}, gitHubOrganization: {}", maskToken, org);
-				return stringStream;
-			}, taskExecutor)).toList();
-
+				return repos;
+			}, taskExecutor))
+			.toList();
+      log.info("There are futures {}", repoFutures.size());
 		return CompletableFuture.allOf(repoFutures.toArray(new CompletableFuture[0]))
-			.thenApply(v -> repoFutures.stream().flatMap(CompletableFuture::join).collect(Collectors.toSet()));
+			.thenApply(v -> repoFutures.stream()
+				.map(CompletableFuture::join)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toSet()));
 	}
 
 }

@@ -5,7 +5,9 @@ import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepos;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.RequestFailedException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,11 +15,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +35,29 @@ class GithubServiceTest {
 
 	@InjectMocks
 	GitHubService githubService;
+
+	ThreadPoolTaskExecutor executor;
+
+	@BeforeEach
+	public void setUp() {
+		githubService = new GitHubService(executor = getTaskExecutor(), gitHubFeignClient);
+	}
+
+	@AfterEach
+	public void tearDown() {
+		executor.shutdown();
+	}
+
+	public ThreadPoolTaskExecutor getTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(10);
+		executor.setMaxPoolSize(100);
+		executor.setQueueCapacity(500);
+		executor.setKeepAliveSeconds(60);
+		executor.setThreadNamePrefix("Heartbeat-");
+		executor.initialize();
+		return executor;
+	}
 
 	@Test
 	void shouldReturnNonRedundantGithubReposWhenCallGithubFeignClientApi() {
@@ -46,7 +75,7 @@ class GithubServiceTest {
 					GitHubRepos.builder().html_url("33333").build(), GitHubRepos.builder().html_url("44444").build()));
 
 		final var response = githubService.verifyToken(githubToken);
-
+		githubService.shutdownExecutor();
 		assertThat(response.getGithubRepos()).hasSize(4);
 		assertThat(response.getGithubRepos())
 			.isEqualTo(new LinkedHashSet<>(List.of("11111", "22222", "33333", "44444")));
@@ -63,6 +92,20 @@ class GithubServiceTest {
 				() -> githubService.verifyToken(wrongGithubToken));
 
 		assertThat(thrown.getMessage()).isEqualTo("Request failed with status code 401, error: Bad credentials");
+	}
+
+	@Test
+	void shouldThrowExceptionWhenVerifyGitHubThrowUnExpectedException() {
+
+		when(gitHubFeignClient.getAllRepos(anyString()))
+			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+		when(gitHubFeignClient.getGithubOrganizationsInfo(anyString()))
+			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+		when(gitHubFeignClient.getReposByOrganizationName(anyString(), anyString()))
+			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+
+		assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(CompletionException.class)
+			.hasMessageContaining("UnExpected Exception");
 	}
 
 }

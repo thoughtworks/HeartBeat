@@ -65,6 +65,37 @@ Resources:
                 Effect: Allow
                 Resource: "*"
             Version: "2012-10-17"
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaPolicy
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - ec2:StartInstances
+                  - ec2:StopInstances
+                  - ec2:DescribeInstances
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - logs:*
+              Resource: arn:aws:logs:*:*:*
 
   AWSGitHubActionRole:
     Type: AWS::IAM::Role
@@ -373,6 +404,87 @@ Resources:
       InstanceId: !Ref E2EEC2Instance
       Domain: vpc
 
+  LambdaForEC2Management:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: !Sub |
+          import boto3
+          import logging
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          ec2 = boto3.client('ec2')
+
+          def lambda_handler(event, context):
+              action = event.get('action')
+              logger.info('---Start to %s instances.', action)
+              filters = [{'Name': 'tag:' + 'env', 'Values': ['SIT','E2E']}]
+              instances = ec2.describe_instances(Filters=filters)
+              instance_ids = []
+              for reservation in instances['Reservations']:
+                  for instance in reservation['Instances']:
+                      instance_ids.append(instance['InstanceId'])
+
+              if event['action'] == 'start':
+                  response = ec2.start_instances(InstanceIds=instance_ids)
+                  logger.info('---Started instances. response: %s', response)
+              elif event['action'] == 'stop':
+                  response = ec2.stop_instances(InstanceIds=instance_ids)
+                  logger.info('---Stopped instances. response: %s', response)
+              else:
+                  response = {'Error': 'Invalid action'}
+                  logger.error(response)
+              return "completed"
+      Runtime: python3.8
+      Architectures:
+        - "arm64"
+  LambdaPermissionForStartEC2Management:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaForEC2Management
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt EventsRuleForEC2Start.Arn
+  LambdaPermissionForStopEC2Management:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaForEC2Management
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt EventsRuleForEC2Stop.Arn
+
+  EventsRuleForEC2Start:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: default
+      Name: ec2-start-event-rule
+      ScheduleExpression: cron(0 1 ? * * *)
+      State: ENABLED
+      Targets:
+        - Id: ec2-start-event-rule-id
+          Arn: !GetAtt LambdaForEC2Management.Arn
+          Input: |
+            {
+              "action":"start"
+            }
+  EventsRuleForEC2Stop:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: default
+      Name: ec2-stop-event-rule
+      ScheduleExpression: cron(15 14 ? * * *)
+      State: ENABLED
+      Targets:
+        - Id: ec2-stop-event-rule-id
+          Arn: !GetAtt LambdaForEC2Management.Arn
+          Input: |
+            {
+              "action":"stop"
+            }
 Outputs:
   Role:
     Value: !GetAtt AWSGitHubActionRole.Arn

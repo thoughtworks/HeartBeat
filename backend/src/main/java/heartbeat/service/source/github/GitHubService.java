@@ -91,7 +91,6 @@ public class GitHubService {
 				return repos;
 			}, taskExecutor))
 			.toList();
-      log.info("There are futures {}", repoFutures.size());
 		return CompletableFuture.allOf(repoFutures.toArray(new CompletableFuture[0]))
 			.thenApply(v -> repoFutures.stream()
 				.map(CompletableFuture::join)

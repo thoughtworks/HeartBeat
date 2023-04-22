@@ -1,6 +1,5 @@
 package heartbeat.controller.source;
 
-import heartbeat.client.dto.codebase.github.GitHubRepos;
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.TokenUtil;

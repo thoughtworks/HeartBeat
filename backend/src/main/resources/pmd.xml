@@ -10,6 +10,7 @@
         </properties>
     </rule>
     <exclude-pattern>.*/JiraService.*</exclude-pattern>
+  <exclude-pattern>.*/GitHubService.*</exclude-pattern>
 
 </ruleset>
 

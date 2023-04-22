@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 @EnableCaching
 @SuppressWarnings("PMD.UseUtilityClass")
-@OpenAPIDefinition(info = @Info(title = "Heartbeat API", description = "Heartbeat Information"))
+@OpenAPIDefinition(info = @Info(title = "Heartbeat API", description = "Heartbeat Information", version = "1.0"))
 public class HeartbeatApplication {
 
 	public static void main(String[] args) {

@@ -18,3 +18,7 @@ jira:
 
 buildKite:
   url: https://api.buildkite.com
+
+springdoc:
+  swagger-ui:
+    path: /docs

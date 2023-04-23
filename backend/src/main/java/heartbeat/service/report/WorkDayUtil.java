@@ -22,7 +22,7 @@ public class WorkDayUtil {
 	private final HolidayFeignClient holidayFeignClient;
 
 	public Map<String, Boolean> loadHolidayList(String year) {
-		List<HolidayDTO> tempHolidayList = holidayFeignClient.getHoliday(year);
+		List<HolidayDTO> tempHolidayList = holidayFeignClient.getHoliday(year).getDays();
 		Map<String, Boolean> holidayMap = new HashMap<>();
 		for (HolidayDTO tempHoliday : tempHolidayList) {
 			holidayMap.put(tempHoliday.getDate(), tempHoliday.getIsOffDay());

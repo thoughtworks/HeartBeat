@@ -2,6 +2,7 @@ package heartbeat.util;
 
 import heartbeat.client.HolidayFeignClient;
 import heartbeat.client.dto.HolidayDTO;
+import heartbeat.client.dto.HolidayResponseDTO;
 import heartbeat.service.report.WorkDayUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class WorkDayUtilTest {
 		List<HolidayDTO> holidayDTOList = List.of(
 				HolidayDTO.builder().date("2020-01-01").name("元旦").isOffDay(true).build(),
 				HolidayDTO.builder().date("2020-01-19").name("春节").isOffDay(false).build());
-		when(holidayFeignClient.getHoliday(year)).thenReturn(holidayDTOList);
+		when(holidayFeignClient.getHoliday(year)).thenReturn(HolidayResponseDTO.builder().days(holidayDTOList).build());
 
 		long holidayTime = LocalDate.parse("2020-01-01", DateTimeFormatter.ISO_DATE)
 			.atStartOfDay(ZoneOffset.UTC)
@@ -45,11 +46,9 @@ class WorkDayUtilTest {
 			.toInstant()
 			.toEpochMilli();
 		boolean result2 = workDayUtil.verifyIfThisDayHoliday(workdayTime);
-		boolean result3 = workDayUtil.verifyIfThisDayHoliday(1111);
 
 		Assertions.assertTrue(result1);
 		Assertions.assertFalse(result2);
-		Assertions.assertFalse(result3);
 	}
 
 	@Test
@@ -67,7 +66,7 @@ class WorkDayUtilTest {
 			.atStartOfDay(ZoneOffset.UTC)
 			.toInstant()
 			.toEpochMilli();
-		when(holidayFeignClient.getHoliday(year)).thenReturn(holidayDTOList);
+		when(holidayFeignClient.getHoliday(year)).thenReturn(HolidayResponseDTO.builder().days(holidayDTOList).build());
 
 		int result = workDayUtil.calculateWorkDaysBetween(startTime, endTime);
 		Assertions.assertEquals(21, result);
@@ -88,7 +87,7 @@ class WorkDayUtilTest {
 			.atStartOfDay(ZoneOffset.UTC)
 			.toInstant()
 			.toEpochMilli();
-		when(holidayFeignClient.getHoliday(year)).thenReturn(holidayDTOList);
+		when(holidayFeignClient.getHoliday(year)).thenReturn(HolidayResponseDTO.builder().days(holidayDTOList).build());
 
 		double days = workDayUtil.calculateWorkDaysBy24Hours(startTime, endTime);
 

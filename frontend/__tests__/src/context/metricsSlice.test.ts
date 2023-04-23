@@ -7,7 +7,6 @@ import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   selectDeploymentFrequencySettings,
-  initDeploymentFrequencySettings,
   addALeadTimeForChanges,
   deleteALeadTimeForChange,
   updateLeadTimeForChanges,

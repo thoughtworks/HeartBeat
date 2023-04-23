@@ -111,10 +111,6 @@ export const metricsSlice = createSlice({
       state.leadTimeForChanges = [...state.leadTimeForChanges.filter(({ id }) => id !== deleteId)]
     },
 
-    initDeploymentFrequencySettings: (state) => {
-      state.deploymentFrequencySettings = initialState.deploymentFrequencySettings
-    },
-
     initLeadTimeForChanges: (state) => {
       state.leadTimeForChanges = initialState.leadTimeForChanges
     },

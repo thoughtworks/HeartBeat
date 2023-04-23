@@ -41,7 +41,7 @@ export const SingleSelection = ({
         <InputLabel id={labelId}>{label}</InputLabel>
         <Select labelId={labelId} value={options.length > 0 ? selectedValue : ''} onChange={handleChange}>
           {options.map((data) => (
-            <MenuItem key={data} value={data}>
+            <MenuItem key={data} value={data} data-test-id={labelId}>
               <ListItemText primary={data} />
             </MenuItem>
           ))}

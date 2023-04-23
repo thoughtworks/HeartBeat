@@ -234,7 +234,7 @@ export const CREWS_SETTING = 'Crews Setting'
 export const CYCLE_TIME_SETTINGS = 'Cycle Time Settings'
 export const CLASSIFICATION_SETTING = 'Classification Setting'
 export const REAL_DONE = 'Real Done'
-export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
+export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
 export enum VelocityMetricName {

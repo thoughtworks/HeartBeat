@@ -25,6 +25,7 @@ interface pipelineMetricSelectionProps {
   errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
   handleClickRemoveButton: (id: number) => void
   onUpdatePipeline: (id: number, label: string, value: string) => void
+  onClearErrorMessage: (id: number, label: string) => void
 }
 
 export const PipelineMetricSelection = ({
@@ -33,6 +34,7 @@ export const PipelineMetricSelection = ({
   errorMessages,
   handleClickRemoveButton,
   onUpdatePipeline,
+  onClearErrorMessage,
 }: pipelineMetricSelectionProps) => {
   const { id, organization, pipelineName, steps } = pipelineSetting
   const dispatch = useAppDispatch()
@@ -68,6 +70,7 @@ export const PipelineMetricSelection = ({
         value={organization}
         errorMessage={errorMessages?.organization}
         onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+        onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
       />
       {organization && (
         <SingleSelection
@@ -78,6 +81,7 @@ export const PipelineMetricSelection = ({
           errorMessage={errorMessages?.pipelineName}
           onGetSteps={handleGetSteps}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+          onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />
       )}
       {organization && pipelineName && (
@@ -88,6 +92,7 @@ export const PipelineMetricSelection = ({
           value={steps}
           errorMessage={errorMessages?.steps}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+          onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />
       )}
       <ButtonWrapper>{isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove</RemoveButton>}</ButtonWrapper>

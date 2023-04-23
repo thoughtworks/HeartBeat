@@ -39,9 +39,10 @@ const REPORT = 'Report'
 const stepperColor = 'rgba(0, 0, 0, 0.87)'
 
 const mockValidationCheckContext = {
-  errorMessages: [],
+  deploymentFrequencySettingsErrorMessages: [],
+  leadTimeForChangesErrorMessages: [],
   clearErrorMessage: jest.fn(),
-  checkDuplicatedPipeLine: jest.fn(),
+  checkDuplicatedPipeline: jest.fn(),
   isPipelineValid: jest.fn().mockReturnValue(true),
 }
 

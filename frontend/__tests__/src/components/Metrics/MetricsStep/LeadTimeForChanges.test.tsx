@@ -9,7 +9,7 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import userEvent from '@testing-library/user-event'
 
-export const LEAD_TIME_FOR_CHANGES = 'Lead Time for Changes'
+export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
@@ -32,6 +32,35 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectSteps: jest.fn().mockReturnValue(['']),
 }))
 
+const mockValidationCheckContext = {
+  leadTimeForChangesErrorMessages: [
+    {
+      id: 0,
+      error: {
+        organization: 'organization is required',
+        pipelineName: 'pipelineName is required',
+        steps: 'steps is required',
+      },
+    },
+    {
+      id: 1,
+      error: {
+        organization: 'organization is required',
+        pipelineName: 'pipelineName is required',
+        steps: 'steps is required',
+      },
+    },
+  ],
+  deploymentFrequencySettingsErrorMessages: [],
+  clearErrorMessage: jest.fn(),
+  checkDuplicatedPipeline: jest.fn(),
+  isPipelineValid: jest.fn().mockReturnValue(true),
+}
+
+jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
+  useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
+}))
+
 const setup = () =>
   render(
     <Provider store={store}>
@@ -45,9 +74,11 @@ describe('LeadTimeForChanges', () => {
   })
 
   it('should render LeadTimeForChanges', () => {
-    const { getByText } = setup()
+    const { getByText, getAllByText } = setup()
 
     expect(getByText(LEAD_TIME_FOR_CHANGES)).toBeInTheDocument()
+    expect(getAllByText('Organization').length).toBe(2)
+    expect(getByText('organization is required')).toBeInTheDocument()
   })
 
   it('should call addALeadTimeForChanges function when click add another pipeline button', async () => {
@@ -66,7 +97,7 @@ describe('LeadTimeForChanges', () => {
     expect(deleteALeadTimeForChange).toHaveBeenCalledTimes(1)
   })
 
-  it('should call updateLeadTimeForChanges function when select organization', async () => {
+  it('should call updateLeadTimeForChanges function and clearErrorMessages function when select organization', async () => {
     const { getAllByRole, getByRole } = setup()
 
     await userEvent.click(getAllByRole('button', { name: 'Organization' })[0])
@@ -74,5 +105,6 @@ describe('LeadTimeForChanges', () => {
     await userEvent.click(listBox.getByText('mockOrgName'))
 
     expect(updateLeadTimeForChanges).toHaveBeenCalledTimes(1)
+    expect(mockValidationCheckContext.clearErrorMessage).toHaveBeenCalledTimes(1)
   })
 })

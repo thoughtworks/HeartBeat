@@ -84,7 +84,7 @@ const MetricsStepper = () => {
     }
 
     if (activeStep === 1) {
-      isPipelineValid() && dispatch(nextStep())
+      isPipelineValid('LeadTimeForChanges') && isPipelineValid('DeploymentFrequencySettings') && dispatch(nextStep())
     }
   }
 

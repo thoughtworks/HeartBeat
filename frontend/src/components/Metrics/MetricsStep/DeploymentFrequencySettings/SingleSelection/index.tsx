@@ -1,7 +1,6 @@
 import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlWrapper } from './style'
-import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import camelCase from 'lodash.camelcase'
 
 interface Props {
@@ -12,11 +11,20 @@ interface Props {
   errorMessage: string | undefined
   onGetSteps?: (pipelineName: string) => void
   onUpDatePipeline: (id: number, label: string, value: string) => void
+  onClearErrorMessage: (id: number, label: string) => void
 }
 
-export const SingleSelection = ({ options, label, value, id, errorMessage, onGetSteps, onUpDatePipeline }: Props) => {
+export const SingleSelection = ({
+  options,
+  label,
+  value,
+  id,
+  errorMessage,
+  onGetSteps,
+  onUpDatePipeline,
+  onClearErrorMessage,
+}: Props) => {
   const [selectedValue, setSelectedValue] = useState(value)
-  const { clearErrorMessage } = useMetricsStepValidationCheckContext()
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -24,7 +32,7 @@ export const SingleSelection = ({ options, label, value, id, errorMessage, onGet
     if (onGetSteps) onGetSteps(value)
     setSelectedValue(value)
     onUpDatePipeline(id, label, value)
-    !!errorMessage && clearErrorMessage(id, camelCase(label))
+    !!errorMessage && onClearErrorMessage(id, camelCase(label))
   }
 
   return (

@@ -11,6 +11,7 @@ import {
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton'
 import camelCase from 'lodash.camelcase'
+import { PIPELINE_SETTING_TYPES } from '@src/constants'
 
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch()
@@ -19,23 +20,23 @@ export const DeploymentFrequencySettings = () => {
     useMetricsStepValidationCheckContext()
 
   useEffect(() => {
-    checkDuplicatedPipeline(deploymentFrequencySettings, 'DeploymentFrequencySettings')
+    checkDuplicatedPipeline(deploymentFrequencySettings, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
   }, [deploymentFrequencySettings])
 
-  const handleClickAddButton = () => {
+  const handleAddPipeline = () => {
     dispatch(addADeploymentFrequencySetting())
   }
 
-  const handleClickRemoveButton = (id: number) => {
+  const handleRemovePipeline = (id: number) => {
     dispatch(deleteADeploymentFrequencySetting(id))
   }
 
-  const UpdatePipeline = (id: number, label: string, value: string) => {
+  const handleUpdatePipeline = (id: number, label: string, value: string) => {
     dispatch(updateDeploymentFrequencySettings({ updateId: id, label, value }))
   }
 
   const handleClearErrorMessage = (id: number, label: string) => {
-    clearErrorMessage(id, camelCase(label), 'DeploymentFrequencySettings')
+    clearErrorMessage(id, camelCase(label), PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
   }
 
   const getErrorMessage = (deploymentFrequencySettingId: number) => {
@@ -51,12 +52,12 @@ export const DeploymentFrequencySettings = () => {
           pipelineSetting={deploymentFrequencySetting}
           isShowRemoveButton={deploymentFrequencySettings.length > 1}
           errorMessages={getErrorMessage(deploymentFrequencySetting.id)}
-          handleClickRemoveButton={(id) => handleClickRemoveButton(id)}
-          onUpdatePipeline={(id, label, value) => UpdatePipeline(id, label, value)}
+          onRemovePipeline={(id) => handleRemovePipeline(id)}
+          onUpdatePipeline={(id, label, value) => handleUpdatePipeline(id, label, value)}
           onClearErrorMessage={(id, label) => handleClearErrorMessage(id, label)}
         />
       ))}
-      <MetricsSettingAddButton handleClickAddButton={handleClickAddButton} />
+      <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />
     </>
   )
 }

@@ -11,7 +11,7 @@ import {
   NEXT,
   PROJECT_NAME_LABEL,
   SAVE,
-  STEPS,
+  STEPPER,
   TEST_PROJECT_NAME,
   VELOCITY,
 } from '../../../fixtures'
@@ -101,7 +101,7 @@ describe('MetricsStepper', () => {
   it('should show metrics stepper', () => {
     const { getByText } = setup()
 
-    STEPS.map((label) => {
+    STEPPER.map((label) => {
       expect(getByText(label)).toBeInTheDocument()
     })
 

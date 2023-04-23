@@ -8,8 +8,7 @@ import {
   updateLeadTimeForChanges,
 } from '@src/context/Metrics/metricsSlice'
 import userEvent from '@testing-library/user-event'
-
-export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
+import { LEAD_TIME_FOR_CHANGES, ORGANIZATION, REMOVE_BUTTON } from '../../../fixtures'
 
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
@@ -77,7 +76,7 @@ describe('LeadTimeForChanges', () => {
     const { getByText, getAllByText } = setup()
 
     expect(getByText(LEAD_TIME_FOR_CHANGES)).toBeInTheDocument()
-    expect(getAllByText('Organization').length).toBe(2)
+    expect(getAllByText(ORGANIZATION).length).toBe(2)
     expect(getByText('organization is required')).toBeInTheDocument()
   })
 
@@ -92,7 +91,7 @@ describe('LeadTimeForChanges', () => {
   it('should call deleteALeadTimeForChanges function when click remove pipeline button', async () => {
     const { getAllByRole } = await setup()
 
-    await userEvent.click(getAllByRole('button', { name: 'Remove' })[0])
+    await userEvent.click(getAllByRole('button', { name: REMOVE_BUTTON })[0])
 
     expect(deleteALeadTimeForChange).toHaveBeenCalledTimes(1)
   })
@@ -100,7 +99,7 @@ describe('LeadTimeForChanges', () => {
   it('should call updateLeadTimeForChanges function and clearErrorMessages function when select organization', async () => {
     const { getAllByRole, getByRole } = setup()
 
-    await userEvent.click(getAllByRole('button', { name: 'Organization' })[0])
+    await userEvent.click(getAllByRole('button', { name: ORGANIZATION })[0])
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByText('mockOrgName'))
 

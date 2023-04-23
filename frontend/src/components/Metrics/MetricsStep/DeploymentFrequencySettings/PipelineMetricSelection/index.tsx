@@ -23,7 +23,7 @@ interface pipelineMetricSelectionProps {
   }
   isShowRemoveButton: boolean
   errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
-  handleClickRemoveButton: (id: number) => void
+  onRemovePipeline: (id: number) => void
   onUpdatePipeline: (id: number, label: string, value: string) => void
   onClearErrorMessage: (id: number, label: string) => void
 }
@@ -32,7 +32,7 @@ export const PipelineMetricSelection = ({
   pipelineSetting,
   isShowRemoveButton,
   errorMessages,
-  handleClickRemoveButton,
+  onRemovePipeline,
   onUpdatePipeline,
   onClearErrorMessage,
 }: pipelineMetricSelectionProps) => {
@@ -44,7 +44,7 @@ export const PipelineMetricSelection = ({
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
 
   const handleClick = () => {
-    handleClickRemoveButton(id)
+    onRemovePipeline(id)
   }
 
   const handleGetSteps = (_pipelineName: string) => {

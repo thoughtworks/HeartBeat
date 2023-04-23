@@ -12,6 +12,9 @@ import { setupStore } from '../utils/setupStoreUtil'
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore'
 
 describe('useMetricsStepValidationCheckContext', () => {
+  const DEPLOYMENT_FREQUENCY_SETTINGS = 'DeploymentFrequencySettings'
+  const LEAD_TIME_FOR_CHANGES = 'LeadTimeForChanges'
+
   const duplicatedData = [
     {
       updateId: 0,
@@ -55,6 +58,17 @@ describe('useMetricsStepValidationCheckContext', () => {
     },
   ]
 
+  const updatedRequiredDataErrorMessages = [
+    {
+      id: 0,
+      error: {
+        organization: '',
+        pipelineName: 'pipelineName is required',
+        steps: 'steps is required',
+      },
+    },
+  ]
+
   const emptyErrorMessages = [
     {
       id: 0,
@@ -82,6 +96,11 @@ describe('useMetricsStepValidationCheckContext', () => {
   const notDuplicatedPipelineSettings = [
     { id: 0, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
     { id: 1, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'changedMockSteps' },
+  ]
+
+  const emptyPipelineSettings = [
+    { id: 2, organization: '', pipelineName: '', steps: '' },
+    { id: 3, organization: '', pipelineName: '', steps: '' },
   ]
 
   const setup = () => {
@@ -112,22 +131,22 @@ describe('useMetricsStepValidationCheckContext', () => {
 
     expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual([])
     expect(result.current?.leadTimeForChangesErrorMessages).toEqual([])
-    expect(result.current?.clearErrorMessage(1, 'label', 'DeploymentFrequencySettings')).toBe(null)
-    expect(result.current?.clearErrorMessage(1, 'label', 'LeadTimeForChanges')).toBe(null)
+    expect(result.current?.clearErrorMessage(1, 'label', DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(null)
+    expect(result.current?.clearErrorMessage(1, 'label', LEAD_TIME_FOR_CHANGES)).toBe(null)
     expect(
       result.current?.checkDuplicatedPipeline(
         [{ id: 1, organization: '', pipelineName: '', steps: '' }],
-        'DeploymentFrequencySettings'
+        DEPLOYMENT_FREQUENCY_SETTINGS
       )
     ).toBe(null)
     expect(
       result.current?.checkDuplicatedPipeline(
         [{ id: 1, organization: '', pipelineName: '', steps: '' }],
-        'LeadTimeForChanges'
+        LEAD_TIME_FOR_CHANGES
       )
     ).toBe(null)
-    expect(result.current?.isPipelineValid('DeploymentFrequencySettings')).toBe(false)
-    expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(false)
+    expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
+    expect(result.current?.isPipelineValid(LEAD_TIME_FOR_CHANGES)).toBe(false)
   })
 
   it('should return useMetricsStepValidationCheckContext correctly ', () => {
@@ -143,38 +162,20 @@ describe('useMetricsStepValidationCheckContext', () => {
     const { result } = setup()
 
     act(() => {
-      result.current?.isPipelineValid('DeploymentFrequencySettings')
-      result.current?.isPipelineValid('LeadTimeForChanges')
+      result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)
+      result.current?.isPipelineValid(LEAD_TIME_FOR_CHANGES)
     })
 
     expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual(requiredDataErrorMessages)
     expect(result.current?.leadTimeForChangesErrorMessages).toEqual(requiredDataErrorMessages)
 
     act(() => {
-      result.current?.clearErrorMessage(0, 'organization', 'DeploymentFrequencySettings')
-      result.current?.clearErrorMessage(0, 'organization', 'LeadTimeForChanges')
+      result.current?.clearErrorMessage(0, 'organization', DEPLOYMENT_FREQUENCY_SETTINGS)
+      result.current?.clearErrorMessage(0, 'organization', LEAD_TIME_FOR_CHANGES)
     })
 
-    expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual([
-      {
-        id: 0,
-        error: {
-          organization: '',
-          pipelineName: 'pipelineName is required',
-          steps: 'steps is required',
-        },
-      },
-    ])
-    expect(result.current?.leadTimeForChangesErrorMessages).toEqual([
-      {
-        id: 0,
-        error: {
-          organization: '',
-          pipelineName: 'pipelineName is required',
-          steps: 'steps is required',
-        },
-      },
-    ])
+    expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual(updatedRequiredDataErrorMessages)
+    expect(result.current?.leadTimeForChangesErrorMessages).toEqual(updatedRequiredDataErrorMessages)
   })
 
   it('should return duplicated error message correctly when call checkDuplicatedPipeLine given not duplicated data', () => {
@@ -184,8 +185,8 @@ describe('useMetricsStepValidationCheckContext', () => {
     })
 
     act(() => {
-      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, 'DeploymentFrequencySettings')
-      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, 'LeadTimeForChanges')
+      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, DEPLOYMENT_FREQUENCY_SETTINGS)
+      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, LEAD_TIME_FOR_CHANGES)
     })
 
     expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual(duplicatedDataErrorMessages)
@@ -199,8 +200,8 @@ describe('useMetricsStepValidationCheckContext', () => {
     })
 
     act(() => {
-      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, 'DeploymentFrequencySettings')
-      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, 'LeadTimeForChanges')
+      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, DEPLOYMENT_FREQUENCY_SETTINGS)
+      result.current?.checkDuplicatedPipeline(duplicatedPipelineSettings, LEAD_TIME_FOR_CHANGES)
     })
 
     expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual(duplicatedDataErrorMessages)
@@ -212,8 +213,8 @@ describe('useMetricsStepValidationCheckContext', () => {
     })
 
     act(() => {
-      result.current?.checkDuplicatedPipeline(notDuplicatedPipelineSettings, 'DeploymentFrequencySettings')
-      result.current?.checkDuplicatedPipeline(notDuplicatedPipelineSettings, 'LeadTimeForChanges')
+      result.current?.checkDuplicatedPipeline(notDuplicatedPipelineSettings, DEPLOYMENT_FREQUENCY_SETTINGS)
+      result.current?.checkDuplicatedPipeline(notDuplicatedPipelineSettings, LEAD_TIME_FOR_CHANGES)
     })
 
     expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual(emptyErrorMessages)
@@ -236,16 +237,12 @@ describe('useMetricsStepValidationCheckContext', () => {
     })
 
     act(() => {
-      expect(result.current?.isPipelineValid('DeploymentFrequencySettings')).toBe(true)
+      expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(true)
       expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(true)
     })
 
-    expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual([
-      { id: 0, error: { organization: '', pipelineName: '', steps: '' } },
-    ])
-    expect(result.current?.leadTimeForChangesErrorMessages).toEqual([
-      { id: 0, error: { organization: '', pipelineName: '', steps: '' } },
-    ])
+    expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual([emptyErrorMessages[0]])
+    expect(result.current?.leadTimeForChangesErrorMessages).toEqual([emptyErrorMessages[0]])
   })
 
   it('should return false when call isPipelineValid given duplicated data', () => {
@@ -255,7 +252,7 @@ describe('useMetricsStepValidationCheckContext', () => {
     })
 
     act(() => {
-      expect(result.current?.isPipelineValid('DeploymentFrequencySettings')).toBe(false)
+      expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
       expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(false)
     })
 
@@ -267,7 +264,7 @@ describe('useMetricsStepValidationCheckContext', () => {
     const { result } = setup()
 
     act(() => {
-      expect(result.current?.isPipelineValid('DeploymentFrequencySettings')).toBe(false)
+      expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
       expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(false)
     })
     expect(result.current?.deploymentFrequencySettingsErrorMessages).toEqual(requiredDataErrorMessages)
@@ -283,8 +280,8 @@ describe('useMetricsStepValidationCheckContext', () => {
     })
 
     act(() => {
-      expect(result.current?.isPipelineValid('DeploymentFrequencySettings')).toBe(false)
-      expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(false)
+      expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
+      expect(result.current?.isPipelineValid(LEAD_TIME_FOR_CHANGES)).toBe(false)
     })
 
     act(() => {
@@ -294,22 +291,12 @@ describe('useMetricsStepValidationCheckContext', () => {
 
     act(() => {
       result.current?.checkDuplicatedPipeline(
-        [
-          { id: 0, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
-          { id: 1, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
-          { id: 2, organization: '', pipelineName: '', steps: '' },
-          { id: 3, organization: '', pipelineName: '', steps: '' },
-        ],
-        'DeploymentFrequencySettings'
+        [...duplicatedPipelineSettings, ...emptyPipelineSettings],
+        DEPLOYMENT_FREQUENCY_SETTINGS
       )
       result.current?.checkDuplicatedPipeline(
-        [
-          { id: 0, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
-          { id: 1, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
-          { id: 2, organization: '', pipelineName: '', steps: '' },
-          { id: 3, organization: '', pipelineName: '', steps: '' },
-        ],
-        'LeadTimeForChanges'
+        [...duplicatedPipelineSettings, ...emptyPipelineSettings],
+        LEAD_TIME_FOR_CHANGES
       )
     })
 
@@ -317,38 +304,22 @@ describe('useMetricsStepValidationCheckContext', () => {
       ...duplicatedDataErrorMessages,
       {
         id: 2,
-        error: {
-          organization: 'organization is required',
-          pipelineName: 'pipelineName is required',
-          steps: 'steps is required',
-        },
+        error: requiredDataErrorMessages[0].error,
       },
       {
         id: 3,
-        error: {
-          organization: '',
-          pipelineName: '',
-          steps: '',
-        },
+        error: emptyErrorMessages[0].error,
       },
     ])
     expect(result.current?.leadTimeForChangesErrorMessages).toEqual([
       ...duplicatedDataErrorMessages,
       {
         id: 2,
-        error: {
-          organization: 'organization is required',
-          pipelineName: 'pipelineName is required',
-          steps: 'steps is required',
-        },
+        error: requiredDataErrorMessages[0].error,
       },
       {
         id: 3,
-        error: {
-          organization: '',
-          pipelineName: '',
-          steps: '',
-        },
+        error: emptyErrorMessages[0].error,
       },
     ])
   })

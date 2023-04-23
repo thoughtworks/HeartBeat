@@ -8,7 +8,7 @@ import {
   deleteADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice'
-import { DEPLOYMENT_FREQUENCY_SETTINGS } from '../../../../fixtures'
+import { DEPLOYMENT_FREQUENCY_SETTINGS, REMOVE_BUTTON, ORGANIZATION } from '../../../../fixtures'
 
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
@@ -75,7 +75,7 @@ describe('DeploymentFrequencySettings', () => {
     const { getByText, getAllByText } = setup()
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
-    expect(getAllByText('Organization').length).toBe(2)
+    expect(getAllByText(ORGANIZATION).length).toBe(2)
     expect(getByText('organization is required')).toBeInTheDocument()
   })
 
@@ -90,7 +90,7 @@ describe('DeploymentFrequencySettings', () => {
   it('should call deleteADeploymentFrequencySetting function when click remove pipeline button', async () => {
     const { getAllByRole } = await setup()
 
-    await userEvent.click(getAllByRole('button', { name: 'Remove' })[0])
+    await userEvent.click(getAllByRole('button', { name: REMOVE_BUTTON })[0])
 
     expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
   })
@@ -98,7 +98,7 @@ describe('DeploymentFrequencySettings', () => {
   it('should call updateDeploymentFrequencySetting function and clearErrorMessages function when select organization', async () => {
     const { getAllByRole, getByRole } = setup()
 
-    await userEvent.click(getAllByRole('button', { name: 'Organization' })[0])
+    await userEvent.click(getAllByRole('button', { name: ORGANIZATION })[0])
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByText('mockOrgName'))
 

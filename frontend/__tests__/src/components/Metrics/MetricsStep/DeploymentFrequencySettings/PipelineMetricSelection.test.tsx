@@ -5,6 +5,7 @@ import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { metricsClient } from '@src/clients/MetricsClient'
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice'
+import { ORGANIZATION, PIPELINE_NAME, STEPS, REMOVE_BUTTON } from '../../../../fixtures'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -35,10 +36,6 @@ jest.mock('@src/context/config/configSlice', () => ({
 }))
 
 describe('PipelineMetricSelection', () => {
-  const REMOVE_BUTTON = 'Remove'
-  const ORGANIZATION = 'Organization'
-  const PIPELINE_NAME = 'Pipeline Name'
-  const STEPS = 'Steps'
   const mockId = 0
   const deploymentFrequencySetting = {
     id: 0,
@@ -65,7 +62,7 @@ describe('PipelineMetricSelection', () => {
             pipelineName: 'pipelineName is required',
             steps: 'steps is required',
           }}
-          handleClickRemoveButton={mockHandleClickRemoveButton}
+          onRemovePipeline={mockHandleClickRemoveButton}
           onUpdatePipeline={mockUpdatePipeline}
           onClearErrorMessage={mockClearErrorMessage}
         />

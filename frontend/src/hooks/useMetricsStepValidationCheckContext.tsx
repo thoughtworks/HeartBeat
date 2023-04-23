@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react'
 import { useAppSelector } from '@src/hooks/index'
 import { selectDeploymentFrequencySettings, selectLeadTimeForChanges } from '@src/context/Metrics/metricsSlice'
+import { PIPELINE_SETTING_TYPES } from '@src/constants'
 
 interface Error {
   organization: string
@@ -110,29 +111,32 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
   )
   const [leadTimeForChangesErrorMessages, setLeadTimeForChangesErrorMessages] = useState([] as ErrorMessagesProps[])
 
-  const handleSetErrorMessages = (type: string, errorMessages: ErrorMessagesProps[]) => {
-    type === 'LeadTimeForChanges'
+  const saveErrorMessages = (type: string, errorMessages: ErrorMessagesProps[]) => {
+    type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
       ? setLeadTimeForChangesErrorMessages(errorMessages)
       : setDeploymentFrequencySettingsErrorMessages(errorMessages)
   }
 
   const isPipelineValid = (type: string) => {
-    const pipelines = type === 'LeadTimeForChanges' ? leadTimeForChanges : deploymentFrequencySettings
+    const pipelines =
+      type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE ? leadTimeForChanges : deploymentFrequencySettings
     const errorMessages = getErrorMessages(pipelines)
-    handleSetErrorMessages(type, errorMessages)
+    saveErrorMessages(type, errorMessages)
     return errorMessages.every(({ error }) => Object.values(error).every((val) => !val))
   }
 
   const clearErrorMessage = (changedSelectionId: number, label: string, type: string) => {
     const selectedErrorMessages =
-      type === 'LeadTimeForChanges' ? leadTimeForChangesErrorMessages : deploymentFrequencySettingsErrorMessages
+      type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
+        ? leadTimeForChangesErrorMessages
+        : deploymentFrequencySettingsErrorMessages
     const updatedErrorMessages = selectedErrorMessages.map((errorMessage) => {
       if (errorMessage.id === changedSelectionId) {
         errorMessage.error[label as keyof Error] = ''
       }
       return errorMessage
     })
-    type === 'LeadTimeForChanges'
+    type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
       ? setLeadTimeForChangesErrorMessages(updatedErrorMessages)
       : setDeploymentFrequencySettingsErrorMessages(updatedErrorMessages)
   }
@@ -145,7 +149,7 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
     const errorMessages = pipelineSettings.map((pipelineSetting) =>
       getDuplicatedErrorMessage(pipelineSetting, duplicatedPipeLineIds, deploymentFrequencySettingsErrorMessages)
     )
-    handleSetErrorMessages(type, errorMessages)
+    saveErrorMessages(type, errorMessages)
   }
 
   return (

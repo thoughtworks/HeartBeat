@@ -4,13 +4,13 @@ import { MetricsSettingButtonContainer } from '@src/components/Common/MetricsSet
 import React from 'react'
 
 interface metricsSettingAddButtonProps {
-  handleClickAddButton: () => void
+  onAddPipeline: () => void
 }
 
-export const MetricsSettingAddButton = ({ handleClickAddButton }: metricsSettingAddButtonProps) => {
+export const MetricsSettingAddButton = ({ onAddPipeline }: metricsSettingAddButtonProps) => {
   return (
     <MetricsSettingButtonContainer>
-      <IconButton onClick={handleClickAddButton}>
+      <IconButton onClick={onAddPipeline}>
         <Add />
       </IconButton>
     </MetricsSettingButtonContainer>

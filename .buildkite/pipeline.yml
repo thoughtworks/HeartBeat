@@ -21,6 +21,9 @@ steps:
 
   - label: ":computer: Frontend Check"
     command: ./.buildkite/app-check frontend
-  
-  - label: ":license: License compliance check"
-    command: npm run license-compliance
+
+  - label: ":computer: License compliance check"
+    commands:
+      - cd frontend
+      - npm install
+      - npm run license-compliance

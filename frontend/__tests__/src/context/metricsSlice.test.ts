@@ -7,10 +7,11 @@ import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   selectDeploymentFrequencySettings,
-  initDeploymentFrequencySettings,
   addALeadTimeForChanges,
   deleteALeadTimeForChange,
   updateLeadTimeForChanges,
+  initDeploymentFrequencySettings,
+  initLeadTimeForChanges,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -208,5 +209,19 @@ describe('saveMetricsSetting reducer', () => {
     )
 
     expect(savedMetricsSetting.leadTimeForChanges).toEqual(updatedLeadTimeForChanges)
+  })
+
+  it('should init leadTimeForChanges when handle initLeadTimeForChanges given multiple leadTimeForChanges', () => {
+    const multipleLeadTimeForChangesInitState = {
+      ...initState,
+      leadTimeForChanges: [
+        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', steps: 'step1' },
+        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', steps: 'step2' },
+      ],
+    }
+
+    const savedMetricsSetting = saveMetricsSettingReducer(multipleLeadTimeForChangesInitState, initLeadTimeForChanges())
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual(initState.leadTimeForChanges)
   })
 })

@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class StatusChangedArrayItem {
 
-	private int timestamp;
+	private long timestamp;
 
 	private String status;
 

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class WorkDayUtil {
+public class WorkDay {
 
 	private static final long ONE_DAY = 1000 * 60 * 60 * 24;
 

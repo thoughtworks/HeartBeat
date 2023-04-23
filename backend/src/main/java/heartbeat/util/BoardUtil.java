@@ -3,7 +3,8 @@ package heartbeat.util;
 import heartbeat.controller.board.vo.StatusChangedArrayItem;
 import heartbeat.controller.board.vo.request.CardStepsEnum;
 import heartbeat.controller.board.vo.response.CycleTimeInfo;
-import heartbeat.service.report.WorkDayUtil;
+import heartbeat.service.report.WorkDay;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,14 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 public class BoardUtil {
 
-	WorkDayUtil workDayUtil;
+	private final WorkDay workDay;
+
+	private final TimeUtil timeUtil;
 
 	public List<StatusChangedArrayItem> reformTimeLineForFlaggedCards(List<StatusChangedArrayItem> statusChangedArray) {
-		List<Integer> needToFilterArray = new ArrayList<>();
+		List<Long> needToFilterArray = new ArrayList<>();
 		List<StatusChangedArrayItem> timeLine = statusChangedArray.stream()
-			.sorted(Comparator.comparingInt(StatusChangedArrayItem::getTimestamp))
+			.sorted(Comparator.comparingLong(StatusChangedArrayItem::getTimestamp))
 			.toList();
 
 		for (int i = 0; i < timeLine.size(); i++) {
@@ -64,11 +68,11 @@ public class BoardUtil {
 
 	public double getThisStepCostTime(int index, List<StatusChangedArrayItem> statusChangedArrayItems) {
 		if (index < statusChangedArrayItems.size() - 1) {
-			return workDayUtil.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
+			return workDay.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
 					statusChangedArrayItems.get(index + 1).getTimestamp());
 		}
-		return workDayUtil.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
-				System.currentTimeMillis());
+		return workDay.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
+				timeUtil.getCurrentTimeMillis());
 	}
 
 }

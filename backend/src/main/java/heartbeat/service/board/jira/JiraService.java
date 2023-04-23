@@ -5,12 +5,12 @@ import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.JiraCard;
 import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.HistoryDetail;
 import heartbeat.client.dto.IssueField;
 import heartbeat.client.dto.Issuetype;
 import heartbeat.client.dto.JiraBoardConfigDTO;
+import heartbeat.client.dto.JiraCard;
 import heartbeat.client.dto.JiraColumn;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.controller.board.vo.CycleTimeInfoDTO;
@@ -71,14 +71,16 @@ public class JiraService {
 
 	private final JiraUriGenerator urlGenerator;
 
+	private final BoardUtil boardUtil;
+
+	private CardCustomFieldKey cardCustomFieldKey;
+
 	@PreDestroy
 	public void shutdownExecutor() {
 		taskExecutor.shutdown();
 	}
 
 	private static final String DONE_CARD_TAG = "done";
-
-	private CardCustomFieldKey cardCustomFieldKey;
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
@@ -350,7 +352,7 @@ public class JiraService {
 
 	public Cards getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
-		cardCustomFieldKey = saveCustomFieldKey(request);
+		CardCustomFieldKey cardCustomFieldKey = saveCustomFieldKey(request);
 		BoardType boardType = BoardType.fromValue(request.getType());
 		URI baseUrl = urlGenerator.getUri(request.getSite());
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
@@ -419,10 +421,9 @@ public class JiraService {
 				treatFlagCardAsBlock);
 		List<StatusChangedArrayItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(
 				cardHistoryResponseDTO, true);
-
-		BoardUtil boardUtil = new BoardUtil();
-		List<CycleTimeInfo> cycleTimeInfos = boardUtil
-			.getCardTimeForEachStep(boardUtil.reformTimeLineForFlaggedCards(statusChangedArray));
+		List<StatusChangedArrayItem> statusChangedArrayItems = boardUtil
+			.reformTimeLineForFlaggedCards(statusChangedArray);
+		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCardTimeForEachStep(statusChangedArrayItems);
 		List<CycleTimeInfo> originCycleTimeInfos = boardUtil
 			.getCardTimeForEachStep(boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag));
 
@@ -458,7 +459,7 @@ public class JiraService {
 		if (treatFlagCardAsBlock) {
 			jiraCardHistory.getItems()
 				.stream()
-				.filter(activity -> "flogged".equals(activity.getFieldId()))
+				.filter(activity -> "flagged".equals(activity.getFieldId()))
 				.forEach(activity -> {
 					if ("Impediment".equals(activity.getTo().getDisplayValue())) {
 						statusChangedArray.add(StatusChangedArrayItem.builder()

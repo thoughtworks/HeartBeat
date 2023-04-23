@@ -17,6 +17,10 @@ import heartbeat.client.dto.Project;
 import heartbeat.client.dto.StatusCategory;
 import heartbeat.client.dto.StatusSelfDTO;
 import heartbeat.client.dto.Status;
+import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.vo.response.TargetField;
+import heartbeat.controller.report.vo.request.JiraBoardSetting;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -113,6 +117,38 @@ public class JiraBoardConfigDTOFixture {
 		issueFieldMap.put("priority", priorityIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
+	}
+
+	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_BUILD() {
+		return JiraBoardSetting.builder()
+			.boardId("123")
+			.boardColumns(List.of())
+			.token("token")
+			.site("site")
+			.doneColumn(List.of("DONE"))
+			.treatFlagCardAsBlock(true)
+			.type("jira")
+			.projectKey("PLL")
+			.teamId("HB")
+			.teamName("HB")
+			.targetFields(List.of(TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
+					TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
+					TargetField.builder().key("testKey").name("Flagged").flag(true).build()));
+	}
+
+	public static StoryPointsAndCycleTimeRequest.StoryPointsAndCycleTimeRequestBuilder STORY_POINTS_FORM_ALL_DONE_CARD() {
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+		return StoryPointsAndCycleTimeRequest.builder()
+			.token("token")
+			.type(jiraBoardSetting.getType())
+			.site(jiraBoardSetting.getSite())
+			.project(jiraBoardSetting.getProjectKey())
+			.boardId(jiraBoardSetting.getBoardId())
+			.status(jiraBoardSetting.getDoneColumn())
+			.startTime("1672556350000")
+			.endTime("1676908799000")
+			.targetFields(jiraBoardSetting.getTargetFields())
+			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
 }

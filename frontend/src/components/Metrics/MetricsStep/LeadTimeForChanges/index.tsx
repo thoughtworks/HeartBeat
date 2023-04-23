@@ -56,17 +56,6 @@ export const LeadTimeForChanges = () => {
           onClearErrorMessage={(id, label) => handleClearErrorMessage(id, label)}
         />
       ))}
-      {leadTimeForChanges.map((leadTimeForChange) => (
-        <PipelineMetricSelection
-          key={leadTimeForChange.id}
-          pipelineSetting={leadTimeForChange}
-          isShowRemoveButton={leadTimeForChanges.length > 1}
-          errorMessages={getErrorMessage(leadTimeForChange.id)}
-          handleClickRemoveButton={(id) => handleClickRemoveButton(id)}
-          onUpdatePipeline={(id, label, value) => UpdatePipeline(id, label, value)}
-          onClearErrorMessage={(id, label) => handleClearErrorMessage(id, label)}
-        />
-      ))}
       <MetricsSettingAddButton handleClickAddButton={handleClickAddButton} />
     </>
   )

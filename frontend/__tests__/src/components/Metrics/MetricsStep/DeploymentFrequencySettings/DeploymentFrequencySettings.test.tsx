@@ -72,23 +72,6 @@ describe('DeploymentFrequencySettings', () => {
   })
 
   it('should render DeploymentFrequencySettings component', () => {
-    const mockValidationCheckContext = {
-      errorMessages: [{ id: 1, error: 'error' }],
-      clearErrorMessage: jest.fn(),
-      checkDuplicatedPipeLine: jest.fn(),
-      isPipelineValid: () => true,
-    }
-
-    jest.mock('@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection', () => ({
-      PipelineMetricSelection: ({ errorMessages }: { errorMessages: string }) => (
-        <div>errorMessages: {errorMessages}</div>
-      ),
-    }))
-
-    jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
-      useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
-    }))
-
     const { getByText, getAllByText } = setup()
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()

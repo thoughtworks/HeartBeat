@@ -16,6 +16,9 @@ run_frontend_check(){
   bash <(curl -Ls https://coverage.codacy.com/get.sh)
 }
 
+set -e
+set +x
+
 if [[ "$1" == "backend" ]]; then
   run_backend_check
 elif [[ "$1" == "frontend" ]]; then

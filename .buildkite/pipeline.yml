@@ -6,7 +6,7 @@ steps:
   #     docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
 
   # - label: ":rocket: Backend Check"
-  #   command: ./infra/buildkite/app-check backend
+  #   command: ./.buildkite/app-check backend
 
   # - label: ":mag: Backend License Check"
   #   commands:

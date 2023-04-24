@@ -3,33 +3,34 @@ package heartbeat.service.board.jira;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
-import heartbeat.client.dto.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.FieldResponseDTO;
-import heartbeat.client.dto.HistoryDetail;
-import heartbeat.client.dto.IssueField;
-import heartbeat.client.dto.Issuetype;
-import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.JiraCard;
-import heartbeat.client.dto.JiraColumn;
-import heartbeat.client.dto.StatusSelfDTO;
-import heartbeat.controller.board.vo.CycleTimeInfoDTO;
-import heartbeat.controller.board.vo.StatusChangedArrayItem;
-import heartbeat.controller.board.vo.request.BoardRequestParam;
-import heartbeat.controller.board.vo.request.BoardType;
-import heartbeat.controller.board.vo.request.CardStepsEnum;
-import heartbeat.controller.board.vo.request.Cards;
-import heartbeat.controller.board.vo.request.RequestJiraBoardColumnSetting;
-import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
-import heartbeat.controller.board.vo.response.BoardConfigResponse;
-import heartbeat.controller.board.vo.response.CardCustomFieldKey;
-import heartbeat.controller.board.vo.response.CardCycleTime;
-import heartbeat.controller.board.vo.response.ColumnValue;
-import heartbeat.controller.board.vo.response.CycleTimeInfo;
-import heartbeat.controller.board.vo.response.JiraCardResponse;
-import heartbeat.controller.board.vo.response.JiraColumnResponse;
-import heartbeat.controller.board.vo.response.StepsDay;
-import heartbeat.controller.board.vo.response.TargetField;
+
+import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
+import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.HistoryDetail;
+import heartbeat.client.dto.board.jira.IssueField;
+import heartbeat.client.dto.board.jira.Issuetype;
+import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraColumn;
+import heartbeat.client.dto.board.jira.StatusSelfDTO;
+import heartbeat.controller.board.dto.request.BoardRequestParam;
+import heartbeat.controller.board.dto.request.BoardType;
+import heartbeat.controller.board.dto.request.CardStepsEnum;
+import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.CardCustomFieldKey;
+import heartbeat.controller.board.dto.response.CardCycleTime;
+import heartbeat.controller.board.dto.response.ColumnValue;
+import heartbeat.controller.board.dto.response.CycleTimeInfo;
+import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
+import heartbeat.controller.board.dto.response.JiraCardResponse;
+import heartbeat.controller.board.dto.response.JiraColumnResponse;
+import heartbeat.controller.board.dto.response.StatusChangedArrayItem;
+import heartbeat.controller.board.dto.response.StepsDay;
+import heartbeat.controller.board.dto.response.TargetField;
+import heartbeat.controller.board.dto.request.Cards;
+import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
+import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
@@ -480,7 +481,7 @@ public class JiraService {
 	}
 
 	private CardCycleTime calculateCardCycleTime(String cardId, List<CycleTimeInfo> cycleTimeInfos,
-			List<RequestJiraBoardColumnSetting> boardColumns) {
+												 List<RequestJiraBoardColumnSetting> boardColumns) {
 		Map<String, CardStepsEnum> boardMap = selectedStepsArrayToMap(boardColumns);
 		StepsDay stepsDay = StepsDay.builder().build();
 		double total = 0;

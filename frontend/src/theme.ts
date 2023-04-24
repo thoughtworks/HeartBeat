@@ -12,6 +12,7 @@ declare module '@mui/material/styles' {
       boxShadow: string
     }
   }
+
   // allow configuration using `createTheme`
   interface ThemeOptions {
     main: {

@@ -1,25 +1,26 @@
 package heartbeat.service.jira;
 
-import heartbeat.client.dto.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.Assignee;
-import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.JiraCard;
-import heartbeat.client.dto.JiraCardFields;
-import heartbeat.client.dto.FieldResponseDTO;
-import heartbeat.client.dto.IssueField;
-import heartbeat.client.dto.Issuetype;
-import heartbeat.client.dto.HistoryDetail;
-import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.JiraColumn;
-import heartbeat.client.dto.JiraColumnConfig;
-import heartbeat.client.dto.JiraColumnStatus;
-import heartbeat.client.dto.Project;
-import heartbeat.client.dto.StatusCategory;
-import heartbeat.client.dto.StatusSelfDTO;
-import heartbeat.client.dto.Status;
-import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
-import heartbeat.controller.board.vo.response.TargetField;
-import heartbeat.controller.report.vo.request.JiraBoardSetting;
+
+import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.board.jira.HistoryDetail;
+import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraCardFields;
+import heartbeat.client.dto.board.jira.Status;
+import heartbeat.client.dto.board.jira.Assignee;
+import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
+import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.IssueField;
+import heartbeat.client.dto.board.jira.Issuetype;
+import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraColumn;
+import heartbeat.client.dto.board.jira.JiraColumnConfig;
+import heartbeat.client.dto.board.jira.JiraColumnStatus;
+import heartbeat.client.dto.board.jira.Project;
+import heartbeat.client.dto.board.jira.StatusCategory;
+import heartbeat.client.dto.board.jira.StatusSelfDTO;
+import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.dto.response.TargetField;
+import heartbeat.controller.report.dto.request.JiraBoardSetting;
 
 import java.util.Collections;
 import java.util.HashMap;

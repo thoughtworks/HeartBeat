@@ -1,5 +1,5 @@
 export const SITE = {
-  title: 'HeartBeat Docs',
+  title: 'Heartbeat Docs',
   description: 'Your website description.',
   defaultLanguage: 'en_US',
 };
@@ -48,6 +48,20 @@ export const SIDEBAR: Sidebar = {
       { text: 'Page 2', link: '/en/page-2' },
       { text: 'Page 3', link: '/en/page-3' },
     ],
-    'Dev Center': [{ text: 'Report Calculation Method', link: '/en/report-calculation-method' }],
+    'Dev Center': [
+      { text: 'Team Info', link: '/en/dev-center/team-infos' },
+      { text: 'Onboarding Flow', link: '/en/dev-center/onboarding-flow' },
+      { text: 'Architecture', link: '/en/dev-center/architecture' },
+      { text: 'Team Activity Calendar', link: '/en/dev-center/team-activity-calendar' },
+      { text: 'Way of Working', link: '/en/dev-center/way-of-working' },
+      { text: 'Business Context', link: '/en/dev-center/business-context' },
+      { text: 'Tech Spikes', link: '/en/dev-center/tech-spikes' },
+      { text: 'Guideline & Best Practice', link: '/en/dev-center/guideline-and-best-practices' },
+      { text: 'Test Strategies', link: '/en/dev-center/test-strategies' },
+      { text: 'Conventions', link: '/en/dev-center/conventions' },
+      { text: 'Useful scripts & tools', link: '/en/dev-center/useful-scripts-and-tools' },
+      { text: 'Report Calculation Method', link: '/en/report-calculation-method' },
+      { text: 'Sequence Diagrams', link: '/en/dev-center/sequence-diagrams' },
+    ],
   },
 };

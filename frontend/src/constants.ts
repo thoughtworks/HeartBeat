@@ -1,3 +1,5 @@
+import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+
 export const PROJECT_NAME = 'Heartbeat'
 export const DEFAULT_HELPER_TEXT = ' '
 
@@ -74,7 +76,7 @@ export const METRICS_CONSTANTS = {
   doneKeyFromBackend: 'done',
   todoValue: 'To do',
   analysisValue: 'Analysis',
-  inDevValue: 'In dev',
+  inDevValue: 'In Dev',
   blockValue: 'Block',
   waitingValue: 'Waiting for testing',
   testingValue: 'Testing',
@@ -109,7 +111,64 @@ export const SELECTED_VALUE_SEPARATOR = ', '
 export const SAVE_CONFIG_TIPS =
   'Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)'
 
-export enum VelocityMetric {
-  VELOCITY_SP = 'Velocity(SP)',
-  THROUGHPUT_CARDS_COUNT = 'ThroughPut(Cards Count)',
+export enum VELOCITY_METRICS_NAME {
+  VELOCITY_SP = 'Velocity(Story Point)',
+  THROUGHPUT_CARDS_COUNT = 'Throughput(Cards Count)',
 }
+
+export enum CYCLE_TIME_METRICS_NAME {
+  AVERAGE_CYCLE_TIME = 'Average cycle time',
+  DEVELOPMENT_PROPORTION = 'Total development time / Total cycle time',
+  WAITING_PROPORTION = 'Total waiting for testing time / Total cycle time',
+  BLOCK_PROPORTION = 'Total block time / Total cycle time',
+  REVIEW_PROPORTION = 'Total review time / Total cycle time',
+  TESTING_PROPORTION = 'Total testing time / Total cycle time',
+  AVERAGE_DEVELOPMENT_TIME = 'Average development time',
+  AVERAGE_WAITING_TIME = 'Average waiting for testing time',
+  AVERAGE_BLOCK_TIME = 'Average block time',
+  AVERAGE_REVIEW_TIME = 'Average review time',
+  AVERAGE_TESTING_TIME = 'Average testing time',
+}
+
+export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency(deployments/day)'
+
+export const FAILURE_RATE_NAME = 'Failure rate'
+
+export const PIPELINE_STEP = 'Pipeline/step'
+
+export const NAME = 'Name'
+
+export enum Unit {
+  PER_SP = '(days/SP)',
+  PER_CARD = '(days/card)',
+}
+
+export const INIT_REPORT_DATA_WITH_TWO_COLUMNS: ReportDataWithTwoColumns[] = [
+  {
+    id: 1,
+    name: '',
+    valueList: [{ value: 0 }],
+  },
+]
+export const INIT_REPORT_DATA_WITH_TWO_COLUMNS_CYCLE: ReportDataWithTwoColumns[] = [
+  {
+    id: 1,
+    name: '',
+    valueList: [{ value: 0, unit: '' }],
+  },
+]
+
+export const INIT_REPORT_DATA_WITH_THREE_COLUMNS: ReportDataWithThreeColumns[] = [
+  {
+    id: 1,
+    name: '',
+    valuesList: [
+      {
+        name: '',
+        value: '',
+      },
+    ],
+  },
+]
+
+export const GET_STEPS_FAILED_MESSAGE = 'get steps failed'

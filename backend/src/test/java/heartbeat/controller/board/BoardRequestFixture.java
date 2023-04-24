@@ -2,7 +2,7 @@ package heartbeat.controller.board;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import heartbeat.controller.board.vo.request.BoardRequestParam;
+import heartbeat.controller.board.dto.request.BoardRequestParam;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 

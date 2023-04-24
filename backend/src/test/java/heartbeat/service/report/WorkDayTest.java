@@ -1,8 +1,8 @@
 package heartbeat.service.report;
 
 import heartbeat.client.HolidayFeignClient;
-import heartbeat.client.dto.HolidayDTO;
-import heartbeat.client.dto.HolidayResponseDTO;
+import heartbeat.client.dto.board.jira.HolidayDTO;
+import heartbeat.client.dto.board.jira.HolidayResponseDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

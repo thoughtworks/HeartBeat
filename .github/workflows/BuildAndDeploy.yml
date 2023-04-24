@@ -2,9 +2,9 @@ name: Build and Deploy
 
 on:
   push:
-    branches: ["*"]
+    branches: [ "*" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -17,6 +17,29 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: trufflehog-actions-scan
         uses: edplato/trufflehog-actions-scan@master
+      - name: Scan fs
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy fs \
+          --severity HIGH,CRITICAL \
+          --exit-code 1 \
+          ./
+      - name: Scan repo
+        run: |
+          docker run --rm -v\
+              /var/run/docker.sock:/var/run/docker.sock \
+              aquasec/trivy repo \
+             --severity HIGH,CRITICAL \
+             https://github.com/au-heartbeat/Heartbeat
+      - name: pwd
+        run: ls ../
+      - name: Scan config
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+             aquasec/trivy fs \
+             --security-checks vuln,config \
+             --severity HIGH,CRITICAL \
+           ./
   backend-check:
     runs-on: ubuntu-latest
     defaults:
@@ -172,12 +195,28 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: heartbeat_backend
-          IMAGE_TAG: latest
+          IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./infra/Dockerfile.backend
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.backend
-          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.backend
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_backend:latest
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
+      - name: Push for Backend
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: heartbeat_backend
+          IMAGE_TAG: "hb${{ github.run_number }}"
+        run: |
+          docker push $REGISTRY/$REPOSITORY:latest
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
 
   build-frontend:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -205,12 +244,29 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: heartbeat_frontend
-          IMAGE_TAG: latest
+          IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./infra/Dockerfile.frontend
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.frontend
-          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.frontend
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_frontend:latest
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
+
+      - name: Push for Frontend
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: heartbeat_frontend
+          IMAGE_TAG: "hb${{ github.run_number }}"
+        run: |
+          docker push $REGISTRY/$REPOSITORY:latest
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
 
   build-mock-server:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -234,17 +290,35 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push for MockServer
+      - name: Build, tag for MockServer
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: mock_server
-          IMAGE_TAG: latest
+          IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./infra/Dockerfile.stub
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.stub
-          docker build -t $REGISTRY/$REPOSITORY:${{ github.run_number }} ./ -f ./infra/Dockerfile.stub
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/mock_server:latest
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
+
+      - name: Push for MockServer
+        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: mock_server
+          IMAGE_TAG: "hb${{ github.run_number }}"
+        run: |
+          docker push $REGISTRY/$REPOSITORY:latest
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:${{ github.run_number }}
 
   deploy-e2e:
     runs-on: ubuntu-latest
@@ -256,8 +330,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Update docker-compose.yaml
         run: |
-          sed -i -e 's/heartbeat_backend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_backend:${{ github.run_number }}/g' infra/docker-compose.yml
-          sed -i -e 's/heartbeat_frontend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_frontend:${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/heartbeat_backend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_backend:hb${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/heartbeat_frontend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_frontend:hb${{ github.run_number }}/g' infra/docker-compose.yml
 
       - name: Copy docker-compose to ec2
         uses: appleboy/scp-action@master
@@ -274,7 +348,7 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-          IMAGE_TAG: ${{ github.run_number }}
+          IMAGE_TAG: "hb${{ github.run_number }}"
         with:
           host: ${{ secrets.AWS_EC2_IP_E2E }}
           username: ${{ secrets.AWS_USERNAME }}
@@ -283,8 +357,9 @@ jobs:
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             cp "./infra/docker-compose.yml" ./
-            docker-compose down
-            if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
+            # docker-compose down
+            if [[ -n $(docker images -f label=arch=Backend -q) ]]; then docker rmi -f $(docker images -f label=arch=Backend -q); fi
+            if [[ -n $(docker images -f label=arch=Frontend -q) ]]; then docker rmi -f $(docker images -f label=arch=Frontend -q); fi
             docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
             docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
             export MOCK_SERVER_URL=${{ secrets.AWS_EC2_IP_MOCK_SERVER }}:${{ secrets.AWS_EC2_IP_E2E_PORT }}
@@ -302,7 +377,8 @@ jobs:
       - name: Update docker-compose.yaml
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         run: |
-          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:hb${{ github.run_number }}/g' infra/docker-compose.yml
+          mv infra/docker-compose.yml infra/docker-compose-mock-server.yml
       - name: Copy docker-compose to ec2
         uses: appleboy/scp-action@master
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
@@ -311,7 +387,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
-          source: "./infra/docker-compose.yml"
+          source: "./infra/docker-compose-mock-server.yml"
           target: "./"
           strip_components: 1
       - name: Deploy
@@ -319,7 +395,7 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-          IMAGE_TAG: ${{ github.run_number }}
+          IMAGE_TAG: "hb${{ github.run_number }}"
         with:
           host: ${{ secrets.AWS_EC2_IP_MOCK_SERVER }}
           username: ${{ secrets.AWS_USERNAME }}
@@ -327,12 +403,12 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            cp "./infra/docker-compose.yml" ./
-            docker-compose down
+            cp "./infra/docker-compose-mock-server.yml" ./
+            # docker-compose down mockServer
             if [[ -n $(docker images -f label=arch=stubs -q) ]]; then docker rmi -f $(docker images -f label=arch=stubs -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
             export MOCK_SERVER_PORT=${{ secrets.AWS_EC2_IP_E2E_PORT }}
-            docker-compose up -d mockServer
+            docker-compose -f docker-compose-mock-server.yml up -d mockServer
   e2e:
     runs-on: ubuntu-latest
     defaults:
@@ -370,8 +446,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Update docker-compose.yaml
         run: |
-          sed -i -e 's/heartbeat_backend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_backend:${{ github.run_number }}/g' infra/docker-compose.yml
-          sed -i -e 's/heartbeat_frontend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_frontend:${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/heartbeat_backend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_backend:hb${{ github.run_number }}/g' infra/docker-compose.yml
+          sed -i -e 's/heartbeat_frontend:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_frontend:hb${{ github.run_number }}/g' infra/docker-compose.yml
 
       - name: Copy docker-compose to ec2
         uses: appleboy/scp-action@master
@@ -388,7 +464,7 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-          IMAGE_TAG: ${{ github.run_number }}
+          IMAGE_TAG: "hb${{ github.run_number }}"
         with:
           host: ${{ secrets.AWS_EC2_IP }}
           username: ${{ secrets.AWS_USERNAME }}
@@ -397,7 +473,7 @@ jobs:
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
             cp "./infra/docker-compose.yml" ./
-            docker-compose down
+            # docker-compose down
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_backend:$IMAGE_TAG
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_frontend:$IMAGE_TAG

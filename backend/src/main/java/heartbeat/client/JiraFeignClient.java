@@ -1,10 +1,10 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.CardHistoryResponseDTO;
-import heartbeat.client.dto.FieldResponseDTO;
-import heartbeat.client.dto.JiraBoardConfigDTO;
-import heartbeat.client.dto.StatusSelfDTO;
+import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
+import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import java.net.URI;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;

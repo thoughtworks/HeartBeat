@@ -13,7 +13,7 @@ Health endpoint:
 http://localhost:4322/api/v1/health
 
 Swagger address:
-http://localhost:4322/api/v1/swagger-ui/index.html
+http://localhost:4322/api/v1/docs
 
 ## 2. How to build docker image and run locally
 

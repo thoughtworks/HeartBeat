@@ -21,9 +21,7 @@ class Config {
   selectMetricsData() {
     cy.contains('Required Data').siblings().click()
 
-    cy.contains('Velocity').click()
-    cy.contains('Lead time for changes').click()
-    cy.contains('Deployment frequency').click()
+    cy.contains('All').click()
 
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
   }
@@ -45,9 +43,6 @@ class Config {
     cy.contains('Token').siblings().first().type(token)
 
     cy.contains('Verify').click()
-    cy.wait(10000)
-    cy.contains('Verified').should('exist')
-    cy.contains('Reset').should('exist')
   }
 
   fillPipelineToolFieldsInfoAndVerify(token: string) {

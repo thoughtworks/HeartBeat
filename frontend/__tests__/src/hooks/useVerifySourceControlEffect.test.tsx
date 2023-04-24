@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
-import { sourceControlClient } from '@src/clients/SourceControlClient'
+import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient'
 import { MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 

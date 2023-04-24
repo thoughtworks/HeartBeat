@@ -1,10 +1,10 @@
 package heartbeat.service.report;
 
-import heartbeat.controller.board.vo.request.Cards;
-import heartbeat.controller.report.vo.request.GenerateReportRequest;
-import heartbeat.controller.report.vo.request.JiraBoardSetting;
-import heartbeat.controller.report.vo.response.GenerateReportResponse;
-import heartbeat.controller.report.vo.response.Velocity;
+import heartbeat.controller.board.dto.request.Cards;
+import heartbeat.controller.report.dto.request.GenerateReportRequest;
+import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.controller.report.dto.response.GenerateReportResponse;
+import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

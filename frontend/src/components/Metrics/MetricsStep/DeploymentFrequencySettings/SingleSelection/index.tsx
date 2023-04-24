@@ -12,15 +12,18 @@ interface Props {
   value: string
   id: number
   errorMessage: string | undefined
+  onGetSteps?: (pipelineName: string) => void
 }
 
-export const SingleSelection = ({ options, label, value, id, errorMessage }: Props) => {
+export const SingleSelection = ({ options, label, value, id, errorMessage, onGetSteps }: Props) => {
   const dispatch = useAppDispatch()
   const [selectedValue, setSelectedValue] = useState(value)
   const { clearErrorMessage } = useMetricsStepValidationCheckContext()
+  const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
 
   const handleChange = (event: SelectChangeEvent) => {
     const value = event.target.value
+    if (onGetSteps) onGetSteps(value)
     setSelectedValue(value)
     dispatch(updateDeploymentFrequencySettings({ updateId: id, label, value }))
     !!errorMessage && clearErrorMessage(id, camelCase(label))
@@ -29,8 +32,8 @@ export const SingleSelection = ({ options, label, value, id, errorMessage }: Pro
   return (
     <>
       <FormControlWrapper variant='standard' required error={!!errorMessage}>
-        <InputLabel id='single-selection-label'>{label}</InputLabel>
-        <Select labelId='single-selection-label' value={selectedValue} onChange={handleChange}>
+        <InputLabel id={labelId}>{label}</InputLabel>
+        <Select labelId={labelId} value={options.length > 0 ? selectedValue : ''} onChange={handleChange}>
           {options.map((data) => (
             <MenuItem key={data} value={data}>
               <ListItemText primary={data} />

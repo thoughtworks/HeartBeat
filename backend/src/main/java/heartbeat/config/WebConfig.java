@@ -1,7 +1,8 @@
 package heartbeat.config;
 
-import heartbeat.util.StringToEnumConverter;
+import heartbeat.controller.board.dto.request.BoardType;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -10,7 +11,12 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
-		registry.addConverter(new StringToEnumConverter());
+		registry.addConverter(new Converter<String, BoardType>() {
+			@Override
+			public BoardType convert(String source) {
+				return BoardType.fromValue(source.toLowerCase());
+			}
+		});
 	}
 
 }

@@ -1,8 +1,8 @@
 package heartbeat.util;
 
-import heartbeat.controller.board.vo.StatusChangedArrayItem;
-import heartbeat.controller.board.vo.request.CardStepsEnum;
-import heartbeat.controller.board.vo.response.CycleTimeInfo;
+import heartbeat.controller.board.dto.request.CardStepsEnum;
+import heartbeat.controller.board.dto.response.CycleTimeInfo;
+import heartbeat.controller.board.dto.response.StatusChangedArrayItem;
 import heartbeat.service.report.WorkDay;
 import lombok.RequiredArgsConstructor;
 

@@ -2,10 +2,10 @@ package heartbeat.controller.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.report.vo.request.GenerateReportRequest;
-import heartbeat.controller.report.vo.response.GenerateReportResponse;
-import heartbeat.controller.report.vo.response.Velocity;
+import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.service.report.GenerateReporterService;
+import heartbeat.controller.report.dto.response.GenerateReportResponse;
+import heartbeat.controller.report.dto.response.Velocity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package heartbeat.service.report;
 
 import heartbeat.client.HolidayFeignClient;
-import heartbeat.client.dto.HolidayDTO;
+import heartbeat.client.dto.board.jira.HolidayDTO;
 import lombok.RequiredArgsConstructor;
 
 import java.time.DayOfWeek;

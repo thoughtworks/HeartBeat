@@ -32,7 +32,7 @@ frontend_license_check() {
 backend_check() {
   cd backend
   ./gradlew clean check
-  bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./build/reports/jacoco/test/jacocoTestReport.xml
   ./gradlew clean build -x test
 }
 
@@ -41,7 +41,7 @@ frontend_check(){
   pnpm install --no-frozen-lockfile
   pnpm lint
   pnpm coverage
-  bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./coverage/clover.xml
   pnpm build
 }
 

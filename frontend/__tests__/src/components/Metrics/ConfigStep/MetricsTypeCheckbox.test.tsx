@@ -90,18 +90,19 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should be checked of All selected option when click any other options', async () => {
     const { getByRole } = setup()
-
     await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
 
     const listBox = within(getByRole('listbox'))
-
-    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))
-    await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }))
-    await userEvent.click(listBox.getByRole('option', { name: CLASSIFICATION }))
-    await userEvent.click(listBox.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
-    await userEvent.click(listBox.getByRole('option', { name: DEPLOYMENT_FREQUENCY }))
-    await userEvent.click(listBox.getByRole('option', { name: CHANGE_FAILURE_RATE }))
-    await userEvent.click(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }))
+    const optionsToClick = [
+      listBox.getByRole('option', { name: VELOCITY }),
+      listBox.getByRole('option', { name: CYCLE_TIME }),
+      listBox.getByRole('option', { name: CLASSIFICATION }),
+      listBox.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }),
+      listBox.getByRole('option', { name: DEPLOYMENT_FREQUENCY }),
+      listBox.getByRole('option', { name: CHANGE_FAILURE_RATE }),
+      listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }),
+    ]
+    await Promise.all(optionsToClick.map((opt) => userEvent.click(opt)))
 
     expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true')
   })

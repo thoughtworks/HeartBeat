@@ -1,9 +1,0 @@
-#!/bin/bash
-
-run_backend_check() {
-  cd backend
-  ./gradlew clean check
-  ./gradlew clean build
-  bash <(curl -Ls https://coverage.codacy.com/get.sh)
-}
-run_backend_check

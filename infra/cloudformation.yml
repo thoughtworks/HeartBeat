@@ -31,6 +31,9 @@ Parameters:
     Description: Audience supplied to configure-aws-credentials.
     Default: "sts.amazonaws.com"
     Type: String
+  BuildKiteToken:
+    Description: Token which is used to setup agent
+    Type: String
 
 Conditions:
   CreateOIDCProvider: !Equals
@@ -379,9 +382,10 @@ Resources:
             - sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
             - sudo chmod +x /usr/local/bin/docker-compose
+            - # Ref to https://buildkite.com/docs/agent/v3/redhat
             - sudo sh -c 'echo -e "[buildkite-agent]\nname = Buildkite Pty Ltd\nbaseurl = https://yum.buildkite.com/buildkite-agent/stable/x86_64/\nenabled=1\ngpgcheck=0\npriority=1" > /etc/yum.repos.d/buildkite-agent.repo'
             - sudo yum -y install buildkite-agent
-            - sudo sed -i "s/xxx/INSERT-YOUR-AGENT-TOKEN-HERE/g" /etc/buildkite-agent/buildkite-agent.cfg
+            - sudo sed -i "s/xxx/${BuildKiteToken}/g" /etc/buildkite-agent/buildkite-agent.cfg
             - sudo systemctl enable buildkite-agent && sudo systemctl start buildkite-agent
             - sudo mkdir /opt/gradle
             - sudo yum install -y wget

@@ -3,7 +3,6 @@ set -e
 set +x
 
 display_help() {
-    # taken from https://stackoverflow.com/users/4307337/vincent-stans
     echo "Usage: $0 {security|frontend|backend|backend-license|frontend-license}" >&2
     echo
     echo "   frontend           run check for the frontend"
@@ -12,14 +11,29 @@ display_help() {
     exit 1
 }
 
-run_backend_check() {
+security_check() {
+  docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
+}
+
+backend_license_check() {
+  cd backend
+  ./gradlew clean checkLicense
+}
+
+frontend_license_check() {
+  cd frontend
+  npm install
+  npm run license-compliance
+}
+
+backend_check() {
   cd backend
   ./gradlew clean check
   ./gradlew clean build
   bash <(curl -Ls https://coverage.codacy.com/get.sh)
 }
 
-run_frontend_check(){
+frontend_check(){
   cd frontend
   pnpm install --no-frozen-lockfile
   pnpm lint
@@ -36,8 +50,11 @@ fi
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) display_help; shift ;;
-        frontend) run_frontend_check ;;
-        backend) run_backend_check ;;
+        security) security_check ;;
+        frontend) frontend_check ;;
+        backend) backend_check ;;
+        "backend-license") backend_license_check ;;
+        "backend-license") frontend_license_check ;;
         *) echo "Unknown parameter passed: $1" ;;
     esac
     shift

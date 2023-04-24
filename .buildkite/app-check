@@ -32,7 +32,7 @@ frontend_license_check() {
 backend_check() {
   cd backend
   ./gradlew clean check
-  ./gradlew clean build
+  ./gradlew clean build -x test
   bash <(curl -Ls https://coverage.codacy.com/get.sh)
 }
 

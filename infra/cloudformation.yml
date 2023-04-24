@@ -397,7 +397,7 @@ Resources:
             - sudo yum update -y
             - sudo yum install nodejs -y
             - sudo npm install -g pnpm
-            - sudo yum install -y java-1.8.0
+            - sudo yum install java-17-amazon-corretto -y
 
   EC2KeyPair:
     Type: AWS::EC2::KeyPair

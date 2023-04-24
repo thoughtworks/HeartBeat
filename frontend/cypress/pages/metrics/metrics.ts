@@ -45,6 +45,10 @@ class Metrics {
   goReportStep() {
     cy.contains('Next').click()
   }
+
+  goReportStep() {
+    cy.contains('Next').click()
+  }
 }
 
 const metricsPage = new Metrics()

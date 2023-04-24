@@ -32,8 +32,8 @@ frontend_license_check() {
 backend_check() {
   cd backend
   ./gradlew clean check
-  ./gradlew clean build -x test
   bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  ./gradlew clean build -x test
 }
 
 frontend_check(){
@@ -41,8 +41,8 @@ frontend_check(){
   pnpm install --no-frozen-lockfile
   pnpm lint
   pnpm coverage
-  pnpm build
   bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  pnpm build
 }
 
 if [[ "$#" -le 0 ]]; then

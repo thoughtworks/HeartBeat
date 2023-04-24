@@ -4,6 +4,7 @@ import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.Assignee;
 import heartbeat.client.dto.CardHistoryResponseDTO;
 import heartbeat.client.dto.FieldResponseDTO;
 import heartbeat.client.dto.HistoryDetail;
@@ -17,11 +18,16 @@ import heartbeat.controller.board.vo.request.BoardType;
 import heartbeat.controller.board.vo.request.Cards;
 import heartbeat.controller.board.vo.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.vo.response.BoardConfigResponse;
+import heartbeat.controller.board.vo.response.CardCycleTime;
+import heartbeat.controller.board.vo.response.JiraCardResponse;
+import heartbeat.controller.board.vo.response.StepsDay;
 import heartbeat.controller.board.vo.response.TargetField;
 import heartbeat.controller.report.vo.request.JiraBoardSetting;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
+import heartbeat.util.BoardUtil;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,9 +71,12 @@ class JiraServiceTest {
 
 	ThreadPoolTaskExecutor executor;
 
+	@Mock
+	BoardUtil boardUtil;
+
 	@BeforeEach
 	public void setUp() {
-		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator);
+		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator, boardUtil);
 	}
 
 	@AfterEach
@@ -443,35 +452,8 @@ class JiraServiceTest {
 	@Test
 	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() {
 		String token = "token";
-
-		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
-			.boardId("123")
-			.boardColumns(List.of())
-			.token(token)
-			.site("site")
-			.doneColumn(List.of("DONE"))
-			.treatFlagCardAsBlock(true)
-			.type("jira")
-			.projectKey("PLL")
-			.teamId("HB")
-			.teamName("HB")
-			.targetFields(List.of(TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
-					TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
-					TargetField.builder().key("testKey").name("Flagged").flag(true).build()))
-			.build();
-
-		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = StoryPointsAndCycleTimeRequest.builder()
-			.token("token")
-			.type(jiraBoardSetting.getType())
-			.site(jiraBoardSetting.getSite())
-			.project(jiraBoardSetting.getProjectKey())
-			.boardId(jiraBoardSetting.getBoardId())
-			.status(jiraBoardSetting.getDoneColumn())
-			.startTime("1672556350000")
-			.endTime("1676908799000")
-			.targetFields(jiraBoardSetting.getTargetFields())
-			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
-			.build();
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
@@ -482,10 +464,35 @@ class JiraServiceTest {
 			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
-		Cards cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns(), List.of("San Zhang"));
 
-		assertThat(false);
+		Cards cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
+		CardCycleTime cardCycleTime = CardCycleTime.builder()
+			.name("1")
+			.steps(StepsDay.builder().
+				analyse(0.0).development(0.0).waiting(0.0).testing(0.0)
+				.blocked(0.0)
+				.review(0.0)
+				.build())
+			.total(0.0)
+			.build();
+		Cards expect = Cards.builder()
+			.cardsNumber(1)
+			.jiraCardResponseList(List.of(JiraCardResponse.builder()
+				.baseInfo(JiraCard.builder()
+					.key("1").fields(JiraCardFields.builder()
+						.assignee(Assignee.builder()
+							.displayName("Zhang San")
+							.build())
+						.build())
+					.build())
+					.cycleTime(List.of())
+					.originCycleTime(List.of())
+					.cardCycleTime(cardCycleTime)
+				.build()))
+			.build();
+
+		Assertions.assertEquals(expect, cards);
 	}
 
 }

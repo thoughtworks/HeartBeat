@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 
 public class GenerateReporterService {
 
+	// todo: need remove private fields not use void function when finish
+	// GenerateReporterService
 	private Cards cards;
 
 	private final JiraService jiraService;

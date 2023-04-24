@@ -13,8 +13,8 @@ import { DEPLOYMENT_FREQUENCY_SETTINGS, REMOVE_BUTTON, ORGANIZATION } from '../.
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
   useAppSelector: jest.fn().mockReturnValue([
+    { id: 0, organization: '', pipelineName: '', steps: '' },
     { id: 1, organization: '', pipelineName: '', steps: '' },
-    { id: 2, organization: '', pipelineName: '', steps: '' },
   ]),
 }))
 
@@ -77,7 +77,7 @@ describe('DeploymentFrequencySettings', () => {
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
     expect(getAllByText(ORGANIZATION).length).toBe(2)
-    expect(getByText('organization is required')).toBeInTheDocument()
+    expect(getAllByText('organization is required').length).toBe(2)
   })
 
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {

@@ -13,8 +13,8 @@ import { LEAD_TIME_FOR_CHANGES, ORGANIZATION, REMOVE_BUTTON } from '../../../fix
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
   useAppSelector: jest.fn().mockReturnValue([
+    { id: 0, organization: '', pipelineName: '', steps: '' },
     { id: 1, organization: '', pipelineName: '', steps: '' },
-    { id: 2, organization: '', pipelineName: '', steps: '' },
   ]),
 }))
 
@@ -77,7 +77,7 @@ describe('LeadTimeForChanges', () => {
 
     expect(getByText(LEAD_TIME_FOR_CHANGES)).toBeInTheDocument()
     expect(getAllByText(ORGANIZATION).length).toBe(2)
-    expect(getByText('organization is required')).toBeInTheDocument()
+    expect(getAllByText('organization is required').length).toBe(2)
   })
 
   it('should call addALeadTimeForChanges function when click add another pipeline button', async () => {

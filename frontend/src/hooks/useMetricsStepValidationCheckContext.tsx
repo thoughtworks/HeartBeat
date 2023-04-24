@@ -43,7 +43,7 @@ const emptyErrorMessages = {
   steps: '',
 }
 
-const setErrorMessage = (label: string, value: string, id: number, duplicatedPipeLineIds: number[]) =>
+const assignErrorMessage = (label: string, value: string, id: number, duplicatedPipeLineIds: number[]) =>
   !value ? `${label} is required` : duplicatedPipeLineIds.includes(id) ? `duplicated ${label}` : ''
 
 const getDuplicatedPipeLineIds = (
@@ -69,9 +69,9 @@ const getErrorMessages = (
   return pipelineSettings.map(({ id, organization, pipelineName, steps }) => ({
     id,
     error: {
-      organization: setErrorMessage('organization', organization, id, duplicatedPipelineIds),
-      pipelineName: setErrorMessage('pipelineName', pipelineName, id, duplicatedPipelineIds),
-      steps: setErrorMessage('steps', steps, id, duplicatedPipelineIds),
+      organization: assignErrorMessage('organization', organization, id, duplicatedPipelineIds),
+      pipelineName: assignErrorMessage('pipelineName', pipelineName, id, duplicatedPipelineIds),
+      steps: assignErrorMessage('steps', steps, id, duplicatedPipelineIds),
     },
   }))
 }

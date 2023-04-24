@@ -4,8 +4,11 @@ import feign.FeignException;
 import heartbeat.client.GitHubFeignClient;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepo;
+import heartbeat.client.dto.codebase.github.PipelineLeadTime;
+import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.service.codebase.ICodebase;
 import heartbeat.util.TokenUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -25,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class GitHubService {
+public class GitHubService implements ICodebase {
 
 	@Autowired
 	private final ThreadPoolTaskExecutor taskExecutor;
@@ -98,4 +102,8 @@ public class GitHubService {
 				.collect(Collectors.toSet()));
 	}
 
+	@Override
+	public List<PipelineLeadTime> fetchPipelinesLeadTime(List<DeployTimes> deployTimes, Map<String, String> repositories) {
+		return null;
+	}
 }

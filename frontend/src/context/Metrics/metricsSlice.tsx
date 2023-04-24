@@ -122,7 +122,6 @@ export const {
   saveDoneColumn,
   saveUsers,
   saveBoardColumns,
-  initDeploymentFrequencySettings,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,

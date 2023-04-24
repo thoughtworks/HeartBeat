@@ -95,7 +95,13 @@ export const PipelineMetricSelection = ({
           onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />
       )}
-      <ButtonWrapper>{isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove</RemoveButton>}</ButtonWrapper>
+      <ButtonWrapper>
+        {isShowRemoveButton && (
+          <RemoveButton data-test-id={'remove-button'} onClick={handleClick}>
+            Remove
+          </RemoveButton>
+        )}
+      </ButtonWrapper>
     </PipelineMetricSelectionWrapper>
   )
 }

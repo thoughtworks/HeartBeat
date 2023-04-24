@@ -13,4 +13,6 @@ public class GenerateReportResponse {
 
 	private Velocity velocity;
 
+	private Classification classification;
+
 }

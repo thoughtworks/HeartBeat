@@ -5,8 +5,11 @@ set +x
 display_help() {
     echo "Usage: $0 {security|frontend|backend|backend-license|frontend-license}" >&2
     echo
+    echo "   security           run security check for the whole project"
     echo "   frontend           run check for the frontend"
     echo "   backend            run check for the backend"
+    echo "   backend-license    check license for the backend"
+    echo "   frontend-license   check license for the frontend"
     echo
     exit 1
 }

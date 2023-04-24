@@ -387,6 +387,7 @@ Resources:
             - sudo yum -y install buildkite-agent
             - sudo sed -i "s/xxx/${BuildKiteToken}/g" /etc/buildkite-agent/buildkite-agent.cfg
             - sudo systemctl enable buildkite-agent && sudo systemctl start buildkite-agent
+            - # Add public key on GitHub DeployKey(https://github.com/au-heartbeat/Heartbeat/settings/keys) according to https://buildkite.com/docs/agent/v3/redhat#ssh-key-configuration
             - sudo mkdir /opt/gradle
             - sudo yum install -y wget
             - sudo wget https://services.gradle.org/distributions/gradle-8.0.2-bin.zip -P /opt/gradle

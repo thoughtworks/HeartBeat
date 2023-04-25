@@ -4,6 +4,7 @@ import heartbeat.client.HolidayFeignClient;
 import heartbeat.client.dto.board.jira.HolidayDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Log4j2
+@Component
 @RequiredArgsConstructor
 public class WorkDay {
 

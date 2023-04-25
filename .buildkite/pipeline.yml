@@ -2,19 +2,28 @@ env:
   RETENTION_DAYS: "10"
 steps:
   - label: ":lock: Security Check"
-    command: >
-      docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
+    command: ./.buildkite/app-check security
 
   - label: ":rocket: Backend Check"
-    command: ./infra/buildkite/app-check && echo 'Backend Check complete'
+    command: ./.buildkite/app-check backend
+
+  - label: ":mag: Frontend License Check"
+    commands: ./.buildkite/app-check frontendLicenseCheck
 
   - label: ":mag: Backend License Check"
-    commands:
-      - cd backend
-      - ./gradlew clean checkLicense
+    commands: ./.buildkite/app-check backendLicenseCheck
     plugins:
       - artifacts#v1.9.0:
           upload:
             - "backend/build/reports/dependency-license/**/*"
           name: "backend-license-report"
           expire_in: "${RETENTION_DAYS} days"
+
+  - label: ":computer: Frontend Check"
+    command: ./.buildkite/app-check frontend
+
+  - label: ":computer: License compliance check"
+    commands:
+      - cd frontend
+      - npm install
+      - npm run license-compliance

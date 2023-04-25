@@ -31,6 +31,9 @@ Parameters:
     Description: Audience supplied to configure-aws-credentials.
     Default: "sts.amazonaws.com"
     Type: String
+  BuildKiteToken:
+    Description: Token which is used to setup agent
+    Type: String
 
 Conditions:
   CreateOIDCProvider: !Equals
@@ -350,6 +353,51 @@ Resources:
             - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
             - sudo chmod +x /usr/local/bin/docker-compose
             - sudo `aws ecr get-login-password --region ${AwsRegion} | docker login --username AWS --password-stdin ${AwsAccountId}.dkr.ecr.${AwsHost}`
+  BuildKiteAgentEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Sub ${EC2ImageId}
+      InstanceType: "t2.medium"
+      Tags:
+        - Key: "Name"
+          Value: "HearbeatBuildKiteAgent"
+        - Key: "app"
+          Value: "HearbeatBuildKiteAgent"
+        - Key: "env"
+          Value: "E2E"
+      SecurityGroups:
+        - !Ref EC2SSHSecurityGroup
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      KeyName: !Ref EC2KeyPair
+      UserData:
+        "Fn::Base64": !Sub |
+          #cloud-config
+          cloud_final_modules:
+          - [scripts-user, always]
+          runcmd:
+            - sudo yum -y install docker
+            - sudo systemctl enable docker.service
+            - sudo systemctl start docker.service
+            - sudo chmod 666 /var/run/docker.sock
+            - sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+            - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            - sudo chmod +x /usr/local/bin/docker-compose
+            - # Ref to https://buildkite.com/docs/agent/v3/redhat
+            - sudo sh -c 'echo -e "[buildkite-agent]\nname = Buildkite Pty Ltd\nbaseurl = https://yum.buildkite.com/buildkite-agent/stable/x86_64/\nenabled=1\ngpgcheck=0\npriority=1" > /etc/yum.repos.d/buildkite-agent.repo'
+            - sudo yum -y install buildkite-agent
+            - sudo sed -i "s/xxx/${BuildKiteToken}/g" /etc/buildkite-agent/buildkite-agent.cfg
+            - sudo systemctl enable buildkite-agent && sudo systemctl start buildkite-agent
+            - # Add public key on GitHub DeployKey(https://github.com/au-heartbeat/Heartbeat/settings/keys) according to https://buildkite.com/docs/agent/v3/redhat#ssh-key-configuration
+            - sudo mkdir /opt/gradle
+            - sudo yum install -y wget
+            - sudo wget https://services.gradle.org/distributions/gradle-8.0.2-bin.zip -P /opt/gradle
+            - sudo unzip -d /opt/gradle /opt/gradle/gradle-8.0.2-bin.zip
+            - echo 'export PATH=$PATH:/opt/gradle/gradle-8.0.2/bin' | sudo tee -a /etc/profile.d/gradle.sh
+            - source /etc/profile.d/gradle.sh
+            - sudo yum update -y
+            - sudo yum install nodejs -y
+            - sudo npm install -g pnpm
+            - sudo yum install java-17-amazon-corretto -y
 
   EC2KeyPair:
     Type: AWS::EC2::KeyPair

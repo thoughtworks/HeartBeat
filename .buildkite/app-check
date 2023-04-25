@@ -1,0 +1,64 @@
+#!/bin/bash
+set -e
+set +x
+
+display_help() {
+    echo "Usage: $0 {security|frontend|backend|backend-license|frontend-license}" >&2
+    echo
+    echo "   security           run security check for the whole project"
+    echo "   frontend           run check for the frontend"
+    echo "   backend            run check for the backend"
+    echo "   backend-license    check license for the backend"
+    echo "   frontend-license   check license for the frontend"
+    echo
+    exit 1
+}
+
+security_check() {
+  docker run --rm -it -v "$PWD:/pwd" trufflesecurity/trufflehog:latest  git file:///pwd --since-commit HEAD  --fail
+}
+
+backend_license_check() {
+  cd backend
+  ./gradlew clean checkLicense
+}
+
+frontend_license_check() {
+  cd frontend
+  npm install
+  npm run license-compliance
+}
+
+backend_check() {
+  cd backend
+  ./gradlew clean check
+  bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./build/reports/jacoco/test/jacocoTestReport.xml
+  ./gradlew clean build -x test
+}
+
+frontend_check(){
+  cd frontend
+  pnpm install --no-frozen-lockfile
+  pnpm lint
+  pnpm coverage
+  bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./coverage/clover.xml
+  pnpm build
+}
+
+if [[ "$#" -le 0 ]]; then
+  display_help
+  exit 0
+fi
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -h|--help) display_help; shift ;;
+        security) security_check ;;
+        frontend) frontend_check ;;
+        backend) backend_check ;;
+        "backend-license") backend_license_check ;;
+        "backend-license") frontend_license_check ;;
+        *) echo "Unknown parameter passed: $1" ;;
+    esac
+    shift
+done

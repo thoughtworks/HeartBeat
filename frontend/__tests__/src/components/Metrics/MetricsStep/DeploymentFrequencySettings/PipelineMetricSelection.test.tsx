@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
-import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { metricsClient } from '@src/clients/MetricsClient'
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice'
+import { ORGANIZATION, PIPELINE_NAME, STEPS, REMOVE_BUTTON } from '../../../../fixtures'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -14,7 +14,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
 
 jest.mock('@src/context/config/configSlice', () => ({
   ...jest.requireActual('@src/context/config/configSlice'),
-  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
+  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName', 'mockOrgName2']),
   selectPipelineNames: jest.fn().mockReturnValue(['mockName', 'mockName2']),
   selectSteps: jest.fn().mockReturnValue(['step1', 'step2']),
   selectStepsParams: jest.fn().mockReturnValue({
@@ -36,10 +36,6 @@ jest.mock('@src/context/config/configSlice', () => ({
 }))
 
 describe('PipelineMetricSelection', () => {
-  const REMOVE_BUTTON = 'Remove'
-  const ORGANIZATION = 'Organization'
-  const PIPELINE_NAME = 'Pipeline Name'
-  const STEPS = 'Steps'
   const mockId = 0
   const deploymentFrequencySetting = {
     id: 0,
@@ -47,6 +43,9 @@ describe('PipelineMetricSelection', () => {
     pipelineName: '',
     steps: '',
   }
+  const mockHandleClickRemoveButton = jest.fn()
+  const mockUpdatePipeline = jest.fn()
+  const mockClearErrorMessage = jest.fn()
 
   const setup = async (
     deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
@@ -56,9 +55,16 @@ describe('PipelineMetricSelection', () => {
     return render(
       <Provider store={store}>
         <PipelineMetricSelection
-          deploymentFrequencySetting={deploymentFrequencySetting}
+          pipelineSetting={deploymentFrequencySetting}
           isShowRemoveButton={isShowRemoveButton}
-          errorMessages={{ organization: '', pipelineName: '', steps: '' }}
+          errorMessages={{
+            organization: 'organization is required',
+            pipelineName: 'pipelineName is required',
+            steps: 'steps is required',
+          }}
+          onRemovePipeline={mockHandleClickRemoveButton}
+          onUpdatePipeline={mockUpdatePipeline}
+          onClearErrorMessage={mockClearErrorMessage}
         />
       </Provider>
     )
@@ -87,15 +93,21 @@ describe('PipelineMetricSelection', () => {
 
     await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 
-    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
-    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledWith(mockId)
+    expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(1)
+    expect(mockHandleClickRemoveButton).toHaveBeenCalledWith(mockId)
   })
 
   it('should show pipelineName selection when select organization', async () => {
-    const { getByText } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false)
+    const { getByText, getByRole } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false)
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
     expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
+
+    await userEvent.click(getByRole('button', { name: ORGANIZATION }))
+    const listBox = within(getByRole('listbox'))
+    await userEvent.click(listBox.getByText('mockOrgName2'))
+
+    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
   })
 
   it('should show step selection when select organization and pipelineName', async () => {
@@ -126,6 +138,8 @@ describe('PipelineMetricSelection', () => {
     await waitFor(() => {
       expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument()
     })
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
+    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
   })
 
   it('should show steps selection when getSteps succeed ', async () => {
@@ -136,10 +150,17 @@ describe('PipelineMetricSelection', () => {
     )
 
     await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
-    const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockName2'))
+    const pipelineNameListBox = within(getByRole('listbox'))
+    await userEvent.click(pipelineNameListBox.getByText('mockName2'))
 
     expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
     expect(getByText(STEPS)).toBeInTheDocument()
+
+    await userEvent.click(getByRole('button', { name: STEPS }))
+    const stepsListBox = within(getByRole('listbox'))
+    await userEvent.click(stepsListBox.getByText('step2'))
+
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
+    expect(mockClearErrorMessage).toHaveBeenCalledTimes(2)
   })
 })

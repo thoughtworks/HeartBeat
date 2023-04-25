@@ -1,14 +1,14 @@
 import { render, within } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
-import userEvent from '@testing-library/user-event'
-import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
+import { LeadTimeForChanges } from '@src/components/Metrics/MetricsStep/LeadTimeForChanges'
 import {
-  addADeploymentFrequencySetting,
-  deleteADeploymentFrequencySetting,
-  updateDeploymentFrequencySettings,
+  addALeadTimeForChanges,
+  deleteALeadTimeForChange,
+  updateLeadTimeForChanges,
 } from '@src/context/Metrics/metricsSlice'
-import { DEPLOYMENT_FREQUENCY_SETTINGS, REMOVE_BUTTON, ORGANIZATION } from '../../../../fixtures'
+import userEvent from '@testing-library/user-event'
+import { LEAD_TIME_FOR_CHANGES, ORGANIZATION, REMOVE_BUTTON } from '../../../fixtures'
 
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
@@ -19,9 +19,9 @@ jest.mock('@src/hooks', () => ({
 }))
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
-  addADeploymentFrequencySetting: jest.fn(),
-  deleteADeploymentFrequencySetting: jest.fn(),
-  updateDeploymentFrequencySettings: jest.fn(),
+  addALeadTimeForChanges: jest.fn(),
+  deleteALeadTimeForChange: jest.fn(),
+  updateLeadTimeForChanges: jest.fn(),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({
@@ -32,7 +32,7 @@ jest.mock('@src/context/config/configSlice', () => ({
 }))
 
 const mockValidationCheckContext = {
-  deploymentFrequencySettingsErrorMessages: [
+  leadTimeForChangesErrorMessages: [
     {
       id: 0,
       error: {
@@ -50,7 +50,7 @@ const mockValidationCheckContext = {
       },
     },
   ],
-  leadTimeForChangesErrorMessages: [],
+  deploymentFrequencySettingsErrorMessages: [],
   clearErrorMessage: jest.fn(),
   checkDuplicatedPipeline: jest.fn(),
   isPipelineValid: jest.fn().mockReturnValue(true),
@@ -63,47 +63,47 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
 const setup = () =>
   render(
     <Provider store={store}>
-      <DeploymentFrequencySettings />
+      <LeadTimeForChanges />
     </Provider>
   )
 
-describe('DeploymentFrequencySettings', () => {
+describe('LeadTimeForChanges', () => {
   afterEach(() => {
     jest.clearAllMocks()
   })
 
-  it('should render DeploymentFrequencySettings component', () => {
+  it('should render LeadTimeForChanges', () => {
     const { getByText, getAllByText } = setup()
 
-    expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
+    expect(getByText(LEAD_TIME_FOR_CHANGES)).toBeInTheDocument()
     expect(getAllByText(ORGANIZATION).length).toBe(2)
     expect(getAllByText('organization is required').length).toBe(2)
   })
 
-  it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
+  it('should call addALeadTimeForChanges function when click add another pipeline button', async () => {
     const { getByTestId } = await setup()
 
     await userEvent.click(getByTestId('AddIcon'))
 
-    expect(addADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
+    expect(addALeadTimeForChanges).toHaveBeenCalledTimes(1)
   })
 
-  it('should call deleteADeploymentFrequencySetting function when click remove pipeline button', async () => {
+  it('should call deleteALeadTimeForChanges function when click remove pipeline button', async () => {
     const { getAllByRole } = await setup()
 
     await userEvent.click(getAllByRole('button', { name: REMOVE_BUTTON })[0])
 
-    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
+    expect(deleteALeadTimeForChange).toHaveBeenCalledTimes(1)
   })
 
-  it('should call updateDeploymentFrequencySetting function and clearErrorMessages function when select organization', async () => {
+  it('should call updateLeadTimeForChanges function and clearErrorMessages function when select organization', async () => {
     const { getAllByRole, getByRole } = setup()
 
     await userEvent.click(getAllByRole('button', { name: ORGANIZATION })[0])
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByText('mockOrgName'))
 
-    expect(updateDeploymentFrequencySettings).toHaveBeenCalledTimes(1)
+    expect(updateLeadTimeForChanges).toHaveBeenCalledTimes(1)
     expect(mockValidationCheckContext.clearErrorMessage).toHaveBeenCalledTimes(1)
   })
 })

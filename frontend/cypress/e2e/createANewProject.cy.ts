@@ -47,6 +47,8 @@ describe('Create a new project', () => {
 
     metricsPage.checkDeploymentFrequencySettings()
 
+    metricsPage.checkLeadTimeForChanges()
+
     nextButton().should('be.enabled')
 
     metricsPage.goReportStep()

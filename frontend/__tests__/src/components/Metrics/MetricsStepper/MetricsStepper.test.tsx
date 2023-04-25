@@ -11,7 +11,7 @@ import {
   NEXT,
   PROJECT_NAME_LABEL,
   SAVE,
-  STEPS,
+  STEPPER,
   TEST_PROJECT_NAME,
   VELOCITY,
 } from '../../../fixtures'
@@ -39,9 +39,10 @@ const REPORT = 'Report'
 const stepperColor = 'rgba(0, 0, 0, 0.87)'
 
 const mockValidationCheckContext = {
-  errorMessages: [],
+  deploymentFrequencySettingsErrorMessages: [],
+  leadTimeForChangesErrorMessages: [],
   clearErrorMessage: jest.fn(),
-  checkDuplicatedPipeLine: jest.fn(),
+  checkDuplicatedPipeline: jest.fn(),
   isPipelineValid: jest.fn().mockReturnValue(true),
 }
 
@@ -100,7 +101,7 @@ describe('MetricsStepper', () => {
   it('should show metrics stepper', () => {
     const { getByText } = setup()
 
-    STEPS.map((label) => {
+    STEPPER.map((label) => {
       expect(getByText(label)).toBeInTheDocument()
     })
 

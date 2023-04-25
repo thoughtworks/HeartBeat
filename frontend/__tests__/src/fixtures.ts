@@ -26,7 +26,7 @@ export const PROJECT_NAME_LABEL = 'Project Name'
 
 export const EXPORT_BOARD_DATA = 'Export board data'
 
-export const STEPS = ['Config', 'Metrics', 'Report']
+export const STEPPER = ['Config', 'Metrics', 'Report']
 
 export const REQUIRED_DATA_LIST = [
   'All',
@@ -234,7 +234,7 @@ export const CREWS_SETTING = 'Crews Setting'
 export const CYCLE_TIME_SETTINGS = 'Cycle Time Settings'
 export const CLASSIFICATION_SETTING = 'Classification Setting'
 export const REAL_DONE = 'Real Done'
-export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
+export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
 export enum VelocityMetricName {
@@ -269,6 +269,12 @@ export const MOCK_GET_STEPS_PARAMS = {
   pipelineType: 'BuildKite',
   token: 'mockToken',
 }
+
+export const REMOVE_BUTTON = 'Remove'
+export const ORGANIZATION = 'Organization'
+export const PIPELINE_NAME = 'Pipeline Name'
+export const STEPS = 'Steps'
+
 export const MOCK_REPORT_RESPONSE = {
   velocity: {
     velocityForSP: 20,

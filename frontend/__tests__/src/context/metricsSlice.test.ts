@@ -7,7 +7,11 @@ import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   selectDeploymentFrequencySettings,
+  addALeadTimeForChanges,
+  deleteALeadTimeForChange,
+  updateLeadTimeForChanges,
   initDeploymentFrequencySettings,
+  initLeadTimeForChanges,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -18,6 +22,7 @@ const initState = {
   doneColumn: [],
   boardColumns: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
   importFile: [],
   isProjectCreated: true,
   classification: [],
@@ -35,6 +40,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', steps: '' },
     ])
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', steps: '' }])
   })
 
   it('should store updated targetFields when its value changed', () => {
@@ -166,5 +172,56 @@ describe('saveMetricsSetting reducer', () => {
     )
 
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(initState.deploymentFrequencySettings)
+  })
+
+  it('should add a leadTimeForChange when handle leadTimeForChanges given initial state', () => {
+    const addedLeadTimeForChanges = [
+      { id: 0, organization: '', pipelineName: '', steps: '' },
+      { id: 1, organization: '', pipelineName: '', steps: '' },
+    ]
+
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, addALeadTimeForChanges())
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual(addedLeadTimeForChanges)
+  })
+
+  it('should delete a leadTimeForChange when handle deleteALeadTimeForChange given initial state', async () => {
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, deleteALeadTimeForChange(0))
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([])
+  })
+
+  it('should update a leadTimeForChange when handle updateLeadTimeForChanges given multiple leadTimeForChanges', () => {
+    const multipleLeadTimeForChangesInitState = {
+      ...initState,
+      leadTimeForChanges: [
+        { id: 0, organization: '', pipelineName: '', steps: '' },
+        { id: 1, organization: '', pipelineName: '', steps: '' },
+      ],
+    }
+    const updatedLeadTimeForChanges = [
+      { id: 0, organization: 'mock new organization', pipelineName: '', steps: '' },
+      { id: 1, organization: '', pipelineName: '', steps: '' },
+    ]
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      multipleLeadTimeForChangesInitState,
+      updateLeadTimeForChanges({ updateId: 0, label: 'organization', value: 'mock new organization' })
+    )
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual(updatedLeadTimeForChanges)
+  })
+
+  it('should init leadTimeForChanges when handle initLeadTimeForChanges given multiple leadTimeForChanges', () => {
+    const multipleLeadTimeForChangesInitState = {
+      ...initState,
+      leadTimeForChanges: [
+        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', steps: 'step1' },
+        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', steps: 'step2' },
+      ],
+    }
+
+    const savedMetricsSetting = saveMetricsSettingReducer(multipleLeadTimeForChangesInitState, initLeadTimeForChanges())
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual(initState.leadTimeForChanges)
   })
 })

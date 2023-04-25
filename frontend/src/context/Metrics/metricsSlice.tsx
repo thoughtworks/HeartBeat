@@ -9,6 +9,7 @@ export interface savedMetricsSettingState {
   doneColumn: string[]
   boardColumns: { name: string; value: string }[]
   deploymentFrequencySettings: { id: number; organization: string; pipelineName: string; steps: string }[]
+  leadTimeForChanges: { id: number; organization: string; pipelineName: string; steps: string }[]
   importFile: string[]
   isProjectCreated: boolean
   classification: string[]
@@ -21,6 +22,7 @@ const initialState: savedMetricsSettingState = {
   doneColumn: [],
   boardColumns: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
   importFile: [],
   isProjectCreated: true,
   classification: [],
@@ -82,6 +84,36 @@ export const metricsSlice = createSlice({
     initDeploymentFrequencySettings: (state) => {
       state.deploymentFrequencySettings = initialState.deploymentFrequencySettings
     },
+
+    addALeadTimeForChanges: (state) => {
+      const newId = state.leadTimeForChanges[state.leadTimeForChanges.length - 1].id + 1
+      state.leadTimeForChanges = [
+        ...state.leadTimeForChanges,
+        { id: newId, organization: '', pipelineName: '', steps: '' },
+      ]
+    },
+
+    updateLeadTimeForChanges: (state, action) => {
+      const { updateId, label, value } = action.payload
+
+      state.leadTimeForChanges = state.leadTimeForChanges.map((leadTimeForChange) => {
+        return leadTimeForChange.id === updateId
+          ? {
+              ...leadTimeForChange,
+              [camelCase(label)]: value,
+            }
+          : leadTimeForChange
+      })
+    },
+
+    deleteALeadTimeForChange: (state, action) => {
+      const deleteId = action.payload
+      state.leadTimeForChanges = [...state.leadTimeForChanges.filter(({ id }) => id !== deleteId)]
+    },
+
+    initLeadTimeForChanges: (state) => {
+      state.leadTimeForChanges = initialState.leadTimeForChanges
+    },
   },
 })
 
@@ -90,14 +122,19 @@ export const {
   saveDoneColumn,
   saveUsers,
   saveBoardColumns,
-  initDeploymentFrequencySettings,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,
   updateMetricsState,
+  addALeadTimeForChanges,
+  updateLeadTimeForChanges,
+  deleteALeadTimeForChange,
+  initDeploymentFrequencySettings,
+  initLeadTimeForChanges,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
+export const selectLeadTimeForChanges = (state: RootState) => state.metrics.leadTimeForChanges
 
 export const selectBoardColumns = (state: RootState) => state.metrics.boardColumns
 export const selectMetricsContent = (state: RootState) => state.metrics

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react'
 import { useAppSelector } from '@src/hooks/index'
-import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
+import { selectDeploymentFrequencySettings, selectLeadTimeForChanges } from '@src/context/Metrics/metricsSlice'
+import { PIPELINE_SETTING_TYPES } from '@src/constants'
 
 interface Error {
   organization: string
@@ -14,10 +15,14 @@ interface ErrorMessagesProps {
 }
 
 interface ProviderContextType {
-  errorMessages: ErrorMessagesProps[]
-  clearErrorMessage: (changedSelectionId: number, label: string) => void
-  checkDuplicatedPipeLine: () => void
-  isPipelineValid: () => boolean
+  deploymentFrequencySettingsErrorMessages: ErrorMessagesProps[]
+  leadTimeForChangesErrorMessages: ErrorMessagesProps[]
+  clearErrorMessage: (changedSelectionId: number, label: string, type: string) => void
+  checkDuplicatedPipeline: (
+    pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[],
+    type: string
+  ) => void
+  isPipelineValid: (type: string) => boolean
 }
 
 interface ContextProviderProps {
@@ -25,9 +30,10 @@ interface ContextProviderProps {
 }
 
 export const ValidationContext = createContext<ProviderContextType>({
-  errorMessages: [],
+  deploymentFrequencySettingsErrorMessages: [],
+  leadTimeForChangesErrorMessages: [],
   clearErrorMessage: () => null,
-  checkDuplicatedPipeLine: () => null,
+  checkDuplicatedPipeline: () => null,
   isPipelineValid: () => false,
 })
 
@@ -37,14 +43,14 @@ const emptyErrorMessages = {
   steps: '',
 }
 
-const getErrorMessage = (label: string, value: string, id: number, duplicatedPipeLineIds: number[]) =>
+const assignErrorMessage = (label: string, value: string, id: number, duplicatedPipeLineIds: number[]) =>
   !value ? `${label} is required` : duplicatedPipeLineIds.includes(id) ? `duplicated ${label}` : ''
 
 const getDuplicatedPipeLineIds = (
-  deploymentFrequencySettings: { id: number; organization: string; pipelineName: string; steps: string }[]
+  pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[]
 ) => {
   const errors: { [key: string]: number[] } = {}
-  deploymentFrequencySettings.forEach(({ id, organization, pipelineName, steps }) => {
+  pipelineSettings.forEach(({ id, organization, pipelineName, steps }) => {
     if (organization && pipelineName && steps) {
       const errorString = `${organization}${pipelineName}${steps}`
       if (errors[errorString]) errors[errorString].push(id)
@@ -56,72 +62,103 @@ const getDuplicatedPipeLineIds = (
     .flat()
 }
 
-export const ContextProvider = ({ children }: ContextProviderProps) => {
-  const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings)
-  const [errorMessages, setErrorMessages] = useState([] as ErrorMessagesProps[])
+const getErrorMessages = (
+  pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[]
+) => {
+  const duplicatedPipelineIds: number[] = getDuplicatedPipeLineIds(pipelineSettings)
+  return pipelineSettings.map(({ id, organization, pipelineName, steps }) => ({
+    id,
+    error: {
+      organization: assignErrorMessage('organization', organization, id, duplicatedPipelineIds),
+      pipelineName: assignErrorMessage('pipelineName', pipelineName, id, duplicatedPipelineIds),
+      steps: assignErrorMessage('steps', steps, id, duplicatedPipelineIds),
+    },
+  }))
+}
 
-  const isPipelineValid = () => {
-    const duplicatedPipeLineIds: number[] = getDuplicatedPipeLineIds(deploymentFrequencySettings)
-    const newErrorMessages = deploymentFrequencySettings.map(({ id, organization, pipelineName, steps }) => ({
+const getDuplicatedErrorMessage = (
+  pipelineSetting: { id: number; organization: string; pipelineName: string; steps: string },
+  duplicatedPipeLineIds: number[],
+  errorMessages: { id: number; error: { organization: string; pipelineName: string; steps: string } }[]
+) => {
+  const { id, organization, pipelineName, steps } = pipelineSetting
+  if (!organization || !pipelineName || !steps) {
+    return {
+      id,
+      error: errorMessages.find((x) => x.id === id)?.error ?? emptyErrorMessages,
+    }
+  }
+
+  if (duplicatedPipeLineIds.includes(id)) {
+    return {
       id,
       error: {
-        organization: getErrorMessage('organization', organization, id, duplicatedPipeLineIds),
-        pipelineName: getErrorMessage('pipelineName', pipelineName, id, duplicatedPipeLineIds),
-        steps: getErrorMessage('steps', steps, id, duplicatedPipeLineIds),
+        organization: 'duplicated organization',
+        pipelineName: 'duplicated pipelineName',
+        steps: 'duplicated steps',
       },
-    }))
-    setErrorMessages(newErrorMessages)
-    return newErrorMessages.every(({ error }) => Object.values(error).every((val) => !val))
-  }
-
-  const clearErrorMessage = (changedSelectionId: number, label: string) => {
-    setErrorMessages([
-      ...errorMessages.map((errorMessage) => {
-        if (errorMessage.id === changedSelectionId) {
-          errorMessage.error[label as keyof Error] = ''
-        }
-        return errorMessage
-      }),
-    ])
-  }
-
-  const checkDuplicatedPipeLine = () => {
-    const duplicatedPipeLineIds: number[] = getDuplicatedPipeLineIds(deploymentFrequencySettings)
-    const errorMessages = deploymentFrequencySettings.map((deploymentFrequencySetting) =>
-      getDuplicatedErrorMessage(deploymentFrequencySetting, duplicatedPipeLineIds)
-    )
-    setErrorMessages(errorMessages)
-  }
-
-  const getDuplicatedErrorMessage = (
-    deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
-    duplicatedPipeLineIds: number[]
-  ) => {
-    const { id, organization, pipelineName, steps } = deploymentFrequencySetting
-    if (!organization || !pipelineName || !steps) {
-      return { id, error: errorMessages.find((x) => x.id === id)?.error ?? emptyErrorMessages }
     }
+  }
 
-    if (duplicatedPipeLineIds.includes(id)) {
-      return {
-        id,
-        error: {
-          organization: 'duplicated organization',
-          pipelineName: 'duplicated pipelineName',
-          steps: 'duplicated steps',
-        },
+  return { id, error: emptyErrorMessages }
+}
+
+export const ContextProvider = ({ children }: ContextProviderProps) => {
+  const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings)
+  const leadTimeForChanges = useAppSelector(selectLeadTimeForChanges)
+  const [deploymentFrequencySettingsErrorMessages, setDeploymentFrequencySettingsErrorMessages] = useState(
+    [] as ErrorMessagesProps[]
+  )
+  const [leadTimeForChangesErrorMessages, setLeadTimeForChangesErrorMessages] = useState([] as ErrorMessagesProps[])
+
+  const saveErrorMessages = (type: string, errorMessages: ErrorMessagesProps[]) => {
+    type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
+      ? setLeadTimeForChangesErrorMessages(errorMessages)
+      : setDeploymentFrequencySettingsErrorMessages(errorMessages)
+  }
+
+  const isPipelineValid = (type: string) => {
+    const pipelines =
+      type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE ? leadTimeForChanges : deploymentFrequencySettings
+    const errorMessages = getErrorMessages(pipelines)
+    saveErrorMessages(type, errorMessages)
+    return errorMessages.every(({ error }) => Object.values(error).every((val) => !val))
+  }
+
+  const clearErrorMessage = (changedSelectionId: number, label: string, type: string) => {
+    const selectedErrorMessages =
+      type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
+        ? leadTimeForChangesErrorMessages
+        : deploymentFrequencySettingsErrorMessages
+    const updatedErrorMessages = selectedErrorMessages.map((errorMessage) => {
+      if (errorMessage.id === changedSelectionId) {
+        errorMessage.error[label as keyof Error] = ''
       }
-    }
+      return errorMessage
+    })
+    type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
+      ? setLeadTimeForChangesErrorMessages(updatedErrorMessages)
+      : setDeploymentFrequencySettingsErrorMessages(updatedErrorMessages)
+  }
 
-    return { id, error: emptyErrorMessages }
+  const checkDuplicatedPipeline = (
+    pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[],
+    type: string
+  ) => {
+    const duplicatedPipeLineIds: number[] = getDuplicatedPipeLineIds(pipelineSettings)
+    const errorMessages = pipelineSettings.map((pipelineSetting) =>
+      getDuplicatedErrorMessage(pipelineSetting, duplicatedPipeLineIds, deploymentFrequencySettingsErrorMessages)
+    )
+    saveErrorMessages(type, errorMessages)
   }
 
   return (
     <ValidationContext.Provider
       value={{
-        errorMessages,
+        deploymentFrequencySettingsErrorMessages: deploymentFrequencySettingsErrorMessages,
+        leadTimeForChangesErrorMessages: leadTimeForChangesErrorMessages,
         clearErrorMessage,
-        checkDuplicatedPipeLine,
+        checkDuplicatedPipeline,
         isPipelineValid,
       }}
     >

@@ -1,6 +1,5 @@
 #!/bin/bash
-set -e
-set +x
+set -euo pipefail
 
 display_help() {
     echo "Usage: $0 {frontend|backend|mockserver}" >&2

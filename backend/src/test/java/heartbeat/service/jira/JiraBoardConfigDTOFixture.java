@@ -19,6 +19,7 @@ import heartbeat.client.dto.board.jira.StatusCategory;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 
@@ -89,6 +90,18 @@ public class JiraBoardConfigDTOFixture {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(new JiraCard("1", JiraCardFields.builder().assignee(new Assignee("Zhang San")).build())));
+	}
+
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
+		return AllDoneCardsResponseDTO.builder()
+			.total("2")
+			.issues(List.of(
+					new JiraCard("1",
+							JiraCardFields.builder().assignee(new Assignee("Zhang San")).storyPoints(2).build()),
+					new JiraCard("1",
+							JiraCardFields.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
+					new JiraCard("1",
+							JiraCardFields.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
@@ -199,6 +212,15 @@ public class JiraBoardConfigDTOFixture {
 			.endTime("1676908799000")
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
+	}
+
+	public static List<CycleTimeInfo> CYCLE_TIME_INFO_LIST() {
+		return List.of(CycleTimeInfo.builder().column("Waiting for testing").day(1.0).build(),
+				CycleTimeInfo.builder().column("Testing").day(2.0).build(),
+				CycleTimeInfo.builder().column("In Dev").day(3.0).build(),
+				CycleTimeInfo.builder().column("Review").day(4.0).build(),
+				CycleTimeInfo.builder().column("UNKNOWN").day(5.0).build(),
+				CycleTimeInfo.builder().column("FLAG").day(6.0).build());
 	}
 
 }

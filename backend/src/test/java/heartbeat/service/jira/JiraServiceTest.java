@@ -4,7 +4,6 @@ import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
@@ -18,10 +17,6 @@ import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.Cards;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigResponse;
-import heartbeat.controller.board.dto.response.CardCycleTime;
-import heartbeat.controller.board.dto.response.CycleTimeInfo;
-import heartbeat.controller.board.dto.response.JiraCardResponse;
-import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.RequestFailedException;
@@ -459,52 +454,19 @@ class JiraServiceTest {
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
-			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
 
-		List<CycleTimeInfo> expect = List.of(CycleTimeInfo.builder().column("Waiting for testing").day(1.0).build(),
-				CycleTimeInfo.builder().column("Testing").day(2.0).build(),
-				CycleTimeInfo.builder().column("In Dev").day(3.0).build(),
-				CycleTimeInfo.builder().column("Review").day(4.0).build(),
-				CycleTimeInfo.builder().column("UNKNOWN").day(5.0).build(),
-				CycleTimeInfo.builder().column("FLAG").day(6.0).build());
-		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(expect);
-
-		// main test
 		Cards cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
-
-		Cards expect1 = Cards.builder()
-			.cardsNumber(1)
-			.jiraCardResponseList(List.of(JiraCardResponse.builder()
-				.baseInfo(JiraCard.builder()
-					.key("1")
-					.fields(JiraCardFields.builder()
-						.assignee(Assignee.builder().displayName("Zhang San").build())
-						.build())
-					.build())
-				.cycleTime(List.of())
-				.originCycleTime(List.of())
-				.cardCycleTime(CardCycleTime.builder()
-					.name("1")
-					.steps(StepsDay.builder()
-						.analyse(0.0)
-						.development(0.0)
-						.waiting(0.0)
-						.testing(0.0)
-						.blocked(0.0)
-						.review(0.0)
-						.build())
-					.total(0.0)
-					.build())
-				.build()))
-			.build();
-
-		assertThat(cards).isEqualTo(cards);
+		assertThat(cards.getStoryPointSum()).isEqualTo(8);
+		assertThat(cards.getCardsNumber()).isEqualTo(3);
+		assertThat(cards.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
+		assertThat(cards.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
 	}
 
 	@Test
@@ -522,21 +484,12 @@ class JiraServiceTest {
 			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
 
-		List<CycleTimeInfo> expect = List.of(CycleTimeInfo.builder().column("Waiting for testing").day(1.0).build(),
-				CycleTimeInfo.builder().column("Testing").day(2.0).build(),
-				CycleTimeInfo.builder().column("In Dev").day(3.0).build(),
-				CycleTimeInfo.builder().column("Review").day(4.0).build(),
-				CycleTimeInfo.builder().column("UNKNOWN").day(5.0).build(),
-				CycleTimeInfo.builder().column("FLAG").day(6.0).build());
-		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(expect);
-
-		// main test
 		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San")))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("Type does not find!");
-
 	}
 
 }

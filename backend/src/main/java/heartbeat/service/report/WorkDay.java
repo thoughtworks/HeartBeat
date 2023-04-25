@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import heartbeat.client.HolidayFeignClient;
 import heartbeat.client.dto.board.jira.HolidayDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @RequiredArgsConstructor
 public class WorkDay {
 
@@ -22,7 +24,11 @@ public class WorkDay {
 	private final HolidayFeignClient holidayFeignClient;
 
 	public Map<String, Boolean> loadHolidayList(String year) {
+
+		log.info("[WorkDay] Start to get chinese holiday by year: {}", year);
 		List<HolidayDTO> tempHolidayList = holidayFeignClient.getHoliday(year).getDays();
+		log.info("[WorkDay] Successfully get holiday list:{}", tempHolidayList);
+
 		Map<String, Boolean> holidayMap = new HashMap<>();
 		for (HolidayDTO tempHoliday : tempHolidayList) {
 			holidayMap.put(tempHoliday.getDate(), tempHoliday.getIsOffDay());

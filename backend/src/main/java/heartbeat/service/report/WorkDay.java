@@ -62,15 +62,16 @@ public class WorkDay {
 	}
 
 	public double calculateWorkDaysBy24Hours(long startTime, long endTime) {
-		startTime = getNextNearestWorkingTime(startTime);
-		endTime = getNextNearestWorkingTime(endTime);
-		Date startDate = new Date(startTime);
+		long realStartTime = getNextNearestWorkingTime(startTime);
+		long realEndTime = getNextNearestWorkingTime(endTime);
+		Date startDate = new Date(realStartTime);
 		startDate.setHours(0);
-		Date endDate = new Date(endTime);
+		Date endDate = new Date(realEndTime);
 		endDate.setHours(0);
 		long gapDaysTime = endDate.getTime() - startDate.getTime();
-		long gapWorkingDaysTime = (calculateWorkDaysBetween(startTime, endTime) - 1) * ONE_DAY;
-		return Double.parseDouble(String.valueOf((endTime - startTime - gapDaysTime + gapWorkingDaysTime) / ONE_DAY));
+		long gapWorkingDaysTime = (calculateWorkDaysBetween(realStartTime, realEndTime) - 1) * ONE_DAY;
+		return Double
+			.parseDouble(String.valueOf((realEndTime - realStartTime - gapDaysTime + gapWorkingDaysTime) / ONE_DAY));
 	}
 
 	private static String convertTimeToDateString(long time) {
@@ -79,10 +80,11 @@ public class WorkDay {
 	}
 
 	private long getNextNearestWorkingTime(long time) {
-		while (verifyIfThisDayHoliday(time)) {
-			time += ONE_DAY;
+		long nextWorkingTime = time;
+		while (verifyIfThisDayHoliday(nextWorkingTime)) {
+			nextWorkingTime += ONE_DAY;
 		}
-		return time;
+		return nextWorkingTime;
 	}
 
 }

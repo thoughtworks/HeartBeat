@@ -15,4 +15,17 @@ public enum CardStepsEnum {
 		return value;
 	}
 
+	public static CardStepsEnum fromValue(String type) {
+		return switch (type) {
+			case "In Dev" -> DEVELOPMENT;
+			case "Waiting for testing" -> WAITING;
+			case "Block" -> BLOCK;
+			case "Testing" -> TESTING;
+			case "Review" -> REVIEW;
+			case "UNKNOWN" -> UNKNOWN;
+			case "FLAG" -> FLAG;
+			default -> throw new IllegalArgumentException("Type does not find!");
+		};
+	}
+
 }

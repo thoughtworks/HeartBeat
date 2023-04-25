@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,9 +44,11 @@ class BoardUtilTest {
 	void testGetCardTimeForEachStep() {
 		List<StatusChangedArrayItem> statusChangedArrayItems = StatusChangedArrayItemsFixture
 			.STATUS_CHANGED_ITEMS_LIST();
-		List<CycleTimeInfo> expect = List.of(CycleTimeInfo.builder().column("UNKNOWN").day(0.0).build(),
-				CycleTimeInfo.builder().column("FLAG").day(0.0).build(),
-				CycleTimeInfo.builder().column("REMOVEFLAG").day(0.0).build());
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong())).thenReturn(2.0);
+
+		List<CycleTimeInfo> expect = List.of(CycleTimeInfo.builder().column("UNKNOWN").day(4.0).build(),
+				CycleTimeInfo.builder().column("FLAG").day(4.0).build(),
+				CycleTimeInfo.builder().column("REMOVEFLAG").day(4.0).build());
 		List<CycleTimeInfo> result = boardUtil.getCardTimeForEachStep(statusChangedArrayItems);
 
 		Assertions.assertEquals(expect, result);

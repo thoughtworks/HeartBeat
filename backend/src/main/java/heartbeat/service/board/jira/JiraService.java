@@ -481,7 +481,7 @@ public class JiraService {
 	}
 
 	private CardCycleTime calculateCardCycleTime(String cardId, List<CycleTimeInfo> cycleTimeInfos,
-												 List<RequestJiraBoardColumnSetting> boardColumns) {
+			List<RequestJiraBoardColumnSetting> boardColumns) {
 		Map<String, CardStepsEnum> boardMap = selectedStepsArrayToMap(boardColumns);
 		StepsDay stepsDay = StepsDay.builder().build();
 		double total = 0;
@@ -491,7 +491,7 @@ public class JiraService {
 			if (swimLane.equals("FLAG")) {
 				boardMap.put(swimLane.toUpperCase(), CardStepsEnum.BLOCK);
 			}
-			if (boardMap.containsKey(swimLane.toUpperCase())) {
+			if (boardMap.containsKey(swimLane)) {
 				CardStepsEnum cardStep = boardMap.get(swimLane);
 				switch (cardStep) {
 					case DEVELOPMENT -> {
@@ -525,7 +525,7 @@ public class JiraService {
 	private Map<String, CardStepsEnum> selectedStepsArrayToMap(List<RequestJiraBoardColumnSetting> boardColumns) {
 		Map<String, CardStepsEnum> map = new HashMap<>();
 		for (RequestJiraBoardColumnSetting boardColumn : boardColumns) {
-			map.put(boardColumn.getName().toUpperCase(), CardStepsEnum.valueOf(boardColumn.getValue()));
+			map.put(boardColumn.getName(), CardStepsEnum.fromValue(boardColumn.getValue()));
 		}
 		return map;
 	}

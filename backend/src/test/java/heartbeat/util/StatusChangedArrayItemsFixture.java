@@ -1,6 +1,5 @@
 package heartbeat.util;
 
-
 import heartbeat.controller.board.dto.response.StatusChangedArrayItem;
 
 import java.util.List;

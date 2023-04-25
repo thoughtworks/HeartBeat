@@ -1,6 +1,5 @@
 package heartbeat.service.report;
 
-
 import heartbeat.controller.board.dto.request.Cards;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;

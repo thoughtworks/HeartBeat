@@ -38,6 +38,9 @@ public class GenerateReporterService {
 	public GenerateReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
+
+		// calculate all required data
+		Velocity velocity = calculateVelocity();
 		List<Classification> classification = calculateClassification
 			.calculateClassification(request.getJiraBoardSetting().getTargetFields(), cards);
 		calculateDeployment();
@@ -48,7 +51,7 @@ public class GenerateReporterService {
 				GenerateReportResponse.builder().velocity(velocity).build());
 
 		// combined data to GenerateReportResponse
-		return GenerateReportResponse.builder().velocity(velocity).build();
+		return GenerateReportResponse.builder().velocity(velocity).classification(classification).build();
 	}
 
 	private Velocity calculateVelocity() {

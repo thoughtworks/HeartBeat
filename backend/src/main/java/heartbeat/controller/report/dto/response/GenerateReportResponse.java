@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,6 +15,6 @@ public class GenerateReportResponse {
 
 	private Velocity velocity;
 
-	private Classification classification;
+	private List<Classification> classification;
 
 }

@@ -358,7 +358,6 @@ public class JiraService {
 		URI baseUrl = urlGenerator.getUri(request.getSite());
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
 			.boardId(request.getBoardId())
-			.email("")
 			.projectKey(request.getProject())
 			.site(request.getSite())
 			.token(request.getToken())
@@ -406,6 +405,7 @@ public class JiraService {
 		CardCustomFieldKey cardCustomFieldKey = CardCustomFieldKey.builder().build();
 		for (TargetField value : model.getTargetFields()) {
 			switch (value.getName()) {
+				// todo if project Story Points field is unknown name need throw error
 				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setSTORY_POINTS(value.getKey());
 				case "Sprint" -> cardCustomFieldKey.setSPRINT(value.getKey());
 				case "Flagged" -> cardCustomFieldKey.setFLAGGED(value.getKey());

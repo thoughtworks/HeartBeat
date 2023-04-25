@@ -57,7 +57,7 @@ while [[ "$#" -gt 0 ]]; do
         frontend) frontend_check ;;
         backend) backend_check ;;
         "backend-license") backend_license_check ;;
-        "backend-license") frontend_license_check ;;
+        "frontend-license") frontend_license_check ;;
         *) echo "Unknown parameter passed: $1" ;;
     esac
     shift

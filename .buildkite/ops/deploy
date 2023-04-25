@@ -12,29 +12,28 @@ display_help() {
     exit 1
 }
 deploy_infra(){
-
+  echo "deploy_infra"
 }
 
 deploy_e2e(){
-
+  echo "deploy_e2e"
 }
 
 deploy_stub(){
-
+  echo "deploy_stub"
 }
 
 deploy_prod(){
-
+  echo "deploy_prod"
 }
 
 if [[ "$#" -le 0 ]]; then
   display_help
-  exit 0
 fi
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        -h|--help) display_help; shift ;;
+        -h|--help) display_help ;;
         infra) deploy_infra ;;
         e2e) deploy_e2e ;;
         stub) deploy_stub ;;

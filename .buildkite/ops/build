@@ -12,27 +12,26 @@ display_help() {
 }
 
 build_backend(){
-
+  echo "build_backend"
 }
 
 build_mockserver(){
-
+  echo "build_mockserver"
 }
 
 build_frontend(){
-
+  echo "build_frontend"
 }
 
 
 
 if [[ "$#" -le 0 ]]; then
   display_help
-  exit 0
 fi
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        -h|--help) display_help; shift ;;
+        -h|--help) display_help ;;
         frontend) build_frontend ;;
         backend) build_backend ;;
         mockserver) build_mockserver ;;

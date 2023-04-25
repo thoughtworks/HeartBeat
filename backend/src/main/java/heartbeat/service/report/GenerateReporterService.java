@@ -44,6 +44,11 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
+	private final List<String> codebaseMetrics = Stream
+		.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES)
+		.map(RequireDataEnum::getValue)
+		.toList();
+
 	// todo: need remove private fields not use void function when finish GenerateReport
 	private CardCollection cardCollection;
 
@@ -102,7 +107,9 @@ public class GenerateReporterService {
 			fetchDataFromKanban(request);
 		}
 
-		fetchGithubData();
+		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
+			fetchGithubData();
+		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
 			fetchBuildKiteData(request);

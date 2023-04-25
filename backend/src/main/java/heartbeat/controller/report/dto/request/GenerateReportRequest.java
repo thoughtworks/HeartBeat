@@ -28,4 +28,6 @@ public class GenerateReportRequest {
 
 	private BuildKiteSetting buildKiteSetting;
 
+	private CodebaseSetting codebaseSetting;
+
 }

@@ -8,8 +8,6 @@ import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.pipeline.dto.request.LeadTimeEnvironment;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
-import heartbeat.controller.pipeline.dto.request.LeadTimeEnvironment;
-import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;

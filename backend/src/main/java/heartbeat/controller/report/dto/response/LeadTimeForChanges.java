@@ -5,16 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportResponse {
+@Builder
+public class LeadTimeForChanges {
+	private List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines;
 
-	private Velocity velocity;
-
-	private DeploymentFrequency deploymentFrequency;
-
-	private LeadTimeForChanges leadTimeForChanges;
-
+	private List<AvgLeadTimeForChanges> avgLeadTimeForChanges;
 }
+

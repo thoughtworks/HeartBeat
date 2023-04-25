@@ -31,6 +31,4 @@ public class LeadTime {
 
 	private Number totalTime;
 
-	private List<LeadTime> leadTimes;
-
 }

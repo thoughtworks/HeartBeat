@@ -6,6 +6,9 @@ import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
+import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
+import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
@@ -190,6 +193,41 @@ public class BuildKiteService {
 			return Integer.parseInt(matcher.group(1));
 		}
 		return 1;
+	}
+
+	public List<BuildKiteBuildInfo> fetchPipelineBuilds(String token, DeploymentEnvironment deploymentEnvironment,
+			String startTime, String endTime) {
+		String partialToken = token.substring(0, token.length() / 2);
+		PipelineStepsParam stepsParam = new PipelineStepsParam("", "", "", startTime, endTime);
+
+		return this.fetchPipelineStepsByPage(token, deploymentEnvironment.getOrgId(), deploymentEnvironment.getId(),
+				stepsParam, partialToken);
+	}
+
+	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,
+										List<BuildKiteBuildInfo> buildInfos) {
+		if (deploymentEnvironment.getOrgId() == null) {
+			throw new Error("miss orgId argument");
+		}
+		List<DeployInfo> passedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "passed");
+		List<DeployInfo> failedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "failed");
+
+		return DeployTimes.builder()
+			.pipelineId(deploymentEnvironment.getId())
+			.pipelineName(deploymentEnvironment.getName())
+			.pipelineStep(deploymentEnvironment.getStep())
+			.passed(passedBuilds)
+			.failed(failedBuilds)
+			.build();
+	}
+
+	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
+			DeploymentEnvironment deploymentEnvironment, String states) {
+		return buildInfos.stream()
+			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), states))
+			.filter(job -> !job.equals(DeployInfo.builder().build()))
+			.filter(job -> !job.getJobStartTime().isEmpty())
+			.toList();
 	}
 
 }

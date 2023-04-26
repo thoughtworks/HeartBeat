@@ -8,7 +8,7 @@ import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyModel;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -18,8 +18,8 @@ import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Service
-public class CalculateDeploymentFrequencyService {
+@Component
+public class CalculateDeploymentFrequency {
 
 	private final WorkDay workDay;
 

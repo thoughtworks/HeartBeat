@@ -23,7 +23,7 @@ import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepV
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
-import { updateMetricsState } from '@src/context/Metrics/metricsSlice'
+import { selectMetricsContent, updateMetricsState } from '@src/context/Metrics/metricsSlice'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -31,6 +31,7 @@ const MetricsStepper = () => {
   const activeStep = useAppSelector(selectStepNumber)
   const [isDialogShowing, setIsDialogShowing] = useState(false)
   const config = useAppSelector(selectConfig)
+  const metricsConfig = useAppSelector(selectMetricsContent)
   const [isDisableNextButton, setIsDisableNextButton] = useState(true)
 
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board
@@ -66,15 +67,48 @@ const MetricsStepper = () => {
   const handleSave = () => {
     const { projectName, dateRange, calendarType, metrics } = config.basic
     const configData = {
-      projectName: projectName,
-      dateRange: dateRange,
-      calendarType: calendarType,
-      metrics: metrics,
+      projectName,
+      dateRange,
+      calendarType,
+      metrics,
       board: isShowBoard ? config.board.config : undefined,
       pipelineTool: isShowPipeline ? config.pipelineTool.config : undefined,
       sourceControl: isShowSourceControl ? config.sourceControl.config : undefined,
     }
-    exportToJsonFile('config', configData)
+
+    const {
+      leadTimeForChanges,
+      deploymentFrequencySettings,
+      users,
+      doneColumn,
+      targetFields,
+      boardColumns,
+      treatFlagCardAsBlock,
+    } = Object.fromEntries(
+      Object.entries(metricsConfig).filter(
+        ([key, value]) =>
+          !Array.isArray(value) ||
+          (Array.isArray(value) && !value.every((item) => item.organization === '') && value.length > 0)
+      )
+    )
+
+    const metricsData = {
+      deployment: deploymentFrequencySettings,
+      leadTime: leadTimeForChanges,
+      doneStatus: doneColumn,
+      crews: users,
+      cycleTime: boardColumns
+        ? {
+            jiraColumns: boardColumns?.map(({ name, value }: { name: string; value: string }) => ({ [name]: value })),
+            treatFlagCardAsBlock,
+          }
+        : undefined,
+      classification: targetFields
+        ?.filter((item: { name: string; key: string; flag: boolean }) => item.flag)
+        .map((item: { name: string; key: string; flag: boolean }) => item.key),
+    }
+    const jsonData = activeStep === 0 ? configData : { ...configData, ...metricsData }
+    exportToJsonFile('config', jsonData)
   }
 
   const handleNext = () => {

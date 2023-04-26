@@ -364,10 +364,7 @@ public class JiraService {
 			.build();
 		List<JiraCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
 
-		List<JiraCardResponse> matchedCards = new ArrayList<>();
-		allDoneCards.forEach(doneCard -> {
-			getMatchedCards(request, boardColumns, users, baseUrl, matchedCards, doneCard);
-		});
+		List<JiraCardResponse> matchedCards = getMatchedCards(request, boardColumns, users, baseUrl, allDoneCards);
 
 		int storyPointSum = matchedCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
@@ -380,28 +377,33 @@ public class JiraService {
 			.build();
 	}
 
-	private void getMatchedCards(StoryPointsAndCycleTimeRequest request,
+	private List<JiraCardResponse> getMatchedCards(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, URI baseUrl,
-			List<JiraCardResponse> matchedCards, JiraCard doneCard) {
-		CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-				request.isTreatFlagCardAsBlock());
-		ArrayList<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
-		if (doneCard.getFields().getAssignee() != null && doneCard.getFields().getAssignee().getDisplayName() != null) {
-			assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
-		}
-		if (users.stream().anyMatch(assigneeSet::contains)) {
-			// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
-			doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
+			List<JiraCard> allDoneCards) {
+		List<JiraCardResponse> matchedCards = new ArrayList<>();
+		allDoneCards.forEach(doneCard -> {
+			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
+					request.isTreatFlagCardAsBlock());
+			ArrayList<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
+			if (doneCard.getFields().getAssignee() != null
+					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
+				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
+			}
+			if (users.stream().anyMatch(assigneeSet::contains)) {
+				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
+				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
 
-			JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
-				.baseInfo(doneCard)
-				.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
-				.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
-				.cardCycleTime(
-						calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns))
-				.build();
-			matchedCards.add(jiraCardResponse);
-		}
+				JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
+					.baseInfo(doneCard)
+					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
+					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
+					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(),
+							boardColumns))
+					.build();
+				matchedCards.add(jiraCardResponse);
+			}
+		});
+		return matchedCards;
 	}
 
 	private CardCustomFieldKey saveCustomFieldKey(StoryPointsAndCycleTimeRequest model) {

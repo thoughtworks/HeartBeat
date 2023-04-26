@@ -49,17 +49,16 @@ public class BuildKiteService {
 	public BuildKiteResponse fetchPipelineInfo(PipelineParam pipelineParam) {
 		try {
 			String buildKiteToken = "Bearer " + pipelineParam.getToken();
-			log.info("[BuildKite] Start to query token permissions" + TokenUtil.mask(pipelineParam.getToken()));
+			log.info("Start to query token permissions" + TokenUtil.mask(pipelineParam.getToken()));
 			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
-			log.info("[BuildKite] Successfully get permissions" + buildKiteTokenInfo);
+			log.info("Successfully get permissions" + buildKiteTokenInfo);
 			verifyToken(buildKiteTokenInfo);
-			log.info("[BuildKite] Start to query organizations");
+			log.info("Start to query organizations");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
 				.getBuildKiteOrganizationsInfo(buildKiteToken);
-			log.info("[BuildKite] Successfully get organizations slug:" + buildKiteOrganizationsInfo);
+			log.info("Successfully get organizations slug:" + buildKiteOrganizationsInfo);
 
-			log.info("[BuildKite] Start to query buildKite pipelineInfo by organizations slug:"
-					+ buildKiteOrganizationsInfo);
+			log.info("Start to query buildKite pipelineInfo by organizations slug:" + buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
 				.flatMap(org -> buildKiteFeignClient
 					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
@@ -68,13 +67,12 @@ public class BuildKiteService {
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))
 				.collect(Collectors.toList());
-			log.info("[BuildKite] Successfully get buildKite pipelineInfo, pipelineInfoList size is:"
-					+ buildKiteInfoList.size());
+			log.info("Successfully get buildKite pipelineInfo, pipelineInfoList size is:" + buildKiteInfoList.size());
 
 			return BuildKiteResponse.builder().pipelineList(buildKiteInfoList).build();
 		}
 		catch (FeignException e) {
-			log.error("[BuildKite] Failed when call BuildKite", e);
+			log.error("Failed when call BuildKite", e);
 			throw new RequestFailedException(e);
 		}
 	}
@@ -103,7 +101,7 @@ public class BuildKiteService {
 				.map(BuildKiteJob::getName)
 				.distinct()
 				.toList();
-			log.info("[BuildKite] Successfully get pipeline steps, finally build steps_buildSteps:{}", buildSteps);
+			log.info("Successfully get pipeline steps, finally build steps_buildSteps:{}", buildSteps);
 			return PipelineStepsResponse.builder()
 				.pipelineId(pipelineId)
 				.steps(buildSteps)
@@ -126,17 +124,16 @@ public class BuildKiteService {
 			PipelineStepsParam stepsParam, String partialToken) {
 		String page = "1";
 		String perPage = "100";
-		log.info(
-				"[BuildKite] Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+		log.info("Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
 				partialToken, orgId, pipelineId, stepsParam, page);
 		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(token, orgId,
 				pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime());
 		log.info(
-				"[BuildKite] Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},result status code: {},page:{}",
+				"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},result status code: {},page:{}",
 				partialToken, orgId, pipelineId, pipelineStepsInfo.getStatusCode(), page);
 
 		int totalPage = parseTotalPage(pipelineStepsInfo.getHeaders().get(BUILD_KITE_LINK_HEADER));
-		log.info("[BuildKite] Successfully parse the total page_total page: {}", totalPage);
+		log.info("Successfully parse the total page_total page: {}", totalPage);
 
 		List<BuildKiteBuildInfo> firstPageStepsInfo = pipelineStepsInfo.getBody();
 		List<BuildKiteBuildInfo> pageStepsInfo = new ArrayList<>();
@@ -160,19 +157,19 @@ public class BuildKiteService {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				log.info(
-						"[BuildKite] Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+						"Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
 						partialToken, organizationId, pipelineId, stepsParam, page);
 				List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
 						organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
 						stepsParam.getEndTime());
 				log.info(
-						"[BuildKite] Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},pipeline steps size: {},page:{}",
+						"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},pipeline steps size: {},page:{}",
 						partialToken, organizationId, pipelineId, pipelineStepsInfo.size(), page);
 				return pipelineStepsInfo;
 			}
 			catch (RequestFailedException e) {
 				log.error(
-						"[BuildKite] Failed get build kite steps page_token: {},orgId: {},pipelineId: {}, exception occurred: {},page: {}",
+						"Failed get build kite steps page_token: {},orgId: {},pipelineId: {}, exception occurred: {},page: {}",
 						token, organizationId, pipelineId, e.getMessage(), page);
 				throw e;
 			}

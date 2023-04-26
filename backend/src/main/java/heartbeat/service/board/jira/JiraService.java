@@ -3,7 +3,6 @@ package heartbeat.service.board.jira;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
-
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
@@ -17,7 +16,10 @@ import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
+import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
+import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.CardCustomFieldKey;
 import heartbeat.controller.board.dto.response.CardCycleTime;
 import heartbeat.controller.board.dto.response.ColumnValue;
@@ -25,12 +27,9 @@ import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
 import heartbeat.controller.board.dto.response.JiraCardResponse;
 import heartbeat.controller.board.dto.response.JiraColumnResponse;
-import heartbeat.controller.board.dto.response.StatusChangedArrayItem;
+import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
-import heartbeat.controller.board.dto.request.Cards;
-import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
-import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
@@ -43,7 +42,6 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -351,7 +349,7 @@ public class JiraService {
 			.collect(Collectors.toList());
 	}
 
-	public Cards getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
+	public CardCollection getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
 		CardCustomFieldKey cardCustomFieldKey = saveCustomFieldKey(request);
 		BoardType boardType = BoardType.fromValue(request.getType());
@@ -368,37 +366,42 @@ public class JiraService {
 
 		List<JiraCardResponse> matchedCards = new ArrayList<>();
 		allDoneCards.forEach(doneCard -> {
-			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock());
-			ArrayList<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
-			if (doneCard.getFields().getAssignee() != null
-					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
-				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
-			}
-			if (users.stream().anyMatch(assigneeSet::contains)) {
-				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
-				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
-
-				JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
-					.baseInfo(doneCard)
-					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
-					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
-					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(),
-							boardColumns))
-					.build();
-				matchedCards.add(jiraCardResponse);
-			}
+			getMatchedCards(request, boardColumns, users, baseUrl, matchedCards, doneCard);
 		});
 
 		int storyPointSum = matchedCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
 
-		return Cards.builder()
+		return CardCollection.builder()
 			.storyPointSum(storyPointSum)
 			.cardsNumber(matchedCards.size())
 			.jiraCardResponseList(matchedCards)
 			.build();
+	}
+
+	private void getMatchedCards(StoryPointsAndCycleTimeRequest request,
+			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, URI baseUrl,
+			List<JiraCardResponse> matchedCards, JiraCard doneCard) {
+		CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
+				request.isTreatFlagCardAsBlock());
+		ArrayList<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
+		if (doneCard.getFields().getAssignee() != null && doneCard.getFields().getAssignee().getDisplayName() != null) {
+			assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
+		}
+		if (users.stream().anyMatch(assigneeSet::contains)) {
+			// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
+			doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
+
+			JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
+				.baseInfo(doneCard)
+				.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
+				.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
+				.cardCycleTime(
+						calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns))
+				.build();
+			matchedCards.add(jiraCardResponse);
+		}
 	}
 
 	private CardCustomFieldKey saveCustomFieldKey(StoryPointsAndCycleTimeRequest model) {
@@ -418,13 +421,12 @@ public class JiraService {
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock) {
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
-		List<StatusChangedArrayItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
+		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				treatFlagCardAsBlock);
-		List<StatusChangedArrayItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(
-				cardHistoryResponseDTO, true);
-		List<StatusChangedArrayItem> statusChangedArrayItems = boardUtil
-			.reformTimeLineForFlaggedCards(statusChangedArray);
-		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCardTimeForEachStep(statusChangedArrayItems);
+		List<StatusChangedItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
+				true);
+		List<StatusChangedItem> statusChangedItems = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray);
+		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCardTimeForEachStep(statusChangedItems);
 		List<CycleTimeInfo> originCycleTimeInfos = boardUtil
 			.getCardTimeForEachStep(boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag));
 
@@ -434,16 +436,16 @@ public class JiraService {
 			.build();
 	}
 
-	private List<StatusChangedArrayItem> putStatusChangeEventsIntoAnArray(CardHistoryResponseDTO jiraCardHistory,
+	private List<StatusChangedItem> putStatusChangeEventsIntoAnArray(CardHistoryResponseDTO jiraCardHistory,
 			Boolean treatFlagCardAsBlock) {
-		List<StatusChangedArrayItem> statusChangedArray = new ArrayList<>();
+		List<StatusChangedItem> statusChangedArray = new ArrayList<>();
 		List<HistoryDetail> statusActivities = jiraCardHistory.getItems()
 			.stream()
 			.filter(activity -> "status".equals(activity.getFieldId()))
 			.toList();
 
 		if (jiraCardHistory.getItems().size() > 0 && statusActivities.size() > 0) {
-			statusChangedArray.add(StatusChangedArrayItem.builder()
+			statusChangedArray.add(StatusChangedItem.builder()
 				.timestamp(jiraCardHistory.getItems().get(0).getTimeStamp() - 1)
 				.status(statusActivities.get(0).getFrom().getDisplayValue())
 				.build());
@@ -451,7 +453,7 @@ public class JiraService {
 			jiraCardHistory.getItems()
 				.stream()
 				.filter(activity -> "status".equals(activity.getFieldId()))
-				.forEach(activity -> statusChangedArray.add(StatusChangedArrayItem.builder()
+				.forEach(activity -> statusChangedArray.add(StatusChangedItem.builder()
 					.timestamp(activity.getTimeStamp())
 					.status(activity.getTo().getDisplayValue())
 					.build()));
@@ -463,13 +465,13 @@ public class JiraService {
 				.filter(activity -> "flagged".equals(activity.getFieldId()))
 				.forEach(activity -> {
 					if ("Impediment".equals(activity.getTo().getDisplayValue())) {
-						statusChangedArray.add(StatusChangedArrayItem.builder()
+						statusChangedArray.add(StatusChangedItem.builder()
 							.timestamp(activity.getTimeStamp())
 							.status(CardStepsEnum.FLAG.getValue())
 							.build());
 					}
 					else {
-						statusChangedArray.add(StatusChangedArrayItem.builder()
+						statusChangedArray.add(StatusChangedItem.builder()
 							.timestamp(activity.getTimeStamp())
 							.status(CardStepsEnum.REMOVEFLAG.getValue())
 							.build());
@@ -482,7 +484,9 @@ public class JiraService {
 
 	private CardCycleTime calculateCardCycleTime(String cardId, List<CycleTimeInfo> cycleTimeInfos,
 			List<RequestJiraBoardColumnSetting> boardColumns) {
-		Map<String, CardStepsEnum> boardMap = selectedStepsArrayToMap(boardColumns);
+		Map<String, CardStepsEnum> boardMap = boardColumns.stream()
+			.collect(Collectors.toMap(RequestJiraBoardColumnSetting::getName,
+					boardColumn -> CardStepsEnum.fromValue(boardColumn.getValue())));
 		StepsDay stepsDay = StepsDay.builder().build();
 		double total = 0;
 
@@ -520,14 +524,6 @@ public class JiraService {
 			}
 		}
 		return CardCycleTime.builder().name(cardId).steps(stepsDay).total(total).build();
-	}
-
-	private Map<String, CardStepsEnum> selectedStepsArrayToMap(List<RequestJiraBoardColumnSetting> boardColumns) {
-		Map<String, CardStepsEnum> map = new HashMap<>();
-		for (RequestJiraBoardColumnSetting boardColumn : boardColumns) {
-			map.put(boardColumn.getName(), CardStepsEnum.fromValue(boardColumn.getValue()));
-		}
-		return map;
 	}
 
 }

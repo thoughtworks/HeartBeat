@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/report")
+@RequestMapping("/reports")
 @Validated
 public class GenerateReportController {
 
 	private final GenerateReporterService generateReporterService;
 
 	@PostMapping
-	public GenerateReportResponse getReport(@RequestBody GenerateReportRequest request) {
+	public GenerateReportResponse generateReport(@RequestBody GenerateReportRequest request) {
 		return generateReporterService.generateReporter(request);
 	}
 

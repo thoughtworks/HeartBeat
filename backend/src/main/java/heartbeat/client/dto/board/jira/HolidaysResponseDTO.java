@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HolidayResponseDTO implements Serializable {
+public class HolidaysResponseDTO implements Serializable {
 
 	private List<HolidayDTO> days;
 

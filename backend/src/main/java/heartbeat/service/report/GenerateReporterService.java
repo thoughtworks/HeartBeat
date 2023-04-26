@@ -1,6 +1,6 @@
 package heartbeat.service.report;
 
-import heartbeat.controller.board.dto.request.Cards;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class GenerateReporterService {
 
 	// todo: need remove private fields not use void function when finish GenerateReport
-	private Cards cards;
+	private CardCollection cardCollection;
 
 	private final JiraService jiraService;
 
@@ -49,8 +49,8 @@ public class GenerateReporterService {
 
 	private Velocity calculateVelocity() {
 		return Velocity.builder()
-			.velocityForSP(String.valueOf(cards.getStoryPointSum()))
-			.velocityForCards(String.valueOf(cards.getCardsNumber()))
+			.velocityForSP(String.valueOf(cardCollection.getStoryPointSum()))
+			.velocityForCards(String.valueOf(cardCollection.getCardsNumber()))
 			.build();
 	}
 
@@ -97,7 +97,7 @@ public class GenerateReporterService {
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
 			.build();
-		cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+		cardCollection = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 	}
 

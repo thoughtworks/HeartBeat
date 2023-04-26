@@ -1,6 +1,5 @@
-package heartbeat.controller.board.dto.request;
+package heartbeat.controller.board.dto.response;
 
-import heartbeat.controller.board.dto.response.JiraCardResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cards {
+public class CardCollection {
 
 	private int storyPointSum;
 

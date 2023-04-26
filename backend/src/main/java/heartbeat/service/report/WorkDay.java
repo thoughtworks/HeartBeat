@@ -27,9 +27,9 @@ public class WorkDay {
 
 	public Map<String, Boolean> loadHolidayList(String year) {
 
-		log.info("[WorkDay] Start to get chinese holiday by year: {}", year);
-		List<HolidayDTO> tempHolidayList = holidayFeignClient.getHoliday(year).getDays();
-		log.info("[WorkDay] Successfully get holiday list:{}", tempHolidayList);
+		log.info("Start to get chinese holiday by year: {}", year);
+		List<HolidayDTO> tempHolidayList = holidayFeignClient.getHolidays(year).getDays();
+		log.info("Successfully get holiday list:{}", tempHolidayList);
 
 		Map<String, Boolean> holidayMap = new HashMap<>();
 		for (HolidayDTO tempHoliday : tempHolidayList) {

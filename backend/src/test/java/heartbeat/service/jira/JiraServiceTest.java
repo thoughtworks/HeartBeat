@@ -14,7 +14,7 @@ import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
-import heartbeat.controller.board.dto.request.Cards;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigResponse;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -461,12 +461,13 @@ class JiraServiceTest {
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
 
-		Cards cards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
-		assertThat(cards.getStoryPointSum()).isEqualTo(8);
-		assertThat(cards.getCardsNumber()).isEqualTo(3);
-		assertThat(cards.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
-		assertThat(cards.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
+
+		assertThat(cardCollection.getStoryPointSum()).isEqualTo(8);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(3);
+		assertThat(cardCollection.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
+		assertThat(cardCollection.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
 	}
 
 	@Test

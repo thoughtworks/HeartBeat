@@ -2,7 +2,7 @@ package heartbeat.util;
 
 import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
-import heartbeat.controller.board.dto.response.StatusChangedArrayItem;
+import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.service.report.WorkDay;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,17 +20,15 @@ public class BoardUtil {
 
 	private final WorkDay workDay;
 
-	private final TimeUtil timeUtil;
-
-	public List<StatusChangedArrayItem> reformTimeLineForFlaggedCards(List<StatusChangedArrayItem> statusChangedArray) {
+	public List<StatusChangedItem> reformTimeLineForFlaggedCards(List<StatusChangedItem> statusChangedArray) {
 		List<Long> needToFilterArray = new ArrayList<>();
-		List<StatusChangedArrayItem> timeLine = statusChangedArray.stream()
-			.sorted(Comparator.comparingLong(StatusChangedArrayItem::getTimestamp))
+		List<StatusChangedItem> timeLine = statusChangedArray.stream()
+			.sorted(Comparator.comparingLong(StatusChangedItem::getTimestamp))
 			.toList();
 
 		for (int i = 0; i < timeLine.size(); i++) {
-			StatusChangedArrayItem statusChangedArrayItem = timeLine.get(i);
-			if (!Objects.equals(statusChangedArrayItem.getStatus(), CardStepsEnum.FLAG.getValue())) {
+			StatusChangedItem statusChangedItem = timeLine.get(i);
+			if (!Objects.equals(statusChangedItem.getStatus(), CardStepsEnum.FLAG.getValue())) {
 				continue;
 			}
 			String statusNameAfterBlock = CardStepsEnum.UNKNOWN.getValue();
@@ -49,13 +47,13 @@ public class BoardUtil {
 		return timeLine.stream().filter(activity -> !needToFilterArray.contains(activity.getTimestamp())).toList();
 	}
 
-	public List<CycleTimeInfo> getCardTimeForEachStep(List<StatusChangedArrayItem> statusChangedArrayItems) {
+	public List<CycleTimeInfo> getCardTimeForEachStep(List<StatusChangedItem> statusChangedItems) {
 		Map<String, Double> result = new HashMap<>();
-		for (int i = 0; i < statusChangedArrayItems.size(); i++) {
-			StatusChangedArrayItem statusChangedArrayItem = statusChangedArrayItems.get(i);
-			String status = statusChangedArrayItem.getStatus().toUpperCase();
+		for (int i = 0; i < statusChangedItems.size(); i++) {
+			StatusChangedItem statusChangedItem = statusChangedItems.get(i);
+			String status = statusChangedItem.getStatus().toUpperCase();
 			double addedTime = result.getOrDefault(status, 0.0);
-			double costedTime = getThisStepCostTime(i, statusChangedArrayItems);
+			double costedTime = getThisStepCostTime(i, statusChangedItems);
 			double value = addedTime + costedTime;
 			result.put(status, value);
 		}
@@ -68,13 +66,13 @@ public class BoardUtil {
 		return cycleTimeInfos;
 	}
 
-	public double getThisStepCostTime(int index, List<StatusChangedArrayItem> statusChangedArrayItems) {
-		if (index < statusChangedArrayItems.size() - 1) {
-			return workDay.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
-					statusChangedArrayItems.get(index + 1).getTimestamp());
+	private double getThisStepCostTime(int index, List<StatusChangedItem> statusChangedItems) {
+		if (index < statusChangedItems.size() - 1) {
+			return workDay.calculateWorkDaysBy24Hours(statusChangedItems.get(index).getTimestamp(),
+					statusChangedItems.get(index + 1).getTimestamp());
 		}
-		return workDay.calculateWorkDaysBy24Hours(statusChangedArrayItems.get(index).getTimestamp(),
-				timeUtil.getCurrentTimeMillis());
+		return workDay.calculateWorkDaysBy24Hours(statusChangedItems.get(index).getTimestamp(),
+				System.currentTimeMillis());
 	}
 
 }

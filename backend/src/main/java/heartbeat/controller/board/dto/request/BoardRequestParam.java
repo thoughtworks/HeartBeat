@@ -17,8 +17,6 @@ public class BoardRequestParam {
 	@NotBlank(message = "Board Id cannot be empty.")
 	private String boardId;
 
-	private String email;
-
 	@NotBlank(message = "Project Key cannot be empty.")
 	private String projectKey;
 

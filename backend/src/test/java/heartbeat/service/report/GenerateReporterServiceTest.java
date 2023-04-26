@@ -1,6 +1,6 @@
 package heartbeat.service.report;
 
-import heartbeat.controller.board.dto.request.Cards;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.GenerateReportResponse;
@@ -41,8 +41,6 @@ class GenerateReporterServiceTest {
 			.treatFlagCardAsBlock(true)
 			.type("jira")
 			.projectKey("PLL")
-			.teamId("HB")
-			.teamName("HB")
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.metrics(List.of("velocity"))
@@ -53,7 +51,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any()))
-			.thenReturn(Cards.builder().storyPointSum(0).cardsNumber(0).build());
+			.thenReturn(CardCollection.builder().storyPointSum(0).cardsNumber(0).build());
 
 		GenerateReportResponse result = generateReporterService.generateReporter(request);
 		Velocity velocity = Velocity.builder().velocityForSP("0").velocityForCards("0").build();

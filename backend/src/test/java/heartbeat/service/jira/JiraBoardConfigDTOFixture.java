@@ -166,8 +166,6 @@ public class JiraBoardConfigDTOFixture {
 			.treatFlagCardAsBlock(true)
 			.type("jira")
 			.projectKey("PLL")
-			.teamId("HB")
-			.teamName("HB")
 			.targetFields(List.of(TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
 					TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
 					TargetField.builder().key("testKey").name("Flagged").flag(true).build()));
@@ -192,8 +190,6 @@ public class JiraBoardConfigDTOFixture {
 			.treatFlagCardAsBlock(true)
 			.type("jira")
 			.projectKey("PLL")
-			.teamId("HB")
-			.teamName("HB")
 			.targetFields(List.of(TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
 					TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
 					TargetField.builder().key("testKey").name("Flagged").flag(true).build()));

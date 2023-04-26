@@ -48,8 +48,8 @@ class GenerateReporterControllerTest {
 		when(generateReporterService.generateReporter(request)).thenReturn(expectedResponse);
 
 		MockHttpServletResponse response = mockMvc
-			.perform(
-					post("/report").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(request)))
+			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();

@@ -7,7 +7,7 @@ public enum CardStepsEnum {
 
 	private final String value;
 
-	private CardStepsEnum(String value) {
+	CardStepsEnum(String value) {
 		this.value = value;
 	}
 

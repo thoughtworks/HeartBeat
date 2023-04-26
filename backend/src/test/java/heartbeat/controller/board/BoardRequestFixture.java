@@ -15,7 +15,6 @@ public class BoardRequestFixture {
 	public static BoardRequestParam.BoardRequestParamBuilder BOARD_REQUEST_BUILDER() {
 		return BoardRequestParam.builder()
 			.boardId(BOARD_ID)
-			.email("test@email.com")
 			.projectKey("project key")
 			.site("site")
 			.token("token")

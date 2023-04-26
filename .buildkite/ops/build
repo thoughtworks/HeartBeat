@@ -16,7 +16,9 @@ build_backend() {
     eval $(aws sts assume-role --role-arn $AWS_GITHUB_ACTION_ROLE --role-session-name buildkite | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')
     aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
     cd infra
+    echo "start to build backend 11"
     docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest -f Dockerfile.backend .
+    echo "start to build backend 22"
     docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER} -f Dockerfile.backend .
     docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
     docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}

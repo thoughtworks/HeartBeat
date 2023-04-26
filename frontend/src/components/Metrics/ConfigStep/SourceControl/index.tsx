@@ -74,7 +74,7 @@ export const SourceControl = () => {
     e.preventDefault()
     dispatch(
       updateSourceControl({
-        sourceControl: fields[0].value,
+        type: fields[0].value,
         token: fields[1].value,
       })
     )

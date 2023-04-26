@@ -1,11 +1,11 @@
 package heartbeat.client.dto.codebase.github;
 
 public class LeadTimeDelayTime {
-	private Number prDelayTime;
+	private Double prDelayTime;
 
-	private Number pipelineDelayTime;
+	private Double pipelineDelayTime;
 
-	public LeadTimeDelayTime(Number prDelayTime, Number pipelineDelayTime) {
+	public LeadTimeDelayTime(Double prDelayTime, Double pipelineDelayTime) {
 		this.prDelayTime = prDelayTime;
 		this.pipelineDelayTime = pipelineDelayTime;
 	}

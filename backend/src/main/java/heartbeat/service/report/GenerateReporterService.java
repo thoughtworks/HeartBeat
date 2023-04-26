@@ -150,7 +150,13 @@ public class GenerateReporterService {
 			return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList, avgLeadTimeForChangesArrayList);
 		});
 		return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList, avgLeadTimeForChangesArrayList);
-	};
+	}
+
+	private HashMap<Double, Double> transformDelayTimeMapWithLeadTime(LeadTime leadTime) {
+		HashMap<Double, Double> delayTimeMap = new HashMap<>();
+		delayTimeMap.put(leadTime.getPrDelayTime(), leadTime.getPipelineDelayTime());
+		return delayTimeMap;
+	}
 
 	private void fetchOriginalData(GenerateReportRequest request) {
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();

@@ -15,23 +15,23 @@ public class LeadTime {
 
 	private String commitId;
 
-	private Number prCreatedTime;
+	private double prCreatedTime;
 
-	private Number prMergedTime;
+	private double prMergedTime;
 
-	private Number firstCommitTimeInPr;
+	private double firstCommitTimeInPr;
 
-	private Number jobFinishTime;
+	private double jobFinishTime;
 
-	private Number pipelineCreateTime;
+	private double pipelineCreateTime;
 
-	private Number prDelayTime;
+	private double prDelayTime;
 
-	private Number pipelineDelayTime;
+	private double pipelineDelayTime;
 
-	private Number totalTime;
+	private double totalTime;
 
-	public LeadTime(Number prDelayTime, Number pipelineDelayTime) {
+	public LeadTime(double prDelayTime, double pipelineDelayTime) {
 		this.prDelayTime = prDelayTime;
 		this.pipelineCreateTime = pipelineDelayTime;
 	}

@@ -52,25 +52,18 @@ export class ReportClient extends HttpClient {
   }
 
   report = async (params: ReportRequestDTO) => {
-    // eslint-disable-next-line no-useless-catch
-    try {
-      await this.axiosInstance
-        .post(
-          `/report`,
-          {},
-          {
-            headers: {
-              'content-type': 'application/x-www-form-urlencoded',
-            },
-            params: params,
-          }
-        )
-        .then((res) => {
-          this.reportResponse = res.data
-        })
-    } catch (e) {
-      throw e
-    }
+    await this.axiosInstance
+      .post(`/report`, params, {
+        headers: {
+          'content-type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.reportResponse = res.data
+      })
+      .catch((e) => {
+        throw e
+      })
     return {
       response: this.reportResponse,
     }

@@ -52,6 +52,11 @@ export const SOURCE_CONTROL_TYPES = {
   GITHUB: 'GitHub',
 }
 
+export enum PIPELINE_SETTING_TYPES {
+  DEPLOYMENT_FREQUENCY_SETTINGS_TYPE = 'DeploymentFrequencySettings',
+  LEAD_TIME_FOR_CHANGES_TYPE = 'LeadTimeForChanges',
+}
+
 export const EMAIL_REG_EXP = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 export const BOARD_TOKEN_REG_EXP = /^[a-zA-Z0-9\-=_]{1,500}$/

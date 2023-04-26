@@ -1,7 +1,6 @@
 import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
-import { deleteADeploymentFrequencySetting } from '@src/context/Metrics/metricsSlice'
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './style'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
@@ -16,7 +15,7 @@ import {
 import { store } from '@src/store'
 
 interface pipelineMetricSelectionProps {
-  deploymentFrequencySetting: {
+  pipelineSetting: {
     id: number
     organization: string
     pipelineName: string
@@ -24,14 +23,20 @@ interface pipelineMetricSelectionProps {
   }
   isShowRemoveButton: boolean
   errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
+  onRemovePipeline: (id: number) => void
+  onUpdatePipeline: (id: number, label: string, value: string) => void
+  onClearErrorMessage: (id: number, label: string) => void
 }
 
 export const PipelineMetricSelection = ({
-  deploymentFrequencySetting,
+  pipelineSetting,
   isShowRemoveButton,
   errorMessages,
+  onRemovePipeline,
+  onUpdatePipeline,
+  onClearErrorMessage,
 }: pipelineMetricSelectionProps) => {
-  const { id, organization, pipelineName, steps } = deploymentFrequencySetting
+  const { id, organization, pipelineName, steps } = pipelineSetting
   const dispatch = useAppDispatch()
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
@@ -39,7 +44,7 @@ export const PipelineMetricSelection = ({
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
 
   const handleClick = () => {
-    dispatch(deleteADeploymentFrequencySetting(id))
+    onRemovePipeline(id)
   }
 
   const handleGetSteps = (_pipelineName: string) => {
@@ -64,6 +69,8 @@ export const PipelineMetricSelection = ({
         label={'Organization'}
         value={organization}
         errorMessage={errorMessages?.organization}
+        onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+        onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
       />
       {organization && (
         <SingleSelection
@@ -73,6 +80,8 @@ export const PipelineMetricSelection = ({
           value={pipelineName}
           errorMessage={errorMessages?.pipelineName}
           onGetSteps={handleGetSteps}
+          onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+          onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />
       )}
       {organization && pipelineName && (
@@ -82,9 +91,17 @@ export const PipelineMetricSelection = ({
           label={'Steps'}
           value={steps}
           errorMessage={errorMessages?.steps}
+          onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+          onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />
       )}
-      <ButtonWrapper>{isShowRemoveButton && <RemoveButton onClick={handleClick}>Remove</RemoveButton>}</ButtonWrapper>
+      <ButtonWrapper>
+        {isShowRemoveButton && (
+          <RemoveButton data-test-id={'remove-button'} onClick={handleClick}>
+            Remove
+          </RemoveButton>
+        )}
+      </ButtonWrapper>
     </PipelineMetricSelectionWrapper>
   )
 }

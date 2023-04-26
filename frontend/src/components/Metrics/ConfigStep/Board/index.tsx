@@ -32,6 +32,7 @@ import {
   selectIsBoardVerified,
   updateJiraVerifyResponse,
 } from '@src/context/config/configSlice'
+import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -156,6 +157,7 @@ export const Board = () => {
   }
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
+    dispatch(updateTreatFlagCardAsBlock(true))
     updateBoardFields(e)
     const msg = `${fields[2].value}:${fields[5].value}`
     const encodeToken = `Basic ${btoa(msg)}`

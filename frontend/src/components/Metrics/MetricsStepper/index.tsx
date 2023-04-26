@@ -14,7 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
-import { SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
+import { PIPELINE_SETTING_TYPES, SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
@@ -84,7 +84,9 @@ const MetricsStepper = () => {
     }
 
     if (activeStep === 1) {
-      isPipelineValid() && dispatch(nextStep())
+      isPipelineValid(PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE) &&
+        isPipelineValid(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE) &&
+        dispatch(nextStep())
     }
   }
 

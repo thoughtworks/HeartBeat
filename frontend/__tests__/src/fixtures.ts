@@ -1,3 +1,5 @@
+import { ReportRequestDTO } from '@src/clients/report/dto/request'
+
 export const PROJECT_NAME = 'Heartbeat'
 export const PROJECT_DESCRIPTION =
   'Heartbeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.'
@@ -26,7 +28,7 @@ export const PROJECT_NAME_LABEL = 'Project Name'
 
 export const EXPORT_BOARD_DATA = 'Export board data'
 
-export const STEPS = ['Config', 'Metrics', 'Report']
+export const STEPPER = ['Config', 'Metrics', 'Report']
 
 export const REQUIRED_DATA_LIST = [
   'All',
@@ -131,27 +133,27 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   endTime: 1614873600000,
 }
 
-export const MOCK_GENERATE_REPORT_REQUEST_PARAMS = {
+export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
   metrics: [],
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+  considerHoliday: true,
   pipeline: {
     token: 'mockToken',
     type: PIPELINE_TOOL_TYPES.BUILD_KITE,
   },
-  board: {
+  jiraBoardSetting: {
     token: 'mockToken',
     type: BOARD_TYPES.CLASSIC_JIRA,
     site: '2',
-    email: '1@qq.com',
     projectKey: '2',
     boardId: '2',
+    boardColumns: [{ name: 'In Analysis', value: 'In Analysis' }],
+    treatFlagCardAsBlock: true,
+    users: ['user1', 'user2'],
+    targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
+    doneColumn: ['Done'],
   },
-  sourceControl: {
-    token: 'mockToken',
-    type: SOURCE_CONTROL_TYPES.GITHUB,
-  },
-  calendarType: REGULAR_CALENDAR,
-  startTime: '1613664000000',
-  endTime: '1614873600000',
 }
 
 export const MOCK_IMPORT_FILE = {
@@ -234,7 +236,7 @@ export const CREWS_SETTING = 'Crews Setting'
 export const CYCLE_TIME_SETTINGS = 'Cycle Time Settings'
 export const CLASSIFICATION_SETTING = 'Classification Setting'
 export const REAL_DONE = 'Real Done'
-export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment Frequency Settings'
+export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
 export enum VelocityMetricName {
@@ -269,6 +271,12 @@ export const MOCK_GET_STEPS_PARAMS = {
   pipelineType: 'BuildKite',
   token: 'mockToken',
 }
+
+export const REMOVE_BUTTON = 'Remove'
+export const ORGANIZATION = 'Organization'
+export const PIPELINE_NAME = 'Pipeline Name'
+export const STEPS = 'Steps'
+
 export const MOCK_REPORT_RESPONSE = {
   velocity: {
     velocityForSP: 20,

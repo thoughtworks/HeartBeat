@@ -4,6 +4,7 @@ import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
 import {
+  CHINA_CALENDAR,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS_CYCLE,
@@ -12,6 +13,8 @@ import {
 } from '@src/constants'
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
+import { ReportRequestDTO } from '@src/clients/report/dto/request'
+import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 
 export const ReportStep = () => {
   const { generateReport, isLoading } = useGenerateReportEffect()
@@ -22,16 +25,28 @@ export const ReportStep = () => {
   const [leadTimeForChangesData, setLeadTimeForChangesData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
   const [changeFailureRateData, setChangeFailureRateData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
   const configData = useAppSelector(selectConfig)
+  const { boardColumns, treatFlagCardAsBlock, users, targetFields, doneColumn } = useAppSelector(selectMetricsContent)
   const { metrics, calendarType, dateRange } = configData.basic
-  const { board, pipelineTool, sourceControl } = configData
-  const params = {
+  const { board, pipelineTool } = configData
+  const { token, type, site, projectKey, boardId } = board.config
+  const params: ReportRequestDTO = {
     metrics: metrics,
-    pipeline: pipelineTool.config,
-    board: board.config,
-    sourceControl: sourceControl.config,
-    calendarType: calendarType,
     startTime: dateRange.startDate,
     endTime: dateRange.endDate,
+    considerHoliday: calendarType === CHINA_CALENDAR,
+    pipeline: pipelineTool.config,
+    jiraBoardSetting: {
+      token,
+      type,
+      site,
+      projectKey,
+      boardId,
+      boardColumns,
+      treatFlagCardAsBlock,
+      users,
+      targetFields,
+      doneColumn,
+    },
   }
 
   useEffect(() => {

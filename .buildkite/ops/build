@@ -15,16 +15,14 @@ build_backend() {
     aws configure set region $AWS_REGION
     eval $(aws sts assume-role --role-arn $AWS_GITHUB_ACTION_ROLE --role-session-name buildkite | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')
     aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-    cd infra
     echo "start to build backend 11"
-    docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest -f Dockerfile.backend .
+    docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
     echo "start to build backend 22"
-    docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER} -f Dockerfile.backend .
+    docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER} ./ -f ./infra/Dockerfile.backend
     docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
     docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
     docker rmi $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
     docker rmi $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
-    cd ..
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
     trivy image --severity HIGH,CRITICAL --exit-code 1 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
 }

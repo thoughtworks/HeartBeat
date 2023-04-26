@@ -31,4 +31,8 @@ public class LeadTime {
 
 	private Number totalTime;
 
+	public LeadTime(Number prDelayTime, Number pipelineDelayTime) {
+		this.prDelayTime = prDelayTime;
+		this.pipelineCreateTime = pipelineDelayTime;
+	}
 }

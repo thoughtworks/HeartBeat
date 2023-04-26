@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.codebase.github.LeadTime;
 import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
@@ -11,6 +12,9 @@ import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
+import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
+import heartbeat.controller.report.dto.response.LeadTimeForChanges;
+import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
@@ -89,6 +93,8 @@ public class GenerateReporterService {
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
+				case "lead time for changes" ->
+					reportResponse.setLeadTimeForChanges(calculateLeadTime(this.leadTimes));
 				default -> {
 					// TODO
 				}
@@ -116,6 +122,35 @@ public class GenerateReporterService {
 	private void calculateLeadTime() {
 		// todo:add calculate LeadTime logic
 	}
+	private LeadTimeForChanges calculateLeadTime(List<PipelineLeadTime> PipelineLeadTime) {
+
+		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelinesList = new ArrayList<>();
+		List<AvgLeadTimeForChanges> avgLeadTimeForChangesArrayList = new ArrayList<>();
+		if (PipelineLeadTime.isEmpty()){
+			avgLeadTimeForChangesArrayList.add(new AvgLeadTimeForChanges(0, 0));
+			return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList,avgLeadTimeForChangesArrayList);
+		}
+		PipelineLeadTime.stream().map(item -> {
+			int times = item.getLeadTimes().size();
+			if (times == 0) {
+				item.getLeadTimes().add(new LeadTime(0, 0));
+			}
+			HashMap<Integer, Integer> totalDelayTime = item.getLeadTimes().stream().map((leadTime -> new HashMap<Integer, Integer>(
+					leadTime.getPrDelayTime() == null ? 0 : leadTime.getPrDelayTime().intValue(),
+					leadTime.getPipelineDelayTime().intValue()
+				)))
+				.reduce(new HashMap<Integer, Integer>(0, 0), (pre, now) -> now);
+			int totalPrDelayTime = totalDelayTime.keySet().stream().reduce(0, Integer::sum);
+			int totalPipelineDelayTime = totalDelayTime.values().stream().reduce(0, Integer::sum);
+
+			int avgPrDelayTime = totalPrDelayTime / times;
+			int avgPipelineDelayTime = totalPipelineDelayTime / times;
+
+
+			return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList, avgLeadTimeForChangesArrayList);
+		});
+		return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList, avgLeadTimeForChangesArrayList);
+	};
 
 	private void fetchOriginalData(GenerateReportRequest request) {
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();

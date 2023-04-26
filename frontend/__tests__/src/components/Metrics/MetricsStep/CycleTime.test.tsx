@@ -48,8 +48,9 @@ const errorMessage = 'Only one column can be selected as "Done"'
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
 
 let store = setupStore()
-jest.mock('@src/hooks', () => ({
-  useAppSelector: jest.fn().mockReturnValue({
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  selectMetricsContent: jest.fn().mockReturnValue({
     boardColumns: [
       {
         Doing: 'Analysis',
@@ -60,6 +61,13 @@ jest.mock('@src/hooks', () => ({
     ],
     isProjectCreated: false,
   }),
+}))
+
+jest.mock('@src/context/config/configSlice', () => ({
+  ...jest.requireActual('@src/context/config/configSlice'),
+  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
+  selectPipelineNames: jest.fn().mockReturnValue(['']),
+  selectSteps: jest.fn().mockReturnValue(['']),
 }))
 
 const setup = () =>

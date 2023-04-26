@@ -12,6 +12,7 @@ import saveMetricsSettingReducer, {
   updateLeadTimeForChanges,
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
+  updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -26,6 +27,7 @@ const initState = {
   importFile: [],
   isProjectCreated: true,
   classification: [],
+  treatFlagCardAsBlock: true,
 }
 
 describe('saveMetricsSetting reducer', () => {
@@ -41,6 +43,7 @@ describe('saveMetricsSetting reducer', () => {
       { id: 0, organization: '', pipelineName: '', steps: '' },
     ])
     expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', steps: '' }])
+    expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true)
   })
 
   it('should store updated targetFields when its value changed', () => {
@@ -223,5 +226,11 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(multipleLeadTimeForChangesInitState, initLeadTimeForChanges())
 
     expect(savedMetricsSetting.leadTimeForChanges).toEqual(initState.leadTimeForChanges)
+  })
+
+  it('should return false when update TreatFlagCardAsBlock value  given false', () => {
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateTreatFlagCardAsBlock(false))
+
+    expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(false)
   })
 })

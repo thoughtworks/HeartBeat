@@ -13,6 +13,7 @@ export interface savedMetricsSettingState {
   importFile: string[]
   isProjectCreated: boolean
   classification: string[]
+  treatFlagCardAsBlock: boolean
 }
 
 const initialState: savedMetricsSettingState = {
@@ -26,6 +27,7 @@ const initialState: savedMetricsSettingState = {
   importFile: [],
   isProjectCreated: true,
   classification: [],
+  treatFlagCardAsBlock: true,
 }
 
 export const metricsSlice = createSlice({
@@ -114,6 +116,11 @@ export const metricsSlice = createSlice({
     initLeadTimeForChanges: (state) => {
       state.leadTimeForChanges = initialState.leadTimeForChanges
     },
+
+    updateTreatFlagCardAsBlock: (state, action) => {
+      console.log(action.payload)
+      state.treatFlagCardAsBlock = action.payload
+    },
   },
 })
 
@@ -131,6 +138,7 @@ export const {
   deleteALeadTimeForChange,
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
+  updateTreatFlagCardAsBlock,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
@@ -139,4 +147,5 @@ export const selectLeadTimeForChanges = (state: RootState) => state.metrics.lead
 export const selectBoardColumns = (state: RootState) => state.metrics.boardColumns
 export const selectMetricsContent = (state: RootState) => state.metrics
 
+export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock
 export default metricsSlice.reducer

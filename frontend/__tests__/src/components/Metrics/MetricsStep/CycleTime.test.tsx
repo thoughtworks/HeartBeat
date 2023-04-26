@@ -63,6 +63,13 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   }),
 }))
 
+jest.mock('@src/context/config/configSlice', () => ({
+  ...jest.requireActual('@src/context/config/configSlice'),
+  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
+  selectPipelineNames: jest.fn().mockReturnValue(['']),
+  selectSteps: jest.fn().mockReturnValue(['']),
+}))
+
 const setup = () =>
   render(
     <Provider store={store}>

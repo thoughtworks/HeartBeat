@@ -1,3 +1,5 @@
+import { JSON_FILE_CONTENT } from '../../fixtures/fixtures'
+
 class Metrics {
   checkClassification() {
     cy.contains('Distinguished By').siblings().click()
@@ -40,6 +42,13 @@ class Metrics {
     cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")').click()
     cy.contains('BuildKite get steps failed: 404 Not Found').should('exist')
     cy.get('[data-test-id="remove-button"]').eq(1).click()
+  }
+
+  checkJsonFile() {
+    cy.contains('Save').click()
+    cy.readFile('./cypress/downloads/config.json').then((fileContent) => {
+      expect(fileContent).to.deep.equal(JSON_FILE_CONTENT)
+    })
   }
 
   goReportStep() {

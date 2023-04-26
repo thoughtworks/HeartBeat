@@ -51,6 +51,8 @@ describe('Create a new project', () => {
 
     nextButton().should('be.enabled')
 
+    metricsPage.checkJsonFile()
+
     metricsPage.goReportStep()
 
     cy.contains('Subtitle').should('exist')

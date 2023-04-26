@@ -59,7 +59,6 @@ def testIgnoreList = [
   "**/HeartbeatApplication**",
   '**/config/**',
   '**/decoder/**',
-  '**/TimeUtil**',
 ]
 
 jacocoTestReport {

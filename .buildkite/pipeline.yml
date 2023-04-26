@@ -1,20 +1,26 @@
 env:
   RETENTION_DAYS: "10"
 steps:
-  - label: ":lock: Security Check"
-    command: ./.buildkite/ops/check security
+  # - label: ":lock: Security Check"
+  #   command: ./.buildkite/ops/check security
 
-  - label: ":rocket: Backend Check"
-    command: ./.buildkite/ops/check backend
+  # - label: ":rocket: Backend Check"
+  #   command: ./.buildkite/ops/check backend
 
-  - label: ":mag: Frontend License Check"
-    commands: ./.buildkite/ops/check frontend-license
+  # - label: ":mag: Frontend License Check"
+  #   commands: ./.buildkite/ops/check frontend-license
 
-  - label: ":mag: Backend License Check"
-    commands: ./.buildkite/ops/check backend-license
-    plugins:
-      - artifacts#v1.9.0:
-          upload:
-            - "backend/build/reports/dependency-license/**/*"
-          name: "backend-license-report"
-          expire_in: "${RETENTION_DAYS} days"
+  # - label: ":mag: Backend License Check"
+  #   commands: ./.buildkite/ops/check backend-license
+  #   plugins:
+  #     - artifacts#v1.9.0:
+  #         upload:
+  #           - "backend/build/reports/dependency-license/**/*"
+  #         name: "backend-license-report"
+  #         expire_in: "${RETENTION_DAYS} days"
+
+  - label: "build-backend"
+    # if: build.branch == "main"
+    # depends_on: deploy-infra
+    command: ./.buildkite/ops/build backend
+

@@ -11,19 +11,19 @@ display_help() {
     echo
     exit 1
 }
-deploy_infra(){
+deploy_infra() {
   echo "deploy_infra"
 }
 
-deploy_e2e(){
+deploy_e2e() {
   echo "deploy_e2e"
 }
 
-deploy_stub(){
+deploy_stub() {
   echo "deploy_stub"
 }
 
-deploy_prod(){
+deploy_prod() {
   echo "deploy_prod"
 }
 

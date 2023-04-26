@@ -120,9 +120,11 @@ const MetricsStepper = () => {
         {activeStep === 2 && <ReportStep />}
       </MetricsStepperContent>
       <ButtonContainer>
-        <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
-          <SaveButton onClick={handleSave}>Save</SaveButton>
-        </Tooltip>
+        {activeStep !== 2 && (
+          <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
+            <SaveButton onClick={handleSave}>Save</SaveButton>
+          </Tooltip>
+        )}
         <ButtonGroup>
           <BackButton onClick={handleBack}>Back</BackButton>
           {activeStep === STEPS.length - 1 ? (

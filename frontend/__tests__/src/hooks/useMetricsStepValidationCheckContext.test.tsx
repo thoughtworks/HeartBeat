@@ -22,10 +22,10 @@ describe('useMetricsStepValidationCheckContext', () => {
       value: 'mockOrganization',
     },
     { updateId: 0, label: 'pipelineName', value: 'mockPipelineName' },
-    { updateId: 0, label: 'steps', value: 'mockSteps' },
+    { updateId: 0, label: 'step', value: 'mockstep' },
     { updateId: 1, label: 'organization', value: 'mockOrganization' },
     { updateId: 1, label: 'pipelineName', value: 'mockPipelineName' },
-    { updateId: 1, label: 'steps', value: 'mockSteps' },
+    { updateId: 1, label: 'step', value: 'mockstep' },
   ]
 
   const duplicatedDataErrorMessages = [
@@ -34,7 +34,7 @@ describe('useMetricsStepValidationCheckContext', () => {
       error: {
         organization: 'duplicated organization',
         pipelineName: 'duplicated pipelineName',
-        steps: 'duplicated steps',
+        step: 'duplicated step',
       },
     },
     {
@@ -42,7 +42,7 @@ describe('useMetricsStepValidationCheckContext', () => {
       error: {
         organization: 'duplicated organization',
         pipelineName: 'duplicated pipelineName',
-        steps: 'duplicated steps',
+        step: 'duplicated step',
       },
     },
   ]
@@ -53,7 +53,7 @@ describe('useMetricsStepValidationCheckContext', () => {
       error: {
         organization: 'organization is required',
         pipelineName: 'pipelineName is required',
-        steps: 'steps is required',
+        step: 'step is required',
       },
     },
   ]
@@ -64,7 +64,7 @@ describe('useMetricsStepValidationCheckContext', () => {
       error: {
         organization: '',
         pipelineName: 'pipelineName is required',
-        steps: 'steps is required',
+        step: 'step is required',
       },
     },
   ]
@@ -75,7 +75,7 @@ describe('useMetricsStepValidationCheckContext', () => {
       error: {
         organization: '',
         pipelineName: '',
-        steps: '',
+        step: '',
       },
     },
     {
@@ -83,24 +83,24 @@ describe('useMetricsStepValidationCheckContext', () => {
       error: {
         organization: '',
         pipelineName: '',
-        steps: '',
+        step: '',
       },
     },
   ]
 
   const duplicatedPipelineSettings = [
-    { id: 0, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
-    { id: 1, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
+    { id: 0, organization: 'mockOrganization', pipelineName: 'mockPipelineName', step: 'mockstep' },
+    { id: 1, organization: 'mockOrganization', pipelineName: 'mockPipelineName', step: 'mockstep' },
   ]
 
   const notDuplicatedPipelineSettings = [
-    { id: 0, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'mockSteps' },
-    { id: 1, organization: 'mockOrganization', pipelineName: 'mockPipelineName', steps: 'changedMockSteps' },
+    { id: 0, organization: 'mockOrganization', pipelineName: 'mockPipelineName', step: 'mockstep' },
+    { id: 1, organization: 'mockOrganization', pipelineName: 'mockPipelineName', step: 'changedMockstep' },
   ]
 
   const emptyPipelineSettings = [
-    { id: 2, organization: '', pipelineName: '', steps: '' },
-    { id: 3, organization: '', pipelineName: '', steps: '' },
+    { id: 2, organization: '', pipelineName: '', step: '' },
+    { id: 3, organization: '', pipelineName: '', step: '' },
   ]
 
   const setup = () => {
@@ -135,13 +135,13 @@ describe('useMetricsStepValidationCheckContext', () => {
     expect(result.current?.clearErrorMessage(1, 'label', LEAD_TIME_FOR_CHANGES)).toBe(null)
     expect(
       result.current?.checkDuplicatedPipeline(
-        [{ id: 1, organization: '', pipelineName: '', steps: '' }],
+        [{ id: 1, organization: '', pipelineName: '', step: '' }],
         DEPLOYMENT_FREQUENCY_SETTINGS
       )
     ).toBe(null)
     expect(
       result.current?.checkDuplicatedPipeline(
-        [{ id: 1, organization: '', pipelineName: '', steps: '' }],
+        [{ id: 1, organization: '', pipelineName: '', step: '' }],
         LEAD_TIME_FOR_CHANGES
       )
     ).toBe(null)
@@ -208,8 +208,8 @@ describe('useMetricsStepValidationCheckContext', () => {
     expect(result.current?.leadTimeForChangesErrorMessages).toEqual(duplicatedDataErrorMessages)
 
     act(() => {
-      store.dispatch(updateDeploymentFrequencySettings({ updateId: 1, label: 'steps', value: 'changedMockSteps' }))
-      store.dispatch(updateLeadTimeForChanges({ updateId: 1, label: 'steps', value: 'changedMockSteps' }))
+      store.dispatch(updateDeploymentFrequencySettings({ updateId: 1, label: 'step', value: 'changedMockstep' }))
+      store.dispatch(updateLeadTimeForChanges({ updateId: 1, label: 'step', value: 'changedMockstep' }))
     })
 
     act(() => {
@@ -230,10 +230,10 @@ describe('useMetricsStepValidationCheckContext', () => {
       store.dispatch(
         updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mockPipelineName' })
       )
-      store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'steps', value: 'mockSteps' }))
+      store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mockstep' }))
       store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'organization', value: 'mockOrganization' }))
       store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'pipelineName', value: 'mockPipelineName' }))
-      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'steps', value: 'mockSteps' }))
+      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'step', value: 'mockstep' }))
     })
 
     act(() => {

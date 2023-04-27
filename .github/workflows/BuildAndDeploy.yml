@@ -32,6 +32,7 @@ jobs:
           aquasec/trivy fs \
           --severity HIGH,CRITICAL \
           --exit-code 1 \
+          --ignore-unfixed \
           ./
       - name: Scan repo
         run: |

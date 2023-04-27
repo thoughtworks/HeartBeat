@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardParentFields {
+public class JiraColumnDTO {
 
-	private String summary;
+	private String key;
+
+	private ColumnValue value;
 
 }

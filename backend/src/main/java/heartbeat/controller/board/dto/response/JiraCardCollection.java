@@ -10,16 +10,12 @@ import java.util.List;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class JiraCardResponse {
+@AllArgsConstructor
+public class JiraCardCollection {
 
-	private JiraCard baseInfo;
+	private Integer total;
 
-	private List<CycleTimeInfo> cycleTime;
-
-	private List<CycleTimeInfo> originCycleTime;
-
-	private CardCycleTime cardCycleTime;
+	private List<JiraCard> issues;
 
 }

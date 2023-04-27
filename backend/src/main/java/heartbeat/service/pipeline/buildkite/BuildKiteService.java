@@ -8,9 +8,9 @@ import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
-import heartbeat.controller.pipeline.dto.response.BuildKiteResponse;
+import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
-import heartbeat.controller.pipeline.dto.response.PipelineStepsResponse;
+import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
@@ -46,7 +46,7 @@ public class BuildKiteService {
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
-	public BuildKiteResponse fetchPipelineInfo(PipelineParam pipelineParam) {
+	public BuildKiteResponseDTO fetchPipelineInfo(PipelineParam pipelineParam) {
 		try {
 			String buildKiteToken = "Bearer " + pipelineParam.getToken();
 			log.info("Start to query token permissions" + TokenUtil.mask(pipelineParam.getToken()));
@@ -69,7 +69,7 @@ public class BuildKiteService {
 				.collect(Collectors.toList());
 			log.info("Successfully get buildKite pipelineInfo, pipelineInfoList size is:" + buildKiteInfoList.size());
 
-			return BuildKiteResponse.builder().pipelineList(buildKiteInfoList).build();
+			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
 		}
 		catch (FeignException e) {
 			log.error("Failed when call BuildKite", e);
@@ -87,7 +87,7 @@ public class BuildKiteService {
 		}
 	}
 
-	public PipelineStepsResponse fetchPipelineSteps(String token, String organizationId, String pipelineId,
+	public PipelineStepsDTO fetchPipelineSteps(String token, String organizationId, String pipelineId,
 			PipelineStepsParam stepsParam) {
 		try {
 			String partialToken = token.substring(0, token.length() / 2);
@@ -102,7 +102,7 @@ public class BuildKiteService {
 				.distinct()
 				.toList();
 			log.info("Successfully get pipeline steps, finally build steps_buildSteps:{}", buildSteps);
-			return PipelineStepsResponse.builder()
+			return PipelineStepsDTO.builder()
 				.pipelineId(pipelineId)
 				.steps(buildSteps)
 				.name(stepsParam.getOrgName())

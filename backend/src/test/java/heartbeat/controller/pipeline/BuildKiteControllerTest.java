@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.pipeline.dto.response.BuildKiteResponse;
+import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
-import heartbeat.controller.pipeline.dto.response.PipelineStepsResponse;
+import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import java.io.File;
 import java.util.List;
@@ -45,8 +45,8 @@ public class BuildKiteControllerTest {
 		List<Pipeline> pipelines = mapper.readValue(
 				new File("src/test/java/heartbeat/controller/pipeline/pipelineInfoData.json"), new TypeReference<>() {
 				});
-		BuildKiteResponse buildKiteResponse = BuildKiteResponse.builder().pipelineList(pipelines).build();
-		when(buildKiteService.fetchPipelineInfo(any())).thenReturn(buildKiteResponse);
+		BuildKiteResponseDTO buildKiteResponseDTO = BuildKiteResponseDTO.builder().pipelineList(pipelines).build();
+		when(buildKiteService.fetchPipelineInfo(any())).thenReturn(buildKiteResponseDTO);
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/pipelines/buildKite").contentType(MediaType.APPLICATION_JSON)
 				.queryParam("token", "test_token")
@@ -64,9 +64,9 @@ public class BuildKiteControllerTest {
 	@Test
 	void shouldReturnCorrectPipelineStepsWhenCalBuildKiteMockServer() throws Exception {
 		List<String> steps = List.of(":docker: publish image to cloudsmith", ":maven: :wrench: Build");
-		PipelineStepsResponse pipelineStepsResponse = PipelineStepsResponse.builder().steps(steps).build();
+		PipelineStepsDTO pipelineStepsDTO = PipelineStepsDTO.builder().steps(steps).build();
 		when(buildKiteService.fetchPipelineSteps(anyString(), anyString(), anyString(), any()))
-			.thenReturn(pipelineStepsResponse);
+			.thenReturn(pipelineStepsDTO);
 
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/pipelines/buildkite/XXXX/pipelines/fs-platform-onboarding/steps")

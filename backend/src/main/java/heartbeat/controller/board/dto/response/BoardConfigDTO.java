@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardConfigResponse {
+public class BoardConfigDTO {
 
 	@JsonProperty("jiraColumns")
-	private List<JiraColumnResponse> jiraColumnResponses;
+	private List<JiraColumnDTO> jiraColumnRespons;
 
 	private List<String> users;
 

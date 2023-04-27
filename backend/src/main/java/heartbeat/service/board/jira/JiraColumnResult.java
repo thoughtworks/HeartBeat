@@ -1,6 +1,6 @@
 package heartbeat.service.board.jira;
 
-import heartbeat.controller.board.dto.response.JiraColumnResponse;
+import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class JiraColumnResult {
 
-	private List<JiraColumnResponse> jiraColumnResponses;
+	private List<JiraColumnDTO> jiraColumnRespons;
 
 	private List<String> doneColumns;
 

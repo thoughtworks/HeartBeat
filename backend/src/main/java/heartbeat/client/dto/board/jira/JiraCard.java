@@ -1,7 +1,5 @@
 package heartbeat.client.dto.board.jira;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class JiraCard implements Serializable {
+public class JiraCard {
 
 	private String key;
 
-	private JiraCardFields fields;
+	private JiraCardField fields;
 
 }

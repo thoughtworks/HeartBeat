@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CardParent {
 
-	private CardParentFields fields;
+	private CardParentField fields;
 
 }

@@ -18,15 +18,15 @@ import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
-import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.CardCustomFieldKey;
 import heartbeat.controller.board.dto.response.CardCycleTime;
 import heartbeat.controller.board.dto.response.ColumnValue;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
-import heartbeat.controller.board.dto.response.JiraCardResponse;
-import heartbeat.controller.board.dto.response.JiraColumnResponse;
+import heartbeat.controller.board.dto.response.JiraCardDTO;
+import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -84,7 +84,7 @@ public class JiraService {
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
 
-	public BoardConfigResponse getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
+	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
 		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
@@ -101,8 +101,8 @@ public class JiraService {
 			return jiraColumnsFuture
 				.thenCompose(jiraColumnResult -> getUserAsync(boardType, baseUrl, boardRequestParam,
 						jiraColumnResult.getDoneColumns())
-					.thenApply(users -> BoardConfigResponse.builder()
-						.jiraColumnResponses(jiraColumnResult.getJiraColumnResponses())
+					.thenApply(users -> BoardConfigDTO.builder()
+						.jiraColumnRespons(jiraColumnResult.getJiraColumnRespons())
 						.targetFields(targetFieldFuture.join())
 						.users(users)
 						.build()))
@@ -137,7 +137,7 @@ public class JiraService {
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
 				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		List<String> doneColumns = new CopyOnWriteArrayList<>();
-		List<CompletableFuture<JiraColumnResponse>> futures = jiraBoardConfigDTO.getColumnConfig()
+		List<CompletableFuture<JiraColumnDTO>> futures = jiraBoardConfigDTO.getColumnConfig()
 			.getColumns()
 			.stream()
 			.map(jiraColumn -> CompletableFuture.supplyAsync(
@@ -145,29 +145,27 @@ public class JiraService {
 					taskExecutor))
 			.toList();
 
-		List<JiraColumnResponse> columnResponse = futures.stream()
-			.map(CompletableFuture::join)
-			.collect(Collectors.toList());
+		List<JiraColumnDTO> columnResponse = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 
 		JiraColumnResult jiraColumnResult = JiraColumnResult.builder()
-			.jiraColumnResponses(columnResponse)
+			.jiraColumnRespons(columnResponse)
 			.doneColumns(doneColumns)
 			.build();
 		log.info(
 				"[Jira] Successfully to get jira columns, project key: {}, board id: {}, column result size: {}, done columns: {}",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
-				jiraColumnResult.getJiraColumnResponses().size(), doneColumns);
+				jiraColumnResult.getJiraColumnRespons().size(), doneColumns);
 		return jiraColumnResult;
 	}
 
-	private JiraColumnResponse getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, List<String> doneColumns,
+	private JiraColumnDTO getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, List<String> doneColumns,
 			String token) {
 		log.info("[Jira] Start to get column and status, the column name: {} column status: {}", jiraColumn.getName(),
 				jiraColumn.getStatuses());
 		List<StatusSelfDTO> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
 		String key = handleColumKey(doneColumns, statusSelfList);
 
-		JiraColumnResponse jiraColumnResponse = JiraColumnResponse.builder()
+		JiraColumnDTO jiraColumnDTO = JiraColumnDTO.builder()
 			.key(key)
 			.value(ColumnValue.builder()
 				.name(jiraColumn.getName())
@@ -176,9 +174,9 @@ public class JiraService {
 					.collect(Collectors.toList()))
 				.build())
 			.build();
-		log.info("[Jira] Successfully get column and status, the column key: {}, status: {}",
-				jiraColumnResponse.getKey(), jiraColumnResponse.getValue().getStatuses());
-		return jiraColumnResponse;
+		log.info("[Jira] Successfully get column and status, the column key: {}, status: {}", jiraColumnDTO.getKey(),
+				jiraColumnDTO.getValue().getStatuses());
+		return jiraColumnDTO;
 	}
 
 	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, JiraColumn jiraColumn, String token) {
@@ -364,7 +362,7 @@ public class JiraService {
 			.build();
 		List<JiraCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
 
-		List<JiraCardResponse> matchedCards = getMatchedCards(request, boardColumns, users, baseUrl, allDoneCards);
+		List<JiraCardDTO> matchedCards = getMatchedCards(request, boardColumns, users, baseUrl, allDoneCards);
 
 		int storyPointSum = matchedCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
@@ -373,14 +371,14 @@ public class JiraService {
 		return CardCollection.builder()
 			.storyPointSum(storyPointSum)
 			.cardsNumber(matchedCards.size())
-			.jiraCardResponseList(matchedCards)
+			.jiraCardDTOList(matchedCards)
 			.build();
 	}
 
-	private List<JiraCardResponse> getMatchedCards(StoryPointsAndCycleTimeRequest request,
+	private List<JiraCardDTO> getMatchedCards(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, URI baseUrl,
 			List<JiraCard> allDoneCards) {
-		List<JiraCardResponse> matchedCards = new ArrayList<>();
+		List<JiraCardDTO> matchedCards = new ArrayList<>();
 		allDoneCards.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock());
@@ -393,14 +391,14 @@ public class JiraService {
 				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
 				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
 
-				JiraCardResponse jiraCardResponse = JiraCardResponse.builder()
+				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
 					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
 					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
 					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(),
 							boardColumns))
 					.build();
-				matchedCards.add(jiraCardResponse);
+				matchedCards.add(jiraCardDTO);
 			}
 		});
 		return matchedCards;

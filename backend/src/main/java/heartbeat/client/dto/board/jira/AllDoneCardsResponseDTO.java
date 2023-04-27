@@ -1,16 +1,15 @@
 package heartbeat.client.dto.board.jira;
 
-import java.io.Serializable;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Data
 @Builder
-public class AllDoneCardsResponseDTO implements Serializable {
+public class AllDoneCardsResponseDTO {
 
 	private String total;
 

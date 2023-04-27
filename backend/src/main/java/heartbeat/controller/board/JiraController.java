@@ -2,7 +2,7 @@ package heartbeat.controller.board;
 
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
-import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.service.board.jira.JiraService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +20,7 @@ public class JiraController {
 	private final JiraService jiraService;
 
 	@GetMapping("/{boardType}")
-	public BoardConfigResponse getBoard(@PathVariable @NotBlank BoardType boardType,
+	public BoardConfigDTO getBoard(@PathVariable @NotBlank BoardType boardType,
 			@Valid BoardRequestParam boardRequestParam) {
 		return jiraService.getJiraConfiguration(boardType, boardRequestParam);
 	}

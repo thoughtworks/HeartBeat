@@ -1,8 +1,5 @@
 package heartbeat.client.dto.board.jira;
 
-import java.io.Serializable;
-import java.util.List;
-
 import heartbeat.controller.board.dto.response.CardParent;
 import heartbeat.controller.board.dto.response.FixVersion;
 import heartbeat.controller.board.dto.response.IssueType;
@@ -14,11 +11,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class JiraCardFields implements Serializable {
+public class JiraCardField {
 
 	private Assignee assignee;
 

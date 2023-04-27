@@ -17,6 +17,6 @@ public class CardCollection {
 
 	private int cardsNumber;
 
-	private List<JiraCardResponse> jiraCardResponseList;
+	private List<JiraCardDTO> jiraCardDTOList;
 
 }

@@ -2,14 +2,14 @@ package heartbeat.service.jira;
 
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
+import heartbeat.client.dto.board.jira.Issuetype;
 import heartbeat.client.dto.board.jira.JiraCard;
-import heartbeat.client.dto.board.jira.JiraCardFields;
+import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.IssueField;
-import heartbeat.client.dto.board.jira.Issuetype;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraColumn;
 import heartbeat.client.dto.board.jira.JiraColumnConfig;
@@ -89,7 +89,7 @@ public class JiraBoardConfigDTOFixture {
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new JiraCard("1", JiraCardFields.builder().assignee(new Assignee("Zhang San")).build())));
+			.issues(List.of(new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
@@ -97,17 +97,17 @@ public class JiraBoardConfigDTOFixture {
 			.total("2")
 			.issues(List.of(
 					new JiraCard("1",
-							JiraCardFields.builder().assignee(new Assignee("Zhang San")).storyPoints(2).build()),
+							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(2).build()),
 					new JiraCard("1",
-							JiraCardFields.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
+							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
 					new JiraCard("1",
-							JiraCardFields.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
+							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("200")
-			.issues(List.of(new JiraCard("1", JiraCardFields.builder().assignee(new Assignee("Zhang San")).build())));
+			.issues(List.of(new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER() {

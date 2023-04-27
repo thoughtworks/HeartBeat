@@ -9,14 +9,14 @@ import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
-import heartbeat.client.dto.board.jira.JiraCardFields;
+import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
-import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.RequestFailedException;
@@ -115,18 +115,16 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 		jiraService.shutdownExecutor();
-		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0))
-			.isEqualTo("DONE");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1))
-			.isEqualTo("DOING");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
-		assertThat(boardConfigResponse.getTargetFields()).isEqualTo(expectTargetField);
+		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(2);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
 	@Test
@@ -156,18 +154,16 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 
-		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0))
-			.isEqualTo("DONE");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1))
-			.isEqualTo("DOING");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
-		assertThat(boardConfigResponse.getTargetFields()).isEqualTo(expectTargetField);
+		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(2);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
 	@Test
@@ -200,19 +196,16 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeClassicJira,
-				boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeClassicJira, boardRequestParam);
 
-		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0))
-			.isEqualTo("DONE");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1))
-			.isEqualTo("DOING");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
-		assertThat(boardConfigResponse.getTargetFields()).isEqualTo(expectTargetField);
+		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(2);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
 	@Test
@@ -310,10 +303,10 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getUsers().get(0)).isEqualTo("Zhang San");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getUsers().get(0)).isEqualTo("Zhang San");
 	}
 
 	@Test
@@ -359,7 +352,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new JiraCard("1", new JiraCardFields())))
+			.issues(List.of(new JiraCard("1", new JiraCardField())))
 			.build();
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -394,7 +387,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new JiraCard("1", new JiraCardFields())))
+			.issues(List.of(new JiraCard("1", new JiraCardField())))
 			.build();
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
@@ -466,8 +459,8 @@ class JiraServiceTest {
 
 		assertThat(cardCollection.getStoryPointSum()).isEqualTo(8);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(3);
-		assertThat(cardCollection.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
-		assertThat(cardCollection.getJiraCardResponseList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
 	}
 
 	@Test

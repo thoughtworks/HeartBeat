@@ -2,7 +2,7 @@ package heartbeat.client;
 
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
-import heartbeat.client.dto.codebase.github.GitHubRepos;
+import heartbeat.client.dto.codebase.github.GitHubRepo;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
@@ -22,11 +22,11 @@ public interface GitHubFeignClient {
 
 	@GetMapping(path = "/user/repos")
 	@ResponseStatus(HttpStatus.OK)
-	List<GitHubRepos> getAllRepos(@RequestHeader("Authorization") String token);
+	List<GitHubRepo> getAllRepos(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "/orgs/{organizationName}/repos")
 	@ResponseStatus(HttpStatus.OK)
-	List<GitHubRepos> getReposByOrganizationName(@PathVariable String organizationName,
+	List<GitHubRepo> getReposByOrganizationName(@PathVariable String organizationName,
 			@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "/repos/{repository}/commits/{commitId}")

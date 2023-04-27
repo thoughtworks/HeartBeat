@@ -43,6 +43,9 @@ public class GenerateReporterService {
 		calculateCycleTime();
 		calculateLeadTime();
 
+		log.info("Successfully generate Report, request: {}, report: {}", request,
+				GenerateReportResponse.builder().velocity(velocity).build());
+
 		// combined data to GenerateReportResponse
 		return GenerateReportResponse.builder().velocity(velocity).build();
 	}

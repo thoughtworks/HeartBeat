@@ -86,7 +86,7 @@ const MetricsStepper = () => {
       treatFlagCardAsBlock,
     } = Object.fromEntries(
       Object.entries(metricsConfig).filter(
-        ([key, value]) =>
+        ([, value]) =>
           !Array.isArray(value) ||
           (Array.isArray(value) &&
             !value.every((item) => item.organization === '') &&

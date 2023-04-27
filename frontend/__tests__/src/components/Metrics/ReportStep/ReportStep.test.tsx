@@ -1,8 +1,10 @@
-import { render, waitFor } from '@testing-library/react'
+import { act, render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { EXPECTED_REPORT_VALUES, REQUIRED_DATA_LIST } from '../../../fixtures'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
+import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
+import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: () => ({
@@ -13,9 +15,29 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
 let store = null
 
 describe('Report Step', () => {
-  store = setupStore()
-  const setup = () => {
+  const setup = async () => {
     store = setupStore()
+    await store.dispatch(
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock organization' })
+    )
+    await store.dispatch(
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock pipeline name' })
+    )
+    await store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock step1' }))
+    await store.dispatch(
+      updatePipelineToolVerifyResponse({
+        pipelineList: [
+          {
+            orgId: 'mock organization id',
+            orgName: 'mock organization',
+            id: 'mock pipeline id',
+            name: 'mock pipeline name',
+            steps: ['mock step1', 'mock step2'],
+            repository: 'mock url',
+          },
+        ],
+      })
+    )
     return render(
       <Provider store={store}>
         <ReportStep />
@@ -26,7 +48,7 @@ describe('Report Step', () => {
     store = null
   })
   it('should render report page', async () => {
-    const { getByText } = setup()
+    const { getByText } = await act(() => setup())
 
     await waitFor(() => {
       expect(getByText(REQUIRED_DATA_LIST[1])).toBeInTheDocument()
@@ -35,7 +57,7 @@ describe('Report Step', () => {
   })
 
   it('should renders the velocity component with correct props', async () => {
-    const { getByText } = setup()
+    const { getByText } = await act(() => setup())
 
     await waitFor(() => {
       expect(getByText(20)).toBeInTheDocument()
@@ -44,7 +66,7 @@ describe('Report Step', () => {
   })
 
   it('should renders the CycleTime component with correct props', async () => {
-    const { getByText } = setup()
+    const { getByText } = await act(() => setup())
 
     await waitFor(() => {
       expect(getByText('30.26(days/card)')).toBeInTheDocument()

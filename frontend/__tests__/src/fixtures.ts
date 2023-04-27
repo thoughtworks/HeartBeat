@@ -138,6 +138,30 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
   pipeline: {
     token: 'mockToken',
     type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    deployment: [
+      {
+        id: 'mockPipelineId',
+        name: 'mockPipelineName',
+        orgId: 'mockOrgId',
+        orgName: 'mockOrgName',
+        repository: 'mockRep',
+        step: 'step',
+      },
+    ],
+  },
+  codebaseSetting: {
+    type: 'github',
+    token: 'mockToken',
+    leadTime: [
+      {
+        id: 'mockPipelineId',
+        name: 'mockPipelineName',
+        orgId: 'mockOrgId',
+        orgName: 'mockOrgName',
+        repository: 'mockRep',
+        step: 'step',
+      },
+    ],
   },
   jiraBoardSetting: {
     token: 'mockToken',

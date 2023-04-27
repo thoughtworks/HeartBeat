@@ -14,7 +14,7 @@ import {
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
-import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 
 export const ReportStep = () => {
   const { generateReport, isLoading } = useGenerateReportEffect()
@@ -25,16 +25,55 @@ export const ReportStep = () => {
   const [leadTimeForChangesData, setLeadTimeForChangesData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
   const [changeFailureRateData, setChangeFailureRateData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
   const configData = useAppSelector(selectConfig)
-  const { boardColumns, treatFlagCardAsBlock, users, targetFields, doneColumn } = useAppSelector(selectMetricsContent)
+  const {
+    boardColumns,
+    treatFlagCardAsBlock,
+    users,
+    targetFields,
+    doneColumn,
+    deploymentFrequencySettings,
+    leadTimeForChanges,
+  } = useAppSelector(selectMetricsContent)
   const { metrics, calendarType, dateRange } = configData.basic
-  const { board, pipelineTool } = configData
+  const { board, pipelineTool, sourceControl } = configData
   const { token, type, site, projectKey, boardId } = board.config
-  const params: ReportRequestDTO = {
+
+  const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) => {
+    if (!pipelineConfigs[0].organization && pipelineConfigs.length === 1) {
+      return []
+    }
+    return pipelineConfigs.map(({ organization, pipelineName, step }) => {
+      const pipelineConfigFromPipelineList = configData.pipelineTool.verifiedResponse.pipelineList.find(
+        (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization
+      )
+      if (pipelineConfigFromPipelineList != undefined) {
+        const { orgName, orgId, name, id, repository } = pipelineConfigFromPipelineList
+        return {
+          orgId,
+          orgName,
+          id,
+          name,
+          step,
+          repository,
+        }
+      }
+    }) as { id: string; name: string; orgId: string; orgName: string; repository: string; step: string }[]
+  }
+
+  const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,
     startTime: dateRange.startDate,
     endTime: dateRange.endDate,
     considerHoliday: calendarType === CHINA_CALENDAR,
-    pipeline: pipelineTool.config,
+    pipeline: {
+      ...pipelineTool.config,
+      deployment: getPipelineConfig(deploymentFrequencySettings),
+    },
+    codebaseSetting: {
+      type: sourceControl.config.type,
+      token: sourceControl.config.token,
+      leadTime: getPipelineConfig(leadTimeForChanges),
+    },
     jiraBoardSetting: {
       token,
       type,
@@ -47,10 +86,10 @@ export const ReportStep = () => {
       targetFields,
       doneColumn,
     },
-  }
+  })
 
   useEffect(() => {
-    generateReport(params).then((res) => {
+    generateReport(getReportRequestBody()).then((res) => {
       if (res) {
         setVelocityData(res.velocityList)
         setCycleTimeData(res.cycleTimeList)

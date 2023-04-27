@@ -88,7 +88,10 @@ const MetricsStepper = () => {
       Object.entries(metricsConfig).filter(
         ([key, value]) =>
           !Array.isArray(value) ||
-          (Array.isArray(value) && !value.every((item) => item.organization === '') && value.length > 0)
+          (Array.isArray(value) &&
+            !value.every((item) => item.organization === '') &&
+            value.length > 0 &&
+            !value.every((item) => item.flag === false))
       )
     )
 
@@ -105,7 +108,7 @@ const MetricsStepper = () => {
         : undefined,
       classification: targetFields
         ?.filter((item: { name: string; key: string; flag: boolean }) => item.flag)
-        .map((item: { name: string; key: string; flag: boolean }) => item.key),
+        ?.map((item: { name: string; key: string; flag: boolean }) => item.key),
     }
     const jsonData = activeStep === 0 ? configData : { ...configData, ...metricsData }
     exportToJsonFile('config', jsonData)

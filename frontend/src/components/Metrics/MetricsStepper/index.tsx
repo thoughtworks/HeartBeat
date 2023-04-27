@@ -96,9 +96,6 @@ const MetricsStepper = () => {
     )
 
     const metricsData = {
-      deployment: deploymentFrequencySettings,
-      leadTime: leadTimeForChanges,
-      doneStatus: doneColumn,
       crews: users,
       cycleTime: boardColumns
         ? {
@@ -106,9 +103,12 @@ const MetricsStepper = () => {
             treatFlagCardAsBlock,
           }
         : undefined,
+      doneStatus: doneColumn,
       classification: targetFields
         ?.filter((item: { name: string; key: string; flag: boolean }) => item.flag)
         ?.map((item: { name: string; key: string; flag: boolean }) => item.key),
+      deployment: deploymentFrequencySettings,
+      leadTime: leadTimeForChanges,
     }
     const jsonData = activeStep === 0 ? configData : { ...configData, ...metricsData }
     exportToJsonFile('config', jsonData)

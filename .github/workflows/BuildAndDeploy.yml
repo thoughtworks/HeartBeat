@@ -33,6 +33,7 @@ jobs:
           --severity HIGH,CRITICAL \
           --exit-code 1 \
           --ignore-unfixed \
+          --ignorefile .trivyignore \
           ./
       - name: Scan repo
         run: |

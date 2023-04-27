@@ -35,7 +35,7 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	public GenerateReportResponse generateReporter(GenerateReportRequest request) {
+	public GenerateReportResponse generateReporter(GenerateReportRequest request) throws IllegalAccessException {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 

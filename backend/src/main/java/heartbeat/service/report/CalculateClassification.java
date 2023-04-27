@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.board.jira.JiraCardFields;
 import heartbeat.controller.board.dto.request.Cards;
 import heartbeat.controller.board.dto.response.JiraCardResponse;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -9,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +23,10 @@ public class CalculateClassification {
 
 	private static final String NONE_KEY = "None";
 
-	public List<heartbeat.controller.report.dto.response.Classification> calculateClassification(
-			List<TargetField> targetFields, Cards cards) {
+	public List<Classification> calculateClassification(List<TargetField> targetFields, Cards cards)
+			throws IllegalAccessException {
 		// todo:add calculate Deployment logic
-		List<heartbeat.controller.report.dto.response.Classification> classificationFields = new ArrayList<>();
+		List<Classification> classificationFields = new ArrayList<>();
 		Map<String, Map<String, Integer>> resultMap = new HashMap<>();
 		Map<String, String> nameMap = new HashMap<>();
 
@@ -45,23 +46,21 @@ public class CalculateClassification {
 			nameMap.put(targetField.getKey(), targetField.getName());
 		});
 
-		for (JiraCardResponse card : cards.getJiraCardResponseList()) {
-			Map<String, Object> fields = (Map<String, Object>) card.getBaseInfo().getFields();
-			for (Map.Entry<String, Object> entry : fields.entrySet()) {
-				String fieldName = entry.getKey();
-				Object fieldValue = entry.getValue();
-				if (resultMap.containsKey(fieldName)) {
-					if (fieldValue instanceof Object[]) {
-						mapArrayField(resultMap, fieldName, (List<Map<String, Object>>) fieldValue);
-					}
-					else {
-						String displayName = pickDisplayNameFromObj(fieldValue);
-						if (displayName != null) {
-							Map<String, Integer> fieldCounts = resultMap.computeIfAbsent(fieldName,
-									k -> new HashMap<>());
-							fieldCounts.compute(displayName, (k, v) -> v != null ? v + 1 : 1);
-							fieldCounts.computeIfPresent(NONE_KEY, (k, v) -> v - 1);
-						}
+		for (JiraCardResponse jiraCardResponse : cards.getJiraCardResponseList()) {
+			JiraCardFields jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
+			Map<String, Object> tempFields = toMap(jiraCardFields);
+			for (String tempFieldsKey : tempFields.keySet()) {
+				Object obj = tempFields.get(tempFieldsKey);
+				if (obj instanceof Object[]) {
+					mapArrayField(resultMap, tempFieldsKey, (List<Map<String, Object>>) obj);
+				}
+				else if (obj != null) {
+					Map<String, Integer> map = resultMap.get(tempFieldsKey);
+					if (map != null) {
+						String displayName = pickDisplayNameFromObj(obj);
+						Integer count = map.get(displayName);
+						map.put(displayName, count != null ? count + 1 : 1);
+						map.put(NONE_KEY, map.get(NONE_KEY) - 1);
 					}
 				}
 			}
@@ -69,64 +68,80 @@ public class CalculateClassification {
 
 		for (Map.Entry<String, Map<String, Integer>> entry : resultMap.entrySet()) {
 			String fieldName = entry.getKey();
-			Map<String, Integer> fieldCounts = entry.getValue();
+			Map<String, Integer> map = entry.getValue();
+			List<ClassificationNameValuePair> classificationNameValuePair = new ArrayList<>();
 
-			fieldCounts.remove(NONE_KEY, 0);
+			if (map.get(NONE_KEY) == 0) {
+				map.remove(NONE_KEY);
+			}
 
-			List<ClassificationNameValuePair> nameValuePairs = fieldCounts.entrySet().stream().map(e -> {
-				String name = e.getKey();
-				float percentage = e.getValue().floatValue() / cards.getCardsNumber() * 100;
-				String formattedPercentage = String.format("%.2f%%", percentage);
-				return new ClassificationNameValuePair(name, formattedPercentage);
-			}).collect(Collectors.toList());
+			for (Map.Entry<String, Integer> mapEntry : map.entrySet()) {
+				String displayName = mapEntry.getKey();
+				Integer count = mapEntry.getValue();
+				classificationNameValuePair.add(new ClassificationNameValuePair(displayName,
+						String.format("%.2f%%", (count.floatValue() / cards.getCardsNumber()) * 100)));
+			}
 
-			String displayName = nameMap.get(fieldName);
-			classificationFields.add(new Classification(displayName, nameValuePairs));
+			classificationFields.add(new Classification(nameMap.get(fieldName), classificationNameValuePair));
 		}
 		return classificationFields;
 	}
 
-	public void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldName,
-			List<Map<String, Object>> fieldValues) {
-		Map<String, Integer> fieldCounts = resultMap.get(fieldName);
-		if (fieldCounts == null || fieldValues.isEmpty()) {
-			return;
-		}
-
-		for (Map<String, Object> fieldValue : fieldValues) {
-			if (fieldValue != null) {
-				String displayName = pickDisplayNameFromObj(fieldValue);
-				fieldCounts.compute(displayName, (k, v) -> v != null ? v + 1 : 1);
+	public void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey,
+			List<Map<String, Object>> obj) {
+		Map<String, Integer> map = resultMap.get(fieldsKey);
+		if (map != null && !obj.isEmpty()) {
+			for (Map<String, Object> p1 : obj) {
+				if (p1 != null) {
+					String displayName = pickDisplayNameFromObj(p1);
+					Integer count = map.get(displayName);
+					map.put(displayName, count != null ? count + 1 : 1);
+				}
+			}
+			if (!obj.isEmpty()) {
+				map.put(NONE_KEY, map.get(NONE_KEY) - 1);
 			}
 		}
-
-		fieldCounts.computeIfPresent(NONE_KEY, (k, v) -> v - 1);
 	}
 
 	public static String pickDisplayNameFromObj(Object obj) {
 		if (obj == null) {
-			return NONE_KEY;
+			return "None";
 		}
-
 		if (obj instanceof Map) {
 			Map<String, Object> map = (Map<String, Object>) obj;
-			return Arrays.stream(new String[] { "displayName", "name", "key", "value" })
-				.filter(map::containsKey)
-				.map(map::get)
-				.findFirst()
-				.map(Object::toString)
-				.orElse(obj.toString());
-		}
-
-		if (obj instanceof String) {
-			String str = (String) obj;
-			Matcher matcher = Pattern.compile("name=([^,]+)").matcher(str);
-			if (matcher.find()) {
-				return matcher.group(1);
+			if (map.containsKey("displayName")) {
+				return map.get("displayName").toString();
+			}
+			if (map.containsKey("name")) {
+				return map.get("name").toString();
+			}
+			if (map.containsKey("key")) {
+				return map.get("key").toString();
+			}
+			if (map.containsKey("value")) {
+				return map.get("value").toString();
 			}
 		}
-
+		else if (obj instanceof String) {
+			String str = (String) obj;
+			Matcher matcher = Pattern.compile("name=.*").matcher(str);
+			if (matcher.find()) {
+				return matcher.group().replace("name=", "").split(",")[0];
+			}
+		}
 		return obj.toString();
+	}
+
+	public Map<String, Object> toMap(JiraCardFields cardFields) throws IllegalAccessException {
+		Map<String, Object> map = new HashMap<>();
+		Field[] fields = cardFields.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			Object value = field.get(cardFields);
+			map.put(field.getName(), value);
+		}
+		return map;
 	}
 
 }

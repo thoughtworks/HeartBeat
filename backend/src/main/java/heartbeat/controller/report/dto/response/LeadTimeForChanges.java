@@ -14,6 +14,6 @@ import java.util.List;
 public class LeadTimeForChanges {
 	private List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines;
 
-	private List<AvgLeadTimeForChanges> avgLeadTimeForChanges;
+	private AvgLeadTimeForChanges avgLeadTimeForChanges;
 }
 

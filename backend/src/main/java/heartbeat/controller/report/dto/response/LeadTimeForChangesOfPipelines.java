@@ -7,11 +7,12 @@ public class LeadTimeForChangesOfPipelines {
 	private Double pipelineDelayTime;
 	private Double totalDelayTime;
 
-	public LeadTimeForChangesOfPipelines(String name, String step, Double mergeDelayTime, Double pipelineDelayTime, Double totalDelayTime) {
+	public LeadTimeForChangesOfPipelines(String name, String step, Double mergeDelayTime, Double pipelineDelayTime) {
+		//TODO: add logic of calculation
 		this.name = name;
 		this.step = step;
-		this.mergeDelayTime = mergeDelayTime;
-		this.pipelineDelayTime = pipelineDelayTime;
-		this.totalDelayTime = totalDelayTime;
+		this.mergeDelayTime = Math.round((mergeDelayTime/ 1000 / 60) * 100.0) / 100.0;
+		this.pipelineDelayTime = Math.round((pipelineDelayTime/ 1000 / 60) * 100.0) / 100.0;
+		this.totalDelayTime = this.mergeDelayTime + this.pipelineDelayTime;
 	}
 }

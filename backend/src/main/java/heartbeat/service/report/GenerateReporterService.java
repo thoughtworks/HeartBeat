@@ -46,6 +46,8 @@ public class GenerateReporterService {
 
 	private final List<PipelineLeadTime> leadTimes;
 
+	private final CalculateLeadTimeForChanges calculateLeadTimeForChanges;
+
 	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
@@ -118,35 +120,29 @@ public class GenerateReporterService {
 		// todo:add calculate CycleTime logic
 	}
 
-	private void calculateLeadTime() {
-		// todo:add calculate LeadTime logic
-	}
 	private LeadTimeForChanges calculateLeadTime(List<PipelineLeadTime> PipelineLeadTime) {
-
 		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelinesList = new ArrayList<>();
 		List<AvgLeadTimeForChanges> avgLeadTimeForChangesArrayList = new ArrayList<>();
 		if (PipelineLeadTime.isEmpty()){
-			avgLeadTimeForChangesArrayList.add(new AvgLeadTimeForChanges(0, 0));
+			avgLeadTimeForChangesArrayList.add(new AvgLeadTimeForChanges(0d, 0d));
 			return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList,avgLeadTimeForChangesArrayList);
 		}
 		PipelineLeadTime.stream().map(item -> {
 			int times = item.getLeadTimes().size();
-			if (times == 0) {
-				item.getLeadTimes().add(new LeadTime(0, 0));
+			if (item.getLeadTimes().isEmpty()) {
+				item.getLeadTimes().add(new LeadTime(0d, 0d));
 			}
-			HashMap<Integer, Integer> totalDelayTime = item.getLeadTimes().stream().map((leadTime -> new HashMap<Integer, Integer>(
-					leadTime.getPrDelayTime() == null ? 0 : leadTime.getPrDelayTime().intValue(),
-					leadTime.getPipelineDelayTime().intValue()
-				)))
-				.reduce(new HashMap<Integer, Integer>(0, 0), (pre, now) -> now);
-			int totalPrDelayTime = totalDelayTime.keySet().stream().reduce(0, Integer::sum);
-			int totalPipelineDelayTime = totalDelayTime.values().stream().reduce(0, Integer::sum);
+			HashMap<Double, Double> totalDelayTime = item.getLeadTimes()
+				.stream()
+				.map(this::transformDelayTimeMapWithLeadTime)
+				.reduce(new HashMap<>(), (pre, now) -> now);
+			double totalPrDelayTime = totalDelayTime.keySet().stream().reduce(0d, Double::sum);
+			double totalPipelineDelayTime = totalDelayTime.values().stream().reduce(0d, Double::sum);
 
-			int avgPrDelayTime = totalPrDelayTime / times;
-			int avgPipelineDelayTime = totalPipelineDelayTime / times;
+			double avgPrDelayTime = totalPrDelayTime / times;
+			double avgPipelineDelayTime = totalPipelineDelayTime / times;
 
-
-			return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList, avgLeadTimeForChangesArrayList);
+			return avgLeadTimeForChangesArrayList.add(new AvgLeadTimeForChanges(avgPrDelayTime, avgPipelineDelayTime));
 		});
 		return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList, avgLeadTimeForChangesArrayList);
 	}

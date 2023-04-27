@@ -26,6 +26,5 @@ export const deploymentFrequencyMapper = ({
       },
     ],
   })
-  console.log(mappedDeploymentFrequencyValue)
   return mappedDeploymentFrequencyValue
 }

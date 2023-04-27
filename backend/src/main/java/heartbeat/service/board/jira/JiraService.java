@@ -20,7 +20,6 @@ import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
-import heartbeat.controller.board.dto.response.CardCustomFieldKey;
 import heartbeat.controller.board.dto.response.CardCycleTime;
 import heartbeat.controller.board.dto.response.ColumnValue;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
@@ -71,8 +70,6 @@ public class JiraService {
 	private final JiraUriGenerator urlGenerator;
 
 	private final BoardUtil boardUtil;
-
-	private CardCustomFieldKey cardCustomFieldKey;
 
 	@PreDestroy
 	public void shutdownExecutor() {
@@ -349,7 +346,6 @@ public class JiraService {
 
 	public CardCollection getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
-		CardCustomFieldKey cardCustomFieldKey = saveCustomFieldKey(request);
 		BoardType boardType = BoardType.fromValue(request.getType());
 		URI baseUrl = urlGenerator.getUri(request.getSite());
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
@@ -402,21 +398,6 @@ public class JiraService {
 			}
 		});
 		return matchedCards;
-	}
-
-	private CardCustomFieldKey saveCustomFieldKey(StoryPointsAndCycleTimeRequest model) {
-		CardCustomFieldKey cardCustomFieldKey = CardCustomFieldKey.builder().build();
-		for (TargetField value : model.getTargetFields()) {
-			switch (value.getName()) {
-				// todo if project Story Points field is unknown name need throw error
-				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setSTORY_POINTS(value.getKey());
-				case "Sprint" -> cardCustomFieldKey.setSPRINT(value.getKey());
-				case "Flagged" -> cardCustomFieldKey.setFLAGGED(value.getKey());
-				default -> {
-				}
-			}
-		}
-		return cardCustomFieldKey;
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock) {

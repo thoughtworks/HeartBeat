@@ -18,6 +18,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BoardUtilTest {
 
+	public static final double EXPECT_DAYS = 4.0;
+
 	@InjectMocks
 	BoardUtil boardUtil;
 
@@ -41,9 +43,9 @@ class BoardUtilTest {
 		List<StatusChangedItem> statusChangedItems = StatusChangedArrayItemsFixture.STATUS_CHANGED_ITEMS_LIST();
 		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong())).thenReturn(2.0);
 
-		List<CycleTimeInfo> expect = List.of(CycleTimeInfo.builder().column("UNKNOWN").day(4.0).build(),
-				CycleTimeInfo.builder().column("FLAG").day(4.0).build(),
-				CycleTimeInfo.builder().column("REMOVEFLAG").day(4.0).build());
+		List<CycleTimeInfo> expect = List.of(CycleTimeInfo.builder().column("UNKNOWN").day(EXPECT_DAYS).build(),
+				CycleTimeInfo.builder().column("FLAG").day(EXPECT_DAYS).build(),
+				CycleTimeInfo.builder().column("REMOVEFLAG").day(EXPECT_DAYS).build());
 		List<CycleTimeInfo> result = boardUtil.getCardTimeForEachStep(statusChangedItems);
 
 		Assertions.assertEquals(expect, result);

@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.GenerateReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
@@ -30,8 +31,11 @@ class GenerateReporterServiceTest {
 	@Mock
 	JiraService jiraService;
 
+	@Mock
+	CalculateClassification calculateClassification;
+
 	@Test
-	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
+	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() throws IllegalAccessException {
 		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
 			.boardId("")
 			.boardColumns(List.of())
@@ -52,11 +56,15 @@ class GenerateReporterServiceTest {
 
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any()))
 			.thenReturn(CardCollection.builder().storyPointSum(0).cardsNumber(0).build());
+		when(calculateClassification.calculateClassification(any(), any()))
+			.thenReturn(List.of(Classification.builder().build()));
 
 		GenerateReportResponse result = generateReporterService.generateReporter(request);
 		Velocity velocity = Velocity.builder().velocityForSP("0").velocityForCards("0").build();
-
-		assertThat(result).isEqualTo(GenerateReportResponse.builder().velocity(velocity).build());
+		assertThat(result).isEqualTo(GenerateReportResponse.builder()
+			.velocity(velocity)
+			.classification(List.of(Classification.builder().build()))
+			.build());
 	}
 
 }

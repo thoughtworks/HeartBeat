@@ -23,9 +23,10 @@ build_backend() {
     # docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
     # docker rmi $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
     # docker rmi $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
-    sudo yum -y update
-    sudo yum -y install trivy
-    trivy image --severity HIGH,CRITICAL --exit-code 1 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
+    export PATH="$PATH:~/bin/trivy"
+    echo "trivy version"
+    trivy --version
+    ~/bin/trivy image --severity HIGH,CRITICAL --exit-code 1 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
 }
 
 build_mockserver() {

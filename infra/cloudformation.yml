@@ -398,6 +398,7 @@ Resources:
             - sudo yum install nodejs -y
             - sudo npm install -g pnpm
             - sudo yum install java-17-amazon-corretto -y
+            - sudo curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo bash -s -- -b $HOME/bin/
 
   EC2KeyPair:
     Type: AWS::EC2::KeyPair

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -31,7 +30,7 @@ public class CalculateLeadTimeForChanges {
 		List<HashMap<String, Double>>  avgDelayTimeMapList = pipelineLeadTime.stream().map(item -> {
 			int times = item.getLeadTimes().size();
 			if (item.getLeadTimes().isEmpty()) {
-				return new HashMap<>(0, 0);
+				return new HashMap<String, Double>(0, 0);
 			}
 
 			HashMap<Double, Double> totalDelayTime = item.getLeadTimes()
@@ -56,10 +55,10 @@ public class CalculateLeadTimeForChanges {
 
 			HashMap<String, Double> avgTotalDelayTime = new HashMap<>();
 			avgTotalDelayTime.put("avgPrDelayTime", avgPrDelayTime);
-			avgTotalDelayTime.put("avgPipelineDelayTime", avgPipelineDelayTime;
+			avgTotalDelayTime.put("avgPipelineDelayTime", avgPipelineDelayTime);
 
 			return avgTotalDelayTime;
-			}).collect(Collectors.toList());
+			}).toList();
 
 		Double totalAvgPrDelayTime = avgDelayTimeMapList.stream().map(item -> item.getOrDefault("avgPrDelayTime", 0d)).reduce(0.0, Double::sum);
 		Double totalAvgPipeDelayTime = avgDelayTimeMapList.stream().map(item -> item.getOrDefault("avgPipelineDelayTime", 0d)).reduce(0.0, Double::sum);
@@ -69,7 +68,7 @@ public class CalculateLeadTimeForChanges {
 		}
 
 		private HashMap<Double, Double> getDelayTimeMapWithLeadTime(LeadTime leadTime) {
-			HashMap<Long, Long> delayTimeMap = new HashMap<>();
+			HashMap<Double, Double> delayTimeMap = new HashMap<>();
 			delayTimeMap.put(leadTime.getPrDelayTime(), leadTime.getPipelineDelayTime());
 			return delayTimeMap;
 		}

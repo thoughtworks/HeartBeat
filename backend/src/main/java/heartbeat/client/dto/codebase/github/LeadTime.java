@@ -16,23 +16,23 @@ public class LeadTime {
 
 	private String commitId;
 
-	private long prCreatedTime;
+	private double prCreatedTime;
 
-	private long prMergedTime;
+	private double prMergedTime;
 
-	private long firstCommitTimeInPr;
+	private double firstCommitTimeInPr;
 
-	private long jobFinishTime;
+	private double jobFinishTime;
 
-	private long pipelineCreateTime;
+	private double pipelineCreateTime;
 
-	private long prDelayTime;
+	private double prDelayTime;
 
-	private long pipelineDelayTime;
+	private double pipelineDelayTime;
 
-	private long totalTime;
+	private double totalTime;
 
-	public LeadTime(String commitId, Long pipelineCreateTime, Long jobFinishTime, Long prCreatedTime, Long prMergedTime, Long firstCommitTimeInPr) {
+	public LeadTime(String commitId, Double pipelineCreateTime, Double jobFinishTime, Double prCreatedTime, Double prMergedTime,  Double firstCommitTimeInPr) {
 		this.commitId = commitId;
 		this.prCreatedTime = prCreatedTime;
 		this.prMergedTime = prMergedTime;
@@ -57,13 +57,13 @@ public class LeadTime {
 		if (gitHubPull.getMergedAt() == null) {
 			throw new Exception("this commit has not been merged");
 		}
-		long prCreatedTime = Instant.parse(gitHubPull.getCreatedAt()).toEpochMilli();
-		long prMergedTime = Instant.parse(gitHubPull.getMergedAt()).toEpochMilli();
-		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-		Long firstCommitTimeInPr = null;
+		double prCreatedTime = Instant.parse(gitHubPull.getCreatedAt()).toEpochMilli();
+		double prMergedTime = Instant.parse(gitHubPull.getMergedAt()).toEpochMilli();
+		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+		Double firstCommitTimeInPr = null;
 		if (firstCommit.getCommit() != null && firstCommit.getCommit().getCommitter() != null && firstCommit.getCommit().getCommitter().getDate() != null) {
-			firstCommitTimeInPr = Instant.parse(firstCommit.getCommit().getCommitter().getDate()).toEpochMilli();
+			firstCommitTimeInPr = Double.valueOf(Instant.parse(firstCommit.getCommit().getCommitter().getDate()).toEpochMilli());
 		}
 
 		return new LeadTime(

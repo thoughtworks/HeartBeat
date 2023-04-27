@@ -29,7 +29,7 @@ public class CalculateLeadTimeForChanges {
 		List<HashMap<String, Double>>  avgDelayTimeMapList = pipelineLeadTime.stream().map(item -> {
 			int times = item.getLeadTimes().size();
 			if (item.getLeadTimes().isEmpty()) {
-				return new HashMap<String, Double>(0, 0);
+				return new HashMap<String, Double>();
 			}
 
 			HashMap<Double, Double> totalDelayTime = item.getLeadTimes()
@@ -59,12 +59,18 @@ public class CalculateLeadTimeForChanges {
 			return avgTotalDelayTime;
 			}).toList();
 
-		Double totalAvgPrDelayTime = avgDelayTimeMapList.stream().map(item -> item.getOrDefault("avgPrDelayTime", 0d)).reduce(0.0, Double::sum);
-		Double totalAvgPipeDelayTime = avgDelayTimeMapList.stream().map(item -> item.getOrDefault("avgPipelineDelayTime", 0d)).reduce(0.0, Double::sum);
-		avgLeadTimeForChanges.setDelayTime(totalAvgPrDelayTime, totalAvgPipeDelayTime);
+		Double avgPrDelayTimeOfAllPipeline = avgDelayTimeMapList.stream()
+			.map(item -> item.getOrDefault("avgPrDelayTime", 0d))
+			.reduce(0.0, Double::sum);
+		Double AvgPipeDelayTimeOfAllPipeline = avgDelayTimeMapList.stream()
+			.map(item -> item.getOrDefault("avgPipelineDelayTime", 0d))
+			.reduce(0.0, Double::sum);
+		avgLeadTimeForChanges.setDelayTime(
+			avgPrDelayTimeOfAllPipeline / pipelineCount,
+			AvgPipeDelayTimeOfAllPipeline / pipelineCount);
 
 		return new LeadTimeForChanges(leadTimeForChangesOfPipelines, avgLeadTimeForChanges);
-		}
+	}
 
 		private HashMap<Double, Double> getDelayTimeMapWithLeadTime(LeadTime leadTime) {
 			HashMap<Double, Double> delayTimeMap = new HashMap<>();

@@ -24,3 +24,6 @@ steps:
     # depends_on: deploy-infra
     command: ./.buildkite/ops/build backend
 
+  - label: ":exploding_death_star: clean space"
+    command: ./.buildkite/ops/clean
+

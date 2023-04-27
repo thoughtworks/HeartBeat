@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
+rm -rf /var/lib/buildkite-agent/builds/*
+rm -rf /var/lib/buildkite-agent/.cache/*
+rm -rf /var/lib/buildkite-agent/.local/*

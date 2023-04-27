@@ -14,6 +14,7 @@ import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { DEFAULT_HELPER_TEXT, METRICS_CONSTANTS, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
+import { FormControlWrapper } from './style'
 
 interface realDoneProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[]
@@ -72,7 +73,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   return (
     <>
       <MetricsSettingTitle title={title} />
-      <FormControl variant='standard' required error={!selectedDoneStatuses.length}>
+      <FormControlWrapper variant='standard' required error={!selectedDoneStatuses.length}>
         <InputLabel id='real-done-data-multiple-checkbox-label'>{label}</InputLabel>
         <Select
           labelId='real-done-data-multiple-checkbox-label'
@@ -102,7 +103,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
         ) : (
           DEFAULT_HELPER_TEXT
         )}
-      </FormControl>
+      </FormControlWrapper>
     </>
   )
 }

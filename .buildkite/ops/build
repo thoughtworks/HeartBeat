@@ -21,7 +21,7 @@ build_backend() {
     docker run --rm \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $(pwd)/.trivyignore:/.trivyignore \
-    aquasec/trivy:latest \
+    aquasec/trivy:0.20.0 \
     image --severity HIGH,CRITICAL --exit-code 1 \
     --ignore-unfixed --format table \
     --ignorefile /.trivyignore \

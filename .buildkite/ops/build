@@ -2,48 +2,61 @@
 set -euo pipefail
 
 display_help() {
-    echo "Usage: $0 {frontend|backend|mockserver}" >&2
-    echo
-    echo "   frontend     build frontend"
-    echo "   backend      build backend"
-    echo "   mockserver   build mockserver"
-    echo
-    exit 1
+  echo "Usage: $0 {frontend|backend|mockserver}" >&2
+  echo
+  echo "   frontend     build frontend"
+  echo "   backend      build backend"
+  echo "   mockserver   build mockserver"
+  echo
+  exit 1
 }
 
 build_backend() {
-    aws configure set region "$AWS_REGION"
-    eval "$(aws sts assume-role --role-arn "$AWS_GITHUB_ACTION_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
-    aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com
-    set +e
-    docker build -t "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
-    docker build -t "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}" ./ -f ./infra/Dockerfile.backend
-    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$(pwd)/.trivyignore":/.trivyignore aquasec/trivy:0.20.0 image --severity HIGH,CRITICAL --exit-code 1 --ignore-unfixed --format table --ignorefile /.trivyignore "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com/heartbeat_backend:latest
-    docker push "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com/heartbeat_backend:latest
-    docker push "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
-    docker rmi "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com/heartbeat_backend:latest
-    docker rmi "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
+  local AWS_HOST = "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com"
+
+  aws configure set region "$AWS_REGION"
+  eval "$(aws sts assume-role --role-arn "$AWS_GITHUB_ACTION_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
+  aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$AWS_HOST"
+
+  docker build -t "$AWS_HOST"/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
+  docker tag "$AWS_HOST"/heartbeat_backend:latest "$AWS_HOST/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
+
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$(pwd)/.trivyignore":/.trivyignore \
+    aquasec/trivy:0.20.0 image \
+    --severity HIGH,CRITICAL \
+    --exit-code 1 \
+    --ignore-unfixed \
+    --format table \
+    --ignorefile /.trivyignore \
+    "$AWS_HOST"/heartbeat_backend:latest
+
+  docker push "$AWS_HOST/heartbeat_backend:latest
+  docker push "$AWS_HOST/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
+
+  docker rmi "$AWS_HOST/heartbeat_backend:latest
+  docker rmi "$AWS_HOST/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
 }
 
 build_mockserver() {
-    echo "build mockserver"
+  echo "build mockserver"
 }
 
 build_frontend() {
-    echo "build frontend"
+  echo "build frontend"
 }
 
 if [[ "$#" -le 0 ]]; then
-    display_help
+  display_help
 fi
 
 while [[ "$#" -gt 0 ]]; do
-    case $1 in
-    -h | --help) display_help ;;
-    frontend) build_frontend ;;
-    backend) build_backend ;;
-    mockserver) build_mockserver ;;
-    *) echo "Unknown parameter passed: $1" ;;
-    esac
-    shift
+  case $1 in
+  -h | --help) display_help ;;
+  frontend) build_frontend ;;
+  backend) build_backend ;;
+  mockserver) build_mockserver ;;
+  *) echo "Unknown parameter passed: $1" ;;
+  esac
+  shift
 done

@@ -19,10 +19,10 @@ interface pipelineMetricSelectionProps {
     id: number
     organization: string
     pipelineName: string
-    steps: string
+    step: string
   }
   isShowRemoveButton: boolean
-  errorMessages: { organization: string; pipelineName: string; steps: string } | undefined
+  errorMessages: { organization: string; pipelineName: string; step: string } | undefined
   onRemovePipeline: (id: number) => void
   onUpdatePipeline: (id: number, label: string, value: string) => void
   onClearErrorMessage: (id: number, label: string) => void
@@ -36,7 +36,7 @@ export const PipelineMetricSelection = ({
   onUpdatePipeline,
   onClearErrorMessage,
 }: pipelineMetricSelectionProps) => {
-  const { id, organization, pipelineName, steps } = pipelineSetting
+  const { id, organization, pipelineName, step } = pipelineSetting
   const dispatch = useAppDispatch()
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
@@ -89,8 +89,8 @@ export const PipelineMetricSelection = ({
           id={id}
           options={stepsOptions}
           label={'Steps'}
-          value={steps}
-          errorMessage={errorMessages?.steps}
+          value={step}
+          errorMessage={errorMessages?.step}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
           onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />

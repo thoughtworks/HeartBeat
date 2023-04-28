@@ -30,11 +30,11 @@ export const JSON_FILE_CONTENT = {
   },
   pipelineTool: {
     type: 'BuildKite',
-    token: 'mock1234mock1234mock1234mock1234mock1234',
+    token: 'mock1234'.repeat(5),
   },
   sourceControl: {
     type: 'GitHub',
-    token: 'ghp_Abc123Abc123Abc123Abc123Abc123Abc123',
+    token: `ghp_${'Abc123'.repeat(6)}`,
   },
   deployment: [
     {

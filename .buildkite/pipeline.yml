@@ -18,3 +18,8 @@ steps:
             - "backend/build/reports/dependency-license/**/*"
           name: "backend-license-report"
           expire_in: "${RETENTION_DAYS} days"
+
+  - label: "build-backend"
+    branches: main
+    # depends_on: deploy-infra
+    command: ./.buildkite/ops/build backend

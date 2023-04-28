@@ -2,28 +2,28 @@
 set -euo pipefail
 
 display_help() {
-    echo "Usage: $0 {infra|e2e|stub|prod}" >&2
-    echo
-    echo "   infra    deploy infra file"
-    echo "   stub     deploy stub"
-    echo "   e2e      deploy application to the e2e env"
-    echo "   prod     deploy application to the prod env"
-    echo
-    exit 1
+  echo "Usage: $0 {infra|e2e|stub|prod}" >&2
+  echo
+  echo "   infra    deploy infra file"
+  echo "   stub     deploy stub"
+  echo "   e2e      deploy application to the e2e env"
+  echo "   prod     deploy application to the prod env"
+  echo
+  exit 1
 }
-deploy_infra(){
+deploy_infra() {
   echo "deploy_infra"
 }
 
-deploy_e2e(){
+deploy_e2e() {
   echo "deploy_e2e"
 }
 
-deploy_stub(){
+deploy_stub() {
   echo "deploy_stub"
 }
 
-deploy_prod(){
+deploy_prod() {
   echo "deploy_prod"
 }
 
@@ -32,13 +32,13 @@ if [[ "$#" -le 0 ]]; then
 fi
 
 while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        -h|--help) display_help ;;
-        infra) deploy_infra ;;
-        e2e) deploy_e2e ;;
-        stub) deploy_stub ;;
-        prod) deploy_prod ;;
-        *) echo "Unknown parameter passed: $1" ;;
-    esac
-    shift
+  case $1 in
+    -h|--help) display_help ;;
+    infra) deploy_infra ;;
+    e2e) deploy_e2e ;;
+    stub) deploy_stub ;;
+    prod) deploy_prod ;;
+    *) echo "Unknown parameter passed: $1" ;;
+  esac
+  shift
 done

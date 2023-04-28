@@ -41,14 +41,14 @@ describe('PipelineMetricSelection', () => {
     id: 0,
     organization: '',
     pipelineName: '',
-    steps: '',
+    step: '',
   }
   const mockHandleClickRemoveButton = jest.fn()
   const mockUpdatePipeline = jest.fn()
   const mockClearErrorMessage = jest.fn()
 
   const setup = async (
-    deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; steps: string },
+    deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; step: string },
     isShowRemoveButton: boolean
   ) => {
     const store = setupStore()
@@ -60,7 +60,7 @@ describe('PipelineMetricSelection', () => {
           errorMessages={{
             organization: 'organization is required',
             pipelineName: 'pipelineName is required',
-            steps: 'steps is required',
+            step: 'steps is required',
           }}
           onRemovePipeline={mockHandleClickRemoveButton}
           onUpdatePipeline={mockUpdatePipeline}
@@ -127,7 +127,7 @@ describe('PipelineMetricSelection', () => {
       throw new Error('error message')
     })
     const { getByText, getByRole } = await setup(
-      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', steps: '' },
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
       false
     )
 
@@ -145,7 +145,7 @@ describe('PipelineMetricSelection', () => {
   it('should show steps selection when getSteps succeed ', async () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps'])
     const { getByRole, getByText } = await setup(
-      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', steps: '' },
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
       false
     )
 

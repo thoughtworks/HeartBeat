@@ -2,17 +2,24 @@ import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
 
+export interface IPipelineConfig {
+  id: number
+  organization: string
+  pipelineName: string
+  step: string
+}
 export interface savedMetricsSettingState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
   targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
   doneColumn: string[]
   boardColumns: { name: string; value: string }[]
-  deploymentFrequencySettings: { id: number; organization: string; pipelineName: string; steps: string }[]
-  leadTimeForChanges: { id: number; organization: string; pipelineName: string; steps: string }[]
+  deploymentFrequencySettings: IPipelineConfig[]
+  leadTimeForChanges: IPipelineConfig[]
   importFile: string[]
   isProjectCreated: boolean
   classification: string[]
+  treatFlagCardAsBlock: boolean
 }
 
 const initialState: savedMetricsSettingState = {
@@ -21,11 +28,12 @@ const initialState: savedMetricsSettingState = {
   users: [],
   doneColumn: [],
   boardColumns: [],
-  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
-  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', steps: '' }],
+  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
+  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   importFile: [],
   isProjectCreated: true,
   classification: [],
+  treatFlagCardAsBlock: true,
 }
 
 export const metricsSlice = createSlice({
@@ -49,7 +57,7 @@ export const metricsSlice = createSlice({
       const newId = state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
       state.deploymentFrequencySettings = [
         ...state.deploymentFrequencySettings,
-        { id: newId, organization: '', pipelineName: '', steps: '' },
+        { id: newId, organization: '', pipelineName: '', step: '' },
       ]
     },
 
@@ -60,7 +68,7 @@ export const metricsSlice = createSlice({
         return deploymentFrequencySetting.id === updateId
           ? {
               ...deploymentFrequencySetting,
-              [camelCase(label)]: value,
+              [label === 'Steps' ? 'step' : camelCase(label)]: value,
             }
           : deploymentFrequencySetting
       })
@@ -89,7 +97,7 @@ export const metricsSlice = createSlice({
       const newId = state.leadTimeForChanges[state.leadTimeForChanges.length - 1].id + 1
       state.leadTimeForChanges = [
         ...state.leadTimeForChanges,
-        { id: newId, organization: '', pipelineName: '', steps: '' },
+        { id: newId, organization: '', pipelineName: '', step: '' },
       ]
     },
 
@@ -100,7 +108,7 @@ export const metricsSlice = createSlice({
         return leadTimeForChange.id === updateId
           ? {
               ...leadTimeForChange,
-              [camelCase(label)]: value,
+              [label === 'Steps' ? 'step' : camelCase(label)]: value,
             }
           : leadTimeForChange
       })
@@ -113,6 +121,10 @@ export const metricsSlice = createSlice({
 
     initLeadTimeForChanges: (state) => {
       state.leadTimeForChanges = initialState.leadTimeForChanges
+    },
+
+    updateTreatFlagCardAsBlock: (state, action) => {
+      state.treatFlagCardAsBlock = action.payload
     },
   },
 })
@@ -131,6 +143,7 @@ export const {
   deleteALeadTimeForChange,
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
+  updateTreatFlagCardAsBlock,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
@@ -139,4 +152,5 @@ export const selectLeadTimeForChanges = (state: RootState) => state.metrics.lead
 export const selectBoardColumns = (state: RootState) => state.metrics.boardColumns
 export const selectMetricsContent = (state: RootState) => state.metrics
 
+export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock
 export default metricsSlice.reducer

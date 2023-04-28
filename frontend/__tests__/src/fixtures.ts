@@ -1,3 +1,5 @@
+import { ReportRequestDTO } from '@src/clients/report/dto/request'
+
 export const PROJECT_NAME = 'Heartbeat'
 export const PROJECT_DESCRIPTION =
   'Heartbeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.'
@@ -24,8 +26,6 @@ export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required']
 
 export const PROJECT_NAME_LABEL = 'Project Name'
 
-export const EXPORT_BOARD_DATA = 'Export board data'
-
 export const STEPPER = ['Config', 'Metrics', 'Report']
 
 export const REQUIRED_DATA_LIST = [
@@ -50,7 +50,6 @@ export const REQUIRED_DATA = 'Required Data'
 export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
-export const PAST_DATE = '08/02/2022'
 export const CREATE_NEW_PROJECT = 'Create a new project'
 export const IMPORT_PROJECT_FROM_FILE = 'Import project from file'
 
@@ -131,27 +130,51 @@ export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   endTime: 1614873600000,
 }
 
-export const MOCK_GENERATE_REPORT_REQUEST_PARAMS = {
+export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
   metrics: [],
+  startTime: '1613664000000',
+  endTime: '1614873600000',
+  considerHoliday: true,
   pipeline: {
     token: 'mockToken',
     type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    deployment: [
+      {
+        id: 'mockPipelineId',
+        name: 'mockPipelineName',
+        orgId: 'mockOrgId',
+        orgName: 'mockOrgName',
+        repository: 'mockRep',
+        step: 'step',
+      },
+    ],
   },
-  board: {
+  codebaseSetting: {
+    type: 'github',
+    token: 'mockToken',
+    leadTime: [
+      {
+        id: 'mockPipelineId',
+        name: 'mockPipelineName',
+        orgId: 'mockOrgId',
+        orgName: 'mockOrgName',
+        repository: 'mockRep',
+        step: 'step',
+      },
+    ],
+  },
+  jiraBoardSetting: {
     token: 'mockToken',
     type: BOARD_TYPES.CLASSIC_JIRA,
     site: '2',
-    email: '1@qq.com',
     projectKey: '2',
     boardId: '2',
+    boardColumns: [{ name: 'In Analysis', value: 'In Analysis' }],
+    treatFlagCardAsBlock: true,
+    users: ['user1', 'user2'],
+    targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
+    doneColumn: ['Done'],
   },
-  sourceControl: {
-    token: 'mockToken',
-    type: SOURCE_CONTROL_TYPES.GITHUB,
-  },
-  calendarType: REGULAR_CALENDAR,
-  startTime: '1613664000000',
-  endTime: '1614873600000',
 }
 
 export const MOCK_IMPORT_FILE = {
@@ -162,24 +185,6 @@ export const MOCK_IMPORT_FILE = {
     endDate: '2023-03-29T16:00:00.000Z',
   },
   metrics: [],
-}
-
-export const MOCK_RESPONSE_SLICE_INIT_STATE = {
-  board: {
-    jiraColumns: [],
-    users: [],
-    targetFields: [],
-  },
-  pipelineTool: {
-    buildKite: {
-      pipelineList: [],
-    },
-  },
-  sourceControl: {
-    github: {
-      githubRepos: [],
-    },
-  },
 }
 
 export const MOCK_JIRA_VERIFY_RESPONSE = {
@@ -236,25 +241,6 @@ export const CLASSIFICATION_SETTING = 'Classification Setting'
 export const REAL_DONE = 'Real Done'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
-
-export enum VelocityMetricName {
-  VELOCITY_SP = 'Velocity(Story Point)',
-  THROUGHPUT_CARDS_COUNT = 'Throughput(Cards Count)',
-}
-
-export enum CycleTimeMetricsName {
-  AVERAGE_CYCLE_TIME = 'Average cycle time',
-  DEVELOPMENT_PROPORTION = 'Total development time/Total cycle time',
-  WAITING_PROPORTION = 'Total waiting for testing time/Total cycle time',
-  BLOCK_PROPORTION = 'Total block time/Total cycle time',
-  REVIEW_PROPORTION = 'Total review time/Total cycle time',
-  TESTING_PROPORTION = 'Total testing time/Total cycle time',
-  AVERAGE_DEVELOPMENT_TIME = 'Average development time',
-  AVERAGE_WAITING_TIME = 'Average waiting for testing time',
-  AVERAGE_BLOCK_TIME = 'Average block time',
-  AVERAGE_REVIEW_TIME = 'Average review time',
-  AVERAGE_TESTING_TIME = 'Average testing time',
-}
 
 export const MOCK_GET_STEPS_PARAMS = {
   params: {

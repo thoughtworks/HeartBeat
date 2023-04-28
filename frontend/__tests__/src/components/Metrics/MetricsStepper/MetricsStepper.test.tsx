@@ -332,9 +332,9 @@ describe('MetricsStepper', () => {
         jiraColumns: [{ TODO: 'To do' }],
         treatFlagCardAsBlock: false,
       },
-      deployment: [{ id: 0, organization: 'mock new organization', pipelineName: '', steps: '' }],
+      deployment: [{ id: 0, organization: 'mock new organization', pipelineName: '', step: '' }],
       doneStatus: ['Done', 'Canceled'],
-      leadTime: [{ id: 0, organization: 'mock new organization', pipelineName: '', steps: '' }],
+      leadTime: [{ id: 0, organization: 'mock new organization', pipelineName: '', step: '' }],
     }
     const { getByText } = setup()
 

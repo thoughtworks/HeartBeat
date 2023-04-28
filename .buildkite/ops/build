@@ -19,7 +19,7 @@ build_backend() {
   aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
 
   docker build -t "${AWS_HOST}"/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
-  docker tag "${AWS_HOST}/heartbeat_backend:latest ${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
+  docker tag "${AWS_HOST}"/heartbeat_backend:latest "${AWS_HOST}"/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
 
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
     -v "$(pwd)"/.trivyignore:/.trivyignore \

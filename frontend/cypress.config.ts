@@ -6,7 +6,8 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       config.env.url = process.env.APP_ORIGIN || 'http://localhost:4321'
-
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      require('./cypress/plugins/updateConfigJson.ts')(on, config)
       return config
     },
   },

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import {
-  MetricsStepperContent,
-  ButtonGroup,
-  NextButton,
-  ExportButton,
   BackButton,
-  StyledStepper,
+  ButtonContainer,
+  ButtonGroup,
+  ExportButton,
+  MetricsStepperContent,
+  NextButton,
+  SaveButton,
   StyledStep,
   StyledStepLabel,
-  SaveButton,
-  ButtonContainer,
+  StyledStepper,
 } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
@@ -23,7 +23,7 @@ import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepV
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
-import { selectMetricsContent, updateMetricsState } from '@src/context/Metrics/metricsSlice'
+import { savedMetricsSettingState, selectMetricsContent, updateMetricsState } from '@src/context/Metrics/metricsSlice'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -64,6 +64,21 @@ const MetricsStepper = () => {
     dateRange,
   ])
   const { isPipelineValid } = useMetricsStepValidationCheckContext()
+  const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {
+    return Object.fromEntries(
+      Object.entries(metricsConfig).filter(([, value]) => {
+        if (Array.isArray(value)) {
+          return (
+            !value.every((item) => item.organization === '') &&
+            !value.every((item) => item.flag === false) &&
+            value.length > 0
+          )
+        } else {
+          return true
+        }
+      })
+    )
+  }
   const handleSave = () => {
     const { projectName, dateRange, calendarType, metrics } = config.basic
     const configData = {
@@ -84,16 +99,7 @@ const MetricsStepper = () => {
       targetFields,
       boardColumns,
       treatFlagCardAsBlock,
-    } = Object.fromEntries(
-      Object.entries(metricsConfig).filter(
-        ([, value]) =>
-          !Array.isArray(value) ||
-          (Array.isArray(value) &&
-            !value.every((item) => item.organization === '') &&
-            value.length > 0 &&
-            !value.every((item) => item.flag === false))
-      )
-    )
+    } = filterMetricsConfig(metricsConfig)
 
     const metricsData = {
       crews: users,

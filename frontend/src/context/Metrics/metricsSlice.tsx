@@ -124,7 +124,6 @@ export const metricsSlice = createSlice({
     },
 
     updateTreatFlagCardAsBlock: (state, action) => {
-      console.log(action.payload)
       state.treatFlagCardAsBlock = action.payload
     },
   },

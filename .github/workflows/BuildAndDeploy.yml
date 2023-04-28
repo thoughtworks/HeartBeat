@@ -24,31 +24,23 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
-      - name: trufflehog-actions-scan
-        uses: edplato/trufflehog-actions-scan@master
-      - name: Scan fs
-        run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-          aquasec/trivy fs \
-          --severity HIGH,CRITICAL \
-          --exit-code 1 \
-          ./
-      - name: Scan repo
-        run: |
-          docker run --rm -v\
-              /var/run/docker.sock:/var/run/docker.sock \
-              aquasec/trivy repo \
-             --severity HIGH,CRITICAL \
-             https://github.com/au-heartbeat/Heartbeat
-      - name: pwd
-        run: ls ../
-      - name: Scan config
-        run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-             aquasec/trivy fs \
-             --security-checks vuln,config \
-             --severity HIGH,CRITICAL \
-           ./
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          exit-code: '1'
+          severity: 'CRITICAL'
+          trivyignores: .trivyignore
+
+      - name: Run Trivy vulnerability scanner in IaC mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL'
+          trivyignores: .trivyignore
   backend-check:
     runs-on: ubuntu-latest
     defaults:

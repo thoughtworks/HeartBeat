@@ -284,7 +284,7 @@ describe('MetricsStepper', () => {
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
   })
 
-  it('should export json file when click save button in metrics page when all content is empty', async () => {
+  it('should export json file when click save button in metrics page given all content is empty', async () => {
     const expectedFileName = 'config'
     const expectedJson = {
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
@@ -313,7 +313,7 @@ describe('MetricsStepper', () => {
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
   })
 
-  it('should export json file when click save button in metrics page when all content is filled', async () => {
+  it('should export json file when click save button in metrics page given all content is filled', async () => {
     const expectedFileName = 'config'
     const expectedJson = {
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },

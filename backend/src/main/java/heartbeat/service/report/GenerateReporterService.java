@@ -142,12 +142,7 @@ public class GenerateReporterService {
 			double avgPrDelayTime = totalPrDelayTime / times;
 			double avgPipelineDelayTime = totalPipelineDelayTime / times;
 
-			return avgLeadTimeForChangesArrayList.add(new AvgLeadTimeForChanges(avgPrDelayTime, avgPipelineDelayTime));
-		});
-		return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList, avgLeadTimeForChangesArrayList);
-	}
-
-	private HashMap<Double, Double> transformDelayTimeMapWithLeadTime(LeadTime leadTime) {
+	private HashMap<Double, Double> getDelayTimeMapWithLeadTime(LeadTime leadTime) {
 		HashMap<Double, Double> delayTimeMap = new HashMap<>();
 		delayTimeMap.put(leadTime.getPrDelayTime(), leadTime.getPipelineDelayTime());
 		return delayTimeMap;

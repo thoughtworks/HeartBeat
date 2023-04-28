@@ -21,9 +21,8 @@ public class CalculateLeadTimeForChanges {
 		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines = new ArrayList<>();
 		AvgLeadTimeForChanges avgLeadTimeForChanges = new AvgLeadTimeForChanges(0d, 0d);
 
-		int pipelineCount = pipelineLeadTime.size();
 
-		if (pipelineLeadTime.isEmpty()){
+		if (pipelineLeadTime == null || pipelineLeadTime.isEmpty()){
 			return new LeadTimeForChanges(leadTimeForChangesOfPipelines, avgLeadTimeForChanges);
 		}
 

@@ -12,9 +12,9 @@ display_help() {
 }
 
 build_backend() {
-    # aws configure set region $AWS_REGION
+    aws configure set region $AWS_REGION
     # eval $(aws sts assume-role --role-arn $AWS_GITHUB_ACTION_ROLE --role-session-name buildkite | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')
-    # aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
     set +e
     docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
     docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER} ./ -f ./infra/Dockerfile.backend

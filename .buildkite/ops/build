@@ -12,30 +12,30 @@ display_help() {
 }
 
 build_backend() {
-  local AWS_HOST = "$AWS_ACCOUNT_ID".dkr.ecr."$AWS_REGION".amazonaws.com"
+  local AWS_HOST="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
   aws configure set region "$AWS_REGION"
   eval "$(aws sts assume-role --role-arn "$AWS_GITHUB_ACTION_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
-  aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$AWS_HOST"
+  aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
 
-  docker build -t "$AWS_HOST"/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
-  docker tag "$AWS_HOST"/heartbeat_backend:latest "$AWS_HOST/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
+  docker build -t "${AWS_HOST}"/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
+  docker tag "${AWS_HOST}/heartbeat_backend:latest ${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
 
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-    -v "$(pwd)/.trivyignore":/.trivyignore \
+    -v "$(pwd)"/.trivyignore:/.trivyignore \
     aquasec/trivy:0.20.0 image \
     --severity HIGH,CRITICAL \
     --exit-code 1 \
     --ignore-unfixed \
     --format table \
     --ignorefile /.trivyignore \
-    "$AWS_HOST"/heartbeat_backend:latest
+    "${AWS_HOST}"/heartbeat_backend:latest
 
-  docker push "$AWS_HOST/heartbeat_backend:latest
-  docker push "$AWS_HOST/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
+  docker push "${AWS_HOST}/heartbeat_backend:latest"
+  docker push "${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
 
-  docker rmi "$AWS_HOST/heartbeat_backend:latest
-  docker rmi "$AWS_HOST/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
+  docker rmi "${AWS_HOST}/heartbeat_backend:latest"
+  docker rmi "${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
 }
 
 build_mockserver() {

@@ -167,8 +167,8 @@ export const Board = () => {
       projectKey: fields[3].value,
       site: fields[4].value,
       token: encodeToken,
-      startTime: dayjs(DateRange.startDate).startOf('date').valueOf(),
-      endTime: dayjs(DateRange.endDate).startOf('date').valueOf(),
+      startTime: dayjs(DateRange.startDate).valueOf(),
+      endTime: dayjs(DateRange.endDate).valueOf(),
     }
     await verifyJira(params).then((res) => {
       if (res) {

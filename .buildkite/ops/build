@@ -18,14 +18,7 @@ build_backend() {
     set +e
     docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
     docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER} ./ -f ./infra/Dockerfile.backend
-    docker run --rm \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $(pwd)/.trivyignore:/.trivyignore \
-    aquasec/trivy:0.20.0 \
-    image --severity HIGH,CRITICAL --exit-code 1 \
-    --ignore-unfixed --format table \
-    --ignorefile /.trivyignore \
-    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
+    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/.trivyignore:/.trivyignore aquasec/trivy:0.20.0 image --severity HIGH,CRITICAL --exit-code 1 --ignore-unfixed --format table --ignorefile /.trivyignore $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
     docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest
     docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
     docker rmi $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/heartbeat_backend:latest

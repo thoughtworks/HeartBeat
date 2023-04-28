@@ -6,7 +6,6 @@
   <rule ref="category/java/errorprone.xml/DataflowAnomalyAnalysis">
     <properties>
       <property name="checkUnusedPrefixIncrement" value="false" />
-      <property name="reportUnusedVariables" value="false" />
     </properties>
   </rule>
 </ruleset>

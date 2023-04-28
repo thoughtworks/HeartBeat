@@ -12,8 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class LeadTimeForChanges {
+
 	private List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines;
 
 	private AvgLeadTimeForChanges avgLeadTimeForChanges;
-}
 
+}

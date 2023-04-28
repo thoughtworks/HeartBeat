@@ -18,4 +18,5 @@ public class PipelineLeadTime {
 	private String pipelineStep;
 
 	private List<LeadTime> leadTimes;
+
 }

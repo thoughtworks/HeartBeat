@@ -7,7 +7,9 @@ import java.util.List;
 
 @Builder
 public class PipelineInfoOfRepository {
+
 	private String repository;
+
 	private List<DeployInfo> passedDeploy;
 
 	private String pipelineName;
@@ -29,4 +31,5 @@ public class PipelineInfoOfRepository {
 	public String getPipelineStep() {
 		return pipelineStep;
 	}
+
 }

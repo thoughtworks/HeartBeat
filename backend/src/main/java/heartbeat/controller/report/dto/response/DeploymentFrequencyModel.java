@@ -18,7 +18,7 @@ public class DeploymentFrequencyModel {
 
 	private String step;
 
-	private double value;
+	private float value;
 
 	private List<DeployInfo> passed;
 

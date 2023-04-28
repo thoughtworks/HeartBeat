@@ -15,6 +15,7 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
+import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.TokenUtil;
@@ -198,16 +199,16 @@ public class BuildKiteService {
 	public List<BuildKiteBuildInfo> fetchPipelineBuilds(String token, DeploymentEnvironment deploymentEnvironment,
 			String startTime, String endTime) {
 		String partialToken = token.substring(0, token.length() / 2);
-		PipelineStepsParam stepsParam = new PipelineStepsParam("", "", "", startTime, endTime);
+		PipelineStepsParam stepsParam = PipelineStepsParam.builder().startTime(startTime).endTime(endTime).build();
 
 		return this.fetchPipelineStepsByPage(token, deploymentEnvironment.getOrgId(), deploymentEnvironment.getId(),
 				stepsParam, partialToken);
 	}
 
 	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,
-										List<BuildKiteBuildInfo> buildInfos) {
+			List<BuildKiteBuildInfo> buildInfos) {
 		if (deploymentEnvironment.getOrgId() == null) {
-			throw new Error("miss orgId argument");
+			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "miss orgId argument");
 		}
 		List<DeployInfo> passedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "passed");
 		List<DeployInfo> failedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "failed");

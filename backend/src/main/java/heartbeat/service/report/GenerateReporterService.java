@@ -12,9 +12,6 @@ import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
-import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
-import heartbeat.controller.report.dto.response.LeadTimeForChanges;
-import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
@@ -44,7 +41,7 @@ public class GenerateReporterService {
 
 	private final DeploymentFrequencyCalculator deploymentFrequency;
 
-	private final List<PipelineLeadTime> leadTimes;
+	private List<PipelineLeadTime> leadTimes;
 
 	private final CalculateLeadTimeForChanges calculateLeadTimeForChanges;
 
@@ -59,10 +56,10 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	private final List<String> codebaseMetrics = Stream
-		.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES)
+	private final List<String> codebaseMetrics = Stream.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES)
 		.map(RequireDataEnum::getValue)
 		.toList();
+
 	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
 		Map<String, String> repoMap = new HashMap<>();
 		for (LeadTimeEnvironment currentValue : codebaseSetting.getLeadTime()) {
@@ -85,7 +82,6 @@ public class GenerateReporterService {
 		// calculate all required data
 		calculateClassification();
 		calculateCycleTime();
-		calculateLeadTime();
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
@@ -94,8 +90,8 @@ public class GenerateReporterService {
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
-				case "lead time for changes" ->
-					reportResponse.setLeadTimeForChanges(calculateLeadTime(this.leadTimes));
+				case "lead time for changes" -> reportResponse
+					.setLeadTimeForChanges(calculateLeadTimeForChanges.calculateLeadTimeForChanges(this.leadTimes));
 				default -> {
 					// TODO
 				}
@@ -118,34 +114,6 @@ public class GenerateReporterService {
 
 	private void calculateCycleTime() {
 		// todo:add calculate CycleTime logic
-	}
-
-	private LeadTimeForChanges calculateLeadTime(List<PipelineLeadTime> PipelineLeadTime) {
-		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelinesList = new ArrayList<>();
-		List<AvgLeadTimeForChanges> avgLeadTimeForChangesArrayList = new ArrayList<>();
-		if (PipelineLeadTime.isEmpty()){
-			avgLeadTimeForChangesArrayList.add(new AvgLeadTimeForChanges(0d, 0d));
-			return new LeadTimeForChanges(leadTimeForChangesOfPipelinesList,avgLeadTimeForChangesArrayList);
-		}
-		PipelineLeadTime.stream().map(item -> {
-			int times = item.getLeadTimes().size();
-			if (item.getLeadTimes().isEmpty()) {
-				item.getLeadTimes().add(new LeadTime(0d, 0d));
-			}
-			HashMap<Double, Double> totalDelayTime = item.getLeadTimes()
-				.stream()
-				.map(this::transformDelayTimeMapWithLeadTime)
-				.reduce(new HashMap<>(), (pre, now) -> now);
-			double totalPrDelayTime = totalDelayTime.keySet().stream().reduce(0d, Double::sum);
-			double totalPipelineDelayTime = totalDelayTime.values().stream().reduce(0d, Double::sum);
-
-			double avgPrDelayTime = totalPrDelayTime / times;
-			double avgPipelineDelayTime = totalPipelineDelayTime / times;
-
-	private HashMap<Double, Double> getDelayTimeMapWithLeadTime(LeadTime leadTime) {
-		HashMap<Double, Double> delayTimeMap = new HashMap<>();
-		delayTimeMap.put(leadTime.getPrDelayTime(), leadTime.getPipelineDelayTime());
-		return delayTimeMap;
 	}
 
 	private void fetchOriginalData(GenerateReportRequest request) {
@@ -184,11 +152,11 @@ public class GenerateReporterService {
 	}
 
 	private void fetchGithubData(GenerateReportRequest request) {
-		for (LeadTimeEnvironment leadTimeEnvironment : request.getCodebaseSetting().getLeadTime()){
-//			this.deployTimesListFromLeadTimeSetting.add(getDeployTimesListFromDeploy(request));
+		for (LeadTimeEnvironment ignored : request.getCodebaseSetting().getLeadTime()) {
+			this.deployTimesList.add(getDeployTimesListFromDeploy(request));
 		}
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
-		this.leadTimes = gitHubService._fetchPipelinesLeadTime(this.deployTimesListFromLeadTimeSetting, repoMap).join();
+		this.leadTimes = gitHubService.fetchPipelinesLeadTime(this.deployTimesList, repoMap).join();
 	}
 
 	private synchronized void fetchBuildKiteData(GenerateReportRequest request) {
@@ -208,8 +176,8 @@ public class GenerateReporterService {
 		DeployTimes deployTimes = new DeployTimes();
 		for (DeploymentEnvironment deploymentEnvironment : request.getBuildKiteSetting().getDeploymentEnvList()) {
 			List<BuildKiteBuildInfo> buildInfo = buildKiteService.fetchPipelineBuilds(
-				request.getBuildKiteSetting().getToken(), deploymentEnvironment, request.getStartTime(),
-				request.getEndTime());
+					request.getBuildKiteSetting().getToken(), deploymentEnvironment, request.getStartTime(),
+					request.getEndTime());
 			deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildInfo);
 		}
 		return deployTimes;

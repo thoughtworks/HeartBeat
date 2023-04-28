@@ -1,6 +1,7 @@
 package heartbeat.client.dto.codebase.github;
 
 public class LeadTimeDelayTime {
+
 	private Double prDelayTime;
 
 	private Double pipelineDelayTime;
@@ -17,4 +18,5 @@ public class LeadTimeDelayTime {
 	public Number getPipelineDelayTime() {
 		return pipelineDelayTime;
 	}
+
 }

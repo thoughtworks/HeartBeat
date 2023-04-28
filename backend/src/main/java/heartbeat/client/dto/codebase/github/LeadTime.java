@@ -32,30 +32,6 @@ public class LeadTime {
 
 	private double totalTime;
 
-	public String getCommitId() {
-		return commitId;
-	}
-
-	public double getPrCreatedTime() {
-		return prCreatedTime;
-	}
-
-	public double getPrMergedTime() {
-		return prMergedTime;
-	}
-
-	public double getFirstCommitTimeInPr() {
-		return firstCommitTimeInPr;
-	}
-
-	public double getJobFinishTime() {
-		return jobFinishTime;
-	}
-
-	public double getPipelineCreateTime() {
-		return pipelineCreateTime;
-	}
-
 	public double getPrDelayTime() {
 		return prDelayTime;
 	}
@@ -64,11 +40,8 @@ public class LeadTime {
 		return pipelineDelayTime;
 	}
 
-	public double getTotalTime() {
-		return totalTime;
-	}
-
-	public LeadTime(String commitId, Double pipelineCreateTime, Double jobFinishTime, Double prCreatedTime, Double prMergedTime, Double firstCommitTimeInPr) {
+	public LeadTime(String commitId, Double pipelineCreateTime, Double jobFinishTime, Double prCreatedTime,
+			Double prMergedTime, Double firstCommitTimeInPr) {
 		this.commitId = commitId;
 		this.prCreatedTime = prCreatedTime;
 		this.prMergedTime = prMergedTime;
@@ -80,16 +53,19 @@ public class LeadTime {
 		if (prMergedTime != null && prCreatedTime != null) {
 			if (firstCommitTimeInPr != null) {
 				this.prDelayTime = prMergedTime - firstCommitTimeInPr;
-			} else {
+			}
+			else {
 				this.prDelayTime = prMergedTime - prCreatedTime;
 			}
 			this.totalTime = this.prDelayTime + this.pipelineDelayTime;
-		} else {
+		}
+		else {
 			this.totalTime = this.pipelineDelayTime;
 		}
 	}
 
-	public static LeadTime mapFrom(GitHubPull gitHubPull, DeployInfo deployInfo, CommitInfo firstCommit) throws Exception {
+	public static LeadTime mapFrom(PullRequestInfo gitHubPull, DeployInfo deployInfo, CommitInfo firstCommit)
+			throws Exception {
 		if (gitHubPull.getMergedAt() == null) {
 			throw new Exception("this commit has not been merged");
 		}
@@ -98,19 +74,14 @@ public class LeadTime {
 		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
 		Double firstCommitTimeInPr = null;
-		if (firstCommit.getCommit() != null && firstCommit.getCommit().getCommitter() != null && firstCommit.getCommit().getCommitter().getDate() != null) {
-			firstCommitTimeInPr = Double.valueOf(Instant.parse(firstCommit.getCommit().getCommitter().getDate()).toEpochMilli());
+		if (firstCommit.getCommit() != null && firstCommit.getCommit().getCommitter() != null
+				&& firstCommit.getCommit().getCommitter().getDate() != null) {
+			firstCommitTimeInPr = (double) Instant.parse(firstCommit.getCommit().getCommitter().getDate())
+				.toEpochMilli();
 		}
 
-		return new LeadTime(
-			deployInfo.getCommitId(),
-			pipelineCreateTime,
-			jobFinishTime,
-			prCreatedTime,
-			prMergedTime,
-			firstCommitTimeInPr
-		);
+		return new LeadTime(deployInfo.getCommitId(), pipelineCreateTime, jobFinishTime, prCreatedTime, prMergedTime,
+				firstCommitTimeInPr);
 	}
-
 
 }

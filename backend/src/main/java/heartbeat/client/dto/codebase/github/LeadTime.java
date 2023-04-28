@@ -32,7 +32,43 @@ public class LeadTime {
 
 	private double totalTime;
 
-	public LeadTime(String commitId, Double pipelineCreateTime, Double jobFinishTime, Double prCreatedTime, Double prMergedTime,  Double firstCommitTimeInPr) {
+	public String getCommitId() {
+		return commitId;
+	}
+
+	public double getPrCreatedTime() {
+		return prCreatedTime;
+	}
+
+	public double getPrMergedTime() {
+		return prMergedTime;
+	}
+
+	public double getFirstCommitTimeInPr() {
+		return firstCommitTimeInPr;
+	}
+
+	public double getJobFinishTime() {
+		return jobFinishTime;
+	}
+
+	public double getPipelineCreateTime() {
+		return pipelineCreateTime;
+	}
+
+	public double getPrDelayTime() {
+		return prDelayTime;
+	}
+
+	public double getPipelineDelayTime() {
+		return pipelineDelayTime;
+	}
+
+	public double getTotalTime() {
+		return totalTime;
+	}
+
+	public LeadTime(String commitId, Double pipelineCreateTime, Double jobFinishTime, Double prCreatedTime, Double prMergedTime, Double firstCommitTimeInPr) {
 		this.commitId = commitId;
 		this.prCreatedTime = prCreatedTime;
 		this.prMergedTime = prMergedTime;

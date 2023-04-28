@@ -188,7 +188,7 @@ public class GenerateReporterService {
 //			this.deployTimesListFromLeadTimeSetting.add(getDeployTimesListFromDeploy(request));
 		}
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
-//		this.leadTimes = gitHubService.fetchPipelinesLeadTime(deployTimesListFromLeadTimeSetting, repoMap);
+		this.leadTimes = gitHubService._fetchPipelinesLeadTime(this.deployTimesListFromLeadTimeSetting, repoMap).join();
 	}
 
 	private synchronized void fetchBuildKiteData(GenerateReportRequest request) {

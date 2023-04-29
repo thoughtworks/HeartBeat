@@ -1,6 +1,5 @@
 import styled from '@emotion/styled'
 import { Divider } from '@src/components/Common/MetricsSettingTitle/style'
-import React from 'react'
 
 export const MetricsSettingTitle = (props: { title: string }) => (
   <Divider>

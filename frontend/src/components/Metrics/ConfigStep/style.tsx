@@ -7,8 +7,7 @@ export const ConfigStepWrapper = styled('div')({
 })
 
 export const ProjectNameInput = styled(TextField)({
-  width: '90%',
-  maxWidth: '30rem',
+  width: '100%',
 })
 
 export const StyledFormControlLabel = styled(FormControlLabel)`

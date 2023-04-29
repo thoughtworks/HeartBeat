@@ -11,7 +11,7 @@ class Config {
   }
 
   typeProjectName(projectName: string) {
-    cy.contains('Project Name *').siblings().first().type(projectName)
+    cy.contains('Project name *').siblings().first().type(projectName)
   }
 
   selectDateRange() {
@@ -19,7 +19,7 @@ class Config {
   }
 
   selectMetricsData() {
-    cy.contains('Required Data').siblings().click()
+    cy.contains('Required data').siblings().click()
 
     cy.contains('All').click()
 

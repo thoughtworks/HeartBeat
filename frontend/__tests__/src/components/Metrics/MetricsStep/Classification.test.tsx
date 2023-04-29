@@ -5,7 +5,7 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 
 const mockTitle = 'Classification Setting'
-const mockLabel = 'Distinguished By'
+const mockLabel = 'Distinguished by'
 const mockTargetField = [
   { flag: false, key: 'issue', name: 'Issue' },
   { flag: false, key: 'type', name: 'Type' },

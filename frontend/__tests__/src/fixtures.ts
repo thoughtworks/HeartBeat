@@ -24,7 +24,7 @@ export const VERIFIED = 'Verified'
 
 export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required']
 
-export const PROJECT_NAME_LABEL = 'Project Name'
+export const PROJECT_NAME_LABEL = 'Project name'
 
 export const STEPPER = ['Config', 'Metrics', 'Report']
 
@@ -46,7 +46,7 @@ export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
 export const DEPLOYMENT_FREQUENCY = 'Deployment frequency'
 export const CHANGE_FAILURE_RATE = 'Change failure rate'
 export const MEAN_TIME_TO_RECOVERY = 'Mean time to recovery'
-export const REQUIRED_DATA = 'Required Data'
+export const REQUIRED_DATA = 'Required data'
 export const TEST_PROJECT_NAME = 'test project Name'
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
@@ -235,10 +235,10 @@ export const MOCK_GITHUB_VERIFY_RESPONSE = {
   githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
 }
 
-export const CREWS_SETTING = 'Crews Setting'
-export const CYCLE_TIME_SETTINGS = 'Cycle Time Settings'
-export const CLASSIFICATION_SETTING = 'Classification Setting'
-export const REAL_DONE = 'Real Done'
+export const CREWS_SETTING = 'Crews setting'
+export const CYCLE_TIME_SETTINGS = 'Cycle time settings'
+export const CLASSIFICATION_SETTING = 'Classification setting'
+export const REAL_DONE = 'Real done'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 

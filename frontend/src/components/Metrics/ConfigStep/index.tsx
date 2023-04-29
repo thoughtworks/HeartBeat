@@ -26,7 +26,7 @@ export const ConfigStep = () => {
     <ConfigStepWrapper>
       <ProjectNameInput
         required
-        label='Project Name'
+        label='Project name'
         variant='standard'
         value={projectName}
         onFocus={(e) => {
@@ -37,7 +37,7 @@ export const ConfigStep = () => {
           setIsEmptyProjectName(e.target.value === '')
         }}
         error={isEmptyProjectName}
-        helperText={isEmptyProjectName ? 'Project Name is required' : DEFAULT_HELPER_TEXT}
+        helperText={isEmptyProjectName ? 'Project name is required' : DEFAULT_HELPER_TEXT}
       />
       <h3>Collection Date</h3>
       <RadioGroup

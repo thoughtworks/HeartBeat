@@ -59,7 +59,7 @@ describe('ConfigStep', () => {
     fireEvent.change(input, { target: { value: TEST_PROJECT_NAME } })
     fireEvent.change(input, { target: { value: '' } })
 
-    expect(getByText('Project Name is required')).toBeInTheDocument()
+    expect(getByText('Project name is required')).toBeInTheDocument()
   })
 
   it('should show error message when click project name input with no letter', () => {
@@ -68,7 +68,7 @@ describe('ConfigStep', () => {
 
     fireEvent.focus(input)
 
-    expect(getByText('Project Name is required')).toBeInTheDocument()
+    expect(getByText('Project name is required')).toBeInTheDocument()
   })
 
   it('should select Regular calendar by default when rendering the radioGroup', () => {

@@ -14,7 +14,7 @@ describe('Create a new project', () => {
     configPage.goHomePage()
 
     homePage.createANewProject()
-    cy.contains('Project Name *').should('have.value', '')
+    cy.contains('Project name *').should('have.value', '')
 
     configPage.typeProjectName('E2E Project')
 
@@ -40,8 +40,8 @@ describe('Create a new project', () => {
 
     configPage.goMetricsStep()
 
-    cy.contains('Crews Setting').should('exist')
-    cy.contains('Real Done').should('exist')
+    cy.contains('Crews setting').should('exist')
+    cy.contains('Real done').should('exist')
 
     metricsPage.checkClassification()
 

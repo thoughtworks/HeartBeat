@@ -88,20 +88,14 @@ export const ExportButton = styled(Button)({
 })
 
 export const ButtonGroup = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  width: '60%',
-  margin: '0 auto',
   padding: '1rem',
-  [theme.breakpoints.down('md')]: {
-    width: '80%',
-  },
 })
 
 export const ButtonContainer = styled('div')({
   display: 'flex',
   alignItems: 'center',
-  width: '60%',
+  justifyContent: 'space-around',
   margin: '0 auto',
-  padding: '1rem',
+  padding: '2rem 0',
+  width: '100%',
 })

@@ -12,7 +12,8 @@ display_help() {
   exit 1
 }
 deploy_infra() {
-  eval "$(aws sts assume-role --role-arn "$AWS_GITHUB_ACTION_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')"
+  aws configure set region "$AWS_REGION"
+  eval "$(aws sts assume-role --role-arn "$AWS_GITHUB_ACTION_ROLE" --role-session-name MySessionName | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')"
   sh ./infra/updateAwsResource
 }
 

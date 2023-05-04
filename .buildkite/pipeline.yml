@@ -25,7 +25,7 @@ steps:
   #   command: ./.buildkite/ops/build backend
 
   - label: "deploy-infra"
-    if: build.branch == "main" && build.message =~ /\[infra\]/
+    if:  build.message =~ /\[infra\]/
     env:
       SSHPublicKey: "$AWS_EC2_SSH_PUBLIC_KEY"
       AWSHost: "$AWS_HOST"

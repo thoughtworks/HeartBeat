@@ -13,8 +13,8 @@ display_help() {
 }
 deploy_infra() {
   aws configure set region "$AWS_REGION"
-  # aws configure set aws_access_key_id "$AWS_PRIVATE_KEY"
-  aws configure set aws_secret_access_key "$AWS_PRIVATE_KEY"
+  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
   eval "$(aws sts assume-role --role-arn "$AWS_GITHUB_ACTION_ROLE" --role-session-name MySessionName | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')"
   sh ./infra/updateAwsResource
 }

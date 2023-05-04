@@ -27,7 +27,6 @@ steps:
   - label: "deploy-infra"
     if:  build.message =~ /\[infra\]/
     env:
-      SSHPublicKey: "$AWS_EC2_SSH_PUBLIC_KEY"
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"

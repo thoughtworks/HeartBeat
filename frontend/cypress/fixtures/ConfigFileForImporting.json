@@ -1,11 +1,6 @@
 {
   "projectName": "ConfigFileForImporting",
-  "metrics": [
-    "Velocity",
-    "Cycle time",
-    "Classification",
-    "Lead time for changes"
-  ],
+  "metrics": ["Velocity", "Cycle time", "Classification", "Lead time for changes"],
   "dateRange": {
     "startDate": "2023-03-16T00:00:00+08:00",
     "endDate": "2023-03-30T23:59:59+08:00"
@@ -29,15 +24,8 @@
     "type": "GitHub",
     "token": ""
   },
-  "crews": [
-    "lucy",
-    "hi hi",
-    "Yu Zhang"
-  ],
-  "classification": [
-    "type",
-    "Parent"
-  ],
+  "crews": ["lucy", "hi hi", "Yu Zhang"],
+  "classification": ["type", "Parent"],
   "cycleTime": [
     {
       "In Analysis": "To do"

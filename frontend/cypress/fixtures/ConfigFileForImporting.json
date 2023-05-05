@@ -2,8 +2,8 @@
   "projectName": "ConfigFileForImporting",
   "metrics": ["Velocity", "Cycle time", "Classification", "Lead time for changes"],
   "dateRange": {
-    "startDate": "2023-03-16T00:00:00+08:00",
-    "endDate": "2023-03-30T23:59:59+08:00"
+    "startDate": "2023-03-15T16:00:00.000Z",
+    "endDate": "2023-03-29T16:00:00.000Z"
   },
   "calendarType": "Calendar with Chinese Holiday",
   "boardConfig": {

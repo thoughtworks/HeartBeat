@@ -32,6 +32,7 @@ deploy_prod() {
   sed -i -e "s/heartbeat_frontend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
   
   ssh-keyscan -H "${AWS_EC2_IP}" >> ~/.ssh/known_hosts
+  echo "${AWS_PRIVATE_KEY}" > etc/buildkite-agent/aws-private-key.pem
   echo "test scp"
   scp -i "etc/buildkite-agent/aws-private-key.pem" -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:~/"
   echo "test ssh"

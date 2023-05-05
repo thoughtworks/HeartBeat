@@ -30,11 +30,11 @@ deploy_stub() {
 deploy_prod() {
   sed -i -e "s/heartbeat_backend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
   sed -i -e "s/heartbeat_frontend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
-
-  scp -i "${AWS_PRIVATE_KEY}" -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:~/"
-
+  
   ssh-keyscan -H "${AWS_EC2_IP}" >> ~/.ssh/known_hosts
-  ssh -o StrictHostKeyChecking=yes -i "${AWS_PRIVATE_KEY}" -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP}" "
+  scp -i "$BUILDKITE_SECRETS_PATH/aws-private-key.pem" -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:~/"
+
+  ssh -o StrictHostKeyChecking=yes -i "$BUILDKITE_SECRETS_PATH/aws-private-key.pem" -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP}" "
         aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}
         cp './infra/docker-compose.yml' ./
         if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi

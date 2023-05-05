@@ -1,8 +1,8 @@
 package heartbeat.service.report;
 
-import heartbeat.client.dto.board.jira.JiraCardFields;
-import heartbeat.controller.board.dto.request.Cards;
-import heartbeat.controller.board.dto.response.JiraCardResponse;
+import heartbeat.client.dto.board.jira.JiraCardField;
+import heartbeat.controller.board.dto.response.CardCollection;
+import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
@@ -23,8 +23,7 @@ public class CalculateClassification {
 
 	private static final String NONE_KEY = "None";
 
-	public List<Classification> calculateClassification(List<TargetField> targetFields, Cards cards)
-			throws IllegalAccessException {
+	public List<Classification> calculateClassification(List<TargetField> targetFields, CardCollection cards) {
 		// todo:add calculate Deployment logic
 		List<Classification> classificationFields = new ArrayList<>();
 		Map<String, Map<String, Integer>> resultMap = new HashMap<>();
@@ -46,8 +45,8 @@ public class CalculateClassification {
 			nameMap.put(targetField.getKey(), targetField.getName());
 		});
 
-		for (JiraCardResponse jiraCardResponse : cards.getJiraCardResponseList()) {
-			JiraCardFields jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
+		for (JiraCardDTO jiraCardResponse : cards.getJiraCardDTOList()) {
+			JiraCardField jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
 			Map<String, Object> tempFields = toMap(jiraCardFields);
 			for (String tempFieldsKey : tempFields.keySet()) {
 				Object obj = tempFields.get(tempFieldsKey);
@@ -133,13 +132,18 @@ public class CalculateClassification {
 		return obj.toString();
 	}
 
-	public Map<String, Object> toMap(JiraCardFields cardFields) throws IllegalAccessException {
+	public Map<String, Object> toMap(JiraCardField cardFields) {
 		Map<String, Object> map = new HashMap<>();
 		Field[] fields = cardFields.getClass().getDeclaredFields();
 		for (Field field : fields) {
 			field.setAccessible(true);
-			Object value = field.get(cardFields);
-			map.put(field.getName(), value);
+			try {
+				Object value = field.get(cardFields);
+				map.put(field.getName(), value);
+			}
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 		return map;
 	}

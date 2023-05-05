@@ -35,14 +35,14 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	public GenerateReportResponse generateReporter(GenerateReportRequest request) throws IllegalAccessException {
+	public GenerateReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 
 		// calculate all required data
 		Velocity velocity = calculateVelocity();
 		List<Classification> classification = calculateClassification
-			.calculateClassification(request.getJiraBoardSetting().getTargetFields(), cards);
+			.calculateClassification(request.getJiraBoardSetting().getTargetFields(), cardCollection);
 		calculateDeployment();
 		calculateCycleTime();
 		calculateLeadTime();

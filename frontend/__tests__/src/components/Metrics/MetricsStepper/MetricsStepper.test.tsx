@@ -290,7 +290,7 @@ describe('MetricsStepper', () => {
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
       dateRange: {
-        endDate: dayjs().startOf('date').add(14, 'day').format(),
+        endDate: dayjs().endOf('date').add(14, 'day').format(),
         startDate: dayjs().startOf('date').format(),
       },
       metrics: ['Velocity', 'Lead time for changes'],
@@ -319,7 +319,7 @@ describe('MetricsStepper', () => {
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
       dateRange: {
-        endDate: dayjs().startOf('date').add(14, 'day').format(),
+        endDate: dayjs().endOf('date').add(14, 'day').format(),
         startDate: dayjs().startOf('date').format(),
       },
       metrics: ['Velocity', 'Lead time for changes'],

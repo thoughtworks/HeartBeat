@@ -9,6 +9,8 @@ set -euo pipefail
 
 echo "Start to perform cleanup"
 
+rm -rf /root/.cache/trivy/db/*
+
 rm -rf /var/lib/buildkite-agent/builds/*
 rm -rf /var/lib/buildkite-agent/.cache/*
 rm -rf /var/lib/buildkite-agent/.local/*

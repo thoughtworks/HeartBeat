@@ -12,5 +12,6 @@ echo "Start to perform cleanup"
 rm -rf /var/lib/buildkite-agent/builds/*
 rm -rf /var/lib/buildkite-agent/.cache/*
 rm -rf /var/lib/buildkite-agent/.local/*
+docker rmi $(docker images -q)
 
 echo "Finished to perform cleanup"

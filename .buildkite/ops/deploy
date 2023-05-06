@@ -31,8 +31,10 @@ deploy_prod() {
   sed -i -e "s/heartbeat_backend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
   sed -i -e "s/heartbeat_frontend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
   
-  echo "$AWS_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key
+  echo "$AWS_PRIVATE_KEY" > ~/.ssh/deploy_key
+  cat ~/.ssh/deploy_key | tr -d '\r' > ~/.ssh/deploy_key_temp && mv ~/.ssh/deploy_key_temp ~/.ssh/deploy_key
   chmod 600 ~/.ssh/deploy_key
+
   echo "test scp"
   scp  -i ~/.ssh/deploy_key -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:~/"
   echo "test ssh"

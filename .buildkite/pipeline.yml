@@ -25,12 +25,12 @@ steps:
   #   command: ./.buildkite/ops/build backend
 
   - label: ":rocket: Deploy to infra"
-    # if:  build.message =~ /\[infra\]/
+    if:  build.branch == "main" && build.message =~ /\[infra\]/
     env:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
     command: ./.buildkite/ops/deploy infra
 
-  # - label: ":rocket: Deploy to prod"
-  #   command: ./.buildkite/ops/deploy prod
+  - label: ":rocket: Deploy to prod"
+    command: ./.buildkite/ops/deploy prod

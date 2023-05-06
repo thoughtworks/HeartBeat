@@ -12,6 +12,6 @@ echo "Start to perform cleanup"
 rm -rf /var/lib/buildkite-agent/builds/*
 rm -rf /var/lib/buildkite-agent/.cache/*
 rm -rf /var/lib/buildkite-agent/.local/*
-if docker images | grep -qE '.*<none>.*'; then docker rmi $(docker images -q) ; fi
+if docker images | grep -qE '.*<none>.*'; then docker rmi -f $(docker images -q) ; fi
 
 echo "Finished to perform cleanup"

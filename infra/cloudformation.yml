@@ -27,6 +27,10 @@ Parameters:
     Description: Public key to connect EC2
     Default: ""
     Type: String
+  SSHPrivateKey:
+    Description: Private key to connect EC2
+    Default: ""
+    Type: String
   OIDCAudience:
     Description: Audience supplied to configure-aws-credentials.
     Default: "sts.amazonaws.com"
@@ -117,6 +121,54 @@ Resources:
                 token.actions.githubusercontent.com:aud: !Ref OIDCAudience
               StringLike:
                 token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:*
+      Policies:
+        - PolicyName: IAMAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                  - iam:GetRole
+                Effect: Allow
+                Resource: "*"
+        - PolicyName: GitHubAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:GetRepositoryPolicy
+                  - ecr:DescribeRepositories
+                  - ecr:ListImages
+                  - ecr:BatchGetImage
+                  - ecr:CompleteLayerUpload
+                  - ecr:InitiateLayerUpload
+                  - ecr:PutImage
+                  - ecr:UploadLayerPart
+                  - cloudformation:CreateStack
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:ListStacks
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:GetTemplateSummary
+                  - ec2:*
+                Effect: Allow
+                Resource: "*"
+  AWSBuildKiteStepsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: "arn:aws:iam::661346466567:root"
       Policies:
         - PolicyName: IAMAccess
           PolicyDocument:
@@ -398,6 +450,7 @@ Resources:
             - sudo yum install nodejs -y
             - sudo npm install -g pnpm
             - sudo yum install java-17-amazon-corretto -y
+            - sudo -u buildkite-agent bash -c "cd /var/lib/buildkite-agent/.ssh/ && echo ${SSHPrivateKey} > HeartBeatKeyPair.pem && chmod 600 HeartBeatKeyPair.pem"
 
   EC2KeyPair:
     Type: AWS::EC2::KeyPair

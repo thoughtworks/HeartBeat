@@ -19,7 +19,7 @@ steps:
           name: "backend-license-report"
           expire_in: "${RETENTION_DAYS} days"
 
-  - label: ":rocket: Deploy to infra"
+  - label: ":rocket: Deploy infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
     env:
       AWSHost: "$AWS_HOST"
@@ -32,5 +32,5 @@ steps:
     depends_on: deploy-infra
     command: ./.buildkite/ops/build backend
 
-  - label: ":rocket: Deploy to prod"
+  - label: ":rocket: Deploy prod"
     command: ./.buildkite/ops/deploy prod

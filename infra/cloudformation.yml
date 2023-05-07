@@ -442,9 +442,9 @@ Resources:
             - # Add public key on GitHub DeployKey(https://github.com/au-heartbeat/Heartbeat/settings/keys) according to https://buildkite.com/docs/agent/v3/redhat#ssh-key-configuration
             - sudo mkdir /opt/gradle
             - sudo yum install -y wget
-            - sudo wget https://services.gradle.org/distributions/gradle-8.0.2-bin.zip -P /opt/gradle
-            - sudo unzip -d /opt/gradle /opt/gradle/gradle-8.0.2-bin.zip
-            - echo 'export PATH=$PATH:/opt/gradle/gradle-8.0.2/bin' | sudo tee -a /etc/profile.d/gradle.sh
+            - sudo wget https://services.gradle.org/distributions/gradle-8.1.1-bin.zip -P /opt/gradle
+            - sudo unzip -d /opt/gradle /opt/gradle/gradle-8.1.1-bin.zip
+            - echo 'export PATH=$PATH:/opt/gradle/gradle-8.1.1/bin' | sudo tee -a /etc/profile.d/gradle.sh
             - source /etc/profile.d/gradle.sh
             - sudo yum update -y
             - sudo yum install nodejs -y

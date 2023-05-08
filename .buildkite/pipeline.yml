@@ -19,6 +19,7 @@ steps:
           name: "backend-license-report"
           expire_in: "${RETENTION_DAYS} days"
 
+  - wait
   - label: ":rocket: Deploy infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
     env:
@@ -27,10 +28,11 @@ steps:
       AWSRegion: "$AWS_REGION"
     command: ./.buildkite/ops/deploy infra
 
+  - wait
   - label: "build-backend"
     branches: main
-    depends_on: deploy-infra
     command: ./.buildkite/ops/build backend
 
+  - wait
   - label: ":rocket: Deploy prod"
     command: ./.buildkite/ops/deploy prod

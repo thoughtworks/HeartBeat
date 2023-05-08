@@ -2,29 +2,47 @@
 set -euo pipefail
 
 display_help() {
-    echo "Usage: $0 {infra|e2e|stub|prod}" >&2
-    echo
-    echo "   infra    deploy infra file"
-    echo "   stub     deploy stub"
-    echo "   e2e      deploy application to the e2e env"
-    echo "   prod     deploy application to the prod env"
-    echo
-    exit 1
+  echo "Usage: $0 {infra|e2e|stub|prod}" >&2
+  echo
+  echo "   infra    deploy infra file"
+  echo "   stub     deploy stub"
+  echo "   e2e      deploy application to the e2e env"
+  echo "   prod     deploy application to the prod env"
+  echo
+  exit 1
 }
-deploy_infra(){
-  echo "deploy_infra"
+deploy_infra() {
+  aws configure set region "$AWS_REGION"
+  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+  eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name MySessionName | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')"
+  sh ./infra/updateAwsResource
 }
 
-deploy_e2e(){
+deploy_e2e() {
   echo "deploy_e2e"
 }
 
-deploy_stub(){
+deploy_stub() {
   echo "deploy_stub"
 }
 
-deploy_prod(){
-  echo "deploy_prod"
+deploy_prod() {
+  sed -i -e "s/heartbeat_backend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
+  sed -i -e "s/heartbeat_frontend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
+
+  scp  -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:./"
+
+  ssh -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP}" "
+    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}
+    cp './infra/docker-compose.yml' ./
+    if [ -n \"\$(docker images -f label=app=Heartbeat -q)\" ]; then
+        docker rmi -f \$(docker images -f label=app=Heartbeat -q)
+    fi
+    docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
+    docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}
+    docker-compose up -d frontend
+  "
 }
 
 if [[ "$#" -le 0 ]]; then
@@ -32,13 +50,13 @@ if [[ "$#" -le 0 ]]; then
 fi
 
 while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        -h|--help) display_help ;;
-        infra) deploy_infra ;;
-        e2e) deploy_e2e ;;
-        stub) deploy_stub ;;
-        prod) deploy_prod ;;
-        *) echo "Unknown parameter passed: $1" ;;
-    esac
-    shift
+  case $1 in
+    -h|--help) display_help ;;
+    infra) deploy_infra ;;
+    e2e) deploy_e2e ;;
+    stub) deploy_stub ;;
+    prod) deploy_prod ;;
+    *) echo "Unknown parameter passed: $1" ;;
+  esac
+  shift
 done

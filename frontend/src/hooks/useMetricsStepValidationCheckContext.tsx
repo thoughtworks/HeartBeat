@@ -6,7 +6,7 @@ import { PIPELINE_SETTING_TYPES } from '@src/constants'
 interface Error {
   organization: string
   pipelineName: string
-  steps: string
+  step: string
 }
 
 interface ErrorMessagesProps {
@@ -19,7 +19,7 @@ interface ProviderContextType {
   leadTimeForChangesErrorMessages: ErrorMessagesProps[]
   clearErrorMessage: (changedSelectionId: number, label: string, type: string) => void
   checkDuplicatedPipeline: (
-    pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[],
+    pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[],
     type: string
   ) => void
   isPipelineValid: (type: string) => boolean
@@ -40,19 +40,19 @@ export const ValidationContext = createContext<ProviderContextType>({
 const emptyErrorMessages = {
   organization: '',
   pipelineName: '',
-  steps: '',
+  step: '',
 }
 
 const assignErrorMessage = (label: string, value: string, id: number, duplicatedPipeLineIds: number[]) =>
   !value ? `${label} is required` : duplicatedPipeLineIds.includes(id) ? `duplicated ${label}` : ''
 
 const getDuplicatedPipeLineIds = (
-  pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[]
+  pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[]
 ) => {
   const errors: { [key: string]: number[] } = {}
-  pipelineSettings.forEach(({ id, organization, pipelineName, steps }) => {
-    if (organization && pipelineName && steps) {
-      const errorString = `${organization}${pipelineName}${steps}`
+  pipelineSettings.forEach(({ id, organization, pipelineName, step }) => {
+    if (organization && pipelineName && step) {
+      const errorString = `${organization}${pipelineName}${step}`
       if (errors[errorString]) errors[errorString].push(id)
       else errors[errorString] = [id]
     }
@@ -63,26 +63,26 @@ const getDuplicatedPipeLineIds = (
 }
 
 const getErrorMessages = (
-  pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[]
+  pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[]
 ) => {
   const duplicatedPipelineIds: number[] = getDuplicatedPipeLineIds(pipelineSettings)
-  return pipelineSettings.map(({ id, organization, pipelineName, steps }) => ({
+  return pipelineSettings.map(({ id, organization, pipelineName, step }) => ({
     id,
     error: {
       organization: assignErrorMessage('organization', organization, id, duplicatedPipelineIds),
       pipelineName: assignErrorMessage('pipelineName', pipelineName, id, duplicatedPipelineIds),
-      steps: assignErrorMessage('steps', steps, id, duplicatedPipelineIds),
+      step: assignErrorMessage('step', step, id, duplicatedPipelineIds),
     },
   }))
 }
 
 const getDuplicatedErrorMessage = (
-  pipelineSetting: { id: number; organization: string; pipelineName: string; steps: string },
+  pipelineSetting: { id: number; organization: string; pipelineName: string; step: string },
   duplicatedPipeLineIds: number[],
-  errorMessages: { id: number; error: { organization: string; pipelineName: string; steps: string } }[]
+  errorMessages: { id: number; error: { organization: string; pipelineName: string; step: string } }[]
 ) => {
-  const { id, organization, pipelineName, steps } = pipelineSetting
-  if (!organization || !pipelineName || !steps) {
+  const { id, organization, pipelineName, step } = pipelineSetting
+  if (!organization || !pipelineName || !step) {
     return {
       id,
       error: errorMessages.find((x) => x.id === id)?.error ?? emptyErrorMessages,
@@ -95,7 +95,7 @@ const getDuplicatedErrorMessage = (
       error: {
         organization: 'duplicated organization',
         pipelineName: 'duplicated pipelineName',
-        steps: 'duplicated steps',
+        step: 'duplicated step',
       },
     }
   }
@@ -142,7 +142,7 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
   }
 
   const checkDuplicatedPipeline = (
-    pipelineSettings: { id: number; organization: string; pipelineName: string; steps: string }[],
+    pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[],
     type: string
   ) => {
     const duplicatedPipeLineIds: number[] = getDuplicatedPipeLineIds(pipelineSettings)

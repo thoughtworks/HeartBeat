@@ -50,6 +50,8 @@ export const SIDEBAR: Sidebar = {
     ],
     'Dev Center': [
       { text: 'Team Info', link: '/en/dev-center/team-infos' },
+      { text: 'Glossary', link: '/en/dev-center/glossary' },
+      { text: 'Responsibilities-TL', link: '/en/dev-center/responsibilities-TL' },
       { text: 'Onboarding Flow', link: '/en/dev-center/onboarding-flow' },
       { text: 'Architecture', link: '/en/dev-center/architecture' },
       { text: 'Team Activity Calendar', link: '/en/dev-center/team-activity-calendar' },

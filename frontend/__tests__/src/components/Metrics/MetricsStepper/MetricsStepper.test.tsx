@@ -27,6 +27,15 @@ import { navigateMock } from '../../../../setupTests'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
+import {
+  saveBoardColumns,
+  saveDoneColumn,
+  saveTargetFields,
+  saveUsers,
+  updateDeploymentFrequencySettings,
+  updateLeadTimeForChanges,
+  updateTreatFlagCardAsBlock,
+} from '@src/context/Metrics/metricsSlice'
 
 const START_DATE_LABEL = 'From *'
 const TODAY = dayjs()
@@ -80,6 +89,22 @@ const fillConfigPageData = async () => {
 const fillMetricsData = async () => {
   await act(async () => {
     await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
+  })
+}
+
+const fillMetricsPageDate = async () => {
+  await act(async () => {
+    await Promise.all([
+      store.dispatch(saveTargetFields([{ name: 'mockClassification', key: 'mockClassification', flag: true }])),
+      store.dispatch(saveUsers(['mockUsers'])),
+      store.dispatch(saveDoneColumn(['Done', 'Canceled'])),
+      store.dispatch(saveBoardColumns([{ name: 'TODO', value: 'To do' }])),
+      store.dispatch(updateTreatFlagCardAsBlock(false)),
+      store.dispatch(
+        updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' })
+      ),
+      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'organization', value: 'mock new organization' })),
+    ])
   })
 }
 
@@ -254,6 +279,68 @@ describe('MetricsStepper', () => {
     const { getByText } = setup()
     await fillMetricsData()
 
+    await userEvent.click(getByText(SAVE))
+
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
+  })
+
+  it('should export json file when click save button in metrics page given all content is empty', async () => {
+    const expectedFileName = 'config'
+    const expectedJson = {
+      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
+      calendarType: 'Regular Calendar(Weekend Considered)',
+      dateRange: {
+        endDate: dayjs().endOf('date').add(14, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      },
+      metrics: ['Velocity', 'Lead time for changes'],
+      pipelineTool: { type: 'BuildKite', token: '' },
+      projectName: 'test project Name',
+      sourceControl: { type: 'GitHub', token: '' },
+      classification: undefined,
+      crews: undefined,
+      cycleTime: undefined,
+      deployment: undefined,
+      doneStatus: undefined,
+      leadTime: undefined,
+    }
+    const { getByText } = setup()
+
+    await fillConfigPageData()
+    await userEvent.click(getByText(NEXT))
+    await userEvent.click(getByText(SAVE))
+
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
+  })
+
+  it('should export json file when click save button in metrics page given all content is filled', async () => {
+    const expectedFileName = 'config'
+    const expectedJson = {
+      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
+      calendarType: 'Regular Calendar(Weekend Considered)',
+      dateRange: {
+        endDate: dayjs().endOf('date').add(14, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      },
+      metrics: ['Velocity', 'Lead time for changes'],
+      pipelineTool: { type: 'BuildKite', token: '' },
+      projectName: 'test project Name',
+      sourceControl: { type: 'GitHub', token: '' },
+      classification: ['mockClassification'],
+      crews: ['mockUsers'],
+      cycleTime: {
+        jiraColumns: [{ TODO: 'To do' }],
+        treatFlagCardAsBlock: false,
+      },
+      deployment: [{ id: 0, organization: 'mock new organization', pipelineName: '', step: '' }],
+      doneStatus: ['Done', 'Canceled'],
+      leadTime: [{ id: 0, organization: 'mock new organization', pipelineName: '', step: '' }],
+    }
+    const { getByText } = setup()
+
+    await fillConfigPageData()
+    await userEvent.click(getByText(NEXT))
+    await fillMetricsPageDate()
     await userEvent.click(getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)

@@ -16,6 +16,6 @@ describe('Import project from file', () => {
     configPage.verifyAndClickNextToMetrics()
 
     configPage.goMetricsStep()
-    cy.contains('Classification Setting').should('exist')
+    cy.contains('Classification setting').should('exist')
   })
 })

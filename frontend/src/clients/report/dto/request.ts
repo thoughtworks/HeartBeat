@@ -6,6 +6,21 @@ export interface ReportRequestDTO {
   pipeline?: {
     type: string
     token: string
+    deployment:
+      | {
+          id: string
+          name: string
+          orgId: string
+          orgName: string
+          repository: string
+          step: string
+        }[]
+      | []
+  }
+  codebaseSetting?: {
+    type: string
+    token: string
+    leadTime: { id: string; name: string; orgId: string; orgName: string; repository: string; step: string }[]
   }
   jiraBoardSetting?: {
     token: string
@@ -19,4 +34,5 @@ export interface ReportRequestDTO {
     targetFields: { key: string; name: string; flag: boolean }[]
     doneColumn: string[]
   }
+  csvTimeStamp?: number
 }

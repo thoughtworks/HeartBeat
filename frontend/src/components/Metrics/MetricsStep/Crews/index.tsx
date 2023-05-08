@@ -57,6 +57,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
         <Select
           labelId='crew-data-multiple-checkbox-label'
           multiple
+          error={isEmptyCrewData}
           value={selectedCrews}
           onChange={handleCrewChange}
           renderValue={(selectedCrews: string[]) => selectedCrews.join(SELECTED_VALUE_SEPARATOR)}
@@ -72,13 +73,15 @@ export const Crews = ({ options, title, label }: crewsProps) => {
             </MenuItem>
           ))}
         </Select>
-        {isEmptyCrewData ? (
-          <FormHelperText>
-            {label} is <strong>required</strong>
-          </FormHelperText>
-        ) : (
-          DEFAULT_HELPER_TEXT
-        )}
+        <FormHelperText>
+          {isEmptyCrewData ? (
+            <>
+              {label} is <strong>required</strong>
+            </>
+          ) : (
+            DEFAULT_HELPER_TEXT
+          )}
+        </FormHelperText>
       </FormControl>
     </>
   )

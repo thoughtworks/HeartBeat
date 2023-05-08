@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import {
-  MetricsStepperContent,
-  ButtonGroup,
-  NextButton,
-  ExportButton,
   BackButton,
-  StyledStepper,
+  ButtonContainer,
+  ButtonGroup,
+  ExportButton,
+  MetricsStepperContent,
+  NextButton,
+  SaveButton,
   StyledStep,
   StyledStepLabel,
-  SaveButton,
-  ButtonContainer,
+  StyledStepper,
 } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
@@ -23,7 +23,7 @@ import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepV
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
-import { updateMetricsState } from '@src/context/Metrics/metricsSlice'
+import { savedMetricsSettingState, selectMetricsContent, updateMetricsState } from '@src/context/Metrics/metricsSlice'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -31,6 +31,7 @@ const MetricsStepper = () => {
   const activeStep = useAppSelector(selectStepNumber)
   const [isDialogShowing, setIsDialogShowing] = useState(false)
   const config = useAppSelector(selectConfig)
+  const metricsConfig = useAppSelector(selectMetricsContent)
   const [isDisableNextButton, setIsDisableNextButton] = useState(true)
 
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board
@@ -63,18 +64,60 @@ const MetricsStepper = () => {
     dateRange,
   ])
   const { isPipelineValid } = useMetricsStepValidationCheckContext()
+  const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {
+    return Object.fromEntries(
+      Object.entries(metricsConfig).filter(([, value]) => {
+        if (Array.isArray(value)) {
+          return (
+            !value.every((item) => item.organization === '') &&
+            !value.every((item) => item.flag === false) &&
+            value.length > 0
+          )
+        } else {
+          return true
+        }
+      })
+    )
+  }
   const handleSave = () => {
     const { projectName, dateRange, calendarType, metrics } = config.basic
     const configData = {
-      projectName: projectName,
-      dateRange: dateRange,
-      calendarType: calendarType,
-      metrics: metrics,
+      projectName,
+      dateRange,
+      calendarType,
+      metrics,
       board: isShowBoard ? config.board.config : undefined,
       pipelineTool: isShowPipeline ? config.pipelineTool.config : undefined,
       sourceControl: isShowSourceControl ? config.sourceControl.config : undefined,
     }
-    exportToJsonFile('config', configData)
+
+    const {
+      leadTimeForChanges,
+      deploymentFrequencySettings,
+      users,
+      doneColumn,
+      targetFields,
+      boardColumns,
+      treatFlagCardAsBlock,
+    } = filterMetricsConfig(metricsConfig)
+
+    const metricsData = {
+      crews: users,
+      cycleTime: boardColumns
+        ? {
+            jiraColumns: boardColumns?.map(({ name, value }: { name: string; value: string }) => ({ [name]: value })),
+            treatFlagCardAsBlock,
+          }
+        : undefined,
+      doneStatus: doneColumn,
+      classification: targetFields
+        ?.filter((item: { name: string; key: string; flag: boolean }) => item.flag)
+        ?.map((item: { name: string; key: string; flag: boolean }) => item.key),
+      deployment: deploymentFrequencySettings,
+      leadTime: leadTimeForChanges,
+    }
+    const jsonData = activeStep === 0 ? configData : { ...configData, ...metricsData }
+    exportToJsonFile('config', jsonData)
   }
 
   const handleNext = () => {
@@ -120,9 +163,11 @@ const MetricsStepper = () => {
         {activeStep === 2 && <ReportStep />}
       </MetricsStepperContent>
       <ButtonContainer>
-        <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
-          <SaveButton onClick={handleSave}>Save</SaveButton>
-        </Tooltip>
+        {activeStep !== 2 && (
+          <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
+            <SaveButton onClick={handleSave}>Save</SaveButton>
+          </Tooltip>
+        )}
         <ButtonGroup>
           <BackButton onClick={handleBack}>Back</BackButton>
           {activeStep === STEPS.length - 1 ? (

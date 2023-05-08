@@ -6,9 +6,8 @@ export const StyledSection = styled('div')({
   position: 'relative',
   boxShadow: theme.main.boxShadow,
   borderRadius: '0.25rem',
-  width: '85%',
   margin: '1rem 0',
-  padding: '1rem',
+  padding: '1rem 0',
   lineHeight: '2rem',
 })
 

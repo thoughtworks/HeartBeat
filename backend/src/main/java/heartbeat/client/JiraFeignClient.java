@@ -30,6 +30,11 @@ public interface JiraFeignClient {
 	AllDoneCardsResponseDTO getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
+	@Cacheable(cacheNames = "jiraAllDoneCards", key = "#boardId+'-'+#queryCount+'-'+#startAt+'-'+#jql")
+	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
+	String getAllDoneCardStoryPoint(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
+			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
+
 	@Cacheable(cacheNames = "jiraActivityfeed", key = "#jiraCardKey")
 	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")
 	CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,

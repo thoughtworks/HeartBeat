@@ -3,6 +3,7 @@ import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
+import dayjs from 'dayjs'
 import {
   CHINA_CALENDAR,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
@@ -62,8 +63,8 @@ export const ReportStep = () => {
 
   const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,
-    startTime: dateRange.startDate,
-    endTime: dateRange.endDate,
+    startTime: dayjs(dateRange.startDate).valueOf().toString(),
+    endTime: dayjs(dateRange.endDate).valueOf().toString(),
     considerHoliday: calendarType === CHINA_CALENDAR,
     pipeline: {
       ...pipelineTool.config,
@@ -76,7 +77,7 @@ export const ReportStep = () => {
     },
     jiraBoardSetting: {
       token,
-      type,
+      type: type.toLowerCase(),
       site,
       projectKey,
       boardId,

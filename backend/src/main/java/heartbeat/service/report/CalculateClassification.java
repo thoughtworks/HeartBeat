@@ -45,11 +45,9 @@ public class CalculateClassification {
 			for (String tempFieldsKey : tempFields.keySet()) {
 				Object obj = tempFields.get(tempFieldsKey);
 				if (obj instanceof List) {
-//					Map<String,Object> newObj = toMap(((List<?>) obj).get(0));
-//					List<Object> newObj = (List<Object>) obj;
-//					List<Map<String, Object>> newObj = new ArrayList<>(Arrays.asList(obj));
 					mapArrayField(resultMap, tempFieldsKey, (List<Object>) obj);
-				} else if (obj != null) {
+				}
+				else if (obj != null) {
 					Map<String, Integer> map = resultMap.get(tempFieldsKey);
 					if (map != null) {
 						String displayName = pickDisplayNameFromObj(obj);
@@ -74,7 +72,7 @@ public class CalculateClassification {
 				String displayName = mapEntry.getKey();
 				Integer count = mapEntry.getValue();
 				classificationNameValuePair.add(new ClassificationNameValuePair(displayName,
-					String.format("%.2f%%", (count.floatValue() / cards.getCardsNumber()) * 100)));
+						String.format("%.2f%%", (count.floatValue() / cards.getCardsNumber()) * 100)));
 			}
 
 			classificationFields.add(new Classification(nameMap.get(fieldName), classificationNameValuePair));
@@ -82,8 +80,7 @@ public class CalculateClassification {
 		return classificationFields;
 	}
 
-	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey,
-							   List<Object> obj) {
+	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey, List<Object> obj) {
 		Map<String, Integer> map = resultMap.get(fieldsKey);
 		if (map != null && !obj.isEmpty()) {
 			for (Object p1 : obj) {
@@ -91,82 +88,64 @@ public class CalculateClassification {
 				Integer count = map.get(displayName);
 				map.put(displayName, count != null ? count + 1 : 1);
 			}
+			if (!obj.isEmpty()) {
+				map.put(NONE_KEY, map.get(NONE_KEY) - 1);
+			}
 		}
-		if (!obj.isEmpty()) {
-			map.put(NONE_KEY, map.get(NONE_KEY) - 1);
-		}
-	}
 
-//			List<Map<String, Object>> dataList = (List<Map<String, Object>>) obj;
-//				for (Map.Entry<String, Object> entry : p1.entrySet()) {
-//					Object value = entry.getValue();
-//					String displayName = pickDisplayNameFromObj(value);
-//					Integer count = map.get(displayName);
-//					map.put(displayName, count != null ? count + 1 : 1);
-//				}
-//				List<Map<String, Object>> dataList = obj;
-//				for (Map<String, Object> p1 : obj) {
-//					for (Map.Entry<String, Integer> entry : map.entrySet()) {
-//						String key = entry.getKey();
-//						Object value = entry.getValue();
-//					}
-//				}
-//				dataList.forEach(p1 -> {
-//					for (Map.Entry<String, Object> entry : p1.entrySet()) {
-//						Object value = entry.getValue();
-//						if (value != null) {
-//							String displayName = pickDisplayNameFromObj(value);
-//							Integer count = map.get(displayName);
-//							map.put(displayName, count != null ? count + 1 : 1);
-//						}
-//						if (!obj.isEmpty()) {
-//							map.put(NONE_KEY, map.get(NONE_KEY) - 1);
-//						}
-//					}
-//				});
+	}
 
 	private static String pickDisplayNameFromObj(Object obj) {
 		if (obj == null) {
 			return "None";
 		}
-//		obj.getClass().getDeclaredFields("displayName")
-		if (obj instanceof Map) {
-			Map<String, Object> map = (Map<String, Object>) obj;
-			if (map.containsKey("displayName")) {
-				return map.get("displayName").toString();
-			}
-			if (map.containsKey("name")) {
-				return map.get("name").toString();
-			}
-			if (map.containsKey("key")) {
-				return map.get("key").toString();
-			}
-			if (map.containsKey("value")) {
-				return map.get("value").toString();
-			}
-		}
-			else if (obj instanceof String) {
-				String str = (String) obj;
-				Matcher matcher = Pattern.compile("name=.*").matcher(str);
-				if (matcher.find()) {
-					return matcher.group().replace("name=", "").split(",")[0];
-				}
-			}
-			return obj.toString();
-		}
 
-		private Map<String, Object> toMap (JiraCardField cardFields){
-			Map<String, Object> map = new HashMap<>();
-			Field[] fields = cardFields.getClass().getDeclaredFields();
-			for (Field field : fields) {
-				field.setAccessible(true);
-				try {
-					Object value = field.get(cardFields);
-					map.put(field.getName(), value);
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
-			}
-			return map;
+		Map<String, Object> map = objectToMap(obj);
+		if (map.containsKey("displayName")) {
+			return map.get("displayName").toString();
 		}
+		if (map.containsKey("name")) {
+			return map.get("name").toString();
+		}
+		if (map.containsKey("key")) {
+			return map.get("key").toString();
+		}
+		if (map.containsKey("value")) {
+			return map.get("value").toString();
+		}
+		else if (obj instanceof String) {
+			String str = (String) obj;
+			Matcher matcher = Pattern.compile("name=.*").matcher(str);
+			if (matcher.find()) {
+				return matcher.group().replace("name=", "").split(",")[0];
+			}
+		}
+		return obj.toString();
 	}
+
+
+	private static Map<String, Object> getFieldsAsMap(Object object) {
+		Map<String, Object> map = new HashMap<>();
+		Field[] fields = object.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			try {
+				Object value = field.get(object);
+				map.put(field.getName(), value);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return map;
+	}
+
+	private Map<String, Object> toMap(JiraCardField cardFields) {
+		return getFieldsAsMap(cardFields);
+	}
+
+	public static Map<String, Object> objectToMap(Object object) {
+		return getFieldsAsMap(object);
+	}
+
+
+}

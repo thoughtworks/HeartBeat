@@ -199,7 +199,7 @@ export const selectStepsParams = (state: RootState, organizationName: string, pi
       repository: pipeline?.repository ?? '',
       orgName: pipeline?.orgName ?? '',
       startTime: dayjs(startDate).startOf('date').valueOf(),
-      endTime: dayjs(endDate).startOf('date').valueOf(),
+      endTime: dayjs(endDate).endOf('date').valueOf(),
     },
     buildId: pipeline?.id ?? '',
     organizationId: pipeline?.orgId ?? '',

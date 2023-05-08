@@ -204,7 +204,7 @@ describe('pipelineTool reducer', () => {
         buildId: 'mockId',
         organizationId: 'mockOrgId',
         params: {
-          endTime: 1681747200000,
+          endTime: 1681833599999,
           orgName: 'mockOrgName',
           pipelineName: 'mockName',
           repository: 'mockRepository',
@@ -220,7 +220,7 @@ describe('pipelineTool reducer', () => {
         buildId: '',
         organizationId: '',
         params: {
-          endTime: 1681747200000,
+          endTime: 1681833599999,
           orgName: '',
           pipelineName: '',
           repository: '',

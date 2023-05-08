@@ -4,24 +4,24 @@ import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.board.jira.HistoryDetail;
-import heartbeat.client.dto.board.jira.Status;
-import heartbeat.controller.board.dto.request.Cards;
-import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
-import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
-import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
-import heartbeat.client.dto.board.jira.DoneCard;
-import heartbeat.client.dto.board.jira.DoneCardFields;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraCardField;
+import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
-import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.CardCollection;
+import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.TargetField;
+import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
+import heartbeat.util.BoardUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,9 +66,12 @@ class JiraServiceTest {
 
 	ThreadPoolTaskExecutor executor;
 
+	@Mock
+	BoardUtil boardUtil;
+
 	@BeforeEach
 	public void setUp() {
-		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator);
+		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator, boardUtil);
 	}
 
 	@AfterEach
@@ -112,18 +115,16 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 		jiraService.shutdownExecutor();
-		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0))
-			.isEqualTo("DONE");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1))
-			.isEqualTo("DOING");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
-		assertThat(boardConfigResponse.getTargetFields()).isEqualTo(expectTargetField);
+		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(2);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
 	@Test
@@ -153,18 +154,16 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 
-		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0))
-			.isEqualTo("DONE");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1))
-			.isEqualTo("DOING");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
-		assertThat(boardConfigResponse.getTargetFields()).isEqualTo(expectTargetField);
+		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(2);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
 	@Test
@@ -197,19 +196,16 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeClassicJira,
-				boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeClassicJira, boardRequestParam);
 
-		assertThat(boardConfigResponse.getJiraColumnResponses()).hasSize(1);
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(0))
-			.isEqualTo("DONE");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getValue().getStatuses().get(1))
-			.isEqualTo("DOING");
-		assertThat(boardConfigResponse.getJiraColumnResponses().get(0).getKey()).isEqualTo("done");
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getTargetFields()).hasSize(2);
-		assertThat(boardConfigResponse.getTargetFields()).isEqualTo(expectTargetField);
+		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(2);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
 	@Test
@@ -307,10 +303,10 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		BoardConfigResponse boardConfigResponse = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 
-		assertThat(boardConfigResponse.getUsers()).hasSize(1);
-		assertThat(boardConfigResponse.getUsers().get(0)).isEqualTo("Zhang San");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getUsers().get(0)).isEqualTo("Zhang San");
 	}
 
 	@Test
@@ -356,7 +352,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new DoneCard("1", new DoneCardFields(null))))
+			.issues(List.of(new JiraCard("1", new JiraCardField())))
 			.build();
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -391,7 +387,7 @@ class JiraServiceTest {
 
 		AllDoneCardsResponseDTO allDoneCardsResponse = AllDoneCardsResponseDTO.builder()
 			.total("2")
-			.issues(List.of(new DoneCard("1", new DoneCardFields(new Assignee(null)))))
+			.issues(List.of(new JiraCard("1", new JiraCardField())))
 			.build();
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
@@ -443,12 +439,51 @@ class JiraServiceTest {
 
 	@Test
 	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() {
-		StoryPointsAndCycleTimeRequest request = StoryPointsAndCycleTimeRequest.builder().build();
-		RequestJiraBoardColumnSetting requestJiraBoardColumnSetting = RequestJiraBoardColumnSetting.builder().build();
-		Cards cards = jiraService.getStoryPointsAndCycleTime(request, List.of(requestJiraBoardColumnSetting),
-				List.of("Zhang"));
+		String token = "token";
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
 
-		assertThat(cards.equals(Cards.builder().build()));
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
+
+		assertThat(cardCollection.getStoryPointSum()).isEqualTo(8);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(3);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
+	}
+
+	@Test
+	void shouldReturnIllegalArgumentExceptionWhenHaveUnknownColumn() {
+		String token = "token";
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_HAVE_UNKNOWN_COLUMN_BUILD().build();
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
+			.thenReturn(ALL_DONE_CARDS_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
+
+		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San")))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("Type does not find!");
 	}
 
 }

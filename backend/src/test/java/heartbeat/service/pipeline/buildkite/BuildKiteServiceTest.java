@@ -11,9 +11,9 @@ import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
-import heartbeat.controller.pipeline.dto.response.BuildKiteResponse;
+import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
-import heartbeat.controller.pipeline.dto.response.PipelineStepsResponse;
+import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.exception.RequestFailedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,10 +84,10 @@ class BuildKiteServiceTest {
 			.thenReturn(pipelineDTOS);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		BuildKiteResponse buildKiteResponse = buildKiteService.fetchPipelineInfo(pipelineParam);
+		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.fetchPipelineInfo(pipelineParam);
 
-		assertThat(buildKiteResponse.getPipelineList().size()).isEqualTo(1);
-		Pipeline pipeline = buildKiteResponse.getPipelineList().get(0);
+		assertThat(buildKiteResponseDTO.getPipelineList().size()).isEqualTo(1);
+		Pipeline pipeline = buildKiteResponseDTO.getPipelineList().get(0);
 		assertThat(pipeline.getId()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getName()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getOrgId()).isEqualTo("XXXX");
@@ -138,11 +138,11 @@ class BuildKiteServiceTest {
 				anyString(), anyString()))
 			.thenReturn(responseEntity);
 
-		PipelineStepsResponse pipelineStepsResponse = buildKiteService.fetchPipelineSteps(token, organizationId,
-				pipelineId, stepsParam);
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId,
+				stepsParam);
 
-		assertNotNull(pipelineStepsResponse);
-		assertThat(pipelineStepsResponse.getSteps().get(0)).isEqualTo("testJob");
+		assertNotNull(pipelineStepsDTO);
+		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo("testJob");
 	}
 
 	@Test
@@ -186,14 +186,14 @@ class BuildKiteServiceTest {
 				anyString(), anyString()))
 			.thenReturn(buildKiteBuildInfoList2);
 
-		PipelineStepsResponse pipelineStepsResponse = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
 				"test_pipeline_id", stepsParam);
 
-		assertNotNull(pipelineStepsResponse);
-		assertThat(pipelineStepsResponse.getSteps().size()).isEqualTo(3);
-		assertThat(pipelineStepsResponse.getSteps().get(0)).isEqualTo("testJob");
-		assertThat(pipelineStepsResponse.getSteps().get(1)).isEqualTo("testJob2");
-		assertThat(pipelineStepsResponse.getSteps().get(2)).isEqualTo("testJob3");
+		assertNotNull(pipelineStepsDTO);
+		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(3);
+		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo("testJob");
+		assertThat(pipelineStepsDTO.getSteps().get(1)).isEqualTo("testJob2");
+		assertThat(pipelineStepsDTO.getSteps().get(2)).isEqualTo("testJob3");
 	}
 
 	@Test
@@ -262,12 +262,12 @@ class BuildKiteServiceTest {
 				anyString(), anyString()))
 			.thenReturn(responseEntity);
 
-		PipelineStepsResponse pipelineStepsResponse = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
 				"test_pipeline_id", stepsParam);
 
-		assertNotNull(pipelineStepsResponse);
-		assertThat(pipelineStepsResponse.getSteps().size()).isEqualTo(1);
-		assertThat(pipelineStepsResponse.getSteps().get(0)).isEqualTo("testJob");
+		assertNotNull(pipelineStepsDTO);
+		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(1);
+		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo("testJob");
 	}
 
 	@Test
@@ -285,11 +285,11 @@ class BuildKiteServiceTest {
 				anyString(), anyString()))
 			.thenReturn(responseEntity);
 
-		PipelineStepsResponse pipelineStepsResponse = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
 				"test_pipeline_id", stepsParam);
 
-		assertNotNull(pipelineStepsResponse);
-		assertThat(pipelineStepsResponse.getSteps().size()).isEqualTo(0);
+		assertNotNull(pipelineStepsDTO);
+		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(0);
 	}
 
 }

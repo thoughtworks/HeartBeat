@@ -23,10 +23,6 @@ public class JiraBoardSetting {
 
 	private String projectKey;
 
-	private String teamName;
-
-	private String teamId;
-
 	private String boardId;
 
 	private List<String> doneColumn;

@@ -1,17 +1,18 @@
 package heartbeat.client.dto.board.jira;
 
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DoneCard implements Serializable {
+@Builder
+public class JiraCard {
 
 	private String key;
 
-	private DoneCardFields fields;
+	private JiraCardField fields;
 
 }

@@ -1,11 +1,15 @@
 package heartbeat.controller.board.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class CardParentFields {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CardParentField {
 
 	private String summary;
 

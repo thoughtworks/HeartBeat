@@ -96,7 +96,7 @@ public class PullRequestInfo {
 	private Base base;
 
 	@JsonProperty("_links")
-	private Links links;
+	private LinkCollection linkCollection;
 
 	@JsonProperty("author_association")
 	private String authorAssociation;

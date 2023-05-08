@@ -17,15 +17,15 @@ export const MetricsStep = () => {
   const selectedBoardColumns = useAppSelector(selectBoardColumns)
   return (
     <>
-      <Crews options={users} title={'Crews setting'} label={'Included crews'} />
+      <Crews options={users} title={'Crews setting'} label={'Included Crews'} />
       {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && (
         <CycleTime columns={jiraColumns} title={'Cycle time settings'} />
       )}
       {selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2 && (
-        <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as done'} />
+        <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as Done'} />
       )}
       {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
-        <Classification options={targetFields} title={'Classification setting'} label={'Distinguished by'} />
+        <Classification options={targetFields} title={'Classification setting'} label={'Distinguished By'} />
       )}
       {requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) && <DeploymentFrequencySettings />}
       {requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) && <LeadTimeForChanges />}

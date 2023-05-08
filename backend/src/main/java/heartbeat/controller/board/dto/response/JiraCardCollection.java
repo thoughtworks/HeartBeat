@@ -1,5 +1,6 @@
 package heartbeat.controller.board.dto.response;
 
+import heartbeat.client.dto.board.jira.JiraCard;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JiraCards {
+public class JiraCardCollection {
 
 	private Integer total;
 

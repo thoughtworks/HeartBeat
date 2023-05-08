@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class BuildKiteResponse {
+public class BuildKiteResponseDTO {
 
 	private List<Pipeline> pipelineList;
 

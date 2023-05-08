@@ -5,16 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardCustomFieldKey {
+public class StatusChangedItem {
 
-	private String STORY_POINTS;
+	private long timestamp;
 
-	private String SPRINT;
-
-	private String FLAGGED;
+	private String status;
 
 }

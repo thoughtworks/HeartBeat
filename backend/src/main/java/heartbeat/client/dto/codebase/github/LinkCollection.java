@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Links {
+public class LinkCollection {
 
 	private Self self;
 
@@ -18,7 +18,7 @@ public class Links {
 
 	private Issue issue;
 
-	private Comments comments;
+	private Comment comment;
 
 	@JsonProperty("review_comments")
 	private ReviewComments reviewComments;
@@ -28,6 +28,6 @@ public class Links {
 
 	private Commits commits;
 
-	private Statuses statuses;
+	private Status status;
 
 }

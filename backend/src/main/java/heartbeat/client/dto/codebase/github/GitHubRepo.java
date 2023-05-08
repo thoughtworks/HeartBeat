@@ -1,20 +1,20 @@
-package heartbeat.client.dto.board.jira;
+package heartbeat.client.dto.codebase.github;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FieldResponseDTO {
+public class GitHubRepo {
 
-	private List<Project> projects;
+	@JsonProperty("html_url")
+	private String htmlUrl;
 
 }

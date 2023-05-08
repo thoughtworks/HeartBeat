@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class JiraCard {
+@NoArgsConstructor
+public class JiraColumnDTO {
 
 	private String key;
 
-	private JiraCardField fields;
+	private ColumnValue value;
 
 }

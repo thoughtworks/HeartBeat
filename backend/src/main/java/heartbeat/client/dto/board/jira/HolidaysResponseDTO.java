@@ -1,18 +1,20 @@
-package heartbeat.client.dto.codebase.github;
+package heartbeat.client.dto.board.jira;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class GitHubRepos {
+import java.util.List;
 
-	private String html_url;
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class HolidaysResponseDTO {
+
+	private List<HolidayDTO> days;
 
 }

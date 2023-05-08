@@ -3,7 +3,7 @@ package heartbeat.service.source.github;
 import feign.FeignException;
 import heartbeat.client.GitHubFeignClient;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
-import heartbeat.client.dto.codebase.github.GitHubRepos;
+import heartbeat.client.dto.codebase.github.GitHubRepo;
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.TokenUtil;
@@ -42,7 +42,7 @@ public class GitHubService {
 			String token = "token " + githubToken;
 			String maskToken = TokenUtil.mask(token);
 			log.info("Start to query repository_url by token, token: {}", maskToken);
-			CompletableFuture<List<GitHubRepos>> githubReposByUserFuture = CompletableFuture
+			CompletableFuture<List<GitHubRepo>> githubReposByUserFuture = CompletableFuture
 				.supplyAsync(() -> gitHubFeignClient.getAllRepos(token), taskExecutor);
 
 			log.info("Start to query organizations_token: {}", maskToken);
@@ -55,7 +55,7 @@ public class GitHubService {
 							githubReposByUser);
 					log.info("Successfully get organizations_token: {} organizations: {}", maskToken,
 							githubOrganizations);
-					List<String> githubReposMapped = githubReposByUser.stream().map(GitHubRepos::getHtml_url).toList();
+					List<String> githubReposMapped = githubReposByUser.stream().map(GitHubRepo::getHtmlUrl).toList();
 					LinkedHashSet<String> githubRepos = new LinkedHashSet<>(githubReposMapped);
 					CompletableFuture<Set<String>> githubReposByOrganizations = getAllGitHubReposAsync(token,
 							githubOrganizations);
@@ -85,7 +85,7 @@ public class GitHubService {
 				log.info("Start to query repository by organization_token: {}, gitHubOrganization: {}", maskToken, org);
 				List<String> repos = gitHubFeignClient.getReposByOrganizationName(org, token)
 					.stream()
-					.map(GitHubRepos::getHtml_url)
+					.map(GitHubRepo::getHtmlUrl)
 					.toList();
 				log.info("End to queried repository by organization_token: {}, gitHubOrganization: {}", maskToken, org);
 				return repos;

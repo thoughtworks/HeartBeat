@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import heartbeat.controller.board.dto.request.BoardRequestParam;
-import heartbeat.controller.board.dto.response.BoardConfigResponse;
+import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.Test;
@@ -37,11 +37,11 @@ public class JiraControllerTest {
 
 	@Test
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
-		BoardConfigResponse boardConfigResponse = BOARD_CONFIG_RESPONSE_BUILDER().build();
+		BoardConfigDTO boardConfigDTO = BOARD_CONFIG_RESPONSE_BUILDER().build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
 
-		when(jiraService.getJiraConfiguration(any(), any())).thenReturn(boardConfigResponse);
+		when(jiraService.getJiraConfiguration(any(), any())).thenReturn(boardConfigDTO);
 
 		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters))
 			.andExpect(status().isOk())

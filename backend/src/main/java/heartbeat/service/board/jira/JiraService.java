@@ -427,7 +427,7 @@ public class JiraService {
 
 		if (jiraCardHistory.getItems().size() > 0 && statusActivities.size() > 0) {
 			statusChangedArray.add(StatusChangedItem.builder()
-				.timestamp(jiraCardHistory.getItems().get(0).getTimeStamp() - 1)
+				.timestamp(jiraCardHistory.getItems().get(0).getTimestamp() - 1)
 				.status(statusActivities.get(0).getFrom().getDisplayValue())
 				.build());
 
@@ -435,7 +435,7 @@ public class JiraService {
 				.stream()
 				.filter(activity -> "status".equals(activity.getFieldId()))
 				.forEach(activity -> statusChangedArray.add(StatusChangedItem.builder()
-					.timestamp(activity.getTimeStamp())
+					.timestamp(activity.getTimestamp())
 					.status(activity.getTo().getDisplayValue())
 					.build()));
 		}
@@ -447,13 +447,13 @@ public class JiraService {
 				.forEach(activity -> {
 					if ("Impediment".equals(activity.getTo().getDisplayValue())) {
 						statusChangedArray.add(StatusChangedItem.builder()
-							.timestamp(activity.getTimeStamp())
+							.timestamp(activity.getTimestamp())
 							.status(CardStepsEnum.FLAG.getValue())
 							.build());
 					}
 					else {
 						statusChangedArray.add(StatusChangedItem.builder()
-							.timestamp(activity.getTimeStamp())
+							.timestamp(activity.getTimestamp())
 							.status(CardStepsEnum.REMOVEFLAG.getValue())
 							.build());
 					}

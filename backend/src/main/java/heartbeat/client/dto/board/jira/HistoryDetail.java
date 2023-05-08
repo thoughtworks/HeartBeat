@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class HistoryDetail {
 
-	private int timeStamp;
+	private long timestamp;
 
 	private String fieldId;
 

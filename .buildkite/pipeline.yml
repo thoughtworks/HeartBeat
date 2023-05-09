@@ -5,7 +5,7 @@ steps:
   - label: ":lock: Check security"
     command: ./.buildkite/ops/check security
 
-  - label: ":rocket: Check backend "
+  - label: ":rocket: Check backend"
     command: ./.buildkite/ops/check backend
 
   - label: ":mag: Check frontend license"

@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -82,7 +80,7 @@ public class CalculateClassification {
 
 	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey, List<Object> obj) {
 		Map<String, Integer> map = resultMap.get(fieldsKey);
-		if (map != null && !obj.isEmpty()) {
+		if (map != null) {
 			for (Object p1 : obj) {
 				String displayName = pickDisplayNameFromObj(p1);
 				Integer count = map.get(displayName);
@@ -92,14 +90,9 @@ public class CalculateClassification {
 				map.put(NONE_KEY, map.get(NONE_KEY) - 1);
 			}
 		}
-
 	}
 
 	private static String pickDisplayNameFromObj(Object obj) {
-		if (obj == null) {
-			return "None";
-		}
-
 		Map<String, Object> map = objectToMap(obj);
 		if (map.containsKey("displayName")) {
 			return map.get("displayName").toString();
@@ -107,22 +100,11 @@ public class CalculateClassification {
 		if (map.containsKey("name")) {
 			return map.get("name").toString();
 		}
-		if (map.containsKey("key")) {
-			return map.get("key").toString();
-		}
-		if (map.containsKey("value")) {
-			return map.get("value").toString();
-		}
-		else if (obj instanceof String) {
-			String str = (String) obj;
-			Matcher matcher = Pattern.compile("name=.*").matcher(str);
-			if (matcher.find()) {
-				return matcher.group().replace("name=", "").split(",")[0];
-			}
+		if (map.containsKey("displayValue")) {
+			return map.get("displayValue").toString();
 		}
 		return obj.toString();
 	}
-
 
 	private static Map<String, Object> getFieldsAsMap(Object object) {
 		Map<String, Object> map = new HashMap<>();
@@ -132,7 +114,8 @@ public class CalculateClassification {
 			try {
 				Object value = field.get(object);
 				map.put(field.getName(), value);
-			} catch (IllegalAccessException e) {
+			}
+			catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
@@ -146,6 +129,5 @@ public class CalculateClassification {
 	public static Map<String, Object> objectToMap(Object object) {
 		return getFieldsAsMap(object);
 	}
-
 
 }

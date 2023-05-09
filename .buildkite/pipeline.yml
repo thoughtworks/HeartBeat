@@ -2,16 +2,16 @@ env:
   RETENTION_DAYS: "10"
 
 steps:
-  - label: ":lock: Security Check"
+  - label: ":lock: Check security"
     command: ./.buildkite/ops/check security
 
-  - label: ":rocket: Backend Check"
+  - label: ":rocket: Check backend "
     command: ./.buildkite/ops/check backend
 
-  - label: ":mag: Frontend License Check"
+  - label: ":mag: Check frontend license"
     commands: ./.buildkite/ops/check frontend-license
 
-  - label: ":mag: Backend License Check"
+  - label: ":mag: Check backend license"
     commands: ./.buildkite/ops/check backend-license
     plugins:
       - artifacts#v1.9.0:
@@ -30,20 +30,18 @@ steps:
     command: ./.buildkite/ops/deploy infra
 
   - wait
-  - label: "build-backend"
+  - label: "Build backend"
     branches: main
     command: ./.buildkite/ops/build backend
 
   - wait
-  - label: mock_server_build
+  - label: "Build stub"
     branches: main
-    key: mock_server_build
     command: ./.buildkite/ops/build mockServer
 
-  - label: mock_server_deploy
+  - label: "Deploy stub"
     branches: main
-    key: mock_server_deploy
-    depends_on: mock_server_build
+    depends_on: "Build stub"
     command: ./.buildkite/ops/deploy stub
 
   - wait

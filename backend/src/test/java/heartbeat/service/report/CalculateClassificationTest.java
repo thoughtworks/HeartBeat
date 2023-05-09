@@ -512,4 +512,90 @@ class CalculateClassificationTest {
 		assertEquals("testValue", classifications.get(0).getPairs().get(0).getName());
 	}
 
+	@Test
+	void shouldReturnNoneClassificationWithLabels() {
+		List<TargetField> mockTargetFields = List
+			.of(TargetField.builder().key("label").name("Labels").flag(true).build());
+
+		List<JiraCardDTO> mockJiraCards = Arrays.asList(
+				JiraCardDTO.builder()
+					.baseInfo(JiraCard.builder()
+						.key("key1")
+						.fields(JiraCardField.builder()
+							.status(Status.builder().displayValue("testValue").build())
+							.fixVersions(List.of(FixVersion.builder().build(), FixVersion.builder().build()))
+							.label("testLabel1")
+							.build())
+						.build())
+					.build(),
+				JiraCardDTO.builder()
+					.baseInfo(JiraCard.builder()
+						.key("key1")
+						.fields(JiraCardField.builder()
+							.status(Status.builder().displayValue("testValue").build())
+							.fixVersions(List.of(FixVersion.builder().build(), FixVersion.builder().build()))
+							.label("testLabel2")
+							.build())
+						.build())
+					.build());
+
+		CardCollection mockCards = CardCollection.builder()
+			.cardsNumber(2)
+			.storyPointSum(3)
+			.jiraCardDTOList(mockJiraCards)
+			.build();
+
+		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
+				mockCards);
+
+		assertEquals(1, classifications.size());
+		assertEquals("Labels", classifications.get(0).getFieldName());
+		assertEquals("testLabel2", classifications.get(0).getPairs().get(0).getName());
+		assertEquals("50.00%", classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("testLabel1", classifications.get(0).getPairs().get(1).getName());
+		assertEquals("50.00%", classifications.get(0).getPairs().get(1).getValue());
+	}
+
+	@Test
+	void shouldReturnNoneClassificationWithArray() {
+		List<TargetField> mockTargetFields = List
+			.of(TargetField.builder().key("fixVersions").name("Fix Versions").flag(true).build());
+
+		List<JiraCardDTO> mockJiraCards = Arrays.asList(
+				JiraCardDTO.builder()
+					.baseInfo(JiraCard.builder()
+						.key("key1")
+						.fields(JiraCardField.builder()
+							.fixVersions(List.of(FixVersion.builder().name("version1").build(),
+									FixVersion.builder().name("version1").build()))
+							.build())
+						.build())
+					.build(),
+				JiraCardDTO.builder()
+					.baseInfo(JiraCard.builder()
+						.key("key2")
+						.fields(JiraCardField.builder()
+							.fixVersions(List.of(FixVersion.builder().name("version2").build(),
+									FixVersion.builder().name("version2").build()))
+							.build())
+						.build())
+					.build());
+
+		CardCollection mockCards = CardCollection.builder()
+			.cardsNumber(2)
+			.storyPointSum(3)
+			.jiraCardDTOList(mockJiraCards)
+			.build();
+
+		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
+				mockCards);
+
+		assertEquals(1, classifications.size());
+		assertEquals("Fix Versions", classifications.get(0).getFieldName());
+		assertEquals("version2", classifications.get(0).getPairs().get(0).getName());
+		assertEquals("100.00%", classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("version1", classifications.get(0).getPairs().get(1).getName());
+		assertEquals("100.00%", classifications.get(0).getPairs().get(1).getValue());
+	}
+
 }

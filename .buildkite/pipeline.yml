@@ -35,18 +35,18 @@ steps:
     command: ./.buildkite/ops/build backend
 
   - wait
-  - label: ":rocket: Deploy prod"
-    command: ./.buildkite/ops/deploy prod
-
-  - wait
   - label: mock_server_build
     branches: main
     key: mock_server_build
-    command: ./.buildkite/ops/build mockserver
+    command: ./.buildkite/ops/build mockServer
 
-  - wait
   - label: mock_server_deploy
     branches: main
     key: mock_server_deploy
     depends_on: mock_server_build
     command: ./.buildkite/ops/deploy stub
+
+  - wait
+  - label: ":rocket: Deploy prod"
+    command: ./.buildkite/ops/deploy prod
+

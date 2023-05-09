@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# shellcheck source=/dev/null
+source ./.buildkite/ops/base
+
 display_help() {
   echo "Usage: $0 {infra|e2e|stub|prod}" >&2
   echo
@@ -12,10 +15,6 @@ display_help() {
   exit 1
 }
 deploy_infra() {
-  aws configure set region "$AWS_REGION"
-  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-  eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name MySessionName | jq -r '.Credentials | to_entries | map(.key + "=" + "\"" + (.value | tostring) + "\"") | .[]')"
   sh ./infra/updateAwsResource
 }
 
@@ -24,35 +23,39 @@ deploy_e2e() {
 }
 
 deploy_stub() {
+  sed -i -e "s/heartbeat_stub:latest/${AWS_ECR_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
 
-  ssh  -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
-            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}
+  ssh -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
 
-            if [ -n \"\$(docker images -f label=arch=stubs -q)\" ]; then
-                  docker stop \$(docker ps -aq -f label=arch=stubs)
-                  docker rm \$(docker ps -aq -f label=arch=stubs)
-                  docker rmi -f \$(docker images -f label=arch=stubs -q)
-            fi
-            docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}
+    if [ -n \"\$(docker images -f label=arch=stubs -q)\" ]; then
+          docker stop \$(docker ps -aq -f label=arch=stubs)
+          docker rm \$(docker ps -aq -f label=arch=stubs)
+          docker rmi -f \$(docker images -f label=arch=stubs -q)
+    fi
 
-            docker run -p 4323:4323 -d --name mockServer ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}
-        "
+    cp ./infra/docker-compose.yml ./docker-compose-stub.yml
+
+    docker pull ${AWS_ECR_HOST}/heartbeat_stub:${BUILDKITE_BUILD_NUMBER}
+
+    export MOCK_SERVER_PORT=${AWS_EC2_IP_E2E_PORT}
+    docker-compose -f docker-compose-stub.yml up -d stub
+  "
 }
 
 deploy_prod() {
-  sed -i -e "s/heartbeat_backend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
-  sed -i -e "s/heartbeat_frontend:latest/${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
+  sed -i -e "s/heartbeat_backend:latest/${AWS_ECR_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
+  sed -i -e "s/heartbeat_frontend:latest/${AWS_ECR_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
 
-  scp  -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:./"
+  scp -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:./"
 
   ssh -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP}" "
-    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}
+    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_HOST}
     cp './infra/docker-compose.yml' ./
     if [ -n \"\$(docker images -f label=app=Heartbeat -q)\" ]; then
         docker rmi -f \$(docker images -f label=app=Heartbeat -q)
     fi
-    docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
-    docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}
+    docker pull ${AWS_ECR_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
+    docker pull ${AWS_ECR_HOST}/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}
     docker-compose up -d frontend
   "
 }
@@ -63,12 +66,12 @@ fi
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-    -h|--help) display_help ;;
-    infra) deploy_infra ;;
-    e2e) deploy_e2e ;;
-    stub) deploy_stub ;;
-    prod) deploy_prod ;;
-    *) echo "Unknown parameter passed: $1" ;;
+  -h | --help) display_help ;;
+  infra) deploy_infra ;;
+  e2e) deploy_e2e ;;
+  stub) deploy_stub ;;
+  prod) deploy_prod ;;
+  *) echo "Unknown parameter passed: $1" ;;
   esac
   shift
 done

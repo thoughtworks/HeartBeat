@@ -23,7 +23,7 @@ deploy_e2e() {
 }
 
 deploy_stub() {
-  sed -i -e "s/heartbeat_stub:latest/${AWS_ECR_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
+  sed -i -e "s/heartbeat_stub:latest/${AWS_ECR_HOST}\/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
 
   ssh -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
 

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+source ./base
+
 display_help() {
   echo "Usage: $0 {frontend|backend|stub}" >&2
   echo
@@ -12,61 +14,12 @@ display_help() {
 }
 
 build_backend() {
-  local AWS_HOST="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
-
-  aws configure set region "$AWS_REGION"
-  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-  eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
-  aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
-
-  docker build -t "${AWS_HOST}"/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
-  docker tag "${AWS_HOST}"/heartbeat_backend:latest "${AWS_HOST}"/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
-
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-    -v "$(pwd)"/.trivyignore:/.trivyignore \
-    aquasec/trivy:0.20.0 image \
-    --severity HIGH,CRITICAL \
-    --exit-code 1 \
-    --ignore-unfixed \
-    --format table \
-    --ignorefile /.trivyignore \
-    "${AWS_HOST}"/heartbeat_backend:latest
-
-  docker push "${AWS_HOST}/heartbeat_backend:latest"
-  docker push "${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
-
-  docker rmi "${AWS_HOST}/heartbeat_backend:latest"
-  docker rmi "${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
+  build_and_push_image backend
 }
 
 build_stub() {
   if [[ "$BUILDKITE_MESSAGE" == *"[stub]"* ]]; then
-
-    local AWS_HOST="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
-
-    aws configure set region "$AWS_REGION"
-    eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
-    aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
-
-    docker build -t "${AWS_HOST}"/heartbeat_stub:latest ./ -f ./infra/Dockerfile.stub
-    docker tag "${AWS_HOST}"/heartbeat_stub:latest "${AWS_HOST}"/heartbeat_stub:hb"${BUILDKITE_BUILD_NUMBER}"
-
-    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-      -v "$(pwd)"/.trivyignore:/.trivyignore \
-      aquasec/trivy:0.20.0 image \
-      --severity HIGH,CRITICAL \
-      --exit-code 1 \
-      --ignore-unfixed \
-      --format table \
-      --ignorefile /.trivyignore \
-      "${AWS_HOST}"/heartbeat_stub:latest
-
-    docker push "${AWS_HOST}/heartbeat_stub:latest"
-    docker push "${AWS_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}"
-
-    docker rmi "${AWS_HOST}/heartbeat_stub:latest"
-    docker rmi "${AWS_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}"
+    build_and_push_image stub
   fi
 }
 

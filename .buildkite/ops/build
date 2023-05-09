@@ -49,8 +49,8 @@ build_mockserver() {
     eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
     aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
 
-    docker build -t "${AWS_HOST}"/mock_server:latest ./ -f ./infra/Dockerfile.stub
-    docker tag "${AWS_HOST}"/mock_server:latest "${AWS_HOST}"/mock_server:hb"${BUILDKITE_BUILD_NUMBER}"
+    docker build -t "${AWS_HOST}"/heartbeat_stub:latest ./ -f ./infra/Dockerfile.stub
+    docker tag "${AWS_HOST}"/heartbeat_stub:latest "${AWS_HOST}"/heartbeat_stub:hb"${BUILDKITE_BUILD_NUMBER}"
 
     docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
       -v "$(pwd)"/.trivyignore:/.trivyignore \
@@ -60,13 +60,13 @@ build_mockserver() {
       --ignore-unfixed \
       --format table \
       --ignorefile /.trivyignore \
-      "${AWS_HOST}"/mock_server:latest
+      "${AWS_HOST}"/heartbeat_stub:latest
 
-    docker push "${AWS_HOST}/mock_server:latest"
-    docker push "${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}"
+    docker push "${AWS_HOST}/heartbeat_stub:latest"
+    docker push "${AWS_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}"
 
-    docker rmi "${AWS_HOST}/mock_server:latest"
-    docker rmi "${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}"
+    docker rmi "${AWS_HOST}/heartbeat_stub:latest"
+    docker rmi "${AWS_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}"
   fi
 }
 

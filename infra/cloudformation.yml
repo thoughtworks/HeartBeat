@@ -260,7 +260,7 @@ Resources:
   EcrMockServer:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: "mock_server"
+      RepositoryName: "heartbeat_stub"
       LifecyclePolicy:
         LifecyclePolicyText: |
             {

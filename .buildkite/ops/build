@@ -43,31 +43,31 @@ build_backend() {
 build_mockserver() {
   if [[ "$BUILDKITE_MESSAGE" == *"[stub]"* ]]; then
 
-          local AWS_HOST="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+    local AWS_HOST="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
-          aws configure set region "$AWS_REGION"
-          eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
-          aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
+    aws configure set region "$AWS_REGION"
+    eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
+    aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
 
-          docker build -t "${AWS_HOST}"/mock_server:latest ./ -f ./infra/Dockerfile.stub
-          docker tag "${AWS_HOST}"/mock_server:latest "${AWS_HOST}"/mock_server:hb"${BUILDKITE_BUILD_NUMBER}"
+    docker build -t "${AWS_HOST}"/mock_server:latest ./ -f ./infra/Dockerfile.stub
+    docker tag "${AWS_HOST}"/mock_server:latest "${AWS_HOST}"/mock_server:hb"${BUILDKITE_BUILD_NUMBER}"
 
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$(pwd)"/.trivyignore:/.trivyignore \
-            aquasec/trivy:0.20.0 image \
-            --severity HIGH,CRITICAL \
-            --exit-code 1 \
-            --ignore-unfixed \
-            --format table \
-            --ignorefile /.trivyignore \
-            "${AWS_HOST}"/mock_server:latest
+    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+      -v "$(pwd)"/.trivyignore:/.trivyignore \
+      aquasec/trivy:0.20.0 image \
+      --severity HIGH,CRITICAL \
+      --exit-code 1 \
+      --ignore-unfixed \
+      --format table \
+      --ignorefile /.trivyignore \
+      "${AWS_HOST}"/mock_server:latest
 
-          docker push "${AWS_HOST}/mock_server:latest"
-          docker push "${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}"
+    docker push "${AWS_HOST}/mock_server:latest"
+    docker push "${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}"
 
-          docker rmi "${AWS_HOST}/mock_server:latest"
-          docker rmi "${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}"
-    fi
+    docker rmi "${AWS_HOST}/mock_server:latest"
+    docker rmi "${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}"
+  fi
 }
 
 build_frontend() {

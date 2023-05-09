@@ -30,16 +30,17 @@ steps:
     command: ./.buildkite/ops/deploy infra
 
   - wait
-  - label: "Build backend"
+  - label: ":rocket: Build backend"
     branches: main
     command: ./.buildkite/ops/build backend
 
   - wait
-  - label: "Build stub"
+  - label: ":rocket: Build stub"
+    key: "Build stub"
     branches: main
-    command: ./.buildkite/ops/build mockServer
+    command: ./.buildkite/ops/build stub
 
-  - label: "Deploy stub"
+  - label: ":rocket: Deploy stub"
     branches: main
     depends_on: "Build stub"
     command: ./.buildkite/ops/deploy stub

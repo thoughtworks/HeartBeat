@@ -25,6 +25,8 @@ deploy_e2e() {
 deploy_stub() {
   sed -i -e "s/heartbeat_stub:latest/${AWS_ECR_HOST}\/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
 
+  scp -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}":./docker-compose-stub.yml
+
   ssh -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
 
     if [ -n \"\$(docker images -f label=arch=stubs -q)\" ]; then
@@ -32,8 +34,6 @@ deploy_stub() {
           docker rm \$(docker ps -aq -f label=arch=stubs)
           docker rmi -f \$(docker images -f label=arch=stubs -q)
     fi
-
-    cp ./infra/docker-compose.yml ./docker-compose-stub.yml
 
     docker pull ${AWS_ECR_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}
 

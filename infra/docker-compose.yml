@@ -22,8 +22,8 @@ services:
     restart: always
     networks:
       - default
-  mockServer:
-    image: mock_server:latest
+  stub:
+    image: heartbeat_stub:latest
     container_name: mockServer
     ports:
       - "${MOCK_SERVER_PORT:-4323}:4323"

@@ -257,7 +257,7 @@ Resources:
               - ecr:InitiateLayerUpload
               - ecr:UploadLayerPart
               - ecr:CompleteLayerUpload
-  EcrMockServer:
+  EcrStub:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "heartbeat_stub"

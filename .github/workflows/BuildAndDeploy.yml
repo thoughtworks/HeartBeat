@@ -296,7 +296,7 @@ jobs:
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: mock_server
+          REPOSITORY: heartbeat_stub
           IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
           docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./infra/Dockerfile.stub
@@ -305,7 +305,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ steps.login-ecr.outputs.registry }}/mock_server:latest
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_stub:latest
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -316,7 +316,7 @@ jobs:
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: mock_server
+          REPOSITORY: heartbeat_stub
           IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
           docker push $REGISTRY/$REPOSITORY:latest
@@ -379,8 +379,8 @@ jobs:
       - name: Update docker-compose.yaml
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
         run: |
-          sed -i -e 's/mock_server:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/mock_server:hb${{ github.run_number }}/g' infra/docker-compose.yml
-          mv infra/docker-compose.yml infra/docker-compose-mock-server.yml
+          sed -i -e 's/heartbeat_stub:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_stub:hb${{ github.run_number }}/g' infra/docker-compose.yml
+          mv infra/docker-compose.yml infra/docker-compose-stub.yml
       - name: Copy docker-compose to ec2
         uses: appleboy/scp-action@master
         if: ${{ contains(github.event.head_commit.message, '[stub]') }}
@@ -389,7 +389,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
-          source: "./infra/docker-compose-mock-server.yml"
+          source: "./infra/docker-compose-stub.yml"
           target: "./"
           strip_components: 1
       - name: Deploy
@@ -405,12 +405,12 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            cp "./infra/docker-compose-mock-server.yml" ./
-            # docker-compose down mockServer
+            cp "./infra/docker-compose-stub.yml" ./
+            # docker-compose down stub
             if [[ -n $(docker images -f label=arch=stubs -q) ]]; then docker rmi -f $(docker images -f label=arch=stubs -q); fi
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/mock_server:latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_stub:latest
             export MOCK_SERVER_PORT=${{ secrets.AWS_EC2_IP_E2E_PORT }}
-            docker-compose -f docker-compose-mock-server.yml up -d mockServer
+            docker-compose -f docker-compose-stub.yml up -d stub
   e2e:
     runs-on: ubuntu-latest
     defaults:

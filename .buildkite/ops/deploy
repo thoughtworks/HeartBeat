@@ -40,7 +40,7 @@ deploy_stub() {
 
     docker-compose stop stub
 
-    export MOCK_SERVER_PORT=${AWS_EC2_IP_E2E_PORT}
+    export MOCK_SERVER_PORT=${AWS_EC2_IP_MOCK_SERVER_PORT}
     docker-compose -f docker-compose-stub.yml up -d stub
   "
   echo "Successfully deployed stub service"

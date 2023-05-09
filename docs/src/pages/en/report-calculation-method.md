@@ -12,3 +12,10 @@ layout: ../../layouts/MainLayout.astro
 | :---------------------- | :--------------------------------------- | :--- |
 | Velocity for Storypoint | Sum of the storypoints of all done cards |      |
 | Velocity for cards      | Sum of all done cards                    |      |
+
+## CycleTime
+
+| Metrics                 | Calculate method                         | Note |
+| :---------------------- | :--------------------------------------- | :--- |
+| Velocity for Storypoint | Sum of the storypoints of all done cards |      |
+| Velocity for cards      | Sum of all done cards                    |      |

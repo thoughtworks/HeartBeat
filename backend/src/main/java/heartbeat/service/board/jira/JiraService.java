@@ -1,5 +1,7 @@
 package heartbeat.service.board.jira;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
@@ -129,7 +131,6 @@ public class JiraService {
 	public CardCollection getStoryPointsAndCycleTime(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
 		BoardType boardType = BoardType.fromValue(request.getType());
-		cardCustomFieldKey = saveCustomFieldKey(request.getTargetFields());
 		URI baseUrl = urlGenerator.getUri(request.getSite());
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
 			.boardId(request.getBoardId())
@@ -140,16 +141,8 @@ public class JiraService {
 			.endTime(request.getEndTime())
 			.build();
 
-		List<Integer> storyPiontList = getStoryPoint(baseUrl, boardRequestParam,
-				parseJiraJql(boardType, request.getStatus(), boardRequestParam));
 		List<JiraCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
-		ArrayList<JiraCard> mutableList = new ArrayList<>(allDoneCards);
-		for (int i = 0; i < allDoneCards.size(); i++) {
-			mutableList.get(i).getFields().setStoryPoints(storyPiontList.get(i));
-		}
-		allDoneCards = mutableList;
 		List<JiraCardDTO> matchedCards = getMatchedCards(request, boardColumns, users, baseUrl, allDoneCards);
-
 		int storyPointSum = matchedCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
@@ -276,12 +269,13 @@ public class JiraService {
 		String jql = parseJiraJql(boardType, doneColumns, boardRequestParam);
 
 		log.info("[Jira] Start to get first-page done card information");
-		AllDoneCardsResponseDTO allDoneCardsResponseDTO = jiraFeignClient.getAllDoneCards(baseUrl,
+		String allDoneCardResponse = jiraFeignClient.getAllDoneCardForStoryPoint(baseUrl,
 				boardRequestParam.getBoardId(), QUERY_COUNT, 0, jql, boardRequestParam.getToken());
 		log.info("[Jira] Successfully get first-page done card information");
 
-		List<JiraCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
+		AllDoneCardsResponseDTO allDoneCardsResponseDTO = formatAllDoneCardsResponse(allDoneCardResponse);
 
+		List<JiraCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 		int pages = (int) Math.ceil(Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
 		if (pages <= 1) {
 			return doneCards;
@@ -290,9 +284,11 @@ public class JiraService {
 		log.info("[Jira] Start to get more done card information");
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
 		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
-			.map(startFrom -> CompletableFuture
-				.supplyAsync(() -> (jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
-						QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken())), taskExecutor))
+			.map(startFrom -> CompletableFuture.supplyAsync(
+					() -> (formatAllDoneCardsResponse(
+							jiraFeignClient.getAllDoneCardForStoryPoint(baseUrl, boardRequestParam.getBoardId(),
+									QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()))),
+					taskExecutor))
 			.toList();
 		log.info("[Jira] Successfully get more done card information");
 
@@ -304,17 +300,33 @@ public class JiraService {
 		return Stream.concat(doneCards.stream(), moreDoneCards.stream()).toList();
 	}
 
-	private List<Integer> getStoryPoint(URI baseUrl, BoardRequestParam boardRequestParam, String jql) {
-		String allDoneCardResponse = jiraFeignClient.getAllDoneCardForStoryPoint(baseUrl,
-				boardRequestParam.getBoardId(), QUERY_COUNT, 0, jql, boardRequestParam.getToken());
+	private AllDoneCardsResponseDTO formatAllDoneCardsResponse(String allDoneCardResponse) {
+		AllDoneCardsResponseDTO allDoneCardsResponseDTO;
 		String[] split = allDoneCardResponse.split(",");
-		return Arrays.stream(split).filter(it -> it.contains(cardCustomFieldKey.getSTORY_POINTS())).map(field -> {
-			String item = field.substring(field.indexOf(":") + 1, field.length()).trim();
-			if (item.equals("null")) {
-				return (int) Double.parseDouble("0");
-			}
-			return (int) Double.parseDouble(item);
-		}).toList();
+		List<Integer> storyPiontList = Arrays.stream(split)
+			.filter(it -> it.contains(cardCustomFieldKey.getSTORY_POINTS()))
+			.map(field -> {
+				String item = field.substring(field.indexOf(":") + 1, field.length()).trim();
+				if (item.equals("null")) {
+					return (int) Double.parseDouble("0");
+				}
+				return (int) Double.parseDouble(item);
+			})
+			.toList();
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			allDoneCardsResponseDTO = objectMapper.readValue(allDoneCardResponse, AllDoneCardsResponseDTO.class);
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+		ArrayList<JiraCard> mutableList = new ArrayList<>(allDoneCardsResponseDTO.getIssues());
+
+		for (int i = 0; i < allDoneCardsResponseDTO.getIssues().size(); i++) {
+			mutableList.get(i).getFields().setStoryPoints(storyPiontList.get(i));
+		}
+		allDoneCardsResponseDTO.setIssues(mutableList);
+		return allDoneCardsResponseDTO;
 	}
 
 	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {

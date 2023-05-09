@@ -24,7 +24,7 @@ services:
       - default
   stub:
     image: heartbeat_stub:latest
-    container_name: mockServer
+    container_name: stub
     ports:
       - "${MOCK_SERVER_PORT:-4323}:4323"
     restart: always

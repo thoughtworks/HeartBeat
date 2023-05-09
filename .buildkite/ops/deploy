@@ -24,7 +24,19 @@ deploy_e2e() {
 }
 
 deploy_stub() {
-  echo "deploy_stub"
+
+  ssh  -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
+            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}
+
+            if [ -n \"\$(docker images -f label=arch=stubs -q)\" ]; then
+                  docker stop \$(docker ps -aq -f label=arch=stubs)
+                  docker rm \$(docker ps -aq -f label=arch=stubs)
+                  docker rmi -f \$(docker images -f label=arch=stubs -q)
+            fi
+            docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}
+
+            docker run -p 4323:4323 -d --name mockServer ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_HOST}/mock_server:hb${BUILDKITE_BUILD_NUMBER}
+        "
 }
 
 deploy_prod() {

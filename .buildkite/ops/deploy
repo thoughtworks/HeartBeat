@@ -27,12 +27,13 @@ deploy_stub() {
 
   scp -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}":./docker-compose-stub.yml
 
+  echo "Start to deploy stub service"
   ssh -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
 
     if [ -n \"\$(docker images -f label=arch=stubs -q)\" ]; then
-          docker stop \$(docker ps -aq -f label=arch=stubs)
-          docker rm \$(docker ps -aq -f label=arch=stubs)
-          docker rmi -f \$(docker images -f label=arch=stubs -q)
+      docker stop \$(docker ps -aq -f label=arch=stubs)
+      docker rm \$(docker ps -aq -f label=arch=stubs)
+      docker rmi -f \$(docker images -f label=arch=stubs -q)
     fi
 
     docker pull ${AWS_ECR_HOST}/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}
@@ -40,6 +41,7 @@ deploy_stub() {
     export MOCK_SERVER_PORT=${AWS_EC2_IP_E2E_PORT}
     docker-compose -f docker-compose-stub.yml up -d stub
   "
+  echo "Successfully deployed stub service"
 }
 
 deploy_prod() {

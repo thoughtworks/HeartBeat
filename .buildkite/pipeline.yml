@@ -46,6 +46,7 @@ steps:
 
   - wait
   - label: mock_server_deploy
+    branches: main
     key: mock_server_deploy
     depends_on: mock_server_build
     command: ./.buildkite/ops/deploy stub

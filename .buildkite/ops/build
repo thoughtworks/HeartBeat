@@ -2,11 +2,11 @@
 set -euo pipefail
 
 display_help() {
-  echo "Usage: $0 {frontend|backend|mockserver}" >&2
+  echo "Usage: $0 {frontend|backend|mockServer}" >&2
   echo
   echo "   frontend     build frontend"
   echo "   backend      build backend"
-  echo "   mockserver   build mockserver"
+  echo "   mockServer   build mockServer"
   echo
   exit 1
 }

@@ -32,14 +32,17 @@ steps:
   - label: ":rocket: Build Backend"
     # branches: main
     depends_on: "deploy-infra"
-    command: ./.buildkite/ops/build backend
+    command: true|| ./.buildkite/ops/build backend
 
   - label: ":rocket: Build Stub"
     # if:  build.branch == "main" && build.message =~ /\[stub\]/
+    key: "build-stub"
+    depends_on: "deploy-infra"
     command: ./.buildkite/ops/build stub
 
   - label: ":rocket: Deploy Stub"
     # if:  build.branch == "main" && build.message =~ /\[stub\]/
+    depends_on: "build-stub"
     command: ./.buildkite/ops/deploy stub
 
   - label: ":rocket: Deploy Prod"

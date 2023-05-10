@@ -23,7 +23,7 @@ steps:
   - wait
   - label: ":rocket: Deploy infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
-    key: "deploy infra"
+    key: "deploy-infra"
     env:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
@@ -32,7 +32,7 @@ steps:
 
   - label: ":rocket: Build backend"
     branches: main
-    depends_on: "deploy infra"
+    depends_on: "deploy-infra"
     command: ./.buildkite/ops/build backend
 
   - label: ":rocket: Build Stub"

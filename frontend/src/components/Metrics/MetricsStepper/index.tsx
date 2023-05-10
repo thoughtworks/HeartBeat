@@ -46,7 +46,7 @@ const MetricsStepper = () => {
   const { metrics, projectName, dateRange } = config.basic
 
   const selectedBoardColumns = useAppSelector(selectBoardColumns)
-  const isPipelineVerified = (type: string) => {
+  const verifyPipeline = (type: string) => {
     const pipelines =
       type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
         ? metricsConfig.leadTimeForChanges
@@ -59,32 +59,33 @@ const MetricsStepper = () => {
     isShowBoard && selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2
   const isShowDeploymentFrequency = isShowPipeline
   const isShowLeadTimeForChanges = isShowPipeline && isShowSourceControl
-  const isCrewsSettingVerified = metricsConfig.users.length > 0
-  const isRealDoneVerified = metricsConfig.doneColumn.length > 0
-  const isDeploymentFrequencyVerified = isPipelineVerified(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-  const isLeadTimeForChangesVerified = isPipelineVerified(PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
+  const isCrewsSettingValid = metricsConfig.users.length > 0
+  const isRealDoneValid = metricsConfig.doneColumn.length > 0
+  const isDeploymentFrequencyValid = verifyPipeline(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+  const isLeadTimeForChangesValid = verifyPipeline(PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
 
   useEffect(() => {
     if (!activeStep) {
-      const hasMetrics = metrics.length
-      const showNextButtonParams = [
-        { key: isShowBoard, value: isBoardVerified },
-        { key: isShowPipeline, value: isPipelineToolVerified },
-        { key: isShowSourceControl, value: isSourceControlVerified },
+      const nextButtonValidityOptions = [
+        { isShow: isShowBoard, isValid: isBoardVerified },
+        { isShow: isShowPipeline, isValid: isPipelineToolVerified },
+        { isShow: isShowSourceControl, isValid: isSourceControlVerified },
       ]
-      const activeParams = showNextButtonParams.filter(({ key }) => key)
-      projectName && dateRange.startDate && dateRange.endDate && hasMetrics
-        ? setIsDisableNextButton(!activeParams.every(({ value }) => value))
+      const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
+      projectName && dateRange.startDate && dateRange.endDate && metrics.length
+        ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
         : setIsDisableNextButton(true)
     } else if (activeStep === 1) {
-      const showNextButtonParams = [
-        { key: isShowCrewsSetting, value: isCrewsSettingVerified },
-        { key: isShowRealDone, value: isRealDoneVerified },
-        { key: isShowDeploymentFrequency, value: isDeploymentFrequencyVerified },
-        { key: isShowLeadTimeForChanges, value: isLeadTimeForChangesVerified },
+      const nextButtonValidityOptions = [
+        { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
+        { isShow: isShowRealDone, isValid: isRealDoneValid },
+        { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
+        { isShow: isShowLeadTimeForChanges, isValid: isLeadTimeForChangesValid },
       ]
-      const activeParams = showNextButtonParams.filter(({ key }) => key)
-      activeParams.every(({ value }) => value) ? setIsDisableNextButton(false) : setIsDisableNextButton(true)
+      const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
+      activeNextButtonValidityOptions.every(({ isValid }) => isValid)
+        ? setIsDisableNextButton(false)
+        : setIsDisableNextButton(true)
     }
   }, [
     activeStep,

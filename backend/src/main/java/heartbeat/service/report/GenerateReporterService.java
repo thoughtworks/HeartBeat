@@ -2,13 +2,12 @@ package heartbeat.service.report;
 
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
-import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
-import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
@@ -31,6 +30,7 @@ public class GenerateReporterService {
 	private final JiraService jiraService;
 
 	private final CalculateClassification calculateClassification;
+
 	private final BuildKiteService buildKiteService;
 
 	private final DeploymentFrequencyCalculator deploymentFrequency;
@@ -58,10 +58,6 @@ public class GenerateReporterService {
 		this.fetchOriginalData(request);
 
 		// calculate all required data
-		Velocity velocity = calculateVelocity();
-		List<Classification> classification = calculateClassification
-			.calculateClassification(request.getJiraBoardSetting().getTargetFields(), cardCollection);
-		calculateDeployment();
 		calculateCycleTime();
 		calculateLeadTime();
 
@@ -69,6 +65,8 @@ public class GenerateReporterService {
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
+				case "classification" -> reportResponse.setClassification(calculateClassification
+					.calculateClassification(request.getJiraBoardSetting().getTargetFields(), cardCollection));
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));

@@ -5,32 +5,24 @@ import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
-import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
-import heartbeat.controller.report.dto.response.DeploymentFrequency;
-import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.controller.report.dto.response.*;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import heartbeat.service.pipeline.buildkite.builder.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.when;
-
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -44,13 +36,14 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	CalculateClassification calculateClassification;
+
 	private BuildKiteService buildKiteService;
 
 	@Mock
 	private DeploymentFrequencyCalculator calculateDeploymentFrequency;
 
 	@Test
-	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() throws IllegalAccessException {
+	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
 		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
 			.boardId("")
 			.boardColumns(List.of())
@@ -76,7 +69,7 @@ class GenerateReporterServiceTest {
 
 		ReportResponse result = generateReporterService.generateReporter(request);
 		Velocity velocity = Velocity.builder().velocityForSP("0").velocityForCards("0").build();
-
+		Classification classification = Classification.builder().build();
 		assertThat(result).isEqualTo(ReportResponse.builder().velocity(velocity).build());
 	}
 

@@ -16,6 +16,7 @@ public class ReportResponse {
 	private Velocity velocity;
 
 	private List<Classification> classification;
+
 	private DeploymentFrequency deploymentFrequency;
 
 }

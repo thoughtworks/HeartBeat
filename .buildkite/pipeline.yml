@@ -22,7 +22,7 @@ steps:
 
   # - wait
   - label: ":rocket: Deploy Infra"
-    if:  build.branch == "main" && build.message =~ /\[infra\]/
+    # if:  build.branch == "main" && build.message =~ /\[infra\]/
     key: "deploy-infra"
     env:
       AWSHost: "$AWS_HOST"

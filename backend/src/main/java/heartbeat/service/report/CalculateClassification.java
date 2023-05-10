@@ -39,7 +39,7 @@ public class CalculateClassification {
 
 		for (JiraCardDTO jiraCardResponse : cards.getJiraCardDTOList()) {
 			JiraCardField jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
-			Map<String, Object> tempFields = toMap(jiraCardFields);
+			Map<String, Object> tempFields = getFieldsAsMap(jiraCardFields);
 			for (String tempFieldsKey : tempFields.keySet()) {
 				Object obj = tempFields.get(tempFieldsKey);
 				if (obj instanceof List) {
@@ -93,7 +93,7 @@ public class CalculateClassification {
 	}
 
 	private static String pickDisplayNameFromObj(Object obj) {
-		Map<String, Object> map = objectToMap(obj);
+		Map<String, Object> map = getFieldsAsMap(obj);
 		if (map.containsKey("displayName")) {
 			return map.get("displayName").toString();
 		}
@@ -120,14 +120,6 @@ public class CalculateClassification {
 			}
 		}
 		return map;
-	}
-
-	private Map<String, Object> toMap(JiraCardField cardFields) {
-		return getFieldsAsMap(cardFields);
-	}
-
-	public static Map<String, Object> objectToMap(Object object) {
-		return getFieldsAsMap(object);
 	}
 
 }

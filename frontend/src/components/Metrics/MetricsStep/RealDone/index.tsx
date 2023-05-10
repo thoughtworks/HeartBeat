@@ -13,20 +13,16 @@ interface realDoneProps {
   label: string
 }
 
-function getSelectedDoneColumns(selectedBoardColumns: { name: string; value: string }[]) {
-  return selectedBoardColumns.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).map(({ name }) => name)
-}
+const getSelectedDoneColumns = (selectedBoardColumns: { name: string; value: string }[]) =>
+  selectedBoardColumns.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).map(({ name }) => name)
 
-function getFilteredStatuses(
+const getFilteredStatuses = (
   columns: { key: string; value: { name: string; statuses: string[] } }[],
   selectedDoneColumns: string[]
-) {
-  return columns.filter(({ value }) => selectedDoneColumns.includes(value.name)).flatMap(({ value }) => value.statuses)
-}
+) => columns.filter(({ value }) => selectedDoneColumns.includes(value.name)).flatMap(({ value }) => value.statuses)
 
-function getDoneStatuses(columns: { key: string; value: { name: string; statuses: string[] } }[]) {
-  return columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
-}
+const getDoneStatuses = (columns: { key: string; value: { name: string; statuses: string[] } }[]) =>
+  columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
 
 export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const dispatch = useAppDispatch()

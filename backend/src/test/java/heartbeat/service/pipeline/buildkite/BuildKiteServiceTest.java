@@ -9,12 +9,20 @@ import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
+import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
+import heartbeat.exception.NotFoundException;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
+import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -290,6 +299,71 @@ class BuildKiteServiceTest {
 
 		assertNotNull(pipelineStepsDTO);
 		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(0);
+	}
+
+	@Test
+	public void shouldReturnBuildKiteBuildInfoWhenFetchPipelineBuilds() {
+		String mockStartTime = "1661702400000";
+		String mockEndTime = "1662739199000";
+		String mockToken = "xxxxxxxxxx";
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
+				HttpStatus.OK);
+
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString()))
+			.thenReturn(responseEntity);
+		List<BuildKiteBuildInfo> pipelineBuilds = buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment,
+				mockStartTime, mockEndTime);
+
+		assertNotNull(pipelineBuilds);
+		assertThat(pipelineBuilds.size()).isEqualTo(0);
+	}
+
+	@Test
+	public void shouldReturnDeployTimesWhenCountDeployTimes() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build(),
+				BuildKiteBuildInfoBuilder.withDefault()
+					.withJobs(List.of(BuildKiteJobBuilder.withDefault().withState("passed").build()))
+					.build(),
+				BuildKiteBuildInfoBuilder.withDefault()
+					.withJobs(List.of(BuildKiteJobBuilder.withDefault().withStartedAt("").build()))
+					.build());
+		DeployTimes expectedDeployTimes = DeployTimesBuilder.withDefault().build();
+
+		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos);
+
+		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
+	}
+
+	@Test
+	public void shouldReturnDeployInfoWhenMappedDeployInfoIsNull() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().withStep("xxxx").build();
+		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build());
+		DeployTimes expectedDeployTimes = DeployTimesBuilder.withDefault()
+			.withPipelineStep("xxxx")
+			.withPassed(Collections.emptyList())
+			.withFailed(Collections.emptyList())
+			.build();
+
+		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos);
+
+		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
+	}
+
+	@Test
+	public void shouldThrowErrorWhenCountDeployTimesGivenOrgIdIsNull() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironment.builder().build();
+		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfo.builder().build());
+
+		Assertions.assertThatThrownBy(() -> buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos))
+			.isInstanceOf(NotFoundException.class)
+			.hasMessageContaining("miss orgId argument");
 	}
 
 }

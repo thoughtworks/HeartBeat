@@ -5,7 +5,7 @@ import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { metricsClient } from '@src/clients/MetricsClient'
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice'
-import { ORGANIZATION, PIPELINE_NAME, STEPS, REMOVE_BUTTON } from '../../../../fixtures'
+import { ORGANIZATION, PIPELINE_NAME, REMOVE_BUTTON, STEP } from '../../../../fixtures'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -119,7 +119,7 @@ describe('PipelineMetricSelection', () => {
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
     expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
-    expect(getByText(STEPS)).toBeInTheDocument()
+    expect(getByText(STEP)).toBeInTheDocument()
   })
 
   it('should show error message pop when getSteps failed', async () => {
@@ -154,9 +154,9 @@ describe('PipelineMetricSelection', () => {
     await userEvent.click(pipelineNameListBox.getByText('mockName2'))
 
     expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
-    expect(getByText(STEPS)).toBeInTheDocument()
+    expect(getByText(STEP)).toBeInTheDocument()
 
-    await userEvent.click(getByRole('button', { name: STEPS }))
+    await userEvent.click(getByRole('button', { name: STEP }))
     const stepsListBox = within(getByRole('listbox'))
     await userEvent.click(stepsListBox.getByText('step2'))
 

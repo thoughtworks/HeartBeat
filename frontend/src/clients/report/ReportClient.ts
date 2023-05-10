@@ -53,11 +53,7 @@ export class ReportClient extends HttpClient {
 
   report = async (params: ReportRequestDTO) => {
     await this.axiosInstance
-      .post(`/report`, params, {
-        headers: {
-          'content-type': 'application/json',
-        },
-      })
+      .post(`/reports`, params, {})
       .then((res) => {
         this.reportResponse = res.data
       })

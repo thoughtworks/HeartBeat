@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
@@ -7,7 +7,6 @@ import {
   CHINA_CALENDAR,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
-  INIT_REPORT_DATA_WITH_TWO_COLUMNS_CYCLE,
   NAME,
   PIPELINE_STEP,
 } from '@src/constants'
@@ -15,15 +14,29 @@ import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import dayjs from 'dayjs'
+import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 
 export const ReportStep = () => {
   const { generateReport, isLoading } = useGenerateReportEffect()
-  const [velocityData, setVelocityData] = useState(INIT_REPORT_DATA_WITH_TWO_COLUMNS)
-  const [cycleTimeData, setCycleTimeData] = useState(INIT_REPORT_DATA_WITH_TWO_COLUMNS_CYCLE)
-  const [classificationData, setClassificationData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
-  const [deploymentFrequencyData, setDeploymentFrequencyData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
-  const [leadTimeForChangesData, setLeadTimeForChangesData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
-  const [changeFailureRateData, setChangeFailureRateData] = useState(INIT_REPORT_DATA_WITH_THREE_COLUMNS)
+  const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
+  const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
+  const [classificationState, setClassificationState] = useState({
+    value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
+    isShow: false,
+  })
+  const [deploymentFrequencyState, setDeploymentFrequencyState] = useState({
+    value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
+    isShow: false,
+  })
+  const [leadTimeForChangesState, setLeadTimeForChangesState] = useState({
+    value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
+    isShow: false,
+  })
+  const [changeFailureRateState, setChangeFailureRateState] = useState({
+    value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
+    isShow: false,
+  })
   const configData = useAppSelector(selectConfig)
   const {
     boardColumns,
@@ -59,15 +72,14 @@ export const ReportStep = () => {
       }
     }) as { id: string; name: string; orgId: string; orgName: string; repository: string; step: string }[]
   }
-
   const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,
-    startTime: dateRange.startDate,
-    endTime: dateRange.endDate,
+    startTime: dayjs(dateRange.startDate).valueOf().toString(),
+    endTime: dayjs(dateRange.endDate).valueOf().toString(),
     considerHoliday: calendarType === CHINA_CALENDAR,
-    pipeline: {
+    buildKiteSetting: {
       ...pipelineTool.config,
-      deployment: getPipelineConfig(deploymentFrequencySettings),
+      deploymentEnvList: getPipelineConfig(deploymentFrequencySettings),
     },
     codebaseSetting: {
       type: sourceControl.config.type,
@@ -88,19 +100,46 @@ export const ReportStep = () => {
     },
   })
 
-  useEffect(() => {
-    generateReport(getReportRequestBody()).then((res) => {
-      if (res) {
-        setVelocityData(res.velocityList)
-        setCycleTimeData(res.cycleTimeList)
-        setClassificationData(res.classificationList)
-        setDeploymentFrequencyData(res.deploymentFrequencyList)
-        setChangeFailureRateData(res.changeFailureRateList)
-        setLeadTimeForChangesData(res.leadTimeForChangesList)
+  const fetchReportData: () => Promise<
+    | {
+        velocityList?: ReportDataWithTwoColumns[]
+        cycleTimeList?: ReportDataWithTwoColumns[]
+        classificationList?: ReportDataWithThreeColumns[]
+        deploymentFrequencyList?: ReportDataWithThreeColumns[]
+        leadTimeForChangesList?: ReportDataWithThreeColumns[]
+        changeFailureRateList?: ReportDataWithThreeColumns[]
       }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    | undefined
+  > = useCallback(async () => {
+    const res = await generateReport(getReportRequestBody())
+    return res
   }, [])
+
+  useEffect(() => {
+    fetchReportData().then((res) => {
+      res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
+      res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
+      res?.classificationList && setClassificationState({ value: res.classificationList, isShow: true })
+      res?.deploymentFrequencyList &&
+        setDeploymentFrequencyState({
+          ...deploymentFrequencyState,
+          value: res.deploymentFrequencyList,
+          isShow: true,
+        })
+      res?.changeFailureRateList &&
+        setChangeFailureRateState({
+          ...changeFailureRateState,
+          value: res.changeFailureRateList,
+          isShow: true,
+        })
+      res?.leadTimeForChangesList &&
+        setLeadTimeForChangesState({
+          ...leadTimeForChangesState,
+          value: res.leadTimeForChangesList,
+          isShow: true,
+        })
+    })
+  }, [fetchReportData])
 
   return (
     <>
@@ -108,32 +147,40 @@ export const ReportStep = () => {
         <Loading />
       ) : (
         <>
-          <ReportForTwoColumns title={'Velocity'} data={velocityData} />
-          <ReportForTwoColumns title={'Cycle time'} data={cycleTimeData} />
-          <ReportForThreeColumns
-            title={'Classifications'}
-            fieldName='Field Name'
-            listName='Subtitle'
-            data={classificationData}
-          />
-          <ReportForThreeColumns
-            title={'Deployment frequency'}
-            fieldName={PIPELINE_STEP}
-            listName={NAME}
-            data={deploymentFrequencyData}
-          />
-          <ReportForThreeColumns
-            title={'Lead time for changes'}
-            fieldName={PIPELINE_STEP}
-            listName={NAME}
-            data={leadTimeForChangesData}
-          />
-          <ReportForThreeColumns
-            title={'Change failure rate'}
-            fieldName={PIPELINE_STEP}
-            listName={NAME}
-            data={changeFailureRateData}
-          />
+          {velocityState.isShow && <ReportForTwoColumns title={'Velocity'} data={velocityState.value} />}
+          {cycleTimeState.isShow && <ReportForTwoColumns title={'Cycle time'} data={cycleTimeState.value} />}
+          {classificationState.isShow && (
+            <ReportForThreeColumns
+              title={'Classifications'}
+              fieldName='Field Name'
+              listName='Subtitle'
+              data={classificationState.value}
+            />
+          )}
+          {deploymentFrequencyState.isShow && (
+            <ReportForThreeColumns
+              title={'Deployment frequency'}
+              fieldName={PIPELINE_STEP}
+              listName={NAME}
+              data={deploymentFrequencyState.value}
+            />
+          )}
+          {leadTimeForChangesState.isShow && (
+            <ReportForThreeColumns
+              title={'Lead time for changes'}
+              fieldName={PIPELINE_STEP}
+              listName={NAME}
+              data={leadTimeForChangesState.value}
+            />
+          )}
+          {changeFailureRateState.isShow && (
+            <ReportForThreeColumns
+              title={'Change failure rate'}
+              fieldName={PIPELINE_STEP}
+              listName={NAME}
+              data={changeFailureRateState.value}
+            />
+          )}
         </>
       )}
     </>

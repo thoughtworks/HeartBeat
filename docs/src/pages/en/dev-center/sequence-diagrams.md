@@ -7,7 +7,7 @@ layout: ../../../layouts/MainLayout.astro
 ## C3 - Generate Report
 
 ```plantuml
-@startuml
+@startuml report
 skin rose
 title C3 - Heartbeat - Generate Report
 participant Frontend
@@ -84,10 +84,19 @@ loop pipeline from pipelines
 
   BuildKiteService -> BuildKiteFeignClient: get BuildKite builds
   activate BuildKiteFeignClient
-  BuildKiteFeignClient --> BuildKiteService:
+    alt#Gold #LightBlue Successful case
+      BuildKiteFeignClient -> BuildKiteService: return BuildKite builds
+    else #Pink Failure
+      BuildKiteFeignClient -> BuildKiteService: throw RequestFailedException
+    end
   deactivate BuildKiteFeignClient
 
-  BuildKiteService -> BuildKiteService: Count deploy times
+  alt#Gold #LightBlue Successful case
+    BuildKiteService -> BuildKiteService:Count deploy times
+  else #Pink Failure
+    BuildKiteService -> BuildKiteService: throw NotFoundException
+  end
+
 end
 
 BuildKiteService --> GenerateReporter_service: return pipeline builds and count deploy time

@@ -8,12 +8,12 @@ import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks
 export interface useGenerateReportEffectInterface {
   generateReport: (params: ReportRequestDTO) => Promise<
     | {
-        velocityList: ReportDataWithTwoColumns[]
-        cycleTimeList: ReportDataWithTwoColumns[]
-        classificationList: ReportDataWithThreeColumns[]
-        deploymentFrequencyList: ReportDataWithThreeColumns[]
-        leadTimeForChangesList: ReportDataWithThreeColumns[]
-        changeFailureRateList: ReportDataWithThreeColumns[]
+        velocityList?: ReportDataWithTwoColumns[]
+        cycleTimeList?: ReportDataWithTwoColumns[]
+        classificationList?: ReportDataWithThreeColumns[]
+        deploymentFrequencyList?: ReportDataWithThreeColumns[]
+        leadTimeForChangesList?: ReportDataWithThreeColumns[]
+        changeFailureRateList?: ReportDataWithThreeColumns[]
       }
     | undefined
   >

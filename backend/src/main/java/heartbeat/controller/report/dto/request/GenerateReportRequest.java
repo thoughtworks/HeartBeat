@@ -26,4 +26,6 @@ public class GenerateReportRequest {
 
 	private JiraBoardSetting jiraBoardSetting;
 
+	private BuildKiteSetting buildKiteSetting;
+
 }

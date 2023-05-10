@@ -1,19 +1,25 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
+import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.Classification;
-import heartbeat.controller.report.dto.response.GenerateReportResponse;
+import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
+import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Service
@@ -22,12 +28,12 @@ import java.util.stream.Stream;
 
 public class GenerateReporterService {
 
-	// todo: need remove private fields not use void function when finish GenerateReport
-	private CardCollection cardCollection;
-
 	private final JiraService jiraService;
 
 	private final CalculateClassification calculateClassification;
+	private final BuildKiteService buildKiteService;
+
+	private final DeploymentFrequencyCalculator deploymentFrequency;
 
 	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> kanbanMetrics = Stream
@@ -35,7 +41,19 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	public GenerateReportResponse generateReporter(GenerateReportRequest request) {
+	private final List<String> buildKiteMetrics = Stream
+		.of(RequireDataEnum.CHANGE_FAILURE_RATE, RequireDataEnum.DEPLOYMENT_FREQUENCY)
+		.map(RequireDataEnum::getValue)
+		.toList();
+
+	// todo: need remove private fields not use void function when finish GenerateReport
+	private CardCollection cardCollection;
+
+	private List<DeployTimes> deployTimesList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
+
+	public ReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 
@@ -47,11 +65,20 @@ public class GenerateReporterService {
 		calculateCycleTime();
 		calculateLeadTime();
 
-		log.info("Successfully generate Report, request: {}, report: {}", request,
-				GenerateReportResponse.builder().velocity(velocity).build());
+		ReportResponse reportResponse = new ReportResponse();
+		request.getMetrics().forEach((metrics) -> {
+			switch (metrics.toLowerCase()) {
+				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
+				case "deployment frequency" ->
+					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
+							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
+				default -> {
+					// TODO
+				}
+			}
+		});
 
-		// combined data to GenerateReportResponse
-		return GenerateReportResponse.builder().velocity(velocity).classification(classification).build();
+		return reportResponse;
 	}
 
 	private Velocity calculateVelocity() {
@@ -59,10 +86,6 @@ public class GenerateReporterService {
 			.velocityForSP(String.valueOf(cardCollection.getStoryPointSum()))
 			.velocityForCards(String.valueOf(cardCollection.getCardsNumber()))
 			.build();
-	}
-
-	private void calculateDeployment() {
-		// todo:add calculate Deployment logic
 	}
 
 	private void calculateCycleTime() {
@@ -82,7 +105,9 @@ public class GenerateReporterService {
 
 		fetchGithubData();
 
-		fetchBuildKiteData();
+		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
+			fetchBuildKiteData(request);
+		}
 
 	}
 
@@ -108,8 +133,17 @@ public class GenerateReporterService {
 		// todo:add fetchGithubData logic
 	}
 
-	private void fetchBuildKiteData() {
-		// todo:add fetchBuildKiteData logic
+	private synchronized void fetchBuildKiteData(GenerateReportRequest request) {
+		deployTimesList.clear();
+		buildInfosList.clear();
+		for (DeploymentEnvironment deploymentEnvironment : request.getBuildKiteSetting().getDeploymentEnvList()) {
+			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(
+					request.getBuildKiteSetting().getToken(), deploymentEnvironment, request.getStartTime(),
+					request.getEndTime());
+			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos);
+			deployTimesList.add(deployTimes);
+			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
+		}
 	}
 
 }

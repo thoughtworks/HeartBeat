@@ -1,10 +1,10 @@
 export interface ReportResponseDTO {
-  velocity: VelocityResponse
-  cycleTime: CycleTimeResponse
-  deploymentFrequency: DeploymentFrequencyResponse
-  leadTimeForChanges: LeadTimeForChangesResponse
-  changeFailureRate: ChangeFailureRateResponse
-  classification: Array<ClassificationResponse>
+  velocity?: VelocityResponse
+  cycleTime?: CycleTimeResponse
+  deploymentFrequency?: DeploymentFrequencyResponse
+  leadTimeForChanges?: LeadTimeForChangesResponse
+  changeFailureRate?: ChangeFailureRateResponse
+  classification?: Array<ClassificationResponse>
 }
 
 export interface VelocityResponse {

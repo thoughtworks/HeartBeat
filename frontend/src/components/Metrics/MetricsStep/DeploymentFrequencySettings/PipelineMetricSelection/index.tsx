@@ -88,7 +88,7 @@ export const PipelineMetricSelection = ({
         <SingleSelection
           id={id}
           options={stepsOptions}
-          label={'Steps'}
+          label={'Step'}
           value={step}
           errorMessage={errorMessages?.step}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}

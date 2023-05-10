@@ -15,24 +15,24 @@ export const reportMapper = ({
   leadTimeForChanges,
   changeFailureRate,
 }: ReportResponseDTO): {
-  velocityList: ReportDataWithTwoColumns[]
-  cycleTimeList: ReportDataWithTwoColumns[]
-  classificationList: ReportDataWithThreeColumns[]
-  deploymentFrequencyList: ReportDataWithThreeColumns[]
-  leadTimeForChangesList: ReportDataWithThreeColumns[]
-  changeFailureRateList: ReportDataWithThreeColumns[]
+  velocityList?: ReportDataWithTwoColumns[]
+  cycleTimeList?: ReportDataWithTwoColumns[]
+  classificationList?: ReportDataWithThreeColumns[]
+  deploymentFrequencyList?: ReportDataWithThreeColumns[]
+  leadTimeForChangesList?: ReportDataWithThreeColumns[]
+  changeFailureRateList?: ReportDataWithThreeColumns[]
 } => {
-  const velocityList = velocityMapper(velocity)
+  const velocityList = velocity && velocityMapper(velocity)
 
-  const cycleTimeList = cycleTimeMapper(cycleTime)
+  const cycleTimeList = cycleTime && cycleTimeMapper(cycleTime)
 
-  const classificationList = classificationMapper(classification)
+  const classificationList = classification && classificationMapper(classification)
 
-  const deploymentFrequencyList = deploymentFrequencyMapper(deploymentFrequency)
+  const deploymentFrequencyList = deploymentFrequency && deploymentFrequencyMapper(deploymentFrequency)
 
-  const leadTimeForChangesList = leadTimeForChangesMapper(leadTimeForChanges)
+  const leadTimeForChangesList = leadTimeForChanges && leadTimeForChangesMapper(leadTimeForChanges)
 
-  const changeFailureRateList = changeFailureRateMapper(changeFailureRate)
+  const changeFailureRateList = changeFailureRate && changeFailureRateMapper(changeFailureRate)
 
   return {
     velocityList,

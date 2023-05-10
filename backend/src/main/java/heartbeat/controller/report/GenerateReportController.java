@@ -2,7 +2,7 @@ package heartbeat.controller.report;
 
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
-import heartbeat.controller.report.dto.response.GenerateReportResponse;
+import heartbeat.controller.report.dto.response.ReportResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.validation.annotation.Validated;
@@ -21,9 +21,11 @@ public class GenerateReportController {
 	private final GenerateReporterService generateReporterService;
 
 	@PostMapping
-	public GenerateReportResponse generateReport(@RequestBody GenerateReportRequest request) {
+	public ReportResponse generateReport(@RequestBody GenerateReportRequest request) {
 		log.info("Start to generate Report, request: {} ", request);
-		return generateReporterService.generateReporter(request);
+		ReportResponse reports = generateReporterService.generateReporter(request);
+		log.info("Successfully generate Report, request: {}, reports: {}", request, reports);
+		return reports;
 	}
 
 }

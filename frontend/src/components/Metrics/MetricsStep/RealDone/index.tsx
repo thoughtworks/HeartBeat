@@ -16,37 +16,37 @@ interface realDoneProps {
 const getSelectedDoneColumns = (selectedBoardColumns: { name: string; value: string }[]) =>
   selectedBoardColumns.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).map(({ name }) => name)
 
-const getFilteredStatuses = (
+const getFilteredStatus = (
   columns: { key: string; value: { name: string; statuses: string[] } }[],
   selectedDoneColumns: string[]
 ) => columns.filter(({ value }) => selectedDoneColumns.includes(value.name)).flatMap(({ value }) => value.statuses)
 
-const getDoneStatuses = (columns: { key: string; value: { name: string; statuses: string[] } }[]) =>
+const getDoneStatus = (columns: { key: string; value: { name: string; statuses: string[] } }[]) =>
   columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
 
 export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const dispatch = useAppDispatch()
   const selectedBoardColumns = useAppSelector(selectBoardColumns)
   const savedDoneColumns = useAppSelector(selectMetricsContent).doneColumn
-  const doneStatuses = getDoneStatuses(columns)
+  const doneStatus = getDoneStatus(columns)
   const selectedDoneColumns = getSelectedDoneColumns(selectedBoardColumns)
-  const filteredStatuses = getFilteredStatuses(columns, selectedDoneColumns)
-  const statuses = selectedDoneColumns.length < 1 ? doneStatuses : filteredStatuses
-  const [selectedDoneStatuses, setSelectedDoneStatuses] = useState([] as string[])
-  const isAllSelected = savedDoneColumns.length === statuses.length
+  const filteredStatus = getFilteredStatus(columns, selectedDoneColumns)
+  const status = selectedDoneColumns.length < 1 ? doneStatus : filteredStatus
+  const [selectedDoneStatus, setSelectedDoneStatus] = useState([] as string[])
+  const isAllSelected = savedDoneColumns.length === status.length
 
   useEffect(() => {
-    setSelectedDoneStatuses([])
+    setSelectedDoneStatus([])
   }, [selectedBoardColumns])
 
   const handleRealDoneChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value
     if (value[value.length - 1] === 'All') {
-      setSelectedDoneStatuses(selectedDoneStatuses.length === statuses.length ? [] : statuses)
-      dispatch(saveDoneColumn(selectedDoneStatuses.length === statuses.length ? [] : statuses))
+      setSelectedDoneStatus(selectedDoneStatus.length === status.length ? [] : status)
+      dispatch(saveDoneColumn(selectedDoneStatus.length === status.length ? [] : status))
       return
     }
-    setSelectedDoneStatuses([...value])
+    setSelectedDoneStatus([...value])
     dispatch(saveDoneColumn([...value]))
   }
 
@@ -66,7 +66,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
             <Checkbox checked={isAllSelected} />
             <ListItemText primary='All' />
           </MenuItem>
-          {statuses.map((column) => {
+          {status.map((column) => {
             const isChecked = savedDoneColumns.includes(column)
             return (
               <MenuItem key={column} value={column}>

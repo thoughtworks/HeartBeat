@@ -53,6 +53,7 @@ const mockValidationCheckContext = {
   clearErrorMessage: jest.fn(),
   checkDuplicatedPipeline: jest.fn(),
   isPipelineValid: jest.fn().mockReturnValue(true),
+  getDuplicatedPipeLineIds: jest.fn().mockReturnValue([]),
 }
 
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
@@ -103,7 +104,13 @@ const fillMetricsPageDate = async () => {
       store.dispatch(
         updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' })
       ),
+      store.dispatch(
+        updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' })
+      ),
+      store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock new step' })),
       store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'organization', value: 'mock new organization' })),
+      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' })),
+      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'step', value: 'mock new step' })),
     ])
   })
 }
@@ -235,6 +242,7 @@ describe('MetricsStepper', () => {
     const { getByText } = setup()
     await fillConfigPageData()
     await userEvent.click(getByText(NEXT))
+    await fillMetricsPageDate()
     await userEvent.click(getByText(NEXT))
 
     expect(getByText(REPORT)).toHaveStyle(`color:${stepperColor}`)
@@ -332,9 +340,13 @@ describe('MetricsStepper', () => {
         jiraColumns: [{ TODO: 'To do' }],
         treatFlagCardAsBlock: false,
       },
-      deployment: [{ id: 0, organization: 'mock new organization', pipelineName: '', step: '' }],
+      deployment: [
+        { id: 0, organization: 'mock new organization', pipelineName: 'mock new pipelineName', step: 'mock new step' },
+      ],
       doneStatus: ['Done', 'Canceled'],
-      leadTime: [{ id: 0, organization: 'mock new organization', pipelineName: '', step: '' }],
+      leadTime: [
+        { id: 0, organization: 'mock new organization', pipelineName: 'mock new pipelineName', step: 'mock new step' },
+      ],
     }
     const { getByText } = setup()
 

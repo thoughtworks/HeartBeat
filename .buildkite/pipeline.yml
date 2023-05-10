@@ -35,7 +35,7 @@ steps:
     command: true|| ./.buildkite/ops/build backend
 
   - label: ":rocket: Build Stub"
-    # if:  build.branch == "main" && build.message =~ /\[stub\]/
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
     key: "build-stub"
     depends_on: "deploy-infra"
     command: ./.buildkite/ops/build stub

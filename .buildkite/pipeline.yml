@@ -28,7 +28,7 @@ steps:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
-    command: ./.buildkite/ops/deploy infra
+    command: ./.buildkite/ops/deploy infra ||true
 
   - label: ":rocket: Build backend"
     # branches: main

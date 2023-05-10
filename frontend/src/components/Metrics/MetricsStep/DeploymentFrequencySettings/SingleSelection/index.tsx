@@ -1,5 +1,5 @@
 import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import React, { useState } from 'react'
+import React from 'react'
 import { FormControlWrapper } from './style'
 import camelCase from 'lodash.camelcase'
 
@@ -24,13 +24,14 @@ export const SingleSelection = ({
   onUpDatePipeline,
   onClearErrorMessage,
 }: Props) => {
-  const [selectedValue, setSelectedValue] = useState(value)
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
 
   const handleChange = (event: SelectChangeEvent) => {
     const value = event.target.value
-    if (onGetSteps) onGetSteps(value)
-    setSelectedValue(value)
+    if (onGetSteps) {
+      onGetSteps(value)
+      onUpDatePipeline(id, 'Step', '')
+    }
     onUpDatePipeline(id, label, value)
     !!errorMessage && onClearErrorMessage(id, camelCase(label))
   }
@@ -39,7 +40,7 @@ export const SingleSelection = ({
     <>
       <FormControlWrapper variant='standard' required error={!!errorMessage}>
         <InputLabel id={labelId}>{label}</InputLabel>
-        <Select labelId={labelId} value={options.length > 0 ? selectedValue : ''} onChange={handleChange}>
+        <Select labelId={labelId} value={value} onChange={handleChange}>
           {options.map((data) => (
             <MenuItem key={data} value={data} data-test-id={labelId}>
               <ListItemText primary={data} />

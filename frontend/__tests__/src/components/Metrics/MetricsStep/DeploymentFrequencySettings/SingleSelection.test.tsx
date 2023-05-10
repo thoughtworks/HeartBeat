@@ -68,9 +68,8 @@ describe('SingleSelection', () => {
     await userEvent.click(getByRole('button', { name: mockLabel }))
     await userEvent.click(getByText(mockOptions[1]))
 
-    expect(getByText(mockOptions[1])).toBeInTheDocument()
     expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
     expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
   })
 })

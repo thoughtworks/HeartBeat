@@ -138,7 +138,7 @@ describe('PipelineMetricSelection', () => {
     await waitFor(() => {
       expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument()
     })
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
     expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
   })
 
@@ -160,7 +160,7 @@ describe('PipelineMetricSelection', () => {
     const stepsListBox = within(getByRole('listbox'))
     await userEvent.click(stepsListBox.getByText('step2'))
 
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(3)
     expect(mockClearErrorMessage).toHaveBeenCalledTimes(2)
   })
 })

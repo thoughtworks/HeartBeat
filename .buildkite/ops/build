@@ -19,9 +19,7 @@ build_backend() {
 }
 
 build_stub() {
-  if [[ "$BUILDKITE_MESSAGE" == *"[stub]"* ]]; then
     build_and_push_image stub
-  fi
 }
 
 build_frontend() {

@@ -34,19 +34,16 @@ steps:
     branches: main
     command: ./.buildkite/ops/build backend
 
-  - wait
-  - label: stub_build
-    branches: main
-    key: stub_build
+  - label: ":rocket: Build Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
     command: ./.buildkite/ops/build stub
 
-  - label: stub_deploy
-    branches: main
-    key: stub_deploy
-    depends_on: stub_build
+  - label: ":rocket: Deploy Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
     command: ./.buildkite/ops/deploy stub
 
   - wait
   - label: ":rocket: Deploy prod"
+    branches: main
     command: ./.buildkite/ops/deploy prod
 

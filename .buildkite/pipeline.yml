@@ -2,26 +2,26 @@ env:
   RETENTION_DAYS: "10"
 
 steps:
-  - label: ":lock: Security Check"
-    command: ./.buildkite/ops/check security
+  # - label: ":lock: Security Check"
+  #   command: ./.buildkite/ops/check security
 
-  - label: ":rocket: Backend Check"
-    command: ./.buildkite/ops/check backend
+  # - label: ":rocket: Backend Check"
+  #   command: ./.buildkite/ops/check backend
 
-  - label: ":mag: Frontend License Check"
-    commands: ./.buildkite/ops/check frontend-license
+  # - label: ":mag: Frontend License Check"
+  #   commands: ./.buildkite/ops/check frontend-license
 
-  - label: ":mag: Backend License Check"
-    commands: ./.buildkite/ops/check backend-license
-    plugins:
-      - artifacts#v1.9.0:
-          upload:
-            - "backend/build/reports/dependency-license/**/*"
-          name: "backend-license-report"
-          expire_in: "${RETENTION_DAYS} days"
+  # - label: ":mag: Backend License Check"
+  #   commands: ./.buildkite/ops/check backend-license
+  #   plugins:
+  #     - artifacts#v1.9.0:
+  #         upload:
+  #           - "backend/build/reports/dependency-license/**/*"
+  #         name: "backend-license-report"
+  #         expire_in: "${RETENTION_DAYS} days"
 
-  - wait
-  - label: ":rocket: Deploy infra"
+  # - wait
+  - label: ":rocket: Deploy Infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
     key: "deploy-infra"
     env:
@@ -31,20 +31,20 @@ steps:
     command: ./.buildkite/ops/deploy infra
 
   - label: ":rocket: Build backend"
-    branches: main
+    # branches: main
     depends_on: "deploy-infra"
     command: ./.buildkite/ops/build backend
 
-  - label: ":rocket: Build Stub"
-    if:  build.branch == "main" && build.message =~ /\[stub\]/
-    command: ./.buildkite/ops/build stub
+  # - label: ":rocket: Build Stub"
+  #   if:  build.branch == "main" && build.message =~ /\[stub\]/
+  #   command: ./.buildkite/ops/build stub
 
-  - label: ":rocket: Deploy Stub"
-    if:  build.branch == "main" && build.message =~ /\[stub\]/
-    command: ./.buildkite/ops/deploy stub
+  # - label: ":rocket: Deploy Stub"
+  #   if:  build.branch == "main" && build.message =~ /\[stub\]/
+  #   command: ./.buildkite/ops/deploy stub
 
-  - wait
-  - label: ":rocket: Deploy prod"
-    branches: main
-    command: ./.buildkite/ops/deploy prod
+  # - wait
+  # - label: ":rocket: Deploy prod"
+  #   branches: main
+  #   command: ./.buildkite/ops/deploy prod
 

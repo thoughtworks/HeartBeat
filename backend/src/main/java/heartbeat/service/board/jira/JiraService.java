@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
-import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
@@ -97,18 +97,20 @@ public class JiraService {
 			log.info("[Jira] Successfully get configuration for board: " + boardRequestParam.getBoardId() + "response: "
 					+ jiraBoardConfigDTO);
 
+			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
 			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequestParam, baseUrl,
 					jiraBoardConfigDTO);
-			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
 
-			return jiraColumnsFuture
-				.thenCompose(jiraColumnResult -> getUserAsync(boardType, baseUrl, boardRequestParam,
-						jiraColumnResult.getDoneColumns())
-					.thenApply(users -> BoardConfigDTO.builder()
-						.jiraColumnRespons(jiraColumnResult.getJiraColumnRespons())
-						.targetFields(targetFieldFuture.join())
-						.users(users)
-						.build()))
+			return jiraColumnsFuture.thenCombine(targetFieldFuture,
+					(jiraColumnResult,
+							targetFields) -> getUserAsync(boardType, baseUrl, boardRequestParam,
+									jiraColumnResult.getDoneColumns())
+								.thenApply(users -> BoardConfigDTO.builder()
+									.targetFields(targetFields)
+									.jiraColumnRespons(jiraColumnResult.getJiraColumnRespons())
+									.users(users)
+									.build())
+								.join())
 				.join();
 		}
 		catch (FeignException e) {
@@ -269,8 +271,8 @@ public class JiraService {
 		String jql = parseJiraJql(boardType, doneColumns, boardRequestParam);
 
 		log.info("[Jira] Start to get first-page done card information");
-		String allDoneCardResponse = jiraFeignClient.getAllDoneCardForStoryPoint(baseUrl,
-				boardRequestParam.getBoardId(), QUERY_COUNT, 0, jql, boardRequestParam.getToken());
+		String allDoneCardResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
+				QUERY_COUNT, 0, jql, boardRequestParam.getToken());
 		log.info("[Jira] Successfully get first-page done card information");
 
 		AllDoneCardsResponseDTO allDoneCardsResponseDTO = formatAllDoneCardsResponse(allDoneCardResponse);
@@ -284,10 +286,9 @@ public class JiraService {
 		log.info("[Jira] Start to get more done card information");
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
 		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
-			.map(startFrom -> CompletableFuture.supplyAsync(
-					() -> (formatAllDoneCardsResponse(
-							jiraFeignClient.getAllDoneCardForStoryPoint(baseUrl, boardRequestParam.getBoardId(),
-									QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()))),
+			.map(startFrom -> CompletableFuture.supplyAsync(() -> (formatAllDoneCardsResponse(
+					jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(), QUERY_COUNT,
+							startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()))),
 					taskExecutor))
 			.toList();
 		log.info("[Jira] Successfully get more done card information");
@@ -303,30 +304,34 @@ public class JiraService {
 	private AllDoneCardsResponseDTO formatAllDoneCardsResponse(String allDoneCardResponse) {
 		AllDoneCardsResponseDTO allDoneCardsResponseDTO;
 		String[] split = allDoneCardResponse.split(",");
-		List<Integer> storyPiontList = Arrays.stream(split)
-			.filter(it -> it.contains(cardCustomFieldKey.getSTORY_POINTS()))
-			.map(field -> {
-				String item = field.substring(field.indexOf(":") + 1, field.length()).trim();
-				if (item.equals("null")) {
-					return (int) Double.parseDouble("0");
-				}
-				return (int) Double.parseDouble(item);
-			})
-			.toList();
-		ObjectMapper objectMapper = new ObjectMapper();
 		try {
+			List<Integer> storyPiontList = Arrays.stream(split)
+				.filter(it -> it.contains(cardCustomFieldKey.getStoryPoints()))
+				.map(field -> {
+					String item = field.substring(field.indexOf(":") + 1).trim();
+					if ("null".equals(item) || "[]".equals(item)) {
+						return 0;
+					}
+					return (int) Double.parseDouble(item);
+				})
+				.toList();
+			ObjectMapper objectMapper = new ObjectMapper();
 			allDoneCardsResponseDTO = objectMapper.readValue(allDoneCardResponse, AllDoneCardsResponseDTO.class);
+			ArrayList<JiraCard> mutableList = new ArrayList<>(allDoneCardsResponseDTO.getIssues());
+			if (!(storyPiontList.size() == 0)) {
+				for (int i = 0; i < allDoneCardsResponseDTO.getIssues().size(); i++) {
+					mutableList.get(i).getFields().setStoryPoints(storyPiontList.get(i));
+				}
+			}
+			allDoneCardsResponseDTO.setIssues(mutableList);
+			return allDoneCardsResponseDTO;
 		}
 		catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
+			throw new RequestFailedException(500, "[Jira] Deserialization failure.");
 		}
-		ArrayList<JiraCard> mutableList = new ArrayList<>(allDoneCardsResponseDTO.getIssues());
-
-		for (int i = 0; i < allDoneCardsResponseDTO.getIssues().size(); i++) {
-			mutableList.get(i).getFields().setStoryPoints(storyPiontList.get(i));
+		catch (NumberFormatException e) {
+			throw new RequestFailedException(500, "[Jira] Type conversion failure.");
 		}
-		allDoneCardsResponseDTO.setIssues(mutableList);
-		return allDoneCardsResponseDTO;
 	}
 
 	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
@@ -550,9 +555,9 @@ public class JiraService {
 		CardCustomFieldKey cardCustomFieldKey = CardCustomFieldKey.builder().build();
 		for (TargetField value : model) {
 			switch (value.getName()) {
-				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setSTORY_POINTS(value.getKey());
-				case "Sprint" -> cardCustomFieldKey.setSPRINT(value.getKey());
-				case "Flagged" -> cardCustomFieldKey.setFLAGGED(value.getKey());
+				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setStoryPoints(value.getKey());
+				case "Sprint" -> cardCustomFieldKey.setSprint(value.getKey());
+				case "Flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
 				default -> {
 				}
 			}

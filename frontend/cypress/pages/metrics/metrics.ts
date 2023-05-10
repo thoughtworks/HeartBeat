@@ -12,8 +12,8 @@ class Metrics {
     cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")').click()
     cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(0).siblings().click()
     cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-payment-selector")').click()
-    cy.get('[id="single-selection-steps"]:contains("Steps")').eq(0).siblings().click()
-    cy.get('[data-test-id="single-selection-steps"]:contains("RECORD RELEASE TO PROD")').click()
+    cy.get('[id="single-selection-step"]:contains("Step")').eq(0).siblings().click()
+    cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO PROD")').click()
 
     cy.get('[data-testid="AddIcon"]:first').click()
     cy.get('[id="single-selection-organization"]:contains("Organization")').eq(1).siblings().click()
@@ -30,8 +30,8 @@ class Metrics {
     cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")').click()
     cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(1).siblings().click()
     cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")').click()
-    cy.get('[id="single-selection-steps"]:contains("Steps")').eq(1).siblings().click()
-    cy.get('[data-test-id="single-selection-steps"]:contains("RECORD RELEASE TO UAT"):last').click()
+    cy.get('[id="single-selection-step"]:contains("Step")').eq(1).siblings().click()
+    cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO UAT"):last').click()
 
     cy.get('[data-testid="AddIcon"]:last').click()
     cy.get('[id="single-selection-organization"]:contains("Organization")').eq(2).siblings().click()

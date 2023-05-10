@@ -40,8 +40,12 @@ describe('Create a new project', () => {
 
     configPage.goMetricsStep()
 
+    nextButton().should('be.disabled')
+
     cy.contains('Crews setting').should('exist')
     cy.contains('Real done').should('exist')
+
+    metricsPage.checkRealDone()
 
     metricsPage.checkClassification()
 

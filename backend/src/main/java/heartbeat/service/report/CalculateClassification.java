@@ -24,6 +24,8 @@ public class CalculateClassification {
 
 	private static final String NONE_KEY = "None";
 
+	private static final String[] VALUE_KEYS = { "displayName", "name", "displayValue" };
+
 	public List<Classification> calculateClassification(List<TargetField> targetFields, CardCollection cards) {
 		// todo:add calculate Classification logic
 		List<Classification> classificationFields = new ArrayList<>();
@@ -39,19 +41,19 @@ public class CalculateClassification {
 
 		for (JiraCardDTO jiraCardResponse : cards.getJiraCardDTOList()) {
 			JiraCardField jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
-			Map<String, Object> tempFields = getFieldsAsMap(jiraCardFields);
+			Map<String, Object> tempFields = getMapFromObject(jiraCardFields);
 			for (String tempFieldsKey : tempFields.keySet()) {
-				Object obj = tempFields.get(tempFieldsKey);
-				if (obj instanceof List) {
-					mapArrayField(resultMap, tempFieldsKey, (List<Object>) obj);
+				Object object = tempFields.get(tempFieldsKey);
+				if (object instanceof List) {
+					mapArrayField(resultMap, tempFieldsKey, (List<Object>) object);
 				}
-				else if (obj != null) {
-					Map<String, Integer> map = resultMap.get(tempFieldsKey);
-					if (map != null) {
-						String displayName = pickDisplayNameFromObj(obj);
-						Integer count = map.get(displayName);
-						map.put(displayName, count != null ? count + 1 : 1);
-						map.put(NONE_KEY, map.get(NONE_KEY) - 1);
+				else if (object != null) {
+					Map<String, Integer> countMap = resultMap.get(tempFieldsKey);
+					if (countMap != null) {
+						String displayName = pickDisplayNameFromObj(object);
+						Integer count = countMap.get(displayName);
+						countMap.put(displayName, count != null ? count + 1 : 1);
+						countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
 					}
 				}
 			}
@@ -59,14 +61,14 @@ public class CalculateClassification {
 
 		for (Map.Entry<String, Map<String, Integer>> entry : resultMap.entrySet()) {
 			String fieldName = entry.getKey();
-			Map<String, Integer> map = entry.getValue();
+			Map<String, Integer> valueMap = entry.getValue();
 			List<ClassificationNameValuePair> classificationNameValuePair = new ArrayList<>();
 
-			if (map.get(NONE_KEY) == 0) {
-				map.remove(NONE_KEY);
+			if (valueMap.get(NONE_KEY) == 0) {
+				valueMap.remove(NONE_KEY);
 			}
 
-			for (Map.Entry<String, Integer> mapEntry : map.entrySet()) {
+			for (Map.Entry<String, Integer> mapEntry : valueMap.entrySet()) {
 				String displayName = mapEntry.getKey();
 				Integer count = mapEntry.getValue();
 				classificationNameValuePair.add(new ClassificationNameValuePair(displayName,
@@ -78,35 +80,31 @@ public class CalculateClassification {
 		return classificationFields;
 	}
 
-	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey, List<Object> obj) {
+	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey, List<Object> objects) {
 		Map<String, Integer> map = resultMap.get(fieldsKey);
 		if (map != null) {
-			for (Object p1 : obj) {
-				String displayName = pickDisplayNameFromObj(p1);
+			for (Object object : objects) {
+				String displayName = pickDisplayNameFromObj(object);
 				Integer count = map.get(displayName);
 				map.put(displayName, count != null ? count + 1 : 1);
 			}
-			if (!obj.isEmpty()) {
+			if (!objects.isEmpty()) {
 				map.put(NONE_KEY, map.get(NONE_KEY) - 1);
 			}
 		}
 	}
 
-	private static String pickDisplayNameFromObj(Object obj) {
-		Map<String, Object> map = getFieldsAsMap(obj);
-		if (map.containsKey("displayName")) {
-			return map.get("displayName").toString();
+	private static String pickDisplayNameFromObj(Object object) {
+		Map<String, Object> map = getMapFromObject(object);
+		for (String fieldName : VALUE_KEYS) {
+			if (map.containsKey(fieldName)) {
+				return map.get(fieldName).toString();
+			}
 		}
-		if (map.containsKey("name")) {
-			return map.get("name").toString();
-		}
-		if (map.containsKey("displayValue")) {
-			return map.get("displayValue").toString();
-		}
-		return obj.toString();
+		return object.toString();
 	}
 
-	private static Map<String, Object> getFieldsAsMap(Object object) {
+	private static Map<String, Object> getMapFromObject(Object object) {
 		Map<String, Object> map = new HashMap<>();
 		Field[] fields = object.getClass().getDeclaredFields();
 		for (Field field : fields) {

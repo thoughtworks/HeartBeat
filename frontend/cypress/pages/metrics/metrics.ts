@@ -1,6 +1,6 @@
 class Metrics {
   checkRealDone() {
-    cy.contains('Consider as done').siblings().eq(0).click()
+    cy.contains('Consider as Done').siblings().eq(0).click()
 
     cy.contains('All').click()
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })

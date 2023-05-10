@@ -14,7 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
-import { PIPELINE_SETTING_TYPES, SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
+import { METRICS_CONSTANTS, PIPELINE_SETTING_TYPES, SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
@@ -23,7 +23,12 @@ import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepV
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
-import { savedMetricsSettingState, selectMetricsContent, updateMetricsState } from '@src/context/Metrics/metricsSlice'
+import {
+  savedMetricsSettingState,
+  selectBoardColumns,
+  selectMetricsContent,
+  updateMetricsState,
+} from '@src/context/Metrics/metricsSlice'
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -33,22 +38,53 @@ const MetricsStepper = () => {
   const config = useAppSelector(selectConfig)
   const metricsConfig = useAppSelector(selectMetricsContent)
   const [isDisableNextButton, setIsDisableNextButton] = useState(true)
+  const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext()
 
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl
   const { metrics, projectName, dateRange } = config.basic
+
+  const selectedBoardColumns = useAppSelector(selectBoardColumns)
+  const verifyPipeline = (type: string) => {
+    const pipelines =
+      type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
+        ? metricsConfig.leadTimeForChanges
+        : metricsConfig.deploymentFrequencySettings
+    return pipelines.every(({ step }) => step !== '') && getDuplicatedPipeLineIds(pipelines).length === 0
+  }
+
+  const isShowCrewsSetting = isShowBoard
+  const isShowRealDone =
+    isShowBoard && selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2
+  const isShowDeploymentFrequency = isShowPipeline
+  const isShowLeadTimeForChanges = isShowPipeline && isShowSourceControl
+  const isCrewsSettingValid = metricsConfig.users.length > 0
+  const isRealDoneValid = metricsConfig.doneColumn.length > 0
+  const isDeploymentFrequencyValid = verifyPipeline(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+  const isLeadTimeForChangesValid = verifyPipeline(PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
+
   useEffect(() => {
     if (!activeStep) {
-      const hasMetrics = metrics.length
-      const showNextButtonParams = [
-        { key: isShowBoard, value: isBoardVerified },
-        { key: isShowPipeline, value: isPipelineToolVerified },
-        { key: isShowSourceControl, value: isSourceControlVerified },
+      const nextButtonValidityOptions = [
+        { isShow: isShowBoard, isValid: isBoardVerified },
+        { isShow: isShowPipeline, isValid: isPipelineToolVerified },
+        { isShow: isShowSourceControl, isValid: isSourceControlVerified },
       ]
-      const activeParams = showNextButtonParams.filter(({ key }) => key)
-      projectName && dateRange.startDate && dateRange.endDate && hasMetrics
-        ? setIsDisableNextButton(!activeParams.every(({ value }) => value))
+      const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
+      projectName && dateRange.startDate && dateRange.endDate && metrics.length
+        ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
+        : setIsDisableNextButton(true)
+    } else if (activeStep === 1) {
+      const nextButtonValidityOptions = [
+        { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
+        { isShow: isShowRealDone, isValid: isRealDoneValid },
+        { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
+        { isShow: isShowLeadTimeForChanges, isValid: isLeadTimeForChangesValid },
+      ]
+      const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
+      activeNextButtonValidityOptions.every(({ isValid }) => isValid)
+        ? setIsDisableNextButton(false)
         : setIsDisableNextButton(true)
     }
   }, [
@@ -62,8 +98,10 @@ const MetricsStepper = () => {
     metrics,
     projectName,
     dateRange,
+    selectedBoardColumns,
+    metricsConfig,
   ])
-  const { isPipelineValid } = useMetricsStepValidationCheckContext()
+
   const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {
     return Object.fromEntries(
       Object.entries(metricsConfig).filter(([, value]) => {
@@ -127,9 +165,7 @@ const MetricsStepper = () => {
     }
 
     if (activeStep === 1) {
-      isPipelineValid(PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE) &&
-        isPipelineValid(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE) &&
-        dispatch(nextStep())
+      dispatch(nextStep())
     }
   }
 

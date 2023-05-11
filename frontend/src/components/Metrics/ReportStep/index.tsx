@@ -3,7 +3,6 @@ import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
-import dayjs from 'dayjs'
 import {
   CHINA_CALENDAR,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,

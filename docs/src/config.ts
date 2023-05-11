@@ -64,6 +64,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Useful scripts & tools', link: '/en/dev-center/useful-scripts-and-tools' },
       { text: 'Report Calculation Method', link: '/en/report-calculation-method' },
       { text: 'Sequence Diagrams', link: '/en/dev-center/sequence-diagrams' },
+      { text: 'Report Flow Diagrams', link: '/en/dev-center/report-calculation-diagrams' },
     ],
   },
 };

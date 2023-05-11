@@ -432,7 +432,7 @@ Resources:
           cloud_final_modules:
           - [scripts-user, always]
           runcmd:
-            - sudo yum -y install docker
+            - sudo yum -y install docker jq
             - sudo systemctl enable docker.service
             - sudo systemctl start docker.service
             - sudo chmod 666 /var/run/docker.sock

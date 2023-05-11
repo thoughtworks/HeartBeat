@@ -83,7 +83,7 @@ export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`
 export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
 export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`
-export const MOCK_REPORT_URL = `${BASE_URL}/report`
+export const MOCK_REPORT_URL = `${BASE_URL}/reports`
 
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
@@ -135,10 +135,10 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
   startTime: '1613664000000',
   endTime: '1614873600000',
   considerHoliday: true,
-  pipeline: {
+  buildKiteSetting: {
     token: 'mockToken',
     type: PIPELINE_TOOL_TYPES.BUILD_KITE,
-    deployment: [
+    deploymentEnvList: [
       {
         id: 'mockPipelineId',
         name: 'mockPipelineName',
@@ -259,7 +259,7 @@ export const MOCK_GET_STEPS_PARAMS = {
 export const REMOVE_BUTTON = 'Remove'
 export const ORGANIZATION = 'Organization'
 export const PIPELINE_NAME = 'Pipeline Name'
-export const STEPS = 'Steps'
+export const STEP = 'Step'
 
 export const MOCK_REPORT_RESPONSE = {
   velocity: {
@@ -388,17 +388,17 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Deployment frequency(deployments/day)',
-          value: '30.00%',
+          value: '0.3',
         },
       ],
     },
     {
       id: 1,
-      name: 'Average/',
+      name: 'Average',
       valuesList: [
         {
           name: 'Deployment frequency(deployments/day)',
-          value: '40.00%',
+          value: '0.4',
         },
       ],
     },

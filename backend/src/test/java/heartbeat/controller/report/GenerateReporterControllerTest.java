@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.service.report.GenerateReporterService;
-import heartbeat.controller.report.dto.response.GenerateReportResponse;
+import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
+import heartbeat.controller.report.dto.response.DeploymentFrequency;
+import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,8 +39,11 @@ class GenerateReporterControllerTest {
 
 	@Test
 	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
-		GenerateReportResponse expectedResponse = GenerateReportResponse.builder()
+		ReportResponse expectedResponse = ReportResponse.builder()
 			.velocity(Velocity.builder().velocityForSP("10").build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
 			.build();
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -58,6 +63,11 @@ class GenerateReporterControllerTest {
 			.read("$.velocity.velocityForSP")
 			.toString();
 		assertThat(resultVelocity).contains("10");
+
+		final var resultDeployment = JsonPath.parse(response.getContentAsString())
+			.read("$.deploymentFrequency.avgDeploymentFrequency.deploymentFrequency")
+			.toString();
+		assertThat(resultDeployment).contains("0.1");
 	}
 
 }

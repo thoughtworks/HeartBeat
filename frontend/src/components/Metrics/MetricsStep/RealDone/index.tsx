@@ -1,6 +1,6 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { saveDoneColumn, selectBoardColumns } from '@src/context/Metrics/metricsSlice'
+import { saveDoneColumn, selectBoardColumns, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { DEFAULT_HELPER_TEXT, METRICS_CONSTANTS, SELECTED_VALUE_SEPARATOR } from '@src/constants'
@@ -13,63 +13,52 @@ interface realDoneProps {
   label: string
 }
 
-function getSelectedDoneColumns(selectedBoardColumns: { name: string; value: string }[]) {
-  const selectedDoneColumns = selectedBoardColumns
-    .filter(({ value }) => value === METRICS_CONSTANTS.doneValue)
-    .map(({ name }) => name)
-  return selectedDoneColumns
-}
+const getSelectedDoneColumns = (selectedBoardColumns: { name: string; value: string }[]) =>
+  selectedBoardColumns.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).map(({ name }) => name)
 
-function getFilteredStatuses(
+const getFilteredStatus = (
   columns: { key: string; value: { name: string; statuses: string[] } }[],
   selectedDoneColumns: string[]
-) {
-  const filteredStatuses = columns
-    .filter(({ value }) => selectedDoneColumns.includes(value.name))
-    .flatMap(({ value }) => value.statuses)
-  return filteredStatuses
-}
+) => columns.filter(({ value }) => selectedDoneColumns.includes(value.name)).flatMap(({ value }) => value.statuses)
 
-function getDoneStatuses(columns: { key: string; value: { name: string; statuses: string[] } }[]) {
-  const doneStatuses =
-    columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
-  return doneStatuses
-}
+const getDoneStatus = (columns: { key: string; value: { name: string; statuses: string[] } }[]) =>
+  columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
 
 export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const dispatch = useAppDispatch()
   const selectedBoardColumns = useAppSelector(selectBoardColumns)
-  const doneStatuses = getDoneStatuses(columns)
+  const savedDoneColumns = useAppSelector(selectMetricsContent).doneColumn
+  const doneStatus = getDoneStatus(columns)
   const selectedDoneColumns = getSelectedDoneColumns(selectedBoardColumns)
-  const filteredStatuses = getFilteredStatuses(columns, selectedDoneColumns)
-  const statuses = selectedDoneColumns.length < 1 ? doneStatuses : filteredStatuses
-  const [selectedDoneStatuses, setSelectedDoneStatuses] = useState([] as string[])
-  const isAllSelected = selectedDoneStatuses.length === statuses.length
+  const filteredStatus = getFilteredStatus(columns, selectedDoneColumns)
+  const status = selectedDoneColumns.length < 1 ? doneStatus : filteredStatus
+  const [selectedDoneStatus, setSelectedDoneStatus] = useState([] as string[])
+  const isAllSelected = savedDoneColumns.length === status.length
 
   useEffect(() => {
-    setSelectedDoneStatuses([])
+    setSelectedDoneStatus([])
   }, [selectedBoardColumns])
 
   const handleRealDoneChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value
     if (value[value.length - 1] === 'All') {
-      setSelectedDoneStatuses(selectedDoneStatuses.length === statuses.length ? [] : statuses)
-      dispatch(saveDoneColumn(selectedDoneStatuses.length === statuses.length ? [] : statuses))
+      setSelectedDoneStatus(selectedDoneStatus.length === status.length ? [] : status)
+      dispatch(saveDoneColumn(selectedDoneStatus.length === status.length ? [] : status))
       return
     }
-    setSelectedDoneStatuses([...value])
+    setSelectedDoneStatus([...value])
     dispatch(saveDoneColumn([...value]))
   }
 
   return (
     <>
       <MetricsSettingTitle title={title} />
-      <FormControlWrapper variant='standard' required error={!selectedDoneStatuses.length}>
+      <FormControlWrapper variant='standard' required error={!savedDoneColumns.length}>
         <InputLabel id='real-done-data-multiple-checkbox-label'>{label}</InputLabel>
         <Select
           labelId='real-done-data-multiple-checkbox-label'
           multiple
-          value={selectedDoneStatuses}
+          value={savedDoneColumns}
           onChange={handleRealDoneChange}
           renderValue={(selectedDoneColumn: string[]) => selectedDoneColumn.join(SELECTED_VALUE_SEPARATOR)}
         >
@@ -77,8 +66,8 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
             <Checkbox checked={isAllSelected} />
             <ListItemText primary='All' />
           </MenuItem>
-          {statuses.map((column) => {
-            const isChecked = selectedDoneStatuses.includes(column)
+          {status.map((column) => {
+            const isChecked = savedDoneColumns.includes(column)
             return (
               <MenuItem key={column} value={column}>
                 <Checkbox checked={isChecked} />
@@ -87,7 +76,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
             )
           })}
         </Select>
-        {!selectedDoneStatuses.length ? (
+        {!savedDoneColumns.length ? (
           <FormHelperText>
             Must select which you want to <strong>consider as Done</strong>
           </FormHelperText>

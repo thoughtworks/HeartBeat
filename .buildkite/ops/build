@@ -1,47 +1,25 @@
 #!/bin/bash
 set -euo pipefail
 
+# shellcheck source=/dev/null
+source ./.buildkite/ops/base
+
 display_help() {
-  echo "Usage: $0 {frontend|backend|mockserver}" >&2
+  echo "Usage: $0 {frontend|backend|stub}" >&2
   echo
   echo "   frontend     build frontend"
   echo "   backend      build backend"
-  echo "   mockserver   build mockserver"
+  echo "   stub         build stub"
   echo
   exit 1
 }
 
 build_backend() {
-  local AWS_HOST="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
-
-  aws configure set region "$AWS_REGION"
-  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-  eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
-  aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_HOST}"
-
-  docker build -t "${AWS_HOST}"/heartbeat_backend:latest ./ -f ./infra/Dockerfile.backend
-  docker tag "${AWS_HOST}"/heartbeat_backend:latest "${AWS_HOST}"/heartbeat_backend:hb"${BUILDKITE_BUILD_NUMBER}"
-
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-    -v "$(pwd)"/.trivyignore:/.trivyignore \
-    aquasec/trivy:0.20.0 image \
-    --severity HIGH,CRITICAL \
-    --exit-code 1 \
-    --ignore-unfixed \
-    --format table \
-    --ignorefile /.trivyignore \
-    "${AWS_HOST}"/heartbeat_backend:latest
-
-  docker push "${AWS_HOST}/heartbeat_backend:latest"
-  docker push "${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
-
-  docker rmi "${AWS_HOST}/heartbeat_backend:latest"
-  docker rmi "${AWS_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}"
+  build_and_push_image backend
 }
 
-build_mockserver() {
-  echo "build mockserver"
+build_stub() {
+    build_and_push_image stub
 }
 
 build_frontend() {
@@ -57,7 +35,7 @@ while [[ "$#" -gt 0 ]]; do
   -h | --help) display_help ;;
   frontend) build_frontend ;;
   backend) build_backend ;;
-  mockserver) build_mockserver ;;
+  stub) build_stub ;;
   *) echo "Unknown parameter passed: $1" ;;
   esac
   shift

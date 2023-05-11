@@ -257,10 +257,10 @@ Resources:
               - ecr:InitiateLayerUpload
               - ecr:UploadLayerPart
               - ecr:CompleteLayerUpload
-  EcrMockServer:
+  EcrStub:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: "mock_server"
+      RepositoryName: "heartbeat_stub"
       LifecyclePolicy:
         LifecyclePolicyText: |
             {

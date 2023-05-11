@@ -9,70 +9,36 @@
   ],
   "startTime": 1661702400000,
   "endTime": 1662739199000,
-  "considerHoliday": false,
-  "pipeline": {
+  "buildKiteSetting": {
     "type": "BuildKite",
     "token": "0d6*********************************a57a",
-    "deployment": [
+    "deploymentEnvList": [
       {
         "orgId": "xxxx",
         "orgName": "XXXX",
         "id": "fs-platform-payment-selector",
         "name": "fs-platform-payment-selector",
-        "step": "RECORD RELEASE TO PROD",
-        "repository": "https://github.com/xxxx-fs/fs-platform-payment-selector.git"
+        "step": "RECORD RELEASE TO PROD"
       },
       {
         "orgId": "xxxx",
         "orgName": "XXXX",
         "id": "fs-platform-onboarding",
         "name": "fs-platform-onboarding",
-        "step": " :shipit: deploy to PROD",
-        "repository": "https://github.com/xxxx-fs/fs-platform-onboarding"
+        "step": " :shipit: deploy to PROD"
       },
       {
         "orgId": "xxxx",
         "orgName": "XXXX",
         "id": "fs-platform-environment-devops",
         "name": "fs-platform-environment-devops",
-        "step": "RECORD RELEASE TO PROD",
-        "repository": "https://github.com/xxxx-fs/fs-platform-environment-devops.git"
+        "step": "RECORD RELEASE TO PROD"
       }
     ]
   },
-  "codebaseSetting": {
-    "type": "Github",
-    "token": "ghp_HThM***************************apHec",
-    "leadTime": [
-      {
-        "orgId": "xxxx",
-        "orgName": "XXXX",
-        "id": "fs-platform-payment-selector",
-        "name": "fs-platform-payment-selector",
-        "step": "RECORD RELEASE TO PROD",
-        "repository": "https://github.com/xxxx-fs/fs-platform-payment-selector.git"
-      },
-      {
-        "orgId": "xxxx",
-        "orgName": "XXXX",
-        "id": "fs-platform-onboarding",
-        "name": "fs-platform-onboarding",
-        "step": " :shipit: deploy to PROD",
-        "repository": "https://github.com/xxxx-fs/fs-platform-onboarding"
-      },
-      {
-        "orgId": "xxxx",
-        "orgName": "XXXX",
-        "id": "fs-platform-environment-devops",
-        "name": "fs-platform-environment-devops",
-        "step": "RECORD RELEASE TO PROD",
-        "repository": "https://github.com/xxxx-fs/fs-platform-environment-devops.git"
-      }
-    ]
-  },
-  "kanbanSetting": {
+  "jiraBoardSetting": {
     "type": "classic jira",
-    "token": "Basic eXUuemh********************************************BRUU3",
+    "token": "Basic exxxxxhhbmdxxxxvYixxxxxxZzlxxxxxx3Rqaxxxxxlodxxxxx9BRUU3",
     "site": "arlive",
     "projectKey": "PLL",
     "boardId": "1963",
@@ -282,9 +248,6 @@
         "flag": false
       }
     ],
-    "doneColumn": [
-      "DONE"
-    ]
-  },
-  "csvTimeStamp": 1679642968744
+    "doneColumn": ["DONE"]
+  }
 }

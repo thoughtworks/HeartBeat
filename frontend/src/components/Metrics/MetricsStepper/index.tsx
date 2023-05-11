@@ -14,11 +14,11 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
-import { METRICS_CONSTANTS, PIPELINE_SETTING_TYPES, SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
+import { METRICS_CONSTANTS, PIPELINE_SETTING_TYPES, REQUIRED_DATA, SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
-import { selectConfig } from '@src/context/config/configSlice'
+import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { Tooltip } from '@mui/material'
@@ -35,6 +35,7 @@ const MetricsStepper = () => {
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStepNumber)
   const [isDialogShowing, setIsDialogShowing] = useState(false)
+  const requiredData = useAppSelector(selectMetrics)
   const config = useAppSelector(selectConfig)
   const metricsConfig = useAppSelector(selectMetricsContent)
   const [isDisableNextButton, setIsDisableNextButton] = useState(true)
@@ -57,8 +58,8 @@ const MetricsStepper = () => {
   const isShowCrewsSetting = isShowBoard
   const isShowRealDone =
     isShowBoard && selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2
-  const isShowDeploymentFrequency = isShowPipeline
-  const isShowLeadTimeForChanges = isShowPipeline && isShowSourceControl
+  const isShowDeploymentFrequency = requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
+  const isShowLeadTimeForChanges = requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)
   const isCrewsSettingValid = metricsConfig.users.length > 0
   const isRealDoneValid = metricsConfig.doneColumn.length > 0
   const isDeploymentFrequencyValid = verifyPipeline(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)

@@ -421,6 +421,11 @@ Resources:
         - !Ref EC2SSHSecurityGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
+      BlockDeviceMappings:
+        - DeviceName: "/dev/xvda"
+          Ebs:
+            VolumeSize: "14"
+            VolumeType: "gp3"
       UserData:
         "Fn::Base64": !Sub |
           #cloud-config

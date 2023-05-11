@@ -86,12 +86,6 @@ public class JiraBoardConfigDTOFixture {
 		return StatusSelfDTO.builder().untranslatedName("doing").statusCategory(new StatusCategory("doing", "doing"));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
-			.total("2")
-			.issues(List.of(new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build())));
-	}
-
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
@@ -100,6 +94,7 @@ public class JiraBoardConfigDTOFixture {
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(2).build()),
 					new JiraCard("1",
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
+					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
 					new JiraCard("1",
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
 	}
@@ -148,6 +143,26 @@ public class JiraBoardConfigDTOFixture {
 		issueFieldMap.put("description", descriptionIssueField);
 		issueFieldMap.put("priority", priorityIssueField);
 		issueFieldMap.put("customfield_10016", storyPointIssueField);
+
+		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
+	}
+
+	public static FieldResponseDTO.FieldResponseDTOBuilder ALL_FIELD_RESPONSE_BUILDER() {
+		IssueField timetrackingIssueField = new IssueField("timetracking", "Time tracking");
+		IssueField summaryIssueField = new IssueField("summary", "Summary");
+		IssueField descriptionIssueField = new IssueField("description", "Description");
+		IssueField priorityIssueField = new IssueField("priority", "Priority");
+		IssueField storyPointIssueField = new IssueField("customfield_10016", "Story point estimate");
+		IssueField sprintIssueField = new IssueField("customfield_10032", "Sprint");
+		IssueField flaggedIssueField = new IssueField("customfield_10048", "Flagged");
+		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
+		issueFieldMap.put("timetracking", timetrackingIssueField);
+		issueFieldMap.put("summary", summaryIssueField);
+		issueFieldMap.put("description", descriptionIssueField);
+		issueFieldMap.put("priority", priorityIssueField);
+		issueFieldMap.put("customfield_10016", storyPointIssueField);
+		issueFieldMap.put("customfield_10032", sprintIssueField);
+		issueFieldMap.put("customfield_10048", flaggedIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}

@@ -1,7 +1,9 @@
 package heartbeat.service.board.jira;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
@@ -43,7 +45,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -275,7 +276,7 @@ public class JiraService {
 				QUERY_COUNT, 0, jql, boardRequestParam.getToken());
 		log.info("[Jira] Successfully get first-page done card information");
 
-		AllDoneCardsResponseDTO allDoneCardsResponseDTO = formatAllDoneCardsResponse(allDoneCardResponse);
+		AllDoneCardsResponseDTO allDoneCardsResponseDTO = formatAllDoneCards(allDoneCardResponse);
 
 		List<JiraCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 		int pages = (int) Math.ceil(Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
@@ -286,9 +287,9 @@ public class JiraService {
 		log.info("[Jira] Start to get more done card information");
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
 		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
-			.map(startFrom -> CompletableFuture.supplyAsync(() -> (formatAllDoneCardsResponse(
-					jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(), QUERY_COUNT,
-							startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()))),
+			.map(startFrom -> CompletableFuture.supplyAsync(
+					() -> (formatAllDoneCards(jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
+							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()))),
 					taskExecutor))
 			.toList();
 		log.info("[Jira] Successfully get more done card information");
@@ -299,39 +300,34 @@ public class JiraService {
 			.toList();
 
 		return Stream.concat(doneCards.stream(), moreDoneCards.stream()).toList();
+
 	}
 
-	private AllDoneCardsResponseDTO formatAllDoneCardsResponse(String allDoneCardResponse) {
-		AllDoneCardsResponseDTO allDoneCardsResponseDTO;
-		String[] split = allDoneCardResponse.split(",");
-		try {
-			List<Integer> storyPiontList = Arrays.stream(split)
-				.filter(it -> it.contains(cardCustomFieldKey.getStoryPoints()))
-				.map(field -> {
-					String item = field.substring(field.indexOf(":") + 1).trim();
-					if ("null".equals(item) || "[]".equals(item)) {
-						return 0;
-					}
-					return (int) Double.parseDouble(item);
-				})
-				.toList();
-			ObjectMapper objectMapper = new ObjectMapper();
-			allDoneCardsResponseDTO = objectMapper.readValue(allDoneCardResponse, AllDoneCardsResponseDTO.class);
-			ArrayList<JiraCard> mutableList = new ArrayList<>(allDoneCardsResponseDTO.getIssues());
-			if (!(storyPiontList.size() == 0)) {
-				for (int i = 0; i < allDoneCardsResponseDTO.getIssues().size(); i++) {
-					mutableList.get(i).getFields().setStoryPoints(storyPiontList.get(i));
-				}
+	private AllDoneCardsResponseDTO formatAllDoneCards(String allDoneCardResponse) {
+		Gson gson = new Gson();
+		AllDoneCardsResponseDTO allDoneCardsResponseDTO = gson.fromJson(allDoneCardResponse,
+				AllDoneCardsResponseDTO.class);
+		List<JiraCard> jiraCards = allDoneCardsResponseDTO.getIssues();
+
+		JsonArray elements = JsonParser.parseString(allDoneCardResponse)
+			.getAsJsonObject()
+			.get("issues")
+			.getAsJsonArray();
+
+		ArrayList<Integer> storyPointList = new ArrayList<>();
+		for (JsonElement element : elements) {
+			JsonElement jsonElement = element.getAsJsonObject().get("fields");
+			if (jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).isJsonNull()) {
+				storyPointList.add(0);
+				continue;
 			}
-			allDoneCardsResponseDTO.setIssues(mutableList);
-			return allDoneCardsResponseDTO;
+			int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
+			storyPointList.add(storyPoint);
 		}
-		catch (JsonProcessingException e) {
-			throw new RequestFailedException(500, "[Jira] Deserialization failure.");
+		for (int index = 0; index < jiraCards.size(); index++) {
+			jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
 		}
-		catch (NumberFormatException e) {
-			throw new RequestFailedException(500, "[Jira] Type conversion failure.");
-		}
+		return allDoneCardsResponseDTO;
 	}
 
 	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {

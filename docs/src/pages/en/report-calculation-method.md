@@ -59,7 +59,7 @@ layout: ../../layouts/MainLayout.astro
 - For each selected step
   1. Count DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos)
   2. Calculate total recovery time and recovery times:
-     - `recovery time = pipeline create time of passed deployment - pipeline create time of last failed deployment`
+     - `recovery time = pipeline create time of passed deployment - pipeline create time of first failed deployment since last passed`
      - `total recovery time is sum of recovery time`
      - `recovery times is number of deployment failed to passed`
   3. Calculate Mean Time To Recovery: total recovery time divided by the recovery times.

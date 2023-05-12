@@ -22,12 +22,17 @@ public class ChangeFailureRateCalculator {
 
 	public ChangeFailureRate calculate(List<DeployTimes> deployTimesList) {
 		DecimalFormat decimalFormat = new DecimalFormat(FORMAT_4_DECIMALS);
+		totalCount = 0;
+		totalFailureCount = 0;
 
 		List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines = deployTimesList.stream().map(item -> {
 			int failedTimesOfPipeline = item.getFailed().size();
 			int passedTimesOfPipeline = item.getPassed().size();
 			int totalTimesOfPipeline = failedTimesOfPipeline + passedTimesOfPipeline;
-			float failureRateOfPipeline = (float) failedTimesOfPipeline / totalTimesOfPipeline;
+
+			float failureRateOfPipeline = totalTimesOfPipeline == 0 ? 0
+					: (float) failedTimesOfPipeline / totalTimesOfPipeline;
+
 			totalCount += totalTimesOfPipeline;
 			totalFailureCount += failedTimesOfPipeline;
 
@@ -40,7 +45,7 @@ public class ChangeFailureRateCalculator {
 				.build();
 		}).toList();
 
-		float avgFailureRate = (float) totalFailureCount / totalCount;
+		float avgFailureRate = totalCount == 0 ? 0 : (float) totalFailureCount / totalCount;
 		AvgChangeFailureRate avgChangeFailureRate = AvgChangeFailureRate.builder()
 			.totalTimes(totalCount)
 			.totalFailedTimes(totalFailureCount)

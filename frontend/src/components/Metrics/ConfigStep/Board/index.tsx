@@ -151,7 +151,7 @@ export const Board = () => {
         email: fields[2].value,
         projectKey: fields[3].value,
         site: fields[4].value,
-        token: fields[5].value,
+        token: `Basic ${btoa(`${fields[2].value}:${fields[5].value}`)}`,
       })
     )
   }

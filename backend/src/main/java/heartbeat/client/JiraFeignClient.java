@@ -1,6 +1,5 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
@@ -25,9 +24,8 @@ public interface JiraFeignClient {
 	StatusSelfDTO getColumnStatusCategory(URI baseUrl, @PathVariable String statusNum,
 			@RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "jiraAllDoneCards", key = "#boardId+'-'+#queryCount+'-'+#startAt+'-'+#jql")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql}")
-	AllDoneCardsResponseDTO getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
+	String getAllDoneCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraActivityfeed", key = "#jiraCardKey")

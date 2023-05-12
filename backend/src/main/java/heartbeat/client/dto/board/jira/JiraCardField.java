@@ -1,5 +1,6 @@
 package heartbeat.client.dto.board.jira;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import heartbeat.controller.board.dto.response.CardParent;
 import heartbeat.controller.board.dto.response.FixVersion;
 import heartbeat.controller.board.dto.response.IssueType;
@@ -17,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class JiraCardField {
 
 	private Assignee assignee;

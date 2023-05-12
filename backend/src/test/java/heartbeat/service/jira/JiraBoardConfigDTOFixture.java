@@ -29,7 +29,7 @@ import java.util.List;
 
 public class JiraBoardConfigDTOFixture {
 
-	public static final String BOARD_ID = "123";
+	public static final String BOARD_ID = "unknown";
 
 	public static final String BOARD_NAME_JIRA = "jira";
 
@@ -86,12 +86,6 @@ public class JiraBoardConfigDTOFixture {
 		return StatusSelfDTO.builder().untranslatedName("doing").statusCategory(new StatusCategory("doing", "doing"));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
-			.total("2")
-			.issues(List.of(new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build())));
-	}
-
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
@@ -100,6 +94,7 @@ public class JiraBoardConfigDTOFixture {
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(2).build()),
 					new JiraCard("1",
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
+					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
 					new JiraCard("1",
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
 	}
@@ -116,13 +111,16 @@ public class JiraBoardConfigDTOFixture {
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
-			.items(List.of(new HistoryDetail(1, "assignee", new Status("San Zhang"), new Status("San Zhang"))));
+			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do")),
+					new HistoryDetail(3, "status", new Status("Review"), new Status("In Dev")),
+					new HistoryDetail(4, "status", new Status("Waiting for testing"), new Status("Review")),
+					new HistoryDetail(5, "status", new Status("Testing"), new Status("Waiting for testing"))));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_MULTI_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status("Block")),
-					new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do")),
+					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do")),
 					new HistoryDetail(3, "status", new Status("Review"), new Status("In Dev")),
 					new HistoryDetail(4, "status", new Status("Waiting for testing"), new Status("Review")),
 					new HistoryDetail(5, "status", new Status("Testing"), new Status("Waiting for testing")),
@@ -138,18 +136,40 @@ public class JiraBoardConfigDTOFixture {
 		IssueField summaryIssueField = new IssueField("summary", "Summary");
 		IssueField descriptionIssueField = new IssueField("description", "Description");
 		IssueField priorityIssueField = new IssueField("priority", "Priority");
+		IssueField storyPointIssueField = new IssueField("customfield_10016", "Story point estimate");
 		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
 		issueFieldMap.put("timetracking", timetrackingIssueField);
 		issueFieldMap.put("summary", summaryIssueField);
 		issueFieldMap.put("description", descriptionIssueField);
 		issueFieldMap.put("priority", priorityIssueField);
+		issueFieldMap.put("customfield_10016", storyPointIssueField);
+
+		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
+	}
+
+	public static FieldResponseDTO.FieldResponseDTOBuilder ALL_FIELD_RESPONSE_BUILDER() {
+		IssueField timetrackingIssueField = new IssueField("timetracking", "Time tracking");
+		IssueField summaryIssueField = new IssueField("summary", "Summary");
+		IssueField descriptionIssueField = new IssueField("description", "Description");
+		IssueField priorityIssueField = new IssueField("priority", "Priority");
+		IssueField storyPointIssueField = new IssueField("customfield_10016", "Story point estimate");
+		IssueField sprintIssueField = new IssueField("customfield_10032", "Sprint");
+		IssueField flaggedIssueField = new IssueField("customfield_10048", "Flagged");
+		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
+		issueFieldMap.put("timetracking", timetrackingIssueField);
+		issueFieldMap.put("summary", summaryIssueField);
+		issueFieldMap.put("description", descriptionIssueField);
+		issueFieldMap.put("priority", priorityIssueField);
+		issueFieldMap.put("customfield_10016", storyPointIssueField);
+		issueFieldMap.put("customfield_10032", sprintIssueField);
+		issueFieldMap.put("customfield_10048", flaggedIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}
 
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_BUILD() {
 		return JiraBoardSetting.builder()
-			.boardId("123")
+			.boardId("unknown")
 			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name("In Dev").value("In Dev").build(),
 					RequestJiraBoardColumnSetting.builder()
 						.name("Waiting for testing")
@@ -173,7 +193,7 @@ public class JiraBoardConfigDTOFixture {
 
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_HAVE_UNKNOWN_COLUMN_BUILD() {
 		return JiraBoardSetting.builder()
-			.boardId("123")
+			.boardId("jira")
 			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name("In Dev").value("In Dev").build(),
 					RequestJiraBoardColumnSetting.builder()
 						.name("Waiting for testing")

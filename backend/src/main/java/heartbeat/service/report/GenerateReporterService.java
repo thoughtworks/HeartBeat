@@ -13,7 +13,6 @@ import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,8 +22,6 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
-
 public class GenerateReporterService {
 
 	private final JiraService jiraService;
@@ -32,6 +29,8 @@ public class GenerateReporterService {
 	private final BuildKiteService buildKiteService;
 
 	private final DeploymentFrequencyCalculator deploymentFrequency;
+
+	private final ChangeFailureRateCalculator changeFailureRate;
 
 	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> kanbanMetrics = Stream
@@ -67,6 +66,8 @@ public class GenerateReporterService {
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
+				case "change failure rate" ->
+					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
 				default -> {
 					// TODO
 				}
@@ -139,7 +140,8 @@ public class GenerateReporterService {
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(
 					request.getBuildKiteSetting().getToken(), deploymentEnvironment, request.getStartTime(),
 					request.getEndTime());
-			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos);
+			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos,
+					request.getStartTime(), request.getEndTime());
 			deployTimesList.add(deployTimes);
 			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 		}

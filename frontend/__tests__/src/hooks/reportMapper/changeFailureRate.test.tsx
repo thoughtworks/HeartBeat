@@ -4,13 +4,17 @@ describe('change failure rate data mapper', () => {
   const mockChangeFailureRateRes = {
     avgChangeFailureRate: {
       name: 'Average',
-      failureRate: '0.00% (0/12)',
+      totalTimes: 12,
+      totalFailedTimes: 0,
+      failureRate: 0.0,
     },
     changeFailureRateOfPipelines: [
       {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
-        failureRate: '0.00% (0/3)',
+        failedTimesOfPipeline: 0,
+        totalTimesOfPipeline: 3,
+        failureRate: 0.0,
       },
     ],
   }
@@ -22,17 +26,17 @@ describe('change failure rate data mapper', () => {
         valuesList: [
           {
             name: 'Failure rate',
-            value: '0.00% (0/3)',
+            value: '0%(0/3)',
           },
         ],
       },
       {
         id: 1,
-        name: 'Average/',
+        name: 'Average',
         valuesList: [
           {
             name: 'Failure rate',
-            value: '0.00% (0/12)',
+            value: '0%(0/12)',
           },
         ],
       },

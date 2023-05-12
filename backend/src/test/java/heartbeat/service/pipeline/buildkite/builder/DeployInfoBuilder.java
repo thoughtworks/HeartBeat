@@ -29,4 +29,9 @@ public class DeployInfoBuilder {
 		return this;
 	}
 
+	public DeployInfoBuilder withJobFinishTime(String jobFinishTime) {
+		deployInfo.setJobFinishTime(jobFinishTime);
+		return this;
+	}
+
 }

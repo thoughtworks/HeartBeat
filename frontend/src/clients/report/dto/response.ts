@@ -83,13 +83,17 @@ export interface AvgLeadTime {
 export interface FailureRateOfPipeline {
   name: string
   step: string
-  failureRate: string
+  failedTimesOfPipeline: number
+  totalTimesOfPipeline: number
+  failureRate: number
 }
 
 export interface AvgFailureRate {
   name: string
   step?: string
-  failureRate: string
+  totalTimes: number
+  totalFailedTimes: number
+  failureRate: number
 }
 
 export interface MeanTimeToRecoveryOfPipeline {

@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AvgDeploymentFrequency {
+public class ChangeFailureRate {
 
-	@Builder.Default
-	private String name = "Average";
+	private AvgChangeFailureRate avgChangeFailureRate;
 
-	private float deploymentFrequency;
+	private List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines;
 
 }

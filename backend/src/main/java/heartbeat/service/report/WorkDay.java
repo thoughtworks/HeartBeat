@@ -38,7 +38,7 @@ public class WorkDay {
 	}
 
 	private void checkHolidayList(String year) {
-		if (holidayMap.isEmpty()) {
+		if (holidayMap.size() == 0) {
 			loadHolidayList(year);
 		}
 		else if (!isYearExisted(year)) {

@@ -81,15 +81,15 @@ public class CalculateClassification {
 	}
 
 	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey, List<Object> objects) {
-		Map<String, Integer> map = resultMap.get(fieldsKey);
-		if (map != null) {
+		Map<String, Integer> countMap = resultMap.get(fieldsKey);
+		if (countMap != null) {
 			for (Object object : objects) {
 				String displayName = pickDisplayNameFromObj(object);
-				Integer count = map.get(displayName);
-				map.put(displayName, count != null ? count + 1 : 1);
+				Integer count = countMap.get(displayName);
+				countMap.put(displayName, count != null ? count + 1 : 1);
 			}
 			if (!objects.isEmpty()) {
-				map.put(NONE_KEY, map.get(NONE_KEY) - 1);
+				countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
 			}
 		}
 	}

@@ -27,8 +27,7 @@ public class WorkDay {
 
 	private Map<String, Boolean> holidayMap = new HashMap<>();
 
-	public Map<String, Boolean> loadHolidayList(String year) {
-
+	private void loadHolidayList(String year) {
 		log.info("Start to get chinese holiday by year: {}", year);
 		List<HolidayDTO> tempHolidayList = holidayFeignClient.getHolidays(year).getDays();
 		log.info("Successfully get holiday list:{}", tempHolidayList);
@@ -36,19 +35,18 @@ public class WorkDay {
 		for (HolidayDTO tempHoliday : tempHolidayList) {
 			holidayMap.put(tempHoliday.getDate(), tempHoliday.getIsOffDay());
 		}
-		return holidayMap;
 	}
 
 	private void checkHolidayList(String year) {
-		if (holidayMap.size() == 0) {
+		if (holidayMap.isEmpty()) {
 			loadHolidayList(year);
 		}
-		else if (!isContainYear(year)) {
+		else if (!isYearExisted(year)) {
 			loadHolidayList(year);
 		}
 	}
 
-	private boolean isContainYear(String year) {
+	private boolean isYearExisted(String year) {
 		boolean hasYear = false;
 		for (String dateString : holidayMap.keySet()) {
 			hasYear = dateString.startsWith(year);

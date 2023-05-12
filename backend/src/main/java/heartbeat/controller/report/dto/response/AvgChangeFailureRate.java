@@ -9,11 +9,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AvgDeploymentFrequency {
+public class AvgChangeFailureRate {
 
 	@Builder.Default
 	private String name = "Average";
 
-	private float deploymentFrequency;
+	private int totalTimes;
+
+	private int totalFailedTimes;
+
+	private float failureRate;
 
 }

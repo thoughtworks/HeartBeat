@@ -15,4 +15,6 @@ public class ReportResponse {
 
 	private DeploymentFrequency deploymentFrequency;
 
+	private ChangeFailureRate changeFailureRate;
+
 }

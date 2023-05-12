@@ -26,6 +26,7 @@ steps:
   - wait
   - label: ":cloudformation: Deploy infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
+    key: "deploy-infra"
     env:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
@@ -39,14 +40,18 @@ steps:
 
   - label: ":java: Build Backend"
     branches: main
+    depends_on: "deploy-infra"
     command: ./ops/build.sh backend
 
   - label: ":rocket: Build Stub"
     if:  build.branch == "main" && build.message =~ /\[stub\]/
+    key: "build-stub"
+    depends_on: "deploy-infra"
     command: ./ops/build.sh stub
 
   - label: ":rocket: Deploy Stub"
     if:  build.branch == "main" && build.message =~ /\[stub\]/
+    depends_on: "build-stub"
     command: ./ops/deploy.sh stub
 
   - wait

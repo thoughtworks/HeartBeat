@@ -50,7 +50,7 @@ public class GenerateReporterService {
 
 	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
 
-	public ReportResponse generateReporter(GenerateReportRequest request) {
+	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 
@@ -133,7 +133,7 @@ public class GenerateReporterService {
 		// todo:add fetchGithubData logic
 	}
 
-	private synchronized void fetchBuildKiteData(GenerateReportRequest request) {
+	private void fetchBuildKiteData(GenerateReportRequest request) {
 		deployTimesList.clear();
 		buildInfosList.clear();
 		for (DeploymentEnvironment deploymentEnvironment : request.getBuildKiteSetting().getDeploymentEnvList()) {

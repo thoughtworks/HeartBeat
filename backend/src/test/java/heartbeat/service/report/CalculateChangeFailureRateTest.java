@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +43,20 @@ class CalculateChangeFailureRateTest {
 		assertThat(changeFailureRate.getAvgChangeFailureRate().getFailureRate()).isEqualTo(0.5F);
 		assertThat(changeFailureRate.getAvgChangeFailureRate().getTotalFailedTimes()).isEqualTo(1);
 		assertThat(changeFailureRate.getAvgChangeFailureRate().getTotalTimes()).isEqualTo(2);
+	}
+
+	@Test
+	public void testCalculateChangeFailureRateWhenTotalDeployInfosTimesIsZero() {
+		DeployTimes mockedDeployTimes = DeployTimesBuilder.withDefault()
+			.withPassed(Collections.emptyList())
+			.withFailed(Collections.emptyList())
+			.build();
+
+		ChangeFailureRate changeFailureRate = this.changeFailureRate.calculate(List.of(mockedDeployTimes));
+
+		assertThat(changeFailureRate.getAvgChangeFailureRate().getFailureRate()).isEqualTo(0.0F);
+		assertThat(changeFailureRate.getAvgChangeFailureRate().getTotalFailedTimes()).isEqualTo(0);
+		assertThat(changeFailureRate.getAvgChangeFailureRate().getTotalTimes()).isEqualTo(0);
 	}
 
 }

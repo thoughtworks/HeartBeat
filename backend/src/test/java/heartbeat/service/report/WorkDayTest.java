@@ -45,20 +45,24 @@ class WorkDayTest {
 		when(holidayFeignClient.getHolidays(year))
 			.thenReturn(HolidaysResponseDTO.builder().days(holidayDTOList).build());
 
-		boolean result1 = workDay.verifyIfThisDayHoliday(holidayTime);
-		boolean result2 = workDay.verifyIfThisDayHoliday(workdayTime);
+		boolean resultWorkDay = workDay.verifyIfThisDayHoliday(holidayTime);
+		boolean resultHoliday = workDay.verifyIfThisDayHoliday(workdayTime);
 
-		Assertions.assertTrue(result1);
-		Assertions.assertFalse(result2);
+		Assertions.assertTrue(resultWorkDay);
+		Assertions.assertFalse(resultHoliday);
 	}
 
 	@Test
 	void shouldReturnRightWorkDaysWhenCalculateWorkDaysBetween() {
 		when(holidayFeignClient.getHolidays("2020"))
 			.thenReturn(HolidaysResponseDTO.builder().days(WorkDayFixture.HOLIDAYS_DATA()).build());
+		when(holidayFeignClient.getHolidays("2021"))
+			.thenReturn(HolidaysResponseDTO.builder().days(WorkDayFixture.HOLIDAYS_DATA()).build());
 		int result = workDay.calculateWorkDaysBetween(WorkDayFixture.START_TIME(), WorkDayFixture.END_TIME());
+		int resultNewYear = workDay.calculateWorkDaysBetween(WorkDayFixture.START_TIME_NEW_YEAR(), WorkDayFixture.END_TIME_NEW_YEAR());
 
 		Assertions.assertEquals(21, result);
+		Assertions.assertEquals(22, resultNewYear);
 	}
 
 	@Test

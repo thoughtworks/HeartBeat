@@ -28,7 +28,8 @@ const setup = () =>
   )
 
 describe('MetricsStep', () => {
-  it('should render Crews and Real Done components', () => {
+  it('should render Crews and Real Done components when select velocity', async () => {
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
     const { getByText, queryByText } = setup()
 
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()
@@ -44,7 +45,8 @@ describe('MetricsStep', () => {
     expect(getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument()
   })
 
-  it('should show Real Done when selectedColumns include done column', async () => {
+  it('should show Real Done when select velocity and selectedColumns include done column', async () => {
+    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
     const mockColumnsList = [
       {
         key: 'done',

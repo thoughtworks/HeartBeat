@@ -58,7 +58,10 @@ const MetricsStepper = () => {
   const isShowCrewsSetting = isShowBoard
   const isShowRealDone =
     isShowBoard && selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2
-  const isShowDeploymentFrequency = requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
+  const isShowDeploymentFrequency =
+    requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
+    requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
+    requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
   const isShowLeadTimeForChanges = requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)
   const isCrewsSettingValid = metricsConfig.users.length > 0
   const isRealDoneValid = metricsConfig.doneColumn.length > 0

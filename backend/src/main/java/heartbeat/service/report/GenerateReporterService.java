@@ -12,6 +12,9 @@ import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
+import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.CycleTimeCalculator;
+import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,8 @@ public class GenerateReporterService {
 	private final DeploymentFrequencyCalculator deploymentFrequency;
 
 	private final ChangeFailureRateCalculator changeFailureRate;
+
+	private final CycleTimeCalculator cycleTimeCalculator;
 
 	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> kanbanMetrics = Stream
@@ -63,6 +68,8 @@ public class GenerateReporterService {
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
+				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(cardCollection,
+						request.getJiraBoardSetting().getBoardColumns()));
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));

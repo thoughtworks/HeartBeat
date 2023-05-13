@@ -17,6 +17,8 @@ import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import heartbeat.service.pipeline.buildkite.builder.*;
+import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

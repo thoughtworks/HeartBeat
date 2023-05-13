@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportResponse {
+public class CycleTimeForSelectedStepItem {
 
-	private Velocity velocity;
+	private String optionalItemName;
 
-	private CycleTime cycleTime;
+	private String averageTimeForSP;
 
-	private DeploymentFrequency deploymentFrequency;
+	private String averageTimeForCards;
 
-	private ChangeFailureRate changeFailureRate;
+	private String totalTime;
 
 }

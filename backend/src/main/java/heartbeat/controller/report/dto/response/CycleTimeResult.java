@@ -5,18 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportResponse {
+public class CycleTimeResult {
 
-	private Velocity velocity;
+	private List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList;
 
-	private CycleTime cycleTime;
-
-	private DeploymentFrequency deploymentFrequency;
-
-	private ChangeFailureRate changeFailureRate;
+	private String totalTime;
 
 }

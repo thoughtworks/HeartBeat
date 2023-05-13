@@ -4,6 +4,7 @@ import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.report.dto.response.ChangeFailureRate;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
+import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

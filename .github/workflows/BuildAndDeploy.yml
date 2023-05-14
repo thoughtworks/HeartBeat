@@ -168,6 +168,7 @@ jobs:
           AWSHost: ${{ secrets.AWS_HOST }}
           AWSAccountId: ${{ secrets.AWS_ACCOUNT_ID }}
           AWSRegion: ${{ secrets.AWS_REGION }}
+          BuildKiteToken: ${{ secrets.BUILDKITE_TOKEN }}
         run: |
           sh ./ops/infra/updateAwsResource.sh
 

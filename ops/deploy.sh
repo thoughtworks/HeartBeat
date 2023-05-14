@@ -15,7 +15,7 @@ display_help() {
   exit 1
 }
 deploy_infra() {
-  sh ./ops/infra/updateAwsResource
+  sh ./ops/infra/updateAwsResource.sh
 }
 
 deploy_e2e() {

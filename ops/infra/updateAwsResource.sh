@@ -8,7 +8,7 @@ BuildKiteToken=${BuildKiteToken:?}
 SshPrivateKey=${SSHPrivateKey:?}
 
 aws cloudformation update-stack --stack-name Heartbeat \
- --template-body file://infra/cloudformation.yml \
+ --template-body file://ops/infra/cloudformation.yml \
   --parameters ParameterKey=AwsRegion,ParameterValue="${AwsRegion}" \
   ParameterKey=GitHubOrg,ParameterValue=au-heartbeat \
   ParameterKey=RepositoryName,ParameterValue=Heartbeat \

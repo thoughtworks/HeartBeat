@@ -30,7 +30,6 @@ steps:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
-      BuildKiteToken: "$BUILDKITE_TOKEN"
     command: ./ops/deploy.sh infra
 
   - wait

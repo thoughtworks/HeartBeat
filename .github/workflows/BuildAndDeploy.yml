@@ -169,6 +169,7 @@ jobs:
           AWSAccountId: ${{ secrets.AWS_ACCOUNT_ID }}
           AWSRegion: ${{ secrets.AWS_REGION }}
           BuildKiteToken: ${{ secrets.BUILDKITE_TOKEN }}
+          SSHPrivateKey: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY}}
         run: |
           sh ./ops/infra/updateAwsResource.sh
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # shellcheck source=/dev/null
-source ./.buildkite/ops/base.sh
+source ./ops/base.sh
 
 display_help() {
   echo "Usage: $0 {infra|e2e|stub|prod}" >&2
@@ -15,7 +15,7 @@ display_help() {
   exit 1
 }
 deploy_infra() {
-  sh ./infra/updateAwsResource
+  sh ./ops/infra/updateAwsResource
 }
 
 deploy_e2e() {
@@ -23,9 +23,9 @@ deploy_e2e() {
 }
 
 deploy_stub() {
-  sed -i -e "s/heartbeat_stub:latest/${AWS_ECR_HOST}\/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
+  sed -i -e "s/heartbeat_stub:latest/${AWS_ECR_HOST}\/heartbeat_stub:hb${BUILDKITE_BUILD_NUMBER}/g" ./ops/infra/docker-compose.yml
 
-  scp -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}":./docker-compose-stub.yml
+  scp -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./ops/infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}":./docker-compose-stub.yml
 
   echo "Start to deploy stub service"
   ssh -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
@@ -47,14 +47,13 @@ deploy_stub() {
 }
 
 deploy_prod() {
-  sed -i -e "s/heartbeat_backend:latest/${AWS_ECR_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
-  sed -i -e "s/heartbeat_frontend:latest/${AWS_ECR_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" infra/docker-compose.yml
+  sed -i -e "s/heartbeat_backend:latest/${AWS_ECR_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" ./ops/infra/docker-compose.yml
+  sed -i -e "s/heartbeat_frontend:latest/${AWS_ECR_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" ./ops/infra/docker-compose.yml
 
-  scp -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:./"
+  scp -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./ops/infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:./"
 
   ssh -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP}" "
     aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_HOST}
-    cp './infra/docker-compose.yml' ./
     if [ -n \"\$(docker images -f label=app=Heartbeat -q)\" ]; then
         docker rmi -f \$(docker images -f label=app=Heartbeat -q)
     fi

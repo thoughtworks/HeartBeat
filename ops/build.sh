@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # shellcheck source=/dev/null
-source ./.buildkite/ops/base.sh
+source ./ops/base.sh
 
 display_help() {
   echo "Usage: $0 {frontend|backend|stub}" >&2

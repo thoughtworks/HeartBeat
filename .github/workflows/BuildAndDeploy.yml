@@ -16,7 +16,7 @@ jobs:
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
-          scandir: './.buildkite/ops'
+          scandir: './ops'
   security-check:
     runs-on: ubuntu-latest
     steps:
@@ -169,7 +169,7 @@ jobs:
           AWSAccountId: ${{ secrets.AWS_ACCOUNT_ID }}
           AWSRegion: ${{ secrets.AWS_REGION }}
         run: |
-          sh ./infra/updateAwsResource
+          sh ./ops/infra/updateAwsResource.sh
 
   build-backend:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -199,8 +199,8 @@ jobs:
           REPOSITORY: heartbeat_backend
           IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./infra/Dockerfile.backend
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.backend
+          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./ops/infra/Dockerfile.backend
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./ops/infra/Dockerfile.backend
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -248,8 +248,8 @@ jobs:
           REPOSITORY: heartbeat_frontend
           IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./infra/Dockerfile.frontend
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.frontend
+          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./ops/infra/Dockerfile.frontend
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./ops/infra/Dockerfile.frontend
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -299,8 +299,8 @@ jobs:
           REPOSITORY: heartbeat_stub
           IMAGE_TAG: "hb${{ github.run_number }}"
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./infra/Dockerfile.stub
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./infra/Dockerfile.stub
+          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./ops/infra/Dockerfile.stub
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./ops/infra/Dockerfile.stub
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -342,7 +342,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
-          source: "./infra/docker-compose.yml"
+          source: "./ops/infra/docker-compose.yml"
           target: "./"
           strip_components: 1
 
@@ -358,7 +358,7 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            cp "./infra/docker-compose.yml" ./
+            cp "./ops/infra/docker-compose.yml" ./
             # docker-compose down
             if [[ -n $(docker images -f label=arch=Backend -q) ]]; then docker rmi -f $(docker images -f label=arch=Backend -q); fi
             if [[ -n $(docker images -f label=arch=Frontend -q) ]]; then docker rmi -f $(docker images -f label=arch=Frontend -q); fi
@@ -389,7 +389,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
-          source: "./infra/docker-compose-stub.yml"
+          source: "./ops/infra/docker-compose-stub.yml"
           target: "./"
           strip_components: 1
       - name: Deploy
@@ -405,7 +405,7 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            cp "./infra/docker-compose-stub.yml" ./
+            cp "./ops/infra/docker-compose-stub.yml" ./
             # docker-compose down stub
             if [[ -n $(docker images -f label=arch=stubs -q) ]]; then docker rmi -f $(docker images -f label=arch=stubs -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_stub:latest
@@ -458,7 +458,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
-          source: "./infra/docker-compose.yml"
+          source: "./ops/infra/docker-compose.yml"
           target: "./"
           strip_components: 1
 
@@ -474,7 +474,7 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-            cp "./infra/docker-compose.yml" ./
+            cp "./ops/infra/docker-compose.yml" ./
             # docker-compose down
             if [[ -n $(docker images -f label=app=Heartbeat -q) ]]; then docker rmi -f $(docker images -f label=app=Heartbeat -q); fi
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_backend:$IMAGE_TAG

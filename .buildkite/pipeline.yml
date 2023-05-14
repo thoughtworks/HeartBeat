@@ -3,19 +3,19 @@ env:
 
 steps:
   - label: ":white_check_mark: Check Shell"
-    command: ./.buildkite/ops/check.sh shell
+    command: ./ops/check.sh shell
 
   - label: ":lock: Check Security"
-    command: ./.buildkite/ops/check.sh security
+    command: ./ops/check.sh security
 
   - label: ":white_check_mark: Backend Check"
-    command: ./.buildkite/ops/check.sh backend
+    command: ./ops/check.sh backend
 
   - label: ":mag: Check Frontend License"
-    commands: ./.buildkite/ops/check.sh frontend-license
+    commands: ./ops/check.sh frontend-license
 
   - label: ":mag: Check Backend License"
-    commands: ./.buildkite/ops/check.sh backend-license
+    commands: ./ops/check.sh backend-license
     plugins:
       - artifacts#v1.9.0:
           upload:
@@ -30,23 +30,23 @@ steps:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
-    command: ./.buildkite/ops/deploy.sh infra
+    command: ./ops/deploy.sh infra
 
   - wait
   - label: ":java: Build Backend"
     branches: main
-    command: ./.buildkite/ops/build.sh backend
+    command: ./ops/build.sh backend
 
   - label: ":rocket: Build Stub"
     if:  build.branch == "main" && build.message =~ /\[stub\]/
-    command: ./.buildkite/ops/build.sh stub
+    command: ./ops/build.sh stub
 
   - label: ":rocket: Deploy Stub"
     if:  build.branch == "main" && build.message =~ /\[stub\]/
-    command: ./.buildkite/ops/deploy.sh stub
+    command: ./ops/deploy.sh stub
 
   - wait
   - label: ":rocket: Deploy prod"
     branches: main
-    command: ./.buildkite/ops/deploy.sh prod
+    command: ./ops/deploy.sh prod
 

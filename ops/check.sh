@@ -16,7 +16,7 @@ display_help() {
 }
 
 check_shell() {
-  docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable ./.buildkite/ops/*.sh
+  docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable ./ops/*.sh
 }
 
 security_check() {

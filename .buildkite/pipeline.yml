@@ -2,17 +2,20 @@ env:
   RETENTION_DAYS: "10"
 
 steps:
+  - label: ":lock: Check Shell"
+    command: ./.buildkite/ops/check.sh shell
+
   - label: ":lock: Security Check"
-    command: ./.buildkite/ops/check security
+    command: ./.buildkite/ops/check.sh security
 
   - label: ":rocket: Backend Check"
-    command: ./.buildkite/ops/check backend
+    command: ./.buildkite/ops/check.sh backend
 
   - label: ":mag: Frontend License Check"
-    commands: ./.buildkite/ops/check frontend-license
+    commands: ./.buildkite/ops/check.sh frontend-license
 
   - label: ":mag: Backend License Check"
-    commands: ./.buildkite/ops/check backend-license
+    commands: ./.buildkite/ops/check.sh backend-license
     plugins:
       - artifacts#v1.9.0:
           upload:
@@ -27,23 +30,23 @@ steps:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
-    command: ./.buildkite/ops/deploy infra
+    command: ./.buildkite/ops/deploy.sh infra
 
   - wait
   - label: "build-backend"
     branches: main
-    command: ./.buildkite/ops/build backend
+    command: ./.buildkite/ops/build.sh backend
 
   - label: ":rocket: Build Stub"
     if:  build.branch == "main" && build.message =~ /\[stub\]/
-    command: ./.buildkite/ops/build stub
+    command: ./.buildkite/ops/build.sh stub
 
   - label: ":rocket: Deploy Stub"
     if:  build.branch == "main" && build.message =~ /\[stub\]/
-    command: ./.buildkite/ops/deploy stub
+    command: ./.buildkite/ops/deploy.sh stub
 
   - wait
   - label: ":rocket: Deploy prod"
     branches: main
-    command: ./.buildkite/ops/deploy prod
+    command: ./.buildkite/ops/deploy.sh prod
 

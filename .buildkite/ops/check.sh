@@ -2,8 +2,9 @@
 set -euo pipefail
 
 display_help() {
-  echo "Usage: $0 {security|frontend|backend|backend-license|frontend-license|e2e}" >&2
+  echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e}" >&2
   echo
+  echo "   shell              run shell check for the whole project"
   echo "   security           run security check for the whole project"
   echo "   frontend           run check for the frontend"
   echo "   backend            run check for the backend"
@@ -12,6 +13,10 @@ display_help() {
   echo "   e2e                run e2e for the frontend"
   echo
   exit 1
+}
+
+check_shell() {
+  docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable ./.buildkite/ops/*.sh
 }
 
 security_check() {
@@ -60,6 +65,7 @@ fi
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     -h|--help) display_help ;;
+    shell) check_shell ;;
     security) security_check ;;
     frontend) frontend_check ;;
     backend) backend_check ;;

@@ -33,6 +33,10 @@ steps:
     command: ./ops/deploy.sh infra
 
   - wait
+  - label: ":react: Build Frontend"
+    branches: main
+    command: ./ops/build.sh frontend
+
   - label: ":java: Build Backend"
     branches: main
     command: ./ops/build.sh backend

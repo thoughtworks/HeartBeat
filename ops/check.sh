@@ -55,7 +55,9 @@ frontend_check(){
 }
 
 e2e_check(){
-  echo "e2e check"
+  cd frontend
+  pnpm install --no-frozen-lockfile
+  pnpm run e2e
 }
 
 if [[ "$#" -le 0 ]]; then

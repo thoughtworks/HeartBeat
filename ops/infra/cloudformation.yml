@@ -456,6 +456,7 @@ Resources:
             - sudo npm install -g pnpm
             - sudo yum install java-17-amazon-corretto -y
             - sudo -u buildkite-agent bash -c "cd /var/lib/buildkite-agent/.ssh/ && echo ${SSHPrivateKey} > HeartBeatKeyPair.pem && chmod 600 HeartBeatKeyPair.pem"
+            - sudo yum install -y xorg-x11-server-Xvfb gtk3-devel libnotify-devel libXScrnSaver
 
   EC2KeyPair:
     Type: AWS::EC2::KeyPair

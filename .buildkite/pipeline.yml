@@ -50,7 +50,19 @@ steps:
     command: ./ops/deploy.sh stub
 
   - wait
+  - label: ":rocket: Deploy e2e"
+    branches: main
+    command: ./ops/deploy.sh e2e
+
+  - wait
+  - label: ":rocket: Run e2e"
+    branches: main
+    command: ./ops/check.sh e2e
+
+  - wait
   - label: ":rocket: Deploy prod"
     branches: main
     command: ./ops/deploy.sh prod
+
+
 

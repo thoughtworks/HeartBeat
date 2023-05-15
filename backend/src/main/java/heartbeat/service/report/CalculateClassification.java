@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +40,20 @@ public class CalculateClassification {
 
 		for (JiraCardDTO jiraCardResponse : cards.getJiraCardDTOList()) {
 			JiraCardField jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
-			Map<String, Object> tempFields = getMapFromObject(jiraCardFields);
+			Map<String, Object> tempFields = new HashMap<>();
+			tempFields.put("assignee", jiraCardFields.getAssignee());
+			tempFields.put("summary", jiraCardFields.getSummary());
+			tempFields.put("status", jiraCardFields.getStatus());
+			tempFields.put("issuetype", jiraCardFields.getIssuetype());
+			tempFields.put("reporter", jiraCardFields.getReporter());
+			tempFields.put("statusCategoryChangeData", jiraCardFields.getStatusCategoryChangeDate());
+			tempFields.put("storyPoints", jiraCardFields.getStoryPoints());
+			tempFields.put("fixVersions", jiraCardFields.getFixVersions());
+			tempFields.put("project", jiraCardFields.getProject());
+			tempFields.put("parent", jiraCardFields.getParent());
+			tempFields.put("priority", jiraCardFields.getPriority());
+			tempFields.put("label", jiraCardFields.getLabel());
+
 			for (String tempFieldsKey : tempFields.keySet()) {
 				Object object = tempFields.get(tempFieldsKey);
 				if (object instanceof List) {
@@ -51,8 +63,8 @@ public class CalculateClassification {
 					Map<String, Integer> countMap = resultMap.get(tempFieldsKey);
 					if (countMap != null) {
 						String displayName = pickDisplayNameFromObj(object);
-						Integer count = countMap.get(displayName);
-						countMap.put(displayName, count != null ? count + 1 : 1);
+						Integer count = countMap.getOrDefault(displayName, 0);
+						countMap.put(displayName, count > 0 ? count + 1 : 1);
 						countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
 					}
 				}
@@ -85,8 +97,8 @@ public class CalculateClassification {
 		if (countMap != null) {
 			for (Object object : objects) {
 				String displayName = pickDisplayNameFromObj(object);
-				Integer count = countMap.get(displayName);
-				countMap.put(displayName, count != null ? count + 1 : 1);
+				Integer count = countMap.getOrDefault(displayName, 0);
+				countMap.put(displayName, count > 0 ? count + 1 : 1);
 			}
 			if (!objects.isEmpty()) {
 				countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
@@ -95,29 +107,10 @@ public class CalculateClassification {
 	}
 
 	private static String pickDisplayNameFromObj(Object object) {
-		Map<String, Object> map = getMapFromObject(object);
-		for (String fieldName : VALUE_KEYS) {
-			if (map.containsKey(fieldName)) {
-				return map.get(fieldName).toString();
-			}
+		if (object instanceof ICardFieldDisplayName) {
+			return ((ICardFieldDisplayName) object).getDisplayName();
 		}
 		return object.toString();
-	}
-
-	private static Map<String, Object> getMapFromObject(Object object) {
-		Map<String, Object> map = new HashMap<>();
-		Field[] fields = object.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			field.setAccessible(true);
-			try {
-				Object value = field.get(object);
-				map.put(field.getName(), value);
-			}
-			catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-		return map;
 	}
 
 }

@@ -17,4 +17,5 @@ public class IssueType implements ICardFieldDisplayName {
 	public String getDisplayName() {
 		return name;
 	}
+
 }

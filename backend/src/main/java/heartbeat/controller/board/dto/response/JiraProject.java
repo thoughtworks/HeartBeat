@@ -21,4 +21,5 @@ public class JiraProject implements ICardFieldDisplayName {
 	public String getDisplayName() {
 		return name;
 	}
+
 }

@@ -17,6 +17,5 @@ public class FixVersion implements ICardFieldDisplayName {
 	public String getDisplayName() {
 		return name;
 	}
+
 }
-
-

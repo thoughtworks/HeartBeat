@@ -17,4 +17,5 @@ public class Priority implements ICardFieldDisplayName {
 	public String getDisplayName() {
 		return name;
 	}
+
 }

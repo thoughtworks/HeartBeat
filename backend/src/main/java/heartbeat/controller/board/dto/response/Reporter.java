@@ -17,4 +17,5 @@ public class Reporter implements ICardFieldDisplayName {
 	public String getDisplayName() {
 		return displayName;
 	}
+
 }

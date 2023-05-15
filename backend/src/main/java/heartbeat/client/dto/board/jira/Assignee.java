@@ -17,4 +17,5 @@ public class Assignee implements ICardFieldDisplayName {
 	public String getDisplayName() {
 		return displayName;
 	}
+
 }

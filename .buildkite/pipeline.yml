@@ -3,18 +3,23 @@ env:
 
 steps:
   - label: ":white_check_mark: Check Shell"
+    key: "check-shell"
     command: ./ops/check.sh shell
 
   - label: ":lock: Check Security"
+    key: "check-security"
     command: ./ops/check.sh security
 
-  - label: ":white_check_mark: Backend Check"
+  - label: ":white_check_mark: Check Backend"
+    key: "check-backend"
     command: ./ops/check.sh backend
 
   - label: ":mag: Check Frontend License"
+    key: "check-frontend-license"
     commands: ./ops/check.sh frontend-license
 
   - label: ":mag: Check Backend License"
+    key: "check-backend-license"
     commands: ./ops/check.sh backend-license
     plugins:
       - artifacts#v1.9.0:
@@ -23,19 +28,25 @@ steps:
           name: "backend-license-report"
           expire_in: "${RETENTION_DAYS} days"
 
-  - wait
   - label: ":cloudformation: Deploy infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
     key: "deploy-infra"
+    depends_on:
+      - "check-shell" 
+      - "check-security"
+      - "check-backend"
+      - "check-frontend-license"
+      - "check-backend-license"
     env:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
     command: ./ops/deploy.sh infra
 
-  - wait
   - label: ":react: Build Frontend"
     branches: main
+    key: "build-frontend"
+    depends_on: "deploy-infra"
     command: ./ops/build.sh frontend
 
   - label: ":java: Build Backend"
@@ -51,22 +62,29 @@ steps:
 
   - label: ":rocket: Deploy Stub"
     if:  build.branch == "main" && build.message =~ /\[stub\]/
+    key: "deploy-stub"
     depends_on: "build-stub"
     command: ./ops/deploy.sh stub
 
-  - wait
   - label: ":rocket: Deploy e2e"
     branches: main
+    key: "deploy-e2e"
+    depends_on:
+      - "build-frontend"
+      - "build-backend"
     command: ./ops/deploy.sh e2e
 
-  - wait
   - label: ":rocket: Run e2e"
     branches: main
+    key: "check-e2e"
+    depends_on:
+      - "deploy-e2e"
+      - "deploy-stub"
     command: ./ops/check.sh e2e
 
-  - wait
   - label: ":rocket: Deploy prod"
     branches: main
+    depends_on: "check-e2e"
     command: ./ops/deploy.sh prod
 
 

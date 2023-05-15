@@ -83,7 +83,7 @@ public class CalculateClassification {
 	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey, List<Object> objects) {
 		Map<String, Integer> countMap = resultMap.get(fieldsKey);
 		if (countMap != null) {
-			for (Object object : objects) {
+			for (Object object : (List) objects.get(0)) {
 				String displayName = pickDisplayNameFromObj(object);
 				Integer count = countMap.getOrDefault(displayName, 0);
 				countMap.put(displayName, count > 0 ? count + 1 : 1);
@@ -98,6 +98,15 @@ public class CalculateClassification {
 		if (object instanceof ICardFieldDisplayName) {
 			return ((ICardFieldDisplayName) object).getDisplayName();
 		}
+		// else if (object instanceof List) {
+		// List<?> list = (List<?>) object;
+		// for (Object subObject: list) {
+		// String displayName = pickDisplayNameFromObj(subObject);
+		// if (displayName != null) {
+		// return displayName;
+		// }
+		// }
+		// }
 		return object.toString();
 	}
 

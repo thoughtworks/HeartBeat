@@ -37,7 +37,7 @@ public class CycleTimeCalculator {
 			for (CycleTimeInfo partTime : jiraCardResponse.getCycleTime()) {
 				String column = partTime.getColumn();
 
-				if (column.equals(CardStepsEnum.FLAG)) {
+				if (column.equals(CardStepsEnum.FLAG.getValue())) {
 					selectedStepsMap.put(column, CardStepsEnum.BLOCK.getValue());
 				}
 
@@ -53,7 +53,7 @@ public class CycleTimeCalculator {
 		return tempSwimlaneMap;
 	}
 
-	public Map<String, Double> aggregateResultBySelectedSteps(Map<String, Double> totalTimeOfEachStepsMap,
+	private Map<String, Double> aggregateResultBySelectedSteps(Map<String, Double> totalTimeOfEachStepsMap,
 			Map<String, String> selectedStepsMap) {
 		Map<String, Double> aggregateMap = new HashMap<>();
 
@@ -69,7 +69,7 @@ public class CycleTimeCalculator {
 		return aggregateMap;
 	}
 
-	public CycleTimeResult calculateAverageTimeAndTotalTime(Map<String, Double> aggregatedMap,
+	private CycleTimeResult calculateAverageTimeAndTotalTime(Map<String, Double> aggregatedMap,
 			CardCollection cardCollection) {
 		List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList = new ArrayList<>();
 		double totalTime = 0;

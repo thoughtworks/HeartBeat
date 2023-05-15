@@ -2,59 +2,67 @@ env:
   RETENTION_DAYS: "10"
 
 steps:
-#  - label: ":white_check_mark: Check Shell"
-#    command: ./ops/check.sh shell
-#
-#  - label: ":lock: Check Security"
-#    command: ./ops/check.sh security
-#
-#  - label: ":white_check_mark: Backend Check"
-#    command: ./ops/check.sh backend
-#
-#  - label: ":mag: Check Frontend License"
-#    commands: ./ops/check.sh frontend-license
-#
-#  - label: ":mag: Check Backend License"
-#    commands: ./ops/check.sh backend-license
-#    plugins:
-#      - artifacts#v1.9.0:
-#          upload:
-#            - "backend/build/reports/dependency-license/**/*"
-#          name: "backend-license-report"
-#          expire_in: "${RETENTION_DAYS} days"
-#
-#  - wait
-#  - label: ":cloudformation: Deploy infra"
-#    if:  build.branch == "main" && build.message =~ /\[infra\]/
-#    env:
-#      AWSHost: "$AWS_HOST"
-#      AWSAccountId: "$AWS_ACCOUNT_ID"
-#      AWSRegion: "$AWS_REGION"
-#    command: ./ops/deploy.sh infra
-#
-#  - wait
-#  - label: ":react: Build Frontend"
-#    branches: main
-#    command: ./ops/build.sh frontend
-#
-#  - label: ":java: Build Backend"
-#    branches: main
-#    command: ./ops/build.sh backend
-#
-#  - label: ":rocket: Build Stub"
-#    if:  build.branch == "main" && build.message =~ /\[stub\]/
-#    command: ./ops/build.sh stub
-#
-#  - label: ":rocket: Deploy Stub"
-#    if:  build.branch == "main" && build.message =~ /\[stub\]/
-#    command: ./ops/deploy.sh stub
-#
-#  - wait
-#  - label: ":rocket: Deploy prod"
-#    branches: main
-#    command: ./ops/deploy.sh prod
+  - label: ":white_check_mark: Check Shell"
+    command: ./ops/check.sh shell
 
-  - label: ":rocket: e2e"
-#    branches: main
+  - label: ":lock: Check Security"
+    command: ./ops/check.sh security
+
+  - label: ":white_check_mark: Backend Check"
+    command: ./ops/check.sh backend
+
+  - label: ":mag: Check Frontend License"
+    commands: ./ops/check.sh frontend-license
+
+  - label: ":mag: Check Backend License"
+    commands: ./ops/check.sh backend-license
+    plugins:
+      - artifacts#v1.9.0:
+          upload:
+            - "backend/build/reports/dependency-license/**/*"
+          name: "backend-license-report"
+          expire_in: "${RETENTION_DAYS} days"
+
+  - wait
+  - label: ":cloudformation: Deploy infra"
+    if:  build.branch == "main" && build.message =~ /\[infra\]/
+    env:
+      AWSHost: "$AWS_HOST"
+      AWSAccountId: "$AWS_ACCOUNT_ID"
+      AWSRegion: "$AWS_REGION"
+    command: ./ops/deploy.sh infra
+
+  - wait
+  - label: ":react: Build Frontend"
+    branches: main
+    command: ./ops/build.sh frontend
+
+  - label: ":java: Build Backend"
+    branches: main
+    command: ./ops/build.sh backend
+
+  - label: ":rocket: Build Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    command: ./ops/build.sh stub
+
+  - label: ":rocket: Deploy Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    command: ./ops/deploy.sh stub
+
+  - wait
+  - label: ":rocket: Deploy e2e"
+    branches: main
+    command: ./ops/deploy.sh e2e
+
+  - wait
+  - label: ":rocket: Run e2e"
+    branches: main
     command: ./ops/check.sh e2e
+
+  - wait
+  - label: ":rocket: Deploy prod"
+    branches: main
+    command: ./ops/deploy.sh prod
+
+
 

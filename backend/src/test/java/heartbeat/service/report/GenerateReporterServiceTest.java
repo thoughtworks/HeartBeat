@@ -1,6 +1,11 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.board.jira.Assignee;
+import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.controller.board.dto.response.CardCollection;
+import heartbeat.controller.board.dto.response.JiraCardDTO;
+import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
@@ -9,6 +14,7 @@ import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.ChangeFailureRate;
 import heartbeat.controller.report.dto.response.Classification;
+import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
@@ -78,13 +84,58 @@ class GenerateReporterServiceTest {
 
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any()))
 			.thenReturn(CardCollection.builder().storyPointSum(0).cardsNumber(0).build());
-		when(calculateClassification.calculateClassification(any(), any()))
-			.thenReturn(List.of(Classification.builder().build()));
 
 		ReportResponse result = generateReporterService.generateReporter(request);
 		Velocity velocity = Velocity.builder().velocityForSP("0").velocityForCards("0").build();
-		Classification classification = Classification.builder().build();
 		assertThat(result).isEqualTo(ReportResponse.builder().velocity(velocity).build());
+	}
+
+	@Test
+
+	public void testGenerateReportWithClassification() {
+		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
+			.boardId("")
+			.boardColumns(List.of())
+			.token("testToken")
+			.site("site")
+			.doneColumn(List.of())
+			.treatFlagCardAsBlock(true)
+			.type("jira")
+			.projectKey("PLL")
+			.targetFields(List.of(TargetField.builder().key("assignee").name("Assignee").flag(true).build()))
+			.build();
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.metrics(List.of("classification"))
+			.jiraBoardSetting(jiraBoardSetting)
+			.startTime("123")
+			.endTime("123")
+			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
+			.build();
+
+		Classification classification = Classification.builder()
+			.fieldName("Assignee")
+			.pairs((List.of(ClassificationNameValuePair.builder().name("shawn").value("100.00%").build())))
+			.build();
+
+		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(0)
+			.cardsNumber(0)
+			.jiraCardDTOList(List.of(JiraCardDTO.builder()
+				.baseInfo(JiraCard.builder()
+					.fields(JiraCardField.builder().assignee(Assignee.builder().displayName("shawn").build()).build())
+					.build())
+				.build()))
+			.build());
+		Classification mockClassification = Classification.builder()
+			.fieldName("Assignee")
+			.pairs((List.of(ClassificationNameValuePair.builder().name("shawn").value("100.00%").build())))
+			.build();
+
+		when(calculateClassification.calculateClassification(any(), any())).thenReturn(List.of(mockClassification));
+
+		ReportResponse result = generateReporterService.generateReporter(request);
+
+		assertThat(result.getClassification()).isEqualTo(List.of(classification));
 	}
 
 	@Test

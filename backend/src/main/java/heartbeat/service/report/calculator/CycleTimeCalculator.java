@@ -82,9 +82,9 @@ public class CycleTimeCalculator {
 			}
 			CycleTimeForSelectedStepItem cycleTimeOptionalItem = CycleTimeForSelectedStepItem.builder()
 				.optionalItemName(key)
-				.averageTimeForSP(formatResultWithUnit(
+				.averageTimeForSP(String.format("%.2f",
 						Double.parseDouble(String.valueOf(value / cardCollection.getStoryPointSum()))))
-				.averageTimeForCards(formatResultWithUnit(
+				.averageTimeForCards(String.format("%.2f",
 						Double.parseDouble(String.valueOf(value / cardCollection.getCardsNumber()))))
 				.totalTime(String.format("%.2f", value))
 				.build();
@@ -96,10 +96,6 @@ public class CycleTimeCalculator {
 			.cycleTimeForSelectedStepsList(cycleTimeForSelectedStepsList)
 			.totalTime(String.format("%.2f", totalTime))
 			.build();
-	}
-
-	private String formatResultWithUnit(Double value) {
-		return Double.isNaN(value) ? "" : String.format("%.2f", value);
 	}
 
 	public CycleTime calculateCycleTime(CardCollection cardCollection,

@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
@@ -8,33 +9,36 @@ import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.ChangeFailureRate;
+import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import heartbeat.service.pipeline.buildkite.builder.*;
+import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
+import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.when;
-
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.List;
+
+import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
+import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -54,6 +58,9 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	private ChangeFailureRateCalculator calculateChangeFailureRate;
+
+	@Mock
+	private CycleTimeCalculator cycleTimeCalculator;
 
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
@@ -134,7 +141,6 @@ class GenerateReporterServiceTest {
 			.token("bkua_6xxxafcc3bxxxxxxb8xxx8d8dxxxf7897cc8b2f1")
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
-
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.metrics(List.of("change failure rate"))
 			.buildKiteSetting(buildKiteSetting)
@@ -164,6 +170,39 @@ class GenerateReporterServiceTest {
 
 		assertThat(response.getChangeFailureRate().getAvgChangeFailureRate().getFailureRate())
 			.isEqualTo(changeFailureRate.getAvgChangeFailureRate().getFailureRate());
+	}
+
+	@Test
+	void shouldReturnGenerateReportResponseWithCycleTimeModelWhenCallGenerateReporterWithCycleTimeMetrics() {
+		CardCollection cardCollection = MOCK_CARD_COLLECTION();
+		List<RequestJiraBoardColumnSetting> boardColumns = JIRA_BOARD_COLUMNS_SETTING();
+
+		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
+			.boardId("")
+			.boardColumns(boardColumns)
+			.token("testToken")
+			.site("site")
+			.doneColumn(List.of())
+			.treatFlagCardAsBlock(true)
+			.type("jira")
+			.projectKey("PLL")
+			.build();
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.metrics(List.of("cycle time"))
+			.jiraBoardSetting(jiraBoardSetting)
+			.startTime("123")
+			.endTime("123")
+			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
+			.build();
+
+		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(cardCollection);
+		when(cycleTimeCalculator.calculateCycleTime(cardCollection, request.getJiraBoardSetting().getBoardColumns()))
+			.thenReturn(CycleTime.builder().build());
+
+		ReportResponse result = generateReporterService.generateReporter(request);
+
+		assertThat(result).isEqualTo(ReportResponse.builder().cycleTime(CycleTime.builder().build()).build());
+
 	}
 
 }

@@ -51,6 +51,7 @@ steps:
 
   - label: ":java: Build Backend"
     branches: main
+    key: "build-backend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh backend
 

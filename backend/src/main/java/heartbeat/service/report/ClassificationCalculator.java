@@ -19,14 +19,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Log4j2
 
-public class CalculateClassification {
+public class ClassificationCalculator {
 
 	private static final String NONE_KEY = "None";
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
 			"statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority", "label" };
 
-	public List<Classification> calculateClassification(List<TargetField> targetFields, CardCollection cards) {
+	public List<Classification> calculate(List<TargetField> targetFields, CardCollection cards) {
 		List<Classification> classificationFields = new ArrayList<>();
 		Map<String, Map<String, Integer>> resultMap = new HashMap<>();
 		Map<String, String> nameMap = new HashMap<>();
@@ -98,21 +98,12 @@ public class CalculateClassification {
 		if (object instanceof ICardFieldDisplayName) {
 			return ((ICardFieldDisplayName) object).getDisplayName();
 		}
-		// else if (object instanceof List) {
-		// List<?> list = (List<?>) object;
-		// for (Object subObject: list) {
-		// String displayName = pickDisplayNameFromObj(subObject);
-		// if (displayName != null) {
-		// return displayName;
-		// }
-		// }
-		// }
 		return object.toString();
 	}
 
 	private static Map<String, Object> extractFields(JiraCardField jiraCardFields) {
 		Map<String, Object> tempFields = new HashMap<>();
-		for (String fieldName : CalculateClassification.FIELD_NAMES) {
+		for (String fieldName : ClassificationCalculator.FIELD_NAMES) {
 			switch (fieldName) {
 				case "assignee" -> tempFields.put(fieldName, jiraCardFields.getAssignee());
 				case "summary" -> tempFields.put(fieldName, jiraCardFields.getSummary());

@@ -26,7 +26,7 @@ public class GenerateReporterService {
 
 	private final JiraService jiraService;
 
-	private final CalculateClassification calculateClassification;
+	private final ClassificationCalculator classificationCalculator;
 
 	private final BuildKiteService buildKiteService;
 
@@ -64,8 +64,8 @@ public class GenerateReporterService {
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
-				case "classification" -> reportResponse.setClassification(calculateClassification
-					.calculateClassification(request.getJiraBoardSetting().getTargetFields(), cardCollection));
+				case "classification" -> reportResponse.setClassification(classificationCalculator
+					.calculate(request.getJiraBoardSetting().getTargetFields(), cardCollection));
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));

@@ -51,7 +51,7 @@ class GenerateReporterServiceTest {
 	JiraService jiraService;
 
 	@Mock
-	CalculateClassification calculateClassification;
+	ClassificationCalculator classificationCalculator;
 
 	@Mock
 	private BuildKiteService buildKiteService;
@@ -131,7 +131,7 @@ class GenerateReporterServiceTest {
 			.pairs((List.of(ClassificationNameValuePair.builder().name("shawn").value("100.00%").build())))
 			.build();
 
-		when(calculateClassification.calculateClassification(any(), any())).thenReturn(List.of(mockClassification));
+		when(classificationCalculator.calculate(any(), any())).thenReturn(List.of(mockClassification));
 
 		ReportResponse result = generateReporterService.generateReporter(request);
 

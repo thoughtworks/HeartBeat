@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class CalculateClassificationTest {
+class ClassificationCalculatorTest {
 
 	@InjectMocks
-	CalculateClassification calculateClassification;
+	ClassificationCalculator classificationCalculator;
 
 	@Test
 	void shouldReturnClassificationFields() {
@@ -57,8 +57,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(1, classifications.size());
 
@@ -99,8 +98,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(1, classifications.size());
 
@@ -170,8 +168,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(2, classifications.size());
 
@@ -218,8 +215,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(4, classifications.size());
 
@@ -259,8 +255,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(1, classifications.size());
 		assertEquals("Status", classifications.get(0).getFieldName());
@@ -300,8 +295,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(1, classifications.size());
 		assertEquals("Labels", classifications.get(0).getFieldName());
@@ -345,8 +339,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(0, classifications.size());
 	}
@@ -372,8 +365,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(0, classifications.size());
 	}
@@ -409,8 +401,7 @@ class CalculateClassificationTest {
 			.jiraCardDTOList(mockJiraCards)
 			.build();
 
-		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
-				mockCards);
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields, mockCards);
 
 		assertEquals(1, classifications.size());
 		assertEquals("Fix Versions", classifications.get(0).getFieldName());

@@ -29,4 +29,18 @@ public class WorkDayFixture {
 			.toEpochMilli();
 	}
 
+	public static long START_TIME_NEW_YEAR() {
+		return LocalDate.parse("2021-01-01", DateTimeFormatter.ISO_DATE)
+			.atStartOfDay(ZoneOffset.UTC)
+			.toInstant()
+			.toEpochMilli();
+	}
+
+	public static long END_TIME_NEW_YEAR() {
+		return LocalDate.parse("2021-02-01", DateTimeFormatter.ISO_DATE)
+			.atStartOfDay(ZoneOffset.UTC)
+			.toInstant()
+			.toEpochMilli();
+	}
+
 }

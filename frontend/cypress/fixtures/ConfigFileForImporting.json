@@ -6,7 +6,7 @@
     "endDate": "2023-03-30T23:59:59.999+08:00"
   },
   "calendarType": "Calendar with Chinese Holiday",
-  "boardConfig": {
+  "board": {
     "type": "Classic Jira",
     "verifyToken": "mockVerifyToken",
     "boardId": "1963",
@@ -15,12 +15,12 @@
     "email": "test@test.com",
     "projectKey": "PLL"
   },
-  "pipelineConfig": "mockToken",
-  "pipelineToolConfig": {
+  "pipeline": "mockToken",
+  "pipelineTool": {
     "type": "BuildKite",
     "token": "mockToken"
   },
-  "sourceControlConfig": {
+  "sourceControl": {
     "type": "GitHub",
     "token": ""
   },

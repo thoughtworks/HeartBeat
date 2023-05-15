@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,9 +27,15 @@ public class BuildKiteBuildInfo {
 
 	private int number;
 
-	public DeployInfo mapToDeployInfo(String step, String states) {
+	public DeployInfo mapToDeployInfo(String step, String state, String startTime, String endTime) {
+		Instant startDate = Instant.ofEpochMilli(Long.parseLong(startTime));
+		Instant endDate = Instant.ofEpochMilli(Long.parseLong(endTime));
 		BuildKiteJob job = this.jobs.stream()
-			.filter(item -> Objects.equals(item.getName(), step) && Objects.equals(states, item.getState()))
+			.filter(item -> Objects.equals(item.getName(), step) && Objects.equals(state, item.getState()))
+			.filter(item -> {
+				Instant time = Instant.parse(item.getFinishedAt());
+				return time.isAfter(startDate) && time.isBefore(endDate);
+			})
 			.findFirst()
 			.orElse(null);
 

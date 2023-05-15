@@ -1,29 +1,72 @@
 class Config {
+  private readonly backButton = () => cy.contains('Back')
+
+  private readonly yesButton = () => cy.contains('Yes')
+
+  private readonly projectNameInput = () => cy.contains('Project name *').siblings().first()
+
+  private readonly collectionDateFrom = () => cy.contains('From').parent()
+
+  private readonly requiredDataSelect = () => cy.contains('Required data').siblings()
+
+  private readonly requiredDataAllSelectOption = () => cy.contains('All')
+
+  private readonly requiredDataModelCloseElement = () =>
+    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop')
+
+  private readonly boardInfoSelectionJira = () => cy.contains('Jira')
+
+  private readonly boardInfoSelectionClassicJira = () => cy.contains('Classic Jira')
+
+  private readonly boardInfoBoardIdInput = () => cy.contains('Board Id').siblings().first()
+
+  private readonly boardInfoEmailInput = () => cy.contains('Email').siblings().first()
+
+  private readonly boardInfoProjectKeyInput = () => cy.contains('Project Key').siblings().first()
+
+  private readonly boardInfoSiteInput = () => cy.contains('Site').siblings().first()
+
+  private readonly boardInfoTokenInput = () => cy.contains('Token').siblings().first()
+
+  private readonly boardInfoVerifyButton = () => cy.contains('Verify')
+
+  private readonly pipelineToolTokenInput = () => cy.contains("[data-testid='pipelineToolTextField']", 'Token')
+
+  private readonly pipelineToolVerifyButton = () => cy.get('[data-test-id="pipelineVerifyButton"]')
+
+  private readonly sourceControlTokenInput = () => cy.contains("[data-testid='sourceControlTextField']", 'Token')
+
+  private readonly sourceControlVerifyButton = () => cy.get('[data-test-id="sourceControlVerifyButton"]')
+
+  private readonly cancelButton = () => cy.contains('Cancel')
+
+  private readonly goToMetricsStepButton = () => cy.contains('Next')
+
   navigate() {
     cy.visit(Cypress.env('url') + '/metrics')
   }
 
   goHomePage() {
-    cy.contains('Back').click()
-    cy.contains('Yes').click()
+    this.backButton().click()
+    this.yesButton().click()
 
     cy.url().should('include', '/home')
   }
 
   typeProjectName(projectName: string) {
-    cy.contains('Project name *').siblings().first().type(projectName)
+    this.projectNameInput().type(projectName)
   }
 
   selectDateRange() {
-    cy.contains('From').parent().type('03162023')
+    this.collectionDateFrom().type('03162023')
   }
 
   selectMetricsData() {
-    cy.contains('Required data').siblings().click()
+    this.requiredDataSelect().click()
 
-    cy.contains('All').click()
+    this.requiredDataAllSelectOption().click()
 
-    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+    this.requiredDataModelCloseElement().click({ force: true })
   }
 
   fillBoardInfoAndVerifyWithClassicJira(
@@ -33,43 +76,43 @@ class Config {
     site: string,
     token: string
   ) {
-    cy.contains('Jira').click()
-    cy.contains('Classic Jira').click()
+    this.boardInfoSelectionJira().click()
+    this.boardInfoSelectionClassicJira().click()
 
-    cy.contains('Board Id').siblings().first().type(boardId)
-    cy.contains('Email').siblings().first().type(email)
-    cy.contains('Project Key').siblings().first().type(projectKey)
-    cy.contains('Site').siblings().first().type(site)
-    cy.contains('Token').siblings().first().type(token)
+    this.boardInfoBoardIdInput().type(boardId)
+    this.boardInfoEmailInput().type(email)
+    this.boardInfoProjectKeyInput().type(projectKey)
+    this.boardInfoSiteInput().type(site)
+    this.boardInfoTokenInput().type(token)
 
-    cy.contains('Verify').click()
+    this.boardInfoVerifyButton().click()
   }
 
   fillPipelineToolFieldsInfoAndVerify(token: string) {
-    cy.contains("[data-testid='pipelineToolTextField']", 'Token').type(token)
+    this.pipelineToolTokenInput().type(token)
 
-    cy.get('[data-test-id="pipelineVerifyButton"]').click()
+    this.pipelineToolVerifyButton().click()
   }
 
   fillSourceControlFieldsInfoAndVerify(token: string) {
-    cy.contains("[data-testid='sourceControlTextField']", 'Token').type(token)
+    this.sourceControlTokenInput().type(token)
 
-    cy.get('[data-test-id="sourceControlVerifyButton"]').click()
+    this.sourceControlVerifyButton().click()
   }
 
   verifyAndClickNextToMetrics() {
     cy.contains('Verify').click()
-    cy.get('[data-test-id="pipelineVerifyButton"]').click()
-    cy.get('[data-test-id="sourceControlVerifyButton"]').click()
+    this.pipelineToolVerifyButton().click()
+    this.sourceControlVerifyButton().click()
   }
 
   CancelBackToHomePage() {
-    cy.contains('Back').click()
-    cy.contains('Cancel').click()
+    this.backButton().click()
+    this.cancelButton().click()
   }
 
   goMetricsStep() {
-    cy.contains('Next').click()
+    this.goToMetricsStepButton().click()
   }
 }
 

@@ -40,8 +40,12 @@ describe('Create a new project', () => {
 
     configPage.goMetricsStep()
 
+    nextButton().should('be.disabled')
+
     cy.contains('Crews setting').should('exist')
     cy.contains('Real done').should('exist')
+
+    metricsPage.checkRealDone()
 
     metricsPage.checkClassification()
 
@@ -52,9 +56,5 @@ describe('Create a new project', () => {
     nextButton().should('be.enabled')
 
     metricsPage.goReportStep()
-
-    cy.contains('Subtitle').should('exist')
-    cy.contains('Velocity').should('exist')
-    cy.contains('Change failure rate').should('exist')
   })
 })

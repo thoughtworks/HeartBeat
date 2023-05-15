@@ -33,4 +33,9 @@ public class BuildKiteJobBuilder {
 		return this;
 	}
 
+	public BuildKiteJobBuilder withFinishedAt(String finishedAt) {
+		buildKiteJob.setFinishedAt(finishedAt);
+		return this;
+	}
+
 }

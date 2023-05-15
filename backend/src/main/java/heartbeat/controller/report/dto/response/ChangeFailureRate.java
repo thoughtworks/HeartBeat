@@ -11,14 +11,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportResponse {
+public class ChangeFailureRate {
 
-	private Velocity velocity;
+	private AvgChangeFailureRate avgChangeFailureRate;
 
-	private List<Classification> classification;
-
-	private DeploymentFrequency deploymentFrequency;
-
-	private ChangeFailureRate changeFailureRate;
+	private List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines;
 
 }

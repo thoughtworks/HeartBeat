@@ -1,49 +1,112 @@
 class Metrics {
-  checkClassification() {
-    cy.contains('Distinguished by').siblings().click()
+  private readonly realDoneSelect = () => cy.contains('Consider as Done').siblings().eq(0)
 
-    cy.contains('All').click()
-    cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop').click({ force: true })
+  private readonly RealDoneSelectAllOption = () => cy.contains('All')
+
+  private readonly closeModelElement = () => cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop')
+
+  private readonly classificationSelect = () => cy.contains('Distinguished By').siblings()
+
+  private readonly classificationSelectAllOption = () => cy.contains('All')
+
+  private readonly deploymentFrequencySettingTitle = () => cy.contains('Deployment frequency settings')
+
+  private readonly organizationSelect = () =>
+    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(0).siblings()
+
+  private readonly pipelineOfOrgXXXX = () => cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")')
+
+  private readonly pipelineSelect = (i: number) =>
+    cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(i).siblings()
+
+  private readonly pipelineSelectOneOption = () =>
+    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-payment-selector")')
+
+  private readonly stepOfSomePipelineSelect = (i: number) =>
+    cy.get('[id="single-selection-step"]:contains("Step")').eq(i).siblings()
+
+  private readonly stepSelectSomeOption = () =>
+    cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO PROD")')
+
+  private readonly addOnePipelineButton = () => cy.get('[data-testid="AddIcon"]:first')
+
+  private readonly organizationSecondSelect = (i: number) =>
+    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(i).siblings()
+
+  private readonly pipelineSelectOnboardingOption = () =>
+    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")')
+
+  private readonly pipelineSelectUIOption = () =>
+    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
+
+  private readonly buildKiteStepNotFoundTips = () => cy.contains('BuildKite get steps failed: 404 Not Found')
+
+  private readonly pipelineRemoveButton = () => cy.get('[data-test-id="remove-button"]').eq(1)
+
+  private readonly leadTimeForChangesTitle = () => cy.contains('Lead time for changes')
+
+  private readonly pipelineStepSelectXXOption = () =>
+    cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO UAT"):last')
+
+  private readonly pipelineStepXXOption = () =>
+    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
+
+  private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
+
+  private readonly backButton = () => cy.contains('Next')
+
+  checkRealDone() {
+    this.realDoneSelect().click()
+
+    this.RealDoneSelectAllOption().click()
+    this.closeModelElement().click({ force: true })
+  }
+
+  checkClassification() {
+    this.classificationSelect().click()
+
+    this.classificationSelectAllOption().click()
+    this.closeModelElement().click({ force: true })
   }
 
   checkDeploymentFrequencySettings() {
-    cy.contains('Deployment frequency settings').should('exist')
-    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(0).siblings().click()
-    cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")').click()
-    cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(0).siblings().click()
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-payment-selector")').click()
-    cy.get('[id="single-selection-steps"]:contains("Steps")').eq(0).siblings().click()
-    cy.get('[data-test-id="single-selection-steps"]:contains("RECORD RELEASE TO PROD")').click()
+    this.deploymentFrequencySettingTitle().should('exist')
+    this.organizationSelect().click()
+    this.pipelineOfOrgXXXX().click()
+    this.pipelineSelect(0).click()
+    this.pipelineSelectOneOption().click()
+    this.stepOfSomePipelineSelect(0).click()
+    this.stepSelectSomeOption().click()
 
-    cy.get('[data-testid="AddIcon"]:first').click()
-    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(1).siblings().click()
-    cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")').click()
-    cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(1).siblings().click()
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")').click()
-    cy.contains('BuildKite get steps failed: 404 Not Found').should('exist')
-    cy.get('[data-test-id="remove-button"]').eq(1).click()
+    this.addOnePipelineButton().click()
+    this.organizationSecondSelect(1).click()
+    this.pipelineOfOrgXXXX().click()
+    this.pipelineSelect(1).click()
+    this.pipelineSelectUIOption().click()
+    this.buildKiteStepNotFoundTips().should('exist')
+    this.pipelineRemoveButton().click()
   }
 
   checkLeadTimeForChanges() {
-    cy.contains('Lead time for changes').should('exist')
-    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(1).siblings().click()
-    cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")').click()
-    cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(1).siblings().click()
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")').click()
-    cy.get('[id="single-selection-steps"]:contains("Steps")').eq(1).siblings().click()
-    cy.get('[data-test-id="single-selection-steps"]:contains("RECORD RELEASE TO UAT"):last').click()
+    this.leadTimeForChangesTitle().should('exist')
+    this.organizationSecondSelect(1).click()
+    this.pipelineOfOrgXXXX().click()
+    this.pipelineSelect(1).click()
+    this.pipelineSelectOnboardingOption().click()
+    this.stepOfSomePipelineSelect(1).click()
+    this.pipelineStepSelectXXOption().click()
 
-    cy.get('[data-testid="AddIcon"]:last').click()
-    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(2).siblings().click()
-    cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")').click()
-    cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(2).siblings().click()
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")').click()
-    cy.contains('BuildKite get steps failed: 404 Not Found').should('exist')
-    cy.get('[data-test-id="remove-button"]').eq(1).click()
+    this.leadTimeForChangeAddOneButton().click()
+    this.organizationSecondSelect(2).click()
+    this.pipelineOfOrgXXXX().click()
+    this.pipelineSelect(2).click()
+    this.pipelineStepXXOption().click()
+    this.buildKiteStepNotFoundTips().should('exist')
+    this.pipelineRemoveButton().click()
   }
 
   goReportStep() {
-    cy.contains('Next').click()
+    this.backButton().click()
   }
 }
 

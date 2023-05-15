@@ -25,23 +25,38 @@ public class WorkDay {
 
 	private final HolidayFeignClient holidayFeignClient;
 
-	public Map<String, Boolean> loadHolidayList(String year) {
+	private Map<String, Boolean> holidayMap = new HashMap<>();
 
+	private void loadHolidayList(String year) {
 		log.info("Start to get chinese holiday by year: {}", year);
 		List<HolidayDTO> tempHolidayList = holidayFeignClient.getHolidays(year).getDays();
 		log.info("Successfully get holiday list:{}", tempHolidayList);
 
-		Map<String, Boolean> holidayMap = new HashMap<>();
 		for (HolidayDTO tempHoliday : tempHolidayList) {
 			holidayMap.put(tempHoliday.getDate(), tempHoliday.getIsOffDay());
 		}
-		return holidayMap;
+	}
+
+	private void checkHolidayList(String year) {
+		if (holidayMap.size() == 0) {
+			loadHolidayList(year);
+		}
+		else if (!isYearExisted(year)) {
+			loadHolidayList(year);
+		}
+	}
+
+	private boolean isYearExisted(String year) {
+		boolean hasYear = false;
+		for (String dateString : holidayMap.keySet()) {
+			hasYear = dateString.startsWith(year);
+		}
+		return hasYear;
 	}
 
 	public boolean verifyIfThisDayHoliday(long time) {
 		String dateString = convertTimeToDateString(time);
-		int year = LocalDate.parse(dateString, DATE_FORMATTER).getYear();
-		Map<String, Boolean> holidayMap = loadHolidayList(String.valueOf(year));
+		checkHolidayList(String.valueOf(LocalDate.parse(dateString, DATE_FORMATTER).getYear()));
 		if (holidayMap.containsKey(dateString)) {
 			return holidayMap.get(dateString);
 		}

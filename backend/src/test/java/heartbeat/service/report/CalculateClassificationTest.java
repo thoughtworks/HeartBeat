@@ -117,7 +117,8 @@ class CalculateClassificationTest {
 		List<TargetField> mockTargetFields = List.of(
 				TargetField.builder().key("assignee").name("Assignee").flag(true).build(),
 				TargetField.builder().key("fixVersions").name("Fix versions").flag(false).build(),
-				TargetField.builder().key("sprint").name("Sprint").flag(false).build());
+				TargetField.builder().key("sprint").name("Sprint").flag(false).build(),
+				TargetField.builder().key("reporter").name("Reporter").flag(true).build());
 
 		List<JiraCardDTO> mockJiraCards = Arrays.asList(
 				JiraCardDTO.builder()
@@ -172,22 +173,26 @@ class CalculateClassificationTest {
 		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
 				mockCards);
 
-		assertEquals(1, classifications.size());
+		assertEquals(2, classifications.size());
 
-		Classification classification = classifications.get(0);
-		assertEquals("Assignee", classification.getFieldName());
-		assertEquals("value2", classification.getPairs().get(0).getName());
-		assertEquals("50.00%", classification.getPairs().get(0).getValue());
-		assertEquals("value1", classification.getPairs().get(1).getName());
-		assertEquals("50.00%", classification.getPairs().get(1).getValue());
+		assertEquals("Assignee", classifications.get(1).getFieldName());
+		assertEquals("value2", classifications.get(1).getPairs().get(0).getName());
+		assertEquals("50.00%", classifications.get(1).getPairs().get(0).getValue());
+		assertEquals("value1", classifications.get(1).getPairs().get(1).getName());
+		assertEquals("50.00%", classifications.get(1).getPairs().get(1).getValue());
+		assertEquals("Reporter", classifications.get(0).getFieldName());
+		assertEquals("Shawn", classifications.get(0).getPairs().get(0).getName());
+		assertEquals("100.00%", classifications.get(0).getPairs().get(0).getValue());
 	}
 
 	@Test
 	void shouldReturnClassificationWithPickRightName() {
 		List<TargetField> mockTargetFields = List.of(
 				TargetField.builder().key("project").name("Project").flag(true).build(),
+				TargetField.builder().key("issuetype").name("IssueType").flag(true).build(),
 				TargetField.builder().key("fixVersions").name("Fix versions").flag(false).build(),
-				TargetField.builder().key("assignee").name("Assignee").flag(true).build());
+				TargetField.builder().key("assignee").name("Assignee").flag(true).build(),
+				TargetField.builder().key("parent").name("Card Parent").flag(true).build());
 
 		List<JiraCardDTO> mockJiraCards = Arrays.asList(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()
@@ -195,13 +200,13 @@ class CalculateClassificationTest {
 				.fields(JiraCardField.builder()
 					.assignee(Assignee.builder().displayName("value1").build())
 					.summary("test")
-					.issuetype(IssueType.builder().name("test").build())
+					.issuetype(IssueType.builder().name("testIssue").build())
 					.reporter(Reporter.builder().displayName("Shawn").build())
 					.statusCategoryChangeDate("test")
 					.storyPoints(3)
 					.priority(Priority.builder().name("Top").build())
 					.project(JiraProject.builder().id("001").key("project").name("heartBeat").build())
-					.parent(CardParent.builder().build())
+					.parent(CardParent.builder().name("ADM-442").build())
 					.label("testLabel")
 					.build())
 				.build())
@@ -216,12 +221,21 @@ class CalculateClassificationTest {
 		List<Classification> classifications = calculateClassification.calculateClassification(mockTargetFields,
 				mockCards);
 
-		assertEquals(2, classifications.size());
+		assertEquals(4, classifications.size());
 
-		Classification classification = classifications.get(0);
-		assertEquals("Project", classification.getFieldName());
-		assertEquals("heartBeat", classification.getPairs().get(0).getName());
-		assertEquals("100.00%", classification.getPairs().get(0).getValue());
+		assertEquals("IssueType", classifications.get(0).getFieldName());
+		assertEquals("testIssue", classifications.get(0).getPairs().get(0).getName());
+		assertEquals("100.00%", classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("Card Parent", classifications.get(1).getFieldName());
+		assertEquals("ADM-442", classifications.get(1).getPairs().get(0).getName());
+		assertEquals("100.00%", classifications.get(1).getPairs().get(0).getValue());
+		assertEquals("Assignee", classifications.get(3).getFieldName());
+		assertEquals("value1", classifications.get(3).getPairs().get(0).getName());
+		assertEquals("100.00%", classifications.get(3).getPairs().get(0).getValue());
+		assertEquals("Project", classifications.get(2).getFieldName());
+		assertEquals("heartBeat", classifications.get(2).getPairs().get(0).getName());
+		assertEquals("100.00%", classifications.get(2).getPairs().get(0).getValue());
+
 	}
 
 	@Test

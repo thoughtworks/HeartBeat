@@ -15,19 +15,32 @@ export const MetricsStep = () => {
   const jiraColumns = useAppSelector(selectJiraColumns)
   const targetFields = useAppSelector(selectTargetFields)
   const selectedBoardColumns = useAppSelector(selectBoardColumns)
+  const isShowCrewsAndRealDone =
+    requiredData.includes(REQUIRED_DATA.VELOCITY) ||
+    requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
+    requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
+
   return (
     <>
-      <Crews options={users} title={'Crews setting'} label={'Included Crews'} />
+      {isShowCrewsAndRealDone && <Crews options={users} title={'Crews setting'} label={'Included Crews'} />}
+
       {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && (
         <CycleTime columns={jiraColumns} title={'Cycle time settings'} />
       )}
-      {selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2 && (
-        <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as Done'} />
-      )}
+
+      {isShowCrewsAndRealDone &&
+        selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2 && (
+          <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as Done'} />
+        )}
+
       {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
         <Classification options={targetFields} title={'Classification setting'} label={'Distinguished By'} />
       )}
-      {requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) && <DeploymentFrequencySettings />}
+
+      {(requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
+        requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
+        requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && <DeploymentFrequencySettings />}
+
       {requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) && <LeadTimeForChanges />}
     </>
   )

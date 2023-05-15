@@ -22,6 +22,7 @@ import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,11 +67,19 @@ class BuildKiteServiceTest {
 			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next"
 			""";
 
+	private static final String PASSED_STATE = "passed";
+
+	private static final String FAILED_STATE = "failed";
+
 	@Mock
 	BuildKiteFeignClient buildKiteFeignClient;
 
 	@InjectMocks
 	BuildKiteService buildKiteService;
+
+	private static final String mockStartTime = "1661702400000";
+
+	private static final String mockEndTime = "1662739199000";
 
 	@Test
 	void shouldReturnBuildKiteResponseWhenCallBuildKiteApi() throws IOException {
@@ -303,8 +312,6 @@ class BuildKiteServiceTest {
 
 	@Test
 	public void shouldReturnBuildKiteBuildInfoWhenFetchPipelineBuilds() {
-		String mockStartTime = "1661702400000";
-		String mockEndTime = "1662739199000";
 		String mockToken = "xxxxxxxxxx";
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		List<String> linkHeader = new ArrayList<>();
@@ -329,14 +336,15 @@ class BuildKiteServiceTest {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build(),
 				BuildKiteBuildInfoBuilder.withDefault()
-					.withJobs(List.of(BuildKiteJobBuilder.withDefault().withState("passed").build()))
+					.withJobs(List.of(BuildKiteJobBuilder.withDefault().withState(PASSED_STATE).build()))
 					.build(),
 				BuildKiteBuildInfoBuilder.withDefault()
 					.withJobs(List.of(BuildKiteJobBuilder.withDefault().withStartedAt("").build()))
 					.build());
 		DeployTimes expectedDeployTimes = DeployTimesBuilder.withDefault().build();
 
-		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos);
+		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
+				mockStartTime, mockEndTime);
 
 		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
 	}
@@ -351,7 +359,8 @@ class BuildKiteServiceTest {
 			.withFailed(Collections.emptyList())
 			.build();
 
-		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos);
+		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
+				mockStartTime, mockEndTime);
 
 		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
 	}
@@ -361,9 +370,52 @@ class BuildKiteServiceTest {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironment.builder().build();
 		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfo.builder().build());
 
-		Assertions.assertThatThrownBy(() -> buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos))
+		Assertions
+			.assertThatThrownBy(() -> buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
+					mockStartTime, mockEndTime))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessageContaining("miss orgId argument");
+	}
+
+	@Test
+	public void shouldReturnDeployTimesWhenCountDeployTimesAtFixedTimeIntervals() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build(),
+				BuildKiteBuildInfoBuilder.withDefault()
+					.withJobs(List.of(
+							BuildKiteJobBuilder.withDefault()
+								.withState(PASSED_STATE)
+								.withFinishedAt("2023-09-09T04:57:09.545Z")
+								.build(),
+							BuildKiteJobBuilder.withDefault()
+								.withState(PASSED_STATE)
+								.withFinishedAt("2022-08-28T04:57:09.545Z")
+								.build(),
+							BuildKiteJobBuilder.withDefault()
+								.withState(FAILED_STATE)
+								.withFinishedAt("2022-07-21T04:57:09.545Z")
+								.build(),
+							BuildKiteJobBuilder.withDefault()
+								.withState(FAILED_STATE)
+								.withFinishedAt("2022-08-30T04:57:09.545Z")
+								.build()))
+					.build(),
+				BuildKiteBuildInfoBuilder.withDefault()
+					.withJobs(List.of(BuildKiteJobBuilder.withDefault().withStartedAt("").build()))
+					.build());
+		DeployTimes expectedDeployTimes = DeployTimesBuilder.withDefault()
+			.withPassed(Collections.emptyList())
+			.withFailed(List.of(DeployInfoBuilder.withDefault().withState(FAILED_STATE).build(),
+					DeployInfoBuilder.withDefault()
+						.withState(FAILED_STATE)
+						.withJobFinishTime("2022-08-30T04:57:09.545Z")
+						.build()))
+			.build();
+
+		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
+				mockStartTime, mockEndTime);
+
+		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
 	}
 
 }

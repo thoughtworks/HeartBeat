@@ -206,12 +206,14 @@ public class BuildKiteService {
 	}
 
 	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,
-			List<BuildKiteBuildInfo> buildInfos) {
+			List<BuildKiteBuildInfo> buildInfos, String startTime, String endTime) {
 		if (deploymentEnvironment.getOrgId() == null) {
 			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "miss orgId argument");
 		}
-		List<DeployInfo> passedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "passed");
-		List<DeployInfo> failedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "failed");
+		List<DeployInfo> passedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "passed", startTime,
+				endTime);
+		List<DeployInfo> failedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "failed", startTime,
+				endTime);
 
 		return DeployTimes.builder()
 			.pipelineId(deploymentEnvironment.getId())
@@ -223,9 +225,9 @@ public class BuildKiteService {
 	}
 
 	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
-			DeploymentEnvironment deploymentEnvironment, String states) {
+			DeploymentEnvironment deploymentEnvironment, String states, String startTime, String endTime) {
 		return buildInfos.stream()
-			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), states))
+			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), states, startTime, endTime))
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
 			.filter(job -> !job.getJobStartTime().isEmpty())
 			.toList();

@@ -147,6 +147,9 @@ describe('useMetricsStepValidationCheckContext', () => {
     ).toBe(null)
     expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
     expect(result.current?.isPipelineValid(LEAD_TIME_FOR_CHANGES)).toBe(false)
+    expect(result.current?.getDuplicatedPipeLineIds([{ id: 1, organization: '', pipelineName: '', step: '' }])).toEqual(
+      []
+    )
   })
 
   it('should return useMetricsStepValidationCheckContext correctly ', () => {

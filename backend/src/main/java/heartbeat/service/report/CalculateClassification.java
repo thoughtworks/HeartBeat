@@ -23,8 +23,6 @@ public class CalculateClassification {
 
 	private static final String NONE_KEY = "None";
 
-	private static final String[] VALUE_KEYS = { "displayName", "name", "displayValue" };
-
 	public List<Classification> calculateClassification(List<TargetField> targetFields, CardCollection cards) {
 		// todo:add calculate Classification logic
 		List<Classification> classificationFields = new ArrayList<>();

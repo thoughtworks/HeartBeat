@@ -2,17 +2,20 @@ env:
   RETENTION_DAYS: "10"
 
 steps:
-  - label: ":lock: Security Check"
-    command: ./.buildkite/ops/check security
+  - label: ":white_check_mark: Check Shell"
+    command: ./ops/check.sh shell
 
-  - label: ":rocket: Backend Check"
-    command: ./.buildkite/ops/check backend
+  - label: ":lock: Check Security"
+    command: ./ops/check.sh security
 
-  - label: ":mag: Frontend License Check"
-    commands: ./.buildkite/ops/check frontend-license
+  - label: ":white_check_mark: Backend Check"
+    command: ./ops/check.sh backend
 
-  - label: ":mag: Backend License Check"
-    commands: ./.buildkite/ops/check backend-license
+  - label: ":mag: Check Frontend License"
+    commands: ./ops/check.sh frontend-license
+
+  - label: ":mag: Check Backend License"
+    commands: ./ops/check.sh backend-license
     plugins:
       - artifacts#v1.9.0:
           upload:
@@ -21,32 +24,33 @@ steps:
           expire_in: "${RETENTION_DAYS} days"
 
   - wait
-  - label: ":rocket: Deploy infra"
+  - label: ":cloudformation: Deploy infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
     env:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
-    command: ./.buildkite/ops/deploy infra
+    command: ./ops/deploy.sh infra
 
   - wait
-  - label: "build-backend"
+  - label: ":react: Build Frontend"
     branches: main
-    command: ./.buildkite/ops/build backend
+    command: ./ops/build.sh frontend
 
-  - wait
-  - label: stub_build
+  - label: ":java: Build Backend"
     branches: main
-    key: stub_build
-    command: ./.buildkite/ops/build stub
+    command: ./ops/build.sh backend
 
-  - label: stub_deploy
-    branches: main
-    key: stub_deploy
-    depends_on: stub_build
-    command: ./.buildkite/ops/deploy stub
+  - label: ":rocket: Build Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    command: ./ops/build.sh stub
+
+  - label: ":rocket: Deploy Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    command: ./ops/deploy.sh stub
 
   - wait
   - label: ":rocket: Deploy prod"
-    command: ./.buildkite/ops/deploy prod
+    branches: main
+    command: ./ops/deploy.sh prod
 

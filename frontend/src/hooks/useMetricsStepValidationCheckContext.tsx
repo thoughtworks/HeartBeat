@@ -23,6 +23,9 @@ interface ProviderContextType {
     type: string
   ) => void
   isPipelineValid: (type: string) => boolean
+  getDuplicatedPipeLineIds: (
+    pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[]
+  ) => number[]
 }
 
 interface ContextProviderProps {
@@ -35,6 +38,7 @@ export const ValidationContext = createContext<ProviderContextType>({
   clearErrorMessage: () => null,
   checkDuplicatedPipeline: () => null,
   isPipelineValid: () => false,
+  getDuplicatedPipeLineIds: () => [],
 })
 
 const emptyErrorMessages = {
@@ -160,6 +164,7 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
         clearErrorMessage,
         checkDuplicatedPipeline,
         isPipelineValid,
+        getDuplicatedPipeLineIds,
       }}
     >
       {children}

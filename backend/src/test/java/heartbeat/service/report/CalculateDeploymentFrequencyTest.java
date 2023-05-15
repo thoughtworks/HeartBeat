@@ -24,15 +24,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class CalculateDeploymentFrequencyTest {
 
-	public static final String JOB_FINISH_TIME_2022 = "2022-09-08T22:45:33.981Z";
+	private static final String JOB_FINISH_TIME_2022 = "2022-09-08T22:45:33.981Z";
 
-	public static final String JOB_FINISH_TIME_2023 = "2023-09-08T22:45:33.981Z";
+	private static final String JOB_FINISH_TIME_2023 = "2023-09-08T22:45:33.981Z";
 
-	public static final String PASSED_STATE = "passed";
+	private static final String PASSED_STATE = "passed";
 
-	public static final String START_TIME = "0000000000000";
+	private static final String START_TIME = "0000000000000";
 
-	public static final String END_TIME = "1662739199000";
+	private static final String END_TIME = "1662739199000";
 
 	@InjectMocks
 	private DeploymentFrequencyCalculator deploymentFrequency;
@@ -47,7 +47,7 @@ class CalculateDeploymentFrequencyTest {
 					DeployInfo.builder().jobFinishTime(JOB_FINISH_TIME_2023).state(PASSED_STATE).build()))
 			.build();
 		DeploymentFrequency expectedDeploymentFrequency = DeploymentFrequency.builder()
-			.avgDeploymentFrequency(AvgDeploymentFrequency.builder().deploymentFrequency(0.1F).build())
+			.avgDeploymentFrequency(AvgDeploymentFrequency.builder().deploymentFrequency(0.2F).build())
 			.build();
 
 		when(workDay.calculateWorkDaysBetween(anyLong(), anyLong())).thenReturn(10);

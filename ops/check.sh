@@ -57,7 +57,7 @@ frontend_check(){
 e2e_check(){
   cd frontend
   pnpm install --no-frozen-lockfile
-  docker run --rm  -v $PWD:/e2e -w /e2e -e APP_ORIGIN="${APP_ORIGIN}" cypress/included:12.9.0
+  pnpm run e2e
 }
 
 if [[ "$#" -le 0 ]]; then

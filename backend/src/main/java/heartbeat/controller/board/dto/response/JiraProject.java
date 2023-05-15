@@ -1,5 +1,6 @@
 package heartbeat.controller.board.dto.response;
 
+import heartbeat.service.report.ICardFieldDisplayName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JiraProject {
+public class JiraProject implements ICardFieldDisplayName {
 
 	private String id;
 
@@ -17,4 +18,7 @@ public class JiraProject {
 
 	private String name;
 
+	public String getDisplayName() {
+		return name;
+	}
 }

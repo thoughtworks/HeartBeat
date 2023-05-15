@@ -1,5 +1,6 @@
 package heartbeat.controller.board.dto.response;
 
+import heartbeat.service.report.ICardFieldDisplayName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FixVersion {
+public class FixVersion implements ICardFieldDisplayName {
 
 	private String name;
 
+	public String getDisplayName() {
+		return name;
+	}
 }
+
+

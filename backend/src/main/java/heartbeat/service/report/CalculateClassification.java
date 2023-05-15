@@ -23,8 +23,10 @@ public class CalculateClassification {
 
 	private static final String NONE_KEY = "None";
 
+	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
+			"statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority", "label" };
+
 	public List<Classification> calculateClassification(List<TargetField> targetFields, CardCollection cards) {
-		// todo:add calculate Classification logic
 		List<Classification> classificationFields = new ArrayList<>();
 		Map<String, Map<String, Integer>> resultMap = new HashMap<>();
 		Map<String, String> nameMap = new HashMap<>();
@@ -38,24 +40,12 @@ public class CalculateClassification {
 
 		for (JiraCardDTO jiraCardResponse : cards.getJiraCardDTOList()) {
 			JiraCardField jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
-			Map<String, Object> tempFields = new HashMap<>();
-			tempFields.put("assignee", jiraCardFields.getAssignee());
-			tempFields.put("summary", jiraCardFields.getSummary());
-			tempFields.put("status", jiraCardFields.getStatus());
-			tempFields.put("issuetype", jiraCardFields.getIssuetype());
-			tempFields.put("reporter", jiraCardFields.getReporter());
-			tempFields.put("statusCategoryChangeData", jiraCardFields.getStatusCategoryChangeDate());
-			tempFields.put("storyPoints", jiraCardFields.getStoryPoints());
-			tempFields.put("fixVersions", jiraCardFields.getFixVersions());
-			tempFields.put("project", jiraCardFields.getProject());
-			tempFields.put("parent", jiraCardFields.getParent());
-			tempFields.put("priority", jiraCardFields.getPriority());
-			tempFields.put("label", jiraCardFields.getLabel());
+			Map<String, Object> tempFields = extractFields(jiraCardFields);
 
 			for (String tempFieldsKey : tempFields.keySet()) {
 				Object object = tempFields.get(tempFieldsKey);
 				if (object instanceof List) {
-					mapArrayField(resultMap, tempFieldsKey, (List<Object>) object);
+					mapArrayField(resultMap, tempFieldsKey, (List.of(object)));
 				}
 				else if (object != null) {
 					Map<String, Integer> countMap = resultMap.get(tempFieldsKey);
@@ -109,6 +99,30 @@ public class CalculateClassification {
 			return ((ICardFieldDisplayName) object).getDisplayName();
 		}
 		return object.toString();
+	}
+
+	private static Map<String, Object> extractFields(JiraCardField jiraCardFields) {
+		Map<String, Object> tempFields = new HashMap<>();
+		for (String fieldName : CalculateClassification.FIELD_NAMES) {
+			switch (fieldName) {
+				case "assignee" -> tempFields.put(fieldName, jiraCardFields.getAssignee());
+				case "summary" -> tempFields.put(fieldName, jiraCardFields.getSummary());
+				case "status" -> tempFields.put(fieldName, jiraCardFields.getStatus());
+				case "issuetype" -> tempFields.put(fieldName, jiraCardFields.getIssuetype());
+				case "reporter" -> tempFields.put(fieldName, jiraCardFields.getReporter());
+				case "statusCategoryChangeData" ->
+					tempFields.put(fieldName, jiraCardFields.getStatusCategoryChangeDate());
+				case "storyPoints" -> tempFields.put(fieldName, jiraCardFields.getStoryPoints());
+				case "fixVersions" -> tempFields.put(fieldName, jiraCardFields.getFixVersions());
+				case "project" -> tempFields.put(fieldName, jiraCardFields.getProject());
+				case "parent" -> tempFields.put(fieldName, jiraCardFields.getParent());
+				case "priority" -> tempFields.put(fieldName, jiraCardFields.getPriority());
+				case "label" -> tempFields.put(fieldName, jiraCardFields.getLabel());
+				default -> {
+				}
+			}
+		}
+		return tempFields;
 	}
 
 }

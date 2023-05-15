@@ -32,7 +32,7 @@ class CalculateClassificationTest {
 				TargetField.builder().key("timetracking").name("Time tracking").flag(false).build(),
 				TargetField.builder().key("sprint").name("Sprint").flag(false).build());
 
-		List<JiraCardDTO> mockJiraCards = Arrays.asList(JiraCardDTO.builder()
+		List<JiraCardDTO> mockJiraCards = List.of(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()
 				.key("key1")
 				.fields(JiraCardField.builder()
@@ -73,7 +73,7 @@ class CalculateClassificationTest {
 				TargetField.builder().key("fixVersions").name("Fix versions").flag(true).build(),
 				TargetField.builder().key("sprint").name("Sprint").flag(false).build());
 
-		List<JiraCardDTO> mockJiraCards = Arrays.asList(JiraCardDTO.builder()
+		List<JiraCardDTO> mockJiraCards = List.of(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()
 				.key("key1")
 				.fields(JiraCardField.builder()
@@ -194,7 +194,7 @@ class CalculateClassificationTest {
 				TargetField.builder().key("assignee").name("Assignee").flag(true).build(),
 				TargetField.builder().key("parent").name("Card Parent").flag(true).build());
 
-		List<JiraCardDTO> mockJiraCards = Arrays.asList(JiraCardDTO.builder()
+		List<JiraCardDTO> mockJiraCards = List.of(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()
 				.key("key1")
 				.fields(JiraCardField.builder()
@@ -243,11 +243,11 @@ class CalculateClassificationTest {
 		List<TargetField> mockTargetFields = List
 			.of(TargetField.builder().key("status").name("Status").flag(true).build());
 
-		List<JiraCardDTO> mockJiraCards = Arrays.asList(JiraCardDTO.builder()
+		List<JiraCardDTO> mockJiraCards = List.of(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()
 				.key("key1")
 				.fields(JiraCardField.builder()
-					.status(heartbeat.client.dto.board.jira.Status.builder().displayValue("testValue").build())
+					.status(Status.builder().displayValue("testValue").build())
 					.fixVersions(List.of(FixVersion.builder().build(), FixVersion.builder().build()))
 					.build())
 				.build())
@@ -277,7 +277,7 @@ class CalculateClassificationTest {
 					.baseInfo(JiraCard.builder()
 						.key("key1")
 						.fields(JiraCardField.builder()
-							.status(heartbeat.client.dto.board.jira.Status.builder().displayValue("testValue").build())
+							.status(Status.builder().displayValue("testValue").build())
 							.fixVersions(List.of(FixVersion.builder().build(), FixVersion.builder().build()))
 							.label("testLabel1")
 							.build())
@@ -318,7 +318,7 @@ class CalculateClassificationTest {
 				TargetField.builder().key("fixVersions").name("Fix versions").flag(false).build(),
 				TargetField.builder().key("assignee").name("Assignee").flag(false).build());
 
-		List<JiraCardDTO> mockJiraCards = Arrays.asList(JiraCardDTO.builder()
+		List<JiraCardDTO> mockJiraCards = List.of(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()
 				.key("key1")
 				.fields(JiraCardField.builder()
@@ -356,7 +356,7 @@ class CalculateClassificationTest {
 		List<TargetField> mockTargetFields = List
 			.of(TargetField.builder().key("assignee").name("Assignee").flag(false).build());
 
-		List<JiraCardDTO> mockJiraCards = Arrays.asList(JiraCardDTO.builder()
+		List<JiraCardDTO> mockJiraCards = List.of(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()
 				.key("key1")
 				.fields(JiraCardField.builder()

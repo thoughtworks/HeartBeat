@@ -41,17 +41,18 @@ public class WorkDay {
 		if (holidayMap.size() == 0) {
 			loadHolidayList(year);
 		}
-		else if (!isYearExisted(year)) {
+		if (!isYearExisted(year)) {
 			loadHolidayList(year);
 		}
 	}
 
 	private boolean isYearExisted(String year) {
-		boolean hasYear = false;
 		for (String dateString : holidayMap.keySet()) {
-			hasYear = dateString.startsWith(year);
+			if (dateString.startsWith(year)) {
+				return true;
+			}
 		}
-		return hasYear;
+		return false;
 	}
 
 	public boolean verifyIfThisDayHoliday(long time) {

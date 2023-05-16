@@ -91,7 +91,6 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-
 	public void testGenerateReportWithClassification() {
 		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
 			.boardId("")

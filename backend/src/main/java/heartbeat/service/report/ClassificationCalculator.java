@@ -7,17 +7,15 @@ import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Component
 @RequiredArgsConstructor
-@Log4j2
 
 public class ClassificationCalculator {
 

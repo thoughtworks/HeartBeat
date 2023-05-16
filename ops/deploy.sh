@@ -19,7 +19,29 @@ deploy_infra() {
 }
 
 deploy_e2e() {
-  echo "deploy_e2e"
+  sed -i -e "s/heartbeat_backend:latest/${AWS_ECR_HOST}\/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}/g" ./ops/infra/docker-compose.yml
+  sed -i -e "s/heartbeat_frontend:latest/${AWS_ECR_HOST}\/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}/g" ./ops/infra/docker-compose.yml
+
+  scp -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./ops/infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:./"
+
+  echo "Start to deploy e2e service"
+  ssh -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP}" "
+    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_HOST}
+    if [ -n \"\$(docker images -f label=arch=Backend -q)\" ]; then
+        docker rmi -f \$(docker images -f label=arch=Backend -q)
+    fi
+    if [ -n \"\$(docker images -f label=arch=Frontend -q)\" ]; then
+        docker rmi -f \$(docker images -f label=arch=Frontend -q)
+    fi
+
+    docker pull ${AWS_ECR_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
+    docker pull ${AWS_ECR_HOST}/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}
+
+    export MOCK_SERVER_URL=${AWS_EC2_IP_MOCK_SERVER}:${AWS_EC2_IP_MOCK_SERVER_PORT}
+    export SPRING_PROFILES_ACTIVE=\"e2e\"
+    docker-compose up -d frontend
+  "
+  echo "Successfully deployed e2e service"
 }
 
 deploy_stub() {

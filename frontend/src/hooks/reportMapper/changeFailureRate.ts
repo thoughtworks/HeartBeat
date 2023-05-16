@@ -15,7 +15,7 @@ export const changeFailureRateMapper = ({
       valuesList: [
         {
           name: FAILURE_RATE_NAME,
-          value: `${item.failureRate * 100}%(${item.failedTimesOfPipeline}/${item.totalTimesOfPipeline})`,
+          value: `${(item.failureRate * 100).toFixed(2)}%(${item.failedTimesOfPipeline}/${item.totalTimesOfPipeline})`,
         },
       ],
     }
@@ -27,7 +27,7 @@ export const changeFailureRateMapper = ({
     valuesList: [
       {
         name: FAILURE_RATE_NAME,
-        value: `${avgChangeFailureRate.failureRate * 100}%(${avgChangeFailureRate.totalFailedTimes}/${
+        value: `${(avgChangeFailureRate.failureRate * 100).toFixed(2)}%(${avgChangeFailureRate.totalFailedTimes}/${
           avgChangeFailureRate.totalTimes
         })`,
       },

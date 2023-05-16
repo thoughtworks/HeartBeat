@@ -82,6 +82,12 @@ steps:
       - "deploy-e2e"
       - "deploy-stub"
     command: ./ops/check.sh e2e
+    plugins:
+      - artifacts#v1.9.0:
+          upload:
+            - "frontend/cypress/videos/**/*"
+          name: "cypress-videos"
+          expire_in: "${RETENTION_DAYS} days"
 
   - label: ":rocket: Deploy prod"
     branches: main

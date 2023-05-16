@@ -434,7 +434,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Failure rate',
-          value: '0%(0/2)',
+          value: '0.00%(0/2)',
         },
       ],
     },
@@ -444,7 +444,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Failure rate',
-          value: '0%(0/6)',
+          value: '0.00%(0/6)',
         },
       ],
     },

@@ -26,7 +26,7 @@ describe('change failure rate data mapper', () => {
         valuesList: [
           {
             name: 'Failure rate',
-            value: '0%(0/3)',
+            value: '0.00%(0/3)',
           },
         ],
       },
@@ -36,7 +36,7 @@ describe('change failure rate data mapper', () => {
         valuesList: [
           {
             name: 'Failure rate',
-            value: '0%(0/12)',
+            value: '0.00%(0/12)',
           },
         ],
       },

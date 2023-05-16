@@ -26,7 +26,6 @@ deploy_e2e() {
 
   echo "Start to deploy e2e service"
   ssh -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP}" "
-    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_HOST}
     if [ -n \"\$(docker images -f label=arch=Backend -q)\" ]; then
         docker rmi -f \$(docker images -f label=arch=Backend -q)
     fi
@@ -38,7 +37,7 @@ deploy_e2e() {
     docker pull ${AWS_ECR_HOST}/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}
 
     export MOCK_SERVER_URL=${AWS_EC2_IP_MOCK_SERVER}:${AWS_EC2_IP_MOCK_SERVER_PORT}
-    export SPRING_PROFILES_ACTIVE=\"e2e\"
+    export SPRING_PROFILES_ACTIVE=e2e
     docker-compose up -d frontend
   "
   echo "Successfully deployed e2e service"

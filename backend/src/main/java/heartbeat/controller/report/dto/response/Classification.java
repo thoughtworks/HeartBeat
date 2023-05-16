@@ -8,17 +8,13 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportResponse {
+@Builder
+public class Classification {
 
-	private Velocity velocity;
+	private String fieldName;
 
-	private List<Classification> classificationList;
-
-	private DeploymentFrequency deploymentFrequency;
-
-	private ChangeFailureRate changeFailureRate;
+	private List<ClassificationNameValuePair> pairList;
 
 }

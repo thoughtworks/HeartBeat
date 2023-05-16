@@ -28,7 +28,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
 import {
-  saveBoardColumns,
+  saveCycleTimeSettings,
   saveDoneColumn,
   saveTargetFields,
   saveUsers,
@@ -99,7 +99,7 @@ const fillMetricsPageDate = async () => {
       store.dispatch(saveTargetFields([{ name: 'mockClassification', key: 'mockClassification', flag: true }])),
       store.dispatch(saveUsers(['mockUsers'])),
       store.dispatch(saveDoneColumn(['Done', 'Canceled'])),
-      store.dispatch(saveBoardColumns([{ name: 'TODO', value: 'To do' }])),
+      store.dispatch(saveCycleTimeSettings([{ name: 'TODO', value: 'To do' }])),
       store.dispatch(updateTreatFlagCardAsBlock(false)),
       store.dispatch(
         updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' })

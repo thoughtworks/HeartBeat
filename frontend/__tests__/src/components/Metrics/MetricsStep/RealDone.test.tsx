@@ -3,7 +3,7 @@ import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
 import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
-import { saveBoardColumns } from '@src/context/Metrics/metricsSlice'
+import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice'
 
 const mockColumnsList = [
   {
@@ -90,7 +90,7 @@ describe('RealDone', () => {
   })
 
   it('should show doing when choose Testing column is Done', async () => {
-    await store.dispatch(saveBoardColumns([{ name: 'Done', value: 'Done' }]))
+    await store.dispatch(saveCycleTimeSettings([{ name: 'Done', value: 'Done' }]))
     const { getByRole } = setup()
 
     await userEvent.click(getByRole('button', { name: mockLabel }))

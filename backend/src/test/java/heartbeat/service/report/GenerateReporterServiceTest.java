@@ -113,7 +113,7 @@ class GenerateReporterServiceTest {
 
 		Classification classification = Classification.builder()
 			.fieldName("Assignee")
-			.pairs((List.of(ClassificationNameValuePair.builder().name("shawn").value("100.00%").build())))
+			.pairList((List.of(ClassificationNameValuePair.builder().name("shawn").value(1.0D).build())))
 			.build();
 
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
@@ -127,14 +127,14 @@ class GenerateReporterServiceTest {
 			.build());
 		Classification mockClassification = Classification.builder()
 			.fieldName("Assignee")
-			.pairs((List.of(ClassificationNameValuePair.builder().name("shawn").value("100.00%").build())))
+			.pairList((List.of(ClassificationNameValuePair.builder().name("shawn").value(1.0D).build())))
 			.build();
 
 		when(classificationCalculator.calculate(any(), any())).thenReturn(List.of(mockClassification));
 
 		ReportResponse result = generateReporterService.generateReporter(request);
 
-		assertThat(result.getClassification()).isEqualTo(List.of(classification));
+		assertThat(result.getClassificationList()).isEqualTo(List.of(classification));
 	}
 
 	@Test

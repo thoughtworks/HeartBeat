@@ -64,7 +64,7 @@ public class GenerateReporterService {
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
-				case "classification" -> reportResponse.setClassification(classificationCalculator
+				case "classification" -> reportResponse.setClassificationList(classificationCalculator
 					.calculate(request.getJiraBoardSetting().getTargetFields(), cardCollection));
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,

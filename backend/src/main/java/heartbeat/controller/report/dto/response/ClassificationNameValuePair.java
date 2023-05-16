@@ -13,6 +13,6 @@ public class ClassificationNameValuePair {
 
 	private String name;
 
-	private String value;
+	private Double value;
 
 }

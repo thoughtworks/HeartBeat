@@ -104,10 +104,10 @@ class ClassificationCalculatorTest {
 
 		Classification classification = classifications.get(0);
 		assertEquals("Fix versions", classification.getFieldName());
-		assertEquals("sprint1", classification.getPairs().get(0).getName());
-		assertEquals("20.00%", classification.getPairs().get(0).getValue());
-		assertEquals("sprint2", classification.getPairs().get(1).getName());
-		assertEquals("20.00%", classification.getPairs().get(1).getValue());
+		assertEquals("sprint1", classification.getPairList().get(0).getName());
+		assertEquals(0.2, classification.getPairList().get(0).getValue());
+		assertEquals("sprint2", classification.getPairList().get(1).getName());
+		assertEquals(0.2, classification.getPairList().get(1).getValue());
 	}
 
 	@Test
@@ -173,13 +173,13 @@ class ClassificationCalculatorTest {
 		assertEquals(2, classifications.size());
 
 		assertEquals("Assignee", classifications.get(1).getFieldName());
-		assertEquals("value2", classifications.get(1).getPairs().get(0).getName());
-		assertEquals("50.00%", classifications.get(1).getPairs().get(0).getValue());
-		assertEquals("value1", classifications.get(1).getPairs().get(1).getName());
-		assertEquals("50.00%", classifications.get(1).getPairs().get(1).getValue());
+		assertEquals("value2", classifications.get(1).getPairList().get(0).getName());
+		assertEquals(0.5, classifications.get(1).getPairList().get(0).getValue());
+		assertEquals("value1", classifications.get(1).getPairList().get(1).getName());
+		assertEquals(0.5, classifications.get(1).getPairList().get(1).getValue());
 		assertEquals("Reporter", classifications.get(0).getFieldName());
-		assertEquals("Shawn", classifications.get(0).getPairs().get(0).getName());
-		assertEquals("100.00%", classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("Shawn", classifications.get(0).getPairList().get(0).getName());
+		assertEquals(1.0, classifications.get(0).getPairList().get(0).getValue());
 	}
 
 	@Test
@@ -220,17 +220,17 @@ class ClassificationCalculatorTest {
 		assertEquals(4, classifications.size());
 
 		assertEquals("IssueType", classifications.get(0).getFieldName());
-		assertEquals("testIssue", classifications.get(0).getPairs().get(0).getName());
-		assertEquals("100.00%", classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("testIssue", classifications.get(0).getPairList().get(0).getName());
+		assertEquals(1.0, classifications.get(0).getPairList().get(0).getValue());
 		assertEquals("Card Parent", classifications.get(1).getFieldName());
-		assertEquals("ADM-442", classifications.get(1).getPairs().get(0).getName());
-		assertEquals("100.00%", classifications.get(1).getPairs().get(0).getValue());
+		assertEquals("ADM-442", classifications.get(1).getPairList().get(0).getName());
+		assertEquals(1.0, classifications.get(1).getPairList().get(0).getValue());
 		assertEquals("Assignee", classifications.get(3).getFieldName());
-		assertEquals("value1", classifications.get(3).getPairs().get(0).getName());
-		assertEquals("100.00%", classifications.get(3).getPairs().get(0).getValue());
+		assertEquals("value1", classifications.get(3).getPairList().get(0).getName());
+		assertEquals(1.0, classifications.get(3).getPairList().get(0).getValue());
 		assertEquals("Project", classifications.get(2).getFieldName());
-		assertEquals("heartBeat", classifications.get(2).getPairs().get(0).getName());
-		assertEquals("100.00%", classifications.get(2).getPairs().get(0).getValue());
+		assertEquals("heartBeat", classifications.get(2).getPairList().get(0).getName());
+		assertEquals(1.0, classifications.get(2).getPairList().get(0).getValue());
 
 	}
 
@@ -259,7 +259,7 @@ class ClassificationCalculatorTest {
 
 		assertEquals(1, classifications.size());
 		assertEquals("Status", classifications.get(0).getFieldName());
-		assertEquals("testValue", classifications.get(0).getPairs().get(0).getName());
+		assertEquals("testValue", classifications.get(0).getPairList().get(0).getName());
 	}
 
 	@Test
@@ -299,10 +299,10 @@ class ClassificationCalculatorTest {
 
 		assertEquals(1, classifications.size());
 		assertEquals("Labels", classifications.get(0).getFieldName());
-		assertEquals("testLabel2", classifications.get(0).getPairs().get(0).getName());
-		assertEquals("50.00%", classifications.get(0).getPairs().get(0).getValue());
-		assertEquals("testLabel1", classifications.get(0).getPairs().get(1).getName());
-		assertEquals("50.00%", classifications.get(0).getPairs().get(1).getValue());
+		assertEquals("testLabel2", classifications.get(0).getPairList().get(0).getName());
+		assertEquals(0.5, classifications.get(0).getPairList().get(0).getValue());
+		assertEquals("testLabel1", classifications.get(0).getPairList().get(1).getName());
+		assertEquals(0.5, classifications.get(0).getPairList().get(1).getValue());
 	}
 
 	@Test
@@ -405,10 +405,10 @@ class ClassificationCalculatorTest {
 
 		assertEquals(1, classifications.size());
 		assertEquals("Fix Versions", classifications.get(0).getFieldName());
-		assertEquals("version2", classifications.get(0).getPairs().get(0).getName());
-		assertEquals("100.00%", classifications.get(0).getPairs().get(0).getValue());
-		assertEquals("version1", classifications.get(0).getPairs().get(1).getName());
-		assertEquals("100.00%", classifications.get(0).getPairs().get(1).getValue());
+		assertEquals("version2", classifications.get(0).getPairList().get(0).getName());
+		assertEquals(1.0, classifications.get(0).getPairList().get(0).getValue());
+		assertEquals("version1", classifications.get(0).getPairList().get(1).getName());
+		assertEquals(1.0, classifications.get(0).getPairList().get(1).getValue());
 	}
 
 }

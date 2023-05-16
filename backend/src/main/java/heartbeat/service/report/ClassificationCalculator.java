@@ -69,8 +69,8 @@ public class ClassificationCalculator {
 			for (Map.Entry<String, Integer> mapEntry : valueMap.entrySet()) {
 				String displayName = mapEntry.getKey();
 				Integer count = mapEntry.getValue();
-				classificationNameValuePair.add(new ClassificationNameValuePair(displayName,
-						String.format("%.2f%%", (count.floatValue() / cards.getCardsNumber()) * 100)));
+				classificationNameValuePair
+					.add(new ClassificationNameValuePair(displayName, (double) count / cards.getCardsNumber()));
 			}
 
 			classificationFields.add(new Classification(nameMap.get(fieldName), classificationNameValuePair));

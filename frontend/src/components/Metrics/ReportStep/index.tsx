@@ -39,7 +39,7 @@ export const ReportStep = () => {
   })
   const configData = useAppSelector(selectConfig)
   const {
-    boardColumns,
+    cycleTimeSettings,
     treatFlagCardAsBlock,
     users,
     targetFields,
@@ -92,7 +92,7 @@ export const ReportStep = () => {
       site,
       projectKey,
       boardId,
-      boardColumns,
+      boardColumns: cycleTimeSettings,
       treatFlagCardAsBlock,
       users,
       targetFields,

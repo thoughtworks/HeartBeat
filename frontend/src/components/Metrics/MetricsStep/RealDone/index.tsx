@@ -1,6 +1,6 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { saveDoneColumn, selectBoardColumns, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { saveDoneColumn, selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { DEFAULT_HELPER_TEXT, METRICS_CONSTANTS, SELECTED_VALUE_SEPARATOR } from '@src/constants'
@@ -26,10 +26,10 @@ const getDoneStatus = (columns: { key: string; value: { name: string; statuses: 
 
 export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const dispatch = useAppDispatch()
-  const selectedBoardColumns = useAppSelector(selectBoardColumns)
+  const selectedCycleTimeSettings = useAppSelector(selectCycleTimeSettings)
   const savedDoneColumns = useAppSelector(selectMetricsContent).doneColumn
   const doneStatus = getDoneStatus(columns)
-  const selectedDoneColumns = getSelectedDoneColumns(selectedBoardColumns)
+  const selectedDoneColumns = getSelectedDoneColumns(selectedCycleTimeSettings)
   const filteredStatus = getFilteredStatus(columns, selectedDoneColumns)
   const status = selectedDoneColumns.length < 1 ? doneStatus : filteredStatus
   const [selectedDoneStatus, setSelectedDoneStatus] = useState([] as string[])
@@ -37,7 +37,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
 
   useEffect(() => {
     setSelectedDoneStatus([])
-  }, [selectedBoardColumns])
+  }, [selectedCycleTimeSettings])
 
   const handleRealDoneChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value

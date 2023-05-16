@@ -12,7 +12,7 @@ import {
   REAL_DONE,
   REQUIRED_DATA_LIST,
 } from '../../../fixtures'
-import { saveBoardColumns } from '@src/context/Metrics/metricsSlice'
+import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice'
 
 let store = setupStore()
 
@@ -56,7 +56,7 @@ describe('MetricsStep', () => {
         },
       },
     ]
-    await store.dispatch(saveBoardColumns(mockColumnsList))
+    await store.dispatch(saveCycleTimeSettings(mockColumnsList))
     const { getByText } = setup()
 
     expect(getByText(REAL_DONE)).toBeInTheDocument()
@@ -64,7 +64,7 @@ describe('MetricsStep', () => {
 
   it('should hide Real Done when select two "Done" in cycleTime settings', async () => {
     await store.dispatch(
-      saveBoardColumns([
+      saveCycleTimeSettings([
         { name: 'Testing', value: 'Done' },
         { name: 'TODO', value: 'Done' },
       ])

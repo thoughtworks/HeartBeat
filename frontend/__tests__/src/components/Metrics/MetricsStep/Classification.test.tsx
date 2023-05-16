@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 
 const mockTitle = 'Classification Setting'
 const mockLabel = 'Distinguished by'
-const mockTargetField = [
+const mockTargetFields = [
   { flag: false, key: 'issue', name: 'Issue' },
   { flag: false, key: 'type', name: 'Type' },
 ]
@@ -21,7 +21,7 @@ let store = setupStore()
 const setup = () => {
   return render(
     <Provider store={store}>
-      <Classification title={mockTitle} label={mockLabel} options={mockTargetField} />
+      <Classification title={mockTitle} label={mockLabel} targetFields={mockTargetFields} />
     </Provider>
   )
 }
@@ -61,7 +61,7 @@ describe('Classification', () => {
     await userEvent.click(getByRole('button', { name: mockLabel }))
     await userEvent.click(getByText('All'))
     const listBox = within(getByRole('listbox'))
-    const names = mockTargetField.map((item) => item.name)
+    const names = mockTargetFields.map((item) => item.name)
 
     expect(listBox.getByRole('option', { name: names[0] })).toHaveProperty('selected', true)
     expect(listBox.getByRole('option', { name: names[1] })).toHaveProperty('selected', true)
@@ -74,7 +74,7 @@ describe('Classification', () => {
 
   it('should show selected targetField when click selected field', async () => {
     const { getByRole, getByText } = setup()
-    const names = mockTargetField.map((item) => item.name)
+    const names = mockTargetFields.map((item) => item.name)
 
     await userEvent.click(getByRole('button', { name: mockLabel }))
     await userEvent.click(getByText('All'))

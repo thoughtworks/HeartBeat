@@ -3,8 +3,6 @@ package heartbeat.service.report.calculator;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
-import heartbeat.controller.board.dto.response.CycleTimeInfo;
-import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.CycleTimeForSelectedStepItem;
 import heartbeat.controller.report.dto.response.CycleTimeResult;
@@ -32,24 +30,23 @@ public class CycleTimeCalculator {
 	private Map<String, Double> addAllCardsTimeUpForEachStep(CardCollection cardCollection,
 			Map<String, String> selectedStepsMap) {
 		Map<String, Double> tempSwimlaneMap = new HashMap<>();
-
-		for (JiraCardDTO jiraCardResponse : cardCollection.getJiraCardDTOList()) {
-			for (CycleTimeInfo partTime : jiraCardResponse.getCycleTime()) {
+		cardCollection.getJiraCardDTOList()
+			.stream()
+			.flatMap(jiraCardResponse -> jiraCardResponse.getCycleTime().stream())
+			.forEach(partTime -> {
 				String column = partTime.getColumn();
-
 				if (column.equals(CardStepsEnum.FLAG.getValue())) {
 					selectedStepsMap.put(column, CardStepsEnum.BLOCK.getValue());
 				}
 
-				if (selectedStepsMap.containsKey(column)) {
+				selectedStepsMap.entrySet().stream().filter(entry -> entry.getKey().equals(column)).forEach(entry -> {
 					Double day = tempSwimlaneMap.get(column);
 					if (day == null) {
 						day = 0.0;
 					}
 					tempSwimlaneMap.put(column, day + partTime.getDay());
-				}
-			}
-		}
+				});
+			});
 		return tempSwimlaneMap;
 	}
 

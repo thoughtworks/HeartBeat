@@ -145,8 +145,8 @@ class BuildKiteServiceTest {
 		String organizationId = "test_org_id";
 		String pipelineId = "test_pipeline_id";
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
@@ -172,17 +172,17 @@ class BuildKiteServiceTest {
 				any(), any()))
 			.thenThrow(mockException);
 
-		assertThrows(
-				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-						"test_pipeline_id", new PipelineStepsParam()),
+		assertThrows(RequestFailedException.class,
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
 				"Request failed with status code 500, error: exception");
 	}
 
 	@Test
 	public void shouldReturnMoreThanOnePageStepsWhenPageFetchPipelineSteps() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -232,9 +232,9 @@ class BuildKiteServiceTest {
 				any(), any()))
 			.thenThrow(new RequestFailedException(404, "Client Error"));
 
-		assertThrows(
-				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-						"test_pipeline_id", new PipelineStepsParam()),
+		assertThrows(RequestFailedException.class,
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
 				"Request failed with status statusCode 500, error: Server Error");
 	}
 
@@ -250,23 +250,23 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				anyString(), anyString()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
 			.thenThrow(new RequestFailedException(500, "Server Error"));
 
-		assertThrows(
-				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-						"test_pipeline_id", new PipelineStepsParam()),
+		assertThrows(RequestFailedException.class,
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
 				"Request failed with status statusCode 500, error: Server Error");
 	}
 
 	@Test
 	public void shouldReturnOnePageStepsWhenPageFetchPipelineStepsAndHeaderParseOnePage() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -291,8 +291,8 @@ class BuildKiteServiceTest {
 	@Test
 	public void shouldReturnOnePageStepsWhenPageFetchPipelineStep() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();

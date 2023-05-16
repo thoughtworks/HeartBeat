@@ -325,3 +325,7 @@ pnpm e2e
 ```
 pnpm e2e:report
 ```
+# 7 How to trigger BuildKite Pipeline
+1. Add `[stub]` tag to the title of a commit message or PR to trigger stub-related deployments.
+
+2. Add `[infra]` tag to the title of the commit message or PR to trigger infra-related deployments.

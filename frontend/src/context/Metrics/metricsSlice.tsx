@@ -13,12 +13,12 @@ export interface savedMetricsSettingState {
   targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
   doneColumn: string[]
-  boardColumns: { name: string; value: string }[]
+  cycleTimeSettings: { name: string; value: string }[]
   deploymentFrequencySettings: IPipelineConfig[]
   leadTimeForChanges: IPipelineConfig[]
   importFile: string[]
   isProjectCreated: boolean
-  cycleTimeSettings: { name: string; value: string }[]
+  importedCycleTimeSettings: { name: string; value: string }[]
   classification: string[]
   treatFlagCardAsBlock: boolean
 }
@@ -28,12 +28,12 @@ const initialState: savedMetricsSettingState = {
   targetFields: [],
   users: [],
   doneColumn: [],
-  boardColumns: [],
+  cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   importFile: [],
   isProjectCreated: true,
-  cycleTimeSettings: [],
+  importedCycleTimeSettings: [],
   classification: [],
   treatFlagCardAsBlock: true,
 }
@@ -51,8 +51,8 @@ export const metricsSlice = createSlice({
     saveUsers: (state, action) => {
       state.users = action.payload
     },
-    saveBoardColumns: (state, action) => {
-      state.boardColumns = action.payload
+    saveCycleTimeSettings: (state, action) => {
+      state.cycleTimeSettings = action.payload
     },
 
     addADeploymentFrequencySetting: (state) => {
@@ -81,7 +81,7 @@ export const metricsSlice = createSlice({
       state.isProjectCreated = isProjectCreated
       state.importFile = basic
       state.users = basic.crews || state.users
-      state.cycleTimeSettings = basic.cycleTime?.jiraColumns
+      state.importedCycleTimeSettings = basic.cycleTime?.jiraColumns
       state.doneColumn = basic.realDone || state.doneColumn
       state.classification = basic.classification || state.classification
     },
@@ -135,7 +135,7 @@ export const {
   saveTargetFields,
   saveDoneColumn,
   saveUsers,
-  saveBoardColumns,
+  saveCycleTimeSettings,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,
@@ -151,7 +151,7 @@ export const {
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
 export const selectLeadTimeForChanges = (state: RootState) => state.metrics.leadTimeForChanges
 
-export const selectBoardColumns = (state: RootState) => state.metrics.boardColumns
+export const selectCycleTimeSettings = (state: RootState) => state.metrics.cycleTimeSettings
 export const selectMetricsContent = (state: RootState) => state.metrics
 
 export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock

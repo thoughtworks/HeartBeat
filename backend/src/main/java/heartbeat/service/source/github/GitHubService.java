@@ -109,24 +109,19 @@ public class GitHubService {
 				.collect(Collectors.toSet()));
 	}
 
-	private PipelineInfoOfRepository convertDeployTimesToPipelineInfoOfRepository(DeployTimes deployTime,
-			String repository) {
-		return PipelineInfoOfRepository.builder()
-			.repository(repository)
-			.passedDeploy(deployTime.getPassed())
-			.pipelineStep(deployTime.getPipelineStep())
-			.pipelineName(deployTime.getPipelineName())
-			.build();
-	}
-
 	public CompletableFuture<List<PipelineLeadTime>> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
 		return CompletableFuture.supplyAsync(() -> {
 			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = deployTimes.stream().map(deployTime -> {
 				String repository = GithubUtil.getGithubUrlFullName(repositories.get(deployTime.getPipelineId()));
-				return this.convertDeployTimesToPipelineInfoOfRepository(deployTime, repository);
+				return PipelineInfoOfRepository.builder()
+					.repository(repository)
+					.passedDeploy(deployTime.getPassed())
+					.pipelineStep(deployTime.getPipelineStep())
+					.pipelineName(deployTime.getPipelineName())
+					.build();
 			}).toList();
-			List<PipelineLeadTime> pipelineLeadTimeList = pipelineInfoOfRepositories.stream().map(item -> {
+			return pipelineInfoOfRepositories.stream().map(item -> {
 				List<DeployInfo> passedDeployInfos = item.getPassedDeploy();
 				List<LeadTime> leadTimes = passedDeployInfos.stream().map(deployInfo -> {
 					try {
@@ -162,7 +157,7 @@ public class GitHubService {
 									mergedPull.get().getNumber().toString(), token), taskExecutor)
 							.join();
 						CommitInfo firstCommitInfo = commitInfos.get(0);
-						return LeadTime.mapFrom(mergedPull.get(), deployInfo, firstCommitInfo);
+						return this.mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);
 					}
 					catch (Exception e) {
 						throw new RuntimeException(e);
@@ -174,8 +169,52 @@ public class GitHubService {
 					.leadTimes(leadTimes)
 					.build();
 			}).toList();
-			return pipelineLeadTimeList;
 		});
+	}
+
+	private LeadTime mapLeadTimeWithInfo(PullRequestInfo pullRequestInfo, DeployInfo deployInfo, CommitInfo commitInfo)
+			throws Exception {
+		if (pullRequestInfo.getMergedAt() == null) {
+			throw new Exception("this commit has not been merged");
+		}
+		double prCreatedTime = Instant.parse(pullRequestInfo.getCreatedAt()).toEpochMilli();
+		double prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
+		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+		double firstCommitTimeInPr = 0;
+		if (commitInfo.getCommit() != null && commitInfo.getCommit().getCommitter() != null
+				&& commitInfo.getCommit().getCommitter().getDate() != null) {
+			firstCommitTimeInPr = (double) Instant.parse(commitInfo.getCommit().getCommitter().getDate())
+				.toEpochMilli();
+		}
+
+		double pipelineDelayTime = jobFinishTime - pipelineCreateTime;
+		double prDelayTime = 0;
+		double totalTime;
+		if (prMergedTime > 0 && prCreatedTime > 0) {
+			if (firstCommitTimeInPr > 0) {
+				prDelayTime = prMergedTime - firstCommitTimeInPr;
+			}
+			else {
+				prDelayTime = prMergedTime - prCreatedTime;
+			}
+			totalTime = prDelayTime + pipelineDelayTime;
+		}
+		else {
+			totalTime = pipelineDelayTime;
+		}
+
+		return LeadTime.builder()
+			.pipelineDelayTime(pipelineDelayTime)
+			.prDelayTime(prDelayTime)
+			.firstCommitTimeInPr(firstCommitTimeInPr)
+			.prMergedTime(prMergedTime)
+			.totalTime(totalTime)
+			.prCreatedTime(prCreatedTime)
+			.commitId(deployInfo.getCommitId())
+			.jobFinishTime(jobFinishTime)
+			.pipelineCreateTime(pipelineCreateTime)
+			.build();
 	}
 
 }

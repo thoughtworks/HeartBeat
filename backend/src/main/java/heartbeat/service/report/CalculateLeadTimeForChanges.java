@@ -5,6 +5,7 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
+import heartbeat.util.TimeConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class CalculateLeadTimeForChanges {
 	public LeadTimeForChanges calculateLeadTimeForChanges(List<PipelineLeadTime> pipelineLeadTime) {
 		int pipelineCount = pipelineLeadTime.size();
 		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines = new ArrayList<>();
-		AvgLeadTimeForChanges avgLeadTimeForChanges = new AvgLeadTimeForChanges(0d, 0d);
+		AvgLeadTimeForChanges avgLeadTimeForChanges = new AvgLeadTimeForChanges();
 
 		if (pipelineLeadTime.isEmpty()) {
 			return new LeadTimeForChanges(leadTimeForChangesOfPipelines, avgLeadTimeForChanges);
@@ -41,11 +42,16 @@ public class CalculateLeadTimeForChanges {
 			double totalPrDelayTime = totalDelayTime.keySet().stream().reduce(0d, Double::sum);
 			double totalPipelineDelayTime = totalDelayTime.values().stream().reduce(0d, Double::sum);
 
-			double avgPrDelayTime = totalPrDelayTime / times;
-			double avgPipelineDelayTime = totalPipelineDelayTime / times;
+			double avgPrDelayTime = TimeConverter.convertMillisecondToMinutes(totalPrDelayTime / times);
+			double avgPipelineDelayTime = TimeConverter.convertMillisecondToMinutes(totalPipelineDelayTime / times);
 
-			leadTimeForChangesOfPipelines.add(new LeadTimeForChangesOfPipelines(item.getPipelineName(),
-					item.getPipelineStep(), avgPrDelayTime, avgPipelineDelayTime));
+			leadTimeForChangesOfPipelines.add(LeadTimeForChangesOfPipelines.builder()
+				.name(item.getPipelineName())
+				.step(item.getPipelineStep())
+				.mergeDelayTime(avgPrDelayTime)
+				.pipelineDelayTime(avgPipelineDelayTime)
+				.totalDelayTime(avgPrDelayTime + avgPipelineDelayTime)
+				.build());
 
 			HashMap<String, Double> avgTotalDelayTime = new HashMap<>();
 			avgTotalDelayTime.put("avgPrDelayTime", avgPrDelayTime);
@@ -57,11 +63,17 @@ public class CalculateLeadTimeForChanges {
 		Double avgPrDelayTimeOfAllPipeline = avgDelayTimeMapList.stream()
 			.map(item -> item.getOrDefault("avgPrDelayTime", 0d))
 			.reduce(0.0, Double::sum);
-		Double AvgPipeDelayTimeOfAllPipeline = avgDelayTimeMapList.stream()
+		Double avgPipeDelayTimeOfAllPipeline = avgDelayTimeMapList.stream()
 			.map(item -> item.getOrDefault("avgPipelineDelayTime", 0d))
 			.reduce(0.0, Double::sum);
-		avgLeadTimeForChanges.setDelayTime(avgPrDelayTimeOfAllPipeline / pipelineCount,
-				AvgPipeDelayTimeOfAllPipeline / pipelineCount);
+		Double avgMergeDelayTime = TimeConverter
+			.convertMillisecondToMinutes(avgPrDelayTimeOfAllPipeline / pipelineCount);
+		Double avgPipelineDelayTime = TimeConverter
+			.convertMillisecondToMinutes(avgPipeDelayTimeOfAllPipeline / pipelineCount);
+
+		avgLeadTimeForChanges.setMergeDelayTime(avgMergeDelayTime);
+		avgLeadTimeForChanges.setPipelineDelayTime(avgPipelineDelayTime);
+		avgLeadTimeForChanges.setTotalDelayTime(avgMergeDelayTime + avgPipelineDelayTime);
 
 		return new LeadTimeForChanges(leadTimeForChangesOfPipelines, avgLeadTimeForChanges);
 	}

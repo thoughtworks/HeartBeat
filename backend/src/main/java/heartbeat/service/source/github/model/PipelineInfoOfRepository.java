@@ -2,10 +2,14 @@ package heartbeat.service.source.github.model;
 
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
 @Builder
+@Data
+@Getter
 public class PipelineInfoOfRepository {
 
 	private String repository;
@@ -15,21 +19,5 @@ public class PipelineInfoOfRepository {
 	private String pipelineName;
 
 	private String pipelineStep;
-
-	public String getRepository() {
-		return repository;
-	}
-
-	public List<DeployInfo> getPassedDeploy() {
-		return passedDeploy;
-	}
-
-	public String getPipelineName() {
-		return pipelineName;
-	}
-
-	public String getPipelineStep() {
-		return pipelineStep;
-	}
 
 }

@@ -52,7 +52,9 @@ export const metricsSlice = createSlice({
     saveBoardColumns: (state, action) => {
       state.boardColumns = action.payload
     },
-
+    updateClassification: (state, action) => {
+      state.classification = action.payload
+    },
     addADeploymentFrequencySetting: (state) => {
       const newId = state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
       state.deploymentFrequencySettings = [
@@ -134,6 +136,7 @@ export const {
   saveDoneColumn,
   saveUsers,
   saveBoardColumns,
+  updateClassification,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,

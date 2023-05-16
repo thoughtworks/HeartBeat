@@ -23,7 +23,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -110,19 +109,24 @@ public class GitHubService {
 				.collect(Collectors.toSet()));
 	}
 
+	private PipelineInfoOfRepository convertDeployTimesToPipelineInfoOfRepository(DeployTimes deployTime,
+			String repository) {
+		return PipelineInfoOfRepository.builder()
+			.repository(repository)
+			.passedDeploy(deployTime.getPassed())
+			.pipelineStep(deployTime.getPipelineStep())
+			.pipelineName(deployTime.getPipelineName())
+			.build();
+	}
+
 	public CompletableFuture<List<PipelineLeadTime>> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
 		return CompletableFuture.supplyAsync(() -> {
-			ArrayList<PipelineLeadTime> pipelineLeadTimes = new ArrayList<>();
-			deployTimes.stream().map(deployTime -> {
+			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = deployTimes.stream().map(deployTime -> {
 				String repository = GithubUtil.getGithubUrlFullName(repositories.get(deployTime.getPipelineId()));
-				return PipelineInfoOfRepository.builder()
-					.repository(repository)
-					.passedDeploy(deployTime.getPassed())
-					.pipelineStep(deployTime.getPipelineStep())
-					.pipelineName(deployTime.getPipelineName())
-					.build();
-			}).map(item -> {
+				return this.convertDeployTimesToPipelineInfoOfRepository(deployTime, repository);
+			}).toList();
+			List<PipelineLeadTime> pipelineLeadTimeList = pipelineInfoOfRepositories.stream().map(item -> {
 				List<DeployInfo> passedDeployInfos = item.getPassedDeploy();
 				List<LeadTime> leadTimes = passedDeployInfos.stream().map(deployInfo -> {
 					try {
@@ -130,7 +134,6 @@ public class GitHubService {
 							.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
 									deployInfo.getCommitId(), token), taskExecutor)
 							.join();
-
 						long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 						long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
 
@@ -156,9 +159,8 @@ public class GitHubService {
 
 						List<CommitInfo> commitInfos = CompletableFuture
 							.supplyAsync(() -> gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
-									deployInfo.getCommitId(), token), taskExecutor)
+									mergedPull.get().getNumber().toString(), token), taskExecutor)
 							.join();
-
 						CommitInfo firstCommitInfo = commitInfos.get(0);
 						return LeadTime.mapFrom(mergedPull.get(), deployInfo, firstCommitInfo);
 					}
@@ -169,9 +171,10 @@ public class GitHubService {
 				return PipelineLeadTime.builder()
 					.pipelineName(item.getPipelineName())
 					.pipelineStep(item.getPipelineStep())
-					.leadTimes(leadTimes);
-			});
-			return pipelineLeadTimes;
+					.leadTimes(leadTimes)
+					.build();
+			}).toList();
+			return pipelineLeadTimeList;
 		});
 	}
 

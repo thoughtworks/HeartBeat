@@ -18,6 +18,23 @@ import java.util.Map;
 @Component
 public class CycleTimeCalculator {
 
+	public CycleTime calculateCycleTime(CardCollection cardCollection,
+			List<RequestJiraBoardColumnSetting> boardColumns) {
+		Map<String, String> selectedStepsMap = selectedStepsArrayToMap(boardColumns);
+		Map<String, Double> totalTimeOfEachStepsMap = addAllCardsTimeUpForEachStep(cardCollection, selectedStepsMap);
+		Map<String, Double> aggregatedMap = aggregateResultBySelectedSteps(totalTimeOfEachStepsMap, selectedStepsMap);
+		CycleTimeResult cycleTimeResult = calculateAverageTimeAndTotalTime(aggregatedMap, cardCollection);
+		double cycleTotalTime = cycleTimeResult.getTotalTime();
+		return CycleTime.builder()
+			.totalTime(cycleTotalTime)
+			.averageCycleTimePerSP(
+					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getStoryPointSum())))
+			.averageCircleTimePerCard(
+					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getCardsNumber())))
+			.cycleTimeForSelectedStepList(cycleTimeResult.getCycleTimeForSelectedStepsList())
+			.build();
+	}
+
 	private Map<String, String> selectedStepsArrayToMap(List<RequestJiraBoardColumnSetting> boardColumns) {
 
 		Map<String, String> map = new HashMap<>();
@@ -90,23 +107,6 @@ public class CycleTimeCalculator {
 		return CycleTimeResult.builder()
 			.cycleTimeForSelectedStepsList(cycleTimeForSelectedStepsList)
 			.totalTime(Double.parseDouble(String.format("%.2f", totalTime)))
-			.build();
-	}
-
-	public CycleTime calculateCycleTime(CardCollection cardCollection,
-			List<RequestJiraBoardColumnSetting> boardColumns) {
-		Map<String, String> selectedStepsMap = selectedStepsArrayToMap(boardColumns);
-		Map<String, Double> totalTimeOfEachStepsMap = addAllCardsTimeUpForEachStep(cardCollection, selectedStepsMap);
-		Map<String, Double> aggregatedMap = aggregateResultBySelectedSteps(totalTimeOfEachStepsMap, selectedStepsMap);
-		CycleTimeResult cycleTimeResult = calculateAverageTimeAndTotalTime(aggregatedMap, cardCollection);
-		double cycleTotalTime = cycleTimeResult.getTotalTime();
-		return CycleTime.builder()
-			.totalTime(cycleTotalTime)
-			.averageCycleTimePerSP(
-					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getStoryPointSum())))
-			.averageCircleTimePerCard(
-					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getCardsNumber())))
-			.cycleTimeForSelectedStepsList(cycleTimeResult.getCycleTimeForSelectedStepsList())
 			.build();
 	}
 

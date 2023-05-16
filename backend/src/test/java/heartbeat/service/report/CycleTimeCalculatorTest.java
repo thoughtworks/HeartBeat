@@ -34,7 +34,7 @@ class CycleTimeCalculatorTest {
 			.totalTime(14.8)
 			.averageCycleTimePerSP(4.93)
 			.averageCircleTimePerCard(7.40)
-			.cycleTimeForSelectedStepsList(List.of(
+			.cycleTimeForSelectedStepList(List.of(
 					CycleTimeForSelectedStepItem.builder()
 						.optionalItemName("In Dev")
 						.averageTimeForSP(2.07)

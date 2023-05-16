@@ -19,6 +19,6 @@ public class CycleTime {
 
 	private double averageCycleTimePerSP;
 
-	private List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList;
+	private List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepList;
 
 }

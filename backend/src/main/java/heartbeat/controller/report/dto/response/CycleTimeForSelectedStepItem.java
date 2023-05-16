@@ -13,10 +13,10 @@ public class CycleTimeForSelectedStepItem {
 
 	private String optionalItemName;
 
-	private String averageTimeForSP;
+	private double averageTimeForSP;
 
-	private String averageTimeForCards;
+	private double averageTimeForCards;
 
-	private String totalTime;
+	private double totalTime;
 
 }

@@ -79,11 +79,9 @@ public class CycleTimeCalculator {
 			}
 			CycleTimeForSelectedStepItem cycleTimeOptionalItem = CycleTimeForSelectedStepItem.builder()
 				.optionalItemName(key)
-				.averageTimeForSP(String.format("%.2f",
-						Double.parseDouble(String.valueOf(value / cardCollection.getStoryPointSum()))))
-				.averageTimeForCards(String.format("%.2f",
-						Double.parseDouble(String.valueOf(value / cardCollection.getCardsNumber()))))
-				.totalTime(String.format("%.2f", value))
+				.averageTimeForSP(Double.parseDouble(String.format("%.2f", value / cardCollection.getStoryPointSum())))
+				.averageTimeForCards(Double.parseDouble(String.format("%.2f", value / cardCollection.getCardsNumber())))
+				.totalTime(value)
 				.build();
 
 			cycleTimeForSelectedStepsList.add(cycleTimeOptionalItem);
@@ -91,7 +89,7 @@ public class CycleTimeCalculator {
 		}
 		return CycleTimeResult.builder()
 			.cycleTimeForSelectedStepsList(cycleTimeForSelectedStepsList)
-			.totalTime(String.format("%.2f", totalTime))
+			.totalTime(Double.parseDouble(String.format("%.2f", totalTime)))
 			.build();
 	}
 
@@ -101,11 +99,13 @@ public class CycleTimeCalculator {
 		Map<String, Double> totalTimeOfEachStepsMap = addAllCardsTimeUpForEachStep(cardCollection, selectedStepsMap);
 		Map<String, Double> aggregatedMap = aggregateResultBySelectedSteps(totalTimeOfEachStepsMap, selectedStepsMap);
 		CycleTimeResult cycleTimeResult = calculateAverageTimeAndTotalTime(aggregatedMap, cardCollection);
-		double cycleTotalTime = Double.parseDouble(cycleTimeResult.getTotalTime());
+		double cycleTotalTime = cycleTimeResult.getTotalTime();
 		return CycleTime.builder()
 			.totalTime(cycleTotalTime)
-			.averageCycleTimePerSP(String.format("%.2f", cycleTotalTime / cardCollection.getStoryPointSum()))
-			.averageCircleTimePerCard(String.format("%.2f", cycleTotalTime / cardCollection.getCardsNumber()))
+			.averageCycleTimePerSP(
+					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getStoryPointSum())))
+			.averageCircleTimePerCard(
+					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getCardsNumber())))
 			.cycleTimeForSelectedStepsList(cycleTimeResult.getCycleTimeForSelectedStepsList())
 			.build();
 	}

@@ -15,9 +15,9 @@ public class CycleTime {
 
 	private double totalTime;
 
-	private String averageCircleTimePerCard;
+	private double averageCircleTimePerCard;
 
-	private String averageCycleTimePerSP;
+	private double averageCycleTimePerSP;
 
 	private List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList;
 

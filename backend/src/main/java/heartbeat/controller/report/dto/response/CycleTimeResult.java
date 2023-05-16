@@ -15,6 +15,6 @@ public class CycleTimeResult {
 
 	private List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList;
 
-	private String totalTime;
+	private double totalTime;
 
 }

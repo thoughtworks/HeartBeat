@@ -32,26 +32,26 @@ class CycleTimeCalculatorTest {
 
 		CycleTime cycleTimeExpect = CycleTime.builder()
 			.totalTime(14.8)
-			.averageCycleTimePerSP("4.93")
-			.averageCircleTimePerCard("7.40")
+			.averageCycleTimePerSP(4.93)
+			.averageCircleTimePerCard(7.40)
 			.cycleTimeForSelectedStepsList(List.of(
 					CycleTimeForSelectedStepItem.builder()
 						.optionalItemName("In Dev")
-						.averageTimeForSP("2.07")
-						.averageTimeForCards("3.10")
-						.totalTime("6.20")
+						.averageTimeForSP(2.07)
+						.averageTimeForCards(3.10)
+						.totalTime(6.20)
 						.build(),
 					CycleTimeForSelectedStepItem.builder()
 						.optionalItemName("Block")
-						.averageTimeForSP("2.00")
-						.averageTimeForCards("3.00")
-						.totalTime("6.00")
+						.averageTimeForSP(2.00)
+						.averageTimeForCards(3.00)
+						.totalTime(6.00)
 						.build(),
 					CycleTimeForSelectedStepItem.builder()
 						.optionalItemName("Testing")
-						.averageTimeForSP("0.87")
-						.averageTimeForCards("1.30")
-						.totalTime("2.60")
+						.averageTimeForSP(0.87)
+						.averageTimeForCards(1.30)
+						.totalTime(2.60)
 						.build()))
 
 			.build();

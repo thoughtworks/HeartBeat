@@ -111,7 +111,7 @@ public class GitHubService {
 	}
 
 	public CompletableFuture<List<PipelineLeadTime>> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
-			Map<String, String> repositories) {
+			Map<String, String> repositories, String token) {
 		return CompletableFuture.supplyAsync(() -> {
 			ArrayList<PipelineLeadTime> pipelineLeadTimes = new ArrayList<>();
 			deployTimes.stream().map(deployTime -> {
@@ -124,13 +124,11 @@ public class GitHubService {
 					.build();
 			}).map(item -> {
 				List<DeployInfo> passedDeployInfos = item.getPassedDeploy();
-				// TODO: need token
-				String fakeToke = "Token";
 				List<LeadTime> leadTimes = passedDeployInfos.stream().map(deployInfo -> {
 					try {
 						List<PullRequestInfo> pullRequestInfos = CompletableFuture
 							.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
-									deployInfo.getCommitId(), fakeToke), taskExecutor)
+									deployInfo.getCommitId(), token), taskExecutor)
 							.join();
 
 						long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
@@ -158,7 +156,7 @@ public class GitHubService {
 
 						List<CommitInfo> commitInfos = CompletableFuture
 							.supplyAsync(() -> gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
-									deployInfo.getCommitId(), fakeToke), taskExecutor)
+									deployInfo.getCommitId(), token), taskExecutor)
 							.join();
 
 						CommitInfo firstCommitInfo = commitInfos.get(0);

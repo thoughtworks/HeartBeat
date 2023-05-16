@@ -2,8 +2,8 @@ package heartbeat.service.report;
 
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
-import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 public class GenerateReporterService {
 
 	private final JiraService jiraService;
+
+	private final ClassificationCalculator classificationCalculator;
 
 	private final BuildKiteService buildKiteService;
 
@@ -55,7 +57,6 @@ public class GenerateReporterService {
 		this.fetchOriginalData(request);
 
 		// calculate all required data
-		calculateClassification();
 		calculateCycleTime();
 		calculateLeadTime();
 
@@ -63,6 +64,8 @@ public class GenerateReporterService {
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
+				case "classification" -> reportResponse.setClassificationList(classificationCalculator
+					.calculate(request.getJiraBoardSetting().getTargetFields(), cardCollection));
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
@@ -82,10 +85,6 @@ public class GenerateReporterService {
 			.velocityForSP(String.valueOf(cardCollection.getStoryPointSum()))
 			.velocityForCards(String.valueOf(cardCollection.getCardsNumber()))
 			.build();
-	}
-
-	private void calculateClassification() {
-		// todo:add calculate classification logic
 	}
 
 	private void calculateCycleTime() {

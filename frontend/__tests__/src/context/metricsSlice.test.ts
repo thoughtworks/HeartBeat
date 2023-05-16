@@ -25,6 +25,7 @@ const initState = {
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   importFile: [],
+  cycleTimeSettings: [],
   isProjectCreated: true,
   classification: [],
   treatFlagCardAsBlock: true,
@@ -39,6 +40,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([])
     expect(savedMetricsSetting.doneColumn).toEqual([])
     expect(savedMetricsSetting.boardColumns).toEqual([])
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '' },
     ])

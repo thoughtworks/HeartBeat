@@ -51,7 +51,7 @@ let store = setupStore()
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
   selectMetricsContent: jest.fn().mockReturnValue({
-    boardColumns: [
+    cycleTimeSettings: [
       {
         Doing: 'Analysis',
       },

@@ -18,6 +18,7 @@ export interface savedMetricsSettingState {
   leadTimeForChanges: IPipelineConfig[]
   importFile: string[]
   isProjectCreated: boolean
+  cycleTimeSettings: { name: string; value: string }[]
   classification: string[]
   treatFlagCardAsBlock: boolean
 }
@@ -32,6 +33,7 @@ const initialState: savedMetricsSettingState = {
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   importFile: [],
   isProjectCreated: true,
+  cycleTimeSettings: [],
   classification: [],
   treatFlagCardAsBlock: true,
 }
@@ -79,7 +81,7 @@ export const metricsSlice = createSlice({
       state.isProjectCreated = isProjectCreated
       state.importFile = basic
       state.users = basic.crews || state.users
-      state.boardColumns = basic.cycleTime || state.boardColumns
+      state.cycleTimeSettings = basic.cycleTime?.jiraColumns
       state.doneColumn = basic.realDone || state.doneColumn
       state.classification = basic.classification || state.classification
     },

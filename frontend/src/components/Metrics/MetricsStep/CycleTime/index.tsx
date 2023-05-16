@@ -6,6 +6,7 @@ import { ErrorDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveBoardColumns, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
+import { CYCLE_TIME_LIST, METRICS_CONSTANTS } from '@src/constants'
 
 interface cycleTimeProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[]
@@ -15,11 +16,22 @@ interface cycleTimeProps {
 export const CycleTime = ({ columns, title }: cycleTimeProps) => {
   const dispatch = useAppDispatch()
   const [isError, setIsError] = useState(false)
-  const boardColumns = useAppSelector(selectMetricsContent).boardColumns
-  const defaultValue = boardColumns.map((item) => {
-    const [name, value] = Object.entries(item)[0]
-    return { name, value }
-  })
+  const cycleTimeSettings = useAppSelector(selectMetricsContent).cycleTimeSettings
+  const getDefaultOptionValue = (
+    item: { key: string; value: { name: string; statuses: string[] } },
+    cycleTimeSettings: { name: string; value: string }[]
+  ) => {
+    const controlName = item.value.name
+    let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
+    const validImportValue = cycleTimeSettings?.find((i) => Object.keys(i)[0] === controlName)
+
+    if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {
+      defaultOptionValue = Object.values(validImportValue)[0]
+    }
+
+    return { name: controlName, value: defaultOptionValue }
+  }
+  const defaultValue = Object.values(columns).map((item) => getDefaultOptionValue(item, cycleTimeSettings))
   const isProjectCreated = useAppSelector(selectMetricsContent).isProjectCreated
   const columnsOption = Object.values(columns).map((item) => ({ name: item.value.name, value: '' }))
   const [cycleTimeOptions, setCycleTimeOptions] = useState(isProjectCreated ? columnsOption : defaultValue)
@@ -48,11 +60,7 @@ export const CycleTime = ({ columns, title }: cycleTimeProps) => {
           <span>Only one column can be selected as &quot;Done&quot;</span>
         </ErrorDone>
       )}
-      <FormSelectPart
-        columnsOption={columnsOption}
-        selectedOptions={cycleTimeOptions}
-        saveCycleTimeOptions={saveCycleTimeOptions}
-      />
+      <FormSelectPart selectedOptions={cycleTimeOptions} saveCycleTimeOptions={saveCycleTimeOptions} />
       <FlagCard />
     </>
   )

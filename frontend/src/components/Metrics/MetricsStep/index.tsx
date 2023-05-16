@@ -34,7 +34,7 @@ export const MetricsStep = () => {
         )}
 
       {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
-        <Classification options={targetFields} title={'Classification setting'} label={'Distinguished By'} />
+        <Classification targetFields={targetFields} title={'Classification setting'} label={'Distinguished By'} />
       )}
 
       {(requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||

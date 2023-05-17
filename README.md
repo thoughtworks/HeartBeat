@@ -1,6 +1,6 @@
 # Heartbeat Project（2023/01）
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Grade)[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Coverage)
+[![Build status](https://badge.buildkite.com/94880b707695acea56c07125ec8e0d1220c746457d120ed022.svg)](https://buildkite.com/thoughtworks-Heartbeat/heartbeat)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Grade)[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Coverage)
 
 [![Docs](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml) [![Frontend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml) [![Backend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml) [![Security](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml) [![Build and Deploy](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml)
 
@@ -325,3 +325,7 @@ pnpm e2e
 ```
 pnpm e2e:report
 ```
+# 7 How to trigger BuildKite Pipeline
+1. Add `[stub]` tag to the title of a commit message or PR to trigger stub-related deployments.
+
+2. Add `[infra]` tag to the title of the commit message or PR to trigger infra-related deployments.

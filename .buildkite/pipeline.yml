@@ -32,7 +32,7 @@ steps:
     if:  build.branch == "main" && build.message =~ /\[infra\]/
     key: "deploy-infra"
     depends_on:
-      - "check-shell" 
+      - "check-shell"
       - "check-security"
       - "check-backend"
       - "check-frontend-license"

@@ -41,11 +41,14 @@ partition "Calculate Cycle Time" {
 :iterate over CycleTimeInfoList;
  :initialize jira board columns name as nameMap;
  :initialize jira board columns cost time as cycleTimeMap;
-  :calculate Average Cycle Time;
+  :calculate Average Cycle Time
   (sum of total Cycle Time / storyPointSum)
-  (sum of total Cycle Time / cardNumber)
-  :calculate Average Column Cycle Time;
-  :calculate proportion of column Cycle Time in total Cycle Time;
+  (sum of total Cycle Time / cardNumber);
+  :calculate Average Column Cycle Time
+  (sum of column total Cycle Time / storyPointSum)
+  (sum of column total Cycle Time / cardNumber);
+  :calculate proportion of column Cycle Time in total Cycle Time
+  (column Cycle Time / total Cycle Time);
 }
 
 :output CycleTime /

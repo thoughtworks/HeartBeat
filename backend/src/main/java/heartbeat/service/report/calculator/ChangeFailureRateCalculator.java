@@ -1,4 +1,4 @@
-package heartbeat.service.report;
+package heartbeat.service.report.calculator;
 
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;

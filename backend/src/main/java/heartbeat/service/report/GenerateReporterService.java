@@ -12,6 +12,9 @@ import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
+import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.CycleTimeCalculator;
+import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,8 @@ public class GenerateReporterService {
 	private final DeploymentFrequencyCalculator deploymentFrequency;
 
 	private final ChangeFailureRateCalculator changeFailureRate;
+
+	private final CycleTimeCalculator cycleTimeCalculator;
 
 	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> kanbanMetrics = Stream
@@ -57,13 +62,14 @@ public class GenerateReporterService {
 		this.fetchOriginalData(request);
 
 		// calculate all required data
-		calculateCycleTime();
 		calculateLeadTime();
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
+				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(cardCollection,
+						request.getJiraBoardSetting().getBoardColumns()));
 				case "classification" -> reportResponse.setClassificationList(classificationCalculator
 					.calculate(request.getJiraBoardSetting().getTargetFields(), cardCollection));
 				case "deployment frequency" ->
@@ -85,10 +91,6 @@ public class GenerateReporterService {
 			.velocityForSP(String.valueOf(cardCollection.getStoryPointSum()))
 			.velocityForCards(String.valueOf(cardCollection.getCardsNumber()))
 			.build();
-	}
-
-	private void calculateCycleTime() {
-		// todo:add calculate CycleTime logic
 	}
 
 	private void calculateLeadTime() {

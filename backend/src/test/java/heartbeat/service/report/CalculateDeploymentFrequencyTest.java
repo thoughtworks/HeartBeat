@@ -5,6 +5,7 @@ import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
+import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

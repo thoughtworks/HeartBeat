@@ -1,4 +1,4 @@
-package heartbeat.service.report;
+package heartbeat.service.report.calculator;
 
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
@@ -6,6 +6,7 @@ import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DailyDeploymentCount;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
+import heartbeat.service.report.WorkDay;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

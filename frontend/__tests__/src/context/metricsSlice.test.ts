@@ -1,5 +1,5 @@
 import saveMetricsSettingReducer, {
-  saveBoardColumns,
+  saveCycleTimeSettings,
   saveTargetFields,
   saveUsers,
   saveDoneColumn,
@@ -22,10 +22,11 @@ const initState = {
   targetFields: [],
   users: [],
   doneColumn: [],
-  boardColumns: [],
+  cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   importFile: [],
+  importedCycleTimeSettings: [],
   isProjectCreated: true,
   classification: [],
   treatFlagCardAsBlock: true,
@@ -39,7 +40,8 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.targetFields).toEqual([])
     expect(savedMetricsSetting.jiraColumns).toEqual([])
     expect(savedMetricsSetting.doneColumn).toEqual([])
-    expect(savedMetricsSetting.boardColumns).toEqual([])
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
+    expect(savedMetricsSetting.importedCycleTimeSettings).toEqual([])
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '' },
     ])
@@ -95,18 +97,18 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.users).toEqual(mockUpdatedUsers)
   })
 
-  it('should store saved boardColumns when its value changed', () => {
-    const mockSavedBoardColumns = {
-      boardColumns: [{ name: 'TODO', value: 'To do' }],
+  it('should store saved cycleTimeSettings when its value changed', () => {
+    const mockSavedCycleTimeSettings = {
+      cycleTimeSettings: [{ name: 'TODO', value: 'To do' }],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
-      saveBoardColumns({
-        boardColumns: mockSavedBoardColumns.boardColumns,
+      saveCycleTimeSettings({
+        cycleTimeSettings: mockSavedCycleTimeSettings.cycleTimeSettings,
       })
     )
 
-    expect(savedMetricsSetting.boardColumns).toEqual(mockSavedBoardColumns)
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual(mockSavedCycleTimeSettings)
   })
 
   it('should update classification settings when its value changed given initial state', () => {

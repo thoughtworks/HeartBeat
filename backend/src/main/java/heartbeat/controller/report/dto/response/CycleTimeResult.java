@@ -11,16 +11,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportResponse {
+public class CycleTimeResult {
 
-	private Velocity velocity;
+	private List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList;
 
-	private List<Classification> classificationList;
-
-	private CycleTime cycleTime;
-
-	private DeploymentFrequency deploymentFrequency;
-
-	private ChangeFailureRate changeFailureRate;
+	private double totalTime;
 
 }

@@ -344,7 +344,7 @@ export const MOCK_REPORT_RESPONSE = {
       pairs: [
         {
           name: 'Feature Work - Planned',
-          value: '57.14%',
+          value: 0.5714,
         },
       ],
     },

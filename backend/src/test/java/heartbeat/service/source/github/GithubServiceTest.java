@@ -1,8 +1,16 @@
 package heartbeat.service.source.github;
 
 import heartbeat.client.GitHubFeignClient;
+import heartbeat.client.dto.codebase.github.Commit;
+import heartbeat.client.dto.codebase.github.CommitInfo;
+import heartbeat.client.dto.codebase.github.Committer;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepo;
+import heartbeat.client.dto.codebase.github.LeadTime;
+import heartbeat.client.dto.codebase.github.PipelineLeadTime;
+import heartbeat.client.dto.codebase.github.PullRequestInfo;
+import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
+import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.RequestFailedException;
 import org.junit.jupiter.api.AfterEach;
@@ -17,12 +25,17 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -36,11 +49,58 @@ class GithubServiceTest {
 	@InjectMocks
 	GitHubService githubService;
 
+	@Mock
+	PullRequestInfo pullRequestInfo;
+
+	@Mock
+	DeployInfo deployInfo;
+
+	@Mock
+	CommitInfo commitInfo;
+
+	@Mock
+	List<DeployTimes> deployTimes;
+
 	ThreadPoolTaskExecutor executor;
 
 	@BeforeEach
 	public void setUp() {
 		githubService = new GitHubService(executor = getTaskExecutor(), gitHubFeignClient);
+		pullRequestInfo = PullRequestInfo.builder()
+			.mergedAt("2022-07-23T04:04:00.000+00:00")
+			.createdAt("2022-07-23T04:03:00.000+00:00")
+			.build();
+		deployInfo = DeployInfo.builder()
+			.commitId("111")
+			.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
+			.jobFinishTime("2022-07-23T04:06:00.000+00:00")
+			.build();
+		commitInfo = CommitInfo.builder()
+			.commit(Commit.builder()
+				.committer(Committer.builder().date("2022-07-23T04:03:00.000+00:00").build())
+				.build())
+			.build();
+
+		deployTimes = List.of(DeployTimes.builder()
+			.pipelineId("ID")
+			.pipelineName("Name")
+			.pipelineStep("Step")
+			.passed(List.of(
+					DeployInfo.builder()
+						.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
+						.jobStartTime("2022-07-23T04:05:01.000+00:00")
+						.jobFinishTime("2022-07-23T04:06:00.000+00:00")
+						.commitId("111")
+						.state("passed")
+						.build(),
+					DeployInfo.builder()
+						.pipelineCreateTime("2022-07-24T04:05:00.000+00:00")
+						.jobStartTime("2022-07-24T04:05:01.000+00:00")
+						.jobFinishTime("2022-07-24T04:06:00.000+00:00")
+						.commitId("222")
+						.state("passed")
+						.build()))
+			.build());
 	}
 
 	@AfterEach
@@ -106,6 +166,72 @@ class GithubServiceTest {
 
 		assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(CompletionException.class)
 			.hasMessageContaining("UnExpected Exception");
+	}
+
+	@Test
+	void shouldReturnWhenMergeTimeIsNull() {
+		PullRequestInfo pullRequestInfo = PullRequestInfo.builder().build();
+		DeployInfo deployInfo = DeployInfo.builder().build();
+		CommitInfo commitInfo = CommitInfo.builder().build();
+
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+		assertNull(result);
+	}
+
+	@Test
+	void shouldReturnLeadTimeWhenMergedTimeIsNotNull() {
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+		LeadTime expect = LeadTime.builder()
+			.commitId("111")
+			.prCreatedTime(1.65854898E12)
+			.prMergedTime(1.65854904E12)
+			.firstCommitTimeInPr(1.65854898E12)
+			.jobFinishTime(1.65854916E12)
+			.pipelineDelayTime(1.6585491E12)
+			.pipelineCreateTime(1.6585491E12)
+			.prDelayTime(60000.0)
+			.pipelineDelayTime(60000.0)
+			.totalTime(120000.0)
+			.build();
+		assertEquals(expect, result);
+	}
+
+	@Test
+	void CommitTimeInPrShouldBeZeroWhenCommitInfoIsNull() {
+		commitInfo = CommitInfo.builder().build();
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+		LeadTime expect = LeadTime.builder()
+			.commitId("111")
+			.prCreatedTime(1.65854898E12)
+			.prMergedTime(1.65854904E12)
+			.firstCommitTimeInPr(0)
+			.jobFinishTime(1.65854916E12)
+			.pipelineDelayTime(1.6585491E12)
+			.pipelineCreateTime(1.6585491E12)
+			.prDelayTime(60000.0)
+			.pipelineDelayTime(60000.0)
+			.totalTime(120000.0)
+			.build();
+		assertEquals(expect, result);
+	}
+
+	@Test
+	void shouldReturnCommitTimeInPrZeroWhenCommitInfoIsNull() {
+		commitInfo = CommitInfo.builder().build();
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+		LeadTime expect = LeadTime.builder()
+			.commitId("111")
+			.prCreatedTime(1.65854898E12)
+			.prMergedTime(1.65854904E12)
+			.firstCommitTimeInPr(0)
+			.jobFinishTime(1.65854916E12)
+			.pipelineDelayTime(1.6585491E12)
+			.pipelineCreateTime(1.6585491E12)
+			.prDelayTime(60000.0)
+			.pipelineDelayTime(60000.0)
+			.totalTime(120000.0)
+			.build();
+		assertEquals(expect, result);
 	}
 
 }

@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-
 public class GenerateReporterService {
 
 	private final JiraService jiraService;

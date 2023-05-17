@@ -172,37 +172,34 @@ public class GitHubService {
 		});
 	}
 
-	private LeadTime mapLeadTimeWithInfo(PullRequestInfo pullRequestInfo, DeployInfo deployInfo, CommitInfo commitInfo)
-			throws Exception {
+	public LeadTime mapLeadTimeWithInfo(PullRequestInfo pullRequestInfo, DeployInfo deployInfo, CommitInfo commitInfo) {
 		if (pullRequestInfo.getMergedAt() == null) {
-			throw new Exception("this commit has not been merged");
+			return null;
 		}
 		double prCreatedTime = Instant.parse(pullRequestInfo.getCreatedAt()).toEpochMilli();
 		double prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
 		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-		double firstCommitTimeInPr = 0;
+		double firstCommitTimeInPr;
 		if (commitInfo.getCommit() != null && commitInfo.getCommit().getCommitter() != null
 				&& commitInfo.getCommit().getCommitter().getDate() != null) {
 			firstCommitTimeInPr = (double) Instant.parse(commitInfo.getCommit().getCommitter().getDate())
 				.toEpochMilli();
 		}
+		else {
+			firstCommitTimeInPr = 0;
+		}
 
 		double pipelineDelayTime = jobFinishTime - pipelineCreateTime;
-		double prDelayTime = 0;
+		double prDelayTime;
 		double totalTime;
-		if (prMergedTime > 0 && prCreatedTime > 0) {
-			if (firstCommitTimeInPr > 0) {
-				prDelayTime = prMergedTime - firstCommitTimeInPr;
-			}
-			else {
-				prDelayTime = prMergedTime - prCreatedTime;
-			}
-			totalTime = prDelayTime + pipelineDelayTime;
+		if (firstCommitTimeInPr > 0) {
+			prDelayTime = prMergedTime - firstCommitTimeInPr;
 		}
 		else {
-			totalTime = pipelineDelayTime;
+			prDelayTime = prMergedTime - prCreatedTime;
 		}
+		totalTime = prDelayTime + pipelineDelayTime;
 
 		return LeadTime.builder()
 			.pipelineDelayTime(pipelineDelayTime)

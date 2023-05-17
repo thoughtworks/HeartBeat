@@ -18,6 +18,7 @@ import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.util.TimeUtil;
 import heartbeat.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -133,8 +134,13 @@ public class BuildKiteService {
 		String perPage = "100";
 		log.info("Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
 				partialToken, orgId, pipelineId, stepsParam, page);
-		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(token, orgId,
-				pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime());
+
+		String realToken = "Bearer " + token;
+		stepsParam.setStartTime(TimeUtil.convertToISOFormat(stepsParam.getStartTime()));
+		stepsParam.setEndTime(TimeUtil.convertToISOFormat(stepsParam.getEndTime()));
+
+		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(realToken,
+				orgId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime());
 		log.info(
 				"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},result status code: {},page:{}",
 				partialToken, orgId, pipelineId, pipelineStepsInfo.getStatusCode(), page);
@@ -150,7 +156,7 @@ public class BuildKiteService {
 		if (totalPage != 1) {
 			Stream<CompletableFuture<List<BuildKiteBuildInfo>>> futureStream = IntStream
 				.range(Integer.parseInt(page) + 1, totalPage + 1)
-				.mapToObj(currentPage -> getBuildKiteStepsAsync(token, orgId, pipelineId, stepsParam, perPage,
+				.mapToObj(currentPage -> getBuildKiteStepsAsync(realToken, orgId, pipelineId, stepsParam, perPage,
 						currentPage, partialToken));
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = futureStream.map(CompletableFuture::join)
 				.flatMap(Collection::stream)
@@ -167,6 +173,7 @@ public class BuildKiteService {
 				log.info(
 						"Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
 						partialToken, organizationId, pipelineId, stepsParam, page);
+
 				List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
 						organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
 						stepsParam.getEndTime());
@@ -206,12 +213,14 @@ public class BuildKiteService {
 	}
 
 	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,
-			List<BuildKiteBuildInfo> buildInfos) {
+			List<BuildKiteBuildInfo> buildInfos, String startTime, String endTime) {
 		if (deploymentEnvironment.getOrgId() == null) {
 			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "miss orgId argument");
 		}
-		List<DeployInfo> passedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "passed");
-		List<DeployInfo> failedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "failed");
+		List<DeployInfo> passedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "passed", startTime,
+				endTime);
+		List<DeployInfo> failedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "failed", startTime,
+				endTime);
 
 		return DeployTimes.builder()
 			.pipelineId(deploymentEnvironment.getId())
@@ -223,9 +232,9 @@ public class BuildKiteService {
 	}
 
 	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
-			DeploymentEnvironment deploymentEnvironment, String states) {
+			DeploymentEnvironment deploymentEnvironment, String states, String startTime, String endTime) {
 		return buildInfos.stream()
-			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), states))
+			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), states, startTime, endTime))
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
 			.filter(job -> !job.getJobStartTime().isEmpty())
 			.toList();

@@ -12,6 +12,7 @@ echo "Start to perform cleanup"
 rm -rf /var/lib/buildkite-agent/builds/*
 rm -rf /var/lib/buildkite-agent/.cache/*
 rm -rf /var/lib/buildkite-agent/.local/*
-docker system prune -a --volumes --force
+
+docker system df
 
 echo "Finished to perform cleanup"

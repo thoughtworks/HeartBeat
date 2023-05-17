@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,6 +15,12 @@ public class ReportResponse {
 
 	private Velocity velocity;
 
+	private List<Classification> classificationList;
+
+	private CycleTime cycleTime;
+
 	private DeploymentFrequency deploymentFrequency;
+
+	private ChangeFailureRate changeFailureRate;
 
 }

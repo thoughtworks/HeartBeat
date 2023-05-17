@@ -2,8 +2,8 @@ package heartbeat.service.report;
 
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
-import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
@@ -12,8 +12,10 @@ import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
+import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.CycleTimeCalculator;
+import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,15 +25,19 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
-
 public class GenerateReporterService {
 
 	private final JiraService jiraService;
 
+	private final ClassificationCalculator classificationCalculator;
+
 	private final BuildKiteService buildKiteService;
 
 	private final DeploymentFrequencyCalculator deploymentFrequency;
+
+	private final ChangeFailureRateCalculator changeFailureRate;
+
+	private final CycleTimeCalculator cycleTimeCalculator;
 
 	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> kanbanMetrics = Stream
@@ -51,22 +57,26 @@ public class GenerateReporterService {
 
 	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
 
-	public ReportResponse generateReporter(GenerateReportRequest request) {
+	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 
 		// calculate all required data
-		calculateClassification();
-		calculateCycleTime();
 		calculateLeadTime();
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
+				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(cardCollection,
+						request.getJiraBoardSetting().getBoardColumns()));
+				case "classification" -> reportResponse.setClassificationList(classificationCalculator
+					.calculate(request.getJiraBoardSetting().getTargetFields(), cardCollection));
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
+				case "change failure rate" ->
+					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
 				default -> {
 					// TODO
 				}
@@ -81,14 +91,6 @@ public class GenerateReporterService {
 			.velocityForSP(String.valueOf(cardCollection.getStoryPointSum()))
 			.velocityForCards(String.valueOf(cardCollection.getCardsNumber()))
 			.build();
-	}
-
-	private void calculateClassification() {
-		// todo:add calculate classification logic
-	}
-
-	private void calculateCycleTime() {
-		// todo:add calculate CycleTime logic
 	}
 
 	private void calculateLeadTime() {
@@ -132,14 +134,15 @@ public class GenerateReporterService {
 		// todo:add fetchGithubData logic
 	}
 
-	private synchronized void fetchBuildKiteData(GenerateReportRequest request) {
+	private void fetchBuildKiteData(GenerateReportRequest request) {
 		deployTimesList.clear();
 		buildInfosList.clear();
 		for (DeploymentEnvironment deploymentEnvironment : request.getBuildKiteSetting().getDeploymentEnvList()) {
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(
 					request.getBuildKiteSetting().getToken(), deploymentEnvironment, request.getStartTime(),
 					request.getEndTime());
-			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos);
+			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos,
+					request.getStartTime(), request.getEndTime());
 			deployTimesList.add(deployTimes);
 			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 		}

@@ -25,7 +25,7 @@ import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
 import {
   savedMetricsSettingState,
-  selectBoardColumns,
+  selectCycleTimeSettings,
   selectMetricsContent,
   updateMetricsState,
 } from '@src/context/Metrics/metricsSlice'
@@ -46,7 +46,7 @@ const MetricsStepper = () => {
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl
   const { metrics, projectName, dateRange } = config.basic
 
-  const selectedBoardColumns = useAppSelector(selectBoardColumns)
+  const selectedBoardColumns = useAppSelector(selectCycleTimeSettings)
   const verifyPipeline = (type: string) => {
     const pipelines =
       type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
@@ -58,7 +58,10 @@ const MetricsStepper = () => {
   const isShowCrewsSetting = isShowBoard
   const isShowRealDone =
     isShowBoard && selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2
-  const isShowDeploymentFrequency = requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
+  const isShowDeploymentFrequency =
+    requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
+    requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
+    requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
   const isShowLeadTimeForChanges = requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)
   const isCrewsSettingValid = metricsConfig.users.length > 0
   const isRealDoneValid = metricsConfig.doneColumn.length > 0
@@ -136,15 +139,17 @@ const MetricsStepper = () => {
       users,
       doneColumn,
       targetFields,
-      boardColumns,
+      cycleTimeSettings,
       treatFlagCardAsBlock,
     } = filterMetricsConfig(metricsConfig)
 
     const metricsData = {
       crews: users,
-      cycleTime: boardColumns
+      cycleTime: cycleTimeSettings
         ? {
-            jiraColumns: boardColumns?.map(({ name, value }: { name: string; value: string }) => ({ [name]: value })),
+            jiraColumns: cycleTimeSettings?.map(({ name, value }: { name: string; value: string }) => ({
+              [name]: value,
+            })),
             treatFlagCardAsBlock,
           }
         : undefined,

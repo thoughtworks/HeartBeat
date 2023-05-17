@@ -40,7 +40,7 @@ export const leadTimeForChangesMapper = ({
   })
   mappedLeadTimeForChangesValue.push({
     id: mappedLeadTimeForChangesValue.length,
-    name: `${avgLeadTimeForChanges.name}/`,
+    name: avgLeadTimeForChanges.name,
     valuesList: Object.entries(avgLeadTimeForChanges)
       .slice(-3)
       .map(([name, value]) => ({

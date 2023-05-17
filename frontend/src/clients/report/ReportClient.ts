@@ -45,7 +45,9 @@ export class ReportClient extends HttpClient {
     changeFailureRate: {
       avgChangeFailureRate: {
         name: '',
-        failureRate: '',
+        totalTimes: 0,
+        totalFailedTimes: 0,
+        failureRate: 0.0,
       },
       changeFailureRateOfPipelines: [],
     },

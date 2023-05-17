@@ -39,7 +39,7 @@ export const ReportStep = () => {
   })
   const configData = useAppSelector(selectConfig)
   const {
-    boardColumns,
+    cycleTimeSettings,
     treatFlagCardAsBlock,
     users,
     targetFields,
@@ -88,11 +88,11 @@ export const ReportStep = () => {
     },
     jiraBoardSetting: {
       token,
-      type,
+      type: type.toLowerCase().replace(' ', '-'),
       site,
       projectKey,
       boardId,
-      boardColumns,
+      boardColumns: cycleTimeSettings,
       treatFlagCardAsBlock,
       users,
       targetFields,

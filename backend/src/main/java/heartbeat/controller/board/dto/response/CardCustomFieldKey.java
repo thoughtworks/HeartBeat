@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CardCustomFieldKey {
 
-	private String STORY_POINTS;
+	private String storyPoints;
 
-	private String SPRINT;
+	private String sprint;
 
-	private String FLAGGED;
+	private String flagged;
 
 }

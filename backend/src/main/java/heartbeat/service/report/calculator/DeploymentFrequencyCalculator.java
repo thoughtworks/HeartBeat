@@ -1,4 +1,4 @@
-package heartbeat.service.report;
+package heartbeat.service.report.calculator;
 
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
@@ -6,6 +6,7 @@ import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DailyDeploymentCount;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
+import heartbeat.service.report.WorkDay;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Component
 public class DeploymentFrequencyCalculator {
 
-	public static final String FORMAT_2_DECIMALS = "0.00";
+	private static final String FORMAT_2_DECIMALS = "0.00";
 
 	private final WorkDay workDay;
 
@@ -31,9 +32,8 @@ public class DeploymentFrequencyCalculator {
 		int timePeriod = workDay.calculateWorkDaysBetween(startTime, endTime);
 
 		List<DeploymentFrequencyOfPipeline> deploymentFrequencyOfPipelines = deployTimes.stream().map((item) -> {
-			List<DeployInfo> filteredPassedItems = filterPassedItemsByTime(item.getPassed(), startTime, endTime);
-			int passedDeployInfosCount = filteredPassedItems.size();
-			List<DailyDeploymentCount> dailyDeploymentCounts = mapDeploymentPassedItems(filteredPassedItems);
+			int passedDeployInfosCount = item.getPassed().size();
+			List<DailyDeploymentCount> dailyDeploymentCounts = mapDeploymentPassedItems(item.getPassed());
 			float frequency = passedDeployInfosCount == 0 || timePeriod == 0 ? 0
 					: (float) passedDeployInfosCount / timePeriod;
 			return DeploymentFrequencyOfPipeline.builder()
@@ -56,13 +56,6 @@ public class DeploymentFrequencyCalculator {
 				.build())
 			.deploymentFrequencyOfPipelines(deploymentFrequencyOfPipelines)
 			.build();
-	}
-
-	private List<DeployInfo> filterPassedItemsByTime(List<DeployInfo> deployInfos, Long startTime, Long endTime) {
-		return deployInfos.stream().filter((data) -> {
-			long time = Instant.parse(data.getJobFinishTime()).toEpochMilli();
-			return time > startTime && time <= endTime;
-		}).toList();
 	}
 
 	private List<DailyDeploymentCount> mapDeploymentPassedItems(List<DeployInfo> deployInfos) {

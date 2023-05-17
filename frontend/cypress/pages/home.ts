@@ -1,16 +1,20 @@
 class Home {
+  private readonly createANewProjectButton = () => cy.contains('Create a new project')
+
+  private readonly importProjectFromFileButton = () => cy.contains('Import project from file')
+
   navigate() {
     cy.visit(Cypress.env('url') + '/index.html')
   }
 
   createANewProject() {
-    cy.contains('Create a new project').click()
+    this.createANewProjectButton().click()
   }
 
   importProjectFromFile() {
     const configFixtureName = 'ConfigFileForImporting.json'
 
-    cy.contains('Import project from file').click()
+    this.importProjectFromFileButton().click()
     cy.fixture(configFixtureName).then((fileContent) => {
       cy.get<HTMLInputElement>('#importJson').then((e) => {
         const testFile = new File([JSON.stringify(fileContent)], configFixtureName, {

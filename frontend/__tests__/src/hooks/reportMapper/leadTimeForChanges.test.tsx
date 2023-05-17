@@ -31,7 +31,7 @@ describe('lead time for changes data mapper', () => {
       },
       {
         id: 1,
-        name: 'Average/',
+        name: 'Average',
         valuesList: [
           { name: 'mergeDelayTime', value: '2day 12hours 47minutes' },
           { name: 'pipelineDelayTime', value: '1day 15hours 1minutes' },

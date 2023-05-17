@@ -14,7 +14,7 @@ init_aws() {
 build_and_push_image() {
   local app_name="$1" # like, backend, frontend, stub
 
-  docker build -t "${AWS_ECR_HOST}/heartbeat_${app_name}:latest" ./ -f ./infra/Dockerfile."${app_name}"
+  docker build -t "${AWS_ECR_HOST}/heartbeat_${app_name}:latest" ./ -f ./ops/infra/Dockerfile."${app_name}"
   docker tag "${AWS_ECR_HOST}/heartbeat_${app_name}:latest" "${AWS_ECR_HOST}/heartbeat_${app_name}:hb${BUILDKITE_BUILD_NUMBER}"
 
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \

@@ -4,6 +4,81 @@ description: Flow Diagram
 layout: ../../../layouts/MainLayout.astro
 ---
 
+## Calculate Classification
+
+```plantuml
+@startuml Classification
+skin rose
+title FlowChart - Heartbeat - Calculate Classification
+start
+:input cards, targetFields/
+:filter targetFields which flag is true;
+  :iterate over targetFields;
+    :put innerMap with "None" key, cardsNumber;
+    :put resultMap with "targetField key", innerMap;
+    :put nameMap with "targetFieldkey", "targetFieldName";
+    :iterate cardsJiraCardDTOList to get jiraCardResponse;
+:get cardsNumber, cardsJiraCardDTOList;
+partition "Calculate Classification" {
+  :initialize classificationFields List;
+    :get jiraCardFields from jiraCardResponse.BaseInfo.fields;
+    :extract tempFields(Map<String, Object>) from jiraCardFields;
+    :iterate tempFields.keySet to get tempfieldKey;
+    :get object in tempFields by tempfieldKey;
+    if (object > 0) then (yes)
+    :calculate countMap by resultMap, tempfieldKey, object;
+      :get countMap(<Map<String, Integer>>) from resultMap by fieldsKey;
+      if (countMap!= null) then (yes)
+        :iterate object;
+        if (object follow ICardFieldDisplayName Interface) then (yes)
+        :get displayName from object;
+        else (no)
+        :transfer object to String as displayName;
+        endif
+        :get count from countMap by displayName;
+            if (count != null) then (yes)
+            :put displayName and count + 1 in countMap;
+            else (no)
+            :put displayName and count = 1 in countMap;
+            endif
+            :put None_Key , count of None_Key -1 in countMap;
+    endif
+    else (no)
+      :get countMap from resultMap by fieldsKey;
+      :iterate object;
+        if (object follow ICardFieldDisplayName Interface) then (yes)
+        :get displayName from object;
+        else (no)
+        :transfer object to String as displayName;
+        endif
+      :get count from countMap by displayName;
+        if (count > 0) then (yes)
+          :put displayName and count + 1 in countMap;
+        else (no)
+          :put displayName and count = 1 in countMap;
+        endif
+        :put None_Key , count of None_Key -1 in countMap;
+    endif
+    :iterate entry in resultMap;
+    :get fieldName and valueMap(Map<String, Integer>);
+    :intialize classificationNameValuePair;
+      if (count of valueMap for None_Key = 0 ) then (yes)
+        :valueMap remove None_Key;
+      else (no)
+      endif
+    :iterate mapEntry in valueMap;
+      :get displayName, count from mapEntry;
+      :calculate result of count / cardsNumber;
+      :put displayName and result in classificationNameValuePair;
+      :get fieldName from nameMap;
+      :put fieldName and classificationNameValuePair in classificationFields;
+}
+:output classificationFields/
+
+stop
+@enduml
+```
+
 ## Calculate Deployment Frequency
 
 ```plantuml

@@ -17,7 +17,7 @@ jest.mock('@src/context/config/configSlice', () => ({
 }))
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectMetricsContent: jest.fn().mockReturnValue({ classification: ['Issue', 'Parent'] }),
+  selectMetricsImportedData: jest.fn().mockReturnValue({ importedClassification: ['issue', 'parent'] }),
 }))
 
 let store = setupStore()

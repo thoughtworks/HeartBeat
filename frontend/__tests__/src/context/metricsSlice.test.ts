@@ -13,7 +13,6 @@ import saveMetricsSettingReducer, {
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
-  updateClassification,
   updateMetricsImportedData,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
@@ -128,13 +127,6 @@ describe('saveMetricsSetting reducer', () => {
     )
 
     expect(savedMetricsSetting.cycleTimeSettings).toEqual(mockSavedCycleTimeSettings)
-  })
-
-  it('should update classification settings when its value changed given initial state', () => {
-    const mockClassification = ['classification1', 'classification2']
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateClassification(mockClassification))
-
-    expect(savedMetricsSetting.classification).toEqual(mockClassification)
   })
 
   it('should update metricsImportedData when its value changed given initial state', () => {

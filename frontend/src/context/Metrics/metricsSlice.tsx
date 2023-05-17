@@ -16,7 +16,6 @@ export interface savedMetricsSettingState {
   cycleTimeSettings: { name: string; value: string }[]
   deploymentFrequencySettings: IPipelineConfig[]
   leadTimeForChanges: IPipelineConfig[]
-  classification: string[]
   treatFlagCardAsBlock: boolean
   importedData: {
     importedCrews: string[]
@@ -39,7 +38,6 @@ const initialState: savedMetricsSettingState = {
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-  classification: [],
   treatFlagCardAsBlock: true,
   importedData: {
     importedCrews: [],
@@ -69,9 +67,6 @@ export const metricsSlice = createSlice({
     },
     saveCycleTimeSettings: (state, action) => {
       state.cycleTimeSettings = action.payload
-    },
-    updateClassification: (state, action) => {
-      state.classification = action.payload
     },
     addADeploymentFrequencySetting: (state) => {
       const newId = state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
@@ -155,7 +150,6 @@ export const {
   saveDoneColumn,
   saveUsers,
   saveCycleTimeSettings,
-  updateClassification,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,

@@ -88,7 +88,7 @@ export const ReportStep = () => {
     },
     jiraBoardSetting: {
       token,
-      type: type.toLowerCase(),
+      type: type.toLowerCase().replace(' ', '-'),
       site,
       projectKey,
       boardId,

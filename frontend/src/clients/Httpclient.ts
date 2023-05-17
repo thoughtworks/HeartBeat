@@ -14,7 +14,7 @@ import { NotFoundException } from '@src/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/exceptions/ForbiddenException'
 
 export class HttpClient {
-  protected httpTimeout = 20000
+  protected httpTimeout = 300000
   protected axiosInstance: AxiosInstance
 
   constructor() {

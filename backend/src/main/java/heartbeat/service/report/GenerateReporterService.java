@@ -1,10 +1,13 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
+import heartbeat.controller.pipeline.dto.request.LeadTimeEnvironment;
+import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
@@ -15,10 +18,12 @@ import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.source.github.GitHubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -31,6 +36,8 @@ public class GenerateReporterService {
 
 	private final ClassificationCalculator classificationCalculator;
 
+	private final GitHubService gitHubService;
+
 	private final BuildKiteService buildKiteService;
 
 	private final DeploymentFrequencyCalculator deploymentFrequency;
@@ -39,7 +46,10 @@ public class GenerateReporterService {
 
 	private final CycleTimeCalculator cycleTimeCalculator;
 
-	// need add GitHubMetrics and BuildKiteMetrics
+	private List<PipelineLeadTime> leadTimes;
+
+	private final CalculateLeadTimeForChanges calculateLeadTimeForChanges;
+
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
 		.map(RequireDataEnum::getValue)
@@ -49,6 +59,18 @@ public class GenerateReporterService {
 		.of(RequireDataEnum.CHANGE_FAILURE_RATE, RequireDataEnum.DEPLOYMENT_FREQUENCY)
 		.map(RequireDataEnum::getValue)
 		.toList();
+
+	private final List<String> codebaseMetrics = Stream.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES)
+		.map(RequireDataEnum::getValue)
+		.toList();
+
+	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
+		Map<String, String> repoMap = new HashMap<>();
+		for (LeadTimeEnvironment currentValue : codebaseSetting.getLeadTime()) {
+			repoMap.put(currentValue.getId(), currentValue.getRepository());
+		}
+		return repoMap;
+	}
 
 	// todo: need remove private fields not use void function when finish GenerateReport
 	private CardCollection cardCollection;
@@ -60,9 +82,6 @@ public class GenerateReporterService {
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
-
-		// calculate all required data
-		calculateLeadTime();
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
@@ -77,6 +96,8 @@ public class GenerateReporterService {
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
 				case "change failure rate" ->
 					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
+				case "lead time for changes" -> reportResponse
+					.setLeadTimeForChanges(calculateLeadTimeForChanges.calculateLeadTimeForChanges(this.leadTimes));
 				default -> {
 					// TODO
 				}
@@ -93,10 +114,6 @@ public class GenerateReporterService {
 			.build();
 	}
 
-	private void calculateLeadTime() {
-		// todo:add calculate LeadTime logic
-	}
-
 	private void fetchOriginalData(GenerateReportRequest request) {
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
 
@@ -104,7 +121,9 @@ public class GenerateReporterService {
 			fetchDataFromKanban(request);
 		}
 
-		fetchGithubData();
+		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
+			fetchGithubData(request);
+		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
 			fetchBuildKiteData(request);
@@ -130,8 +149,14 @@ public class GenerateReporterService {
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 	}
 
-	private void fetchGithubData() {
-		// todo:add fetchGithubData logic
+	private void fetchGithubData(GenerateReportRequest request) {
+		for (LeadTimeEnvironment ignored : request.getCodebaseSetting().getLeadTime()) {
+			fetchBuildKiteData(request);
+		}
+		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
+		this.leadTimes = gitHubService
+			.fetchPipelinesLeadTime(this.deployTimesList, repoMap, request.getCodebaseSetting().getToken())
+			.join();
 	}
 
 	private void fetchBuildKiteData(GenerateReportRequest request) {

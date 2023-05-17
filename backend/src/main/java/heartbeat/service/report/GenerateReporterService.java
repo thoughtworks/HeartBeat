@@ -48,7 +48,7 @@ public class GenerateReporterService {
 
 	private List<PipelineLeadTime> leadTimes;
 
-	private final CalculateLeadTimeForChanges calculateLeadTimeForChanges;
+	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
 
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
@@ -72,7 +72,6 @@ public class GenerateReporterService {
 		return repoMap;
 	}
 
-	// todo: need remove private fields not use void function when finish GenerateReport
 	private CardCollection cardCollection;
 
 	private List<DeployTimes> deployTimesList = new ArrayList<>();
@@ -97,7 +96,7 @@ public class GenerateReporterService {
 				case "change failure rate" ->
 					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
 				case "lead time for changes" -> reportResponse
-					.setLeadTimeForChanges(calculateLeadTimeForChanges.calculateLeadTimeForChanges(this.leadTimes));
+					.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(leadTimes));
 				default -> {
 					// TODO
 				}

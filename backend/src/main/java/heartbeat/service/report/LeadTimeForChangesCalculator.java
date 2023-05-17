@@ -17,9 +17,9 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 @Component
-public class CalculateLeadTimeForChanges {
+public class LeadTimeForChangesCalculator {
 
-	public LeadTimeForChanges calculateLeadTimeForChanges(List<PipelineLeadTime> pipelineLeadTime) {
+	public LeadTimeForChanges calculate(List<PipelineLeadTime> pipelineLeadTime) {
 		int pipelineCount = pipelineLeadTime.size();
 		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines = new ArrayList<>();
 		AvgLeadTimeForChanges avgLeadTimeForChanges = new AvgLeadTimeForChanges();

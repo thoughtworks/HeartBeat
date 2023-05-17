@@ -6,7 +6,6 @@ import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
-import heartbeat.controller.pipeline.dto.request.LeadTimeEnvironment;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
@@ -66,7 +65,7 @@ public class GenerateReporterService {
 
 	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
 		Map<String, String> repoMap = new HashMap<>();
-		for (LeadTimeEnvironment currentValue : codebaseSetting.getLeadTime()) {
+		for (DeploymentEnvironment currentValue : codebaseSetting.getLeadTime()) {
 			repoMap.put(currentValue.getId(), currentValue.getRepository());
 		}
 		return repoMap;
@@ -77,6 +76,8 @@ public class GenerateReporterService {
 	private List<DeployTimes> deployTimesList = new ArrayList<>();
 
 	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTiemBuildInfosList = new ArrayList<>();
 
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
@@ -95,8 +96,8 @@ public class GenerateReporterService {
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
 				case "change failure rate" ->
 					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
-				case "lead time for changes" -> reportResponse
-					.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(leadTimes));
+				case "lead time for changes" ->
+					reportResponse.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(leadTimes));
 				default -> {
 					// TODO
 				}
@@ -149,9 +150,8 @@ public class GenerateReporterService {
 	}
 
 	private void fetchGithubData(GenerateReportRequest request) {
-		for (LeadTimeEnvironment ignored : request.getCodebaseSetting().getLeadTime()) {
-			fetchBuildKiteData(request);
-		}
+		fetchBuildKiteData(request.getStartTime(), request.getEndTime(), request.getCodebaseSetting().getLeadTime(),
+				request.getCodebaseSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
 		this.leadTimes = gitHubService
 			.fetchPipelinesLeadTime(this.deployTimesList, repoMap, request.getCodebaseSetting().getToken())
@@ -159,16 +159,22 @@ public class GenerateReporterService {
 	}
 
 	private void fetchBuildKiteData(GenerateReportRequest request) {
+		fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
+				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken());
+	}
+
+	private void fetchBuildKiteData(String startTime, String endTime,
+			List<DeploymentEnvironment> deploymentEnvironments, String token) {
 		deployTimesList.clear();
 		buildInfosList.clear();
-		for (DeploymentEnvironment deploymentEnvironment : request.getBuildKiteSetting().getDeploymentEnvList()) {
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(
-					request.getBuildKiteSetting().getToken(), deploymentEnvironment, request.getStartTime(),
-					request.getEndTime());
+		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
+			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(token,
+					deploymentEnvironment, startTime, endTime);
 			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos,
-					request.getStartTime(), request.getEndTime());
+					startTime, endTime);
 			deployTimesList.add(deployTimes);
 			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
+			leadTiemBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 		}
 	}
 

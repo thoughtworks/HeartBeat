@@ -66,10 +66,8 @@ public class LeadTimeForChangesCalculator {
 		Double avgPipeDelayTimeOfAllPipeline = avgDelayTimeMapList.stream()
 			.map(item -> item.getOrDefault("avgPipelineDelayTime", 0d))
 			.reduce(0.0, Double::sum);
-		Double avgMergeDelayTime = TimeConverter
-			.convertMillisecondToMinutes(avgPrDelayTimeOfAllPipeline / pipelineCount);
-		Double avgPipelineDelayTime = TimeConverter
-			.convertMillisecondToMinutes(avgPipeDelayTimeOfAllPipeline / pipelineCount);
+		Double avgMergeDelayTime = avgPrDelayTimeOfAllPipeline / pipelineCount;
+		Double avgPipelineDelayTime = avgPipeDelayTimeOfAllPipeline / pipelineCount;
 
 		avgLeadTimeForChanges.setMergeDelayTime(avgMergeDelayTime);
 		avgLeadTimeForChanges.setPipelineDelayTime(avgPipelineDelayTime);

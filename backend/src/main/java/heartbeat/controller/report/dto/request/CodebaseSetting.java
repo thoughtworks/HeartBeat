@@ -1,6 +1,6 @@
 package heartbeat.controller.report.dto.request;
 
-import heartbeat.controller.pipeline.dto.request.LeadTimeEnvironment;
+import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +18,6 @@ public class CodebaseSetting {
 
 	private String token;
 
-	private List<LeadTimeEnvironment> leadTime;
+	private List<DeploymentEnvironment> leadTime;
 
 }

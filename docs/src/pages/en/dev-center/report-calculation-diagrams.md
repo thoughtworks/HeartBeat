@@ -68,7 +68,7 @@ partition "Calculate Classification" {
       endif
     :iterate mapEntry in valueMap;
       :get displayName, count from mapEntry;
-      :calculate result of count / cardsNumber * 100;
+      :calculate result of count / cardsNumber;
       :put displayName and result in classificationNameValuePair;
       :get fieldName from nameMap;
       :put fieldName and classificationNameValuePair in classificationFields;

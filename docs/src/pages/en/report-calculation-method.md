@@ -55,6 +55,34 @@ layout: ../../layouts/MainLayout.astro
 | Average column Cycle Time                                           | cycle time of all done cards for each column per story point of day and per card of day |      |
 | Proportion of column Cycle Time in total Cycle Time for each column | the cycle time for each column divided by total cycle time                              |      |
 
+## Classification
+
+### Config
+
+- StartDate、EndDate
+- Board type, Board Id, Email, Project key, Site, Token
+- Crews setting
+- Real done
+- Target Fields(Classification setting in metrics page)
+-
+- ### Calculate logic
+
+- Get all cardCollection information (cardsNumber, fields in baseInfo), targetFields.
+- Filter targetFields which flag is true (which were selected in Metrics page)
+  1. get object value in fields of card baseInfo.
+  2. get specific classification from object value.
+  3. count the times specific classification shows.
+  4. calculate proportion about different specific classifications to each targetField.
+  5. output the fieldName, specific classification, proportion.
+-
+- ### Definition
+
+| Metrics    | Description                                                   | Note |
+| :--------- | :------------------------------------------------------------ | :--- |
+| Field name | TargetFields selected in Metrics Page                         |      |
+| Subtitle   | Spcific classification for each targetField                   |      |
+| Value      | The proportion of specific classification to Each targetField |      |
+
 ## Deployment Frequency
 
 ### Config

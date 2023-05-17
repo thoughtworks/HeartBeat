@@ -7,7 +7,7 @@ SshPublicKey=${SSHPublicKey:?}
 BuildKiteToken=${BuildKiteToken:?}
 SshPrivateKey=${SSHPrivateKey:?}
 
-aws cloudformation update-stack --stack-name Heartbeat \
+OUTPUT=$(aws cloudformation update-stack --stack-name Heartbeat \
     --template-body file://ops/infra/cloudformation.yml \
     --parameters ParameterKey=AwsRegion,ParameterValue="${AwsRegion}" \
     ParameterKey=GitHubOrg,ParameterValue=au-heartbeat \
@@ -18,4 +18,11 @@ aws cloudformation update-stack --stack-name Heartbeat \
     ParameterKey=BuildKiteToken,ParameterValue="${BuildKiteToken}" \
     ParameterKey=SSHPrivateKey,ParameterValue="${SshPrivateKey}" \
     --capabilities CAPABILITY_NAMED_IAM \
-    --no-fail-on-empty-changeset
+    2>&1)
+RETURN_CODE=$?
+if [[ $OUTPUT == *"No updates are to be performed1"* ]]; then
+    echo "No updates are to be performed. Exiting gracefully."
+else
+    echo "$OUTPUT"
+    exit $RETURN_CODE
+fi

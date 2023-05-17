@@ -16,11 +16,19 @@ export interface savedMetricsSettingState {
   cycleTimeSettings: { name: string; value: string }[]
   deploymentFrequencySettings: IPipelineConfig[]
   leadTimeForChanges: IPipelineConfig[]
-  importFile: string[]
-  isProjectCreated: boolean
-  importedCycleTimeSettings: { name: string; value: string }[]
   classification: string[]
   treatFlagCardAsBlock: boolean
+  importedData: {
+    importedCrews: string[]
+    importedCycleTime: {
+      importedCycleTimeSettings: { [key: string]: string }[]
+      importedTreatFlagCardAsBlock: boolean
+    }
+    importedDoneStatus: string[]
+    importedClassification: string[]
+    importedDeployment: IPipelineConfig[]
+    importedLeadTime: IPipelineConfig[]
+  }
 }
 
 const initialState: savedMetricsSettingState = {
@@ -31,11 +39,19 @@ const initialState: savedMetricsSettingState = {
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-  importFile: [],
-  isProjectCreated: true,
-  importedCycleTimeSettings: [],
   classification: [],
   treatFlagCardAsBlock: true,
+  importedData: {
+    importedCrews: [],
+    importedCycleTime: {
+      importedCycleTimeSettings: [],
+      importedTreatFlagCardAsBlock: true,
+    },
+    importedDoneStatus: [],
+    importedClassification: [],
+    importedDeployment: [],
+    importedLeadTime: [],
+  },
 }
 
 export const metricsSlice = createSlice({
@@ -78,14 +94,15 @@ export const metricsSlice = createSlice({
       })
     },
 
-    updateMetricsState: (state, action) => {
-      const { isProjectCreated, basic } = action.payload
-      state.isProjectCreated = isProjectCreated
-      state.importFile = basic
-      state.users = basic.crews || state.users
-      state.importedCycleTimeSettings = basic.cycleTime?.jiraColumns
-      state.doneColumn = basic.realDone || state.doneColumn
-      state.classification = basic.classification || state.classification
+    updateMetricsImportedData: (state, action) => {
+      const { crews, cycleTime, doneStatus, classification, deployment, leadTime } = action.payload
+      state.importedData.importedCrews = crews
+      state.importedData.importedCycleTime.importedCycleTimeSettings = cycleTime?.jiraColumns
+      state.importedData.importedCycleTime.importedTreatFlagCardAsBlock = cycleTime?.treatFlagCardAsBlock
+      state.importedData.importedDoneStatus = doneStatus
+      state.importedData.importedClassification = classification
+      state.importedData.importedDeployment = deployment
+      state.importedData.importedLeadTime = leadTime
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {
@@ -142,7 +159,7 @@ export const {
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,
-  updateMetricsState,
+  updateMetricsImportedData,
   addALeadTimeForChanges,
   updateLeadTimeForChanges,
   deleteALeadTimeForChange,
@@ -156,6 +173,6 @@ export const selectLeadTimeForChanges = (state: RootState) => state.metrics.lead
 
 export const selectCycleTimeSettings = (state: RootState) => state.metrics.cycleTimeSettings
 export const selectMetricsContent = (state: RootState) => state.metrics
-
+export const selectMetricsImportedData = (state: RootState) => state.metrics.importedData
 export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock
 export default metricsSlice.reducer

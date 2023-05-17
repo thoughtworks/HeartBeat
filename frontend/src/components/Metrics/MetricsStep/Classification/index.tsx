@@ -7,6 +7,7 @@ import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
 import { WaringDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { getArrayIntersection } from '@src/utils/util'
+import { selectIsProjectCreated } from '@src/context/config/configSlice'
 
 interface classificationProps {
   title: string
@@ -16,7 +17,7 @@ interface classificationProps {
 
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
   const dispatch = useAppDispatch()
-  const isProjectCreated = useAppSelector(selectMetricsContent).isProjectCreated
+  const isProjectCreated = useAppSelector(selectIsProjectCreated)
   const importClassification = useAppSelector(selectMetricsContent).classification
   const classification = targetFields.map((targetField) => targetField.name)
   const [selectedClassification, setSelectedClassification] = useState(

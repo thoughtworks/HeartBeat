@@ -14,6 +14,7 @@ import saveMetricsSettingReducer, {
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
   updateClassification,
+  updateMetricsImportedData,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -25,11 +26,19 @@ const initState = {
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-  importFile: [],
-  importedCycleTimeSettings: [],
-  isProjectCreated: true,
   classification: [],
   treatFlagCardAsBlock: true,
+  importedData: {
+    importedCrews: [],
+    importedCycleTime: {
+      importedCycleTimeSettings: [],
+      importedTreatFlagCardAsBlock: true,
+    },
+    importedDoneStatus: [],
+    importedClassification: [],
+    importedDeployment: [],
+    importedLeadTime: [],
+  },
 }
 
 describe('saveMetricsSetting reducer', () => {
@@ -41,12 +50,22 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([])
     expect(savedMetricsSetting.doneColumn).toEqual([])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
-    expect(savedMetricsSetting.importedCycleTimeSettings).toEqual([])
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '' },
     ])
     expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '' }])
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true)
+    expect(savedMetricsSetting.importedData).toEqual({
+      importedCrews: [],
+      importedCycleTime: {
+        importedCycleTimeSettings: [],
+        importedTreatFlagCardAsBlock: true,
+      },
+      importedDoneStatus: [],
+      importedClassification: [],
+      importedDeployment: [],
+      importedLeadTime: [],
+    })
   })
 
   it('should store updated targetFields when its value changed', () => {
@@ -116,6 +135,33 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateClassification(mockClassification))
 
     expect(savedMetricsSetting.classification).toEqual(mockClassification)
+  })
+
+  it('should update metricsImportedData when its value changed given initial state', () => {
+    const mockMetricsImportedData = {
+      crews: ['mockUser'],
+      cycleTime: {
+        jiraColumns: ['mockCycleTimeSettings'],
+        treatFlagCardAsBlock: true,
+      },
+      doneStatus: ['mockDoneStatus'],
+      classification: ['mockClassification'],
+      deployment: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
+      leadTime: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))
+
+    expect(savedMetricsSetting.importedData).toEqual({
+      importedCrews: mockMetricsImportedData.crews,
+      importedCycleTime: {
+        importedCycleTimeSettings: mockMetricsImportedData.cycleTime.jiraColumns,
+        importedTreatFlagCardAsBlock: mockMetricsImportedData.cycleTime.treatFlagCardAsBlock,
+      },
+      importedDoneStatus: mockMetricsImportedData.doneStatus,
+      importedClassification: mockMetricsImportedData.classification,
+      importedDeployment: mockMetricsImportedData.deployment,
+      importedLeadTime: mockMetricsImportedData.leadTime,
+    })
   })
 
   it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {

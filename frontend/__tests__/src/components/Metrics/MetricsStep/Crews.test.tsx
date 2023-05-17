@@ -8,11 +8,13 @@ const mockOptions = ['crew A', 'crew B']
 const mockTitle = 'Crews Setting'
 const mockLabel = 'Included Crews'
 
-jest.mock('@src/hooks', () => ({
-  useAppSelector: jest.fn().mockReturnValue({
-    users: ['crew A', 'crew B'],
-    isProjectCreated: false,
-  }),
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  selectMetricsImportedData: jest.fn().mockReturnValue({ importedCrews: ['crew A', 'crew B'] }),
+}))
+jest.mock('@src/context/config/configSlice', () => ({
+  ...jest.requireActual('@src/context/config/configSlice'),
+  selectIsProjectCreated: jest.fn().mockReturnValue(false),
 }))
 
 let store = setupStore()

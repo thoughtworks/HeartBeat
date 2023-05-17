@@ -175,7 +175,7 @@ export const selectIsBoardVerified = (state: RootState) => state.config.board.is
 export const selectUsers = (state: RootState) => state.config.board.verifiedResponse.users
 export const selectJiraColumns = (state: RootState) => state.config.board.verifiedResponse.jiraColumns
 export const selectTargetFields = (state: RootState) => state.config.board.verifiedResponse.targetFields
-
+export const selectIsProjectCreated = (state: RootState) => state.config.isProjectCreated
 export const selectPipelineOrganizations = (state: RootState) => [
   ...new Set(state.config.pipelineTool.verifiedResponse.pipelineList.map((item) => item.orgName)),
 ]

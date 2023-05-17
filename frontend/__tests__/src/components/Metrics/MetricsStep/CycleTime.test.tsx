@@ -50,16 +50,17 @@ const FlagAsBlock = 'Consider the "Flag" as "Block"'
 let store = setupStore()
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectMetricsContent: jest.fn().mockReturnValue({
-    importedCycleTimeSettings: [
-      {
-        Doing: 'Analysis',
-      },
-      {
-        Testing: 'Review',
-      },
-    ],
-    isProjectCreated: false,
+  selectMetricsImportedData: jest.fn().mockReturnValue({
+    importedCycleTime: {
+      importedCycleTimeSettings: [
+        {
+          Doing: 'Analysis',
+        },
+        {
+          Testing: 'Review',
+        },
+      ],
+    },
   }),
 }))
 
@@ -68,6 +69,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
   selectPipelineNames: jest.fn().mockReturnValue(['']),
   selectSteps: jest.fn().mockReturnValue(['']),
+  selectIsProjectCreated: jest.fn().mockReturnValue(false),
 }))
 
 const setup = () =>

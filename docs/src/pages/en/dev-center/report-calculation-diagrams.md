@@ -4,6 +4,52 @@ description: Flow Diagram
 layout: ../../../layouts/MainLayout.astro
 ---
 
+## Calculate Velocity
+
+```plantuml
+@startuml velocity
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Calculate velocity
+start
+:input startTime, endTime, allDoneCardsInfo/
+partition "Calculate Velocity of JiraBoard" {
+  :sum of all done cards Story Points;
+  :sum of cards number;
+}
+:output Velocity /
+stop
+@enduml
+```
+
+## Calculate Cycle Time
+
+```plantuml
+@startuml Cycle Time
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Calculate Cycle Time
+start
+:input startTime, endTime, cardHistory, boardColumns/
+partition "Calculate Cycle Time for each cards" {
+  :iterate over DoneCards;
+    :calculate card cost time for each column;
+}
+:output CycleTimeInfoList/
+partition "Calculate Cycle Time" {
+:iterate over CycleTimeInfoList;
+ :initialize jira board columns name as nameMap;
+ :initialize jira board columns cost time as cycleTimeMap;
+  :calculate Average Cycle Time;
+  :calculate Average Column Cycle Time;
+  :calculate proportion of column Cycle Time in total Cycle Time;
+}
+
+:output CycleTime /
+stop
+@enduml
+```
+
 ## Calculate Deployment Frequency
 
 ```plantuml

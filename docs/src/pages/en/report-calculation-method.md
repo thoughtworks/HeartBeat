@@ -8,10 +8,52 @@ layout: ../../layouts/MainLayout.astro
 
 ## Velocity
 
-| Metrics                 | Calculate method                         | Note |
-| :---------------------- | :--------------------------------------- | :--- |
-| Velocity for Storypoint | Sum of the storypoints of all done cards |      |
-| Velocity for cards      | Sum of all done cards                    |      |
+### Config
+
+- StartDate、EndDate
+- metrics select velocity
+- JiraBoard token
+- Crews member
+- Real done label
+
+### Calculate logic
+
+- Get all done cards information based on token、date、member name.
+
+### Definition
+
+| Metrics                  | Calculate method                          | Note |
+| :----------------------- | :---------------------------------------- | :--- |
+| Velocity for Story Point | Sum of the story points of all done cards |      |
+| Velocity for cards       | Sum of all done cards number              |      |
+
+## Cycle Time
+
+### Config
+
+- StartDate、EndDate
+- metrics select cycle time
+- JiraBoard token
+- Crews member
+- Corresponding Columns name setting
+- Real done label
+
+### Calculate logic
+
+- Get all done cards cycle time based on token、date、member name.
+- Calculate Average Cycle Time : sum of cycle time for each selected column and then divided by the number of days and
+  cards.
+- Calculate Average column Cycle Time : the cycle time for each column divided by the number of days and cards.
+- Calculate proportion of column Cycle Time in total Cycle Time : the cycle time for each column divided by sum of cycle
+  time for each selected column.
+
+### Definition
+
+| Metrics                                                             | Calculate method                                                                        | Note |
+| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------- | :--- |
+| Average Cycle Time                                                  | cycle time of all done cards per story point of day and per card of day                 |      |
+| Average column Cycle Time                                           | cycle time of all done cards for each column per story point of day and per card of day |      |
+| Proportion of column Cycle Time in total Cycle Time for each column | the cycle time for each column divided by total cycle time                              |      |
 
 ## Classification
 
@@ -85,12 +127,16 @@ layout: ../../layouts/MainLayout.astro
 
 - Get all deployment information according to token、date、organization and pipeline name.
 - For each selected step
+
   1. Count DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos)
   2. Calculate total recovery time and recovery times:
-     - `recovery time = pipeline create time of passed deployment - pipeline create time of first failed deployment since last passed`
-     - `total recovery time is sum of recovery time`
-     - `recovery times is number of deployment failed to passed`
+
+  - `recovery time = pipeline create time of passed deployment - pipeline create time of first failed deployment since last passed`
+  - `total recovery time is sum of recovery time`
+  - `recovery times is number of deployment failed to passed`
+
   3. Calculate Mean Time To Recovery: total recovery time divided by the recovery times.
+
 - Calculate Average Mean Time To Recovery: sum of mean time to recovery for each selected step divided by the total
   number of selected step.
 
@@ -116,14 +162,18 @@ layout: ../../layouts/MainLayout.astro
 
 - Get all deployment information according to token、date、organization and pipeline name.
 - For each selected step
+
   1. Count DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos)
   2. Calculate totalTimesOfPipeline, failedTimesOfPipeline, totalFailedTimes, totalTimes:
-     - `failedTimesOfPipeline = number of failed deployInfos`
-     - `passedTimesOfPipeline = number of passed deployInfos`
-     - `totalTimesOfPipeline = failedTimesOfPipeline + passedTimesOfPipeline`
-     - `totalFailedTimes += failedTimesOfPipeline`
-     - `totalTimes += totalTimesOfPipeline`
+
+  - `failedTimesOfPipeline = number of failed deployInfos`
+  - `passedTimesOfPipeline = number of passed deployInfos`
+  - `totalTimesOfPipeline = failedTimesOfPipeline + passedTimesOfPipeline`
+  - `totalFailedTimes += failedTimesOfPipeline`
+  - `totalTimes += totalTimesOfPipeline`
+
   3. Calculate Change Failure Rate: `failureRate = failedTimesOfPipeline / totalTimesOfPipeline`
+
 - Calculate Average Change Failure Rate: `AverageFailureRate = totalFailedTimes/totalTimes`
 
 ### Definition

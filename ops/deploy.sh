@@ -51,7 +51,7 @@ deploy_stub() {
 
   echo "Start to deploy stub service"
   ssh -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -p "${AWS_SSH_PORT}" "${AWS_USERNAME}@${AWS_EC2_IP_MOCK_SERVER}" "
-
+    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_HOST}
     if [ -n \"\$(docker images -f label=arch=stubs -q)\" ]; then
       docker stop \$(docker ps -aq -f label=arch=stubs)
       docker rm \$(docker ps -aq -f label=arch=stubs)

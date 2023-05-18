@@ -3,12 +3,14 @@ package heartbeat.service.report;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
+import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
+import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
@@ -18,6 +20,7 @@ import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
+import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
@@ -30,6 +33,7 @@ import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.source.github.GitHubService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,6 +43,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
@@ -64,6 +69,9 @@ class GenerateReporterServiceTest {
 	private BuildKiteService buildKiteService;
 
 	@Mock
+	private GitHubService gitHubService;
+
+	@Mock
 	private DeploymentFrequencyCalculator calculateDeploymentFrequency;
 
 	@Mock
@@ -71,6 +79,9 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	private CycleTimeCalculator cycleTimeCalculator;
+
+	@Mock
+	private LeadTimeForChangesCalculator leadTimeForChangesCalculator;
 
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
@@ -260,6 +271,46 @@ class GenerateReporterServiceTest {
 
 		assertThat(result).isEqualTo(ReportResponse.builder().cycleTime(CycleTime.builder().build()).build());
 
+	}
+
+	@Test
+	public void testGenerateReporterWithLeadTimeForChangesMetric() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+
+		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
+			.type("Github")
+			.token("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")
+			.leadTime(List.of(mockDeployment))
+			.build();
+
+		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token("bkua_6xxxafcc3bxxxxxxb8xxx8d8dxxxf7897cc8b2f1")
+			.deploymentEnvList(List.of(mockDeployment))
+			.build();
+
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.metrics(List.of("lead time for changes"))
+			.buildKiteSetting(buildKiteSetting)
+			.codebaseSetting(codebaseSetting)
+			.startTime("1661702400000")
+			.endTime("1662739199000")
+			.build();
+
+		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
+			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
+				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.build()));
+		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
+				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
+		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any()))
+			.thenReturn(CompletableFuture.supplyAsync(() -> List.of(PipelineLeadTime.builder().build())));
+		LeadTimeForChanges mockLeadTimeForChanges = LeadTimeForChanges.builder().build();
+		when(leadTimeForChangesCalculator.calculate(any())).thenReturn(mockLeadTimeForChanges);
+		ReportResponse result = generateReporterService.generateReporter(request);
+
+		assertThat(result.getLeadTimeForChanges()).isEqualTo(mockLeadTimeForChanges);
 	}
 
 }

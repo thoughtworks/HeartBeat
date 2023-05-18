@@ -5,11 +5,11 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
-import heartbeat.util.TimeConverter;
+import heartbeat.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.log4j.Log4j2;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +42,8 @@ public class LeadTimeForChangesCalculator {
 			double totalPrDelayTime = totalDelayTime.keySet().stream().reduce(0d, Double::sum);
 			double totalPipelineDelayTime = totalDelayTime.values().stream().reduce(0d, Double::sum);
 
-			double avgPrDelayTime = TimeConverter.convertMillisecondToMinutes(totalPrDelayTime / times);
-			double avgPipelineDelayTime = TimeConverter.convertMillisecondToMinutes(totalPipelineDelayTime / times);
+			double avgPrDelayTime = TimeUtil.convertMillisecondToMinutes(totalPrDelayTime / times);
+			double avgPipelineDelayTime = TimeUtil.convertMillisecondToMinutes(totalPipelineDelayTime / times);
 
 			leadTimeForChangesOfPipelines.add(LeadTimeForChangesOfPipelines.builder()
 				.name(item.getPipelineName())

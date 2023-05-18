@@ -130,7 +130,7 @@ public class GitHubService {
 									deployInfo.getCommitId(), token), taskExecutor)
 							.join();
 						long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-						long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+						long pipelineCreateTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
 
 						LeadTime noMergeDelayTime = LeadTime.builder()
 							.commitId(deployInfo.getCommitId())

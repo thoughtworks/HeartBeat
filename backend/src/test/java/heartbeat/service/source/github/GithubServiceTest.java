@@ -13,6 +13,7 @@ import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,11 +32,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +56,9 @@ class GithubServiceTest {
 	PullRequestInfo pullRequestInfo;
 
 	@Mock
+	PipelineInfoOfRepository pipelineInfoOfRepository;
+
+	@Mock
 	DeployInfo deployInfo;
 
 	@Mock
@@ -60,6 +66,12 @@ class GithubServiceTest {
 
 	@Mock
 	List<DeployTimes> deployTimes;
+
+	@Mock
+	List<PipelineLeadTime> pipelineLeadTimes;
+
+	@Mock
+	Map<String, String> repositoryMap;
 
 	ThreadPoolTaskExecutor executor;
 
@@ -69,6 +81,7 @@ class GithubServiceTest {
 		pullRequestInfo = PullRequestInfo.builder()
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
+			.number(1)
 			.build();
 		deployInfo = DeployInfo.builder()
 			.commitId("111")
@@ -82,25 +95,45 @@ class GithubServiceTest {
 			.build();
 
 		deployTimes = List.of(DeployTimes.builder()
-			.pipelineId("ID")
+			.pipelineId("fs-platform-onboarding")
 			.pipelineName("Name")
 			.pipelineStep("Step")
-			.passed(List.of(
-					DeployInfo.builder()
-						.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
-						.jobStartTime("2022-07-23T04:05:01.000+00:00")
-						.jobFinishTime("2022-07-23T04:06:00.000+00:00")
-						.commitId("111")
-						.state("passed")
-						.build(),
-					DeployInfo.builder()
-						.pipelineCreateTime("2022-07-24T04:05:00.000+00:00")
-						.jobStartTime("2022-07-24T04:05:01.000+00:00")
-						.jobFinishTime("2022-07-24T04:06:00.000+00:00")
-						.commitId("222")
-						.state("passed")
-						.build()))
+			.passed(List.of(DeployInfo.builder()
+				.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
+				.jobStartTime("2022-07-23T04:05:01.000+00:00")
+				.jobFinishTime("2022-07-23T04:06:00.000+00:00")
+				.commitId("111")
+				.state("passed")
+				.build()))
 			.build());
+
+		pipelineLeadTimes = List.of(PipelineLeadTime.builder()
+			.pipelineName("Name")
+			.pipelineStep("Step")
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("111")
+				.prCreatedTime(1.65854898E12)
+				.prMergedTime(1.65854904E12)
+				.firstCommitTimeInPr(1.65854898E12)
+				.jobFinishTime(1.65854916E12)
+				.pipelineDelayTime(1.6585491E12)
+				.pipelineCreateTime(1.6585491E12)
+				.prDelayTime(60000.0)
+				.pipelineDelayTime(60000.0)
+				.totalTime(120000.0)
+				.build()))
+			.build());
+
+		repositoryMap = new HashMap<>();
+		repositoryMap.put("fs-platform-payment-selector", "https://github.com/XXXX-fs/fs-platform-onboarding");
+		repositoryMap.put("fs-platform-onboarding", "https://github.com/XXXX-fs/fs-platform-onboarding");
+
+		pipelineInfoOfRepository = PipelineInfoOfRepository.builder()
+			.repository("https://github.com/XXXX-fs/fs-platform-onboarding")
+			.passedDeploy(deployTimes.get(0).getPassed())
+			.pipelineStep(deployTimes.get(0).getPipelineStep())
+			.pipelineName(deployTimes.get(0).getPipelineName())
+			.build();
 	}
 
 	@AfterEach
@@ -169,12 +202,12 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldReturnWhenMergeTimeIsNull() {
+	void shouldReturnNullWhenMergeTimeIsNull() {
 		PullRequestInfo pullRequestInfo = PullRequestInfo.builder().build();
 		DeployInfo deployInfo = DeployInfo.builder().build();
 		CommitInfo commitInfo = CommitInfo.builder().build();
-
 		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+
 		assertNull(result);
 	}
 
@@ -193,6 +226,7 @@ class GithubServiceTest {
 			.pipelineDelayTime(60000.0)
 			.totalTime(120000.0)
 			.build();
+
 		assertEquals(expect, result);
 	}
 
@@ -212,6 +246,7 @@ class GithubServiceTest {
 			.pipelineDelayTime(60000.0)
 			.totalTime(120000.0)
 			.build();
+
 		assertEquals(expect, result);
 	}
 
@@ -231,7 +266,24 @@ class GithubServiceTest {
 			.pipelineDelayTime(60000.0)
 			.totalTime(120000.0)
 			.build();
+
 		assertEquals(expect, result);
+	}
+
+	@Test
+	void shouldReturnPipeLineLeadTimeWhenDeployITimesIsNotEmpty() throws ExecutionException, InterruptedException {
+		String mockToken = "mockToken";
+
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenReturn(List.of(pullRequestInfo));
+
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(),
+			any()))
+			.thenReturn(List.of(commitInfo));
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken)
+			.get();
+
+		assertEquals(pipelineLeadTimes, result);
 	}
 
 }

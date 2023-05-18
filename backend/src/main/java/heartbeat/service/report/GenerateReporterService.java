@@ -77,7 +77,7 @@ public class GenerateReporterService {
 
 	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
 
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTiemBuildInfosList = new ArrayList<>();
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
 
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		// fetch data for calculate
@@ -151,7 +151,7 @@ public class GenerateReporterService {
 
 	private void fetchGithubData(GenerateReportRequest request) {
 		fetchBuildKiteData(request.getStartTime(), request.getEndTime(), request.getCodebaseSetting().getLeadTime(),
-				request.getCodebaseSetting().getToken());
+				request.getBuildKiteSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
 		this.leadTimes = gitHubService
 			.fetchPipelinesLeadTime(this.deployTimesList, repoMap, request.getCodebaseSetting().getToken())
@@ -167,6 +167,7 @@ public class GenerateReporterService {
 			List<DeploymentEnvironment> deploymentEnvironments, String token) {
 		deployTimesList.clear();
 		buildInfosList.clear();
+		leadTimeBuildInfosList.clear();
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(token,
 					deploymentEnvironment, startTime, endTime);
@@ -174,7 +175,7 @@ public class GenerateReporterService {
 					startTime, endTime);
 			deployTimesList.add(deployTimes);
 			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
-			leadTiemBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
+			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 		}
 	}
 

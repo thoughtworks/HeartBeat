@@ -291,20 +291,22 @@ start
     :get buildInfos by leadTimeEnv.id;
     partition "Generate leadTimeCsvData "{
       partition "filter buildInfos "{
-        :convert each buildInfo to deployInfo;
+        :convert buildInfo where name is step.name and buildInfo.state is passed/failed to deployInfo;
         if(check if the commitId in deployInfo is not empty) then (yes)
           :return buildInfos;
         endif
       }
       :iterate over buildInfos;
-        :convert each buildInfo to deployInfo;
+        :convert buildInfo where name is step.name and buildInfo.state is passed/failed to deployInfo;
         :output buildInfo, deployInfo/
         :get commitInfo through deployInfo.commitId and repoId;
         :output commitInfo /
         partition "Generate leadTimeInfos from pipelineLeadTimeList"{
           :filter pipelineLeadTimeList with pipelineName equals to leadTimeEnv.name;
           if(filtered pipelineLeadTimeList not empty) then (yes)
-            :filter leadTime in pipelineLeadTime with commitId equals to deployInfo.commitId;
+            if(filter leadTime in pipelineLeadTime with commitId equals to deployInfo.commitId) then (yes)
+            :return leadTimes;
+            endif
           endif
           :output leadTimeInfo/
         }
@@ -335,13 +337,13 @@ start
     :get buildInfos by deploymentEnv.id;
     partition "Generate deploymentCsvData "{
       partition "filter buildInfos "{
-        :convert each buildInfo to deployInfo;
+        :convert buildInfo where name is step.name and buildInfo.state is passed/failed to deployInfo;
         if(check if the commitId in deployInfo is not empty) then (yes)
           :return buildInfos;
         endif
       }
       :iterate over buildInfos;
-        :convert each buildInfo to deployInfo;
+        :convert buildInfo where name is step.name and buildInfo.state is passed/failed to deployInfo;
         :output buildInfo, deployInfo/
         :get jobFinishTime through deployInfo.jobFinishTime;
         :get pipelineStartTime through deployInfo.pipelineCreateTime;
@@ -371,11 +373,14 @@ skinparam defaultTextAlignment center
 title FlowChart - Heartbeat - Generate CSV For Pipeline
 start
 :input request.codebaseSetting,request.buildKiteSetting,request.csvTimeStamp/
-:generate leadTimeCsvDataList through Generate Pipeline CSV For LeadTime;
-:generate deploymentCsvDataList through Generate Pipeline CSV For BuildInfos;
+if(check if the buildKiteSetting is undefined) then (yes)
+:return;
+endif
+:generate leadTimeCsvDataList through [Generate Pipeline CSV For LeadTime];
+:generate deploymentCsvDataList through [Generate Pipeline CSV For BuildInfos];
 :concat leadTimeCsvDataList and deploymentCsvDataList to generate pipelineDataList;
 :output pipelineDataList/
-:convert pipelineDataList to a CSV file;
+:convert pipelineDataList to a CSV;
 :save the CSV on disk;
 stop
 @enduml

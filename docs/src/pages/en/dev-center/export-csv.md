@@ -1,7 +1,7 @@
 ---
 title: Export CSV
 description: Export CSV
-layout: ../../layouts/MainLayout.astro
+layout: ../../../layouts/MainLayout.astro
 ---
 
 # Export pipeline data

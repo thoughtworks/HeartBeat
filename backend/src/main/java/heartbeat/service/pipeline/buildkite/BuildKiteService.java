@@ -132,7 +132,7 @@ public class BuildKiteService {
 			PipelineStepsParam stepsParam, String partialToken) {
 		String page = "1";
 		String perPage = "100";
-		log.info("Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+		log.info("Start to paginated pipeline steps pagination info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
 				partialToken, orgId, pipelineId, stepsParam, page);
 
 		String realToken = "Bearer " + token;
@@ -142,7 +142,7 @@ public class BuildKiteService {
 		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(realToken,
 				orgId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime());
 		log.info(
-				"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},result status code: {},page:{}",
+				"Successfully get paginated pipeline steps pagination info_token:{},orgId: {},pipelineId: {},result status code: {},page:{}",
 				partialToken, orgId, pipelineId, pipelineStepsInfo.getStatusCode(), page);
 
 		int totalPage = parseTotalPage(pipelineStepsInfo.getHeaders().get(BUILD_KITE_LINK_HEADER));

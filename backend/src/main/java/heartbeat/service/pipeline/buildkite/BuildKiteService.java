@@ -20,12 +20,15 @@ import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.TimeUtil;
 import heartbeat.util.TokenUtil;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,7 +41,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +52,14 @@ public class BuildKiteService {
 	private static final List<String> permissions = List.of("read_builds", "read_organizations", "read_pipelines");
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
+
+	@Autowired
+	private final ThreadPoolTaskExecutor taskExecutor;
+
+	@PreDestroy
+	public void shutdownExecutor() {
+		taskExecutor.shutdown();
+	}
 
 	public BuildKiteResponseDTO fetchPipelineInfo(PipelineParam pipelineParam) {
 		try {
@@ -132,7 +142,8 @@ public class BuildKiteService {
 			PipelineStepsParam stepsParam, String partialToken) {
 		String page = "1";
 		String perPage = "100";
-		log.info("Start to paginated pipeline steps pagination info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+		log.info(
+				"Start to paginated pipeline steps pagination info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
 				partialToken, orgId, pipelineId, stepsParam, page);
 
 		String realToken = "Bearer " + token;
@@ -157,7 +168,7 @@ public class BuildKiteService {
 			List<CompletableFuture<List<BuildKiteBuildInfo>>> futureStream = IntStream
 				.range(Integer.parseInt(page), totalPage + 1)
 				.mapToObj(currentPage -> getBuildKiteStepsAsync(realToken, orgId, pipelineId, stepsParam, perPage,
-					currentPage, partialToken))
+						currentPage, partialToken))
 				.toList();
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = futureStream.stream()
 				.map(CompletableFuture::join)
@@ -190,7 +201,7 @@ public class BuildKiteService {
 						token, organizationId, pipelineId, e.getMessage(), page);
 				throw e;
 			}
-		});
+		}, taskExecutor);
 	}
 
 	private int parseTotalPage(@Nullable List<String> linkHeader) {

@@ -92,7 +92,7 @@ loop pipeline from pipelines
   deactivate BuildKiteFeignClient
 
   alt#Gold #LightBlue Successful case
-    BuildKiteService -> BuildKiteService:Count deploy times
+    BuildKiteService -> BuildKiteService:count deploy times
   else #Pink Failure
     BuildKiteService -> BuildKiteService: throw NotFoundException
   end
@@ -138,6 +138,26 @@ deactivate GithubService
 end
 
 GenerateReporter_service --> GenerateReporter_service: calculate Lead time
+
+group generate csv for pipeline
+group generate pipeline csv data with codebase
+GenerateReporter_service --> GithubService: get commitInfo
+activate GithubService
+GithubService --> GitHubFeignClient: get commitInfo
+activate GitHubFeignClient
+GitHubFeignClient --> GithubService
+deactivate GitHubFeignClient
+GithubService --> GenerateReporter_service
+deactivate GithubService
+GenerateReporter_service --> GenerateReporter_service: generate pipeline csv data with codebase
+end
+GenerateReporter_service --> GenerateReporter_service: generate pipeline csv data without codebase
+GenerateReporter_service --> GenerateCsvFileService: convert pipeline data to csv
+activate GenerateCsvFileService
+GenerateCsvFileService --> GenerateReporter_service: save csv
+deactivate GenerateCsvFileService
+end
+
 GenerateReporter_service --> GenerateReportController: return analysis report
 deactivate GenerateReporter_service
 GenerateReportController --> Frontend: return response

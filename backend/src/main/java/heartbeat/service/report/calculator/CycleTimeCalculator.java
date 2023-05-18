@@ -26,7 +26,7 @@ public class CycleTimeCalculator {
 		CycleTimeResult cycleTimeResult = calculateAverageTimeAndTotalTime(aggregatedMap, cardCollection);
 		double cycleTotalTime = cycleTimeResult.getTotalTime();
 		return CycleTime.builder()
-			.totalTime(cycleTotalTime)
+			.totalTimeForCards(cycleTotalTime)
 			.averageCycleTimePerSP(
 					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getStoryPointSum())))
 			.averageCycleTimePerCard(

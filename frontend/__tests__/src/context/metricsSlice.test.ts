@@ -14,6 +14,7 @@ import saveMetricsSettingReducer, {
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
   updateMetricsImportedData,
+  updateMetricsState,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -154,6 +155,26 @@ describe('saveMetricsSetting reducer', () => {
       importedDeployment: mockMetricsImportedData.deployment,
       importedLeadTime: mockMetricsImportedData.leadTime,
     })
+  })
+
+  it('should update metricsState when its value changed given initial state', () => {
+    const mockJiraResponse = {
+      targetFields: [{ key: 'issuetype', name: 'Issue Type', flag: false }],
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedClassification: ['issuetype'],
+        },
+      },
+      updateMetricsState({
+        targetFields: mockJiraResponse.targetFields,
+      })
+    )
+
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }])
   })
 
   it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {

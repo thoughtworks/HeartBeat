@@ -18,6 +18,7 @@ import {
   updateBoard,
   updateBoardVerifyState,
   updateJiraVerifyResponse,
+  selectIsProjectCreated
 } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
@@ -33,13 +34,14 @@ import {
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
 import dayjs from 'dayjs'
-import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
+import { updateMetricsState, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
   const isVerified = useAppSelector(selectIsBoardVerified)
   const boardFields = useAppSelector(selectBoard)
   const DateRange = useAppSelector(selectDateRange)
+  const isProjectCreated = useAppSelector(selectIsProjectCreated)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
   const { verifyJira, isLoading, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
@@ -175,6 +177,7 @@ export const Board = () => {
       if (res) {
         dispatch(updateBoardVerifyState(res.isBoardVerify))
         dispatch(updateJiraVerifyResponse(res.response))
+        !isProjectCreated && dispatch(updateMetricsState(res.response))
         setIsNoDoneCard(res.isNoDoneCard)
       }
     })

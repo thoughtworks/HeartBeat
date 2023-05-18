@@ -1,7 +1,7 @@
 import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveTargetFields, selectMetricsImportedData } from '@src/context/Metrics/metricsSlice'
+import { saveTargetFields, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
@@ -17,26 +17,25 @@ interface classificationProps {
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
   const dispatch = useAppDispatch()
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
-  const importClassificationKeys = useAppSelector(selectMetricsImportedData).importedClassification
-  const classification = targetFields.map((targetField) => targetField.name)
-  const getDefaultValue = (importClassification: string[]) => {
-    const includeClassifications = importClassification.filter((item) => targetFields.find((i) => i.key === item))
-    return targetFields.filter((item) => includeClassifications.find((i) => i === item.key))
-  }
-  const defaultValue = getDefaultValue(importClassificationKeys).map((targetField) => targetField.name)
-  const [selectedClassification, setSelectedClassification] = useState(isProjectCreated ? classification : defaultValue)
-
+  const classificationSettings = useAppSelector(selectMetricsContent)
+    .targetFields.filter((targetField) => targetField.flag)
+    .map((targetField) => targetField.name)
+  const [selectedClassification, setSelectedClassification] = useState(classificationSettings)
   const isAllSelected = selectedClassification.length > 0 && selectedClassification.length === targetFields.length
 
   const handleChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value
-    const classificationSettings =
-      value[value.length - 1] === 'All' ? (isAllSelected ? [] : classification) : [...value]
+    const newClassificationSettings =
+      value[value.length - 1] === 'All'
+        ? isAllSelected
+          ? []
+          : targetFields.map((targetField) => targetField.name)
+        : [...value]
     const updatedTargetFields = targetFields.map((targetField) => ({
       ...targetField,
-      flag: classificationSettings.includes(targetField.name),
+      flag: newClassificationSettings.includes(targetField.name),
     }))
-    setSelectedClassification(classificationSettings)
+    setSelectedClassification(newClassificationSettings)
     dispatch(saveTargetFields(updatedTargetFields))
   }
 

@@ -100,6 +100,14 @@ export const metricsSlice = createSlice({
       state.importedData.importedLeadTime = leadTime
     },
 
+    updateMetricsState: (state, action) => {
+      const { targetFields } = action.payload
+      state.targetFields = targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
+        ...item,
+        flag: state.importedData.importedClassification.includes(item.key),
+      }))
+    },
+
     deleteADeploymentFrequencySetting: (state, action) => {
       const deleteId = action.payload
       state.deploymentFrequencySettings = [...state.deploymentFrequencySettings.filter(({ id }) => id !== deleteId)]
@@ -160,6 +168,7 @@ export const {
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
+  updateMetricsState,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings

@@ -268,3 +268,115 @@ stop
 
 @enduml
 ```
+
+## Export Pipeline CSV
+
+### Generate Pipeline CSV For LeadTime
+
+```plantuml
+@startuml Generate Pipeline CSV For LeadTime
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Generate Pipeline CSV For LeadTime
+start
+:input request.codebaseSetting,BuildInfosOfLeadTimes,pipelineLeadTimeList/
+  :initialize leadTimeCsvDataList:PipelineCsvInfo[]=[];
+  if (codebaseSetting==undefined) then (yes)
+    :return [];
+  endif
+  :get codebase instance by codebaseSetting.type, codebaseSetting.token;
+  partition "Generate List<leadTimeCsvData>"{
+  :iterate over leadTimeEnv of codebaseSetting.leadTimeEnvList;
+    :get repoId by leadTimeEnv.id;
+    :get buildInfos by leadTimeEnv.id;
+    partition "Generate leadTimeCsvData "{
+      partition "filter buildInfos "{
+        :convert each buildInfo to deployInfo;
+        if(check if the commitId in deployInfo is not empty) then (yes)
+          :return buildInfos;
+        endif
+      }
+      :iterate over buildInfos;
+        :convert each buildInfo to deployInfo;
+        :output buildInfo, deployInfo/
+        :get commitInfo through deployInfo.commitId and repoId;
+        :output commitInfo /
+        partition "Generate leadTimeInfos from pipelineLeadTimeList"{
+          :filter pipelineLeadTimeList with pipelineName equals to leadTimeEnv.name;
+          if(filtered pipelineLeadTimeList not empty) then (yes)
+            :filter leadTime in pipelineLeadTime with commitId equals to deployInfo.commitId;
+          endif
+          :output leadTimeInfo/
+        }
+        :create new PipelineCsvInfo(leadTimeCsvData);
+          :set leadTimeCsvData with leadTimeEnv.name,leadTimeEnv.step,
+            buildInfo,deployInfo,commitInfo and new LeadTimeInfo(leadTimeInfo);
+      :output leadTimeCsvData/
+    }
+    :add leadTimeCsvData to leadTimeCsvDataList;
+  }
+:output List<PipelineCsvInfo> leadTimeCsvDataList /
+stop
+@enduml
+```
+
+### Generate Pipeline CSV For BuildInfos
+
+```plantuml
+@startuml Generate Pipeline CSV For BuildInfos
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Generate Pipeline CSV For BuildInfos
+start
+:input request.buildKiteSetting.deploymentEnvList/
+  :initialize deploymentCsvDataList:PipelineCsvInfo[]=[];
+  partition "Generate deploymentCsvDataList"{
+  :iterate over deploymentEnv of deploymentEnvList;
+    :get buildInfos by deploymentEnv.id;
+    partition "Generate deploymentCsvData "{
+      partition "filter buildInfos "{
+        :convert each buildInfo to deployInfo;
+        if(check if the commitId in deployInfo is not empty) then (yes)
+          :return buildInfos;
+        endif
+      }
+      :iterate over buildInfos;
+        :convert each buildInfo to deployInfo;
+        :output buildInfo, deployInfo/
+        :get jobFinishTime through deployInfo.jobFinishTime;
+        :get pipelineStartTime through deployInfo.pipelineCreateTime;
+        partition "Generate noMergeDalayTime"{
+          :input deployInfo.commitId, jobFinishTime,pipelineStartTime/
+          :set noMergeDalayTime = new LeadTime(deployInfo.commitId,jobFinishTime,pipelineStartTime);
+          :output noMergeDalayTime/
+        }
+        :create new deploymentCsvInfo(deploymentCsvData);
+          :set deploymentCsvData with deploymentEnv.name,deploymentEnv.step,
+            buildInfo,deployInfo,new CommitInfo(),new LeadTimeInfo(noMergeDelayTime);
+      :output deploymentCsvData/
+    }
+    :add deploymentCsvData to deploymentCsvDataList;
+  }
+:output List<PipelineCsvInfo> deploymentCsvDataList /
+stop
+@enduml
+```
+
+### Generate Pipeline CSV
+
+```plantuml
+@startuml Generate CSV For Pipeline
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Generate CSV For Pipeline
+start
+:input request.codebaseSetting,request.buildKiteSetting,request.csvTimeStamp/
+:generate leadTimeCsvDataList through Generate Pipeline CSV For LeadTime;
+:generate deploymentCsvDataList through Generate Pipeline CSV For BuildInfos;
+:concat leadTimeCsvDataList and deploymentCsvDataList to generate pipelineDataList;
+:output pipelineDataList/
+:convert pipelineDataList to a CSV file;
+:save the CSV on disk;
+stop
+@enduml
+```

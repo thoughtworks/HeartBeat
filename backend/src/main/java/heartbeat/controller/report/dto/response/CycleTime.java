@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CycleTime {
 
-	private double totalTime;
+	private double totalTimeForCards;
 
 	private double averageCycleTimePerCard;
 

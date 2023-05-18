@@ -96,7 +96,7 @@ class GenerateReporterServiceTest {
 			.thenReturn(CardCollection.builder().storyPointSum(0).cardsNumber(0).build());
 
 		ReportResponse result = generateReporterService.generateReporter(request);
-		Velocity velocity = Velocity.builder().velocityForSP("0").velocityForCards("0").build();
+		Velocity velocity = Velocity.builder().velocityForSP(0).velocityForCards(0).build();
 
 		assertThat(result).isEqualTo(ReportResponse.builder().velocity(velocity).build());
 	}

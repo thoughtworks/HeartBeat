@@ -88,8 +88,8 @@ public class GenerateReporterService {
 
 	private Velocity calculateVelocity() {
 		return Velocity.builder()
-			.velocityForSP(String.valueOf(cardCollection.getStoryPointSum()))
-			.velocityForCards(String.valueOf(cardCollection.getCardsNumber()))
+			.velocityForSP(cardCollection.getStoryPointSum())
+			.velocityForCards(cardCollection.getCardsNumber())
 			.build();
 	}
 

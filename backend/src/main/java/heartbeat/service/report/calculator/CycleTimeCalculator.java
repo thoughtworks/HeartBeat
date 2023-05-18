@@ -29,9 +29,9 @@ public class CycleTimeCalculator {
 			.totalTime(cycleTotalTime)
 			.averageCycleTimePerSP(
 					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getStoryPointSum())))
-			.averageCircleTimePerCard(
+			.averageCycleTimePerCard(
 					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getCardsNumber())))
-			.cycleTimeForSelectedStepList(cycleTimeResult.getCycleTimeForSelectedStepsList())
+			.swimlaneList(cycleTimeResult.getCycleTimeForSelectedStepsList())
 			.build();
 	}
 

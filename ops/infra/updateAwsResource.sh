@@ -20,7 +20,7 @@ OUTPUT=$(aws cloudformation update-stack --stack-name Heartbeat \
     --capabilities CAPABILITY_NAMED_IAM \
     2>&1)
 RETURN_CODE=$?
-if [[ $OUTPUT == *"No updates are to be performed1"* ]]; then
+if [[ $OUTPUT == *"No updates are to be performed"* ]]; then
     echo "No updates are to be performed. Exiting gracefully."
 else
     echo "$OUTPUT"

@@ -18,7 +18,7 @@ import {
   updateBoard,
   updateBoardVerifyState,
   updateJiraVerifyResponse,
-  selectIsProjectCreated
+  selectIsProjectCreated,
 } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'

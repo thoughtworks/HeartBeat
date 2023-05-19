@@ -17,6 +17,22 @@ jobs:
         uses: ludeeus/action-shellcheck@master
         with:
           scandir: './ops'
+
+  credential-check:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 10
+      - name: Trufflehog scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --fail --only-verified
+
   security-check:
     runs-on: ubuntu-latest
     steps:

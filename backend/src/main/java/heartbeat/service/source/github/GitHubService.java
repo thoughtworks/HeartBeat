@@ -213,4 +213,12 @@ public class GitHubService {
 			.build();
 	}
 
+	public CommitInfo fetchCommitInfo(String commitId, String repositoryId, String token) {
+		String maskToken = TokenUtil.mask(token);
+		log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
+		CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, token);
+		log.info("Successfully get commit info_commitInfo: {}", commitInfo);
+		return commitInfo;
+	}
+
 }

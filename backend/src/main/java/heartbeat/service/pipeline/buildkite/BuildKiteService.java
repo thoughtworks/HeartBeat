@@ -241,9 +241,9 @@ public class BuildKiteService {
 	}
 
 	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
-			DeploymentEnvironment deploymentEnvironment, String states, String startTime, String endTime) {
+			DeploymentEnvironment deploymentEnvironment, String state, String startTime, String endTime) {
 		return buildInfos.stream()
-			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), states, startTime, endTime))
+			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), List.of(state), startTime, endTime))
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
 			.filter(job -> !job.getJobStartTime().isEmpty())
 			.toList();

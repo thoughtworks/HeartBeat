@@ -1,7 +1,11 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.codebase.github.CommitInfo;
+import heartbeat.client.dto.codebase.github.LeadTime;
 import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
+import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CardCollection;
@@ -10,6 +14,8 @@ import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
+import heartbeat.controller.report.dto.response.LeadTimeInfo;
+import heartbeat.controller.report.dto.response.PipelineCsvInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -19,6 +25,7 @@ import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
+import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
@@ -51,6 +59,8 @@ public class GenerateReporterService {
 	private final VelocityCalculator velocityCalculator;
 
 	private CardCollection cardCollection;
+
+	private List<PipelineLeadTime> pipelineLeadTimes;
 
 	private List<DeployTimes> deployTimesList = new ArrayList<>();
 
@@ -89,6 +99,8 @@ public class GenerateReporterService {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 
+		generateCsvForPipeline(request);
+
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
@@ -103,7 +115,7 @@ public class GenerateReporterService {
 				case "change failure rate" ->
 					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
 				case "lead time for changes" ->
-					reportResponse.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(leadTimes));
+					reportResponse.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(pipelineLeadTimes));
 				default -> {
 					// TODO
 				}
@@ -152,7 +164,7 @@ public class GenerateReporterService {
 		fetchBuildKiteData(request.getStartTime(), request.getEndTime(), request.getCodebaseSetting().getLeadTime(),
 				request.getBuildKiteSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
-		this.leadTimes = gitHubService
+		this.pipelineLeadTimes = gitHubService
 			.fetchPipelinesLeadTime(this.deployTimesList, repoMap, request.getCodebaseSetting().getToken())
 			.join();
 	}
@@ -176,6 +188,67 @@ public class GenerateReporterService {
 			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 		}
+	}
+
+	private void generateCsvForPipeline(GenerateReportRequest request) {
+		if (request.getBuildKiteSetting() == null) {
+			return;
+		}
+
+		List<PipelineCsvInfo> pipelineData = generateCsvForPipelineWithCodebase(request.getCodebaseSetting(),
+				request.getStartTime(), request.getEndTime());
+	}
+
+	private List<PipelineCsvInfo> generateCsvForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
+			String endTime) {
+
+		List<String> requiredStates = List.of("passed", "failed");
+		List<PipelineCsvInfo> pipelineCsvInfos = new ArrayList<>();
+
+		if (codebaseSetting == null) {
+			return pipelineCsvInfos;
+		}
+
+		for (DeploymentEnvironment deploymentEnvironment : codebaseSetting.getLeadTime()) {
+			String repoId = GithubUtil
+				.getGithubUrlFullName(getRepoMap(codebaseSetting).get(deploymentEnvironment.getId()));
+			List<BuildKiteBuildInfo> buildInfos = leadTimeBuildInfosList.stream()
+				.filter(entry -> entry.getKey().equals(deploymentEnvironment.getId()))
+				.findFirst()
+				.map(Map.Entry::getValue)
+				.orElse(new ArrayList<>());
+
+			List<PipelineCsvInfo> pipelineCsvInfoList = buildInfos.stream().filter(buildInfo -> {
+				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
+						deploymentEnvironment.getStep(), requiredStates, startTime, endTime);
+				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
+			}).map(buildInfo -> {
+				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), requiredStates,
+						startTime, endTime);
+
+				LeadTime filteredLeadTime = pipelineLeadTimes.stream()
+					.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
+							deploymentEnvironment.getName()))
+					.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
+					.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
+					.findFirst()
+					.orElse(null);
+
+				CommitInfo commitInfo = gitHubService.fetchCommitInfo(codebaseSetting.getToken(), repoId,
+						deployInfo.getCommitId());
+
+				return PipelineCsvInfo.builder()
+					.pipeLineName(deploymentEnvironment.getName())
+					.stepName(deploymentEnvironment.getStep())
+					.buildInfo(buildInfo)
+					.deployInfo(deployInfo)
+					.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
+					.commitInfo(commitInfo)
+					.build();
+			}).toList();
+			pipelineCsvInfos.addAll(pipelineCsvInfoList);
+		}
+		return pipelineCsvInfos;
 	}
 
 }

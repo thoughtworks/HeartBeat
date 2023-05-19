@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
+import { CYCLE_TIME_LIST, METRICS_CONSTANTS } from '@src/constants'
 
 export interface IPipelineConfig {
   id: number
@@ -16,11 +17,18 @@ export interface savedMetricsSettingState {
   cycleTimeSettings: { name: string; value: string }[]
   deploymentFrequencySettings: IPipelineConfig[]
   leadTimeForChanges: IPipelineConfig[]
-  importFile: string[]
-  isProjectCreated: boolean
-  importedCycleTimeSettings: { name: string; value: string }[]
-  classification: string[]
   treatFlagCardAsBlock: boolean
+  importedData: {
+    importedCrews: string[]
+    importedCycleTime: {
+      importedCycleTimeSettings: { [key: string]: string }[]
+      importedTreatFlagCardAsBlock: boolean
+    }
+    importedDoneStatus: string[]
+    importedClassification: string[]
+    importedDeployment: IPipelineConfig[]
+    importedLeadTime: IPipelineConfig[]
+  }
 }
 
 const initialState: savedMetricsSettingState = {
@@ -31,11 +39,18 @@ const initialState: savedMetricsSettingState = {
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-  importFile: [],
-  isProjectCreated: true,
-  importedCycleTimeSettings: [],
-  classification: [],
   treatFlagCardAsBlock: true,
+  importedData: {
+    importedCrews: [],
+    importedCycleTime: {
+      importedCycleTimeSettings: [],
+      importedTreatFlagCardAsBlock: true,
+    },
+    importedDoneStatus: [],
+    importedClassification: [],
+    importedDeployment: [],
+    importedLeadTime: [],
+  },
 }
 
 export const metricsSlice = createSlice({
@@ -53,9 +68,6 @@ export const metricsSlice = createSlice({
     },
     saveCycleTimeSettings: (state, action) => {
       state.cycleTimeSettings = action.payload
-    },
-    updateClassification: (state, action) => {
-      state.classification = action.payload
     },
     addADeploymentFrequencySetting: (state) => {
       const newId = state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
@@ -78,14 +90,40 @@ export const metricsSlice = createSlice({
       })
     },
 
+    updateMetricsImportedData: (state, action) => {
+      const { crews, cycleTime, doneStatus, classification, deployment, leadTime } = action.payload
+      state.importedData.importedCrews = crews
+      state.importedData.importedCycleTime.importedCycleTimeSettings = cycleTime?.jiraColumns
+      state.importedData.importedCycleTime.importedTreatFlagCardAsBlock = cycleTime?.treatFlagCardAsBlock
+      state.importedData.importedDoneStatus = doneStatus
+      state.importedData.importedClassification = classification
+      state.importedData.importedDeployment = deployment
+      state.importedData.importedLeadTime = leadTime
+    },
+
     updateMetricsState: (state, action) => {
-      const { isProjectCreated, basic } = action.payload
-      state.isProjectCreated = isProjectCreated
-      state.importFile = basic
-      state.users = basic.crews || state.users
-      state.importedCycleTimeSettings = basic.cycleTime?.jiraColumns
-      state.doneColumn = basic.realDone || state.doneColumn
-      state.classification = basic.classification || state.classification
+      const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
+      const { importedCrews, importedClassification, importedCycleTime } = state.importedData
+      state.users = isProjectCreated ? users : users?.filter((item: string) => importedCrews.includes(item))
+      state.targetFields = isProjectCreated
+        ? []
+        : targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
+            ...item,
+            flag: importedClassification.includes(item.key),
+          }))
+      state.cycleTimeSettings = jiraColumns?.map(
+        (item: { key: string; value: { name: string; statuses: string[] } }) => {
+          const controlName = item.value.name
+          let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
+          const validImportValue = importedCycleTime.importedCycleTimeSettings?.find(
+            (i) => Object.keys(i)[0] === controlName
+          )
+          if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {
+            defaultOptionValue = Object.values(validImportValue)[0]
+          }
+          return { name: controlName, value: defaultOptionValue }
+        }
+      )
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {
@@ -138,17 +176,17 @@ export const {
   saveDoneColumn,
   saveUsers,
   saveCycleTimeSettings,
-  updateClassification,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,
-  updateMetricsState,
+  updateMetricsImportedData,
   addALeadTimeForChanges,
   updateLeadTimeForChanges,
   deleteALeadTimeForChange,
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
+  updateMetricsState,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings
@@ -156,6 +194,6 @@ export const selectLeadTimeForChanges = (state: RootState) => state.metrics.lead
 
 export const selectCycleTimeSettings = (state: RootState) => state.metrics.cycleTimeSettings
 export const selectMetricsContent = (state: RootState) => state.metrics
-
 export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock
+
 export default metricsSlice.reducer

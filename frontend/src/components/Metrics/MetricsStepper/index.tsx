@@ -27,7 +27,6 @@ import {
   savedMetricsSettingState,
   selectCycleTimeSettings,
   selectMetricsContent,
-  updateMetricsState,
 } from '@src/context/Metrics/metricsSlice'
 
 const MetricsStepper = () => {
@@ -165,14 +164,7 @@ const MetricsStepper = () => {
   }
 
   const handleNext = () => {
-    if (activeStep === 0) {
-      dispatch(updateMetricsState(config))
-      dispatch(nextStep())
-    }
-
-    if (activeStep === 1) {
-      dispatch(nextStep())
-    }
+    dispatch(nextStep())
   }
 
   const handleBack = () => {

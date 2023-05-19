@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateProjectCreatedState, updateBasicConfigState } from '@src/context/config/configSlice'
 import React from 'react'
+import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 
 const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -45,6 +46,7 @@ export const HomeGuide = () => {
         if (reader.result && typeof reader.result === 'string') {
           dispatch(updateProjectCreatedState(false))
           dispatch(updateBasicConfigState(JSON.parse(reader.result)))
+          dispatch(updateMetricsImportedData(JSON.parse(reader.result)))
           navigate('/metrics')
         }
       }

@@ -17,10 +17,6 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
 
-jest.mock('@src/context/config/configSlice', () => ({
-  ...jest.requireActual('@src/context/config/configSlice'),
-  selectIsProjectCreated: jest.fn().mockReturnValue(false),
-}))
 export const fillBoardFieldsInformation = () => {
   const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
   const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken']

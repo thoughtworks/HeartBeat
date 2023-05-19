@@ -10,11 +10,7 @@ const mockLabel = 'Included Crews'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectMetricsImportedData: jest.fn().mockReturnValue({ importedCrews: ['crew A', 'crew B'] }),
-}))
-jest.mock('@src/context/config/configSlice', () => ({
-  ...jest.requireActual('@src/context/config/configSlice'),
-  selectIsProjectCreated: jest.fn().mockReturnValue(false),
+  selectMetricsContent: jest.fn().mockReturnValue({ users: ['crew A', 'crew B'] }),
 }))
 
 let store = setupStore()

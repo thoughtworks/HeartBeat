@@ -41,6 +41,27 @@ const initState = {
   },
 }
 
+const mockJiraResponse = {
+  targetFields: [{ key: 'issuetype', name: 'Issue Type', flag: false }],
+  users: ['User A', 'User B'],
+  jiraColumns: [
+    {
+      key: 'indeterminate',
+      value: {
+        name: 'Doing',
+        statuses: ['ANALYSIS'],
+      },
+    },
+    {
+      key: 'indeterminate',
+      value: {
+        name: 'Testing',
+        statuses: ['TESTING'],
+      },
+    },
+  ],
+}
+
 describe('saveMetricsSetting reducer', () => {
   it('should show empty array when handle initial state', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(undefined, { type: 'unknown' })
@@ -157,24 +178,51 @@ describe('saveMetricsSetting reducer', () => {
     })
   })
 
-  it('should update metricsState when its value changed given initial state', () => {
-    const mockJiraResponse = {
-      targetFields: [{ key: 'issuetype', name: 'Issue Type', flag: false }],
+  it('should update metricsState when its value changed given isProjectCreated is false', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
     }
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
         importedData: {
           ...initState.importedData,
+          importedCrews: ['User B', 'User C'],
           importedClassification: ['issuetype'],
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Doing: 'Analysis' }, { Testing: 'mockOption' }],
+            importedTreatFlagCardAsBlock: true,
+          },
         },
       },
-      updateMetricsState({
-        targetFields: mockJiraResponse.targetFields,
-      })
+      updateMetricsState(mockUpdateMetricsStateArguments)
     )
 
     expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }])
+    expect(savedMetricsSetting.users).toEqual(['User B'])
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([
+      { name: 'Doing', value: 'Analysis' },
+      { name: 'Testing', value: '----' },
+    ])
+  })
+
+  it('should update metricsState when its value changed given isProjectCreated is true', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: true,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      initState,
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.targetFields).toEqual([])
+    expect(savedMetricsSetting.users).toEqual(['User A', 'User B'])
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([
+      { name: 'Doing', value: '----' },
+      { name: 'Testing', value: '----' },
+    ])
   })
 
   it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {

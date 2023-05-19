@@ -177,7 +177,7 @@ export const Board = () => {
       if (res) {
         dispatch(updateBoardVerifyState(res.isBoardVerify))
         dispatch(updateJiraVerifyResponse(res.response))
-        !isProjectCreated && dispatch(updateMetricsState(res.response))
+        dispatch(updateMetricsState({ ...res.response, isProjectCreated }))
         setIsNoDoneCard(res.isNoDoneCard)
       }
     })

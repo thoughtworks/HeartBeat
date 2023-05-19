@@ -12,10 +12,8 @@ import { DEFAULT_HELPER_TEXT, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveUsers, selectMetricsImportedData } from '@src/context/Metrics/metricsSlice'
+import { saveUsers, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
-import { getArrayIntersection } from '@src/utils/util'
-import { selectIsProjectCreated } from '@src/context/config/configSlice'
 
 interface crewsProps {
   options: string[]
@@ -26,11 +24,8 @@ interface crewsProps {
 export const Crews = ({ options, title, label }: crewsProps) => {
   const dispatch = useAppDispatch()
   const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false)
-  const importCrews = useAppSelector(selectMetricsImportedData).importedCrews
-  const isProjectCreated = useAppSelector(selectIsProjectCreated)
-  const [selectedCrews, setSelectedCrews] = useState(
-    isProjectCreated ? options : getArrayIntersection(importCrews, options)
-  )
+  const users = useAppSelector(selectMetricsContent).users
+  const [selectedCrews, setSelectedCrews] = useState(users)
   const isAllSelected = options.length > 0 && selectedCrews.length === options.length
 
   useEffect(() => {

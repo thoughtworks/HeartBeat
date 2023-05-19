@@ -4,39 +4,18 @@ import FlagCard from '@src/components/Metrics/MetricsStep/CycleTime/FlagCard'
 import { FormSelectPart } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelectPart'
 import { ErrorDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveCycleTimeSettings, selectMetricsImportedData } from '@src/context/Metrics/metricsSlice'
+import { saveCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
-import { CYCLE_TIME_LIST, METRICS_CONSTANTS } from '@src/constants'
-import { selectIsProjectCreated } from '@src/context/config/configSlice'
 
 interface cycleTimeProps {
-  columns: { key: string; value: { name: string; statuses: string[] } }[]
   title: string
 }
 
-export const CycleTime = ({ columns, title }: cycleTimeProps) => {
+export const CycleTime = ({ title }: cycleTimeProps) => {
   const dispatch = useAppDispatch()
   const [isError, setIsError] = useState(false)
-  const importedCycleTimeSettings =
-    useAppSelector(selectMetricsImportedData).importedCycleTime.importedCycleTimeSettings
-  const getDefaultOptionValue = (
-    item: { key: string; value: { name: string; statuses: string[] } },
-    importedCycleTimeSettings: { [key: string]: string }[]
-  ) => {
-    const controlName = item.value.name
-    let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
-    const validImportValue = importedCycleTimeSettings?.find((i) => Object.keys(i)[0] === controlName)
-
-    if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {
-      defaultOptionValue = Object.values(validImportValue)[0]
-    }
-
-    return { name: controlName, value: defaultOptionValue }
-  }
-  const defaultValue = Object.values(columns).map((item) => getDefaultOptionValue(item, importedCycleTimeSettings))
-  const isProjectCreated = useAppSelector(selectIsProjectCreated)
-  const columnsOption = Object.values(columns).map((item) => ({ name: item.value.name, value: '' }))
-  const [cycleTimeOptions, setCycleTimeOptions] = useState(isProjectCreated ? columnsOption : defaultValue)
+  const cycleTimeSettings = useAppSelector(selectMetricsContent).cycleTimeSettings
+  const [cycleTimeOptions, setCycleTimeOptions] = useState(cycleTimeSettings)
 
   const saveCycleTimeOptions = (name: string, value: string) =>
     setCycleTimeOptions(

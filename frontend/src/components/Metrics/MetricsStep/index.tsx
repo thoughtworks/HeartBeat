@@ -24,9 +24,7 @@ export const MetricsStep = () => {
     <>
       {isShowCrewsAndRealDone && <Crews options={users} title={'Crews setting'} label={'Included Crews'} />}
 
-      {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && (
-        <CycleTime columns={jiraColumns} title={'Cycle time settings'} />
-      )}
+      {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
 
       {isShowCrewsAndRealDone &&
         selectedCycleTimeSettings.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2 && (

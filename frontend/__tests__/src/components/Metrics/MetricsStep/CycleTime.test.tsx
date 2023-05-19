@@ -6,43 +6,7 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { CYCLE_TIME_SETTINGS } from '../../../fixtures'
 
 const DEFAULT_SELECTED = '----'
-const mockColumnsList = [
-  {
-    key: 'indeterminate',
-    value: {
-      name: 'Doing',
-      statuses: ['ANALYSIS'],
-    },
-  },
-  {
-    key: 'indeterminate',
-    value: {
-      name: 'Testing',
-      statuses: ['TESTING'],
-    },
-  },
-  {
-    key: 'indeterminate',
-    value: {
-      name: 'TODO',
-      statuses: ['TODO'],
-    },
-  },
-  {
-    key: 'done',
-    value: {
-      name: 'Done',
-      statuses: ['DONE', 'CANCELLED'],
-    },
-  },
-  {
-    key: 'indeterminate',
-    value: {
-      name: 'Blocked',
-      statuses: ['BLOCKED'],
-    },
-  },
-]
+
 const errorMessage = 'Only one column can be selected as "Done"'
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
@@ -50,17 +14,21 @@ const FlagAsBlock = 'Consider the "Flag" as "Block"'
 let store = setupStore()
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectMetricsImportedData: jest.fn().mockReturnValue({
-    importedCycleTime: {
-      importedCycleTimeSettings: [
-        {
-          Doing: 'Analysis',
-        },
-        {
-          Testing: 'Review',
-        },
-      ],
-    },
+  selectMetricsContent: jest.fn().mockReturnValue({
+    cycleTimeSettings: [
+      {
+        name: 'Doing',
+        value: 'Analysis',
+      },
+      {
+        name: 'Testing',
+        value: 'Review',
+      },
+      {
+        name: 'TODO',
+        value: '----',
+      },
+    ],
   }),
 }))
 
@@ -69,13 +37,12 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
   selectPipelineNames: jest.fn().mockReturnValue(['']),
   selectSteps: jest.fn().mockReturnValue(['']),
-  selectIsProjectCreated: jest.fn().mockReturnValue(false),
 }))
 
 const setup = () =>
   render(
     <Provider store={store}>
-      <CycleTime title={CYCLE_TIME_SETTINGS} columns={mockColumnsList} />
+      <CycleTime title={CYCLE_TIME_SETTINGS} />
     </Provider>
   )
 
@@ -99,17 +66,15 @@ describe('CycleTime', () => {
     it('should show selectors title when render Crews component', () => {
       const { getByText } = setup()
 
-      expect(getByText(mockColumnsList[0].value.name)).toBeInTheDocument()
-      expect(getByText(mockColumnsList[1].value.name)).toBeInTheDocument()
-      expect(getByText(mockColumnsList[2].value.name)).toBeInTheDocument()
-      expect(getByText(mockColumnsList[3].value.name)).toBeInTheDocument()
-      expect(getByText(mockColumnsList[4].value.name)).toBeInTheDocument()
+      expect(getByText('Doing')).toBeInTheDocument()
+      expect(getByText('Testing')).toBeInTheDocument()
+      expect(getByText('TODO')).toBeInTheDocument()
     })
 
     it('should show "----" in selector by create default when initializing', () => {
       const { getAllByText } = setup()
 
-      expect(getAllByText(DEFAULT_SELECTED)).toHaveLength(3)
+      expect(getAllByText(DEFAULT_SELECTED)).toHaveLength(1)
     })
 
     it('should show detail options when click included button', async () => {
@@ -136,7 +101,7 @@ describe('CycleTime', () => {
     it('should show other selections when change option', async () => {
       const { getAllByRole, getByRole, getByText } = setup()
       const columnsArray = getAllByRole('button', { name: 'Doing' })
-      await userEvent.click(columnsArray[3])
+      await userEvent.click(columnsArray[2])
       const listBox = within(getByRole('listbox'))
       const mockOption = listBox.getByRole('option', { name: 'To do' })
       await userEvent.click(mockOption)

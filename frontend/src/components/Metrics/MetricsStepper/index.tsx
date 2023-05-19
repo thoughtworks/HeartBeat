@@ -164,13 +164,7 @@ const MetricsStepper = () => {
   }
 
   const handleNext = () => {
-    if (activeStep === 0) {
-      dispatch(nextStep())
-    }
-
-    if (activeStep === 1) {
-      dispatch(nextStep())
-    }
+    dispatch(nextStep())
   }
 
   const handleBack = () => {

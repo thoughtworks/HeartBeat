@@ -14,7 +14,7 @@ interface cycleTimeProps {
 export const CycleTime = ({ title }: cycleTimeProps) => {
   const dispatch = useAppDispatch()
   const [isError, setIsError] = useState(false)
-  const cycleTimeSettings = useAppSelector(selectMetricsContent).cycleTimeSettings
+  const { cycleTimeSettings } = useAppSelector(selectMetricsContent)
   const [cycleTimeOptions, setCycleTimeOptions] = useState(cycleTimeSettings)
 
   const saveCycleTimeOptions = (name: string, value: string) =>

@@ -24,7 +24,7 @@ interface crewsProps {
 export const Crews = ({ options, title, label }: crewsProps) => {
   const dispatch = useAppDispatch()
   const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false)
-  const users = useAppSelector(selectMetricsContent).users
+  const { users } = useAppSelector(selectMetricsContent)
   const [selectedCrews, setSelectedCrews] = useState(users)
   const isAllSelected = options.length > 0 && selectedCrews.length === options.length
 

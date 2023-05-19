@@ -103,20 +103,19 @@ export const metricsSlice = createSlice({
 
     updateMetricsState: (state, action) => {
       const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
-      state.users = isProjectCreated
-        ? users
-        : users?.filter((item: string) => state.importedData.importedCrews.includes(item))
+      const { importedCrews, importedClassification, importedCycleTime } = state.importedData
+      state.users = isProjectCreated ? users : users?.filter((item: string) => importedCrews.includes(item))
       state.targetFields = isProjectCreated
         ? []
         : targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
             ...item,
-            flag: state.importedData.importedClassification.includes(item.key),
+            flag: importedClassification.includes(item.key),
           }))
       state.cycleTimeSettings = jiraColumns?.map(
         (item: { key: string; value: { name: string; statuses: string[] } }) => {
           const controlName = item.value.name
           let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
-          const validImportValue = state.importedData.importedCycleTime.importedCycleTimeSettings?.find(
+          const validImportValue = importedCycleTime.importedCycleTimeSettings?.find(
             (i) => Object.keys(i)[0] === controlName
           )
           if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {

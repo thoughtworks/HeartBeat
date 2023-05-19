@@ -3,6 +3,7 @@ package heartbeat.util;
 import java.time.Instant;
 
 public interface TimeUtil {
+
 	static Double convertMillisecondToMinutes(Double millisecond) {
 		return Math.round((millisecond / 1000 / 60) * 100.0) / 100.0;
 	}

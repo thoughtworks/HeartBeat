@@ -127,39 +127,39 @@ public class GitHubService {
 				}
 				List<DeployInfo> passedDeployInfos = item.getPassedDeploy();
 				List<LeadTime> leadTimes = passedDeployInfos.stream().map(deployInfo -> {
-						List<PullRequestInfo> pullRequestInfos = CompletableFuture
-							.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
-									deployInfo.getCommitId(), token), taskExecutor)
-							.join();
-						long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-						long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
-						long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+					List<PullRequestInfo> pullRequestInfos = CompletableFuture
+						.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
+								deployInfo.getCommitId(), token), taskExecutor)
+						.join();
+					long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+					long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
+					long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
 
-						LeadTime noMergeDelayTime = LeadTime.builder()
-							.commitId(deployInfo.getCommitId())
-							.pipelineCreateTime((double) pipelineCreateTime)
-							.jobFinishTime((double) jobFinishTime)
-							.pipelineDelayTime((double) jobFinishTime - jobStartTime)
-							.build();
+					LeadTime noMergeDelayTime = LeadTime.builder()
+						.commitId(deployInfo.getCommitId())
+						.pipelineCreateTime((double) pipelineCreateTime)
+						.jobFinishTime((double) jobFinishTime)
+						.pipelineDelayTime((double) jobFinishTime - jobStartTime)
+						.build();
 
-						if (pullRequestInfos.isEmpty()) {
-							return noMergeDelayTime;
-						}
+					if (pullRequestInfos.isEmpty()) {
+						return noMergeDelayTime;
+					}
 
-						Optional<PullRequestInfo> mergedPull = pullRequestInfos.stream()
-							.filter(gitHubPull -> gitHubPull.getMergedAt() != null)
-							.findFirst();
+					Optional<PullRequestInfo> mergedPull = pullRequestInfos.stream()
+						.filter(gitHubPull -> gitHubPull.getMergedAt() != null)
+						.findFirst();
 
-						if (mergedPull.isEmpty()) {
-							return noMergeDelayTime;
-						}
+					if (mergedPull.isEmpty()) {
+						return noMergeDelayTime;
+					}
 
-						List<CommitInfo> commitInfos = CompletableFuture
-							.supplyAsync(() -> gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
-									mergedPull.get().getNumber().toString(), token), taskExecutor)
-							.join();
-						CommitInfo firstCommitInfo = commitInfos.get(0);
-						return this.mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);
+					List<CommitInfo> commitInfos = CompletableFuture
+						.supplyAsync(() -> gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
+								mergedPull.get().getNumber().toString(), token), taskExecutor)
+						.join();
+					CommitInfo firstCommitInfo = commitInfos.get(0);
+					return this.mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);
 				}).toList();
 				return PipelineLeadTime.builder()
 					.pipelineName(item.getPipelineName())

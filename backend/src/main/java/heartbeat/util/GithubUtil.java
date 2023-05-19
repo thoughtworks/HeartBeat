@@ -3,9 +3,10 @@ package heartbeat.util;
 public interface GithubUtil {
 
 	static String getGithubUrlFullName(String url) {
-		if (url  == null) {
+		if (url == null) {
 			return "";
-		} else {
+		}
+		else {
 			return url.replaceFirst("^(.*?github.com/)", "").replaceFirst("(\\.git)?$", "");
 		}
 	}

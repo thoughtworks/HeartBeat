@@ -47,14 +47,14 @@ import java.util.stream.IntStream;
 @Log4j2
 public class BuildKiteService {
 
+	@Autowired
+	private final ThreadPoolTaskExecutor taskExecutor;
+
 	public static final String BUILD_KITE_LINK_HEADER = HttpHeaders.LINK;
 
 	private static final List<String> permissions = List.of("read_builds", "read_organizations", "read_pipelines");
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
-
-	@Autowired
-	private final ThreadPoolTaskExecutor taskExecutor;
 
 	@PreDestroy
 	public void shutdownExecutor() {
@@ -165,12 +165,12 @@ public class BuildKiteService {
 			pageStepsInfo.addAll(firstPageStepsInfo);
 		}
 		if (totalPage != 1) {
-			List<CompletableFuture<List<BuildKiteBuildInfo>>> futureStream = IntStream
-				.range(Integer.parseInt(page), totalPage + 1)
+			List<CompletableFuture<List<BuildKiteBuildInfo>>> futures = IntStream
+				.range(Integer.parseInt(page) + 1, totalPage + 1)
 				.mapToObj(currentPage -> getBuildKiteStepsAsync(realToken, orgId, pipelineId, stepsParam, perPage,
 						currentPage, partialToken))
 				.toList();
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = futureStream.stream()
+			List<BuildKiteBuildInfo> buildKiteBuildInfos = futures.stream()
 				.map(CompletableFuture::join)
 				.flatMap(Collection::stream)
 				.toList();

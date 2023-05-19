@@ -28,8 +28,10 @@ import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.report.calculator.VelocityCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -75,6 +77,9 @@ class GenerateReporterServiceTest {
 	@Mock
 	private CycleTimeCalculator cycleTimeCalculator;
 
+	@Mock
+	VelocityCalculator velocityCalculator;
+
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
 		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
@@ -96,11 +101,12 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
 			.build();
 
+		Velocity velocity = Velocity.builder().velocityForSP(0).velocityForCards(0).build();
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any()))
 			.thenReturn(CardCollection.builder().storyPointSum(0).cardsNumber(0).build());
+		when(velocityCalculator.calculateVelocity(any())).thenReturn(velocity);
 
 		ReportResponse result = generateReporterService.generateReporter(request);
-		Velocity velocity = Velocity.builder().velocityForSP(0).velocityForCards(0).build();
 
 		assertThat(result).isEqualTo(ReportResponse.builder().velocity(velocity).build());
 	}

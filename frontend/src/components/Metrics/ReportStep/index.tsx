@@ -49,7 +49,7 @@ export const ReportStep = () => {
   } = useAppSelector(selectMetricsContent)
   const { metrics, calendarType, dateRange } = configData.basic
   const { board, pipelineTool, sourceControl } = configData
-  const { token, type, site, projectKey, boardId } = board.config
+  const { token, type, site, projectKey, boardId, email } = board.config
 
   const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) => {
     if (!pipelineConfigs[0].organization && pipelineConfigs.length === 1) {
@@ -72,6 +72,9 @@ export const ReportStep = () => {
       }
     }) as { id: string; name: string; orgId: string; orgName: string; repository: string; step: string }[]
   }
+
+  const msg = `${email}:${token}`
+  const encodeToken = `Basic ${btoa(msg)}`
   const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,
     startTime: dayjs(dateRange.startDate).valueOf().toString(),
@@ -87,7 +90,7 @@ export const ReportStep = () => {
       leadTime: getPipelineConfig(leadTimeForChanges),
     },
     jiraBoardSetting: {
-      token,
+      token: encodeToken,
       type: type.toLowerCase().replace(' ', '-'),
       site,
       projectKey,

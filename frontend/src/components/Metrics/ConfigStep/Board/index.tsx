@@ -1,17 +1,24 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
 import {
-  BOARD_TYPES,
-  EMAIL_REG_EXP,
-  EMAIL,
-  CONFIG_TITLE,
   BOARD_TOKEN,
   BOARD_TOKEN_REG_EXP,
-  EMPTY_STRING,
+  BOARD_TYPES,
+  CONFIG_TITLE,
   DEFAULT_HELPER_TEXT,
+  EMAIL,
+  EMAIL_REG_EXP,
+  EMPTY_STRING,
 } from '@src/constants'
-import { FormEvent, useState, useEffect } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectBoard, selectDateRange } from '@src/context/config/configSlice'
+import {
+  selectBoard,
+  selectDateRange,
+  selectIsBoardVerified,
+  updateBoard,
+  updateBoardVerifyState,
+  updateJiraVerifyResponse,
+} from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
@@ -26,12 +33,6 @@ import {
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
 import dayjs from 'dayjs'
-import {
-  updateBoardVerifyState,
-  updateBoard,
-  selectIsBoardVerified,
-  updateJiraVerifyResponse,
-} from '@src/context/config/configSlice'
 import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
 
 export const Board = () => {
@@ -151,7 +152,7 @@ export const Board = () => {
         email: fields[2].value,
         projectKey: fields[3].value,
         site: fields[4].value,
-        token: `Basic ${btoa(`${fields[2].value}:${fields[5].value}`)}`,
+        token: fields[5].value,
       })
     )
   }

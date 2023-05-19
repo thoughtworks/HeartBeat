@@ -29,6 +29,8 @@ public class GenerateReporterService {
 
 	private final JiraService jiraService;
 
+	private final WorkDay workDay;
+
 	private final ClassificationCalculator classificationCalculator;
 
 	private final BuildKiteService buildKiteService;
@@ -58,6 +60,7 @@ public class GenerateReporterService {
 	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
 
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
+		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 

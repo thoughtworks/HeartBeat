@@ -101,7 +101,7 @@ class BuildKiteServiceTest {
 
 	@AfterEach
 	public void tearDown() {
-		executor.shutdown();
+		buildKiteService.shutdownExecutor();
 	}
 
 	@Test

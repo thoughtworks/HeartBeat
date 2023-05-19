@@ -2,8 +2,12 @@ package heartbeat.util;
 
 public interface GithubUtil {
 
-	public static String getGithubUrlFullName(String url) {
-		return url.replaceFirst("^(.*?github.com/)", "").replaceFirst("(\\.git)?$", "");
+	static String getGithubUrlFullName(String url) {
+		if (url  == null) {
+			return "";
+		} else {
+			return url.replaceFirst("^(.*?github.com/)", "").replaceFirst("(\\.git)?$", "");
+		}
 	}
 
 }

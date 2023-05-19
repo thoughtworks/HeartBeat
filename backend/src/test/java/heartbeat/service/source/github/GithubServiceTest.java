@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
@@ -86,7 +85,9 @@ class GithubServiceTest {
 		deployInfo = DeployInfo.builder()
 			.commitId("111")
 			.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
+			.jobStartTime("2022-07-23T04:05:00.000+00:00")
 			.jobFinishTime("2022-07-23T04:06:00.000+00:00")
+			.state("passed")
 			.build();
 		commitInfo = CommitInfo.builder()
 			.commit(Commit.builder()
@@ -100,7 +101,7 @@ class GithubServiceTest {
 			.pipelineStep("Step")
 			.passed(List.of(DeployInfo.builder()
 				.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
-				.jobStartTime("2022-07-23T04:05:01.000+00:00")
+				.jobStartTime("2022-07-23T04:05:00.000+00:00")
 				.jobFinishTime("2022-07-23T04:06:00.000+00:00")
 				.commitId("111")
 				.state("passed")
@@ -284,6 +285,95 @@ class GithubServiceTest {
 			.get();
 
 		assertEquals(pipelineLeadTimes, result);
+	}
+
+	@Test
+	void shouldReturnEmptyLeadTimeWhenDeployTimesIsEmpty() throws ExecutionException, InterruptedException {
+		String mockToken = "mockToken";
+
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenReturn(List.of(pullRequestInfo));
+
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(),
+			any()))
+			.thenReturn(List.of(commitInfo));
+		List<DeployTimes> emptyDeployTimes = List.of(DeployTimes.builder().build());
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(emptyDeployTimes, repositoryMap, mockToken)
+			.get();
+		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder().build());
+
+		assertEquals(expect, result);
+	}
+
+	@Test
+	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoIsEmpty() throws ExecutionException, InterruptedException {
+		String mockToken = "mockToken";
+
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenReturn(List.of());
+
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(),
+			any()))
+			.thenReturn(List.of());
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken)
+			.get();
+
+		List<PipelineLeadTime> expect = List.of(
+			PipelineLeadTime
+				.builder()
+				.pipelineStep("Step")
+				.pipelineName("Name")
+				.leadTimes(List.of(LeadTime.builder()
+					.commitId("111")
+						.prCreatedTime(0)
+						.prMergedTime(0)
+						.firstCommitTimeInPr(0)
+						.jobFinishTime(1.65854916E12)
+						.pipelineCreateTime(1.6585491E12)
+						.prDelayTime(0)
+						.pipelineDelayTime(60000)
+						.totalTime(0)
+					.build()))
+				.build()
+		);
+
+		assertEquals(expect, result);
+	}
+
+
+	@Test
+	void shouldReturnEmptyMergeLeadTimeWhenMergeTimeIsEmpty() throws ExecutionException, InterruptedException {
+		String mockToken = "mockToken";
+		pullRequestInfo.setMergedAt(null);
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenReturn(List.of(pullRequestInfo));
+
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(),
+			any()))
+			.thenReturn(List.of());
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken)
+			.get();
+
+		List<PipelineLeadTime> expect = List.of(
+			PipelineLeadTime
+				.builder()
+				.pipelineStep("Step")
+				.pipelineName("Name")
+				.leadTimes(List.of(LeadTime.builder()
+					.commitId("111")
+					.prCreatedTime(0)
+					.prMergedTime(0)
+					.firstCommitTimeInPr(0)
+					.jobFinishTime(1.65854916E12)
+					.pipelineCreateTime(1.6585491E12)
+					.prDelayTime(0)
+					.pipelineDelayTime(60000)
+					.totalTime(0)
+					.build()))
+				.build()
+		);
+
+		assertEquals(expect, result);
 	}
 
 }

@@ -7,6 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GithubUtilTest {
 
 	@Test
+	void shouldReturnEmptyWhenInputGithubRepoIsNull() {
+		String result = GithubUtil.getGithubUrlFullName(null);
+		assertEquals("", result);
+	}
+
+	@Test
 	void shouldReturnRepositoryFullNameWhenInputGithubRepo() {
 		String result = GithubUtil.getGithubUrlFullName("https://github.com/XXXX-fs/fs-platform-onboarding");
 		assertEquals("XXXX-fs/fs-platform-onboarding", result);

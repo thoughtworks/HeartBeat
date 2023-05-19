@@ -122,22 +122,24 @@ public class GitHubService {
 					.build();
 			}).toList();
 			return pipelineInfoOfRepositories.stream().map(item -> {
+				if (item.getPassedDeploy() == null || item.getPassedDeploy().isEmpty()) {
+					return PipelineLeadTime.builder().build();
+				}
 				List<DeployInfo> passedDeployInfos = item.getPassedDeploy();
 				List<LeadTime> leadTimes = passedDeployInfos.stream().map(deployInfo -> {
-					try {
 						List<PullRequestInfo> pullRequestInfos = CompletableFuture
 							.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
 									deployInfo.getCommitId(), token), taskExecutor)
 							.join();
 						long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-						long pipelineCreateTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
+						long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
+						long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
 
 						LeadTime noMergeDelayTime = LeadTime.builder()
 							.commitId(deployInfo.getCommitId())
 							.pipelineCreateTime((double) pipelineCreateTime)
 							.jobFinishTime((double) jobFinishTime)
-							.prCreatedTime((double) jobFinishTime)
-							.prMergedTime((double) jobFinishTime)
+							.pipelineDelayTime((double) jobFinishTime - jobStartTime)
 							.build();
 
 						if (pullRequestInfos.isEmpty()) {
@@ -158,10 +160,6 @@ public class GitHubService {
 							.join();
 						CommitInfo firstCommitInfo = commitInfos.get(0);
 						return this.mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);
-					}
-					catch (Exception e) {
-						throw new RuntimeException(e);
-					}
 				}).toList();
 				return PipelineLeadTime.builder()
 					.pipelineName(item.getPipelineName())
@@ -180,6 +178,7 @@ public class GitHubService {
 		double prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
 		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+		double jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
 		double firstCommitTimeInPr;
 		if (commitInfo.getCommit() != null && commitInfo.getCommit().getCommitter() != null
 				&& commitInfo.getCommit().getCommitter().getDate() != null) {
@@ -190,7 +189,7 @@ public class GitHubService {
 			firstCommitTimeInPr = 0;
 		}
 
-		double pipelineDelayTime = jobFinishTime - pipelineCreateTime;
+		double pipelineDelayTime = jobFinishTime - jobStartTime;
 		double prDelayTime;
 		double totalTime;
 		if (firstCommitTimeInPr > 0) {

@@ -116,7 +116,7 @@ export const metricsSlice = createSlice({
         (item: { key: string; value: { name: string; statuses: string[] } }) => {
           const controlName = item.value.name
           let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
-          const validImportValue = state.importedData.importedCycleTime.importedCycleTimeSettings.find(
+          const validImportValue = state.importedData.importedCycleTime.importedCycleTimeSettings?.find(
             (i) => Object.keys(i)[0] === controlName
           )
           if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {

@@ -127,4 +127,26 @@ describe('HomeGuide', () => {
       }
     )
   })
+
+  it('should show error message when import given invalid json', async () => {
+    const invalidConfig = JSON.stringify(IMPORTED_CONFIG_FIXTURE).slice(0, -1)
+
+    const { getByTestId, queryByText } = setup()
+
+    const file = new File([invalidConfig], 'test.json', {
+      type: 'file',
+    })
+    const input = getByTestId('testInput')
+
+    Object.defineProperty(input, 'files', {
+      value: [file],
+    })
+
+    fireEvent.change(input)
+
+    await waitFor(() => {
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
+      expect(queryByText(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE)).toBeInTheDocument()
+    })
+  })
 })

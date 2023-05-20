@@ -44,14 +44,17 @@ export const HomeGuide = () => {
   const getImportFileElement = () => document.getElementById('importJson') as HTMLInputElement
 
   const isValidImportedConfig = (configStr: string) => {
-    const importedConfig = JSON.parse(configStr)
-
-    const {
-      projectName,
-      metrics,
-      dateRange: { startDate, endDate },
-    } = importedConfig
-    return !!projectName && !!startDate && !!endDate && metrics.length > 0
+    try {
+      const importedConfig = JSON.parse(configStr)
+      const {
+        projectName,
+        metrics,
+        dateRange: { startDate, endDate },
+      } = importedConfig
+      return !!projectName && !!startDate && !!endDate && metrics.length > 0
+    } catch {
+      return false
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -45,7 +45,13 @@ export const HomeGuide = () => {
 
   const isValidImportedConfig = (configStr: string) => {
     const importedConfig = JSON.parse(configStr)
-    return !!importedConfig.projectName
+
+    const {
+      projectName,
+      metrics,
+      dateRange: { startDate, endDate },
+    } = importedConfig
+    return !!projectName && !!startDate && !!endDate && metrics.length > 0
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,10 +67,10 @@ export const HomeGuide = () => {
             navigate('/metrics')
           } else {
             setValidConfig(false)
-            const fileInput = getImportFileElement()
-            fileInput.value = ''
           }
         }
+        const fileInput = getImportFileElement()
+        fileInput.value = ''
       }
       reader.readAsText(input, 'utf-8')
     }

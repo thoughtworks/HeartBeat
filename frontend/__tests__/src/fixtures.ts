@@ -452,3 +452,41 @@ export const EXPECTED_REPORT_VALUES = {
 }
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
   'Imported data is not perfectly matched. Please review carefully before going next!'
+
+export const IMPORTED_CONFIG_FIXTURE = {
+  projectName: 'ConfigFileForImporting',
+  metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
+  dateRange: {
+    startDate: '2023-03-16T00:00:00.000+08:00',
+    endDate: '2023-03-30T23:59:59.999+08:00',
+  },
+  calendarType: 'Calendar with Chinese Holiday',
+  board: {
+    type: 'Classic Jira',
+    verifyToken: 'mockVerifyToken',
+    boardId: '1963',
+    token: 'mockToken',
+    site: 'mockSite',
+    email: 'test@test.com',
+    projectKey: 'PLL',
+  },
+  pipeline: 'mockToken',
+  pipelineTool: {
+    type: 'BuildKite',
+    token: 'mockToken',
+  },
+  sourceControl: {
+    type: 'GitHub',
+    token: '',
+  },
+  crews: ['lucy', 'hi hi', 'Yu Zhang'],
+  classification: ['type', 'Parent'],
+  cycleTime: [
+    {
+      'In Analysis': 'To do',
+    },
+    {
+      'Ready For Dev': 'Analysis',
+    },
+  ],
+}

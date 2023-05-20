@@ -78,4 +78,26 @@ describe('HomeGuide', () => {
     expect(navigateMock).toHaveBeenCalledTimes(1)
     expect(navigateMock).toHaveBeenCalledWith('/metrics')
   })
+
+  it('should show error message when import project from file given file does not contain projectName field', async () => {
+    const { getByTestId, queryByText } = setup()
+
+    const file = new File(['{"pipeline": "Heartbeat test"}'], 'test.json', {
+      type: 'file',
+    })
+    const input = getByTestId('testInput')
+
+    Object.defineProperty(input, 'files', {
+      value: [file],
+    })
+
+    fireEvent.change(input)
+
+    await waitFor(() => {
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
+      expect(
+        queryByText('Imported data is not perfectly matched. Please review carefully before going next!')
+      ).toBeInTheDocument()
+    })
+  })
 })

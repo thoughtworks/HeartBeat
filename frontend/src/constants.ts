@@ -170,3 +170,6 @@ export const INIT_REPORT_DATA_WITH_THREE_COLUMNS: ReportDataWithThreeColumns[] =
 ]
 
 export const GET_STEPS_FAILED_MESSAGE = 'get steps failed'
+
+export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
+  'Imported data is not perfectly matched. Please review carefully before going next!'

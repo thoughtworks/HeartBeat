@@ -70,7 +70,7 @@ public class GenerateReporterService {
 				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
 				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(cardCollection,
 						request.getJiraBoardSetting().getBoardColumns()));
-				case "classification" -> reportResponse.setClassificationList(classificationCalculator
+				case "classification" -> reportResponse.setClassification(classificationCalculator
 					.calculate(request.getJiraBoardSetting().getTargetFields(), cardCollection));
 				case "deployment frequency" ->
 					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,

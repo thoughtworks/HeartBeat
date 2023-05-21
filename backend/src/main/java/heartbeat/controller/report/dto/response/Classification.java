@@ -15,6 +15,6 @@ public class Classification {
 
 	private String fieldName;
 
-	private List<ClassificationNameValuePair> pairList;
+	private List<ClassificationNameValuePair> pairs;
 
 }

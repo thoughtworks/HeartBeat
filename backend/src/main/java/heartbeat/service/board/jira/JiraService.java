@@ -31,6 +31,8 @@ import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
+import heartbeat.controller.board.dto.response.Partner;
+import heartbeat.controller.board.dto.response.Sprint;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -315,17 +317,108 @@ public class JiraService {
 			.getAsJsonArray();
 
 		ArrayList<Integer> storyPointList = new ArrayList<>();
+		ArrayList<String> flaggedList = new ArrayList<>();
+		ArrayList<String> startDateList = new ArrayList<>();
+		ArrayList<String> developmentList = new ArrayList<>();
+		ArrayList<String> qaList = new ArrayList<>();
+		ArrayList<String> rankList = new ArrayList<>();
+		ArrayList<String> issueColorList = new ArrayList<>();
+		ArrayList<String> featureList = new ArrayList<>();
+		ArrayList<ArrayList<Partner>> testPartnerList = new ArrayList<>();
+		ArrayList<ArrayList<Sprint>> testSprintList = new ArrayList<>();
+		Sprint nullSprint = new Sprint();
+		nullSprint.setName(null);
+		Partner nullPartner = new Partner();
+		nullPartner.setDisplayName("None");
+
+
 		for (JsonElement element : elements) {
 			JsonElement jsonElement = element.getAsJsonObject().get("fields");
+			ArrayList<Sprint> newSprint = new ArrayList<>();
+			if (jsonElement.getAsJsonObject().get(cardCustomFieldKey.getSprint()).isJsonNull()) {
+				newSprint.add(nullSprint);
+				continue;
+			}
+			JsonArray jsonElement1 = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getSprint()).getAsJsonArray();
+			for (JsonElement element1: jsonElement1) {
+
+				Sprint testSprint = gson.fromJson(element1,
+					Sprint.class);
+				newSprint.add(testSprint);
+			}
+			testSprintList.add(newSprint);
+
+			ArrayList<Partner> partnerList = new ArrayList<>();
+
+			JsonElement partnerElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getPartner());
+			if (partnerElement != null && !partnerElement.isJsonNull()) {
+				if (partnerElement.isJsonArray()) {
+					JsonArray partnerArray = partnerElement.getAsJsonArray();
+					partnerArray.forEach(partnerSingle -> {
+						Partner testPartner = gson.fromJson(partnerSingle, Partner.class);
+						partnerList.add(testPartner);
+					});
+				} else {
+					Partner testPartner = gson.fromJson(partnerElement, Partner.class);
+					partnerList.add(testPartner);
+				}
+			} else {
+				partnerList.add(nullPartner);
+			}
+			testPartnerList.add(partnerList);
+
+
 			if (jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).isJsonNull()) {
 				storyPointList.add(0);
 				continue;
 			}
 			int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
 			storyPointList.add(storyPoint);
+
+			JsonElement flaggedElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getFlagged());
+			String flagged = (flaggedElement == null || flaggedElement.isJsonNull()) ? null : flaggedElement.getAsString();
+			flaggedList.add(flagged);
+
+			JsonElement startDateElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStartDate());
+			String startDate = (startDateElement == null || startDateElement.isJsonNull()) ? null : startDateElement.getAsString();
+			startDateList.add(startDate);
+
+			JsonElement developmentElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getDevelopment());
+			String development = (developmentElement == null || developmentElement.isJsonNull()) ? null : developmentElement.getAsString();
+			developmentList.add(development);
+
+			JsonElement qaElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getQA());
+			String qa = (qaElement == null || qaElement.isJsonNull()) ? null : qaElement.getAsString();
+			qaList.add(qa);
+
+			JsonElement rankElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getRank());
+			String rank = (rankElement == null || rankElement.isJsonNull()) ? null : rankElement.getAsString();
+			rankList.add(rank);
+
+			JsonElement issueColorElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getIssueColor());
+			String issueColor = (issueColorElement == null || issueColorElement.isJsonNull()) ? null : issueColorElement.getAsString();
+			issueColorList.add(issueColor);
+
+			JsonElement featureElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getFeature());
+			String feature = (featureElement == null || featureElement.isJsonNull()) ? null : featureElement.getAsString();
+			featureList.add(feature);
+
 		}
 		for (int index = 0; index < jiraCards.size(); index++) {
 			jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
+			jiraCards.get(index).getFields().setFlagged(flaggedList.get(index));
+			jiraCards.get(index).getFields().setStartDate(startDateList.get(index));
+			jiraCards.get(index).getFields().setDevelopment(developmentList.get(index));
+			jiraCards.get(index).getFields().setQA(qaList.get(index));
+			jiraCards.get(index).getFields().setRank(rankList.get(index));
+			jiraCards.get(index).getFields().setIssueColor(issueColorList.get(index));
+			jiraCards.get(index).getFields().setFeature(featureList.get(index));
+			ArrayList<String> finalSprint = new ArrayList<>();
+			testSprintList.get(index).stream().map(it -> finalSprint.add(it.getName()));
+			jiraCards.get(index).getFields().setSprint(testSprintList.get(index));
+			ArrayList<String> finalPartner = new ArrayList<>();
+			testPartnerList.get(index).stream().map(it -> finalPartner.add(it.getDisplayName()));
+			jiraCards.get(index).getFields().setPartner(testPartnerList.get(index));
 		}
 		return allDoneCardsResponseDTO;
 	}
@@ -550,11 +643,17 @@ public class JiraService {
 	private CardCustomFieldKey saveCustomFieldKey(List<TargetField> model) {
 		CardCustomFieldKey cardCustomFieldKey = CardCustomFieldKey.builder().build();
 		for (TargetField value : model) {
-			String lowercaseName = value.getName().toLowerCase();
-			switch (lowercaseName) {
-				case "story points", "story point estimate" -> cardCustomFieldKey.setStoryPoints(value.getKey());
-				case "sprint" -> cardCustomFieldKey.setSprint(value.getKey());
-				case "flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
+			switch (value.getName()) {
+				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setStoryPoints(value.getKey());
+				case "Sprint" -> cardCustomFieldKey.setSprint(value.getKey());
+				case "Flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
+				case "Partner" -> cardCustomFieldKey.setPartner(value.getKey());
+				case "Start date" -> cardCustomFieldKey.setStartDate(value.getKey());
+				case "development" -> cardCustomFieldKey.setDevelopment(value.getKey());
+				case "QA" -> cardCustomFieldKey.setQA(value.getKey());
+				case "Rank" -> cardCustomFieldKey.setRank(value.getKey());
+				case "Issue color" -> cardCustomFieldKey.setIssueColor(value.getKey());
+				case "Feature/Operation" -> cardCustomFieldKey.setFeature(value.getKey());
 				default -> {
 				}
 			}

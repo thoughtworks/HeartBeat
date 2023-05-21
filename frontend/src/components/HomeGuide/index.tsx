@@ -65,8 +65,9 @@ export const HomeGuide = () => {
         if (reader.result && typeof reader.result === 'string') {
           if (isValidImportedConfig(reader.result)) {
             dispatch(updateProjectCreatedState(false))
-            dispatch(updateBasicConfigState(JSON.parse(reader.result)))
-            dispatch(updateMetricsImportedData(JSON.parse(reader.result)))
+            const importedConfig = JSON.parse(reader.result)
+            dispatch(updateBasicConfigState(importedConfig))
+            dispatch(updateMetricsImportedData(importedConfig))
             navigate('/metrics')
           } else {
             setValidConfig(false)

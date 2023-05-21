@@ -7,22 +7,13 @@ import { Provider } from 'react-redux'
 const mockTitle = 'Classification Setting'
 const mockLabel = 'Distinguished by'
 const mockTargetFields = [
-  { flag: false, key: 'issue', name: 'Issue' },
+  { flag: true, key: 'issue', name: 'Issue' },
   { flag: false, key: 'type', name: 'Type' },
 ]
 
 jest.mock('@src/context/config/configSlice', () => ({
   ...jest.requireActual('@src/context/config/configSlice'),
   selectIsProjectCreated: jest.fn().mockReturnValue(false),
-}))
-jest.mock('@src/context/Metrics/metricsSlice', () => ({
-  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectMetricsContent: jest.fn().mockReturnValue({
-    targetFields: [
-      { flag: true, key: 'issue', name: 'Issue' },
-      { flag: false, key: 'type', name: 'Type' },
-    ],
-  }),
 }))
 
 let store = setupStore()

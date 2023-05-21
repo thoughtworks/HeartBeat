@@ -1,7 +1,7 @@
 import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveTargetFields, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { saveTargetFields } from '@src/context/Metrics/metricsSlice'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
@@ -17,8 +17,8 @@ interface classificationProps {
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
   const dispatch = useAppDispatch()
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
-  const classificationSettings = useAppSelector(selectMetricsContent)
-    .targetFields.filter((targetField) => targetField.flag)
+  const classificationSettings = targetFields
+    .filter((targetField) => targetField.flag)
     .map((targetField) => targetField.name)
   const [selectedClassification, setSelectedClassification] = useState(classificationSettings)
   const isAllSelected = selectedClassification.length > 0 && selectedClassification.length === targetFields.length

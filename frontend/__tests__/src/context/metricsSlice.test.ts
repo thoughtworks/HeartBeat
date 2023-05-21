@@ -217,7 +217,7 @@ describe('saveMetricsSetting reducer', () => {
       updateMetricsState(mockUpdateMetricsStateArguments)
     )
 
-    expect(savedMetricsSetting.targetFields).toEqual([])
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: false }])
     expect(savedMetricsSetting.users).toEqual(['User A', 'User B'])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
       { name: 'Doing', value: '----' },

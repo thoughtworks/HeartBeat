@@ -106,7 +106,7 @@ export const metricsSlice = createSlice({
       const { importedCrews, importedClassification, importedCycleTime } = state.importedData
       state.users = isProjectCreated ? users : users?.filter((item: string) => importedCrews?.includes(item))
       state.targetFields = isProjectCreated
-        ? []
+        ? targetFields
         : targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
             ...item,
             flag: importedClassification?.includes(item.key),

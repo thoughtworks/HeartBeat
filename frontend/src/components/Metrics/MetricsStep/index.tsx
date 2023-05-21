@@ -5,7 +5,7 @@ import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice'
 import { METRICS_CONSTANTS, REQUIRED_DATA } from '@src/constants'
-import { selectCycleTimeSettings } from '@src/context/Metrics/metricsSlice'
+import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import { LeadTimeForChanges } from '@src/components/Metrics/MetricsStep/LeadTimeForChanges'
 
@@ -13,7 +13,7 @@ export const MetricsStep = () => {
   const requiredData = useAppSelector(selectMetrics)
   const users = useAppSelector(selectUsers)
   const jiraColumns = useAppSelector(selectJiraColumns)
-  const targetFields = useAppSelector(selectTargetFields)
+  const targetFields = useAppSelector(selectMetricsContent).targetFields
   const selectedCycleTimeSettings = useAppSelector(selectCycleTimeSettings)
   const isShowCrewsAndRealDone =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||

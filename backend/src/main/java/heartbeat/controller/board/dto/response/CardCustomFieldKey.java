@@ -17,4 +17,18 @@ public class CardCustomFieldKey {
 
 	private String flagged;
 
+	private String development;
+
+	private String partner;
+
+	private String startDate;
+
+	private String QA;
+
+	private String rank;
+
+	private String issueColor;
+
+	private String feature;
+
 }

@@ -17,8 +17,10 @@ public class CardParent implements ICardFieldDisplayName {
 
 	private String name;
 
+	private String key;
+
 	public String getDisplayName() {
-		return name;
+		return key;
 	}
 
 }

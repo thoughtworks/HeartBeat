@@ -22,7 +22,9 @@ public class ClassificationCalculator {
 	private static final String NONE_KEY = "None";
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
-			"statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority", "label" };
+			"statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority", "label",
+		"customfield_10000", "customfield_10015", "customfield_10016", "customfield_10017", "customfield_10019",
+		"customfield_10020", "customfield_10021", "customfield_10027", "customfield_10037", "customfield_10038" };
 
 	public List<Classification> calculate(List<TargetField> targetFields, CardCollection cards) {
 		List<Classification> classificationFields = new ArrayList<>();
@@ -86,7 +88,9 @@ public class ClassificationCalculator {
 				Integer count = countMap.getOrDefault(displayName, 0);
 				countMap.put(displayName, count > 0 ? count + 1 : 1);
 			}
-			if (!objects.isEmpty()) {
+			if (!objects.isEmpty() && objects.get(0) instanceof List) {
+				countMap.put(NONE_KEY, countMap.get(NONE_KEY));
+			} else {
 				countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
 			}
 		}
@@ -116,6 +120,17 @@ public class ClassificationCalculator {
 				case "parent" -> tempFields.put(fieldName, jiraCardFields.getParent());
 				case "priority" -> tempFields.put(fieldName, jiraCardFields.getPriority());
 				case "label" -> tempFields.put(fieldName, jiraCardFields.getLabel());
+				case "customfield_10000" -> tempFields.put(fieldName, jiraCardFields.getDevelopment());
+				case "customfield_10015" -> tempFields.put(fieldName, jiraCardFields.getStartDate());
+				case "customfield_10016" -> tempFields.put(fieldName, jiraCardFields.getStoryPoints());
+				case "customfield_10017" -> tempFields.put(fieldName, jiraCardFields.getIssueColor());
+				case "customfield_10019" -> tempFields.put(fieldName, jiraCardFields.getRank());
+				case "customfield_10020" -> tempFields.put(fieldName, jiraCardFields.getSprint());
+				case "customfield_10021" -> tempFields.put(fieldName, jiraCardFields.getFlagged());
+				case "customfield_10027" -> tempFields.put(fieldName, jiraCardFields.getFeature());
+				case "customfield_10037" -> tempFields.put(fieldName, jiraCardFields.getPartner());
+				case "customfield_10038" -> tempFields.put(fieldName, jiraCardFields.getQA());
+				case "partner" -> tempFields.put(fieldName, jiraCardFields.getPartner());
 				default -> {
 				}
 			}

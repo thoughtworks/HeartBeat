@@ -7,6 +7,8 @@ import heartbeat.controller.board.dto.response.IssueType;
 import heartbeat.controller.board.dto.response.JiraProject;
 import heartbeat.controller.board.dto.response.Priority;
 import heartbeat.controller.board.dto.response.Reporter;
+import heartbeat.controller.board.dto.response.Partner;
+import heartbeat.controller.board.dto.response.Sprint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,5 +46,23 @@ public class JiraCardField {
 	private CardParent parent;
 
 	private String label;
+
+	private List<Sprint> sprint;
+
+	private String flagged;
+
+	private String development;
+
+	private List<Partner> partner;
+
+	private String startDate;
+
+	private String QA;
+
+	private String rank;
+
+	private String issueColor;
+
+	private String feature;
 
 }

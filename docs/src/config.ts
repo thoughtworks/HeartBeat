@@ -65,7 +65,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Report Calculation Method', link: '/en/report-calculation-method' },
       { text: 'Sequence Diagrams', link: '/en/dev-center/sequence-diagrams' },
       { text: 'Report Flow Diagrams', link: '/en/dev-center/flow-diagrams' },
-      { text: 'Export CSV', link: '/en/export-csv' },
+      { text: 'Export CSV', link: '/en/dev-center/export-csv' },
     ],
   },
 };

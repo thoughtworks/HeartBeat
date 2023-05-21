@@ -50,10 +50,10 @@ class ClassificationCalculatorTest {
 
 		Classification classification = classifications.get(0);
 		assertEquals("Fix versions", classification.getFieldName());
-		assertEquals("sprint1", classification.getPairList().get(0).getName());
-		assertEquals(0.5, classification.getPairList().get(0).getValue());
-		assertEquals("sprint2", classification.getPairList().get(1).getName());
-		assertEquals(0.5, classification.getPairList().get(1).getValue());
+		assertEquals("sprint1", classification.getPairs().get(0).getName());
+		assertEquals(0.5, classification.getPairs().get(0).getValue());
+		assertEquals("sprint2", classification.getPairs().get(1).getName());
+		assertEquals(0.5, classification.getPairs().get(1).getValue());
 	}
 
 	@Test
@@ -70,13 +70,13 @@ class ClassificationCalculatorTest {
 		assertEquals(2, classifications.size());
 
 		assertEquals("Assignee", classifications.get(1).getFieldName());
-		assertEquals("Shawn", classifications.get(1).getPairList().get(0).getName());
-		assertEquals(0.25, classifications.get(1).getPairList().get(0).getValue());
-		assertEquals("Tom", classifications.get(1).getPairList().get(1).getName());
-		assertEquals(0.25, classifications.get(1).getPairList().get(1).getValue());
+		assertEquals("Shawn", classifications.get(1).getPairs().get(0).getName());
+		assertEquals(0.25, classifications.get(1).getPairs().get(0).getValue());
+		assertEquals("Tom", classifications.get(1).getPairs().get(1).getName());
+		assertEquals(0.25, classifications.get(1).getPairs().get(1).getValue());
 		assertEquals("Reporter", classifications.get(0).getFieldName());
-		assertEquals("Jack", classifications.get(0).getPairList().get(0).getName());
-		assertEquals(0.5, classifications.get(0).getPairList().get(0).getValue());
+		assertEquals("Jack", classifications.get(0).getPairs().get(0).getName());
+		assertEquals(0.5, classifications.get(0).getPairs().get(0).getValue());
 	}
 
 	@Test
@@ -94,17 +94,17 @@ class ClassificationCalculatorTest {
 		assertEquals(4, classifications.size());
 
 		assertEquals("IssueType", classifications.get(0).getFieldName());
-		assertEquals("Task", classifications.get(0).getPairList().get(0).getName());
-		assertEquals(0.5, classifications.get(0).getPairList().get(0).getValue());
+		assertEquals("Task", classifications.get(0).getPairs().get(0).getName());
+		assertEquals(0.5, classifications.get(0).getPairs().get(0).getValue());
 		assertEquals("Card Parent", classifications.get(1).getFieldName());
-		assertEquals("test", classifications.get(1).getPairList().get(0).getName());
-		assertEquals(0.25, classifications.get(1).getPairList().get(0).getValue());
+		assertEquals("test", classifications.get(1).getPairs().get(0).getName());
+		assertEquals(0.25, classifications.get(1).getPairs().get(0).getValue());
 		assertEquals("Assignee", classifications.get(3).getFieldName());
-		assertEquals("Shawn", classifications.get(3).getPairList().get(0).getName());
-		assertEquals(0.25, classifications.get(3).getPairList().get(0).getValue());
+		assertEquals("Shawn", classifications.get(3).getPairs().get(0).getName());
+		assertEquals(0.25, classifications.get(3).getPairs().get(0).getValue());
 		assertEquals("Project", classifications.get(2).getFieldName());
-		assertEquals("heartBeat", classifications.get(2).getPairList().get(0).getName());
-		assertEquals(0.5, classifications.get(2).getPairList().get(0).getValue());
+		assertEquals("heartBeat", classifications.get(2).getPairs().get(0).getName());
+		assertEquals(0.5, classifications.get(2).getPairs().get(0).getValue());
 
 	}
 
@@ -118,7 +118,7 @@ class ClassificationCalculatorTest {
 
 		assertEquals(1, classifications.size());
 		assertEquals("Status", classifications.get(0).getFieldName());
-		assertEquals("Doing", classifications.get(0).getPairList().get(0).getName());
+		assertEquals("Doing", classifications.get(0).getPairs().get(0).getName());
 	}
 
 	@Test
@@ -131,12 +131,12 @@ class ClassificationCalculatorTest {
 
 		assertEquals(1, classifications.size());
 		assertEquals("Labels", classifications.get(0).getFieldName());
-		assertEquals("bug", classifications.get(0).getPairList().get(0).getName());
-		assertEquals(0.25, classifications.get(0).getPairList().get(0).getValue());
-		assertEquals("None", classifications.get(0).getPairList().get(1).getName());
-		assertEquals(0.5, classifications.get(0).getPairList().get(1).getValue());
-		assertEquals("frontend", classifications.get(0).getPairList().get(2).getName());
-		assertEquals(0.25, classifications.get(0).getPairList().get(2).getValue());
+		assertEquals("bug", classifications.get(0).getPairs().get(0).getName());
+		assertEquals(0.25, classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("None", classifications.get(0).getPairs().get(1).getName());
+		assertEquals(0.5, classifications.get(0).getPairs().get(1).getValue());
+		assertEquals("frontend", classifications.get(0).getPairs().get(2).getName());
+		assertEquals(0.25, classifications.get(0).getPairs().get(2).getValue());
 
 	}
 
@@ -186,10 +186,10 @@ class ClassificationCalculatorTest {
 
 		assertEquals(1, classifications.size());
 		assertEquals("Fix Versions", classifications.get(0).getFieldName());
-		assertEquals("sprint1", classifications.get(0).getPairList().get(0).getName());
-		assertEquals(0.5, classifications.get(0).getPairList().get(0).getValue());
-		assertEquals("sprint2", classifications.get(0).getPairList().get(1).getName());
-		assertEquals(0.5, classifications.get(0).getPairList().get(1).getValue());
+		assertEquals("sprint1", classifications.get(0).getPairs().get(0).getName());
+		assertEquals(0.5, classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("sprint2", classifications.get(0).getPairs().get(1).getName());
+		assertEquals(0.5, classifications.get(0).getPairs().get(1).getValue());
 	}
 
 }

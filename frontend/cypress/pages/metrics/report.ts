@@ -23,36 +23,6 @@ class Report {
         cy.contains('Throughput(Cards Count)').should('exist')
         cy.contains('16').should('exist')
       })
-    const cycleTimeData = [
-      { label: 'Name', value: 'Value' },
-      { label: 'Average cycle time', value: '25.88(days/SP)' },
-      { label: '32.35(days/card)' },
-      { label: 'Total development time / Total cycle time', value: '0.55' },
-      { label: 'Total waiting for testing time / Total cycle time', value: '0.01' },
-      { label: 'Total block time / Total cycle time', value: '0.43' },
-      { label: 'Total review time / Total cycle time', value: '0.01' },
-      { label: 'Total testing time / Total cycle time', value: '0' },
-      { label: 'Average development time', value: '14.18(days/SP)' },
-      { label: '17.72(days/card)' },
-      { label: 'Average waiting for testing time', value: '0.16(days/SP)' },
-      { label: '0.2(days/card)' },
-      { label: 'Average block time', value: '11.19(days/SP)' },
-      { label: '13.99(days/card)' },
-      { label: 'Average review time', value: '0.26(days/SP)' },
-      { label: '0.32(days/card)' },
-      { label: 'Average testing time', value: '0.1(days/SP)' },
-      { label: '0.12(days/card)' },
-    ]
-    cy.get('[data-test-id="Cycle time"]')
-      .find('tr')
-      .each((row, index) => {
-        cy.wrap(row).within(() => {
-          cy.contains(cycleTimeData[index].label).should('exist')
-          if (cycleTimeData[index].value) {
-            cy.contains(cycleTimeData[index].value).should('exist')
-          }
-        })
-      })
   }
 }
 

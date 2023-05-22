@@ -36,7 +36,7 @@ public class ClassificationFixture {
 							.fixVersions(List.of(FixVersion.builder().name("sprint1").build(),
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
-							.parent(CardParent.builder().name("test").build())
+							.parent(CardParent.builder().key("test").build())
 							.label("bug")
 							.build())
 						.build())
@@ -56,7 +56,7 @@ public class ClassificationFixture {
 							.fixVersions(List.of(FixVersion.builder().name("sprint1").build(),
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
-							.parent(CardParent.builder().name("ADM-442").build())
+							.parent(CardParent.builder().key("ADM-442").build())
 							.label("frontend")
 							.build())
 						.build())
@@ -94,7 +94,7 @@ public class ClassificationFixture {
 							.fixVersions(List.of(FixVersion.builder().name("sprint1").build(),
 									FixVersion.builder().name("sprint1").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
-							.parent(CardParent.builder().name("test").build())
+							.parent(CardParent.builder().key("test").build())
 							.label("bug")
 							.build())
 						.build())
@@ -106,7 +106,7 @@ public class ClassificationFixture {
 							.fixVersions(List.of(FixVersion.builder().name("sprint2").build(),
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
-							.parent(CardParent.builder().name("test").build())
+							.parent(CardParent.builder().key("test").build())
 							.label("bug")
 							.build())
 						.build())
@@ -132,7 +132,7 @@ public class ClassificationFixture {
 							.fixVersions(List.of(FixVersion.builder().name("sprint1").build(),
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
-							.parent(CardParent.builder().name("test").build())
+							.parent(CardParent.builder().key("test").build())
 							.label("bug")
 							.build())
 						.build())
@@ -152,7 +152,7 @@ public class ClassificationFixture {
 							.fixVersions(List.of(FixVersion.builder().name("sprint1").build(),
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
-							.parent(CardParent.builder().name("ADM-442").build())
+							.parent(CardParent.builder().key("ADM-442").build())
 							.label("frontend")
 							.build())
 						.build())

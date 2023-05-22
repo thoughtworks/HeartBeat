@@ -308,6 +308,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(true)
 			.metrics(List.of("lead time for changes"))
 			.buildKiteSetting(buildKiteSetting)
 			.codebaseSetting(codebaseSetting)

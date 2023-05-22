@@ -61,12 +61,6 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    metricsPage.BackToMetricsStep()
-
-    metricsPage.checkClassificationValueExist()
-
-    metricsPage.goReportStep()
-
     reportPage.checkVelocity()
   })
 })

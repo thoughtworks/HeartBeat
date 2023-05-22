@@ -64,8 +64,8 @@ layout: ../../layouts/MainLayout.astro
 - Crews setting
 - Real done
 - Target Fields(Classification setting in metrics page)
--
-- ### Calculate logic
+
+### Calculate logic
 
 - Get all cardCollection information (cardsNumber, fields in baseInfo), targetFields.
 - Filter targetFields which flag is true (which were selected in Metrics page)
@@ -74,8 +74,8 @@ layout: ../../layouts/MainLayout.astro
   3. count the times specific classification shows.
   4. calculate proportion about different specific classifications to each targetField.
   5. output the fieldName, specific classification, proportion.
--
-- ### Definition
+
+### Definition
 
 | Metrics    | Description                                                   | Note |
 | :--------- | :------------------------------------------------------------ | :--- |
@@ -127,16 +127,12 @@ layout: ../../layouts/MainLayout.astro
 
 - Get all deployment information according to token、date、organization and pipeline name.
 - For each selected step
-
   1. Count DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos)
   2. Calculate total recovery time and recovery times:
-
-  - `recovery time = pipeline create time of passed deployment - pipeline create time of first failed deployment since last passed`
-  - `total recovery time is sum of recovery time`
-  - `recovery times is number of deployment failed to passed`
-
+     - `recovery time = pipeline create time of passed deployment - pipeline create time of first failed deployment since last passed`
+     - `total recovery time is sum of recovery time`
+     - `recovery times is number of deployment failed to passed`
   3. Calculate Mean Time To Recovery: total recovery time divided by the recovery times.
-
 - Calculate Average Mean Time To Recovery: sum of mean time to recovery for each selected step divided by the total
   number of selected step.
 
@@ -162,18 +158,14 @@ layout: ../../layouts/MainLayout.astro
 
 - Get all deployment information according to token、date、organization and pipeline name.
 - For each selected step
-
   1. Count DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos)
   2. Calculate totalTimesOfPipeline, failedTimesOfPipeline, totalFailedTimes, totalTimes:
-
-  - `failedTimesOfPipeline = number of failed deployInfos`
-  - `passedTimesOfPipeline = number of passed deployInfos`
-  - `totalTimesOfPipeline = failedTimesOfPipeline + passedTimesOfPipeline`
-  - `totalFailedTimes += failedTimesOfPipeline`
-  - `totalTimes += totalTimesOfPipeline`
-
+     - `failedTimesOfPipeline = number of failed deployInfos`
+     - `passedTimesOfPipeline = number of passed deployInfos`
+     - `totalTimesOfPipeline = failedTimesOfPipeline + passedTimesOfPipeline`
+     - `totalFailedTimes += failedTimesOfPipeline`
+     - `totalTimes += totalTimesOfPipeline`
   3. Calculate Change Failure Rate: `failureRate = failedTimesOfPipeline / totalTimesOfPipeline`
-
 - Calculate Average Change Failure Rate: `AverageFailureRate = totalFailedTimes/totalTimes`
 
 ### Definition

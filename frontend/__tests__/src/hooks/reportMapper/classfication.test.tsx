@@ -7,15 +7,15 @@ describe('classification data mapper', () => {
       pairs: [
         {
           name: 'Feature Work - Planned',
-          value: '57.14%',
+          value: 0.5714,
         },
         {
           name: 'Operational Work - Planned',
-          value: '35.71%',
+          value: 0.3571,
         },
         {
           name: 'Feature Work - Unplanned',
-          value: '7.14%',
+          value: 0.0714,
         },
       ],
     },

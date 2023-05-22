@@ -59,7 +59,9 @@ public class LeadTimeInfo {
 				this.prDelayTime = TimeUtil.convertMillisecondToMinutes(leadTime.getPrDelayTime()).toString();
 			}
 
-			this.totalTime = TimeUtil.convertMillisecondToMinutes(leadTime.getTotalTime()).toString();
+			if (leadTime.getTotalTime() != 0.0) {
+				this.totalTime = TimeUtil.convertMillisecondToMinutes(leadTime.getTotalTime()).toString();
+			}
 		}
 	}
 

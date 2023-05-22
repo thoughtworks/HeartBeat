@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,8 +196,56 @@ public class GenerateReporterService {
 			return;
 		}
 
-		List<PipelineCsvInfo> pipelineData = generateCsvForPipelineWithCodebase(request.getCodebaseSetting(),
+		List<PipelineCsvInfo> leadTimeData = generateCsvForPipelineWithCodebase(request.getCodebaseSetting(),
 				request.getStartTime(), request.getEndTime());
+
+		List<PipelineCsvInfo> pipelineData = generateCsvForPipelineWithoutCodebase(
+				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime());
+	}
+
+	private List<PipelineCsvInfo> generateCsvForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
+			String startTime, String endTime) {
+
+		List<String> requiredStates = List.of("passed", "failed");
+		List<PipelineCsvInfo> pipelineCsvInfos = new ArrayList<>();
+
+		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvList) {
+			List<BuildKiteBuildInfo> buildInfos = buildInfosList.stream()
+				.filter(entry -> entry.getKey().equals(deploymentEnvironment.getId()))
+				.findFirst()
+				.map(Map.Entry::getValue)
+				.orElse(new ArrayList<>());
+
+			List<PipelineCsvInfo> pipelineCsvInfoList = buildInfos.stream().filter(buildInfo -> {
+				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
+						deploymentEnvironment.getStep(), requiredStates, startTime, endTime);
+				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
+			}).map(buildInfo -> {
+				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), requiredStates,
+						startTime, endTime);
+
+				long jobFinishTime = new Date(Long.parseLong(deployInfo.getJobFinishTime())).getTime();
+				long pipelineStartTime = new Date(Long.parseLong(deployInfo.getPipelineCreateTime())).getTime();
+
+				LeadTime noMergeDelayTime = LeadTime.builder()
+					.commitId(deployInfo.getCommitId())
+					.pipelineCreateTime(pipelineStartTime)
+					.jobFinishTime(jobFinishTime)
+					.pipelineDelayTime(jobFinishTime - pipelineStartTime)
+					.build();
+
+				return PipelineCsvInfo.builder()
+					.pipeLineName(deploymentEnvironment.getName())
+					.stepName(deploymentEnvironment.getStep())
+					.buildInfo(buildInfo)
+					.deployInfo(deployInfo)
+					.leadTimeInfo(new LeadTimeInfo(noMergeDelayTime))
+					.build();
+			}).toList();
+
+			pipelineCsvInfos.addAll(pipelineCsvInfoList);
+		}
+		return pipelineCsvInfos;
 	}
 
 	private List<PipelineCsvInfo> generateCsvForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,

@@ -18,7 +18,7 @@ In HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time a
 # 2 Support tools
 
 Here is the user manaul for Version 1 on 2020/06. For now, we just can support Jira/Buildkite/Github to generate the corresponding metrics data.
-| Type | board | pipeline | Repo |
+| Type | Board | Pipeline | Repo |
 | ------------- | --------------------- | ---------------------------------------- | -------------------------- |
 | Support tools | Jira √ </br> Trello × | Buildkite √ </br>Teamcity × </br> GoCD × | Github √ </br> Bitbucket × |
 
@@ -49,7 +49,11 @@ Users need to select a period of time, then all of the data that follows is base
 1. **Regular Calendar(Weekend Considered):** If you select this item, it means all data will exclude the weekend.
 2. **Calendar with Chinese Holiday:** If you select this item, it means all data will exclude the weekend and Chinese holiday. So if the time period you selected contains Chinese holiday, you need to select this item.
 
-All need to select which data you want to get, for now, we support six metrics data (Image 3-3).
+All need to select which data you want to get, for now, we support seven metrics data (Image 3-3). Those seven metrics are `Deployment Frequency (DF)`, `Lead Time for changes (LTC)`, `Mean Time To Recover (MTTR)`, `Change Failure Rate (CFR)`, and `Velocity`, `Cycle time`, `Classification`, where
+- `Velocity` : includes how many story points and cards we have completed within selected time period.
+- `Cycle time`: the time it take for each card start to do until move to done.
+- `Classification`: provide different dimensions to view how much efforts team spent within selected time period.
+ 
 
 ![Image 3-3](https://user-images.githubusercontent.com/995849/90855755-ef7f4280-e3b2-11ea-8b72-923f544db508.png)\
 _Image 3-3，Metrics Data_
@@ -58,6 +62,20 @@ _Image 3-3，Metrics Data_
 
 Because all metrics data from different tools that your projects use. Need to have the access to these tools then you can get the data. So after select time period and metrics data, then you need to input the config for different tools(Image 3-4).
 
+According to your selected required data, you need to input account settings for the respective data source. Below is the mapping between your selected data to data source.
+ 
+                
+| Required Data  | Datasource  |
+|---|---|
+| Velocity  | Board  |
+| Cycle time  | Board  |
+| Classification  | Board  |
+| Lead time for changes  | Repo，Pipeline  |
+| Deployment frequency  | Pipeline |
+| Change failure rate  | Pipeline  |
+| Mean time to recovery  |  Pipeline |
+
+
 ![Image 3-4](https://user-images.githubusercontent.com/995849/90856214-0d00dc00-e3b4-11ea-9f51-7fc0bd6a5ab8.png)\
 Image 3-4，Project config
 
@@ -65,34 +83,34 @@ Image 3-4，Project config
 |Items|Description|
 |---|---|
 |Board Type|Support two types of board: Classic Jira and Next-gen Jira|
-|Board Id|The value of BoardId is number. You need to find it from your team’s Jira board URL.<br/>For Example: <br/> 1. Your jira board URL like below, then 2 is the boardId <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2 <br/> 2. Your jira board URL like below, then rapidView=3, 3 is the boardId <br/> https://pokergame.atlassian.net/secure/RapidBoard.jspa?projectKey=KAN1&useStoredSettings=true&rapidView=3 |
-|Project|Project is the project key for your project. Also can find it from your team’s Jira board URL. <br/> For Example: <br/> 1. Your jira board URL like below, then ADM is the project <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2<br/> 2. Your jira board URL like below, then projectKey=KAN1, KAN1 is the project <br/> https://pokergame.atlassian.net/secure/RapidBoard.jspa?projectKey=KAN1&useStoredSettings=true&rapidView=3 |
-|Site|Site is the domain for your jira board, like below URL, dorametrics is the site <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2 |
+|Board Id|The value of BoardId is number. You need to find it from your team’s Jira board URL.<br/>For Example: <br/> 1. Your jira board URL like below, then `2` is the boardId <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2 <br/> 2. Your jira board URL like below, then rapidView=3, `3` is the boardId <br/> https://pokergame.atlassian.net/secure/RapidBoard.jspa?projectKey=KAN1&useStoredSettings=true&rapidView=3 |
+|ProjectKey|You can find it from your team’s Jira board URL. <br/> For Example: <br/> 1. Your jira board URL like below, then `ADM` is the projectkey <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2<br/> 2. Your jira board URL like below, then projectKey is `KAN1` <br/> https://pokergame.atlassian.net/secure/RapidBoard.jspa?projectKey=KAN1&useStoredSettings=true&rapidView=3 |
+|Site|Site is the domain for your jira board, like below URL, `dorametrics` is the site <br/> https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2 |
 |Email|The email can access to the Jira board |
-|Token|Use the token for the email you used, https://id.atlassian.com/manage-profile/security/api-tokens |
+|Token|Generate a new token with below link, https://id.atlassian.com/manage-profile/security/api-tokens |
 
 **The details for Pipeline:**
 |Items|Description|
 |---|---|
-|PipelineTool| The pipeline tool you team use, but just support BuildKit in Version 1|
-|Token|The token can access to pipeline tool, https://buildkite.com/user/api-access-tokens|
+|PipelineTool| The pipeline tool you team use, currently heartbeat only support buildkite|
+|Token|Generate buildkite token with below link, https://buildkite.com/user/api-access-tokens|
 
 **The details for SourceControl:**
 |Items|Description|
 |---|---|
-|SourceControl|The source control tool you team use, but just support GitHub in Version 1|
-|Token|The token can access to source control tool, https://github.com/settings/tokens|
+|SourceControl|The source control tool you team use, currently heartbeat only support Github|
+|Token|Generate Github token with below link(classic one), https://github.com/settings/tokens|
 
 ### 3.2 Config Metrics data
 
-After inputting the details info, users need to click the “Verify” button to verify if can access to these tool. Once can access, can click the “Next” button go to next page -- Config Metrics page(Image 3-5，Image 3-6，Image 3-7)
+After inputting the details info, users need to click the `Verify` button to verify if can access to these tool. Once verified, they could click the `Next` button go to next page -- Config Metrics page(Image 3-5，Image 3-6，Image 3-7)
 
 #### 3.2.1 Config Crews/Cycle Time
 
 ![Image 3-5](https://user-images.githubusercontent.com/995849/90856562-c6f84800-e3b4-11ea-80ea-f1a267f1dcd7.png)\
 _Image 3-5, Crews/Cycle Time config_
 
-**Crew Settings:** In the last page, it will get all the tickets that finished in the time period selected in the last step. So also get the all assignees list that assigned for these done tickets. In the crew setting, will list all assignees. Users can select any assignees or all assignees to generate the report.  
+**Crew Settings:** You could select your team members from a list get from board source. The list will include the assignees for those tickets that finished in the time period selected in the last step. 
 **Cycle Time:** It will list all columns for the current active jira board. Then users need to map the each column to the supported columns. Like, if your board have “in progress” column, it means developer doing this ticket, so it should be mapping with “In Dev” for the list we provide.
 
 | Status              | Description                                                                                                                            |
@@ -112,18 +130,20 @@ _Image 3-5, Crews/Cycle Time config_
 ![Image 3-6](https://user-images.githubusercontent.com/995849/89784259-f56f5b00-db4a-11ea-8a58-d6238e81df3c.png)\
 _Image 3-6，Classification Settings_
 
-In classification settings, it will list all Context fields for your jira board. Users can select anyone to get the data for them.
+In classification settings, it will list all Context fields for your jira board. Users can select anyone to get the data for them. And according to your selection, in the export page, you will see the classification report to provide more insight with your board data.
 
 #### 3.2.3 Deployment Frequency/Lead Time for Changes
 
 ![Image 3-7](https://user-images.githubusercontent.com/995849/89784260-f6a08800-db4a-11ea-8ce2-87983363aa18.png)\
 _Image 3-7，Settings for Pipeline_
 
+They are sharing the similar settings which you need to specify the pipeline step so that Heartbeat will know in which pipeline and step, team consider it as deploy to PROD. So that we could use it to calculate metrics.
+
 | Items         | Description                         |
 | ------------- | ----------------------------------- |
 | Organization  | The organization for your pipelines |
 | Pipeline Name | Your pipeline name                  |
-| Steps         | Your pipeline steps name            |
+| Steps         | The pipeline step that consider as deploy to PROD            |
 
 ## 3.2 Export and import config info
 
@@ -160,7 +180,10 @@ _Image 3-11，Cycle Time Report_
 
 ### 3.3.3 Classification
 
-![Image 3-12](https://user-images.githubusercontent.com/995849/89784278-fdc79600-db4a-11ea-820a-fc409a89b86a.png)\
+It will show the classification data of Board based on your selection on `Classification Settings` in metrics page. 
+The percentage value represent the count of that type tickets vs total count of tickets. 
+
+![Image 3-12](docs/img/Classification-Export.png)\
 _Image 3-12，Classification Report_
 
 ### 3.3.4 Deployment Frequency
@@ -250,7 +273,12 @@ In the current version, if you add or delete some columns for the jira board, it
 | Kanban        | It will change finish time for all last column tickets to add/delete column time                                                          | If delete non-last column: It will change finish time for all last column tickets to add/delete column time<br/>If delete the last column: It will change finish time for current last column tickets to add/delete column time |
 | Scrum         | finish time for all last column tickets to add/delete column time<br/>All finished ticket’s finish time changed to add/delete column time | If delete the last column: It will change finish time for current last column tickets to add/delete column time                                                                                                                 |
 
-For now, we don’t have a good solution to resolve this issue.
+## 4.2 No crew settings for Pipeline and Github 
+In case that not only your team but also other team was contributing on the same repo and pipeline, the metrics (`Lead time for change`, `deployment frenquency`, `change failure rate`, `mean time to recovery`) might not be as accurate which might include the other team's contribution. Because currently Heartbeat could't not differentiate which pipeline trigger by your team or other team within specified time range. The feature is still under development. 
+
+## 4.3 Change failure rate and MTTR
+Currently the calculated metrics for change failure rate might not be precise in some scenarios. 
+And MTTR is still under development. 
 
 # 5 Instructions
 

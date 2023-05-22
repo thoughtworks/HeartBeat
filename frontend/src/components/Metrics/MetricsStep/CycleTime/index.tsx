@@ -8,6 +8,7 @@ import {
   saveCycleTimeSettings,
   selectCycleTimeWarningMessage,
   selectMetricsContent,
+  saveDoneColumn
 } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
 import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
@@ -23,7 +24,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
   const warningMessage = useAppSelector(selectCycleTimeWarningMessage)
   const [cycleTimeOptions, setCycleTimeOptions] = useState(cycleTimeSettings)
 
-  const saveCycleTimeOptions = (name: string, value: string) =>
+  const saveCycleTimeOptions = (name: string, value: string) => {
     setCycleTimeOptions(
       cycleTimeOptions.map((item) => {
         if (item.name === name) {
@@ -33,6 +34,8 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
         return item
       })
     )
+    dispatch(saveDoneColumn([]))
+  }
 
   useEffect(() => {
     setIsError(cycleTimeOptions.filter((item) => item.value === 'Done').length > 1)

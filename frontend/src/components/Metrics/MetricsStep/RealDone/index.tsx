@@ -1,5 +1,5 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { saveDoneColumn, selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
@@ -34,10 +34,6 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const status = selectedDoneColumns.length < 1 ? doneStatus : filteredStatus
   const [selectedDoneStatus, setSelectedDoneStatus] = useState([] as string[])
   const isAllSelected = savedDoneColumns.length === status.length
-
-  useEffect(() => {
-    setSelectedDoneStatus([])
-  }, [selectedCycleTimeSettings])
 
   const handleRealDoneChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value

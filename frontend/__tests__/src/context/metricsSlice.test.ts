@@ -51,8 +51,8 @@ const mockJiraResponse = {
     {
       key: 'indeterminate',
       value: {
-        name: 'Doing',
-        statuses: ['ANALYSIS'],
+        name: 'Done',
+        statuses: ['DONE', 'CLOSED'],
       },
     },
     {
@@ -181,7 +181,7 @@ describe('saveMetricsSetting reducer', () => {
     })
   })
 
-  it('should update metricsState when its value changed given isProjectCreated is false', () => {
+  it('should update metricsState when its value changed given isProjectCreated is false and selectedDoneColumns', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
@@ -194,9 +194,10 @@ describe('saveMetricsSetting reducer', () => {
           importedCrews: ['User B', 'User C'],
           importedClassification: ['issuetype'],
           importedCycleTime: {
-            importedCycleTimeSettings: [{ Doing: 'Analysis' }, { Testing: 'mockOption' }],
+            importedCycleTimeSettings: [{ Done: 'Done' }, { Testing: 'mockOption' }],
             importedTreatFlagCardAsBlock: true,
           },
+          importedDoneStatus: ['DONE'],
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
@@ -205,9 +206,34 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }])
     expect(savedMetricsSetting.users).toEqual(['User B'])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
-      { name: 'Doing', value: 'Analysis' },
+      { name: 'Done', value: 'Done' },
       { name: 'Testing', value: '----' },
     ])
+    expect(savedMetricsSetting.doneColumn).toEqual(['DONE'])
+  })
+
+  it('should update metricsState when its value changed given isProjectCreated is false and no selectedDoneColumns', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Done: 'Review' }, { Testing: 'mockOption' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+          importedDoneStatus: ['DONE'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.doneColumn).toEqual([])
   })
 
   it('should update metricsState when its value changed given isProjectCreated is true', () => {
@@ -223,9 +249,10 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: false }])
     expect(savedMetricsSetting.users).toEqual(['User A', 'User B'])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
-      { name: 'Doing', value: '----' },
+      { name: 'Done', value: '----' },
       { name: 'Testing', value: '----' },
     ])
+    expect(savedMetricsSetting.doneColumn).toEqual([])
   })
 
   it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {

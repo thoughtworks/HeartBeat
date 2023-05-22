@@ -116,6 +116,24 @@ const setCycleTimeSettings = (
     return { name: controlName, value: defaultOptionValue }
   })
 }
+
+const setSelectDoneColumns = (
+  jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
+  cycleTimeSettings: { name: string; value: string }[],
+  importedDoneStatus: string[]
+) => {
+  const doneStatus =
+    jiraColumns?.find((item) => item.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
+  const selectedDoneColumns = cycleTimeSettings
+    ?.filter(({ value }) => value === METRICS_CONSTANTS.doneValue)
+    .map(({ name }) => name)
+  const filteredStatus = jiraColumns
+    ?.filter(({ value }) => selectedDoneColumns.includes(value.name))
+    .flatMap(({ value }) => value.statuses)
+  const status = selectedDoneColumns?.length < 1 ? doneStatus : filteredStatus
+  return status.filter((item: string) => importedDoneStatus?.includes(item))
+}
+
 export const metricsSlice = createSlice({
   name: 'metrics',
   initialState,
@@ -166,7 +184,7 @@ export const metricsSlice = createSlice({
 
     updateMetricsState: (state, action) => {
       const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
-      const { importedCrews, importedClassification, importedCycleTime } = state.importedData
+      const { importedCrews, importedClassification, importedCycleTime, importedDoneStatus } = state.importedData
       state.users = isProjectCreated ? users : setSelectUsers(users, importedCrews)
       state.targetFields = isProjectCreated ? targetFields : setSelectTargetFields(targetFields, importedClassification)
 
@@ -209,6 +227,9 @@ export const metricsSlice = createSlice({
       }
 
       state.cycleTimeSettings = setCycleTimeSettings(jiraColumns, importedCycleTime.importedCycleTimeSettings)
+      state.doneColumn = isProjectCreated
+        ? []
+        : setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus)
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {

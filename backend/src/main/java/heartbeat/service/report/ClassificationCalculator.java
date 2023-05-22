@@ -22,9 +22,10 @@ public class ClassificationCalculator {
 	private static final String NONE_KEY = "None";
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
-			"statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority", "label",
-		"customfield_10000", "customfield_10015", "customfield_10016", "customfield_10017", "customfield_10019",
-		"customfield_10020", "customfield_10021", "customfield_10027", "customfield_10037", "customfield_10038" };
+			"timetracking", "statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority",
+			"label", "customfield_10000", "customfield_10015", "customfield_10016", "customfield_10017",
+			"customfield_10019", "customfield_10020", "customfield_10021", "customfield_10027", "customfield_10037",
+			"customfield_10038" };
 
 	public List<Classification> calculate(List<TargetField> targetFields, CardCollection cards) {
 		List<Classification> classificationFields = new ArrayList<>();
@@ -88,9 +89,10 @@ public class ClassificationCalculator {
 				Integer count = countMap.getOrDefault(displayName, 0);
 				countMap.put(displayName, count > 0 ? count + 1 : 1);
 			}
-			if (!objects.isEmpty() && objects.get(0) instanceof List) {
+			if (!objects.isEmpty() && objects.get(0) instanceof List && ((List<?>) objects.get(0)).isEmpty()) {
 				countMap.put(NONE_KEY, countMap.get(NONE_KEY));
-			} else {
+			}
+			else {
 				countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
 			}
 		}
@@ -129,8 +131,9 @@ public class ClassificationCalculator {
 				case "customfield_10021" -> tempFields.put(fieldName, jiraCardFields.getFlagged());
 				case "customfield_10027" -> tempFields.put(fieldName, jiraCardFields.getFeature());
 				case "customfield_10037" -> tempFields.put(fieldName, jiraCardFields.getPartner());
-				case "customfield_10038" -> tempFields.put(fieldName, jiraCardFields.getQA());
+				case "customfield_10038" -> tempFields.put(fieldName, jiraCardFields.getQualityAssurance());
 				case "partner" -> tempFields.put(fieldName, jiraCardFields.getPartner());
+				case "timetracking" -> tempFields.put(fieldName, jiraCardFields.getTimetracking());
 				default -> {
 				}
 			}

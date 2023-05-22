@@ -17,4 +17,5 @@ public class Sprint implements ICardFieldDisplayName {
 	public String getDisplayName() {
 		return name;
 	}
+
 }

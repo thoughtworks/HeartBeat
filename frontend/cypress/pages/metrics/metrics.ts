@@ -95,7 +95,8 @@ class Metrics {
 
   private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
 
-  private readonly backButton = () => cy.contains('Next')
+  private readonly nextButton = () => cy.contains('Next')
+  private readonly backButton = () => cy.contains('Back')
 
   checkCycleTime() {
     this.cycleTimeSettingTitle()
@@ -160,7 +161,16 @@ class Metrics {
   }
 
   goReportStep() {
+    this.nextButton().click()
+  }
+
+  BackToMetricsStep() {
     this.backButton().click()
+  }
+
+  checkClassificationValueExist() {
+    this.classificationSelect().click()
+    cy.get('input[type="checkbox"]').should('be.checked')
   }
 }
 

@@ -99,12 +99,80 @@ class JiraServiceTest {
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
-		List<TargetField> expectTargetField = List.of(
+		List<TargetField> expectTargetField = List.of(new TargetField("customfield_10020", "Sprint", false),
+				new TargetField("customfield_10021", "Flagged", false),
+				new TargetField("customfield_10000", "development", false),
+				new TargetField("priority", "Priority", false), new TargetField("timetracking", "Time tracking", false),
+				new TargetField("customfield_10037", "Partner", false),
+				new TargetField("customfield_10015", "Start date", false),
 				new TargetField("customfield_10016", "Story point estimate", false),
-				new TargetField("priority", "Priority", false),
-				new TargetField("timetracking", "Time tracking", false));
+				new TargetField("customfield_10038", "QA", false),
+				new TargetField("customfield_10027", "Feature/Operation", false),
+				new TargetField("customfield_10017", "Issue color", false),
+				new TargetField("customfield_10019", "Rank", false));
+
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
-			.replaceAll("storyPoints", "customfield_10016");
+			.replaceAll("sprint", "customfield_10020")
+			.replaceAll("partner", "customfield_10037")
+			.replaceAll("flagged", "customfield_10021")
+			.replaceAll("development", "customfield_10000");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		jiraService.shutdownExecutor();
+
+		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
+	}
+
+	@Test
+	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfigWithError()
+			throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(
+				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		List<TargetField> expectTargetField = List.of(new TargetField("customfield_10020", "Sprint", false),
+				new TargetField("customfield_10021", "Flagged", false),
+				new TargetField("customfield_10000", "development", false),
+				new TargetField("priority", "Priority", false), new TargetField("timetracking", "Time tracking", false),
+				new TargetField("customfield_10037", "Partner", false),
+				new TargetField("customfield_10015", "Start date", false),
+				new TargetField("customfield_10016", "Story point estimate", false),
+				new TargetField("customfield_10038", "QA", false),
+				new TargetField("customfield_10027", "Feature/Operation", false),
+				new TargetField("customfield_10017", "Issue color", false),
+				new TargetField("customfield_10019", "Rank", false));
+		String allDoneCards = objectMapper
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER_WITH_ERROR().build())
+			.replaceAll("storyPoints", "customfield_10016")
+			.replaceAll("flagged", "customfield_10021")
+			.replaceAll("sprint", "customfield_10020")
+			.replaceAll("startDate", "customfield_10015")
+			.replaceAll("partner", "customfield_10037")
+			.replaceAll("development", "customfield_10000")
+			.replaceAll("qualityAssurance", "customfield_10038")
+			.replaceAll("rank", "customfield_10019")
+			.replaceAll("issueColor", "customfield_10017")
+			.replaceAll("feature", "customfield_10027");
 
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -138,10 +206,17 @@ class JiraServiceTest {
 		String jql = String.format(
 				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
-		List<TargetField> expectTargetField = List.of(
+		List<TargetField> expectTargetField = List.of(new TargetField("customfield_10020", "Sprint", false),
+				new TargetField("customfield_10021", "Flagged", false),
+				new TargetField("customfield_10000", "development", false),
+				new TargetField("priority", "Priority", false), new TargetField("timetracking", "Time tracking", false),
+				new TargetField("customfield_10037", "Partner", false),
+				new TargetField("customfield_10015", "Start date", false),
 				new TargetField("customfield_10016", "Story point estimate", false),
-				new TargetField("priority", "Priority", false),
-				new TargetField("timetracking", "Time tracking", false));
+				new TargetField("customfield_10038", "QA", false),
+				new TargetField("customfield_10027", "Feature/Operation", false),
+				new TargetField("customfield_10017", "Issue color", false),
+				new TargetField("customfield_10019", "Rank", false));
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER().build())
 			.replaceAll("storyPoints", "customfield_10016");
 
@@ -164,7 +239,7 @@ class JiraServiceTest {
 		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
 		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigDTO.getUsers()).hasSize(1);
-		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(12);
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
@@ -182,10 +257,17 @@ class JiraServiceTest {
 				"status in ('%s', '%s') AND (status changed to '%s' during (%s, %s) or status changed to '%s' during (%s, %s))",
 				"DONE", "COMPLETE", "DONE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime(),
 				"COMPLETE", boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
-		List<TargetField> expectTargetField = List.of(
+		List<TargetField> expectTargetField = List.of(new TargetField("customfield_10020", "Sprint", false),
+				new TargetField("customfield_10021", "Flagged", false),
+				new TargetField("customfield_10000", "development", false),
+				new TargetField("priority", "Priority", false), new TargetField("timetracking", "Time tracking", false),
+				new TargetField("customfield_10037", "Partner", false),
+				new TargetField("customfield_10015", "Start date", false),
 				new TargetField("customfield_10016", "Story point estimate", false),
-				new TargetField("priority", "Priority", false),
-				new TargetField("timetracking", "Time tracking", false));
+				new TargetField("customfield_10038", "QA", false),
+				new TargetField("customfield_10027", "Feature/Operation", false),
+				new TargetField("customfield_10017", "Issue color", false),
+				new TargetField("customfield_10019", "Rank", false));
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
 			.replaceAll("storyPoints", "customfield_10016");
 
@@ -208,7 +290,7 @@ class JiraServiceTest {
 		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
 		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigDTO.getUsers()).hasSize(1);
-		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(12);
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
@@ -457,8 +539,8 @@ class JiraServiceTest {
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
 
-		assertThat(cardCollection.getStoryPointSum()).isEqualTo(0);
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
+		assertThat(cardCollection.getStoryPointSum()).isEqualTo(8);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(4);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getCardCycleTime().getTotal()).isEqualTo(16);
 	}

@@ -337,44 +337,43 @@ public class JiraService {
 			JsonElement sprintData = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getSprint());
 			if ((sprintData == null || sprintData.isJsonNull())) {
 				detailSprintList.add(emptySprint);
-				continue;
 			}
-			JsonArray sprintElementList = jsonElement.getAsJsonObject()
-				.get(cardCustomFieldKey.getSprint())
-				.getAsJsonArray();
-			for (JsonElement sprintElement : sprintElementList) {
-				Sprint sprint = gson.fromJson(sprintElement, Sprint.class);
-				detailSprintList.add(sprint);
+			else {
+				JsonArray sprintElementList = jsonElement.getAsJsonObject()
+					.get(cardCustomFieldKey.getSprint())
+					.getAsJsonArray();
+				for (JsonElement sprintElement : sprintElementList) {
+					Sprint sprint = gson.fromJson(sprintElement, Sprint.class);
+					detailSprintList.add(sprint);
+				}
 			}
 			sprintList.add(detailSprintList);
 
 			ArrayList<Partner> detailPartnerList = new ArrayList<>();
 
-			JsonElement partnerElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getPartner());
-			if (partnerElement != null && !partnerElement.isJsonNull()) {
-				if (partnerElement.isJsonArray()) {
-					JsonArray partnerArray = partnerElement.getAsJsonArray();
-					partnerArray.forEach(partnerSingle -> {
-						Partner partner = gson.fromJson(partnerSingle, Partner.class);
-						detailPartnerList.add(partner);
-					});
-				}
-				else {
+			JsonElement partnerData = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getPartner());
+			if ((partnerData == null || partnerData.isJsonNull())) {
+				detailPartnerList.add(emptyPartner);
+			}
+			else {
+				JsonArray partnerElementList = jsonElement.getAsJsonObject()
+					.get(cardCustomFieldKey.getPartner())
+					.getAsJsonArray();
+				for (JsonElement partnerElement : partnerElementList) {
 					Partner partner = gson.fromJson(partnerElement, Partner.class);
 					detailPartnerList.add(partner);
 				}
 			}
-			else {
-				detailPartnerList.add(emptyPartner);
-			}
 			partnerList.add(detailPartnerList);
 
-			if (jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).isJsonNull()) {
+			JsonElement storyPoints = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints());
+			if (storyPoints == null || storyPoints.isJsonNull()) {
 				storyPointList.add(0);
-				continue;
 			}
-			int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
-			storyPointList.add(storyPoint);
+			else {
+				int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
+				storyPointList.add(storyPoint);
+			}
 
 			JsonElement flaggedElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getFlagged());
 			String flagged = (flaggedElement == null || flaggedElement.isJsonNull()) ? null
@@ -425,10 +424,10 @@ public class JiraService {
 				jiraCards.get(index).getFields().setIssueColor(issueColorList.get(index));
 				jiraCards.get(index).getFields().setFeature(featureList.get(index));
 				ArrayList<String> cardsInSprint = new ArrayList<>();
-				sprintList.get(index).stream().map(it -> cardsInSprint.add(it.getName()));
+				sprintList.get(index).forEach(card -> cardsInSprint.add(card.getName()));
 				jiraCards.get(index).getFields().setSprint(sprintList.get(index));
 				ArrayList<String> cardsInPartner = new ArrayList<>();
-				partnerList.get(index).stream().map(it -> cardsInPartner.add(it.getDisplayName()));
+				partnerList.get(index).forEach(card -> cardsInPartner.add(card.getDisplayName()));
 				jiraCards.get(index).getFields().setPartner(partnerList.get(index));
 			}
 		}

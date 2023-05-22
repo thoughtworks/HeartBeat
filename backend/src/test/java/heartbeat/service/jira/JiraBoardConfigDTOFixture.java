@@ -1,25 +1,27 @@
 package heartbeat.service.jira;
 
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.board.jira.HistoryDetail;
-import heartbeat.client.dto.board.jira.Issuetype;
-import heartbeat.client.dto.board.jira.JiraCard;
-import heartbeat.client.dto.board.jira.JiraCardField;
-import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
+import heartbeat.client.dto.board.jira.Issuetype;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.JiraColumn;
 import heartbeat.client.dto.board.jira.JiraColumnConfig;
 import heartbeat.client.dto.board.jira.JiraColumnStatus;
 import heartbeat.client.dto.board.jira.Project;
+import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.StatusCategory;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
+import heartbeat.controller.board.dto.response.Partner;
+import heartbeat.controller.board.dto.response.Sprint;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 
@@ -91,12 +93,71 @@ public class JiraBoardConfigDTOFixture {
 			.total("2")
 			.issues(List.of(
 					new JiraCard("1",
-							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(2).build()),
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.storyPoints(2)
+								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
+								.partner(List.of(Partner.builder().displayName("Shawn").build()))
+								.flagged("block")
+								.build()),
 					new JiraCard("1",
-							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
-					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.storyPoints(1)
+								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
+								.partner(List.of(Partner.builder().displayName("Shawn").build()))
+								.startDate("20230522")
+								.build()),
 					new JiraCard("1",
-							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
+								.partner(List.of(Partner.builder().displayName("Shawn").build()))
+								.build()),
+					new JiraCard("1",
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.storyPoints(5)
+								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
+								.partner(List.of(Partner.builder().displayName("Shawn").build()))
+								.build())));
+	}
+
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER_WITH_ERROR() {
+		return AllDoneCardsResponseDTO.builder()
+			.total("2")
+			.issues(List.of(new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
+					new JiraCard("1",
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
+								.flagged(null)
+								.development(null)
+								.startDate(null)
+								.qualityAssurance(null)
+								.rank(null)
+								.issueColor(null)
+								.feature(null)
+								.build()),
+					new JiraCard("1",
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.sprint(List.of(Sprint.builder().name("Sprint 8").build()))
+								.partner(List.of(Partner.builder().displayName("jeff").build()))
+								.flagged("top")
+								.development("new")
+								.startDate("20220522")
+								.qualityAssurance("shawn")
+								.rank("top")
+								.issueColor("cool")
+								.feature("bug")
+								.build()),
+					new JiraCard("1",
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.sprint(List.of(Sprint.builder().name("Sprint 9").build()))
+								.partner(List.of(Partner.builder().displayName("tom").build()))
+								.build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
@@ -137,12 +198,30 @@ public class JiraBoardConfigDTOFixture {
 		IssueField descriptionIssueField = new IssueField("description", "Description");
 		IssueField priorityIssueField = new IssueField("priority", "Priority");
 		IssueField storyPointIssueField = new IssueField("customfield_10016", "Story point estimate");
+		IssueField sprintIssueField = new IssueField("customfield_10020", "Sprint");
+		IssueField partnerIssueField = new IssueField("customfield_10037", "Partner");
+		IssueField startDateIssueField = new IssueField("customfield_10015", "Start date");
+		IssueField developmentIssueField = new IssueField("customfield_10000", "development");
+		IssueField qaIssueField = new IssueField("customfield_10038", "QA");
+		IssueField rankIssueField = new IssueField("customfield_10019", "Rank");
+		IssueField issueColorIssueField = new IssueField("customfield_10017", "Issue color");
+		IssueField featureIssueField = new IssueField("customfield_10027", "Feature/Operation");
+		IssueField flaggedIssueField = new IssueField("customfield_10021", "Flagged");
 		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
 		issueFieldMap.put("timetracking", timetrackingIssueField);
 		issueFieldMap.put("summary", summaryIssueField);
 		issueFieldMap.put("description", descriptionIssueField);
 		issueFieldMap.put("priority", priorityIssueField);
 		issueFieldMap.put("customfield_10016", storyPointIssueField);
+		issueFieldMap.put("customfield_10020", sprintIssueField);
+		issueFieldMap.put("customfield_10037", partnerIssueField);
+		issueFieldMap.put("customfield_10015", startDateIssueField);
+		issueFieldMap.put("customfield_10000", developmentIssueField);
+		issueFieldMap.put("customfield_10038", qaIssueField);
+		issueFieldMap.put("customfield_10019", rankIssueField);
+		issueFieldMap.put("customfield_10017", issueColorIssueField);
+		issueFieldMap.put("customfield_10027", featureIssueField);
+		issueFieldMap.put("customfield_10021", flaggedIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}

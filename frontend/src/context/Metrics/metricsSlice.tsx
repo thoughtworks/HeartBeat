@@ -89,6 +89,33 @@ const findKeyByValues = (arrayA: { [key: string]: string }[], arrayB: string[]):
   }
   return `The value of ${matchingKeys} in imported json is not in dropdown list now. Please select a value for it!`
 }
+
+const setSelectUsers = (users: string[], importedCrews: string[]) =>
+  users?.filter((item: string) => importedCrews?.includes(item))
+
+const setSelectTargetFields = (
+  targetFields: { name: string; key: string; flag: boolean }[],
+  importedClassification: string[]
+) =>
+  targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
+    ...item,
+    flag: importedClassification?.includes(item.key),
+  }))
+
+const setCycleTimeSettings = (
+  jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
+  importedCycleTimeSettings: { [key: string]: string }[]
+) => {
+  return jiraColumns?.map((item: { key: string; value: { name: string; statuses: string[] } }) => {
+    const controlName = item.value.name
+    let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
+    const validImportValue = importedCycleTimeSettings?.find((i) => Object.keys(i)[0] === controlName)
+    if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {
+      defaultOptionValue = Object.values(validImportValue)[0]
+    }
+    return { name: controlName, value: defaultOptionValue }
+  })
+}
 export const metricsSlice = createSlice({
   name: 'metrics',
   initialState,
@@ -140,13 +167,8 @@ export const metricsSlice = createSlice({
     updateMetricsState: (state, action) => {
       const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
       const { importedCrews, importedClassification, importedCycleTime } = state.importedData
-      state.users = isProjectCreated ? users : users?.filter((item: string) => importedCrews?.includes(item))
-      state.targetFields = isProjectCreated
-        ? targetFields
-        : targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
-            ...item,
-            flag: importedClassification?.includes(item.key),
-          }))
+      state.users = isProjectCreated ? users : setSelectUsers(users, importedCrews)
+      state.targetFields = isProjectCreated ? targetFields : setSelectTargetFields(targetFields, importedClassification)
 
       if (!isProjectCreated) {
         const importedCycleTimeSettingsKeys = importedCycleTime.importedCycleTimeSettings?.flatMap((obj) =>
@@ -186,19 +208,7 @@ export const metricsSlice = createSlice({
         state.classificationWarningMessage = null
       }
 
-      state.cycleTimeSettings = jiraColumns?.map(
-        (item: { key: string; value: { name: string; statuses: string[] } }) => {
-          const controlName = item.value.name
-          let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
-          const validImportValue = importedCycleTime.importedCycleTimeSettings?.find(
-            (i) => Object.keys(i)[0] === controlName
-          )
-          if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {
-            defaultOptionValue = Object.values(validImportValue)[0]
-          }
-          return { name: controlName, value: defaultOptionValue }
-        }
-      )
+      state.cycleTimeSettings = setCycleTimeSettings(jiraColumns, importedCycleTime.importedCycleTimeSettings)
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {

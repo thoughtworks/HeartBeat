@@ -34,8 +34,10 @@ import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,6 +68,9 @@ class GenerateReporterServiceTest {
 	JiraService jiraService;
 
 	@Mock
+	WorkDay workDay;
+
+	@Mock
 	ClassificationCalculator classificationCalculator;
 
 	@Mock
@@ -84,6 +89,9 @@ class GenerateReporterServiceTest {
 	private CycleTimeCalculator cycleTimeCalculator;
 
 	@Mock
+	VelocityCalculator velocityCalculator;
+
+	@Mock
 	private LeadTimeForChangesCalculator leadTimeForChangesCalculator;
 
 	@Test
@@ -99,6 +107,7 @@ class GenerateReporterServiceTest {
 			.projectKey("PLL")
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
 			.metrics(List.of("velocity"))
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
@@ -106,11 +115,12 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
 			.build();
 
+		Velocity velocity = Velocity.builder().velocityForSP(0).velocityForCards(0).build();
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any()))
 			.thenReturn(CardCollection.builder().storyPointSum(0).cardsNumber(0).build());
+		when(velocityCalculator.calculateVelocity(any())).thenReturn(velocity);
 
 		ReportResponse result = generateReporterService.generateReporter(request);
-		Velocity velocity = Velocity.builder().velocityForSP("0").velocityForCards("0").build();
 
 		assertThat(result).isEqualTo(ReportResponse.builder().velocity(velocity).build());
 	}
@@ -129,6 +139,7 @@ class GenerateReporterServiceTest {
 			.targetFields(List.of(TargetField.builder().key("assignee").name("Assignee").flag(true).build()))
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
 			.metrics(List.of("classification"))
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
@@ -173,6 +184,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
 			.metrics(List.of("deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
@@ -213,6 +225,7 @@ class GenerateReporterServiceTest {
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
 			.metrics(List.of("change failure rate"))
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
@@ -259,6 +272,7 @@ class GenerateReporterServiceTest {
 			.projectKey("PLL")
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
 			.metrics(List.of("cycle time"))
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")

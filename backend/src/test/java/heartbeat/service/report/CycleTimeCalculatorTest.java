@@ -31,10 +31,10 @@ class CycleTimeCalculatorTest {
 		List<RequestJiraBoardColumnSetting> boardColumns = JIRA_BOARD_COLUMNS_SETTING();
 
 		CycleTime cycleTimeExpect = CycleTime.builder()
-			.totalTime(14.8)
+			.totalTimeForCards(14.8)
 			.averageCycleTimePerSP(4.93)
-			.averageCircleTimePerCard(7.40)
-			.cycleTimeForSelectedStepList(List.of(
+			.averageCycleTimePerCard(7.40)
+			.swimlaneList(List.of(
 					CycleTimeForSelectedStepItem.builder()
 						.optionalItemName("In Dev")
 						.averageTimeForSP(2.07)

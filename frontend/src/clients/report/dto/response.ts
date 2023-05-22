@@ -115,5 +115,5 @@ export interface MeanTimeToRecovery {
 
 export interface Pair {
   name: string
-  value: string
+  value: number
 }

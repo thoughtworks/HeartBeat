@@ -1,6 +1,7 @@
 import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'
+import reportPage from '../pages/metrics/report'
 
 describe('Create a new project', () => {
   it('Should create a new project manually', () => {
@@ -43,6 +44,9 @@ describe('Create a new project', () => {
     nextButton().should('be.disabled')
 
     cy.contains('Crews setting').should('exist')
+
+    metricsPage.checkCycleTime()
+
     cy.contains('Real done').should('exist')
 
     metricsPage.checkRealDone()
@@ -56,5 +60,7 @@ describe('Create a new project', () => {
     nextButton().should('be.enabled')
 
     metricsPage.goReportStep()
+
+    reportPage.checkVelocity()
   })
 })

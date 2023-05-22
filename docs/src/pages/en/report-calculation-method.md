@@ -8,10 +8,80 @@ layout: ../../layouts/MainLayout.astro
 
 ## Velocity
 
-| Metrics                 | Calculate method                         | Note |
-| :---------------------- | :--------------------------------------- | :--- |
-| Velocity for Storypoint | Sum of the storypoints of all done cards |      |
-| Velocity for cards      | Sum of all done cards                    |      |
+### Config
+
+- StartDate、EndDate
+- metrics select velocity
+- JiraBoard token
+- Crews member
+- Real done label
+
+### Calculate logic
+
+- Get all done cards information based on token、date、member name.
+
+### Definition
+
+| Metrics                  | Calculate method                          | Note |
+| :----------------------- | :---------------------------------------- | :--- |
+| Velocity for Story Point | Sum of the story points of all done cards |      |
+| Velocity for cards       | Sum of all done cards number              |      |
+
+## Cycle Time
+
+### Config
+
+- StartDate、EndDate
+- metrics select cycle time
+- JiraBoard token
+- Crews member
+- Corresponding Columns name setting
+- Real done label
+
+### Calculate logic
+
+- Get all done cards cycle time based on token、date、member name.
+- Calculate Average Cycle Time : sum of cycle time for each selected column and then divided by the number of days and
+  cards.
+- Calculate Average column Cycle Time : the cycle time for each column divided by the number of days and cards.
+- Calculate proportion of column Cycle Time in total Cycle Time : the cycle time for each column divided by sum of cycle
+  time for each selected column.
+
+### Definition
+
+| Metrics                                                             | Calculate method                                                                        | Note |
+| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------- | :--- |
+| Average Cycle Time                                                  | cycle time of all done cards per story point of day and per card of day                 |      |
+| Average column Cycle Time                                           | cycle time of all done cards for each column per story point of day and per card of day |      |
+| Proportion of column Cycle Time in total Cycle Time for each column | the cycle time for each column divided by total cycle time                              |      |
+
+## Classification
+
+### Config
+
+- StartDate、EndDate
+- Board type, Board Id, Email, Project key, Site, Token
+- Crews setting
+- Real done
+- Target Fields(Classification setting in metrics page)
+
+### Calculate logic
+
+- Get all cardCollection information (cardsNumber, fields in baseInfo), targetFields.
+- Filter targetFields which flag is true (which were selected in Metrics page)
+  1. get object value in fields of card baseInfo.
+  2. get specific classification from object value.
+  3. count the times specific classification shows.
+  4. calculate proportion about different specific classifications to each targetField.
+  5. output the fieldName, specific classification, proportion.
+
+### Definition
+
+| Metrics    | Description                                                   | Note |
+| :--------- | :------------------------------------------------------------ | :--- |
+| Field name | TargetFields selected in Metrics Page                         |      |
+| Subtitle   | Spcific classification for each targetField                   |      |
+| Value      | The proportion of specific classification to Each targetField |      |
 
 ## Deployment Frequency
 

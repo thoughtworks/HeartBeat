@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,27 +37,17 @@ public class WorkDay {
 		}
 	}
 
-	private void checkHolidayList(String year) {
-		if (holidayMap.size() == 0) {
-			loadHolidayList(year);
+	public void changeConsiderHolidayMode(boolean considerHoliday) {
+		if (!considerHoliday) {
+			holidayMap = new HashMap<>();
 		}
-		if (!isYearExisted(year)) {
-			loadHolidayList(year);
+		else if (holidayMap.size() == 0) {
+			loadHolidayList(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
 		}
-	}
-
-	private boolean isYearExisted(String year) {
-		for (String dateString : holidayMap.keySet()) {
-			if (dateString.startsWith(year)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean verifyIfThisDayHoliday(long time) {
 		String dateString = convertTimeToDateString(time);
-		checkHolidayList(String.valueOf(LocalDate.parse(dateString, DATE_FORMATTER).getYear()));
 		if (holidayMap.containsKey(dateString)) {
 			return holidayMap.get(dateString);
 		}
@@ -80,14 +70,9 @@ public class WorkDay {
 	public double calculateWorkDaysBy24Hours(long startTime, long endTime) {
 		long realStartTime = getNextNearestWorkingTime(startTime);
 		long realEndTime = getNextNearestWorkingTime(endTime);
-		Date startDate = new Date(realStartTime);
-		startDate.setHours(0);
-		Date endDate = new Date(realEndTime);
-		endDate.setHours(0);
-		long gapDaysTime = endDate.getTime() - startDate.getTime();
+		long gapDaysTime = realEndTime - (realEndTime % ONE_DAY) - (realStartTime - (realStartTime % ONE_DAY));
 		long gapWorkingDaysTime = (calculateWorkDaysBetween(realStartTime, realEndTime) - 1) * ONE_DAY;
-		return Double
-			.parseDouble(String.valueOf((realEndTime - realStartTime - gapDaysTime + gapWorkingDaysTime) / ONE_DAY));
+		return (double) (realEndTime - realStartTime - gapDaysTime + gapWorkingDaysTime) / ONE_DAY;
 	}
 
 	private static String convertTimeToDateString(long time) {
@@ -99,6 +84,7 @@ public class WorkDay {
 		long nextWorkingTime = time;
 		while (verifyIfThisDayHoliday(nextWorkingTime)) {
 			nextWorkingTime += ONE_DAY;
+			nextWorkingTime = nextWorkingTime - (nextWorkingTime % ONE_DAY);
 		}
 		return nextWorkingTime;
 	}

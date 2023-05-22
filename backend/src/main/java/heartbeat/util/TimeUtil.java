@@ -1,6 +1,9 @@
 package heartbeat.util;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public interface TimeUtil {
 
@@ -14,6 +17,14 @@ public interface TimeUtil {
 
 	static boolean isAfterAndEqual(Instant startDate, Instant time) {
 		return time.compareTo(startDate) >= 0;
+	}
+
+	static String convertToISOFormat(String timestamp) {
+		Instant instant = Instant.ofEpochMilli(Long.parseLong(timestamp));
+		LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		return dateTime.format(formatter);
+
 	}
 
 }

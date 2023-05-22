@@ -11,14 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Velocity {
 
-	private String velocityForSP;
+	private int velocityForSP;
 
-	private String velocityForCards;
-
-	private String percentageOfPlannedFeature;
-
-	private String percentageOfPlannedOperation;
-
-	private String percentageOfUnplannedOperation;
+	private int velocityForCards;
 
 }

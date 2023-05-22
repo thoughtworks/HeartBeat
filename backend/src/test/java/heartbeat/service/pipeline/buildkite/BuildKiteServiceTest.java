@@ -1,5 +1,14 @@
 package heartbeat.service.pipeline.buildkite;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
@@ -15,18 +24,24 @@ import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
-import heartbeat.exception.NotFoundException;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
+import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
-import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -34,21 +49,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -74,12 +75,34 @@ class BuildKiteServiceTest {
 	@Mock
 	BuildKiteFeignClient buildKiteFeignClient;
 
-	@InjectMocks
 	BuildKiteService buildKiteService;
+
+	ThreadPoolTaskExecutor executor;
 
 	private static final String mockStartTime = "1661702400000";
 
 	private static final String mockEndTime = "1662739199000";
+
+	@BeforeEach
+	public void setUp() {
+		buildKiteService = new BuildKiteService(executor = getTaskExecutor(), buildKiteFeignClient);
+	}
+
+	public ThreadPoolTaskExecutor getTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(10);
+		executor.setMaxPoolSize(100);
+		executor.setQueueCapacity(500);
+		executor.setKeepAliveSeconds(60);
+		executor.setThreadNamePrefix("Heartbeat-");
+		executor.initialize();
+		return executor;
+	}
+
+	@AfterEach
+	public void tearDown() {
+		buildKiteService.shutdownExecutor();
+	}
 
 	@Test
 	void shouldReturnBuildKiteResponseWhenCallBuildKiteApi() throws IOException {
@@ -145,8 +168,8 @@ class BuildKiteServiceTest {
 		String organizationId = "test_org_id";
 		String pipelineId = "test_pipeline_id";
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
@@ -172,17 +195,17 @@ class BuildKiteServiceTest {
 				any(), any()))
 			.thenThrow(mockException);
 
-		assertThrows(
-				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-						"test_pipeline_id", new PipelineStepsParam()),
+		assertThrows(RequestFailedException.class,
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
 				"Request failed with status code 500, error: exception");
 	}
 
 	@Test
 	public void shouldReturnMoreThanOnePageStepsWhenPageFetchPipelineSteps() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -232,9 +255,9 @@ class BuildKiteServiceTest {
 				any(), any()))
 			.thenThrow(new RequestFailedException(404, "Client Error"));
 
-		assertThrows(
-				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-						"test_pipeline_id", new PipelineStepsParam()),
+		assertThrows(RequestFailedException.class,
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
 				"Request failed with status statusCode 500, error: Server Error");
 	}
 
@@ -250,23 +273,23 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				anyString(), anyString()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
 			.thenThrow(new RequestFailedException(500, "Server Error"));
 
-		assertThrows(
-				RequestFailedException.class, () -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-						"test_pipeline_id", new PipelineStepsParam()),
+		assertThrows(RequestFailedException.class,
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
 				"Request failed with status statusCode 500, error: Server Error");
 	}
 
 	@Test
 	public void shouldReturnOnePageStepsWhenPageFetchPipelineStepsAndHeaderParseOnePage() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -291,8 +314,8 @@ class BuildKiteServiceTest {
 	@Test
 	public void shouldReturnOnePageStepsWhenPageFetchPipelineStep() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime("2023-01-01T00:00:00Z");
-		stepsParam.setEndTime("2023-09-01T00:00:00Z");
+		stepsParam.setStartTime(mockStartTime);
+		stepsParam.setEndTime(mockEndTime);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();

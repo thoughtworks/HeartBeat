@@ -2,7 +2,12 @@ import { HomeGuide } from '@src/components/HomeGuide'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { setupStore } from '../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
-import { CREATE_NEW_PROJECT, IMPORT_PROJECT_FROM_FILE } from '../../fixtures'
+import {
+  CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE,
+  CREATE_NEW_PROJECT,
+  IMPORTED_CONFIG_FIXTURE,
+  IMPORT_PROJECT_FROM_FILE,
+} from '../../fixtures'
 import userEvent from '@testing-library/user-event'
 import { navigateMock } from '../../../setupTests'
 
@@ -23,6 +28,8 @@ const setup = () => {
     </Provider>
   )
 }
+
+const copied = () => JSON.parse(JSON.stringify(IMPORTED_CONFIG_FIXTURE))
 
 describe('HomeGuide', () => {
   beforeEach(() => {
@@ -51,11 +58,11 @@ describe('HomeGuide', () => {
   })
 
   it('should go to Metrics page and read file when click import file button', async () => {
-    const { getByTestId } = setup()
-
-    const file = new File(['{"projectName": "Heartbeat test"}'], 'test.json', {
+    const file = new File([`${JSON.stringify(IMPORTED_CONFIG_FIXTURE)}`], 'test.json', {
       type: 'file',
     })
+
+    const { getByTestId } = setup()
     const input = getByTestId('testInput')
 
     Object.defineProperty(input, 'files', {
@@ -65,7 +72,7 @@ describe('HomeGuide', () => {
     fireEvent.change(input)
 
     await waitFor(() => {
-      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(2)
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(3)
       expect(navigateMock).toHaveBeenCalledWith('/metrics')
     })
   })
@@ -77,5 +84,69 @@ describe('HomeGuide', () => {
 
     expect(navigateMock).toHaveBeenCalledTimes(1)
     expect(navigateMock).toHaveBeenCalledWith('/metrics')
+  })
+
+  describe('Test invalid config', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { projectName, ...noProjectNameConfig } = IMPORTED_CONFIG_FIXTURE
+
+    const noStartDateConfig = copied()
+    noStartDateConfig.dateRange.startDate = ''
+
+    const noEndDateConfig = copied()
+    noEndDateConfig.dateRange.endDate = ''
+
+    const noMetricsConfig = copied()
+    noMetricsConfig.metrics = []
+
+    it.each([
+      ['noProjectNameConfig', noProjectNameConfig],
+      ['noStartDateConfig', noStartDateConfig],
+      ['noEndDateConfig', noEndDateConfig],
+      ['noMetricsConfig', noMetricsConfig],
+    ])(
+      'should show error message when import project from file given file does not contain %s field',
+      async (_, config) => {
+        const { getByTestId, queryByText } = setup()
+
+        const file = new File([`${JSON.stringify(config)}`], 'test.json', {
+          type: 'file',
+        })
+        const input = getByTestId('testInput')
+
+        Object.defineProperty(input, 'files', {
+          value: [file],
+        })
+
+        fireEvent.change(input)
+
+        await waitFor(() => {
+          expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
+          expect(queryByText(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE)).toBeInTheDocument()
+        })
+      }
+    )
+  })
+
+  it('should show error message when import given invalid json', async () => {
+    const invalidConfig = JSON.stringify(IMPORTED_CONFIG_FIXTURE).slice(0, -1)
+
+    const { getByTestId, queryByText } = setup()
+
+    const file = new File([invalidConfig], 'test.json', {
+      type: 'file',
+    })
+    const input = getByTestId('testInput')
+
+    Object.defineProperty(input, 'files', {
+      value: [file],
+    })
+
+    fireEvent.change(input)
+
+    await waitFor(() => {
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
+      expect(queryByText(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE)).toBeInTheDocument()
+    })
   })
 })

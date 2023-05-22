@@ -40,7 +40,7 @@ class GenerateReporterControllerTest {
 	@Test
 	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
 		ReportResponse expectedResponse = ReportResponse.builder()
-			.velocity(Velocity.builder().velocityForSP("10").build())
+			.velocity(Velocity.builder().velocityForSP(10).build())
 			.deploymentFrequency(DeploymentFrequency.builder()
 				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
 				.build())

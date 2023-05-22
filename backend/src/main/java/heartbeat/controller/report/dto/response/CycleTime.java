@@ -13,12 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 public class CycleTime {
 
-	private double totalTime;
+	private double totalTimeForCards;
 
-	private double averageCircleTimePerCard;
+	private double averageCycleTimePerCard;
 
 	private double averageCycleTimePerSP;
 
-	private List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepList;
+	private List<CycleTimeForSelectedStepItem> swimlaneList;
 
 }

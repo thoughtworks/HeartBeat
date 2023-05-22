@@ -13,7 +13,8 @@ import saveMetricsSettingReducer, {
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
-  updateClassification,
+  updateMetricsImportedData,
+  updateMetricsState,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 
@@ -25,11 +26,40 @@ const initState = {
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-  importFile: [],
-  importedCycleTimeSettings: [],
-  isProjectCreated: true,
   classification: [],
   treatFlagCardAsBlock: true,
+  importedData: {
+    importedCrews: [],
+    importedCycleTime: {
+      importedCycleTimeSettings: [],
+      importedTreatFlagCardAsBlock: true,
+    },
+    importedDoneStatus: [],
+    importedClassification: [],
+    importedDeployment: [],
+    importedLeadTime: [],
+  },
+}
+
+const mockJiraResponse = {
+  targetFields: [{ key: 'issuetype', name: 'Issue Type', flag: false }],
+  users: ['User A', 'User B'],
+  jiraColumns: [
+    {
+      key: 'indeterminate',
+      value: {
+        name: 'Doing',
+        statuses: ['ANALYSIS'],
+      },
+    },
+    {
+      key: 'indeterminate',
+      value: {
+        name: 'Testing',
+        statuses: ['TESTING'],
+      },
+    },
+  ],
 }
 
 describe('saveMetricsSetting reducer', () => {
@@ -41,12 +71,22 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([])
     expect(savedMetricsSetting.doneColumn).toEqual([])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
-    expect(savedMetricsSetting.importedCycleTimeSettings).toEqual([])
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '' },
     ])
     expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '' }])
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true)
+    expect(savedMetricsSetting.importedData).toEqual({
+      importedCrews: [],
+      importedCycleTime: {
+        importedCycleTimeSettings: [],
+        importedTreatFlagCardAsBlock: true,
+      },
+      importedDoneStatus: [],
+      importedClassification: [],
+      importedDeployment: [],
+      importedLeadTime: [],
+    })
   })
 
   it('should store updated targetFields when its value changed', () => {
@@ -111,11 +151,78 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.cycleTimeSettings).toEqual(mockSavedCycleTimeSettings)
   })
 
-  it('should update classification settings when its value changed given initial state', () => {
-    const mockClassification = ['classification1', 'classification2']
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateClassification(mockClassification))
+  it('should update metricsImportedData when its value changed given initial state', () => {
+    const mockMetricsImportedData = {
+      crews: ['mockUser'],
+      cycleTime: {
+        jiraColumns: ['mockCycleTimeSettings'],
+        treatFlagCardAsBlock: true,
+      },
+      doneStatus: ['mockDoneStatus'],
+      classification: ['mockClassification'],
+      deployment: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
+      leadTime: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))
 
-    expect(savedMetricsSetting.classification).toEqual(mockClassification)
+    expect(savedMetricsSetting.importedData).toEqual({
+      importedCrews: mockMetricsImportedData.crews,
+      importedCycleTime: {
+        importedCycleTimeSettings: mockMetricsImportedData.cycleTime.jiraColumns,
+        importedTreatFlagCardAsBlock: mockMetricsImportedData.cycleTime.treatFlagCardAsBlock,
+      },
+      importedDoneStatus: mockMetricsImportedData.doneStatus,
+      importedClassification: mockMetricsImportedData.classification,
+      importedDeployment: mockMetricsImportedData.deployment,
+      importedLeadTime: mockMetricsImportedData.leadTime,
+    })
+  })
+
+  it('should update metricsState when its value changed given isProjectCreated is false', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedCrews: ['User B', 'User C'],
+          importedClassification: ['issuetype'],
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Doing: 'Analysis' }, { Testing: 'mockOption' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }])
+    expect(savedMetricsSetting.users).toEqual(['User B'])
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([
+      { name: 'Doing', value: 'Analysis' },
+      { name: 'Testing', value: '----' },
+    ])
+  })
+
+  it('should update metricsState when its value changed given isProjectCreated is true', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: true,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      initState,
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: false }])
+    expect(savedMetricsSetting.users).toEqual(['User A', 'User B'])
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([
+      { name: 'Doing', value: '----' },
+      { name: 'Testing', value: '----' },
+    ])
   })
 
   it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {

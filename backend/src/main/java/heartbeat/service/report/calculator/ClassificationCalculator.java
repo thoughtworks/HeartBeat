@@ -1,4 +1,4 @@
-package heartbeat.service.report;
+package heartbeat.service.report.calculator;
 
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.controller.board.dto.response.CardCollection;
@@ -6,6 +6,7 @@ import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
+import heartbeat.service.report.ICardFieldDisplayName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

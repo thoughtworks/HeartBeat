@@ -37,7 +37,7 @@ class Report {
       { label: 'Average waiting for testing time', value: '0.16(days/SP)' },
       { label: '0.2(days/card)' },
       { label: 'Average block time', value: '11.19(days/SP)' },
-      { label: '13.98(days/card)' },
+      { label: '13.99(days/card)' },
       { label: 'Average review time', value: '0.26(days/SP)' },
       { label: '0.32(days/card)' },
       { label: 'Average testing time', value: '0.1(days/SP)' },

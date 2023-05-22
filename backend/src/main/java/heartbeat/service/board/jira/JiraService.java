@@ -412,20 +412,25 @@ public class JiraService {
 
 		}
 		for (int index = 0; index < jiraCards.size(); index++) {
-			jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
-			jiraCards.get(index).getFields().setFlagged(flaggedList.get(index));
-			jiraCards.get(index).getFields().setStartDate(startDateList.get(index));
-			jiraCards.get(index).getFields().setDevelopment(developmentList.get(index));
-			jiraCards.get(index).getFields().setQualityAssurance(qualityAssuranceList.get(index));
-			jiraCards.get(index).getFields().setRank(rankList.get(index));
-			jiraCards.get(index).getFields().setIssueColor(issueColorList.get(index));
-			jiraCards.get(index).getFields().setFeature(featureList.get(index));
-			ArrayList<String> cardsInSprint = new ArrayList<>();
-			sprintList.get(index).stream().map(it -> cardsInSprint.add(it.getName()));
-			jiraCards.get(index).getFields().setSprint(sprintList.get(index));
-			ArrayList<String> cardsInPartner = new ArrayList<>();
-			partnerList.get(index).stream().map(it -> cardsInPartner.add(it.getDisplayName()));
-			jiraCards.get(index).getFields().setPartner(partnerList.get(index));
+			if (storyPointList.size() > index && flaggedList.size() > index && startDateList.size() > index
+					&& developmentList.size() > index && qualityAssuranceList.size() > index && rankList.size() > index
+					&& issueColorList.size() > index && featureList.size() > index && sprintList.size() > index
+					&& partnerList.size() > index) {
+				jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
+				jiraCards.get(index).getFields().setFlagged(flaggedList.get(index));
+				jiraCards.get(index).getFields().setStartDate(startDateList.get(index));
+				jiraCards.get(index).getFields().setDevelopment(developmentList.get(index));
+				jiraCards.get(index).getFields().setQualityAssurance(qualityAssuranceList.get(index));
+				jiraCards.get(index).getFields().setRank(rankList.get(index));
+				jiraCards.get(index).getFields().setIssueColor(issueColorList.get(index));
+				jiraCards.get(index).getFields().setFeature(featureList.get(index));
+				ArrayList<String> cardsInSprint = new ArrayList<>();
+				sprintList.get(index).stream().map(it -> cardsInSprint.add(it.getName()));
+				jiraCards.get(index).getFields().setSprint(sprintList.get(index));
+				ArrayList<String> cardsInPartner = new ArrayList<>();
+				partnerList.get(index).stream().map(it -> cardsInPartner.add(it.getDisplayName()));
+				jiraCards.get(index).getFields().setPartner(partnerList.get(index));
+			}
 		}
 		return allDoneCardsResponseDTO;
 	}

@@ -163,8 +163,9 @@ Resources:
         - Key: "app"
           Value: "HeartBeat"
       SecurityGroups:
-      - !Ref EC2SSHSecurityGroup
-      - !Ref EC2AppSecurityGroup
+        - !Ref EC2SSHSecurityGroup
+        - !Ref EC2AppSecurityGroup
+        - !Ref EC2OldAppSecurityGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
       UserData:
@@ -196,14 +197,23 @@ Resources:
         FromPort: 22
         ToPort: 22
         CidrIp: 0.0.0.0/0
+  EC2OldAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable access application
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 4325
+        ToPort: 4325
+        CidrIp: 0.0.0.0/0
   EC2AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable access application
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 3000
-        ToPort: 3000
+        FromPort: 4321
+        ToPort: 4321
         CidrIp: 0.0.0.0/0
 
   WebPortAddress:

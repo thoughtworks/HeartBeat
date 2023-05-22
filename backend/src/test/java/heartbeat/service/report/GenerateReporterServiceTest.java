@@ -317,7 +317,6 @@ class GenerateReporterServiceTest {
 				.build()))
 			.build();
 
-
 		LeadTimeForChanges mockLeadTimeForChanges = LeadTimeForChanges.builder()
 			.leadTimeForChangesOfPipelines(List.of(LeadTimeForChangesOfPipelines.builder()
 				.name("Name")

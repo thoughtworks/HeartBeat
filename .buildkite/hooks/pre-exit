@@ -14,5 +14,6 @@ rm -rf /var/lib/buildkite-agent/.cache/*
 rm -rf /var/lib/buildkite-agent/.local/*
 
 docker system df
+docker system prune -a --volumes --force
 
 echo "Finished to perform cleanup"

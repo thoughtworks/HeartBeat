@@ -9,6 +9,8 @@ import heartbeat.controller.report.dto.response.CycleTimeResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +29,12 @@ public class CycleTimeCalculator {
 		double cycleTotalTime = cycleTimeResult.getTotalTime();
 		return CycleTime.builder()
 			.totalTimeForCards(cycleTotalTime)
-			.averageCycleTimePerSP(
-					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getStoryPointSum())))
-			.averageCycleTimePerCard(
-					Double.parseDouble(String.format("%.2f", cycleTotalTime / cardCollection.getCardsNumber())))
+			.averageCycleTimePerSP(BigDecimal.valueOf(cycleTotalTime)
+				.divide(BigDecimal.valueOf(cardCollection.getStoryPointSum()), 2, BigDecimal.ROUND_HALF_UP)
+				.doubleValue())
+			.averageCycleTimePerCard(BigDecimal.valueOf(cycleTotalTime)
+				.divide(BigDecimal.valueOf(cardCollection.getCardsNumber()), 2, BigDecimal.ROUND_HALF_UP)
+				.doubleValue())
 			.swimlaneList(cycleTimeResult.getCycleTimeForSelectedStepsList())
 			.build();
 	}
@@ -89,24 +93,27 @@ public class CycleTimeCalculator {
 		double totalTime = 0;
 		for (Map.Entry<String, Double> entry : aggregatedMap.entrySet()) {
 			String key = entry.getKey();
-			double value = entry.getValue();
+			double value = BigDecimal.valueOf(entry.getValue()).setScale(2, RoundingMode.HALF_UP).doubleValue();
 			if (List.of(CardStepsEnum.ANALYSE, CardStepsEnum.TODO, CardStepsEnum.DONE)
 				.contains(CardStepsEnum.fromValue(key))) {
 				continue;
 			}
 			CycleTimeForSelectedStepItem cycleTimeOptionalItem = CycleTimeForSelectedStepItem.builder()
 				.optionalItemName(key)
-				.averageTimeForSP(Double.parseDouble(String.format("%.2f", value / cardCollection.getStoryPointSum())))
-				.averageTimeForCards(Double.parseDouble(String.format("%.2f", value / cardCollection.getCardsNumber())))
+				.averageTimeForSP(BigDecimal.valueOf(value)
+					.divide(BigDecimal.valueOf(cardCollection.getStoryPointSum()), 2, BigDecimal.ROUND_HALF_UP)
+					.doubleValue())
+				.averageTimeForCards(BigDecimal.valueOf(value)
+					.divide(BigDecimal.valueOf(cardCollection.getCardsNumber()), 2, BigDecimal.ROUND_HALF_UP)
+					.doubleValue())
 				.totalTime(value)
 				.build();
-
 			cycleTimeForSelectedStepsList.add(cycleTimeOptionalItem);
 			totalTime += value;
 		}
 		return CycleTimeResult.builder()
 			.cycleTimeForSelectedStepsList(cycleTimeForSelectedStepsList)
-			.totalTime(Double.parseDouble(String.format("%.2f", totalTime)))
+			.totalTime(BigDecimal.valueOf(totalTime).setScale(2, RoundingMode.HALF_UP).doubleValue())
 			.build();
 	}
 

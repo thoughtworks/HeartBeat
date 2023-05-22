@@ -16,6 +16,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GenerateReportRequest {
 
+	private Boolean considerHoliday;
+
 	@NotBlank(message = "StartTime is required")
 	private String startTime;
 

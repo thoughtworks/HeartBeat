@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
+import heartbeat.client.dto.codebase.github.LeadTime;
 import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
@@ -15,12 +16,14 @@ import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
+import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
 import heartbeat.controller.report.dto.response.ChangeFailureRate;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
+import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
@@ -280,13 +283,13 @@ class GenerateReporterServiceTest {
 
 		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
 			.type("Github")
-			.token("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")
+			.token("github_fake_token")
 			.leadTime(List.of(mockDeployment))
 			.build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
 			.type("BuildKite")
-			.token("bkua_6xxxafcc3bxxxxxxb8xxx8d8dxxxf7897cc8b2f1")
+			.token("buildKite_fake_token")
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 
@@ -298,6 +301,39 @@ class GenerateReporterServiceTest {
 			.endTime("1662739199000")
 			.build();
 
+		PipelineLeadTime pipelineLeadTime = PipelineLeadTime.builder()
+			.pipelineStep("Step")
+			.pipelineName("Name")
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("111")
+				.prCreatedTime(1.6585491E12)
+				.prMergedTime(1.65854916E12)
+				.firstCommitTimeInPr(1.6585491E12)
+				.jobFinishTime(1.65854916E12)
+				.pipelineCreateTime(1.6585491E12)
+				.prDelayTime(60000)
+				.pipelineDelayTime(60000)
+				.totalTime(120000)
+				.build()))
+			.build();
+
+
+		LeadTimeForChanges mockLeadTimeForChanges = LeadTimeForChanges.builder()
+			.leadTimeForChangesOfPipelines(List.of(LeadTimeForChangesOfPipelines.builder()
+				.name("Name")
+				.step("Step")
+				.mergeDelayTime(1.0)
+				.pipelineDelayTime(1.0)
+				.totalDelayTime(2.0)
+				.build()))
+			.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
+				.name("Average")
+				.mergeDelayTime(1.0)
+				.pipelineDelayTime(1.0)
+				.totalDelayTime(2.0)
+				.build())
+			.build();
+
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
 			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
 				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
@@ -305,8 +341,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any()))
-			.thenReturn(CompletableFuture.supplyAsync(() -> List.of(PipelineLeadTime.builder().build())));
-		LeadTimeForChanges mockLeadTimeForChanges = LeadTimeForChanges.builder().build();
+			.thenReturn(CompletableFuture.supplyAsync(() -> List.of(pipelineLeadTime)));
 		when(leadTimeForChangesCalculator.calculate(any())).thenReturn(mockLeadTimeForChanges);
 		ReportResponse result = generateReporterService.generateReporter(request);
 

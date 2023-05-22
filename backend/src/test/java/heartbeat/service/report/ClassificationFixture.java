@@ -10,8 +10,10 @@ import heartbeat.controller.board.dto.response.FixVersion;
 import heartbeat.controller.board.dto.response.IssueType;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraProject;
+import heartbeat.controller.board.dto.response.Partner;
 import heartbeat.controller.board.dto.response.Priority;
 import heartbeat.controller.board.dto.response.Reporter;
+import heartbeat.controller.board.dto.response.Sprint;
 
 import java.util.List;
 
@@ -38,6 +40,8 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
 							.label("bug")
+							.partner(List.of(Partner.builder().displayName("shawn").build()))
+							.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
 							.build())
 						.build())
 					.build(),
@@ -58,6 +62,8 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("ADM-442").build())
 							.label("frontend")
+							.partner(List.of(Partner.builder().displayName("jack").build()))
+							.sprint(List.of(Sprint.builder().name("Sprint 8").build()))
 							.build())
 						.build())
 					.build()))
@@ -157,6 +163,30 @@ public class ClassificationFixture {
 							.build())
 						.build())
 					.build()))
+		.build();
+
+	public static CardCollection CARD_COLLECTION_WITH_EMPTY_CONTENT = CardCollection.builder()
+		.cardsNumber(2)
+		.storyPointSum(3)
+		.jiraCardDTOList(List.of(JiraCardDTO.builder()
+			.baseInfo(JiraCard.builder()
+				.key("key1")
+				.fields(JiraCardField.builder()
+					.assignee(Assignee.builder().displayName("Shawn").build())
+					.summary("Tech replacement")
+					.status(Status.builder().displayValue("Doing").build())
+					.issuetype(IssueType.builder().name("Task").build())
+					.reporter(Reporter.builder().displayName("Jack").build())
+					.statusCategoryChangeDate("2023-4-23")
+					.storyPoints(3)
+					.priority(Priority.builder().name("Top").build())
+					.fixVersions(List.of())
+					.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
+					.parent(CardParent.builder().key("test").build())
+					.label("bug")
+					.build())
+				.build())
+			.build()))
 		.build();
 
 }

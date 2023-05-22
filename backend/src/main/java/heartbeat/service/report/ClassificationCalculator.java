@@ -132,7 +132,6 @@ public class ClassificationCalculator {
 				case "customfield_10027" -> tempFields.put(fieldName, jiraCardFields.getFeature());
 				case "customfield_10037" -> tempFields.put(fieldName, jiraCardFields.getPartner());
 				case "customfield_10038" -> tempFields.put(fieldName, jiraCardFields.getQualityAssurance());
-				case "partner" -> tempFields.put(fieldName, jiraCardFields.getPartner());
 				case "timetracking" -> tempFields.put(fieldName, jiraCardFields.getTimetracking());
 				default -> {
 				}

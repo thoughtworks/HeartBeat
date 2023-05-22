@@ -334,7 +334,8 @@ public class JiraService {
 		for (JsonElement element : elements) {
 			JsonElement jsonElement = element.getAsJsonObject().get("fields");
 			ArrayList<Sprint> detailSprintList = new ArrayList<>();
-			if (jsonElement.getAsJsonObject().get(cardCustomFieldKey.getSprint()).isJsonNull()) {
+			JsonElement sprintData = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getSprint());
+			if ((sprintData == null || sprintData.isJsonNull())) {
 				detailSprintList.add(emptySprint);
 				continue;
 			}
@@ -342,7 +343,6 @@ public class JiraService {
 				.get(cardCustomFieldKey.getSprint())
 				.getAsJsonArray();
 			for (JsonElement sprintElement : sprintElementList) {
-
 				Sprint sprint = gson.fromJson(sprintElement, Sprint.class);
 				detailSprintList.add(sprint);
 			}

@@ -41,19 +41,33 @@ class ClassificationCalculatorTest {
 		List<TargetField> mockTargetFields = List.of(
 				TargetField.builder().key("priority").name("Priority").flag(false).build(),
 				TargetField.builder().key("fixVersions").name("Fix versions").flag(true).build(),
-				TargetField.builder().key("sprint").name("Sprint").flag(false).build());
+				TargetField.builder().key("customfield_10037").name("Partner").flag(true).build(),
+				TargetField.builder().key("customfield_10020").name("Sprint").flag(true).build());
 
 		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields,
 				ClassificationFixture.GENERAL_CARD_COLLECTION);
 
-		assertEquals(1, classifications.size());
+		assertEquals(3, classifications.size());
+		assertEquals("Sprint", classifications.get(0).getFieldName());
+		assertEquals("None", classifications.get(0).getPairs().get(0).getName());
+		assertEquals(0.5, classifications.get(0).getPairs().get(0).getValue());
+		assertEquals("Sprint 8", classifications.get(0).getPairs().get(1).getName());
+		assertEquals(0.25, classifications.get(0).getPairs().get(1).getValue());
+		assertEquals("Sprint 7", classifications.get(0).getPairs().get(2).getName());
+		assertEquals(0.25, classifications.get(0).getPairs().get(2).getValue());
+		assertEquals("Fix versions", classifications.get(1).getFieldName());
+		assertEquals("sprint1", classifications.get(1).getPairs().get(0).getName());
+		assertEquals(0.5, classifications.get(1).getPairs().get(0).getValue());
+		assertEquals("sprint2", classifications.get(1).getPairs().get(1).getName());
+		assertEquals(0.5, classifications.get(1).getPairs().get(1).getValue());
+		assertEquals("Partner", classifications.get(2).getFieldName());
+		assertEquals("shawn", classifications.get(2).getPairs().get(0).getName());
+		assertEquals(0.25, classifications.get(2).getPairs().get(0).getValue());
+		assertEquals("None", classifications.get(2).getPairs().get(1).getName());
+		assertEquals(0.5, classifications.get(2).getPairs().get(1).getValue());
+		assertEquals("jack", classifications.get(2).getPairs().get(2).getName());
+		assertEquals(0.25, classifications.get(2).getPairs().get(2).getValue());
 
-		Classification classification = classifications.get(0);
-		assertEquals("Fix versions", classification.getFieldName());
-		assertEquals("sprint1", classification.getPairs().get(0).getName());
-		assertEquals(0.5, classification.getPairs().get(0).getValue());
-		assertEquals("sprint2", classification.getPairs().get(1).getName());
-		assertEquals(0.5, classification.getPairs().get(1).getValue());
 	}
 
 	@Test
@@ -190,6 +204,20 @@ class ClassificationCalculatorTest {
 		assertEquals(0.5, classifications.get(0).getPairs().get(0).getValue());
 		assertEquals("sprint2", classifications.get(0).getPairs().get(1).getName());
 		assertEquals(0.5, classifications.get(0).getPairs().get(1).getValue());
+	}
+
+	@Test
+	void shouldReturnClassificationWithMapArrayFieldEmptyContent() {
+		List<TargetField> mockTargetFields = List
+			.of(TargetField.builder().key("fixVersions").name("Fix Versions").flag(true).build());
+
+		List<Classification> classifications = classificationCalculator.calculate(mockTargetFields,
+				ClassificationFixture.CARD_COLLECTION_WITH_EMPTY_CONTENT);
+
+		assertEquals(1, classifications.size());
+		assertEquals("Fix Versions", classifications.get(0).getFieldName());
+		assertEquals("None", classifications.get(0).getPairs().get(0).getName());
+		assertEquals(1, classifications.get(0).getPairs().get(0).getValue());
 	}
 
 }

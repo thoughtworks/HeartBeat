@@ -178,7 +178,6 @@ public class GitHubService {
 		double prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
 		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-		double jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
 		double firstCommitTimeInPr;
 		if (commitInfo.getCommit() != null && commitInfo.getCommit().getCommitter() != null
 				&& commitInfo.getCommit().getCommitter().getDate() != null) {
@@ -189,7 +188,7 @@ public class GitHubService {
 			firstCommitTimeInPr = 0;
 		}
 
-		double pipelineDelayTime = jobFinishTime - jobStartTime;
+		double pipelineDelayTime = jobFinishTime - prMergedTime;
 		double prDelayTime;
 		double totalTime;
 		if (firstCommitTimeInPr > 0) {

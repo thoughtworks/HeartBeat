@@ -85,7 +85,7 @@ class GithubServiceTest {
 		deployInfo = DeployInfo.builder()
 			.commitId("111")
 			.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
-			.jobStartTime("2022-07-23T04:05:00.000+00:00")
+			.jobStartTime("2022-07-23T04:04:00.000+00:00")
 			.jobFinishTime("2022-07-23T04:06:00.000+00:00")
 			.state("passed")
 			.build();
@@ -101,7 +101,7 @@ class GithubServiceTest {
 			.pipelineStep("Step")
 			.passed(List.of(DeployInfo.builder()
 				.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
-				.jobStartTime("2022-07-23T04:05:00.000+00:00")
+				.jobStartTime("2022-07-23T04:04:00.000+00:00")
 				.jobFinishTime("2022-07-23T04:06:00.000+00:00")
 				.commitId("111")
 				.state("passed")
@@ -120,8 +120,8 @@ class GithubServiceTest {
 				.pipelineDelayTime(1.6585491E12)
 				.pipelineCreateTime(1.6585491E12)
 				.prDelayTime(60000.0)
-				.pipelineDelayTime(60000.0)
-				.totalTime(120000.0)
+				.pipelineDelayTime(120000.0)
+				.totalTime(180000.0)
 				.build()))
 			.build());
 
@@ -224,8 +224,8 @@ class GithubServiceTest {
 			.pipelineDelayTime(1.6585491E12)
 			.pipelineCreateTime(1.6585491E12)
 			.prDelayTime(60000.0)
-			.pipelineDelayTime(60000.0)
-			.totalTime(120000.0)
+			.pipelineDelayTime(120000.0)
+			.totalTime(180000.0)
 			.build();
 
 		assertEquals(expect, result);
@@ -244,15 +244,15 @@ class GithubServiceTest {
 			.pipelineDelayTime(1.6585491E12)
 			.pipelineCreateTime(1.6585491E12)
 			.prDelayTime(60000.0)
-			.pipelineDelayTime(60000.0)
-			.totalTime(120000.0)
+			.pipelineDelayTime(120000.0)
+			.totalTime(180000.0)
 			.build();
 
 		assertEquals(expect, result);
 	}
 
 	@Test
-	void shouldReturnCommitTimeInPrZeroWhenCommitInfoIsNull() {
+	void shouldReturnFirstCommitTimeInPrZeroWhenCommitInfoIsNull() {
 		commitInfo = CommitInfo.builder().build();
 		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
 		LeadTime expect = LeadTime.builder()
@@ -264,8 +264,8 @@ class GithubServiceTest {
 			.pipelineDelayTime(1.6585491E12)
 			.pipelineCreateTime(1.6585491E12)
 			.prDelayTime(60000.0)
-			.pipelineDelayTime(60000.0)
-			.totalTime(120000.0)
+			.pipelineDelayTime(120000.0)
+			.totalTime(180000.0)
 			.build();
 
 		assertEquals(expect, result);
@@ -320,7 +320,7 @@ class GithubServiceTest {
 				.jobFinishTime(1.65854916E12)
 				.pipelineCreateTime(1.6585491E12)
 				.prDelayTime(0)
-				.pipelineDelayTime(60000)
+				.pipelineDelayTime(120000)
 				.totalTime(0)
 				.build()))
 			.build());
@@ -349,7 +349,7 @@ class GithubServiceTest {
 				.jobFinishTime(1.65854916E12)
 				.pipelineCreateTime(1.6585491E12)
 				.prDelayTime(0)
-				.pipelineDelayTime(60000)
+				.pipelineDelayTime(120000)
 				.totalTime(0)
 				.build()))
 			.build());

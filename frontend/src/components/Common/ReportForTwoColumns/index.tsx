@@ -32,7 +32,7 @@ export const ReportForTwoColumns = ({ title, data }: ReportForTwoColumnsProps) =
     <>
       <MetricsSettingTitle title={title} />
       <Container>
-        <Table>
+        <Table data-test-id={title}>
           <TableHead>
             <TableRow id={title}>
               <TableCell>Name</TableCell>

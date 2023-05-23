@@ -119,9 +119,9 @@ class GithubServiceTest {
 				.jobFinishTime(1658549160000L)
 				.pipelineDelayTime(1658549100000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(60000.0)
-				.pipelineDelayTime(120000.0)
-				.totalTime(180000.0)
+				.prDelayTime(60000)
+				.pipelineDelayTime(120000)
+				.totalTime(180000)
 				.build()))
 			.build());
 
@@ -223,9 +223,9 @@ class GithubServiceTest {
 			.jobFinishTime(1658549160000L)
 			.pipelineDelayTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000.0)
-			.pipelineDelayTime(120000.0)
-			.totalTime(180000.0)
+			.prDelayTime(60000)
+			.pipelineDelayTime(120000)
+			.totalTime(180000)
 			.build();
 
 		assertEquals(expect, result);
@@ -243,9 +243,9 @@ class GithubServiceTest {
 			.jobFinishTime(1658549160000L)
 			.pipelineDelayTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000.0)
-			.pipelineDelayTime(120000.0)
-			.totalTime(180000.0)
+			.prDelayTime(60000)
+			.pipelineDelayTime(120000)
+			.totalTime(180000)
 			.build();
 
 		assertEquals(expect, result);
@@ -263,9 +263,9 @@ class GithubServiceTest {
 			.jobFinishTime(1658549160000L)
 			.pipelineDelayTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000.0)
-			.pipelineDelayTime(120000.0)
-			.totalTime(180000.0)
+			.prDelayTime(60000)
+			.pipelineDelayTime(120000)
+			.totalTime(180000L)
 			.build();
 
 		assertEquals(expect, result);

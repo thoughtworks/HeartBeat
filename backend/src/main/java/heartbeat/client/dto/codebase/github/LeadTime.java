@@ -23,10 +23,10 @@ public class LeadTime {
 
 	private long pipelineCreateTime;
 
-	private double prDelayTime;
+	private long prDelayTime;
 
-	private double pipelineDelayTime;
+	private long pipelineDelayTime;
 
-	private double totalTime;
+	private long totalTime;
 
 }

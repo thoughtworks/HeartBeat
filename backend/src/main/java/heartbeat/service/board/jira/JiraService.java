@@ -40,7 +40,7 @@ import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +67,7 @@ import static java.util.Objects.nonNull;
 @Log4j2
 public class JiraService {
 
-	@Autowired
+	@Qualifier("taskExecutor")
 	private final ThreadPoolTaskExecutor taskExecutor;
 
 	public static final int QUERY_COUNT = 100;

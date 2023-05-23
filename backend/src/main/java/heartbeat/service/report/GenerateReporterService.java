@@ -29,7 +29,6 @@ import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +58,9 @@ public class GenerateReporterService {
 
 	private final VelocityCalculator velocityCalculator;
 
+	private final CSVFileGenerator csvFileGenerator;
+
+	// need add GitHubMetrics and BuildKiteMetrics
 	private CardCollection cardCollection;
 
 	private List<PipelineLeadTime> pipelineLeadTimes;
@@ -201,6 +203,10 @@ public class GenerateReporterService {
 
 		List<PipelineCsvInfo> pipelineData = generateCsvForPipelineWithoutCodebase(
 				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime());
+
+		leadTimeData.addAll(pipelineData);
+		csvFileGenerator.convertPipelineDataToCsv(leadTimeData, request.getCsvTimeStamp());
+
 	}
 
 	private List<PipelineCsvInfo> generateCsvForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
@@ -224,15 +230,7 @@ public class GenerateReporterService {
 				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), requiredStates,
 						startTime, endTime);
 
-				long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-				long pipelineStartTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-
-				LeadTime noMergeDelayTime = LeadTime.builder()
-					.commitId(deployInfo.getCommitId())
-					.pipelineCreateTime(pipelineStartTime)
-					.jobFinishTime(jobFinishTime)
-					.pipelineDelayTime(jobFinishTime - pipelineStartTime)
-					.build();
+				LeadTime noMergeDelayTime = gitHubService.getNoMergeDelayTime(deployInfo);
 
 				return PipelineCsvInfo.builder()
 					.pipeLineName(deploymentEnvironment.getName())
@@ -283,14 +281,14 @@ public class GenerateReporterService {
 					.findFirst()
 					.orElse(null);
 
-				CommitInfo commitInfo = gitHubService.fetchCommitInfo(codebaseSetting.getToken(), repoId,
-						deployInfo.getCommitId());
-
+				CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
+						codebaseSetting.getToken());
 				return PipelineCsvInfo.builder()
 					.pipeLineName(deploymentEnvironment.getName())
 					.stepName(deploymentEnvironment.getStep())
 					.buildInfo(buildInfo)
 					.deployInfo(deployInfo)
+					.commitInfo(commitInfo)
 					.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
 					.build();
 			}).toList();

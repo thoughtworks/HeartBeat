@@ -76,6 +76,9 @@ class GenerateReporterServiceTest {
 	ClassificationCalculator classificationCalculator;
 
 	@Mock
+	CSVFileGenerator csvFileGenerator;
+
+	@Mock
 	private BuildKiteService buildKiteService;
 
 	@Mock
@@ -323,11 +326,11 @@ class GenerateReporterServiceTest {
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
-				.prCreatedTime(1.6585491E12)
-				.prMergedTime(1.65854916E12)
-				.firstCommitTimeInPr(1.6585491E12)
-				.jobFinishTime(1.65854916E12)
-				.pipelineCreateTime(1.6585491E12)
+				.prCreatedTime(1658549100000L)
+				.prMergedTime(1658549160000L)
+				.firstCommitTimeInPr(1658549100000L)
+				.jobFinishTime(1658549160000L)
+				.pipelineCreateTime(1658549100000L)
 				.prDelayTime(60000)
 				.pipelineDelayTime(60000)
 				.totalTime(120000)

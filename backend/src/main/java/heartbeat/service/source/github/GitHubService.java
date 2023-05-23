@@ -134,16 +134,7 @@ public class GitHubService {
 								deployInfo.getCommitId(), realToken), taskExecutor)
 						.join();
 
-					long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-					long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
-					long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-
-					LeadTime noMergeDelayTime = LeadTime.builder()
-						.commitId(deployInfo.getCommitId())
-						.pipelineCreateTime(pipelineCreateTime)
-						.jobFinishTime(jobFinishTime)
-						.pipelineDelayTime(jobFinishTime - jobStartTime)
-						.build();
+					LeadTime noMergeDelayTime = getNoMergeDelayTime(deployInfo);
 
 					if (pullRequestInfos.isEmpty()) {
 						return noMergeDelayTime;
@@ -171,6 +162,19 @@ public class GitHubService {
 					.build();
 			}).toList();
 		});
+	}
+
+	public LeadTime getNoMergeDelayTime(DeployInfo deployInfo) {
+		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+		long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
+		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+
+		return LeadTime.builder()
+			.commitId(deployInfo.getCommitId())
+			.pipelineCreateTime(pipelineCreateTime)
+			.jobFinishTime(jobFinishTime)
+			.pipelineDelayTime(jobFinishTime - jobStartTime)
+			.build();
 	}
 
 	public LeadTime mapLeadTimeWithInfo(PullRequestInfo pullRequestInfo, DeployInfo deployInfo, CommitInfo commitInfo) {

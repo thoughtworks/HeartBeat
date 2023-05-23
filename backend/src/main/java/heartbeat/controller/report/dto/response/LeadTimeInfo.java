@@ -23,13 +23,11 @@ public class LeadTimeInfo {
 	@Nullable
 	private String firstCommitTimeInPr;
 
-	@Nullable
 	private String jobFinishTime;
 
 	@Nullable
 	private String prDelayTime;
 
-	@Nullable
 	private String pipelineDelayTime;
 
 	@Nullable
@@ -53,14 +51,14 @@ public class LeadTimeInfo {
 
 			this.jobFinishTime = TimeUtil.convertToISOFormat(String.valueOf(leadTime.getJobFinishTime()));
 
-			this.pipelineDelayTime = TimeUtil.convertMillisecondToMinutes(leadTime.getPipelineDelayTime()).toString();
+			this.pipelineDelayTime = TimeUtil.msToHMS(leadTime.getPipelineDelayTime()).toString();
 
 			if (leadTime.getPrDelayTime() != 0.0) {
-				this.prDelayTime = TimeUtil.convertMillisecondToMinutes(leadTime.getPrDelayTime()).toString();
+				this.prDelayTime = TimeUtil.msToHMS(leadTime.getPrDelayTime()).toString();
 			}
 
 			if (leadTime.getTotalTime() != 0.0) {
-				this.totalTime = TimeUtil.convertMillisecondToMinutes(leadTime.getTotalTime()).toString();
+				this.totalTime = TimeUtil.msToHMS(leadTime.getTotalTime()).toString();
 			}
 		}
 	}

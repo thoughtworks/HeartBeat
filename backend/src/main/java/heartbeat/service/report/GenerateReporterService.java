@@ -50,7 +50,14 @@ public class GenerateReporterService {
 
 	private final VelocityCalculator velocityCalculator;
 
-	// need add GitHubMetrics and BuildKiteMetrics
+	private CardCollection cardCollection;
+
+	private List<DeployTimes> deployTimesList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
+
 	private List<PipelineLeadTime> leadTimes;
 
 	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
@@ -76,14 +83,6 @@ public class GenerateReporterService {
 		}
 		return repoMap;
 	}
-
-	private CardCollection cardCollection;
-
-	private List<DeployTimes> deployTimesList = new ArrayList<>();
-
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
-
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
 
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());

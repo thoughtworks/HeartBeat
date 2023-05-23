@@ -104,12 +104,12 @@ export const metricsSlice = createSlice({
     updateMetricsState: (state, action) => {
       const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
       const { importedCrews, importedClassification, importedCycleTime } = state.importedData
-      state.users = isProjectCreated ? users : users?.filter((item: string) => importedCrews.includes(item))
+      state.users = isProjectCreated ? users : users?.filter((item: string) => importedCrews?.includes(item))
       state.targetFields = isProjectCreated
-        ? []
+        ? targetFields
         : targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
             ...item,
-            flag: importedClassification.includes(item.key),
+            flag: importedClassification?.includes(item.key),
           }))
       state.cycleTimeSettings = jiraColumns?.map(
         (item: { key: string; value: { name: string; statuses: string[] } }) => {

@@ -28,23 +28,24 @@ class WorkDayTest {
 
 	@Test
 	void shouldReturnDayIsHoliday() {
-		String year = "2020";
+		String year = "2023";
 		List<HolidayDTO> holidayDTOList = List.of(
-				HolidayDTO.builder().date("2020-01-01").name("元旦").isOffDay(true).build(),
-				HolidayDTO.builder().date("2020-01-19").name("春节").isOffDay(false).build());
+				HolidayDTO.builder().date("2023-01-01").name("元旦").isOffDay(true).build(),
+				HolidayDTO.builder().date("2023-01-28").name("春节").isOffDay(false).build());
 
-		long holidayTime = LocalDate.parse("2020-01-01", DateTimeFormatter.ISO_DATE)
+		long holidayTime = LocalDate.parse("2023-01-01", DateTimeFormatter.ISO_DATE)
 			.atStartOfDay(ZoneOffset.UTC)
 			.toInstant()
 			.toEpochMilli();
 
-		long workdayTime = LocalDate.parse("2020-01-19", DateTimeFormatter.ISO_DATE)
+		long workdayTime = LocalDate.parse("2023-01-28", DateTimeFormatter.ISO_DATE)
 			.atStartOfDay(ZoneOffset.UTC)
 			.toInstant()
 			.toEpochMilli();
 		when(holidayFeignClient.getHolidays(year))
 			.thenReturn(HolidaysResponseDTO.builder().days(holidayDTOList).build());
 
+		workDay.changeConsiderHolidayMode(true);
 		boolean resultWorkDay = workDay.verifyIfThisDayHoliday(holidayTime);
 		boolean resultHoliday = workDay.verifyIfThisDayHoliday(workdayTime);
 
@@ -53,25 +54,43 @@ class WorkDayTest {
 	}
 
 	@Test
-	void shouldReturnRightWorkDaysWhenCalculateWorkDaysBetween() {
-		when(holidayFeignClient.getHolidays("2020"))
-			.thenReturn(HolidaysResponseDTO.builder().days(WorkDayFixture.HOLIDAYS_DATA()).build());
-		when(holidayFeignClient.getHolidays("2021"))
-			.thenReturn(HolidaysResponseDTO.builder().days(WorkDayFixture.HOLIDAYS_DATA()).build());
-		int result = workDay.calculateWorkDaysBetween(WorkDayFixture.START_TIME(), WorkDayFixture.END_TIME());
-		int resultNewYear = workDay.calculateWorkDaysBetween(WorkDayFixture.START_TIME_NEW_YEAR(), WorkDayFixture.END_TIME_NEW_YEAR());
+	void shouldReturnDayIsHolidayWithoutChineseHoliday() {
 
-		Assertions.assertEquals(21, result);
+		long holidayTime = LocalDate.parse("2023-01-01", DateTimeFormatter.ISO_DATE)
+			.atStartOfDay(ZoneOffset.UTC)
+			.toInstant()
+			.toEpochMilli();
+
+		long workdayTime = LocalDate.parse("2023-01-28", DateTimeFormatter.ISO_DATE)
+			.atStartOfDay(ZoneOffset.UTC)
+			.toInstant()
+			.toEpochMilli();
+
+		workDay.changeConsiderHolidayMode(false);
+		boolean resultWorkDay = workDay.verifyIfThisDayHoliday(holidayTime);
+		boolean resultHoliday = workDay.verifyIfThisDayHoliday(workdayTime);
+
+		Assertions.assertTrue(resultWorkDay);
+		Assertions.assertTrue(resultHoliday);
+	}
+
+	@Test
+	void shouldReturnRightWorkDaysWhenCalculateWorkDaysBetween() {
+
+		int result = workDay.calculateWorkDaysBetween(WorkDayFixture.START_TIME(), WorkDayFixture.END_TIME());
+		int resultNewYear = workDay.calculateWorkDaysBetween(WorkDayFixture.START_TIME_NEW_YEAR(),
+				WorkDayFixture.END_TIME_NEW_YEAR());
+
+		Assertions.assertEquals(23, result);
 		Assertions.assertEquals(22, resultNewYear);
 	}
 
 	@Test
 	void shouldReturnRightWorkDaysWhenCalculateWorkDaysBy24Hours() {
-		when(holidayFeignClient.getHolidays("2020"))
-			.thenReturn(HolidaysResponseDTO.builder().days(WorkDayFixture.HOLIDAYS_DATA()).build());
+
 		double days = workDay.calculateWorkDaysBy24Hours(WorkDayFixture.START_TIME(), WorkDayFixture.END_TIME());
 
-		Assertions.assertEquals(21, days);
+		Assertions.assertEquals(23, days);
 	}
 
 }

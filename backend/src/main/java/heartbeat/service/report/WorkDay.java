@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,27 +37,17 @@ public class WorkDay {
 		}
 	}
 
-	private void checkHolidayList(String year) {
-		if (holidayMap.size() == 0) {
-			loadHolidayList(year);
+	public void changeConsiderHolidayMode(boolean considerHoliday) {
+		if (!considerHoliday) {
+			holidayMap = new HashMap<>();
 		}
-		if (!isYearExisted(year)) {
-			loadHolidayList(year);
+		else if (holidayMap.size() == 0) {
+			loadHolidayList(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
 		}
-	}
-
-	private boolean isYearExisted(String year) {
-		for (String dateString : holidayMap.keySet()) {
-			if (dateString.startsWith(year)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean verifyIfThisDayHoliday(long time) {
 		String dateString = convertTimeToDateString(time);
-		checkHolidayList(String.valueOf(LocalDate.parse(dateString, DATE_FORMATTER).getYear()));
 		if (holidayMap.containsKey(dateString)) {
 			return holidayMap.get(dateString);
 		}

@@ -9,12 +9,13 @@ import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.report.calculator.VelocityCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,8 @@ public class GenerateReporterService {
 
 	private final JiraService jiraService;
 
+	private final WorkDay workDay;
+
 	private final ClassificationCalculator classificationCalculator;
 
 	private final BuildKiteService buildKiteService;
@@ -38,6 +41,8 @@ public class GenerateReporterService {
 	private final ChangeFailureRateCalculator changeFailureRate;
 
 	private final CycleTimeCalculator cycleTimeCalculator;
+
+	private final VelocityCalculator velocityCalculator;
 
 	// need add GitHubMetrics and BuildKiteMetrics
 	private final List<String> kanbanMetrics = Stream
@@ -58,6 +63,7 @@ public class GenerateReporterService {
 	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
 
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
+		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 
@@ -67,7 +73,7 @@ public class GenerateReporterService {
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
-				case "velocity" -> reportResponse.setVelocity(calculateVelocity());
+				case "velocity" -> reportResponse.setVelocity(velocityCalculator.calculateVelocity(cardCollection));
 				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(cardCollection,
 						request.getJiraBoardSetting().getBoardColumns()));
 				case "classification" -> reportResponse.setClassification(classificationCalculator
@@ -84,13 +90,6 @@ public class GenerateReporterService {
 		});
 
 		return reportResponse;
-	}
-
-	private Velocity calculateVelocity() {
-		return Velocity.builder()
-			.velocityForSP(cardCollection.getStoryPointSum())
-			.velocityForCards(cardCollection.getCardsNumber())
-			.build();
 	}
 
 	private void calculateLeadTime() {

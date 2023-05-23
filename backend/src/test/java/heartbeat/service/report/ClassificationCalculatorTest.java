@@ -2,6 +2,7 @@ package heartbeat.service.report;
 
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.response.Classification;
+import heartbeat.service.report.calculator.ClassificationCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -17,6 +17,22 @@ jobs:
         uses: ludeeus/action-shellcheck@master
         with:
           scandir: './ops'
+
+  credential-check:
+    name: Credential Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 10
+      - name: Trufflehog scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --only-verified
+
   security-check:
     runs-on: ubuntu-latest
     steps:
@@ -143,6 +159,7 @@ jobs:
       - backend-check
       - security-check
       - shellcheck
+      - credential-check
       - frontend-license-check
       - backend-license-check
     runs-on: ubuntu-latest
@@ -153,25 +170,25 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        if: ${{ contains(github.event.head_commit.message, '[infra]') }}
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION}}
-          role-session-name: MySessionName
+      # - name: Configure AWS credentials
+      #   if: ${{ contains(github.event.head_commit.message, '[infra]') }}
+      #   uses: aws-actions/configure-aws-credentials@v2
+      #   with:
+      #     role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+      #     aws-region: ${{ secrets.AWS_REGION}}
+      #     role-session-name: MySessionName
 
-      - name: Deploy infra
-        if: ${{ contains(github.event.head_commit.message, '[infra]') }}
-        env:
-          SSHPublicKey: ${{ secrets.AWS_EC2_SSH_PUBLIC_KEY}}
-          AWSHost: ${{ secrets.AWS_HOST }}
-          AWSAccountId: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWSRegion: ${{ secrets.AWS_REGION }}
-          BuildKiteToken: ${{ secrets.BUILDKITE_TOKEN }}
-          SSHPrivateKey: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY}}
-        run: |
-          sh ./ops/infra/updateAwsResource.sh
+      # - name: Deploy infra
+      #   if: ${{ contains(github.event.head_commit.message, '[infra]') }}
+      #   env:
+      #     SSHPublicKey: ${{ secrets.AWS_EC2_SSH_PUBLIC_KEY}}
+      #     AWSHost: ${{ secrets.AWS_HOST }}
+      #     AWSAccountId: ${{ secrets.AWS_ACCOUNT_ID }}
+      #     AWSRegion: ${{ secrets.AWS_REGION }}
+      #     BuildKiteToken: ${{ secrets.BUILDKITE_TOKEN }}
+      #     SSHPrivateKey: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY}}
+      #   run: |
+      #     sh ./ops/infra/updateAwsResource.sh
 
   build-backend:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -213,14 +230,14 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
           trivyignores: '.trivyignore'
-      - name: Push for Backend
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: heartbeat_backend
-          IMAGE_TAG: "hb${{ github.run_number }}"
-        run: |
-          docker push $REGISTRY/$REPOSITORY:latest
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+      # - name: Push for Backend
+      #   env:
+      #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     REPOSITORY: heartbeat_backend
+      #     IMAGE_TAG: "hb${{ github.run_number }}"
+      #   run: |
+      #     docker push $REGISTRY/$REPOSITORY:latest
+      #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   build-frontend:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -263,14 +280,14 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivyignores: '.trivyignore'
 
-      - name: Push for Frontend
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: heartbeat_frontend
-          IMAGE_TAG: "hb${{ github.run_number }}"
-        run: |
-          docker push $REGISTRY/$REPOSITORY:latest
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+      # - name: Push for Frontend
+      #   env:
+      #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     REPOSITORY: heartbeat_frontend
+      #     IMAGE_TAG: "hb${{ github.run_number }}"
+      #   run: |
+      #     docker push $REGISTRY/$REPOSITORY:latest
+      #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   build-mock-server:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -314,15 +331,15 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivyignores: '.trivyignore'
 
-      - name: Push for MockServer
-        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: heartbeat_stub
-          IMAGE_TAG: "hb${{ github.run_number }}"
-        run: |
-          docker push $REGISTRY/$REPOSITORY:latest
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+      # - name: Push for MockServer
+      #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}
+      #   env:
+      #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     REPOSITORY: heartbeat_stub
+      #     IMAGE_TAG: "hb${{ github.run_number }}"
+      #   run: |
+      #     docker push $REGISTRY/$REPOSITORY:latest
+      #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   deploy-e2e:
     runs-on: ubuntu-latest

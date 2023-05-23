@@ -1,4 +1,46 @@
 class Metrics {
+  private readonly cycleTimeSettingTitle = () => cy.contains('Cycle time settings').should('exist')
+
+  private readonly cycleTimeSettingAnalysis = () => {
+    cy.contains('In Analysis').siblings().eq(0).click()
+    cy.get('[data-test-id="Analysis"]:contains(Analysis)').click()
+  }
+
+  private readonly cycleTimeSettingTodo = () => {
+    cy.contains('Ready For Dev').siblings().eq(0).click()
+    cy.get('[data-test-id="To do"]:contains(To do)').click()
+  }
+
+  private readonly cycleTimeSettingInDev = () => {
+    cy.contains('In Dev').siblings().eq(0).click()
+    cy.get('[data-test-id="In Dev"]:contains(In Dev)').click()
+  }
+
+  private readonly cycleTimeSettingBlock = () => {
+    cy.contains('Blocked').siblings().eq(0).click()
+    cy.get('[data-test-id="Block"]:contains(Block)').click()
+  }
+
+  private readonly cycleTimeSettingWaitTest = () => {
+    cy.contains('Ready For Test').siblings().eq(0).click()
+    cy.get('[data-test-id="Waiting for testing"]:contains(Waiting for testing)').click()
+  }
+
+  private readonly cycleTimeSettingTesting = () => {
+    cy.contains('In Test').siblings().eq(0).click()
+    cy.get('[data-test-id="Testing"]:contains(Testing)').click()
+  }
+
+  private readonly cycleTimeSettingReview = () => {
+    cy.contains('Ready to Deploy').siblings().eq(0).click()
+    cy.get('[data-test-id="Review"]:contains(Review)').click()
+  }
+
+  private readonly cycleTimeSettingDone = () => {
+    cy.contains('Done').siblings().eq(0).click()
+    cy.get('[data-test-id="Done"]:contains(Done)').click()
+  }
+
   private readonly realDoneSelect = () => cy.contains('Consider as Done').siblings().eq(0)
 
   private readonly RealDoneSelectAllOption = () => cy.contains('All')
@@ -53,7 +95,20 @@ class Metrics {
 
   private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
 
-  private readonly backButton = () => cy.contains('Next')
+  private readonly nextButton = () => cy.contains('Next')
+  private readonly backButton = () => cy.contains('Back')
+
+  checkCycleTime() {
+    this.cycleTimeSettingTitle()
+    this.cycleTimeSettingAnalysis()
+    this.cycleTimeSettingTodo()
+    this.cycleTimeSettingInDev()
+    this.cycleTimeSettingBlock()
+    this.cycleTimeSettingWaitTest()
+    this.cycleTimeSettingTesting()
+    this.cycleTimeSettingReview()
+    this.cycleTimeSettingDone()
+  }
 
   checkRealDone() {
     this.realDoneSelect().click()
@@ -106,7 +161,16 @@ class Metrics {
   }
 
   goReportStep() {
+    this.nextButton().click()
+  }
+
+  BackToMetricsStep() {
     this.backButton().click()
+  }
+
+  checkClassificationValueExist() {
+    this.classificationSelect().click()
+    cy.get('input[type="checkbox"]').should('be.checked')
   }
 }
 

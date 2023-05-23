@@ -22,7 +22,7 @@ export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: for
       <InputLabel id='cycletime-data-checkbox-label'>{label}</InputLabel>
       <Select labelId='cycletime-data-checkbox-label' value={selectedCycleTime} onChange={handleCycleTimeChange}>
         {CYCLE_TIME_LIST.map((data) => (
-          <MenuItem key={data} value={data}>
+          <MenuItem key={data} value={data} data-test-id={data}>
             <ListItemText primary={data} />
           </MenuItem>
         ))}

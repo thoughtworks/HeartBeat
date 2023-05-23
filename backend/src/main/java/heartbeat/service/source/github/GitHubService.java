@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 public class GitHubService {
 
 	@Autowired
+	@Qualifier("taskExecutor")
 	private final ThreadPoolTaskExecutor taskExecutor;
 
 	private final GitHubFeignClient gitHubFeignClient;
@@ -111,7 +112,7 @@ public class GitHubService {
 
 	public CompletableFuture<List<PipelineLeadTime>> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
-		String realToken = "Bearer" + token;
+		String realToken = "Bearer " + token;
 		return CompletableFuture.supplyAsync(() -> {
 			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = deployTimes.stream().map(deployTime -> {
 				String repository = GithubUtil.getGithubUrlFullName(repositories.get(deployTime.getPipelineId()));
@@ -132,15 +133,16 @@ public class GitHubService {
 						.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
 								deployInfo.getCommitId(), realToken), taskExecutor)
 						.join();
+
 					long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 					long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
 					long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
 
 					LeadTime noMergeDelayTime = LeadTime.builder()
 						.commitId(deployInfo.getCommitId())
-						.pipelineCreateTime((double) pipelineCreateTime)
-						.jobFinishTime((double) jobFinishTime)
-						.pipelineDelayTime((double) jobFinishTime - jobStartTime)
+						.pipelineCreateTime(pipelineCreateTime)
+						.jobFinishTime(jobFinishTime)
+						.pipelineDelayTime(jobFinishTime - jobStartTime)
 						.build();
 
 					if (pullRequestInfos.isEmpty()) {
@@ -175,23 +177,22 @@ public class GitHubService {
 		if (pullRequestInfo.getMergedAt() == null) {
 			return null;
 		}
-		double prCreatedTime = Instant.parse(pullRequestInfo.getCreatedAt()).toEpochMilli();
-		double prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
-		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-		double firstCommitTimeInPr;
+		long prCreatedTime = Instant.parse(pullRequestInfo.getCreatedAt()).toEpochMilli();
+		long prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
+		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+		long firstCommitTimeInPr;
 		if (commitInfo.getCommit() != null && commitInfo.getCommit().getCommitter() != null
 				&& commitInfo.getCommit().getCommitter().getDate() != null) {
-			firstCommitTimeInPr = (double) Instant.parse(commitInfo.getCommit().getCommitter().getDate())
-				.toEpochMilli();
+			firstCommitTimeInPr = Instant.parse(commitInfo.getCommit().getCommitter().getDate()).toEpochMilli();
 		}
 		else {
 			firstCommitTimeInPr = 0;
 		}
 
-		double pipelineDelayTime = jobFinishTime - prMergedTime;
-		double prDelayTime;
-		double totalTime;
+		long pipelineDelayTime = jobFinishTime - prMergedTime;
+		long prDelayTime;
+		long totalTime;
 		if (firstCommitTimeInPr > 0) {
 			prDelayTime = prMergedTime - firstCommitTimeInPr;
 		}
@@ -215,8 +216,9 @@ public class GitHubService {
 
 	public CommitInfo fetchCommitInfo(String commitId, String repositoryId, String token) {
 		String maskToken = TokenUtil.mask(token);
+		String realToken = "Bearer " + token;
 		log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
-		CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, token);
+		CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
 		log.info("Successfully get commit info_commitInfo: {}", commitInfo);
 		return commitInfo;
 	}

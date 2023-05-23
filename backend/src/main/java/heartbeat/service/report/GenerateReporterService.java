@@ -29,8 +29,8 @@ import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,8 +224,8 @@ public class GenerateReporterService {
 				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), requiredStates,
 						startTime, endTime);
 
-				long jobFinishTime = new Date(Long.parseLong(deployInfo.getJobFinishTime())).getTime();
-				long pipelineStartTime = new Date(Long.parseLong(deployInfo.getPipelineCreateTime())).getTime();
+				long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+				long pipelineStartTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
 
 				LeadTime noMergeDelayTime = LeadTime.builder()
 					.commitId(deployInfo.getCommitId())
@@ -292,7 +292,6 @@ public class GenerateReporterService {
 					.buildInfo(buildInfo)
 					.deployInfo(deployInfo)
 					.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
-					.commitInfo(commitInfo)
 					.build();
 			}).toList();
 			pipelineCsvInfos.addAll(pipelineCsvInfoList);

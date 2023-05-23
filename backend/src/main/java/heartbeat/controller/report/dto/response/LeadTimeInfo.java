@@ -38,16 +38,16 @@ public class LeadTimeInfo {
 	public LeadTimeInfo(LeadTime leadTime) {
 		if (leadTime != null) {
 			// TODO LeadTime field type change from double to long
-			if (leadTime.getFirstCommitTimeInPr() != 0.0) {
+			if (leadTime.getFirstCommitTimeInPr() != 0) {
 				this.firstCommitTimeInPr = TimeUtil
 					.convertToISOFormat(String.valueOf(leadTime.getFirstCommitTimeInPr()));
 			}
 
-			if (leadTime.getPrCreatedTime() != 0.0) {
+			if (leadTime.getPrCreatedTime() != 0) {
 				this.prCreatedTime = TimeUtil.convertToISOFormat(String.valueOf(leadTime.getPrCreatedTime()));
 			}
 
-			if (leadTime.getPrMergedTime() != 0.0) {
+			if (leadTime.getPrMergedTime() != 0) {
 				this.prMergedTime = TimeUtil.convertToISOFormat(String.valueOf(leadTime.getPrMergedTime()));
 			}
 

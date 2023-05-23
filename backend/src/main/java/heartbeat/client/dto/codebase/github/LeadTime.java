@@ -13,15 +13,15 @@ public class LeadTime {
 
 	private String commitId;
 
-	private double prCreatedTime;
+	private long prCreatedTime;
 
-	private double prMergedTime;
+	private long prMergedTime;
 
-	private double firstCommitTimeInPr;
+	private long firstCommitTimeInPr;
 
-	private double jobFinishTime;
+	private long jobFinishTime;
 
-	private double pipelineCreateTime;
+	private long pipelineCreateTime;
 
 	private double prDelayTime;
 

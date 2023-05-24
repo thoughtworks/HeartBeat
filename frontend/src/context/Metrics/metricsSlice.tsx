@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
-import { CLASSIFICATION_WARNING_MESSAGE, CYCLE_TIME_LIST, METRICS_CONSTANTS } from '@src/constants'
+import { CLASSIFICATION_WARNING_MESSAGE, CYCLE_TIME_LIST, METRICS_CONSTANTS, PIPELINE_SETTING_TYPES } from '@src/constants'
+import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 
 export interface IPipelineConfig {
   id: number
@@ -232,6 +233,94 @@ export const metricsSlice = createSlice({
         : setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus)
     },
 
+    updatePipelineSettings: (state, action) => {
+      const { pipelineList, isProjectCreated } = action.payload
+      const { importedDeployment, importedLeadTime } = state.importedData
+      const orgName = new Set(pipelineList.map((item: pipeline) => item.orgName))
+
+      const filteredPipelineName = (organization: string) =>
+        pipelineList
+          .filter((pipeline: pipeline) => pipeline.orgName === organization)
+          .map((item: pipeline) => item.name)
+      const validDeployment = importedDeployment?.map((item) => {
+        if (!orgName.has(item.organization)) {
+          return {
+            ...item,
+            organization: '',
+            pipelineName: '',
+            step: '',
+          }
+        } else if (
+          orgName.has(item.organization) &&
+          !filteredPipelineName(item.organization).includes(item.pipelineName)
+        ) {
+          return {
+            ...item,
+            pipelineName: '',
+            step: '',
+          }
+        }
+        return {
+          ...item,
+          step: '',
+        }
+      })
+      const validLeadTime = importedLeadTime?.map((item) => {
+        if (!orgName.has(item.organization)) {
+          return {
+            ...item,
+            organization: '',
+            pipelineName: '',
+            step: '',
+          }
+        } else if (
+          orgName.has(item.organization) &&
+          !filteredPipelineName(item.organization).includes(item.pipelineName)
+        ) {
+          return {
+            ...item,
+            pipelineName: '',
+            step: '',
+          }
+        }
+        return {
+          ...item,
+          step: '',
+        }
+      })
+      state.deploymentFrequencySettings = isProjectCreated ? initialState.deploymentFrequencySettings : validDeployment
+      state.leadTimeForChanges = isProjectCreated ? initialState.leadTimeForChanges : validLeadTime
+    },
+
+    updatePipelineSteps: (state, action) => {
+      const { res, isProjectCreated, id, type } = action.payload
+      const { importedDeployment, importedLeadTime } = state.importedData
+      const updatedImportedPipeline =
+        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
+      const updatedImportedPipelineStep = updatedImportedPipeline?.filter((item) => item.id === id).map((i) => i.step)
+      const validStep = res ? res.filter((item: string) => updatedImportedPipelineStep?.includes(item)).join(',') : ''
+
+      if (type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE) {
+        state.deploymentFrequencySettings = state.deploymentFrequencySettings.map((deploymentFrequencySetting) => {
+          return deploymentFrequencySetting.id === id
+            ? {
+                ...deploymentFrequencySetting,
+                step: res ? (isProjectCreated ? '' : validStep) : '',
+              }
+            : deploymentFrequencySetting
+        })
+      } else {
+        state.leadTimeForChanges = state.leadTimeForChanges.map((leadTimeForChange) => {
+          return leadTimeForChange.id === id
+            ? {
+                ...leadTimeForChange,
+                step: res ? (isProjectCreated ? '' : validStep) : '',
+              }
+            : leadTimeForChange
+        })
+      }
+    },
+
     deleteADeploymentFrequencySetting: (state, action) => {
       const deleteId = action.payload
       state.deploymentFrequencySettings = [...state.deploymentFrequencySettings.filter(({ id }) => id !== deleteId)]
@@ -293,6 +382,8 @@ export const {
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
   updateMetricsState,
+  updatePipelineSettings,
+  updatePipelineSteps,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings

@@ -49,6 +49,7 @@ export const LeadTimeForChanges = () => {
       {leadTimeForChanges.map((leadTimeForChange) => (
         <PipelineMetricSelection
           key={leadTimeForChange.id}
+          type={PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE}
           pipelineSetting={leadTimeForChange}
           isShowRemoveButton={leadTimeForChanges.length > 1}
           errorMessages={getErrorMessage(leadTimeForChange.id)}

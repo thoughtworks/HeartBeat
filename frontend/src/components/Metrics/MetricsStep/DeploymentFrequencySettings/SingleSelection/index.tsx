@@ -1,7 +1,9 @@
 import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
 import camelCase from 'lodash.camelcase'
+import { useAppSelector } from '@src/hooks'
+import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 
 interface Props {
   options: string[]
@@ -25,16 +27,28 @@ export const SingleSelection = ({
   onClearErrorMessage,
 }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
+  const [selectedOptions, setSelectedOptions] = useState(value)
+  const step = useAppSelector(selectMetricsContent)
+    .deploymentFrequencySettings.filter((i) => i.id === id)
+    .map((i) => i.step)
+    .join(',')
 
   const handleChange = (event: SelectChangeEvent) => {
-    const value = event.target.value
+    const newValue = event.target.value
+    setSelectedOptions(newValue)
     if (onGetSteps) {
-      onGetSteps(value)
       onUpDatePipeline(id, 'Step', '')
+      onGetSteps(newValue)
     }
-    onUpDatePipeline(id, label, value)
+    onUpDatePipeline(id, label, newValue)
     !!errorMessage && onClearErrorMessage(id, camelCase(label))
   }
+
+  useEffect(() => {
+    if (onGetSteps && selectedOptions !== '' && step === '') {
+      onGetSteps(selectedOptions)
+    }
+  }, [])
 
   return (
     <>

@@ -6,6 +6,7 @@ import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import {
+  selectIsProjectCreated,
   selectPipelineNames,
   selectPipelineOrganizations,
   selectSteps,
@@ -13,8 +14,11 @@ import {
   updatePipelineToolVerifyResponseSteps,
 } from '@src/context/config/configSlice'
 import { store } from '@src/store'
+import { useAppSelector } from '@src/hooks/useAppDispatch'
+import { updatePipelineSteps } from '@src/context/Metrics/metricsSlice'
 
 interface pipelineMetricSelectionProps {
+  type: string
   pipelineSetting: {
     id: number
     organization: string
@@ -29,6 +33,7 @@ interface pipelineMetricSelectionProps {
 }
 
 export const PipelineMetricSelection = ({
+  type,
   pipelineSetting,
   isShowRemoveButton,
   errorMessages,
@@ -42,6 +47,7 @@ export const PipelineMetricSelection = ({
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
   const pipelineNameOptions = selectPipelineNames(store.getState(), organization)
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
+  const isProjectCreated = useAppSelector(selectIsProjectCreated)
 
   const handleClick = () => {
     onRemovePipeline(id)
@@ -56,6 +62,7 @@ export const PipelineMetricSelection = ({
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
       const steps = res ? Object.values(res) : []
       dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps }))
+      dispatch(updatePipelineSteps({ res, isProjectCreated, id, type }))
     })
   }
 

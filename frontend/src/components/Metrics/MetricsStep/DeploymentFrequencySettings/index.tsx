@@ -49,6 +49,7 @@ export const DeploymentFrequencySettings = () => {
       {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
         <PipelineMetricSelection
           key={deploymentFrequencySetting.id}
+          type={PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE}
           pipelineSetting={deploymentFrequencySetting}
           isShowRemoveButton={deploymentFrequencySettings.length > 1}
           errorMessages={getErrorMessage(deploymentFrequencySetting.id)}

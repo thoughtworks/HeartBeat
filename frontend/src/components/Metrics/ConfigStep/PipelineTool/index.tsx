@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   isPipelineToolVerified,
   selectDateRange,
+  selectIsProjectCreated,
   selectPipelineTool,
   updatePipelineTool,
   updatePipelineToolVerifyResponse,
@@ -30,13 +31,18 @@ import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEff
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
-import { initDeploymentFrequencySettings, initLeadTimeForChanges } from '@src/context/Metrics/metricsSlice'
+import {
+  initDeploymentFrequencySettings,
+  initLeadTimeForChanges,
+  updatePipelineSettings,
+} from '@src/context/Metrics/metricsSlice'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
   const pipelineToolFields = useAppSelector(selectPipelineTool)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
+  const isProjectCreated = useAppSelector(selectIsProjectCreated)
   const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect()
   const [fields, setFields] = useState([
     {
@@ -132,6 +138,7 @@ export const PipelineTool = () => {
         dispatch(updatePipelineToolVerifyResponse(res.response))
         dispatch(initDeploymentFrequencySettings())
         dispatch(initLeadTimeForChanges())
+        dispatch(updatePipelineSettings({ ...res.response, isProjectCreated }))
       }
     })
   }

@@ -89,6 +89,17 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
+	// need add GitHubMetrics and BuildKiteMetrics
+	private List<PipelineLeadTime> pipelineLeadTimes;
+
+	private CardCollection cardCollection;
+
+	private List<DeployTimes> deployTimesList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
+
 	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
 		Map<String, String> repoMap = new HashMap<>();
 		for (DeploymentEnvironment currentValue : codebaseSetting.getLeadTime()) {
@@ -206,7 +217,6 @@ public class GenerateReporterService {
 
 		leadTimeData.addAll(pipelineData);
 		csvFileGenerator.convertPipelineDataToCsv(leadTimeData, request.getCsvTimeStamp());
-
 	}
 
 	private List<PipelineCsvInfo> generateCsvForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,

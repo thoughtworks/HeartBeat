@@ -1,9 +1,8 @@
-package heartbeat.client.dto.pipeline.buildkite;
+package heartbeat.client.dto.codebase.github;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -12,16 +11,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeployTimes {
-
-	private String pipelineId;
+public class PipelineLeadTime {
 
 	private String pipelineName;
 
 	private String pipelineStep;
 
-	private List<DeployInfo> passed;
-
-	private List<DeployInfo> failed;
+	private List<LeadTime> leadTimes;
 
 }

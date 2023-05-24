@@ -1,5 +1,6 @@
 package heartbeat.util;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -40,6 +41,27 @@ class TimeUtilTest {
 		Instant mockTime = Instant.parse("2022-08-06T12:05:30Z");
 
 		assertFalse(TimeUtil.isAfterAndEqual(mockStartDate, mockTime));
+	}
+
+	@Test
+	void shouldReturnZeroWhenInputZero() {
+		double result = TimeUtil.convertMillisecondToMinutes(0d);
+		Assertions.assertEquals(0d, result);
+	}
+
+	@Test
+	void shouldReturnZeroWhenInputLessThan300() {
+		double result = TimeUtil.convertMillisecondToMinutes(299d);
+		Assertions.assertEquals(0d, result);
+	}
+
+	@Test
+	void shouldReturnGreaterThanZeroWhenInputGreaterOrEqualThan300() {
+		double result = TimeUtil.convertMillisecondToMinutes(300d);
+		Assertions.assertEquals(0.01d, result);
+
+		double result2 = TimeUtil.convertMillisecondToMinutes(600000d);
+		Assertions.assertEquals(10d, result2);
 	}
 
 }

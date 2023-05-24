@@ -8,6 +8,8 @@ import com.opencsv.CSVWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -58,6 +60,22 @@ public class CSVFileGenerator {
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public String GetDataFromCsv(String dataType, long csvTimeStamp) throws IOException {
+		switch (dataType) {
+			case "board":
+				return readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv");
+			case "pipeline":
+				return readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
+			default:
+				return "";
+		}
+	}
+
+	private static String readStringFromCsvFile(String fileName) throws IOException {
+		byte[] bytes = Files.readAllBytes(Paths.get(fileName));
+		return new String(bytes, "utf8");
 	}
 
 }

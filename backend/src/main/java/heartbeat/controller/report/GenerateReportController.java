@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reports")
@@ -30,8 +32,8 @@ public class GenerateReportController {
 		return reports;
 	}
 
-	@GetMapping
-	public void exportCsv(ExportCsvRequest request) {
+	@GetMapping("/csvExport")
+	public void exportCsv(ExportCsvRequest request) throws IOException {
 		log.info("Start to export Report, request: {} ", request);
 		String result = generateReporterService.fetchCsvData(request);
 		log.info("Successfully export Report, request: {}", result);

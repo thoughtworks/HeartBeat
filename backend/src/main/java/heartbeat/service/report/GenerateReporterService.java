@@ -30,6 +30,8 @@ import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -220,6 +222,7 @@ public class GenerateReporterService {
 
 		leadTimeData.addAll(pipelineData);
 		csvFileGenerator.convertPipelineDataToCsv(leadTimeData, request.getCsvTimeStamp());
+
 	}
 
 	private List<PipelineCsvInfo> generateCsvForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
@@ -310,8 +313,26 @@ public class GenerateReporterService {
 		return pipelineCsvInfos;
 	}
 
-	public String fetchCsvData(ExportCsvRequest request) {
-		return "";
+	public String fetchCsvData(ExportCsvRequest request) throws IOException {
+		deleteOldCsv();
+		return csvFileGenerator.GetDataFromCsv(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
+	}
+
+	private void deleteOldCsv() {
+		File directory = new File("./csv/");
+		File[] files = directory.listFiles();
+		long currentTimeStamp = System.currentTimeMillis();
+		if (files != null) {
+			for (File file : files) {
+				String fileName = file.getName();
+				String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
+				String timeStamp = splitResult[1];
+				// remove csv which created 10h ago
+				if (Long.parseLong(timeStamp) < currentTimeStamp - 36000000) {
+					file.delete();
+				}
+			}
+		}
 	}
 
 }

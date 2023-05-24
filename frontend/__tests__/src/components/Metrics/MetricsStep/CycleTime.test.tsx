@@ -1,9 +1,9 @@
-import { render, waitFor, within } from '@testing-library/react'
+import { act, render, waitFor, within } from '@testing-library/react'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { CYCLE_TIME_SETTINGS } from '../../../fixtures'
+import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION } from '../../../fixtures'
 
 const DEFAULT_SELECTED = '----'
 
@@ -173,11 +173,16 @@ describe('CycleTime', () => {
     expect(getByText('Test warning Message')).toBeVisible()
   })
 
-  it('should show disable warning message when selectWarningMessage has a value after two seconds in cycleTime component', () => {
+  it('should show disable warning message when selectWarningMessage has a value after two seconds in cycleTime component', async () => {
+    jest.useFakeTimers()
     const { queryByText } = setup()
 
-    setTimeout(() => {
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
+
+    await waitFor(() => {
       expect(queryByText('Test warning Message')).not.toBeInTheDocument()
-    }, 2000)
+    })
   })
 })

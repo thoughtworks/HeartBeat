@@ -44,13 +44,13 @@ steps:
     command: ./ops/deploy.sh infra
 
   - label: ":react: Build Frontend"
-    branches: main
+    if:  build.branch == "main" && build.message =~ /\[frontend\]/
     key: "build-frontend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh frontend
 
   - label: ":java: Build Backend"
-    branches: main
+    if:  build.branch == "main" && build.message =~ /\[backend\]/
     key: "build-backend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh backend

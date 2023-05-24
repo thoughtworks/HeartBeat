@@ -11,6 +11,7 @@ import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
+import heartbeat.controller.report.dto.request.ExportCsvRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
@@ -74,6 +75,8 @@ public class GenerateReporterService {
 	private List<PipelineLeadTime> leadTimes;
 
 	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
+
+	private final CSVFileGenerator csvFileGenerator;
 
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
@@ -305,6 +308,10 @@ public class GenerateReporterService {
 			pipelineCsvInfos.addAll(pipelineCsvInfoList);
 		}
 		return pipelineCsvInfos;
+	}
+
+	public String fetchCsvData(ExportCsvRequest request) {
+		return "";
 	}
 
 }

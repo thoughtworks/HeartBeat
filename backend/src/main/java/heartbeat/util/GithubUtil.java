@@ -6,8 +6,11 @@ public interface GithubUtil {
 		if (url == null) {
 			return "";
 		}
-		else {
+		if (url.startsWith("https://")) {
 			return url.replaceFirst("^(.*?github.com/)", "").replaceFirst("(\\.git)?$", "");
+		}
+		else {
+			return url.replaceFirst("^(.*?:)", "").replaceFirst("(\\.git)?$", "");
 		}
 	}
 

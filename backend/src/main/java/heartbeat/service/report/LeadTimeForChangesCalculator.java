@@ -29,7 +29,7 @@ public class LeadTimeForChangesCalculator {
 		}
 
 		List<HashMap<String, Double>> avgDelayTimeMapList = pipelineLeadTime.stream().map(item -> {
-			if (item.getLeadTimes().isEmpty()) {
+			if (item.getLeadTimes() == null || item.getLeadTimes().isEmpty()) {
 				return new HashMap<String, Double>();
 			}
 			int times = item.getLeadTimes().size();

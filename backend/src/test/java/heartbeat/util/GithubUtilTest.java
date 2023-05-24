@@ -24,4 +24,10 @@ public class GithubUtilTest {
 		assertEquals("https://notgdithdub.com/XXXX-fs/fs-platform-onboarding", result);
 	}
 
+	@Test
+	void shouldReturnInputWhenInputIsNotStartWithHttps() {
+		String result = GithubUtil.getGithubUrlFullName("git@github.com:au-heartbeat/Heartbeat.git");
+		assertEquals("au-heartbeat/Heartbeat", result);
+	}
+
 }

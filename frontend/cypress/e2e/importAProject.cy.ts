@@ -1,5 +1,6 @@
 import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
+import metricsPage from '../pages/metrics/metrics'
 describe('Import project from file', () => {
   it('Should import a project manually', () => {
     homePage.navigate()
@@ -16,6 +17,23 @@ describe('Import project from file', () => {
     configPage.verifyAndClickNextToMetrics()
 
     configPage.goMetricsStep()
-    cy.contains('Classification setting').should('exist')
+
+    metricsPage.checkImportCrewsSetting()
+    metricsPage.checkImportCycleTimeSetting()
+    metricsPage.checkImportRealDone()
+    metricsPage.checkImportClassificationSetting()
+    metricsPage.checkImportDeploymentFrequencySettings()
+    metricsPage.checkImportLeadTimeForChanges()
+
+    metricsPage.goReportStep()
+
+    metricsPage.BackToMetricsStep()
+
+    metricsPage.checkImportCrewsSetting()
+    metricsPage.checkImportCycleTimeSetting()
+    metricsPage.checkImportRealDone()
+    metricsPage.checkImportClassificationSetting()
+    metricsPage.checkImportDeploymentFrequencySettings()
+    metricsPage.checkImportLeadTimeForChanges()
   })
 })

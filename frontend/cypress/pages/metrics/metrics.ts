@@ -1,5 +1,17 @@
 class Metrics {
-  private readonly cycleTimeSettingTitle = () => cy.contains('Cycle time settings').should('exist')
+  private readonly crewsSettingTitle = () => cy.contains('Crews setting')
+  private readonly crewsSettingContent = () => cy.contains('Yu Zhang')
+  private readonly cycleTimeSettingTitle = () => cy.contains('Cycle time settings')
+  private readonly importCycleTimeSettingContent = () => {
+    cy.contains('Analysis').should('exist')
+    cy.contains('To do').should('exist')
+    cy.contains('In Dev').should('exist')
+    cy.contains('Block').should('exist')
+    cy.contains('Waiting for testing').should('exist')
+    cy.contains('Testing').should('exist')
+    cy.contains('Review').should('exist')
+    cy.contains('Done').should('exist')
+  }
 
   private readonly cycleTimeSettingAnalysis = () => {
     cy.contains('In Analysis').siblings().eq(0).click()
@@ -41,12 +53,20 @@ class Metrics {
     cy.get('[data-test-id="Done"]:contains(Done)').click()
   }
 
+  private readonly realDoneTitle = () => cy.contains('Real done')
+
+  private readonly importRealDoneContent = () => cy.contains('DONE, CLOSED')
+
   private readonly realDoneSelect = () => cy.contains('Consider as Done').siblings().eq(0)
 
   private readonly RealDoneSelectAllOption = () => cy.contains('All')
 
   private readonly closeModelElement = () => cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop')
 
+  private readonly classificationSettingTitle = () => cy.contains('Classification setting')
+
+  private readonly importClassificationContent = () =>
+    cy.contains('Issue Type, Has Dependancies, FS R&D Classification, Parent')
   private readonly classificationSelect = () => cy.contains('Distinguished By').siblings()
 
   private readonly classificationSelectAllOption = () => cy.contains('All')
@@ -95,8 +115,30 @@ class Metrics {
 
   private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
 
+  private readonly importDeploymentFrequencySettingContent = () => {
+    cy.contains('XXXX').should('exist')
+    cy.contains('fs-platform-onboarding').should('exist')
+    cy.contains(':docker: publish gradle-cache image to cloudsmith').should('exist')
+  }
+
+  private readonly importLeadTimeForChangesContent = () => {
+    cy.contains('XXXX').should('exist')
+    cy.contains('fs-platform-payment-selector').should('exist')
+    cy.contains(':docker: publish maven-cache image to cloudsmith').should('exist')
+  }
+
   private readonly nextButton = () => cy.contains('Next')
   private readonly backButton = () => cy.contains('Back')
+
+  checkImportCrewsSetting() {
+    this.crewsSettingTitle().should('exist')
+    this.crewsSettingContent().should('exist')
+  }
+
+  checkImportCycleTimeSetting() {
+    this.cycleTimeSettingTitle().should('exist')
+    this.importCycleTimeSettingContent()
+  }
 
   checkCycleTime() {
     this.cycleTimeSettingTitle()
@@ -117,11 +159,21 @@ class Metrics {
     this.closeModelElement().click({ force: true })
   }
 
+  checkImportRealDone() {
+    this.realDoneTitle().should('exist')
+    this.importRealDoneContent().should('exist')
+  }
+
   checkClassification() {
     this.classificationSelect().click()
 
     this.classificationSelectAllOption().click()
     this.closeModelElement().click({ force: true })
+  }
+
+  checkImportClassificationSetting() {
+    this.classificationSettingTitle().should('exist')
+    this.importClassificationContent().should('exist')
   }
 
   checkDeploymentFrequencySettings() {
@@ -142,6 +194,11 @@ class Metrics {
     this.pipelineRemoveButton().click()
   }
 
+  checkImportDeploymentFrequencySettings() {
+    this.deploymentFrequencySettingTitle().should('exist')
+    this.importDeploymentFrequencySettingContent()
+  }
+
   checkLeadTimeForChanges() {
     this.leadTimeForChangesTitle().should('exist')
     this.organizationSecondSelect(1).click()
@@ -158,6 +215,11 @@ class Metrics {
     this.pipelineStepXXOption().click()
     this.buildKiteStepNotFoundTips().should('exist')
     this.pipelineRemoveButton().click()
+  }
+
+  checkImportLeadTimeForChanges() {
+    this.leadTimeForChangesTitle().should('exist')
+    this.importLeadTimeForChangesContent()
   }
 
   goReportStep() {

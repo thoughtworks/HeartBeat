@@ -30,6 +30,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
       },
     ],
   }),
+  selectCycleTimeWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({
@@ -164,5 +165,19 @@ describe('CycleTime', () => {
 
       expect(queryByText(errorMessage)).not.toBeInTheDocument()
     })
+  })
+
+  it('should show warning message when selectWarningMessage has a value in cycleTime component', () => {
+    const { getByText } = setup()
+
+    expect(getByText('Test warning Message')).toBeVisible()
+  })
+
+  it('should show disable warning message when selectWarningMessage has a value after two seconds in cycleTime component', () => {
+    const { queryByText } = setup()
+
+    setTimeout(() => {
+      expect(queryByText('Test warning Message')).not.toBeInTheDocument()
+    }, 2000)
   })
 })

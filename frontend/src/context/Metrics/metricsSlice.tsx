@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
-import { CYCLE_TIME_LIST, METRICS_CONSTANTS } from '@src/constants'
+import { CLASSIFICATION_WARNING_MESSAGE, CYCLE_TIME_LIST, METRICS_CONSTANTS } from '@src/constants'
 
 export interface IPipelineConfig {
   id: number
@@ -9,6 +9,7 @@ export interface IPipelineConfig {
   pipelineName: string
   step: string
 }
+
 export interface savedMetricsSettingState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
   targetFields: { name: string; key: string; flag: boolean }[]
@@ -29,6 +30,8 @@ export interface savedMetricsSettingState {
     importedDeployment: IPipelineConfig[]
     importedLeadTime: IPipelineConfig[]
   }
+  cycleTimeWarningMessage: string | null
+  classificationWarningMessage: string | null
 }
 
 const initialState: savedMetricsSettingState = {
@@ -51,8 +54,41 @@ const initialState: savedMetricsSettingState = {
     importedDeployment: [],
     importedLeadTime: [],
   },
+  cycleTimeWarningMessage: null,
+  classificationWarningMessage: null,
 }
 
+const compareArrays = (arrayA: string[], arrayB: string[]): string | null => {
+  if (arrayA?.length > arrayB?.length) {
+    const differentValues = arrayA?.filter((value) => !arrayB.includes(value))
+    return `The column of ${differentValues} is a deleted column, which means this column existed the time you saved config, but was deleted. Please confirm!`
+  } else {
+    const differentValues = arrayB?.filter((value) => !arrayA.includes(value))
+    return differentValues?.length > 0
+      ? `The column of ${differentValues} is a new column. Please select a value for it!`
+      : null
+  }
+}
+const findDifferentValues = (arrayA: string[], arrayB: string[]): string[] | null => {
+  const diffInArrayA = arrayA?.filter((value) => !arrayB.includes(value))
+  if (diffInArrayA?.length === 0) {
+    return null
+  } else {
+    return diffInArrayA
+  }
+}
+const findKeyByValues = (arrayA: { [key: string]: string }[], arrayB: string[]): string | null => {
+  const matchingKeys: string[] = []
+
+  for (const setting of arrayA) {
+    const key = Object.keys(setting)[0]
+    const value = setting[key]
+    if (arrayB.includes(value)) {
+      matchingKeys.push(key)
+    }
+  }
+  return `The value of ${matchingKeys} in imported json is not in dropdown list now. Please select a value for it!`
+}
 export const metricsSlice = createSlice({
   name: 'metrics',
   initialState,
@@ -111,6 +147,41 @@ export const metricsSlice = createSlice({
             ...item,
             flag: importedClassification?.includes(item.key),
           }))
+      //cycleTime warningMessage
+      const importedCycleTimeSettingsKeys = importedCycleTime.importedCycleTimeSettings?.flatMap((obj) =>
+        Object.keys(obj)
+      )
+      const importedCycleTimeSettingsValues = importedCycleTime.importedCycleTimeSettings?.flatMap((obj) =>
+        Object.values(obj)
+      )
+      const jiraColumnsNames = jiraColumns?.map(
+        (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value.name
+      )
+      const metricsContainsValues = Object.values(METRICS_CONSTANTS)
+
+      const importedKeyMismatchWarning = compareArrays(importedCycleTimeSettingsKeys, jiraColumnsNames)
+      const importedValueMismatchWarning = findDifferentValues(importedCycleTimeSettingsValues, metricsContainsValues)
+
+      const getWarningMessage = (): string | null => {
+        if (importedKeyMismatchWarning?.length) {
+          return compareArrays(importedCycleTimeSettingsKeys, jiraColumnsNames)
+        }
+        if (importedValueMismatchWarning?.length) {
+          return findKeyByValues(importedCycleTime.importedCycleTimeSettings, importedValueMismatchWarning)
+        }
+        return null
+      }
+      state.cycleTimeWarningMessage = getWarningMessage()
+
+      //classification warningMessage
+      const keyArray = targetFields?.map((field: { key: string; name: string; flag: boolean }) => field.key)
+
+      if (importedClassification?.every((item) => keyArray.includes(item))) {
+        state.classificationWarningMessage = null
+      } else {
+        state.classificationWarningMessage = CLASSIFICATION_WARNING_MESSAGE
+      }
+
       state.cycleTimeSettings = jiraColumns?.map(
         (item: { key: string; value: { name: string; statuses: string[] } }) => {
           const controlName = item.value.name
@@ -195,5 +266,7 @@ export const selectLeadTimeForChanges = (state: RootState) => state.metrics.lead
 export const selectCycleTimeSettings = (state: RootState) => state.metrics.cycleTimeSettings
 export const selectMetricsContent = (state: RootState) => state.metrics
 export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock
+export const selectCycleTimeWarningMessage = (state: RootState) => state.metrics.cycleTimeWarningMessage
+export const selectClassificationWarningMessage = (state: RootState) => state.metrics.classificationWarningMessage
 
 export default metricsSlice.reducer

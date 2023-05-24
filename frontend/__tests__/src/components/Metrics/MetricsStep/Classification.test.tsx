@@ -3,6 +3,7 @@ import { Classification } from '@src/components/Metrics/MetricsStep/Classificati
 import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
+import { ERROR_MESSAGE_TIME_DURATION } from '../../../fixtures'
 
 const mockTitle = 'Classification Setting'
 const mockLabel = 'Distinguished by'
@@ -14,6 +15,11 @@ const mockTargetFields = [
 jest.mock('@src/context/config/configSlice', () => ({
   ...jest.requireActual('@src/context/config/configSlice'),
   selectIsProjectCreated: jest.fn().mockReturnValue(false),
+}))
+
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  selectClassificationWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
 }))
 
 let store = setupStore()
@@ -85,5 +91,19 @@ describe('Classification', () => {
 
     expect(listBox.getByRole('option', { name: names[0] })).toHaveProperty('selected', true)
     expect(listBox.getByRole('option', { name: names[1] })).toHaveProperty('selected', false)
+  })
+
+  it('should show warning message when classification warning message has a value in cycleTime component', () => {
+    const { getByText } = setup()
+
+    expect(getByText('Test warning Message')).toBeVisible()
+  })
+
+  it('should show disable warning message when classification warning message has a value after two seconds in cycleTime component', async () => {
+    const { queryByText } = setup()
+
+    setTimeout(() => {
+      expect(queryByText('Test warning Message')).not.toBeInTheDocument()
+    }, ERROR_MESSAGE_TIME_DURATION)
   })
 })

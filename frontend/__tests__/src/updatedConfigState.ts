@@ -1,5 +1,10 @@
-import { CHINA_CALENDAR } from './fixtures'
-import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
+import {
+  BOARD_TYPES,
+  CHINA_CALENDAR,
+  CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE,
+  PIPELINE_TOOL_TYPES,
+  SOURCE_CONTROL_TYPES,
+} from './fixtures'
 
 const updatedConfigState = {
   isProjectCreated: true,
@@ -51,6 +56,7 @@ const updatedConfigState = {
       repoList: [],
     },
   },
+  warningMessage: CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE,
 }
 
 export default updatedConfigState

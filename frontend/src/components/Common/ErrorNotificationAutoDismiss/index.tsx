@@ -16,7 +16,7 @@ export const ErrorNotificationAutoDismiss = (props: { message: string }) => {
   }, [])
   return (
     <ErrorBarAutoDismiss open={open}>
-      <StyledAlert severity='error'>{message}</StyledAlert>
+      <StyledAlert severity='warning'>{message}</StyledAlert>
     </ErrorBarAutoDismiss>
   )
 }

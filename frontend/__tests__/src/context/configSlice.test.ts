@@ -1,10 +1,10 @@
 import configReducer, {
+  updateBasicConfigState,
   updateCalendarType,
   updateDateRange,
-  updateProjectName,
   updateMetrics,
-  updateBasicConfigState,
   updateProjectCreatedState,
+  updateProjectName,
 } from '@src/context/config/configSlice'
 import { CHINA_CALENDAR, MOCK_IMPORT_FILE, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 import initialConfigState from '../initialConfigState'
@@ -55,5 +55,23 @@ describe('config reducer', () => {
     const config = configReducer(initialConfigState, updateMetrics([VELOCITY])).basic
 
     expect(config.metrics).toEqual([VELOCITY])
+  })
+
+  it('should set warningMessage is null when projectName startDate endDate and metrics data is null', () => {
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: {
+        projectName: 'Test Project',
+        dateRange: {
+          startDate: new Date(),
+          endDate: new Date(),
+        },
+        metrics: ['Metric 1', 'Metric 2'],
+      },
+    }
+
+    const config = configReducer(initialConfigState, action)
+
+    expect(config.warningMessage).toBeNull()
   })
 })

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { REGULAR_CALENDAR, REQUIRED_DATA } from '@src/constants'
+import { CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE, REGULAR_CALENDAR, REQUIRED_DATA } from '@src/constants'
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice'
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
@@ -21,6 +21,7 @@ export interface BasicConfigState {
   board: IBoardState
   pipelineTool: IPipelineToolState
   sourceControl: ISourceControl
+  warningMessage: string | null
 }
 
 export const initialBasicConfigState: BasicConfigState = {
@@ -37,6 +38,7 @@ export const initialBasicConfigState: BasicConfigState = {
   board: initialBoardState,
   pipelineTool: initialPipelineToolState,
   sourceControl: initialSourceControlState,
+  warningMessage: null,
 }
 
 export const configSlice = createSlice({
@@ -84,6 +86,12 @@ export const configSlice = createSlice({
     },
     updateBasicConfigState: (state, action) => {
       state.basic = action.payload
+      const { projectName, dateRange, metrics } = state.basic
+
+      state.warningMessage =
+        projectName && dateRange.startDate && dateRange.endDate && metrics.length > 0
+          ? null
+          : CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE
       state.board.config = action.payload.board || state.board.config
       state.pipelineTool.config = action.payload.pipelineTool || state.pipelineTool.config
       state.sourceControl.config = action.payload.sourceControl || state.sourceControl.config
@@ -169,6 +177,8 @@ export const isPipelineToolVerified = (state: RootState) => state.config.pipelin
 export const selectPipelineTool = (state: RootState) => state.config.pipelineTool.config
 export const isSourceControlVerified = (state: RootState) => state.config.sourceControl.isVerified
 export const selectSourceControl = (state: RootState) => state.config.sourceControl.config
+export const selectWarningMessage = (state: RootState) => state.config.warningMessage
+
 export const selectConfig = (state: RootState) => state.config
 
 export const selectIsBoardVerified = (state: RootState) => state.config.board.isVerified

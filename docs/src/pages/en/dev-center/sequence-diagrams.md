@@ -80,23 +80,32 @@ GenerateReporter_service --> GenerateReporter_service: calculate Classification
 group fetch BuildKite data
 GenerateReporter_service -> BuildKiteService: get pipeline builds and count deploy times
 activate BuildKiteService
-loop pipeline from pipelines
 
-  BuildKiteService -> BuildKiteFeignClient: get BuildKite builds
-  activate BuildKiteFeignClient
-    alt#Gold #LightBlue Successful case
-      BuildKiteFeignClient -> BuildKiteService: return BuildKite builds
-    else #Pink Failure
-      BuildKiteFeignClient -> BuildKiteService: throw RequestFailedException
+group pipeline from pipelines
+BuildKiteService -> BuildKiteFeignClient: getPipelineSteps(token, orgId, pipelineId, page=1, perPage=100)
+activate BuildKiteFeignClient
+BuildKiteFeignClient --> BuildKiteService: return first page of pipeline steps
+deactivate BuildKiteFeignClient
+
+BuildKiteService -> BuildKiteService: handle pagination
+BuildKiteService -> BuildKiteService: add fetched steps to result list
+
+  par fetch Remaining Pages
+    BuildKiteService -> BuildKiteFeignClient: fetch remaining pages asynchronously
+    activate BuildKiteFeignClient
+      alt#Gold #LightBlue Successful case
+        BuildKiteFeignClient --> BuildKiteService: return BuildKite builds
+        BuildKiteService -> BuildKiteService: Add fetched steps to result list
+      else #Pink Failure
+        BuildKiteFeignClient --> BuildKiteService: throw RequestFailedException
+      deactivate BuildKiteFeignClient
+      end
     end
-  deactivate BuildKiteFeignClient
-
-  alt#Gold #LightBlue Successful case
-    BuildKiteService -> BuildKiteService:count deploy times
-  else #Pink Failure
-    BuildKiteService -> BuildKiteService: throw NotFoundException
-  end
-
+    alt#Gold #LightBlue Successful case
+      BuildKiteService -> BuildKiteService:count deploy times
+    else #Pink Failure
+      BuildKiteService -> BuildKiteService: throw NotFoundException
+    end
 end
 
 BuildKiteService --> GenerateReporter_service: return pipeline builds and count deploy time

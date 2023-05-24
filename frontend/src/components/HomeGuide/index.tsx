@@ -5,11 +5,11 @@ import { styled } from '@mui/material/styles'
 import { theme } from '@src/theme'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { updateProjectCreatedState, updateBasicConfigState } from '@src/context/config/configSlice'
+import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice'
 import React, { useState } from 'react'
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 import { ErrorNotificationAutoDismiss } from '../Common/ErrorNotificationAutoDismiss'
-import { CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE } from '@src/constants'
+import { HOME_VERIFY_IMPORT_WARNING_MESSAGE } from '@src/constants'
 
 const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -51,7 +51,7 @@ export const HomeGuide = () => {
         metrics,
         dateRange: { startDate, endDate },
       } = importedConfig
-      return !!projectName && !!startDate && !!endDate && metrics.length > 0
+      return projectName || startDate || endDate || metrics.length > 0
     } catch {
       return false
     }
@@ -92,7 +92,7 @@ export const HomeGuide = () => {
 
   return (
     <>
-      {!validConfig && <ErrorNotificationAutoDismiss message={CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE} />}
+      {!validConfig && <ErrorNotificationAutoDismiss message={HOME_VERIFY_IMPORT_WARNING_MESSAGE} />}
       <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
         <GuideButton onClick={openFileImportBox}>Import project from file</GuideButton>
         <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange} />

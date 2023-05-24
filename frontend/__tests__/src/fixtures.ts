@@ -450,6 +450,7 @@ export const EXPECTED_REPORT_VALUES = {
     },
   ],
 }
+
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
   'Imported data is not perfectly matched. Please review carefully before going next!'
 
@@ -490,3 +491,9 @@ export const IMPORTED_CONFIG_FIXTURE = {
     },
   ],
 }
+
+export const ERROR_MESSAGE_TIME_DURATION = 2000
+export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed now.`
+
+export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
+  'The content of the imported JSON file is empty. Please confirm carefully'

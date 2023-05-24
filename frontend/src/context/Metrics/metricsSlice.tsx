@@ -236,58 +236,22 @@ export const metricsSlice = createSlice({
     updatePipelineSettings: (state, action) => {
       const { pipelineList, isProjectCreated } = action.payload
       const { importedDeployment, importedLeadTime } = state.importedData
-      const orgName = new Set(pipelineList.map((item: pipeline) => item.orgName))
-
-      const filteredPipelineName = (organization: string) =>
+      const orgNames = new Set(pipelineList.map((item: pipeline) => item.orgName))
+      const filteredPipelineNames = (organization: string) =>
         pipelineList
           .filter((pipeline: pipeline) => pipeline.orgName === organization)
           .map((item: pipeline) => item.name)
-      const validDeployment = importedDeployment?.map((item) => {
-        if (!orgName.has(item.organization)) {
-          return {
-            ...item,
-            organization: '',
-            pipelineName: '',
-            step: '',
-          }
-        } else if (
-          orgName.has(item.organization) &&
-          !filteredPipelineName(item.organization).includes(item.pipelineName)
-        ) {
-          return {
-            ...item,
-            pipelineName: '',
-            step: '',
-          }
-        }
-        return {
-          ...item,
+      const getValidPipelines = (pipelines: IPipelineConfig[]) =>
+        pipelines?.map(({ id, organization, pipelineName }) => ({
+          id,
+          organization: orgNames.has(organization) ? organization : '',
+          pipelineName: filteredPipelineNames(organization).includes(pipelineName) ? pipelineName : '',
           step: '',
-        }
-      })
-      const validLeadTime = importedLeadTime?.map((item) => {
-        if (!orgName.has(item.organization)) {
-          return {
-            ...item,
-            organization: '',
-            pipelineName: '',
-            step: '',
-          }
-        } else if (
-          orgName.has(item.organization) &&
-          !filteredPipelineName(item.organization).includes(item.pipelineName)
-        ) {
-          return {
-            ...item,
-            pipelineName: '',
-            step: '',
-          }
-        }
-        return {
-          ...item,
-          step: '',
-        }
-      })
+        }))
+
+      const validDeployment = getValidPipelines(importedDeployment)
+      const validLeadTime = getValidPipelines(importedLeadTime)
+
       state.deploymentFrequencySettings = isProjectCreated ? initialState.deploymentFrequencySettings : validDeployment
       state.leadTimeForChanges = isProjectCreated ? initialState.leadTimeForChanges : validLeadTime
     },
@@ -300,25 +264,19 @@ export const metricsSlice = createSlice({
       const updatedImportedPipelineStep = updatedImportedPipeline?.filter((item) => item.id === id).map((i) => i.step)
       const validStep = res ? res.filter((item: string) => updatedImportedPipelineStep?.includes(item)).join(',') : ''
 
-      if (type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE) {
-        state.deploymentFrequencySettings = state.deploymentFrequencySettings.map((deploymentFrequencySetting) => {
-          return deploymentFrequencySetting.id === id
+      const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
+        pipelines.map((pipeline) => {
+          return pipeline.id === id
             ? {
-                ...deploymentFrequencySetting,
+                ...pipeline,
                 step: res ? (isProjectCreated ? '' : validStep) : '',
               }
-            : deploymentFrequencySetting
+            : pipeline
         })
-      } else {
-        state.leadTimeForChanges = state.leadTimeForChanges.map((leadTimeForChange) => {
-          return leadTimeForChange.id === id
-            ? {
-                ...leadTimeForChange,
-                step: res ? (isProjectCreated ? '' : validStep) : '',
-              }
-            : leadTimeForChange
-        })
-      }
+
+      type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+        ? (state.deploymentFrequencySettings = getPipelineSettings(state.deploymentFrequencySettings))
+        : (state.leadTimeForChanges = getPipelineSettings(state.leadTimeForChanges))
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {

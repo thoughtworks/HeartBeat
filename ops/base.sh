@@ -7,7 +7,11 @@ init_aws() {
   aws configure set region "$AWS_REGION"
   aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
   aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+  echo "start to sts assume-role"
   eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
+  echo "get-session-token"
+  aws sts get-session-token --duration-seconds 3600
+  echo "start to login ecr"
   aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_ECR_HOST}"
 }
 

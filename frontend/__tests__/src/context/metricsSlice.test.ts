@@ -14,6 +14,8 @@ import saveMetricsSettingReducer, {
   updateLeadTimeForChanges,
   updateMetricsImportedData,
   updateMetricsState,
+  updatePipelineSettings,
+  IPipelineConfig,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
@@ -379,6 +381,74 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateTreatFlagCardAsBlock(false))
 
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(false)
+  })
+
+  it('should update pipeline settings When call updatePipelineSettings given import json file', () => {
+    const mockImportedDeployment = [
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2' },
+      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3' },
+    ]
+    const mockImportedLeadTime = [
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+    ]
+    const mockInitState = {
+      ...initState,
+      importedData: {
+        ...initState.importedData,
+        importedDeployment: mockImportedDeployment,
+        importedLeadTime: mockImportedLeadTime,
+      },
+    }
+    const mockPipelineList = [
+      {
+        id: 'mockId1',
+        name: 'mockPipelineName1',
+        orgId: 'mockOrgId1',
+        orgName: 'mockOrganization1',
+        repository: 'mockRepository1',
+        steps: ['mock step 1', 'mock step 2'],
+      },
+    ]
+    const isProjectCreated = false
+
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      mockInitState,
+      updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated })
+    )
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+      { id: 1, organization: 'mockOrganization1', pipelineName: '', step: '' },
+      { id: 2, organization: '', pipelineName: '', step: '' },
+    ])
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+    ])
+  })
+
+  it('should update pipeline settings When call updatePipelineSettings given isProjectCreated true ', () => {
+    const mockPipelineList = [
+      {
+        id: 'mockId1',
+        name: 'mockPipelineName1',
+        orgId: 'mockOrgId1',
+        orgName: 'mockOrganization1',
+        repository: 'mockRepository1',
+        steps: ['mock step 1', 'mock step 2'],
+      },
+    ]
+    const isProjectCreated = true
+
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      initState,
+      updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated })
+    )
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
+      { id: 0, organization: '', pipelineName: '', step: '' },
+    ])
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '' }])
   })
 
   it('should set warningMessage have value when there are more values in the import file than in the response', () => {

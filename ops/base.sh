@@ -4,7 +4,6 @@ set -euo pipefail
 AWS_ECR_HOST="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
 init_aws() {
-  eval "$(aws sts assume-role --role-arn "$AWS_BUILDKITE_STEPS_ROLE" --role-session-name buildkite | jq -r '.Credentials | to_entries | map("\(.key)=\"\(.value | tostring)\"") | .[]')"
   aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_ECR_HOST}"
 }
 

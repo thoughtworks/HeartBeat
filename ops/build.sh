@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 # shellcheck source=/dev/null
 source ./ops/base.sh

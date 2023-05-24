@@ -3,7 +3,6 @@ import {
   BackButton,
   ButtonContainer,
   ButtonGroup,
-  ExportButton,
   MetricsStepperContent,
   NextButton,
   SaveButton,
@@ -198,20 +197,18 @@ const MetricsStepper = () => {
       </MetricsStepperContent>
       <ButtonContainer>
         {activeStep !== 2 && (
-          <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
-            <SaveButton onClick={handleSave}>Save</SaveButton>
-          </Tooltip>
+          <>
+            <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
+              <SaveButton onClick={handleSave}>Save</SaveButton>
+            </Tooltip>
+            <ButtonGroup>
+              <BackButton onClick={handleBack}>Back</BackButton>
+              <NextButton onClick={handleNext} disabled={isDisableNextButton}>
+                Next
+              </NextButton>
+            </ButtonGroup>
+          </>
         )}
-        <ButtonGroup>
-          <BackButton onClick={handleBack}>Back</BackButton>
-          {activeStep === STEPS.length - 1 ? (
-            <ExportButton>Export board data</ExportButton>
-          ) : (
-            <NextButton onClick={handleNext} disabled={isDisableNextButton}>
-              Next
-            </NextButton>
-          )}
-        </ButtonGroup>
       </ButtonContainer>
       {isDialogShowing && (
         <ConfirmDialog isDialogShowing={isDialogShowing} onConfirm={backToHomePage} onClose={CancelDialog} />

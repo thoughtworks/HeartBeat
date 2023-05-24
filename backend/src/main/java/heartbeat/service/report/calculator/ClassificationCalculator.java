@@ -1,5 +1,9 @@
 package heartbeat.service.report.calculator;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
@@ -8,6 +12,7 @@ import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.service.report.ICardFieldDisplayName;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,16 +22,14 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-
+@Log4j2
 public class ClassificationCalculator {
 
 	private static final String NONE_KEY = "None";
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
 			"timetracking", "statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority",
-			"label", "customfield_10000", "customfield_10015", "customfield_10016", "customfield_10017",
-			"customfield_10019", "customfield_10020", "customfield_10021", "customfield_10027", "customfield_10037",
-			"customfield_10038" };
+			"labels" };
 
 	public List<Classification> calculate(List<TargetField> targetFields, CardCollection cards) {
 		List<Classification> classificationFields = new ArrayList<>();
@@ -46,7 +49,18 @@ public class ClassificationCalculator {
 
 			for (String tempFieldsKey : tempFields.keySet()) {
 				Object object = tempFields.get(tempFieldsKey);
-				if (object instanceof List) {
+				if (object instanceof JsonArray) {
+					JsonArray jsonArray = (JsonArray) object;
+					List<JsonObject> objectList = new ArrayList<>();
+					for (JsonElement element : jsonArray) {
+						if (element.isJsonObject()) {
+							JsonObject jsonObject = element.getAsJsonObject();
+							objectList.add(jsonObject);
+						}
+					}
+					mapArrayField(resultMap, tempFieldsKey, (List.of(objectList)));
+				}
+				else if (object instanceof List) {
 					mapArrayField(resultMap, tempFieldsKey, (List.of(object)));
 				}
 				else if (object != null) {
@@ -103,11 +117,42 @@ public class ClassificationCalculator {
 		if (object instanceof ICardFieldDisplayName) {
 			return ((ICardFieldDisplayName) object).getDisplayName();
 		}
+		if (object instanceof JsonObject) {
+			JsonElement value = ((JsonObject) object).get("name");
+			if (value != null) {
+				return value.toString();
+			}
+			else {
+				JsonElement nameValue = ((JsonObject) object).get("displayName");
+				if (nameValue != null) {
+					return nameValue.toString();
+				}
+				else {
+					JsonElement valueName = ((JsonObject) object).get("value");
+					if (valueName != null) {
+						return valueName.toString();
+					}
+					else {
+						return NONE_KEY;
+					}
+				}
+			}
+		}
+		if (object instanceof JsonNull) {
+			return NONE_KEY;
+		}
+
 		return object.toString();
 	}
 
 	private static Map<String, Object> extractFields(JiraCardField jiraCardFields) {
 		Map<String, Object> tempFields = new HashMap<>();
+		for (Map.Entry<String, JsonElement> entry : jiraCardFields.getCustomFields().entrySet()) {
+			String key = entry.getKey();
+			JsonElement jsonElement = entry.getValue();
+			tempFields.put(key, jsonElement);
+		}
+
 		for (String fieldName : ClassificationCalculator.FIELD_NAMES) {
 			switch (fieldName) {
 				case "assignee" -> tempFields.put(fieldName, jiraCardFields.getAssignee());
@@ -122,18 +167,7 @@ public class ClassificationCalculator {
 				case "project" -> tempFields.put(fieldName, jiraCardFields.getProject());
 				case "parent" -> tempFields.put(fieldName, jiraCardFields.getParent());
 				case "priority" -> tempFields.put(fieldName, jiraCardFields.getPriority());
-				case "label" -> tempFields.put(fieldName, jiraCardFields.getLabel());
-				case "customfield_10000" -> tempFields.put(fieldName, jiraCardFields.getDevelopment());
-				case "customfield_10015" -> tempFields.put(fieldName, jiraCardFields.getStartDate());
-				case "customfield_10016" -> tempFields.put(fieldName, jiraCardFields.getStoryPoints());
-				case "customfield_10017" -> tempFields.put(fieldName, jiraCardFields.getIssueColor());
-				case "customfield_10019" -> tempFields.put(fieldName, jiraCardFields.getRank());
-				case "customfield_10020" -> tempFields.put(fieldName, jiraCardFields.getSprint());
-				case "customfield_10021" -> tempFields.put(fieldName, jiraCardFields.getFlagged());
-				case "customfield_10027" -> tempFields.put(fieldName, jiraCardFields.getFeature());
-				case "customfield_10037" -> tempFields.put(fieldName, jiraCardFields.getPartner());
-				case "customfield_10038" -> tempFields.put(fieldName, jiraCardFields.getQualityAssurance());
-				case "timetracking" -> tempFields.put(fieldName, jiraCardFields.getTimetracking());
+				case "labels" -> tempFields.put(fieldName, jiraCardFields.getLabels());
 				default -> {
 				}
 			}

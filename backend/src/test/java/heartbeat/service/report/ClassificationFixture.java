@@ -10,10 +10,8 @@ import heartbeat.controller.board.dto.response.FixVersion;
 import heartbeat.controller.board.dto.response.IssueType;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraProject;
-import heartbeat.controller.board.dto.response.Partner;
 import heartbeat.controller.board.dto.response.Priority;
 import heartbeat.controller.board.dto.response.Reporter;
-import heartbeat.controller.board.dto.response.Sprint;
 
 import java.util.List;
 
@@ -39,9 +37,7 @@ public class ClassificationFixture {
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
-							.label("bug")
-							.partner(List.of(Partner.builder().displayName("shawn").build()))
-							.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
+							.labels(List.of("backend", "frontend"))
 							.build())
 						.build())
 					.build(),
@@ -61,9 +57,7 @@ public class ClassificationFixture {
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("ADM-442").build())
-							.label("frontend")
-							.partner(List.of(Partner.builder().displayName("jack").build()))
-							.sprint(List.of(Sprint.builder().name("Sprint 8").build()))
+							.labels(List.of("backend", "frontend"))
 							.build())
 						.build())
 					.build()))
@@ -101,7 +95,7 @@ public class ClassificationFixture {
 									FixVersion.builder().name("sprint1").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
-							.label("bug")
+							.labels(List.of("bug"))
 							.build())
 						.build())
 					.build(),
@@ -113,7 +107,7 @@ public class ClassificationFixture {
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
-							.label("bug")
+							.labels(List.of("bug"))
 							.build())
 						.build())
 					.build()))
@@ -139,7 +133,7 @@ public class ClassificationFixture {
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
-							.label("bug")
+							.labels(List.of("bug"))
 							.build())
 						.build())
 					.build(),
@@ -159,7 +153,7 @@ public class ClassificationFixture {
 									FixVersion.builder().name("sprint2").build()))
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("ADM-442").build())
-							.label("frontend")
+							.labels(List.of("frontend"))
 							.build())
 						.build())
 					.build()))
@@ -183,7 +177,7 @@ public class ClassificationFixture {
 					.fixVersions(List.of())
 					.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 					.parent(CardParent.builder().key("test").build())
-					.label("bug")
+					.labels(List.of("bug"))
 					.build())
 				.build())
 			.build()))

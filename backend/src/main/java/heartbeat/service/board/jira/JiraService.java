@@ -3,6 +3,7 @@ package heartbeat.service.board.jira;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
@@ -31,8 +32,6 @@ import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
-import heartbeat.controller.board.dto.response.Partner;
-import heartbeat.controller.board.dto.response.Sprint;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -48,6 +47,7 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +79,8 @@ public class JiraService {
 	private final BoardUtil boardUtil;
 
 	private CardCustomFieldKey cardCustomFieldKey;
+
+	private List<TargetField> targetFields;
 
 	@PreDestroy
 	public void shutdownExecutor() {
@@ -315,57 +317,12 @@ public class JiraService {
 			.getAsJsonObject()
 			.get("issues")
 			.getAsJsonArray();
-
+		List<Map<String, JsonElement>> customFieldMapList = new ArrayList<>();
 		ArrayList<Integer> storyPointList = new ArrayList<>();
-		ArrayList<String> flaggedList = new ArrayList<>();
-		ArrayList<String> startDateList = new ArrayList<>();
-		ArrayList<String> developmentList = new ArrayList<>();
-		ArrayList<String> qualityAssuranceList = new ArrayList<>();
-		ArrayList<String> rankList = new ArrayList<>();
-		ArrayList<String> issueColorList = new ArrayList<>();
-		ArrayList<String> featureList = new ArrayList<>();
-		ArrayList<ArrayList<Partner>> partnerList = new ArrayList<>();
-		ArrayList<ArrayList<Sprint>> sprintList = new ArrayList<>();
-		Sprint emptySprint = new Sprint();
-		emptySprint.setName(null);
-		Partner emptyPartner = new Partner();
-		emptyPartner.setDisplayName("None");
-
+		Map<String, String> resultMap = targetFields.stream()
+			.collect(Collectors.toMap(TargetField::getKey, TargetField::getName));
 		for (JsonElement element : elements) {
-			JsonElement jsonElement = element.getAsJsonObject().get("fields");
-			ArrayList<Sprint> detailSprintList = new ArrayList<>();
-			JsonElement sprintData = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getSprint());
-			if ((sprintData == null || sprintData.isJsonNull())) {
-				detailSprintList.add(emptySprint);
-			}
-			else {
-				JsonArray sprintElementList = jsonElement.getAsJsonObject()
-					.get(cardCustomFieldKey.getSprint())
-					.getAsJsonArray();
-				for (JsonElement sprintElement : sprintElementList) {
-					Sprint sprint = gson.fromJson(sprintElement, Sprint.class);
-					detailSprintList.add(sprint);
-				}
-			}
-			sprintList.add(detailSprintList);
-
-			ArrayList<Partner> detailPartnerList = new ArrayList<>();
-
-			JsonElement partnerData = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getPartner());
-			if ((partnerData == null || partnerData.isJsonNull())) {
-				detailPartnerList.add(emptyPartner);
-			}
-			else {
-				JsonArray partnerElementList = jsonElement.getAsJsonObject()
-					.get(cardCustomFieldKey.getPartner())
-					.getAsJsonArray();
-				for (JsonElement partnerElement : partnerElementList) {
-					Partner partner = gson.fromJson(partnerElement, Partner.class);
-					detailPartnerList.add(partner);
-				}
-			}
-			partnerList.add(detailPartnerList);
-
+			JsonObject jsonElement = element.getAsJsonObject().get("fields").getAsJsonObject();
 			JsonElement storyPoints = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints());
 			if (storyPoints == null || storyPoints.isJsonNull()) {
 				storyPointList.add(0);
@@ -374,62 +331,23 @@ public class JiraService {
 				int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
 				storyPointList.add(storyPoint);
 			}
-
-			JsonElement flaggedElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getFlagged());
-			String flagged = (flaggedElement == null || flaggedElement.isJsonNull()) ? null
-					: flaggedElement.getAsString();
-			flaggedList.add(flagged);
-
-			JsonElement startDateElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStartDate());
-			String startDate = (startDateElement == null || startDateElement.isJsonNull()) ? null
-					: startDateElement.getAsString();
-			startDateList.add(startDate);
-
-			JsonElement developmentElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getDevelopment());
-			String development = (developmentElement == null || developmentElement.isJsonNull()) ? null
-					: developmentElement.getAsString();
-			developmentList.add(development);
-
-			JsonElement qualityAssuranceElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getQA());
-			String qualityAssurance = (qualityAssuranceElement == null || qualityAssuranceElement.isJsonNull()) ? null
-					: qualityAssuranceElement.getAsString();
-			qualityAssuranceList.add(qualityAssurance);
-
-			JsonElement rankElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getRank());
-			String rank = (rankElement == null || rankElement.isJsonNull()) ? null : rankElement.getAsString();
-			rankList.add(rank);
-
-			JsonElement issueColorElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getIssueColor());
-			String issueColor = (issueColorElement == null || issueColorElement.isJsonNull()) ? null
-					: issueColorElement.getAsString();
-			issueColorList.add(issueColor);
-
-			JsonElement featureElement = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getFeature());
-			String feature = (featureElement == null || featureElement.isJsonNull()) ? null
-					: featureElement.getAsString();
-			featureList.add(feature);
-
-		}
-		for (int index = 0; index < jiraCards.size(); index++) {
-			if (storyPointList.size() > index && flaggedList.size() > index && startDateList.size() > index
-					&& developmentList.size() > index && qualityAssuranceList.size() > index && rankList.size() > index
-					&& issueColorList.size() > index && featureList.size() > index && sprintList.size() > index
-					&& partnerList.size() > index) {
-				jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
-				jiraCards.get(index).getFields().setFlagged(flaggedList.get(index));
-				jiraCards.get(index).getFields().setStartDate(startDateList.get(index));
-				jiraCards.get(index).getFields().setDevelopment(developmentList.get(index));
-				jiraCards.get(index).getFields().setQualityAssurance(qualityAssuranceList.get(index));
-				jiraCards.get(index).getFields().setRank(rankList.get(index));
-				jiraCards.get(index).getFields().setIssueColor(issueColorList.get(index));
-				jiraCards.get(index).getFields().setFeature(featureList.get(index));
-				ArrayList<String> cardsInSprint = new ArrayList<>();
-				sprintList.get(index).forEach(card -> cardsInSprint.add(card.getName()));
-				jiraCards.get(index).getFields().setSprint(sprintList.get(index));
-				ArrayList<String> cardsInPartner = new ArrayList<>();
-				partnerList.get(index).forEach(card -> cardsInPartner.add(card.getDisplayName()));
-				jiraCards.get(index).getFields().setPartner(partnerList.get(index));
+			for (int index = 0; index < jiraCards.size(); index++) {
+				if (storyPointList.size() > index) {
+					jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
+				}
 			}
+			Map<String, JsonElement> customFieldMap = new HashMap<>();
+			for (Map.Entry<String, String> entry : resultMap.entrySet()) {
+				String customFieldKey = entry.getKey();
+				if (jsonElement.has(customFieldKey)) {
+					JsonElement fieldValue = jsonElement.get(customFieldKey);
+					customFieldMap.put(customFieldKey, fieldValue);
+				}
+			}
+			customFieldMapList.add(customFieldMap);
+		}
+		for (int index = 0; index < customFieldMapList.size(); index++) {
+			allDoneCardsResponseDTO.getIssues().get(index).getFields().setCustomFields(customFieldMapList.get(index));
 		}
 		return allDoneCardsResponseDTO;
 	}
@@ -503,6 +421,7 @@ public class JiraService {
 			.toList();
 		log.info("[Jira] Successfully get targetField:{}", targetFields);
 		cardCustomFieldKey = saveCustomFieldKey(targetFields);
+		this.targetFields = targetFields;
 		return targetFields;
 	}
 
@@ -528,8 +447,6 @@ public class JiraService {
 			}
 			if (users.stream().anyMatch(assigneeSet::contains)) {
 				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
-
-				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
 
 				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
@@ -656,15 +573,6 @@ public class JiraService {
 		for (TargetField value : model) {
 			switch (value.getName()) {
 				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setStoryPoints(value.getKey());
-				case "Sprint" -> cardCustomFieldKey.setSprint(value.getKey());
-				case "Flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
-				case "Partner" -> cardCustomFieldKey.setPartner(value.getKey());
-				case "Start date" -> cardCustomFieldKey.setStartDate(value.getKey());
-				case "development" -> cardCustomFieldKey.setDevelopment(value.getKey());
-				case "QA" -> cardCustomFieldKey.setQA(value.getKey());
-				case "Rank" -> cardCustomFieldKey.setRank(value.getKey());
-				case "Issue color" -> cardCustomFieldKey.setIssueColor(value.getKey());
-				case "Feature/Operation" -> cardCustomFieldKey.setFeature(value.getKey());
 				default -> {
 				}
 			}

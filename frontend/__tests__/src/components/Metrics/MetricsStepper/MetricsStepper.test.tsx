@@ -60,6 +60,13 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
 }))
 
+jest.mock('@src/context/config/configSlice', () => ({
+  ...jest.requireActual('@src/context/config/configSlice'),
+  selectPipelineOrganizations: jest.fn().mockReturnValue(['mock new organization']),
+  selectPipelineNames: jest.fn().mockReturnValue(['mock new pipelineName']),
+  selectSteps: jest.fn().mockReturnValue(['mock new step']),
+}))
+
 jest.mock('@src/utils/util', () => ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   exportToJsonFile: jest.fn((_filename: string, _json: object) => {

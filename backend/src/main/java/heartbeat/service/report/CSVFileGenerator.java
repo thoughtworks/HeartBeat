@@ -3,20 +3,37 @@ package heartbeat.service.report;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCsvInfo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import com.opencsv.CSVWriter;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Log4j2
 public class CSVFileGenerator {
 
+	private static String readStringFromCsvFile(String fileName) throws IOException {
+		byte[] bytes = Files.readAllBytes(Paths.get(fileName));
+		return new String(bytes, StandardCharsets.UTF_8);
+	}
+
 	public void convertPipelineDataToCsv(List<PipelineCsvInfo> leadTimeData, String csvTimeStamp) {
+		log.info("Start to create csv directory");
+		boolean created = createCsvDirectory();
+		if (created) {
+			log.info("Successfully create csv directory");
+		}
+		else {
+			log.info("Failed to create csv directory");
+		}
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv";
 
@@ -62,20 +79,21 @@ public class CSVFileGenerator {
 		}
 	}
 
-	public String GetDataFromCsv(String dataType, long csvTimeStamp) throws IOException {
-		switch (dataType) {
-			case "board":
-				return readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv");
-			case "pipeline":
-				return readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
-			default:
-				return "";
-		}
+	public String getDataFromCsv(String dataType, long csvTimeStamp) throws IOException {
+		return switch (dataType) {
+			case "board" -> readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv");
+			case "pipeline" -> readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
+			default -> "";
+		};
 	}
 
-	private static String readStringFromCsvFile(String fileName) throws IOException {
-		byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-		return new String(bytes, "utf8");
+	private boolean createCsvDirectory() {
+		String directoryPath = "./csv";
+		File directory = new File(directoryPath);
+		if (!directory.exists()) {
+			return directory.mkdirs();
+		}
+		return true;
 	}
 
 }

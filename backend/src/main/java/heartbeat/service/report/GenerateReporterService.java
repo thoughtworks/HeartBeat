@@ -28,6 +28,7 @@ import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -41,6 +42,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class GenerateReporterService {
 
 	private final JiraService jiraService;
@@ -315,7 +317,7 @@ public class GenerateReporterService {
 
 	public String fetchCsvData(ExportCsvRequest request) throws IOException {
 		deleteOldCsv();
-		return csvFileGenerator.GetDataFromCsv(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
+		return csvFileGenerator.getDataFromCsv(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
 	}
 
 	private void deleteOldCsv() {
@@ -327,9 +329,11 @@ public class GenerateReporterService {
 				String fileName = file.getName();
 				String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
 				String timeStamp = splitResult[1];
-				// remove csv which created 10h ago
 				if (Long.parseLong(timeStamp) < currentTimeStamp - 36000000) {
-					file.delete();
+					boolean isDeleted = file.delete();
+					if (isDeleted) {
+						log.info("Successfully delete file {} ", fileName);
+					}
 				}
 			}
 		}

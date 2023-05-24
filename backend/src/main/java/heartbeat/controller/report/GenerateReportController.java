@@ -32,11 +32,12 @@ public class GenerateReportController {
 		return reports;
 	}
 
-	@GetMapping("/csvExport")
-	public void exportCsv(ExportCsvRequest request) throws IOException {
+	@GetMapping("/csv")
+	public String exportCsv(ExportCsvRequest request) throws IOException {
 		log.info("Start to export Report, request: {} ", request);
 		String result = generateReporterService.fetchCsvData(request);
 		log.info("Successfully export Report, request: {}", result);
+		return result;
 	}
 
 }

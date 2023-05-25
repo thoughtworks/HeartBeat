@@ -385,3 +385,44 @@ endif
 stop
 @enduml
 ```
+
+
+### LeadTime for Changes
+
+```plantuml
+@startuml LeadTime for Changes
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - LeadTime for Changes
+start
+:Input: startTime, endTime
+pipeline token, database token;
+:Get deployTimes from pipeline serives;
+:Filter deployTimes of Passed;
+  repeat: DeployTime of Passed
+    :Get PullRequst info with the repositoy in DeployTime from service;
+      :Get Commit info by pullrequest from service;
+      :Filter the first commit info;
+      :Get firstCommitTimeInPr, prmergeTime, jobFinishTime;
+    backward: repeat for per passed deployTime;
+    repeat while (Ready to calclulate LeadTime)
+    : 
+      LeadTime of per pipeline deploy: 
+
+      * mergeDelayTime = prMergedTime - firstCommitTimeInPr
+      * pipelineDelayTime = jobFinishTime - prMergedTime
+      * totalDelayTine = mergeDelayTime + pipelineDelayTime
+      ;
+  ->sum;  
+  : Calclulate average LeadTime of all pipeline;
+    
+  : 
+  Average LeadTime of total pipeline deploy: 
+     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount 
+     * AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
+     * AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime;
+     : OutPut:
+     LeadTimeForChanges;
+stop
+@enduml
+```

@@ -189,7 +189,7 @@ layout: ../../layouts/MainLayout.astro
 ### Calculate logic
 
 - Get deployment information according to pipeline config.
-- - Get pull request infomation according to the repository in deployment information.
+- Get pull request infomation according to the repository in deployment information.
 - Get commit infomation according to the repository in deployment information.
 - For each selected step:
   1. Get DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos).
@@ -203,9 +203,11 @@ layout: ../../layouts/MainLayout.astro
   6. Calculate Lead Time for changes: 
      - `mergeDelayTime = prMergedTime - firstCommitTimeInPr`
      - `pipelineDelayTime = jobFinishTime - prMergedTime`
+     - `totalDelayTine = mergeDelayTime + pipelineDelayTime`
 - Calculate Average Lead Time for changes: 
      - `AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount `
      -  `AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
+     -  `AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime`
 
 ### Definition
 

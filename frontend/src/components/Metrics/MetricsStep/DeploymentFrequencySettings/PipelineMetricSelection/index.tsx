@@ -6,7 +6,6 @@ import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import {
-  selectIsProjectCreated,
   selectPipelineNames,
   selectPipelineOrganizations,
   selectSteps,

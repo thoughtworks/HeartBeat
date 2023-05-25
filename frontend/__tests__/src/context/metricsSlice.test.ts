@@ -15,10 +15,11 @@ import saveMetricsSettingReducer, {
   updateMetricsImportedData,
   updateMetricsState,
   updatePipelineSettings,
-  IPipelineConfig,
+  updatePipelineStep,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
+import { PIPELINE_SETTING_TYPES } from '../fixtures'
 import { CLASSIFICATION_WARNING_MESSAGE } from '../fixtures'
 
 const initState = {
@@ -449,6 +450,92 @@ describe('saveMetricsSetting reducer', () => {
       { id: 0, organization: '', pipelineName: '', step: '' },
     ])
     expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '' }])
+  })
+
+  describe('update step When call updatePipelineSteps', () => {
+    const mockImportedDeployment = [
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2' },
+      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3' },
+    ]
+    const mockImportedLeadTime = [
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+    ]
+    const mockInitState = {
+      ...initState,
+      deploymentFrequencySettings: [
+        { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+      ],
+      leadTimeForChanges: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
+      importedData: {
+        ...initState.importedData,
+        importedDeployment: mockImportedDeployment,
+        importedLeadTime: mockImportedLeadTime,
+      },
+    }
+    const mockSteps = ['mockStep1']
+    const testDeploymentFrequencySettingsCases = [
+      {
+        id: 0,
+        mockSteps: ['mockStep1'],
+        type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
+        expectedSettings: [
+          { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+        ],
+      },
+      {
+        id: 1,
+        mockSteps: ['mockStep1'],
+        type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
+        expectedSettings: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
+      },
+    ]
+    const testLeadTimeForChangesSettingsCases = [
+      {
+        id: 0,
+        mockSteps: ['mockStep1'],
+        type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
+        expectedSettings: [
+          { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+        ],
+      },
+      {
+        id: 1,
+        mockSteps: ['mockStep1'],
+        type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
+        expectedSettings: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
+      },
+    ]
+
+    testDeploymentFrequencySettingsCases.forEach((testCase) => {
+      it(`should update DeploymentFrequencySettings step when call updatePipelineSteps with id ${testCase.id}`, () => {
+        const savedMetricsSetting = saveMetricsSettingReducer(
+          mockInitState,
+          updatePipelineStep({
+            steps: mockSteps,
+            id: testCase.id,
+            type: testCase.type,
+          })
+        )
+
+        expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(testCase.expectedSettings)
+      })
+    })
+
+    testLeadTimeForChangesSettingsCases.forEach((testCase) => {
+      it(`should update leadTimeForChanges step when call updatePipelineSteps with id ${testCase.id}`, () => {
+        const savedMetricsSetting = saveMetricsSettingReducer(
+          mockInitState,
+          updatePipelineStep({
+            steps: mockSteps,
+            id: testCase.id,
+            type: testCase.type,
+          })
+        )
+
+        expect(savedMetricsSetting.leadTimeForChanges).toEqual(testCase.expectedSettings)
+      })
+    })
   })
 
   it('should set warningMessage have value when there are more values in the import file than in the response', () => {

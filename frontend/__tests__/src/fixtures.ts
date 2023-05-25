@@ -240,6 +240,11 @@ export const CYCLE_TIME_SETTINGS = 'Cycle time settings'
 export const CLASSIFICATION_SETTING = 'Classification setting'
 export const REAL_DONE = 'Real done'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Deployment frequency settings'
+
+export enum PIPELINE_SETTING_TYPES {
+  DEPLOYMENT_FREQUENCY_SETTINGS_TYPE = 'DeploymentFrequencySettings',
+  LEAD_TIME_FOR_CHANGES_TYPE = 'LeadTimeForChanges',
+}
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
 export const MOCK_GET_STEPS_PARAMS = {

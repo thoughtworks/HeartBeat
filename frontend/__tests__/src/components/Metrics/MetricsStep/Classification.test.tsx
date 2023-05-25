@@ -1,4 +1,4 @@
-import { render, within } from '@testing-library/react'
+import { act, render, waitFor, within } from '@testing-library/react'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -100,10 +100,15 @@ describe('Classification', () => {
   })
 
   it('should show disable warning message when classification warning message has a value after two seconds in cycleTime component', async () => {
+    jest.useFakeTimers()
     const { queryByText } = setup()
 
-    setTimeout(() => {
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
+
+    await waitFor(() => {
       expect(queryByText('Test warning Message')).not.toBeInTheDocument()
-    }, ERROR_MESSAGE_TIME_DURATION)
+    })
   })
 })

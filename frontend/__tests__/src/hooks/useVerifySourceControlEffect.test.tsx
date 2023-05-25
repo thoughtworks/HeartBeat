@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect'
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient'
-import { MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
+import { ERROR_MESSAGE_TIME_DURATION, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 describe('use verify sourceControl state', () => {
@@ -22,7 +22,7 @@ describe('use verify sourceControl state', () => {
 
     act(() => {
       result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
-      jest.advanceTimersByTime(2000)
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
     })
 
     expect(result.current.errorMessage).toEqual('')

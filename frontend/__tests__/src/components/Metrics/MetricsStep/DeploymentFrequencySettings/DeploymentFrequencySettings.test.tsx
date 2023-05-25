@@ -11,17 +11,19 @@ import {
 import { DEPLOYMENT_FREQUENCY_SETTINGS, REMOVE_BUTTON, ORGANIZATION } from '../../../../fixtures'
 
 jest.mock('@src/hooks', () => ({
+  ...jest.requireActual('@src/hooks'),
   useAppDispatch: () => jest.fn(),
-  useAppSelector: jest.fn().mockReturnValue([
-    { id: 0, organization: '', pipelineName: '', steps: '' },
-    { id: 1, organization: '', pipelineName: '', steps: '' },
-  ]),
 }))
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
   addADeploymentFrequencySetting: jest.fn(),
   deleteADeploymentFrequencySetting: jest.fn(),
   updateDeploymentFrequencySettings: jest.fn(),
+  selectDeploymentFrequencySettings: jest.fn().mockReturnValue([
+    { id: 0, organization: '', pipelineName: '', steps: '' },
+    { id: 1, organization: '', pipelineName: '', steps: '' },
+  ]),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({

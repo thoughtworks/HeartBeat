@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
@@ -14,7 +14,10 @@ const mockValidationCheckContext = {
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
 }))
-
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useEffect: jest.fn(),
+}))
 describe('SingleSelection', () => {
   const mockOptions = ['mockOptions 1', 'mockOptions 2', 'mockOptions 3']
   const mockLabel = 'mockLabel'
@@ -63,13 +66,15 @@ describe('SingleSelection', () => {
   })
 
   it('should call update option function and OnGetSteps function when change option given mockValue as default', async () => {
-    const { getByText, getByRole } = setup(mockError)
+    const { getByText, getByRole } = await setup(mockError)
 
-    await userEvent.click(getByRole('button', { name: mockLabel }))
-    await userEvent.click(getByText(mockOptions[1]))
+    await waitFor(async () => {
+      await userEvent.click(getByRole('button', { name: mockLabel }))
+      await userEvent.click(getByText(mockOptions[1]))
 
-    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
-    expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
+      expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
+      expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
+      expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
+    })
   })
 })

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
 import camelCase from 'lodash.camelcase'
 import { useAppSelector } from '@src/hooks'
-import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 
 interface Props {
   options: string[]
@@ -28,10 +28,10 @@ export const SingleSelection = ({
 }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
   const [selectedOptions, setSelectedOptions] = useState(value)
-  const step = useAppSelector(selectMetricsContent)
-    .deploymentFrequencySettings.filter((i) => i.id === id)
-    .map((i) => i.step)
-    .join(',')
+  const step =
+    useAppSelector(selectDeploymentFrequencySettings).find(
+      (selectDeploymentFrequencySetting) => selectDeploymentFrequencySetting.id === id
+    )?.step ?? ''
 
   const handleChange = (event: SelectChangeEvent) => {
     const newValue = event.target.value

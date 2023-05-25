@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
@@ -66,15 +66,13 @@ describe('SingleSelection', () => {
   })
 
   it('should call update option function and OnGetSteps function when change option given mockValue as default', async () => {
-    const { getByText, getByRole } = await setup(mockError)
+    const { getByText, getByRole } = setup(mockError)
 
-    await waitFor(async () => {
-      await userEvent.click(getByRole('button', { name: mockLabel }))
-      await userEvent.click(getByText(mockOptions[1]))
+    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByText(mockOptions[1]))
 
-      expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
-      expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
-      expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
-    })
+    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
+    expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
   })
 })

@@ -174,3 +174,42 @@ layout: ../../layouts/MainLayout.astro
 | :---------- | :------------------------------------- | :--- |
 | failureRate | The frequency of each pipeline failure |      |
 | Average     | The average of failureRate             |      |
+
+
+## Lead Time for changes
+
+### Config
+
+- StartDate、EndDate
+- Metrics select lead time for changes
+- Pipeline Type, Pipeline Token
+- SourceControl Type, SourceControl Token 
+- Pipeline organization, name, Step
+
+### Calculate logic
+
+- Get deployment information according to pipeline config.
+- - Get pull request infomation according to the repository in deployment information.
+- Get commit infomation according to the repository in deployment information.
+- For each selected step:
+  1. Get DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos).
+  2. Filter the passed deployInfos.
+  3. Get pull request info according to the repository in passed deployInfos.
+  4. Get commit info according to the commitid in pull request info.
+  5. Now we get some deploy and commit times:
+     - `jobFinishTime = job finishTime of the job`
+     - `prMergedTime = time of the pull request be merged`
+     - `firstCommitTimeInPr = the first time of the commit in this pull request`
+  6. Calculate Lead Time for changes: 
+     - `mergeDelayTime = prMergedTime - firstCommitTimeInPr`
+     - `pipelineDelayTime = jobFinishTime - prMergedTime`
+- Calculate Average Lead Time for changes: 
+     - `AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount `
+     -  `AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
+
+### Definition
+
+| Metrics     | Description                            | Note |
+| :---------- | :------------------------------------- | :--- |
+| Lead Time for changes | The time from code commit to deploy production successd |      |
+| Average     | The average of lead Time  for per pipeline          |      |

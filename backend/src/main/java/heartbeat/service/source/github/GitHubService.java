@@ -111,6 +111,7 @@ public class GitHubService {
 
 	public CompletableFuture<List<PipelineLeadTime>> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
+		String realToken = "Bearer" + token;
 		return CompletableFuture.supplyAsync(() -> {
 			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = deployTimes.stream().map(deployTime -> {
 				String repository = GithubUtil.getGithubUrlFullName(repositories.get(deployTime.getPipelineId()));
@@ -129,7 +130,7 @@ public class GitHubService {
 				List<LeadTime> leadTimes = passedDeployInfos.stream().map(deployInfo -> {
 					List<PullRequestInfo> pullRequestInfos = CompletableFuture
 						.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
-								deployInfo.getCommitId(), token), taskExecutor)
+								deployInfo.getCommitId(), realToken), taskExecutor)
 						.join();
 					long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 					long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
@@ -156,7 +157,7 @@ public class GitHubService {
 
 					List<CommitInfo> commitInfos = CompletableFuture
 						.supplyAsync(() -> gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
-								mergedPull.get().getNumber().toString(), token), taskExecutor)
+								mergedPull.get().getNumber().toString(), realToken), taskExecutor)
 						.join();
 					CommitInfo firstCommitInfo = commitInfos.get(0);
 					return this.mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);

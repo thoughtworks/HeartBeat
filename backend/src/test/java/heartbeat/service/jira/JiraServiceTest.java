@@ -229,8 +229,7 @@ class JiraServiceTest {
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(null, boardRequestParam))
 			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining(
-					"Request failed with status statusCode 400, error: [Jira] boardType param is not correct");
+			.hasMessageContaining("Request failed with status statusCode 400, error: boardType param is not correct");
 	}
 
 	@Test
@@ -256,7 +255,7 @@ class JiraServiceTest {
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
 			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no done cards.");
+			.hasMessageContaining("Request failed with status statusCode 204, error: There is no done cards.");
 	}
 
 	@Test
@@ -276,7 +275,7 @@ class JiraServiceTest {
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
 			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no done column.");
+			.hasMessageContaining("Request failed with status statusCode 204, error: There is no done column.");
 	}
 
 	@Test
@@ -362,7 +361,7 @@ class JiraServiceTest {
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no target field.");
+			.hasMessageContaining("Request failed with status statusCode 204, error: There is no target field.");
 	}
 
 	@Test
@@ -386,7 +385,7 @@ class JiraServiceTest {
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: [Jira] There is no target field.");
+			.hasMessageContaining("Request failed with status statusCode 204, error: There is no target field.");
 	}
 
 	@Test

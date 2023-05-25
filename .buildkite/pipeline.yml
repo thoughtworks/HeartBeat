@@ -44,13 +44,13 @@ steps:
     command: ./ops/deploy.sh infra
 
   - label: ":react: Build Frontend"
-    branches: main
+    if:  build.branch == "main" && build.message =~ /\[frontend\]/
     key: "build-frontend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh frontend
 
   - label: ":java: Build Backend"
-    branches: main
+    if:  build.branch == "main" && build.message =~ /\[backend\]/
     key: "build-backend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh backend
@@ -68,7 +68,9 @@ steps:
     command: ./ops/deploy.sh stub
 
   - label: ":rocket: Deploy e2e"
-    branches: main
+    if: |
+      build.branch == "main" &&
+      (build.message =~ /\\[frontend\\]/ || build.message =~ /\\[backend\\]/)
     key: "deploy-e2e"
     depends_on:
       - "build-frontend"
@@ -90,6 +92,8 @@ steps:
           expire_in: "${RETENTION_DAYS} days"
 
   - label: ":rocket: Deploy prod"
-    branches: main
+    if: |
+      build.branch == "main" &&
+      (build.message =~ /\\[frontend\\]/ || build.message =~ /\\[backend\\]/)
     depends_on: "check-e2e"
     command: ./ops/deploy.sh prod

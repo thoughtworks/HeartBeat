@@ -14,8 +14,7 @@ import {
   updatePipelineToolVerifyResponseSteps,
 } from '@src/context/config/configSlice'
 import { store } from '@src/store'
-import { useAppSelector } from '@src/hooks/useAppDispatch'
-import { updatePipelineSteps } from '@src/context/Metrics/metricsSlice'
+import { updatePipelineStep } from '@src/context/Metrics/metricsSlice'
 
 interface pipelineMetricSelectionProps {
   type: string
@@ -47,7 +46,6 @@ export const PipelineMetricSelection = ({
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
   const pipelineNameOptions = selectPipelineNames(store.getState(), organization)
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
-  const isProjectCreated = useAppSelector(selectIsProjectCreated)
 
   const handleClick = () => {
     onRemovePipeline(id)
@@ -62,7 +60,7 @@ export const PipelineMetricSelection = ({
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
       const steps = res ? Object.values(res) : []
       dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps }))
-      dispatch(updatePipelineSteps({ res, isProjectCreated, id, type }))
+      dispatch(updatePipelineStep({ steps, id, type }))
     })
   }
 

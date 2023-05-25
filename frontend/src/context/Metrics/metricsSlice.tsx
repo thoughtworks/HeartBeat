@@ -256,23 +256,24 @@ export const metricsSlice = createSlice({
       state.leadTimeForChanges = isProjectCreated ? initialState.leadTimeForChanges : validLeadTime
     },
 
-    updatePipelineSteps: (state, action) => {
-      const { res, isProjectCreated, id, type } = action.payload
+    updatePipelineStep: (state, action) => {
+      const { steps, id, type } = action.payload
       const { importedDeployment, importedLeadTime } = state.importedData
       const updatedImportedPipeline =
         type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
-      const updatedImportedPipelineStep = updatedImportedPipeline?.filter((item) => item.id === id).map((i) => i.step)
-      const validStep = res ? res.filter((item: string) => updatedImportedPipelineStep?.includes(item)).join(',') : ''
+      const updatedImportedPipelineStep =
+        updatedImportedPipeline.filter((pipeline) => pipeline.id === id)[0]?.step ?? ''
+      const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
-        pipelines.map((pipeline) => {
-          return pipeline.id === id
+        pipelines.map((pipeline) =>
+          pipeline.id === id
             ? {
                 ...pipeline,
-                step: res ? (isProjectCreated ? '' : validStep) : '',
+                step: validStep,
               }
             : pipeline
-        })
+        )
 
       type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
         ? (state.deploymentFrequencySettings = getPipelineSettings(state.deploymentFrequencySettings))
@@ -341,7 +342,7 @@ export const {
   updateTreatFlagCardAsBlock,
   updateMetricsState,
   updatePipelineSettings,
-  updatePipelineSteps,
+  updatePipelineStep,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings

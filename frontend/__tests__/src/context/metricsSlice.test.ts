@@ -384,7 +384,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(false)
   })
 
-  it('should update pipeline settings When call updatePipelineSettings given import json file', () => {
+  describe('updatePipelineSettings', () => {
     const mockImportedDeployment = [
       { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
       { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2' },
@@ -411,48 +411,43 @@ describe('saveMetricsSetting reducer', () => {
         steps: ['mock step 1', 'mock step 2'],
       },
     ]
-    const isProjectCreated = false
-
-    const savedMetricsSetting = saveMetricsSettingReducer(
-      mockInitState,
-      updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated })
-    )
-
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
-      { id: 1, organization: 'mockOrganization1', pipelineName: '', step: '' },
-      { id: 2, organization: '', pipelineName: '', step: '' },
-    ])
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual([
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
-    ])
-  })
-
-  it('should update pipeline settings When call updatePipelineSettings given isProjectCreated true ', () => {
-    const mockPipelineList = [
+    const testCases = [
       {
-        id: 'mockId1',
-        name: 'mockPipelineName1',
-        orgId: 'mockOrgId1',
-        orgName: 'mockOrganization1',
-        repository: 'mockRepository1',
-        steps: ['mock step 1', 'mock step 2'],
+        isProjectCreated: false,
+        expectSetting: {
+          deploymentFrequencySettings: [
+            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+            { id: 1, organization: 'mockOrganization1', pipelineName: '', step: '' },
+            { id: 2, organization: '', pipelineName: '', step: '' },
+          ],
+          leadTimeForChanges: [
+            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+          ],
+        },
+      },
+      {
+        isProjectCreated: true,
+        expectSetting: {
+          deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
+          leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
+        },
       },
     ]
-    const isProjectCreated = true
 
-    const savedMetricsSetting = saveMetricsSettingReducer(
-      initState,
-      updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated })
-    )
+    testCases.forEach(({ isProjectCreated, expectSetting }) => {
+      it(`should update pipeline settings When call updatePipelineSettings given isProjectCreated ${isProjectCreated}`, () => {
+        const savedMetricsSetting = saveMetricsSettingReducer(
+          mockInitState,
+          updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated })
+        )
 
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
-      { id: 0, organization: '', pipelineName: '', step: '' },
-    ])
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '' }])
+        expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(expectSetting.deploymentFrequencySettings)
+        expect(savedMetricsSetting.leadTimeForChanges).toEqual(expectSetting.leadTimeForChanges)
+      })
+    })
   })
 
-  describe('update step When call updatePipelineSteps', () => {
+  describe('updatePipelineSteps', () => {
     const mockImportedDeployment = [
       { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
       { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2' },
@@ -474,10 +469,10 @@ describe('saveMetricsSetting reducer', () => {
       },
     }
     const mockSteps = ['mockStep1']
-    const testDeploymentFrequencySettingsCases = [
+    const testSettingsCases = [
       {
         id: 0,
-        mockSteps: ['mockStep1'],
+        steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         expectedSettings: [
           { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
@@ -485,15 +480,13 @@ describe('saveMetricsSetting reducer', () => {
       },
       {
         id: 1,
-        mockSteps: ['mockStep1'],
+        steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         expectedSettings: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
       },
-    ]
-    const testLeadTimeForChangesSettingsCases = [
       {
         id: 0,
-        mockSteps: ['mockStep1'],
+        steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
         expectedSettings: [
           { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
@@ -501,39 +494,29 @@ describe('saveMetricsSetting reducer', () => {
       },
       {
         id: 1,
-        mockSteps: ['mockStep1'],
+        steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
         expectedSettings: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
       },
     ]
 
-    testDeploymentFrequencySettingsCases.forEach((testCase) => {
-      it(`should update DeploymentFrequencySettings step when call updatePipelineSteps with id ${testCase.id}`, () => {
+    testSettingsCases.forEach(({ id, type, steps, expectedSettings }) => {
+      const settingsKey =
+        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+          ? 'deploymentFrequencySettings'
+          : 'leadTimeForChanges'
+
+      it(`should update ${settingsKey} step when call updatePipelineSteps with id ${id}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(
           mockInitState,
           updatePipelineStep({
-            steps: mockSteps,
-            id: testCase.id,
-            type: testCase.type,
+            steps: steps,
+            id: id,
+            type: type,
           })
         )
 
-        expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(testCase.expectedSettings)
-      })
-    })
-
-    testLeadTimeForChangesSettingsCases.forEach((testCase) => {
-      it(`should update leadTimeForChanges step when call updatePipelineSteps with id ${testCase.id}`, () => {
-        const savedMetricsSetting = saveMetricsSettingReducer(
-          mockInitState,
-          updatePipelineStep({
-            steps: mockSteps,
-            id: testCase.id,
-            type: testCase.type,
-          })
-        )
-
-        expect(savedMetricsSetting.leadTimeForChanges).toEqual(testCase.expectedSettings)
+        expect(savedMetricsSetting[settingsKey]).toEqual(expectedSettings)
       })
     })
   })

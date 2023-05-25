@@ -184,8 +184,8 @@ export const metricsSlice = createSlice({
       state.importedData.importedCycleTime.importedTreatFlagCardAsBlock = cycleTime?.treatFlagCardAsBlock
       state.importedData.importedDoneStatus = doneStatus
       state.importedData.importedClassification = classification
-      state.importedData.importedDeployment = deployment
-      state.importedData.importedLeadTime = leadTime
+      state.importedData.importedDeployment = deployment ?? []
+      state.importedData.importedLeadTime = leadTime ?? []
     },
 
     updateMetricsState: (state, action) => {
@@ -246,18 +246,17 @@ export const metricsSlice = createSlice({
           .filter((pipeline: pipeline) => pipeline.orgName === organization)
           .map((item: pipeline) => item.name)
       const getValidPipelines = (pipelines: IPipelineConfig[]) =>
-        pipelines?.map(({ id, organization, pipelineName }) => ({
-          id,
-          organization: orgNames.has(organization) ? organization : '',
-          pipelineName: filteredPipelineNames(organization).includes(pipelineName) ? pipelineName : '',
-          step: '',
-        }))
+        !pipelines.length || isProjectCreated
+          ? [{ id: 0, organization: '', pipelineName: '', step: '' }]
+          : pipelines.map(({ id, organization, pipelineName }) => ({
+              id,
+              organization: orgNames.has(organization) ? organization : '',
+              pipelineName: filteredPipelineNames(organization).includes(pipelineName) ? pipelineName : '',
+              step: '',
+            }))
 
-      const validDeployment = getValidPipelines(importedDeployment)
-      const validLeadTime = getValidPipelines(importedLeadTime)
-
-      state.deploymentFrequencySettings = isProjectCreated ? initialState.deploymentFrequencySettings : validDeployment
-      state.leadTimeForChanges = isProjectCreated ? initialState.leadTimeForChanges : validLeadTime
+      state.deploymentFrequencySettings = getValidPipelines(importedDeployment)
+      state.leadTimeForChanges = getValidPipelines(importedLeadTime)
     },
 
     updatePipelineStep: (state, action) => {
@@ -265,8 +264,9 @@ export const metricsSlice = createSlice({
       const { importedDeployment, importedLeadTime } = state.importedData
       const updatedImportedPipeline =
         type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
-      const updatedImportedPipelineStep =
-        updatedImportedPipeline.filter((pipeline) => pipeline.id === id)[0]?.step ?? ''
+      const updatedImportedPipelineStep = !updatedImportedPipeline.length
+        ? ''
+        : updatedImportedPipeline.filter((pipeline) => pipeline.id === id)[0]?.step ?? ''
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>

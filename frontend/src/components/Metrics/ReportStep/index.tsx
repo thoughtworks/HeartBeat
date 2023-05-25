@@ -17,10 +17,11 @@ import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/r
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { BackButton, ButtonContainer, ButtonGroup, ExportButton } from '@src/components/Metrics/MetricsStepper/style'
+import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCSVEffect } from '@src/hooks/useExportCSVEffect'
 import { backStep } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportStep/style'
 
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
@@ -44,7 +45,7 @@ export const ReportStep = () => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
-  const csvTimeStamp = new Date().getTime()
+  const [csvTimeStamp, setCsvTimeStamp] = useState(0)
   const configData = useAppSelector(selectConfig)
   const {
     cycleTimeSettings,
@@ -137,6 +138,7 @@ export const ReportStep = () => {
   }, [])
 
   useEffect(() => {
+    setCsvTimeStamp(new Date().getTime())
     fetchReportData().then((res) => {
       res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
       res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
@@ -217,15 +219,11 @@ export const ReportStep = () => {
           )}
         </>
       )}
-      <ButtonContainer>
-        <ButtonGroup>
-          <>
-            <BackButton onClick={handleBack}>Back</BackButton>
-            {isShowExportBoardButton && <ExportButton>Export board data</ExportButton>}
-            {isShowExportPipelineButton && <ExportButton onClick={handleDownload}>Export pipeline data</ExportButton>}
-          </>
-        </ButtonGroup>
-      </ButtonContainer>
+      <ButtonGroupStyle>
+        <BackButton onClick={handleBack}>Back</BackButton>
+        {isShowExportBoardButton && <ExportButton>Export board data</ExportButton>}
+        {isShowExportPipelineButton && <ExportButton onClick={handleDownload}>Export pipeline data</ExportButton>}
+      </ButtonGroupStyle>
     </>
   )
 }

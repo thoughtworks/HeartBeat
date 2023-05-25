@@ -75,18 +75,6 @@ export const NextButton = styled(Button)({
   },
 })
 
-export const ExportButton = styled(Button)({
-  ...basicButtonStyle,
-  width: '12rem',
-  backgroundColor: theme.main.backgroundColor,
-  color: theme.main.color,
-  '&:hover': {
-    ...basicButtonStyle,
-    backgroundColor: theme.main.backgroundColor,
-    color: theme.main.color,
-  },
-})
-
 export const ButtonGroup = styled('div')({
   padding: '1rem',
 })

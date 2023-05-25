@@ -191,6 +191,32 @@ describe('saveMetricsSetting reducer', () => {
     })
   })
 
+  it('should not update metricsImportedData when imported data is broken given initial state', () => {
+    const mockMetricsImportedData = {
+      crews: undefined,
+      cycleTime: {
+        jiraColumns: undefined,
+        treatFlagCardAsBlock: true,
+      },
+      doneStatus: undefined,
+      classification: undefined,
+      deployment: undefined,
+      leadTime: undefined,
+    }
+
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))
+
+    expect(savedMetricsSetting.users).toEqual([])
+    expect(savedMetricsSetting.targetFields).toEqual([])
+    expect(savedMetricsSetting.jiraColumns).toEqual([])
+    expect(savedMetricsSetting.doneColumn).toEqual([])
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
+      { id: 0, organization: '', pipelineName: '', step: '' },
+    ])
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '' }])
+  })
+
   it('should update metricsState when its value changed given isProjectCreated is false and selectedDoneColumns', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,

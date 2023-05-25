@@ -13,7 +13,6 @@ import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.service.report.ICardFieldDisplayName;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Log4j2
 public class ClassificationCalculator {
 
 	private static final String NONE_KEY = "None";

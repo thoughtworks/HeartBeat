@@ -571,9 +571,13 @@ public class JiraService {
 	private CardCustomFieldKey saveCustomFieldKey(List<TargetField> model) {
 		CardCustomFieldKey cardCustomFieldKey = CardCustomFieldKey.builder().build();
 		for (TargetField value : model) {
-			switch (value.getName()) {
-				case "Story Points", "Story point estimate" -> cardCustomFieldKey.setStoryPoints(value.getKey());
+			String lowercaseName = value.getName().toLowerCase();
+			switch (lowercaseName) {
+				case "story points", "story point estimate" -> cardCustomFieldKey.setStoryPoints(value.getKey());
+				case "sprint" -> cardCustomFieldKey.setSprint(value.getKey());
+				case "flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
 				default -> {
+
 				}
 			}
 		}

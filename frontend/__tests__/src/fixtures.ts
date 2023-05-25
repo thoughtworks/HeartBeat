@@ -1,4 +1,4 @@
-import { ReportRequestDTO } from '@src/clients/report/dto/request'
+import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 
 export const PROJECT_NAME = 'Heartbeat'
 export const PROJECT_DESCRIPTION =
@@ -84,6 +84,7 @@ export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
 export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`
 export const MOCK_REPORT_URL = `${BASE_URL}/reports`
+export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/csv`
 
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
@@ -175,6 +176,10 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
     doneColumn: ['Done'],
   },
+}
+export const MOCK_EXPORT_CSV_REQUEST_PARAMS: CSVReportRequestDTO = {
+  csvTimeStamp: 1613664000000,
+  dataType: 'pipeline',
 }
 
 export const MOCK_IMPORT_FILE = {

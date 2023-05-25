@@ -2,7 +2,7 @@ import { HttpClient } from '@src/clients/Httpclient'
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
 import moment from 'moment'
 
-export class CSVExportClient extends HttpClient {
+export class CsvClient extends HttpClient {
   parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string =>
     moment(csvTimeStamp).format('YYYY-MM-DD-kk-mm-ss')
 
@@ -12,7 +12,6 @@ export class CSVExportClient extends HttpClient {
       .then((res) => {
         const blob = new Blob([res.data])
         const exportedFilename = `pipeline-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
-        // For other browsers
         const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = url
@@ -27,4 +26,4 @@ export class CSVExportClient extends HttpClient {
   }
 }
 
-export const csvExportClient = new CSVExportClient()
+export const csvClient = new CsvClient()

@@ -18,7 +18,7 @@ import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metr
 import dayjs from 'dayjs'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
-import { useExportCSVEffect } from '@src/hooks/useExportCSVEffect'
+import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportStep/style'
@@ -26,7 +26,7 @@ import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportSt
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
   const { generateReport, isLoading } = useGenerateReportEffect()
-  const { fetchExportData } = useExportCSVEffect()
+  const { fetchExportData } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [classificationState, setClassificationState] = useState({

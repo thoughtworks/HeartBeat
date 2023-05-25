@@ -326,3 +326,5 @@ pnpm e2e:report
 # 7 How to trigger BuildKite Pipeline
 1. commit message或者PR的title中添加`[stub]` tag,以触发stub相关的部署。 
 2. commit message或者PR的title中添加`[infra]` tag,以触发infra相关的部署。
+3. commit message或者PR的title中添加`[backend]` tag,以触发backend相关的部署。
+4. commit message或者PR的title中添加`[frontend]` tag,以触发frontend相关的部署。

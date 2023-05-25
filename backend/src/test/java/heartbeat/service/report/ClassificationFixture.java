@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import com.google.gson.JsonPrimitive;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
@@ -13,7 +14,9 @@ import heartbeat.controller.board.dto.response.JiraProject;
 import heartbeat.controller.board.dto.response.Priority;
 import heartbeat.controller.board.dto.response.Reporter;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class ClassificationFixture {
 
@@ -38,6 +41,7 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
 							.labels(List.of("backend", "frontend"))
+							.customFields(Map.of("customfield_10015", new JsonPrimitive(42)))
 							.build())
 						.build())
 					.build(),
@@ -58,6 +62,7 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("ADM-442").build())
 							.labels(List.of("backend", "frontend"))
+							.customFields(Map.of("customfield_10015", new JsonPrimitive(42)))
 							.build())
 						.build())
 					.build()))
@@ -78,6 +83,7 @@ public class ClassificationFixture {
 					.fixVersions(List.of(FixVersion.builder().build(), FixVersion.builder().build()))
 					.project(JiraProject.builder().build())
 					.parent(CardParent.builder().build())
+					.customFields(Collections.EMPTY_MAP)
 					.build())
 				.build())
 			.build()))
@@ -96,6 +102,7 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
 							.labels(List.of("bug"))
+							.customFields(Map.of("customfield_10015", new JsonPrimitive(42)))
 							.build())
 						.build())
 					.build(),
@@ -108,6 +115,7 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
 							.labels(List.of("bug"))
+							.customFields(Map.of("customfield_10015", new JsonPrimitive(42)))
 							.build())
 						.build())
 					.build()))
@@ -134,6 +142,7 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("test").build())
 							.labels(List.of("bug"))
+							.customFields(Map.of("customfield_10015", new JsonPrimitive(42)))
 							.build())
 						.build())
 					.build(),
@@ -154,6 +163,7 @@ public class ClassificationFixture {
 							.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 							.parent(CardParent.builder().key("ADM-442").build())
 							.labels(List.of("frontend"))
+							.customFields(Map.of("customfield_10015", new JsonPrimitive(42)))
 							.build())
 						.build())
 					.build()))
@@ -178,6 +188,7 @@ public class ClassificationFixture {
 					.project(JiraProject.builder().id("1").key("metrics").name("heartBeat").build())
 					.parent(CardParent.builder().key("test").build())
 					.labels(List.of("bug"))
+					.customFields(Map.of("customfield_10015", new JsonPrimitive(42)))
 					.build())
 				.build())
 			.build()))

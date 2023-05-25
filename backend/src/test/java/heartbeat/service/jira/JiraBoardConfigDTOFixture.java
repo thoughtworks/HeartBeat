@@ -20,8 +20,6 @@ import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
-import heartbeat.controller.board.dto.response.Partner;
-import heartbeat.controller.board.dto.response.Sprint;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 
@@ -93,71 +91,21 @@ public class JiraBoardConfigDTOFixture {
 			.total("2")
 			.issues(List.of(
 					new JiraCard("1",
-							JiraCardField.builder()
-								.assignee(new Assignee("Zhang San"))
-								.storyPoints(2)
-								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
-								.partner(List.of(Partner.builder().displayName("Shawn").build()))
-								.flagged("block")
-								.build()),
+							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(2).build()),
 					new JiraCard("1",
-							JiraCardField.builder()
-								.assignee(new Assignee("Zhang San"))
-								.storyPoints(1)
-								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
-								.partner(List.of(Partner.builder().displayName("Shawn").build()))
-								.startDate("20230522")
-								.build()),
+							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
+					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
 					new JiraCard("1",
-							JiraCardField.builder()
-								.assignee(new Assignee("Zhang San"))
-								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
-								.partner(List.of(Partner.builder().displayName("Shawn").build()))
-								.build()),
-					new JiraCard("1",
-							JiraCardField.builder()
-								.assignee(new Assignee("Zhang San"))
-								.storyPoints(5)
-								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
-								.partner(List.of(Partner.builder().displayName("Shawn").build()))
-								.build())));
+							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER_WITH_ERROR() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
-					new JiraCard("1",
-							JiraCardField.builder()
-								.assignee(new Assignee("Zhang San"))
-								.sprint(List.of(Sprint.builder().name("Sprint 7").build()))
-								.flagged(null)
-								.development(null)
-								.startDate(null)
-								.qualityAssurance(null)
-								.rank(null)
-								.issueColor(null)
-								.feature(null)
-								.build()),
-					new JiraCard("1",
-							JiraCardField.builder()
-								.assignee(new Assignee("Zhang San"))
-								.sprint(List.of(Sprint.builder().name("Sprint 8").build()))
-								.partner(List.of(Partner.builder().displayName("jeff").build()))
-								.flagged("top")
-								.development("new")
-								.startDate("20220522")
-								.qualityAssurance("shawn")
-								.rank("top")
-								.issueColor("cool")
-								.feature("bug")
-								.build()),
-					new JiraCard("1",
-							JiraCardField.builder()
-								.assignee(new Assignee("Zhang San"))
-								.sprint(List.of(Sprint.builder().name("Sprint 9").build()))
-								.partner(List.of(Partner.builder().displayName("tom").build()))
-								.build())));
+					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
+					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
+					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {

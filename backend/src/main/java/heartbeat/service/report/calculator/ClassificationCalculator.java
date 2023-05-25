@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
@@ -49,10 +50,9 @@ public class ClassificationCalculator {
 
 			for (String tempFieldsKey : tempFields.keySet()) {
 				Object object = tempFields.get(tempFieldsKey);
-				if (object instanceof JsonArray) {
-					JsonArray jsonArray = (JsonArray) object;
+				if (object instanceof JsonArray objectArray) {
 					List<JsonObject> objectList = new ArrayList<>();
-					for (JsonElement element : jsonArray) {
+					for (JsonElement element : objectArray) {
 						if (element.isJsonObject()) {
 							JsonObject jsonObject = element.getAsJsonObject();
 							objectList.add(jsonObject);
@@ -117,32 +117,36 @@ public class ClassificationCalculator {
 		if (object instanceof ICardFieldDisplayName) {
 			return ((ICardFieldDisplayName) object).getDisplayName();
 		}
-		if (object instanceof JsonObject) {
-			JsonElement value = ((JsonObject) object).get("name");
-			if (value != null) {
-				return value.toString();
+
+		if (object instanceof JsonObject jsonObject) {
+			JsonElement nameValue = jsonObject.get("name");
+			if (nameValue != null) {
+				return removeQuotes(nameValue.getAsString());
 			}
-			else {
-				JsonElement nameValue = ((JsonObject) object).get("displayName");
-				if (nameValue != null) {
-					return nameValue.toString();
-				}
-				else {
-					JsonElement valueName = ((JsonObject) object).get("value");
-					if (valueName != null) {
-						return valueName.toString();
-					}
-					else {
-						return NONE_KEY;
-					}
-				}
+			JsonElement displayNameValue = jsonObject.get("displayName");
+			if (displayNameValue != null) {
+				return removeQuotes(displayNameValue.getAsString());
 			}
+			JsonElement valueName = jsonObject.get("value");
+			if (valueName != null) {
+				return removeQuotes(valueName.getAsString());
+			}
+			return NONE_KEY;
 		}
+
 		if (object instanceof JsonNull) {
 			return NONE_KEY;
 		}
 
+		if (object instanceof JsonPrimitive) {
+			return removeQuotes(((JsonPrimitive) object).getAsString());
+		}
+
 		return object.toString();
+	}
+
+	private static String removeQuotes(String value) {
+		return value.replaceAll("\"", "");
 	}
 
 	private static Map<String, Object> extractFields(JiraCardField jiraCardFields) {

@@ -386,7 +386,6 @@ stop
 @enduml
 ```
 
-
 ### LeadTime for Changes
 
 ```plantuml
@@ -406,23 +405,55 @@ pipeline token, database token;
       :Get firstCommitTimeInPr, prmergeTime, jobFinishTime;
     backward: repeat for per passed deployTime;
     repeat while (Ready to calclulate LeadTime)
-    : 
-      LeadTime of per pipeline deploy: 
+    :
+      LeadTime of per pipeline deploy:
 
       * mergeDelayTime = prMergedTime - firstCommitTimeInPr
       * pipelineDelayTime = jobFinishTime - prMergedTime
       * totalDelayTine = mergeDelayTime + pipelineDelayTime
       ;
-  ->sum;  
+  ->sum;
   : Calclulate average LeadTime of all pipeline;
-    
-  : 
-  Average LeadTime of total pipeline deploy: 
-     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount 
+
+  :
+  Average LeadTime of total pipeline deploy:
+     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount
      * AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
      * AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime;
      : OutPut:
      LeadTimeForChanges;
+stop
+@enduml
+```
+
+### Generate Board CSV
+
+```plantuml
+@startuml Generate CSV For Board
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Generate CSV For Board
+start
+:input allDoneCards, nonDoneCards, jiraColumns, request.jiraBoardSetting.targetFields,request.csvTimeStamp/
+:get activeTargetFields use field.flag filter targetFields;
+:input CSVField and targetFields/
+if(check if the targetField is not in CSVField) then (add targetField to ExtraFields)
+:return;
+endif
+:output ExtraFields/
+:sort nonDoneCards by status in columns;
+if(status undefined in columns) then (put it last)
+:return;
+endif
+:get allCardList through [concat allDoneCards and nonDoneCards];
+:update ExtraFields;
+:insert ExtraFields;
+ :iterate over Card of allCardList;
+ :get CycleTime for allCardList;
+ :build CycleTimeFlat Object use CycleTime;
+ :calculate: TotalCycleTime / StoryPoints;
+:convert cardsInfo to a CSV;
+:save the CSV on disk;
 stop
 @enduml
 ```

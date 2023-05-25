@@ -27,7 +27,53 @@ layout: ../../../layouts/MainLayout.astro
 ## Impact w/o metrics set up
 
 - On the config page, selecting `Lead times for changes`, `Deployment frequency`, `Change failure rate`, or `Mean
-time to recovery` will display the `export pipeline data` button.
+  time to recovery` will display the `export pipeline data` button.
 - Only selecting `Lead times for changes`, can get value of `Committer`,`Code Committed Time` and
   completed `leadTimeInfo`.
 - On the metrics page, selecting different pipeline and step will show different data.
+
+# Export board data
+
+## Data structure
+
+| Field Name                | Source                                                      | Description                                                | Note |
+| :------------------------ | :---------------------------------------------------------- | :--------------------------------------------------------- | :--- |
+| Issue Key                 | CardCollection.jiraCardDTOList.baseInfo.key                 | the card ID                                                |      |
+| Summary                   | CardCollection.jiraCardDTOList.baseInfo.fields.summary      | the specific description of this card                      |      |
+| Issue Tyoe                | CardCollection.jiraCardDTOList.baseInfo.fields.issuetype    | the card type (Tech, Bug, Story)                           |      |
+| Status                    | CardCollection.jiraCardDTOList.baseInfo.fields.status       | the card in status                                         |      |
+| Story Points              | CardCollection.jiraCardDTOList.baseInfo.fields.storyPoints  | the card story point estimate                              |      |
+| assignee                  | CardCollection.jiraCardDTOList.baseInfo.fields.assignee     | the card belongs to which member                           |      |
+| Reporter                  | CardCollection.jiraCardDTOList.baseInfo.fields.reporter     | the team member who created this card                      |      |
+| Project Key               | CardCollection.jiraCardDTOList.baseInfo.fields.project.key  |                                                            |      |
+| Project Name              | CardCollection.jiraCardDTOList.baseInfo.fields.project.name |                                                            |      |
+| Priority                  | CardCollection.jiraCardDTOList.baseInfo.fields.priority     | distinguish the degree of urgency of a card                |      |
+| Parent Summary            | CardCollection.jiraCardDTOList.baseInfo.fields.parent       |                                                            |      |
+| Sprint                    | CardCollection.jiraCardDTOList.baseInfo.fields.             |                                                            |      |
+| Labels                    | CardCollection.jiraCardDTOList.baseInfo.fields.project.name |                                                            |      |
+| customField               | CardCollection.jiraCardDTOList.baseInfo.fields.customFiekds |                                                            |      |
+| Cycle Time                | CardCollection.jiraCardDTOList.cardCycleTime.total          | All the time it takes for this card to done from the doing |      |
+| Cycle Time / Story Points |                                                             |                                                            |      |
+| To Do Days                | CardCollection.jiraCardDTOList.cycleTimeList                | The time this card spent in to do column                   |      |
+| Analysis Days             | CardCollection.jiraCardDTOList.cycleTimeList.analysis       | The time this card spent in analysis column                |      |
+| Doing Days                | CardCollection.jiraCardDTOList.cycleTimeList.doing          | The time this card spent in Doing column                   |      |
+| Waiting Days              | CardCollection.jiraCardDTOList.cycleTimeList.waiting        | The time this card spent in waiting for testing column     |      |
+| Testing Days              | CardCollection.jiraCardDTOList.cycleTimeList.testing        | The time this card spent in testing column                 |      |
+| Block Days                | CardCollection.jiraCardDTOList.cycleTimeList.block          | The time this card spent in block column                   |      |
+| Review Days               | CardCollection.jiraCardDTOList.cycleTimeList.review         | The time this card spent in review column                  |      |
+| Done Days                 | CardCollection.jiraCardDTOList.cycleTimeList.done           | The time this card spent in done column                    |      |
+| OriginCycleTime: TODO     | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+| OriginCycleTime: ANALYSIS | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+| OriginCycleTime: DOING    | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+| OriginCycleTime: WAITING  | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+| OriginCycleTime: TESTING  | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+| OriginCycleTime: BLOCKED  | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+| OriginCycleTime: REVIEW   | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+| OriginCycleTime: DONE     | CardCollection.jiraCardDTOList.originCycleTimeList          |                                                            |      |
+
+## Impact w/o metrics set up
+
+- On the config page, selecting `Velocity`, `Cycle Time` or `Classicfation` will display the `export board data` button.
+- Only selecting `Classification`, can get value of custom field.
+- On the metrics page, selecting `Consider the "Flag" as "Block"` will calculate `Cycle Time` otherwise calculate `Origin Cycle Time`
+- On the metrics page, selecting different crews, boardSetting and classification will show different data.

@@ -2,8 +2,6 @@ import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChang
 import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
 import camelCase from 'lodash.camelcase'
-import { useAppSelector } from '@src/hooks'
-import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 
 interface Props {
   options: string[]
@@ -12,6 +10,7 @@ interface Props {
   id: number
   errorMessage: string | undefined
   onGetSteps?: (pipelineName: string) => void
+  step?: string
   onUpDatePipeline: (id: number, label: string, value: string) => void
   onClearErrorMessage: (id: number, label: string) => void
 }
@@ -23,15 +22,19 @@ export const SingleSelection = ({
   id,
   errorMessage,
   onGetSteps,
+  step,
   onUpDatePipeline,
   onClearErrorMessage,
 }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
   const [selectedOptions, setSelectedOptions] = useState(value)
-  const step =
-    useAppSelector(selectDeploymentFrequencySettings).find(
-      (selectDeploymentFrequencySetting) => selectDeploymentFrequencySetting.id === id
-    )?.step ?? ''
+  // const step =
+  //   type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+  //     ? useAppSelector(selectDeploymentFrequencySettings).find(
+  //         (selectDeploymentFrequencySetting) => selectDeploymentFrequencySetting.id === id
+  //       )?.step ?? ''
+  //     : useAppSelector(selectLeadTimeForChanges).find((selectLeadTimeForChanges) => selectLeadTimeForChanges.id === id)
+  //         ?.step ?? ''
 
   const handleChange = (event: SelectChangeEvent) => {
     const newValue = event.target.value

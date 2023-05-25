@@ -83,6 +83,7 @@ export const PipelineMetricSelection = ({
           label={'Pipeline Name'}
           value={pipelineName}
           errorMessage={errorMessages?.pipelineName}
+          step={step}
           onGetSteps={handleGetSteps}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
           onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}

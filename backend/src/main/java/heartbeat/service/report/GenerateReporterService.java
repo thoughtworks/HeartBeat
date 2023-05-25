@@ -65,22 +65,7 @@ public class GenerateReporterService {
 
 	private final CSVFileGenerator csvFileGenerator;
 
-	// need add GitHubMetrics and BuildKiteMetrics
-	private CardCollection cardCollection;
-
-	private List<PipelineLeadTime> pipelineLeadTimes;
-
-	private List<DeployTimes> deployTimesList = new ArrayList<>();
-
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
-
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
-
-	private List<PipelineLeadTime> leadTimes;
-
 	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
-
-	private final CSVFileGenerator csvFileGenerator;
 
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
@@ -96,10 +81,9 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	// need add GitHubMetrics and BuildKiteMetrics
-	private List<PipelineLeadTime> pipelineLeadTimes;
-
 	private CardCollection cardCollection;
+
+	private List<PipelineLeadTime> pipelineLeadTimes;
 
 	private List<DeployTimes> deployTimesList = new ArrayList<>();
 

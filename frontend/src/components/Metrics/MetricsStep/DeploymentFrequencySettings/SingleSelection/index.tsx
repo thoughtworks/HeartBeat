@@ -28,13 +28,6 @@ export const SingleSelection = ({
 }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
   const [selectedOptions, setSelectedOptions] = useState(value)
-  // const step =
-  //   type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-  //     ? useAppSelector(selectDeploymentFrequencySettings).find(
-  //         (selectDeploymentFrequencySetting) => selectDeploymentFrequencySetting.id === id
-  //       )?.step ?? ''
-  //     : useAppSelector(selectLeadTimeForChanges).find((selectLeadTimeForChanges) => selectLeadTimeForChanges.id === id)
-  //         ?.step ?? ''
 
   const handleChange = (event: SelectChangeEvent) => {
     const newValue = event.target.value

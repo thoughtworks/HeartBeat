@@ -101,21 +101,13 @@ class Metrics {
   checkCycleTime() {
     this.cycleTimeSettingTitle()
     this.cycleTimeSettingAnalysis()
-    cy.wait(2000)
     this.cycleTimeSettingTodo()
-    cy.wait(2000)
     this.cycleTimeSettingInDev()
-    cy.wait(2000)
     this.cycleTimeSettingBlock()
-    cy.wait(2000)
     this.cycleTimeSettingWaitTest()
-    cy.wait(2000)
     this.cycleTimeSettingTesting()
-    cy.wait(2000)
     this.cycleTimeSettingReview()
-    cy.wait(2000)
     this.cycleTimeSettingDone()
-    cy.wait(2000)
   }
 
   checkRealDone() {

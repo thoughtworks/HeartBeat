@@ -61,6 +61,13 @@ const mockJiraResponse = {
     {
       key: 'indeterminate',
       value: {
+        name: 'Doing',
+        statuses: ['ANALYSIS'],
+      },
+    },
+    {
+      key: 'indeterminate',
+      value: {
         name: 'Testing',
         statuses: ['TESTING'],
       },
@@ -210,6 +217,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.users).toEqual(['User B'])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
       { name: 'Done', value: 'Done' },
+      { name: 'Doing', value: '----' },
       { name: 'Testing', value: '----' },
     ])
     expect(savedMetricsSetting.doneColumn).toEqual(['DONE'])
@@ -253,6 +261,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.users).toEqual(['User A', 'User B'])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
       { name: 'Done', value: '----' },
+      { name: 'Doing', value: '----' },
       { name: 'Testing', value: '----' },
     ])
     expect(savedMetricsSetting.doneColumn).toEqual([])
@@ -532,7 +541,12 @@ describe('saveMetricsSetting reducer', () => {
         importedData: {
           ...initState.importedData,
           importedCycleTime: {
-            importedCycleTimeSettings: [{ ToDo: 'mockOption' }, { Doing: 'Analysis' }, { Testing: 'TESTING' }],
+            importedCycleTimeSettings: [
+              { ToDo: 'mockOption' },
+              { Doing: 'Analysis' },
+              { Testing: 'Testing' },
+              { Done: 'Done' },
+            ],
             importedTreatFlagCardAsBlock: true,
           },
         },
@@ -556,7 +570,7 @@ describe('saveMetricsSetting reducer', () => {
         importedData: {
           ...initState.importedData,
           importedCycleTime: {
-            importedCycleTimeSettings: [{ Doing: 'Analysis' }],
+            importedCycleTimeSettings: [{ Doing: 'Analysis' }, { Done: 'Done' }],
             importedTreatFlagCardAsBlock: true,
           },
         },
@@ -580,7 +594,7 @@ describe('saveMetricsSetting reducer', () => {
         importedData: {
           ...initState.importedData,
           importedCycleTime: {
-            importedCycleTimeSettings: [{ Doing: 'mockOption' }, { Testing: 'Analysis' }],
+            importedCycleTimeSettings: [{ Doing: 'mockOption' }, { Testing: 'Analysis' }, { Done: 'Done' }],
             importedTreatFlagCardAsBlock: true,
           },
         },
@@ -604,7 +618,7 @@ describe('saveMetricsSetting reducer', () => {
         importedData: {
           ...initState.importedData,
           importedCycleTime: {
-            importedCycleTimeSettings: [{ Testing: 'Testing' }, { Doing: 'done' }],
+            importedCycleTimeSettings: [{ Testing: 'Testing' }, { Doing: 'Done' }, { Done: 'Done' }],
             importedTreatFlagCardAsBlock: true,
           },
         },

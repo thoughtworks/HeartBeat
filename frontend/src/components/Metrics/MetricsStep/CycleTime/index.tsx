@@ -8,7 +8,7 @@ import {
   saveCycleTimeSettings,
   selectCycleTimeWarningMessage,
   selectMetricsContent,
-  saveDoneColumn
+  saveDoneColumn,
 } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
 import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'

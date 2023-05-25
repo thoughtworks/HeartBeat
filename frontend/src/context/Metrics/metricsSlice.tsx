@@ -1,7 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
-import { CLASSIFICATION_WARNING_MESSAGE, CYCLE_TIME_LIST, METRICS_CONSTANTS, PIPELINE_SETTING_TYPES } from '@src/constants'
+import {
+  CLASSIFICATION_WARNING_MESSAGE,
+  CYCLE_TIME_LIST,
+  METRICS_CONSTANTS,
+  PIPELINE_SETTING_TYPES,
+} from '@src/constants'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 
 export interface IPipelineConfig {
@@ -200,7 +205,6 @@ export const metricsSlice = createSlice({
           (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value.name
         )
         const metricsContainsValues = Object.values(METRICS_CONSTANTS)
-        console.log(importedCycleTimeSettingsKeys)
         const importedKeyMismatchWarning = compareArrays(importedCycleTimeSettingsKeys, jiraColumnsNames)
         const importedValueMismatchWarning = findDifferentValues(importedCycleTimeSettingsValues, metricsContainsValues)
 

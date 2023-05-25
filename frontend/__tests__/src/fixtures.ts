@@ -492,8 +492,8 @@ export const IMPORTED_CONFIG_FIXTURE = {
   ],
 }
 
-export const ERROR_MESSAGE_TIME_DURATION = 2000
-export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed now.`
+export const ERROR_MESSAGE_TIME_DURATION = 4000
+export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed.`
 
 export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
   'The content of the imported JSON file is empty. Please confirm carefully'

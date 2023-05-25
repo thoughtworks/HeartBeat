@@ -102,7 +102,7 @@ export const CYCLE_TIME_LIST = [
 
 export const BOARD_TOKEN = 'Token'
 
-export const ERROR_MESSAGE_TIME_DURATION = 2000
+export const ERROR_MESSAGE_TIME_DURATION = 4000
 
 export const TOKEN_HELPER_TEXT = {
   RequiredTokenText: 'Token is required',
@@ -177,4 +177,4 @@ export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
   'Imported data is not perfectly matched. Please review carefully before going next!'
 
-export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed now.`
+export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed.`

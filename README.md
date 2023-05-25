@@ -329,3 +329,7 @@ pnpm e2e:report
 1. Add `[stub]` tag to the title of a commit message or PR to trigger stub-related deployments.
 
 2. Add `[infra]` tag to the title of the commit message or PR to trigger infra-related deployments.
+
+3. Add `[backend]` tag to the title of the commit message or PR to trigger backend-related deployments.
+
+4. Add `[frontend]` tag to the title of the commit message or PR to trigger frontend-related deployments.

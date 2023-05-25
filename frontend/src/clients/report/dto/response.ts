@@ -4,7 +4,7 @@ export interface ReportResponseDTO {
   deploymentFrequency?: DeploymentFrequencyResponse
   leadTimeForChanges?: LeadTimeForChangesResponse
   changeFailureRate?: ChangeFailureRateResponse
-  classification?: Array<ClassificationResponse>
+  classificationList?: Array<ClassificationResponse>
 }
 
 export interface VelocityResponse {
@@ -21,7 +21,7 @@ export interface CycleTimeResponse {
 
 export interface ClassificationResponse {
   fieldName: string
-  pairs: Array<Pair>
+  pairList: Array<ClassificationNameValuePair>
 }
 
 export interface DeploymentFrequencyResponse {
@@ -113,7 +113,7 @@ export interface MeanTimeToRecovery {
   meanTimeRecoveryPipelines: MeanTimeToRecoveryOfPipeline[]
 }
 
-export interface Pair {
+export interface ClassificationNameValuePair {
   name: string
   value: number
 }

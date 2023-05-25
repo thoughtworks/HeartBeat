@@ -107,7 +107,7 @@ export const ReportStep = () => {
     | {
         velocityList?: ReportDataWithTwoColumns[]
         cycleTimeList?: ReportDataWithTwoColumns[]
-        classificationList?: ReportDataWithThreeColumns[]
+        classification?: ReportDataWithThreeColumns[]
         deploymentFrequencyList?: ReportDataWithThreeColumns[]
         leadTimeForChangesList?: ReportDataWithThreeColumns[]
         changeFailureRateList?: ReportDataWithThreeColumns[]
@@ -122,7 +122,7 @@ export const ReportStep = () => {
     fetchReportData().then((res) => {
       res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
       res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
-      res?.classificationList && setClassificationState({ value: res.classificationList, isShow: true })
+      res?.classification && setClassificationState({ value: res.classification, isShow: true })
       res?.deploymentFrequencyList &&
         setDeploymentFrequencyState({
           ...deploymentFrequencyState,

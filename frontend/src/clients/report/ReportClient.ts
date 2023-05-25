@@ -20,10 +20,10 @@ export class ReportClient extends HttpClient {
         },
       ],
     },
-    classification: [
+    classificationList: [
       {
         fieldName: '',
-        pairs: [],
+        pairList: [],
       },
     ],
     deploymentFrequency: {

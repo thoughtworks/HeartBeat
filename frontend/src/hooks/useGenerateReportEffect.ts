@@ -10,7 +10,7 @@ export interface useGenerateReportEffectInterface {
     | {
         velocityList?: ReportDataWithTwoColumns[]
         cycleTimeList?: ReportDataWithTwoColumns[]
-        classificationList?: ReportDataWithThreeColumns[]
+        classification?: ReportDataWithThreeColumns[]
         deploymentFrequencyList?: ReportDataWithThreeColumns[]
         leadTimeForChangesList?: ReportDataWithThreeColumns[]
         changeFailureRateList?: ReportDataWithThreeColumns[]

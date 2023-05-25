@@ -93,6 +93,3 @@ steps:
     branches: main
     depends_on: "check-e2e"
     command: ./ops/deploy.sh prod
-
-
-

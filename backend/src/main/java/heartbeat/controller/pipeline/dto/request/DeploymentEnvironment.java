@@ -1,5 +1,6 @@
 package heartbeat.controller.pipeline.dto.request;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,8 @@ public class DeploymentEnvironment {
 	private String name;
 
 	private String step;
+
+	@Nullable
+	private String repository;
 
 }

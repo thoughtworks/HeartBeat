@@ -1,12 +1,13 @@
 import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState } from 'react'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveTargetFields } from '@src/context/Metrics/metricsSlice'
+import { saveTargetFields, selectClassificationWarningMessage } from '@src/context/Metrics/metricsSlice'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
 import { WaringDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { selectIsProjectCreated } from '@src/context/config/configSlice'
+import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
 
 interface classificationProps {
   title: string
@@ -17,6 +18,7 @@ interface classificationProps {
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
   const dispatch = useAppDispatch()
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
+  const classificationWarningMessage = useAppSelector(selectClassificationWarningMessage)
   const classificationSettings = targetFields
     .filter((targetField) => targetField.flag)
     .map((targetField) => targetField.name)
@@ -42,6 +44,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
   return (
     <>
       <MetricsSettingTitle title={title} />
+      {classificationWarningMessage && <ErrorNotificationAutoDismiss message={classificationWarningMessage} />}
       {!isProjectCreated && (
         <WaringDone>
           <span>Warning: Some classifications in import data might be removed now.</span>

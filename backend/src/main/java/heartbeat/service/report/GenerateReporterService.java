@@ -1,10 +1,12 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
+import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
@@ -16,10 +18,12 @@ import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
+import heartbeat.service.source.github.GitHubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -34,6 +38,8 @@ public class GenerateReporterService {
 
 	private final ClassificationCalculator classificationCalculator;
 
+	private final GitHubService gitHubService;
+
 	private final BuildKiteService buildKiteService;
 
 	private final DeploymentFrequencyCalculator deploymentFrequency;
@@ -44,7 +50,18 @@ public class GenerateReporterService {
 
 	private final VelocityCalculator velocityCalculator;
 
-	// need add GitHubMetrics and BuildKiteMetrics
+	private CardCollection cardCollection;
+
+	private List<DeployTimes> deployTimesList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
+
+	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
+
+	private List<PipelineLeadTime> leadTimes;
+
+	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
+
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
 		.map(RequireDataEnum::getValue)
@@ -55,20 +72,22 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	// todo: need remove private fields not use void function when finish GenerateReport
-	private CardCollection cardCollection;
+	private final List<String> codebaseMetrics = Stream.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES)
+		.map(RequireDataEnum::getValue)
+		.toList();
 
-	private List<DeployTimes> deployTimesList = new ArrayList<>();
-
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
+	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
+		Map<String, String> repoMap = new HashMap<>();
+		for (DeploymentEnvironment currentValue : codebaseSetting.getLeadTime()) {
+			repoMap.put(currentValue.getId(), currentValue.getRepository());
+		}
+		return repoMap;
+	}
 
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());
 		// fetch data for calculate
 		this.fetchOriginalData(request);
-
-		// calculate all required data
-		calculateLeadTime();
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
@@ -83,6 +102,8 @@ public class GenerateReporterService {
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
 				case "change failure rate" ->
 					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
+				case "lead time for changes" ->
+					reportResponse.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(leadTimes));
 				default -> {
 					// TODO
 				}
@@ -92,10 +113,6 @@ public class GenerateReporterService {
 		return reportResponse;
 	}
 
-	private void calculateLeadTime() {
-		// todo:add calculate LeadTime logic
-	}
-
 	private void fetchOriginalData(GenerateReportRequest request) {
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
 
@@ -103,7 +120,9 @@ public class GenerateReporterService {
 			fetchDataFromKanban(request);
 		}
 
-		fetchGithubData();
+		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
+			fetchGithubData(request);
+		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
 			fetchBuildKiteData(request);
@@ -129,21 +148,33 @@ public class GenerateReporterService {
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 	}
 
-	private void fetchGithubData() {
-		// todo:add fetchGithubData logic
+	private void fetchGithubData(GenerateReportRequest request) {
+		fetchBuildKiteData(request.getStartTime(), request.getEndTime(), request.getCodebaseSetting().getLeadTime(),
+				request.getBuildKiteSetting().getToken());
+		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
+		this.leadTimes = gitHubService
+			.fetchPipelinesLeadTime(this.deployTimesList, repoMap, request.getCodebaseSetting().getToken())
+			.join();
 	}
 
 	private void fetchBuildKiteData(GenerateReportRequest request) {
+		fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
+				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken());
+	}
+
+	private void fetchBuildKiteData(String startTime, String endTime,
+			List<DeploymentEnvironment> deploymentEnvironments, String token) {
 		deployTimesList.clear();
 		buildInfosList.clear();
-		for (DeploymentEnvironment deploymentEnvironment : request.getBuildKiteSetting().getDeploymentEnvList()) {
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(
-					request.getBuildKiteSetting().getToken(), deploymentEnvironment, request.getStartTime(),
-					request.getEndTime());
+		leadTimeBuildInfosList.clear();
+		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
+			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(token,
+					deploymentEnvironment, startTime, endTime);
 			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos,
-					request.getStartTime(), request.getEndTime());
+					startTime, endTime);
 			deployTimesList.add(deployTimes);
 			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
+			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 		}
 	}
 

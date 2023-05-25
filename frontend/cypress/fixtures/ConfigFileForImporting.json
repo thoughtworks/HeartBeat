@@ -1,6 +1,6 @@
 {
   "projectName": "ConfigFileForImporting",
-  "metrics": ["Velocity", "Cycle time", "Classification", "Lead time for changes"],
+  "metrics": ["Velocity", "Cycle time", "Classification", "Lead time for changes", "Deployment frequency"],
   "dateRange": {
     "startDate": "2023-03-16T00:00:00.000+08:00",
     "endDate": "2023-03-30T23:59:59.999+08:00"
@@ -25,13 +25,51 @@
     "token": ""
   },
   "crews": ["lucy", "hi hi", "Yu Zhang"],
-  "classification": ["type", "Parent"],
-  "cycleTime": [
+  "cycleTime": {
+    "jiraColumns": [
+      {
+        "In Analysis": "Analysis"
+      },
+      {
+        "Ready For Dev": "To do"
+      },
+      {
+        "In Dev": "In Dev"
+      },
+      {
+        "Blocked": "Block"
+      },
+      {
+        "Ready For Test": "Waiting for testing"
+      },
+      {
+        "In Test": "Testing"
+      },
+      {
+        "Ready to Deploy": "Review"
+      },
+      {
+        "Done": "Done"
+      }
+    ],
+    "treatFlagCardAsBlock": true
+  },
+  "classification": ["issuetype", "customfield_21212", "customfield_22466", "parent"],
+  "doneStatus": ["DONE", "CLOSED"],
+  "deployment": [
     {
-      "In Analysis": "To do"
-    },
+      "id": 0,
+      "organization": "XXXX",
+      "pipelineName": "fs-platform-onboarding",
+      "step": " :docker: publish gradle-cache image to cloudsmith"
+    }
+  ],
+  "leadTime": [
     {
-      "Ready For Dev": "Analysis"
+      "id": 0,
+      "organization": "XXXX",
+      "pipelineName": "fs-platform-payment-selector",
+      "step": " :docker: publish maven-cache image to cloudsmith"
     }
   ]
 }

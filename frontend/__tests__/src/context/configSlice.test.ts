@@ -1,15 +1,21 @@
 import configReducer, {
   updateCalendarType,
   updateDateRange,
-  updateProjectName,
   updateMetrics,
-  updateBasicConfigState,
   updateProjectCreatedState,
+  updateProjectName,
 } from '@src/context/config/configSlice'
-import { CHINA_CALENDAR, MOCK_IMPORT_FILE, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
+import { CHINA_CALENDAR, CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE, REGULAR_CALENDAR, VELOCITY } from '../fixtures'
 import initialConfigState from '../initialConfigState'
-import updatedConfigState from '../updatedConfigState'
 
+const MockBasicState = {
+  projectName: 'Test Project',
+  dateRange: {
+    startDate: new Date(),
+    endDate: new Date(),
+  },
+  metrics: ['Metric 1', 'Metric 2'],
+}
 describe('config reducer', () => {
   it('should be default value when init render config page', () => {
     const config = configReducer(undefined, { type: 'unknown' }).basic
@@ -39,13 +45,7 @@ describe('config reducer', () => {
     expect(config.dateRange.endDate).toEqual('')
   })
 
-  it('should update config when import file', () => {
-    const config = configReducer(initialConfigState, updateBasicConfigState(MOCK_IMPORT_FILE))
-
-    expect(config).toEqual(updatedConfigState)
-  })
-
-  it('should update config when import file', () => {
+  it('should isProjectCreated is false when import file', () => {
     const config = configReducer(initialConfigState, updateProjectCreatedState(false))
 
     expect(config.isProjectCreated).toEqual(false)
@@ -55,5 +55,40 @@ describe('config reducer', () => {
     const config = configReducer(initialConfigState, updateMetrics([VELOCITY])).basic
 
     expect(config.metrics).toEqual([VELOCITY])
+  })
+
+  it('should set warningMessage is null when projectName startDate endDate and metrics data have value', () => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: false,
+    }
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: MockBasicState,
+    }
+
+    const config = configReducer(initialState, action)
+
+    expect(config.warningMessage).toBeNull()
+  })
+
+  it.each([
+    ['projectName', { ...MockBasicState, projectName: '' }],
+    ['startDate', { ...MockBasicState, dateRange: { startDate: '' } }],
+    ['endDate', { ...MockBasicState, dateRange: { endDate: '' } }],
+    ['metrics', { ...MockBasicState, metrics: [] }],
+  ])('should show warning message when only %s empty', (_, payload) => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: false,
+    }
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload,
+    }
+
+    const config = configReducer(initialState, action)
+
+    expect(config.warningMessage).toEqual(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE)
   })
 })

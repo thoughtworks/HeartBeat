@@ -52,6 +52,7 @@ const initialConfigState: BasicConfigState = {
       repoList: [],
     },
   },
+  warningMessage: '',
 }
 
 export default initialConfigState

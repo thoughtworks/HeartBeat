@@ -1,22 +1,23 @@
 import saveMetricsSettingReducer, {
-  saveCycleTimeSettings,
-  saveTargetFields,
-  saveUsers,
-  saveDoneColumn,
-  updateDeploymentFrequencySettings,
   addADeploymentFrequencySetting,
-  deleteADeploymentFrequencySetting,
-  selectDeploymentFrequencySettings,
   addALeadTimeForChanges,
+  deleteADeploymentFrequencySetting,
   deleteALeadTimeForChange,
-  updateLeadTimeForChanges,
   initDeploymentFrequencySettings,
   initLeadTimeForChanges,
-  updateTreatFlagCardAsBlock,
+  saveCycleTimeSettings,
+  saveDoneColumn,
+  saveTargetFields,
+  saveUsers,
+  selectDeploymentFrequencySettings,
+  updateDeploymentFrequencySettings,
+  updateLeadTimeForChanges,
   updateMetricsImportedData,
   updateMetricsState,
+  updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
+import { CLASSIFICATION_WARNING_MESSAGE } from '../fixtures'
 
 const initState = {
   jiraColumns: [],
@@ -39,6 +40,8 @@ const initState = {
     importedDeployment: [],
     importedLeadTime: [],
   },
+  cycleTimeWarningMessage: null,
+  classificationWarningMessage: null,
 }
 
 const mockJiraResponse = {
@@ -349,5 +352,137 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateTreatFlagCardAsBlock(false))
 
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(false)
+  })
+
+  it('should set warningMessage have value when there are more values in the import file than in the response', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ ToDo: 'mockOption' }, { Doing: 'Analysis' }, { Testing: 'TESTING' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.cycleTimeWarningMessage).toEqual(
+      'The column of ToDo is a deleted column, which means this column existed the time you saved config, but was deleted. Please confirm!'
+    )
+  })
+
+  it('should set warningMessage have value when the values in the import file are less than those in the response', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Doing: 'Analysis' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.cycleTimeWarningMessage).toEqual(
+      'The column of Testing is a new column. Please select a value for it!'
+    )
+  })
+
+  it('should set warningMessage have value when the key value in the import file matches the value in the response, but the value does not match the fixed column', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Doing: 'mockOption' }, { Testing: 'Analysis' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.cycleTimeWarningMessage).toEqual(
+      'The value of Doing in imported json is not in dropdown list now. Please select a value for it!'
+    )
+  })
+
+  it('should set warningMessage null when the key value in the imported file matches the value in the response and the value matches the fixed column', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Testing: 'Testing' }, { Doing: 'done' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.cycleTimeWarningMessage).toBeNull()
+  })
+
+  it('should set classification warningMessage null when the key value in the imported file matches the value in the response and the value matches the fixed column', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedClassification: ['issuetype'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.classificationWarningMessage).toBeNull()
+  })
+
+  it('should set classification warningMessage have value when the key value in the imported file matches the value in the response and the value matches the fixed column', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedClassification: ['test'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.classificationWarningMessage).toEqual(CLASSIFICATION_WARNING_MESSAGE)
   })
 })

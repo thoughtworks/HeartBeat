@@ -8,22 +8,26 @@ import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsT
 import {
   selectCalendarType,
   selectProjectName,
+  selectWarningMessage,
   updateBoardVerifyState,
   updateCalendarType,
   updatePipelineToolVerifyState,
   updateProjectName,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
+import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
   const projectName = useAppSelector(selectProjectName)
   const calendarType = useAppSelector(selectCalendarType)
+  const warningMessage = useAppSelector(selectWarningMessage)
 
   const [isEmptyProjectName, setIsEmptyProjectName] = useState<boolean>(false)
 
   return (
     <ConfigStepWrapper>
+      {warningMessage && <ErrorNotificationAutoDismiss message={warningMessage} />}
       <ProjectNameInput
         required
         label='Project name'

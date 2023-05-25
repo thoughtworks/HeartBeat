@@ -4,7 +4,7 @@ describe('classification data mapper', () => {
   const mockClassificationRes = [
     {
       fieldName: 'FS Work Type',
-      pairs: [
+      pairList: [
         {
           name: 'Feature Work - Planned',
           value: 0.5714,

@@ -45,7 +45,7 @@ export const ReportStep = () => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
-  const [csvTimeStamp, setCsvTimeStamp] = useState(0)
+  const [csvTimeStamp] = useState(new Date().getTime())
   const configData = useAppSelector(selectConfig)
   const {
     cycleTimeSettings,
@@ -123,6 +123,11 @@ export const ReportStep = () => {
     csvTimeStamp: csvTimeStamp,
   })
 
+  const getExportPipelineCSV = (): CSVReportRequestDTO => ({
+    dataType: 'pipeline',
+    csvTimeStamp: csvTimeStamp,
+  })
+
   const fetchReportData: () => Promise<
     | {
         velocityList?: ReportDataWithTwoColumns[]
@@ -138,7 +143,6 @@ export const ReportStep = () => {
   }, [])
 
   useEffect(() => {
-    setCsvTimeStamp(new Date().getTime())
     fetchReportData().then((res) => {
       res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
       res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
@@ -163,11 +167,6 @@ export const ReportStep = () => {
         })
     })
   }, [fetchReportData])
-
-  const getExportPipelineCSV = (): CSVReportRequestDTO => ({
-    dataType: 'pipeline',
-    csvTimeStamp: csvTimeStamp,
-  })
 
   const handleDownload = () => {
     fetchExportData(getExportPipelineCSV())

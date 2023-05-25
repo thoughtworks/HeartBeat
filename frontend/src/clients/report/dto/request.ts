@@ -39,5 +39,5 @@ export interface ReportRequestDTO {
 
 export interface CSVReportRequestDTO {
   dataType: string
-  csvTimeStamp?: number
+  csvTimeStamp: number
 }

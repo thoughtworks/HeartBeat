@@ -1,6 +1,7 @@
 package heartbeat.service.source.github;
 
 import heartbeat.client.GitHubFeignClient;
+import heartbeat.client.dto.codebase.github.Author;
 import heartbeat.client.dto.codebase.github.Commit;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.Committer;
@@ -37,6 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -355,6 +357,22 @@ class GithubServiceTest {
 			.build());
 
 		assertEquals(expect, result);
+	}
+
+	@Test
+	public void shouldFetchCommitInfo() {
+		CommitInfo commitInfo = CommitInfo.builder()
+			.commit(Commit.builder()
+				.author(Author.builder().name("XXXX").email("XXX@test.com").date("2023-05-10T06:43:02.653Z").build())
+				.committer(
+						Committer.builder().name("XXXX").email("XXX@test.com").date("2023-05-10T06:43:02.653Z").build())
+				.build())
+			.build();
+		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString())).thenReturn(commitInfo);
+
+		CommitInfo result = githubService.fetchCommitInfo("12344", "org/repo", "mockToken");
+
+		assertEquals(result, commitInfo);
 	}
 
 }

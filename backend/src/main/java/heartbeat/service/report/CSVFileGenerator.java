@@ -2,12 +2,15 @@ package heartbeat.service.report;
 
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCsvInfo;
+import heartbeat.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import com.opencsv.CSVWriter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +29,7 @@ public class CSVFileGenerator {
 			return new String(bytes, StandardCharsets.UTF_8);
 		}
 		catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "this file is not exist");
 		}
 	}
 
@@ -80,7 +83,7 @@ public class CSVFileGenerator {
 			}
 		}
 		catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "this file is not exist");
 		}
 	}
 

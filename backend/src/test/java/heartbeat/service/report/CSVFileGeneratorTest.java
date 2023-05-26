@@ -1,6 +1,7 @@
 package heartbeat.service.report;
 
 import heartbeat.controller.report.dto.response.PipelineCsvInfo;
+import heartbeat.exception.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+
+import static org.junit.Assert.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -103,6 +106,14 @@ class CSVFileGeneratorTest {
 		String result = csvFileGenerator.getDataFromCsv("mockDataType", Long.parseLong(mockTimeStamp));
 
 		Assertions.assertEquals(0, result.length());
+	}
+
+	@Test
+	public void shouldThrowExceptionWhenFileNotExist() {
+		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
+		assertThrows(NotFoundException.class, () -> csvFileGenerator.getDataFromCsv("pipeline", 123456L));
+		assertThrows(NotFoundException.class,
+				() -> csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, "15469:89/033"));
 	}
 
 }

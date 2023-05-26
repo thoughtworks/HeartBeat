@@ -34,8 +34,8 @@ deploy_e2e() {
         docker rmi -f \$(docker images -f label=arch=Frontend -q)
     fi
 
-    docker pull ${AWS_ECR_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
-    docker pull ${AWS_ECR_HOST}/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}
+    docker pull ${AWS_ECR_HOST}/heartbeat_backend:latest
+    docker pull ${AWS_ECR_HOST}/heartbeat_frontend:latest
 
     export MOCK_SERVER_URL=${AWS_EC2_IP_MOCK_SERVER}:${AWS_EC2_IP_MOCK_SERVER_PORT}
     export SPRING_PROFILES_ACTIVE=e2e
@@ -79,8 +79,8 @@ deploy_prod() {
     if [ -n \"\$(docker images -f label=app=Heartbeat -q)\" ]; then
         docker rmi -f \$(docker images -f label=app=Heartbeat -q)
     fi
-    docker pull ${AWS_ECR_HOST}/heartbeat_backend:hb${BUILDKITE_BUILD_NUMBER}
-    docker pull ${AWS_ECR_HOST}/heartbeat_frontend:hb${BUILDKITE_BUILD_NUMBER}
+    docker pull ${AWS_ECR_HOST}/heartbeat_backend:latest
+    docker pull ${AWS_ECR_HOST}/heartbeat_frontend:latest
     docker-compose up -d frontend
   "
 }

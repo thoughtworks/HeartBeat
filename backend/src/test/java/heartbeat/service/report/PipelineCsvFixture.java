@@ -4,17 +4,20 @@ import heartbeat.client.dto.codebase.github.Author;
 import heartbeat.client.dto.codebase.github.Commit;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.Committer;
+import heartbeat.client.dto.codebase.github.LeadTime;
+import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
+import heartbeat.controller.report.dto.request.ExportCsvRequest;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCsvInfo;
 
 import java.util.List;
 
-public class LeadTimeFixture {
+public class PipelineCsvFixture {
 
-	public static List<PipelineCsvInfo> MOCK_LEAD_TIME_DATA() {
+	public static List<PipelineCsvInfo> MOCK_PIPELINE_CSV_DATA() {
 		PipelineCsvInfo pipelineCsvInfo = PipelineCsvInfo.builder()
 			.pipeLineName("Heartbeat")
 			.stepName(":rocket: Deploy prod")
@@ -59,6 +62,29 @@ public class LeadTimeFixture {
 				.build())
 			.build();
 		return List.of(pipelineCsvInfo);
+	}
+
+	public static ExportCsvRequest MOCK_EXPORT_CSV_REQUEST() {
+		return ExportCsvRequest.builder().dataType("pipeline").csvTimeStamp("1685010080107").build();
+	}
+
+	public static PipelineLeadTime MOCK_PIPELINE_LEAD_TIME_DATA() {
+		return PipelineLeadTime.builder()
+			.pipelineStep("xx")
+			.pipelineName("xx")
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("xx")
+				.prCreatedTime(1658549100000L)
+				.prMergedTime(1658549160000L)
+				.firstCommitTimeInPr(1658549100000L)
+				.jobFinishTime(1658549160000L)
+				.pipelineCreateTime(1658549100000L)
+				.prDelayTime(60000)
+				.pipelineDelayTime(60000)
+				.totalTime(120000)
+				.build()))
+			.build();
+
 	}
 
 }

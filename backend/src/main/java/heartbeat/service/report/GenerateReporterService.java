@@ -81,6 +81,8 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
+	List<String> REQUIRED_STATES = List.of("passed", "failed");
+
 	private CardCollection cardCollection;
 
 	private List<PipelineLeadTime> pipelineLeadTimes;
@@ -213,8 +215,6 @@ public class GenerateReporterService {
 
 	private List<PipelineCsvInfo> generateCsvForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
 			String startTime, String endTime) {
-
-		List<String> requiredStates = List.of("passed", "failed");
 		List<PipelineCsvInfo> pipelineCsvInfos = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvList) {
@@ -226,10 +226,10 @@ public class GenerateReporterService {
 
 			List<PipelineCsvInfo> pipelineCsvInfoList = buildInfos.stream().filter(buildInfo -> {
 				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
-						deploymentEnvironment.getStep(), requiredStates, startTime, endTime);
+						deploymentEnvironment.getStep(), REQUIRED_STATES, startTime, endTime);
 				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
 			}).map(buildInfo -> {
-				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), requiredStates,
+				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
 						startTime, endTime);
 
 				LeadTime noMergeDelayTime = gitHubService.getNoMergeDelayTime(deployInfo);
@@ -250,8 +250,6 @@ public class GenerateReporterService {
 
 	private List<PipelineCsvInfo> generateCsvForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
 			String endTime) {
-
-		List<String> requiredStates = List.of("passed", "failed");
 		List<PipelineCsvInfo> pipelineCsvInfos = new ArrayList<>();
 
 		if (codebaseSetting == null) {
@@ -269,10 +267,10 @@ public class GenerateReporterService {
 
 			List<PipelineCsvInfo> pipelineCsvInfoList = buildInfos.stream().filter(buildInfo -> {
 				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
-						deploymentEnvironment.getStep(), requiredStates, startTime, endTime);
+						deploymentEnvironment.getStep(), REQUIRED_STATES, startTime, endTime);
 				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
 			}).map(buildInfo -> {
-				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), requiredStates,
+				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
 						startTime, endTime);
 
 				LeadTime filteredLeadTime = pipelineLeadTimes.stream()
@@ -310,17 +308,12 @@ public class GenerateReporterService {
 		File directory = new File("./csv/");
 		File[] files = directory.listFiles();
 		long currentTimeStamp = System.currentTimeMillis();
-		if (files != null) {
-			for (File file : files) {
-				String fileName = file.getName();
-				String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
-				String timeStamp = splitResult[1];
-				if (Long.parseLong(timeStamp) < currentTimeStamp - 36000000) {
-					boolean isDeleted = file.delete();
-					if (isDeleted) {
-						log.info("Successfully delete file {} ", fileName);
-					}
-				}
+		for (File file : files) {
+			String fileName = file.getName();
+			String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
+			String timeStamp = splitResult[1];
+			if (Long.parseLong(timeStamp) < currentTimeStamp - 36000000) {
+				file.delete();
 			}
 		}
 	}

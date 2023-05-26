@@ -25,10 +25,27 @@ class CSVFileGeneratorTest {
 
 	String mockTimeStamp = "168369327000";
 
+	private static void deleteDirectory(File directory) {
+		if (directory.exists()) {
+			File[] files = directory.listFiles();
+			if (files != null) {
+				for (File file : files) {
+					if (file.isDirectory()) {
+						deleteDirectory(file);
+					}
+					else {
+						file.delete();
+					}
+				}
+			}
+			directory.delete();
+		}
+	}
+
 	@Test
 	void shouldConvertPipelineDataToCsv() throws IOException {
 
-		List<PipelineCsvInfo> pipelineCsvInfos = LeadTimeFixture.MOCK_LEAD_TIME_DATA();
+		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, mockTimeStamp);
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
@@ -53,7 +70,7 @@ class CSVFileGeneratorTest {
 		String csvDirPath = "./csv";
 		File csvDir = new File(csvDirPath);
 		deleteDirectory(csvDir);
-		List<PipelineCsvInfo> pipelineCsvInfos = LeadTimeFixture.MOCK_LEAD_TIME_DATA();
+		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 
 		csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, mockTimeStamp);
 
@@ -64,8 +81,8 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	void shouldHasContentWhenGetDataFromCsv() {
-		List<PipelineCsvInfo> pipelineCsvInfos = LeadTimeFixture.MOCK_LEAD_TIME_DATA();
+	public void shouldHasContentWhenGetDataFromCsv() {
+		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, mockTimeStamp);
 
 		String csvPipelineString = csvFileGenerator.getDataFromCsv("pipeline", Long.parseLong(mockTimeStamp));
@@ -82,27 +99,10 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	void shouldReturnEmptyWhenDataTypeNotMatch() {
+	public void shouldReturnEmptyWhenDataTypeNotMatch() {
 		String result = csvFileGenerator.getDataFromCsv("mockDataType", Long.parseLong(mockTimeStamp));
 
 		Assertions.assertEquals(0, result.length());
-	}
-
-	private static void deleteDirectory(File directory) {
-		if (directory.exists()) {
-			File[] files = directory.listFiles();
-			if (files != null) {
-				for (File file : files) {
-					if (file.isDirectory()) {
-						deleteDirectory(file);
-					}
-					else {
-						file.delete();
-					}
-				}
-			}
-			directory.delete();
-		}
 	}
 
 }

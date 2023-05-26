@@ -179,10 +179,10 @@ group generate csv for pipeline
 
     end
     GenerateReporter_service -> GenerateReporter_service: generate pipeline csv data without codebase
-    GenerateReporter_service -> GenerateCsvFileService: convert pipeline data to csv
-    activate GenerateCsvFileService
-    GenerateCsvFileService --> GenerateReporter_service: save csv
-    deactivate GenerateCsvFileService
+    GenerateReporter_service -> CsvFileGenerator: convert pipeline data to csv
+    activate CsvFileGenerator
+    CsvFileGenerator --> GenerateReporter_service: save csv
+    deactivate CsvFileGenerator
   end
 
 end

@@ -441,15 +441,16 @@ if(check if the targetField is not in CSVField) then (add targetField to ExtraFi
 :return;
 endif
 :output ExtraFields/
-:sort nonDoneCards by status in columns;
+:sort nonDoneCards by status based on jiraColumns;
 if(status undefined in columns) then (put it last)
 :return;
 endif
 :get allCardList through [concat allDoneCards and nonDoneCards];
 :update ExtraFields;
 :insert ExtraFields;
+:output currentTargetField/
  :iterate over Card of allCardList;
- :get CycleTime for allCardList;
+ :update CSVField with CycleTime Columns;
  :build CycleTimeFlat Object use CycleTime;
  :calculate: TotalCycleTime / StoryPoints;
 :convert cardsInfo to a CSV;

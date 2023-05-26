@@ -198,5 +198,29 @@ end
 ## C3 - Export CSV
 
 ```plantuml
+@startuml Export csv file
+skin rose
+title C3 - Heartbeat - Export csv file
+
+participant FrontEnd
+participant GenerateReportController
+participant GenerateReporterService
+participant CSVFileGenerator
+
+group Export pipeline csv file
+    FrontEnd -> GenerateReportController : download csv file
+    activate GenerateReportController
+    GenerateReportController -> GenerateReporterService: fetch csv data
+    activate GenerateReporterService
+    GenerateReporterService -> CSVFileGenerator: get data string from csv file
+    activate CSVFileGenerator
+    GenerateReporterService <- CSVFileGenerator: return csv data string
+    deactivate CSVFileGenerator
+    GenerateReportController <- GenerateReporterService: return csv data string
+    deactivate GenerateReporterService
+    FrontEnd <- GenerateReportController : return csv data string
+    deactivate GenerateReportController
+end
+@enduml
 
 ```

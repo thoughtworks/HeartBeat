@@ -1,6 +1,7 @@
 package heartbeat.client.dto.board.jira;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.JsonElement;
 import heartbeat.controller.board.dto.response.CardParent;
 import heartbeat.controller.board.dto.response.FixVersion;
 import heartbeat.controller.board.dto.response.IssueType;
@@ -13,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -43,6 +45,8 @@ public class JiraCardField {
 
 	private CardParent parent;
 
-	private String label;
+	private List<String> labels;
+
+	private Map<String, JsonElement> customFields;
 
 }

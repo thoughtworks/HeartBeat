@@ -10,14 +10,14 @@ import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks
 export const reportMapper = ({
   velocity,
   cycleTime,
-  classification,
+  classificationList,
   deploymentFrequency,
   leadTimeForChanges,
   changeFailureRate,
 }: ReportResponseDTO): {
   velocityList?: ReportDataWithTwoColumns[]
   cycleTimeList?: ReportDataWithTwoColumns[]
-  classificationList?: ReportDataWithThreeColumns[]
+  classification?: ReportDataWithThreeColumns[]
   deploymentFrequencyList?: ReportDataWithThreeColumns[]
   leadTimeForChangesList?: ReportDataWithThreeColumns[]
   changeFailureRateList?: ReportDataWithThreeColumns[]
@@ -26,7 +26,7 @@ export const reportMapper = ({
 
   const cycleTimeList = cycleTime && cycleTimeMapper(cycleTime)
 
-  const classificationList = classification && classificationMapper(classification)
+  const classification = classificationList && classificationMapper(classificationList)
 
   const deploymentFrequencyList = deploymentFrequency && deploymentFrequencyMapper(deploymentFrequency)
 
@@ -37,7 +37,7 @@ export const reportMapper = ({
   return {
     velocityList,
     cycleTimeList,
-    classificationList,
+    classification,
     deploymentFrequencyList,
     leadTimeForChangesList,
     changeFailureRateList,

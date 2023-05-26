@@ -343,10 +343,10 @@ export const MOCK_REPORT_RESPONSE = {
       },
     ],
   },
-  classification: [
+  classificationList: [
     {
       fieldName: 'FS Work Type',
-      pairs: [
+      pairList: [
         {
           name: 'Feature Work - Planned',
           value: 0.5714,
@@ -383,7 +383,7 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
   ],
-  classificationList: [
+  classification: [
     {
       id: 0,
       name: 'FS Work Type',

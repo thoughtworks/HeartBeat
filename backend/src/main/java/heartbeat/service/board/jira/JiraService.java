@@ -3,6 +3,7 @@ package heartbeat.service.board.jira;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
@@ -46,6 +47,7 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +79,8 @@ public class JiraService {
 	private final BoardUtil boardUtil;
 
 	private CardCustomFieldKey cardCustomFieldKey;
+
+	private List<TargetField> targetFields;
 
 	@PreDestroy
 	public void shutdownExecutor() {
@@ -313,19 +317,37 @@ public class JiraService {
 			.getAsJsonObject()
 			.get("issues")
 			.getAsJsonArray();
-
+		List<Map<String, JsonElement>> customFieldMapList = new ArrayList<>();
 		ArrayList<Integer> storyPointList = new ArrayList<>();
+		Map<String, String> resultMap = targetFields.stream()
+			.collect(Collectors.toMap(TargetField::getKey, TargetField::getName));
 		for (JsonElement element : elements) {
-			JsonElement jsonElement = element.getAsJsonObject().get("fields");
-			if (jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).isJsonNull()) {
+			JsonObject jsonElement = element.getAsJsonObject().get("fields").getAsJsonObject();
+			JsonElement storyPoints = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints());
+			if (storyPoints == null || storyPoints.isJsonNull()) {
 				storyPointList.add(0);
-				continue;
 			}
-			int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
-			storyPointList.add(storyPoint);
+			else {
+				int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
+				storyPointList.add(storyPoint);
+			}
+			for (int index = 0; index < jiraCards.size(); index++) {
+				if (storyPointList.size() > index) {
+					jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
+				}
+			}
+			Map<String, JsonElement> customFieldMap = new HashMap<>();
+			for (Map.Entry<String, String> entry : resultMap.entrySet()) {
+				String customFieldKey = entry.getKey();
+				if (jsonElement.has(customFieldKey)) {
+					JsonElement fieldValue = jsonElement.get(customFieldKey);
+					customFieldMap.put(customFieldKey, fieldValue);
+				}
+			}
+			customFieldMapList.add(customFieldMap);
 		}
-		for (int index = 0; index < jiraCards.size(); index++) {
-			jiraCards.get(index).getFields().setStoryPoints(storyPointList.get(index));
+		for (int index = 0; index < customFieldMapList.size(); index++) {
+			allDoneCardsResponseDTO.getIssues().get(index).getFields().setCustomFields(customFieldMapList.get(index));
 		}
 		return allDoneCardsResponseDTO;
 	}
@@ -399,6 +421,7 @@ public class JiraService {
 			.toList();
 		log.info("Successfully get targetField:{}", targetFields);
 		cardCustomFieldKey = saveCustomFieldKey(targetFields);
+		this.targetFields = targetFields;
 		return targetFields;
 	}
 
@@ -424,8 +447,6 @@ public class JiraService {
 			}
 			if (users.stream().anyMatch(assigneeSet::contains)) {
 				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
-
-				doneCard.getFields().setLabel(String.join(",", doneCard.getFields().getLabel()));
 
 				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
@@ -556,6 +577,7 @@ public class JiraService {
 				case "sprint" -> cardCustomFieldKey.setSprint(value.getKey());
 				case "flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
 				default -> {
+
 				}
 			}
 		}

@@ -20,9 +20,14 @@ import java.util.List;
 @Log4j2
 public class CSVFileGenerator {
 
-	private static String readStringFromCsvFile(String fileName) throws IOException {
-		byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-		return new String(bytes, StandardCharsets.UTF_8);
+	private static String readStringFromCsvFile(String fileName) {
+		try {
+			byte[] bytes = Files.readAllBytes(Paths.get(fileName));
+			return new String(bytes, StandardCharsets.UTF_8);
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void convertPipelineDataToCsv(List<PipelineCsvInfo> leadTimeData, String csvTimeStamp) {
@@ -32,7 +37,7 @@ public class CSVFileGenerator {
 			log.info("Successfully create csv directory");
 		}
 		else {
-			log.info("Failed to create csv directory");
+			log.info("csv directory is already exist");
 		}
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv";
@@ -79,9 +84,9 @@ public class CSVFileGenerator {
 		}
 	}
 
-	public String getDataFromCsv(String dataType, long csvTimeStamp) throws IOException {
+	public String getDataFromCsv(String dataType, long csvTimeStamp) {
 		return switch (dataType) {
-			case "board" -> readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv");
+			// todo: add board case
 			case "pipeline" -> readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
 			default -> "";
 		};
@@ -90,10 +95,7 @@ public class CSVFileGenerator {
 	private boolean createCsvDirectory() {
 		String directoryPath = "./csv";
 		File directory = new File(directoryPath);
-		if (!directory.exists()) {
-			return directory.mkdirs();
-		}
-		return true;
+		return directory.mkdirs();
 	}
 
 }

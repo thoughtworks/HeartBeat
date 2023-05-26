@@ -299,9 +299,11 @@ public class GenerateReporterService {
 		return pipelineCsvInfos;
 	}
 
-	public String fetchCsvData(ExportCsvRequest request) throws IOException {
+	public String fetchCsvData(ExportCsvRequest request) {
 		deleteOldCsv();
-		return csvFileGenerator.getDataFromCsv(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
+		String csvString = csvFileGenerator.getDataFromCsv(request.getDataType(),
+				Long.parseLong(request.getCsvTimeStamp()));
+		return csvString;
 	}
 
 	private void deleteOldCsv() {

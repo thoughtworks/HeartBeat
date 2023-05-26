@@ -97,13 +97,13 @@ const findKeyByValues = (arrayA: { [key: string]: string }[], arrayB: string[]):
 }
 
 const setSelectUsers = (users: string[], importedCrews: string[]) =>
-  users?.filter((item: string) => importedCrews?.includes(item))
+  users.filter((item: string) => importedCrews?.includes(item))
 
 const setSelectTargetFields = (
   targetFields: { name: string; key: string; flag: boolean }[],
   importedClassification: string[]
 ) =>
-  targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
+  targetFields.map((item: { name: string; key: string; flag: boolean }) => ({
     ...item,
     flag: importedClassification?.includes(item.key),
   }))

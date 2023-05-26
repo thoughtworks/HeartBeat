@@ -41,7 +41,7 @@ export const SingleSelection = ({
   }
 
   useEffect(() => {
-    if (onGetSteps && selectedOptions !== '' && step === '') {
+    if (onGetSteps && !!selectedOptions && !step) {
       onGetSteps(selectedOptions)
     }
   }, [])

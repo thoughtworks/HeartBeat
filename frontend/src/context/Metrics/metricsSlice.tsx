@@ -148,17 +148,18 @@ export const metricsSlice = createSlice({
             flag: importedClassification?.includes(item.key),
           }))
 
-      if (!isProjectCreated && importedCycleTime?.importedCycleTimeSettings?.length > 0) {
-        const importedCycleTimeSettingsKeys = importedCycleTime.importedCycleTimeSettings.flatMap((obj) =>
+      if (!isProjectCreated) {
+        const importedCycleTimeSettingsKeys = importedCycleTime.importedCycleTimeSettings?.flatMap((obj) =>
           Object.keys(obj)
         )
-        const importedCycleTimeSettingsValues = importedCycleTime.importedCycleTimeSettings.flatMap((obj) =>
+        const importedCycleTimeSettingsValues = importedCycleTime.importedCycleTimeSettings?.flatMap((obj) =>
           Object.values(obj)
         )
         const jiraColumnsNames = jiraColumns?.map(
           (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value.name
         )
         const metricsContainsValues = Object.values(METRICS_CONSTANTS)
+        console.log(importedCycleTimeSettingsKeys)
         const importedKeyMismatchWarning = compareArrays(importedCycleTimeSettingsKeys, jiraColumnsNames)
         const importedValueMismatchWarning = findDifferentValues(importedCycleTimeSettingsValues, metricsContainsValues)
 
@@ -172,17 +173,16 @@ export const metricsSlice = createSlice({
           return null
         }
         state.cycleTimeWarningMessage = getWarningMessage()
-      } else {
-        state.cycleTimeWarningMessage = null
-      }
-      if (!isProjectCreated && importedClassification?.length > 0) {
+
         const keyArray = targetFields?.map((field: { key: string; name: string; flag: boolean }) => field.key)
-        if (importedClassification.every((item) => keyArray.includes(item))) {
+
+        if (importedClassification?.every((item) => keyArray.includes(item))) {
           state.classificationWarningMessage = null
         } else {
           state.classificationWarningMessage = CLASSIFICATION_WARNING_MESSAGE
         }
       } else {
+        state.cycleTimeWarningMessage = null
         state.classificationWarningMessage = null
       }
 

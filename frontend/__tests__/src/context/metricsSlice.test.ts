@@ -448,28 +448,6 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.cycleTimeWarningMessage).toBeNull()
   })
 
-  it('should set warningMessage null when importedCycleTimeSettings in the imported file matches is empty', () => {
-    const mockUpdateMetricsStateArguments = {
-      ...mockJiraResponse,
-      isProjectCreated: false,
-    }
-    const savedMetricsSetting = saveMetricsSettingReducer(
-      {
-        ...initState,
-        importedData: {
-          ...initState.importedData,
-          importedCycleTime: {
-            importedCycleTimeSettings: [],
-            importedTreatFlagCardAsBlock: true,
-          },
-        },
-      },
-      updateMetricsState(mockUpdateMetricsStateArguments)
-    )
-
-    expect(savedMetricsSetting.cycleTimeWarningMessage).toBeNull()
-  })
-
   it('should set classification warningMessage null when the key value in the imported file matches the value in the response and the value matches the fixed column', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,

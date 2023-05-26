@@ -5,6 +5,8 @@ import { saveTargetFields, selectClassificationWarningMessage } from '@src/conte
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
+import { WaringDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
+import { selectIsProjectCreated } from '@src/context/config/configSlice'
 import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
 
 interface classificationProps {
@@ -15,6 +17,7 @@ interface classificationProps {
 
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
   const dispatch = useAppDispatch()
+  const isProjectCreated = useAppSelector(selectIsProjectCreated)
   const classificationWarningMessage = useAppSelector(selectClassificationWarningMessage)
   const classificationSettings = targetFields
     .filter((targetField) => targetField.flag)
@@ -42,6 +45,11 @@ export const Classification = ({ targetFields, title, label }: classificationPro
     <>
       <MetricsSettingTitle title={title} />
       {classificationWarningMessage && <ErrorNotificationAutoDismiss message={classificationWarningMessage} />}
+      {!isProjectCreated && (
+        <WaringDone>
+          <span>Warning: Some classifications in import data might be removed now.</span>
+        </WaringDone>
+      )}
       <FormControl variant='standard'>
         <InputLabel id='classification-check-box'>{label}</InputLabel>
         <Select

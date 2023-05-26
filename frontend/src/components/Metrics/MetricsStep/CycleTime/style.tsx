@@ -18,3 +18,8 @@ export const ErrorDone = styled('div')({
   color: theme.components?.errorMessage.color,
   paddingBottom: theme.components?.errorMessage.paddingBottom,
 })
+
+export const WaringDone = styled('div')({
+  color: theme.components?.waringMessage.color,
+  paddingBottom: theme.components?.errorMessage.paddingBottom,
+})

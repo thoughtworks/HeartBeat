@@ -1,5 +1,5 @@
 import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
 import camelCase from 'lodash.camelcase'
 
@@ -10,6 +10,7 @@ interface Props {
   id: number
   errorMessage: string | undefined
   onGetSteps?: (pipelineName: string) => void
+  step?: string
   onUpDatePipeline: (id: number, label: string, value: string) => void
   onClearErrorMessage: (id: number, label: string) => void
 }
@@ -21,20 +22,29 @@ export const SingleSelection = ({
   id,
   errorMessage,
   onGetSteps,
+  step,
   onUpDatePipeline,
   onClearErrorMessage,
 }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
+  const [selectedOptions, setSelectedOptions] = useState(value)
 
   const handleChange = (event: SelectChangeEvent) => {
-    const value = event.target.value
+    const newValue = event.target.value
+    setSelectedOptions(newValue)
     if (onGetSteps) {
-      onGetSteps(value)
       onUpDatePipeline(id, 'Step', '')
+      onGetSteps(newValue)
     }
-    onUpDatePipeline(id, label, value)
+    onUpDatePipeline(id, label, newValue)
     !!errorMessage && onClearErrorMessage(id, camelCase(label))
   }
+
+  useEffect(() => {
+    if (onGetSteps && !!selectedOptions && !step) {
+      onGetSteps(selectedOptions)
+    }
+  }, [])
 
   return (
     <>

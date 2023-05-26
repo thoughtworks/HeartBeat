@@ -5,7 +5,7 @@ import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { metricsClient } from '@src/clients/MetricsClient'
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice'
-import { ORGANIZATION, PIPELINE_NAME, REMOVE_BUTTON, STEP } from '../../../../fixtures'
+import { ORGANIZATION, PIPELINE_NAME, PIPELINE_SETTING_TYPES, REMOVE_BUTTON, STEP } from '../../../../fixtures'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -55,6 +55,7 @@ describe('PipelineMetricSelection', () => {
     return render(
       <Provider store={store}>
         <PipelineMetricSelection
+          type={PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE}
           pipelineSetting={deploymentFrequencySetting}
           isShowRemoveButton={isShowRemoveButton}
           errorMessages={{
@@ -149,18 +150,15 @@ describe('PipelineMetricSelection', () => {
       false
     )
 
-    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
-    const pipelineNameListBox = within(getByRole('listbox'))
-    await userEvent.click(pipelineNameListBox.getByText('mockName2'))
-
-    expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
-    expect(getByText(STEP)).toBeInTheDocument()
-
+    await waitFor(() => {
+      expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
+      expect(getByText(STEP)).toBeInTheDocument()
+    })
     await userEvent.click(getByRole('button', { name: STEP }))
     const stepsListBox = within(getByRole('listbox'))
     await userEvent.click(stepsListBox.getByText('step2'))
 
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(3)
-    expect(mockClearErrorMessage).toHaveBeenCalledTimes(2)
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
+    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
   })
 })

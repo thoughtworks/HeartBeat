@@ -14,7 +14,10 @@ const mockValidationCheckContext = {
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
 }))
-
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useEffect: jest.fn(),
+}))
 describe('SingleSelection', () => {
   const mockOptions = ['mockOptions 1', 'mockOptions 2', 'mockOptions 3']
   const mockLabel = 'mockLabel'

@@ -13,8 +13,10 @@ import {
   updatePipelineToolVerifyResponseSteps,
 } from '@src/context/config/configSlice'
 import { store } from '@src/store'
+import { updatePipelineStep } from '@src/context/Metrics/metricsSlice'
 
 interface pipelineMetricSelectionProps {
+  type: string
   pipelineSetting: {
     id: number
     organization: string
@@ -29,6 +31,7 @@ interface pipelineMetricSelectionProps {
 }
 
 export const PipelineMetricSelection = ({
+  type,
   pipelineSetting,
   isShowRemoveButton,
   errorMessages,
@@ -56,6 +59,7 @@ export const PipelineMetricSelection = ({
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
       const steps = res ? Object.values(res) : []
       dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps }))
+      dispatch(updatePipelineStep({ steps, id, type }))
     })
   }
 
@@ -79,6 +83,7 @@ export const PipelineMetricSelection = ({
           label={'Pipeline Name'}
           value={pipelineName}
           errorMessage={errorMessages?.pipelineName}
+          step={step}
           onGetSteps={handleGetSteps}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
           onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}

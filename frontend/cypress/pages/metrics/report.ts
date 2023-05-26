@@ -54,6 +54,10 @@ class Report {
         })
       })
   }
+
+  BackToMetricsStep() {
+    cy.contains('Back').click()
+  }
 }
 
 const reportPage = new Report()

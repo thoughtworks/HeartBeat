@@ -1,7 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
-import { CLASSIFICATION_WARNING_MESSAGE, CYCLE_TIME_LIST, METRICS_CONSTANTS } from '@src/constants'
+import {
+  CLASSIFICATION_WARNING_MESSAGE,
+  CYCLE_TIME_LIST,
+  METRICS_CONSTANTS,
+  PIPELINE_SETTING_TYPES,
+} from '@src/constants'
+import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 
 export interface IPipelineConfig {
   id: number
@@ -89,6 +95,51 @@ const findKeyByValues = (arrayA: { [key: string]: string }[], arrayB: string[]):
   }
   return `The value of ${matchingKeys} in imported json is not in dropdown list now. Please select a value for it!`
 }
+
+const setSelectUsers = (users: string[], importedCrews: string[]) =>
+  users.filter((item: string) => importedCrews?.includes(item))
+
+const setSelectTargetFields = (
+  targetFields: { name: string; key: string; flag: boolean }[],
+  importedClassification: string[]
+) =>
+  targetFields.map((item: { name: string; key: string; flag: boolean }) => ({
+    ...item,
+    flag: importedClassification?.includes(item.key),
+  }))
+
+const setCycleTimeSettings = (
+  jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
+  importedCycleTimeSettings: { [key: string]: string }[]
+) => {
+  return jiraColumns?.map((item: { key: string; value: { name: string; statuses: string[] } }) => {
+    const controlName = item.value.name
+    let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
+    const validImportValue = importedCycleTimeSettings?.find((i) => Object.keys(i)[0] === controlName)
+    if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {
+      defaultOptionValue = Object.values(validImportValue)[0]
+    }
+    return { name: controlName, value: defaultOptionValue }
+  })
+}
+
+const setSelectDoneColumns = (
+  jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
+  cycleTimeSettings: { name: string; value: string }[],
+  importedDoneStatus: string[]
+) => {
+  const doneStatus =
+    jiraColumns?.find((item) => item.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? []
+  const selectedDoneColumns = cycleTimeSettings
+    ?.filter(({ value }) => value === METRICS_CONSTANTS.doneValue)
+    .map(({ name }) => name)
+  const filteredStatus = jiraColumns
+    ?.filter(({ value }) => selectedDoneColumns.includes(value.name))
+    .flatMap(({ value }) => value.statuses)
+  const status = selectedDoneColumns?.length < 1 ? doneStatus : filteredStatus
+  return status.filter((item: string) => importedDoneStatus?.includes(item))
+}
+
 export const metricsSlice = createSlice({
   name: 'metrics',
   initialState,
@@ -133,20 +184,15 @@ export const metricsSlice = createSlice({
       state.importedData.importedCycleTime.importedTreatFlagCardAsBlock = cycleTime?.treatFlagCardAsBlock
       state.importedData.importedDoneStatus = doneStatus
       state.importedData.importedClassification = classification
-      state.importedData.importedDeployment = deployment
-      state.importedData.importedLeadTime = leadTime
+      state.importedData.importedDeployment = deployment ?? []
+      state.importedData.importedLeadTime = leadTime ?? []
     },
 
     updateMetricsState: (state, action) => {
       const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
-      const { importedCrews, importedClassification, importedCycleTime } = state.importedData
-      state.users = isProjectCreated ? users : users?.filter((item: string) => importedCrews?.includes(item))
-      state.targetFields = isProjectCreated
-        ? targetFields
-        : targetFields?.map((item: { name: string; key: string; flag: boolean }) => ({
-            ...item,
-            flag: importedClassification?.includes(item.key),
-          }))
+      const { importedCrews, importedClassification, importedCycleTime, importedDoneStatus } = state.importedData
+      state.users = isProjectCreated ? users : setSelectUsers(users, importedCrews)
+      state.targetFields = isProjectCreated ? targetFields : setSelectTargetFields(targetFields, importedClassification)
 
       if (!isProjectCreated && importedCycleTime?.importedCycleTimeSettings?.length > 0) {
         const importedCycleTimeSettingsKeys = importedCycleTime.importedCycleTimeSettings.flatMap((obj) =>
@@ -186,19 +232,57 @@ export const metricsSlice = createSlice({
         state.classificationWarningMessage = null
       }
 
-      state.cycleTimeSettings = jiraColumns?.map(
-        (item: { key: string; value: { name: string; statuses: string[] } }) => {
-          const controlName = item.value.name
-          let defaultOptionValue = METRICS_CONSTANTS.cycleTimeEmptyStr
-          const validImportValue = importedCycleTime.importedCycleTimeSettings?.find(
-            (i) => Object.keys(i)[0] === controlName
-          )
-          if (validImportValue && CYCLE_TIME_LIST.includes(Object.values(validImportValue)[0])) {
-            defaultOptionValue = Object.values(validImportValue)[0]
-          }
-          return { name: controlName, value: defaultOptionValue }
-        }
-      )
+      state.cycleTimeSettings = setCycleTimeSettings(jiraColumns, importedCycleTime.importedCycleTimeSettings)
+      state.doneColumn = isProjectCreated
+        ? []
+        : setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus)
+    },
+
+    updatePipelineSettings: (state, action) => {
+      const { pipelineList, isProjectCreated } = action.payload
+      const { importedDeployment, importedLeadTime } = state.importedData
+      const orgNames = new Set(pipelineList.map((item: pipeline) => item.orgName))
+      const filteredPipelineNames = (organization: string) =>
+        pipelineList
+          .filter((pipeline: pipeline) => pipeline.orgName === organization)
+          .map((item: pipeline) => item.name)
+      const getValidPipelines = (pipelines: IPipelineConfig[]) =>
+        !pipelines.length || isProjectCreated
+          ? [{ id: 0, organization: '', pipelineName: '', step: '' }]
+          : pipelines.map(({ id, organization, pipelineName }) => ({
+              id,
+              organization: orgNames.has(organization) ? organization : '',
+              pipelineName: filteredPipelineNames(organization).includes(pipelineName) ? pipelineName : '',
+              step: '',
+            }))
+
+      state.deploymentFrequencySettings = getValidPipelines(importedDeployment)
+      state.leadTimeForChanges = getValidPipelines(importedLeadTime)
+    },
+
+    updatePipelineStep: (state, action) => {
+      const { steps, id, type } = action.payload
+      const { importedDeployment, importedLeadTime } = state.importedData
+      const updatedImportedPipeline =
+        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
+      const updatedImportedPipelineStep = !updatedImportedPipeline.length
+        ? ''
+        : updatedImportedPipeline.filter((pipeline) => pipeline.id === id)[0]?.step ?? ''
+      const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
+
+      const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
+        pipelines.map((pipeline) =>
+          pipeline.id === id
+            ? {
+                ...pipeline,
+                step: validStep,
+              }
+            : pipeline
+        )
+
+      type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+        ? (state.deploymentFrequencySettings = getPipelineSettings(state.deploymentFrequencySettings))
+        : (state.leadTimeForChanges = getPipelineSettings(state.leadTimeForChanges))
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {
@@ -262,6 +346,8 @@ export const {
   initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
   updateMetricsState,
+  updatePipelineSettings,
+  updatePipelineStep,
 } = metricsSlice.actions
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings

@@ -1,20 +1,20 @@
 package heartbeat.service.jira;
 
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
-import heartbeat.client.dto.board.jira.HistoryDetail;
-import heartbeat.client.dto.board.jira.Issuetype;
-import heartbeat.client.dto.board.jira.JiraCard;
-import heartbeat.client.dto.board.jira.JiraCardField;
-import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
+import heartbeat.client.dto.board.jira.Issuetype;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.JiraColumn;
 import heartbeat.client.dto.board.jira.JiraColumnConfig;
 import heartbeat.client.dto.board.jira.JiraColumnStatus;
 import heartbeat.client.dto.board.jira.Project;
+import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.StatusCategory;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
@@ -132,17 +132,13 @@ public class JiraBoardConfigDTOFixture {
 	}
 
 	public static FieldResponseDTO.FieldResponseDTOBuilder FIELD_RESPONSE_BUILDER() {
-		IssueField timetrackingIssueField = new IssueField("timetracking", "Time tracking");
-		IssueField summaryIssueField = new IssueField("summary", "Summary");
-		IssueField descriptionIssueField = new IssueField("description", "Description");
-		IssueField priorityIssueField = new IssueField("priority", "Priority");
 		IssueField storyPointIssueField = new IssueField("customfield_10016", "Story point estimate");
+		IssueField sprintIssueField = new IssueField("customfield_10020", "Sprint");
+		IssueField flaggedIssueField = new IssueField("customfield_10021", "Flagged");
 		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
-		issueFieldMap.put("timetracking", timetrackingIssueField);
-		issueFieldMap.put("summary", summaryIssueField);
-		issueFieldMap.put("description", descriptionIssueField);
-		issueFieldMap.put("priority", priorityIssueField);
 		issueFieldMap.put("customfield_10016", storyPointIssueField);
+		issueFieldMap.put("customfield_10020", sprintIssueField);
+		issueFieldMap.put("customfield_10021", flaggedIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}
@@ -152,17 +148,11 @@ public class JiraBoardConfigDTOFixture {
 		IssueField summaryIssueField = new IssueField("summary", "Summary");
 		IssueField descriptionIssueField = new IssueField("description", "Description");
 		IssueField priorityIssueField = new IssueField("priority", "Priority");
-		IssueField storyPointIssueField = new IssueField("customfield_10016", "Story point estimate");
-		IssueField sprintIssueField = new IssueField("customfield_10032", "Sprint");
-		IssueField flaggedIssueField = new IssueField("customfield_10048", "Flagged");
 		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
 		issueFieldMap.put("timetracking", timetrackingIssueField);
 		issueFieldMap.put("summary", summaryIssueField);
 		issueFieldMap.put("description", descriptionIssueField);
 		issueFieldMap.put("priority", priorityIssueField);
-		issueFieldMap.put("customfield_10016", storyPointIssueField);
-		issueFieldMap.put("customfield_10032", sprintIssueField);
-		issueFieldMap.put("customfield_10048", flaggedIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}

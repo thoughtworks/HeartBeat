@@ -7,7 +7,7 @@ export const classificationMapper = (classification: ClassificationResponse[]) =
   classification.map((item, index) => {
     const pairsValues: { name: string; value: string }[] = []
 
-    item.pairs.map((pairItem) => {
+    item.pairList.map((pairItem) => {
       pairsValues.push({ name: pairItem.name, value: `${(pairItem.value * 100).toFixed(2)}%` })
     })
 

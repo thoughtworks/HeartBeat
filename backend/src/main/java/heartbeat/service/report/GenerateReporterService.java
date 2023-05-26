@@ -299,9 +299,7 @@ public class GenerateReporterService {
 
 	public String fetchCsvData(ExportCsvRequest request) {
 		deleteOldCsv();
-		String csvString = csvFileGenerator.getDataFromCsv(request.getDataType(),
-				Long.parseLong(request.getCsvTimeStamp()));
-		return csvString;
+		return csvFileGenerator.getDataFromCsv(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
 	}
 
 	private void deleteOldCsv() {

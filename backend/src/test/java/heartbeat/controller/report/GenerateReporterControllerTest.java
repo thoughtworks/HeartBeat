@@ -2,6 +2,7 @@ package heartbeat.controller.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import heartbeat.controller.report.dto.request.ExportCsvRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
@@ -23,6 +24,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,6 +70,28 @@ class GenerateReporterControllerTest {
 			.read("$.deploymentFrequency.avgDeploymentFrequency.deploymentFrequency")
 			.toString();
 		assertThat(resultDeployment).contains("0.1");
+	}
+
+	@Test
+	public void shouldReturnWhenExportCsv() throws Exception {
+		ExportCsvRequest mockExportCsvRequest = ExportCsvRequest.builder()
+			.dataType("pipeline")
+			.csvTimeStamp("1685010080107")
+			.build();
+		String expectedResponse = "csv data";
+
+		when(generateReporterService.fetchCsvData(mockExportCsvRequest)).thenReturn(expectedResponse);
+
+		MockHttpServletResponse response = mockMvc
+			.perform(get("/reports/csv").contentType(MediaType.APPLICATION_JSON)
+				.queryParam("dataType", "pipeline")
+				.queryParam("csvTimeStamp", "1685010080107"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse();
+
+		assertThat(response.getContentAsString()).isEqualTo(expectedResponse);
+
 	}
 
 }

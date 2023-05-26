@@ -68,9 +68,7 @@ steps:
     command: ./ops/deploy.sh stub
 
   - label: ":rocket: Deploy e2e"
-    if: |
-      build.branch == "main" &&
-      (build.message =~ /\\[frontend\\]/ || build.message =~ /\\[backend\\]/)
+    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
     key: "deploy-e2e"
     depends_on:
       - "build-frontend"
@@ -92,8 +90,6 @@ steps:
           expire_in: "${RETENTION_DAYS} days"
 
   - label: ":rocket: Deploy prod"
-    if: |
-      build.branch == "main" &&
-      (build.message =~ /\\[frontend\\]/ || build.message =~ /\\[backend\\]/)
+    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
     depends_on: "check-e2e"
     command: ./ops/deploy.sh prod

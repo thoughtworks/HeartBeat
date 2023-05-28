@@ -14,19 +14,9 @@ steps:
     key: "check-backend"
     command: ./ops/check.sh backend
 
-  - label: ":mag: Check Frontend License"
-    key: "check-frontend-license"
-    commands: ./ops/check.sh frontend-license
-
-  - label: ":mag: Check Backend License"
-    key: "check-backend-license"
-    commands: ./ops/check.sh backend-license
-    plugins:
-      - artifacts#v1.9.0:
-          upload:
-            - "backend/build/reports/dependency-license/**/*"
-          name: "backend-license-report"
-          expire_in: "${RETENTION_DAYS} days"
+  - label: ":mag: Check compliance"
+    key: "check-compliance"
+    commands: ./ops/check.sh compliance
 
   - label: ":cloudformation: Deploy infra"
     if:  build.branch == "main" && build.message =~ /\[infra\]/
@@ -35,8 +25,7 @@ steps:
       - "check-shell"
       - "check-security"
       - "check-backend"
-      - "check-frontend-license"
-      - "check-backend-license"
+      - "check-compliance"
     env:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
@@ -84,8 +73,7 @@ steps:
       - "check-shell"
       - "check-security"
       - "check-backend"
-      - "check-frontend-license"
-      - "check-backend-license"
+      - "check-compliance"
     command: ./ops/check.sh e2e
     plugins:
       - artifacts#v1.9.0:

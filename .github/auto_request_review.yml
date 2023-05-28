@@ -1,6 +1,6 @@
 reviewers:
   defaults:
-    - team:default-reviewers
+    - team:heartbeat
 options:
   ignore_draft: true
   ignored_keywords:

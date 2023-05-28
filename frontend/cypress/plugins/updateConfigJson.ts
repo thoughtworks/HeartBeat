@@ -1,5 +1,6 @@
 // <reference types="cypress" />
 import fs = require('fs')
+import { GITHUB_TOKEN } from '../fixtures/fixtures'
 
 module.exports = (on, config) => {
   generateTestData()
@@ -11,7 +12,7 @@ function generateTestData() {
   fs.readFile(configJsonFilePath, (err, data) => {
     if (err) throw err
     const mockedImportConfigJSON = JSON.parse(data.toString())
-    mockedImportConfigJSON.sourceControl.token = `ghp_${'Abc123'.repeat(6)}`
+    mockedImportConfigJSON.sourceControl.token = GITHUB_TOKEN
 
     fs.writeFile(configJsonFilePath, JSON.stringify(mockedImportConfigJSON, null, 2), (e) => {
       console.error(e)

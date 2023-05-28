@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static heartbeat.TestFixtures.GITHUB_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -36,7 +37,6 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
-		String token = "ghp_12345jhgyui987654rdef43567yhu7654321";
 		LinkedHashSet<String> repos = new LinkedHashSet<>(
 				List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"));
 
@@ -44,7 +44,7 @@ class GithubControllerTest {
 
 		when(gitHubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 
-		mockMvc.perform(get("/source-control").param("token", token).contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/source-control").param("token", GITHUB_TOKEN).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
 			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));

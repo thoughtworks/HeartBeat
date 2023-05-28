@@ -81,6 +81,11 @@ steps:
     depends_on:
       - "deploy-e2e"
       - "deploy-stub"
+      - "check-shell"
+      - "check-security"
+      - "check-backend"
+      - "check-frontend-license"
+      - "check-backend-license"
     command: ./ops/check.sh e2e
     plugins:
       - artifacts#v1.9.0:

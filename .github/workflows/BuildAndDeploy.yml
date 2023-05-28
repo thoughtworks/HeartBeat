@@ -40,6 +40,15 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
+      - name: Run Gitleaks check
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "${PWD}:/path" \
+            ghcr.io/gitleaks/gitleaks:latest \
+            detect \
+            --source="/path" \
+            -v --redact
+
       - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:

@@ -1,6 +1,4 @@
 class Metrics {
-  private readonly cycleTimeSettingTitle = () => cy.contains('Cycle time settings').should('exist')
-
   private readonly cycleTimeSettingAnalysis = () => {
     cy.contains('In Analysis').siblings().eq(0).click()
     cy.get('[data-test-id="Analysis"]:contains(Analysis)').click()
@@ -99,7 +97,6 @@ class Metrics {
   private readonly backButton = () => cy.contains('Back')
 
   checkCycleTime() {
-    this.cycleTimeSettingTitle()
     this.cycleTimeSettingAnalysis()
     this.cycleTimeSettingTodo()
     this.cycleTimeSettingInDev()

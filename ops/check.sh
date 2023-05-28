@@ -25,6 +25,8 @@ security_check() {
     trufflesecurity/trufflehog:latest \
     git file:///pwd --since-commit HEAD \
     --fail
+
+  docker run -v ${PWD}:/path gitleaks/gitleaks:latest detect --source="/path" -v --redact
 }
 
 backend_license_check() {

@@ -28,7 +28,7 @@ security_check() {
 
   docker run --rm -it \
     -v "${PWD}:/path" \
-    gitleaks/gitleaks:latest \
+    ghcr.io/gitleaks/gitleaks:latest \
     detect \
     --source="/path" \
     -v --redact

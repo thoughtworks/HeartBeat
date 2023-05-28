@@ -18,6 +18,14 @@ jobs:
         with:
           scandir: './ops'
 
+  fossa-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: fossas/fossa-action@main
+        with:
+          api-key: ${{secrets.FOSSA_API_KEY}}
+
   credential-check:
     name: Credential Check
     runs-on: ubuntu-latest
@@ -164,6 +172,7 @@ jobs:
   deploy-infra:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
+      - fossa-check
       - frontend-check
       - backend-check
       - security-check

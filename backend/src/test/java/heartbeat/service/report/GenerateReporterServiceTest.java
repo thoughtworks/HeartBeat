@@ -57,6 +57,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class GenerateReporterServiceTest {
@@ -179,7 +181,7 @@ class GenerateReporterServiceTest {
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
 			.type("BuildKite")
-			.token("bkua_6xxxafcc3bxxxxxxb8xxx8d8dxxxf7897cc8b2f1")
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 
@@ -221,7 +223,7 @@ class GenerateReporterServiceTest {
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
 			.type("BuildKite")
-			.token("bkua_6xxxafcc3bxxxxxxb8xxx8d8dxxxf7897cc8b2f1")
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()

@@ -3,6 +3,8 @@ export const BOARD_TOKEN = 'mockToken'
 export const WEB_SITE = 'https://url.com'
 export const BOARD_PROJECT_KEY = 'mockProjectKey'
 
+export const GITHUB_TOKEN = `ghp_${'Abc123'.repeat(6)}`
+
 export const JSON_FILE_CONTENT = {
   projectName: 'E2E Project',
   dateRange: {
@@ -34,7 +36,7 @@ export const JSON_FILE_CONTENT = {
   },
   sourceControl: {
     type: 'GitHub',
-    token: `ghp_${'Abc123'.repeat(6)}`,
+    token: GITHUB_TOKEN,
   },
   deployment: [
     {

@@ -27,6 +27,35 @@ const velocityData = [
   { label: 'Velocity(Story Point)', value: '20' },
   { label: 'Throughput(Cards Count)', value: '16' },
 ]
+
+interface BoardDataItem {
+  label: string
+  value?: string
+}
+
+const checkBoardCalculation = (testId: string, boardData: BoardDataItem[]) => {
+  cy.get(testId)
+    .find('tr')
+    .each((row, index) => {
+      cy.wrap(row).within(() => {
+        cy.contains(boardData[index].label).should('exist')
+        if (boardData[index].value) {
+          cy.contains(boardData[index].value).should('exist')
+        }
+      })
+    })
+}
+
+const checkVelocity = (testId: string, velocityData: BoardDataItem[]) => {
+  reportPage.velocityTitle().should('exist')
+  checkBoardCalculation(testId, velocityData)
+}
+
+const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
+  reportPage.cycleTimeTitle().should('exist')
+  checkBoardCalculation(testId, cycleTimeData)
+}
+
 describe('Create a new project', () => {
   it('Should create a new project manually', () => {
     homePage.navigate()
@@ -69,6 +98,8 @@ describe('Create a new project', () => {
 
     cy.contains('Crews setting').should('exist')
 
+    cy.contains('Cycle time settings').should('exist')
+
     metricsPage.checkCycleTime()
 
     cy.contains('Real done').should('exist')
@@ -85,8 +116,8 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.checkVelocity('[data-test-id="Velocity"]', velocityData)
+    checkVelocity('[data-test-id="Velocity"]', velocityData)
 
-    reportPage.checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
+    checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
   })
 })

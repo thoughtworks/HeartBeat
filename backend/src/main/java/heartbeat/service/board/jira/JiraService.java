@@ -239,7 +239,6 @@ public class JiraService {
 				keyList.add(statusSelf.getStatusCategory().getName());
 			}
 		});
-
 		return keyList.contains(DONE_CARD_TAG) ? DONE_CARD_TAG
 				: keyList.stream().reduce((pre, last) -> last).orElse("");
 	}

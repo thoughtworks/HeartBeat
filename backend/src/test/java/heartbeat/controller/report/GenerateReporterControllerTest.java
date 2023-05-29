@@ -74,18 +74,16 @@ class GenerateReporterControllerTest {
 
 	@Test
 	public void shouldReturnWhenExportCsv() throws Exception {
-		ExportCsvRequest mockExportCsvRequest = ExportCsvRequest.builder()
-			.dataType("pipeline")
-			.csvTimeStamp("1685010080107")
-			.build();
+		String dataType = "pipeline";
+		String csvTimeStamp = "1685010080107";
 		String expectedResponse = "csv data";
 
-		when(generateReporterService.fetchCsvData(mockExportCsvRequest)).thenReturn(expectedResponse);
+		when(generateReporterService
+			.fetchCsvData(ExportCsvRequest.builder().dataType(dataType).csvTimeStamp(csvTimeStamp).build()))
+			.thenReturn(expectedResponse);
 
 		MockHttpServletResponse response = mockMvc
-			.perform(get("/reports/csv").contentType(MediaType.APPLICATION_JSON)
-				.queryParam("dataType", "pipeline")
-				.queryParam("csvTimeStamp", "1685010080107"))
+			.perform(get("/reports/csv/{dataType}-{csvTimeStamp}.csv", dataType, csvTimeStamp))
 			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();

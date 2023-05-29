@@ -269,9 +269,49 @@ stop
 @enduml
 ```
 
+## Calculate LeadTime for Changes
+
+```plantuml
+@startuml LeadTime for Changes
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - LeadTime for Changes
+start
+:Input: startTime, endTime
+pipeline token, database token;
+:Get deployTimes from pipeline serives;
+:Filter deployTimes of Passed;
+  repeat: DeployTime of Passed
+    :Get PullRequst info with the repositoy in DeployTime from service;
+      :Get Commit info by pullrequest from service;
+      :Filter the first commit info;
+      :Get firstCommitTimeInPr, prmergeTime, jobFinishTime;
+    backward: repeat for per passed deployTime;
+    repeat while (Ready to calclulate LeadTime)
+    :
+      LeadTime of per pipeline deploy:
+
+      * mergeDelayTime = prMergedTime - firstCommitTimeInPr
+      * pipelineDelayTime = jobFinishTime - prMergedTime
+      * totalDelayTine = mergeDelayTime + pipelineDelayTime
+      ;
+  ->sum;
+  : Calclulate average LeadTime of all pipeline;
+
+  :
+  Average LeadTime of total pipeline deploy:
+     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount
+     * AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
+     * AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime;
+     : OutPut:
+     LeadTimeForChanges;
+stop
+@enduml
+```
+
 ## Export Pipeline CSV
 
-### Generate Pipeline CSV For LeadTime
+### Old app: Generate Pipeline CSV For LeadTime
 
 ```plantuml
 @startuml Generate Pipeline CSV For LeadTime
@@ -322,7 +362,7 @@ stop
 @enduml
 ```
 
-### Generate Pipeline CSV For BuildInfos
+### Old app: Generate Pipeline CSV For BuildInfos
 
 ```plantuml
 @startuml Generate Pipeline CSV For BuildInfos
@@ -347,10 +387,10 @@ start
         :output buildInfo, deployInfo/
         :get jobFinishTime through deployInfo.jobFinishTime;
         :get pipelineStartTime through deployInfo.pipelineCreateTime;
-        partition "Generate noMergeDalayTime"{
+        partition "Generate noMergeDelayTime"{
           :input deployInfo.commitId, jobFinishTime,pipelineStartTime/
-          :set noMergeDalayTime = new LeadTime(deployInfo.commitId,jobFinishTime,pipelineStartTime);
-          :output noMergeDalayTime/
+          :set noMergeDelayTime = new LeadTime(deployInfo.commitId,jobFinishTime,pipelineStartTime);
+          :output noMergeDelayTime/
         }
         :create new deploymentCsvInfo(deploymentCsvData);
           :set deploymentCsvData with deploymentEnv.name,deploymentEnv.step,
@@ -364,7 +404,7 @@ stop
 @enduml
 ```
 
-### Generate Pipeline CSV
+### Old app: Generate Pipeline CSV
 
 ```plantuml
 @startuml Generate CSV For Pipeline
@@ -386,42 +426,108 @@ stop
 @enduml
 ```
 
-### LeadTime for Changes
+### New app: Generate Pipeline CSV For LeadTime
 
 ```plantuml
-@startuml LeadTime for Changes
+@startuml Generate Pipeline CSV For LeadTime
 skin rose
 skinparam defaultTextAlignment center
-title FlowChart - Heartbeat - LeadTime for Changes
+title FlowChart - Heartbeat - Generate Pipeline CSV For LeadTime
 start
-:Input: startTime, endTime
-pipeline token, database token;
-:Get deployTimes from pipeline serives;
-:Filter deployTimes of Passed;
-  repeat: DeployTime of Passed
-    :Get PullRequst info with the repositoy in DeployTime from service;
-      :Get Commit info by pullrequest from service;
-      :Filter the first commit info;
-      :Get firstCommitTimeInPr, prmergeTime, jobFinishTime;
-    backward: repeat for per passed deployTime;
-    repeat while (Ready to calclulate LeadTime)
-    :
-      LeadTime of per pipeline deploy:
+:input request.codebaseSetting,leadTimeBuildInfosList,pipelineLeadTimeList,startTime,endTime/
+  :initialize pipelineCsvInfos:PipelineCsvInfo[]=[];
+  if (codebaseSetting==null) then (yes)
+    :return [];
+  endif
+  partition "Generate List<PipelineCsvInfo>"{
+  :iterate over leadTimeEnv of codebaseSetting.leadTimeEnvList;
+    :get repoId by leadTimeEnv.id;
+    :get buildInfos by leadTimeEnv.id;
+    partition "Generate pipelineCSVData "{
+      partition "filter buildInfos "{
+        :get buildKiteJob where name is step.name, state is passed/failed, finishedAt >= startTime and <= endTime for each buildInfo;
+        if(check if the commitId and buildKiteJob of buildInfo is not empty) then (yes)
+          :return buildInfos;
+        endif
+      }
+      :iterate over buildInfos;
+        :convert buildInfo where name is step.name and buildInfo.state is passed/failed to deployInfo;
+        :output buildInfo, deployInfo/
+        partition "Generate leadTimeInfos from pipelineLeadTimeList"{
+          :filter pipelineLeadTimeList with pipelineName equals to leadTimeEnv.name;
+          if(filtered pipelineLeadTimeList not empty) then (yes)
+            if(filter leadTime in pipelineLeadTime with commitId equals to deployInfo.commitId) then (yes)
+            :return leadTimes;
+            endif
+          endif
+          :output leadTimeInfo/
+        }
+        :get commitInfo by deployInfo.commitId,repoId and github token;
+        :output commitInfo /
+        :create new PipelineCsvInfo with leadTimeEnv.name,leadTimeEnv.step,
+          buildInfo,deployInfo,commitInfo and new LeadTimeInfo(leadTimeInfo);
+      :output pipelineCSVData/
+    }
+    :add pipelineCSVData to pipelineCsvInfos;
+  }
+:output List<PipelineCsvInfo> pipelineCsvInfos /
+stop
+@enduml
+```
 
-      * mergeDelayTime = prMergedTime - firstCommitTimeInPr
-      * pipelineDelayTime = jobFinishTime - prMergedTime
-      * totalDelayTine = mergeDelayTime + pipelineDelayTime
-      ;
-  ->sum;
-  : Calclulate average LeadTime of all pipeline;
+### New app: Generate Pipeline CSV For BuildInfos
 
-  :
-  Average LeadTime of total pipeline deploy:
-     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount
-     * AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
-     * AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime;
-     : OutPut:
-     LeadTimeForChanges;
+```plantuml
+@startuml Generate Pipeline CSV For BuildInfos
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Generate Pipeline CSV For BuildInfos
+start
+:input request.buildKiteSetting.deploymentEnvList, buildInfosList,startTime,endTime /
+  :initialize pipelineCsvInfos:PipelineCsvInfo[]=[];
+  partition "Generate List<PipelineCsvInfo>"{
+  :iterate over deploymentEnv of deploymentEnvList;
+    :get buildInfos by deploymentEnv.id;
+    partition "Generate pipelineCSVData "{
+      partition "filter buildInfos "{
+      :get buildKiteJob where name is step.name, state is passed/failed, finishedAt >= startTime and <= endTime for each buildInfo;
+        if(check if the commitId and buildKiteJob of buildInfo is not empty) then (yes)
+          :return buildInfos;
+        endif
+      }
+      :iterate over buildInfos;
+        :convert buildInfo where name is step.name and buildInfo.state is passed/failed to deployInfo;
+        :output buildInfo, deployInfo/
+        :get LeadTime without MergeDelayTime;
+        :create new PipelineCsvInfo with leadTimeEnv.name,leadTimeEnv.step,
+          buildInfo,deployInfo,new CommitInfo(),new LeadTimeInfo(LeadTimeWithoutMergeDelayTime);
+      :output pipelineCSVData/
+    }
+    :add pipelineCSVData to pipelineCsvInfos;
+  }
+:output List<PipelineCsvInfo> pipelineCsvInfos /
+stop
+@enduml
+```
+
+### New app: Generate Pipeline CSV
+
+```plantuml
+@startuml Generate CSV For Pipeline
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Generate CSV For Pipeline
+start
+:input request.codebaseSetting,request.buildKiteSetting,request.csvTimeStamp/
+if(check if the buildKiteSetting is undefined) then (yes)
+:return;
+endif
+:generate leadTimeData through [Generate Pipeline CSV For LeadTime];
+:generate pipelineData through [Generate Pipeline CSV For BuildInfos];
+:concat leadTimeData and pipelineData to generate pipelineDataList;
+:output pipelineDataList/
+:convert pipelineDataList to a CSV;
+:save the CSV on disk;
 stop
 @enduml
 ```

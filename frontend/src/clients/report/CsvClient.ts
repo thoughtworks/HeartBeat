@@ -1,10 +1,10 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 export class CsvClient extends HttpClient {
   parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string =>
-    moment(csvTimeStamp).format('YYYY-MM-DD-kk-mm-ss')
+    dayjs(csvTimeStamp).format('YYYY-MM-DD-HH-mm-ss')
 
   fetchExportData = async (params: CSVReportRequestDTO) => {
     await this.axiosInstance

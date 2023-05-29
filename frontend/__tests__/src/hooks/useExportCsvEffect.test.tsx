@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
-import { csvClient } from '@src/clients/report/CsvClient'
+import { csvClient } from '@src/clients/report/CSVClient'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_EXPORT_CSV_REQUEST_PARAMS } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'

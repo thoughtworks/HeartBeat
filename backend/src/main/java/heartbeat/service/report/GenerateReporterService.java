@@ -232,7 +232,7 @@ public class GenerateReporterService {
 				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
 						startTime, endTime);
 
-				LeadTime noMergeDelayTime = gitHubService.getNoMergeDelayTime(deployInfo);
+				LeadTime noMergeDelayTime = gitHubService.getLeadTimeWithoutMergeDelayTime(deployInfo);
 
 				return PipelineCSVInfo.builder()
 					.pipeLineName(deploymentEnvironment.getName())

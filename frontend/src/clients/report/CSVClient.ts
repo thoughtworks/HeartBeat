@@ -3,7 +3,7 @@ import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
 import dayjs from 'dayjs'
 import { downloadCSV } from '@src/utils/util'
 
-export class CsvClient extends HttpClient {
+export class CSVClient extends HttpClient {
   parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string =>
     dayjs(csvTimeStamp).format('YYYY-MM-DD-HH-mm-ss')
 
@@ -20,4 +20,4 @@ export class CsvClient extends HttpClient {
   }
 }
 
-export const csvClient = new CsvClient()
+export const csvClient = new CSVClient()

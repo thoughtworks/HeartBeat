@@ -131,7 +131,7 @@ public class GitHubService {
 								deployInfo.getCommitId(), realToken), customTaskExecutor)
 						.join();
 
-					LeadTime noMergeDelayTime = getNoMergeDelayTime(deployInfo);
+					LeadTime noMergeDelayTime = getLeadTimeWithoutMergeDelayTime(deployInfo);
 
 					if (pullRequestInfos.isEmpty()) {
 						return noMergeDelayTime;
@@ -161,7 +161,7 @@ public class GitHubService {
 		});
 	}
 
-	public LeadTime getNoMergeDelayTime(DeployInfo deployInfo) {
+	public LeadTime getLeadTimeWithoutMergeDelayTime(DeployInfo deployInfo) {
 		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 		long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
 		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();

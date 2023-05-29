@@ -34,15 +34,6 @@ security_check() {
     -v --redact
 }
 
-check_compliance() {
-  fossa_check
-}
-
-fossa_check() {
-  curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
-  fossa analyze
-}
-
 backend_license_check() {
   cd backend
   ./gradlew clean checkLicense
@@ -90,7 +81,6 @@ while [[ "$#" -gt 0 ]]; do
     e2e) e2e_check ;;
     "backend-license") backend_license_check ;;
     "frontend-license") frontend_license_check ;;
-    compliance) check_compliance ;;
     *) echo "Unknown parameter passed: $1" ;;
   esac
   shift

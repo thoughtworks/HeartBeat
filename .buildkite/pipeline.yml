@@ -14,10 +14,6 @@ steps:
     key: "check-backend"
     command: ./ops/check.sh backend
 
-  - label: ":mag: Check compliance"
-    key: "check-compliance"
-    commands: ./ops/check.sh compliance
-
   - label: ":mag: Check Frontend License"
     key: "check-frontend-license"
     commands: ./ops/check.sh frontend-license
@@ -39,7 +35,6 @@ steps:
       - "check-shell"
       - "check-security"
       - "check-backend"
-      - "check-compliance"
       - "check-frontend-license"
       - "check-backend-license"
     env:
@@ -89,7 +84,6 @@ steps:
       - "check-shell"
       - "check-security"
       - "check-backend"
-      - "check-compliance"
       - "check-frontend-license"
       - "check-backend-license"
     command: ./ops/check.sh e2e

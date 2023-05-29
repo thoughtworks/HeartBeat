@@ -22,7 +22,7 @@ describe('verify export csv', () => {
     window.URL.createObjectURL = mockCreateObjectURL
 
     const mockAxiosInstance = { get: mockGet }
-    await csvClient.fetchExportData.call({ axiosInstance: mockAxiosInstance }, MOCK_EXPORT_CSV_REQUEST_PARAMS)
+    await csvClient.exportCSVData.call({ axiosInstance: mockAxiosInstance }, MOCK_EXPORT_CSV_REQUEST_PARAMS)
 
     expect(mockCreateObjectURL).toHaveBeenCalledWith(mockBlob)
     expect(appendChildSpy).toHaveBeenCalled()
@@ -32,7 +32,7 @@ describe('verify export csv', () => {
   it('should throw error when export csv request status 500', async () => {
     server.use(rest.get(MOCK_EXPORT_CSV_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
     await expect(async () => {
-      await csvClient.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
+      await csvClient.exportCSVData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
   })
 })

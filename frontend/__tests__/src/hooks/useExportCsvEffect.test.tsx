@@ -11,7 +11,7 @@ describe('use export csv effect', () => {
 
   it('should set error message empty when export csv throw error and last for 2 seconds', async () => {
     jest.useFakeTimers()
-    csvClient.fetchExportData = jest.fn().mockImplementation(() => {
+    csvClient.exportCSVData = jest.fn().mockImplementation(() => {
       throw new Error('error')
     })
     const { result } = renderHook(() => useExportCsvEffect())
@@ -25,7 +25,7 @@ describe('use export csv effect', () => {
   })
 
   it('should set error message when export csv response status 500', async () => {
-    csvClient.fetchExportData = jest.fn().mockImplementation(() => {
+    csvClient.exportCSVData = jest.fn().mockImplementation(() => {
       throw new InternalServerException('error message')
     })
     const { result } = renderHook(() => useExportCsvEffect())

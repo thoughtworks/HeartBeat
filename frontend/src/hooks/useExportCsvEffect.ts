@@ -13,7 +13,7 @@ export const useExportCsvEffect = (): useExportCsvEffectInterface => {
 
   const fetchExportData = async (params: CSVReportRequestDTO) => {
     try {
-      return await csvClient.fetchExportData(params)
+      return await csvClient.exportCSVData(params)
     } catch (e) {
       const err = e as Error
       setErrorMessage(`export csv: ${err.message}`)

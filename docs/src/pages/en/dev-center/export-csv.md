@@ -36,40 +36,40 @@ time to recovery` will display the `export pipeline data` button.
 
 ## Data structure
 
-| Field Name                | Source                                                      | Description                                                                       | Note |
-| :------------------------ | :---------------------------------------------------------- | :-------------------------------------------------------------------------------- | :--- |
-| Issue Key                 | CardCollection.jiraCardDTOList.baseInfo.key                 | the card ID                                                                       |      |
-| Summary                   | CardCollection.jiraCardDTOList.baseInfo.fields.summary      | the specific description of this card                                             |      |
-| Issue Tyoe                | CardCollection.jiraCardDTOList.baseInfo.fields.issuetype    | the card type (Tech, Bug, Story)                                                  |      |
-| Status                    | CardCollection.jiraCardDTOList.baseInfo.fields.status       | the card in status                                                                |      |
-| Story Points              | CardCollection.jiraCardDTOList.baseInfo.fields.storyPoints  | the card story point estimate                                                     |      |
-| assignee                  | CardCollection.jiraCardDTOList.baseInfo.fields.assignee     | the card belongs to which member                                                  |      |
-| Reporter                  | CardCollection.jiraCardDTOList.baseInfo.fields.reporter     | the team member who created this card                                             |      |
-| Project Key               | CardCollection.jiraCardDTOList.baseInfo.fields.project.key  | abbreviation of Project Name                                                      |      |
-| Project Name              | CardCollection.jiraCardDTOList.baseInfo.fields.project.name | (Auto Dora Metrics) Project Name                                                  |      |
-| Priority                  | CardCollection.jiraCardDTOList.baseInfo.fields.priority     | distinguish the degree of urgency of a card                                       |      |
-| Parent Summary            | CardCollection.jiraCardDTOList.baseInfo.fields.parent       | detail info for parent card link or issue key?? (but now: Tech Stack Replacement) |      |
-| Sprint                    | CardCollection.jiraCardDTOList.baseInfo.fields.customFields | iteration number                                                                  |      |
-| Labels                    | CardCollection.jiraCardDTOList.baseInfo.fields.project.name |                                                                                   |      |
-| customField               | CardCollection.jiraCardDTOList.baseInfo.fields.customFields | all customFields                                                                  |      |
-| Cycle Time                | CardCollection.jiraCardDTOList.cardCycleTime.total          | All the time it takes for this card to done from the doing                        |      |
-| Cycle Time / Story Points |                                                             | cycle time of this card per story point of day                                    |      |
-| To Do Days                | CardCollection.jiraCardDTOList.cycleTimeList                | The time this card spent in to do column                                          |      |
-| Analysis Days             | CardCollection.jiraCardDTOList.cycleTimeList.analysis       | The time this card spent in analysis column                                       |      |
-| Doing Days                | CardCollection.jiraCardDTOList.cycleTimeList.doing          | The time this card spent in Doing column                                          |      |
-| Waiting Days              | CardCollection.jiraCardDTOList.cycleTimeList.waiting        | The time this card spent in waiting for testing column                            |      |
-| Testing Days              | CardCollection.jiraCardDTOList.cycleTimeList.testing        | The time this card spent in testing column                                        |      |
-| Block Days                | CardCollection.jiraCardDTOList.cycleTimeList.block          | The time this card spent in block column                                          |      |
-| Review Days               | CardCollection.jiraCardDTOList.cycleTimeList.review         | The time this card spent in review column                                         |      |
-| Done Days                 | CardCollection.jiraCardDTOList.cycleTimeList.done           | The time this card spent in done column                                           |      |
-| OriginCycleTime: TODO     | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
-| OriginCycleTime: ANALYSIS | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
-| OriginCycleTime: DOING    | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
-| OriginCycleTime: WAITING  | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
-| OriginCycleTime: TESTING  | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
-| OriginCycleTime: BLOCKED  | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
-| OriginCycleTime: REVIEW   | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
-| OriginCycleTime: DONE     | CardCollection.jiraCardDTOList.originCycleTimeList          | consistent with the above description                                             |      |
+| Field Name                | Source                                                                                                        | Description                                                                       | Note |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------- | :--- |
+| Issue Key                 | CardCollection.jiraCardDTOList.baseInfo.key                                                                   | the card ID                                                                       |      |
+| Summary                   | CardCollection.jiraCardDTOList.baseInfo.fields.summary                                                        | the specific description of this card                                             |      |
+| Issue Tyoe                | CardCollection.jiraCardDTOList.baseInfo.fields.issuetype                                                      | the card type (Tech, Bug, Story)                                                  |      |
+| Status                    | CardCollection.jiraCardDTOList.baseInfo.fields.status                                                         | the card in status                                                                |      |
+| Story Points              | CardCollection.jiraCardDTOList.baseInfo.fields.storyPoints                                                    | the card story point estimate                                                     |      |
+| assignee                  | CardCollection.jiraCardDTOList.baseInfo.fields.assignee                                                       | the card belongs to which member                                                  |      |
+| Reporter                  | CardCollection.jiraCardDTOList.baseInfo.fields.reporter                                                       | the team member who created this card                                             |      |
+| Project Key               | CardCollection.jiraCardDTOList.baseInfo.fields.project.key                                                    | abbreviation of Project Name                                                      |      |
+| Project Name              | CardCollection.jiraCardDTOList.baseInfo.fields.project.name                                                   | (Auto Dora Metrics) Project Name                                                  |      |
+| Priority                  | CardCollection.jiraCardDTOList.baseInfo.fields.priority                                                       | distinguish the degree of urgency of a card                                       |      |
+| Parent Summary            | CardCollection.jiraCardDTOList.baseInfo.fields.parent                                                         | detail info for parent card link or issue key?? (but now: Tech Stack Replacement) |      |
+| Sprint                    | CardCollection.jiraCardDTOList.baseInfo.fields.customFields                                                   | iteration number                                                                  |      |
+| Labels                    | CardCollection.jiraCardDTOList.baseInfo.fields.project.name                                                   |                                                                                   |      |
+| customField               | CardCollection.jiraCardDTOList.baseInfo.fields.customFields                                                   | all customFields                                                                  |      |
+| Cycle Time                | CardCollection.jiraCardDTOList.cardCycleTime.total                                                            | All the time it takes for this card to done from the doing                        |      |
+| Cycle Time / Story Points | CardCollection.jiraCardDTOList.cardCycleTime.total/CardCollection.jiraCardDTOList.baseInfo.fields.storyPoints | cycle time of this card per story point of day                                    |      |
+| To Do Days                | CardCollection.jiraCardDTOList.cycleTimeList.todo                                                             | The time this card spent in to do column                                          |      |
+| Analysis Days             | CardCollection.jiraCardDTOList.cycleTimeList.analysis                                                         | The time this card spent in analysis column                                       |      |
+| Doing Days                | CardCollection.jiraCardDTOList.cycleTimeList.doing                                                            | The time this card spent in Doing column                                          |      |
+| Waiting Days              | CardCollection.jiraCardDTOList.cycleTimeList.waiting                                                          | The time this card spent in waiting for testing column                            |      |
+| Testing Days              | CardCollection.jiraCardDTOList.cycleTimeList.testing                                                          | The time this card spent in testing column                                        |      |
+| Block Days                | CardCollection.jiraCardDTOList.cycleTimeList.block                                                            | The time this card spent in block column                                          |      |
+| Review Days               | CardCollection.jiraCardDTOList.cycleTimeList.review                                                           | The time this card spent in review column                                         |      |
+| Done Days                 | CardCollection.jiraCardDTOList.cycleTimeList.done                                                             | The time this card spent in done column                                           |      |
+| OriginCycleTime: TODO     | CardCollection.jiraCardDTOList.originCycleTimeList.todo                                                       | consistent with the above description                                             |      |
+| OriginCycleTime: ANALYSIS | CardCollection.jiraCardDTOList.originCycleTimeList.analysis                                                   | consistent with the above description                                             |      |
+| OriginCycleTime: DOING    | CardCollection.jiraCardDTOList.originCycleTimeList.doing                                                      | consistent with the above description                                             |      |
+| OriginCycleTime: WAITING  | CardCollection.jiraCardDTOList.originCycleTimeList.waiting                                                    | consistent with the above description                                             |      |
+| OriginCycleTime: TESTING  | CardCollection.jiraCardDTOList.originCycleTimeList.testing                                                    | consistent with the above description                                             |      |
+| OriginCycleTime: BLOCKED  | CardCollection.jiraCardDTOList.originCycleTimeList.block                                                      | consistent with the above description                                             |      |
+| OriginCycleTime: REVIEW   | CardCollection.jiraCardDTOList.originCycleTimeList.review                                                     | consistent with the above description                                             |      |
+| OriginCycleTime: DONE     | CardCollection.jiraCardDTOList.originCycleTimeList.done                                                       | consistent with the above description                                             |      |
 
 ## Impact w/o metrics set up
 

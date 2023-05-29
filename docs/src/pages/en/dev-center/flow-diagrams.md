@@ -436,24 +436,36 @@ title FlowChart - Heartbeat - Generate CSV For Board
 start
 :input allDoneCards, nonDoneCards, jiraColumns, request.jiraBoardSetting.targetFields,request.csvTimeStamp/
 :get activeTargetFields use field.flag filter targetFields;
-:input CSVField and targetFields/
-if(check if the targetField is not in CSVField) then (add targetField to ExtraFields)
-:return;
+partition "Get ExtraFields"{
+ :input CSVField and targetFields/
+ if(check if the targetField is not in CSVField) then (add targetField to extraFields)
+ :return;
+ endif
+ :output extraFields/
+}
+partition " Sort jiraNonDoneCardResponses array base on jiraColumns"{
+if (status undefined in columns) then (invalid status)
+  :Return jiraColumns.length + 1;
+else (valid status)
+  :Calculate index for status a;
+  :Calculate index for status b;
+  :Compare the indices;
 endif
-:output ExtraFields/
-:sort nonDoneCards by status based on jiraColumns;
-if(status undefined in columns) then (put it last)
-:return;
-endif
+}
 :get allCardList through [concat allDoneCards and nonDoneCards];
-:update ExtraFields;
-:insert ExtraFields;
-:output currentTargetField/
- :iterate over Card of allCardList;
+:output allCardList/
+:update ExtraFields [update the data in the allCardList array based on each field.originKey in extraFields];
+:insert ExtraFields [expand the table and insert extraFields into fields];
+:extract all non duplicate column values from the allCardList array;
+:add each column value to the fields array as a new field object;
+partition "Get CardsInfoList"{
+ :iterate over card of allCardList;
  :update CSVField with CycleTime Columns;
  :build CycleTimeFlat Object use CycleTime;
  :calculate: TotalCycleTime / StoryPoints;
-:convert cardsInfo to a CSV;
+ :output cardsInfoList/
+}
+:convert cardsInfoList to a CSV;
 :save the CSV on disk;
 stop
 @enduml

@@ -175,7 +175,6 @@ layout: ../../layouts/MainLayout.astro
 | failureRate | The frequency of each pipeline failure |      |
 | Average     | The average of failureRate             |      |
 
-
 ## Lead Time for changes
 
 ### Config
@@ -183,7 +182,7 @@ layout: ../../layouts/MainLayout.astro
 - StartDate、EndDate
 - Metrics select lead time for changes
 - Pipeline Type, Pipeline Token
-- SourceControl Type, SourceControl Token 
+- SourceControl Type, SourceControl Token
 - Pipeline organization, name, Step
 
 ### Calculate logic
@@ -200,18 +199,18 @@ layout: ../../layouts/MainLayout.astro
      - `jobFinishTime = job finishTime of the job`
      - `prMergedTime = time of the pull request be merged`
      - `firstCommitTimeInPr = the first time of the commit in this pull request`
-  6. Calculate Lead Time for changes: 
+  6. Calculate Lead Time for changes:
      - `mergeDelayTime = prMergedTime - firstCommitTimeInPr`
      - `pipelineDelayTime = jobFinishTime - prMergedTime`
      - `totalDelayTine = mergeDelayTime + pipelineDelayTime`
-- Calculate Average Lead Time for changes: 
-     - `AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount `
-     -  `AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
-     -  `AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime`
+- Calculate Average Lead Time for changes:
+  - `AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount `
+  - `AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
+  - `AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime`
 
 ### Definition
 
-| Metrics     | Description                            | Note |
-| :---------- | :------------------------------------- | :--- |
+| Metrics               | Description                                             | Note |
+| :-------------------- | :------------------------------------------------------ | :--- |
 | Lead Time for changes | The time from code commit to deploy production successd |      |
-| Average     | The average of lead Time  for per pipeline          |      |
+| Average               | The average of lead Time for per pipeline               |      |

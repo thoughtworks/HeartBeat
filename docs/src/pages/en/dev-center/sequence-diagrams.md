@@ -76,6 +76,14 @@ end
 GenerateReporter_service --> GenerateReporter_service: calculate Velocity
 GenerateReporter_service --> GenerateReporter_service: calculate CycleTime
 GenerateReporter_service --> GenerateReporter_service: calculate Classification
+group generate csv for board
+    GenerateReporter_service --> GenerateReporter_service: generate board csv data
+    GenerateReporter_service --> GenerateCsvFileService: convert board data to csv
+    activate GenerateCsvFileService
+    GenerateCsvFileService --> GenerateReporter_service: save csv
+    deactivate GenerateCsvFileService
+end
+
 
 group fetch BuildKite data
 GenerateReporter_service -> BuildKiteService: get pipeline builds and count deploy times

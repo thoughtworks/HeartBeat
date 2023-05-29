@@ -386,7 +386,6 @@ stop
 @enduml
 ```
 
-
 ### LeadTime for Changes
 
 ```plantuml
@@ -406,23 +405,68 @@ pipeline token, database token;
       :Get firstCommitTimeInPr, prmergeTime, jobFinishTime;
     backward: repeat for per passed deployTime;
     repeat while (Ready to calclulate LeadTime)
-    : 
-      LeadTime of per pipeline deploy: 
+    :
+      LeadTime of per pipeline deploy:
 
       * mergeDelayTime = prMergedTime - firstCommitTimeInPr
       * pipelineDelayTime = jobFinishTime - prMergedTime
       * totalDelayTine = mergeDelayTime + pipelineDelayTime
       ;
-  ->sum;  
+  ->sum;
   : Calclulate average LeadTime of all pipeline;
-    
-  : 
-  Average LeadTime of total pipeline deploy: 
-     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount 
+
+  :
+  Average LeadTime of total pipeline deploy:
+     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount
      * AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
      * AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime;
      : OutPut:
      LeadTimeForChanges;
+stop
+@enduml
+```
+
+### Generate Board CSV
+
+```plantuml
+@startuml Generate CSV For Board
+skin rose
+skinparam defaultTextAlignment center
+title FlowChart - Heartbeat - Generate CSV For Board
+start
+:input allDoneCards, nonDoneCards, jiraColumns, request.jiraBoardSetting.targetFields,request.csvTimeStamp/
+:get activeTargetFields use field.flag filter targetFields;
+partition "Get ExtraFields"{
+ :input CSVField and targetFields/
+ if(check if the targetField is not in CSVField) then (add targetField to extraFields)
+ :return;
+ endif
+ :output extraFields/
+}
+partition " Sort jiraNonDoneCardResponses array base on jiraColumns"{
+if (status undefined in columns) then (invalid status)
+  :Return jiraColumns.length + 1;
+else (valid status)
+  :Calculate index for status a;
+  :Calculate index for status b;
+  :Compare the indices;
+endif
+}
+:get allCardList through [concat allDoneCards and nonDoneCards];
+:output allCardList/
+:update ExtraFields [update the data in the allCardList array based on each field.originKey in extraFields];
+:insert ExtraFields [expand the table and insert extraFields into fields];
+:extract all non duplicate column values from the allCardList array;
+:add each column value to the fields array as a new field object;
+partition "Get CardsInfoList"{
+ :iterate over card of allCardList;
+ :update CSVField with CycleTime Columns;
+ :build CycleTimeFlat Object use CycleTime;
+ :calculate: TotalCycleTime / StoryPoints;
+ :output cardsInfoList/
+}
+:convert cardsInfoList to a CSV;
+:save the CSV on disk;
 stop
 @enduml
 ```

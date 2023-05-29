@@ -36,8 +36,6 @@ security_check() {
 
 check_compliance() {
   fossa_check
-  backend_license_check
-  frontend_license_check
 }
 
 fossa_check() {
@@ -90,6 +88,8 @@ while [[ "$#" -gt 0 ]]; do
     frontend) frontend_check ;;
     backend) backend_check ;;
     e2e) e2e_check ;;
+    "backend-license") backend_license_check ;;
+    "frontend-license") frontend_license_check ;;
     compliance) check_compliance ;;
     *) echo "Unknown parameter passed: $1" ;;
   esac

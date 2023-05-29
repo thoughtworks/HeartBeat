@@ -31,10 +31,10 @@ public class GenerateReportController {
 		return reports;
 	}
 
-	@GetMapping("/csv/{dataType}-{csvTimeStamp}.csv")
-	public String exportCSV(@PathVariable String dataType, @PathVariable String csvTimeStamp) {
-		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, csvTimeStamp);
-		ExportCSVRequest request = new ExportCSVRequest(dataType, csvTimeStamp);
+	@GetMapping("/csv/{dataType}/{filename}")
+	public String exportCSV(@PathVariable String dataType, @PathVariable String filename) {
+		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, filename);
+		ExportCSVRequest request = new ExportCSVRequest(dataType, filename);
 		String result = generateReporterService.fetchCSVData(request);
 		log.info("Successfully get CSV file data, result: {}", result);
 		return result;

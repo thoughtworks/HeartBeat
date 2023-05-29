@@ -29,6 +29,7 @@ import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -296,7 +297,7 @@ public class GenerateReporterService {
 		return pipelineCSVInfos;
 	}
 
-	public String fetchCSVData(ExportCSVRequest request) {
+	public InputStreamResource fetchCSVData(ExportCSVRequest request) {
 		deleteOldCSV();
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
 	}

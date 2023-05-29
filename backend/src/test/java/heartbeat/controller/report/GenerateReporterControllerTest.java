@@ -15,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,7 +82,7 @@ class GenerateReporterControllerTest {
 
 		when(generateReporterService
 			.fetchCSVData(ExportCSVRequest.builder().dataType(dataType).csvTimeStamp(csvTimeStamp).build()))
-			.thenReturn(expectedResponse);
+			.thenReturn(new InputStreamResource(new ByteArrayInputStream(expectedResponse.getBytes())));
 
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/csv/{dataType}/{csvTimeStamp}", dataType, csvTimeStamp))

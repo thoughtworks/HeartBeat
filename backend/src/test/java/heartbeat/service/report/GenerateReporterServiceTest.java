@@ -49,12 +49,18 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.core.io.InputStreamResource;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
@@ -474,15 +480,21 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldReturnCsvDataForPipelineWhenExportCsv() {
+	public void shouldReturnCsvDataForPipelineWhenExportCsv() throws IOException {
 		String mockedCsvData = "csv data";
 		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
 			.csvTimeStamp("1685010080107")
 			.build();
 
-		when(csvFileGenerator.getDataFromCSV(any(), anyLong())).thenReturn("csv data");
-		String csvData = generateReporterService.fetchCSVData(mockExportCSVRequest);
+		InputStream inputStream = new ByteArrayInputStream(mockedCsvData.getBytes());
+		InputStreamResource mockInputStreamResource = new InputStreamResource(inputStream);
+		when(csvFileGenerator.getDataFromCSV(any(), anyLong())).thenReturn(mockInputStreamResource);
+
+		InputStreamResource csvDataResource = generateReporterService.fetchCSVData(mockExportCSVRequest);
+		InputStream csvDataInputStream = csvDataResource.getInputStream();
+		String csvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
+			.collect(Collectors.joining("\n"));
 
 		assertThat(csvData).isEqualTo(mockedCsvData);
 	}

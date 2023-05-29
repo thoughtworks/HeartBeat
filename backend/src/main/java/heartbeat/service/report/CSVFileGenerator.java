@@ -5,16 +5,17 @@ import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import com.opencsv.CSVWriter;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -22,10 +23,12 @@ import java.util.List;
 @Log4j2
 public class CSVFileGenerator {
 
-	private static String readStringFromCsvFile(String fileName) {
+	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
-			byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-			return new String(bytes, StandardCharsets.UTF_8);
+			InputStream inputStream = new FileInputStream(fileName);
+			InputStreamResource resource = new InputStreamResource(inputStream);
+
+			return resource;
 		}
 		catch (IOException e) {
 			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "this file is not exist");
@@ -86,11 +89,11 @@ public class CSVFileGenerator {
 		}
 	}
 
-	public String getDataFromCSV(String dataType, long csvTimeStamp) {
+	public InputStreamResource getDataFromCSV(String dataType, long csvTimeStamp) {
 		return switch (dataType) {
 			// todo: add board case
 			case "pipeline" -> readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
-			default -> "";
+			default -> new InputStreamResource(new ByteArrayInputStream("".getBytes()));
 		};
 	}
 

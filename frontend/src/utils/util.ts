@@ -10,7 +10,7 @@ export const exportToJsonFile = (filename: string, json: object) => {
 }
 
 export const downloadCSV = (filename: string, data: string) => {
-  const blob = new Blob([data])
+  const blob = new Blob([data], { type: 'application/octet-stream' })
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url

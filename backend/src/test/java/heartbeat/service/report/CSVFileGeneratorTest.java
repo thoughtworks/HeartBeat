@@ -9,13 +9,16 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.core.io.InputStreamResource;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
 
@@ -84,16 +87,19 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldHasContentWhenGetDataFromCsv() {
+	public void shouldHasContentWhenGetDataFromCsv() throws IOException {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, mockTimeStamp);
 
-		String csvPipelineString = csvFileGenerator.getDataFromCSV("pipeline", Long.parseLong(mockTimeStamp));
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("pipeline",
+				Long.parseLong(mockTimeStamp));
+		InputStream csvDataInputStream = inputStreamResource.getInputStream();
+		String csvPipelineData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
+			.collect(Collectors.joining("\n"));
 
-		Assertions.assertTrue(csvPipelineString.length() > 0);
-		Assertions.assertTrue(csvPipelineString
+		Assertions.assertTrue(csvPipelineData
 			.equals("\"Pipeline Name\",\"Pipeline Step\",\"Build Number\",\"Committer\",\"First Code Committed Time In PR\",\"Code Committed Time\",\"PR Created Time\",\"PR Merged Time\",\"Deployment Completed Time\",\"Total Lead Time (HH:mm:ss)\",\"Time from PR Created to PR Merged (HH:mm:ss)\",\"Time from PR Merged to Deployment Completed (HH:mm:ss)\",\"Status\"\n"
-					+ "\"Heartbeat\",\":rocket: Deploy prod\",\"880\",\"XXXX\",\"2023-05-08T07:18:18Z\",\"2023-05-10T06:43:02.653Z\",\"168369327000\",\"1683793037000\",\"1684793037000\",\"8379303\",\"16837\",\"653037000\",\"passed\"\n"));
+					+ "\"Heartbeat\",\":rocket: Deploy prod\",\"880\",\"XXXX\",\"2023-05-08T07:18:18Z\",\"2023-05-10T06:43:02.653Z\",\"168369327000\",\"1683793037000\",\"1684793037000\",\"8379303\",\"16837\",\"653037000\",\"passed\""));
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
@@ -101,10 +107,14 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldReturnEmptyWhenDataTypeNotMatch() {
-		String result = csvFileGenerator.getDataFromCSV("mockDataType", Long.parseLong(mockTimeStamp));
+	public void shouldReturnEmptyWhenDataTypeNotMatch() throws IOException {
 
-		Assertions.assertEquals(0, result.length());
+		InputStreamResource result = csvFileGenerator.getDataFromCSV("mockDataType", Long.parseLong(mockTimeStamp));
+		InputStream csvDataInputStream = result.getInputStream();
+		String csvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
+			.collect(Collectors.joining("\n"));
+
+		Assertions.assertEquals("", csvData);
 	}
 
 	@Test

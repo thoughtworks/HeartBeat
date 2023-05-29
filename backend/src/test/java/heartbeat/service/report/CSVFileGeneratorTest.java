@@ -1,6 +1,6 @@
 package heartbeat.service.report;
 
-import heartbeat.controller.report.dto.response.PipelineCsvInfo;
+import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.exception.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,8 +48,8 @@ class CSVFileGeneratorTest {
 	@Test
 	void shouldConvertPipelineDataToCsv() throws IOException {
 
-		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
-		csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, mockTimeStamp);
+		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
+		csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, mockTimeStamp);
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
 
@@ -73,9 +73,9 @@ class CSVFileGeneratorTest {
 		String csvDirPath = "./csv";
 		File csvDir = new File(csvDirPath);
 		deleteDirectory(csvDir);
-		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
+		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 
-		csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, mockTimeStamp);
+		csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, mockTimeStamp);
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
@@ -85,10 +85,10 @@ class CSVFileGeneratorTest {
 
 	@Test
 	public void shouldHasContentWhenGetDataFromCsv() {
-		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
-		csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, mockTimeStamp);
+		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
+		csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, mockTimeStamp);
 
-		String csvPipelineString = csvFileGenerator.getDataFromCsv("pipeline", Long.parseLong(mockTimeStamp));
+		String csvPipelineString = csvFileGenerator.getDataFromCSV("pipeline", Long.parseLong(mockTimeStamp));
 
 		Assertions.assertTrue(csvPipelineString.length() > 0);
 		Assertions.assertTrue(csvPipelineString
@@ -102,17 +102,17 @@ class CSVFileGeneratorTest {
 
 	@Test
 	public void shouldReturnEmptyWhenDataTypeNotMatch() {
-		String result = csvFileGenerator.getDataFromCsv("mockDataType", Long.parseLong(mockTimeStamp));
+		String result = csvFileGenerator.getDataFromCSV("mockDataType", Long.parseLong(mockTimeStamp));
 
 		Assertions.assertEquals(0, result.length());
 	}
 
 	@Test
 	public void shouldThrowExceptionWhenFileNotExist() {
-		List<PipelineCsvInfo> pipelineCsvInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
-		assertThrows(NotFoundException.class, () -> csvFileGenerator.getDataFromCsv("pipeline", 123456L));
+		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
+		assertThrows(NotFoundException.class, () -> csvFileGenerator.getDataFromCSV("pipeline", 123456L));
 		assertThrows(NotFoundException.class,
-				() -> csvFileGenerator.convertPipelineDataToCsv(pipelineCsvInfos, "15469:89/033"));
+				() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "15469:89/033"));
 	}
 
 }

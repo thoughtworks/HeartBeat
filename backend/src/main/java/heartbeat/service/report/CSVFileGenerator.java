@@ -1,7 +1,7 @@
 package heartbeat.service.report;
 
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
-import heartbeat.controller.report.dto.response.PipelineCsvInfo;
+import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,7 +32,7 @@ public class CSVFileGenerator {
 		}
 	}
 
-	public void convertPipelineDataToCsv(List<PipelineCsvInfo> leadTimeData, String csvTimeStamp) {
+	public void convertPipelineDataToCSV(List<PipelineCSVInfo> leadTimeData, String csvTimeStamp) {
 		log.info("Start to create csv directory");
 		boolean created = createCsvDirectory();
 		if (created) {
@@ -53,7 +53,7 @@ public class CSVFileGenerator {
 
 			csvWriter.writeNext(headers);
 
-			for (PipelineCsvInfo csvInfo : leadTimeData) {
+			for (PipelineCSVInfo csvInfo : leadTimeData) {
 				String committerName = null;
 				String commitDate = null;
 				String pipelineName = csvInfo.getPipeLineName();
@@ -86,7 +86,7 @@ public class CSVFileGenerator {
 		}
 	}
 
-	public String getDataFromCsv(String dataType, long csvTimeStamp) {
+	public String getDataFromCSV(String dataType, long csvTimeStamp) {
 		return switch (dataType) {
 			// todo: add board case
 			case "pipeline" -> readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");

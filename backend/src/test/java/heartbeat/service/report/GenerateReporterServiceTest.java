@@ -12,7 +12,7 @@ import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
-import heartbeat.controller.report.dto.request.ExportCsvRequest;
+import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
@@ -416,7 +416,7 @@ class GenerateReporterServiceTest {
 		Mockito.doAnswer(invocation -> {
 			Files.createFile(csvFilePath);
 			return null;
-		}).when(csvFileGenerator).convertPipelineDataToCsv(any(), any());
+		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
 
 		generateReporterService.generateReporter(request);
 
@@ -464,7 +464,7 @@ class GenerateReporterServiceTest {
 		Mockito.doAnswer(invocation -> {
 			Files.createFile(mockCsvFilePath);
 			return null;
-		}).when(csvFileGenerator).convertPipelineDataToCsv(any(), any());
+		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
 
 		generateReporterService.generateReporter(request);
 
@@ -476,13 +476,13 @@ class GenerateReporterServiceTest {
 	@Test
 	public void shouldReturnCsvDataForPipelineWhenExportCsv() {
 		String mockedCsvData = "csv data";
-		ExportCsvRequest mockExportCsvRequest = ExportCsvRequest.builder()
+		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
 			.csvTimeStamp("1685010080107")
 			.build();
 
-		when(csvFileGenerator.getDataFromCsv(any(), anyLong())).thenReturn("csv data");
-		String csvData = generateReporterService.fetchCsvData(mockExportCsvRequest);
+		when(csvFileGenerator.getDataFromCSV(any(), anyLong())).thenReturn("csv data");
+		String csvData = generateReporterService.fetchCSVData(mockExportCSVRequest);
 
 		assertThat(csvData).isEqualTo(mockedCsvData);
 	}
@@ -490,12 +490,12 @@ class GenerateReporterServiceTest {
 	@Test
 	public void shouldDeleteOldCsvWhenExportCsvWithOldCsvOutsideTenHours() throws IOException {
 		Files.createFile(mockCsvFilePath);
-		ExportCsvRequest mockExportCsvRequest = ExportCsvRequest.builder()
+		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
 			.csvTimeStamp("1685010080107")
 			.build();
 
-		generateReporterService.fetchCsvData(mockExportCsvRequest);
+		generateReporterService.fetchCSVData(mockExportCSVRequest);
 
 		boolean isFileDeleted = Files.notExists(mockCsvFilePath);
 		Assertions.assertTrue(isFileDeleted);
@@ -506,12 +506,12 @@ class GenerateReporterServiceTest {
 		long currentTimeStamp = System.currentTimeMillis();
 		Path csvFilePath = Path.of(String.format("./csv/exportPipelineMetrics-%s.csv", currentTimeStamp));
 		Files.createFile(csvFilePath);
-		ExportCsvRequest mockExportCsvRequest = ExportCsvRequest.builder()
+		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
 			.csvTimeStamp("1685010080107")
 			.build();
 
-		generateReporterService.fetchCsvData(mockExportCsvRequest);
+		generateReporterService.fetchCSVData(mockExportCSVRequest);
 
 		boolean isFileDeleted = Files.notExists(csvFilePath);
 		Assertions.assertFalse(isFileDeleted);

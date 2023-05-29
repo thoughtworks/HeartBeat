@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PipelineCsvInfo {
+public class PipelineCSVInfo {
 
 	private String pipeLineName;
 

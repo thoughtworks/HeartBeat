@@ -11,12 +11,12 @@ import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
-import heartbeat.controller.report.dto.request.ExportCsvRequest;
+import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
-import heartbeat.controller.report.dto.response.PipelineCsvInfo;
+import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -32,7 +32,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +105,7 @@ public class GenerateReporterService {
 		// fetch data for calculate
 		this.fetchOriginalData(request);
 
-		generateCsvForPipeline(request);
+		generateCSVForPipeline(request);
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
@@ -197,25 +196,25 @@ public class GenerateReporterService {
 		}
 	}
 
-	private void generateCsvForPipeline(GenerateReportRequest request) {
+	private void generateCSVForPipeline(GenerateReportRequest request) {
 		if (request.getBuildKiteSetting() == null) {
 			return;
 		}
 
-		List<PipelineCsvInfo> leadTimeData = generateCsvForPipelineWithCodebase(request.getCodebaseSetting(),
+		List<PipelineCSVInfo> leadTimeData = generateCSVForPipelineWithCodebase(request.getCodebaseSetting(),
 				request.getStartTime(), request.getEndTime());
 
-		List<PipelineCsvInfo> pipelineData = generateCsvForPipelineWithoutCodebase(
+		List<PipelineCSVInfo> pipelineData = generateCSVForPipelineWithoutCodebase(
 				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime());
 
 		leadTimeData.addAll(pipelineData);
-		csvFileGenerator.convertPipelineDataToCsv(leadTimeData, request.getCsvTimeStamp());
+		csvFileGenerator.convertPipelineDataToCSV(leadTimeData, request.getCsvTimeStamp());
 
 	}
 
-	private List<PipelineCsvInfo> generateCsvForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
+	private List<PipelineCSVInfo> generateCSVForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
 			String startTime, String endTime) {
-		List<PipelineCsvInfo> pipelineCsvInfos = new ArrayList<>();
+		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvList) {
 			List<BuildKiteBuildInfo> buildInfos = buildInfosList.stream()
@@ -224,7 +223,7 @@ public class GenerateReporterService {
 				.map(Map.Entry::getValue)
 				.orElse(new ArrayList<>());
 
-			List<PipelineCsvInfo> pipelineCsvInfoList = buildInfos.stream().filter(buildInfo -> {
+			List<PipelineCSVInfo> pipelineCSVInfoList = buildInfos.stream().filter(buildInfo -> {
 				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
 						deploymentEnvironment.getStep(), REQUIRED_STATES, startTime, endTime);
 				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
@@ -234,7 +233,7 @@ public class GenerateReporterService {
 
 				LeadTime noMergeDelayTime = gitHubService.getNoMergeDelayTime(deployInfo);
 
-				return PipelineCsvInfo.builder()
+				return PipelineCSVInfo.builder()
 					.pipeLineName(deploymentEnvironment.getName())
 					.stepName(deploymentEnvironment.getStep())
 					.buildInfo(buildInfo)
@@ -243,17 +242,17 @@ public class GenerateReporterService {
 					.build();
 			}).toList();
 
-			pipelineCsvInfos.addAll(pipelineCsvInfoList);
+			pipelineCSVInfos.addAll(pipelineCSVInfoList);
 		}
-		return pipelineCsvInfos;
+		return pipelineCSVInfos;
 	}
 
-	private List<PipelineCsvInfo> generateCsvForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
+	private List<PipelineCSVInfo> generateCSVForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
 			String endTime) {
-		List<PipelineCsvInfo> pipelineCsvInfos = new ArrayList<>();
+		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
 		if (codebaseSetting == null) {
-			return pipelineCsvInfos;
+			return pipelineCSVInfos;
 		}
 
 		for (DeploymentEnvironment deploymentEnvironment : codebaseSetting.getLeadTime()) {
@@ -265,7 +264,7 @@ public class GenerateReporterService {
 				.map(Map.Entry::getValue)
 				.orElse(new ArrayList<>());
 
-			List<PipelineCsvInfo> pipelineCsvInfoList = buildInfos.stream().filter(buildInfo -> {
+			List<PipelineCSVInfo> pipelineCSVInfoList = buildInfos.stream().filter(buildInfo -> {
 				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
 						deploymentEnvironment.getStep(), REQUIRED_STATES, startTime, endTime);
 				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
@@ -283,7 +282,7 @@ public class GenerateReporterService {
 
 				CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
 						codebaseSetting.getToken());
-				return PipelineCsvInfo.builder()
+				return PipelineCSVInfo.builder()
 					.pipeLineName(deploymentEnvironment.getName())
 					.stepName(deploymentEnvironment.getStep())
 					.buildInfo(buildInfo)
@@ -292,17 +291,17 @@ public class GenerateReporterService {
 					.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
 					.build();
 			}).toList();
-			pipelineCsvInfos.addAll(pipelineCsvInfoList);
+			pipelineCSVInfos.addAll(pipelineCSVInfoList);
 		}
-		return pipelineCsvInfos;
+		return pipelineCSVInfos;
 	}
 
-	public String fetchCsvData(ExportCsvRequest request) {
-		deleteOldCsv();
-		return csvFileGenerator.getDataFromCsv(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
+	public String fetchCSVData(ExportCSVRequest request) {
+		deleteOldCSV();
+		return csvFileGenerator.getDataFromCSV(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
 	}
 
-	private void deleteOldCsv() {
+	private void deleteOldCSV() {
 		File directory = new File("./csv/");
 		File[] files = directory.listFiles();
 		long currentTimeStamp = System.currentTimeMillis();

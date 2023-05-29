@@ -9,16 +9,16 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
-import heartbeat.controller.report.dto.request.ExportCsvRequest;
+import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
-import heartbeat.controller.report.dto.response.PipelineCsvInfo;
+import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 
 import java.util.List;
 
 public class PipelineCsvFixture {
 
-	public static List<PipelineCsvInfo> MOCK_PIPELINE_CSV_DATA() {
-		PipelineCsvInfo pipelineCsvInfo = PipelineCsvInfo.builder()
+	public static List<PipelineCSVInfo> MOCK_PIPELINE_CSV_DATA() {
+		PipelineCSVInfo pipelineCsvInfo = PipelineCSVInfo.builder()
 			.pipeLineName("Heartbeat")
 			.stepName(":rocket: Deploy prod")
 			.buildInfo(BuildKiteBuildInfo.builder()
@@ -64,8 +64,8 @@ public class PipelineCsvFixture {
 		return List.of(pipelineCsvInfo);
 	}
 
-	public static ExportCsvRequest MOCK_EXPORT_CSV_REQUEST() {
-		return ExportCsvRequest.builder().dataType("pipeline").csvTimeStamp("1685010080107").build();
+	public static ExportCSVRequest MOCK_EXPORT_CSV_REQUEST() {
+		return ExportCSVRequest.builder().dataType("pipeline").csvTimeStamp("1685010080107").build();
 	}
 
 	public static PipelineLeadTime MOCK_PIPELINE_LEAD_TIME_DATA() {

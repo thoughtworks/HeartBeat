@@ -2,7 +2,7 @@ package heartbeat.controller.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.report.dto.request.ExportCsvRequest;
+import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
@@ -79,7 +79,7 @@ class GenerateReporterControllerTest {
 		String expectedResponse = "csv data";
 
 		when(generateReporterService
-			.fetchCsvData(ExportCsvRequest.builder().dataType(dataType).csvTimeStamp(csvTimeStamp).build()))
+			.fetchCSVData(ExportCSVRequest.builder().dataType(dataType).csvTimeStamp(csvTimeStamp).build()))
 			.thenReturn(expectedResponse);
 
 		MockHttpServletResponse response = mockMvc

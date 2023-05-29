@@ -51,14 +51,13 @@ public class BuildKiteService {
 
 	private static final List<String> permissions = List.of("read_builds", "read_organizations", "read_pipelines");
 
-	@Qualifier("taskExecutor")
-	private final ThreadPoolTaskExecutor taskExecutor;
+	private final ThreadPoolTaskExecutor customTaskExecutor;
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
 	@PreDestroy
 	public void shutdownExecutor() {
-		taskExecutor.shutdown();
+		customTaskExecutor.shutdown();
 	}
 
 	public BuildKiteResponseDTO fetchPipelineInfo(PipelineParam pipelineParam) {
@@ -199,7 +198,7 @@ public class BuildKiteService {
 						token, organizationId, pipelineId, e.getMessage(), page);
 				throw e;
 			}
-		}, taskExecutor);
+		}, customTaskExecutor);
 	}
 
 	private int parseTotalPage(@Nullable List<String> linkHeader) {

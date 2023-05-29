@@ -19,7 +19,7 @@ import dayjs from 'dayjs'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
-import { backStep } from '@src/context/stepper/StepperSlice'
+import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportStep/style'
 
@@ -45,7 +45,8 @@ export const ReportStep = () => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
-  const [csvTimeStamp] = useState(new Date().getTime())
+  // const [csvTimeStamp] = useState(new Date().getTime())
+  const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
   const {
     cycleTimeSettings,

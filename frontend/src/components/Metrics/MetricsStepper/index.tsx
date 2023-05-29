@@ -11,7 +11,7 @@ import {
   StyledStepper,
 } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
-import { backStep, nextStep, selectStepNumber } from '@src/context/stepper/StepperSlice'
+import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import { METRICS_CONSTANTS, PIPELINE_SETTING_TYPES, REQUIRED_DATA, SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
@@ -163,6 +163,9 @@ const MetricsStepper = () => {
   }
 
   const handleNext = () => {
+    if (activeStep === 1) {
+      dispatch(updateTimeStamp(new Date().getTime()))
+    }
     dispatch(nextStep())
   }
 

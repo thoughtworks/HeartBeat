@@ -6,6 +6,11 @@ import { Provider } from 'react-redux'
 import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice'
 import { ERROR_MESSAGE_TIME_DURATION } from '../../../fixtures'
 
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  selectRealDoneWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
+}))
+
 const mockColumnsList = [
   {
     key: 'done',
@@ -18,12 +23,6 @@ const mockColumnsList = [
 
 const mockTitle = 'RealDone'
 const mockLabel = 'Consider as Done'
-
-jest.mock('@src/context/Metrics/metricsSlice', () => ({
-  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectRealDoneWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
-}))
-
 let store = setupStore()
 const setup = () =>
   render(

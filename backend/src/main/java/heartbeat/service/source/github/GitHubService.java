@@ -18,7 +18,6 @@ import heartbeat.util.TokenUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -38,14 +37,13 @@ import java.util.stream.Collectors;
 @Log4j2
 public class GitHubService {
 
-	@Autowired
-	private final ThreadPoolTaskExecutor taskExecutor;
+	private final ThreadPoolTaskExecutor customTaskExecutor;
 
 	private final GitHubFeignClient gitHubFeignClient;
 
 	@PreDestroy
 	public void shutdownExecutor() {
-		taskExecutor.shutdown();
+		customTaskExecutor.shutdown();
 	}
 
 	public GitHubResponse verifyToken(String githubToken) {
@@ -54,11 +52,11 @@ public class GitHubService {
 			String maskToken = TokenUtil.mask(token);
 			log.info("Start to query repository_url by token, token: {}", maskToken);
 			CompletableFuture<List<GitHubRepo>> githubReposByUserFuture = CompletableFuture
-				.supplyAsync(() -> gitHubFeignClient.getAllRepos(token), taskExecutor);
+				.supplyAsync(() -> gitHubFeignClient.getAllRepos(token), customTaskExecutor);
 
 			log.info("Start to query organizations_token: {}", maskToken);
 			CompletableFuture<List<GitHubOrganizationsInfo>> githubOrganizationsFuture = CompletableFuture
-				.supplyAsync(() -> gitHubFeignClient.getGithubOrganizationsInfo(token), taskExecutor);
+				.supplyAsync(() -> gitHubFeignClient.getGithubOrganizationsInfo(token), customTaskExecutor);
 
 			return githubReposByUserFuture
 				.thenCombineAsync(githubOrganizationsFuture, (githubReposByUser, githubOrganizations) -> {
@@ -74,7 +72,7 @@ public class GitHubService {
 					log.info("Successfully get all repositories_token: {}, repos: {}", maskToken, allGitHubRepos);
 					githubRepos.addAll(allGitHubRepos);
 					return GitHubResponse.builder().githubRepos(githubRepos).build();
-				}, taskExecutor)
+				}, customTaskExecutor)
 				.join();
 		}
 		catch (CompletionException e) {
@@ -100,7 +98,7 @@ public class GitHubService {
 					.toList();
 				log.info("End to queried repository by organization_token: {}, gitHubOrganization: {}", maskToken, org);
 				return repos;
-			}, taskExecutor))
+			}, customTaskExecutor))
 			.toList();
 		return CompletableFuture.allOf(repoFutures.toArray(new CompletableFuture[0]))
 			.thenApply(v -> repoFutures.stream()
@@ -111,7 +109,7 @@ public class GitHubService {
 
 	public CompletableFuture<List<PipelineLeadTime>> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
-		String realToken = "Bearer" + token;
+		String realToken = "Bearer " + token;
 		return CompletableFuture.supplyAsync(() -> {
 			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = deployTimes.stream().map(deployTime -> {
 				String repository = GithubUtil.getGithubUrlFullName(repositories.get(deployTime.getPipelineId()));
@@ -130,18 +128,10 @@ public class GitHubService {
 				List<LeadTime> leadTimes = passedDeployInfos.stream().map(deployInfo -> {
 					List<PullRequestInfo> pullRequestInfos = CompletableFuture
 						.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
-								deployInfo.getCommitId(), realToken), taskExecutor)
+								deployInfo.getCommitId(), realToken), customTaskExecutor)
 						.join();
-					long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-					long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
-					long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
 
-					LeadTime noMergeDelayTime = LeadTime.builder()
-						.commitId(deployInfo.getCommitId())
-						.pipelineCreateTime((double) pipelineCreateTime)
-						.jobFinishTime((double) jobFinishTime)
-						.pipelineDelayTime((double) jobFinishTime - jobStartTime)
-						.build();
+					LeadTime noMergeDelayTime = getLeadTimeWithoutMergeDelayTime(deployInfo);
 
 					if (pullRequestInfos.isEmpty()) {
 						return noMergeDelayTime;
@@ -157,7 +147,7 @@ public class GitHubService {
 
 					List<CommitInfo> commitInfos = CompletableFuture
 						.supplyAsync(() -> gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
-								mergedPull.get().getNumber().toString(), realToken), taskExecutor)
+								mergedPull.get().getNumber().toString(), realToken), customTaskExecutor)
 						.join();
 					CommitInfo firstCommitInfo = commitInfos.get(0);
 					return this.mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);
@@ -171,27 +161,39 @@ public class GitHubService {
 		});
 	}
 
+	public LeadTime getLeadTimeWithoutMergeDelayTime(DeployInfo deployInfo) {
+		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+		long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
+		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+
+		return LeadTime.builder()
+			.commitId(deployInfo.getCommitId())
+			.pipelineCreateTime(pipelineCreateTime)
+			.jobFinishTime(jobFinishTime)
+			.pipelineDelayTime(jobFinishTime - jobStartTime)
+			.build();
+	}
+
 	public LeadTime mapLeadTimeWithInfo(PullRequestInfo pullRequestInfo, DeployInfo deployInfo, CommitInfo commitInfo) {
 		if (pullRequestInfo.getMergedAt() == null) {
 			return null;
 		}
-		double prCreatedTime = Instant.parse(pullRequestInfo.getCreatedAt()).toEpochMilli();
-		double prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
-		double jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-		double pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-		double firstCommitTimeInPr;
+		long prCreatedTime = Instant.parse(pullRequestInfo.getCreatedAt()).toEpochMilli();
+		long prMergedTime = Instant.parse(pullRequestInfo.getMergedAt()).toEpochMilli();
+		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+		long firstCommitTimeInPr;
 		if (commitInfo.getCommit() != null && commitInfo.getCommit().getCommitter() != null
 				&& commitInfo.getCommit().getCommitter().getDate() != null) {
-			firstCommitTimeInPr = (double) Instant.parse(commitInfo.getCommit().getCommitter().getDate())
-				.toEpochMilli();
+			firstCommitTimeInPr = Instant.parse(commitInfo.getCommit().getCommitter().getDate()).toEpochMilli();
 		}
 		else {
 			firstCommitTimeInPr = 0;
 		}
 
-		double pipelineDelayTime = jobFinishTime - prMergedTime;
-		double prDelayTime;
-		double totalTime;
+		long pipelineDelayTime = jobFinishTime - prMergedTime;
+		long prDelayTime;
+		long totalTime;
 		if (firstCommitTimeInPr > 0) {
 			prDelayTime = prMergedTime - firstCommitTimeInPr;
 		}
@@ -211,6 +213,15 @@ public class GitHubService {
 			.jobFinishTime(jobFinishTime)
 			.pipelineCreateTime(pipelineCreateTime)
 			.build();
+	}
+
+	public CommitInfo fetchCommitInfo(String commitId, String repositoryId, String token) {
+		String maskToken = TokenUtil.mask(token);
+		String realToken = "Bearer " + token;
+		log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
+		CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
+		log.info("Successfully get commit info_commitInfo: {}", commitInfo);
+		return commitInfo;
 	}
 
 }

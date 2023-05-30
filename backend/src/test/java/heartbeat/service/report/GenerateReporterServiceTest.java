@@ -12,6 +12,7 @@ import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
+import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
@@ -39,16 +40,27 @@ import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.core.io.InputStreamResource;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
@@ -76,6 +88,14 @@ class GenerateReporterServiceTest {
 	ClassificationCalculator classificationCalculator;
 
 	@Mock
+	CSVFileGenerator csvFileGenerator;
+
+	@Mock
+	VelocityCalculator velocityCalculator;
+
+	Path mockCsvFilePath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
+
+	@Mock
 	private BuildKiteService buildKiteService;
 
 	@Mock
@@ -89,9 +109,6 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	private CycleTimeCalculator cycleTimeCalculator;
-
-	@Mock
-	VelocityCalculator velocityCalculator;
 
 	@Mock
 	private LeadTimeForChangesCalculator leadTimeForChangesCalculator;
@@ -323,11 +340,11 @@ class GenerateReporterServiceTest {
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
-				.prCreatedTime(1.6585491E12)
-				.prMergedTime(1.65854916E12)
-				.firstCommitTimeInPr(1.6585491E12)
-				.jobFinishTime(1.65854916E12)
-				.pipelineCreateTime(1.6585491E12)
+				.prCreatedTime(1658549100000L)
+				.prMergedTime(1658549160000L)
+				.firstCommitTimeInPr(1658549100000L)
+				.jobFinishTime(1658549160000L)
+				.pipelineCreateTime(1658549100000L)
 				.prDelayTime(60000)
 				.pipelineDelayTime(60000)
 				.totalTime(120000)
@@ -362,6 +379,155 @@ class GenerateReporterServiceTest {
 		ReportResponse result = generateReporterService.generateReporter(request);
 
 		assertThat(result.getLeadTimeForChanges()).isEqualTo(mockLeadTimeForChanges);
+	}
+
+	@Test
+	public void shouldGenerateCsvForPipelineWithPipelineMetricAndBuildInfoIsEmpty() throws IOException {
+		Path csvFilePath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+
+		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
+			.type("Github")
+			.token("github_fake_token")
+			.leadTime(List.of(mockDeployment))
+			.build();
+
+		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token("buildKite_fake_token")
+			.deploymentEnvList(List.of(mockDeployment))
+			.build();
+
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(true)
+			.metrics(List.of("lead time for changes", "deployment frequency"))
+			.buildKiteSetting(buildKiteSetting)
+			.codebaseSetting(codebaseSetting)
+			.startTime("1661702400000")
+			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
+			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
+				.withCommit("")
+				.withJobs(List.of(BuildKiteJobBuilder.withDefault().withState("broken").build()))
+				.build()));
+		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
+				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
+		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(
+				CompletableFuture.supplyAsync(() -> List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA())));
+
+		Mockito.doAnswer(invocation -> {
+			Files.createFile(csvFilePath);
+			return null;
+		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
+
+		generateReporterService.generateReporter(request);
+
+		boolean isExists = Files.exists(csvFilePath);
+		Assertions.assertTrue(isExists);
+		Files.deleteIfExists(csvFilePath);
+	}
+
+	@Test
+	public void shouldGenerateCsvForPipelineWithPipelineMetric() throws IOException {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+
+		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
+			.type("Github")
+			.token("github_fake_token")
+			.leadTime(List.of(mockDeployment))
+			.build();
+
+		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token("buildKite_fake_token")
+			.deploymentEnvList(List.of(mockDeployment))
+			.build();
+
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(true)
+			.metrics(List.of("lead time for changes", "deployment frequency"))
+			.buildKiteSetting(buildKiteSetting)
+			.codebaseSetting(codebaseSetting)
+			.startTime("1661702400000")
+			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
+			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
+				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.build()));
+		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
+				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
+		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(
+				CompletableFuture.supplyAsync(() -> List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA())));
+
+		Mockito.doAnswer(invocation -> {
+			Files.createFile(mockCsvFilePath);
+			return null;
+		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
+
+		generateReporterService.generateReporter(request);
+
+		boolean isExists = Files.exists(mockCsvFilePath);
+		Assertions.assertTrue(isExists);
+		Files.deleteIfExists(mockCsvFilePath);
+	}
+
+	@Test
+	public void shouldReturnCsvDataForPipelineWhenExportCsv() throws IOException {
+		String mockedCsvData = "csv data";
+		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
+			.dataType("pipeline")
+			.csvTimeStamp("1685010080107")
+			.build();
+
+		InputStream inputStream = new ByteArrayInputStream(mockedCsvData.getBytes());
+		InputStreamResource mockInputStreamResource = new InputStreamResource(inputStream);
+		when(csvFileGenerator.getDataFromCSV(any(), anyLong())).thenReturn(mockInputStreamResource);
+
+		InputStreamResource csvDataResource = generateReporterService.fetchCSVData(mockExportCSVRequest);
+		InputStream csvDataInputStream = csvDataResource.getInputStream();
+		String csvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
+			.collect(Collectors.joining("\n"));
+
+		assertThat(csvData).isEqualTo(mockedCsvData);
+	}
+
+	@Test
+	public void shouldDeleteOldCsvWhenExportCsvWithOldCsvOutsideTenHours() throws IOException {
+		Files.createFile(mockCsvFilePath);
+		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
+			.dataType("pipeline")
+			.csvTimeStamp("1685010080107")
+			.build();
+
+		generateReporterService.fetchCSVData(mockExportCSVRequest);
+
+		boolean isFileDeleted = Files.notExists(mockCsvFilePath);
+		Assertions.assertTrue(isFileDeleted);
+	}
+
+	@Test
+	public void shouldNotDeleteOldCsvWhenExportCsvWithoutOldCsvInsideTenHours() throws IOException {
+		long currentTimeStamp = System.currentTimeMillis();
+		Path csvFilePath = Path.of(String.format("./csv/exportPipelineMetrics-%s.csv", currentTimeStamp));
+		Files.createFile(csvFilePath);
+		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
+			.dataType("pipeline")
+			.csvTimeStamp("1685010080107")
+			.build();
+
+		generateReporterService.fetchCSVData(mockExportCSVRequest);
+
+		boolean isFileDeleted = Files.notExists(csvFilePath);
+		Assertions.assertFalse(isFileDeleted);
+		Files.deleteIfExists(csvFilePath);
 	}
 
 }

@@ -1,11 +1,15 @@
 package heartbeat.controller.report;
 
+import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.service.report.GenerateReporterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +30,15 @@ public class GenerateReportController {
 		ReportResponse reports = generateReporterService.generateReporter(request);
 		log.info("Successfully generate Report, request: {}, reports: {}", request, reports);
 		return reports;
+	}
+
+	@GetMapping("/csv/{dataType}/{filename}")
+	public InputStreamResource exportCSV(@PathVariable String dataType, @PathVariable String filename) {
+		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, filename);
+		ExportCSVRequest request = new ExportCSVRequest(dataType, filename);
+		InputStreamResource result = generateReporterService.fetchCSVData(request);
+		log.info("Successfully get CSV file data, result: {}", result);
+		return result;
 	}
 
 }

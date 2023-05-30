@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { ErrorBarAutoDismiss, StyledAlert } from './style'
+import { StyledAlert, WarningBar } from './style'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 
-export const ErrorNotificationAutoDismiss = (props: { message: string }) => {
+export const WarningNotification = (props: { message: string }) => {
   const { message } = props
   const [open, setOpen] = useState(true)
   useEffect(() => {
@@ -15,8 +15,8 @@ export const ErrorNotificationAutoDismiss = (props: { message: string }) => {
     }
   }, [])
   return (
-    <ErrorBarAutoDismiss open={open}>
+    <WarningBar open={open}>
       <StyledAlert severity='warning'>{message}</StyledAlert>
-    </ErrorBarAutoDismiss>
+    </WarningBar>
   )
 }

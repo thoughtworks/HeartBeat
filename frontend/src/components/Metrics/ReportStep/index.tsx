@@ -21,12 +21,8 @@ import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import {
-  ButtonGroupStyle,
-  ErrorNotificationContainer,
-  ExportButton,
-  ParentContainer,
-} from '@src/components/Metrics/ReportStep/style'
+import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src/components/Metrics/ReportStep/style'
+import { ErrorNotification } from '@src/components/ErrorNotification'
 
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
@@ -182,12 +178,16 @@ export const ReportStep = () => {
   }
 
   return (
-    <ParentContainer>
+    <>
       {isLoading ? (
         <Loading />
       ) : (
         <>
-          {errorMessage && <ErrorNotificationContainer message={errorMessage} />}
+          {errorMessage && (
+            <ErrorNotificationContainer>
+              <ErrorNotification message={errorMessage} />
+            </ErrorNotificationContainer>
+          )}
           {velocityState.isShow && <ReportForTwoColumns title={'Velocity'} data={velocityState.value} />}
           {cycleTimeState.isShow && <ReportForTwoColumns title={'Cycle time'} data={cycleTimeState.value} />}
           {classificationState.isShow && (
@@ -229,6 +229,6 @@ export const ReportStep = () => {
           </ButtonGroupStyle>
         </>
       )}
-    </ParentContainer>
+    </>
   )
 }

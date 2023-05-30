@@ -15,7 +15,7 @@ import {
   updateProjectName,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
-import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
+import { WarningNotification } from '@src/components/Common/WarningNotification'
 
 export const ConfigStep = () => {
   const dispatch = useAppDispatch()
@@ -27,7 +27,7 @@ export const ConfigStep = () => {
 
   return (
     <ConfigStepWrapper>
-      {warningMessage && <ErrorNotificationAutoDismiss message={warningMessage} />}
+      {warningMessage && <WarningNotification message={warningMessage} />}
       <ProjectNameInput
         required
         label='Project name'

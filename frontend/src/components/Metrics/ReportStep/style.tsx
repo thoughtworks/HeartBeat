@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
 import { theme } from '@src/theme'
+import { ErrorNotification } from '@src/components/ErrorNotification'
 
 export const basicButtonStyle = {
   boxShadow: theme.main.boxShadow,
@@ -31,4 +32,16 @@ export const ButtonGroupStyle = styled('div')({
   margin: '0 auto',
   justifyContent: 'space-around',
   width: '100%',
+})
+
+export const ErrorNotificationContainer = styled(ErrorNotification)({
+  top: '50%',
+  width: '100%',
+  height: '20rem',
+  display: 'flex',
+  justifyContent: 'center',
+})
+
+export const ParentContainer = styled('div')({
+  position: 'relative',
 })

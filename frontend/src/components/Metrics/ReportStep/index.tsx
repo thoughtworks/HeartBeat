@@ -21,12 +21,17 @@ import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportStep/style'
+import {
+  ButtonGroupStyle,
+  ErrorNotificationContainer,
+  ExportButton,
+  ParentContainer,
+} from '@src/components/Metrics/ReportStep/style'
 
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
   const { generateReport, isLoading } = useGenerateReportEffect()
-  const { fetchExportData } = useExportCsvEffect()
+  const { fetchExportData, errorMessage } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [classificationState, setClassificationState] = useState({
@@ -45,7 +50,6 @@ export const ReportStep = () => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
-  // const [csvTimeStamp] = useState(new Date().getTime())
   const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
   const {
@@ -178,11 +182,12 @@ export const ReportStep = () => {
   }
 
   return (
-    <>
+    <ParentContainer>
       {isLoading ? (
         <Loading />
       ) : (
         <>
+          {errorMessage && <ErrorNotificationContainer message={errorMessage} />}
           {velocityState.isShow && <ReportForTwoColumns title={'Velocity'} data={velocityState.value} />}
           {cycleTimeState.isShow && <ReportForTwoColumns title={'Cycle time'} data={cycleTimeState.value} />}
           {classificationState.isShow && (
@@ -217,13 +222,13 @@ export const ReportStep = () => {
               data={changeFailureRateState.value}
             />
           )}
+          <ButtonGroupStyle>
+            <BackButton onClick={handleBack}>Back</BackButton>
+            {isShowExportBoardButton && <ExportButton>Export board data</ExportButton>}
+            {isShowExportPipelineButton && <ExportButton onClick={handleDownload}>Export pipeline data</ExportButton>}
+          </ButtonGroupStyle>
         </>
       )}
-      <ButtonGroupStyle>
-        <BackButton onClick={handleBack}>Back</BackButton>
-        {isShowExportBoardButton && <ExportButton>Export board data</ExportButton>}
-        {isShowExportPipelineButton && <ExportButton onClick={handleDownload}>Export pipeline data</ExportButton>}
-      </ButtonGroupStyle>
-    </>
+    </ParentContainer>
   )
 }

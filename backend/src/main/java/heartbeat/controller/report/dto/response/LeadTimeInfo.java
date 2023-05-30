@@ -35,7 +35,6 @@ public class LeadTimeInfo {
 
 	public LeadTimeInfo(LeadTime leadTime) {
 		if (leadTime != null) {
-			// TODO LeadTime field type change from double to long
 			if (leadTime.getFirstCommitTimeInPr() != 0) {
 				this.firstCommitTimeInPr = TimeUtil
 					.convertToISOFormat(String.valueOf(leadTime.getFirstCommitTimeInPr()));

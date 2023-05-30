@@ -1,8 +1,9 @@
 import { act, render, waitFor } from '@testing-library/react'
-import { WarningNotification } from 'src/components/Common/WarningNotification'
 import { setupStore } from '../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import React from 'react'
+import { WarningNotification } from '@src/components/Common/WarningNotification'
 
 let store = null
 jest.useFakeTimers()

@@ -73,14 +73,14 @@ JiraService --> GenerateReporter_service: return columns, story points and cycle
 deactivate JiraService
 end
 
-GenerateReporter_service --> GenerateReporter_service: calculate Velocity
-GenerateReporter_service --> GenerateReporter_service: calculate CycleTime
-GenerateReporter_service --> GenerateReporter_service: calculate Classification
+GenerateReporter_service -> GenerateReporter_service: calculate Velocity
+GenerateReporter_service -> GenerateReporter_service: calculate CycleTime
+GenerateReporter_service -> GenerateReporter_service: calculate Classification
 group generate csv for board
-    GenerateReporter_service --> GenerateReporter_service: generate board csv data
-    GenerateReporter_service --> GenerateCsvFileService: convert board data to csv
+    GenerateReporter_service -> GenerateReporter_service: generate board csv data
+    GenerateReporter_service -> GenerateCsvFileService: convert board data to csv
     activate GenerateCsvFileService
-    GenerateCsvFileService --> GenerateReporter_service: save csv
+    GenerateCsvFileService --> GenerateReporter_service
     deactivate GenerateCsvFileService
 end
 
@@ -121,9 +121,9 @@ BuildKiteService --> GenerateReporter_service: return pipeline builds and count 
 deactivate BuildKiteService
 end
 
-GenerateReporter_service --> GenerateReporter_service: calculate Deployment frequency
-GenerateReporter_service --> GenerateReporter_service: calculate change failure rate
-GenerateReporter_service --> GenerateReporter_service: calculate mean time to recovery
+GenerateReporter_service -> GenerateReporter_service: calculate Deployment frequency
+GenerateReporter_service -> GenerateReporter_service: calculate change failure rate
+GenerateReporter_service -> GenerateReporter_service: calculate mean time to recovery
 
 group fetch github data
 
@@ -154,32 +154,32 @@ GithubService --> GenerateReporter_service: return pipeline data for lead time
 deactivate GithubService
 end
 
-GenerateReporter_service --> GenerateReporter_service: calculate Lead time
+GenerateReporter_service -> GenerateReporter_service: calculate Lead time
 
 group generate csv for pipeline
 
   opt request.buildKiteSetting == undefined
-  GenerateReporter_service --> GenerateReporter_service: return
+  GenerateReporter_service -> GenerateReporter_service: return
   else
     group generate pipeline csv data with codebase
 
       opt request.codebaseSetting == undefined
-      GenerateReporter_service --> GenerateReporter_service: return empty pipeline csv data with codebase
+      GenerateReporter_service -> GenerateReporter_service: return empty pipeline csv data with codebase
       else
-        GenerateReporter_service --> GithubService: get commitInfo
+        GenerateReporter_service -> GithubService: get commitInfo
         activate GithubService
-        GithubService --> GitHubFeignClient: get commitInfo
+        GithubService -> GitHubFeignClient: get commitInfo
         activate GitHubFeignClient
         GitHubFeignClient --> GithubService
         deactivate GitHubFeignClient
         GithubService --> GenerateReporter_service
         deactivate GithubService
-        GenerateReporter_service --> GenerateReporter_service: generate pipeline csv data with codebase
+        GenerateReporter_service -> GenerateReporter_service: generate pipeline csv data with codebase
       end
 
     end
-    GenerateReporter_service --> GenerateReporter_service: generate pipeline csv data without codebase
-    GenerateReporter_service --> GenerateCsvFileService: convert pipeline data to csv
+    GenerateReporter_service -> GenerateReporter_service: generate pipeline csv data without codebase
+    GenerateReporter_service -> GenerateCsvFileService: convert pipeline data to csv
     activate GenerateCsvFileService
     GenerateCsvFileService --> GenerateReporter_service: save csv
     deactivate GenerateCsvFileService

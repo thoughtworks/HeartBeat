@@ -40,18 +40,18 @@ time to recovery` will display the `export pipeline data` button.
 | :------------------------ | :------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------- | :--- |
 | Issue Key                 | CardCollection.jiraCardDTOList.baseInfo.key                                                                   | the card ID                                                                       |      |
 | Summary                   | CardCollection.jiraCardDTOList.baseInfo.fields.summary                                                        | the specific description of this card                                             |      |
-| Issue Tyoe                | CardCollection.jiraCardDTOList.baseInfo.fields.issuetype                                                      | the card type (Tech, Bug, Story)                                                  |      |
+| Issue Type                | CardCollection.jiraCardDTOList.baseInfo.fields.issuetype                                                      | the card type (Tech, Bug, Story)                                                  |      |
 | Status                    | CardCollection.jiraCardDTOList.baseInfo.fields.status                                                         | the card in status                                                                |      |
 | Story Points              | CardCollection.jiraCardDTOList.baseInfo.fields.storyPoints                                                    | the card story point estimate                                                     |      |
-| assignee                  | CardCollection.jiraCardDTOList.baseInfo.fields.assignee                                                       | the card belongs to which member                                                  |      |
+| Assignee                  | CardCollection.jiraCardDTOList.baseInfo.fields.assignee                                                       | the card belongs to which member                                                  |      |
 | Reporter                  | CardCollection.jiraCardDTOList.baseInfo.fields.reporter                                                       | the team member who created this card                                             |      |
-| Project Key               | CardCollection.jiraCardDTOList.baseInfo.fields.project.key                                                    | abbreviation of Project Name                                                      |      |
+| Project Key               | CardCollection.jiraCardDTOList.baseInfo.fields.project.key                                                    | abbreviation of Project Key                                                       |      |
 | Project Name              | CardCollection.jiraCardDTOList.baseInfo.fields.project.name                                                   | (Auto Dora Metrics) Project Name                                                  |      |
 | Priority                  | CardCollection.jiraCardDTOList.baseInfo.fields.priority                                                       | distinguish the degree of urgency of a card                                       |      |
 | Parent Summary            | CardCollection.jiraCardDTOList.baseInfo.fields.parent                                                         | detail info for parent card link or issue key?? (but now: Tech Stack Replacement) |      |
 | Sprint                    | CardCollection.jiraCardDTOList.baseInfo.fields.sprint                                                         | iteration number                                                                  |      |
 | Labels                    | CardCollection.jiraCardDTOList.baseInfo.fields.labels                                                         | cards label                                                                       |      |
-| customField               | CardCollection.jiraCardDTOList.baseInfo.fields.customFields                                                   | all customFields                                                                  |      |
+| CustomField               | CardCollection.jiraCardDTOList.baseInfo.fields.customFields                                                   | all customFields                                                                  |      |
 | Cycle Time                | CardCollection.jiraCardDTOList.cardCycleTime.total                                                            | All the time it takes for this card to done from the doing                        |      |
 | Cycle Time / Story Points | CardCollection.jiraCardDTOList.cardCycleTime.total/CardCollection.jiraCardDTOList.baseInfo.fields.storyPoints | cycle time of this card per story point of day                                    |      |
 | Columns CycleTime         | CardCollection.jiraCardDTOList.cycleTimeList                                                                  | The time this card spent in each column                                           |      |
@@ -61,6 +61,6 @@ time to recovery` will display the `export pipeline data` button.
 
 - On the config page, selecting `Velocity`, `Cycle Time` or `Classicfation` will display the `export board data` button.
 - Only selecting `Classification`, can get value of custom field.
-- On the metrics page, selecting `Consider the "Flag" as "Block"` will calculate `Cycle Time` otherwise
-  calculate `Origin Cycle Time`
+- On the metrics page, selecting `Consider the "Flag" as "Block"` will calculate `Cycle Time`, Take "Flag" cost time
+  as "Block".
 - On the metrics page, selecting different crews, boardSetting and classification will show different data.

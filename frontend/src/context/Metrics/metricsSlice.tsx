@@ -6,6 +6,7 @@ import {
   CYCLE_TIME_LIST,
   METRICS_CONSTANTS,
   PIPELINE_SETTING_TYPES,
+  REAL_DONE_WARNING_MESSAGE,
 } from '@src/constants'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 
@@ -38,6 +39,7 @@ export interface savedMetricsSettingState {
   }
   cycleTimeWarningMessage: string | null
   classificationWarningMessage: string | null
+  realDoneWarningMessage: string | null
 }
 
 const initialState: savedMetricsSettingState = {
@@ -62,6 +64,7 @@ const initialState: savedMetricsSettingState = {
   },
   cycleTimeWarningMessage: null,
   classificationWarningMessage: null,
+  realDoneWarningMessage: null,
 }
 
 const compareArrays = (arrayA: string[], arrayB: string[]): string | null => {
@@ -232,6 +235,13 @@ export const metricsSlice = createSlice({
         state.classificationWarningMessage = null
       }
 
+      if (!isProjectCreated && !!importedDoneStatus.length) {
+        setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus).length <
+        importedDoneStatus.length
+          ? (state.realDoneWarningMessage = REAL_DONE_WARNING_MESSAGE)
+          : (state.realDoneWarningMessage = null)
+      }
+
       state.cycleTimeSettings = setCycleTimeSettings(jiraColumns, importedCycleTime.importedCycleTimeSettings)
       state.doneColumn = isProjectCreated
         ? []
@@ -358,5 +368,6 @@ export const selectMetricsContent = (state: RootState) => state.metrics
 export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock
 export const selectCycleTimeWarningMessage = (state: RootState) => state.metrics.cycleTimeWarningMessage
 export const selectClassificationWarningMessage = (state: RootState) => state.metrics.classificationWarningMessage
+export const selectRealDoneWarningMessage = (state: RootState) => state.metrics.realDoneWarningMessage
 
 export default metricsSlice.reducer

@@ -178,3 +178,5 @@ export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
   'Imported data is not perfectly matched. Please review carefully before going next!'
 
 export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed.`
+
+export const REAL_DONE_WARNING_MESSAGE = 'Some selected doneStatus in import data might be removed'

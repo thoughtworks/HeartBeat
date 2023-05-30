@@ -34,6 +34,6 @@ describe('use export csv effect', () => {
       result.current.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
     })
 
-    expect(result.current.errorMessage).toEqual('export csv: error message')
+    expect(result.current.errorMessage).toEqual('failed to export csv: error message')
   })
 })

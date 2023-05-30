@@ -9,7 +9,7 @@ describe('use export csv effect', () => {
     jest.resetAllMocks()
   })
 
-  it('should set error message empty when export csv throw error and last for 2 seconds', async () => {
+  it('should set error message empty when export csv throw error and last for 4 seconds', async () => {
     jest.useFakeTimers()
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
       throw new Error('error')

@@ -20,6 +20,8 @@ export const VERIFY = 'Verify'
 
 export const RESET = 'Reset'
 
+export const EXPORT_PIPELINE_DATA = 'Export pipeline data'
+
 export const VERIFIED = 'Verified'
 
 export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required']
@@ -250,6 +252,7 @@ export enum PIPELINE_SETTING_TYPES {
   DEPLOYMENT_FREQUENCY_SETTINGS_TYPE = 'DeploymentFrequencySettings',
   LEAD_TIME_FOR_CHANGES_TYPE = 'LeadTimeForChanges',
 }
+
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
 export const MOCK_GET_STEPS_PARAMS = {

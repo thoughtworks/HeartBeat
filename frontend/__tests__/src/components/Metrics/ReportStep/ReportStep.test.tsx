@@ -1,10 +1,12 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
-import { EXPECTED_REPORT_VALUES, REQUIRED_DATA_LIST } from '../../../fixtures'
+import { BACK, EXPECTED_REPORT_VALUES, EXPORT_PIPELINE_DATA, REQUIRED_DATA_LIST } from '../../../fixtures'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
-import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
+import { updateMetrics, updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
+import userEvent from '@testing-library/user-event'
+import { backStep } from '@src/context/stepper/StepperSlice'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: () => ({
@@ -12,11 +14,24 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
     isLoading: false,
   }),
 }))
+jest.mock('@src/context/stepper/StepperSlice', () => ({
+  ...jest.requireActual('@src/context/stepper/StepperSlice'),
+  backStep: jest.fn().mockReturnValue({ type: 'BACK_STEP' }),
+}))
+
+jest.mock('@src/hooks/useExportCsvEffect', () => ({
+  useExportCsvEffect: () => ({
+    fetchExportData: jest.fn(),
+    errorMessage: 'failed export csv',
+  }),
+}))
+
 let store = null
 
 describe('Report Step', () => {
-  const setup = async () => {
+  const setup = async (params: [string]) => {
     store = setupStore()
+    await store.dispatch(updateMetrics(params))
     await store.dispatch(
       updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock organization' })
     )
@@ -46,9 +61,10 @@ describe('Report Step', () => {
   }
   afterEach(() => {
     store = null
+    jest.clearAllMocks()
   })
   it('should render report page', async () => {
-    const { getByText } = await act(() => setup())
+    const { getByText } = await act(() => setup(['']))
 
     await waitFor(() => {
       expect(getByText(REQUIRED_DATA_LIST[1])).toBeInTheDocument()
@@ -57,7 +73,7 @@ describe('Report Step', () => {
   })
 
   it('should renders the velocity component with correct props', async () => {
-    const { getByText } = await act(() => setup())
+    const { getByText } = await act(() => setup(['']))
 
     await waitFor(() => {
       expect(getByText(20)).toBeInTheDocument()
@@ -66,7 +82,7 @@ describe('Report Step', () => {
   })
 
   it('should renders the CycleTime component with correct props', async () => {
-    const { getByText } = await act(() => setup())
+    const { getByText } = await act(() => setup(['']))
 
     await waitFor(() => {
       expect(getByText('30.26(days/card)')).toBeInTheDocument()
@@ -74,5 +90,39 @@ describe('Report Step', () => {
       expect(getByText('0.57')).toBeInTheDocument()
       expect(getByText('12.13(days/SP)')).toBeInTheDocument()
     })
+  })
+
+  it('should call handleBack method when click back button given back button enabled', async () => {
+    const { getByText } = await act(() => setup(['']))
+
+    await userEvent.click(getByText(BACK))
+
+    expect(backStep).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not show export pipeline button when not select deployment frequency', async () => {
+    const { queryByText } = await act(() => setup([REQUIRED_DATA_LIST[1]]))
+
+    const exportPipelineButton = queryByText(EXPORT_PIPELINE_DATA)
+
+    expect(exportPipelineButton).not.toBeInTheDocument()
+  })
+
+  it.each([[REQUIRED_DATA_LIST[4]], [REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]]])(
+    'should show export pipeline button when select %s',
+    async (requiredData) => {
+      const { getByText } = await act(() => setup([requiredData]))
+      const exportPipelineButton = getByText(EXPORT_PIPELINE_DATA)
+
+      expect(exportPipelineButton).toBeInTheDocument()
+    }
+  )
+
+  it('should show errorMessage when click export pipeline button given csv not exist', async () => {
+    const { getByText } = await act(() => setup([REQUIRED_DATA_LIST[4]]))
+
+    await userEvent.click(getByText(EXPORT_PIPELINE_DATA))
+
+    expect(getByText('failed export csv')).toBeInTheDocument()
   })
 })

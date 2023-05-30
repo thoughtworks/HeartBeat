@@ -21,6 +21,7 @@ import saveMetricsSettingReducer, {
 import { store } from '@src/store'
 import { PIPELINE_SETTING_TYPES } from '../fixtures'
 import { CLASSIFICATION_WARNING_MESSAGE } from '../fixtures'
+import { REAL_DONE_WARNING_MESSAGE } from '@src/constants'
 
 const initState = {
   jiraColumns: [],
@@ -45,6 +46,7 @@ const initState = {
   },
   cycleTimeWarningMessage: null,
   classificationWarningMessage: null,
+  realDoneWarningMessage: null,
 }
 
 const mockJiraResponse = {
@@ -713,5 +715,119 @@ describe('saveMetricsSetting reducer', () => {
     )
 
     expect(savedMetricsSetting.classificationWarningMessage).toEqual(CLASSIFICATION_WARNING_MESSAGE)
+  })
+
+  it('should set realDone warning message null when doneColumns in imported file matches the value in the response', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      jiraColumns: [
+        {
+          key: 'done',
+          value: {
+            name: 'Done',
+            statuses: ['DONE', 'CLOSED'],
+          },
+        },
+      ],
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedDoneStatus: ['DONE'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.realDoneWarningMessage).toBeNull()
+  })
+
+  it('should set realDone warning message have value when doneColumns in imported file not matches the value in the response', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      jiraColumns: [
+        {
+          key: 'done',
+          value: {
+            name: 'Done',
+            statuses: ['DONE', 'CLOSED'],
+          },
+        },
+      ],
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedDoneStatus: ['CANCELED'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(REAL_DONE_WARNING_MESSAGE)
+  })
+
+  it('should set realDone warning message null when doneColumns in imported file matches the value in cycleTimeSettings', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      jiraColumns: [
+        {
+          key: 'done',
+          value: {
+            name: 'Done',
+            statuses: ['DONE', 'CLOSED'],
+          },
+        },
+      ],
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        cycleTimeSettings: [{ name: 'Done', value: 'Done' }],
+        importedData: {
+          ...initState.importedData,
+          importedDoneStatus: ['DONE', 'CLOSED'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.realDoneWarningMessage).toBeNull()
+  })
+
+  it('should set realDone warning message have value when doneColumns in imported file not matches the value in cycleTimeSettings', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      jiraColumns: [
+        {
+          key: 'done',
+          value: {
+            name: 'Done',
+            statuses: ['DONE', 'CLOSED'],
+          },
+        },
+      ],
+      isProjectCreated: false,
+    }
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        cycleTimeSettings: [{ name: 'Done', value: 'Done' }],
+        importedData: {
+          ...initState.importedData,
+          importedDoneStatus: ['DONE', 'CLOSED', 'CANCELED'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments)
+    )
+
+    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(REAL_DONE_WARNING_MESSAGE)
   })
 })

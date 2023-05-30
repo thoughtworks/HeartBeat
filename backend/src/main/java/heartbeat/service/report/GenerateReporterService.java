@@ -76,7 +76,7 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
+	private Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
 		Map<String, String> repoMap = new HashMap<>();
 		for (DeploymentEnvironment currentValue : codebaseSetting.getLeadTime()) {
 			repoMap.put(currentValue.getId(), currentValue.getRepository());
@@ -152,9 +152,8 @@ public class GenerateReporterService {
 		fetchBuildKiteData(request.getStartTime(), request.getEndTime(), request.getCodebaseSetting().getLeadTime(),
 				request.getBuildKiteSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
-		this.leadTimes = gitHubService
-			.fetchPipelinesLeadTime(this.deployTimesList, repoMap, request.getCodebaseSetting().getToken())
-			.join();
+		leadTimes = gitHubService.fetchPipelinesLeadTime(deployTimesList, repoMap,
+				request.getCodebaseSetting().getToken());
 	}
 
 	private void fetchBuildKiteData(GenerateReportRequest request) {

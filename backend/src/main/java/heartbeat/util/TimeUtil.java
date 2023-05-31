@@ -28,12 +28,13 @@ public interface TimeUtil {
 	}
 
 	static String msToHMS(long timeStamp) {
-		long milliseconds = timeStamp % 1000;
-		timeStamp = (timeStamp - milliseconds) / 1000;
-		long seconds = timeStamp % 60;
-		timeStamp = (timeStamp - seconds) / 60;
-		long minutes = timeStamp % 60;
-		long hours = (timeStamp - minutes) / 60;
+		long tempTimeStamp = timeStamp;
+		long milliseconds = tempTimeStamp % 1000;
+		tempTimeStamp = (tempTimeStamp - milliseconds) / 1000;
+		long seconds = tempTimeStamp % 60;
+		tempTimeStamp = (tempTimeStamp - seconds) / 60;
+		long minutes = tempTimeStamp % 60;
+		long hours = (tempTimeStamp - minutes) / 60;
 
 		return hours + ":" + minutes + ":" + seconds;
 	}

@@ -3,7 +3,7 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import { styled } from '@mui/material/styles'
 import { forwardRef } from 'react'
 
-export const WarningBar = styled(Snackbar)({
+export const ErrorBarAutoDismiss = styled(Snackbar)({
   position: 'relative',
   display: 'flex',
   justifyContent: 'center',

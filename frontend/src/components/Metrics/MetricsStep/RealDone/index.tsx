@@ -11,7 +11,7 @@ import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { DEFAULT_HELPER_TEXT, METRICS_CONSTANTS, SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
 import { FormControlWrapper } from './style'
-import { WarningNotification } from '@src/components/Common/WarningNotification'
+import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
 
 interface realDoneProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[]
@@ -56,7 +56,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   return (
     <>
       <MetricsSettingTitle title={title} />
-      {realDoneWarningMessage && <WarningNotification message={realDoneWarningMessage} />}
+      {realDoneWarningMessage && <ErrorNotificationAutoDismiss message={realDoneWarningMessage} />}
       <FormControlWrapper variant='standard' required error={!savedDoneColumns.length}>
         <InputLabel id='real-done-data-multiple-checkbox-label'>{label}</InputLabel>
         <Select

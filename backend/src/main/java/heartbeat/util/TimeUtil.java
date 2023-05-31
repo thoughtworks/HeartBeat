@@ -27,15 +27,4 @@ public interface TimeUtil {
 
 	}
 
-	static String msToHMS(long s) {
-		long ms = s % 1000;
-		s = (s - ms) / 1000;
-		long seconds = s % 60;
-		s = (s - seconds) / 60;
-		long minutes = s % 60;
-		long hours = (s - minutes) / 60;
-
-		return hours + ":" + minutes + ":" + seconds;
-	}
-
 }

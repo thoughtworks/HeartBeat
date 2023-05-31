@@ -31,9 +31,4 @@ public class BuildKiteBuildInfoBuilder {
 		return this;
 	}
 
-	public BuildKiteBuildInfoBuilder withCommit(String commit) {
-		buildKiteBuildInfo.setCommit(commit);
-		return this;
-	}
-
 }

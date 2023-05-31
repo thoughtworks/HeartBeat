@@ -40,6 +40,7 @@ import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +67,8 @@ import static java.util.Objects.nonNull;
 @Log4j2
 public class JiraService {
 
-	private final ThreadPoolTaskExecutor customTaskExecutor;
+	@Autowired
+	private final ThreadPoolTaskExecutor taskExecutor;
 
 	public static final int QUERY_COUNT = 100;
 
@@ -82,7 +84,7 @@ public class JiraService {
 
 	@PreDestroy
 	public void shutdownExecutor() {
-		customTaskExecutor.shutdown();
+		taskExecutor.shutdown();
 	}
 
 	private static final String DONE_CARD_TAG = "done";
@@ -162,7 +164,7 @@ public class JiraService {
 	private CompletableFuture<JiraColumnResult> getJiraColumnsAsync(BoardRequestParam boardRequestParam, URI baseUrl,
 			JiraBoardConfigDTO jiraBoardConfigDTO) {
 		return CompletableFuture.supplyAsync(() -> getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO),
-				customTaskExecutor);
+				taskExecutor);
 	}
 
 	private JiraColumnResult getJiraColumns(BoardRequestParam boardRequestParam, URI baseUrl,
@@ -176,7 +178,7 @@ public class JiraService {
 			.stream()
 			.map(jiraColumn -> CompletableFuture.supplyAsync(
 					() -> getColumnNameAndStatus(jiraColumn, baseUrl, doneColumns, boardRequestParam.getToken()),
-					customTaskExecutor))
+					taskExecutor))
 			.toList();
 
 		List<JiraColumnDTO> columnResponse = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
@@ -219,7 +221,7 @@ public class JiraService {
 			.stream()
 			.map(jiraColumnStatus -> CompletableFuture.supplyAsync(
 					() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
-					customTaskExecutor))
+					taskExecutor))
 			.toList();
 		log.info("Successfully get columns status self list");
 
@@ -244,7 +246,7 @@ public class JiraService {
 	private CompletableFuture<List<String>> getUserAsync(BoardType boardType, URI baseUrl,
 			BoardRequestParam boardRequestParam, List<String> doneColumns) {
 		return CompletableFuture.supplyAsync(() -> getUsers(boardType, baseUrl, boardRequestParam, doneColumns),
-				customTaskExecutor);
+				taskExecutor);
 	}
 
 	private List<String> getUsers(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam,
@@ -261,7 +263,7 @@ public class JiraService {
 
 		List<CompletableFuture<List<String>>> futures = doneCards.stream()
 			.map(doneCard -> CompletableFuture
-				.supplyAsync(() -> getAssigneeSet(baseUrl, doneCard, boardRequestParam.getToken()), customTaskExecutor))
+				.supplyAsync(() -> getAssigneeSet(baseUrl, doneCard, boardRequestParam.getToken()), taskExecutor))
 			.toList();
 
 		List<List<String>> assigneeList = futures.stream().map(CompletableFuture::join).toList();
@@ -291,7 +293,7 @@ public class JiraService {
 			.map(startFrom -> CompletableFuture.supplyAsync(
 					() -> (formatAllDoneCards(jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
 							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()))),
-					customTaskExecutor))
+					taskExecutor))
 			.toList();
 		log.info("Successfully get more done card information");
 
@@ -396,7 +398,7 @@ public class JiraService {
 	}
 
 	private CompletableFuture<List<TargetField>> getTargetFieldAsync(URI baseUrl, BoardRequestParam boardRequestParam) {
-		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequestParam), customTaskExecutor);
+		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequestParam), taskExecutor);
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {

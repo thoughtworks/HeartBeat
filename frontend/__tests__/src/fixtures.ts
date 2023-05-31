@@ -1,4 +1,4 @@
-import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
+import { ReportRequestDTO } from '@src/clients/report/dto/request'
 
 export const PROJECT_NAME = 'Heartbeat'
 export const PROJECT_DESCRIPTION =
@@ -19,8 +19,6 @@ export const SAVE = 'Save'
 export const VERIFY = 'Verify'
 
 export const RESET = 'Reset'
-
-export const EXPORT_PIPELINE_DATA = 'Export pipeline data'
 
 export const VERIFIED = 'Verified'
 
@@ -86,7 +84,6 @@ export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
 export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`
 export const MOCK_REPORT_URL = `${BASE_URL}/reports`
-export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/csv/:dataType/:fileName`
 
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
@@ -179,10 +176,6 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     doneColumn: ['Done'],
   },
 }
-export const MOCK_EXPORT_CSV_REQUEST_PARAMS: CSVReportRequestDTO = {
-  csvTimeStamp: 1613664000000,
-  dataType: 'pipeline',
-}
 
 export const MOCK_IMPORT_FILE = {
   projectName: 'Mock Project Name',
@@ -252,7 +245,6 @@ export enum PIPELINE_SETTING_TYPES {
   DEPLOYMENT_FREQUENCY_SETTINGS_TYPE = 'DeploymentFrequencySettings',
   LEAD_TIME_FOR_CHANGES_TYPE = 'LeadTimeForChanges',
 }
-
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
 
 export const MOCK_GET_STEPS_PARAMS = {

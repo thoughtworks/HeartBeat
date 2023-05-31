@@ -1,7 +1,7 @@
 import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
-import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style'
+import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton } from './style'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
@@ -24,18 +24,20 @@ interface pipelineMetricSelectionProps {
     step: string
   }
   isShowRemoveButton: boolean
+  errorMessages: { organization: string; pipelineName: string; step: string } | undefined
   onRemovePipeline: (id: number) => void
   onUpdatePipeline: (id: number, label: string, value: string) => void
-  duplicatedIds: number[]
+  onClearErrorMessage: (id: number, label: string) => void
 }
 
 export const PipelineMetricSelection = ({
   type,
   pipelineSetting,
   isShowRemoveButton,
+  errorMessages,
   onRemovePipeline,
   onUpdatePipeline,
-  duplicatedIds,
+  onClearErrorMessage,
 }: pipelineMetricSelectionProps) => {
   const { id, organization, pipelineName, step } = pipelineSetting
   const dispatch = useAppDispatch()
@@ -64,14 +66,15 @@ export const PipelineMetricSelection = ({
   return (
     <PipelineMetricSelectionWrapper>
       {isLoading && <Loading />}
-      {duplicatedIds.includes(id) && <WarningMessage> This pipeline is the same as another one!</WarningMessage>}
       {errorMessage && <ErrorNotification message={errorMessage} />}
       <SingleSelection
         id={id}
         options={organizationNameOptions}
         label={'Organization'}
         value={organization}
+        errorMessage={errorMessages?.organization}
         onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+        onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
       />
       {organization && (
         <SingleSelection
@@ -79,9 +82,11 @@ export const PipelineMetricSelection = ({
           options={pipelineNameOptions}
           label={'Pipeline Name'}
           value={pipelineName}
+          errorMessage={errorMessages?.pipelineName}
           step={step}
           onGetSteps={handleGetSteps}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+          onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />
       )}
       {organization && pipelineName && (
@@ -90,7 +95,9 @@ export const PipelineMetricSelection = ({
           options={stepsOptions}
           label={'Step'}
           value={step}
+          errorMessage={errorMessages?.step}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+          onClearErrorMessage={(id, label) => onClearErrorMessage(id, label)}
         />
       )}
       <ButtonWrapper>

@@ -356,8 +356,7 @@ class GenerateReporterServiceTest {
 				.build()));
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
-		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any()))
-			.thenReturn(List.of(pipelineLeadTime));
+		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(List.of(pipelineLeadTime));
 		when(leadTimeForChangesCalculator.calculate(any())).thenReturn(mockLeadTimeForChanges);
 		ReportResponse result = generateReporterService.generateReporter(request);
 

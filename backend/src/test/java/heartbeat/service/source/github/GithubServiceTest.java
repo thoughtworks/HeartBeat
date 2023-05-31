@@ -291,7 +291,8 @@ class GithubServiceTest {
 
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
 		List<DeployTimes> emptyDeployTimes = List.of(DeployTimes.builder().build());
-		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(emptyDeployTimes, repositoryMap, mockToken);
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(emptyDeployTimes, repositoryMap,
+				mockToken);
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder().build());
 
 		assertEquals(expect, result);

@@ -38,7 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -274,7 +273,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldReturnPipeLineLeadTimeWhenDeployITimesIsNotEmpty() throws ExecutionException, InterruptedException {
+	void shouldReturnPipeLineLeadTimeWhenDeployITimesIsNotEmpty() {
 		String mockToken = "mockToken";
 
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
@@ -286,7 +285,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldReturnEmptyLeadTimeWhenDeployTimesIsEmpty() throws ExecutionException, InterruptedException {
+	void shouldReturnEmptyLeadTimeWhenDeployTimesIsEmpty() {
 		String mockToken = "mockToken";
 
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
@@ -301,7 +300,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoIsEmpty() throws ExecutionException, InterruptedException {
+	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoIsEmpty() {
 		String mockToken = "mockToken";
 
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of());
@@ -329,7 +328,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldReturnEmptyMergeLeadTimeWhenMergeTimeIsEmpty() throws ExecutionException, InterruptedException {
+	void shouldReturnEmptyMergeLeadTimeWhenMergeTimeIsEmpty() {
 		String mockToken = "mockToken";
 		pullRequestInfo.setMergedAt(null);
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
@@ -370,6 +369,27 @@ class GithubServiceTest {
 		CommitInfo result = githubService.fetchCommitInfo("12344", "org/repo", "mockToken");
 
 		assertEquals(result, commitInfo);
+	}
+
+	@Test
+	public void shouldReturnLeadTimeWithoutMergeDelayTimeWhenDeployHasNoMergeTime() {
+		DeployInfo deployInfo = DeployInfo.builder()
+			.commitId("123456")
+			.jobStartTime("2023-05-17T10:00:00Z")
+			.jobFinishTime("2023-05-17T10:30:00Z")
+			.pipelineCreateTime("2023-05-17T10:30:00Z")
+			.build();
+
+		LeadTime expectedLeadTime = LeadTime.builder()
+			.commitId("123456")
+			.pipelineCreateTime(1684319400000L)
+			.jobFinishTime(1684319400000L)
+			.pipelineDelayTime(1800000L)
+			.build();
+
+		LeadTime result = githubService.getLeadTimeWithoutMergeDelayTime(deployInfo);
+
+		assertEquals(expectedLeadTime, result);
 	}
 
 }

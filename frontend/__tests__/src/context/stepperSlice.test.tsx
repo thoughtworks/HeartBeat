@@ -1,4 +1,4 @@
-import stepperReducer, { nextStep, backStep } from '@src/context/stepper/StepperSlice'
+import stepperReducer, { backStep, nextStep, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import { ZERO } from '../fixtures'
 
 describe('stepper reducer', () => {
@@ -12,6 +12,7 @@ describe('stepper reducer', () => {
     const stepper = stepperReducer(
       {
         stepNumber: 0,
+        timeStamp: 0,
       },
       nextStep()
     )
@@ -23,6 +24,7 @@ describe('stepper reducer', () => {
     const stepper = stepperReducer(
       {
         stepNumber: 0,
+        timeStamp: 0,
       },
       backStep()
     )
@@ -34,10 +36,24 @@ describe('stepper reducer', () => {
     const stepper = stepperReducer(
       {
         stepNumber: 2,
+        timeStamp: 0,
       },
       backStep()
     )
 
     expect(stepper.stepNumber).toEqual(1)
+  })
+
+  it('should get current time when handle updateTimeStamp', () => {
+    const mockTime = new Date().getTime()
+    const stepper = stepperReducer(
+      {
+        stepNumber: 2,
+        timeStamp: 0,
+      },
+      updateTimeStamp(mockTime)
+    )
+
+    expect(stepper.timeStamp).toEqual(mockTime)
   })
 })

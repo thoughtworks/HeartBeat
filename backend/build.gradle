@@ -40,6 +40,8 @@ dependencies {
   testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
   testCompileOnly 'org.projectlombok:lombok:1.18.26'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+  implementation 'com.opencsv:opencsv:5.5.2'
+  implementation 'org.apache.commons:commons-text:1.10.0'
 }
 
 tasks.named('test') {

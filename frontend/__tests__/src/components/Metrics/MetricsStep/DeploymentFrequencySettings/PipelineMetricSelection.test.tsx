@@ -45,11 +45,11 @@ describe('PipelineMetricSelection', () => {
   }
   const mockHandleClickRemoveButton = jest.fn()
   const mockUpdatePipeline = jest.fn()
-  const mockClearErrorMessage = jest.fn()
 
   const setup = async (
     deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; step: string },
-    isShowRemoveButton: boolean
+    isShowRemoveButton: boolean,
+    duplicatedIds: number[]
   ) => {
     const store = setupStore()
     return render(
@@ -58,14 +58,9 @@ describe('PipelineMetricSelection', () => {
           type={PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE}
           pipelineSetting={deploymentFrequencySetting}
           isShowRemoveButton={isShowRemoveButton}
-          errorMessages={{
-            organization: 'organization is required',
-            pipelineName: 'pipelineName is required',
-            step: 'steps is required',
-          }}
           onRemovePipeline={mockHandleClickRemoveButton}
           onUpdatePipeline={mockUpdatePipeline}
-          onClearErrorMessage={mockClearErrorMessage}
+          duplicatedIds={duplicatedIds}
         />
       </Provider>
     )
@@ -76,21 +71,21 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
-    const { getByText } = await setup(deploymentFrequencySetting, true)
+    const { getByText } = await setup(deploymentFrequencySetting, true, [])
 
     expect(getByText(REMOVE_BUTTON)).toBeInTheDocument()
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is false', async () => {
-    const { getByText, queryByText } = await setup(deploymentFrequencySetting, false)
+    const { getByText, queryByText } = await setup(deploymentFrequencySetting, false, [])
 
     expect(queryByText(REMOVE_BUTTON)).not.toBeInTheDocument()
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
-    const { getByRole } = await setup(deploymentFrequencySetting, true)
+    const { getByRole } = await setup(deploymentFrequencySetting, true, [])
 
     await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 
@@ -99,23 +94,18 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should show pipelineName selection when select organization', async () => {
-    const { getByText, getByRole } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false)
+    const { getByText } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false, [])
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
     expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
-
-    await userEvent.click(getByRole('button', { name: ORGANIZATION }))
-    const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockOrgName2'))
-
-    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
   })
 
   it('should show step selection when select organization and pipelineName', async () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps1', 'steps2'])
     const { getByText } = await setup(
       { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
-      false
+      false,
+      []
     )
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
@@ -129,7 +119,8 @@ describe('PipelineMetricSelection', () => {
     })
     const { getByText, getByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
-      false
+      false,
+      []
     )
 
     await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
@@ -140,14 +131,14 @@ describe('PipelineMetricSelection', () => {
       expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument()
     })
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
-    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
   })
 
   it('should show steps selection when getSteps succeed ', async () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps'])
     const { getByRole, getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
-      false
+      false,
+      []
     )
 
     await waitFor(() => {
@@ -159,6 +150,16 @@ describe('PipelineMetricSelection', () => {
     await userEvent.click(stepsListBox.getByText('step2'))
 
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
-    expect(mockClearErrorMessage).toHaveBeenCalledTimes(1)
+  })
+
+  it('should show duplicated message given duplicated id', async () => {
+    metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps'])
+    const { getByText } = await setup(
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: 'step1' },
+      false,
+      [0, 1]
+    )
+
+    expect(getByText('This pipeline is the same as another one!')).toBeInTheDocument()
   })
 })

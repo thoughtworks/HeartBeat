@@ -32,27 +32,7 @@ jest.mock('@src/context/config/configSlice', () => ({
 }))
 
 const mockValidationCheckContext = {
-  leadTimeForChangesErrorMessages: [
-    {
-      id: 0,
-      error: {
-        organization: 'organization is required',
-        pipelineName: 'pipelineName is required',
-        steps: 'steps is required',
-      },
-    },
-    {
-      id: 1,
-      error: {
-        organization: 'organization is required',
-        pipelineName: 'pipelineName is required',
-        steps: 'steps is required',
-      },
-    },
-  ],
-  deploymentFrequencySettingsErrorMessages: [],
-  clearErrorMessage: jest.fn(),
-  checkDuplicatedPipeline: jest.fn(),
+  getDuplicatedPipeLineIds: jest.fn().mockReturnValue([]),
   isPipelineValid: jest.fn().mockReturnValue(true),
 }
 
@@ -77,7 +57,6 @@ describe('LeadTimeForChanges', () => {
 
     expect(getByText(LEAD_TIME_FOR_CHANGES)).toBeInTheDocument()
     expect(getAllByText(ORGANIZATION).length).toBe(2)
-    expect(getAllByText('organization is required').length).toBe(2)
   })
 
   it('should call addALeadTimeForChanges function when click add another pipeline button', async () => {
@@ -104,6 +83,5 @@ describe('LeadTimeForChanges', () => {
     await userEvent.click(listBox.getByText('mockOrgName'))
 
     expect(updateLeadTimeForChanges).toHaveBeenCalledTimes(1)
-    expect(mockValidationCheckContext.clearErrorMessage).toHaveBeenCalledTimes(1)
   })
 })

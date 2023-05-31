@@ -6,13 +6,12 @@ import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.util.TimeUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Component;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -34,13 +33,16 @@ public class LeadTimeForChangesCalculator {
 			}
 			int times = item.getLeadTimes().size();
 
-			HashMap<Long, Long> totalDelayTime = item.getLeadTimes()
+			double totalPrDelayTime = item.getLeadTimes()
 				.stream()
-				.map(this::getDelayTimeMapWithLeadTime)
-				.reduce(new HashMap<>(), (pre, now) -> now);
-
-			double totalPrDelayTime = totalDelayTime.keySet().stream().reduce(0L, Long::sum);
-			double totalPipelineDelayTime = totalDelayTime.values().stream().reduce(0L, Long::sum);
+				.map(LeadTime::getPrDelayTime)
+				.mapToDouble(Double::doubleValue)
+				.sum();
+			double totalPipelineDelayTime = item.getLeadTimes()
+				.stream()
+				.map(LeadTime::getPipelineDelayTime)
+				.mapToDouble(Double::doubleValue)
+				.sum();
 
 			double avgPrDelayTime = TimeUtil.convertMillisecondToMinutes(totalPrDelayTime / times);
 			double avgPipelineDelayTime = TimeUtil.convertMillisecondToMinutes(totalPipelineDelayTime / times);
@@ -76,8 +78,8 @@ public class LeadTimeForChangesCalculator {
 		return new LeadTimeForChanges(leadTimeForChangesOfPipelines, avgLeadTimeForChanges);
 	}
 
-	private HashMap<Long, Long> getDelayTimeMapWithLeadTime(LeadTime leadTime) {
-		HashMap<Long, Long> delayTimeMap = new HashMap<>();
+	private HashMap<Double, Double> getDelayTimeMapWithLeadTime(LeadTime leadTime) {
+		HashMap<Double, Double> delayTimeMap = new HashMap<>();
 		delayTimeMap.put(leadTime.getPrDelayTime(), leadTime.getPipelineDelayTime());
 		return delayTimeMap;
 	}

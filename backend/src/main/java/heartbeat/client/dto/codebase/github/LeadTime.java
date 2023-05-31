@@ -1,9 +1,12 @@
 package heartbeat.client.dto.codebase.github;
 
+import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.Instant;
 
 @Data
 @Builder
@@ -13,20 +16,20 @@ public class LeadTime {
 
 	private String commitId;
 
-	private long prCreatedTime;
+	private double prCreatedTime;
 
-	private long prMergedTime;
+	private double prMergedTime;
 
-	private long firstCommitTimeInPr;
+	private double firstCommitTimeInPr;
 
-	private long jobFinishTime;
+	private double jobFinishTime;
 
-	private long pipelineCreateTime;
+	private double pipelineCreateTime;
 
-	private long prDelayTime;
+	private double prDelayTime;
 
-	private long pipelineDelayTime;
+	private double pipelineDelayTime;
 
-	private long totalTime;
+	private double totalTime;
 
 }

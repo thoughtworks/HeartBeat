@@ -2,32 +2,23 @@ import { useCallback, useEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
-import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
+import { selectConfig } from '@src/context/config/configSlice'
 import {
   CHINA_CALENDAR,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   NAME,
   PIPELINE_STEP,
-  REQUIRED_DATA,
 } from '@src/constants'
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
-import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
+import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
-import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
-import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
-import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src/components/Metrics/ReportStep/style'
-import { ErrorNotification } from '@src/components/ErrorNotification'
 
 export const ReportStep = () => {
-  const dispatch = useAppDispatch()
   const { generateReport, isLoading } = useGenerateReportEffect()
-  const { fetchExportData, errorMessage } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [classificationState, setClassificationState] = useState({
@@ -46,7 +37,6 @@ export const ReportStep = () => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
-  const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
   const {
     cycleTimeSettings,
@@ -60,16 +50,6 @@ export const ReportStep = () => {
   const { metrics, calendarType, dateRange } = configData.basic
   const { board, pipelineTool, sourceControl } = configData
   const { token, type, site, projectKey, boardId, email } = board.config
-  const requiredData = useAppSelector(selectMetrics)
-  const isShowExportBoardButton =
-    requiredData.includes(REQUIRED_DATA.VELOCITY) ||
-    requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
-    requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
-  const isShowExportPipelineButton =
-    requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
-    requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
-    requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
-    requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
 
   const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) => {
     if (!pipelineConfigs[0].organization && pipelineConfigs.length === 1) {
@@ -121,12 +101,6 @@ export const ReportStep = () => {
       targetFields,
       doneColumn,
     },
-    csvTimeStamp: csvTimeStamp,
-  })
-
-  const getExportPipelineCSV = (): CSVReportRequestDTO => ({
-    dataType: 'pipeline',
-    csvTimeStamp: csvTimeStamp,
   })
 
   const fetchReportData: () => Promise<
@@ -140,7 +114,8 @@ export const ReportStep = () => {
       }
     | undefined
   > = useCallback(async () => {
-    return await generateReport(getReportRequestBody())
+    const res = await generateReport(getReportRequestBody())
+    return res
   }, [])
 
   useEffect(() => {
@@ -169,25 +144,12 @@ export const ReportStep = () => {
     })
   }, [fetchReportData])
 
-  const handleDownload = () => {
-    fetchExportData(getExportPipelineCSV())
-  }
-
-  const handleBack = () => {
-    dispatch(backStep())
-  }
-
   return (
     <>
       {isLoading ? (
         <Loading />
       ) : (
         <>
-          {errorMessage && (
-            <ErrorNotificationContainer>
-              <ErrorNotification message={errorMessage} />
-            </ErrorNotificationContainer>
-          )}
           {velocityState.isShow && <ReportForTwoColumns title={'Velocity'} data={velocityState.value} />}
           {cycleTimeState.isShow && <ReportForTwoColumns title={'Cycle time'} data={cycleTimeState.value} />}
           {classificationState.isShow && (
@@ -222,11 +184,6 @@ export const ReportStep = () => {
               data={changeFailureRateState.value}
             />
           )}
-          <ButtonGroupStyle>
-            <BackButton onClick={handleBack}>Back</BackButton>
-            {isShowExportBoardButton && <ExportButton>Export board data</ExportButton>}
-            {isShowExportPipelineButton && <ExportButton onClick={handleDownload}>Export pipeline data</ExportButton>}
-          </ButtonGroupStyle>
         </>
       )}
     </>

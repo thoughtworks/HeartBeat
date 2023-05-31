@@ -6,12 +6,12 @@ import { ErrorDone } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import {
   saveCycleTimeSettings,
+  saveDoneColumn,
   selectCycleTimeWarningMessage,
   selectMetricsContent,
-  saveDoneColumn,
 } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
-import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
+import { WarningNotification } from '@src/components/Common/WarningNotification'
 
 interface cycleTimeProps {
   title: string
@@ -45,7 +45,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
   return (
     <>
       <MetricsSettingTitle title={title} />
-      {warningMessage && <ErrorNotificationAutoDismiss message={warningMessage} />}
+      {warningMessage && <WarningNotification message={warningMessage} />}
       {isError && (
         <ErrorDone>
           <span>Only one column can be selected as &quot;Done&quot;</span>

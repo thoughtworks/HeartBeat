@@ -27,4 +27,16 @@ public interface TimeUtil {
 
 	}
 
+	static String msToHMS(long timeStamp) {
+		long tempTimeStamp = timeStamp;
+		long milliseconds = tempTimeStamp % 1000;
+		tempTimeStamp = (tempTimeStamp - milliseconds) / 1000;
+		long seconds = tempTimeStamp % 60;
+		tempTimeStamp = (tempTimeStamp - seconds) / 60;
+		long minutes = tempTimeStamp % 60;
+		long hours = (tempTimeStamp - minutes) / 60;
+
+		return hours + ":" + minutes + ":" + seconds;
+	}
+
 }

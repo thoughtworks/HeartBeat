@@ -28,17 +28,22 @@ public class BuildKiteBuildInfo {
 
 	private int number;
 
-	public DeployInfo mapToDeployInfo(String step, String state, String startTime, String endTime) {
+	public BuildKiteJob getBuildKiteJob(List<BuildKiteJob> jobs, String step, List<String> states, String startTime,
+			String endTime) {
 		Instant startDate = Instant.ofEpochMilli(Long.parseLong(startTime));
 		Instant endDate = Instant.ofEpochMilli(Long.parseLong(endTime));
-		BuildKiteJob job = this.jobs.stream()
-			.filter(item -> Objects.equals(item.getName(), step) && Objects.equals(state, item.getState()))
+		return jobs.stream()
+			.filter(item -> Objects.equals(item.getName(), step) && states.contains(item.getState()))
 			.filter(item -> {
 				Instant time = Instant.parse(item.getFinishedAt());
 				return TimeUtil.isAfterAndEqual(startDate, time) && TimeUtil.isBeforeAndEqual(endDate, time);
 			})
 			.findFirst()
 			.orElse(null);
+	}
+
+	public DeployInfo mapToDeployInfo(String step, List<String> states, String startTime, String endTime) {
+		BuildKiteJob job = getBuildKiteJob(this.jobs, step, states, startTime, endTime);
 
 		if (this.pipelineCreateTime == null || job == null || job.getStartedAt() == null
 				|| job.getFinishedAt() == null) {

@@ -8,3 +8,14 @@ export const exportToJsonFile = (filename: string, json: object) => {
   linkElement.setAttribute('download', exportFileDefaultName)
   linkElement.click()
 }
+
+export const downloadCSV = (filename: string, data: string) => {
+  const blob = new Blob([data], { type: 'application/octet-stream' })
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', filename)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}

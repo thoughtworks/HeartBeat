@@ -50,14 +50,14 @@ public class LeadTimeInfo {
 
 			this.jobFinishTime = TimeUtil.convertToISOFormat(String.valueOf(leadTime.getJobFinishTime()));
 
-			this.pipelineDelayTime = TimeUtil.msToHMS(leadTime.getPipelineDelayTime()).toString();
+			this.pipelineDelayTime = TimeUtil.msToHMS(leadTime.getPipelineDelayTime());
 
 			if (leadTime.getPrDelayTime() != 0.0) {
-				this.prDelayTime = TimeUtil.msToHMS(leadTime.getPrDelayTime()).toString();
+				this.prDelayTime = TimeUtil.msToHMS(leadTime.getPrDelayTime());
 			}
 
 			if (leadTime.getTotalTime() != 0.0) {
-				this.totalTime = TimeUtil.msToHMS(leadTime.getTotalTime()).toString();
+				this.totalTime = TimeUtil.msToHMS(leadTime.getTotalTime());
 			}
 		}
 	}

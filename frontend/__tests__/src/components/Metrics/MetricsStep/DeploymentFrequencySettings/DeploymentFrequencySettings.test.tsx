@@ -34,8 +34,28 @@ jest.mock('@src/context/config/configSlice', () => ({
 }))
 
 const mockValidationCheckContext = {
+  deploymentFrequencySettingsErrorMessages: [
+    {
+      id: 0,
+      error: {
+        organization: 'organization is required',
+        pipelineName: 'pipelineName is required',
+        steps: 'steps is required',
+      },
+    },
+    {
+      id: 1,
+      error: {
+        organization: 'organization is required',
+        pipelineName: 'pipelineName is required',
+        steps: 'steps is required',
+      },
+    },
+  ],
+  leadTimeForChangesErrorMessages: [],
+  clearErrorMessage: jest.fn(),
+  checkDuplicatedPipeline: jest.fn(),
   isPipelineValid: jest.fn().mockReturnValue(true),
-  getDuplicatedPipeLineIds: jest.fn().mockReturnValue([]),
 }
 
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
@@ -59,6 +79,7 @@ describe('DeploymentFrequencySettings', () => {
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
     expect(getAllByText(ORGANIZATION).length).toBe(2)
+    expect(getAllByText('organization is required').length).toBe(2)
   })
 
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
@@ -85,5 +106,6 @@ describe('DeploymentFrequencySettings', () => {
     await userEvent.click(listBox.getByText('mockOrgName'))
 
     expect(updateDeploymentFrequencySettings).toHaveBeenCalledTimes(1)
+    expect(mockValidationCheckContext.clearErrorMessage).toHaveBeenCalledTimes(1)
   })
 })

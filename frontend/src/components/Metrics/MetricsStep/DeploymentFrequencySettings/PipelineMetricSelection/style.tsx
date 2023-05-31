@@ -17,9 +17,3 @@ export const RemoveButton = styled(Button)({
   fontSize: '0.8rem',
   fontWeight: '550',
 })
-
-export const WarningMessage = styled('p')({
-  color: '#d32f2f',
-  margin: '0 0 0 2.5%',
-  width: '95%',
-})

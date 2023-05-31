@@ -1,18 +1,31 @@
-import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
+import camelCase from 'lodash.camelcase'
 
 interface Props {
   options: string[]
   label: string
   value: string
   id: number
+  errorMessage: string | undefined
   onGetSteps?: (pipelineName: string) => void
   step?: string
   onUpDatePipeline: (id: number, label: string, value: string) => void
+  onClearErrorMessage: (id: number, label: string) => void
 }
 
-export const SingleSelection = ({ options, label, value, id, onGetSteps, step, onUpDatePipeline }: Props) => {
+export const SingleSelection = ({
+  options,
+  label,
+  value,
+  id,
+  errorMessage,
+  onGetSteps,
+  step,
+  onUpDatePipeline,
+  onClearErrorMessage,
+}: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
   const [selectedOptions, setSelectedOptions] = useState(value)
 
@@ -24,6 +37,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
       onGetSteps(newValue)
     }
     onUpDatePipeline(id, label, newValue)
+    !!errorMessage && onClearErrorMessage(id, camelCase(label))
   }
 
   useEffect(() => {
@@ -34,7 +48,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
 
   return (
     <>
-      <FormControlWrapper variant='standard' required>
+      <FormControlWrapper variant='standard' required error={!!errorMessage}>
         <InputLabel id={labelId}>{label}</InputLabel>
         <Select labelId={labelId} value={value} onChange={handleChange}>
           {options.map((data) => (
@@ -43,6 +57,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
             </MenuItem>
           ))}
         </Select>
+        {errorMessage && <FormHelperText>{errorMessage}</FormHelperText>}
       </FormControlWrapper>
     </>
   )

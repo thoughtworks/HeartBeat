@@ -83,6 +83,9 @@ class Metrics {
 
   private readonly pipelineRemoveButton = () => cy.get('[data-test-id="remove-button"]').eq(1)
 
+  private readonly checkDuplicatedMessage = () =>
+    cy.contains('This pipeline is the same as another one!').should('exist')
+
   private readonly leadTimeForChangesTitle = () => cy.contains('Lead time for changes')
 
   private readonly pipelineStepSelectXXOption = () =>
@@ -136,6 +139,16 @@ class Metrics {
     this.pipelineSelect(1).click()
     this.pipelineSelectUIOption().click()
     this.buildKiteStepNotFoundTips().should('exist')
+    this.pipelineRemoveButton().click()
+
+    this.addOnePipelineButton().click()
+    this.organizationSecondSelect(1).click()
+    this.pipelineOfOrgXXXX().click()
+    this.pipelineSelect(1).click()
+    this.pipelineSelectOneOption().click()
+    this.stepOfSomePipelineSelect(1).click()
+    this.stepSelectSomeOption().click()
+    this.checkDuplicatedMessage()
     this.pipelineRemoveButton().click()
   }
 

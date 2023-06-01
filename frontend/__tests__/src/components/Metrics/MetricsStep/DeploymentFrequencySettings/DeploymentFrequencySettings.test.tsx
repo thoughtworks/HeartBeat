@@ -8,7 +8,7 @@ import {
   deleteADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice'
-import { DEPLOYMENT_FREQUENCY_SETTINGS, REMOVE_BUTTON, ORGANIZATION } from '../../../../fixtures'
+import { DEPLOYMENT_FREQUENCY_SETTINGS, ORGANIZATION, REMOVE_BUTTON } from '../../../../fixtures'
 
 jest.mock('@src/hooks', () => ({
   ...jest.requireActual('@src/hooks'),

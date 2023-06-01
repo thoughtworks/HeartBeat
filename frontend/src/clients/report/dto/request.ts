@@ -36,3 +36,8 @@ export interface ReportRequestDTO {
   }
   csvTimeStamp?: number
 }
+
+export interface CSVReportRequestDTO {
+  dataType: string
+  csvTimeStamp: number
+}

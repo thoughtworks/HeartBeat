@@ -32,4 +32,6 @@ public class GenerateReportRequest {
 
 	private CodebaseSetting codebaseSetting;
 
+	private String csvTimeStamp;
+
 }

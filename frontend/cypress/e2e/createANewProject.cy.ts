@@ -1,8 +1,9 @@
-import { GITHUB_TOKEN } from '../fixtures/fixtures'
+import { GITHUB_TOKEN, PIPELINE_CSV_HEADERS } from '../fixtures/fixtures'
 import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'
 import reportPage from '../pages/metrics/report'
+
 const cycleTimeData = [
   { label: 'Name', value: 'Value' },
   { label: 'Average cycle time', value: '6.71(days/SP)' },
@@ -47,6 +48,15 @@ const checkBoardCalculation = (testId: string, boardData: BoardDataItem[]) => {
     })
 }
 
+const checkPipelineCalculation = (testId: string) => {
+  cy.get(testId).find('tr').contains('Deployment frequency(deployments/day)').should('exist')
+}
+
+const checkDeploymentFrequency = (testId: string) => {
+  reportPage.deploymentFrequencyTitle().should('exist')
+  checkPipelineCalculation(testId)
+}
+
 const checkVelocity = (testId: string, velocityData: BoardDataItem[]) => {
   reportPage.velocityTitle().should('exist')
   checkBoardCalculation(testId, velocityData)
@@ -55,6 +65,26 @@ const checkVelocity = (testId: string, velocityData: BoardDataItem[]) => {
 const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
   reportPage.cycleTimeTitle().should('exist')
   checkBoardCalculation(testId, cycleTimeData)
+}
+
+const getCurrentPipelineCSVs = () => {
+  return new Cypress.Promise((resolve) => {
+    cy.exec('ls ./cypress/downloads').then((result) => {
+      const fileList = result.stdout.trim().split('\n')
+      const csvList = fileList.filter((file) => file.startsWith('pipeline-data-') && file.endsWith('.csv'))
+      resolve(csvList)
+    })
+  })
+}
+
+const checkPipelineCSV = (previousPipelineCSV, currentPipelineCSV) => {
+  Promise.all([previousPipelineCSV, currentPipelineCSV]).then(([previous, current]) => {
+    expect(previous.length + 1).equals(current.length)
+    const latestFile = current[current.length - 1]
+    cy.readFile(`./cypress/downloads/${latestFile}`).then((fileContent) => {
+      expect(fileContent).to.include(PIPELINE_CSV_HEADERS)
+    })
+  })
 }
 
 describe('Create a new project', () => {
@@ -117,8 +147,22 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
+    cy.wait(10000)
+
     checkVelocity('[data-test-id="Velocity"]', velocityData)
 
     checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
+
+    checkDeploymentFrequency('[data-test-id="Deployment frequency"]')
+
+    reportPage.exportPipelineDataButton().should('be.enabled')
+
+    const previousPipelineCSV = getCurrentPipelineCSVs()
+
+    reportPage.exportPipelineData()
+
+    const currentPipelineCSV = getCurrentPipelineCSVs()
+
+    checkPipelineCSV(previousPipelineCSV, currentPipelineCSV)
   })
 })

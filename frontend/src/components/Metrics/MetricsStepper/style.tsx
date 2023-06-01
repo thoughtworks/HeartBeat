@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import { Button, Stepper, Step, StepLabel } from '@mui/material'
+import { Button, Step, StepLabel, Stepper } from '@mui/material'
 import { theme } from '@src/theme'
 
 export const StyledStepper = styled(Stepper)({
@@ -72,18 +72,6 @@ export const NextButton = styled(Button)({
   },
   '&:hover': {
     backgroundColor: theme.main.backgroundColor,
-  },
-})
-
-export const ExportButton = styled(Button)({
-  ...basicButtonStyle,
-  width: '11rem',
-  backgroundColor: theme.main.backgroundColor,
-  color: theme.main.color,
-  '&:hover': {
-    ...basicButtonStyle,
-    backgroundColor: theme.main.backgroundColor,
-    color: theme.main.color,
   },
 })
 

@@ -115,8 +115,20 @@ const fillMetricsPageDate = async () => {
         updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' })
       ),
       store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock new step' })),
-      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'organization', value: 'mock new organization' })),
-      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' })),
+      store.dispatch(
+        updateLeadTimeForChanges({
+          updateId: 0,
+          label: 'organization',
+          value: 'mock new organization',
+        })
+      ),
+      store.dispatch(
+        updateLeadTimeForChanges({
+          updateId: 0,
+          label: 'pipelineName',
+          value: 'mock new pipelineName',
+        })
+      ),
       store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'step', value: 'mock new step' })),
     ])
   })
@@ -348,11 +360,21 @@ describe('MetricsStepper', () => {
         treatFlagCardAsBlock: false,
       },
       deployment: [
-        { id: 0, organization: 'mock new organization', pipelineName: 'mock new pipelineName', step: 'mock new step' },
+        {
+          id: 0,
+          organization: 'mock new organization',
+          pipelineName: 'mock new pipelineName',
+          step: 'mock new step',
+        },
       ],
       doneStatus: ['Done', 'Canceled'],
       leadTime: [
-        { id: 0, organization: 'mock new organization', pipelineName: 'mock new pipelineName', step: 'mock new step' },
+        {
+          id: 0,
+          organization: 'mock new organization',
+          pipelineName: 'mock new pipelineName',
+          step: 'mock new step',
+        },
       ],
     }
     const { getByText } = setup()

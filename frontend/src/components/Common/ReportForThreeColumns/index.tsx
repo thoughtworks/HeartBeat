@@ -10,6 +10,7 @@ interface ReportForThreeColumnsProps {
   listName: string
   data: ReportDataWithThreeColumns[]
 }
+
 export const ReportForThreeColumns = ({ title, fieldName, listName, data }: ReportForThreeColumnsProps) => {
   const renderRows = () => {
     return data.map((row) => (
@@ -31,7 +32,7 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
     <>
       <MetricsSettingTitle title={title} />
       <Container>
-        <Table>
+        <Table data-test-id={title}>
           <TableHead>
             <TableRow>
               <TableCell>{fieldName}</TableCell>

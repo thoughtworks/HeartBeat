@@ -78,10 +78,7 @@ GenerateReporter_service -> GenerateReporter_service: calculate CycleTime
 GenerateReporter_service -> GenerateReporter_service: calculate Classification
 group generate csv for board
     GenerateReporter_service -> GenerateReporter_service: generate board csv data
-    GenerateReporter_service -> GenerateCsvFileService: convert board data to csv
-    activate GenerateCsvFileService
-    GenerateCsvFileService --> GenerateReporter_service
-    deactivate GenerateCsvFileService
+    GenerateReporter_service -> GenerateReporter_service: convert board data to csv
 end
 
 
@@ -179,10 +176,7 @@ group generate csv for pipeline
 
     end
     GenerateReporter_service -> GenerateReporter_service: generate pipeline csv data without codebase
-    GenerateReporter_service -> GenerateCsvFileService: convert pipeline data to csv
-    activate GenerateCsvFileService
-    GenerateCsvFileService --> GenerateReporter_service: save csv
-    deactivate GenerateCsvFileService
+    GenerateReporter_service -> GenerateReporter_service: convert pipeline data to csv
   end
 
 end
@@ -193,4 +187,34 @@ GenerateReportController --> Frontend: return response
 deactivate GenerateReportController
 end
 @enduml
+```
+
+## C3 - Export CSV
+
+```plantuml
+@startuml Export csv file
+skin rose
+title C3 - Heartbeat - Export csv file
+
+participant FrontEnd
+participant GenerateReportController
+participant GenerateReporterService
+participant CSVFileGenerator
+
+group Export pipeline csv file
+    FrontEnd -> GenerateReportController : download csv file
+    activate GenerateReportController
+    GenerateReportController -> GenerateReporterService: fetch csv data
+    activate GenerateReporterService
+    GenerateReporterService -> CSVFileGenerator: get stream data from csv file
+    activate CSVFileGenerator
+    GenerateReporterService <-- CSVFileGenerator: return csv stream data
+    deactivate CSVFileGenerator
+    GenerateReportController <-- GenerateReporterService: return csv stream data
+    deactivate GenerateReporterService
+    FrontEnd <-- GenerateReportController : return csv stream data
+    deactivate GenerateReportController
+end
+@enduml
+
 ```

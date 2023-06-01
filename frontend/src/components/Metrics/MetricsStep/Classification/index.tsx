@@ -5,7 +5,7 @@ import { saveTargetFields, selectClassificationWarningMessage } from '@src/conte
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
-import { ErrorNotificationAutoDismiss } from '@src/components/Common/ErrorNotificationAutoDismiss'
+import { WarningNotification } from '@src/components/Common/WarningNotification'
 
 interface classificationProps {
   title: string
@@ -41,7 +41,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
   return (
     <>
       <MetricsSettingTitle title={title} />
-      {classificationWarningMessage && <ErrorNotificationAutoDismiss message={classificationWarningMessage} />}
+      {classificationWarningMessage && <WarningNotification message={classificationWarningMessage} />}
       <FormControl variant='standard'>
         <InputLabel id='classification-check-box'>{label}</InputLabel>
         <Select

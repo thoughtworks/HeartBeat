@@ -2,6 +2,7 @@ package heartbeat.controller.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
@@ -14,15 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,6 +72,26 @@ class GenerateReporterControllerTest {
 			.read("$.deploymentFrequency.avgDeploymentFrequency.deploymentFrequency")
 			.toString();
 		assertThat(resultDeployment).contains("0.1");
+	}
+
+	@Test
+	public void shouldReturnWhenExportCsv() throws Exception {
+		String dataType = "pipeline";
+		String csvTimeStamp = "1685010080107";
+		String expectedResponse = "csv data";
+
+		when(generateReporterService
+			.fetchCSVData(ExportCSVRequest.builder().dataType(dataType).csvTimeStamp(csvTimeStamp).build()))
+			.thenReturn(new InputStreamResource(new ByteArrayInputStream(expectedResponse.getBytes())));
+
+		MockHttpServletResponse response = mockMvc
+			.perform(get("/reports/{dataType}/{csvTimeStamp}", dataType, csvTimeStamp))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse();
+
+		assertThat(response.getContentAsString()).isEqualTo(expectedResponse);
+
 	}
 
 }

@@ -51,10 +51,6 @@ public class BoardUtil {
 		Map<String, Double> result = new HashMap<>();
 		ArrayList<StatusChangedItem> statusChangedItemArrayList = new ArrayList<>(statusChangedItems);
 		StatusChangedItem lastStatusChangedItem = statusChangedItems.get(statusChangedItems.size() - 1);
-		if (!("Done".equals(lastStatusChangedItem.getStatus()) || "Closed".equals(lastStatusChangedItem.getStatus()))) {
-			long timestamp = lastStatusChangedItem.getTimestamp() + 1;
-			statusChangedItemArrayList.add(StatusChangedItem.builder().timestamp(timestamp).status("Done").build());
-		}
 		for (int i = 0; i < statusChangedItemArrayList.size(); i++) {
 			StatusChangedItem statusChangedItem = statusChangedItemArrayList.get(i);
 			String status = statusChangedItem.getStatus().toUpperCase();

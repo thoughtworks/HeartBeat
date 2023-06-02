@@ -1,7 +1,7 @@
 package heartbeat.service.report;
 
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
-import heartbeat.exception.NotFoundException;
+import heartbeat.exception.FileIOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -120,8 +120,8 @@ class CSVFileGeneratorTest {
 	@Test
 	public void shouldThrowExceptionWhenFileNotExist() {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
-		assertThrows(NotFoundException.class, () -> csvFileGenerator.getDataFromCSV("pipeline", 123456L));
-		assertThrows(NotFoundException.class,
+		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("pipeline", 123456L));
+		assertThrows(FileIOException.class,
 				() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "15469:89/033"));
 	}
 

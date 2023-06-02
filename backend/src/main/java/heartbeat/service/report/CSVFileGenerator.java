@@ -85,6 +85,7 @@ public class CSVFileGenerator {
 			}
 		}
 		catch (IOException e) {
+			e.printStackTrace();
 			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "this file is not exist");
 		}
 	}

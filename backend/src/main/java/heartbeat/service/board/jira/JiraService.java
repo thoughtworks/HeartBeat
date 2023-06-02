@@ -1,5 +1,8 @@
 package heartbeat.service.board.jira;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -38,11 +41,6 @@ import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,9 +55,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -434,10 +433,20 @@ public class JiraService {
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, URI baseUrl,
 			List<JiraCard> allDoneCards) {
 		List<JiraCardDTO> matchedCards = new ArrayList<>();
-		allDoneCards.forEach(doneCard -> {
+
+		allDoneCards.stream().filter(jiraCard -> {
+			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(),
+					request.getToken());
+			String displayName = jiraCardHistory.getItems()
+				.get(jiraCardHistory.getItems().size() - 1)
+				.getTo()
+				.getDisplayName();
+			return CardStepsEnum.DONE.getValue().equalsIgnoreCase(displayName)
+					|| CardStepsEnum.CLOSED.getValue().equalsIgnoreCase(displayName);
+		}).forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock());
-			ArrayList<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
+			List<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());

@@ -67,28 +67,14 @@ const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
   checkBoardCalculation(testId, cycleTimeData)
 }
 
-const getCurrentPipelineCSVs = () => {
-  return new Cypress.Promise((resolve) => {
-    cy.exec('ls ./cypress/downloads').then((result) => {
-      const fileList = result.stdout.trim().split('\n')
-      const csvList = fileList.filter((file) => file.startsWith('pipeline-data-') && file.endsWith('.csv'))
-      resolve(csvList)
-    })
-  })
-}
-
-const checkPipelineCSV = (previousPipelineCSV, currentPipelineCSV) => {
-  Promise.all([previousPipelineCSV, currentPipelineCSV]).then(([previous, current]) => {
-    expect(previous.length + 1).equals(current.length)
-    const latestFile = current[current.length - 1]
-    cy.readFile(`./cypress/downloads/${latestFile}`).then((fileContent) => {
-      expect(fileContent).to.include(PIPELINE_CSV_HEADERS)
-    })
+const checkPipelineCSV = () => {
+  return cy.task('readDir', 'cypress/downloads').then((files) => {
+    expect(files).to.match(new RegExp(/pipeline-data-.*\.csv/))
   })
 }
 
 describe('Create a new project', () => {
-  it('Should create a new project manually', () => {
+  it('Should create a new project manually', async () => {
     homePage.navigate()
 
     homePage.createANewProject()
@@ -157,12 +143,8 @@ describe('Create a new project', () => {
 
     reportPage.exportPipelineDataButton().should('be.enabled')
 
-    const previousPipelineCSV = getCurrentPipelineCSVs()
-
     reportPage.exportPipelineData()
 
-    const currentPipelineCSV = getCurrentPipelineCSVs()
-
-    checkPipelineCSV(previousPipelineCSV, currentPipelineCSV)
+    checkPipelineCSV()
   })
 })

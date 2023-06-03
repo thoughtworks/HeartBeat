@@ -44,6 +44,7 @@ testem.log
 .DS_Store
 Thumbs.db
 volume
+csv
 
 # Stubby4j
 /stubs/logs

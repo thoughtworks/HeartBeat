@@ -1,14 +1,13 @@
 package heartbeat.service.report;
 
+import com.opencsv.CSVWriter;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
-import heartbeat.exception.NotFoundException;
+import heartbeat.exception.FileIOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import com.opencsv.CSVWriter;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -31,7 +30,8 @@ public class CSVFileGenerator {
 			return resource;
 		}
 		catch (IOException e) {
-			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "this file is not exist");
+			log.error("Failed to read file", e);
+			throw new FileIOException(e);
 		}
 	}
 
@@ -46,8 +46,9 @@ public class CSVFileGenerator {
 		}
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv";
+		File file = new File(fileName);
 
-		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(fileName))) {
+		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
 			String[] headers = { "Pipeline Name", "Pipeline Step", "Build Number", "Committer",
 					"First Code Committed Time In PR", "Code Committed Time", "PR Created Time", "PR Merged Time",
 					"Deployment Completed Time", "Total Lead Time (HH:mm:ss)",
@@ -85,7 +86,8 @@ public class CSVFileGenerator {
 			}
 		}
 		catch (IOException e) {
-			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "this file is not exist");
+			log.error("Failed to write file", e);
+			throw new FileIOException(e);
 		}
 	}
 

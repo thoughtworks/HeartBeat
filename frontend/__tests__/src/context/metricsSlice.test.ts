@@ -198,7 +198,7 @@ describe('saveMetricsSetting reducer', () => {
       crews: undefined,
       cycleTime: {
         jiraColumns: undefined,
-        treatFlagCardAsBlock: true,
+        treatFlagCardAsBlock: undefined,
       },
       doneStatus: undefined,
       classification: undefined,
@@ -213,6 +213,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([])
     expect(savedMetricsSetting.doneColumn).toEqual([])
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
+    expect(savedMetricsSetting.treatFlagCardAsBlock).toEqual(true)
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '' },
     ])

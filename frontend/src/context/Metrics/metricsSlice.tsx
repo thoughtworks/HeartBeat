@@ -182,13 +182,15 @@ export const metricsSlice = createSlice({
 
     updateMetricsImportedData: (state, action) => {
       const { crews, cycleTime, doneStatus, classification, deployment, leadTime } = action.payload
-      state.importedData.importedCrews = crews
-      state.importedData.importedCycleTime.importedCycleTimeSettings = cycleTime?.jiraColumns
-      state.importedData.importedCycleTime.importedTreatFlagCardAsBlock = cycleTime?.treatFlagCardAsBlock
-      state.importedData.importedDoneStatus = doneStatus
-      state.importedData.importedClassification = classification
-      state.importedData.importedDeployment = deployment ?? []
-      state.importedData.importedLeadTime = leadTime ?? []
+      state.importedData.importedCrews = crews || state.importedData.importedCrews
+      state.importedData.importedCycleTime.importedCycleTimeSettings =
+        cycleTime?.jiraColumns || state.importedData.importedCycleTime.importedCycleTimeSettings
+      state.importedData.importedCycleTime.importedTreatFlagCardAsBlock =
+        cycleTime?.treatFlagCardAsBlock || state.importedData.importedCycleTime.importedTreatFlagCardAsBlock
+      state.importedData.importedDoneStatus = doneStatus || state.importedData.importedDoneStatus
+      state.importedData.importedClassification = classification || state.importedData.importedClassification
+      state.importedData.importedDeployment = deployment || state.importedData.importedDeployment
+      state.importedData.importedLeadTime = leadTime || state.importedData.importedLeadTime
     },
 
     updateMetricsState: (state, action) => {

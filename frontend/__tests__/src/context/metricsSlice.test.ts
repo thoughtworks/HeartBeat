@@ -10,6 +10,8 @@ import saveMetricsSettingReducer, {
   saveTargetFields,
   saveUsers,
   selectDeploymentFrequencySettings,
+  selectOrganizationWarningMessage,
+  selectPipelineNameWarningMessage,
   updateDeploymentFrequencySettings,
   updateLeadTimeForChanges,
   updateMetricsImportedData,
@@ -21,7 +23,8 @@ import saveMetricsSettingReducer, {
 import { store } from '@src/store'
 import { PIPELINE_SETTING_TYPES } from '../fixtures'
 import { CLASSIFICATION_WARNING_MESSAGE } from '../fixtures'
-import { REAL_DONE_WARNING_MESSAGE } from '@src/constants'
+import { ORGANIZATION_WARNING_MESSAGE, PIPELINE_NAME_WARNING_MESSAGE, REAL_DONE_WARNING_MESSAGE } from '@src/constants'
+import { setupStore } from '../utils/setupStoreUtil'
 
 const initState = {
   jiraColumns: [],
@@ -47,6 +50,8 @@ const initState = {
   cycleTimeWarningMessage: null,
   classificationWarningMessage: null,
   realDoneWarningMessage: null,
+  deploymentWarningMessage: [],
+  leadTimeWarningMessage: [],
 }
 
 const mockJiraResponse = {
@@ -461,6 +466,12 @@ describe('saveMetricsSetting reducer', () => {
           leadTimeForChanges: [
             { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
           ],
+          deploymentWarningMessage: [
+            { id: 0, organization: null, pipelineName: null, step: null },
+            { id: 1, organization: null, pipelineName: PIPELINE_NAME_WARNING_MESSAGE, step: null },
+            { id: 2, organization: ORGANIZATION_WARNING_MESSAGE, pipelineName: null, step: null },
+          ],
+          leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
         },
       },
       {
@@ -468,6 +479,8 @@ describe('saveMetricsSetting reducer', () => {
         expectSetting: {
           deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
           leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
+          deploymentWarningMessage: [],
+          leadTimeWarningMessage: [],
         },
       },
     ]
@@ -481,6 +494,8 @@ describe('saveMetricsSetting reducer', () => {
 
         expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(expectSetting.deploymentFrequencySettings)
         expect(savedMetricsSetting.leadTimeForChanges).toEqual(expectSetting.leadTimeForChanges)
+        expect(savedMetricsSetting.deploymentWarningMessage).toEqual(expectSetting.deploymentWarningMessage)
+        expect(savedMetricsSetting.leadTimeWarningMessage).toEqual(expectSetting.leadTimeWarningMessage)
       })
     })
   })
@@ -830,5 +845,77 @@ describe('saveMetricsSetting reducer', () => {
     )
 
     expect(savedMetricsSetting.realDoneWarningMessage).toEqual(REAL_DONE_WARNING_MESSAGE)
+  })
+
+  describe('select pipeline settings warning message', () => {
+    const mockPipelineSettings = [
+      {
+        id: 0,
+        organization: 'mockOrganization2',
+        pipelineName: 'mockPipelineName1',
+        step: 'mockStep',
+      },
+      {
+        id: 1,
+        organization: 'mockOrganization1',
+        pipelineName: 'mockPipelineName2',
+        step: ' mockStep',
+      },
+    ]
+    const mockImportData = {
+      deployment: mockPipelineSettings,
+      leadTime: mockPipelineSettings,
+    }
+    const mockPipelineList = [
+      {
+        id: 'mockId1',
+        name: 'mockPipelineName1',
+        orgId: 'mockOrgId1',
+        orgName: 'mockOrganization1',
+        repository: 'mockRepository1',
+        steps: ['mock step 1', 'mock step 2'],
+      },
+    ]
+    const ORGANIZATION_WARNING_MESSAGE = 'This organization in import data might be removed'
+    const PIPELINE_NAME_WARNING_MESSAGE = 'This Pipeline in import data might be removed'
+
+    let store = setupStore()
+    beforeEach(async () => {
+      store = setupStore()
+      await store.dispatch(updateMetricsImportedData(mockImportData))
+      await store.dispatch(updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated: false }))
+    })
+    afterEach(() => {
+      jest.clearAllMocks()
+    })
+    it('should return organization warning message when call selectOrganizationWarningMessage function', () => {
+      expect(
+        selectOrganizationWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+      ).toEqual(ORGANIZATION_WARNING_MESSAGE)
+      expect(
+        selectOrganizationWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+      ).toBeNull()
+      expect(
+        selectOrganizationWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
+      ).toEqual(ORGANIZATION_WARNING_MESSAGE)
+      expect(
+        selectOrganizationWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
+      ).toBeNull()
+    })
+
+    it('should return pipelineName warning message when call selectPipelineNameWarningMessage function', () => {
+      expect(
+        selectPipelineNameWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+      ).toBeNull()
+      expect(
+        selectPipelineNameWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+      ).toEqual(PIPELINE_NAME_WARNING_MESSAGE)
+      expect(
+        selectPipelineNameWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
+      ).toBeNull()
+      expect(
+        selectPipelineNameWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
+      ).toEqual(PIPELINE_NAME_WARNING_MESSAGE)
+    })
   })
 })

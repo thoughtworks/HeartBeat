@@ -5,6 +5,8 @@ import {
   CLASSIFICATION_WARNING_MESSAGE,
   CYCLE_TIME_LIST,
   METRICS_CONSTANTS,
+  ORGANIZATION_WARNING_MESSAGE,
+  PIPELINE_NAME_WARNING_MESSAGE,
   PIPELINE_SETTING_TYPES,
   REAL_DONE_WARNING_MESSAGE,
 } from '@src/constants'
@@ -15,6 +17,13 @@ export interface IPipelineConfig {
   organization: string
   pipelineName: string
   step: string
+}
+
+export interface IPipelineWarningMessageConfig {
+  id: number | null
+  organization: string | null
+  pipelineName: string | null
+  step: string | null
 }
 
 export interface savedMetricsSettingState {
@@ -40,6 +49,8 @@ export interface savedMetricsSettingState {
   cycleTimeWarningMessage: string | null
   classificationWarningMessage: string | null
   realDoneWarningMessage: string | null
+  deploymentWarningMessage: IPipelineWarningMessageConfig[]
+  leadTimeWarningMessage: IPipelineWarningMessageConfig[]
 }
 
 const initialState: savedMetricsSettingState = {
@@ -65,6 +76,8 @@ const initialState: savedMetricsSettingState = {
   cycleTimeWarningMessage: null,
   classificationWarningMessage: null,
   realDoneWarningMessage: null,
+  deploymentWarningMessage: [],
+  leadTimeWarningMessage: [],
 }
 
 const compareArrays = (arrayA: string[], arrayB: string[]): string | null => {
@@ -268,8 +281,32 @@ export const metricsSlice = createSlice({
               step: '',
             }))
 
+      const createPipelineWarning = ({ id, organization, pipelineName }: IPipelineConfig) => {
+        const orgWarning = orgNames.has(organization) ? null : ORGANIZATION_WARNING_MESSAGE
+        const pipelineNameWarning =
+          orgWarning || filteredPipelineNames(organization).includes(pipelineName)
+            ? null
+            : PIPELINE_NAME_WARNING_MESSAGE
+
+        return {
+          id,
+          organization: orgWarning,
+          pipelineName: pipelineNameWarning,
+          step: null,
+        }
+      }
+
+      const getPipelinesWarningMessage = (pipelines: IPipelineConfig[]) => {
+        if (!pipelines.length || isProjectCreated) {
+          return []
+        }
+        return pipelines.map((pipeline) => createPipelineWarning(pipeline))
+      }
+
       state.deploymentFrequencySettings = getValidPipelines(importedDeployment)
       state.leadTimeForChanges = getValidPipelines(importedLeadTime)
+      state.deploymentWarningMessage = getPipelinesWarningMessage(importedDeployment)
+      state.leadTimeWarningMessage = getPipelinesWarningMessage(importedLeadTime)
     },
 
     updatePipelineStep: (state, action) => {
@@ -371,5 +408,23 @@ export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.tr
 export const selectCycleTimeWarningMessage = (state: RootState) => state.metrics.cycleTimeWarningMessage
 export const selectClassificationWarningMessage = (state: RootState) => state.metrics.classificationWarningMessage
 export const selectRealDoneWarningMessage = (state: RootState) => state.metrics.realDoneWarningMessage
+
+export const selectOrganizationWarningMessage = (state: RootState, id: number, type: string) => {
+  const { deploymentWarningMessage, leadTimeWarningMessage } = state.metrics
+  const warningMessage =
+    type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+      ? deploymentWarningMessage
+      : leadTimeWarningMessage
+  return warningMessage.find((item) => item.id === id)?.organization
+}
+
+export const selectPipelineNameWarningMessage = (state: RootState, id: number, type: string) => {
+  const { deploymentWarningMessage, leadTimeWarningMessage } = state.metrics
+  const warningMessage =
+    type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+      ? deploymentWarningMessage
+      : leadTimeWarningMessage
+  return warningMessage.find((item) => item.id === id)?.pipelineName
+}
 
 export default metricsSlice.reducer

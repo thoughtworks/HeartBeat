@@ -1,15 +1,24 @@
-import { render, waitFor, within } from '@testing-library/react'
+import { act, render, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../../utils/setupStoreUtil'
 import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection'
 import { metricsClient } from '@src/clients/MetricsClient'
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice'
-import { ORGANIZATION, PIPELINE_NAME, PIPELINE_SETTING_TYPES, REMOVE_BUTTON, STEP } from '../../../../fixtures'
+import {
+  ERROR_MESSAGE_TIME_DURATION,
+  ORGANIZATION,
+  PIPELINE_NAME,
+  PIPELINE_SETTING_TYPES,
+  REMOVE_BUTTON,
+  STEP,
+} from '../../../../fixtures'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
   deleteADeploymentFrequencySetting: jest.fn().mockReturnValue({ type: 'DELETE_DEPLOYMENT_FREQUENCY_SETTING' }),
+  selectOrganizationWarningMessage: jest.fn().mockReturnValue('Test organization warning message'),
+  selectPipelineNameWarningMessage: jest.fn().mockReturnValue('Test pipelineName warning message'),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({
@@ -161,5 +170,26 @@ describe('PipelineMetricSelection', () => {
     )
 
     expect(getByText('This pipeline is the same as another one!')).toBeInTheDocument()
+  })
+
+  it('should show warning message when organization and pipelineName warning messages have value', async () => {
+    const { getByText } = await setup(deploymentFrequencySetting, false, [])
+
+    expect(getByText('Test organization warning message')).toBeInTheDocument()
+    expect(getByText('Test pipelineName warning message')).toBeInTheDocument()
+  })
+
+  it('should clear warning message when organization and pipelineName warning messages have value after four seconds', async () => {
+    jest.useFakeTimers()
+    const { queryByText } = await setup(deploymentFrequencySetting, false, [])
+
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
+
+    await waitFor(() => {
+      expect(queryByText('Test organization warning message')).not.toBeInTheDocument()
+      expect(queryByText('Test pipelineName warning message')).not.toBeInTheDocument()
+    })
   })
 })

@@ -9,6 +9,7 @@ import {
   PIPELINE_NAME_WARNING_MESSAGE,
   PIPELINE_SETTING_TYPES,
   REAL_DONE_WARNING_MESSAGE,
+  STEP_WARNING_MESSAGE,
 } from '@src/constants'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 
@@ -318,6 +319,7 @@ export const metricsSlice = createSlice({
         ? ''
         : updatedImportedPipeline.filter((pipeline) => pipeline.id === id)[0]?.step ?? ''
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
+      const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
         pipelines.map((pipeline) =>
@@ -329,9 +331,27 @@ export const metricsSlice = createSlice({
             : pipeline
         )
 
+      const getStepWarningMessage = (pipelines: IPipelineWarningMessageConfig[]) => {
+        if (pipelines.length > 0) {
+          return pipelines.map((pipeline) =>
+            pipeline.id === id
+              ? {
+                  ...pipeline,
+                  step: stepWarningMessage,
+                }
+              : pipeline
+          )
+        }
+        return []
+      }
+
       type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
         ? (state.deploymentFrequencySettings = getPipelineSettings(state.deploymentFrequencySettings))
         : (state.leadTimeForChanges = getPipelineSettings(state.leadTimeForChanges))
+
+      type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+        ? (state.deploymentWarningMessage = getStepWarningMessage(state.deploymentWarningMessage))
+        : (state.leadTimeWarningMessage = getStepWarningMessage(state.leadTimeWarningMessage))
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {
@@ -425,6 +445,15 @@ export const selectPipelineNameWarningMessage = (state: RootState, id: number, t
       ? deploymentWarningMessage
       : leadTimeWarningMessage
   return warningMessage.find((item) => item.id === id)?.pipelineName
+}
+
+export const selectStepWarningMessage = (state: RootState, id: number, type: string) => {
+  const { deploymentWarningMessage, leadTimeWarningMessage } = state.metrics
+  const warningMessage =
+    type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+      ? deploymentWarningMessage
+      : leadTimeWarningMessage
+  return warningMessage.find((item) => item.id === id)?.step
 }
 
 export default metricsSlice.reducer

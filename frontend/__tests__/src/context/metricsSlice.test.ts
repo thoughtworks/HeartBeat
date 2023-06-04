@@ -12,6 +12,7 @@ import saveMetricsSettingReducer, {
   selectDeploymentFrequencySettings,
   selectOrganizationWarningMessage,
   selectPipelineNameWarningMessage,
+  selectStepWarningMessage,
   updateDeploymentFrequencySettings,
   updateLeadTimeForChanges,
   updateMetricsImportedData,
@@ -513,6 +514,7 @@ describe('saveMetricsSetting reducer', () => {
       ...initState,
       deploymentFrequencySettings: [
         { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+        { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '' },
       ],
       leadTimeForChanges: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
       importedData: {
@@ -520,6 +522,11 @@ describe('saveMetricsSetting reducer', () => {
         importedDeployment: mockImportedDeployment,
         importedLeadTime: mockImportedLeadTime,
       },
+      deploymentWarningMessage: [
+        { id: 0, organization: null, pipelineName: null, step: null },
+        { id: 1, organization: null, pipelineName: null, step: null },
+      ],
+      leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
     }
     const mockSteps = ['mockStep1']
     const testSettingsCases = [
@@ -529,13 +536,30 @@ describe('saveMetricsSetting reducer', () => {
         type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         expectedSettings: [
           { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+          { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '' },
+        ],
+        expectedWarning: [
+          { id: 0, organization: null, pipelineName: null, step: null },
+          { id: 1, organization: null, pipelineName: null, step: null },
         ],
       },
       {
         id: 1,
         steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
-        expectedSettings: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
+        expectedSettings: [
+          { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+          { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '' },
+        ],
+        expectedWarning: [
+          { id: 0, organization: null, pipelineName: null, step: null },
+          {
+            id: 1,
+            organization: null,
+            pipelineName: null,
+            step: 'Selected step of this pipeline in import data might be removed',
+          },
+        ],
       },
       {
         id: 0,
@@ -544,20 +568,26 @@ describe('saveMetricsSetting reducer', () => {
         expectedSettings: [
           { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
         ],
+        expectedWarning: [{ id: 0, organization: null, pipelineName: null, step: null }],
       },
       {
         id: 1,
         steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
         expectedSettings: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
+        expectedWarning: [{ id: 0, organization: null, pipelineName: null, step: null }],
       },
     ]
 
-    testSettingsCases.forEach(({ id, type, steps, expectedSettings }) => {
+    testSettingsCases.forEach(({ id, type, steps, expectedSettings, expectedWarning }) => {
       const settingsKey =
         type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
           ? 'deploymentFrequencySettings'
           : 'leadTimeForChanges'
+      const warningKey =
+        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
+          ? 'deploymentWarningMessage'
+          : 'leadTimeWarningMessage'
 
       it(`should update ${settingsKey} step when call updatePipelineSteps with id ${id}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(
@@ -570,6 +600,7 @@ describe('saveMetricsSetting reducer', () => {
         )
 
         expect(savedMetricsSetting[settingsKey]).toEqual(expectedSettings)
+        expect(savedMetricsSetting[warningKey]).toEqual(expectedWarning)
       })
     })
   })
@@ -859,7 +890,7 @@ describe('saveMetricsSetting reducer', () => {
         id: 1,
         organization: 'mockOrganization1',
         pipelineName: 'mockPipelineName2',
-        step: ' mockStep',
+        step: ' mockStep1',
       },
     ]
     const mockImportData = {
@@ -876,14 +907,28 @@ describe('saveMetricsSetting reducer', () => {
         steps: ['mock step 1', 'mock step 2'],
       },
     ]
+    const mockSteps = ['mockStep']
     const ORGANIZATION_WARNING_MESSAGE = 'This organization in import data might be removed'
     const PIPELINE_NAME_WARNING_MESSAGE = 'This Pipeline in import data might be removed'
+    const STEP_WARNING_MESSAGE = 'Selected step of this pipeline in import data might be removed'
 
     let store = setupStore()
     beforeEach(async () => {
       store = setupStore()
       await store.dispatch(updateMetricsImportedData(mockImportData))
       await store.dispatch(updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated: false }))
+      await store.dispatch(
+        updatePipelineStep({ steps: mockSteps, id: 0, type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE })
+      )
+      await store.dispatch(
+        updatePipelineStep({ steps: mockSteps, id: 1, type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE })
+      )
+      await store.dispatch(
+        updatePipelineStep({ steps: mockSteps, id: 0, type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE })
+      )
+      await store.dispatch(
+        updatePipelineStep({ steps: mockSteps, id: 1, type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE })
+      )
     })
     afterEach(() => {
       jest.clearAllMocks()
@@ -916,6 +961,21 @@ describe('saveMetricsSetting reducer', () => {
       expect(
         selectPipelineNameWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
       ).toEqual(PIPELINE_NAME_WARNING_MESSAGE)
+    })
+
+    it('should return step warning message when call selectStepWarningMessage function', () => {
+      expect(
+        selectStepWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+      ).toBeNull()
+      expect(
+        selectStepWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
+      ).toEqual(STEP_WARNING_MESSAGE)
+      expect(
+        selectStepWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
+      ).toBeNull()
+      expect(selectStepWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)).toEqual(
+        STEP_WARNING_MESSAGE
+      )
     })
   })
 })

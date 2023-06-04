@@ -19,6 +19,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   deleteADeploymentFrequencySetting: jest.fn().mockReturnValue({ type: 'DELETE_DEPLOYMENT_FREQUENCY_SETTING' }),
   selectOrganizationWarningMessage: jest.fn().mockReturnValue('Test organization warning message'),
   selectPipelineNameWarningMessage: jest.fn().mockReturnValue('Test pipelineName warning message'),
+  selectStepWarningMessage: jest.fn().mockReturnValue('Test step warning message'),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({
@@ -177,6 +178,7 @@ describe('PipelineMetricSelection', () => {
 
     expect(getByText('Test organization warning message')).toBeInTheDocument()
     expect(getByText('Test pipelineName warning message')).toBeInTheDocument()
+    expect(getByText('Test step warning message')).toBeInTheDocument()
   })
 
   it('should clear warning message when organization and pipelineName warning messages have value after four seconds', async () => {
@@ -190,6 +192,7 @@ describe('PipelineMetricSelection', () => {
     await waitFor(() => {
       expect(queryByText('Test organization warning message')).not.toBeInTheDocument()
       expect(queryByText('Test pipelineName warning message')).not.toBeInTheDocument()
+      expect(queryByText('Test step warning message')).not.toBeInTheDocument()
     })
   })
 })

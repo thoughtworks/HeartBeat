@@ -26,6 +26,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ]),
   selectOrganizationWarningMessage: jest.fn().mockReturnValue(null),
   selectPipelineNameWarningMessage: jest.fn().mockReturnValue(null),
+  selectStepWarningMessage: jest.fn().mockReturnValue(null),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({

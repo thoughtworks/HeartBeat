@@ -19,6 +19,7 @@ export const RemoveButton = styled(Button)({
 })
 
 export const WarningMessage = styled('p')({
+  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
   color: '#d32f2f',
   margin: '0 0 0 2.5%',
   width: '95%',

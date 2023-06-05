@@ -1,12 +1,25 @@
 # HeartBeat User Guide（2020/06，Version 1）
 
+* [About HeartBeat](#1-About-HeartBeat)
+* [Support tools](#2-Support-tools)
+* [思考工具](#思考工具)
+    * [矩阵](#矩阵)
+    * [清单](#清单)
+    * [假设](#假设)
+* [输出手段](#输出手段)
+    * [图的好处](#图的好处)
+    * [图的用法](#图的用法)
+* [输出核心](#输出核心)
+* [验证](#验证)
+* [反思](#反思)
+
 # 1 About HeartBeat
 
 HeartBeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.
 
 State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
 
-**Here are the for Key meterics:**
+**Here are the four Key meterics:**
 
 1. Deployment Frequency (DF)
 2. Lead Time for changes (LTC)

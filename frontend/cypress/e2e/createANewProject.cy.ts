@@ -1,4 +1,4 @@
-import { GITHUB_TOKEN, PIPELINE_CSV_HEADERS } from '../fixtures/fixtures'
+import { GITHUB_TOKEN } from '../fixtures/fixtures'
 import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'

@@ -180,3 +180,12 @@ export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
 export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed.`
 
 export const REAL_DONE_WARNING_MESSAGE = 'Some selected doneStatus in import data might be removed'
+
+export const ORGANIZATION_WARNING_MESSAGE = 'This organization in import data might be removed'
+
+export const PIPELINE_NAME_WARNING_MESSAGE = 'This Pipeline in import data might be removed'
+
+export const STEP_WARNING_MESSAGE = 'Selected step of this pipeline in import data might be removed'
+
+export const NO_STEP_WARNING_MESSAGE =
+  'There is no step during this period for this pipeline! Please change the search time in the Config page!'

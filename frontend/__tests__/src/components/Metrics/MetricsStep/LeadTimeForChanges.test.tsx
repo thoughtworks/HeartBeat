@@ -22,6 +22,9 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   addALeadTimeForChanges: jest.fn(),
   deleteALeadTimeForChange: jest.fn(),
   updateLeadTimeForChanges: jest.fn(),
+  selectOrganizationWarningMessage: jest.fn().mockReturnValue(null),
+  selectPipelineNameWarningMessage: jest.fn().mockReturnValue(null),
+  selectStepWarningMessage: jest.fn().mockReturnValue(null),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({

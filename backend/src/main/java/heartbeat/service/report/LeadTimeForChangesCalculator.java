@@ -36,12 +36,12 @@ public class LeadTimeForChangesCalculator {
 			double totalPrDelayTime = item.getLeadTimes()
 				.stream()
 				.map(LeadTime::getPrDelayTime)
-				.mapToDouble(Double::doubleValue)
+				.mapToLong(Long::longValue)
 				.sum();
 			double totalPipelineDelayTime = item.getLeadTimes()
 				.stream()
 				.map(LeadTime::getPipelineDelayTime)
-				.mapToDouble(Double::doubleValue)
+				.mapToLong(Long::longValue)
 				.sum();
 
 			double avgPrDelayTime = TimeUtil.convertMillisecondToMinutes(totalPrDelayTime / times);
@@ -76,12 +76,6 @@ public class LeadTimeForChangesCalculator {
 		avgLeadTimeForChanges.setTotalDelayTime(avgMergeDelayTime + avgPipelineDelayTime);
 
 		return new LeadTimeForChanges(leadTimeForChangesOfPipelines, avgLeadTimeForChanges);
-	}
-
-	private HashMap<Double, Double> getDelayTimeMapWithLeadTime(LeadTime leadTime) {
-		HashMap<Double, Double> delayTimeMap = new HashMap<>();
-		delayTimeMap.put(leadTime.getPrDelayTime(), leadTime.getPipelineDelayTime());
-		return delayTimeMap;
 	}
 
 }

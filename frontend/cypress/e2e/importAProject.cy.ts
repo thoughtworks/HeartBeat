@@ -55,6 +55,8 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
+    cy.wait(10000)
+
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)

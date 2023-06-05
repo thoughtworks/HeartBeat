@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 @Data
 @Builder
@@ -13,17 +14,21 @@ public class LeadTime {
 
 	private String commitId;
 
-	private long prCreatedTime;
+	@Nullable
+	private Long prCreatedTime;
 
-	private long prMergedTime;
+	@Nullable
+	private Long prMergedTime;
 
-	private long firstCommitTimeInPr;
+	@Nullable
+	private Long firstCommitTimeInPr;
 
 	private long jobFinishTime;
 
 	private long pipelineCreateTime;
 
-	private long prDelayTime;
+	@Nullable
+	private Long prDelayTime;
 
 	private long pipelineDelayTime;
 

@@ -35,16 +35,16 @@ public class LeadTimeInfo {
 
 	public LeadTimeInfo(LeadTime leadTime) {
 		if (leadTime != null) {
-			if (leadTime.getFirstCommitTimeInPr() != 0) {
+			if (leadTime.getFirstCommitTimeInPr() != null) {
 				this.firstCommitTimeInPr = TimeUtil
 					.convertToISOFormat(String.valueOf(leadTime.getFirstCommitTimeInPr()));
 			}
 
-			if (leadTime.getPrCreatedTime() != 0) {
+			if (leadTime.getPrCreatedTime() != null) {
 				this.prCreatedTime = TimeUtil.convertToISOFormat(String.valueOf(leadTime.getPrCreatedTime()));
 			}
 
-			if (leadTime.getPrMergedTime() != 0) {
+			if (leadTime.getPrMergedTime() != null) {
 				this.prMergedTime = TimeUtil.convertToISOFormat(String.valueOf(leadTime.getPrMergedTime()));
 			}
 
@@ -52,11 +52,11 @@ public class LeadTimeInfo {
 
 			this.pipelineDelayTime = TimeUtil.msToHMS(leadTime.getPipelineDelayTime());
 
-			if (leadTime.getPrDelayTime() != 0.0) {
+			if (leadTime.getPrDelayTime() != null) {
 				this.prDelayTime = TimeUtil.msToHMS(leadTime.getPrDelayTime());
 			}
 
-			if (leadTime.getTotalTime() != 0.0) {
+			if (leadTime.getTotalTime() != 0) {
 				this.totalTime = TimeUtil.msToHMS(leadTime.getTotalTime());
 			}
 		}

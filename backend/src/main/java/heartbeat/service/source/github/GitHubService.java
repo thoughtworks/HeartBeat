@@ -191,19 +191,8 @@ public class GitHubService {
 			.pipelineCreateTime(pipelineCreateTime)
 			.jobFinishTime(jobFinishTime)
 			.pipelineDelayTime(jobFinishTime - jobStartTime)
-			.build();
-	}
-
-	public LeadTime getLeadTimeWithoutMergeDelayTime(DeployInfo deployInfo) {
-		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-		long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
-		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-
-		return LeadTime.builder()
-			.commitId(deployInfo.getCommitId())
-			.pipelineCreateTime(pipelineCreateTime)
-			.jobFinishTime(jobFinishTime)
-			.pipelineDelayTime(jobFinishTime - jobStartTime)
+			.totalTime(jobFinishTime - jobStartTime)
+			.prDelayTime(0L)
 			.build();
 	}
 

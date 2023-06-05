@@ -33,6 +33,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -231,7 +232,7 @@ public class GenerateReporterService {
 				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
 						startTime, endTime);
 
-				LeadTime noMergeDelayTime = gitHubService.getLeadTimeWithoutMergeDelayTime(deployInfo);
+				LeadTime noMergeDelayTime = getLeadTimeWithoutMergeDelayTime(deployInfo);
 
 				return PipelineCSVInfo.builder()
 					.pipeLineName(deploymentEnvironment.getName())
@@ -313,6 +314,19 @@ public class GenerateReporterService {
 				file.delete();
 			}
 		}
+	}
+
+	private LeadTime getLeadTimeWithoutMergeDelayTime(DeployInfo deployInfo) {
+		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
+		long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
+		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+
+		return LeadTime.builder()
+			.commitId(deployInfo.getCommitId())
+			.pipelineCreateTime(pipelineCreateTime)
+			.jobFinishTime(jobFinishTime)
+			.pipelineDelayTime(jobFinishTime - jobStartTime)
+			.build();
 	}
 
 }

@@ -15,7 +15,9 @@ function generateTestData() {
     mockedImportConfigJSON.sourceControl.token = GITHUB_TOKEN
 
     fs.writeFile(configJsonFilePath, JSON.stringify(mockedImportConfigJSON, null, 2), (e) => {
-      console.error(e)
+      if (e) {
+        console.error(e)
+      }
     })
   })
 }

@@ -1,7 +1,7 @@
 // <reference types="cypress" />
 import fs = require('fs')
 
-module.exports = (on, config) => {
+module.exports = (on) => {
   on('task', {
     readDir: async (path) => {
       return new Promise((resolve, reject) => {

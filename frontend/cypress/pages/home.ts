@@ -4,7 +4,7 @@ class Home {
   private readonly importProjectFromFileButton = () => cy.contains('Import project from file')
 
   navigate() {
-    cy.visit(Cypress.env('url') + '/index.html')
+    cy.visit('/index.html')
   }
 
   createANewProject() {

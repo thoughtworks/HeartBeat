@@ -201,15 +201,15 @@ describe('saveMetricsSetting reducer', () => {
 
   it('should not update metricsImportedData when imported data is broken given initial state', () => {
     const mockMetricsImportedData = {
-      crews: undefined,
+      crews: null,
       cycleTime: {
-        jiraColumns: undefined,
-        treatFlagCardAsBlock: undefined,
+        jiraColumns: null,
+        treatFlagCardAsBlock: null,
       },
-      doneStatus: undefined,
-      classification: undefined,
-      deployment: undefined,
-      leadTime: undefined,
+      doneStatus: null,
+      classification: null,
+      deployment: null,
+      leadTime: null,
     }
 
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))

@@ -186,6 +186,3 @@ export const ORGANIZATION_WARNING_MESSAGE = 'This organization in import data mi
 export const PIPELINE_NAME_WARNING_MESSAGE = 'This Pipeline in import data might be removed'
 
 export const STEP_WARNING_MESSAGE = 'Selected step of this pipeline in import data might be removed'
-
-export const NO_STEP_WARNING_MESSAGE =
-  'There is no step during this period for this pipeline! Please change the search time in the Config page!'

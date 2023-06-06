@@ -59,7 +59,7 @@ describe('PipelineMetricSelection', () => {
   const setup = async (
     deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; step: string },
     isShowRemoveButton: boolean,
-    duplicatedIds: number[]
+    isDuplicated: boolean
   ) => {
     const store = setupStore()
     return render(
@@ -70,7 +70,7 @@ describe('PipelineMetricSelection', () => {
           isShowRemoveButton={isShowRemoveButton}
           onRemovePipeline={mockHandleClickRemoveButton}
           onUpdatePipeline={mockUpdatePipeline}
-          duplicatedIds={duplicatedIds}
+          isDuplicated={isDuplicated}
         />
       </Provider>
     )
@@ -81,21 +81,21 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
-    const { getByText } = await setup(deploymentFrequencySetting, true, [])
+    const { getByText } = await setup(deploymentFrequencySetting, true, false)
 
     expect(getByText(REMOVE_BUTTON)).toBeInTheDocument()
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should render PipelineMetricSelection when isShowRemoveButton is false', async () => {
-    const { getByText, queryByText } = await setup(deploymentFrequencySetting, false, [])
+    const { getByText, queryByText } = await setup(deploymentFrequencySetting, false, false)
 
     expect(queryByText(REMOVE_BUTTON)).not.toBeInTheDocument()
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
   })
 
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
-    const { getByRole } = await setup(deploymentFrequencySetting, true, [])
+    const { getByRole } = await setup(deploymentFrequencySetting, true, false)
 
     await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
 
@@ -104,7 +104,7 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should show pipelineName selection when select organization', async () => {
-    const { getByText } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false, [])
+    const { getByText } = await setup({ ...deploymentFrequencySetting, organization: 'mockOrgName' }, false, false)
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
     expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
@@ -115,7 +115,7 @@ describe('PipelineMetricSelection', () => {
     const { getByText } = await setup(
       { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
       false,
-      []
+      false
     )
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
@@ -130,7 +130,7 @@ describe('PipelineMetricSelection', () => {
     const { getByText, getByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
       false,
-      []
+      false
     )
 
     await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
@@ -148,7 +148,7 @@ describe('PipelineMetricSelection', () => {
     const { getByRole, getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
       false,
-      []
+      false
     )
 
     await waitFor(() => {
@@ -167,14 +167,14 @@ describe('PipelineMetricSelection', () => {
     const { getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: 'step1' },
       false,
-      [0, 1]
+      true
     )
 
     expect(getByText('This pipeline is the same as another one!')).toBeInTheDocument()
   })
 
   it('should show warning message when organization and pipelineName warning messages have value', async () => {
-    const { getByText } = await setup(deploymentFrequencySetting, false, [])
+    const { getByText } = await setup(deploymentFrequencySetting, false, false)
 
     expect(getByText('Test organization warning message')).toBeInTheDocument()
     expect(getByText('Test pipelineName warning message')).toBeInTheDocument()
@@ -183,7 +183,7 @@ describe('PipelineMetricSelection', () => {
 
   it('should clear warning message when organization and pipelineName warning messages have value after four seconds', async () => {
     jest.useFakeTimers()
-    const { queryByText } = await setup(deploymentFrequencySetting, false, [])
+    const { queryByText } = await setup(deploymentFrequencySetting, false, false)
 
     act(() => {
       jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)

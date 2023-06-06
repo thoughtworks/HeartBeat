@@ -40,7 +40,7 @@ export const DeploymentFrequencySettings = () => {
           isShowRemoveButton={deploymentFrequencySettings.length > 1}
           onRemovePipeline={(id) => handleRemovePipeline(id)}
           onUpdatePipeline={(id, label, value) => handleUpdatePipeline(id, label, value)}
-          duplicatedIds={getDuplicatedPipeLineIds(deploymentFrequencySettings)}
+          isDuplicated={getDuplicatedPipeLineIds(deploymentFrequencySettings).includes(deploymentFrequencySetting.id)}
         />
       ))}
       <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />

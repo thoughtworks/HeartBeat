@@ -40,7 +40,7 @@ export const LeadTimeForChanges = () => {
           isShowRemoveButton={leadTimeForChanges.length > 1}
           onRemovePipeline={(id) => handleRemovePipeline(id)}
           onUpdatePipeline={(id, label, value) => handleUpdatePipeline(id, label, value)}
-          duplicatedIds={getDuplicatedPipeLineIds(leadTimeForChanges)}
+          isDuplicated={getDuplicatedPipeLineIds(leadTimeForChanges).includes(leadTimeForChange.id)}
         />
       ))}
       <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />

@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import { StyledSection } from '@src/components/Common/ConfigForms'
+import { theme } from '@src/theme'
 
 export const PipelineMetricSelectionWrapper = styled(StyledSection)`
   width: 100%;
@@ -19,7 +20,7 @@ export const RemoveButton = styled(Button)({
 })
 
 export const WarningMessage = styled('p')({
-  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+  fontFamily: theme.typography.fontFamily,
   color: '#d32f2f',
   margin: '0 0 0 2.5%',
   width: '95%',

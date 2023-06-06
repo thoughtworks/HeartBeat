@@ -217,6 +217,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
 			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
 				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.withPipelineCreateTime("2022-09-09T04:57:34Z")
 				.build()));
 
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
@@ -258,6 +259,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
 			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
 				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.withPipelineCreateTime("2022-09-09T04:57:34Z")
 				.build()));
 
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
@@ -345,7 +347,7 @@ class GenerateReporterServiceTest {
 				.firstCommitTimeInPr(1658549100000L)
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(60000)
+				.prDelayTime(60000L)
 				.pipelineDelayTime(60000)
 				.totalTime(120000)
 				.build()))
@@ -370,6 +372,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
 			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
 				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.withPipelineCreateTime("2022-09-09T04:57:34Z")
 				.build()));
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
@@ -460,6 +463,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
 			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
 				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.withPipelineCreateTime("2022-09-09T04:57:34Z")
 				.build()));
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());

@@ -79,7 +79,7 @@ public class PipelineCsvFixture {
 				.firstCommitTimeInPr(1658549100000L)
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(60000)
+				.prDelayTime(60000L)
 				.pipelineDelayTime(60000)
 				.totalTime(120000)
 				.build()))

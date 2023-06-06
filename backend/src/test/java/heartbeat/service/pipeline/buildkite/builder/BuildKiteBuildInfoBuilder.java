@@ -36,4 +36,9 @@ public class BuildKiteBuildInfoBuilder {
 		return this;
 	}
 
+	public BuildKiteBuildInfoBuilder withPipelineCreateTime(String time) {
+		buildKiteBuildInfo.setPipelineCreateTime(time);
+		return this;
+	}
+
 }

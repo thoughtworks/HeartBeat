@@ -142,6 +142,26 @@ describe('PipelineMetricSelection', () => {
     })
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
   })
+  it('should show no steps warning message when getSteps succeed but get no steps', async () => {
+    metricsClient.getSteps = jest.fn().mockImplementation(() => [])
+    const { getByText, getByRole } = await setup(
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
+      false,
+      false
+    )
+
+    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
+    const listBox = within(getByRole('listbox'))
+    await userEvent.click(listBox.getByText('mockName2'))
+
+    await waitFor(() => {
+      expect(
+        getByText(
+          'There is no step during this period for this pipeline! Please change the search time in the Config page!'
+        )
+      ).toBeInTheDocument()
+    })
+  })
 
   it('should show steps selection when getSteps succeed ', async () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => ['steps'])

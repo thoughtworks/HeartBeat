@@ -9,6 +9,7 @@ import heartbeat.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.LongStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -31,21 +32,21 @@ public class LeadTimeForChangesCalculator {
 			if (item.getLeadTimes() == null || item.getLeadTimes().isEmpty()) {
 				return new HashMap<String, Double>();
 			}
-			int times = item.getLeadTimes().size();
+			List<LeadTime> leadTimes = item.getLeadTimes().stream()
+				.filter(leadTime -> leadTime.getPrMergedTime() != 0).toList();
 
-			double totalPrDelayTime = item.getLeadTimes()
+			double totalPrDelayTime = leadTimes
 				.stream()
-				.map(LeadTime::getPrDelayTime)
-				.mapToLong(Long::longValue)
+				.flatMapToLong(leadTime -> LongStream.of(leadTime.getPrDelayTime()))
 				.sum();
-			double totalPipelineDelayTime = item.getLeadTimes()
+			double totalPipelineDelayTime = leadTimes
 				.stream()
-				.map(LeadTime::getPipelineDelayTime)
-				.mapToLong(Long::longValue)
+				.flatMapToLong(leadTime -> LongStream.of(leadTime.getPipelineDelayTime()))
 				.sum();
 
-			double avgPrDelayTime = TimeUtil.convertMillisecondToMinutes(totalPrDelayTime / times);
-			double avgPipelineDelayTime = TimeUtil.convertMillisecondToMinutes(totalPipelineDelayTime / times);
+			double avgPrDelayTime = TimeUtil.convertMillisecondToMinutes(totalPrDelayTime / leadTimes.size());
+			double avgPipelineDelayTime = TimeUtil.convertMillisecondToMinutes(
+				totalPipelineDelayTime / leadTimes.size());
 
 			leadTimeForChangesOfPipelines.add(LeadTimeForChangesOfPipelines.builder()
 				.name(item.getPipelineName())

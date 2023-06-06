@@ -3,9 +3,8 @@ import { defineConfig } from 'cypress'
 export default defineConfig({
   videoCompression: 15,
   e2e: {
+    baseUrl: process.env.APP_ORIGIN || 'http://localhost:4321',
     setupNodeEvents(on, config) {
-      // implement node event listeners here
-      config.env.url = process.env.APP_ORIGIN || 'http://localhost:4321'
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('./cypress/plugins/updateConfigJson.ts')(on, config)
       // eslint-disable-next-line @typescript-eslint/no-var-requires

@@ -68,13 +68,14 @@ const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
 }
 
 const checkPipelineCSV = () => {
+  cy.wait(2000)
   return cy.task('readDir', 'cypress/downloads').then((files) => {
     expect(files).to.match(new RegExp(/pipeline-data-.*\.csv/))
   })
 }
 
 describe('Create a new project', () => {
-  it('Should create a new project manually', async () => {
+  it('Should create a new project manually', () => {
     homePage.navigate()
 
     homePage.createANewProject()

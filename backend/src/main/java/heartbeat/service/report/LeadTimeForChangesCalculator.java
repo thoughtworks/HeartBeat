@@ -32,21 +32,22 @@ public class LeadTimeForChangesCalculator {
 			if (item.getLeadTimes() == null || item.getLeadTimes().isEmpty()) {
 				return new HashMap<String, Double>();
 			}
-			List<LeadTime> leadTimes = item.getLeadTimes().stream()
-				.filter(leadTime -> leadTime.getPrMergedTime() != 0).toList();
-
-			double totalPrDelayTime = leadTimes
+			List<LeadTime> leadTimes = item.getLeadTimes()
 				.stream()
+				.filter(leadTime -> leadTime.getPrMergedTime() != null && leadTime.getPrMergedTime() != 0)
+				.filter(leadTime -> leadTime.getPrDelayTime() != null && leadTime.getPrDelayTime() != 0)
+				.toList();
+
+			double totalPrDelayTime = leadTimes.stream()
 				.flatMapToLong(leadTime -> LongStream.of(leadTime.getPrDelayTime()))
 				.sum();
-			double totalPipelineDelayTime = leadTimes
-				.stream()
+			double totalPipelineDelayTime = leadTimes.stream()
 				.flatMapToLong(leadTime -> LongStream.of(leadTime.getPipelineDelayTime()))
 				.sum();
 
 			double avgPrDelayTime = TimeUtil.convertMillisecondToMinutes(totalPrDelayTime / leadTimes.size());
-			double avgPipelineDelayTime = TimeUtil.convertMillisecondToMinutes(
-				totalPipelineDelayTime / leadTimes.size());
+			double avgPipelineDelayTime = TimeUtil
+				.convertMillisecondToMinutes(totalPipelineDelayTime / leadTimes.size());
 
 			leadTimeForChangesOfPipelines.add(LeadTimeForChangesOfPipelines.builder()
 				.name(item.getPipelineName())

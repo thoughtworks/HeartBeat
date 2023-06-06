@@ -138,7 +138,7 @@ export const PipelineTool = () => {
         dispatch(updatePipelineToolVerifyResponse(res.response))
         dispatch(initDeploymentFrequencySettings())
         dispatch(initLeadTimeForChanges())
-        dispatch(updatePipelineSettings({ ...res.response, isProjectCreated }))
+        res.isPipelineToolVerified && dispatch(updatePipelineSettings({ ...res.response, isProjectCreated }))
       }
     })
   }

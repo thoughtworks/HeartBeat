@@ -37,7 +37,7 @@ public class CalculateLeadTimeForChangesTest {
 				.firstCommitTimeInPr(165854910000L)
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(165854910000L)
-				.prDelayTime(60000)
+				.prDelayTime(60000L)
 				.pipelineDelayTime(60000)
 				.totalTime(120000)
 				.build()))

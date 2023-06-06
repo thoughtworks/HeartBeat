@@ -119,7 +119,7 @@ class GithubServiceTest {
 				.jobFinishTime(1658549160000L)
 				.pipelineDelayTime(1658549100000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(60000)
+				.prDelayTime(60000L)
 				.pipelineDelayTime(120000)
 				.totalTime(180000)
 				.build()))
@@ -223,7 +223,7 @@ class GithubServiceTest {
 			.jobFinishTime(1658549160000L)
 			.pipelineDelayTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000)
+			.prDelayTime(60000L)
 			.pipelineDelayTime(120000)
 			.totalTime(180000)
 			.build();
@@ -239,11 +239,11 @@ class GithubServiceTest {
 			.commitId("111")
 			.prCreatedTime(1658548980000L)
 			.prMergedTime(1658549040000L)
-			.firstCommitTimeInPr(0)
+			.firstCommitTimeInPr(0L)
 			.jobFinishTime(1658549160000L)
 			.pipelineDelayTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000)
+			.prDelayTime(60000L)
 			.pipelineDelayTime(120000)
 			.totalTime(180000)
 			.build();
@@ -259,11 +259,11 @@ class GithubServiceTest {
 			.commitId("111")
 			.prCreatedTime(1658548980000L)
 			.prMergedTime(1658549040000L)
-			.firstCommitTimeInPr(0)
+			.firstCommitTimeInPr(0L)
 			.jobFinishTime(1658549160000L)
 			.pipelineDelayTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000)
+			.prDelayTime(60000L)
 			.pipelineDelayTime(120000)
 			.totalTime(180000L)
 			.build();
@@ -312,14 +312,11 @@ class GithubServiceTest {
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
-				.prCreatedTime(0)
-				.prMergedTime(0)
-				.firstCommitTimeInPr(0)
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(0)
+				.prDelayTime(0L)
 				.pipelineDelayTime(120000)
-				.totalTime(0)
+				.totalTime(120000)
 				.build()))
 			.build());
 
@@ -340,14 +337,11 @@ class GithubServiceTest {
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
-				.prCreatedTime(0)
-				.prMergedTime(0)
-				.firstCommitTimeInPr(0)
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(0)
+				.prDelayTime(0L)
 				.pipelineDelayTime(120000)
-				.totalTime(0)
+				.totalTime(120000)
 				.build()))
 			.build());
 
@@ -368,27 +362,6 @@ class GithubServiceTest {
 		CommitInfo result = githubService.fetchCommitInfo("12344", "org/repo", "mockToken");
 
 		assertEquals(result, commitInfo);
-	}
-
-	@Test
-	public void shouldReturnLeadTimeWithoutMergeDelayTimeWhenDeployHasNoMergeTime() {
-		DeployInfo deployInfo = DeployInfo.builder()
-			.commitId("123456")
-			.jobStartTime("2023-05-17T10:00:00Z")
-			.jobFinishTime("2023-05-17T10:30:00Z")
-			.pipelineCreateTime("2023-05-17T10:30:00Z")
-			.build();
-
-		LeadTime expectedLeadTime = LeadTime.builder()
-			.commitId("123456")
-			.pipelineCreateTime(1684319400000L)
-			.jobFinishTime(1684319400000L)
-			.pipelineDelayTime(1800000L)
-			.build();
-
-		LeadTime result = githubService.getLeadTimeWithoutMergeDelayTime(deployInfo);
-
-		assertEquals(expectedLeadTime, result);
 	}
 
 }

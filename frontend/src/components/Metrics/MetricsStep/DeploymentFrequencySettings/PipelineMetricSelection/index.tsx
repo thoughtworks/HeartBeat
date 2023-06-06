@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style'
@@ -20,7 +20,6 @@ import {
   updatePipelineStep,
 } from '@src/context/Metrics/metricsSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
-import { NO_STEP_WARNING_MESSAGE } from '@src/constants'
 
 interface pipelineMetricSelectionProps {
   type: string
@@ -53,7 +52,6 @@ export const PipelineMetricSelection = ({
   const organizationWarningMessage = selectOrganizationWarningMessage(store.getState(), id, type)
   const pipelineNameWarningMessage = selectPipelineNameWarningMessage(store.getState(), id, type)
   const stepWarningMessage = selectStepWarningMessage(store.getState(), id, type)
-  const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false)
 
   const handleClick = () => {
     onRemovePipeline(id)
@@ -67,7 +65,6 @@ export const PipelineMetricSelection = ({
     )
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
       const steps = res ? Object.values(res) : []
-      setIsShowNoStepWarning(!steps.length)
       dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps }))
       dispatch(updatePipelineStep({ steps, id, type }))
     })
@@ -78,7 +75,6 @@ export const PipelineMetricSelection = ({
       {organizationWarningMessage && <WarningNotification message={organizationWarningMessage} />}
       {pipelineNameWarningMessage && <WarningNotification message={pipelineNameWarningMessage} />}
       {stepWarningMessage && <WarningNotification message={stepWarningMessage} />}
-      {isShowNoStepWarning && <WarningNotification message={NO_STEP_WARNING_MESSAGE} />}
       {isLoading && <Loading />}
       {duplicatedIds.includes(id) && <WarningMessage>This pipeline is the same as another one!</WarningMessage>}
       {errorMessage && <ErrorNotification message={errorMessage} />}

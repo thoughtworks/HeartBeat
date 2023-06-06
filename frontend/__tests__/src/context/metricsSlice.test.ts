@@ -933,7 +933,7 @@ describe('saveMetricsSetting reducer', () => {
     afterEach(() => {
       jest.clearAllMocks()
     })
-    it('should return organization warning message when call selectOrganizationWarningMessage function', () => {
+    it('should return organization warning message given its id and type', () => {
       expect(
         selectOrganizationWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
       ).toEqual(ORGANIZATION_WARNING_MESSAGE)
@@ -948,7 +948,7 @@ describe('saveMetricsSetting reducer', () => {
       ).toBeNull()
     })
 
-    it('should return pipelineName warning message when call selectPipelineNameWarningMessage function', () => {
+    it('should return pipelineName warning message given its id and type', () => {
       expect(
         selectPipelineNameWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
       ).toBeNull()
@@ -963,7 +963,7 @@ describe('saveMetricsSetting reducer', () => {
       ).toEqual(PIPELINE_NAME_WARNING_MESSAGE)
     })
 
-    it('should return step warning message when call selectStepWarningMessage function', () => {
+    it('should return step warning message given its id and type', () => {
       expect(
         selectStepWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
       ).toBeNull()

@@ -39,16 +39,17 @@ export const MetricsTypeCheckbox = () => {
   const { metrics } = configData.basic
   const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false)
   const updateBoardState = () => {
-    dispatch(
-      updateBoard({
-        type: BOARD_TYPES.JIRA,
-        boardId: '',
-        email: '',
-        projectKey: '',
-        site: '',
-        token: '',
-      })
-    )
+    !isShowBoard &&
+      dispatch(
+        updateBoard({
+          type: BOARD_TYPES.JIRA,
+          boardId: '',
+          email: '',
+          projectKey: '',
+          site: '',
+          token: '',
+        })
+      )
     isShowBoard ? dispatch(updateBoardVerifyState(isBoardVerify)) : dispatch(updateBoardVerifyState(false))
   }
 
@@ -59,16 +60,14 @@ export const MetricsTypeCheckbox = () => {
   const [isAllSelected, setIsAllSelected] = useState(false)
 
   const updatePipelineToolState = () => {
-    dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
-    dispatch(updatePipelineToolVerifyState(false))
+    !isShowPipeline && dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     isShowPipeline
       ? dispatch(updatePipelineToolVerifyState(isPipelineToolVerify))
       : dispatch(updatePipelineToolVerifyState(false))
   }
 
   const updateSourceControlState = () => {
-    dispatch(updateSourceControl({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
-    dispatch(updateSourceControlVerifyState(false))
+    !isShowSourceControl && dispatch(updateSourceControl({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
     isShowSourceControl
       ? dispatch(updateSourceControlVerifyState(isSourceControlVerify))
       : dispatch(updateSourceControlVerifyState(false))

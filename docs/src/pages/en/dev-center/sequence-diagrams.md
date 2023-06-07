@@ -38,6 +38,13 @@ par
     JiraFeignClient --> JiraService
     deactivate JiraFeignClient
   end
+  loop card from matched cards
+    JiraService -> JiraFeignClient: get card history
+    activate JiraFeignClient
+    JiraFeignClient --> JiraService
+    deactivate JiraFeignClient
+    JiraService -> JiraService: filter out the complete cards.
+  end
   JiraService -> JiraService: Calculate CycleTime for done cards
 else
   JiraService -> JiraFeignClient: get Jira raw data for non done cards

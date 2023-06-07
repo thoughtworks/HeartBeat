@@ -83,7 +83,7 @@ public class ClassificationFixture {
 					.fixVersions(List.of(FixVersion.builder().build(), FixVersion.builder().build()))
 					.project(JiraProject.builder().build())
 					.parent(CardParent.builder().build())
-					.customFields(Collections.EMPTY_MAP)
+					.customFields(Collections.emptyMap())
 					.build())
 				.build())
 			.build()))

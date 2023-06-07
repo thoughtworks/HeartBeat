@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AvgLeadTimeForChanges {
 
+	@Builder.Default
 	private String name = "Average";
 
 	private Double mergeDelayTime;

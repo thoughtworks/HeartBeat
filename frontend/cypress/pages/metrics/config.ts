@@ -42,6 +42,10 @@ class Config {
 
   private readonly goToMetricsStepButton = () => cy.contains('Next')
 
+  private readonly textInputSelect = (i: number) => cy.get('.MuiInputBase-root input[type="text"]').eq(i)
+
+  private readonly tokenInputSelect = (i: number) => cy.get('[type="password"]').eq(i)
+
   navigate() {
     cy.visit(Cypress.env('url') + '/metrics')
   }
@@ -113,6 +117,14 @@ class Config {
 
   goMetricsStep() {
     this.goToMetricsStepButton().click()
+  }
+
+  checkTextInputValueExist(i: number) {
+    return this.textInputSelect(i)
+  }
+
+  checkTokenInputValueExist(i: number) {
+    return this.tokenInputSelect(i)
   }
 }
 

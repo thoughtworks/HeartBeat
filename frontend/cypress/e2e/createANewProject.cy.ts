@@ -32,6 +32,19 @@ const velocityData = [
 
 const metricsTextList = [
   'Crews setting',
+  'Brian Ong',
+  'Harsh Singal',
+  'Prashant Agarwal',
+  'Sumit Narang',
+  'Yu Zhang',
+  'Peihang Yu',
+  'Mengyang Sun',
+  'HanWei Wang',
+  'Aaron Camilleri',
+  'Qian Zhang',
+  'Gerard Ho',
+  'Anthony Tse',
+  'Yonghee Jeon Jeon',
   'Cycle time settings',
   'Analysis',
   'To do',
@@ -44,6 +57,36 @@ const metricsTextList = [
   'Real done',
   'DONE, CLOSED',
   'Classification setting',
+  'Issue Type',
+  'Has Dependancies',
+  'FS R&D Classification',
+  'Parent',
+  'Components',
+  'Project',
+  'Reporter',
+  'Parent Link',
+  'Fix versions',
+  'Priority',
+  'Paired Member',
+  'Labels',
+  'Story Points',
+  'Sprint',
+  'Epic Link',
+  'Assignee',
+  'FS Work Categorization',
+  'FS Work Type',
+  'Epic Name',
+  'Acceptance Criteria',
+  'Environment',
+  'Affects versions',
+  'FS Domains',
+  'PIR Completed',
+  'Team',
+  'Incident Priority',
+  'Resolution Details',
+  'Time to Resolution - Hrs',
+  'Time to Detect - Hrs',
+  'Cause by - System',
   'Deployment frequency settings',
   'XXXX',
   'fs-platform-payment-selector',
@@ -60,6 +103,22 @@ const configTextList = [
   'Classic Jira',
   'BuildKite',
   'GitHub',
+]
+
+const textInputValues = [
+  { index: 0, value: 'E2E Project' },
+  { index: 1, value: '03 / 16 / 2023' },
+  { index: 2, value: '03 / 30 / 2023' },
+  { index: 3, value: '1963' },
+  { index: 4, value: 'test@test.com' },
+  { index: 5, value: 'PLL' },
+  { index: 6, value: 'site' },
+]
+
+const tokenInputValues = [
+  { index: 0, value: 'mockToken' },
+  { index: 1, value: 'mock1234'.repeat(5) },
+  { index: 2, value: `${GITHUB_TOKEN}` },
 ]
 
 interface BoardDataItem {
@@ -109,6 +168,18 @@ const checkPipelineCSV = () => {
 const checkFieldsExist = (fields: string[]) => {
   fields.forEach((item) => {
     cy.contains(item).should('exist')
+  })
+}
+
+const checkTextInputValuesExist = (fields: { index: number; value: string }[]) => {
+  fields.forEach(({ index, value }) => {
+    configPage.checkTextInputValueExist(index).should('have.value', value)
+  })
+}
+
+const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) => {
+  fields.forEach(({ index, value }) => {
+    configPage.checkTokenInputValueExist(index).should('have.value', value)
   })
 }
 
@@ -193,5 +264,9 @@ describe('Create a new project', () => {
     metricsPage.BackToConfigStep()
 
     checkFieldsExist(configTextList)
+
+    checkTextInputValuesExist(textInputValues)
+
+    checkTokenInputValuesExist(tokenInputValues)
   })
 })

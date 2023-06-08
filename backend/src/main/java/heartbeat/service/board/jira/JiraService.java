@@ -437,18 +437,17 @@ public class JiraService {
 		List<JiraCardDTO> matchedCards = new ArrayList<>();
 		List<CompletableFuture<JiraCard>> futures = allDoneCards.stream()
 			.map(jiraCard -> CompletableFuture.supplyAsync(() -> {
-				CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(), request.getToken());
+				CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(),
+						request.getToken());
 				if (isDoneCardByHistory(jiraCardHistory)) {
 					return jiraCard;
-				} else {
+				}
+				else {
 					return null;
 				}
 			}))
 			.toList();
-		List<JiraCard> jiraCards = futures.stream()
-			.map(CompletableFuture::join)
-			.filter(Objects::nonNull)
-			.toList();
+		List<JiraCard> jiraCards = futures.stream().map(CompletableFuture::join).filter(Objects::nonNull).toList();
 
 		jiraCards.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),

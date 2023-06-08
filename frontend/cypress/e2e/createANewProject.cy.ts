@@ -30,6 +30,38 @@ const velocityData = [
   { label: 'Throughput(Cards Count)', value: '16' },
 ]
 
+const metricsTextList = [
+  'Crews setting',
+  'Cycle time settings',
+  'Analysis',
+  'To do',
+  'In Dev',
+  'Block',
+  'Waiting for testing',
+  'Testing',
+  'Review',
+  'Done',
+  'Real done',
+  'DONE, CLOSED',
+  'Classification setting',
+  'Deployment frequency settings',
+  'XXXX',
+  'fs-platform-payment-selector',
+  'RECORD RELEASE TO PROD',
+  'Lead time for changes',
+  'XXXX',
+  'fs-platform-onboarding',
+  'RECORD RELEASE TO PROD',
+]
+
+const configTextList = [
+  'Project name *',
+  'Velocity, Cycle time, Classification, Lead time for changes, Deployment frequency, Change failure rate, Mean time to recovery',
+  'Classic Jira',
+  'BuildKite',
+  'GitHub',
+]
+
 interface BoardDataItem {
   label: string
   value?: string
@@ -71,6 +103,12 @@ const checkPipelineCSV = () => {
   cy.wait(2000)
   return cy.task('readDir', 'cypress/downloads').then((files) => {
     expect(files).to.match(new RegExp(/pipeline-data-.*\.csv/))
+  })
+}
+
+const checkFieldsExist = (fields: string[]) => {
+  fields.forEach((item) => {
+    cy.contains(item).should('exist')
   })
 }
 
@@ -147,5 +185,13 @@ describe('Create a new project', () => {
     reportPage.exportPipelineData()
 
     checkPipelineCSV()
+
+    reportPage.backToMetricsStep()
+
+    checkFieldsExist(metricsTextList)
+
+    metricsPage.BackToConfigStep()
+
+    checkFieldsExist(configTextList)
   })
 })

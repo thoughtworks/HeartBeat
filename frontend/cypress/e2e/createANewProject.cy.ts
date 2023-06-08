@@ -173,13 +173,13 @@ const checkFieldsExist = (fields: string[]) => {
 
 const checkTextInputValuesExist = (fields: { index: number; value: string }[]) => {
   fields.forEach(({ index, value }) => {
-    configPage.checkTextInputValueExist(index).should('have.value', value)
+    cy.get('.MuiInputBase-root input[type="text"]').eq(index).should('have.value', value)
   })
 }
 
 const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) => {
   fields.forEach(({ index, value }) => {
-    configPage.checkTokenInputValueExist(index).should('have.value', value)
+    cy.get('[type="password"]').eq(index).should('have.value', value)
   })
 }
 
@@ -221,6 +221,16 @@ describe('Create a new project', () => {
 
     configPage.goMetricsStep()
 
+    metricsPage.BackToConfigStep()
+
+    checkFieldsExist(configTextList)
+
+    checkTextInputValuesExist(textInputValues)
+
+    checkTokenInputValuesExist(tokenInputValues)
+
+    configPage.goMetricsStep()
+
     nextButton().should('be.disabled')
 
     cy.contains('Crews setting').should('exist')
@@ -240,6 +250,18 @@ describe('Create a new project', () => {
     metricsPage.checkLeadTimeForChanges()
 
     nextButton().should('be.enabled')
+
+    metricsPage.BackToConfigStep()
+
+    checkFieldsExist(configTextList)
+
+    checkTextInputValuesExist(textInputValues)
+
+    checkTokenInputValuesExist(tokenInputValues)
+
+    configPage.goMetricsStep()
+
+    checkFieldsExist(metricsTextList)
 
     metricsPage.goReportStep()
 

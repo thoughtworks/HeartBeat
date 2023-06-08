@@ -413,7 +413,6 @@ class JiraServiceTest {
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		FeignException mockException = mock(FeignException.class);
-		System.out.println(Math.ceil(0));
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);

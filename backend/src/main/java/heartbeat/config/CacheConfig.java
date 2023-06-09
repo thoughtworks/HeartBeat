@@ -33,7 +33,7 @@ public class CacheConfig {
 		return cacheManager;
 	}
 
-	private <K, V> javax.cache.configuration.Configuration<K, V> getCacheConfiguration( Class<V> valueType) {
+	private <K, V> javax.cache.configuration.Configuration<K, V> getCacheConfiguration(Class<V> valueType) {
 		val offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().heap(1, MemoryUnit.MB);
 		val timeToLive = Duration.ofSeconds(20);
 		CacheConfigurationBuilder<K, V> configuration = CacheConfigurationBuilder

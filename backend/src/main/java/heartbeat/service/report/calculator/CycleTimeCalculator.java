@@ -36,9 +36,8 @@ public class CycleTimeCalculator {
 			.build();
 	}
 
-	private double getAverageCycleTimePerSP(CardCollection cardCollection,
-		double cycleTotalTime) {
-		if(cardCollection.getStoryPointSum() == 0) {
+	private double getAverageCycleTimePerSP(CardCollection cardCollection, double cycleTotalTime) {
+		if (cardCollection.getStoryPointSum() == 0) {
 			return 0;
 		}
 		return BigDecimal.valueOf(cycleTotalTime)
@@ -46,9 +45,8 @@ public class CycleTimeCalculator {
 			.doubleValue();
 	}
 
-	private double getAverageCycleTimePerCard(CardCollection cardCollection,
-		double cycleTotalTime) {
-		if(cardCollection.getCardsNumber() == 0) {
+	private double getAverageCycleTimePerCard(CardCollection cardCollection, double cycleTotalTime) {
+		if (cardCollection.getCardsNumber() == 0) {
 			return 0;
 		}
 		return BigDecimal.valueOf(cycleTotalTime)

@@ -107,8 +107,8 @@ const configTextList = [
 
 const textInputValues = [
   { index: 0, value: 'E2E Project' },
-  { index: 1, value: '03 / 16 / 2023' },
-  { index: 2, value: '03 / 30 / 2023' },
+  { index: 1, value: '03/16/2023' },
+  { index: 2, value: '03/30/2023' },
   { index: 3, value: '1963' },
   { index: 4, value: 'test@test.com' },
   { index: 5, value: 'PLL' },
@@ -221,16 +221,6 @@ describe('Create a new project', () => {
 
     configPage.goMetricsStep()
 
-    metricsPage.BackToConfigStep()
-
-    checkFieldsExist(configTextList)
-
-    checkTextInputValuesExist(textInputValues)
-
-    checkTokenInputValuesExist(tokenInputValues)
-
-    configPage.goMetricsStep()
-
     nextButton().should('be.disabled')
 
     cy.contains('Crews setting').should('exist')
@@ -251,18 +241,6 @@ describe('Create a new project', () => {
 
     nextButton().should('be.enabled')
 
-    metricsPage.BackToConfigStep()
-
-    checkFieldsExist(configTextList)
-
-    checkTextInputValuesExist(textInputValues)
-
-    checkTokenInputValuesExist(tokenInputValues)
-
-    configPage.goMetricsStep()
-
-    checkFieldsExist(metricsTextList)
-
     metricsPage.goReportStep()
 
     cy.wait(10000)
@@ -278,10 +256,78 @@ describe('Create a new project', () => {
     reportPage.exportPipelineData()
 
     checkPipelineCSV()
+  })
+
+  it('Should have data in metrics page when back from report page', () => {
+    homePage.navigate()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.goHomePage()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.selectDateRange()
+
+    configPage.selectMetricsData()
+
+    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
+
+    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
+
+    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
+
+    configPage.goMetricsStep()
+
+    metricsPage.checkCycleTime()
+
+    metricsPage.checkRealDone()
+
+    metricsPage.checkClassification()
+
+    metricsPage.checkDeploymentFrequencySettings()
+
+    metricsPage.checkLeadTimeForChanges()
+
+    checkFieldsExist(metricsTextList)
+
+    metricsPage.goReportStep()
+
+    cy.wait(10000)
 
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
+  })
+
+  it('Should have data in config page when back from metrics page', () => {
+    homePage.navigate()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.goHomePage()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.selectDateRange()
+
+    configPage.selectMetricsData()
+
+    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
+
+    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
+
+    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
+
+    configPage.goMetricsStep()
 
     metricsPage.BackToConfigStep()
 

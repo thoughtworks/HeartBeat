@@ -6,15 +6,14 @@ import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.CycleTimeForSelectedStepItem;
 import heartbeat.controller.report.dto.response.CycleTimeResult;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
@@ -27,16 +26,32 @@ public class CycleTimeCalculator {
 		Map<String, Double> aggregatedMap = aggregateResultBySelectedSteps(totalTimeOfEachStepsMap, selectedStepsMap);
 		CycleTimeResult cycleTimeResult = calculateAverageTimeAndTotalTime(aggregatedMap, cardCollection);
 		double cycleTotalTime = cycleTimeResult.getTotalTime();
+		double averageCycleTimePerCard = getAverageCycleTimePerCard(cardCollection, cycleTotalTime);
+		double averageCycleTimePerSP = getAverageCycleTimePerSP(cardCollection, cycleTotalTime);
 		return CycleTime.builder()
 			.totalTimeForCards(cycleTotalTime)
-			.averageCycleTimePerSP(BigDecimal.valueOf(cycleTotalTime)
-				.divide(BigDecimal.valueOf(cardCollection.getStoryPointSum()), 2, BigDecimal.ROUND_HALF_UP)
-				.doubleValue())
-			.averageCycleTimePerCard(BigDecimal.valueOf(cycleTotalTime)
-				.divide(BigDecimal.valueOf(cardCollection.getCardsNumber()), 2, BigDecimal.ROUND_HALF_UP)
-				.doubleValue())
+			.averageCycleTimePerSP(averageCycleTimePerSP)
+			.averageCycleTimePerCard(averageCycleTimePerCard)
 			.swimlaneList(cycleTimeResult.getCycleTimeForSelectedStepsList())
 			.build();
+	}
+
+	private double getAverageCycleTimePerSP(CardCollection cardCollection, double cycleTotalTime) {
+		if (cardCollection.getStoryPointSum() == 0) {
+			return 0;
+		}
+		return BigDecimal.valueOf(cycleTotalTime)
+			.divide(BigDecimal.valueOf(cardCollection.getStoryPointSum()), 2, RoundingMode.HALF_UP)
+			.doubleValue();
+	}
+
+	private double getAverageCycleTimePerCard(CardCollection cardCollection, double cycleTotalTime) {
+		if (cardCollection.getCardsNumber() == 0) {
+			return 0;
+		}
+		return BigDecimal.valueOf(cycleTotalTime)
+			.divide(BigDecimal.valueOf(cardCollection.getCardsNumber()), 2, RoundingMode.HALF_UP)
+			.doubleValue();
 	}
 
 	private Map<String, String> selectedStepsArrayToMap(List<RequestJiraBoardColumnSetting> boardColumns) {
@@ -100,12 +115,8 @@ public class CycleTimeCalculator {
 			}
 			CycleTimeForSelectedStepItem cycleTimeOptionalItem = CycleTimeForSelectedStepItem.builder()
 				.optionalItemName(key)
-				.averageTimeForSP(BigDecimal.valueOf(value)
-					.divide(BigDecimal.valueOf(cardCollection.getStoryPointSum()), 2, BigDecimal.ROUND_HALF_UP)
-					.doubleValue())
-				.averageTimeForCards(BigDecimal.valueOf(value)
-					.divide(BigDecimal.valueOf(cardCollection.getCardsNumber()), 2, BigDecimal.ROUND_HALF_UP)
-					.doubleValue())
+				.averageTimeForSP(getAverageCycleTimePerSP(cardCollection, value))
+				.averageTimeForCards(getAverageCycleTimePerCard(cardCollection, value))
 				.totalTime(value)
 				.build();
 			cycleTimeForSelectedStepsList.add(cycleTimeOptionalItem);

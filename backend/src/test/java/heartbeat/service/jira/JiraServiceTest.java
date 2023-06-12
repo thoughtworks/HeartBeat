@@ -1,5 +1,36 @@
 package heartbeat.service.jira;
 
+import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
+import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_FIELD_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_MULTI_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER_WITHOUT_STATUS;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COLUM_SELF_ID_1;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COLUM_SELF_ID_2;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COLUM_SELF_ID_3;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.COMPLETE_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CYCLE_TIME_INFO_LIST;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DOING_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DONE_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.FIELD_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_SETTING_BUILD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_SETTING_HAVE_UNKNOWN_COLUMN_BUILD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.NONE_STATUS_SELF_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
@@ -19,6 +50,11 @@ import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.util.BoardUtil;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletionException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,22 +62,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletionException;
-
-import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
-import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JiraServiceTest {
@@ -115,7 +135,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -199,7 +219,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -313,7 +333,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
 			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -413,7 +433,6 @@ class JiraServiceTest {
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		FeignException mockException = mock(FeignException.class);
-		System.out.println(Math.ceil(0));
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
@@ -451,6 +470,8 @@ class JiraServiceTest {
 			.thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
@@ -490,6 +511,8 @@ class JiraServiceTest {
 			.thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER_WITHOUT_STATUS().build());
 		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());

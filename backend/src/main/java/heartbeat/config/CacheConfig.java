@@ -1,9 +1,14 @@
 package heartbeat.config;
 
+import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
+import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import java.time.Duration;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
+import lombok.val;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -21,20 +26,21 @@ public class CacheConfig {
 	public CacheManager ehCacheManager() {
 		CachingProvider provider = Caching.getCachingProvider();
 		CacheManager cacheManager = provider.getCacheManager();
-
-		CacheConfigurationBuilder<Object, Object> configuration = CacheConfigurationBuilder
-			.newCacheConfigurationBuilder(Object.class, Object.class,
-					ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(1, MemoryUnit.MB))
-			.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(20)));
-
-		javax.cache.configuration.Configuration<Object, Object> stringDoubleConfiguration = Eh107Configuration
-			.fromEhcacheCacheConfiguration(configuration);
-
-		cacheManager.createCache("jiraConfig", stringDoubleConfiguration);
-		cacheManager.createCache("jiraStatusCategory", stringDoubleConfiguration);
-		cacheManager.createCache("jiraActivityfeed", stringDoubleConfiguration);
-		cacheManager.createCache("targetField", stringDoubleConfiguration);
+		cacheManager.createCache("jiraConfig", getCacheConfiguration(JiraBoardConfigDTO.class));
+		cacheManager.createCache("jiraStatusCategory", getCacheConfiguration(StatusSelfDTO.class));
+		cacheManager.createCache("jiraActivityfeed", getCacheConfiguration(CardHistoryResponseDTO.class));
+		cacheManager.createCache("targetField", getCacheConfiguration(FieldResponseDTO.class));
 		return cacheManager;
+	}
+
+	private <K, V> javax.cache.configuration.Configuration<K, V> getCacheConfiguration(Class<V> valueType) {
+		val offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().heap(1, MemoryUnit.MB);
+		val timeToLive = Duration.ofSeconds(20);
+		CacheConfigurationBuilder<K, V> configuration = CacheConfigurationBuilder
+			.newCacheConfigurationBuilder((Class<K>) String.class, valueType, offHeap)
+			.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(timeToLive));
+
+		return Eh107Configuration.fromEhcacheCacheConfiguration(configuration);
 	}
 
 }

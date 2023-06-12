@@ -1,5 +1,8 @@
 package heartbeat.service.board.jira;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -38,11 +41,6 @@ import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,14 +55,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class JiraService {
+
+	public static final String STATUS_FIELD_ID = "status";
 
 	private final ThreadPoolTaskExecutor customTaskExecutor;
 
@@ -434,10 +435,24 @@ public class JiraService {
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, URI baseUrl,
 			List<JiraCard> allDoneCards) {
 		List<JiraCardDTO> matchedCards = new ArrayList<>();
-		allDoneCards.forEach(doneCard -> {
+		List<CompletableFuture<JiraCard>> futures = allDoneCards.stream()
+			.map(jiraCard -> CompletableFuture.supplyAsync(() -> {
+				CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(),
+						request.getToken());
+				if (isDoneCardByHistory(jiraCardHistory)) {
+					return jiraCard;
+				}
+				else {
+					return null;
+				}
+			}))
+			.toList();
+		List<JiraCard> jiraCards = futures.stream().map(CompletableFuture::join).filter(Objects::nonNull).toList();
+
+		jiraCards.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock());
-			ArrayList<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
+			List<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
@@ -456,6 +471,20 @@ public class JiraService {
 			}
 		});
 		return matchedCards;
+	}
+
+	private boolean isDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory) {
+		HistoryDetail detail = jiraCardHistory.getItems()
+			.stream()
+			.filter(historyDetail -> STATUS_FIELD_ID.equals(historyDetail.getFieldId()))
+			.reduce((pre, next) -> next)
+			.orElse(null);
+		if (detail == null) {
+			return false;
+		}
+		String displayName = detail.getTo().getDisplayName();
+		return CardStepsEnum.DONE.getValue().equalsIgnoreCase(displayName)
+				|| CardStepsEnum.CLOSED.getValue().equalsIgnoreCase(displayName);
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock) {
@@ -480,7 +509,7 @@ public class JiraService {
 		List<StatusChangedItem> statusChangedArray = new ArrayList<>();
 		List<HistoryDetail> statusActivities = jiraCardHistory.getItems()
 			.stream()
-			.filter(activity -> "status".equals(activity.getFieldId()))
+			.filter(activity -> STATUS_FIELD_ID.equals(activity.getFieldId()))
 			.toList();
 
 		if (jiraCardHistory.getItems().size() > 0 && statusActivities.size() > 0) {
@@ -491,7 +520,7 @@ public class JiraService {
 
 			jiraCardHistory.getItems()
 				.stream()
-				.filter(activity -> "status".equals(activity.getFieldId()))
+				.filter(activity -> STATUS_FIELD_ID.equals(activity.getFieldId()))
 				.forEach(activity -> statusChangedArray.add(StatusChangedItem.builder()
 					.timestamp(activity.getTimestamp())
 					.status(activity.getTo().getDisplayValue())

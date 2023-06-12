@@ -96,6 +96,8 @@ public class JiraBoardConfigDTOFixture {
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(1).build()),
 					new JiraCard("1", JiraCardField.builder().assignee(new Assignee("Zhang San")).build()),
 					new JiraCard("1",
+							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build()),
+					new JiraCard("2",
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
 	}
 
@@ -117,6 +119,14 @@ public class JiraBoardConfigDTOFixture {
 					new HistoryDetail(5, "status", new Status("Testing"), new Status("Waiting for testing"))));
 	}
 
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER_WITHOUT_STATUS() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do")),
+					new HistoryDetail(3, "assignee", new Status("Review"), new Status("In Dev")),
+					new HistoryDetail(4, "assignee", new Status("Waiting for testing"), new Status("Review")),
+					new HistoryDetail(5, "assignee", new Status("Testing"), new Status("Waiting for testing"))));
+	}
+
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_MULTI_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status("Block")),
@@ -128,6 +138,7 @@ public class JiraBoardConfigDTOFixture {
 					new HistoryDetail(7, "status", new Status("FLAG"), new Status("Block")),
 					new HistoryDetail(8, "flagged", new Status("Impediment"), new Status("FLAG")),
 					new HistoryDetail(9, "flagged", new Status("removeFlag"), new Status("Impediment")),
+					new HistoryDetail(9, "status", new Status("Done"), new Status("Testing")),
 					new HistoryDetail(9, "flagged", new Status("UNKNOWN"), new Status("removeFlag"))));
 	}
 

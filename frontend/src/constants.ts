@@ -143,6 +143,8 @@ export const PIPELINE_STEP = 'Pipeline/step'
 
 export const NAME = 'Name'
 
+export const AVERAGE_FIELD = 'Average'
+
 export enum Unit {
   PER_SP = '(days/SP)',
   PER_CARD = '(days/card)',

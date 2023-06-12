@@ -16,6 +16,7 @@ import java.util.List;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
+import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION_WITH_ZERO_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +53,42 @@ class CycleTimeCalculatorTest {
 						.averageTimeForSP(0.87)
 						.averageTimeForCards(1.30)
 						.totalTime(2.60)
+						.build()))
+
+			.build();
+
+		CycleTime cycleTimeActual = cycleTimeCalculator.calculateCycleTime(cardCollection, boardColumns);
+
+		assertThat(cycleTimeActual).isEqualTo(cycleTimeExpect);
+	}
+
+	@Test
+	public void shouldReturnAllDoneCardsCycleTimeWhenCallCalculateCycleTimeWithZeroValue() {
+		CardCollection cardCollection = MOCK_CARD_COLLECTION_WITH_ZERO_VALUE();
+		List<RequestJiraBoardColumnSetting> boardColumns = JIRA_BOARD_COLUMNS_SETTING();
+
+		CycleTime cycleTimeExpect = CycleTime.builder()
+			.totalTimeForCards(4.3)
+			.averageCycleTimePerSP(0.0)
+			.averageCycleTimePerCard(0.0)
+			.swimlaneList(List.of(
+					CycleTimeForSelectedStepItem.builder()
+						.optionalItemName("In Dev")
+						.averageTimeForSP(0.0)
+						.averageTimeForCards(0.0)
+						.totalTime(0.0)
+						.build(),
+					CycleTimeForSelectedStepItem.builder()
+						.optionalItemName("Block")
+						.averageTimeForSP(0.0)
+						.averageTimeForCards(0.0)
+						.totalTime(3.0)
+						.build(),
+					CycleTimeForSelectedStepItem.builder()
+						.optionalItemName("Testing")
+						.averageTimeForSP(0.0)
+						.averageTimeForCards(0.0)
+						.totalTime(1.3)
 						.build()))
 
 			.build();

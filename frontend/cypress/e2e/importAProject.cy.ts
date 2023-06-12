@@ -2,6 +2,7 @@ import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'
 import reportPage from '../pages/metrics/report'
+import { GITHUB_TOKEN } from '../fixtures/fixtures'
 
 const metricsTextList = [
   'Crews setting',
@@ -29,9 +30,45 @@ const metricsTextList = [
   ':docker: publish maven-cache image to cloudsmith',
 ]
 
+const configTextList = [
+  'Project name *',
+  'Velocity, Cycle time, Classification, Lead time for changes, Deployment frequency',
+  'Classic Jira',
+  'BuildKite',
+  'GitHub',
+]
+
+const textInputValues = [
+  { index: 0, value: 'ConfigFileForImporting' },
+  { index: 1, value: '03 / 16 / 2023' },
+  { index: 2, value: '03 / 30 / 2023' },
+  { index: 3, value: '1963' },
+  { index: 4, value: 'test@test.com' },
+  { index: 5, value: 'PLL' },
+  { index: 6, value: 'mockSite' },
+]
+
+const tokenInputValues = [
+  { index: 0, value: 'mockToken' },
+  { index: 1, value: 'mockToken' },
+  { index: 2, value: `${GITHUB_TOKEN}` },
+]
+
 const checkFieldsExist = (fields: string[]) => {
   fields.forEach((item) => {
     cy.contains(item).should('exist')
+  })
+}
+
+const checkTextInputValuesExist = (fields: { index: number; value: string }[]) => {
+  fields.forEach(({ index, value }) => {
+    cy.get('.MuiInputBase-root input[type="text"]').eq(index).should('have.value', value)
+  })
+}
+
+const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) => {
+  fields.forEach(({ index, value }) => {
+    cy.get('[type="password"]').eq(index).should('have.value', value)
   })
 }
 describe('Import project from file', () => {
@@ -60,5 +97,13 @@ describe('Import project from file', () => {
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
+
+    metricsPage.BackToConfigStep()
+
+    checkFieldsExist(configTextList)
+
+    checkTextInputValuesExist(textInputValues)
+
+    checkTokenInputValuesExist(tokenInputValues)
   })
 })

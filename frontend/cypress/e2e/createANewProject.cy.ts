@@ -30,6 +30,97 @@ const velocityData = [
   { label: 'Throughput(Cards Count)', value: '16' },
 ]
 
+const metricsTextList = [
+  'Crews setting',
+  'Brian Ong',
+  'Harsh Singal',
+  'Prashant Agarwal',
+  'Sumit Narang',
+  'Yu Zhang',
+  'Peihang Yu',
+  'Mengyang Sun',
+  'HanWei Wang',
+  'Aaron Camilleri',
+  'Qian Zhang',
+  'Gerard Ho',
+  'Anthony Tse',
+  'Yonghee Jeon Jeon',
+  'Cycle time settings',
+  'Analysis',
+  'To do',
+  'In Dev',
+  'Block',
+  'Waiting for testing',
+  'Testing',
+  'Review',
+  'Done',
+  'Real done',
+  'DONE, CLOSED',
+  'Classification setting',
+  'Issue Type',
+  'Has Dependancies',
+  'FS R&D Classification',
+  'Parent',
+  'Components',
+  'Project',
+  'Reporter',
+  'Parent Link',
+  'Fix versions',
+  'Priority',
+  'Paired Member',
+  'Labels',
+  'Story Points',
+  'Sprint',
+  'Epic Link',
+  'Assignee',
+  'FS Work Categorization',
+  'FS Work Type',
+  'Epic Name',
+  'Acceptance Criteria',
+  'Environment',
+  'Affects versions',
+  'FS Domains',
+  'PIR Completed',
+  'Team',
+  'Incident Priority',
+  'Resolution Details',
+  'Time to Resolution - Hrs',
+  'Time to Detect - Hrs',
+  'Cause by - System',
+  'Deployment frequency settings',
+  'XXXX',
+  'fs-platform-payment-selector',
+  'RECORD RELEASE TO PROD',
+  'Lead time for changes',
+  'XXXX',
+  'fs-platform-onboarding',
+  'RECORD RELEASE TO PROD',
+]
+
+const configTextList = [
+  'Project name *',
+  'Velocity, Cycle time, Classification, Lead time for changes, Deployment frequency, Change failure rate, Mean time to recovery',
+  'Classic Jira',
+  'BuildKite',
+  'GitHub',
+]
+
+const textInputValues = [
+  { index: 0, value: 'E2E Project' },
+  { index: 1, value: '03 / 16 / 2023' },
+  { index: 2, value: '03 / 30 / 2023' },
+  { index: 3, value: '1963' },
+  { index: 4, value: 'test@test.com' },
+  { index: 5, value: 'PLL' },
+  { index: 6, value: 'site' },
+]
+
+const tokenInputValues = [
+  { index: 0, value: 'mockToken' },
+  { index: 1, value: 'mock1234'.repeat(5) },
+  { index: 2, value: `${GITHUB_TOKEN}` },
+]
+
 interface BoardDataItem {
   label: string
   value?: string
@@ -71,6 +162,24 @@ const checkPipelineCSV = () => {
   cy.wait(2000)
   return cy.task('readDir', 'cypress/downloads').then((files) => {
     expect(files).to.match(new RegExp(/pipeline-data-.*\.csv/))
+  })
+}
+
+const checkFieldsExist = (fields: string[]) => {
+  fields.forEach((item) => {
+    cy.contains(item).should('exist')
+  })
+}
+
+const checkTextInputValuesExist = (fields: { index: number; value: string }[]) => {
+  fields.forEach(({ index, value }) => {
+    cy.get('.MuiInputBase-root input[type="text"]').eq(index).should('have.value', value)
+  })
+}
+
+const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) => {
+  fields.forEach(({ index, value }) => {
+    cy.get('[type="password"]').eq(index).should('have.value', value)
   })
 }
 
@@ -147,5 +256,85 @@ describe('Create a new project', () => {
     reportPage.exportPipelineData()
 
     checkPipelineCSV()
+  })
+
+  it('Should have data in metrics page when back from report page', () => {
+    homePage.navigate()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.goHomePage()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.selectDateRange()
+
+    configPage.selectMetricsData()
+
+    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
+
+    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
+
+    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
+
+    configPage.goMetricsStep()
+
+    metricsPage.checkCycleTime()
+
+    metricsPage.checkRealDone()
+
+    metricsPage.checkClassification()
+
+    metricsPage.checkDeploymentFrequencySettings()
+
+    metricsPage.checkLeadTimeForChanges()
+
+    checkFieldsExist(metricsTextList)
+
+    metricsPage.goReportStep()
+
+    cy.wait(10000)
+
+    reportPage.backToMetricsStep()
+
+    checkFieldsExist(metricsTextList)
+  })
+
+  it('Should have data in config page when back from metrics page', () => {
+    homePage.navigate()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.goHomePage()
+
+    homePage.createANewProject()
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.selectDateRange()
+
+    configPage.selectMetricsData()
+
+    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
+
+    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
+
+    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
+
+    configPage.goMetricsStep()
+
+    metricsPage.BackToConfigStep()
+
+    checkFieldsExist(configTextList)
+
+    checkTextInputValuesExist(textInputValues)
+
+    checkTokenInputValuesExist(tokenInputValues)
   })
 })

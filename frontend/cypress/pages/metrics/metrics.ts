@@ -174,7 +174,7 @@ class Metrics {
     this.nextButton().click()
   }
 
-  BackToMetricsStep() {
+  BackToConfigStep() {
     this.backButton().click()
   }
 

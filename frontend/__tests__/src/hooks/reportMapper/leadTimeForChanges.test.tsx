@@ -43,4 +43,136 @@ describe('lead time for changes data mapper', () => {
 
     expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues)
   })
+
+  it('should map time to 1 minute when pipelineDelayTime is greater than 0 but less than 1', () => {
+    const mockLeadTimeForChangesResMock = {
+      leadTimeForChangesOfPipelines: [
+        {
+          name: 'fs-platform-payment-selector',
+          step: 'RECORD RELEASE TO PROD',
+          mergeDelayTime: 2639.42,
+          pipelineDelayTime: 0.49,
+          totalDelayTime: 3289.95,
+        },
+      ],
+      avgLeadTimeForChanges: {
+        name: 'Average',
+        mergeDelayTime: 2341.72,
+        pipelineDelayTime: 0.99,
+        totalDelayTime: 2342.71,
+      },
+    }
+
+    const expectedLeadTimeForChangesValues = [
+      {
+        id: 0,
+        name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
+        valuesList: [
+          { name: 'mergeDelayTime', value: '1day 19hours 59minutes' },
+          { name: 'pipelineDelayTime', value: '1minutes' },
+          { name: 'totalDelayTime', value: '1day 20hours 0minutes' },
+        ],
+      },
+      {
+        id: 1,
+        name: 'Average',
+        valuesList: [
+          { name: 'mergeDelayTime', value: '1day 15hours 1minutes' },
+          { name: 'pipelineDelayTime', value: '1minutes' },
+          { name: 'totalDelayTime', value: '1day 15hours 2minutes' },
+        ],
+      },
+    ]
+    const mappedLeadTimeForChanges = leadTimeForChangesMapper(mockLeadTimeForChangesResMock)
+
+    expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues)
+  })
+
+  it('should map time to 1 minute when mergeDelayTime is greater than 0 but less than 1', () => {
+    const mockLeadTimeForChangesResMock = {
+      leadTimeForChangesOfPipelines: [
+        {
+          name: 'fs-platform-payment-selector',
+          step: 'RECORD RELEASE TO PROD',
+          mergeDelayTime: 0.33,
+          pipelineDelayTime: 2639.42,
+          totalDelayTime: 3289.95,
+        },
+      ],
+      avgLeadTimeForChanges: {
+        name: 'Average',
+        mergeDelayTime: 2341.72,
+        pipelineDelayTime: 0.99,
+        totalDelayTime: 2342.71,
+      },
+    }
+
+    const expectedLeadTimeForChangesValues = [
+      {
+        id: 0,
+        name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
+        valuesList: [
+          { name: 'mergeDelayTime', value: '1minutes' },
+          { name: 'pipelineDelayTime', value: '1day 19hours 59minutes' },
+          { name: 'totalDelayTime', value: '1day 20hours 0minutes' },
+        ],
+      },
+      {
+        id: 1,
+        name: 'Average',
+        valuesList: [
+          { name: 'mergeDelayTime', value: '1day 15hours 1minutes' },
+          { name: 'pipelineDelayTime', value: '1minutes' },
+          { name: 'totalDelayTime', value: '1day 15hours 2minutes' },
+        ],
+      },
+    ]
+    const mappedLeadTimeForChanges = leadTimeForChangesMapper(mockLeadTimeForChangesResMock)
+
+    expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues)
+  })
+
+  it('should map time to 0 minute when it is 0', () => {
+    const mockLeadTimeForChangesResMock = {
+      leadTimeForChangesOfPipelines: [
+        {
+          name: 'fs-platform-payment-selector',
+          step: 'RECORD RELEASE TO PROD',
+          mergeDelayTime: 0,
+          pipelineDelayTime: 0,
+          totalDelayTime: 3289.95,
+        },
+      ],
+      avgLeadTimeForChanges: {
+        name: 'Average',
+        mergeDelayTime: 0.99,
+        pipelineDelayTime: 2341.72,
+        totalDelayTime: 2342.71,
+      },
+    }
+
+    const expectedLeadTimeForChangesValues = [
+      {
+        id: 0,
+        name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
+        valuesList: [
+          { name: 'mergeDelayTime', value: '0minutes' },
+          { name: 'pipelineDelayTime', value: '0minutes' },
+          { name: 'totalDelayTime', value: '0day 0hours 0minutes' },
+        ],
+      },
+      {
+        id: 1,
+        name: 'Average',
+        valuesList: [
+          { name: 'mergeDelayTime', value: '1minutes' },
+          { name: 'pipelineDelayTime', value: '1day 15hours 1minutes' },
+          { name: 'totalDelayTime', value: '1day 15hours 2minutes' },
+        ],
+      },
+    ]
+    const mappedLeadTimeForChanges = leadTimeForChangesMapper(mockLeadTimeForChangesResMock)
+
+    expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues)
+  })
 })

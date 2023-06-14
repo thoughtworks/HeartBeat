@@ -4,33 +4,33 @@ export const leadTimeForChangesMapper = ({
   leadTimeForChangesOfPipelines,
   avgLeadTimeForChanges,
 }: LeadTimeForChangesResponse) => {
+  const minutesPerDay = 1440
+  const minutesPerHour = 60
   const formatDuration = (duration: number) => {
-    const minutesPerDay = 1440
-    const minutesPerHour = 60
     const days = Math.floor(duration / minutesPerDay)
     const hours = Math.floor((duration % minutesPerDay) / minutesPerHour)
-    const minutes = Math.floor(duration % minutesPerHour)
+    const minutes = duration % minutesPerHour
     return (
       (days ? days + 'day ' : '') +
       (hours ? hours + 'hours ' : '') +
-      (0 < minutes && minutes <= 1 ? '1minutes' : minutes + 'minutes').trim()
+      (0 < minutes && minutes <= 1 ? '1minutes' : Math.floor(minutes) + 'minutes').trim()
     )
   }
 
   const calculateTotalTime = (mergeDelayTime: number, pipelineDelayTime: number): string => {
-    const formatMergeDelayTime = formatDuration(mergeDelayTime)
-    const formatPipelineDelayTime = formatDuration(pipelineDelayTime)
+    const mergeDelayTimeMinutes = mergeDelayTime % minutesPerHour
+    const formatMergeDelayTimeMinutes =
+      0 < mergeDelayTimeMinutes && mergeDelayTimeMinutes <= 1 ? 1 : Math.floor(mergeDelayTimeMinutes)
 
-    const [mergeDelayDays, mergeDelayHours, mergeDelayMinutes] = formatMergeDelayTime.match(/\d+/g) || ['0', '0', '0']
-    const [pipelineDelayDays, pipelineDelayHours, pipelineDelayMinutes] = formatPipelineDelayTime.match(/\d+/g) || [
-      '0',
-      '0',
-      '0',
-    ]
+    const pipelineDelayTimeMinutes = pipelineDelayTime % minutesPerHour
+    const formatPipelineDelayTimeMinutes =
+      0 < pipelineDelayTimeMinutes && pipelineDelayTimeMinutes <= 1 ? 1 : Math.floor(pipelineDelayTimeMinutes)
 
-    let totalDays: number = parseInt(mergeDelayDays, 10) + parseInt(pipelineDelayDays, 10)
-    let totalHours: number = parseInt(mergeDelayHours, 10) + parseInt(pipelineDelayHours, 10)
-    let totalMinutes: number = parseInt(mergeDelayMinutes, 10) + parseInt(pipelineDelayMinutes, 10)
+    let totalDays: number = Math.floor(mergeDelayTime / minutesPerDay) + Math.floor(pipelineDelayTime / minutesPerDay)
+    let totalHours: number =
+      Math.floor((mergeDelayTime % minutesPerDay) / minutesPerHour) +
+      Math.floor((pipelineDelayTime % minutesPerDay) / minutesPerHour)
+    let totalMinutes: number = formatMergeDelayTimeMinutes + formatPipelineDelayTimeMinutes
 
     if (totalMinutes >= 60) {
       totalHours += Math.floor(totalMinutes / 60)

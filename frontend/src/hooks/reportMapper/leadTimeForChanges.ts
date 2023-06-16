@@ -42,7 +42,9 @@ export const leadTimeForChangesMapper = ({
       totalHours %= 24
     }
 
-    return `${totalDays}day ${totalHours}hours ${totalMinutes}minutes`
+    return (
+      (totalDays ? totalDays + 'day ' : '') + (totalHours ? totalHours + 'hours ' : '') + (totalMinutes + 'minutes')
+    )
   }
 
   const mappedLeadTimeForChangesValue = leadTimeForChangesOfPipelines.map((item, index) => {

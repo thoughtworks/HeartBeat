@@ -158,7 +158,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: 'mergeDelayTime', value: '0minutes' },
           { name: 'pipelineDelayTime', value: '0minutes' },
-          { name: 'totalDelayTime', value: '0day 0hours 0minutes' },
+          { name: 'totalDelayTime', value: '0minutes' },
         ],
       },
       {

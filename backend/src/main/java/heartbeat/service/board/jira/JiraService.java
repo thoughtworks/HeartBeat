@@ -71,33 +71,28 @@ public class JiraService {
 
 	public static final int QUERY_COUNT = 100;
 
+	private static final String DONE_CARD_TAG = "done";
+
+	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
+			"issuelinks");
+
 	private final JiraFeignClient jiraFeignClient;
 
 	private final JiraUriGenerator urlGenerator;
 
 	private final BoardUtil boardUtil;
 
-	private CardCustomFieldKey cardCustomFieldKey;
-
-	private List<TargetField> targetFields;
-
 	@PreDestroy
 	public void shutdownExecutor() {
 		customTaskExecutor.shutdown();
 	}
 
-	private static final String DONE_CARD_TAG = "done";
-
-	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
-			"issuelinks");
-
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
-		JiraBoardConfigDTO jiraBoardConfigDTO;
 		try {
 			log.info("Start to get configuration for board, board info: " + boardRequestParam);
-			jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardRequestParam.getBoardId(),
-					boardRequestParam.getToken());
+			JiraBoardConfigDTO jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl,
+					boardRequestParam.getBoardId(), boardRequestParam.getToken());
 			log.info("Successfully get configuration for board: " + boardRequestParam.getBoardId() + "response: "
 					+ jiraBoardConfigDTO);
 
@@ -278,7 +273,8 @@ public class JiraService {
 				QUERY_COUNT, 0, jql, boardRequestParam.getToken());
 		log.info("Successfully get first-page done card information");
 
-		AllDoneCardsResponseDTO allDoneCardsResponseDTO = formatAllDoneCards(allDoneCardResponse);
+		List<TargetField> targetField = getTargetField(baseUrl, boardRequestParam);
+		AllDoneCardsResponseDTO allDoneCardsResponseDTO = formatAllDoneCards(allDoneCardResponse, targetField);
 
 		List<JiraCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
 		int pages = (int) Math.ceil(Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
@@ -291,7 +287,7 @@ public class JiraService {
 		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
 			.map(startFrom -> CompletableFuture.supplyAsync(
 					() -> (formatAllDoneCards(jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
-							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()))),
+							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()), targetField)),
 					customTaskExecutor))
 			.toList();
 		log.info("Successfully get more done card information");
@@ -305,7 +301,7 @@ public class JiraService {
 
 	}
 
-	private AllDoneCardsResponseDTO formatAllDoneCards(String allDoneCardResponse) {
+	private AllDoneCardsResponseDTO formatAllDoneCards(String allDoneCardResponse, List<TargetField> targetFields) {
 		Gson gson = new Gson();
 		AllDoneCardsResponseDTO allDoneCardsResponseDTO = gson.fromJson(allDoneCardResponse,
 				AllDoneCardsResponseDTO.class);
@@ -319,6 +315,7 @@ public class JiraService {
 		ArrayList<Integer> storyPointList = new ArrayList<>();
 		Map<String, String> resultMap = targetFields.stream()
 			.collect(Collectors.toMap(TargetField::getKey, TargetField::getName));
+		CardCustomFieldKey cardCustomFieldKey = covertCustomFieldKey(targetFields);
 		for (JsonElement element : elements) {
 			JsonObject jsonElement = element.getAsJsonObject().get("fields").getAsJsonObject();
 			JsonElement storyPoints = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints());
@@ -418,8 +415,6 @@ public class JiraService {
 			.distinct()
 			.toList();
 		log.info("Successfully get targetField:{}", targetFields);
-		cardCustomFieldKey = saveCustomFieldKey(targetFields);
-		this.targetFields = targetFields;
 		return targetFields;
 	}
 
@@ -594,7 +589,7 @@ public class JiraService {
 		return CardCycleTime.builder().name(cardId).steps(stepsDay).total(total).build();
 	}
 
-	private CardCustomFieldKey saveCustomFieldKey(List<TargetField> model) {
+	private CardCustomFieldKey covertCustomFieldKey(List<TargetField> model) {
 		CardCustomFieldKey cardCustomFieldKey = CardCustomFieldKey.builder().build();
 		for (TargetField value : model) {
 			String lowercaseName = value.getName().toLowerCase();

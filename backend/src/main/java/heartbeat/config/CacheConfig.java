@@ -33,8 +33,9 @@ public class CacheConfig {
 		return cacheManager;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <K, V> javax.cache.configuration.Configuration<K, V> getCacheConfiguration(Class<V> valueType) {
-		val offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().heap(1, MemoryUnit.MB);
+		val offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(2, MemoryUnit.MB);
 		val timeToLive = Duration.ofSeconds(20);
 		CacheConfigurationBuilder<K, V> configuration = CacheConfigurationBuilder
 			.newCacheConfigurationBuilder((Class<K>) String.class, valueType, offHeap)

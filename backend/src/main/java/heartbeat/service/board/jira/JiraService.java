@@ -70,10 +70,11 @@ public class JiraService {
 	private final ThreadPoolTaskExecutor customTaskExecutor;
 
 	public static final int QUERY_COUNT = 100;
+
 	private static final String DONE_CARD_TAG = "done";
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
-		"issuelinks");
+			"issuelinks");
 
 	private final JiraFeignClient jiraFeignClient;
 

@@ -27,6 +27,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -446,9 +447,6 @@ class JiraServiceTest {
 
 	@Test
 	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() throws JsonProcessingException {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -463,21 +461,15 @@ class JiraServiceTest {
 			.replaceAll("storyPoints", "customfield_10016");
 
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
-		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
 			.thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
-			.thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 
-		jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
 
@@ -490,10 +482,7 @@ class JiraServiceTest {
 	@Test
 	void shouldReturnIllegalArgumentExceptionWhenHaveUnknownColumn() throws JsonProcessingException {
 		String token = "token";
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_HAVE_UNKNOWN_COLUMN_BUILD().build();
-		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(
@@ -504,9 +493,6 @@ class JiraServiceTest {
 			.replaceAll("storyPoints", "customfield_10016");
 
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
-		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getAllDoneCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
 			.thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
@@ -514,10 +500,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER_WITHOUT_STATUS().build());
 		when(boardUtil.getCardTimeForEachStep(any())).thenReturn(CYCLE_TIME_INFO_LIST());
-		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
-			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San")))
 			.isInstanceOf(IllegalArgumentException.class)

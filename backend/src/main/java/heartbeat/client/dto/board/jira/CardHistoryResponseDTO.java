@@ -1,5 +1,6 @@
 package heartbeat.client.dto.board.jira;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardHistoryResponseDTO {
+public class CardHistoryResponseDTO implements Serializable {
 
 	private List<HistoryDetail> items;
 

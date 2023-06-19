@@ -1,6 +1,7 @@
 package heartbeat.client.dto.board.jira;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Project {
+public class Project implements Serializable {
 
 	private List<Issuetype> issuetypes;
 

@@ -70,6 +70,10 @@ public class JiraService {
 	private final ThreadPoolTaskExecutor customTaskExecutor;
 
 	public static final int QUERY_COUNT = 100;
+	private static final String DONE_CARD_TAG = "done";
+
+	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
+		"issuelinks");
 
 	private final JiraFeignClient jiraFeignClient;
 
@@ -81,11 +85,6 @@ public class JiraService {
 	public void shutdownExecutor() {
 		customTaskExecutor.shutdown();
 	}
-
-	private static final String DONE_CARD_TAG = "done";
-
-	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
-			"issuelinks");
 
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());

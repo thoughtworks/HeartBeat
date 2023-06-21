@@ -242,7 +242,7 @@ public class GitHubService {
 		String realToken = "Bearer " + token;
 		log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
 		CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
-		log.info("Successfully get commit info_commitInfo: {}", commitInfo);
+		log.info("Successfully get commit info_commitInfo_token: {}, commit: {}", maskToken, commitInfo.getCommit());
 		return commitInfo;
 	}
 

@@ -1,6 +1,5 @@
 package heartbeat.controller.board.dto.response;
 
-import heartbeat.service.report.ICardFieldDisplayName;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,16 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CardParent implements ICardFieldDisplayName {
+public class Fields {
 
-	private Fields fields;
-
-	private String name;
-
-	private String key;
-
-	public String getDisplayName() {
-		return key;
-	}
+	private String summary;
 
 }

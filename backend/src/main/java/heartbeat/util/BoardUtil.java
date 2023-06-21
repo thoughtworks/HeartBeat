@@ -48,6 +48,9 @@ public class BoardUtil {
 	}
 
 	public List<CycleTimeInfo> getCardTimeForEachStep(List<StatusChangedItem> statusChangedItems) {
+		if (statusChangedItems.isEmpty()) {
+			return null;
+		}
 		Map<String, Double> result = new HashMap<>();
 		List<StatusChangedItem> statusChangedItemArrayList = new ArrayList<>(statusChangedItems);
 		for (int i = 0; i < statusChangedItemArrayList.size(); i++) {

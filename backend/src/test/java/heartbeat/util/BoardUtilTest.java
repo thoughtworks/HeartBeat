@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -49,6 +50,15 @@ class BoardUtilTest {
 		List<CycleTimeInfo> result = boardUtil.getCardTimeForEachStep(statusChangedItems);
 
 		Assertions.assertEquals(expect, result);
+	}
+
+	@Test
+	void shouldReturnNullWhenCallGetCardTimeForEachStepWithChangedItemIsEmpty() {
+		List<StatusChangedItem> statusChangedItems = Collections.emptyList();
+
+		List<CycleTimeInfo> result = boardUtil.getCardTimeForEachStep(statusChangedItems);
+
+		Assertions.assertNull(result);
 	}
 
 }

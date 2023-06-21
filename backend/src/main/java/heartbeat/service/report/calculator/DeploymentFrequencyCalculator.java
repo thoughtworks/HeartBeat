@@ -7,10 +7,10 @@ import heartbeat.controller.report.dto.response.DailyDeploymentCount;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
 import heartbeat.service.report.WorkDay;
+import heartbeat.util.DecimalUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -23,12 +23,9 @@ import java.util.stream.Collectors;
 @Component
 public class DeploymentFrequencyCalculator {
 
-	private static final String FORMAT_2_DECIMALS = "0.00";
-
 	private final WorkDay workDay;
 
 	public DeploymentFrequency calculate(List<DeployTimes> deployTimes, Long startTime, Long endTime) {
-		DecimalFormat decimalFormat = new DecimalFormat(FORMAT_2_DECIMALS);
 		int timePeriod = workDay.calculateWorkDaysBetween(startTime, endTime);
 
 		List<DeploymentFrequencyOfPipeline> deploymentFrequencyOfPipelines = deployTimes.stream().map((item) -> {
@@ -40,7 +37,7 @@ public class DeploymentFrequencyCalculator {
 				.name(item.getPipelineName())
 				.step(item.getPipelineStep())
 				.dailyDeploymentCounts(dailyDeploymentCounts)
-				.deploymentFrequency(Float.parseFloat(decimalFormat.format(frequency)))
+				.deploymentFrequency(Float.parseFloat(DecimalUtil.formatDecimalTwo(frequency)))
 				.build();
 		}).collect(Collectors.toList());
 
@@ -52,7 +49,7 @@ public class DeploymentFrequencyCalculator {
 
 		return DeploymentFrequency.builder()
 			.avgDeploymentFrequency(AvgDeploymentFrequency.builder()
-				.deploymentFrequency(Float.parseFloat(decimalFormat.format(avgDeployFrequency)))
+				.deploymentFrequency(Float.parseFloat(DecimalUtil.formatDecimalTwo(avgDeployFrequency)))
 				.build())
 			.deploymentFrequencyOfPipelines(deploymentFrequencyOfPipelines)
 			.build();

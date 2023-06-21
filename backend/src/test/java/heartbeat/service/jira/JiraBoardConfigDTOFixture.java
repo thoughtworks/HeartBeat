@@ -20,6 +20,7 @@ import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
+import heartbeat.controller.board.dto.response.IssueType;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 
@@ -72,6 +73,12 @@ public class JiraBoardConfigDTOFixture {
 		return StatusSelfDTO.builder().untranslatedName("done").statusCategory(new StatusCategory("done", "done"));
 	}
 
+	public static StatusSelfDTO.StatusSelfDTOBuilder REVIEW_STATUS_SELF_RESPONSE_BUILDER() {
+		return StatusSelfDTO.builder()
+			.untranslatedName("review")
+			.statusCategory(new StatusCategory("review", "review"));
+	}
+
 	public static StatusSelfDTO.StatusSelfDTOBuilder COMPLETE_STATUS_SELF_RESPONSE_BUILDER() {
 		return StatusSelfDTO.builder()
 			.untranslatedName("complete")
@@ -99,6 +106,29 @@ public class JiraBoardConfigDTOFixture {
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build()),
 					new JiraCard("2",
 							JiraCardField.builder().assignee(new Assignee("Zhang San")).storyPoints(5).build())));
+	}
+
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
+		return AllDoneCardsResponseDTO.builder()
+			.total("3")
+			.issues(List.of(
+					new JiraCard("1",
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.issuetype(IssueType.builder().name("缺陷").build())
+								.storyPoints(2)
+								.build()),
+					new JiraCard("2",
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.issuetype(IssueType.builder().name("缺陷").build())
+								.storyPoints(1)
+								.build()),
+					new JiraCard("3",
+							JiraCardField.builder()
+								.assignee(new Assignee("Zhang San"))
+								.issuetype(IssueType.builder().name("缺陷").build())
+								.build())));
 	}
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
@@ -187,9 +217,9 @@ public class JiraBoardConfigDTOFixture {
 			.treatFlagCardAsBlock(true)
 			.type("jira")
 			.projectKey("PLL")
-			.targetFields(List.of(TargetField.builder().key("testKey").name("Story Points").flag(true).build(),
-					TargetField.builder().key("testKey").name("Sprint").flag(true).build(),
-					TargetField.builder().key("testKey").name("Flagged").flag(true).build()));
+			.targetFields(List.of(TargetField.builder().key("testKey1").name("Story Points").flag(true).build(),
+					TargetField.builder().key("testKey2").name("Sprint").flag(true).build(),
+					TargetField.builder().key("testKey3").name("Flagged").flag(true).build()));
 	}
 
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_HAVE_UNKNOWN_COLUMN_BUILD() {
@@ -231,11 +261,26 @@ public class JiraBoardConfigDTOFixture {
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
+	public static StoryPointsAndCycleTimeRequest.StoryPointsAndCycleTimeRequestBuilder STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS() {
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+		return StoryPointsAndCycleTimeRequest.builder()
+			.token("token")
+			.type(jiraBoardSetting.getType())
+			.site(jiraBoardSetting.getSite())
+			.project(jiraBoardSetting.getProjectKey())
+			.boardId(jiraBoardSetting.getBoardId())
+			.status(Collections.emptyList())
+			.startTime("1672556350000")
+			.endTime("1676908799000")
+			.targetFields(jiraBoardSetting.getTargetFields())
+			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
+	}
+
 	public static List<CycleTimeInfo> CYCLE_TIME_INFO_LIST() {
-		return List.of(CycleTimeInfo.builder().column("Waiting for testing").day(1.0).build(),
-				CycleTimeInfo.builder().column("Testing").day(2.0).build(),
-				CycleTimeInfo.builder().column("In Dev").day(3.0).build(),
-				CycleTimeInfo.builder().column("Review").day(4.0).build(),
+		return List.of(CycleTimeInfo.builder().column("WAITING FOR TESTING").day(1.0).build(),
+				CycleTimeInfo.builder().column("TESTING").day(2.0).build(),
+				CycleTimeInfo.builder().column("IN DEV").day(3.0).build(),
+				CycleTimeInfo.builder().column("REVIEW").day(4.0).build(),
 				CycleTimeInfo.builder().column("UNKNOWN").day(5.0).build(),
 				CycleTimeInfo.builder().column("FLAG").day(6.0).build());
 	}

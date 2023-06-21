@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
@@ -27,6 +28,7 @@ import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
@@ -56,10 +58,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
@@ -74,6 +77,8 @@ import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class GenerateReporterServiceTest {
+
+	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
 
 	@InjectMocks
 	GenerateReporterService generateReporterService;
@@ -93,7 +98,9 @@ class GenerateReporterServiceTest {
 	@Mock
 	VelocityCalculator velocityCalculator;
 
-	Path mockCsvFilePath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
+	Path mockPipelineCsvPath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
+
+	Path mockBoardCsvPath = Path.of("./csv/exportBoard-1683734399999.csv");
 
 	@Mock
 	private BuildKiteService buildKiteService;
@@ -113,6 +120,9 @@ class GenerateReporterServiceTest {
 	@Mock
 	private LeadTimeForChangesCalculator leadTimeForChangesCalculator;
 
+	@Mock
+	private JiraUriGenerator urlGenerator;
+
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
 		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
@@ -124,6 +134,7 @@ class GenerateReporterServiceTest {
 			.treatFlagCardAsBlock(true)
 			.type("jira")
 			.projectKey("PLL")
+			.targetFields(Collections.emptyList())
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
@@ -131,13 +142,27 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
-			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
 			.build();
 
+		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
+
 		Velocity velocity = Velocity.builder().velocityForSP(0).velocityForCards(0).build();
-		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any()))
-			.thenReturn(CardCollection.builder().storyPointSum(0).cardsNumber(0).build());
+		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(0)
+			.cardsNumber(0)
+			.jiraCardDTOList(Collections.emptyList())
+			.build());
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(0)
+			.cardsNumber(0)
+			.jiraCardDTOList(Collections.emptyList())
+			.build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(Collections.emptyList())
+			.doneColumns(Collections.emptyList())
+			.build());
 		when(velocityCalculator.calculateVelocity(any())).thenReturn(velocity);
+		when(urlGenerator.getUri(any())).thenReturn(mockUrl);
 
 		ReportResponse result = generateReporterService.generateReporter(request);
 
@@ -163,7 +188,6 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
-			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
 			.build();
 
 		Classification classification = Classification.builder()
@@ -186,6 +210,20 @@ class GenerateReporterServiceTest {
 			.build();
 
 		when(classificationCalculator.calculate(any(), any())).thenReturn(List.of(mockClassification));
+		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(0)
+			.cardsNumber(0)
+			.jiraCardDTOList(Collections.emptyList())
+			.build());
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(0)
+			.cardsNumber(0)
+			.jiraCardDTOList(Collections.emptyList())
+			.build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(Collections.emptyList())
+			.doneColumns(Collections.emptyList())
+			.build());
 
 		ReportResponse result = generateReporterService.generateReporter(request);
 
@@ -291,6 +329,7 @@ class GenerateReporterServiceTest {
 			.treatFlagCardAsBlock(true)
 			.type("jira")
 			.projectKey("PLL")
+			.targetFields(Collections.emptyList())
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
@@ -298,17 +337,25 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
-			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
 			.build();
 
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(cardCollection);
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(0)
+			.cardsNumber(0)
+			.jiraCardDTOList(Collections.emptyList())
+			.build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(Collections.emptyList())
+			.doneColumns(Collections.emptyList())
+			.build());
 		when(cycleTimeCalculator.calculateCycleTime(cardCollection, request.getJiraBoardSetting().getBoardColumns()))
 			.thenReturn(CycleTime.builder().build());
 
 		ReportResponse result = generateReporterService.generateReporter(request);
+		ReportResponse expect = ReportResponse.builder().cycleTime(CycleTime.builder().build()).build();
 
-		assertThat(result).isEqualTo(ReportResponse.builder().cycleTime(CycleTime.builder().build()).build());
-
+		assertThat(result).isEqualTo(expect);
 	}
 
 	@Test
@@ -471,15 +518,15 @@ class GenerateReporterServiceTest {
 			.thenReturn(List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA()));
 
 		Mockito.doAnswer(invocation -> {
-			Files.createFile(mockCsvFilePath);
+			Files.createFile(mockPipelineCsvPath);
 			return null;
 		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
 
 		generateReporterService.generateReporter(request);
 
-		boolean isExists = Files.exists(mockCsvFilePath);
+		boolean isExists = Files.exists(mockPipelineCsvPath);
 		Assertions.assertTrue(isExists);
-		Files.deleteIfExists(mockCsvFilePath);
+		Files.deleteIfExists(mockPipelineCsvPath);
 	}
 
 	@Test
@@ -504,7 +551,7 @@ class GenerateReporterServiceTest {
 
 	@Test
 	public void shouldDeleteOldCsvWhenExportCsvWithOldCsvOutsideTenHours() throws IOException {
-		Files.createFile(mockCsvFilePath);
+		Files.createFile(mockPipelineCsvPath);
 		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
 			.csvTimeStamp("1685010080107")
@@ -512,7 +559,7 @@ class GenerateReporterServiceTest {
 
 		generateReporterService.fetchCSVData(mockExportCSVRequest);
 
-		boolean isFileDeleted = Files.notExists(mockCsvFilePath);
+		boolean isFileDeleted = Files.notExists(mockPipelineCsvPath);
 		Assertions.assertTrue(isFileDeleted);
 	}
 
@@ -531,6 +578,50 @@ class GenerateReporterServiceTest {
 		boolean isFileDeleted = Files.notExists(csvFilePath);
 		Assertions.assertFalse(isFileDeleted);
 		Files.deleteIfExists(csvFilePath);
+	}
+
+	@Test
+	void shouldGenerateForBoardCsvWhenCallGenerateReporterWithBoardMetric() throws IOException {
+		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
+			.treatFlagCardAsBlock(true)
+			.targetFields(BoardCsvFixture.MOCK_TARGET_FIELD_LIST())
+			.build();
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.metrics(List.of("velocity"))
+			.considerHoliday(false)
+			.jiraBoardSetting(jiraBoardSetting)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
+
+		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(2)
+			.cardsNumber(1)
+			.jiraCardDTOList(BoardCsvFixture.MOCK_DONE_CARD_LIST())
+			.build());
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+			.storyPointSum(2)
+			.cardsNumber(1)
+			.jiraCardDTOList(BoardCsvFixture.MOCK_NON_DONE_CARD_LIST())
+			.build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(BoardCsvFixture.MOCK_JIRA_COLUMN_LIST())
+			.doneColumns(Collections.emptyList())
+			.build());
+		when(urlGenerator.getUri(any())).thenReturn(mockUrl);
+		Mockito.doAnswer(invocation -> {
+			Files.createFile(mockBoardCsvPath);
+			return null;
+		}).when(csvFileGenerator).convertBoardDataToCSV(any(), any(), any(), any());
+
+		generateReporterService.generateReporter(request);
+
+		boolean isExists = Files.exists(mockBoardCsvPath);
+		Assertions.assertTrue(isExists);
+		Files.deleteIfExists(mockBoardCsvPath);
 	}
 
 }

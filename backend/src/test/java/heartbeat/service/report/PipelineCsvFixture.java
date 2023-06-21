@@ -9,7 +9,6 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
-import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 
@@ -62,10 +61,6 @@ public class PipelineCsvFixture {
 				.build())
 			.build();
 		return List.of(pipelineCsvInfo);
-	}
-
-	public static ExportCSVRequest MOCK_EXPORT_CSV_REQUEST() {
-		return ExportCSVRequest.builder().dataType("pipeline").csvTimeStamp("1685010080107").build();
 	}
 
 	public static PipelineLeadTime MOCK_PIPELINE_LEAD_TIME_DATA() {

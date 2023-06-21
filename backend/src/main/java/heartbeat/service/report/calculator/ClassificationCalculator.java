@@ -147,7 +147,8 @@ public class ClassificationCalculator {
 		return value.replaceAll("\"", "");
 	}
 
-	private static Map<String, Object> extractFields(JiraCardField jiraCardFields) {
+	// TODO private to public
+	public Map<String, Object> extractFields(JiraCardField jiraCardFields) {
 		Map<String, Object> tempFields = new HashMap<>();
 		for (Map.Entry<String, JsonElement> entry : jiraCardFields.getCustomFields().entrySet()) {
 			String key = entry.getKey();

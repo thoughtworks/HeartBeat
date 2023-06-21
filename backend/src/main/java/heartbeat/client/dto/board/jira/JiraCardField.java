@@ -45,6 +45,8 @@ public class JiraCardField {
 
 	private CardParent parent;
 
+	private Sprint sprint;
+
 	private List<String> labels;
 
 	private Map<String, JsonElement> customFields;

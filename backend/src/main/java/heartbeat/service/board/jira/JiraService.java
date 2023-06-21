@@ -41,9 +41,11 @@ import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +57,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -106,7 +109,7 @@ public class JiraService {
 									jiraColumnResult.getDoneColumns())
 								.thenApply(users -> BoardConfigDTO.builder()
 									.targetFields(targetFields)
-									.jiraColumnRespons(jiraColumnResult.getJiraColumnRespons())
+									.jiraColumnRespons(jiraColumnResult.getJiraColumnResponse())
 									.users(users)
 									.build())
 								.join())
@@ -161,7 +164,7 @@ public class JiraService {
 				customTaskExecutor);
 	}
 
-	private JiraColumnResult getJiraColumns(BoardRequestParam boardRequestParam, URI baseUrl,
+	public JiraColumnResult getJiraColumns(BoardRequestParam boardRequestParam, URI baseUrl,
 			JiraBoardConfigDTO jiraBoardConfigDTO) {
 		log.info("Start to get jira columns, project key: {}, board id: {}, column size: {}",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
@@ -178,13 +181,13 @@ public class JiraService {
 		List<JiraColumnDTO> columnResponse = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 
 		JiraColumnResult jiraColumnResult = JiraColumnResult.builder()
-			.jiraColumnRespons(columnResponse)
+			.jiraColumnResponse(columnResponse)
 			.doneColumns(doneColumns)
 			.build();
 		log.info(
 				"Successfully to get jira columns, project key: {}, board id: {}, column result size: {}, done columns: {}",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
-				jiraColumnResult.getJiraColumnRespons().size(), doneColumns);
+				jiraColumnResult.getJiraColumnResponse().size(), doneColumns);
 		return jiraColumnResult;
 	}
 
@@ -268,37 +271,7 @@ public class JiraService {
 			BoardRequestParam boardRequestParam) {
 		String jql = parseJiraJql(boardType, doneColumns, boardRequestParam);
 
-		log.info("Start to get first-page done card information");
-		String allDoneCardResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
-				QUERY_COUNT, 0, jql, boardRequestParam.getToken());
-		log.info("Successfully get first-page done card information");
-
-		List<TargetField> targetField = getTargetField(baseUrl, boardRequestParam);
-		AllDoneCardsResponseDTO allDoneCardsResponseDTO = formatAllDoneCards(allDoneCardResponse, targetField);
-
-		List<JiraCard> doneCards = new ArrayList<>(new HashSet<>(allDoneCardsResponseDTO.getIssues()));
-		int pages = (int) Math.ceil(Double.parseDouble(allDoneCardsResponseDTO.getTotal()) / QUERY_COUNT);
-		if (pages <= 1) {
-			return doneCards;
-		}
-
-		log.info("Start to get more done card information");
-		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
-		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
-			.map(startFrom -> CompletableFuture.supplyAsync(
-					() -> (formatAllDoneCards(jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
-							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()), targetField)),
-					customTaskExecutor))
-			.toList();
-		log.info("Successfully get more done card information");
-
-		List<AllDoneCardsResponseDTO> doneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
-		List<JiraCard> moreDoneCards = doneCardsResponses.stream()
-			.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
-			.toList();
-
-		return Stream.concat(doneCards.stream(), moreDoneCards.stream()).toList();
-
+		return getCardList(baseUrl, boardRequestParam, jql, "done");
 	}
 
 	private AllDoneCardsResponseDTO formatAllDoneCards(String allDoneCardResponse, List<TargetField> targetFields) {
@@ -548,15 +521,14 @@ public class JiraService {
 	private CardCycleTime calculateCardCycleTime(String cardId, List<CycleTimeInfo> cycleTimeInfos,
 			List<RequestJiraBoardColumnSetting> boardColumns) {
 		Map<String, CardStepsEnum> boardMap = boardColumns.stream()
-			.collect(Collectors.toMap(RequestJiraBoardColumnSetting::getName,
+			.collect(Collectors.toMap(boardColumn -> boardColumn.getName().toUpperCase(),
 					boardColumn -> CardStepsEnum.fromValue(boardColumn.getValue())));
 		StepsDay stepsDay = StepsDay.builder().build();
 		double total = 0;
-
 		for (CycleTimeInfo cycleTimeInfo : cycleTimeInfos) {
 			String swimLane = cycleTimeInfo.getColumn();
 			if (swimLane.equals("FLAG")) {
-				boardMap.put(swimLane.toUpperCase(), CardStepsEnum.BLOCK);
+				boardMap.put(swimLane, CardStepsEnum.BLOCK);
 			}
 			if (boardMap.containsKey(swimLane)) {
 				CardStepsEnum cardStep = boardMap.get(swimLane);
@@ -603,6 +575,120 @@ public class JiraService {
 			}
 		}
 		return cardCustomFieldKey;
+	}
+
+	public CardCollection getStoryPointsAndCycleTimeForNonDoneCards(StoryPointsAndCycleTimeRequest request,
+			List<RequestJiraBoardColumnSetting> boardColumns) {
+		URI baseUrl = urlGenerator.getUri(request.getSite());
+		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
+			.boardId(request.getBoardId())
+			.projectKey(request.getProject())
+			.site(request.getSite())
+			.token(request.getToken())
+			.startTime(request.getStartTime())
+			.endTime(request.getEndTime())
+			.build();
+
+		List<JiraCard> allNonDoneCards = getAllNonDoneCardsForActiveSprint(baseUrl, request.getStatus(),
+				boardRequestParam);
+		if (allNonDoneCards.isEmpty()) {
+			allNonDoneCards = getAllNonDoneCardsForKanBan(baseUrl, request.getStatus(), boardRequestParam);
+		}
+
+		List<JiraCardDTO> matchedNonCards = getMatchedNonCards(boardColumns, allNonDoneCards);
+		int storyPointSum = matchedNonCards.stream()
+			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
+			.sum();
+
+		return CardCollection.builder()
+			.storyPointSum(storyPointSum)
+			.cardsNumber(matchedNonCards.size())
+			.jiraCardDTOList(matchedNonCards)
+			.build();
+	}
+
+	private List<JiraCardDTO> getMatchedNonCards(List<RequestJiraBoardColumnSetting> boardColumns,
+			List<JiraCard> allNonDoneCards) {
+		List<JiraCardDTO> matchedNonCards = new ArrayList<>();
+		allNonDoneCards.forEach(doneCard -> {
+
+			JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
+				.baseInfo(doneCard)
+				.cycleTime(Collections.emptyList())
+				.originCycleTime(Collections.emptyList())
+				.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), Collections.emptyList(), boardColumns))
+				.build();
+			matchedNonCards.add(jiraCardDTO);
+		});
+		return matchedNonCards;
+	}
+
+	private List<JiraCard> getAllNonDoneCardsForActiveSprint(URI baseUrl, List<String> status,
+			BoardRequestParam boardRequestParam) {
+		String jql;
+		if (status.isEmpty()) {
+			jql = "sprint in openSprints() ";
+		}
+		else {
+			jql = "sprint in openSprints() AND status not in ('" + String.join("','", status) + "')";
+		}
+
+		return getCardList(baseUrl, boardRequestParam, jql, "nonDone");
+	}
+
+	private List<JiraCard> getAllNonDoneCardsForKanBan(URI baseUrl, List<String> status,
+			BoardRequestParam boardRequestParam) {
+		String jql;
+		if (status.isEmpty()) {
+			jql = "";
+		}
+		else {
+			jql = "status not in ('" + String.join("','", status) + "')";
+		}
+		return getCardList(baseUrl, boardRequestParam, jql, "nonDone");
+	}
+
+	private List<JiraCard> getCardList(URI baseUrl, BoardRequestParam boardRequestParam, String jql, String cardType) {
+		log.info("Start to get first-page xxx card information form kanban, param {}", cardType);
+		String allCardResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(), QUERY_COUNT,
+				0, jql, boardRequestParam.getToken());
+		if (allCardResponse.isEmpty()) {
+			return Collections.emptyList();
+		}
+		log.info("Successfully get first-page xxx card information form kanban, param {}", cardType);
+
+		List<TargetField> targetField = getTargetField(baseUrl, boardRequestParam);
+		AllDoneCardsResponseDTO allCardsResponseDTO = formatAllDoneCards(allCardResponse, targetField);
+
+		List<JiraCard> cards = new ArrayList<>(new HashSet<>(allCardsResponseDTO.getIssues()));
+		int pages = (int) Math.ceil(Double.parseDouble(allCardsResponseDTO.getTotal()) / QUERY_COUNT);
+		if (pages <= 1) {
+			return cards;
+		}
+
+		log.info("Start to get more xxx card information form kanban, param {}", cardType);
+		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
+		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
+			.map(startFrom -> CompletableFuture.supplyAsync(
+					() -> (formatAllDoneCards(jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(),
+							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()), targetField)),
+					customTaskExecutor))
+			.toList();
+		log.info("Successfully get more xxx card information form kanban, param {}", cardType);
+
+		List<AllDoneCardsResponseDTO> nonDoneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
+		List<JiraCard> moreNonDoneCards = nonDoneCardsResponses.stream()
+			.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
+			.toList();
+
+		return Stream.concat(cards.stream(), moreNonDoneCards.stream()).toList();
+	}
+
+	public JiraBoardConfigDTO getJiraBoardConfig(URI baseUrl, String boardId, String token) {
+		log.info("Start to get configuration for board, board info: " + boardId + token);
+		JiraBoardConfigDTO jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId, token);
+		log.info("Successfully get configuration for board: " + boardId + "response: " + jiraBoardConfigDTO);
+		return jiraBoardConfigDTO;
 	}
 
 }

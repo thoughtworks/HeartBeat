@@ -1,7 +1,9 @@
 package heartbeat.service.report;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.JiraCard;
@@ -304,11 +306,24 @@ public class BoardCsvFixture {
 				TargetField.builder().key("customfield_1010").name("10").flag(true).build(),
 				TargetField.builder().key("customfield_1011").name("11").flag(true).build(),
 				TargetField.builder().key("customfield_1012").name("12").flag(true).build(),
+				TargetField.builder().key("customfield_1013").name("13").flag(true).build(),
+				TargetField.builder().key("customfield_1014").name("14").flag(true).build(),
 				TargetField.builder().key("parent").name("父级").flag(false).build());
 	}
 
 	public static List<JiraCardDTO> MOCK_NON_DONE_CARD_LIST() {
+		JsonObject jsonObject = new JsonObject();
+		JsonArray jsonArray = new JsonArray();
+
+		jsonObject.addProperty("key1", "value1");
+		jsonObject.addProperty("key2", 123);
+
+		jsonArray.add(jsonObject);
+
 		CUSTOM_FIELDS.put("customfield_1012", new JsonPrimitive("test"));
+		CUSTOM_FIELDS.put("customfield_1013", new JsonArray());
+		CUSTOM_FIELDS.put("customfield_1014", jsonArray);
+
 		List<JiraCardDTO> nonDoneCards = new ArrayList<>();
 		nonDoneCards.add(JiraCardDTO.builder()
 			.baseInfo(JiraCard.builder()

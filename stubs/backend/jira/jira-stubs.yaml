@@ -41,7 +41,8 @@
     url: /rest/agile/1.0/board/1963/issue
     query:
       maxResults: 100
-      jql: sprint in openSprints() AND status not in (%27DONE%27,%27CANCELLED%27)
+      startAt: 0
+      jql: sprint in openSprints%28%29 AND status not in %28%27DONE%27%2C%27CLOSED%27%29
 
   response:
     headers:

@@ -1,6 +1,7 @@
 package heartbeat.service.report;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -45,7 +46,6 @@ import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +62,6 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class GenerateReporterService {
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
@@ -147,14 +146,16 @@ public class GenerateReporterService {
 
 		Object tempObject = object;
 
-		if (tempObject instanceof List<?> list) {
-			if (list.isEmpty()) {
-				return result;
-			}
-			else {
-				tempObject = list.get(0);
-				result = "[0]";
-			}
+		if (tempObject instanceof List<?> list && !list.isEmpty()) {
+			tempObject = list.get(0);
+			result = "[0]";
+		}
+		else if (tempObject instanceof JsonArray jsonArray && !jsonArray.isEmpty()) {
+			tempObject = jsonArray.get(0);
+			result = "[0]";
+		}
+		else {
+			return result;
 		}
 
 		JsonObject jsonObject = gson.toJsonTree(tempObject).getAsJsonObject();
@@ -267,13 +268,6 @@ public class GenerateReporterService {
 		cardDTOList.addAll(allDoneCards);
 		cardDTOList.addAll(emptyJiraCard);
 
-		List<TargetField> activeTargetFields = targetFields.stream()
-			.filter(TargetField::isFlag)
-			.collect(Collectors.toList());
-
-		List<BoardCSVConfig> fields = getFixedBoardFields();
-		List<BoardCSVConfig> extraFields = getExtraFields(activeTargetFields, fields);
-
 		if (nonDoneCards != null) {
 			if (nonDoneCards.size() > 1) {
 				nonDoneCards.sort((preCard, nextCard) -> {
@@ -292,10 +286,6 @@ public class GenerateReporterService {
 			}
 			cardDTOList.addAll(nonDoneCards);
 		}
-
-		List<BoardCSVConfig> newExtraFields = updateExtraFields(extraFields, cardDTOList);
-		List<BoardCSVConfig> allBoardFields = insertExtraFields(newExtraFields, fields);
-
 		List<String> columns = cardDTOList.stream().flatMap(cardDTO -> {
 			if (cardDTO.getOriginCycleTime() != null) {
 				return cardDTO.getOriginCycleTime().stream();
@@ -304,6 +294,16 @@ public class GenerateReporterService {
 				return Stream.empty();
 			}
 		}).map(CycleTimeInfo::getColumn).distinct().toList();
+
+		List<TargetField> activeTargetFields = targetFields.stream()
+			.filter(TargetField::isFlag)
+			.collect(Collectors.toList());
+
+		List<BoardCSVConfig> fields = getFixedBoardFields();
+		List<BoardCSVConfig> extraFields = getExtraFields(activeTargetFields, fields);
+
+		List<BoardCSVConfig> newExtraFields = updateExtraFields(extraFields, cardDTOList);
+		List<BoardCSVConfig> allBoardFields = insertExtraFields(newExtraFields, fields);
 
 		columns.forEach(column -> allBoardFields.add(
 				BoardCSVConfig.builder().label("OriginCycleTime: " + column).value("cycleTimeFlat." + column).build()));

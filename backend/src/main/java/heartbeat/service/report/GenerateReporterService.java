@@ -41,6 +41,7 @@ import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.DecimalUtil;
@@ -82,6 +83,8 @@ public class GenerateReporterService {
 
 	private final ChangeFailureRateCalculator changeFailureRate;
 
+	private final MeanToRecoveryCalculator meanToRecoveryCalculator;
+
 	private final CycleTimeCalculator cycleTimeCalculator;
 
 	private final VelocityCalculator velocityCalculator;
@@ -98,7 +101,8 @@ public class GenerateReporterService {
 		.toList();
 
 	private final List<String> buildKiteMetrics = Stream
-		.of(RequireDataEnum.CHANGE_FAILURE_RATE, RequireDataEnum.DEPLOYMENT_FREQUENCY)
+		.of(RequireDataEnum.CHANGE_FAILURE_RATE, RequireDataEnum.DEPLOYMENT_FREQUENCY,
+				RequireDataEnum.MEAN_TIME_TO_RECOVERY)
 		.map(RequireDataEnum::getValue)
 		.toList();
 
@@ -106,7 +110,7 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	List<String> REQUIRED_STATES = List.of("passed", "failed");
+	private static final List<String> REQUIRED_STATES = List.of("passed", "failed");
 
 	private CardCollection cardCollection;
 
@@ -120,7 +124,7 @@ public class GenerateReporterService {
 
 	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
 
-	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
+	private Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
 		Map<String, String> repoMap = new HashMap<>();
 		for (DeploymentEnvironment currentValue : codebaseSetting.getLeadTime()) {
 			repoMap.put(currentValue.getId(), currentValue.getRepository());
@@ -128,7 +132,7 @@ public class GenerateReporterService {
 		return repoMap;
 	}
 
-	private static List<BoardCSVConfig> getFixedBoardFields() {
+	private List<BoardCSVConfig> getFixedBoardFields() {
 		List<BoardCSVConfig> fields = new ArrayList<>();
 		for (BoardCSVConfigEnum field : BoardCSVConfigEnum.values()) {
 			fields.add(BoardCSVConfig.builder().label(field.getLabel()).value(field.getValue()).build());
@@ -136,7 +140,7 @@ public class GenerateReporterService {
 		return fields;
 	}
 
-	public String getFieldDisplayValue(Object object) {
+	private String getFieldDisplayValue(Object object) {
 		Gson gson = new Gson();
 		String result = "";
 		if (object == null || object instanceof JsonNull || object instanceof Double || object instanceof String
@@ -195,6 +199,8 @@ public class GenerateReporterService {
 							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
 				case "change failure rate" ->
 					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
+				case "mean time to recovery" ->
+					reportResponse.setMeanTimeToRecovery(meanToRecoveryCalculator.calculate(deployTimesList));
 				case "lead time for changes" ->
 					reportResponse.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(pipelineLeadTimes));
 				default -> {
@@ -218,7 +224,7 @@ public class GenerateReporterService {
 		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
-			fetchBuildKiteData(request);
+			fetchBuildKiteInfo(request);
 		}
 
 	}
@@ -440,7 +446,7 @@ public class GenerateReporterService {
 				request.getCodebaseSetting().getToken());
 	}
 
-	private void fetchBuildKiteData(GenerateReportRequest request) {
+	private void fetchBuildKiteInfo(GenerateReportRequest request) {
 		fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
 				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken());
 	}
@@ -474,7 +480,6 @@ public class GenerateReporterService {
 
 		leadTimeData.addAll(pipelineData);
 		csvFileGenerator.convertPipelineDataToCSV(leadTimeData, request.getCsvTimeStamp());
-
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,

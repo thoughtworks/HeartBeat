@@ -23,6 +23,8 @@ public class ReportResponse {
 
 	private ChangeFailureRate changeFailureRate;
 
+	private MeanTimeToRecovery meanTimeToRecovery;
+
 	private LeadTimeForChanges leadTimeForChanges;
 
 }

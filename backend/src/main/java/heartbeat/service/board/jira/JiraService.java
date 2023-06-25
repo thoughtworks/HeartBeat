@@ -595,7 +595,7 @@ public class JiraService {
 			allNonDoneCards = getAllNonDoneCardsForKanBan(baseUrl, request.getStatus(), boardRequestParam);
 		}
 
-		List<JiraCardDTO> matchedNonCards = getMatchedNonCards(boardColumns, allNonDoneCards);
+		List<JiraCardDTO> matchedNonCards = getMatchedNonCards(allNonDoneCards);
 		int storyPointSum = matchedNonCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
@@ -607,17 +607,11 @@ public class JiraService {
 			.build();
 	}
 
-	private List<JiraCardDTO> getMatchedNonCards(List<RequestJiraBoardColumnSetting> boardColumns,
-			List<JiraCard> allNonDoneCards) {
+	private List<JiraCardDTO> getMatchedNonCards(List<JiraCard> allNonDoneCards) {
 		List<JiraCardDTO> matchedNonCards = new ArrayList<>();
 		allNonDoneCards.forEach(doneCard -> {
 
-			JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
-				.baseInfo(doneCard)
-				.cycleTime(Collections.emptyList())
-				.originCycleTime(Collections.emptyList())
-				.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), Collections.emptyList(), boardColumns))
-				.build();
+			JiraCardDTO jiraCardDTO = JiraCardDTO.builder().baseInfo(doneCard).build();
 			matchedNonCards.add(jiraCardDTO);
 		});
 		return matchedNonCards;

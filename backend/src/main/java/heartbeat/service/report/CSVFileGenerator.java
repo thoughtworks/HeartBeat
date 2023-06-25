@@ -287,8 +287,14 @@ public class CSVFileGenerator {
 		String[] values = extraField.getValue().split("\\.");
 		String extraFieldValue = values[values.length - 1];
 		Object fieldValue = elementMap.get(extraFieldValue);
+
 		if (fieldValue == null) {
-			return "";
+			if (extraField.getLabel().contains("OriginCycleTime")) {
+				return "0";
+			}
+			else {
+				return "";
+			}
 		}
 		else if (fieldValue instanceof Double) {
 			return DecimalUtil.formatDecimalTwo((Double) fieldValue);

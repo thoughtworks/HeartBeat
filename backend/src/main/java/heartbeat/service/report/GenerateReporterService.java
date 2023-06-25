@@ -317,7 +317,7 @@ public class GenerateReporterService {
 	}
 
 	private String calculateTotalCycleTimeDivideStoryPoints(JiraCardDTO card) {
-		if (card.getBaseInfo() == null) {
+		if (card.getBaseInfo() == null || card.getCardCycleTime() == null) {
 			return "";
 		}
 		int storyPoints = card.getBaseInfo().getFields().getStoryPoints();

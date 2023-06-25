@@ -240,8 +240,7 @@ public class GenerateReporterService {
 		cardCollection = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 
-		nonDoneCardCollection = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns());
+		nonDoneCardCollection = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
 
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
 			.boardId(jiraBoardSetting.getBoardId())

@@ -515,7 +515,6 @@ class JiraServiceTest {
 	public void shouldReturnCardsWhenCallGetStoryPointsAndCycleTimeForNonDoneCardsForActiveSprint()
 			throws JsonProcessingException {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
@@ -523,8 +522,8 @@ class JiraServiceTest {
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		CardCollection nonDoneCards = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns());
+		CardCollection nonDoneCards = jiraService
+			.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
 		assertThat(nonDoneCards.getStoryPointSum()).isEqualTo(0);
 		assertThat(nonDoneCards.getCardsNumber()).isEqualTo(3);
 	}
@@ -533,7 +532,6 @@ class JiraServiceTest {
 	public void shouldReturnCardsWhenCallGetStoryPointsAndCycleTimeForNonDoneCardsForActiveSprintWithStatusIsEmpty()
 			throws JsonProcessingException {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS()
 			.build();
 
@@ -542,8 +540,8 @@ class JiraServiceTest {
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		CardCollection nonDoneCards = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns());
+		CardCollection nonDoneCards = jiraService
+			.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
 
 		assertThat(nonDoneCards.getStoryPointSum()).isEqualTo(0);
 		assertThat(nonDoneCards.getCardsNumber()).isEqualTo(3);
@@ -553,7 +551,6 @@ class JiraServiceTest {
 	public void shouldReturnCardsWhenCallGetStoryPointsAndCycleTimeForNonDoneCardsForKanban()
 			throws JsonProcessingException {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		String jqlForKanban = "status not in ('" + String.join("','", storyPointsAndCycleTimeRequest.getStatus())
@@ -570,8 +567,8 @@ class JiraServiceTest {
 
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		CardCollection nonDoneCards = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns());
+		CardCollection nonDoneCards = jiraService
+			.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
 
 		assertThat(nonDoneCards.getStoryPointSum()).isEqualTo(0);
 		assertThat(nonDoneCards.getCardsNumber()).isEqualTo(3);
@@ -581,7 +578,6 @@ class JiraServiceTest {
 	public void shouldReturnCardsWhenCallGetStoryPointsAndCycleTimeForNonDoneCardsForKanbanWithStatusIsEmpty()
 			throws JsonProcessingException {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS()
 			.build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -597,8 +593,8 @@ class JiraServiceTest {
 
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		CardCollection nonDoneCards = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns());
+		CardCollection nonDoneCards = jiraService
+			.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
 
 		assertThat(nonDoneCards.getStoryPointSum()).isEqualTo(0);
 		assertThat(nonDoneCards.getCardsNumber()).isEqualTo(3);

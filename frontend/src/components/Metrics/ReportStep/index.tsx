@@ -115,7 +115,7 @@ export const ReportStep = () => {
       site,
       projectKey,
       boardId,
-      boardColumns: cycleTimeSettings,
+      boardColumns: cycleTimeSettings.filter((item) => item.value != '----'),
       treatFlagCardAsBlock,
       users,
       targetFields,

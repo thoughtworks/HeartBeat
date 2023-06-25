@@ -326,11 +326,9 @@ class BuildKiteServiceTest {
 				anyString(), anyString()))
 			.thenReturn(responseEntity);
 
-		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-				"test_pipeline_id", stepsParam);
-
-		assertNotNull(pipelineStepsDTO);
-		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(0);
+		Assertions.assertThatThrownBy(
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id", stepsParam))
+			.isInstanceOf(RequestFailedException.class);
 	}
 
 	@Test

@@ -19,4 +19,8 @@ public class RequestFailedException extends RuntimeException {
 		this.status = statusCode;
 	}
 
+	public RequestFailedException(int statusCode) {
+		this.status = statusCode;
+	}
+
 }

@@ -23,7 +23,6 @@ import heartbeat.util.TokenUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -118,6 +117,11 @@ public class BuildKiteService {
 				.map(BuildKiteJob::getName)
 				.distinct()
 				.toList();
+
+			if (buildSteps.isEmpty()) {
+				throw new RequestFailedException(HttpStatus.NO_CONTENT.value());
+			}
+
 			log.info("Successfully get pipeline steps, finally build steps_buildSteps:{}", buildSteps);
 			return PipelineStepsDTO.builder()
 				.pipelineId(pipelineId)

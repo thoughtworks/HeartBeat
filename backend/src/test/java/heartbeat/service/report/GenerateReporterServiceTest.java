@@ -152,7 +152,7 @@ class GenerateReporterServiceTest {
 			.cardsNumber(0)
 			.jiraCardDTOList(Collections.emptyList())
 			.build());
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
 			.storyPointSum(0)
 			.cardsNumber(0)
 			.jiraCardDTOList(Collections.emptyList())
@@ -215,7 +215,7 @@ class GenerateReporterServiceTest {
 			.cardsNumber(0)
 			.jiraCardDTOList(Collections.emptyList())
 			.build());
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
 			.storyPointSum(0)
 			.cardsNumber(0)
 			.jiraCardDTOList(Collections.emptyList())
@@ -340,7 +340,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(cardCollection);
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
 			.storyPointSum(0)
 			.cardsNumber(0)
 			.jiraCardDTOList(Collections.emptyList())
@@ -602,7 +602,7 @@ class GenerateReporterServiceTest {
 			.cardsNumber(1)
 			.jiraCardDTOList(BoardCsvFixture.MOCK_DONE_CARD_LIST())
 			.build());
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any())).thenReturn(CardCollection.builder()
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
 			.storyPointSum(2)
 			.cardsNumber(1)
 			.jiraCardDTOList(BoardCsvFixture.MOCK_NON_DONE_CARD_LIST())

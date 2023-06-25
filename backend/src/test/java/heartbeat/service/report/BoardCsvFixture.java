@@ -2,7 +2,6 @@ package heartbeat.service.report;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import heartbeat.client.dto.board.jira.Assignee;
@@ -120,14 +119,32 @@ public class BoardCsvFixture {
 
 	private static final BoardCSVConfig STORY_POINT_ESTIMATE_CONFIG = BoardCSVConfig.builder()
 		.label("Story point estimate")
-		.value("baseInfo.fields.customFields.customfield_10016")
-		.originKey("customfield_10016")
+		.value("baseInfo.fields.customFields.customfield_1008")
+		.originKey("customfield_1008")
+		.build();
+
+	private static final BoardCSVConfig CUSTOM_FIELD_1010_CONFIG = BoardCSVConfig.builder()
+		.label("1010")
+		.value("baseInfo.fields.customFields.customfield_1010")
+		.originKey("customfield_1010")
+		.build();
+
+	private static final BoardCSVConfig CUSTOM_FIELD_1011_CONFIG = BoardCSVConfig.builder()
+		.label("1011")
+		.value("baseInfo.fields.customFields.customfield_1011")
+		.originKey("customfield_1011")
+		.build();
+
+	private static final BoardCSVConfig ORIGIN_CYCLE_BLOCKED_CONFIG = BoardCSVConfig.builder()
+		.label("OriginCycleTime: BLOCKED")
+		.value("cycleTimeFlat.BLOCKED")
+		.originKey(null)
 		.build();
 
 	private static final BoardCSVConfig FLAGGED = BoardCSVConfig.builder()
 		.label("Flagged")
-		.value("baseInfo.fields.customFields.customfield_10021")
-		.originKey("customfield_10021")
+		.value("baseInfo.fields.customFields.customfield_1001")
+		.originKey("customfield_1001")
 		.build();
 
 	private static final BoardCSVConfig CYCLE_TIME_STORY_POINTS_CONFIG = BoardCSVConfig.builder()
@@ -186,11 +203,11 @@ public class BoardCsvFixture {
 				ASSIGNEE_CONFIG, REPORTER_CONFIG, PROJECT_KEY_CONFIG, PROJECT_NAME_CONFIG, PRIORITY_CONFIG,
 				PARENT_SUMMARY_CONFIG, SPRINT_CONFIG, LABELS_CONFIG, CYCLE_TIME_CONFIG, CYCLE_TIME_STORY_POINTS_CONFIG,
 				ANALYSIS_DAYS_CONFIG, IN_DEV_DAYS_CONFIG, WAITING_DAYS_CONFIG, TESTING_DAYS_CONFIG, BLOCK_DAYS_CONFIG,
-				REVIEW_DAYS_CONFIG, ORIGIN_CYCLE_TIME_DOING_CONFIG);
+				REVIEW_DAYS_CONFIG, ORIGIN_CYCLE_TIME_DOING_CONFIG, ORIGIN_CYCLE_BLOCKED_CONFIG);
 	}
 
 	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS() {
-		return List.of(STORY_POINT_ESTIMATE_CONFIG, FLAGGED);
+		return List.of(STORY_POINT_ESTIMATE_CONFIG, FLAGGED, CUSTOM_FIELD_1010_CONFIG, CUSTOM_FIELD_1011_CONFIG);
 	}
 
 	public static List<BoardCSVConfig> MOCK_ALL_FIELDS() {
@@ -200,10 +217,6 @@ public class BoardCsvFixture {
 	}
 
 	public static List<JiraCardDTO> MOCK_JIRA_CARD_DTO() {
-		HashMap<String, JsonElement> customFields = new HashMap<>();
-		customFields.put("customfield_10016", new JsonPrimitive(1.0));
-		customFields.put("customfield_10021", JsonNull.INSTANCE);
-
 		JiraCardField jiraCardField = JiraCardField.builder()
 			.summary("summary")
 			.issuetype(IssueType.builder().name("issue type").build())
@@ -216,11 +229,12 @@ public class BoardCsvFixture {
 			.parent(CardParent.builder().fields(Fields.builder().summary("parent").build()).build())
 			.sprint(Sprint.builder().name("sprint 1").build())
 			.labels(Collections.emptyList())
-			.customFields(customFields)
+			.customFields(CUSTOM_FIELDS)
 			.build();
 
 		HashMap<String, Double> cycleTimeFlat = new HashMap<>();
 		cycleTimeFlat.put("DOING", 9.8067E-5);
+		cycleTimeFlat.put("BLOCKED", null);
 
 		CardCycleTime cardCycleTime = CardCycleTime.builder()
 			.name("ADM-489")

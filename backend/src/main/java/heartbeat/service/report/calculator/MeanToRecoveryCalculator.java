@@ -8,22 +8,17 @@ import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.TotalTimeAndRecoveryTimes;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import lombok.val;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-@Log4j2
 public class MeanToRecoveryCalculator {
 
 	public MeanTimeToRecovery calculate(List<DeployTimes> deployTimes) {
-		log.info("Guoqing test deploy: {}", deployTimes);
 		List<MeanTimeToRecoveryOfPipeline> meanTimeRecoveryPipelines = deployTimes.stream()
 			.map(this::convertToMeanTimeToRecoveryOfPipeline)
 			.collect(Collectors.toList());
@@ -39,7 +34,6 @@ public class MeanToRecoveryCalculator {
 	}
 
 	private MeanTimeToRecoveryOfPipeline convertToMeanTimeToRecoveryOfPipeline(DeployTimes deploy) {
-		log.info("Guoqing test deploy22: {}", deploy);
 		if (deploy.getFailed().isEmpty()) {
 			return new MeanTimeToRecoveryOfPipeline(deploy.getPipelineName(), deploy.getPipelineStep(), 0);
 		}

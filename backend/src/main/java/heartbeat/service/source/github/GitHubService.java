@@ -110,30 +110,43 @@ public class GitHubService {
 
 	public List<PipelineLeadTime> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
-		String realToken = "Bearer " + token;
-		List<PipelineInfoOfRepository> pipelineInfoOfRepositories = getInfoOfRepositories(deployTimes, repositories);
+		try {
+			String realToken = "Bearer " + token;
+			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = getInfoOfRepositories(deployTimes,
+					repositories);
 
-		List<CompletableFuture<PipelineLeadTime>> pipelineLeadTimeFutures = pipelineInfoOfRepositories.stream()
-			.map(item -> {
-				if (item.getPassedDeploy() == null || item.getPassedDeploy().isEmpty()) {
-					return CompletableFuture.completedFuture(PipelineLeadTime.builder().build());
-				}
+			List<CompletableFuture<PipelineLeadTime>> pipelineLeadTimeFutures = pipelineInfoOfRepositories.stream()
+				.map(item -> {
+					if (item.getPassedDeploy() == null || item.getPassedDeploy().isEmpty()) {
+						return CompletableFuture.completedFuture(PipelineLeadTime.builder().build());
+					}
 
-				List<CompletableFuture<LeadTime>> leadTimeFutures = getLeadTimeFutures(realToken, item);
+					List<CompletableFuture<LeadTime>> leadTimeFutures = getLeadTimeFutures(realToken, item);
 
-				CompletableFuture<List<LeadTime>> allLeadTimesFuture = CompletableFuture
-					.allOf(leadTimeFutures.toArray(new CompletableFuture[0]))
-					.thenApply(v -> leadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList()));
+					CompletableFuture<List<LeadTime>> allLeadTimesFuture = CompletableFuture
+						.allOf(leadTimeFutures.toArray(new CompletableFuture[0]))
+						.thenApply(v -> leadTimeFutures.stream()
+							.map(CompletableFuture::join)
+							.collect(Collectors.toList()));
 
-				return allLeadTimesFuture.thenApply(leadTimes -> PipelineLeadTime.builder()
-					.pipelineName(item.getPipelineName())
-					.pipelineStep(item.getPipelineStep())
-					.leadTimes(leadTimes)
-					.build());
-			})
-			.toList();
+					return allLeadTimesFuture.thenApply(leadTimes -> PipelineLeadTime.builder()
+						.pipelineName(item.getPipelineName())
+						.pipelineStep(item.getPipelineStep())
+						.leadTimes(leadTimes)
+						.build());
+				})
+				.toList();
 
-		return pipelineLeadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+			return pipelineLeadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+		}
+		catch (CompletionException e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof FeignException feignException) {
+				throw new RequestFailedException(feignException);
+			}
+			throw e;
+		}
+
 	}
 
 	private List<CompletableFuture<LeadTime>> getLeadTimeFutures(String realToken, PipelineInfoOfRepository item) {
@@ -238,12 +251,18 @@ public class GitHubService {
 	}
 
 	public CommitInfo fetchCommitInfo(String commitId, String repositoryId, String token) {
-		String maskToken = TokenUtil.mask(token);
-		String realToken = "Bearer " + token;
-		log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
-		CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
-		log.info("Successfully get commit info_commitInfo_token: {}, commit: {}", maskToken, commitInfo.getCommit());
-		return commitInfo;
+		try {
+			String maskToken = TokenUtil.mask(token);
+			String realToken = "Bearer " + token;
+			log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
+			CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
+			log.info("Successfully get commit info_commitInfo_token: {}, commit: {}", maskToken,
+					commitInfo.getCommit());
+			return commitInfo;
+		}
+		catch (FeignException e) {
+			throw new RequestFailedException(e.status(), e.getMessage());
+		}
 	}
 
 }

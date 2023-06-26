@@ -349,6 +349,31 @@ class GithubServiceTest {
 	}
 
 	@Test
+	void shouldThrowExceptionIfGetPullRequestListInfoHasExceptionWhenFetchPipelinesLeadTime() {
+		String mockToken = "mockToken";
+		pullRequestInfo.setMergedAt(null);
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+
+		assertThatThrownBy(() -> githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken))
+			.isInstanceOf(CompletionException.class)
+			.hasMessageContaining("UnExpected Exception");
+	}
+
+	@Test
+	void shouldThrowCompletableExceptionIfGetPullRequestListInfoHasExceptionWhenFetchPipelinesLeadTime() {
+		String mockToken = "mockToken";
+		pullRequestInfo.setMergedAt(null);
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenThrow(new CustomFeignClientException(401, "Bad credentials"));
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+
+		Assertions.assertThrows(RequestFailedException.class,
+				() -> githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken));
+	}
+
+	@Test
 	public void shouldFetchCommitInfo() {
 		CommitInfo commitInfo = CommitInfo.builder()
 			.commit(Commit.builder()
@@ -362,6 +387,15 @@ class GithubServiceTest {
 		CommitInfo result = githubService.fetchCommitInfo("12344", "org/repo", "mockToken");
 
 		assertEquals(result, commitInfo);
+	}
+
+	@Test
+	public void shouldThrowExceptionWhenFetchCommitInfo() {
+		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString()))
+			.thenThrow(new CustomFeignClientException(403, "request forbidden"));
+
+		Assertions.assertThrows(RequestFailedException.class,
+			() -> githubService.fetchCommitInfo("12344", "org/repo", "mockToken"));
 	}
 
 }

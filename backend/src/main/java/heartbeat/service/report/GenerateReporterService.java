@@ -585,14 +585,16 @@ public class GenerateReporterService {
 						startTime, endTime);
 				List<PipelineLeadTime> pipelineLeadTimes = buildKiteData.getPipelineLeadTimes();
 
-				LeadTime filteredLeadTime = pipelineLeadTimes.stream()
-					.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
-							deploymentEnvironment.getName()))
-					.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
-					.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
-					.findFirst()
-					.orElse(null);
-
+				LeadTime filteredLeadTime = null;
+				if (pipelineLeadTimes != null) {
+					filteredLeadTime = pipelineLeadTimes.stream()
+						.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
+								deploymentEnvironment.getName()))
+						.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
+						.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
+						.findFirst()
+						.orElse(null);
+				}
 				CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
 						codebaseSetting.getToken());
 				return PipelineCSVInfo.builder()

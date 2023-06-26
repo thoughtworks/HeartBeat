@@ -19,6 +19,7 @@ import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
+import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.ChangeFailureRate;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
@@ -26,6 +27,8 @@ import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
+import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.service.board.jira.JiraColumnResult;
@@ -40,8 +43,10 @@ import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
+import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -119,6 +124,9 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	private LeadTimeForChangesCalculator leadTimeForChangesCalculator;
+
+	@Mock
+	private MeanToRecoveryCalculator meanToRecoveryCalculator;
 
 	@Mock
 	private JiraUriGenerator urlGenerator;
@@ -377,7 +385,7 @@ class GenerateReporterServiceTest {
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(true)
-			.metrics(List.of("lead time for changes"))
+			.metrics(List.of("lead time for changes", "mean time to recovery"))
 			.buildKiteSetting(buildKiteSetting)
 			.codebaseSetting(codebaseSetting)
 			.startTime("1661702400000")
@@ -415,6 +423,7 @@ class GenerateReporterServiceTest {
 				.totalDelayTime(2.0)
 				.build())
 			.build();
+		val mockMeanToRecovery = createMockMeanToRecovery();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
 			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
@@ -425,9 +434,11 @@ class GenerateReporterServiceTest {
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(List.of(pipelineLeadTime));
 		when(leadTimeForChangesCalculator.calculate(any())).thenReturn(mockLeadTimeForChanges);
+		when(meanToRecoveryCalculator.calculate(any())).thenReturn(mockMeanToRecovery);
 		ReportResponse result = generateReporterService.generateReporter(request);
 
 		assertThat(result.getLeadTimeForChanges()).isEqualTo(mockLeadTimeForChanges);
+		assertThat(result.getMeanTimeToRecovery()).isEqualTo(mockMeanToRecovery);
 	}
 
 	@Test
@@ -622,6 +633,13 @@ class GenerateReporterServiceTest {
 		boolean isExists = Files.exists(mockBoardCsvPath);
 		Assertions.assertTrue(isExists);
 		Files.deleteIfExists(mockBoardCsvPath);
+	}
+
+	private MeanTimeToRecovery createMockMeanToRecovery() {
+		return MeanTimeToRecovery.builder()
+			.meanTimeRecoveryPipelines(List.of(MeanTimeToRecoveryOfPipeline.builder().build()))
+			.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().build())
+			.build();
 	}
 
 }

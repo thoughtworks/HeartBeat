@@ -37,7 +37,7 @@ public class MeanToRecoveryCalculator {
 	}
 
 	private double getFormattedTime(double time) {
-		BigDecimal decimal = new BigDecimal(time);
+		BigDecimal decimal = new BigDecimal(String.valueOf(time));
 		return decimal.setScale(1, RoundingMode.HALF_UP).doubleValue();
 	}
 

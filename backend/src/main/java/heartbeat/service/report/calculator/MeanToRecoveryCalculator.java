@@ -6,12 +6,15 @@ import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.TotalTimeAndRecoveryTimes;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -27,10 +30,15 @@ public class MeanToRecoveryCalculator {
 			.mapToDouble(MeanTimeToRecoveryOfPipeline::getMeanTimeToRecovery)
 			.average()
 			.orElse(0);
-
-		AvgMeanTimeToRecovery avgMeanTimeToRecoveryObj = new AvgMeanTimeToRecovery(avgMeanTimeToRecovery);
+		AvgMeanTimeToRecovery avgMeanTimeToRecoveryObj = new AvgMeanTimeToRecovery(
+				getFormattedTime(avgMeanTimeToRecovery));
 
 		return new MeanTimeToRecovery(avgMeanTimeToRecoveryObj, meanTimeRecoveryPipelines);
+	}
+
+	private double getFormattedTime(double time) {
+		BigDecimal decimal = new BigDecimal(time);
+		return decimal.setScale(1, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	private MeanTimeToRecoveryOfPipeline convertToMeanTimeToRecoveryOfPipeline(DeployTimes deploy) {
@@ -39,9 +47,12 @@ public class MeanToRecoveryCalculator {
 		}
 		else {
 			TotalTimeAndRecoveryTimes result = getTotalRecoveryTimeAndRecoveryTimes(deploy);
-			double meanTimeToRecovery = result.getTotalTimeToRecovery() / result.getRecoveryTimes();
+			double meanTimeToRecovery = 0;
+			if (result.getRecoveryTimes() != 0) {
+				meanTimeToRecovery = result.getTotalTimeToRecovery() / result.getRecoveryTimes();
+			}
 			return new MeanTimeToRecoveryOfPipeline(deploy.getPipelineName(), deploy.getPipelineStep(),
-					meanTimeToRecovery);
+					getFormattedTime(meanTimeToRecovery));
 		}
 	}
 

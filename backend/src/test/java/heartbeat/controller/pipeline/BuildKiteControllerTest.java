@@ -15,6 +15,7 @@ import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -82,6 +83,26 @@ public class BuildKiteControllerTest {
 			.getResponse();
 		val resultStep = JsonPath.parse(response.getContentAsString()).read("$.steps[0]");
 		assertThat(resultStep).isEqualTo(":docker: publish image to cloudsmith");
+	}
+
+	@Test
+	void shouldReturnNoContentIfNoStepsWhenCallBuildKite() throws Exception {
+		List<String> steps = new ArrayList<>();
+		PipelineStepsDTO emptyPipelineSteps = PipelineStepsDTO.builder().steps(steps).build();
+
+		when(buildKiteService.fetchPipelineSteps(anyString(), anyString(), anyString(), any()))
+			.thenReturn(emptyPipelineSteps);
+
+		mockMvc
+			.perform(get("/pipelines/buildkite/XXXX/pipelines/fs-platform-onboarding/steps")
+				.header("Authorization", "mockBuildKiteToken")
+				.queryParam("pipelineName", "Heartbeat")
+				.queryParam("repository", "git@github.com:au-heartbeat/Heartbeat.git")
+				.queryParam("orgName", "Thoughtworks-Heartbeat")
+				.queryParam("startTime", "1687708800000")
+				.queryParam("endTime", "1689004799999")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNoContent());
 	}
 
 }

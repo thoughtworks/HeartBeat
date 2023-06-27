@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Component;
 public class MeanToRecoveryCalculator {
 
 	public MeanTimeToRecovery calculate(List<DeployTimes> deployTimes) {
+		if (deployTimes.isEmpty()) {
+			return new MeanTimeToRecovery(new AvgMeanTimeToRecovery(BigDecimal.ZERO), Collections.emptyList());
+		}
 		List<MeanTimeToRecoveryOfPipeline> meanTimeRecoveryPipelines = deployTimes.stream()
 			.map(this::convertToMeanTimeToRecoveryOfPipeline)
 			.collect(Collectors.toList());

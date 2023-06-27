@@ -41,11 +41,11 @@ import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
+import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.report.calculator.model.FetchedData;
 import heartbeat.service.report.calculator.model.FetchedData.BuildKiteData;
 import heartbeat.service.report.calculator.model.FetchedData.CardCollectionInfo;
-import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
-import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
@@ -175,7 +175,7 @@ public class GenerateReporterService {
 		// fetch data for calculate
 		FetchedData fetchedData = fetchOriginalData(request);
 
-		generateCSVForPipeline(request, fetchedData.getBuildKiteData(), fetchedData.getPipelineLeadTimes());
+		generateCSVForPipeline(request, fetchedData.getBuildKiteData());
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
@@ -195,8 +195,8 @@ public class GenerateReporterService {
 						changeFailureRate.calculate(fetchedData.getBuildKiteData().getDeployTimesList()));
 				case "mean time to recovery" -> reportResponse.setMeanTimeToRecovery(
 						meanToRecoveryCalculator.calculate(fetchedData.getBuildKiteData().getDeployTimesList()));
-				case "lead time for changes" -> reportResponse
-					.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(fetchedData.getPipelineLeadTimes()));
+				case "lead time for changes" -> reportResponse.setLeadTimeForChanges(
+						leadTimeForChangesCalculator.calculate(fetchedData.getBuildKiteData().getPipelineLeadTimes()));
 				default -> {
 					// TODO
 				}
@@ -216,8 +216,8 @@ public class GenerateReporterService {
 		}
 
 		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
-			List<PipelineLeadTime> pipelineLeadTimes = fetchGithubData(request);
-			fetchedData.setPipelineLeadTimes(pipelineLeadTimes);
+			BuildKiteData buildKiteData = fetchGithubData(request);
+			fetchedData.setBuildKiteData(buildKiteData);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
@@ -457,12 +457,18 @@ public class GenerateReporterService {
 		return extraFields;
 	}
 
-	private List<PipelineLeadTime> fetchGithubData(GenerateReportRequest request) {
+	private FetchedData.BuildKiteData fetchGithubData(GenerateReportRequest request) {
 		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
 				request.getCodebaseSetting().getLeadTime(), request.getBuildKiteSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
-		return gitHubService.fetchPipelinesLeadTime(buildKiteData.getDeployTimesList(), repoMap,
+		List<PipelineLeadTime> pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(buildKiteData.getDeployTimesList(), repoMap,
 				request.getCodebaseSetting().getToken());
+		return BuildKiteData.builder()
+			.pipelineLeadTimes(pipelineLeadTimes)
+			.buildInfosList(buildKiteData.getBuildInfosList())
+			.deployTimesList(buildKiteData.getDeployTimesList())
+			.leadTimeBuildInfosList(buildKiteData.getLeadTimeBuildInfosList())
+			.build();
 	}
 
 	private FetchedData.BuildKiteData fetchBuildKiteInfo(GenerateReportRequest request) {
@@ -472,7 +478,7 @@ public class GenerateReporterService {
 
 	private FetchedData.BuildKiteData fetchBuildKiteData(String startTime, String endTime,
 			List<DeploymentEnvironment> deploymentEnvironments, String token) {
-		ArrayList<DeployTimes> deployTimesList = new ArrayList<>();
+		List<DeployTimes> deployTimesList = new ArrayList<>();
 		List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
 		List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
 
@@ -492,14 +498,13 @@ public class GenerateReporterService {
 			.build();
 	}
 
-	private void generateCSVForPipeline(GenerateReportRequest request, BuildKiteData buildKiteData,
-			List<PipelineLeadTime> pipelineLeadTimes) {
+	private void generateCSVForPipeline(GenerateReportRequest request, BuildKiteData buildKiteData) {
 		if (request.getBuildKiteSetting() == null) {
 			return;
 		}
 
 		List<PipelineCSVInfo> leadTimeData = generateCSVForPipelineWithCodebase(request.getCodebaseSetting(),
-				request.getStartTime(), request.getEndTime(), buildKiteData, pipelineLeadTimes);
+				request.getStartTime(), request.getEndTime(), buildKiteData);
 
 		List<PipelineCSVInfo> pipelineData = generateCSVForPipelineWithoutCodebase(
 				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime(),
@@ -545,7 +550,7 @@ public class GenerateReporterService {
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
-			String endTime, BuildKiteData buildKiteData, List<PipelineLeadTime> pipelineLeadTimes) {
+			String endTime, BuildKiteData buildKiteData) {
 		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
 		if (codebaseSetting == null) {
@@ -569,6 +574,7 @@ public class GenerateReporterService {
 			}).map(buildInfo -> {
 				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
 						startTime, endTime);
+				List<PipelineLeadTime> pipelineLeadTimes = buildKiteData.getPipelineLeadTimes();
 
 				LeadTime filteredLeadTime = pipelineLeadTimes.stream()
 					.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),

@@ -14,8 +14,6 @@ public class FetchedData {
 
 	private CardCollectionInfo cardCollectionInfo;
 
-	private List<PipelineLeadTime> pipelineLeadTimes;
-
 	private BuildKiteData buildKiteData;
 
 	@Data
@@ -31,6 +29,8 @@ public class FetchedData {
 	@Data
 	@Builder
 	public static class BuildKiteData {
+
+		private List<PipelineLeadTime> pipelineLeadTimes;
 
 		private List<DeployTimes> deployTimesList;
 

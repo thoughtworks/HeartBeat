@@ -255,10 +255,12 @@ public class GenerateReporterService {
 			.build();
 		CardCollection nonDoneCardCollection = fetchNonDoneCardCollection(request);
 		CardCollection cardCollection = fetchCardCollection(request);
+
 		CardCollectionInfo collectionInfo = CardCollectionInfo.builder()
 			.cardCollection(cardCollection)
 			.nonDoneCardCollection(nonDoneCardCollection)
 			.build();
+
 		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
 
 		JiraBoardConfigDTO jiraBoardConfigDTO = jiraService.getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(),
@@ -461,8 +463,8 @@ public class GenerateReporterService {
 		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
 				request.getCodebaseSetting().getLeadTime(), request.getBuildKiteSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
-		List<PipelineLeadTime> pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(buildKiteData.getDeployTimesList(), repoMap,
-				request.getCodebaseSetting().getToken());
+		List<PipelineLeadTime> pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(
+				buildKiteData.getDeployTimesList(), repoMap, request.getCodebaseSetting().getToken());
 		return BuildKiteData.builder()
 			.pipelineLeadTimes(pipelineLeadTimes)
 			.buildInfosList(buildKiteData.getBuildInfosList())

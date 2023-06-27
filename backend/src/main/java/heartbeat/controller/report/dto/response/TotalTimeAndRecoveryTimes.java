@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TotalTimeAndRecoveryTimes {
 
-	private double totalTimeToRecovery;
+	private long totalTimeToRecovery;
 
 	private int recoveryTimes;
 

@@ -1,5 +1,6 @@
 package heartbeat.controller.report.dto.response;
 
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,6 @@ public class AvgMeanTimeToRecovery {
 
 	private final String name = "Average";
 
-	private double timeToRecovery;
+	private BigDecimal timeToRecovery;
 
 }

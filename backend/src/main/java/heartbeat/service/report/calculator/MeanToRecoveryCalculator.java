@@ -14,10 +14,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
+@Log4j2
 public class MeanToRecoveryCalculator {
 
 	public MeanTimeToRecovery calculate(List<DeployTimes> deployTimes) {
@@ -25,33 +27,39 @@ public class MeanToRecoveryCalculator {
 			.map(this::convertToMeanTimeToRecoveryOfPipeline)
 			.collect(Collectors.toList());
 
-		double avgMeanTimeToRecovery = meanTimeRecoveryPipelines.stream()
-			.mapToDouble(MeanTimeToRecoveryOfPipeline::getTimeToRecovery)
-			.average()
-			.orElse(0);
+		BigDecimal avgMeanTimeToRecovery = meanTimeRecoveryPipelines.stream()
+			.map(MeanTimeToRecoveryOfPipeline::getTimeToRecovery)
+			.reduce(BigDecimal.ZERO, BigDecimal::add)
+			.divide(BigDecimal.valueOf(meanTimeRecoveryPipelines.size()), 8, RoundingMode.HALF_UP);
 		AvgMeanTimeToRecovery avgMeanTimeToRecoveryObj = new AvgMeanTimeToRecovery(
-				getFormattedTime(avgMeanTimeToRecovery));
+				stripTrailingZeros(avgMeanTimeToRecovery));
 
 		return new MeanTimeToRecovery(avgMeanTimeToRecoveryObj, meanTimeRecoveryPipelines);
 	}
 
-	private double getFormattedTime(double time) {
-		BigDecimal decimal = new BigDecimal(String.valueOf(time));
-		return decimal.setScale(1, RoundingMode.HALF_UP).doubleValue();
-	}
-
 	private MeanTimeToRecoveryOfPipeline convertToMeanTimeToRecoveryOfPipeline(DeployTimes deploy) {
 		if (deploy.getFailed().isEmpty()) {
-			return new MeanTimeToRecoveryOfPipeline(deploy.getPipelineName(), deploy.getPipelineStep(), 0);
+			return new MeanTimeToRecoveryOfPipeline(deploy.getPipelineName(), deploy.getPipelineStep(),
+					BigDecimal.ZERO);
 		}
 		else {
 			TotalTimeAndRecoveryTimes result = getTotalRecoveryTimeAndRecoveryTimes(deploy);
-			double meanTimeToRecovery = 0;
+			BigDecimal meanTimeToRecovery = BigDecimal.ZERO;
 			if (result.getRecoveryTimes() != 0) {
-				meanTimeToRecovery = result.getTotalTimeToRecovery() / result.getRecoveryTimes();
+				meanTimeToRecovery = stripTrailingZeros(new BigDecimal(result.getTotalTimeToRecovery())
+					.divide(new BigDecimal(result.getRecoveryTimes()), 8, RoundingMode.HALF_UP));
 			}
 			return new MeanTimeToRecoveryOfPipeline(deploy.getPipelineName(), deploy.getPipelineStep(),
-					getFormattedTime(meanTimeToRecovery));
+					meanTimeToRecovery);
+		}
+	}
+
+	private BigDecimal stripTrailingZeros(BigDecimal timeToRecovery) {
+		if (timeToRecovery.scale() <= 0) {
+			return timeToRecovery.setScale(0, RoundingMode.DOWN);
+		}
+		else {
+			return timeToRecovery.stripTrailingZeros();
 		}
 	}
 

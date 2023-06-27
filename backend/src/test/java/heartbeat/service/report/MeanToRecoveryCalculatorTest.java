@@ -56,17 +56,17 @@ class MeanToRecoveryCalculatorTest {
 		MeanTimeToRecoveryOfPipeline deploy1Result = meanTimeRecoveryPipelines.get(0);
 		Assertions.assertEquals("Pipeline 1", deploy1Result.getPipelineName());
 		Assertions.assertEquals("Step 1", deploy1Result.getPipelineStep());
-		Assertions.assertEquals(180000.0, deploy1Result.getMeanTimeToRecovery());
+		Assertions.assertEquals(180000.0, deploy1Result.getTimeToRecovery());
 
 		MeanTimeToRecoveryOfPipeline deploy2Result = meanTimeRecoveryPipelines.get(1);
 		Assertions.assertEquals("Pipeline 2", deploy2Result.getPipelineName());
 		Assertions.assertEquals("Step 2", deploy2Result.getPipelineStep());
-		Assertions.assertEquals(120000.0, deploy2Result.getMeanTimeToRecovery());
+		Assertions.assertEquals(120000.0, deploy2Result.getTimeToRecovery());
 
 		MeanTimeToRecoveryOfPipeline deploy3Result = meanTimeRecoveryPipelines.get(2);
 		Assertions.assertEquals("Pipeline 3", deploy3Result.getPipelineName());
 		Assertions.assertEquals("Step 3", deploy3Result.getPipelineStep());
-		Assertions.assertEquals(0.0, deploy3Result.getMeanTimeToRecovery());
+		Assertions.assertEquals(0.0, deploy3Result.getTimeToRecovery());
 	}
 
 	private DeployTimes createDeployTimes(String pipelineName, String pipelineStep, int failedCount, int passedCount) {

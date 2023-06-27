@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AvgMeanTimeToRecovery {
 
-	private double avgMeanTimeToRecovery;
+	private final String name ="Average";
+	private double timeToRecovery;
 
 }

@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class MeanToRecoveryCalculator {
 			.collect(Collectors.toList());
 
 		double avgMeanTimeToRecovery = meanTimeRecoveryPipelines.stream()
-			.mapToDouble(MeanTimeToRecoveryOfPipeline::getMeanTimeToRecovery)
+			.mapToDouble(MeanTimeToRecoveryOfPipeline::getTimeToRecovery)
 			.average()
 			.orElse(0);
 		AvgMeanTimeToRecovery avgMeanTimeToRecoveryObj = new AvgMeanTimeToRecovery(

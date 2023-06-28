@@ -166,10 +166,10 @@ public class JiraBoardConfigDTOFixture {
 					new HistoryDetail(5, "status", new Status("Testing"), new Status("Waiting for testing")),
 					new HistoryDetail(6, "status", new Status("Block"), new Status("Testing")),
 					new HistoryDetail(7, "status", new Status("FLAG"), new Status("Block")),
-					new HistoryDetail(8, "flagged", new Status("Impediment"), new Status("FLAG")),
+					new HistoryDetail(8, "customfield_10021", new Status("Impediment"), new Status("FLAG")),
 					new HistoryDetail(9, "flagged", new Status("removeFlag"), new Status("Impediment")),
 					new HistoryDetail(9, "status", new Status("Done"), new Status("Testing")),
-					new HistoryDetail(9, "flagged", new Status("UNKNOWN"), new Status("removeFlag"))));
+					new HistoryDetail(9, "customfield_10021", new Status("UNKNOWN"), new Status("removeFlag"))));
 	}
 
 	public static FieldResponseDTO.FieldResponseDTOBuilder FIELD_RESPONSE_BUILDER() {
@@ -189,11 +189,13 @@ public class JiraBoardConfigDTOFixture {
 		IssueField summaryIssueField = new IssueField("summary", "Summary");
 		IssueField descriptionIssueField = new IssueField("description", "Description");
 		IssueField priorityIssueField = new IssueField("priority", "Priority");
+		IssueField flaggedIssueField = new IssueField("customfield_10021", "Flagged");
 		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
 		issueFieldMap.put("timetracking", timetrackingIssueField);
 		issueFieldMap.put("summary", summaryIssueField);
 		issueFieldMap.put("description", descriptionIssueField);
 		issueFieldMap.put("priority", priorityIssueField);
+		issueFieldMap.put("customfield_10021", flaggedIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}

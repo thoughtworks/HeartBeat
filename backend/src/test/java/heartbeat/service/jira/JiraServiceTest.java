@@ -483,6 +483,34 @@ class JiraServiceTest {
 	}
 
 	@Test
+	public void shouldProcessCustomFieldsForCardsWhenCallGetStoryPointsAndCycleTime() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getAllDoneCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(
+				"{\"total\":1,\"issues\":[{\"expand\":\"expand\",\"id\":\"1\",\"self\":\"https:xxxx/issue/1\",\"key\":\"ADM-455\",\"fields\":{\"customfield_10020\":[{\"id\":16,\"name\":\"Tool Sprint 11\",\"state\":\"closed\",\"boardId\":2,\"goal\":\"goals\",\"startDate\":\"2023-05-15T03:09:23.000Z\",\"endDate\":\"2023-05-28T16:00:00.000Z\",\"completeDate\":\"2023-05-29T03:51:24.898Z\"}],\"customfield_10021\":[{\"self\":\"https:xxxx/10019\",\"value\":\"Impediment\",\"id\":\"10019\"}],\"customfield_10016\":1,\"assignee\":{\"displayName\":\"Zhang San\"}}}]}");
+		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(FIELD_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+
+		CardCollection doneCards = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
+		assertThat(doneCards.getStoryPointSum()).isEqualTo(1);
+		assertThat(doneCards.getCardsNumber()).isEqualTo(1);
+		assertThat(doneCards.getJiraCardDTOList().get(0).getBaseInfo().getFields().getSprint().getName())
+			.isEqualTo("Tool Sprint 11");
+		assertThat(doneCards.getJiraCardDTOList()
+			.get(0)
+			.getBaseInfo()
+			.getFields()
+			.getCustomFields()
+			.get("customfield_10016")
+			.toString()).isEqualTo("1");
+	}
+
+	@Test
 	void shouldReturnIllegalArgumentExceptionWhenHaveUnknownColumn() throws JsonProcessingException {
 		String token = "token";
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_HAVE_UNKNOWN_COLUMN_BUILD().build();

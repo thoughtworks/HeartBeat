@@ -256,7 +256,6 @@ public class CSVFileGenerator {
 					rowData[10] = cardDTO.getBaseInfo().getFields().getParent().getFields().getSummary();
 				}
 
-				// TODO 与old app不一致，但原始数据sprint为null
 				if (cardDTO.getBaseInfo().getFields().getSprint() != null) {
 					rowData[11] = cardDTO.getBaseInfo().getFields().getSprint().getName();
 				}
@@ -266,7 +265,6 @@ public class CSVFileGenerator {
 
 		}
 		if (cardDTO.getCardCycleTime() != null) {
-			// TODO new app do not calculate cycle time for nonDoneCards
 			rowData[13] = DecimalUtil.formatDecimalTwo(cardDTO.getCardCycleTime().getTotal());
 			rowData[14] = cardDTO.getTotalCycleTimeDivideStoryPoints();
 			rowData[15] = DecimalUtil.formatDecimalTwo(cardDTO.getCardCycleTime().getSteps().getAnalyse());

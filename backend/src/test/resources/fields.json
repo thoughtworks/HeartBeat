@@ -5,7 +5,7 @@
   "customfield_1004": [
     {
       "id": 1,
-      "name": "Sprint 1",
+      "name": "Sprint 1 name",
       "state": "closed",
       "boardId": 1,
       "goal": "",
@@ -17,7 +17,7 @@
   "customfield_1005": [
     {
       "id": 1,
-      "key": "Sprint 1",
+      "key": "Sprint 1 key",
       "state": "closed",
       "boardId": 1,
       "goal": "",
@@ -29,7 +29,7 @@
   "customfield_1006": [
     {
       "id": 1,
-      "displayName": "Sprint 1",
+      "displayName": "Sprint 1 displayName",
       "state": "closed",
       "boardId": 1,
       "goal": "",
@@ -41,7 +41,7 @@
   "customfield_1007": [
     {
       "id": 1,
-      "value": "Sprint 1",
+      "value": "Sprint 1 value",
       "state": "closed",
       "boardId": 1,
       "goal": "",

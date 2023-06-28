@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
@@ -17,9 +18,11 @@ import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
 import heartbeat.client.dto.board.jira.Issuetype;
+import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraColumn;
+import heartbeat.client.dto.board.jira.Sprint;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
@@ -145,8 +148,10 @@ public class JiraService {
 			.endTime(request.getEndTime())
 			.build();
 
-		List<JiraCard> allDoneCards = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
-		List<JiraCardDTO> matchedCards = getMatchedCards(request, boardColumns, users, baseUrl, allDoneCards);
+		JiraCardWithFields allDoneCards1 = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
+		List<JiraCard> allDoneCards = allDoneCards1.getJiraCards();
+		List<JiraCardDTO> matchedCards = getMatchedCards(request, boardColumns, users, baseUrl, allDoneCards,
+				allDoneCards1.getTargetFields());
 		int storyPointSum = matchedCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
@@ -252,7 +257,7 @@ public class JiraService {
 			throw new RequestFailedException(204, "There is no done column.");
 		}
 
-		List<JiraCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam);
+		List<JiraCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam).getJiraCards();
 
 		if (doneCards.isEmpty()) {
 			throw new RequestFailedException(204, "There is no done cards.");
@@ -267,7 +272,7 @@ public class JiraService {
 		return assigneeList.stream().flatMap(Collection::stream).distinct().toList();
 	}
 
-	private List<JiraCard> getAllDoneCards(BoardType boardType, URI baseUrl, List<String> doneColumns,
+	private JiraCardWithFields getAllDoneCards(BoardType boardType, URI baseUrl, List<String> doneColumns,
 			BoardRequestParam boardRequestParam) {
 		String jql = parseJiraJql(boardType, doneColumns, boardRequestParam);
 
@@ -286,6 +291,7 @@ public class JiraService {
 			.getAsJsonArray();
 		List<Map<String, JsonElement>> customFieldMapList = new ArrayList<>();
 		ArrayList<Integer> storyPointList = new ArrayList<>();
+		ArrayList<Sprint> sprintList = new ArrayList<>();
 		Map<String, String> resultMap = targetFields.stream()
 			.collect(Collectors.toMap(TargetField::getKey, TargetField::getName));
 		CardCustomFieldKey cardCustomFieldKey = covertCustomFieldKey(targetFields);
@@ -307,8 +313,34 @@ public class JiraService {
 			Map<String, JsonElement> customFieldMap = new HashMap<>();
 			for (Map.Entry<String, String> entry : resultMap.entrySet()) {
 				String customFieldKey = entry.getKey();
+				String customFieldValue = entry.getValue();
 				if (jsonElement.has(customFieldKey)) {
 					JsonElement fieldValue = jsonElement.get(customFieldKey);
+					if (customFieldValue.equals("Sprint") && !fieldValue.isJsonNull() && fieldValue.isJsonArray()) {
+						JsonArray jsonArray = fieldValue.getAsJsonArray();
+						if (!jsonArray.isJsonNull() && jsonArray.size() > 0) {
+							JsonElement targetField = jsonArray.get(jsonArray.size() - 1);
+							Sprint sprint = gson.fromJson(targetField, Sprint.class);
+							sprintList.add(sprint);
+						}
+					}
+					else if (customFieldValue.equals("Story point estimate") && !fieldValue.isJsonNull()
+							&& fieldValue.isJsonPrimitive()) {
+						JsonPrimitive jsonPrimitive = fieldValue.getAsJsonPrimitive();
+						if (jsonPrimitive.isNumber()) {
+							Number numberValue = jsonPrimitive.getAsNumber();
+							int intValue = numberValue.intValue();
+							fieldValue = new JsonPrimitive(intValue);
+						}
+					}
+					else if (customFieldValue.equals("Flagged") && !fieldValue.isJsonNull()
+							&& fieldValue.isJsonArray()) {
+						JsonArray jsonArray = fieldValue.getAsJsonArray();
+						if (!jsonArray.isJsonNull() && jsonArray.size() > 0) {
+							JsonElement targetField = jsonArray.get(jsonArray.size() - 1);
+							fieldValue = targetField.getAsJsonObject().get("value");
+						}
+					}
 					customFieldMap.put(customFieldKey, fieldValue);
 				}
 			}
@@ -316,6 +348,9 @@ public class JiraService {
 		}
 		for (int index = 0; index < customFieldMapList.size(); index++) {
 			allDoneCardsResponseDTO.getIssues().get(index).getFields().setCustomFields(customFieldMapList.get(index));
+		}
+		for (int index = 0; index < sprintList.size(); index++) {
+			allDoneCardsResponseDTO.getIssues().get(index).getFields().setSprint(sprintList.get(index));
 		}
 		return allDoneCardsResponseDTO;
 	}
@@ -401,7 +436,9 @@ public class JiraService {
 
 	private List<JiraCardDTO> getMatchedCards(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, URI baseUrl,
-			List<JiraCard> allDoneCards) {
+			List<JiraCard> allDoneCards, List<TargetField> targetFields) {
+		CardCustomFieldKey cardCustomFieldKey = covertCustomFieldKey(targetFields);
+		String keyFlagged = cardCustomFieldKey.getFlagged();
 		List<JiraCardDTO> matchedCards = new ArrayList<>();
 		List<CompletableFuture<JiraCard>> futures = allDoneCards.stream()
 			.map(jiraCard -> CompletableFuture.supplyAsync(() -> {
@@ -419,7 +456,7 @@ public class JiraService {
 
 		jiraCards.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock());
+					request.isTreatFlagCardAsBlock(), keyFlagged);
 			List<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
@@ -455,12 +492,13 @@ public class JiraService {
 				|| CardStepsEnum.CLOSED.getValue().equalsIgnoreCase(displayName);
 	}
 
-	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock) {
+	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,
+			String keyFlagged) {
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
-				treatFlagCardAsBlock);
+				treatFlagCardAsBlock, keyFlagged);
 		List<StatusChangedItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
-				true);
+				true, keyFlagged);
 		List<StatusChangedItem> statusChangedItems = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray);
 		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCardTimeForEachStep(statusChangedItems);
 		List<CycleTimeInfo> originCycleTimeInfos = boardUtil
@@ -473,7 +511,7 @@ public class JiraService {
 	}
 
 	private List<StatusChangedItem> putStatusChangeEventsIntoAnArray(CardHistoryResponseDTO jiraCardHistory,
-			Boolean treatFlagCardAsBlock) {
+			Boolean treatFlagCardAsBlock, String keyFlagged) {
 		List<StatusChangedItem> statusChangedArray = new ArrayList<>();
 		List<HistoryDetail> statusActivities = jiraCardHistory.getItems()
 			.stream()
@@ -495,10 +533,10 @@ public class JiraService {
 					.build()));
 		}
 
-		if (treatFlagCardAsBlock) {
+		if (treatFlagCardAsBlock && keyFlagged != null) {
 			jiraCardHistory.getItems()
 				.stream()
-				.filter(activity -> "flagged".equals(activity.getFieldId()))
+				.filter(activity -> keyFlagged.equals(activity.getFieldId()))
 				.forEach(activity -> {
 					if ("Impediment".equals(activity.getTo().getDisplayValue())) {
 						statusChangedArray.add(StatusChangedItem.builder()
@@ -589,9 +627,11 @@ public class JiraService {
 			.build();
 
 		List<JiraCard> allNonDoneCards = getAllNonDoneCardsForActiveSprint(baseUrl, request.getStatus(),
-				boardRequestParam);
+				boardRequestParam)
+			.getJiraCards();
 		if (allNonDoneCards.isEmpty()) {
-			allNonDoneCards = getAllNonDoneCardsForKanBan(baseUrl, request.getStatus(), boardRequestParam);
+			allNonDoneCards = getAllNonDoneCardsForKanBan(baseUrl, request.getStatus(), boardRequestParam)
+				.getJiraCards();
 		}
 
 		List<JiraCardDTO> matchedNonCards = getMatchedNonCards(allNonDoneCards);
@@ -616,7 +656,7 @@ public class JiraService {
 		return matchedNonCards;
 	}
 
-	private List<JiraCard> getAllNonDoneCardsForActiveSprint(URI baseUrl, List<String> status,
+	private JiraCardWithFields getAllNonDoneCardsForActiveSprint(URI baseUrl, List<String> status,
 			BoardRequestParam boardRequestParam) {
 		String jql;
 		if (status.isEmpty()) {
@@ -629,7 +669,7 @@ public class JiraService {
 		return getCardList(baseUrl, boardRequestParam, jql, "nonDone");
 	}
 
-	private List<JiraCard> getAllNonDoneCardsForKanBan(URI baseUrl, List<String> status,
+	private JiraCardWithFields getAllNonDoneCardsForKanBan(URI baseUrl, List<String> status,
 			BoardRequestParam boardRequestParam) {
 		String jql;
 		if (status.isEmpty()) {
@@ -641,12 +681,13 @@ public class JiraService {
 		return getCardList(baseUrl, boardRequestParam, jql, "nonDone");
 	}
 
-	private List<JiraCard> getCardList(URI baseUrl, BoardRequestParam boardRequestParam, String jql, String cardType) {
+	private JiraCardWithFields getCardList(URI baseUrl, BoardRequestParam boardRequestParam, String jql,
+			String cardType) {
 		log.info("Start to get first-page xxx card information form kanban, param {}", cardType);
 		String allCardResponse = jiraFeignClient.getAllDoneCards(baseUrl, boardRequestParam.getBoardId(), QUERY_COUNT,
 				0, jql, boardRequestParam.getToken());
 		if (allCardResponse.isEmpty()) {
-			return Collections.emptyList();
+			return JiraCardWithFields.builder().jiraCards(Collections.emptyList()).build();
 		}
 		log.info("Successfully get first-page xxx card information form kanban, param {}", cardType);
 
@@ -656,7 +697,7 @@ public class JiraService {
 		List<JiraCard> cards = new ArrayList<>(new HashSet<>(allCardsResponseDTO.getIssues()));
 		int pages = (int) Math.ceil(Double.parseDouble(allCardsResponseDTO.getTotal()) / QUERY_COUNT);
 		if (pages <= 1) {
-			return cards;
+			return JiraCardWithFields.builder().jiraCards(cards).targetFields(targetField).build();
 		}
 
 		log.info("Start to get more xxx card information form kanban, param {}", cardType);
@@ -674,7 +715,10 @@ public class JiraService {
 			.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
 			.toList();
 
-		return Stream.concat(cards.stream(), moreNonDoneCards.stream()).toList();
+		return JiraCardWithFields.builder()
+			.jiraCards(Stream.concat(cards.stream(), moreNonDoneCards.stream()).toList())
+			.targetFields(targetField)
+			.build();
 	}
 
 	public JiraBoardConfigDTO getJiraBoardConfig(URI baseUrl, String boardId, String token) {

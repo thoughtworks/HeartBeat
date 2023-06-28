@@ -148,10 +148,11 @@ public class JiraService {
 			.endTime(request.getEndTime())
 			.build();
 
-		JiraCardWithFields allDoneCards1 = getAllDoneCards(boardType, baseUrl, request.getStatus(), boardRequestParam);
-		List<JiraCard> allDoneCards = allDoneCards1.getJiraCards();
+		JiraCardWithFields jiraCardWithFields = getAllDoneCards(boardType, baseUrl, request.getStatus(),
+				boardRequestParam);
+		List<JiraCard> allDoneCards = jiraCardWithFields.getJiraCards();
 		List<JiraCardDTO> matchedCards = getMatchedCards(request, boardColumns, users, baseUrl, allDoneCards,
-				allDoneCards1.getTargetFields());
+				jiraCardWithFields.getTargetFields());
 		int storyPointSum = matchedCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();

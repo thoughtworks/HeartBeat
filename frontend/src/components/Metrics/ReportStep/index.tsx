@@ -124,8 +124,8 @@ export const ReportStep = () => {
     csvTimeStamp: csvTimeStamp,
   })
 
-  const getExportPipelineCSV = (): CSVReportRequestDTO => ({
-    dataType: 'pipeline',
+  const getExportCSV = (dataType: string): CSVReportRequestDTO => ({
+    dataType: dataType,
     csvTimeStamp: csvTimeStamp,
   })
 
@@ -169,8 +169,8 @@ export const ReportStep = () => {
     })
   }, [fetchReportData])
 
-  const handleDownload = () => {
-    fetchExportData(getExportPipelineCSV())
+  const handleDownload = (dataType: string) => {
+    fetchExportData(getExportCSV(dataType))
   }
 
   const handleBack = () => {
@@ -224,8 +224,12 @@ export const ReportStep = () => {
           )}
           <ButtonGroupStyle>
             <BackButton onClick={handleBack}>Back</BackButton>
-            {isShowExportBoardButton && <ExportButton>Export board data</ExportButton>}
-            {isShowExportPipelineButton && <ExportButton onClick={handleDownload}>Export pipeline data</ExportButton>}
+            {isShowExportBoardButton && (
+              <ExportButton onClick={() => handleDownload('board')}>Export board data</ExportButton>
+            )}
+            {isShowExportPipelineButton && (
+              <ExportButton onClick={() => handleDownload('pipeline')}>Export pipeline data</ExportButton>
+            )}
           </ButtonGroupStyle>
         </>
       )}

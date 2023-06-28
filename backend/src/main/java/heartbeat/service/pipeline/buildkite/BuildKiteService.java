@@ -227,9 +227,9 @@ public class BuildKiteService {
 		if (deploymentEnvironment.getOrgId() == null) {
 			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "miss orgId argument");
 		}
-		List<DeployInfo> passedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "passed", startTime,
+		List<DeployInfo> passedBuilds = getBuildsByState(buildInfos, deploymentEnvironment, "passed", startTime,
 				endTime);
-		List<DeployInfo> failedBuilds = this.getBuildsByState(buildInfos, deploymentEnvironment, "failed", startTime,
+		List<DeployInfo> failedBuilds = getBuildsByState(buildInfos, deploymentEnvironment, "failed", startTime,
 				endTime);
 
 		return DeployTimes.builder()

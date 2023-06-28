@@ -41,24 +41,29 @@ import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
+import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
+import heartbeat.service.report.calculator.model.FetchedData;
+import heartbeat.service.report.calculator.model.FetchedData.BuildKiteData;
+import heartbeat.service.report.calculator.model.FetchedData.CardCollectionInfo;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
-import java.time.Instant;
 import java.net.URI;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +87,8 @@ public class GenerateReporterService {
 
 	private final ChangeFailureRateCalculator changeFailureRate;
 
+	private final MeanToRecoveryCalculator meanToRecoveryCalculator;
+
 	private final CycleTimeCalculator cycleTimeCalculator;
 
 	private final VelocityCalculator velocityCalculator;
@@ -98,7 +105,8 @@ public class GenerateReporterService {
 		.toList();
 
 	private final List<String> buildKiteMetrics = Stream
-		.of(RequireDataEnum.CHANGE_FAILURE_RATE, RequireDataEnum.DEPLOYMENT_FREQUENCY)
+		.of(RequireDataEnum.CHANGE_FAILURE_RATE, RequireDataEnum.DEPLOYMENT_FREQUENCY,
+				RequireDataEnum.MEAN_TIME_TO_RECOVERY)
 		.map(RequireDataEnum::getValue)
 		.toList();
 
@@ -106,21 +114,9 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	List<String> REQUIRED_STATES = List.of("passed", "failed");
+	private static final List<String> REQUIRED_STATES = List.of("passed", "failed");
 
-	private CardCollection cardCollection;
-
-	private CardCollection nonDoneCardCollection;
-
-	private List<PipelineLeadTime> pipelineLeadTimes;
-
-	private List<DeployTimes> deployTimesList = new ArrayList<>();
-
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
-
-	private List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
-
-	public static Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
+	private Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
 		Map<String, String> repoMap = new HashMap<>();
 		for (DeploymentEnvironment currentValue : codebaseSetting.getLeadTime()) {
 			repoMap.put(currentValue.getId(), currentValue.getRepository());
@@ -128,7 +124,7 @@ public class GenerateReporterService {
 		return repoMap;
 	}
 
-	private static List<BoardCSVConfig> getFixedBoardFields() {
+	private List<BoardCSVConfig> getFixedBoardFields() {
 		List<BoardCSVConfig> fields = new ArrayList<>();
 		for (BoardCSVConfigEnum field : BoardCSVConfigEnum.values()) {
 			fields.add(BoardCSVConfig.builder().label(field.getLabel()).value(field.getValue()).build());
@@ -136,7 +132,7 @@ public class GenerateReporterService {
 		return fields;
 	}
 
-	public String getFieldDisplayValue(Object object) {
+	private String getFieldDisplayValue(Object object) {
 		Gson gson = new Gson();
 		String result = "";
 		if (object == null || object instanceof JsonNull || object instanceof Double || object instanceof String
@@ -178,25 +174,30 @@ public class GenerateReporterService {
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());
 		// fetch data for calculate
-		this.fetchOriginalData(request);
+		FetchedData fetchedData = fetchOriginalData(request);
 
-		generateCSVForPipeline(request);
+		generateCSVForPipeline(request, fetchedData.getBuildKiteData());
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
-				case "velocity" -> reportResponse.setVelocity(velocityCalculator.calculateVelocity(cardCollection));
-				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(cardCollection,
-						request.getJiraBoardSetting().getBoardColumns()));
-				case "classification" -> reportResponse.setClassificationList(classificationCalculator
-					.calculate(request.getJiraBoardSetting().getTargetFields(), cardCollection));
-				case "deployment frequency" ->
-					reportResponse.setDeploymentFrequency(deploymentFrequency.calculate(deployTimesList,
-							Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
-				case "change failure rate" ->
-					reportResponse.setChangeFailureRate(changeFailureRate.calculate(deployTimesList));
-				case "lead time for changes" ->
-					reportResponse.setLeadTimeForChanges(leadTimeForChangesCalculator.calculate(pipelineLeadTimes));
+				case "velocity" -> reportResponse.setVelocity(
+						velocityCalculator.calculateVelocity(fetchedData.getCardCollectionInfo().getCardCollection()));
+				case "cycle time" -> reportResponse.setCycleTime(
+						cycleTimeCalculator.calculateCycleTime(fetchedData.getCardCollectionInfo().getCardCollection(),
+								request.getJiraBoardSetting().getBoardColumns()));
+				case "classification" -> reportResponse.setClassificationList(
+						classificationCalculator.calculate(request.getJiraBoardSetting().getTargetFields(),
+								fetchedData.getCardCollectionInfo().getCardCollection()));
+				case "deployment frequency" -> reportResponse.setDeploymentFrequency(
+						deploymentFrequency.calculate(fetchedData.getBuildKiteData().getDeployTimesList(),
+								Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
+				case "change failure rate" -> reportResponse.setChangeFailureRate(
+						changeFailureRate.calculate(fetchedData.getBuildKiteData().getDeployTimesList()));
+				case "mean time to recovery" -> reportResponse.setMeanTimeToRecovery(
+						meanToRecoveryCalculator.calculate(fetchedData.getBuildKiteData().getDeployTimesList()));
+				case "lead time for changes" -> reportResponse.setLeadTimeForChanges(
+						leadTimeForChangesCalculator.calculate(fetchedData.getBuildKiteData().getPipelineLeadTimes()));
 				default -> {
 					// TODO
 				}
@@ -206,26 +207,80 @@ public class GenerateReporterService {
 		return reportResponse;
 	}
 
-	private void fetchOriginalData(GenerateReportRequest request) {
+	private FetchedData fetchOriginalData(GenerateReportRequest request) {
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
+		FetchedData fetchedData = new FetchedData();
 
 		if (lowMetrics.stream().anyMatch(this.kanbanMetrics::contains)) {
-			fetchDataFromKanban(request);
+			CardCollectionInfo cardCollectionInfo = fetchDataFromKanban(request);
+			fetchedData.setCardCollectionInfo(cardCollectionInfo);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
-			fetchGithubData(request);
+			BuildKiteData buildKiteData = fetchGithubData(request);
+			fetchedData.setBuildKiteData(buildKiteData);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
-			fetchBuildKiteData(request);
+			FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
+			val cachedBuildKiteData = fetchedData.getBuildKiteData();
+			if (cachedBuildKiteData != null) {
+				val pipelineLeadTimes = cachedBuildKiteData.getPipelineLeadTimes();
+				buildKiteData.setPipelineLeadTimes(pipelineLeadTimes);
+			}
+			fetchedData.setBuildKiteData(buildKiteData);
 		}
 
+		return fetchedData;
 	}
 
-	private void fetchDataFromKanban(GenerateReportRequest request) {
+	private CardCollection fetchCardCollection(GenerateReportRequest request) {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
-		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = StoryPointsAndCycleTimeRequest.builder()
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(request,
+				jiraBoardSetting);
+		return jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
+	}
+
+	private CardCollection fetchNonDoneCardCollection(GenerateReportRequest request) {
+		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(request,
+				jiraBoardSetting);
+		return jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
+	}
+
+	private CardCollectionInfo fetchDataFromKanban(GenerateReportRequest request) {
+		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
+		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
+			.boardId(jiraBoardSetting.getBoardId())
+			.projectKey(jiraBoardSetting.getProjectKey())
+			.site(jiraBoardSetting.getSite())
+			.token(jiraBoardSetting.getToken())
+			.startTime(request.getStartTime())
+			.endTime(request.getEndTime())
+			.build();
+		CardCollection nonDoneCardCollection = fetchNonDoneCardCollection(request);
+		CardCollection cardCollection = fetchCardCollection(request);
+
+		CardCollectionInfo collectionInfo = CardCollectionInfo.builder()
+			.cardCollection(cardCollection)
+			.nonDoneCardCollection(nonDoneCardCollection)
+			.build();
+
+		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
+
+		JiraBoardConfigDTO jiraBoardConfigDTO = jiraService.getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(),
+				boardRequestParam.getToken());
+		JiraColumnResult jiraColumns = jiraService.getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO);
+
+		generateCSVForBoard(cardCollection.getJiraCardDTOList(), nonDoneCardCollection.getJiraCardDTOList(),
+				jiraColumns.getJiraColumnResponse(), jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp());
+		return collectionInfo;
+	}
+
+	private static StoryPointsAndCycleTimeRequest getStoryPointsAndCycleTimeRequest(GenerateReportRequest request,
+			JiraBoardSetting jiraBoardSetting) {
+		return StoryPointsAndCycleTimeRequest.builder()
 			.token(jiraBoardSetting.getToken())
 			.type(jiraBoardSetting.getType())
 			.site(jiraBoardSetting.getSite())
@@ -237,27 +292,6 @@ public class GenerateReporterService {
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
 			.build();
-		cardCollection = jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
-
-		nonDoneCardCollection = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
-
-		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
-			.boardId(jiraBoardSetting.getBoardId())
-			.projectKey(jiraBoardSetting.getProjectKey())
-			.site(jiraBoardSetting.getSite())
-			.token(jiraBoardSetting.getToken())
-			.startTime(request.getStartTime())
-			.endTime(request.getEndTime())
-			.build();
-		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
-
-		JiraBoardConfigDTO jiraBoardConfigDTO = jiraService.getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(),
-				boardRequestParam.getToken());
-		JiraColumnResult jiraColumns = jiraService.getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO);
-
-		generateCSVForBoard(cardCollection.getJiraCardDTOList(), nonDoneCardCollection.getJiraCardDTOList(),
-				jiraColumns.getJiraColumnResponse(), jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp());
 	}
 
 	private void generateCSVForBoard(List<JiraCardDTO> allDoneCards, List<JiraCardDTO> nonDoneCards,
@@ -312,7 +346,6 @@ public class GenerateReporterService {
 			card.setTotalCycleTimeDivideStoryPoints(calculateTotalCycleTimeDivideStoryPoints(card));
 		});
 		csvFileGenerator.convertBoardDataToCSV(cardDTOList, allBoardFields, newExtraFields, csvTimeStamp);
-
 	}
 
 	private String calculateTotalCycleTimeDivideStoryPoints(JiraCardDTO card) {
@@ -432,24 +465,31 @@ public class GenerateReporterService {
 		return extraFields;
 	}
 
-	private void fetchGithubData(GenerateReportRequest request) {
-		fetchBuildKiteData(request.getStartTime(), request.getEndTime(), request.getCodebaseSetting().getLeadTime(),
-				request.getBuildKiteSetting().getToken());
+	private FetchedData.BuildKiteData fetchGithubData(GenerateReportRequest request) {
+		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
+				request.getCodebaseSetting().getLeadTime(), request.getBuildKiteSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
-		pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(deployTimesList, repoMap,
-				request.getCodebaseSetting().getToken());
+		List<PipelineLeadTime> pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(
+				buildKiteData.getDeployTimesList(), repoMap, request.getCodebaseSetting().getToken());
+		return BuildKiteData.builder()
+			.pipelineLeadTimes(pipelineLeadTimes)
+			.buildInfosList(buildKiteData.getBuildInfosList())
+			.deployTimesList(buildKiteData.getDeployTimesList())
+			.leadTimeBuildInfosList(buildKiteData.getLeadTimeBuildInfosList())
+			.build();
 	}
 
-	private void fetchBuildKiteData(GenerateReportRequest request) {
-		fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
+	private FetchedData.BuildKiteData fetchBuildKiteInfo(GenerateReportRequest request) {
+		return fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
 				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken());
 	}
 
-	private void fetchBuildKiteData(String startTime, String endTime,
+	private FetchedData.BuildKiteData fetchBuildKiteData(String startTime, String endTime,
 			List<DeploymentEnvironment> deploymentEnvironments, String token) {
-		deployTimesList.clear();
-		buildInfosList.clear();
-		leadTimeBuildInfosList.clear();
+		List<DeployTimes> deployTimesList = new ArrayList<>();
+		List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
+		List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
+
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(token,
 					deploymentEnvironment, startTime, endTime);
@@ -459,26 +499,31 @@ public class GenerateReporterService {
 			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
 		}
+		return BuildKiteData.builder()
+			.deployTimesList(deployTimesList)
+			.buildInfosList(buildInfosList)
+			.leadTimeBuildInfosList(leadTimeBuildInfosList)
+			.build();
 	}
 
-	private void generateCSVForPipeline(GenerateReportRequest request) {
+	private void generateCSVForPipeline(GenerateReportRequest request, BuildKiteData buildKiteData) {
 		if (request.getBuildKiteSetting() == null) {
 			return;
 		}
 
 		List<PipelineCSVInfo> leadTimeData = generateCSVForPipelineWithCodebase(request.getCodebaseSetting(),
-				request.getStartTime(), request.getEndTime());
+				request.getStartTime(), request.getEndTime(), buildKiteData);
 
 		List<PipelineCSVInfo> pipelineData = generateCSVForPipelineWithoutCodebase(
-				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime());
+				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime(),
+				buildKiteData.getBuildInfosList());
 
 		leadTimeData.addAll(pipelineData);
 		csvFileGenerator.convertPipelineDataToCSV(leadTimeData, request.getCsvTimeStamp());
-
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
-			String startTime, String endTime) {
+			String startTime, String endTime, List<Entry<String, List<BuildKiteBuildInfo>>> buildInfosList) {
 		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvList) {
@@ -513,7 +558,7 @@ public class GenerateReporterService {
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
-			String endTime) {
+			String endTime, BuildKiteData buildKiteData) {
 		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
 		if (codebaseSetting == null) {
@@ -523,7 +568,8 @@ public class GenerateReporterService {
 		for (DeploymentEnvironment deploymentEnvironment : codebaseSetting.getLeadTime()) {
 			String repoId = GithubUtil
 				.getGithubUrlFullName(getRepoMap(codebaseSetting).get(deploymentEnvironment.getId()));
-			List<BuildKiteBuildInfo> buildInfos = leadTimeBuildInfosList.stream()
+			List<BuildKiteBuildInfo> buildInfos = buildKiteData.getLeadTimeBuildInfosList()
+				.stream()
 				.filter(entry -> entry.getKey().equals(deploymentEnvironment.getId()))
 				.findFirst()
 				.map(Map.Entry::getValue)
@@ -536,6 +582,7 @@ public class GenerateReporterService {
 			}).map(buildInfo -> {
 				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
 						startTime, endTime);
+				List<PipelineLeadTime> pipelineLeadTimes = buildKiteData.getPipelineLeadTimes();
 
 				LeadTime filteredLeadTime = pipelineLeadTimes.stream()
 					.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),

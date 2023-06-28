@@ -38,6 +38,10 @@ export const ReportStep = () => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
+  const [meanTimeToRecoveryState, setMeanTimeToRecoveryState] = useState({
+    value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
+    isShow: false,
+  })
   const [leadTimeForChangesState, setLeadTimeForChangesState] = useState({
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
@@ -135,6 +139,7 @@ export const ReportStep = () => {
         cycleTimeList?: ReportDataWithTwoColumns[]
         classification?: ReportDataWithThreeColumns[]
         deploymentFrequencyList?: ReportDataWithThreeColumns[]
+        meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
         leadTimeForChangesList?: ReportDataWithThreeColumns[]
         changeFailureRateList?: ReportDataWithThreeColumns[]
       }
@@ -152,6 +157,12 @@ export const ReportStep = () => {
         setDeploymentFrequencyState({
           ...deploymentFrequencyState,
           value: res.deploymentFrequencyList,
+          isShow: true,
+        })
+      res?.meanTimeToRecoveryList &&
+        setMeanTimeToRecoveryState({
+          ...meanTimeToRecoveryState,
+          value: res.meanTimeToRecoveryList,
           isShow: true,
         })
       res?.changeFailureRateList &&
@@ -204,6 +215,14 @@ export const ReportStep = () => {
               fieldName={PIPELINE_STEP}
               listName={NAME}
               data={deploymentFrequencyState.value}
+            />
+          )}
+          {meanTimeToRecoveryState.isShow && (
+            <ReportForThreeColumns
+              title={'Mean Time To Recovery'}
+              fieldName={PIPELINE_STEP}
+              listName={NAME}
+              data={meanTimeToRecoveryState.value}
             />
           )}
           {leadTimeForChangesState.isShow && (

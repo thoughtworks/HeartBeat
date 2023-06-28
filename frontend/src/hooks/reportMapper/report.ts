@@ -5,6 +5,7 @@ import { cycleTimeMapper } from '@src/hooks/reportMapper/cycleTime'
 import { classificationMapper } from '@src/hooks/reportMapper/classification'
 import { deploymentFrequencyMapper } from '@src/hooks/reportMapper/deploymentFrequency'
 import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges'
+import { meanTimeToRecoveryMapper } from '@src/hooks/reportMapper/meanTimeToRecovery'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 
 export const reportMapper = ({
@@ -12,6 +13,7 @@ export const reportMapper = ({
   cycleTime,
   classificationList,
   deploymentFrequency,
+  meanTimeToRecovery,
   leadTimeForChanges,
   changeFailureRate,
 }: ReportResponseDTO): {
@@ -19,6 +21,7 @@ export const reportMapper = ({
   cycleTimeList?: ReportDataWithTwoColumns[]
   classification?: ReportDataWithThreeColumns[]
   deploymentFrequencyList?: ReportDataWithThreeColumns[]
+  meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
   leadTimeForChangesList?: ReportDataWithThreeColumns[]
   changeFailureRateList?: ReportDataWithThreeColumns[]
 } => {
@@ -30,6 +33,8 @@ export const reportMapper = ({
 
   const deploymentFrequencyList = deploymentFrequency && deploymentFrequencyMapper(deploymentFrequency)
 
+  const meanTimeToRecoveryList = meanTimeToRecovery && meanTimeToRecoveryMapper(meanTimeToRecovery)
+
   const leadTimeForChangesList = leadTimeForChanges && leadTimeForChangesMapper(leadTimeForChanges)
 
   const changeFailureRateList = changeFailureRate && changeFailureRateMapper(changeFailureRate)
@@ -39,6 +44,7 @@ export const reportMapper = ({
     cycleTimeList,
     classification,
     deploymentFrequencyList,
+    meanTimeToRecoveryList,
     leadTimeForChangesList,
     changeFailureRateList,
   }

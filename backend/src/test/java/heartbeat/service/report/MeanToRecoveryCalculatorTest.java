@@ -62,7 +62,7 @@ class MeanToRecoveryCalculatorTest {
 		MeanTimeToRecoveryOfPipeline deploy2Result = meanTimeRecoveryPipelines.get(1);
 		Assertions.assertEquals("Pipeline 2", deploy2Result.getPipelineName());
 		Assertions.assertEquals("Step 2", deploy2Result.getPipelineStep());
-		Assertions.assertEquals(0, deploy2Result.getTimeToRecovery().compareTo(BigDecimal.valueOf(120000.0)));
+		Assertions.assertEquals(0, deploy2Result.getTimeToRecovery().compareTo(BigDecimal.valueOf(120000)));
 
 		MeanTimeToRecoveryOfPipeline deploy3Result = meanTimeRecoveryPipelines.get(2);
 		Assertions.assertEquals("Pipeline 3", deploy3Result.getPipelineName());

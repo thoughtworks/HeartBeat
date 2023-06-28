@@ -61,6 +61,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
@@ -222,6 +223,11 @@ public class GenerateReporterService {
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
 			FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
+			val cachedBuildKiteData = fetchedData.getBuildKiteData();
+			if (cachedBuildKiteData != null) {
+				val pipelineLeadTimes = cachedBuildKiteData.getPipelineLeadTimes();
+				buildKiteData.setPipelineLeadTimes(pipelineLeadTimes);
+			}
 			fetchedData.setBuildKiteData(buildKiteData);
 		}
 

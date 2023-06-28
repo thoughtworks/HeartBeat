@@ -59,12 +59,7 @@ public class MeanToRecoveryCalculator {
 	}
 
 	private BigDecimal stripTrailingZeros(BigDecimal timeToRecovery) {
-		if (timeToRecovery.scale() <= 0) {
-			return timeToRecovery.setScale(0, RoundingMode.DOWN);
-		}
-		else {
-			return timeToRecovery.stripTrailingZeros();
-		}
+		return timeToRecovery.stripTrailingZeros();
 	}
 
 	private TotalTimeAndRecoveryTimes getTotalRecoveryTimeAndRecoveryTimes(DeployTimes deploy) {

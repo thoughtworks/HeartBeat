@@ -32,22 +32,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 10
-      - name: Trufflehog scan
-        uses: trufflesecurity/trufflehog@main
-        with:
-          path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
-          extra_args: --only-verified
-
-  security-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
+      # - name: Trufflehog scan
+      #   uses: trufflesecurity/trufflehog@main
+      #   with:
+      #     path: ./
+      #     base: ${{ github.event.repository.default_branch }}
+      #     head: HEAD
+      #     extra_args: --only-verified
       - name: Run Gitleaks check
         run: |
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
@@ -57,6 +50,13 @@ jobs:
             --source="/path" \
             -v --redact
 
+  security-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
       - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:

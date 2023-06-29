@@ -1,6 +1,12 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
-import { BACK, EXPECTED_REPORT_VALUES, EXPORT_PIPELINE_DATA, REQUIRED_DATA_LIST } from '../../../fixtures'
+import {
+  BACK,
+  EXPECTED_REPORT_VALUES,
+  EXPORT_BOARD_DATA,
+  EXPORT_PIPELINE_DATA,
+  REQUIRED_DATA_LIST,
+} from '../../../fixtures'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
@@ -122,6 +128,32 @@ describe('Report Step', () => {
     const { getByText } = await act(() => setup([REQUIRED_DATA_LIST[4]]))
 
     await userEvent.click(getByText(EXPORT_PIPELINE_DATA))
+
+    expect(getByText('failed export csv')).toBeInTheDocument()
+  })
+
+  it('should not show export board button when not select board metrics', async () => {
+    const { queryByText } = await act(() => setup([REQUIRED_DATA_LIST[4]]))
+
+    const exportPipelineButton = queryByText(EXPORT_BOARD_DATA)
+
+    expect(exportPipelineButton).not.toBeInTheDocument()
+  })
+
+  it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[3]]])(
+    'should show export board button when select %s',
+    async (requiredData) => {
+      const { getByText } = await act(() => setup([requiredData]))
+      const exportPipelineButton = getByText(EXPORT_BOARD_DATA)
+
+      expect(exportPipelineButton).toBeInTheDocument()
+    }
+  )
+
+  it('should show errorMessage when click export board button given csv not exist', async () => {
+    const { getByText } = await act(() => setup([REQUIRED_DATA_LIST[1]]))
+
+    await userEvent.click(getByText(EXPORT_BOARD_DATA))
 
     expect(getByText('failed export csv')).toBeInTheDocument()
   })

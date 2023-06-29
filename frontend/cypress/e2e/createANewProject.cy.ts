@@ -174,6 +174,13 @@ const checkPipelineCSV = () => {
   })
 }
 
+const checkBoardCSV = () => {
+  cy.wait(2000)
+  return cy.task('readDir', 'cypress/downloads').then((files) => {
+    expect(files).to.match(new RegExp(/board-data-.*\.csv/))
+  })
+}
+
 const checkFieldsExist = (fields: string[]) => {
   fields.forEach((item) => {
     cy.contains(item).should('exist')
@@ -267,6 +274,12 @@ describe('Create a new project', () => {
     reportPage.exportPipelineData()
 
     checkPipelineCSV()
+
+    reportPage.exportBoardDataButton().should('be.enabled')
+
+    reportPage.exportBoardData()
+
+    checkBoardCSV()
   })
 
   it('Should have data in metrics page when back from report page', () => {

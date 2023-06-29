@@ -5,6 +5,7 @@ class Report {
   readonly meanTimeToRecoveryTitle = () => cy.contains('Mean Time To Recovery')
   readonly backButton = () => cy.contains('Back')
   readonly exportPipelineDataButton = () => cy.contains('Export pipeline data')
+  readonly exportBoardDataButton = () => cy.contains('Export board data')
 
   backToMetricsStep() {
     this.backButton().click()
@@ -12,6 +13,10 @@ class Report {
 
   exportPipelineData() {
     this.exportPipelineDataButton().click()
+  }
+
+  exportBoardData() {
+    this.exportBoardDataButton().click()
   }
 }
 

@@ -71,6 +71,16 @@ const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) 
     cy.get('[type="password"]').eq(index).should('have.value', value)
   })
 }
+
+const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
+  cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
+}
+
+const checkMeanTimeToRecovery = (testId: string) => {
+  reportPage.meanTimeToRecoveryTitle().should('exist')
+  checkTimeToRecoveryPipelineCalculation(testId)
+}
+
 describe('Import project from file', () => {
   it('Should import a project manually', () => {
     homePage.navigate()
@@ -93,6 +103,8 @@ describe('Import project from file', () => {
     metricsPage.goReportStep()
 
     cy.wait(10000)
+
+    checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 
     reportPage.backToMetricsStep()
 

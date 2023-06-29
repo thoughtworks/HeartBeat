@@ -1,6 +1,13 @@
 {
   "projectName": "ConfigFileForImporting",
-  "metrics": ["Velocity", "Cycle time", "Classification", "Lead time for changes", "Deployment frequency"],
+  "metrics": [
+    "Velocity",
+    "Cycle time",
+    "Classification",
+    "Lead time for changes",
+    "Deployment frequency",
+    "Mean time to recovery"
+  ],
   "dateRange": {
     "startDate": "2023-03-16T00:00:00.000+08:00",
     "endDate": "2023-03-30T23:59:59.999+08:00"

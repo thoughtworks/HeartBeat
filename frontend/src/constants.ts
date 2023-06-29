@@ -139,6 +139,8 @@ export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency(deployments/day)'
 
 export const FAILURE_RATE_NAME = 'Failure rate'
 
+export const MEAN_TIME_TO_RECOVERY_NAME = 'Mean Time To Recovery'
+
 export const PIPELINE_STEP = 'Pipeline/step'
 
 export const NAME = 'Name'

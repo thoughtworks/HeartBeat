@@ -319,6 +319,29 @@ export const MOCK_REPORT_RESPONSE = {
       },
     ],
   },
+  meanTimeToRecovery: {
+    avgMeanTimeToRecovery: {
+      name: 'Average',
+      timeToRecovery: 14396108.777777776,
+    },
+    meanTimeRecoveryPipelines: [
+      {
+        name: 'Heartbeat',
+        step: ':react: Build Frontend',
+        timeToRecovery: 15560177,
+      },
+      {
+        name: 'Heartbeat',
+        step: ':cloudformation: Deploy infra',
+        timeToRecovery: 0,
+      },
+      {
+        name: 'Heartbeat',
+        step: ':rocket: Run e2e',
+        timeToRecovery: 27628149.333333332,
+      },
+    ],
+  },
   leadTimeForChanges: {
     leadTimeForChangesOfPipelines: [
       {
@@ -418,6 +441,48 @@ export const EXPECTED_REPORT_VALUES = {
         {
           name: 'Deployment frequency(deployments/day)',
           value: '0.4',
+        },
+      ],
+    },
+  ],
+  meanTimeToRecoveryList: [
+    {
+      id: 0,
+      name: 'Heartbeat/:react: Build Frontend',
+      valuesList: [
+        {
+          name: 'Mean Time To Recovery',
+          value: '10805day 16hours 17minutes',
+        },
+      ],
+    },
+    {
+      id: 1,
+      name: 'Heartbeat/:cloudformation: Deploy infra',
+      valuesList: [
+        {
+          name: 'Mean Time To Recovery',
+          value: '0minutes',
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Heartbeat/:rocket: Run e2e',
+      valuesList: [
+        {
+          name: 'Mean Time To Recovery',
+          value: '19186day 5hours 9minutes',
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: 'Average',
+      valuesList: [
+        {
+          name: 'Mean Time To Recovery',
+          value: '9997day 7hours 8minutes',
         },
       ],
     },

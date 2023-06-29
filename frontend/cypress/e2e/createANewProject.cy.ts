@@ -158,6 +158,15 @@ const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
   checkBoardCalculation(testId, cycleTimeData)
 }
 
+const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
+  cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
+}
+
+const checkMeanTimeToRecovery = (testId: string) => {
+  reportPage.meanTimeToRecoveryTitle().should('exist')
+  checkTimeToRecoveryPipelineCalculation(testId)
+}
+
 const checkPipelineCSV = () => {
   cy.wait(2000)
   return cy.task('readDir', 'cypress/downloads').then((files) => {
@@ -257,6 +266,8 @@ describe('Create a new project', () => {
     checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
 
     checkDeploymentFrequency('[data-test-id="Deployment frequency"]')
+
+    checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 
     reportPage.exportPipelineDataButton().should('be.enabled')
 

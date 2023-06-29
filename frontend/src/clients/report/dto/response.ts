@@ -2,6 +2,7 @@ export interface ReportResponseDTO {
   velocity?: VelocityResponse
   cycleTime?: CycleTimeResponse
   deploymentFrequency?: DeploymentFrequencyResponse
+  meanTimeToRecovery?: MeanTimeToRecoveryResponse
   leadTimeForChanges?: LeadTimeForChangesResponse
   changeFailureRate?: ChangeFailureRateResponse
   classificationList?: Array<ClassificationResponse>
@@ -104,11 +105,10 @@ export interface MeanTimeToRecoveryOfPipeline {
 
 export interface AvgMeanTimeToRecovery {
   name: string
-  step: string
-  timeToRecovery: string
+  timeToRecovery: number
 }
 
-export interface MeanTimeToRecovery {
+export interface MeanTimeToRecoveryResponse {
   avgMeanTimeToRecovery: AvgMeanTimeToRecovery
   meanTimeRecoveryPipelines: MeanTimeToRecoveryOfPipeline[]
 }

@@ -452,7 +452,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Mean Time To Recovery',
-          value: '10805day 16hours 17minutes',
+          value: '4hours 19minutes',
         },
       ],
     },
@@ -472,7 +472,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Mean Time To Recovery',
-          value: '19186day 5hours 9minutes',
+          value: '7hours 40minutes',
         },
       ],
     },
@@ -482,7 +482,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Mean Time To Recovery',
-          value: '9997day 7hours 8minutes',
+          value: '3hours 59minutes',
         },
       ],
     },

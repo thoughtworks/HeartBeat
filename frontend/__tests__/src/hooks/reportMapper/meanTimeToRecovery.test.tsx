@@ -4,13 +4,13 @@ describe('mean time to recovery data mapper', () => {
   const mockMeanTimeToRecovery = {
     avgMeanTimeToRecovery: {
       name: 'Average',
-      timeToRecovery: 2702.53,
+      timeToRecovery: 162120031.8,
     },
     meanTimeRecoveryPipelines: [
       {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
-        timeToRecovery: 2702.53,
+        timeToRecovery: 162120031.8,
       },
     ],
   }

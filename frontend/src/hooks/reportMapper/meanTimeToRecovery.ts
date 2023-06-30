@@ -8,10 +8,12 @@ export const meanTimeToRecoveryMapper = ({
 }: MeanTimeToRecoveryResponse) => {
   const minutesPerDay = 1440
   const minutesPerHour = 60
+  const milliscondMinute = 60000
   const formatDuration = (duration: number) => {
-    const days = Math.floor(duration / minutesPerDay)
-    const hours = Math.floor((duration % minutesPerDay) / minutesPerHour)
-    const minutes = duration % minutesPerHour
+    const minutesDuration = duration / milliscondMinute
+    const days = Math.floor(minutesDuration / minutesPerDay)
+    const hours = Math.floor((minutesDuration % minutesPerDay) / minutesPerHour)
+    const minutes = minutesDuration % minutesPerHour
     return (
       (days ? days + 'day ' : '') +
       (hours ? hours + 'hours ' : '') +

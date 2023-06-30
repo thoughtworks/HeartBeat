@@ -49,6 +49,7 @@ import heartbeat.service.report.calculator.model.FetchedData.CardCollectionInfo;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
+
 import java.io.File;
 import java.net.URI;
 import java.time.Instant;
@@ -60,6 +61,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.io.InputStreamResource;
@@ -72,6 +74,8 @@ public class GenerateReporterService {
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
 			"timetracking", "statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority",
 			"labels" };
+
+	private static final List<String> REQUIRED_STATES = List.of("passed", "failed");
 
 	private final JiraService jiraService;
 
@@ -114,7 +118,21 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	private static final List<String> REQUIRED_STATES = List.of("passed", "failed");
+	private static StoryPointsAndCycleTimeRequest getStoryPointsAndCycleTimeRequest(GenerateReportRequest request,
+			JiraBoardSetting jiraBoardSetting) {
+		return StoryPointsAndCycleTimeRequest.builder()
+			.token(jiraBoardSetting.getToken())
+			.type(jiraBoardSetting.getType())
+			.site(jiraBoardSetting.getSite())
+			.project(jiraBoardSetting.getProjectKey())
+			.boardId(jiraBoardSetting.getBoardId())
+			.status(jiraBoardSetting.getDoneColumn())
+			.startTime(request.getStartTime())
+			.endTime(request.getEndTime())
+			.targetFields(jiraBoardSetting.getTargetFields())
+			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
+			.build();
+	}
 
 	private Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
 		Map<String, String> repoMap = new HashMap<>();
@@ -174,9 +192,13 @@ public class GenerateReporterService {
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());
 		// fetch data for calculate
-		FetchedData fetchedData = fetchOriginalData(request);
+		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
+		FetchedData fetchedData = fetchOriginalData(request, lowMetrics);
 
-		generateCSVForPipeline(request, fetchedData.getBuildKiteData());
+		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)
+				|| lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
+			generateCSVForPipeline(request, fetchedData.getBuildKiteData());
+		}
 
 		ReportResponse reportResponse = new ReportResponse();
 		request.getMetrics().forEach((metrics) -> {
@@ -207,8 +229,7 @@ public class GenerateReporterService {
 		return reportResponse;
 	}
 
-	private FetchedData fetchOriginalData(GenerateReportRequest request) {
-		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
+	private FetchedData fetchOriginalData(GenerateReportRequest request, List<String> lowMetrics) {
 		FetchedData fetchedData = new FetchedData();
 
 		if (lowMetrics.stream().anyMatch(this.kanbanMetrics::contains)) {
@@ -276,22 +297,6 @@ public class GenerateReporterService {
 		generateCSVForBoard(cardCollection.getJiraCardDTOList(), nonDoneCardCollection.getJiraCardDTOList(),
 				jiraColumns.getJiraColumnResponse(), jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp());
 		return collectionInfo;
-	}
-
-	private static StoryPointsAndCycleTimeRequest getStoryPointsAndCycleTimeRequest(GenerateReportRequest request,
-			JiraBoardSetting jiraBoardSetting) {
-		return StoryPointsAndCycleTimeRequest.builder()
-			.token(jiraBoardSetting.getToken())
-			.type(jiraBoardSetting.getType())
-			.site(jiraBoardSetting.getSite())
-			.project(jiraBoardSetting.getProjectKey())
-			.boardId(jiraBoardSetting.getBoardId())
-			.status(jiraBoardSetting.getDoneColumn())
-			.startTime(request.getStartTime())
-			.endTime(request.getEndTime())
-			.targetFields(jiraBoardSetting.getTargetFields())
-			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
-			.build();
 	}
 
 	private void generateCSVForBoard(List<JiraCardDTO> allDoneCards, List<JiraCardDTO> nonDoneCards,
@@ -507,10 +512,6 @@ public class GenerateReporterService {
 	}
 
 	private void generateCSVForPipeline(GenerateReportRequest request, BuildKiteData buildKiteData) {
-		if (request.getBuildKiteSetting() == null) {
-			return;
-		}
-
 		List<PipelineCSVInfo> leadTimeData = generateCSVForPipelineWithCodebase(request.getCodebaseSetting(),
 				request.getStartTime(), request.getEndTime(), buildKiteData);
 

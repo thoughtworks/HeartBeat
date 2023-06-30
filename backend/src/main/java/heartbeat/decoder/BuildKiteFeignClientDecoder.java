@@ -11,7 +11,7 @@ public class BuildKiteFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
-		log.error("[BuildKiteFeignClientDecoder] failed to get BuildKite info_response status: {}, method key: {}",
+		log.error("failed to get BuildKite info_response status: {}, method key: {}",
 				response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());
 		if (statusCode.is4xxClientError()) {

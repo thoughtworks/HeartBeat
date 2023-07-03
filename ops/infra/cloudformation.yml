@@ -349,7 +349,7 @@ Resources:
       BlockDeviceMappings:
         - DeviceName: "/dev/xvda"
           Ebs:
-            VolumeSize: "10"
+            VolumeSize: "16"
             VolumeType: "gp3"
       Tags:
         - Key: "Name"
@@ -475,7 +475,7 @@ Resources:
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 22
-        ToPort: 22
+        ToPort: 23
         CidrIp: 0.0.0.0/0
   EC2OldAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup

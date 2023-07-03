@@ -604,4 +604,3 @@ Outputs:
     Value: !GetAtt WebPortAddress.PublicIp
   E2EEIP:
     Value: !GetAtt E2EWebPortAddress.PublicIp
-

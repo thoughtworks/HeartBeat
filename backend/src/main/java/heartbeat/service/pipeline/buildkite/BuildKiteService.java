@@ -15,6 +15,7 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
+import heartbeat.exception.HBTimeoutException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
@@ -36,6 +37,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -86,9 +88,19 @@ public class BuildKiteService {
 
 			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
 		}
+		// TODO can not catch exception
 		catch (FeignException e) {
+			Throwable cause = e.getCause();
 			log.error("Failed to call BuildKite_pipelineParam: {}, e: {}", TokenUtil.mask(pipelineParam.getToken()),
 					e.getMessage());
+			String errorMessage = String.format("Failed to get get pipeline steps_reason: %s", e.getMessage());
+			if (cause instanceof TimeoutException) {
+				throw new HBTimeoutException(errorMessage);
+			}
+			else if (cause instanceof RequestFailedException requestFailedException
+					&& requestFailedException.getStatus() == HttpStatus.NOT_FOUND.value()) {
+				throw new NotFoundException(errorMessage);
+			}
 			throw new RequestFailedException(e);
 		}
 	}
@@ -98,7 +110,8 @@ public class BuildKiteService {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
 				log.error("Failed to call BuildKite, because of insufficient permission, current permissions: {}",
 						buildKiteTokenInfo.getScopes());
-				throw new PermissionDenyException(403, "Permission deny!");
+				// TODO
+				throw new PermissionDenyException("Failed to call BuildKite, because of insufficient permission!");
 			}
 		}
 	}
@@ -127,10 +140,20 @@ public class BuildKiteService {
 				.orgId(organizationId)
 				.build();
 		}
+		// TODO
 		catch (CompletionException e) {
 			RequestFailedException requestFailedException = (RequestFailedException) e.getCause();
-			if (requestFailedException.getStatus() == HttpStatus.NOT_FOUND.value()) {
-				throw new RequestFailedException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Server Error");
+			log.error("Failed to get get pipeline steps", e.getCause());
+			String errorMessage = String.format("Failed to get get pipeline steps_reason: %s", e.getMessage());
+			if (requestFailedException.getStatus() == HttpStatus.SERVICE_UNAVAILABLE.value()) {
+				throw new HBTimeoutException(errorMessage);
+			}
+			// TODO check
+			else if (e.getCause() instanceof TimeoutException) {
+				throw new HBTimeoutException(e.getCause().getMessage());
+			}
+			else if (requestFailedException.getStatus() == HttpStatus.NOT_FOUND.value()) {
+				throw new NotFoundException(errorMessage);
 			}
 			throw requestFailedException;
 		}
@@ -224,7 +247,7 @@ public class BuildKiteService {
 	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,
 			List<BuildKiteBuildInfo> buildInfos, String startTime, String endTime) {
 		if (deploymentEnvironment.getOrgId() == null) {
-			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "miss orgId argument");
+			throw new NotFoundException("miss orgId argument");
 		}
 		List<DeployInfo> passedBuilds = getBuildsByState(buildInfos, deploymentEnvironment, "passed", startTime,
 				endTime);

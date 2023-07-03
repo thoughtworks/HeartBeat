@@ -25,18 +25,22 @@ import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
+import heartbeat.exception.HBTimeoutException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,16 +76,16 @@ class BuildKiteServiceTest {
 
 	private static final String FAILED_STATE = "failed";
 
+	private static final String mockStartTime = "1661702400000";
+
+	private static final String mockEndTime = "1662739199000";
+
 	@Mock
 	BuildKiteFeignClient buildKiteFeignClient;
 
 	BuildKiteService buildKiteService;
 
 	ThreadPoolTaskExecutor executor;
-
-	private static final String mockStartTime = "1661702400000";
-
-	private static final String mockEndTime = "1662739199000";
 
 	@BeforeEach
 	public void setUp() {
@@ -158,7 +162,7 @@ class BuildKiteServiceTest {
 		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(List.of("mock")).build();
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo(
+		assertThrows(PermissionDenyException.class, () -> buildKiteService.fetchPipelineInfo(
 				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()));
 	}
 
@@ -255,10 +259,34 @@ class BuildKiteServiceTest {
 				any(), any()))
 			.thenThrow(new RequestFailedException(404, "Client Error"));
 
-		assertThrows(RequestFailedException.class,
+		assertThrows(NotFoundException.class,
 				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
 						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
-				"Request failed with status statusCode 500, error: Server Error");
+				"Request failed with status statusCode 404, error: Client Error");
+	}
+
+	@Test
+	public void shouldRThrowTimeoutExceptionWhenPageFetchPipelineStepsAndFetchNextPage503Exception() {
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
+		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
+				httpHeaders, HttpStatus.OK);
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				any(), any()))
+			.thenReturn(responseEntity);
+		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+				any(), any()))
+			.thenThrow(new RequestFailedException(503, "Timeout"));
+
+		assertThrows(HBTimeoutException.class,
+				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
+				"Request failed with status statusCode 503, error: Server Error");
 	}
 
 	@Test

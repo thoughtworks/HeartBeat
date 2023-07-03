@@ -42,7 +42,7 @@ class RestResponseEntityExceptionHandlerTest {
 
 	@Test
 	public void shouldHandlePermissionDenyException() {
-		PermissionDenyException ex = new PermissionDenyException(403, "Permission deny!");
+		PermissionDenyException ex = new PermissionDenyException("Permission deny!");
 
 		ResponseEntity<Object> response = restExceptionHandler.handlePermissionDenyException(ex);
 
@@ -50,7 +50,7 @@ class RestResponseEntityExceptionHandlerTest {
 		assertNotNull(response.getBody());
 		assertTrue(response.getBody() instanceof RestApiErrorResponse);
 		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
-		assertEquals("Request failed with status statusCode 403, error: Permission deny!", errorResponse.getMessage());
+		assertEquals("Permission deny!", errorResponse.getMessage());
 	}
 
 	@Test
@@ -97,6 +97,32 @@ class RestResponseEntityExceptionHandlerTest {
 		assertTrue(response.getBody() instanceof RestApiErrorResponse);
 		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
 		assertNotNull(errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleTimeoutException() {
+		HBTimeoutException ex = new HBTimeoutException("Timeout");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleTimeoutException(ex);
+
+		assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Timeout", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleNotFoundException() {
+		NotFoundException ex = new NotFoundException("Not found");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleNotFoundException(ex);
+
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Not found", errorResponse.getMessage());
 	}
 
 }

@@ -16,6 +16,18 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
+	@ExceptionHandler(value = NotFoundException.class)
+	protected ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "not found"));
+	}
+
+	@ExceptionHandler(value = HBTimeoutException.class)
+	protected ResponseEntity<Object> handleTimeoutException(HBTimeoutException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "request timeout"));
+	}
+
 	@ExceptionHandler(value = RequestFailedException.class)
 	protected ResponseEntity<Object> handleRequestFailedException(RequestFailedException ex) {
 		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
@@ -23,7 +35,8 @@ public class RestResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = PermissionDenyException.class)
 	protected ResponseEntity<Object> handlePermissionDenyException(PermissionDenyException ex) {
-		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "permission deny"));
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)

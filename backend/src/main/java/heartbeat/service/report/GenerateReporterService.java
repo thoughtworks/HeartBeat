@@ -496,13 +496,13 @@ public class GenerateReporterService {
 		List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(token,
+			List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService.fetchPipelineBuilds(token,
 					deploymentEnvironment, startTime, endTime);
-			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos,
+			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfo,
 					startTime, endTime);
 			deployTimesList.add(deployTimes);
-			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
-			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
+			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfo));
+			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfo));
 		}
 		return BuildKiteData.builder()
 			.deployTimesList(deployTimesList)

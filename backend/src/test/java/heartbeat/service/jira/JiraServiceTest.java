@@ -50,6 +50,9 @@ import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.exception.BadRequestException;
+import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.NoContentException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.util.BoardUtil;
@@ -59,6 +62,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -257,8 +261,8 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(null, boardRequestParam))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 400, error: boardType param is not correct");
+			.isInstanceOf(BadRequestException.class)
+			.hasMessageContaining("boardType param is not correct");
 	}
 
 	@Test
@@ -283,8 +287,8 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: There is no done cards.");
+			.isInstanceOf(NoContentException.class)
+			.hasMessageContaining("There is no done cards.");
 	}
 
 	@Test
@@ -303,8 +307,8 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: There is no done column.");
+			.isInstanceOf(NoContentException.class)
+			.hasMessageContaining("There is no done column.");
 	}
 
 	@Test
@@ -317,6 +321,18 @@ class JiraServiceTest {
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
 			.isInstanceOf(CompletionException.class)
 			.hasMessageContaining("UnExpected Exception");
+	}
+
+	@Test
+	void shouldThrowExceptionWhenGetJiraConfigurationThrowsTimeoutException() {
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
+			.thenThrow(new CompletionException(new TimeoutException("Timeout")));
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+
+		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
+			.isInstanceOf(HBTimeoutException.class)
+			.hasMessageContaining("Timeout");
 	}
 
 	@Test
@@ -389,8 +405,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token)).thenReturn(null);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: There is no target field.");
+			.isInstanceOf(NoContentException.class)
+			.hasMessageContaining("There is no target field.");
 	}
 
 	@Test
@@ -413,8 +429,8 @@ class JiraServiceTest {
 			.thenReturn(emptyProjectFieldResponse);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status statusCode 204, error: There is no target field.");
+			.isInstanceOf(NoContentException.class)
+			.hasMessageContaining("There is no target field.");
 	}
 
 	@Test

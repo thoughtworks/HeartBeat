@@ -41,6 +41,9 @@ import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
+import heartbeat.exception.BadRequestException;
+import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.NoContentException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
@@ -57,6 +60,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -73,14 +77,14 @@ public class JiraService {
 
 	public static final String STATUS_FIELD_ID = "status";
 
-	private final ThreadPoolTaskExecutor customTaskExecutor;
-
 	public static final int QUERY_COUNT = 100;
-
-	private static final String DONE_CARD_TAG = "done";
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
+
+	private static final String DONE_CARD_TAG = "done";
+
+	private final ThreadPoolTaskExecutor customTaskExecutor;
 
 	private final JiraFeignClient jiraFeignClient;
 
@@ -128,8 +132,14 @@ public class JiraService {
 			if (cause instanceof FeignException feignException) {
 				throw new RequestFailedException(feignException);
 			}
-			else if (cause instanceof RequestFailedException requestFailedException) {
-				throw requestFailedException;
+			else if (cause instanceof TimeoutException) {
+				throw new HBTimeoutException(cause.getMessage());
+			}
+			else if (cause instanceof NoContentException) {
+				throw new NoContentException(cause.getMessage());
+			}
+			else if (cause instanceof BadRequestException) {
+				throw new BadRequestException(cause.getMessage());
 			}
 			throw e;
 		}
@@ -255,13 +265,15 @@ public class JiraService {
 	private List<String> getUsers(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam,
 			List<String> doneColumns) {
 		if (doneColumns.isEmpty()) {
-			throw new RequestFailedException(204, "There is no done column.");
+			// TODO
+			throw new NoContentException("There is no done column.");
 		}
 
 		List<JiraCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam).getJiraCards();
 
 		if (doneCards.isEmpty()) {
-			throw new RequestFailedException(204, "There is no done cards.");
+			// TODO
+			throw new NoContentException("There is no done cards.");
 		}
 
 		List<CompletableFuture<List<String>>> futures = doneCards.stream()
@@ -374,7 +386,8 @@ public class JiraService {
 			return String.format("status in ('%s') AND (%s)", String.join("', '", doneColumns), subJql);
 		}
 		else {
-			throw new RequestFailedException(400, "boardType param is not correct");
+			// TODO
+			throw new BadRequestException("boardType param is not correct");
 		}
 	}
 
@@ -415,7 +428,8 @@ public class JiraService {
 				boardRequestParam.getBoardId());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
-			throw new RequestFailedException(204, "There is no target field.");
+			// TODO
+			throw new NoContentException("There is no target field.");
 		}
 
 		List<Issuetype> issueTypes = fieldResponse.getProjects().get(0).getIssuetypes();
@@ -464,8 +478,6 @@ public class JiraService {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
 			}
 			if (users.stream().anyMatch(assigneeSet::contains)) {
-				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
-
 				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
 					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())

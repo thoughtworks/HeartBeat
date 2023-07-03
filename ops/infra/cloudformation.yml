@@ -346,6 +346,11 @@ Resources:
     Properties:
       ImageId: !Sub ${EC2ImageId}
       InstanceType: "t2.micro"
+      BlockDeviceMappings:
+        - DeviceName: "/dev/xvda"
+          Ebs:
+            VolumeSize: "10"
+            VolumeType: "gp3"
       Tags:
         - Key: "Name"
           Value: "HeartbeatEC2"

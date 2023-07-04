@@ -11,7 +11,10 @@ import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.source.dto.GitHubResponse;
+import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import heartbeat.util.TokenUtil;
@@ -26,10 +29,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -77,12 +82,19 @@ public class GitHubService {
 				.join();
 		}
 		catch (CompletionException e) {
-			Throwable cause = e.getCause();
-			log.error("Failed to call GitHub with token_error ", cause);
-			if (cause instanceof FeignException feignException) {
-				throw new RequestFailedException(feignException);
+			RequestFailedException requestFailedException = (RequestFailedException) e.getCause();
+			log.error("Failed to call GitHub with token_error ", e.getCause());
+			String errorMessage = String.format("Failed to call GitHub_reason: %s", e.getMessage());
+			if (requestFailedException.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
+				throw new UnauthorizedException(e.getMessage());
 			}
-			throw e;
+			else if (requestFailedException.getStatus() == HttpStatus.NOT_FOUND.value()) {
+				throw new NotFoundException(errorMessage);
+			}
+			if (requestFailedException.getStatus() == HttpStatus.SERVICE_UNAVAILABLE.value()) {
+				throw new HBTimeoutException(errorMessage);
+			}
+			throw requestFailedException;
 		}
 	}
 
@@ -141,8 +153,12 @@ public class GitHubService {
 		}
 		catch (CompletionException e) {
 			Throwable cause = e.getCause();
+			String errorMessage = String.format("Failed to get pipeline LeadTime_reason: %s", e.getMessage());
 			if (cause instanceof FeignException feignException) {
 				throw new RequestFailedException(feignException);
+			}
+			else if (cause instanceof TimeoutException) {
+				throw new HBTimeoutException(errorMessage);
 			}
 			throw e;
 		}

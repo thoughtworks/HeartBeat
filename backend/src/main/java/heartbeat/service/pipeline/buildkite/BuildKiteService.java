@@ -90,17 +90,8 @@ public class BuildKiteService {
 		}
 		// TODO can not catch exception
 		catch (FeignException e) {
-			Throwable cause = e.getCause();
 			log.error("Failed to call BuildKite_pipelineParam: {}, e: {}", TokenUtil.mask(pipelineParam.getToken()),
 					e.getMessage());
-			String errorMessage = String.format("Failed to get get pipeline steps_reason: %s", e.getMessage());
-			if (cause instanceof TimeoutException) {
-				throw new HBTimeoutException(errorMessage);
-			}
-			else if (cause instanceof RequestFailedException requestFailedException
-					&& requestFailedException.getStatus() == HttpStatus.NOT_FOUND.value()) {
-				throw new NotFoundException(errorMessage);
-			}
 			throw new RequestFailedException(e);
 		}
 	}
@@ -110,7 +101,6 @@ public class BuildKiteService {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
 				log.error("Failed to call BuildKite, because of insufficient permission, current permissions: {}",
 						buildKiteTokenInfo.getScopes());
-				// TODO
 				throw new PermissionDenyException("Failed to call BuildKite, because of insufficient permission!");
 			}
 		}
@@ -144,7 +134,7 @@ public class BuildKiteService {
 		catch (CompletionException e) {
 			RequestFailedException requestFailedException = (RequestFailedException) e.getCause();
 			log.error("Failed to get get pipeline steps", e.getCause());
-			String errorMessage = String.format("Failed to get get pipeline steps_reason: %s", e.getMessage());
+			String errorMessage = String.format("Failed to get pipeline steps_reason: %s", e.getMessage());
 			if (requestFailedException.getStatus() == HttpStatus.SERVICE_UNAVAILABLE.value()) {
 				throw new HBTimeoutException(errorMessage);
 			}

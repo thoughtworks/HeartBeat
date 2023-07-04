@@ -4,31 +4,28 @@ import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import heartbeat.exception.HBTimeoutException;
-import heartbeat.exception.NotFoundException;
-import heartbeat.exception.PermissionDenyException;
+import heartbeat.exception.RateLimitExceededException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 
 @Log4j2
-public class BuildKiteFeignClientDecoder implements ErrorDecoder {
+public class GitHubFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
-		log.error("failed to get BuildKite info_response status: {}, method key: {}", response.status(), methodKey);
+		log.error("[GitHubFeignClientDecoder] failed to get GitHub info_response status: {}, method key: {}",
+				response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());
 		FeignException exception = FeignException.errorStatus(methodKey, response);
-		String errorMessage = String.format("Failed to get BuildKite info_status: %s, reason: %s", statusCode,
+		String errorMessage = String.format("Failed to get GitHub info_status: %s, reason: %s", statusCode,
 				exception.getMessage());
 		if (statusCode == HttpStatus.UNAUTHORIZED) {
 			return new UnauthorizedException(errorMessage);
 		}
 		else if (statusCode == HttpStatus.FORBIDDEN) {
-			return new PermissionDenyException(errorMessage);
-		}
-		else if (statusCode == HttpStatus.NOT_FOUND) {
-			return new NotFoundException(errorMessage);
+			return new RateLimitExceededException(errorMessage);
 		}
 		else if (statusCode == HttpStatus.SERVICE_UNAVAILABLE) {
 			return new HBTimeoutException(errorMessage);

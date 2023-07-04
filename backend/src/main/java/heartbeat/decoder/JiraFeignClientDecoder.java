@@ -21,16 +21,19 @@ public class JiraFeignClientDecoder implements ErrorDecoder {
 		if (statusCode == HttpStatus.NO_CONTENT) {
 			return new NoContentException(errorMessage);
 		}
-		if (statusCode == HttpStatus.BAD_REQUEST) {
+		else if (statusCode == HttpStatus.BAD_REQUEST) {
 			return new BadRequestException(errorMessage);
 		}
-		if (statusCode == HttpStatus.NOT_FOUND) {
+		else if (statusCode == HttpStatus.UNAUTHORIZED) {
+			return new UnauthorizedException(errorMessage);
+		}
+		else if (statusCode == HttpStatus.NOT_FOUND) {
 			return new NotFoundException(errorMessage);
 		}
-		if (statusCode == HttpStatus.SERVICE_UNAVAILABLE) {
+		else if (statusCode == HttpStatus.SERVICE_UNAVAILABLE) {
 			return new HBTimeoutException(errorMessage);
 		}
-		if (statusCode.is4xxClientError()) {
+		else if (statusCode.is4xxClientError()) {
 			return new RequestFailedException(statusCode.value(), "Client Error");
 		}
 		else if (statusCode.is5xxServerError()) {

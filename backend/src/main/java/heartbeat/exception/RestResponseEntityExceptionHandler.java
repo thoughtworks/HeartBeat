@@ -33,6 +33,30 @@ public class RestResponseEntityExceptionHandler {
 		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
+	@ExceptionHandler(value = BadRequestException.class)
+	protected ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "bad request"));
+	}
+
+	@ExceptionHandler(value = NoContentException.class)
+	protected ResponseEntity<Object> handleNoContentException(NoContentException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "no content"));
+	}
+
+	@ExceptionHandler(value = UnauthorizedException.class)
+	protected ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "bad credentials"));
+	}
+
+	@ExceptionHandler(value = RateLimitExceededException.class)
+	protected ResponseEntity<Object> handleRateLimitExceededException(RateLimitExceededException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "api rate limit"));
+	}
+
 	@ExceptionHandler(value = PermissionDenyException.class)
 	protected ResponseEntity<Object> handlePermissionDenyException(PermissionDenyException ex) {
 		return ResponseEntity.status(ex.getStatus())

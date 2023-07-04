@@ -14,6 +14,7 @@ import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -180,27 +182,25 @@ class GithubServiceTest {
 		String wrongGithubToken = "123456";
 		String token = "token " + wrongGithubToken;
 
-		when(gitHubFeignClient.getAllRepos(token)).thenThrow(new CustomFeignClientException(401, "Bad credentials"));
+		when(gitHubFeignClient.getAllRepos(token)).thenThrow(new RequestFailedException(401, "Bad credentials"));
 
-		final var thrown = Assertions.assertThrows(RequestFailedException.class,
-				() -> githubService.verifyToken(wrongGithubToken));
+		assertThatThrownBy(() -> githubService.verifyToken(wrongGithubToken)).isInstanceOf(UnauthorizedException.class)
+			.hasMessageContaining("Request failed with status statusCode 401, error: Bad credentials");
 
-		assertThat(thrown.getMessage()).isEqualTo("Request failed with status code 401, error: Bad credentials");
 	}
 
 	@Test
-    void shouldThrowExceptionWhenVerifyGitHubThrowUnExpectedException() {
+	void shouldThrowExceptionWhenVerifyGitHubThrowUnExpectedException() {
+		RequestFailedException mockException = mock(RequestFailedException.class);
+		when(mockException.getMessage()).thenReturn("UnExpected Exception");
 
-        when(gitHubFeignClient.getAllRepos(anyString()))
-                .thenThrow(new CompletionException(new Exception("UnExpected Exception")));
-        when(gitHubFeignClient.getGithubOrganizationsInfo(anyString()))
-                .thenThrow(new CompletionException(new Exception("UnExpected Exception")));
-        when(gitHubFeignClient.getReposByOrganizationName(anyString(), anyString()))
-                .thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+		when(gitHubFeignClient.getAllRepos(anyString())).thenThrow(mockException);
+		when(gitHubFeignClient.getGithubOrganizationsInfo(anyString())).thenThrow(mockException);
+		when(gitHubFeignClient.getReposByOrganizationName(anyString(), anyString())).thenThrow(mockException);
 
-        assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(CompletionException.class)
-                .hasMessageContaining("UnExpected Exception");
-    }
+		assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(RequestFailedException.class)
+			.hasMessageContaining("UnExpected Exception");
+	}
 
 	@Test
 	void shouldReturnNullWhenMergeTimeIsNull() {
@@ -390,12 +390,12 @@ class GithubServiceTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenFetchCommitInfo() {
-		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString()))
-			.thenThrow(new CustomFeignClientException(403, "request forbidden"));
+    public void shouldThrowExceptionWhenFetchCommitInfo() {
+        when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString()))
+                .thenThrow(new CustomFeignClientException(403, "request forbidden"));
 
-		Assertions.assertThrows(RequestFailedException.class,
-			() -> githubService.fetchCommitInfo("12344", "org/repo", "mockToken"));
-	}
+        Assertions.assertThrows(RequestFailedException.class,
+                () -> githubService.fetchCommitInfo("12344", "org/repo", "mockToken"));
+    }
 
 }

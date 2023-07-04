@@ -18,13 +18,7 @@ public class JiraFeignClientDecoder implements ErrorDecoder {
 		FeignException exception = FeignException.errorStatus(methodKey, response);
 		String errorMessage = String.format("Failed to get Jira info_status: %s, reason: %s", statusCode,
 				exception.getMessage());
-		if (statusCode == HttpStatus.NO_CONTENT) {
-			return new NoContentException(errorMessage);
-		}
-		else if (statusCode == HttpStatus.BAD_REQUEST) {
-			return new BadRequestException(errorMessage);
-		}
-		else if (statusCode == HttpStatus.UNAUTHORIZED) {
+		if (statusCode == HttpStatus.UNAUTHORIZED) {
 			return new UnauthorizedException(errorMessage);
 		}
 		else if (statusCode == HttpStatus.NOT_FOUND) {

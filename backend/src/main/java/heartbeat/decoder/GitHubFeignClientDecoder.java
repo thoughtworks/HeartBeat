@@ -4,6 +4,7 @@ import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RateLimitExceededException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
@@ -26,6 +27,9 @@ public class GitHubFeignClientDecoder implements ErrorDecoder {
 		}
 		else if (statusCode == HttpStatus.FORBIDDEN) {
 			return new RateLimitExceededException(errorMessage);
+		}
+		else if (statusCode == HttpStatus.NOT_FOUND) {
+			return new NotFoundException(errorMessage);
 		}
 		else if (statusCode == HttpStatus.SERVICE_UNAVAILABLE) {
 			return new HBTimeoutException(errorMessage);

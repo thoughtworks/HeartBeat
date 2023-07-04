@@ -1,6 +1,7 @@
-import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { Avatar, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { FormControlWrapper } from './style'
+import { FormControlWrapper, StyledAvatar } from './style'
+import { getEmojiName, removeEmojiNameFromInput } from '@src/utils/util'
 
 interface Props {
   options: string[]
@@ -39,7 +40,10 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
         <Select labelId={labelId} value={value} onChange={handleChange}>
           {options.map((data) => (
             <MenuItem key={data} value={data} data-test-id={labelId}>
-              <ListItemText primary={data} />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {getEmojiName(data) && <StyledAvatar src='https://buildkiteassets.com/emoji/unicode/1f680.png?v1' />}
+                <ListItemText primary={removeEmojiNameFromInput(data)} />
+              </div>
             </MenuItem>
           ))}
         </Select>

@@ -12,7 +12,7 @@ export const deploymentFrequencyMapper = ({
     const deploymentFrequencyValue: ReportDataWithThreeColumns = {
       id: index,
       name: `${item.name}/${item.step}`,
-      valuesList: [{ name: DEPLOYMENT_FREQUENCY_NAME, value: `${item.deploymentFrequency}` }],
+      valuesList: [{ name: DEPLOYMENT_FREQUENCY_NAME, value: `${item.deploymentFrequency.toFixed(2)}` }],
     }
     mappedDeploymentFrequencyValue.push(deploymentFrequencyValue)
   })
@@ -22,7 +22,7 @@ export const deploymentFrequencyMapper = ({
     valuesList: [
       {
         name: DEPLOYMENT_FREQUENCY_NAME,
-        value: `${avgDeploymentFrequency.deploymentFrequency}`,
+        value: `${avgDeploymentFrequency.deploymentFrequency.toFixed(2)}`,
       },
     ],
   })

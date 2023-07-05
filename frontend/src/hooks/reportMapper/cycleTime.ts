@@ -21,9 +21,9 @@ export const cycleTimeMapper = ({
     const swimlane = getSwimlaneByItemName(itemName)
     return swimlane
       ? [
-          { value: swimlane.averageTimeForSP, unit: Unit.PER_SP },
+          { value: swimlane.averageTimeForSP.toFixed(2), unit: Unit.PER_SP },
           {
-            value: swimlane.averageTimeForCards,
+            value: swimlane.averageTimeForCards.toFixed(2),
             unit: Unit.PER_CARD,
           },
         ]
@@ -32,9 +32,9 @@ export const cycleTimeMapper = ({
 
   const cycleTimeValue: { [key: string]: ValueWithUnits[] } = {
     AVERAGE_CYCLE_TIME: [
-      { value: averageCycleTimePerSP, unit: Unit.PER_SP },
+      { value: Number(averageCycleTimePerSP.toFixed(2)), unit: Unit.PER_SP },
       {
-        value: averageCycleTimePerCard,
+        value: averageCycleTimePerCard.toFixed(2),
         unit: Unit.PER_CARD,
       },
     ],

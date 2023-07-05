@@ -5,7 +5,7 @@ export interface ReportDataWithTwoColumns {
 }
 
 export interface ValueWithUnits {
-  value: number
+  value: number | string
   unit?: string
 }
 

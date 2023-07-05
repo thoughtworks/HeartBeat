@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 class BuildKiteFeignClientDecoderTest {
 
 	private final ResponseMockUtil responseMock = new ResponseMockUtil();
+
 	private BuildKiteFeignClientDecoder decoder;
 
 	@BeforeEach

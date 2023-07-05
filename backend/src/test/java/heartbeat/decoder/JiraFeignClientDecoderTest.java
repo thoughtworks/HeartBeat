@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 class JiraFeignClientDecoderTest {
 
 	private final ResponseMockUtil responseMock = new ResponseMockUtil();
+
 	private JiraFeignClientDecoder decoder;
 
 	@BeforeEach
@@ -94,4 +95,5 @@ class JiraFeignClientDecoderTest {
 
 		assertEquals(HBTimeoutException.class, exception.getClass());
 	}
+
 }

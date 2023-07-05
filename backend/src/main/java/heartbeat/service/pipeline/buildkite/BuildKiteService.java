@@ -1,6 +1,5 @@
 package heartbeat.service.pipeline.buildkite;
 
-import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
@@ -15,9 +14,9 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
+import heartbeat.exception.BaseException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
-import heartbeat.exception.RequestFailedException;
 import heartbeat.util.TimeUtil;
 import heartbeat.util.TokenUtil;
 import jakarta.annotation.PreDestroy;
@@ -121,10 +120,10 @@ public class BuildKiteService {
 		catch (CompletionException e) {
 			log.error("Failed to get get pipeline steps", e.getCause());
 			Throwable cause = e.getCause();
-			if (cause instanceof FeignException feignException) {
-				throw new RequestFailedException(feignException);
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
 			}
-			throw (RequestFailedException) e.getCause();
+			throw e;
 		}
 	}
 
@@ -171,24 +170,15 @@ public class BuildKiteService {
 	private CompletableFuture<List<BuildKiteBuildInfo>> getBuildKiteStepsAsync(String token, String organizationId,
 			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, String partialToken) {
 		return CompletableFuture.supplyAsync(() -> {
-			try {
-				log.info(
-						"Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
-						partialToken, organizationId, pipelineId, stepsParam, page);
-				List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
-						organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
-						stepsParam.getEndTime());
-				log.info(
-						"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},pipeline steps size: {},page:{}",
-						partialToken, organizationId, pipelineId, pipelineStepsInfo.size(), page);
-				return pipelineStepsInfo;
-			}
-			catch (RequestFailedException e) {
-				log.error(
-						"Failed to get BuildKite_steps page_token: {},orgId: {},pipelineId: {}, exception occurred: {},page: {}",
-						token, organizationId, pipelineId, e.getMessage(), page);
-				throw e;
-			}
+			log.info("Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+					partialToken, organizationId, pipelineId, stepsParam, page);
+			List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
+					organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
+					stepsParam.getEndTime());
+			log.info(
+					"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},pipeline steps size: {},page:{}",
+					partialToken, organizationId, pipelineId, pipelineStepsInfo.size(), page);
+			return pipelineStepsInfo;
 		}, customTaskExecutor);
 	}
 

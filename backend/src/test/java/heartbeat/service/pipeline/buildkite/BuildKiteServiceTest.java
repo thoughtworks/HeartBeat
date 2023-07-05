@@ -1,6 +1,7 @@
 package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.exception.CustomFeignClientException;
+import heartbeat.exception.HBTimeoutException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -260,11 +261,11 @@ class BuildKiteServiceTest {
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
-			.thenThrow(new CompletionException(new RequestFailedException(404, "Client Error")));
+			.thenThrow(new CompletionException(new NotFoundException("Client Error")));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
 				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
-			.isInstanceOf(Exception.class)
+			.isInstanceOf(NotFoundException.class)
 			.hasMessageContaining("Client Error");
 	}
 
@@ -284,11 +285,11 @@ class BuildKiteServiceTest {
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
-			.thenThrow(new CustomFeignClientException(503, "Timeout"));
+			.thenThrow(new CompletionException(new HBTimeoutException("Timeout")));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
 				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
-			.isInstanceOf(Exception.class)
+			.isInstanceOf(HBTimeoutException.class)
 			.hasMessageContaining("Timeout");
 	}
 
@@ -310,10 +311,11 @@ class BuildKiteServiceTest {
 				any(), any()))
 			.thenThrow(new RequestFailedException(500, "Server Error"));
 
-		assertThrows(RequestFailedException.class,
-				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
-						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
-				"Request failed with status statusCode 500, error: Server Error");
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("Server Error");
+
 	}
 
 	@Test

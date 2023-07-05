@@ -1,6 +1,5 @@
 package heartbeat.service.source.github;
 
-import feign.FeignException;
 import heartbeat.client.GitHubFeignClient;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
@@ -11,7 +10,7 @@ import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.source.dto.GitHubResponse;
-import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.BaseException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import heartbeat.util.TokenUtil;
@@ -79,8 +78,8 @@ public class GitHubService {
 		catch (CompletionException e) {
 			Throwable cause = e.getCause();
 			log.error("Failed to call GitHub with token_error ", cause);
-			if (cause instanceof FeignException feignException) {
-				throw new RequestFailedException(feignException);
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
 			}
 			throw e;
 		}
@@ -141,8 +140,8 @@ public class GitHubService {
 		}
 		catch (CompletionException e) {
 			Throwable cause = e.getCause();
-			if (cause instanceof FeignException feignException) {
-				throw new RequestFailedException(feignException);
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
 			}
 			throw e;
 		}

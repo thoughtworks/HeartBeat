@@ -1,5 +1,6 @@
 package heartbeat.service.board.jira;
 
+import heartbeat.exception.BaseException;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -9,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
@@ -43,7 +43,6 @@ import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.NoContentException;
-import heartbeat.exception.RequestFailedException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
 
@@ -123,14 +122,8 @@ public class JiraService {
 		catch (CompletionException e) {
 			Throwable cause = e.getCause();
 			log.error("Failed when call Jira to get board config", cause);
-			if (cause instanceof FeignException feignException) {
-				throw new RequestFailedException(feignException);
-			}
-			else if (cause instanceof NoContentException) {
-				throw new NoContentException(cause.getMessage());
-			}
-			else if (cause instanceof BadRequestException) {
-				throw new BadRequestException(cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
 			}
 			throw e;
 		}

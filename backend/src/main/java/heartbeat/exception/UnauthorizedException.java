@@ -3,12 +3,10 @@ package heartbeat.exception;
 import lombok.Getter;
 
 @Getter
-public class UnauthorizedException extends RuntimeException {
-
-	private final int status = 401;
+public class UnauthorizedException extends BaseException {
 
 	public UnauthorizedException(String message) {
-		super(message);
+		super(message, 401);
 	}
 
 }

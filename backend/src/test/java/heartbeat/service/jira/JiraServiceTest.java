@@ -32,12 +32,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
@@ -53,7 +51,6 @@ import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.NoContentException;
-import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.util.BoardUtil;
 
@@ -365,15 +362,12 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
-		FeignException mockException = mock(FeignException.class);
-		when(mockException.getMessage()).thenReturn("exception");
-		when(mockException.status()).thenReturn(500);
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token))
-			.thenThrow(mockException);
+			.thenThrow(new CustomFeignClientException(500, "exception"));
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status code 500, error: exception");
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("exception");
 	}
 
 	@Test
@@ -425,17 +419,15 @@ class JiraServiceTest {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
-		FeignException mockException = mock(FeignException.class);
 
-		when(mockException.getMessage()).thenReturn("exception");
-		when(mockException.status()).thenReturn(400);
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenThrow(mockException);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token))
+			.thenThrow(new CustomFeignClientException(400, "exception"));
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status code 400, error: exception");
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("exception");
 	}
 
 	@Test

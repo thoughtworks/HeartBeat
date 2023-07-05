@@ -13,10 +13,9 @@ import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.exception.CustomFeignClientException;
-import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -180,12 +179,11 @@ class GithubServiceTest {
 		String wrongGithubToken = "123456";
 		String token = "token " + wrongGithubToken;
 
-		when(gitHubFeignClient.getAllRepos(token)).thenThrow(new CustomFeignClientException(401, "Bad credentials"));
+		when(gitHubFeignClient.getAllRepos(token))
+			.thenThrow(new CompletionException(new UnauthorizedException("Bad credentials")));
 
-		final var thrown = Assertions.assertThrows(RequestFailedException.class,
-				() -> githubService.verifyToken(wrongGithubToken));
-
-		assertThat(thrown.getMessage()).isEqualTo("Request failed with status code 401, error: Bad credentials");
+		assertThatThrownBy(() -> githubService.verifyToken(wrongGithubToken)).isInstanceOf(UnauthorizedException.class)
+			.hasMessageContaining("Bad credentials");
 	}
 
 	@Test
@@ -366,11 +364,12 @@ class GithubServiceTest {
 		String mockToken = "mockToken";
 		pullRequestInfo.setMergedAt(null);
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
-			.thenThrow(new CustomFeignClientException(401, "Bad credentials"));
+			.thenThrow(new CompletionException(new UnauthorizedException("Bad credentials")));
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
 
-		Assertions.assertThrows(RequestFailedException.class,
-				() -> githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken));
+		assertThatThrownBy(() -> githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken))
+			.isInstanceOf(UnauthorizedException.class)
+			.hasMessageContaining("Bad credentials");
 	}
 
 	@Test

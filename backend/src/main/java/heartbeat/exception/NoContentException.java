@@ -3,12 +3,10 @@ package heartbeat.exception;
 import lombok.Getter;
 
 @Getter
-public class NoContentException extends RuntimeException {
-
-	private final int status = 204;
+public class NoContentException extends BaseException {
 
 	public NoContentException(String message) {
-		super(message);
+		super(message, 204);
 	}
 
 }

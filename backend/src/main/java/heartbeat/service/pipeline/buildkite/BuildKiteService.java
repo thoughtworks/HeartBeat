@@ -1,5 +1,6 @@
 package heartbeat.service.pipeline.buildkite;
 
+import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
@@ -14,7 +15,6 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
-import heartbeat.exception.HBTimeoutException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
@@ -24,7 +24,6 @@ import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -36,7 +35,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -120,22 +118,13 @@ public class BuildKiteService {
 				.orgId(organizationId)
 				.build();
 		}
-		// TODO
 		catch (CompletionException e) {
-			RequestFailedException requestFailedException = (RequestFailedException) e.getCause();
 			log.error("Failed to get get pipeline steps", e.getCause());
-			String errorMessage = String.format("Failed to get pipeline steps_reason: %s", e.getMessage());
-			if (requestFailedException.getStatus() == HttpStatus.SERVICE_UNAVAILABLE.value()) {
-				throw new HBTimeoutException(errorMessage);
+			Throwable cause = e.getCause();
+			if (cause instanceof FeignException feignException) {
+				throw new RequestFailedException(feignException);
 			}
-			// TODO check
-			else if (e.getCause() instanceof TimeoutException) {
-				throw new HBTimeoutException(e.getCause().getMessage());
-			}
-			else if (requestFailedException.getStatus() == HttpStatus.NOT_FOUND.value()) {
-				throw new NotFoundException(errorMessage);
-			}
-			throw requestFailedException;
+			throw (RequestFailedException) e.getCause();
 		}
 	}
 

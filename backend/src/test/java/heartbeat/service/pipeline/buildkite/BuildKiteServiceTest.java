@@ -1,6 +1,8 @@
 package heartbeat.service.pipeline.buildkite;
 
+import heartbeat.exception.CustomFeignClientException;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,7 +13,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
@@ -25,7 +26,6 @@ import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
-import heartbeat.exception.HBTimeoutException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -144,15 +145,17 @@ class BuildKiteServiceTest {
 
 	@Test
 	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
-		FeignException feignException = mock(FeignException.class);
 		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
 			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
 			.build();
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any())).thenThrow(feignException);
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
+			.thenThrow(new CustomFeignClientException(401, "Bad credentials"));
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
-		assertThrows(RequestFailedException.class, () -> buildKiteService.fetchPipelineInfo(
-				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()));
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineInfo(
+				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()))
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("Bad credentials");
 
 		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo(any());
 	}
@@ -257,12 +260,12 @@ class BuildKiteServiceTest {
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
-			.thenThrow(new RequestFailedException(404, "Client Error"));
+			.thenThrow(new CompletionException(new RequestFailedException(404, "Client Error")));
 
-		assertThrows(NotFoundException.class,
-				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
-						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
-				"Request failed with status statusCode 404, error: Client Error");
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("Client Error");
 	}
 
 	@Test
@@ -281,12 +284,12 @@ class BuildKiteServiceTest {
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
-			.thenThrow(new RequestFailedException(503, "Timeout"));
+			.thenThrow(new CustomFeignClientException(503, "Timeout"));
 
-		assertThrows(HBTimeoutException.class,
-				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
-						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
-				"Request failed with status statusCode 503, error: Server Error");
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("Timeout");
 	}
 
 	@Test

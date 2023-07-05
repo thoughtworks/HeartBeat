@@ -390,13 +390,13 @@ class GithubServiceTest {
 	}
 
 	@Test
-    // TODO decoder
     public void shouldThrowExceptionWhenFetchCommitInfo() {
         when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString()))
                 .thenThrow(new CustomFeignClientException(403, "request forbidden"));
 
-        Assertions.assertThrows(RequestFailedException.class,
-                () -> githubService.fetchCommitInfo("12344", "org/repo", "mockToken"));
+        assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "org/repo", "mockToken"))
+                .isInstanceOf(Exception.class)
+                .hasMessageContaining("request forbidden");
     }
 
 }

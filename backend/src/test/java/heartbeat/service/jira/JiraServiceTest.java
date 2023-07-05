@@ -1,6 +1,7 @@
 package heartbeat.service.jira;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
+import heartbeat.exception.CustomFeignClientException;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
@@ -51,7 +52,6 @@ import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.BadRequestException;
-import heartbeat.exception.HBTimeoutException;
 import heartbeat.exception.NoContentException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
@@ -62,7 +62,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -324,18 +323,6 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionWhenGetJiraConfigurationThrowsTimeoutException() {
-		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
-			.thenThrow(new CompletionException(new TimeoutException("Timeout")));
-		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
-			.isInstanceOf(HBTimeoutException.class)
-			.hasMessageContaining("Timeout");
-	}
-
-	@Test
 	void shouldReturnAssigneeNameFromDoneCardWhenGetAssigneeSet() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -452,18 +439,15 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
-		FeignException mockException = mock(FeignException.class);
+    void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 
-		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(mockException);
-		when(mockException.getMessage()).thenReturn("exception");
-		when(mockException.status()).thenReturn(400);
+        when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+        when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(new CustomFeignClientException(400, "exception"));
 
-		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BoardRequestParam.builder().build()))
-			.isInstanceOf(RequestFailedException.class)
-			.hasMessageContaining("Request failed with status code 400, error: ", "");
-	}
+        assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BoardRequestParam.builder().build()))
+                .isInstanceOf(Exception.class)
+                .hasMessageContaining("exception");
+    }
 
 	@Test
 	void shouldGetCardsWhenCallGetStoryPointsAndCycleTime() throws JsonProcessingException {

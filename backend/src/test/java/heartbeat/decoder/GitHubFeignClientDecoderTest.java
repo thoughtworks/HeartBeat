@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import feign.Response;
 import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RateLimitExceededException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
@@ -37,8 +38,17 @@ class GitHubFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_4xxRequestFailedException() {
+	void testDecode_NotFoundException() {
 		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
+
+		assertEquals(NotFoundException.class, exception.getClass());
+	}
+
+	@Test
+	void testDecode_4xxRequestFailedException() {
+		int statusCode = HttpStatus.METHOD_NOT_ALLOWED.value();
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
 

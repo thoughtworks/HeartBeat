@@ -40,15 +40,6 @@ class JiraFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_NoContentException() {
-		int statusCode = HttpStatus.NO_CONTENT.value();
-
-		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
-
-		assertEquals(NoContentException.class, exception.getClass());
-	}
-
-	@Test
 	void testDecode_NotFoundException() {
 		int statusCode = HttpStatus.NOT_FOUND.value();
 

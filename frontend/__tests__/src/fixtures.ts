@@ -399,7 +399,7 @@ export const EXPECTED_REPORT_VALUES = {
       name: 'Average cycle time',
       valueList: [
         { value: 21.18, unit: '(days/SP)' },
-        { value: 30.26, unit: '(days/card)' },
+        { value: '30.26', unit: '(days/card)' },
       ],
     },
     {
@@ -411,8 +411,8 @@ export const EXPECTED_REPORT_VALUES = {
       id: 2,
       name: 'Average development time',
       valueList: [
-        { value: 12.13, unit: '(days/SP)' },
-        { value: 17.32, unit: '(days/card)' },
+        { value: '12.13', unit: '(days/SP)' },
+        { value: '17.32', unit: '(days/card)' },
       ],
     },
   ],
@@ -430,7 +430,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Deployment frequency(deployments/day)',
-          value: '0.3',
+          value: '0.30',
         },
       ],
     },
@@ -440,7 +440,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Deployment frequency(deployments/day)',
-          value: '0.4',
+          value: '0.40',
         },
       ],
     },

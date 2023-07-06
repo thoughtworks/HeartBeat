@@ -7,7 +7,7 @@ import reportPage from '../pages/metrics/report'
 const cycleTimeData = [
   { label: 'Name', value: 'Value' },
   { label: 'Average cycle time', value: '8.14(days/SP)' },
-  { label: '9.3(days/card)' },
+  { label: '9.30(days/card)' },
   { label: 'Total development time / Total cycle time', value: '0.64' },
   { label: 'Total waiting for testing time / Total cycle time', value: '0.02' },
   { label: 'Total block time / Total cycle time', value: '0.28' },
@@ -15,7 +15,7 @@ const cycleTimeData = [
   { label: 'Total testing time / Total cycle time', value: '0.02' },
   { label: 'Average development time', value: '5.18(days/SP)' },
   { label: '5.92(days/card)' },
-  { label: 'Average waiting for testing time', value: '0.2(days/SP)' },
+  { label: 'Average waiting for testing time', value: '0.20(days/SP)' },
   { label: '0.23(days/card)' },
   { label: 'Average block time', value: '2.31(days/SP)' },
   { label: '2.64(days/card)' },

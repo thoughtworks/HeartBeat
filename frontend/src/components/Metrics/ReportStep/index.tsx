@@ -217,14 +217,6 @@ export const ReportStep = () => {
               data={deploymentFrequencyState.value}
             />
           )}
-          {meanTimeToRecoveryState.isShow && (
-            <ReportForThreeColumns
-              title={'Mean Time To Recovery'}
-              fieldName={PIPELINE_STEP}
-              listName={NAME}
-              data={meanTimeToRecoveryState.value}
-            />
-          )}
           {leadTimeForChangesState.isShow && (
             <ReportForThreeColumns
               title={'Lead time for changes'}
@@ -239,6 +231,14 @@ export const ReportStep = () => {
               fieldName={PIPELINE_STEP}
               listName={NAME}
               data={changeFailureRateState.value}
+            />
+          )}
+          {meanTimeToRecoveryState.isShow && (
+            <ReportForThreeColumns
+              title={'Mean Time To Recovery'}
+              fieldName={PIPELINE_STEP}
+              listName={NAME}
+              data={meanTimeToRecoveryState.value}
             />
           )}
           <ButtonGroupStyle>

@@ -70,7 +70,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: frontend-app
-          path: ./frontend-dist
+          path: ./${{ env.REPO_NAME }}-frontend
       - name: Download backend artifact
         uses: actions/download-artifact@v2
         with:

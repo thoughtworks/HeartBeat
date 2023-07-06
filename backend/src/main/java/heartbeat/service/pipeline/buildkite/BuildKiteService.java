@@ -1,6 +1,5 @@
 package heartbeat.service.pipeline.buildkite;
 
-import feign.FeignException;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
@@ -15,17 +14,15 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
+import heartbeat.exception.BaseException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
-import heartbeat.exception.RequestFailedException;
 import heartbeat.util.TimeUtil;
 import heartbeat.util.TokenUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -61,37 +58,29 @@ public class BuildKiteService {
 	}
 
 	public BuildKiteResponseDTO fetchPipelineInfo(PipelineParam pipelineParam) {
-		try {
-			String buildKiteToken = "Bearer " + pipelineParam.getToken();
-			log.info("Start to query token permissions by token: {}", TokenUtil.mask(pipelineParam.getToken()));
-			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
-			log.info("Successfully use token:{} to get permissions: {}", TokenUtil.mask(pipelineParam.getToken()),
-					buildKiteTokenInfo);
-			verifyToken(buildKiteTokenInfo);
-			log.info("Start to query organizations BuildKite_token:{}", buildKiteToken);
-			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
-				.getBuildKiteOrganizationsInfo(buildKiteToken);
-			log.info("Successfully get organizations slug: {}", buildKiteOrganizationsInfo);
+		String buildKiteToken = "Bearer " + pipelineParam.getToken();
+		log.info("Start to query token permissions by token: {}", TokenUtil.mask(pipelineParam.getToken()));
+		BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
+		log.info("Successfully use token:{} to get permissions: {}", TokenUtil.mask(pipelineParam.getToken()),
+				buildKiteTokenInfo);
+		verifyToken(buildKiteTokenInfo);
+		log.info("Start to query organizations BuildKite_token:{}", buildKiteToken);
+		List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
+			.getBuildKiteOrganizationsInfo(buildKiteToken);
+		log.info("Successfully get organizations slug: {}", buildKiteOrganizationsInfo);
 
-			log.info("Start to query buildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
-			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-				.flatMap(org -> buildKiteFeignClient
-					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
-							pipelineParam.getEndTime())
-					.stream()
-					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
-							org.getName())))
-				.collect(Collectors.toList());
-			log.info("Successfully get buildKite pipelineInfo_slug:{}, pipelineInfoList size is:{}",
-					buildKiteOrganizationsInfo, buildKiteInfoList.size());
+		log.info("Start to query buildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
+		List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
+			.flatMap(org -> buildKiteFeignClient
+				.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
+						pipelineParam.getEndTime())
+				.stream()
+				.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(), org.getName())))
+			.collect(Collectors.toList());
+		log.info("Successfully get buildKite pipelineInfo_slug:{}, pipelineInfoList size is:{}",
+				buildKiteOrganizationsInfo, buildKiteInfoList.size());
 
-			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
-		}
-		catch (FeignException e) {
-			log.error("Failed to call BuildKite_pipelineParam: {}, e: {}", TokenUtil.mask(pipelineParam.getToken()),
-					e.getMessage());
-			throw new RequestFailedException(e);
-		}
+		return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
 	}
 
 	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
@@ -99,7 +88,7 @@ public class BuildKiteService {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
 				log.error("Failed to call BuildKite, because of insufficient permission, current permissions: {}",
 						buildKiteTokenInfo.getScopes());
-				throw new PermissionDenyException(403, "Permission deny!");
+				throw new PermissionDenyException("Failed to call BuildKite, because of insufficient permission!");
 			}
 		}
 	}
@@ -129,11 +118,12 @@ public class BuildKiteService {
 				.build();
 		}
 		catch (CompletionException e) {
-			RequestFailedException requestFailedException = (RequestFailedException) e.getCause();
-			if (requestFailedException.getStatus() == HttpStatus.NOT_FOUND.value()) {
-				throw new RequestFailedException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Server Error");
+			log.error("Failed to get get pipeline steps", e.getCause());
+			Throwable cause = e.getCause();
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
 			}
-			throw requestFailedException;
+			throw e;
 		}
 	}
 
@@ -180,24 +170,15 @@ public class BuildKiteService {
 	private CompletableFuture<List<BuildKiteBuildInfo>> getBuildKiteStepsAsync(String token, String organizationId,
 			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, String partialToken) {
 		return CompletableFuture.supplyAsync(() -> {
-			try {
-				log.info(
-						"Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
-						partialToken, organizationId, pipelineId, stepsParam, page);
-				List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
-						organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
-						stepsParam.getEndTime());
-				log.info(
-						"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},pipeline steps size: {},page:{}",
-						partialToken, organizationId, pipelineId, pipelineStepsInfo.size(), page);
-				return pipelineStepsInfo;
-			}
-			catch (RequestFailedException e) {
-				log.error(
-						"Failed to get BuildKite_steps page_token: {},orgId: {},pipelineId: {}, exception occurred: {},page: {}",
-						token, organizationId, pipelineId, e.getMessage(), page);
-				throw e;
-			}
+			log.info("Start to paginated pipeline steps info_token: {},orgId: {},pipelineId: {},stepsParam: {},page:{}",
+					partialToken, organizationId, pipelineId, stepsParam, page);
+			List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
+					organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
+					stepsParam.getEndTime());
+			log.info(
+					"Successfully get paginated pipeline steps info_token:{},orgId: {},pipelineId: {},pipeline steps size: {},page:{}",
+					partialToken, organizationId, pipelineId, pipelineStepsInfo.size(), page);
+			return pipelineStepsInfo;
 		}, customTaskExecutor);
 	}
 
@@ -225,7 +206,7 @@ public class BuildKiteService {
 	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,
 			List<BuildKiteBuildInfo> buildInfos, String startTime, String endTime) {
 		if (deploymentEnvironment.getOrgId() == null) {
-			throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "miss orgId argument");
+			throw new NotFoundException("miss orgId argument");
 		}
 		List<DeployInfo> passedBuilds = getBuildsByState(buildInfos, deploymentEnvironment, "passed", startTime,
 				endTime);

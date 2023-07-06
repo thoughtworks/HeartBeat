@@ -4,14 +4,17 @@ import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
+
 import java.net.URI;
+
+import heartbeat.decoder.JiraFeignClientDecoder;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(value = "jiraFeignClient", url = "${jira.url}")
+@FeignClient(value = "jiraFeignClient", url = "${jira.url}", configuration = JiraFeignClientDecoder.class)
 public interface JiraFeignClient {
 
 	@Cacheable(cacheNames = "jiraConfig", key = "#boardId")

@@ -16,14 +16,51 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
+	@ExceptionHandler(value = NotFoundException.class)
+	protected ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "404 Not Found"));
+	}
+
+	@ExceptionHandler(value = HBTimeoutException.class)
+	protected ResponseEntity<Object> handleTimeoutException(HBTimeoutException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Request Timeout"));
+	}
+
 	@ExceptionHandler(value = RequestFailedException.class)
 	protected ResponseEntity<Object> handleRequestFailedException(RequestFailedException ex) {
 		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
 	}
 
+	@ExceptionHandler(value = BadRequestException.class)
+	protected ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Please reconfirm the input"));
+	}
+
+	@ExceptionHandler(value = NoContentException.class)
+	protected ResponseEntity<Object> handleNoContentException(NoContentException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "No content"));
+	}
+
+	@ExceptionHandler(value = UnauthorizedException.class)
+	protected ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Token is incorrect"));
+	}
+
+	@ExceptionHandler(value = RateLimitExceededException.class)
+	protected ResponseEntity<Object> handleRateLimitExceededException(RateLimitExceededException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "GitHub api rate limit"));
+	}
+
 	@ExceptionHandler(value = PermissionDenyException.class)
 	protected ResponseEntity<Object> handlePermissionDenyException(PermissionDenyException ex) {
-		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Permission deny"));
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)

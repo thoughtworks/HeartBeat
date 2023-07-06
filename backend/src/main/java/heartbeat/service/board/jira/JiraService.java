@@ -1,5 +1,6 @@
 package heartbeat.service.board.jira;
 
+import heartbeat.exception.BaseException;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -9,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import feign.FeignException;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
@@ -41,7 +41,8 @@ import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
-import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.BadRequestException;
+import heartbeat.exception.NoContentException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
 
@@ -73,14 +74,14 @@ public class JiraService {
 
 	public static final String STATUS_FIELD_ID = "status";
 
-	private final ThreadPoolTaskExecutor customTaskExecutor;
-
 	public static final int QUERY_COUNT = 100;
-
-	private static final String DONE_CARD_TAG = "done";
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
+
+	private static final String DONE_CARD_TAG = "done";
+
+	private final ThreadPoolTaskExecutor customTaskExecutor;
 
 	private final JiraFeignClient jiraFeignClient;
 
@@ -118,18 +119,11 @@ public class JiraService {
 								.join())
 				.join();
 		}
-		catch (FeignException e) {
-			log.error("Failed when call Jira to get board config", e);
-			throw new RequestFailedException(e);
-		}
 		catch (CompletionException e) {
 			Throwable cause = e.getCause();
 			log.error("Failed when call Jira to get board config", cause);
-			if (cause instanceof FeignException feignException) {
-				throw new RequestFailedException(feignException);
-			}
-			else if (cause instanceof RequestFailedException requestFailedException) {
-				throw requestFailedException;
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
 			}
 			throw e;
 		}
@@ -255,13 +249,13 @@ public class JiraService {
 	private List<String> getUsers(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam,
 			List<String> doneColumns) {
 		if (doneColumns.isEmpty()) {
-			throw new RequestFailedException(204, "There is no done column.");
+			throw new NoContentException("There is no done column.");
 		}
 
 		List<JiraCard> doneCards = getAllDoneCards(boardType, baseUrl, doneColumns, boardRequestParam).getJiraCards();
 
 		if (doneCards.isEmpty()) {
-			throw new RequestFailedException(204, "There is no done cards.");
+			throw new NoContentException("There is no done cards.");
 		}
 
 		List<CompletableFuture<List<String>>> futures = doneCards.stream()
@@ -374,7 +368,7 @@ public class JiraService {
 			return String.format("status in ('%s') AND (%s)", String.join("', '", doneColumns), subJql);
 		}
 		else {
-			throw new RequestFailedException(400, "boardType param is not correct");
+			throw new BadRequestException("boardType param is not correct");
 		}
 	}
 
@@ -415,7 +409,8 @@ public class JiraService {
 				boardRequestParam.getBoardId());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
-			throw new RequestFailedException(204, "There is no target field.");
+			// TODO
+			throw new NoContentException("There is no target field.");
 		}
 
 		List<Issuetype> issueTypes = fieldResponse.getProjects().get(0).getIssuetypes();
@@ -464,8 +459,6 @@ public class JiraService {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
 			}
 			if (users.stream().anyMatch(assigneeSet::contains)) {
-				// TODO:this logic is unnecessary processCustomFieldsForCard(doneCard)
-
 				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
 					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())

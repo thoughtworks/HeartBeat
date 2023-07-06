@@ -42,7 +42,7 @@ class RestResponseEntityExceptionHandlerTest {
 
 	@Test
 	public void shouldHandlePermissionDenyException() {
-		PermissionDenyException ex = new PermissionDenyException(403, "Permission deny!");
+		PermissionDenyException ex = new PermissionDenyException("Permission deny!");
 
 		ResponseEntity<Object> response = restExceptionHandler.handlePermissionDenyException(ex);
 
@@ -50,7 +50,7 @@ class RestResponseEntityExceptionHandlerTest {
 		assertNotNull(response.getBody());
 		assertTrue(response.getBody() instanceof RestApiErrorResponse);
 		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
-		assertEquals("Request failed with status statusCode 403, error: Permission deny!", errorResponse.getMessage());
+		assertEquals("Permission deny!", errorResponse.getMessage());
 	}
 
 	@Test
@@ -97,6 +97,84 @@ class RestResponseEntityExceptionHandlerTest {
 		assertTrue(response.getBody() instanceof RestApiErrorResponse);
 		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
 		assertNotNull(errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleTimeoutException() {
+		HBTimeoutException ex = new HBTimeoutException("Timeout");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleTimeoutException(ex);
+
+		assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Timeout", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleNotFoundException() {
+		NotFoundException ex = new NotFoundException("Not found");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleNotFoundException(ex);
+
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Not found", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleBadRequestException() {
+		BadRequestException ex = new BadRequestException("Bad request");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleBadRequestException(ex);
+
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Bad request", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleNoContentException() {
+		NoContentException ex = new NoContentException("No Content");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleNoContentException(ex);
+
+		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("No Content", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleUnauthorizedException() {
+		UnauthorizedException ex = new UnauthorizedException("Bad credentials");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleUnauthorizedException(ex);
+
+		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Bad credentials", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleRateLimitExceededException() {
+		RateLimitExceededException ex = new RateLimitExceededException("Rate limit");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleRateLimitExceededException(ex);
+
+		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Rate limit", errorResponse.getMessage());
 	}
 
 }

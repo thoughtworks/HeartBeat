@@ -9,15 +9,8 @@ public interface DecimalUtil {
 
 	static String formatDecimalTwo(double value) {
 		DecimalFormat decimalFormat = new DecimalFormat(FORMAT_2_DECIMALS);
-		if (value == 0) {
-			return "0";
-		}
-		else if (Objects.equals(decimalFormat.format(value), "0.00")) {
-			return "0";
-		}
-		else {
-			return decimalFormat.format(value);
-		}
+
+		return Objects.equals(decimalFormat.format(value), "0.00") ? "0" : decimalFormat.format(value);
 	}
 
 }

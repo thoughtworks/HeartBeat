@@ -3,13 +3,10 @@ package heartbeat.exception;
 import lombok.Getter;
 
 @Getter
-public class PermissionDenyException extends RequestFailedException {
+public class PermissionDenyException extends BaseException {
 
-	private final int status;
-
-	public PermissionDenyException(int status, String message) {
-		super(status, message);
-		this.status = status;
+	public PermissionDenyException(String message) {
+		super(message, 403);
 	}
 
 }

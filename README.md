@@ -346,4 +346,8 @@ Release version follows  **[Software release life cycle](https://en.wikipedia.or
 ```sh
 git tag {tag name}
 git push origin {tag name}
+
+# Delete tag
+git tag -d {tag name}
+git push origin :refs/tags/{tag name}
 ```

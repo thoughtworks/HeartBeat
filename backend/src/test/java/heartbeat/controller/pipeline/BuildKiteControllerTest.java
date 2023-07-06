@@ -14,9 +14,11 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -93,7 +95,7 @@ public class BuildKiteControllerTest {
 		when(buildKiteService.fetchPipelineSteps(anyString(), anyString(), anyString(), any()))
 			.thenReturn(emptyPipelineSteps);
 
-		mockMvc
+		MockHttpServletResponse response = mockMvc
 			.perform(get("/pipelines/buildkite/XXXX/pipelines/fs-platform-onboarding/steps")
 				.header("Authorization", "mockBuildKiteToken")
 				.queryParam("pipelineName", "Heartbeat")
@@ -102,7 +104,11 @@ public class BuildKiteControllerTest {
 				.queryParam("startTime", "1687708800000")
 				.queryParam("endTime", "1689004799999")
 				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isNoContent());
+			.andExpect(status().isNoContent())
+			.andReturn()
+			.getResponse();
+
+		assertThat(response.getContentAsString()).isEqualTo("");
 	}
 
 }

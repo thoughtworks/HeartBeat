@@ -26,7 +26,7 @@ import { ErrorNotification } from '@src/components/ErrorNotification'
 
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
-  const { generateReport, isLoading } = useGenerateReportEffect()
+  const { generateReport, isLoading, errorMessage: reportErrorMsg } = useGenerateReportEffect()
   const { fetchExportData, errorMessage } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
@@ -194,6 +194,11 @@ export const ReportStep = () => {
         <Loading />
       ) : (
         <>
+          {reportErrorMsg && (
+            <ErrorNotificationContainer>
+              <ErrorNotification message={reportErrorMsg} />
+            </ErrorNotificationContainer>
+          )}
           {errorMessage && (
             <ErrorNotificationContainer>
               <ErrorNotification message={errorMessage} />

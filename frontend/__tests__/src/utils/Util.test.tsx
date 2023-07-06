@@ -37,6 +37,24 @@ describe('getEmojiName function', () => {
 })
 
 describe('getEmojiUrl function', () => {
+  test('it should get empty urls', () => {
+    const input = 'one emoji'
+    const emojis: BuildKiteEmoji[] = [
+      {
+        name: 'zap',
+        url: 'https://example.com/abc.png',
+        aliases: [],
+      },
+      {
+        name: 'zap1',
+        url: 'https://example2.com/abc.png',
+        aliases: [],
+      },
+    ]
+
+    expect(getEmojiUrls(input, emojis)).toEqual([])
+  })
+
   test('it should get single emoji url', () => {
     const input = ':zap: one emoji'
     const emojis: BuildKiteEmoji[] = [

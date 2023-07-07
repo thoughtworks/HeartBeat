@@ -496,13 +496,13 @@ public class GenerateReporterService {
 		List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = buildKiteService.fetchPipelineBuilds(token,
+			List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService.fetchPipelineBuilds(token,
 					deploymentEnvironment, startTime, endTime);
-			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfos,
+			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfo,
 					startTime, endTime);
 			deployTimesList.add(deployTimes);
-			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
-			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfos));
+			buildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfo));
+			leadTimeBuildInfosList.add(Map.entry(deploymentEnvironment.getId(), buildKiteBuildInfo));
 		}
 		return BuildKiteData.builder()
 			.deployTimesList(deployTimesList)
@@ -585,14 +585,16 @@ public class GenerateReporterService {
 						startTime, endTime);
 				List<PipelineLeadTime> pipelineLeadTimes = buildKiteData.getPipelineLeadTimes();
 
-				LeadTime filteredLeadTime = pipelineLeadTimes.stream()
-					.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
-							deploymentEnvironment.getName()))
-					.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
-					.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
-					.findFirst()
-					.orElse(null);
-
+				LeadTime filteredLeadTime = null;
+				if (pipelineLeadTimes != null) {
+					filteredLeadTime = pipelineLeadTimes.stream()
+						.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
+								deploymentEnvironment.getName()))
+						.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
+						.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
+						.findFirst()
+						.orElse(null);
+				}
 				CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
 						codebaseSetting.getToken());
 				return PipelineCSVInfo.builder()

@@ -4,6 +4,7 @@ import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepo;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
+import heartbeat.decoder.GitHubFeignClientDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@FeignClient(name = "githubFeignClient", url = "${github.url}")
+@FeignClient(name = "githubFeignClient", url = "${github.url}", configuration = GitHubFeignClientDecoder.class)
 public interface GitHubFeignClient {
 
 	@GetMapping(path = "/user/orgs")

@@ -1,6 +1,5 @@
 package heartbeat.service.source.github;
 
-import feign.FeignException;
 import heartbeat.client.GitHubFeignClient;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
@@ -11,7 +10,7 @@ import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.source.dto.GitHubResponse;
-import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.BaseException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import heartbeat.util.TokenUtil;
@@ -79,8 +78,8 @@ public class GitHubService {
 		catch (CompletionException e) {
 			Throwable cause = e.getCause();
 			log.error("Failed to call GitHub with token_error ", cause);
-			if (cause instanceof FeignException feignException) {
-				throw new RequestFailedException(feignException);
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
 			}
 			throw e;
 		}
@@ -110,30 +109,43 @@ public class GitHubService {
 
 	public List<PipelineLeadTime> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
-		String realToken = "Bearer " + token;
-		List<PipelineInfoOfRepository> pipelineInfoOfRepositories = getInfoOfRepositories(deployTimes, repositories);
+		try {
+			String realToken = "Bearer " + token;
+			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = getInfoOfRepositories(deployTimes,
+					repositories);
 
-		List<CompletableFuture<PipelineLeadTime>> pipelineLeadTimeFutures = pipelineInfoOfRepositories.stream()
-			.map(item -> {
-				if (item.getPassedDeploy() == null || item.getPassedDeploy().isEmpty()) {
-					return CompletableFuture.completedFuture(PipelineLeadTime.builder().build());
-				}
+			List<CompletableFuture<PipelineLeadTime>> pipelineLeadTimeFutures = pipelineInfoOfRepositories.stream()
+				.map(item -> {
+					if (item.getPassedDeploy() == null || item.getPassedDeploy().isEmpty()) {
+						return CompletableFuture.completedFuture(PipelineLeadTime.builder().build());
+					}
 
-				List<CompletableFuture<LeadTime>> leadTimeFutures = getLeadTimeFutures(realToken, item);
+					List<CompletableFuture<LeadTime>> leadTimeFutures = getLeadTimeFutures(realToken, item);
 
-				CompletableFuture<List<LeadTime>> allLeadTimesFuture = CompletableFuture
-					.allOf(leadTimeFutures.toArray(new CompletableFuture[0]))
-					.thenApply(v -> leadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList()));
+					CompletableFuture<List<LeadTime>> allLeadTimesFuture = CompletableFuture
+						.allOf(leadTimeFutures.toArray(new CompletableFuture[0]))
+						.thenApply(v -> leadTimeFutures.stream()
+							.map(CompletableFuture::join)
+							.collect(Collectors.toList()));
 
-				return allLeadTimesFuture.thenApply(leadTimes -> PipelineLeadTime.builder()
-					.pipelineName(item.getPipelineName())
-					.pipelineStep(item.getPipelineStep())
-					.leadTimes(leadTimes)
-					.build());
-			})
-			.toList();
+					return allLeadTimesFuture.thenApply(leadTimes -> PipelineLeadTime.builder()
+						.pipelineName(item.getPipelineName())
+						.pipelineStep(item.getPipelineStep())
+						.leadTimes(leadTimes)
+						.build());
+				})
+				.toList();
 
-		return pipelineLeadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+			return pipelineLeadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+		}
+		catch (CompletionException e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw e;
+		}
+
 	}
 
 	private List<CompletableFuture<LeadTime>> getLeadTimeFutures(String realToken, PipelineInfoOfRepository item) {

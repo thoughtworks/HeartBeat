@@ -3,9 +3,11 @@ package heartbeat.client;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
-import heartbeat.config.BuildKiteFeignClientConfiguration;
-import java.util.List;
 import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
+import heartbeat.decoder.BuildKiteFeignClientDecoder;
+
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@FeignClient(name = "buildKiteFeignClient", url = "${buildKite.url}",
-		configuration = BuildKiteFeignClientConfiguration.class)
+@FeignClient(name = "buildKiteFeignClient", url = "${buildKite.url}", configuration = BuildKiteFeignClientDecoder.class)
 public interface BuildKiteFeignClient {
 
 	@GetMapping(path = "v2/access-token")

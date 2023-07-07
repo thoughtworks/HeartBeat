@@ -72,6 +72,10 @@ jest.mock('@src/utils/util', () => ({
   exportToJsonFile: jest.fn((_filename: string, _json: object) => {
     //Mock for test
   }),
+  getEmojiUrls: jest.fn().mockReturnValue(['https://buildkiteassets.com/emojis/img-buildkite-64/charger64.png']),
+  removeExtraEmojiName: jest.fn(() => {
+    //Mock for test
+  }),
 }))
 
 const server = setupServer(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))

@@ -18,8 +18,7 @@ interface ReportForThreeColumnsProps {
 export const ReportForThreeColumns = ({ title, fieldName, listName, data }: ReportForThreeColumnsProps) => {
   const emojiRow = (row: ReportDataWithThreeColumns) => {
     if (row.name.includes(':') && getEmojiUrls(row.name, emojis).length > 0) {
-      const prefix = row.name.split('/')[0]
-      const suffix = row.name.split('/')[1]
+      const [prefix, suffix] = row.name.split('/')
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Typography>{prefix}/</Typography>

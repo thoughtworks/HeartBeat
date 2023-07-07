@@ -335,3 +335,19 @@ pnpm e2e:report
 3. Add `[backend]` tag to the title of the commit message or PR to trigger backend-related deployments.
 
 4. Add `[frontend]` tag to the title of the commit message or PR to trigger frontend-related deployments.
+
+
+## Release
+
+Release version follows  **[Software release life cycle](https://en.wikipedia.org/wiki/Software_release_life_cycle)**
+
+### Release command in main branch
+
+```sh
+git tag {tag name}
+git push origin {tag name}
+
+# Delete tag
+git tag -d {tag name}
+git push origin :refs/tags/{tag name}
+```

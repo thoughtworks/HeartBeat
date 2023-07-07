@@ -9,7 +9,6 @@ env:
 
 jobs:
   build_backend:
-    if: ${{ github.actor == github.repository_owner }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -36,7 +35,6 @@ jobs:
           retention-days: ${{ vars.RETENTION_DAYS }}
 
   build_frontend:
-    if: ${{ github.actor == github.repository_owner }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -62,7 +60,6 @@ jobs:
           path: frontend/dist
           retention-days: ${{ vars.RETENTION_DAYS }}
   release:
-    if: ${{ github.actor == github.repository_owner }}
     runs-on: ubuntu-latest
     needs:
       - build_frontend

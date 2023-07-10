@@ -8,6 +8,9 @@ export class BoardClient extends HttpClient {
   response = {}
 
   getVerifyBoard = async (params: BoardRequestDTO) => {
+    this.isBoardVerify = false
+    this.isNoDoneCard = false
+    this.response = {}
     try {
       const boardType = params.type === 'Classic Jira' ? 'classic-jira' : params.type.toLowerCase()
       const result = await this.axiosInstance.get(`/boards/${boardType}`, { params })

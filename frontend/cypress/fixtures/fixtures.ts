@@ -131,9 +131,3 @@ export const JSON_FILE_CONTENT = {
     'customfield_22226',
   ],
 }
-
-export const PIPELINE_CSV_HEADERS =
-  '"Pipeline Name","Pipeline Step","Build Number","Committer","First Code Committed Time In PR","Code Committed Time","PR Created Time","PR Merged Time","Deployment Completed Time","Total Lead Time (HH:mm:ss)","Time from PR Created to PR Merged (HH:mm:ss)","Time from PR Merged to Deployment Completed (HH:mm:ss)","Status"\n'
-
-export const PIPELINE_CSV_HEADERS =
-  '"Pipeline Name","Pipeline Step","Build Number","Committer","First Code Committed Time In PR","Code Committed Time","PR Created Time","PR Merged Time","Deployment Completed Time","Total Lead Time (HH:mm:ss)","Time from PR Created to PR Merged (HH:mm:ss)","Time from PR Merged to Deployment Completed (HH:mm:ss)","Status"\n'

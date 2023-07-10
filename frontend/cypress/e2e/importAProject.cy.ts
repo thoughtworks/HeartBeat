@@ -23,11 +23,11 @@ const metricsTextList = [
   'Deployment frequency settings',
   'XXXX',
   'fs-platform-onboarding',
-  ':docker: publish gradle-cache image to cloudsmith',
+  'publish gradle-cache image to cloudsmith',
   'Lead time for changes',
   'XXXX',
   'fs-platform-payment-selector',
-  ':docker: publish maven-cache image to cloudsmith',
+  'publish maven-cache image to cloudsmith',
 ]
 
 const configTextList = [

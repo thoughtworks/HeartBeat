@@ -9,7 +9,13 @@ export interface useGetMetricsStepsEffectInterface {
     buildId: string,
     pipelineType: string,
     token: string
-  ) => Promise<string[] | undefined>
+  ) => Promise<
+    | {
+        isNoStep: boolean
+        response: string[]
+      }
+    | undefined
+  >
   isLoading: boolean
   errorMessage: string
 }

@@ -7,18 +7,20 @@ import { HttpStatusCode } from 'axios'
 describe('get steps from metrics response', () => {
   const { params, buildId, organizationId, pipelineType, token } = MOCK_GET_STEPS_PARAMS
   const getStepsUrl = `${BASE_URL}/pipelines/:type/:orgId/pipelines/:buildId/steps`
-  const server = setupServer(
-    rest.get(getStepsUrl, (req, res, ctx) => {
-      return res(ctx.status(HttpStatusCode.Ok), ctx.json({ steps: ['step1'] }))
-    })
-  )
+  const server = setupServer()
   beforeAll(() => server.listen())
   afterAll(() => server.close())
 
   it('should return steps when getSteps response status 200', async () => {
+    server.use(
+      rest.get(getStepsUrl, (req, res, ctx) => {
+        return res(ctx.status(HttpStatusCode.Ok), ctx.json({ steps: ['step1'] }))
+      })
+    )
+
     const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
 
-    expect(result).toEqual(['step1'])
+    expect(result).toEqual({ response: ['step1'], isNoStep: false })
   })
 
   it('should throw error when getSteps response status 500', async () => {
@@ -46,5 +48,13 @@ describe('get steps from metrics response', () => {
     await expect(async () => {
       await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.BAD_REQUEST)
+  })
+
+  it('should show isNoStep True when getSteps response status 204', async () => {
+    server.use(rest.get(getStepsUrl, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
+
+    const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
+
+    expect(result).toEqual({ response: [], isNoStep: true })
   })
 })

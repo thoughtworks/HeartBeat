@@ -1,8 +1,9 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
-import { MOCK_EXPORT_CSV_REQUEST_PARAMS, MOCK_EXPORT_CSV_URL, VERIFY_ERROR_MESSAGE } from '../fixtures'
+import { MOCK_EXPORT_CSV_REQUEST_PARAMS, MOCK_EXPORT_CSV_URL } from '../fixtures'
 import { csvClient } from '@src/clients/report/CSVClient'
+import http from 'http'
 
 const server = setupServer(rest.get(MOCK_EXPORT_CSV_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
 
@@ -33,6 +34,6 @@ describe('verify export csv', () => {
     server.use(rest.get(MOCK_EXPORT_CSV_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
     await expect(async () => {
       await csvClient.exportCSVData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
-    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
+    }).rejects.toThrow(http.STATUS_CODES[500])
   })
 })

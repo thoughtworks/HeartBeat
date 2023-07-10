@@ -1,17 +1,11 @@
 import axios, { AxiosInstance, HttpStatusCode } from 'axios'
 import { BadRequestException } from '@src/exceptions/BadRequestException'
-import {
-  BAD_REQUEST_ERROR_MESSAGE,
-  INTERNAL_SERVER_ERROR_MESSAGE,
-  INVALID_TOKEN_ERROR_MESSAGE,
-  NOT_FOUND_ERROR_MESSAGE,
-  PERMISSION_DENIED_ERROR_MESSAGE,
-} from '@src/constants'
 import { UnauthorizedException } from '@src/exceptions/UnauthorizedException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/exceptions/ForbiddenException'
+import { TimeoutException } from '@src/exceptions/TimeoutException'
 
 export class HttpClient {
   protected httpTimeout = 300000
@@ -27,22 +21,27 @@ export class HttpClient {
       (error) => {
         const { response } = error
         if (response && response.status) {
-          switch (response.status) {
+          const { status, data, statusText } = response
+          const errorMessage = data?.hintInfo ?? statusText
+          switch (status) {
             case HttpStatusCode.BadRequest:
-              throw new BadRequestException(BAD_REQUEST_ERROR_MESSAGE)
+              throw new BadRequestException(errorMessage)
             case HttpStatusCode.Unauthorized:
-              throw new UnauthorizedException(INVALID_TOKEN_ERROR_MESSAGE)
-            case HttpStatusCode.InternalServerError:
-              throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
+              throw new UnauthorizedException(errorMessage)
             case HttpStatusCode.NotFound:
-              throw new NotFoundException(NOT_FOUND_ERROR_MESSAGE)
+              throw new NotFoundException(errorMessage)
             case HttpStatusCode.Forbidden:
-              throw new ForbiddenException(PERMISSION_DENIED_ERROR_MESSAGE)
+              throw new ForbiddenException(errorMessage)
+            case HttpStatusCode.InternalServerError:
+              throw new InternalServerException(errorMessage)
+            case HttpStatusCode.ServiceUnavailable:
+              throw new TimeoutException(errorMessage)
             default:
               throw new UnknownException()
           }
+        } else {
+          throw new UnknownException()
         }
-        return response
       }
     )
   }

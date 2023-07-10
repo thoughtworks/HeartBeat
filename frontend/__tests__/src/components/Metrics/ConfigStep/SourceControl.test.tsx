@@ -1,5 +1,5 @@
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { SourceControl } from '@src/components/Metrics/ConfigStep/SourceControl'
 import {
@@ -144,7 +144,11 @@ describe('SourceControl', () => {
   })
 
   it('should show error notification when sourceControl verify response status is 401', async () => {
-    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
+    server.use(
+      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
+      )
+    )
     const { getByText, getByRole } = setup()
 
     fillSourceControlFieldsInformation()

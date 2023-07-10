@@ -1,4 +1,4 @@
-import { fireEvent, render, within, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { Board } from '@src/components/Metrics/ConfigStep/Board'
 import {
   BOARD_FIELDS,
@@ -214,7 +214,11 @@ describe('Board', () => {
   })
 
   it('should check error notification show and disappear when board verify response status is 401', async () => {
-    server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
+    server.use(
+      rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
+        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
+      )
+    )
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 

@@ -1,16 +1,16 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import {
-  PIPELINE_TOOL_FIELDS,
   CONFIG_TITLE,
-  PIPELINE_TOOL_TYPES,
   ERROR_MESSAGE_COLOR,
   MOCK_PIPELINE_URL,
-  VERIFY_ERROR_MESSAGE,
-  VERIFY,
+  MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
+  PIPELINE_TOOL_FIELDS,
+  PIPELINE_TOOL_TYPES,
   RESET,
   TOKEN_ERROR_MESSAGE,
-  MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
+  VERIFY,
+  VERIFY_ERROR_MESSAGE,
   VERIFY_FAILED,
 } from '../../../fixtures'
 import { Provider } from 'react-redux'
@@ -185,7 +185,11 @@ describe('PipelineTool', () => {
   })
 
   it('should check error notification show when pipelineTool verify response status is 401', async () => {
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))))
+    server.use(
+      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
+      )
+    )
     const { getByText, getByRole } = setup()
     await fillPipelineToolFieldsInformation()
 

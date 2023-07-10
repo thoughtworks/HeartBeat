@@ -22,7 +22,14 @@ describe('get steps from metrics response', () => {
   })
 
   it('should throw error when getSteps response status 500', async () => {
-    server.use(rest.get(getStepsUrl, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
+    server.use(
+      rest.get(getStepsUrl, (req, res, ctx) =>
+        res(
+          ctx.status(HttpStatusCode.InternalServerError),
+          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
+        )
+      )
+    )
 
     await expect(async () => {
       await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
@@ -30,7 +37,11 @@ describe('get steps from metrics response', () => {
   })
 
   it('should throw error when getSteps response status 400', async () => {
-    server.use(rest.get(getStepsUrl, (req, res, ctx) => res(ctx.status(HttpStatusCode.BadRequest))))
+    server.use(
+      rest.get(getStepsUrl, (req, res, ctx) =>
+        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST }))
+      )
+    )
 
     await expect(async () => {
       await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)

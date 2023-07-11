@@ -19,19 +19,3 @@ export const downloadCSV = (filename: string, data: string) => {
   link.click()
   document.body.removeChild(link)
 }
-
-export const getEmojiName = (text: string): string | null => {
-  const regex = /:([\w+-]+):/
-  const matches = regex.exec(text)
-  if (matches && matches.length >= 2) {
-    return matches[1].trim()
-  }
-  return null
-}
-
-export const removeEmojiNameFromInput = (text: string): string | null => {
-  return text
-    .replace(getEmojiName(text) || '', '')
-    .replace(':', '')
-    .replace(':', '')
-}

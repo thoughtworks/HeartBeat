@@ -42,8 +42,9 @@ export const getEmojiNames = (input: string): string[] => {
 
 export const removeExtraEmojiName = (input: string): string => {
   const names = getEmojiNames(input)
+  let output = input
   names.map((name) => {
-    input = input.replaceAll(name, '')
+    output = output.replaceAll(name, '')
   })
-  return input.replaceAll(':', '')
+  return output.replaceAll(':', '')
 }

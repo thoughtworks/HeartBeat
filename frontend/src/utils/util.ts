@@ -20,31 +20,18 @@ export const downloadCSV = (filename: string, data: string) => {
   document.body.removeChild(link)
 }
 
-export interface BuildKiteEmoji {
-  name: string
-  url: string
-  aliases?: string[]
+export const getEmojiName = (text: string): string | null => {
+  const regex = /:([\w+-]+):/
+  const matches = regex.exec(text)
+  if (matches && matches.length >= 2) {
+    return matches[1].trim()
+  }
+  return null
 }
 
-export const getEmojiUrls = (input: string, emojis: BuildKiteEmoji[]): string[] => {
-  const names = getEmojiNames(input)
-  return names.flatMap((name) => {
-    const emoji: BuildKiteEmoji = emojis.find((emoji) => emoji.name === name) as BuildKiteEmoji
-    return emoji.url
-  })
-}
-
-export const getEmojiNames = (input: string): string[] => {
-  const regex = /:([\w+-]+):/g
-  const matches = input.match(regex) || []
-  return matches.map((match) => match.replaceAll(':', ''))
-}
-
-export const removeExtraEmojiName = (input: string): string => {
-  const names = getEmojiNames(input)
-  let output = input
-  names.map((name) => {
-    output = output.replaceAll(name, '')
-  })
-  return output.replaceAll(':', '')
+export const removeEmojiNameFromInput = (text: string): string | null => {
+  return text
+    .replace(getEmojiName(text) || '', '')
+    .replace(':', '')
+    .replace(':', '')
 }

@@ -13,6 +13,7 @@ import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsS
 import { updateMetrics, updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
 import userEvent from '@testing-library/user-event'
 import { backStep } from '@src/context/stepper/StepperSlice'
+import { BuildKiteEmoji } from '@src/utils/util'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: () => ({
@@ -33,6 +34,7 @@ jest.mock('@src/hooks/useExportCsvEffect', () => ({
 }))
 
 jest.mock('@src/utils/util', () => ({
+  ...jest.requireActual('@src/utils/util'),
   getEmojiUrls: jest.fn().mockReturnValue(['']),
   removeExtraEmojiName: jest.fn((_input: string) => {
     //Mock for test

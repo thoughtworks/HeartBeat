@@ -1,4 +1,4 @@
-import { Avatar, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
+import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style'
 import React, { Fragment } from 'react'

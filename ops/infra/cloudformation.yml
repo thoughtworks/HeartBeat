@@ -474,7 +474,7 @@ Resources:
       GroupDescription: Enable SSH access via port 21
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 21
+        FromPort: 22
         ToPort: 23
         CidrIp: 0.0.0.0/0
   EC2OldAppSecurityGroup:

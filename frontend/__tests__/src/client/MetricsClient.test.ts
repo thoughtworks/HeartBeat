@@ -20,7 +20,7 @@ describe('get steps from metrics response', () => {
 
     const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
 
-    expect(result).toEqual({ response: ['step1'], isNoStep: false })
+    expect(result).toEqual({ response: ['step1'], haveStep: true })
   })
 
   it('should throw error when getSteps response status 500', async () => {
@@ -55,6 +55,6 @@ describe('get steps from metrics response', () => {
 
     const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
 
-    expect(result).toEqual({ response: [], isNoStep: true })
+    expect(result).toEqual({ response: [], haveStep: false })
   })
 })

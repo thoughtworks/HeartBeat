@@ -68,8 +68,8 @@ export const PipelineMetricSelection = ({
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
       const steps = res?.response ?? []
       dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps }))
-      !res?.isNoStep && dispatch(updatePipelineStep({ steps, id, type }))
-      res && setIsShowNoStepWarning(res.isNoStep)
+      res?.haveStep && dispatch(updatePipelineStep({ steps, id, type }))
+      res && setIsShowNoStepWarning(!res.haveStep)
     })
   }
 

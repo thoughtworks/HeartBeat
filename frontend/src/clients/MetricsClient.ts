@@ -11,7 +11,7 @@ export interface getStepsParams {
 
 export class MetricsClient extends HttpClient {
   steps: string[] = []
-  isNoStep = false
+  haveStep = true
 
   getSteps = async (
     params: getStepsParams,
@@ -21,7 +21,7 @@ export class MetricsClient extends HttpClient {
     token: string
   ) => {
     this.steps = []
-    this.isNoStep = false
+    this.haveStep = true
     const result = await this.axiosInstance.get(
       `/pipelines/${pipelineType}/${organizationId}/pipelines/${buildId}/steps`,
       {
@@ -31,10 +31,10 @@ export class MetricsClient extends HttpClient {
         params,
       }
     )
-    result.status === HttpStatusCode.NoContent ? (this.isNoStep = true) : (this.steps = result.data.steps)
+    result.status === HttpStatusCode.NoContent ? (this.haveStep = false) : (this.steps = result.data.steps)
     return {
       response: this.steps,
-      isNoStep: this.isNoStep,
+      haveStep: this.haveStep,
     }
   }
 }

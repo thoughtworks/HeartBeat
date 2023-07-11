@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import { exportToJsonFile } from '@src/utils/util'
+import { BuildKiteEmoji, exportToJsonFile } from '@src/utils/util'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -73,7 +73,7 @@ jest.mock('@src/utils/util', () => ({
     //Mock for test
   }),
   getEmojiUrls: jest.fn().mockReturnValue(['https://buildkiteassets.com/emojis/img-buildkite-64/charger64.png']),
-  removeExtraEmojiName: jest.fn(() => {
+  removeExtraEmojiName: jest.fn((_input: string) => {
     //Mock for test
   }),
 }))

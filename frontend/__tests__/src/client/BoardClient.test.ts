@@ -36,7 +36,7 @@ describe('verify board request', () => {
 
     const result = await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
 
-    expect(result.isNoDoneCard).toEqual(true)
+    expect(result.haveDoneCard).toEqual(false)
     expect(result.isBoardVerify).toEqual(false)
   })
 

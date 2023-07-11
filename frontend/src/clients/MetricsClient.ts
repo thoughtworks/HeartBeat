@@ -1,4 +1,5 @@
 import { HttpClient } from '@src/clients/Httpclient'
+import { HttpStatusCode } from 'axios'
 
 export interface getStepsParams {
   pipelineName: string
@@ -10,6 +11,7 @@ export interface getStepsParams {
 
 export class MetricsClient extends HttpClient {
   steps: string[] = []
+  haveStep = true
 
   getSteps = async (
     params: getStepsParams,
@@ -18,20 +20,22 @@ export class MetricsClient extends HttpClient {
     pipelineType: string,
     token: string
   ) => {
-    await this.axiosInstance
-      .get(`/pipelines/${pipelineType}/${organizationId}/pipelines/${buildId}/steps`, {
+    this.steps = []
+    this.haveStep = true
+    const result = await this.axiosInstance.get(
+      `/pipelines/${pipelineType}/${organizationId}/pipelines/${buildId}/steps`,
+      {
         headers: {
           Authorization: `${token}`,
         },
         params,
-      })
-      .then((res) => {
-        this.steps = res.data.steps
-      })
-      .catch((e) => {
-        throw e
-      })
-    return this.steps
+      }
+    )
+    result.status === HttpStatusCode.NoContent ? (this.haveStep = false) : (this.steps = result.data.steps)
+    return {
+      response: this.steps,
+      haveStep: this.haveStep,
+    }
   }
 }
 

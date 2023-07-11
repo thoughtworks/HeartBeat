@@ -7,7 +7,7 @@ export interface useVerifyBoardStateInterface {
   verifyJira: (params: BoardRequestDTO) => Promise<
     | {
         isBoardVerify: boolean
-        isNoDoneCard: boolean
+        haveDoneCard: boolean
         response: object
       }
     | undefined

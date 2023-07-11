@@ -15,10 +15,10 @@ import {
   selectBoard,
   selectDateRange,
   selectIsBoardVerified,
+  selectIsProjectCreated,
   updateBoard,
   updateBoardVerifyState,
   updateJiraVerifyResponse,
-  selectIsProjectCreated,
 } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
@@ -178,7 +178,7 @@ export const Board = () => {
         dispatch(updateBoardVerifyState(res.isBoardVerify))
         dispatch(updateJiraVerifyResponse(res.response))
         res.isBoardVerify && dispatch(updateMetricsState({ ...res.response, isProjectCreated }))
-        setIsNoDoneCard(res.isNoDoneCard)
+        setIsNoDoneCard(!res.haveDoneCard)
       }
     })
   }

@@ -4,12 +4,12 @@ import { BoardRequestDTO } from '@src/clients/board/dto/request'
 
 export class BoardClient extends HttpClient {
   isBoardVerify = false
-  isNoDoneCard = false
+  haveDoneCard = true
   response = {}
 
   getVerifyBoard = async (params: BoardRequestDTO) => {
     this.isBoardVerify = false
-    this.isNoDoneCard = false
+    this.haveDoneCard = true
     this.response = {}
     try {
       const boardType = params.type === 'Classic Jira' ? 'classic-jira' : params.type.toLowerCase()
@@ -24,13 +24,13 @@ export class BoardClient extends HttpClient {
     return {
       response: this.response,
       isBoardVerify: this.isBoardVerify,
-      isNoDoneCard: this.isNoDoneCard,
+      haveDoneCard: this.haveDoneCard,
     }
   }
 
   handleBoardNoDoneCard = () => {
     this.isBoardVerify = false
-    this.isNoDoneCard = true
+    this.haveDoneCard = false
   }
 
   handleBoardVerifySucceed = (res: object) => {

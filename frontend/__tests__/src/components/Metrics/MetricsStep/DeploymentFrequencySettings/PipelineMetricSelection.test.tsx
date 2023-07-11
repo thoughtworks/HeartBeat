@@ -143,7 +143,7 @@ describe('PipelineMetricSelection', () => {
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
   })
   it('should show no steps warning message when getSteps succeed but get no steps', async () => {
-    metricsClient.getSteps = jest.fn().mockReturnValue({ response: [], isNoStep: true })
+    metricsClient.getSteps = jest.fn().mockReturnValue({ response: [], haveStep: false })
     const { getByText, getByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
       false,
@@ -164,7 +164,7 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should show steps selection when getSteps succeed ', async () => {
-    metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], isNoStep: false })
+    metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], haveStep: true })
     const { getByRole, getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
       false,
@@ -183,7 +183,7 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should show duplicated message given duplicated id', async () => {
-    metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], isNoStep: false })
+    metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], haveStep: true })
     const { getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: 'step1' },
       false,

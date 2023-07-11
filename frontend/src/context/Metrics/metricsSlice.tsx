@@ -315,9 +315,7 @@ export const metricsSlice = createSlice({
       const { importedDeployment, importedLeadTime } = state.importedData
       const updatedImportedPipeline =
         type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
-      const updatedImportedPipelineStep = !updatedImportedPipeline.length
-        ? ''
-        : updatedImportedPipeline.filter((pipeline) => pipeline.id === id)[0]?.step ?? ''
+      const updatedImportedPipelineStep = updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.step ?? ''
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
       const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE
 
@@ -332,17 +330,14 @@ export const metricsSlice = createSlice({
         )
 
       const getStepWarningMessage = (pipelines: IPipelineWarningMessageConfig[]) => {
-        if (pipelines.length > 0) {
-          return pipelines.map((pipeline) =>
-            pipeline.id === id
-              ? {
-                  ...pipeline,
-                  step: stepWarningMessage,
-                }
-              : pipeline
-          )
-        }
-        return []
+        return pipelines.map((pipeline) =>
+          pipeline?.id === id
+            ? {
+                ...pipeline,
+                step: stepWarningMessage,
+              }
+            : pipeline
+        )
       }
 
       type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE

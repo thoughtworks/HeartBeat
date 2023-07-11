@@ -22,8 +22,7 @@ import saveMetricsSettingReducer, {
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
-import { PIPELINE_SETTING_TYPES } from '../fixtures'
-import { CLASSIFICATION_WARNING_MESSAGE } from '../fixtures'
+import { CLASSIFICATION_WARNING_MESSAGE, PIPELINE_SETTING_TYPES } from '../fixtures'
 import { ORGANIZATION_WARNING_MESSAGE, PIPELINE_NAME_WARNING_MESSAGE, REAL_DONE_WARNING_MESSAGE } from '@src/constants'
 import { setupStore } from '../utils/setupStoreUtil'
 
@@ -516,7 +515,14 @@ describe('saveMetricsSetting reducer', () => {
         { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
         { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '' },
       ],
-      leadTimeForChanges: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
+      leadTimeForChanges: [
+        {
+          id: 0,
+          organization: 'mockOrganization1',
+          pipelineName: 'mockPipelineName1',
+          step: '',
+        },
+      ],
       importedData: {
         ...initState.importedData,
         importedDeployment: mockImportedDeployment,
@@ -574,7 +580,14 @@ describe('saveMetricsSetting reducer', () => {
         id: 1,
         steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
-        expectedSettings: [{ id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' }],
+        expectedSettings: [
+          {
+            id: 0,
+            organization: 'mockOrganization1',
+            pipelineName: 'mockPipelineName1',
+            step: '',
+          },
+        ],
         expectedWarning: [{ id: 0, organization: null, pipelineName: null, step: null }],
       },
     ]
@@ -918,10 +931,18 @@ describe('saveMetricsSetting reducer', () => {
       await store.dispatch(updateMetricsImportedData(mockImportData))
       await store.dispatch(updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated: false }))
       await store.dispatch(
-        updatePipelineStep({ steps: mockSteps, id: 0, type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE })
+        updatePipelineStep({
+          steps: mockSteps,
+          id: 0,
+          type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
+        })
       )
       await store.dispatch(
-        updatePipelineStep({ steps: mockSteps, id: 1, type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE })
+        updatePipelineStep({
+          steps: mockSteps,
+          id: 1,
+          type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
+        })
       )
       await store.dispatch(
         updatePipelineStep({ steps: mockSteps, id: 0, type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE })

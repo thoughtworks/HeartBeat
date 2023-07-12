@@ -6,7 +6,7 @@ layout: ../../../layouts/MainLayout.astro
 
 ## FeignClient
 
-Use decoder to handle FeignClient exception.
+**Use decoder to handle FeignClient exception.**
 
 ### Common
 

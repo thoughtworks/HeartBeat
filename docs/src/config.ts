@@ -66,6 +66,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Sequence Diagrams', link: '/en/dev-center/sequence-diagrams' },
       { text: 'Report Flow Diagrams', link: '/en/dev-center/flow-diagrams' },
       { text: 'Export CSV', link: '/en/dev-center/export-csv' },
+      { text: 'Error Handle', link: '/en/dev-center/error-handle' },
     ],
   },
 };

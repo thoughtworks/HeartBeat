@@ -56,15 +56,6 @@ class BuildKiteFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_PermissionDenyException() {
-		int statusCode = HttpStatus.FORBIDDEN.value();
-
-		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
-
-		assertEquals(PermissionDenyException.class, exception.getClass());
-	}
-
-	@Test
 	void testDecode_4xxRequestFailedException() {
 		int statusCode = HttpStatus.METHOD_NOT_ALLOWED.value();
 

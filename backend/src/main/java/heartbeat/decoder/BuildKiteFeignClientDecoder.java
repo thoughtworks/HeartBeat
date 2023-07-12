@@ -18,12 +18,8 @@ public class BuildKiteFeignClientDecoder implements ErrorDecoder {
 		FeignException exception = FeignException.errorStatus(methodKey, response);
 		String errorMessage = String.format("Failed to get BuildKite info_status: %s, reason: %s", statusCode,
 				exception.getMessage());
-		if (statusCode == HttpStatus.FORBIDDEN) {
-			return new PermissionDenyException(errorMessage);
-		}
-		else {
-			return ExceptionUtil.handleCommonFeignClientException(statusCode, errorMessage);
-		}
+
+		return ExceptionUtil.handleCommonFeignClientException(statusCode, errorMessage);
 	}
 
 }

@@ -28,13 +28,15 @@ import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlE
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
+import { useNavigate } from 'react-router-dom'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const sourceControlFields = useAppSelector(selectSourceControl)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isSourceControlVerified)
-  const { verifyGithub, isLoading, errorMessage } = useVerifySourceControlEffect()
+  const { verifyGithub, isLoading, isError, errorMessage } = useVerifySourceControlEffect()
   const [fields, setFields] = useState([
     {
       key: 'SourceControl',
@@ -126,54 +128,60 @@ export const SourceControl = () => {
   }
 
   return (
-    <StyledSection>
-      {errorMessage && <ErrorNotification message={errorMessage} />}
-      {isLoading && <Loading />}
-      <StyledTitle>{CONFIG_TITLE.SOURCE_CONTROL}</StyledTitle>
-      <StyledForm
-        onSubmit={(e) => handleSubmitSourceControlFields(e)}
-        onChange={(e) => updateSourceControlFields(e)}
-        onReset={handleResetSourceControlFields}
-      >
-        <StyledTypeSelections variant='standard' required>
-          <InputLabel id='sourceControl-type-checkbox-label'>Source Control</InputLabel>
-          <Select labelId='sourceControl-type-checkbox-label' value={fields[0].value}>
-            {Object.values(SOURCE_CONTROL_TYPES).map((toolType) => (
-              <MenuItem key={toolType} value={toolType}>
-                <ListItemText primary={toolType} />
-              </MenuItem>
-            ))}
-          </Select>
-        </StyledTypeSelections>
-        <StyledTextField
-          data-testid='sourceControlTextField'
-          key={fields[1].key}
-          required
-          label={fields[1].key}
-          variant='standard'
-          type='password'
-          value={fields[1].value}
-          onChange={(e) => onFormUpdate(1, e.target.value)}
-          error={!fields[1].isValid}
-          helperText={sourceControlHelperText}
-        />
-        <StyledButtonGroup>
-          {isVerified && !isLoading ? (
-            <>
-              <VerifyButton>Verified</VerifyButton>
-              <ResetButton type='reset'>Reset</ResetButton>
-            </>
-          ) : (
-            <VerifyButton
-              data-test-id='sourceControlVerifyButton'
-              type='submit'
-              disabled={isDisableVerifyButton || isLoading}
-            >
-              Verify
-            </VerifyButton>
-          )}
-        </StyledButtonGroup>
-      </StyledForm>
-    </StyledSection>
+    <>
+      {isError ? (
+        navigate('/errorPage')
+      ) : (
+        <StyledSection>
+          {errorMessage && <ErrorNotification message={errorMessage} />}
+          {isLoading && <Loading />}
+          <StyledTitle>{CONFIG_TITLE.SOURCE_CONTROL}</StyledTitle>
+          <StyledForm
+            onSubmit={(e) => handleSubmitSourceControlFields(e)}
+            onChange={(e) => updateSourceControlFields(e)}
+            onReset={handleResetSourceControlFields}
+          >
+            <StyledTypeSelections variant='standard' required>
+              <InputLabel id='sourceControl-type-checkbox-label'>Source Control</InputLabel>
+              <Select labelId='sourceControl-type-checkbox-label' value={fields[0].value}>
+                {Object.values(SOURCE_CONTROL_TYPES).map((toolType) => (
+                  <MenuItem key={toolType} value={toolType}>
+                    <ListItemText primary={toolType} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </StyledTypeSelections>
+            <StyledTextField
+              data-testid='sourceControlTextField'
+              key={fields[1].key}
+              required
+              label={fields[1].key}
+              variant='standard'
+              type='password'
+              value={fields[1].value}
+              onChange={(e) => onFormUpdate(1, e.target.value)}
+              error={!fields[1].isValid}
+              helperText={sourceControlHelperText}
+            />
+            <StyledButtonGroup>
+              {isVerified && !isLoading ? (
+                <>
+                  <VerifyButton>Verified</VerifyButton>
+                  <ResetButton type='reset'>Reset</ResetButton>
+                </>
+              ) : (
+                <VerifyButton
+                  data-test-id='sourceControlVerifyButton'
+                  type='submit'
+                  disabled={isDisableVerifyButton || isLoading}
+                >
+                  Verify
+                </VerifyButton>
+              )}
+            </StyledButtonGroup>
+          </StyledForm>
+        </StyledSection>
+      )}
+    </>
   )
 }

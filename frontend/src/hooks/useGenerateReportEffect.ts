@@ -18,11 +18,13 @@ export interface useGenerateReportEffectInterface {
     | undefined
   >
   isLoading: boolean
+  isError: boolean
   errorMessage: string
 }
 
 export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const generateReport = async (params: ReportRequestDTO) => {
@@ -32,10 +34,15 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       return reportMapper(res.response)
     } catch (e) {
       const err = e as Error
-      setErrorMessage(`generate report: ${err.message}`)
-      setTimeout(() => {
-        setErrorMessage('')
-      }, ERROR_MESSAGE_TIME_DURATION)
+      const { response } = err
+      if (response && response.status && response.status >= 500 && response.status < 600) {
+        setIsError(true)
+      } else {
+        setErrorMessage(`generate report: ${err.message}`)
+        setTimeout(() => {
+          setErrorMessage('')
+        }, ERROR_MESSAGE_TIME_DURATION)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -44,6 +51,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   return {
     generateReport,
     isLoading,
+    isError,
     errorMessage,
   }
 }

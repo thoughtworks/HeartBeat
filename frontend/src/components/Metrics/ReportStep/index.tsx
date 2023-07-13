@@ -23,11 +23,13 @@ import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
-  const { generateReport, isLoading, errorMessage: reportErrorMsg } = useGenerateReportEffect()
-  const { fetchExportData, errorMessage } = useExportCsvEffect()
+  const navigate = useNavigate()
+  const { generateReport, isLoading, isError: isReportError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const { fetchExportData, errorMessage, isError: isCSVError } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [classificationState, setClassificationState] = useState({
@@ -192,6 +194,9 @@ export const ReportStep = () => {
     <>
       {isLoading ? (
         <Loading />
+      ) : isReportError || isCSVError ? (
+        //TODO：rename
+        navigate('/errorPage')
       ) : (
         <>
           {reportErrorMsg && (

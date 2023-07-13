@@ -21,6 +21,7 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { NO_STEP_WARNING_MESSAGE } from '@src/constants'
+import { useNavigate } from 'react-router-dom'
 
 interface pipelineMetricSelectionProps {
   type: string
@@ -46,7 +47,8 @@ export const PipelineMetricSelection = ({
 }: pipelineMetricSelectionProps) => {
   const { id, organization, pipelineName, step } = pipelineSetting
   const dispatch = useAppDispatch()
-  const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
+  const navigate = useNavigate()
+  const { isLoading, isError, errorMessage, getSteps } = useGetMetricsStepsEffect()
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
   const pipelineNameOptions = selectPipelineNames(store.getState(), organization)
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
@@ -74,48 +76,54 @@ export const PipelineMetricSelection = ({
   }
 
   return (
-    <PipelineMetricSelectionWrapper>
-      {organizationWarningMessage && <WarningNotification message={organizationWarningMessage} />}
-      {pipelineNameWarningMessage && <WarningNotification message={pipelineNameWarningMessage} />}
-      {stepWarningMessage && <WarningNotification message={stepWarningMessage} />}
-      {isShowNoStepWarning && <WarningNotification message={NO_STEP_WARNING_MESSAGE} />}
-      {isLoading && <Loading />}
-      {isDuplicated && <WarningMessage>This pipeline is the same as another one!</WarningMessage>}
-      {errorMessage && <ErrorNotification message={errorMessage} />}
-      <SingleSelection
-        id={id}
-        options={organizationNameOptions}
-        label={'Organization'}
-        value={organization}
-        onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
-      />
-      {organization && (
-        <SingleSelection
-          id={id}
-          options={pipelineNameOptions}
-          label={'Pipeline Name'}
-          value={pipelineName}
-          step={step}
-          onGetSteps={handleGetSteps}
-          onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
-        />
+    <>
+      {isError ? (
+        navigate('/errorPage')
+      ) : (
+        <PipelineMetricSelectionWrapper>
+          {organizationWarningMessage && <WarningNotification message={organizationWarningMessage} />}
+          {pipelineNameWarningMessage && <WarningNotification message={pipelineNameWarningMessage} />}
+          {stepWarningMessage && <WarningNotification message={stepWarningMessage} />}
+          {isShowNoStepWarning && <WarningNotification message={NO_STEP_WARNING_MESSAGE} />}
+          {isLoading && <Loading />}
+          {isDuplicated && <WarningMessage>This pipeline is the same as another one!</WarningMessage>}
+          {errorMessage && <ErrorNotification message={errorMessage} />}
+          <SingleSelection
+            id={id}
+            options={organizationNameOptions}
+            label={'Organization'}
+            value={organization}
+            onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+          />
+          {organization && (
+            <SingleSelection
+              id={id}
+              options={pipelineNameOptions}
+              label={'Pipeline Name'}
+              value={pipelineName}
+              step={step}
+              onGetSteps={handleGetSteps}
+              onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+            />
+          )}
+          {organization && pipelineName && (
+            <SingleSelection
+              id={id}
+              options={stepsOptions}
+              label={'Step'}
+              value={step}
+              onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
+            />
+          )}
+          <ButtonWrapper>
+            {isShowRemoveButton && (
+              <RemoveButton data-test-id={'remove-button'} onClick={handleClick}>
+                Remove
+              </RemoveButton>
+            )}
+          </ButtonWrapper>
+        </PipelineMetricSelectionWrapper>
       )}
-      {organization && pipelineName && (
-        <SingleSelection
-          id={id}
-          options={stepsOptions}
-          label={'Step'}
-          value={step}
-          onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
-        />
-      )}
-      <ButtonWrapper>
-        {isShowRemoveButton && (
-          <RemoveButton data-test-id={'remove-button'} onClick={handleClick}>
-            Remove
-          </RemoveButton>
-        )}
-      </ButtonWrapper>
-    </PipelineMetricSelectionWrapper>
+    </>
   )
 }

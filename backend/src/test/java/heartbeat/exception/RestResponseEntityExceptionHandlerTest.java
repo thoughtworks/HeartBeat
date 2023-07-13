@@ -100,8 +100,8 @@ class RestResponseEntityExceptionHandlerTest {
 	}
 
 	@Test
-	public void shouldHandleTimeoutException() {
-		HBTimeoutException ex = new HBTimeoutException("Timeout");
+	public void shouldHandleServiceUnavailableException() {
+		ServiceUnavailableException ex = new ServiceUnavailableException("Service Unavailable");
 
 		ResponseEntity<Object> response = restExceptionHandler.handleTimeoutException(ex);
 
@@ -109,7 +109,7 @@ class RestResponseEntityExceptionHandlerTest {
 		assertNotNull(response.getBody());
 		assertTrue(response.getBody() instanceof RestApiErrorResponse);
 		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
-		assertEquals("Timeout", errorResponse.getMessage());
+		assertEquals("Service Unavailable", errorResponse.getMessage());
 	}
 
 	@Test

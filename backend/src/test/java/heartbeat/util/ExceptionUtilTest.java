@@ -1,6 +1,6 @@
 package heartbeat.util;
 
-import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
@@ -34,7 +34,7 @@ public class ExceptionUtilTest {
 		RuntimeException exception = ExceptionUtil.handleCommonFeignClientException(HttpStatus.SERVICE_UNAVAILABLE,
 				"test");
 
-		assertEquals(HBTimeoutException.class, exception.getClass());
+		assertEquals(ServiceUnavailableException.class, exception.getClass());
 		assertTrue(exception.getMessage().contains("test"));
 
 	}

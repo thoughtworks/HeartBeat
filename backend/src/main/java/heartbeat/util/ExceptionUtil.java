@@ -1,6 +1,6 @@
 package heartbeat.util;
 
-import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
@@ -16,7 +16,7 @@ public interface ExceptionUtil {
 			return new NotFoundException(errorMessage);
 		}
 		else if (statusCode == HttpStatus.SERVICE_UNAVAILABLE) {
-			return new HBTimeoutException(errorMessage);
+			return new ServiceUnavailableException(errorMessage);
 		}
 		else if (statusCode.is4xxClientError()) {
 			return new RequestFailedException(statusCode.value(), "Client Error");

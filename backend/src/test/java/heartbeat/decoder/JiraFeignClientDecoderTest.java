@@ -4,11 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import feign.Response;
-import heartbeat.exception.BadRequestException;
-import heartbeat.exception.HBTimeoutException;
-import heartbeat.exception.NoContentException;
+import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.NotFoundException;
-import heartbeat.exception.RateLimitExceededException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +81,7 @@ class JiraFeignClientDecoderTest {
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
 
-		assertEquals(HBTimeoutException.class, exception.getClass());
+		assertEquals(ServiceUnavailableException.class, exception.getClass());
 	}
 
 }

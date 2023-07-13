@@ -22,10 +22,10 @@ public class RestResponseEntityExceptionHandler {
 			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "404 Not Found"));
 	}
 
-	@ExceptionHandler(value = HBTimeoutException.class)
-	protected ResponseEntity<Object> handleTimeoutException(HBTimeoutException ex) {
+	@ExceptionHandler(value = ServiceUnavailableException.class)
+	protected ResponseEntity<Object> handleTimeoutException(ServiceUnavailableException ex) {
 		return ResponseEntity.status(ex.getStatus())
-			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Request Timeout"));
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Service Unavailable"));
 	}
 
 	@ExceptionHandler(value = RequestFailedException.class)

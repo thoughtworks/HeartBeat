@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import feign.Response;
-import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.NotFoundException;
-import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +51,7 @@ class BuildKiteFeignClientDecoderTest {
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
 
-		assertEquals(HBTimeoutException.class, exception.getClass());
+		assertEquals(ServiceUnavailableException.class, exception.getClass());
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.exception.CustomFeignClientException;
-import heartbeat.exception.HBTimeoutException;
+import heartbeat.exception.ServiceUnavailableException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -285,12 +285,12 @@ class BuildKiteServiceTest {
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
-			.thenThrow(new CompletionException(new HBTimeoutException("Timeout")));
+			.thenThrow(new CompletionException(new ServiceUnavailableException("Service Unavailable")));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
 				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
-			.isInstanceOf(HBTimeoutException.class)
-			.hasMessageContaining("Timeout");
+			.isInstanceOf(ServiceUnavailableException.class)
+			.hasMessageContaining("Service Unavailable");
 	}
 
 	@Test

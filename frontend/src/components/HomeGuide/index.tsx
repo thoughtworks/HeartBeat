@@ -1,8 +1,5 @@
-import Button, { ButtonProps } from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
-import { styled } from '@mui/material/styles'
 
-import { theme } from '@src/theme'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice'
@@ -11,31 +8,7 @@ import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 import { resetStep } from '@src/context/stepper/StepperSlice'
 import { HOME_VERIFY_IMPORT_WARNING_MESSAGE } from '@src/constants'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
-
-const basicStyle = {
-  backgroundColor: theme.main.backgroundColor,
-  color: theme.main.color,
-  margin: '2rem',
-  width: '15rem',
-  minWidth: '10rem',
-  minHeight: '3rem',
-  [theme.breakpoints.down('md')]: {
-    width: '80%',
-    maxWidth: '15rem',
-  },
-}
-const GuideButton = styled(Button)<ButtonProps>({
-  ...basicStyle,
-  '&:hover': {
-    ...basicStyle,
-  },
-  '&:active': {
-    ...basicStyle,
-  },
-  '&:focus': {
-    ...basicStyle,
-  },
-})
+import { GuideButton } from '@src/components/Common/Buttons'
 
 export const HomeGuide = () => {
   const navigate = useNavigate()

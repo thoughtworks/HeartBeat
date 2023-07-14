@@ -35,7 +35,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
     } catch (e) {
       const err = e as Error
       const { response } = err
-      if (response && response.status && response.status >= 500 && response.status < 600) {
+      if (response && response.status) {
         setIsError(true)
       } else {
         setErrorMessage(`generate report: ${err.message}`)

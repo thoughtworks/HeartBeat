@@ -29,7 +29,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
     } catch (e) {
       const err = e as Error
       const { response } = err
-      if (response && response.status && response.status >= 500 && response.status < 600) {
+      if (response && response.status) {
         setIsError(true)
       } else {
         setErrorMessage(`${params.type} ${VERIFY_FAILED_ERROR_MESSAGE}: ${err.message}`)

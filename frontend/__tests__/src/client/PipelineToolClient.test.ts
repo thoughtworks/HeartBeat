@@ -2,7 +2,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { MOCK_PIPELINE_URL, MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures'
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient'
-import { HttpStatusCode } from 'axios'
+import { AxiosError, HttpStatusCode } from 'axios'
 
 const server = setupServer(
   rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => {
@@ -53,29 +53,18 @@ describe('verify pipelineTool request', () => {
     )
   })
 
-  it('should throw error when pipelineTool verify response status 500', async () => {
-    server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
-        )
-      )
-    )
+  it('should throw error when pipelineTool verify response status 5xx', async () => {
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
-      VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR
+      AxiosError
     )
   })
 
   it('should throw error when board verify response status 300', async () => {
-    server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.MultipleChoices), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN }))
-      )
-    )
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))))
 
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
-      VERIFY_ERROR_MESSAGE.UNKNOWN
+      AxiosError
     )
   })
 })

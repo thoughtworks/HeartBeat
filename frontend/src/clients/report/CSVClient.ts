@@ -18,6 +18,17 @@ export class CSVClient extends HttpClient {
         throw e
       })
   }
+
+  // exportCSVData = async (params: CSVReportRequestDTO) => {
+  //   try {
+  //     const response = await this.axiosInstance.get(`/reports/${params.dataType}/${params.csvTimeStamp}`, { responseType: 'blob' });
+  //     const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
+  //     downloadCSV(exportedFilename, response.data)
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  //
+  // }
 }
 
 export const csvClient = new CSVClient()

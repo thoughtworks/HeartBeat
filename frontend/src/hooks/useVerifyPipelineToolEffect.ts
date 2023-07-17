@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient'
 import { ERROR_MESSAGE_TIME_DURATION, VERIFY_FAILED_ERROR_MESSAGE } from '@src/constants'
 import { PipelineRequestDTO } from '@src/clients/pipeline/dto/request'
+import { AxiosError } from 'axios'
 
 export interface useVerifyPipeLineToolStateInterface {
   verifyPipelineTool: (params: PipelineRequestDTO) => Promise<
@@ -26,9 +27,8 @@ export const useVerifyPipelineToolEffect = (): useVerifyPipeLineToolStateInterfa
     try {
       return await pipelineToolClient.verifyPipelineTool(params)
     } catch (e) {
-      const err = e as Error
-      const { response } = err
-      if (response && response.status) {
+      const err = e as AxiosError
+      if (!err.message || err.response) {
         setIsError(true)
       } else {
         setErrorMessage(`${params.type} ${VERIFY_FAILED_ERROR_MESSAGE}: ${err.message}`)

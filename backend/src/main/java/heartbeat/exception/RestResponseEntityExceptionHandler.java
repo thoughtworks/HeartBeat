@@ -1,6 +1,7 @@
 package heartbeat.exception;
 
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -93,6 +94,13 @@ public class RestResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleInternalServerErrorException(InternalServerErrorException ex) {
 		return ResponseEntity.status(ex.getStatus())
 			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Internal Server Error"));
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Object> handleDefaultErrorException(Exception ex) {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(new RestApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(),
+					"Internal Server Error"));
 	}
 
 }

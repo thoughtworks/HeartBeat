@@ -204,4 +204,17 @@ class RestResponseEntityExceptionHandlerTest {
 		assertEquals("Internal Server Error", errorResponse.getMessage());
 	}
 
+	@Test
+	public void shouldHandleDefaultErrorException() {
+		IllegalAccessException ex = new IllegalAccessException("Internal Server Error");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleDefaultErrorException(ex);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Internal Server Error", errorResponse.getMessage());
+	}
+
 }

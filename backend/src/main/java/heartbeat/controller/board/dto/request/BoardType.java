@@ -2,7 +2,7 @@ package heartbeat.controller.board.dto.request;
 
 public enum BoardType {
 
-	JIRA("jira"), CLASSIC_JIRA("classic-jira"), LINEAR("linear");
+	JIRA("jira"), CLASSIC_JIRA("classic-jira");
 
 	public final String boardType;
 
@@ -14,7 +14,6 @@ public enum BoardType {
 		return switch (type) {
 			case "jira" -> JIRA;
 			case "classic-jira" -> CLASSIC_JIRA;
-			case "linear" -> LINEAR;
 			default -> throw new IllegalArgumentException("Board type does not find!");
 		};
 	}

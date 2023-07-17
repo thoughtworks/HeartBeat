@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -175,6 +176,32 @@ class RestResponseEntityExceptionHandlerTest {
 		assertTrue(response.getBody() instanceof RestApiErrorResponse);
 		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
 		assertEquals("Rate limit", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleFileIOException() {
+		FileIOException ex = new FileIOException(new IOException("File read failed"));
+
+		ResponseEntity<Object> response = restExceptionHandler.handleFileIOException(ex);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("File handle error: File read failed", errorResponse.getMessage());
+	}
+
+	@Test
+	public void shouldHandleInternalServerErrorException() {
+		InternalServerErrorException ex = new InternalServerErrorException("Internal Server Error");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleInternalServerErrorException(ex);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("Internal Server Error", errorResponse.getMessage());
 	}
 
 }

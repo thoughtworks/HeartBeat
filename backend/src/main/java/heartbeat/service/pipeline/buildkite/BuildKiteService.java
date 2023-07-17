@@ -15,6 +15,7 @@ import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
 import heartbeat.exception.BaseException;
+import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.util.TimeUtil;
@@ -32,8 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -58,29 +59,43 @@ public class BuildKiteService {
 	}
 
 	public BuildKiteResponseDTO fetchPipelineInfo(PipelineParam pipelineParam) {
-		String buildKiteToken = "Bearer " + pipelineParam.getToken();
-		log.info("Start to query token permissions by token: {}", TokenUtil.mask(pipelineParam.getToken()));
-		BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
-		log.info("Successfully use token:{} to get permissions: {}", TokenUtil.mask(pipelineParam.getToken()),
-				buildKiteTokenInfo);
-		verifyToken(buildKiteTokenInfo);
-		log.info("Start to query organizations BuildKite_token:{}", buildKiteToken);
-		List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
-			.getBuildKiteOrganizationsInfo(buildKiteToken);
-		log.info("Successfully get organizations slug: {}", buildKiteOrganizationsInfo);
+		try {
+			String buildKiteToken = "Bearer " + pipelineParam.getToken();
+			log.info("Start to query token permissions by token: {}", TokenUtil.mask(pipelineParam.getToken()));
+			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
+			log.info("Successfully use token:{} to get permissions: {}", TokenUtil.mask(pipelineParam.getToken()),
+					buildKiteTokenInfo);
+			verifyToken(buildKiteTokenInfo);
+			log.info("Start to query organizations BuildKite_token:{}", buildKiteToken);
+			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
+				.getBuildKiteOrganizationsInfo(buildKiteToken);
+			log.info("Successfully get organizations slug: {}", buildKiteOrganizationsInfo);
 
-		log.info("Start to query buildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
-		List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-			.flatMap(org -> buildKiteFeignClient
-				.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
-						pipelineParam.getEndTime())
-				.stream()
-				.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(), org.getName())))
-			.collect(Collectors.toList());
-		log.info("Successfully get buildKite pipelineInfo_slug:{}, pipelineInfoList size is:{}",
-				buildKiteOrganizationsInfo, buildKiteInfoList.size());
+			log.info("Start to query buildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
+			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
+				.flatMap(org -> buildKiteFeignClient
+					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
+							pipelineParam.getEndTime())
+					.stream()
+					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
+							org.getName())))
+				.collect(Collectors.toList());
+			log.info("Successfully get buildKite pipelineInfo_slug:{}, pipelineInfoList size is:{}",
+					buildKiteOrganizationsInfo, buildKiteInfoList.size());
 
-		return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
+			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			String maskToken = TokenUtil.mask(pipelineParam.getToken());
+			log.error("Failed to call BuildKite_pipelineParam: {}, e: {}", maskToken, cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(String
+				.format("Failed to call BuildKite_pipelineParam: %s, cause is %s", maskToken, cause.getMessage()));
+
+		}
 	}
 
 	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
@@ -117,13 +132,14 @@ public class BuildKiteService {
 				.orgId(organizationId)
 				.build();
 		}
-		catch (CompletionException e) {
-			log.error("Failed to get get pipeline steps", e.getCause());
-			Throwable cause = e.getCause();
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to get pipeline steps_stepsParam:{}, e: {}", stepsParam, cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
-			throw e;
+			throw new InternalServerErrorException(String
+				.format("Failed to get pipeline steps_stepsParam: %s, cause is %s", stepsParam, cause.getMessage()));
 		}
 	}
 
@@ -196,11 +212,22 @@ public class BuildKiteService {
 
 	public List<BuildKiteBuildInfo> fetchPipelineBuilds(String token, DeploymentEnvironment deploymentEnvironment,
 			String startTime, String endTime) {
-		String partialToken = token.substring(0, token.length() / 2);
-		PipelineStepsParam stepsParam = PipelineStepsParam.builder().startTime(startTime).endTime(endTime).build();
+		try {
+			String partialToken = token.substring(0, token.length() / 2);
+			PipelineStepsParam stepsParam = PipelineStepsParam.builder().startTime(startTime).endTime(endTime).build();
 
-		return fetchPipelineStepsByPage(token, deploymentEnvironment.getOrgId(), deploymentEnvironment.getId(),
-				stepsParam, partialToken);
+			return fetchPipelineStepsByPage(token, deploymentEnvironment.getOrgId(), deploymentEnvironment.getId(),
+					stepsParam, partialToken);
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to get pipeline builds_param:{}, e: {}", deploymentEnvironment, cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(String.format("Failed to get pipeline builds_param: %s, cause is %s",
+					deploymentEnvironment, cause.getMessage()));
+		}
 	}
 
 	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,

@@ -30,7 +30,8 @@ public class RestResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = RequestFailedException.class)
 	protected ResponseEntity<Object> handleRequestFailedException(RequestFailedException ex) {
-		return ResponseEntity.status(ex.getStatus()).body(new RestApiErrorResponse(ex.getMessage()));
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), ex.getMessage()));
 	}
 
 	@ExceptionHandler(value = BadRequestException.class)
@@ -80,6 +81,18 @@ public class RestResponseEntityExceptionHandler {
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
 		return ResponseEntity.badRequest().body(new RestApiErrorResponse(ex.getMessage()));
+	}
+
+	@ExceptionHandler(FileIOException.class)
+	public ResponseEntity<Object> handleFileIOException(FileIOException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "File read failed"));
+	}
+
+	@ExceptionHandler(InternalServerErrorException.class)
+	public ResponseEntity<Object> handleInternalServerErrorException(InternalServerErrorException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Internal Server Error"));
 	}
 
 }

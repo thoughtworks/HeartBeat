@@ -1,6 +1,7 @@
 package heartbeat.service.board.jira;
 
 import heartbeat.exception.BaseException;
+import heartbeat.exception.InternalServerErrorException;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -55,8 +56,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -119,13 +120,14 @@ public class JiraService {
 								.join())
 				.join();
 		}
-		catch (CompletionException e) {
-			Throwable cause = e.getCause();
-			log.error("Failed when call Jira to get board config", cause);
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed when call Jira to get board config, e:{}", cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
-			throw e;
+			throw new InternalServerErrorException(
+					String.format("Failed when call Jira to get board config, cause is %s", cause.getMessage()));
 		}
 	}
 
@@ -409,7 +411,6 @@ public class JiraService {
 				boardRequestParam.getBoardId());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
-			// TODO
 			throw new NoContentException("There is no target field.");
 		}
 

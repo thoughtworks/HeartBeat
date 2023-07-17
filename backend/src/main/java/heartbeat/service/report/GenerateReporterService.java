@@ -118,8 +118,8 @@ public class GenerateReporterService {
 		.map(RequireDataEnum::getValue)
 		.toList();
 
-	private static StoryPointsAndCycleTimeRequest getStoryPointsAndCycleTimeRequest(GenerateReportRequest request,
-			JiraBoardSetting jiraBoardSetting) {
+	private static StoryPointsAndCycleTimeRequest getStoryPointsAndCycleTimeRequest(JiraBoardSetting jiraBoardSetting,
+			String startTime, String endTime) {
 		return StoryPointsAndCycleTimeRequest.builder()
 			.token(jiraBoardSetting.getToken())
 			.type(jiraBoardSetting.getType())
@@ -127,8 +127,8 @@ public class GenerateReporterService {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(jiraBoardSetting.getDoneColumn())
-			.startTime(request.getStartTime())
-			.endTime(request.getEndTime())
+			.startTime(startTime)
+			.endTime(endTime)
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
 			.build();
@@ -257,16 +257,16 @@ public class GenerateReporterService {
 
 	private CardCollection fetchCardCollection(GenerateReportRequest request) {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
-		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(request,
-				jiraBoardSetting);
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(
+				jiraBoardSetting, request.getStartTime(), request.getEndTime());
 		return jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 	}
 
 	private CardCollection fetchNonDoneCardCollection(GenerateReportRequest request) {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
-		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(request,
-				jiraBoardSetting);
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(
+				jiraBoardSetting, request.getStartTime(), request.getEndTime());
 		return jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
 	}
 

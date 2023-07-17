@@ -2,6 +2,7 @@ package heartbeat.service.jira;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import heartbeat.exception.CustomFeignClientException;
+import heartbeat.exception.InternalServerErrorException;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
@@ -315,7 +316,7 @@ class JiraServiceTest {
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
-			.isInstanceOf(CompletionException.class)
+			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("UnExpected Exception");
 	}
 

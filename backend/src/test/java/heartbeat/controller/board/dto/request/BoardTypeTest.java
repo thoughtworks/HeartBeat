@@ -9,10 +9,8 @@ public class BoardTypeTest {
 	public void shouldConvertValueToType() {
 		BoardType jiraBoardType = BoardType.fromValue("jira");
 		BoardType classicJiraBoardType = BoardType.fromValue("classic-jira");
-		BoardType linearBoardType = BoardType.fromValue("linear");
 		assertEquals(jiraBoardType, BoardType.JIRA);
 		assertEquals(classicJiraBoardType, BoardType.CLASSIC_JIRA);
-		assertEquals(linearBoardType, BoardType.LINEAR);
 	}
 
 }

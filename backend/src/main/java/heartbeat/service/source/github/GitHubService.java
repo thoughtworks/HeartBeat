@@ -11,6 +11,7 @@ import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.exception.BaseException;
+import heartbeat.exception.InternalServerErrorException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import heartbeat.util.TokenUtil;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -75,13 +75,14 @@ public class GitHubService {
 				}, customTaskExecutor)
 				.join();
 		}
-		catch (CompletionException e) {
-			Throwable cause = e.getCause();
-			log.error("Failed to call GitHub with token_error ", cause);
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to call GitHub with token_error: {} ", cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
-			throw e;
+			throw new InternalServerErrorException(
+					String.format("Failed to call GitHub with token_error: %s", cause.getMessage()));
 		}
 	}
 
@@ -138,12 +139,14 @@ public class GitHubService {
 
 			return pipelineLeadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 		}
-		catch (CompletionException e) {
-			Throwable cause = e.getCause();
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to get pipeline leadTimes_error: {}", cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
-			throw e;
+			throw new InternalServerErrorException(
+					String.format("Failed to get pipeline leadTimes, cause is: %s", cause.getMessage()));
 		}
 
 	}
@@ -250,12 +253,24 @@ public class GitHubService {
 	}
 
 	public CommitInfo fetchCommitInfo(String commitId, String repositoryId, String token) {
-		String maskToken = TokenUtil.mask(token);
-		String realToken = "Bearer " + token;
-		log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
-		CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
-		log.info("Successfully get commit info_commitInfo_token: {}, commit: {}", maskToken, commitInfo.getCommit());
-		return commitInfo;
+		try {
+			String maskToken = TokenUtil.mask(token);
+			String realToken = "Bearer " + token;
+			log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
+			CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
+			log.info("Successfully get commit info_commitInfo_token: {}, commit: {}", maskToken,
+					commitInfo.getCommit());
+			return commitInfo;
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to get commit info_repositoryId: {}, error: {}", repositoryId, cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(String
+				.format("Failed to get commit info_repositoryId: %s,cause is: %s", repositoryId, cause.getMessage()));
+		}
 	}
 
 }

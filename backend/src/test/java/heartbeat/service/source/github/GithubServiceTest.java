@@ -12,7 +12,8 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
-import heartbeat.exception.CustomFeignClientException;
+import heartbeat.exception.InternalServerErrorException;
+import heartbeat.exception.RateLimitExceededException;
 import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -196,7 +197,7 @@ class GithubServiceTest {
         when(gitHubFeignClient.getReposByOrganizationName(anyString(), anyString()))
                 .thenThrow(new CompletionException(new Exception("UnExpected Exception")));
 
-        assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(CompletionException.class)
+        assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(InternalServerErrorException.class)
                 .hasMessageContaining("UnExpected Exception");
     }
 
@@ -355,7 +356,7 @@ class GithubServiceTest {
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
 
 		assertThatThrownBy(() -> githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken))
-			.isInstanceOf(CompletionException.class)
+			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("UnExpected Exception");
 	}
 
@@ -389,13 +390,30 @@ class GithubServiceTest {
 	}
 
 	@Test
-    public void shouldThrowExceptionWhenFetchCommitInfo() {
+    public void shouldThrowRateLimitExceededExceptionWhenFetchCommitInfoRateLimit() {
         when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString()))
-                .thenThrow(new CustomFeignClientException(403, "request forbidden"));
+                .thenThrow(new RateLimitExceededException("request forbidden"));
 
         assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "org/repo", "mockToken"))
-                .isInstanceOf(Exception.class)
+                .isInstanceOf(RateLimitExceededException.class)
                 .hasMessageContaining("request forbidden");
     }
+
+	@Test
+	public void shouldThrowInternalServerErrorExceptionWhenFetchCommitInfo500Exception() {
+		CommitInfo commitInfo = CommitInfo.builder()
+			.commit(Commit.builder()
+				.author(Author.builder().name("XXXX").email("XXX@test.com").date("2023-05-10T06:43:02.653Z").build())
+				.committer(
+						Committer.builder().name("XXXX").email("XXX@test.com").date("2023-05-10T06:43:02.653Z").build())
+				.build())
+			.build();
+
+		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString())).thenReturn(commitInfo);
+
+		assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "org/repo", ""))
+			.isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("Failed to get commit info_repositoryId");
+	}
 
 }

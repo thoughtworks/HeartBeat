@@ -1,7 +1,9 @@
 package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.exception.CustomFeignClientException;
+import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.UnauthorizedException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -294,7 +296,7 @@ class BuildKiteServiceTest {
 	}
 
 	@Test
-	public void shouldThrowServerErrorWhenPageFetchPipelineStepsAndFetchNextPage500Exception() {
+	public void shouldThrowServerErrorWhenPageFetchPipelineStepsAndFetchNextPage5xxException() {
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -309,12 +311,37 @@ class BuildKiteServiceTest {
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any()))
-			.thenThrow(new RequestFailedException(500, "Server Error"));
+			.thenThrow(new RequestFailedException(504, "Server Error"));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
 				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
-			.isInstanceOf(Exception.class)
+			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Server Error");
+	}
+
+	@Test
+	public void shouldThrowInternalServerErrorExceptionWhenPageFetchPipelineStepsAndFetchNextPage5xxException() {
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
+		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
+				httpHeaders, HttpStatus.OK);
+
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString()))
+			.thenReturn(responseEntity);
+		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+				any(), any()))
+			.thenReturn(buildKiteBuildInfoList);
+
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+				PipelineStepsParam.builder().build()))
+			.isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("Failed to get pipeline steps_stepsParam");
 
 	}
 
@@ -385,6 +412,42 @@ class BuildKiteServiceTest {
 
 		assertNotNull(pipelineBuilds);
 		assertThat(pipelineBuilds.size()).isEqualTo(0);
+	}
+
+	@Test
+	public void shouldThrowUnauthorizedExceptionWhenFetchPipelineBuilds401Exception() {
+		String mockToken = "xxxxxxxxxx";
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString()))
+			.thenThrow(new UnauthorizedException("unauthorized"));
+
+		Assertions
+			.assertThatThrownBy(
+					() -> buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment, mockStartTime, mockEndTime))
+			.isInstanceOf(UnauthorizedException.class)
+			.hasMessageContaining("unauthorized");
+	}
+
+	@Test
+	public void shouldThrowInternalServerErrorExceptionWhenFetchPipelineBuilds500Exception() {
+		String mockToken = "xxxxxxxxxx";
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
+				HttpStatus.OK);
+
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString()))
+			.thenReturn(responseEntity);
+
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment, null, mockEndTime))
+			.isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("Failed to get pipeline builds_param");
 	}
 
 	@Test

@@ -48,7 +48,7 @@ export const PipelineMetricSelection = ({
   const { id, organization, pipelineName, step } = pipelineSetting
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { isLoading, isError, errorMessage, getSteps } = useGetMetricsStepsEffect()
+  const { isLoading, isServerError, errorMessage, getSteps } = useGetMetricsStepsEffect()
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
   const pipelineNameOptions = selectPipelineNames(store.getState(), organization)
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
@@ -77,8 +77,8 @@ export const PipelineMetricSelection = ({
 
   return (
     <>
-      {isError ? (
-        navigate('/errorPage')
+      {isServerError ? (
+        navigate('/error-page')
       ) : (
         <PipelineMetricSelectionWrapper>
           {organizationWarningMessage && <WarningNotification message={organizationWarningMessage} />}

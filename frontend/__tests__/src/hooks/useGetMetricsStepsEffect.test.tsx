@@ -59,7 +59,7 @@ describe('use get steps effect', () => {
       result.current.getSteps(params, buildId, organizationId, pipelineType, token)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 
   it('should set isError is true when error is empty', async () => {
@@ -74,6 +74,6 @@ describe('use get steps effect', () => {
       result.current.getSteps(params, buildId, organizationId, pipelineType, token)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 })

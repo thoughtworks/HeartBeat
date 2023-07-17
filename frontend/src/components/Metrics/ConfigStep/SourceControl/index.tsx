@@ -36,7 +36,7 @@ export const SourceControl = () => {
   const sourceControlFields = useAppSelector(selectSourceControl)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isSourceControlVerified)
-  const { verifyGithub, isLoading, isError, errorMessage } = useVerifySourceControlEffect()
+  const { verifyGithub, isLoading, isServerError, errorMessage } = useVerifySourceControlEffect()
   const [fields, setFields] = useState([
     {
       key: 'SourceControl',
@@ -129,8 +129,8 @@ export const SourceControl = () => {
 
   return (
     <>
-      {isError ? (
-        navigate('/errorPage')
+      {isServerError ? (
+        navigate('/error-page')
       ) : (
         <StyledSection>
           {errorMessage && <ErrorNotification message={errorMessage} />}

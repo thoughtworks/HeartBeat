@@ -58,7 +58,7 @@ describe('use verify sourceControl state', () => {
       result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 
   it('should set isError is true when error is empty', async () => {
@@ -73,6 +73,6 @@ describe('use verify sourceControl state', () => {
       result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 })

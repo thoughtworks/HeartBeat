@@ -45,7 +45,7 @@ export const PipelineTool = () => {
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
-  const { verifyPipelineTool, isLoading, isError, errorMessage } = useVerifyPipelineToolEffect()
+  const { verifyPipelineTool, isLoading, isServerError, errorMessage } = useVerifyPipelineToolEffect()
   const [fields, setFields] = useState([
     {
       key: 'PipelineTool',
@@ -153,8 +153,8 @@ export const PipelineTool = () => {
 
   return (
     <>
-      {isError ? (
-        navigate('/errorPage')
+      {isServerError ? (
+        navigate('/error-page')
       ) : (
         <StyledSection>
           {errorMessage && <ErrorNotification message={errorMessage} />}

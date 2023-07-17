@@ -7,28 +7,25 @@ export class CSVClient extends HttpClient {
   parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string =>
     dayjs(csvTimeStamp).format('YYYY-MM-DD-HH-mm-ss')
 
-  exportCSVData = async (params: CSVReportRequestDTO) => {
-    await this.axiosInstance
-      .get(`/reports/${params.dataType}/${params.csvTimeStamp}`, { responseType: 'blob' })
-      .then((res) => {
-        const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
-        downloadCSV(exportedFilename, res.data)
-      })
-      .catch((e) => {
-        throw e
-      })
-  }
-
   // exportCSVData = async (params: CSVReportRequestDTO) => {
-  //   try {
-  //     const response = await this.axiosInstance.get(`/reports/${params.dataType}/${params.csvTimeStamp}`, { responseType: 'blob' });
-  //     const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
-  //     downloadCSV(exportedFilename, response.data)
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  //
+  //   await this.axiosInstance
+  //     .get(`/reports/${params.dataType}/${params.csvTimeStamp}`, { responseType: 'blob' })
+  //     .then((res) => {
+  //       const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
+  //       downloadCSV(exportedFilename, res.data)
+  //     })
+  //     .catch((e) => {
+  //       throw e
+  //     })
   // }
+
+  exportCSVData = async (params: CSVReportRequestDTO) => {
+    const response = await this.axiosInstance.get(`/reports/${params.dataType}/${params.csvTimeStamp}`, {
+      responseType: 'blob',
+    })
+    const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
+    downloadCSV(exportedFilename, response.data)
+  }
 }
 
 export const csvClient = new CSVClient()

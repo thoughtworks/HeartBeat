@@ -53,7 +53,7 @@ describe('use export csv effect', () => {
       result.current.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 
   it('should set isError is true when error is empty', async () => {
@@ -68,6 +68,6 @@ describe('use export csv effect', () => {
       result.current.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 })

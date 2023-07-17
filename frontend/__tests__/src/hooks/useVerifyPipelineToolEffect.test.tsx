@@ -59,7 +59,7 @@ describe('use verify pipelineTool state', () => {
       result.current.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 
   it('should set isError is true when error is empty', async () => {
@@ -74,6 +74,6 @@ describe('use verify pipelineTool state', () => {
       result.current.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 })

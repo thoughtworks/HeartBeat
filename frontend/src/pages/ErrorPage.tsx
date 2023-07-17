@@ -23,7 +23,7 @@ const ErrorPage = () => {
         <ErrorMessageContainer>
           <h1>Oh no!</h1>
           <p>
-            Something is not quite right. We promise we are working on it - in the meantime, perhaps head back to our
+            Something is not quite right. We promise we are working on it - In the meantime, perhaps head back to our
             homepage and try again.
           </p>
         </ErrorMessageContainer>

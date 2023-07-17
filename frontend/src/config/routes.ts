@@ -18,13 +18,13 @@ export const routes = [
     name: 'Metrics',
   },
   {
+    path: '/error-page',
+    component: lazy(() => import('../pages/ErrorPage')),
+    name: 'ErrorPage',
+  },
+  {
     path: '*',
     component: lazy(() => import('../pages/Home')),
     name: 'Home',
-  },
-  {
-    path: '/errorPage',
-    component: lazy(() => import('../pages/errorPage')),
-    name: 'errorPage',
   },
 ]

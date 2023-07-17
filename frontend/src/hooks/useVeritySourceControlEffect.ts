@@ -13,13 +13,13 @@ export interface useVerifySourceControlStateInterface {
     | undefined
   >
   isLoading: boolean
-  isError: boolean
+  isServerError: boolean
   errorMessage: string
 }
 
 export const useVerifySourceControlEffect = (): useVerifySourceControlStateInterface => {
   const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
+  const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const verifyGithub = async (params: SourceControlRequestDTO) => {
@@ -29,7 +29,7 @@ export const useVerifySourceControlEffect = (): useVerifySourceControlStateInter
     } catch (e) {
       const err = e as AxiosError
       if (!err.message || err.response) {
-        setIsError(true)
+        setIsServerError(true)
       } else {
         setErrorMessage(`${params.type} ${VERIFY_FAILED_ERROR_MESSAGE}: ${err.message}`)
         setTimeout(() => {
@@ -44,7 +44,7 @@ export const useVerifySourceControlEffect = (): useVerifySourceControlStateInter
   return {
     verifyGithub,
     isLoading,
-    isError,
+    isServerError,
     errorMessage,
   }
 }

@@ -80,7 +80,7 @@ describe('use generate report effect', () => {
       result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 
   it('should set isError is true when error is empty', async () => {
@@ -95,6 +95,6 @@ describe('use generate report effect', () => {
       result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
-    expect(result.current.isError).toEqual(true)
+    expect(result.current.isServerError).toEqual(true)
   })
 })

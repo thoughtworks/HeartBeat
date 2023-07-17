@@ -577,3 +577,6 @@ export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import da
 
 export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
   'The content of the imported JSON file is empty. Please confirm carefully'
+
+export const ERROR_PAGE_MESSAGE =
+  'Something is not quite right. We promise we are working on it - In the meantime, perhaps head back to our homepage and try again.'

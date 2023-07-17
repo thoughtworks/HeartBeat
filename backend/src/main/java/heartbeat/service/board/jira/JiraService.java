@@ -122,7 +122,8 @@ public class JiraService {
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed when call Jira to get board config, e:{}", cause.getMessage());
+			log.error("Failed when call Jira to get board config_project key: {}, board id: {}, e: {}",
+					boardRequestParam.getBoardId(), boardRequestParam.getProjectKey(), cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}

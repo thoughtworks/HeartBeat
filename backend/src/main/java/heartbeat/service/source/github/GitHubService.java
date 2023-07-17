@@ -264,7 +264,8 @@ public class GitHubService {
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed to get commit info_repositoryId: {}, error: {}", repositoryId, cause.getMessage());
+			log.error("Failed to get commit info_repoId: {},commitId: {}, error: {}", repositoryId, commitId,
+					cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}

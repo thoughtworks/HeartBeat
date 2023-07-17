@@ -12,7 +12,9 @@ layout: ../../../layouts/MainLayout.astro
 
 - **401**: Token is incorrect
 - **404**: 404 Not Found
-- **503**: Request Timeout
+- **503**: Service Unavailable
+- **5xx**: Server Error
+- **4xx**: Client Error
 
 ### GitHub
 
@@ -26,20 +28,20 @@ layout: ../../../layouts/MainLayout.astro
 - **400**: Jira verify failed: Please reconfirm the input
 - **401**: Jira verify failed: Token is incorrect
 - **404**: Jira verify failed: 404 Not Found
-- **503**: Jira verify failed: Request Timeout
+- **503**: Jira verify failed: Service Unavailable
 
 ### Pipeline Tool
 
 - **401**: BuildKite verify failed: Token is incorrect
 - **403**: BuildKite verify failed: Permission denied
 - **404**: BuildKite verify failed: 404 Not Found
-- **503**: BuildKite verify failed: Request Timeout
+- **503**: BuildKite verify failed: Service Unavailable
 
 ### Source Control
 
 - **401**: GitHub verify failed: Token is incorrect
 - **404**: BuildKite verify failed: 404 Not Found
-- **503**: BuildKite verify failed: Request Timeout
+- **503**: BuildKite verify failed: Service Unavailable
 
 ## Metrics Page
 

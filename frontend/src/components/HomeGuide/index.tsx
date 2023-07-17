@@ -8,6 +8,7 @@ import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice'
 import React, { useState } from 'react'
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
+import { resetStep } from '@src/context/stepper/StepperSlice'
 import { HOME_VERIFY_IMPORT_WARNING_MESSAGE } from '@src/constants'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 
@@ -82,11 +83,13 @@ export const HomeGuide = () => {
 
   const openFileImportBox = () => {
     setValidConfig(true)
+    dispatch(resetStep())
     const fileInput = getImportFileElement()
     fileInput.click()
   }
 
   const createNewProject = () => {
+    dispatch(resetStep())
     navigate('/metrics')
   }
 

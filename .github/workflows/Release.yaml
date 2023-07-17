@@ -23,9 +23,7 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: ${{ vars.GRADLE_VERSION }}
+        uses: gradle/gradle-build-action@v2.4.2
       - name: Build
         run: ./gradlew clean build
       - uses: actions/upload-artifact@v3
@@ -67,12 +65,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download frontend artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: frontend-app
           path: ./${{ env.REPO_NAME }}-frontend
       - name: Download backend artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: backend-app
       - name: List

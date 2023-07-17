@@ -65,12 +65,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download frontend artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: frontend-app
           path: ./${{ env.REPO_NAME }}-frontend
       - name: Download backend artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: backend-app
       - name: List

@@ -16,6 +16,10 @@ export const stepperSlice = createSlice({
   name: 'stepper',
   initialState,
   reducers: {
+    resetStep: (state) => {
+      state.stepNumber = initialState.stepNumber
+      state.timeStamp = initialState.timeStamp
+    },
     nextStep: (state) => {
       state.stepNumber += 1
     },
@@ -28,7 +32,7 @@ export const stepperSlice = createSlice({
   },
 })
 
-export const { nextStep, backStep, updateTimeStamp } = stepperSlice.actions
+export const { resetStep, nextStep, backStep, updateTimeStamp } = stepperSlice.actions
 
 export const selectStepNumber = (state: RootState) => state.stepper.stepNumber
 export const selectTimeStamp = (state: RootState) => state.stepper.timeStamp

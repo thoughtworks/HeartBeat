@@ -1,4 +1,4 @@
-import stepperReducer, { backStep, nextStep, updateTimeStamp } from '@src/context/stepper/StepperSlice'
+import stepperReducer, { backStep, nextStep, resetStep, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import { ZERO } from '../fixtures'
 
 describe('stepper reducer', () => {
@@ -6,6 +6,13 @@ describe('stepper reducer', () => {
     const stepper = stepperReducer(undefined, { type: 'unknown' })
 
     expect(stepper.stepNumber).toEqual(ZERO)
+  })
+
+  it('should reset to 0 when handle reset', () => {
+    const stepper = stepperReducer(undefined, resetStep)
+
+    expect(stepper.stepNumber).toEqual(ZERO)
+    expect(stepper.timeStamp).toEqual(ZERO)
   })
 
   it('should get 1 when handle next step given stepNumber is 0', () => {

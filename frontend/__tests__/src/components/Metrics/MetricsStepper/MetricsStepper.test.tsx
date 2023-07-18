@@ -1,5 +1,4 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import { exportToJsonFile } from '@src/utils/util'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -36,6 +35,7 @@ import {
   updateLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
+import { exportToJsonFile } from '@src/utils/util'
 
 const START_DATE_LABEL = 'From *'
 const TODAY = dayjs()
@@ -67,15 +67,14 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectSteps: jest.fn().mockReturnValue(['mock new step']),
 }))
 
-jest.mock('@src/utils/util', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  exportToJsonFile: jest.fn((_filename: string, _json: object) => {
-    //Mock for test
-  }),
+jest.mock('@src/emojis/emoji', () => ({
   getEmojiUrls: jest.fn().mockReturnValue(['https://buildkiteassets.com/emojis/img-buildkite-64/charger64.png']),
-  removeExtraEmojiName: jest.fn(() => {
-    //Mock for test
-  }),
+  removeExtraEmojiName: jest.fn(),
+  transformToCleanedBuildKiteEmoji: jest.fn(),
+}))
+
+jest.mock('@src/utils/util', () => ({
+  exportToJsonFile: jest.fn(),
 }))
 
 const server = setupServer(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))

@@ -6,9 +6,3 @@ export const FormControlWrapper = styled(FormControl)({
   width: '95%',
   height: '2.5rem',
 })
-
-export const StyledAvatar = styled(Avatar)({
-  width: '20px',
-  height: '20px',
-  marginRight: '4px',
-})

@@ -13,16 +13,16 @@ describe('exportToJsonFile function', () => {
 })
 
 describe('getEmojiName function', () => {
-  test('it should get single emoji name', () => {
-    const input = ':zap: one emoji'
+  test('it should get single emojis name', () => {
+    const input = ':zap: one emojis'
 
     const expectName = ['zap']
 
     expect(getEmojiNames(input)).toEqual(expectName)
   })
 
-  test('it should get multl-emoji names', () => {
-    const input = ':zap: :wws: two emoji'
+  test('it should get multl-emojis names', () => {
+    const input = ':zap: :wws: two emojis'
 
     const expectName = ['zap', 'wws']
 
@@ -30,7 +30,7 @@ describe('getEmojiName function', () => {
   })
 
   test('it should get empty names', () => {
-    const input = 'no emoji '
+    const input = 'no emojis '
 
     expect(getEmojiNames(input)).toEqual([])
   })
@@ -38,7 +38,7 @@ describe('getEmojiName function', () => {
 
 describe('getEmojiUrl function', () => {
   test('it should get empty urls', () => {
-    const input = 'one emoji'
+    const input = 'one emojis'
     const emojis: BuildKiteEmoji[] = [
       {
         name: 'zap',
@@ -55,8 +55,8 @@ describe('getEmojiUrl function', () => {
     expect(getEmojiUrls(input, emojis)).toEqual([])
   })
 
-  test('it should get single emoji url', () => {
-    const input = ':zap: one emoji'
+  test('it should get single emojis url', () => {
+    const input = ':zap: one emojis'
     const emojis: BuildKiteEmoji[] = [
       {
         name: 'zap',
@@ -73,8 +73,8 @@ describe('getEmojiUrl function', () => {
     expect(getEmojiUrls(input, emojis)).toEqual(['https://example.com/abc.png'])
   })
 
-  test('it should get muilt-emoji urls', () => {
-    const input = ':zap: :www:one emoji'
+  test('it should get muilt-emojis urls', () => {
+    const input = ':zap: :www:one emojis'
     const emojis: BuildKiteEmoji[] = [
       {
         name: 'zap',
@@ -96,9 +96,9 @@ describe('getEmojiUrl function', () => {
     expect(getEmojiUrls(input, emojis)).toEqual(['https://example.com/abc.png', 'https://example2.com/abc.png'])
   })
 
-  test('it should remove extra emoji names', () => {
-    const input = ':zap: :www:one emoji'
+  test('it should remove extra emojis names', () => {
+    const input = ':zap: :www:one emojis'
 
-    expect(removeExtraEmojiName(input)).toEqual(' one emoji')
+    expect(removeExtraEmojiName(input)).toEqual(' one emojis')
   })
 })

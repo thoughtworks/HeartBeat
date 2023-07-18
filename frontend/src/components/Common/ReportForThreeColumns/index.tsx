@@ -4,9 +4,15 @@ import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style
 import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { AVERAGE_FIELD } from '@src/constants'
-import { getEmojiUrls, removeExtraEmojiName } from '@src/utils/util'
-import emojis from '@src/assets/emojis.json'
-import { StyledAvatar } from '@src/components/Common/ReportForThreeColumns/style'
+import buildKiteEmojis from '@src/assets/buildkiteEmojis.json'
+import appleEmojis from '@src/assets/appleEmojis.json'
+import {
+  CleanedBuildKiteEmoji,
+  getEmojiUrls,
+  removeExtraEmojiName,
+  transformToCleanedBuildKiteEmoji,
+} from '@src/emojis/emoji'
+import { StyledAvatar } from '@src/emojis/style'
 
 interface ReportForThreeColumnsProps {
   title: string
@@ -16,19 +22,23 @@ interface ReportForThreeColumnsProps {
 }
 
 export const ReportForThreeColumns = ({ title, fieldName, listName, data }: ReportForThreeColumnsProps) => {
+  const cleanedEmojis: CleanedBuildKiteEmoji[] = transformToCleanedBuildKiteEmoji([...buildKiteEmojis, ...appleEmojis])
   const emojiRow = (row: ReportDataWithThreeColumns) => {
-    if (row.name.includes(':') && getEmojiUrls(row.name, emojis).length > 0) {
+    const { name } = row
+    const emojiUrls: string[] = getEmojiUrls(name, cleanedEmojis)
+    if (name.includes(':') && emojiUrls.length > 0) {
       const [prefix, suffix] = row.name.split('/')
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Typography>{prefix}/</Typography>
-          {getEmojiUrls(row.name, emojis) &&
-            getEmojiUrls(row.name, emojis).map((url) => <StyledAvatar key={url} src={url} />)}
+          {emojiUrls.map((url) => (
+            <StyledAvatar key={url} src={url} />
+          ))}
           <Typography>{removeExtraEmojiName(suffix)}</Typography>
         </div>
       )
     }
-    return <Typography>{row.name}</Typography>
+    return <Typography>{name}</Typography>
   }
 
   const renderRows = () =>

@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Avatar } from '@mui/material'
 
 export const StyledAvatar = styled(Avatar)({
-  width: '20px',
-  height: '20px',
-  marginRight: '4px',
+  width: '1.25rem',
+  height: '1.25rem',
+  marginRight: '0.25rem',
 })

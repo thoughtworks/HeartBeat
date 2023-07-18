@@ -60,7 +60,6 @@ export const IMPORT_PROJECT_FROM_FILE = 'Import project from file'
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',
   JIRA: 'Jira',
-  LINEAR: 'Linear',
 }
 
 export const PIPELINE_TOOL_TYPES = {

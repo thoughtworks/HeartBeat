@@ -89,13 +89,6 @@ describe('Board', () => {
     await waitFor(() => {
       expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
     })
-
-    fireEvent.mouseDown(getByRole('button', { name: CONFIG_TITLE.BOARD }))
-    fireEvent.click(getByText(BOARD_TYPES.LINEAR))
-
-    await waitFor(() => {
-      expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
-    })
   })
 
   it('should show error message when input a wrong type or empty email ', async () => {

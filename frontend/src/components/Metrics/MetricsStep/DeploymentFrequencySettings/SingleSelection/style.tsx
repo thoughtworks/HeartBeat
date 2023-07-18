@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import { Avatar, FormControl } from '@mui/material'
+import { FormControl } from '@mui/material'
 
 export const FormControlWrapper = styled(FormControl)({
   margin: '0 0 2rem 2.5%',

@@ -35,14 +35,19 @@ describe('router', () => {
     })
   })
 
-  it('should show Metrics page when go Metrics page', () => {
-    const metricsRoute = '/Metrics'
-    const steps = ['Config', 'Metrics', 'Export']
+  it('should show Metrics page when go Metrics page', async () => {
+    expect.assertions(3)
+    const metricsRoute = '/metrics'
 
-    const { findByText } = setup(metricsRoute)
-    steps.map(async (label) => {
-      expect(await findByText(label)).toBeVisible()
-    })
+    const { getByText } = setup(metricsRoute)
+    await waitFor(
+      () => {
+        expect(getByText('Config')).toBeInTheDocument()
+        expect(getByText('Metrics')).toBeInTheDocument()
+        expect(getByText('Report')).toBeInTheDocument()
+      },
+      { timeout: 5000 }
+    )
   })
 
   it('should show error page when go error page', async () => {

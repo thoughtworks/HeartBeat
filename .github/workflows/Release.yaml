@@ -6,7 +6,7 @@ on:
       - '*'
 env:
   REPO_NAME: ${{ github.event.repository.name }}
-  LOWCASE_REPO_NAME: ${{ github.repository }}.toLowerCase()
+  LOWCASE_REPO_NAME: heartbeat
 
 jobs:
   build_backend:

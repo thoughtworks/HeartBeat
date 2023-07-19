@@ -1,76 +1,37 @@
-import { CleanedBuildKiteEmoji, getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
+import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
+
+jest.mock('@src/utils/util', () => ({
+  transformToCleanedBuildKiteEmoji: jest.fn().mockReturnValue([
+    { image: 'abc1.png', aliases: ['zap1'] },
+    { image: 'abc2.png', aliases: ['zap2'] },
+  ]),
+}))
 
 describe('#emojis', () => {
   describe('#getEmojiUrls', () => {
-    it('should get empty images if can not parse name from input', () => {
-      const input = 'one emojis'
-      const emojis: CleanedBuildKiteEmoji[] = [
-        {
-          image: 'abc.png',
-          aliases: ['zap1'],
-        },
-        {
-          image: 'abc.png',
-          aliases: ['zap2'],
-        },
-      ]
+    const EMOJI_URL_PREFIX = 'https://buildkiteassets.com/emojis/'
+    it('should get empty images when can not parse name from input', () => {
+      const mockPipelineStepName = 'one emojis'
 
-      expect(getEmojiUrls(input, emojis)).toEqual([])
+      expect(getEmojiUrls(mockPipelineStepName)).toEqual([])
     })
 
-    it('should get empty string images if can not match any emoji', () => {
-      const input = ':zap: one emojis'
-      const emojis: CleanedBuildKiteEmoji[] = [
-        {
-          image: 'abc.png',
-          aliases: ['zap1'],
-        },
-        {
-          image: 'abc.png',
-          aliases: ['zap2'],
-        },
-      ]
+    it('should get default image url when can not match any emoji', () => {
+      const mockPipelineStepName = ':zap: one emojis'
 
-      expect(getEmojiUrls(input, emojis)).toEqual([''])
+      expect(getEmojiUrls(mockPipelineStepName)).toEqual([`${EMOJI_URL_PREFIX}img-buildkite-64/buildkite.png`])
     })
 
     it('should get single emoji image', () => {
-      const input = ':zap: one emojis'
-      const emojis: CleanedBuildKiteEmoji[] = [
-        {
-          image: 'abc.png',
-          aliases: ['zap'],
-        },
-        {
-          image: 'abc.png',
-          aliases: ['zap1'],
-        },
-      ]
+      const mockPipelineStepName = ':zap1: one emojis'
 
-      expect(getEmojiUrls(input, emojis)).toEqual(['https://buildkiteassets.com/emojis/abc.png'])
+      expect(getEmojiUrls(mockPipelineStepName)).toEqual([`${EMOJI_URL_PREFIX}abc1.png`])
     })
 
     it('should get multi-emoji images', () => {
-      const input = ':zap: :www:one emojis'
-      const emojis: CleanedBuildKiteEmoji[] = [
-        {
-          image: 'abc.png',
-          aliases: ['zap'],
-        },
-        {
-          image: 'abc.png',
-          aliases: ['www'],
-        },
-        {
-          image: 'abc.png',
-          aliases: ['fff'],
-        },
-      ]
+      const input = ':zap1: :zap2:one emojis'
 
-      expect(getEmojiUrls(input, emojis)).toEqual([
-        'https://buildkiteassets.com/emojis/abc.png',
-        'https://buildkiteassets.com/emojis/abc.png',
-      ])
+      expect(getEmojiUrls(input)).toEqual([`${EMOJI_URL_PREFIX}abc1.png`, `${EMOJI_URL_PREFIX}abc2.png`])
     })
   })
 

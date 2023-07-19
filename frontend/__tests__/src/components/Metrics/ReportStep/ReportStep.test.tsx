@@ -35,7 +35,6 @@ jest.mock('@src/hooks/useExportCsvEffect', () => ({
 jest.mock('@src/emojis/emoji', () => ({
   getEmojiUrls: jest.fn().mockReturnValue(['']),
   removeExtraEmojiName: jest.fn(),
-  transformToCleanedBuildKiteEmoji: jest.fn(),
 }))
 
 jest.mock('@src/utils/util', () => ({

@@ -4,7 +4,7 @@ import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style
 import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { AVERAGE_FIELD } from '@src/constants'
-import { cleanedEmojis, getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
+import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
 import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
 
 interface ReportForThreeColumnsProps {
@@ -17,7 +17,7 @@ interface ReportForThreeColumnsProps {
 export const ReportForThreeColumns = ({ title, fieldName, listName, data }: ReportForThreeColumnsProps) => {
   const emojiRow = (row: ReportDataWithThreeColumns) => {
     const { name } = row
-    const emojiUrls: string[] = getEmojiUrls(name, cleanedEmojis)
+    const emojiUrls: string[] = getEmojiUrls(name)
     if (name.includes(':') && emojiUrls.length > 0) {
       const [prefix, suffix] = row.name.split('/')
       return (

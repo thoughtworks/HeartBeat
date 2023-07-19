@@ -1,3 +1,7 @@
+import { transformToCleanedBuildKiteEmoji } from '@src/utils/util'
+import buildKiteEmojis from '@src/assets/buildkiteEmojis.json'
+import appleEmojis from '@src/assets/appleEmojis.json'
+
 export interface OriginBuildKiteEmoji {
   name: string
   image: string
@@ -10,12 +14,8 @@ export interface CleanedBuildKiteEmoji {
 }
 
 const EMOJI_URL_PREFIX = 'https://buildkiteassets.com/emojis/'
-
-export const transformToCleanedBuildKiteEmoji = (input: OriginBuildKiteEmoji[]): CleanedBuildKiteEmoji[] =>
-  input.map(({ name, image, aliases }) => ({
-    image,
-    aliases: [...new Set([...aliases, name])],
-  }))
+export const cleanedEmojis: CleanedBuildKiteEmoji[] = (() =>
+  transformToCleanedBuildKiteEmoji([...buildKiteEmojis, ...appleEmojis]))()
 
 const getEmojiNames = (input: string): string[] => {
   const regex = /:([\w+-]+):/g

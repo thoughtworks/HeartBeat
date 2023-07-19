@@ -70,11 +70,11 @@ jest.mock('@src/context/config/configSlice', () => ({
 jest.mock('@src/emojis/emoji', () => ({
   getEmojiUrls: jest.fn().mockReturnValue(['https://buildkiteassets.com/emojis/img-buildkite-64/charger64.png']),
   removeExtraEmojiName: jest.fn(),
-  transformToCleanedBuildKiteEmoji: jest.fn(),
 }))
 
 jest.mock('@src/utils/util', () => ({
   exportToJsonFile: jest.fn(),
+  transformToCleanedBuildKiteEmoji: jest.fn(),
 }))
 
 const server = setupServer(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))

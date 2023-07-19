@@ -1,16 +1,8 @@
 import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
-import buildKiteEmojis from '@src/assets/buildkiteEmojis.json'
-import appleEmojis from '@src/assets/appleEmojis.json'
-import {
-  CleanedBuildKiteEmoji,
-  getEmojiUrls,
-  OriginBuildKiteEmoji,
-  removeExtraEmojiName,
-  transformToCleanedBuildKiteEmoji,
-} from '@src/emojis/emoji'
-import { StyledAvatar } from '@src/emojis/style'
+import { CleanedBuildKiteEmoji, cleanedEmojis, getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
+import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
 
 interface Props {
   options: string[]
@@ -42,9 +34,8 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
     }
   }, [])
 
-  const emojiView = (input: string, originEmojis: OriginBuildKiteEmoji[]) => {
-    const cleanedEmojis: CleanedBuildKiteEmoji[] = transformToCleanedBuildKiteEmoji(originEmojis)
-    const emojiUrls: string[] = getEmojiUrls(input, cleanedEmojis)
+  const emojiView = (input: string, emojis: CleanedBuildKiteEmoji[]) => {
+    const emojiUrls: string[] = getEmojiUrls(input, emojis)
     return emojiUrls.map((url) => <StyledAvatar key={url} src={url} />)
   }
 
@@ -55,10 +46,10 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
         <Select labelId={labelId} value={value} onChange={handleChange}>
           {options.map((data) => (
             <MenuItem key={data} value={data} data-test-id={labelId}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {emojiView(data, [...buildKiteEmojis, ...appleEmojis])}
+              <EmojiWrap>
+                {emojiView(data, cleanedEmojis)}
                 <ListItemText primary={removeExtraEmojiName(data)} />
-              </div>
+              </EmojiWrap>
             </MenuItem>
           ))}
         </Select>

@@ -6,3 +6,8 @@ export const StyledAvatar = styled(Avatar)({
   height: '1.25rem',
   marginRight: '0.25rem',
 })
+
+export const EmojiWrap = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+})

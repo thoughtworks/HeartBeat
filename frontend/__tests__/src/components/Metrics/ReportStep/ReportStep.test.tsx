@@ -38,6 +38,10 @@ jest.mock('@src/emojis/emoji', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn(),
 }))
 
+jest.mock('@src/utils/util', () => ({
+  transformToCleanedBuildKiteEmoji: jest.fn(),
+}))
+
 let store = null
 
 describe('Report Step', () => {

@@ -80,7 +80,7 @@ describe('Board', () => {
     expect(optionValue).toEqual(Object.values(BOARD_TYPES))
   })
 
-  it('should show different board type when select different board field value ', async () => {
+  it('should show board type when select board field value ', async () => {
     const { getByRole, getByText } = setup()
 
     fireEvent.mouseDown(getByRole('button', { name: CONFIG_TITLE.BOARD }))

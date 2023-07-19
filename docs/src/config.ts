@@ -67,6 +67,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Report Flow Diagrams', link: '/en/dev-center/flow-diagrams' },
       { text: 'Export CSV', link: '/en/dev-center/export-csv' },
       { text: 'Error Handle', link: '/en/dev-center/error-handle' },
+      { text: 'Emoji Flow', link: '/en/dev-center/emoji-flow' },
     ],
   },
 };

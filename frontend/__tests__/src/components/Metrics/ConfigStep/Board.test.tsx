@@ -80,7 +80,7 @@ describe('Board', () => {
     expect(optionValue).toEqual(Object.values(BOARD_TYPES))
   })
 
-  it('should show different board type when select different board field value ', async () => {
+  it('should show board type when select board field value ', async () => {
     const { getByRole, getByText } = setup()
 
     fireEvent.mouseDown(getByRole('button', { name: CONFIG_TITLE.BOARD }))
@@ -88,13 +88,6 @@ describe('Board', () => {
 
     await waitFor(() => {
       expect(getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument()
-    })
-
-    fireEvent.mouseDown(getByRole('button', { name: CONFIG_TITLE.BOARD }))
-    fireEvent.click(getByText(BOARD_TYPES.LINEAR))
-
-    await waitFor(() => {
-      expect(getByText(BOARD_TYPES.LINEAR)).toBeInTheDocument()
     })
   })
 

@@ -40,7 +40,6 @@ export enum CONFIG_TITLE {
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',
   JIRA: 'Jira',
-  LINEAR: 'Linear',
 }
 
 export const PIPELINE_TOOL_TYPES = {

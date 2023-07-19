@@ -1,3 +1,5 @@
+import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
+
 export const exportToJsonFile = (filename: string, json: object) => {
   const dataStr = JSON.stringify(json, null, 4)
   const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`
@@ -19,3 +21,9 @@ export const downloadCSV = (filename: string, data: string) => {
   link.click()
   document.body.removeChild(link)
 }
+
+export const transformToCleanedBuildKiteEmoji = (input: OriginBuildKiteEmoji[]): CleanedBuildKiteEmoji[] =>
+  input.map(({ name, image, aliases }) => ({
+    image,
+    aliases: [...new Set([...aliases, name])],
+  }))

@@ -57,11 +57,40 @@ jobs:
           name: frontend-app
           path: frontend/dist
           retention-days: ${{ vars.RETENTION_DAYS }}
-  release:
+
+  build_and_push_image:
     runs-on: ubuntu-latest
     needs:
       - build_frontend
       - build_backend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push Docker Image for frontend
+        uses: docker/build-push-action@v2
+        with:
+          file: ./ops/infra/Dockerfile.frontend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}_frontend:${{ github.ref }}
+            ghcr.io/${{ github.repository }}_frontend:latest
+      - name: Build and Push Docker Image for backend
+        uses: docker/build-push-action@v2
+        with:
+          file: ./ops/infra/Dockerfile.backend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}_backend:${{ github.ref }}
+            ghcr.io/${{ github.repository }}_backend:latest
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - build_and_push_image
     steps:
       - uses: actions/checkout@v3
       - name: Download frontend artifact
@@ -89,3 +118,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ env.REPO_NAME }}-${{ env.TAG_NAME }}.zip
+
+

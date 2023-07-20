@@ -43,7 +43,7 @@ describe('use verify pipelineTool state', () => {
     )
   })
 
-  it('should set isError is true when error has response', async () => {
+  it('should set isServerError is true when error has response', async () => {
     const error = {
       response: {
         status: 500,
@@ -62,7 +62,7 @@ describe('use verify pipelineTool state', () => {
     expect(result.current.isServerError).toEqual(true)
   })
 
-  it('should set isError is true when error is empty', async () => {
+  it('should set isServerError is true when error is empty', async () => {
     const error = {}
 
     pipelineToolClient.verifyPipelineTool = jest.fn().mockImplementation(() => {

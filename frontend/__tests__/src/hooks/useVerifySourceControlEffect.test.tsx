@@ -42,7 +42,7 @@ describe('use verify sourceControl state', () => {
       `${MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`
     )
   })
-  it('should set isError is true when error has response', async () => {
+  it('should set isServerError is true when error has response', async () => {
     const error = {
       response: {
         status: 500,
@@ -61,7 +61,7 @@ describe('use verify sourceControl state', () => {
     expect(result.current.isServerError).toEqual(true)
   })
 
-  it('should set isError is true when error is empty', async () => {
+  it('should set isServerError is true when error is empty', async () => {
     const error = {}
 
     sourceControlClient.getVerifySourceControl = jest.fn().mockImplementation(() => {

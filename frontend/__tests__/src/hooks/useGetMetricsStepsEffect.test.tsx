@@ -43,7 +43,7 @@ describe('use get steps effect', () => {
     expect(result.current.errorMessage).toEqual('BuildKite get steps failed: error message')
   })
 
-  it('should set isError is true when error has response', async () => {
+  it('should set isServerError is true when error has response', async () => {
     const error = {
       response: {
         status: 500,
@@ -62,7 +62,7 @@ describe('use get steps effect', () => {
     expect(result.current.isServerError).toEqual(true)
   })
 
-  it('should set isError is true when error is empty', async () => {
+  it('should set isServerError is true when error is empty', async () => {
     const error = {}
 
     metricsClient.getSteps = jest.fn().mockImplementation(() => {

@@ -64,7 +64,7 @@ describe('use generate report effect', () => {
     })
   })
 
-  it('should set isError is true when error has response', async () => {
+  it('should set isServerError is true when error has response', async () => {
     const error = {
       response: {
         status: 500,
@@ -83,7 +83,7 @@ describe('use generate report effect', () => {
     expect(result.current.isServerError).toEqual(true)
   })
 
-  it('should set isError is true when error is empty', async () => {
+  it('should set isServerError is true when error is empty', async () => {
     const error = {}
 
     reportClient.report = jest.fn().mockImplementation(() => {

@@ -4,6 +4,7 @@ import ErrorPage from '@src/pages/ErrorPage'
 import { ERROR_PAGE_MESSAGE } from '../fixtures'
 import userEvent from '@testing-library/user-event'
 import { navigateMock } from '../../setupTests'
+import { HOME_PAGE_ROUTE } from '@src/constants'
 
 describe('error page', () => {
   it('should show error message when render error page', () => {
@@ -27,6 +28,6 @@ describe('error page', () => {
 
     await userEvent.click(getByText('Go to homepage'))
 
-    expect(navigateMock).toHaveBeenCalledWith('/home')
+    expect(navigateMock).toHaveBeenCalledWith(HOME_PAGE_ROUTE)
   })
 })

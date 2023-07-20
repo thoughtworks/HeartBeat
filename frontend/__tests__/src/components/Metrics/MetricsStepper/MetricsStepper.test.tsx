@@ -36,6 +36,7 @@ import {
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { exportToJsonFile } from '@src/utils/util'
+import { HOME_PAGE_ROUTE } from '@src/constants'
 
 const START_DATE_LABEL = 'From *'
 const TODAY = dayjs()
@@ -198,7 +199,7 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(YES))
 
     expect(navigateMock).toHaveBeenCalledTimes(1)
-    expect(navigateMock).toHaveBeenCalledWith('/home')
+    expect(navigateMock).toHaveBeenCalledWith(HOME_PAGE_ROUTE)
   })
 
   it('should disable next when required data is empty ', async () => {

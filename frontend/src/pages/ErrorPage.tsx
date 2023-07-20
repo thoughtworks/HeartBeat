@@ -4,16 +4,17 @@ import Header from '@src/layouts/Header'
 import { useNavigate } from 'react-router-dom'
 import { GuideButton } from '@src/components/Common/Buttons'
 import { Stack } from '@mui/material'
+import { HOME_PAGE_ROUTE } from '@src/constants'
 
 const ErrorMessageContainer = styled.div({
-  padding: '48px',
+  padding: '3rem',
 })
 
 const ErrorPage = () => {
   const navigate = useNavigate()
 
   const backToHomePage = () => {
-    navigate('/home')
+    navigate(HOME_PAGE_ROUTE)
   }
 
   return (

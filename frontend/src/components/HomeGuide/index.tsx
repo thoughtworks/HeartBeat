@@ -6,7 +6,7 @@ import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/
 import React, { useState } from 'react'
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 import { resetStep } from '@src/context/stepper/StepperSlice'
-import { HOME_VERIFY_IMPORT_WARNING_MESSAGE } from '@src/constants'
+import { HOME_VERIFY_IMPORT_WARNING_MESSAGE, METRICS_PAGE_ROUTE } from '@src/constants'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { GuideButton } from '@src/components/Common/Buttons'
 
@@ -42,7 +42,7 @@ export const HomeGuide = () => {
             const importedConfig = JSON.parse(reader.result)
             dispatch(updateBasicConfigState(importedConfig))
             dispatch(updateMetricsImportedData(importedConfig))
-            navigate('/metrics')
+            navigate(METRICS_PAGE_ROUTE)
           } else {
             setValidConfig(false)
           }
@@ -63,7 +63,7 @@ export const HomeGuide = () => {
 
   const createNewProject = () => {
     dispatch(resetStep())
-    navigate('/metrics')
+    navigate(METRICS_PAGE_ROUTE)
   }
 
   return (

@@ -20,7 +20,7 @@ import {
   updatePipelineStep,
 } from '@src/context/Metrics/metricsSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
-import { NO_STEP_WARNING_MESSAGE } from '@src/constants'
+import { ERROR_PAGE_ROUTE, NO_STEP_WARNING_MESSAGE } from '@src/constants'
 import { useNavigate } from 'react-router-dom'
 
 interface pipelineMetricSelectionProps {
@@ -78,7 +78,7 @@ export const PipelineMetricSelection = ({
   return (
     <>
       {isServerError ? (
-        navigate('/error-page')
+        navigate(ERROR_PAGE_ROUTE)
       ) : (
         <PipelineMetricSelectionWrapper>
           {organizationWarningMessage && <WarningNotification message={organizationWarningMessage} />}

@@ -5,6 +5,7 @@ import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
 import {
   CHINA_CALENDAR,
+  ERROR_PAGE_ROUTE,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   NAME,
@@ -200,7 +201,7 @@ export const ReportStep = () => {
       {isLoading ? (
         <Loading />
       ) : isReportError || isCSVError ? (
-        navigate('/error-page')
+        navigate(ERROR_PAGE_ROUTE)
       ) : (
         <>
           {reportErrorMsg && (

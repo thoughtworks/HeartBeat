@@ -13,7 +13,14 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import { ConfigStep } from '@src/components/Metrics/ConfigStep'
-import { METRICS_CONSTANTS, PIPELINE_SETTING_TYPES, REQUIRED_DATA, SAVE_CONFIG_TIPS, STEPS } from '@src/constants'
+import {
+  HOME_PAGE_ROUTE,
+  METRICS_CONSTANTS,
+  PIPELINE_SETTING_TYPES,
+  REQUIRED_DATA,
+  SAVE_CONFIG_TIPS,
+  STEPS,
+} from '@src/constants'
 import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
@@ -175,7 +182,7 @@ const MetricsStepper = () => {
   }
 
   const backToHomePage = () => {
-    navigate('/home')
+    navigate(HOME_PAGE_ROUTE)
     setIsDialogShowing(false)
     window.location.reload()
   }

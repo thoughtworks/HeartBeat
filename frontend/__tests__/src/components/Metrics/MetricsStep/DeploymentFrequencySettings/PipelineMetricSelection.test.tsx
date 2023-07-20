@@ -13,6 +13,7 @@ import {
   REMOVE_BUTTON,
   STEP,
 } from '../../../../fixtures'
+import { navigateMock } from '../../../../../setupTests'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -213,6 +214,22 @@ describe('PipelineMetricSelection', () => {
       expect(queryByText('Test organization warning message')).not.toBeInTheDocument()
       expect(queryByText('Test pipelineName warning message')).not.toBeInTheDocument()
       expect(queryByText('Test step warning message')).not.toBeInTheDocument()
+    })
+  })
+
+  it('should check error page show when isServerError is true', async () => {
+    const error = {
+      response: {
+        status: 500,
+      },
+    }
+    metricsClient.getSteps = jest.fn().mockImplementation(() => {
+      throw error
+    })
+    await setup({ id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' }, false, false)
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith('/error-page')
     })
   })
 })

@@ -16,6 +16,8 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
+import React from 'react'
+import { navigateMock } from '../../../../setupTests'
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
@@ -221,6 +223,20 @@ describe('Board', () => {
       expect(
         getByText(`${BOARD_TYPES.JIRA} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
       ).toBeInTheDocument()
+    })
+  })
+
+  it('should check error page show when isServerError is true', async () => {
+    server.use(
+      rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError)))
+    )
+    const { getByRole } = setup()
+    fillBoardFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: VERIFY }))
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith('/error-page')
     })
   })
 })

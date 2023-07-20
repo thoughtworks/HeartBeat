@@ -18,6 +18,7 @@ import {
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
+import { navigateMock } from '../../../../setupTests'
 
 export const fillSourceControlFieldsInformation = () => {
   const mockInfo = 'ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b'
@@ -159,6 +160,21 @@ describe('SourceControl', () => {
       expect(
         getByText(`${SOURCE_CONTROL_TYPES.GITHUB} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
       ).toBeInTheDocument()
+    })
+  })
+
+  it('should check error page show when isServerError is true', async () => {
+    server.use(
+      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError)))
+    )
+
+    const { getByRole } = setup()
+    fillSourceControlFieldsInformation()
+
+    fireEvent.click(getByRole('button', { name: VERIFY }))
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith('/error-page')
     })
   })
 })

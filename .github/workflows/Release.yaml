@@ -6,6 +6,7 @@ on:
       - '*'
 env:
   REPO_NAME: ${{ github.event.repository.name }}
+  LOWCASE_REPO_NAME: ${{ github.repository_owner}}/heartbeat
 
 jobs:
   build_backend:
@@ -57,11 +58,43 @@ jobs:
           name: frontend-app
           path: frontend/dist
           retention-days: ${{ vars.RETENTION_DAYS }}
-  release:
+
+  build_and_push_image:
     runs-on: ubuntu-latest
     needs:
       - build_frontend
       - build_backend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get Tag name
+        run: |
+          echo "TAG_NAME=$(git tag --sort version:refname | tail -n 1)" >> "$GITHUB_ENV"
+      - name: Build and Push Docker Image for frontend
+        uses: docker/build-push-action@v2
+        with:
+          file: ./ops/infra/Dockerfile.frontend
+          push: true
+          tags: |
+            ghcr.io/${{ env.LOWCASE_REPO_NAME }}_frontend:${{ env.TAG_NAME }}
+            ghcr.io/${{ env.LOWCASE_REPO_NAME }}_frontend:latest
+      - name: Build and Push Docker Image for backend
+        uses: docker/build-push-action@v2
+        with:
+          file: ./ops/infra/Dockerfile.backend
+          push: true
+          tags: |
+            ghcr.io/${{ env.LOWCASE_REPO_NAME }}_backend:${{ env.TAG_NAME }}
+            ghcr.io/${{ env.LOWCASE_REPO_NAME }}_backend:latest
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - build_and_push_image
     steps:
       - uses: actions/checkout@v3
       - name: Download frontend artifact
@@ -89,3 +122,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ env.REPO_NAME }}-${{ env.TAG_NAME }}.zip
+
+

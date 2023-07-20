@@ -15,6 +15,10 @@ describe('router', () => {
         </MemoryRouter>
       </Provider>
     )
+  jest.mock('@src/pages/metrics', () => ({
+    __esModule: true,
+    default: () => <div>Mocked Metrics Page</div>,
+  }))
 
   it('should show home page when loading on a bad page', async () => {
     const badRoute = '/some/bad/route'
@@ -35,18 +39,12 @@ describe('router', () => {
   })
 
   it('should show Metrics page when go Metrics page', async () => {
-    expect.assertions(3)
     const metricsRoute = '/metrics'
 
     const { getByText } = setup(metricsRoute)
-    await waitFor(
-      () => {
-        expect(getByText('Config')).toBeInTheDocument()
-        expect(getByText('Metrics')).toBeInTheDocument()
-        expect(getByText('Report')).toBeInTheDocument()
-      },
-      { timeout: 5000 }
-    )
+    await waitFor(() => {
+      expect(getByText('Mocked Metrics Page')).toBeInTheDocument()
+    })
   })
 
   it('should show error page when go error page', async () => {

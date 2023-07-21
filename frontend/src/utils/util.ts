@@ -30,8 +30,8 @@ export const transformToCleanedBuildKiteEmoji = (input: OriginBuildKiteEmoji[]):
     aliases: [...new Set([...aliases, name])],
   }))
 
-export const handleApiRequest = async (
-  apiCall: () => Promise<any>,
+export const handleApiRequest = async <T>(
+  apiCall: () => Promise<T>,
   errorHandler: (err: Error) => void,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   setIsServerError: React.Dispatch<React.SetStateAction<boolean>>,

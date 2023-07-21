@@ -143,10 +143,10 @@ jobs:
           pnpm coverage
       - name: Building
         run: pnpm build
-      - name: Upload Test Report to Codacy
-        run: |
-          export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
-          bash <(curl -Ls https://coverage.codacy.com/get.sh)
+#      - name: Upload Test Report to Codacy
+#        run: |
+#          export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
+#          bash <(curl -Ls https://coverage.codacy.com/get.sh)
   frontend-license-check:
     runs-on: ubuntu-latest
     defaults:

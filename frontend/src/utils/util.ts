@@ -1,4 +1,6 @@
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
+import { ERROR_MESSAGE_TIME_DURATION, UNKNOWN_EXCEPTION } from '@src/constants'
+import React from 'react'
 
 export const exportToJsonFile = (filename: string, json: object) => {
   const dataStr = JSON.stringify(json, null, 4)
@@ -27,3 +29,28 @@ export const transformToCleanedBuildKiteEmoji = (input: OriginBuildKiteEmoji[]):
     image,
     aliases: [...new Set([...aliases, name])],
   }))
+
+export const handleApiRequest = async (
+  apiCall: () => Promise<any>,
+  errorHandler: (err: Error) => void,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsServerError: React.Dispatch<React.SetStateAction<boolean>>,
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>
+) => {
+  setIsLoading(true)
+  try {
+    return await apiCall()
+  } catch (e) {
+    const err = e as Error
+    if (err.message === UNKNOWN_EXCEPTION) {
+      setIsServerError(true)
+    } else {
+      errorHandler(err)
+      setTimeout(() => {
+        setErrorMessage('')
+      }, ERROR_MESSAGE_TIME_DURATION)
+    }
+  } finally {
+    setIsLoading(false)
+  }
+}

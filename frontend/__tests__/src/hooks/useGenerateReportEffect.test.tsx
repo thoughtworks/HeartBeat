@@ -48,7 +48,7 @@ describe('use generate report effect', () => {
       result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
-    expect(result.current.errorMessage).toEqual('generate report: error message')
+    await waitFor(() => expect(result.current.errorMessage).toEqual('generate report: error message'))
   })
 
   it('should call reportMapper method when generate report response status 200', async () => {
@@ -76,6 +76,6 @@ describe('use generate report effect', () => {
       result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
-    expect(result.current.isServerError).toEqual(true)
+    await waitFor(() => expect(result.current.isServerError).toEqual(true))
   })
 })

@@ -5,6 +5,7 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import {
   BACK,
   CONFIRM_DIALOG_DESCRIPTION,
+  EXPECTED_REPORT_VALUES,
   LEAD_TIME_FOR_CHANGES,
   MOCK_REPORT_URL,
   NEXT,
@@ -59,6 +60,14 @@ const mockValidationCheckContext = {
 
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
+}))
+
+jest.mock('@src/hooks/useGenerateReportEffect', () => ({
+  useGenerateReportEffect: jest.fn().mockReturnValue({
+    generateReport: jest.fn(() => Promise.resolve(EXPECTED_REPORT_VALUES)),
+    isLoading: false,
+    isServerError: false,
+  }),
 }))
 
 jest.mock('@src/context/config/configSlice', () => ({

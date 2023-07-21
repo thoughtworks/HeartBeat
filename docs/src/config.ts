@@ -69,6 +69,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Error Handle', link: '/en/dev-center/error-handle' },
       { text: 'Emoji Flow', link: '/en/dev-center/emoji-flow' },
       { text: 'OriginCycleTime calculation', link: '/en/dev-center/origin-cycle-time-calculation' },
+      { text: 'Solution of BuildKite issue', link: '/en/dev-center/solution-of-buildkite-issue' },
     ],
   },
 };

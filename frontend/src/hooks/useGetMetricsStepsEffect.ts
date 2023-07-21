@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { ERROR_MESSAGE_TIME_DURATION, GET_STEPS_FAILED_MESSAGE } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION, GET_STEPS_FAILED_MESSAGE, UNKNOWN_EXCEPTION } from '@src/constants'
 import { getStepsParams, metricsClient } from '@src/clients/MetricsClient'
-import { AxiosError } from 'axios'
 
 export interface useGetMetricsStepsEffectInterface {
   getSteps: (
@@ -38,8 +37,8 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
     try {
       return await metricsClient.getSteps(params, organizationId, buildId, pipelineType, token)
     } catch (e) {
-      const err = e as AxiosError
-      if (!err.message || err.response) {
+      const err = e as Error
+      if (err.message === UNKNOWN_EXCEPTION) {
         setIsServerError(true)
       } else {
         setErrorMessage(`${pipelineType} ${GET_STEPS_FAILED_MESSAGE}: ${err.message}`)

@@ -6,6 +6,11 @@ import { store } from '@src/store'
 import { ERROR_PAGE_MESSAGE } from './fixtures'
 import { HOME_PAGE_ROUTE } from '@src/constants'
 
+jest.mock('@src/pages/Metrics', () => ({
+  __esModule: true,
+  default: () => <div>Mocked Metrics Page</div>,
+}))
+
 describe('router', () => {
   const setup = (routeUrl: string) =>
     render(
@@ -15,10 +20,6 @@ describe('router', () => {
         </MemoryRouter>
       </Provider>
     )
-  jest.mock('@src/pages/metrics', () => ({
-    __esModule: true,
-    default: () => <div>Mocked Metrics Page</div>,
-  }))
 
   it('should show home page when loading on a bad page', async () => {
     const badRoute = '/some/bad/route'

@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION, UNKNOWN_EXCEPTION } from '@src/constants'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { AxiosError } from 'axios'
 
 export interface useGenerateReportEffectInterface {
   generateReport: (params: ReportRequestDTO) => Promise<
@@ -34,8 +33,8 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       const res = await reportClient.report(params)
       return reportMapper(res.response)
     } catch (e) {
-      const err = e as AxiosError
-      if (!err.message || err.response) {
+      const err = e as Error
+      if (err.message === UNKNOWN_EXCEPTION) {
         setIsServerError(true)
       } else {
         setErrorMessage(`generate report: ${err.message}`)

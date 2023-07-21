@@ -4,6 +4,7 @@ import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { metricsClient } from '@src/clients/MetricsClient'
 import { MOCK_GET_STEPS_PARAMS } from '../fixtures'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnknownException } from '@src/exceptions/UnknownException'
 
 describe('use get steps effect', () => {
   const { params, buildId, organizationId, pipelineType, token } = MOCK_GET_STEPS_PARAMS
@@ -44,30 +45,10 @@ describe('use get steps effect', () => {
   })
 
   it('should set isServerError is true when error has response', async () => {
-    const error = {
-      response: {
-        status: 500,
-      },
-    }
-
     metricsClient.getSteps = jest.fn().mockImplementation(() => {
-      throw error
-    })
-    const { result } = renderHook(() => useGetMetricsStepsEffect())
-
-    act(() => {
-      result.current.getSteps(params, buildId, organizationId, pipelineType, token)
+      throw new UnknownException()
     })
 
-    expect(result.current.isServerError).toEqual(true)
-  })
-
-  it('should set isServerError is true when error is empty', async () => {
-    const error = {}
-
-    metricsClient.getSteps = jest.fn().mockImplementation(() => {
-      throw error
-    })
     const { result } = renderHook(() => useGetMetricsStepsEffect())
 
     act(() => {

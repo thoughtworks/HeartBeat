@@ -3,6 +3,7 @@ import { BadRequestException } from '@src/exceptions/BadRequestException'
 import { UnauthorizedException } from '@src/exceptions/UnauthorizedException'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/exceptions/ForbiddenException'
+import { UnknownException } from '@src/exceptions/UnknownException'
 
 export class HttpClient {
   protected httpTimeout = 300000
@@ -30,10 +31,10 @@ export class HttpClient {
             case HttpStatusCode.Forbidden:
               throw new ForbiddenException(errorMessage)
             default:
-              throw error
+              throw new UnknownException()
           }
         } else {
-          throw error
+          throw new UnknownException()
         }
       }
     )

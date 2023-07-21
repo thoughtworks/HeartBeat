@@ -5,6 +5,7 @@ import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE } from '../fi
 import { reportClient } from '@src/clients/report/ReportClient'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnknownException } from '@src/exceptions/UnknownException'
 
 jest.mock('@src/hooks/reportMapper/report', () => ({
   reportMapper: jest.fn(),
@@ -65,30 +66,10 @@ describe('use generate report effect', () => {
   })
 
   it('should set isServerError is true when error has response', async () => {
-    const error = {
-      response: {
-        status: 500,
-      },
-    }
-
     reportClient.report = jest.fn().mockImplementation(() => {
-      throw error
-    })
-    const { result } = renderHook(() => useGenerateReportEffect())
-
-    act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      throw new UnknownException()
     })
 
-    expect(result.current.isServerError).toEqual(true)
-  })
-
-  it('should set isServerError is true when error is empty', async () => {
-    const error = {}
-
-    reportClient.report = jest.fn().mockImplementation(() => {
-      throw error
-    })
     const { result } = renderHook(() => useGenerateReportEffect())
 
     act(() => {

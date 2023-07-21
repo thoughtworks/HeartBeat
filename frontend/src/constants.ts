@@ -187,3 +187,5 @@ export const HOME_PAGE_ROUTE = '/home'
 export const ERROR_PAGE_ROUTE = '/error-page'
 
 export const METRICS_PAGE_ROUTE = '/metrics'
+
+export const UNKNOWN_EXCEPTION = 'Unknown'

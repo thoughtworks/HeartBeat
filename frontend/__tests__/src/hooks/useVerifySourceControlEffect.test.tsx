@@ -3,6 +3,7 @@ import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlE
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient'
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnknownException } from '@src/exceptions/UnknownException'
 
 describe('use verify sourceControl state', () => {
   it('should initial data state when render hook', async () => {
@@ -42,31 +43,11 @@ describe('use verify sourceControl state', () => {
       `${MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`
     )
   })
-  it('should set isServerError is true when error has response', async () => {
-    const error = {
-      response: {
-        status: 500,
-      },
-    }
-
+  it('should set isServerError is true when error is unknown exception', async () => {
     sourceControlClient.getVerifySourceControl = jest.fn().mockImplementation(() => {
-      throw error
-    })
-    const { result } = renderHook(() => useVerifySourceControlEffect())
-
-    act(() => {
-      result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+      throw new UnknownException()
     })
 
-    expect(result.current.isServerError).toEqual(true)
-  })
-
-  it('should set isServerError is true when error is empty', async () => {
-    const error = {}
-
-    sourceControlClient.getVerifySourceControl = jest.fn().mockImplementation(() => {
-      throw error
-    })
     const { result } = renderHook(() => useVerifySourceControlEffect())
 
     act(() => {

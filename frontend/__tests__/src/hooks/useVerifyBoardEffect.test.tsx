@@ -4,6 +4,7 @@ import { boardClient } from '@src/clients/board/BoardClient'
 import { MOCK_BOARD_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnknownException } from '@src/exceptions/UnknownException'
 
 describe('use verify board state', () => {
   it('should initial data state when render hook', async () => {
@@ -11,6 +12,7 @@ describe('use verify board state', () => {
 
     expect(result.current.isLoading).toEqual(false)
   })
+
   it('should set error message when get verify board throw error', async () => {
     jest.useFakeTimers()
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => {
@@ -43,30 +45,9 @@ describe('use verify board state', () => {
     )
   })
 
-  it('should set isServerError is true when error has response', async () => {
-    const error = {
-      response: {
-        status: 500,
-      },
-    }
-
+  it('should set isServerError is true when error is unknown exception', async () => {
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => {
-      throw error
-    })
-    const { result } = renderHook(() => useVerifyBoardEffect())
-
-    act(() => {
-      result.current.verifyJira(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-    })
-
-    expect(result.current.isServerError).toEqual(true)
-  })
-
-  it('should set isServerError is true when error is empty', async () => {
-    const error = {}
-
-    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => {
-      throw error
+      throw new UnknownException()
     })
     const { result } = renderHook(() => useVerifyBoardEffect())
 

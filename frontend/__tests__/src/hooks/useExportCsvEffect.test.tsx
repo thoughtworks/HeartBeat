@@ -3,6 +3,7 @@ import { csvClient } from '@src/clients/report/CSVClient'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_EXPORT_CSV_REQUEST_PARAMS } from '../fixtures'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnknownException } from '@src/exceptions/UnknownException'
 
 describe('use export csv effect', () => {
   afterEach(() => {
@@ -37,30 +38,9 @@ describe('use export csv effect', () => {
     expect(result.current.errorMessage).toEqual('failed to export csv: error message')
   })
 
-  it('should set isServerError is true when error has response', async () => {
-    const error = {
-      response: {
-        status: 500,
-      },
-    }
-
+  it('should set isServerError is true when error is unknown exception', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw error
-    })
-    const { result } = renderHook(() => useExportCsvEffect())
-
-    act(() => {
-      result.current.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
-    })
-
-    expect(result.current.isServerError).toEqual(true)
-  })
-
-  it('should set isServerError is true when error is empty', async () => {
-    const error = {}
-
-    csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw error
+      throw new UnknownException()
     })
     const { result } = renderHook(() => useExportCsvEffect())
 

@@ -1,7 +1,7 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_URL, VERIFY_ERROR_MESSAGE } from '../fixtures'
-import { AxiosError, HttpStatusCode } from 'axios'
+import { HttpStatusCode } from 'axios'
 import { reportClient } from '@src/clients/report/ReportClient'
 
 const server = setupServer(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
@@ -28,11 +28,11 @@ describe('report client', () => {
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.BAD_REQUEST)
   })
 
-  it('should throw error when generate report response status 5xx', async () => {
+  it('should throw unknown exception when generate report response status 5xx', async () => {
     server.use(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
 
     await expect(async () => {
       await reportClient.report(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
-    }).rejects.toThrow(AxiosError)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 })

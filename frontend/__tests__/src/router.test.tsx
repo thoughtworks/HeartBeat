@@ -4,7 +4,7 @@ import Router from '@src/router'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
 import { ERROR_PAGE_MESSAGE } from './fixtures'
-import { HOME_PAGE_ROUTE } from '@src/constants'
+import { ERROR_PAGE_ROUTE, HOME_PAGE_ROUTE } from '@src/constants'
 
 jest.mock('@src/pages/Metrics', () => ({
   __esModule: true,
@@ -49,9 +49,7 @@ describe('router', () => {
   })
 
   it('should show error page when go error page', async () => {
-    const errorPageRoute = '/error-page'
-
-    const { getByText } = setup(errorPageRoute)
+    const { getByText } = setup(ERROR_PAGE_ROUTE)
 
     await waitFor(() => {
       expect(getByText(ERROR_PAGE_MESSAGE)).toBeInTheDocument()

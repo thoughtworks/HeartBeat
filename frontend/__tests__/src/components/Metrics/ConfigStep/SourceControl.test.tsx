@@ -19,6 +19,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
 import { navigateMock } from '../../../../setupTests'
+import { ERROR_PAGE_ROUTE } from '@src/constants'
 
 export const fillSourceControlFieldsInformation = () => {
   const mockInfo = 'ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b'
@@ -174,7 +175,7 @@ describe('SourceControl', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith('/error-page')
+      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
     })
   })
 })

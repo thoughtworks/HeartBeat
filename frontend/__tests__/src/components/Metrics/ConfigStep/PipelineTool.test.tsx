@@ -21,6 +21,7 @@ import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
 import { act } from 'react-dom/test-utils'
 import { navigateMock } from '../../../../setupTests'
+import { ERROR_PAGE_ROUTE } from '@src/constants'
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
@@ -208,7 +209,7 @@ describe('PipelineTool', () => {
     await userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith('/error-page')
+      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
     })
   })
 })

@@ -16,8 +16,8 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
-import React from 'react'
 import { navigateMock } from '../../../../setupTests'
+import { ERROR_PAGE_ROUTE } from '@src/constants'
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
@@ -236,7 +236,7 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith('/error-page')
+      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
     })
   })
 })

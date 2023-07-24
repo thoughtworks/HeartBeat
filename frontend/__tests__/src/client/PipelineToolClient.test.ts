@@ -53,26 +53,15 @@ describe('verify pipelineTool request', () => {
     )
   })
 
-  it('should throw error when pipelineTool verify response status 500', async () => {
-    server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
-        )
-      )
-    )
+  it('should throw unknown exception when pipelineTool verify response status 5xx', async () => {
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
-      VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR
+      VERIFY_ERROR_MESSAGE.UNKNOWN
     )
   })
 
-  it('should throw error when board verify response status 300', async () => {
-    server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.MultipleChoices), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN }))
-      )
-    )
+  it('should throw unknown exception when board verify response status 300', async () => {
+    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))))
 
     await expect(() => pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)).rejects.toThrow(
       VERIFY_ERROR_MESSAGE.UNKNOWN

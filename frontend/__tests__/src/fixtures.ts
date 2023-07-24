@@ -92,10 +92,8 @@ export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:fileName`
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
   UNAUTHORIZED = 'Token is incorrect',
-  INTERNAL_SERVER_ERROR = 'Internal server error',
   NOT_FOUND = '404 Not Found',
   PERMISSION_DENIED = 'Permission denied',
-  REQUEST_TIMEOUT = 'Request Timeout',
   UNKNOWN = 'Unknown',
 }
 
@@ -577,3 +575,8 @@ export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import da
 
 export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
   'The content of the imported JSON file is empty. Please confirm carefully'
+
+export const ERROR_PAGE_MESSAGE =
+  'Something is not quite right. We promise we are working on it - In the meantime, perhaps head back to our homepage and try again.'
+
+export const RETRY_BUTTON = 'Go to homepage'

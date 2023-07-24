@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { ERROR_MESSAGE_TIME_DURATION, GET_STEPS_FAILED_MESSAGE } from '@src/constants'
+import { GET_STEPS_FAILED_MESSAGE } from '@src/constants'
 import { getStepsParams, metricsClient } from '@src/clients/MetricsClient'
+import { handleApiRequest } from '@src/hooks/HandleApiRequest/handleApiRequest'
 
 export interface useGetMetricsStepsEffectInterface {
   getSteps: (
@@ -17,11 +18,13 @@ export interface useGetMetricsStepsEffectInterface {
     | undefined
   >
   isLoading: boolean
+  isServerError: boolean
   errorMessage: string
 }
 
 export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface => {
   const [isLoading, setIsLoading] = useState(false)
+  const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const getSteps = async (
@@ -31,19 +34,18 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
     pipelineType: string,
     token: string
   ) => {
-    setIsLoading(true)
-    try {
-      return await metricsClient.getSteps(params, organizationId, buildId, pipelineType, token)
-    } catch (e) {
-      const err = e as Error
+    const errorHandler = (err: Error) => {
       setErrorMessage(`${pipelineType} ${GET_STEPS_FAILED_MESSAGE}: ${err.message}`)
-      setTimeout(() => {
-        setErrorMessage('')
-      }, ERROR_MESSAGE_TIME_DURATION)
-    } finally {
-      setIsLoading(false)
     }
+
+    return await handleApiRequest(
+      () => metricsClient.getSteps(params, organizationId, buildId, pipelineType, token),
+      errorHandler,
+      setIsLoading,
+      setIsServerError,
+      setErrorMessage
+    )
   }
 
-  return { isLoading, getSteps, errorMessage }
+  return { isLoading, isServerError, getSteps, errorMessage }
 }

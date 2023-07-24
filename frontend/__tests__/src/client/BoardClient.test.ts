@@ -65,34 +65,15 @@ describe('verify board request', () => {
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNAUTHORIZED)
   })
 
-  it('should throw error when board verify response status 500', async () => {
-    server.use(
-      rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
-        )
-      )
-    )
+  it('should throw unknown exception when board verify response empty', async () => {
+    server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res) => res.networkError('Network Error')))
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 
-  it('should throw error when board verify response status 503', async () => {
-    server.use(
-      rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.ServiceUnavailable), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.REQUEST_TIMEOUT }))
-      )
-    )
-
-    await expect(async () => {
-      await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.REQUEST_TIMEOUT)
-  })
-
-  it('should throw error when board verify response status 300', async () => {
+  it('should throw unknown exception when board verify response status 300', async () => {
     server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))))
 
     await expect(async () => {
@@ -100,8 +81,10 @@ describe('verify board request', () => {
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 
-  it('should throw unknown error when board verify response empty', async () => {
-    server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res) => res.networkError('Network Error')))
+  it('should throw unknown exception when board verify response status 5xx', async () => {
+    server.use(
+      rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError)))
+    )
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)

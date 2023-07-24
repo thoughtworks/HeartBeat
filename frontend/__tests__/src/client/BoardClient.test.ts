@@ -9,7 +9,6 @@ import {
 } from '../fixtures'
 import { boardClient } from '@src/clients/board/BoardClient'
 import { HttpStatusCode } from 'axios'
-import { UNKNOWN_EXCEPTION } from '@src/constants'
 
 const server = setupServer(
   rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))),
@@ -68,19 +67,18 @@ describe('verify board request', () => {
 
   it('should throw unknown exception when board verify response empty', async () => {
     server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res) => res.networkError('Network Error')))
-    boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(UNKNOWN_EXCEPTION)
-    })
+
+    await expect(async () => {
+      await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 
   it('should throw unknown exception when board verify response status 300', async () => {
     server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))))
 
-    boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.UNKNOWN)
-    })
+    await expect(async () => {
+      await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 
   it('should throw unknown exception when board verify response status 5xx', async () => {
@@ -88,9 +86,8 @@ describe('verify board request', () => {
       rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError)))
     )
 
-    boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(UNKNOWN_EXCEPTION)
-    })
+    await expect(async () => {
+      await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 })

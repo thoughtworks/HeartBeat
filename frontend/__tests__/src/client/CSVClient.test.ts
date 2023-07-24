@@ -32,9 +32,8 @@ describe('verify export csv', () => {
   it('should throw unknown exception when export csv request status 5xx', async () => {
     server.use(rest.get(MOCK_EXPORT_CSV_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
 
-    csvClient.exportCSVData(MOCK_EXPORT_CSV_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.UNKNOWN)
-    })
+    await expect(async () => {
+      await csvClient.exportCSVData(MOCK_EXPORT_CSV_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 })

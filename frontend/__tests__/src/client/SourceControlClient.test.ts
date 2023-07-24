@@ -47,18 +47,16 @@ describe('verify sourceControl request', () => {
       rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError)))
     )
 
-    sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.UNKNOWN)
-    })
+    await expect(async () => {
+      await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 
   it('should throw unknown exception when sourceControl verify response status is 300', async () => {
     server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))))
 
-    sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
-      expect(e).toBeInstanceOf(Error)
-      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.UNKNOWN)
-    })
+    await expect(async () => {
+      await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 })

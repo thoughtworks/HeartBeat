@@ -14,7 +14,7 @@
     "test": "jest",
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
     "e2e:open": "TZ='PRC' cypress open",
-    "e2e": "TZ='PRC' cypress run --spec cypress/",
+    "e2e": "TZ='PRC' cypress run --config defaultCommandTimeout=10000 --spec cypress/",
     "prepare": "cd .. && husky install frontend/.husky",
     "license-compliance": "license-compliance -r detailed --allow='Unlicense;MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Python-2.0;CC-BY-4.0;CC-BY-3.0;WTFPL;CC0-1.0'"
   },

@@ -1,5 +1,6 @@
-import { exportToJsonFile, handleApiRequest, transformToCleanedBuildKiteEmoji } from '@src/utils/util'
+import { exportToJsonFile, transformToCleanedBuildKiteEmoji } from '@src/utils/util'
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
+import { handleApiRequest } from '@src/hooks/HandleApiRequest/handleApiRequest'
 
 describe('exportToJsonFile function', () => {
   it('should create a link element with the correct attributes and click it', () => {

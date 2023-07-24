@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
 import { csvClient } from '@src/clients/report/CSVClient'
-import { handleApiRequest } from '@src/utils/util'
+import { handleApiRequest } from '@src/hooks/HandleApiRequest/handleApiRequest'
 
 export interface useExportCsvEffectInterface {
   fetchExportData: (params: CSVReportRequestDTO) => void

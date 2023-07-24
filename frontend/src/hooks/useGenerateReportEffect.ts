@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { handleApiRequest } from '@src/utils/util'
 import { reportMapper } from '@src/hooks/reportMapper/report'
+import { handleApiRequest } from '@src/hooks/HandleApiRequest/handleApiRequest'
 
 export interface useGenerateReportEffectInterface {
   generateReport: (params: ReportRequestDTO) => Promise<

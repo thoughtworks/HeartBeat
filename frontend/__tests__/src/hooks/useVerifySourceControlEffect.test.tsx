@@ -22,7 +22,7 @@ describe('use verify sourceControl state', () => {
     expect(result.current.isLoading).toEqual(false)
 
     act(() => {
-      result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+      result.current.verifyGitHub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
       jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
     })
 
@@ -36,7 +36,7 @@ describe('use verify sourceControl state', () => {
     const { result } = renderHook(() => useVerifySourceControlEffect())
 
     act(() => {
-      result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+      result.current.verifyGitHub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
     })
 
     expect(result.current.errorMessage).toEqual(
@@ -51,7 +51,7 @@ describe('use verify sourceControl state', () => {
     const { result } = renderHook(() => useVerifySourceControlEffect())
 
     act(() => {
-      result.current.verifyGithub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
+      result.current.verifyGitHub(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
     })
 
     expect(result.current.isServerError).toEqual(true)

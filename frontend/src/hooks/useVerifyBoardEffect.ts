@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { boardClient } from '@src/clients/board/BoardClient'
 import { VERIFY_FAILED_ERROR_MESSAGE } from '@src/constants'
 import { BoardRequestDTO } from '@src/clients/board/dto/request'
-import { handleApiRequest } from '@src/utils/util'
+import { handleApiRequest } from '@src/hooks/HandleApiRequest/handleApiRequest'
 
 export interface useVerifyBoardStateInterface {
   verifyJira: (params: BoardRequestDTO) => Promise<

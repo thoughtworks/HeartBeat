@@ -37,7 +37,7 @@ export const SourceControl = () => {
   const sourceControlFields = useAppSelector(selectSourceControl)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isSourceControlVerified)
-  const { verifyGithub, isLoading, isServerError, errorMessage } = useVerifySourceControlEffect()
+  const { verifyGitHub, isLoading, isServerError, errorMessage } = useVerifySourceControlEffect()
   const [fields, setFields] = useState([
     {
       key: 'SourceControl',
@@ -91,7 +91,7 @@ export const SourceControl = () => {
       startTime: DateRange.startDate,
       endTime: DateRange.endDate,
     }
-    await verifyGithub(params).then((res) => {
+    await verifyGitHub(params).then((res) => {
       if (res) {
         dispatch(updateSourceControlVerifyState(res.isSourceControlVerify))
         dispatch(updateSourceControlVerifyState(res.response))

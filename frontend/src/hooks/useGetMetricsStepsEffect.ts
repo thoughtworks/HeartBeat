@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { GET_STEPS_FAILED_MESSAGE } from '@src/constants'
 import { getStepsParams, metricsClient } from '@src/clients/MetricsClient'
-import { handleApiRequest } from '@src/utils/util'
+import { handleApiRequest } from '@src/hooks/HandleApiRequest/handleApiRequest'
 
 export interface useGetMetricsStepsEffectInterface {
   getSteps: (

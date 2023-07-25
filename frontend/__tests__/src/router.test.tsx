@@ -3,8 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import Router from '@src/router'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
-import { ERROR_PAGE_MESSAGE } from './fixtures'
-import { ERROR_PAGE_ROUTE, HOME_PAGE_ROUTE } from '@src/constants'
+import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, HOME_PAGE_ROUTE } from './fixtures'
 
 jest.mock('@src/pages/Metrics', () => ({
   __esModule: true,

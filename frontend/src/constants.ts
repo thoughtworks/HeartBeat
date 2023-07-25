@@ -189,3 +189,6 @@ export const ERROR_PAGE_ROUTE = '/error-page'
 export const METRICS_PAGE_ROUTE = '/metrics'
 
 export const UNKNOWN_EXCEPTION = 'Unknown'
+
+export const ERROR_PAGE_MESSAGE =
+  'Something on internet is not quite right. Perhaps head back to our homepage and try again.'

@@ -3,6 +3,7 @@ import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
+  ERROR_PAGE_ROUTE,
   MOCK_PIPELINE_URL,
   MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
   PIPELINE_TOOL_FIELDS,
@@ -21,7 +22,6 @@ import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
 import { act } from 'react-dom/test-utils'
 import { navigateMock } from '../../../../setupTests'
-import { ERROR_PAGE_ROUTE } from '@src/constants'
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'

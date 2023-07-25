@@ -2,6 +2,7 @@ import { act, render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import {
   BACK,
+  ERROR_PAGE_ROUTE,
   EXPECTED_REPORT_VALUES,
   EXPORT_BOARD_DATA,
   EXPORT_PIPELINE_DATA,
@@ -17,7 +18,6 @@ import { navigateMock } from '../../../../setupTests'
 import mocked = jest.mocked
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
-import { ERROR_PAGE_ROUTE } from '@src/constants'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({

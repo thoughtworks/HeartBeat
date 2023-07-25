@@ -8,6 +8,7 @@
 
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat.svg?type=large)](https://app.fossa.com/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat?ref=badge_large)
 
+
 * [News](#news)
 * [About Heartbeat](#1-about-heartbeat)
 * [Support tools](#2-support-tools)
@@ -54,6 +55,7 @@
 # 1 About Heartbeat
 
 Heartbeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.
+
 
 State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
 
@@ -115,7 +117,6 @@ Because all metrics data from different tools that your projects use. Need to ha
 
 According to your selected required data, you need to input account settings for the respective data source. Below is the mapping between your selected data to data source.
 
-
 | Required Data  | Datasource  |
 |---|---|
 | Velocity  | Board  |
@@ -161,7 +162,9 @@ After inputting the details info, users need to click the `Verify` button to ver
 ![Image 3-5](https://user-images.githubusercontent.com/995849/90856562-c6f84800-e3b4-11ea-80ea-f1a267f1dcd7.png)\
 _Image 3-5, Crews/Cycle Time config_
 
+
 **Crew Settings:** You could select your team members from a list get from board source. The list will include the assignees for those tickets that finished in the time period selected in the last step.
+
 **Cycle Time:** It will list all columns for the current active jira board. Then users need to map the each column to the supported columns. Like, if your board have “in progress” column, it means developer doing this ticket, so it should be mapping with “In Dev” for the list we provide.
 
 | Status              | Description                                                                                                                            |
@@ -231,8 +234,10 @@ _Image 3-11，Cycle Time Report_
 
 ### 3.4.3 Classification
 
+
 It will show the classification data of Board based on your selection on `Classification Settings` in metrics page.
 The percentage value represent the count of that type tickets vs total count of tickets.
+
 
 ![Image 3-12](docs/img/Classification-Export.png)\
 _Image 3-12，Classification Report_
@@ -324,12 +329,14 @@ In the current version, if you add or delete some columns for the jira board, it
 | Kanban        | It will change finish time for all last column tickets to add/delete column time                                                          | If delete non-last column: It will change finish time for all last column tickets to add/delete column time<br/>If delete the last column: It will change finish time for current last column tickets to add/delete column time |
 | Scrum         | finish time for all last column tickets to add/delete column time<br/>All finished ticket’s finish time changed to add/delete column time | If delete the last column: It will change finish time for current last column tickets to add/delete column time                                                                                                                 |
 
+
 ## 4.2 No crew settings for Pipeline and Github
 In case that not only your team but also other team was contributing on the same repo and pipeline, the metrics (`Lead time for change`, `deployment frenquency`, `change failure rate`, `mean time to recovery`) might not be as accurate which might include the other team's contribution. Because currently Heartbeat could't not differentiate which pipeline trigger by your team or other team within specified time range. The feature is still under development.
 
 ## 4.3 Change failure rate and MTTR
 Currently the calculated metrics for change failure rate might not be precise in some scenarios.
 And MTTR is still under development.
+
 
 # 5 Instructions
 

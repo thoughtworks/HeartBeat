@@ -5,6 +5,7 @@ import {
   BOARD_TYPES,
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
+  ERROR_PAGE_ROUTE,
   MOCK_BOARD_URL_FOR_JIRA,
   RESET,
   VERIFY,
@@ -17,7 +18,7 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
 import { navigateMock } from '../../../../setupTests'
-import { ERROR_PAGE_ROUTE } from '@src/constants'
+import userEvent from '@testing-library/user-event'
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
@@ -198,13 +199,13 @@ describe('Board', () => {
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: VERIFY }))
+    await userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(getByText('Sorry there is no card has been done, please change your collection date!')).toBeInTheDocument()
     })
 
-    fireEvent.click(getByRole('button', { name: 'Ok' }))
+    await userEvent.click(getByRole('button', { name: 'Ok' }))
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
   })
 
@@ -217,7 +218,7 @@ describe('Board', () => {
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: VERIFY }))
+    await userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(
@@ -233,7 +234,7 @@ describe('Board', () => {
     const { getByRole } = setup()
     fillBoardFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: VERIFY }))
+    await userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)

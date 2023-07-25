@@ -1,0 +1,17 @@
+server:
+  port: 4322
+  servlet:
+    context-path: /api/v1
+logging:
+  level:
+    root: INFO
+
+github:
+  url: ${MOCK_SERVER_URL}
+
+jira:
+  url: ${MOCK_SERVER_URL}
+
+buildKite:
+  url: ${MOCK_SERVER_URL}
+

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "0186104b-aa31-458c-a58c-63266806f2fe",
+    "graphql_id": "UGlwZWxpbmUtLS0wMTg2MTA0Yi1hYTMxLTQ1OGMtYTU4Yy02MzI2NjgwNmYyZmU=",
+    "url": "https://api.buildkite.com/v2/organizations/XXXX/pipelines/payment-selector-ui",
+    "web_url": "https://buildkite.com/XXXX/payment-selector-ui",
+    "name": "payment-selector-ui",
+    "description": "",
+    "slug": "payment-selector-ui",
+    "repository": "https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git",
+    "cluster_id": null,
+    "branch_configuration": null,
+    "default_branch": "main",
+    "skip_queued_branch_builds": "false",
+    "skip_queued_branch_builds_filter": null,
+    "cancel_running_branch_builds": "false",
+    "cancel_running_branch_builds_filter": null,
+    "allow_rebuilds": "true",
+    "provider": {
+      "id": "github",
+      "settings": {
+        "trigger_mode": "code",
+        "build_pull_requests": true,
+        "pull_request_branch_filter_enabled": false,
+        "skip_builds_for_existing_commits": false,
+        "skip_pull_request_builds_for_existing_commits": true,
+        "build_pull_request_ready_for_review": false,
+        "build_pull_request_labels_changed": false,
+        "build_pull_request_base_branch_changed": false,
+        "build_pull_request_forks": false,
+        "prefix_pull_request_fork_branch_names": true,
+        "build_branches": true,
+        "build_tags": false,
+        "cancel_deleted_branch_builds": false,
+        "publish_commit_status": true,
+        "publish_commit_status_per_step": false,
+        "separate_pull_request_statuses": false,
+        "publish_blocked_as_pending": false,
+        "use_step_key_as_commit_status": false,
+        "filter_enabled": false,
+        "repository": "XXXX-fs/fs-platform-payment-selector-ui"
+      },
+      "webhook_url": "https://webhook.buildkite.com/deliver/8da39bcce91c2d11b5e363b59ac2d49c9687a77a794e4a82e5"
+    },
+    "builds_url": "https://api.buildkite.com/v2/organizations/XXXX/pipelines/payment-selector-ui/builds",
+    "badge_url": "https://badge.buildkite.com/3184772a588a1f0e6bec7bd6ae819dcbe9ec9f125812768b93.svg",
+    "created_by": {
+      "id": "018237b3-dc15-4236-b3df-7fa074e95997",
+      "graphql_id": "VXNlci0tLTAxODIzN2IzLWRjMTUtNDIzNi1iM2RmLTdmYTA3NGU5NTk5Nw==",
+      "name": "Yonghee Jeon",
+      "email": "*******",
+      "avatar_url": "https://www.gravatar.com/avatar/f3f19d7a06931ab6866278b9bd9fe425",
+      "created_at": "2022-07-25T23:31:50.420+00:00"
+    },
+    "created_at": "2023-02-02T04:03:59.664+00:00",
+    "archived_at": null,
+    "env": {},
+    "scheduled_builds_count": 0,
+    "running_builds_count": 0,
+    "scheduled_jobs_count": 0,
+    "running_jobs_count": 1,
+    "waiting_jobs_count": 0,
+    "visibility": "private",
+    "tags": null,
+    "steps": [
+      {
+        "type": "script",
+        "name": "step1",
+        "command": "buildkite-agent pipeline upload",
+        "artifact_paths": "",
+        "branch_configuration": "",
+        "env": {},
+        "timeout_in_minutes": null,
+        "agent_query_rules": [
+          "queue=fs-platform-dev"
+        ],
+        "concurrency": null,
+        "parallelism": null
+      }
+    ]
+  }
+]

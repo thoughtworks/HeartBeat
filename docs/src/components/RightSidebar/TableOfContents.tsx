@@ -1,23 +1,21 @@
-import { unescape } from "html-escaper";
-import type { MarkdownHeading } from "astro";
-import type { FunctionalComponent } from "preact";
-import { useState, useEffect, useRef } from "preact/hooks";
+import { unescape } from 'html-escaper';
+import type { MarkdownHeading } from 'astro';
+import type { FunctionalComponent } from 'preact';
+import { useState, useEffect, useRef } from 'preact/hooks';
 
 type ItemOffsets = {
   id: string;
   topOffset: number;
 };
 
-const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
-  headings = [],
-}) => {
+const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({ headings = [] }) => {
   const toc = useRef<HTMLUListElement>();
-  const onThisPageID = "on-this-page-heading";
+  const onThisPageID = 'on-this-page-heading';
   const itemOffsets = useRef<ItemOffsets[]>([]);
-  const [currentID, setCurrentID] = useState("overview");
+  const [currentID, setCurrentID] = useState('overview');
   useEffect(() => {
     const getItemOffsets = () => {
-      const titles = document.querySelectorAll("article :is(h1, h2, h3, h4)");
+      const titles = document.querySelectorAll('article :is(h1, h2, h3, h4)');
       itemOffsets.current = Array.from(titles).map((title) => ({
         id: title.id,
         topOffset: title.getBoundingClientRect().top + window.scrollY,
@@ -25,10 +23,10 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
     };
 
     getItemOffsets();
-    window.addEventListener("resize", getItemOffsets);
+    window.addEventListener('resize', getItemOffsets);
 
     return () => {
-      window.removeEventListener("resize", getItemOffsets);
+      window.removeEventListener('resize', getItemOffsets);
     };
   }, []);
 
@@ -49,26 +47,21 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
     const observerOptions: IntersectionObserverInit = {
       // Negative top margin accounts for `scroll-margin`.
       // Negative bottom margin means heading needs to be towards top of viewport to trigger intersection.
-      rootMargin: "-100px 0% -66%",
+      rootMargin: '-100px 0% -66%',
       threshold: 1,
     };
 
-    const headingsObserver = new IntersectionObserver(
-      setCurrent,
-      observerOptions
-    );
+    const headingsObserver = new IntersectionObserver(setCurrent, observerOptions);
 
     // Observe all the headings in the main page content.
-    document
-      .querySelectorAll("article :is(h1,h2,h3)")
-      .forEach((h) => headingsObserver.observe(h));
+    document.querySelectorAll('article :is(h1,h2,h3)').forEach((h) => headingsObserver.observe(h));
 
     // Stop observing when the component is unmounted.
     return () => headingsObserver.disconnect();
   }, [toc.current]);
 
   const onLinkClick = (e) => {
-    setCurrentID(e.target.getAttribute("href").replace("#", ""));
+    setCurrentID(e.target.getAttribute('href').replace('#', ''));
   };
 
   return (
@@ -82,7 +75,7 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
           .map((heading) => (
             <li
               className={`header-link depth-${heading.depth} ${
-                currentID === heading.slug ? "current-header-link" : ""
+                currentID === heading.slug ? 'current-header-link' : ''
               }`.trim()}
             >
               <a href={`#${heading.slug}`} onClick={onLinkClick}>

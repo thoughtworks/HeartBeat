@@ -1,4 +1,12 @@
-# HeartBeat User Guide（2020/06，Version 1）
+# Heartbeat Project（2023/01）
+
+[![Build status](https://badge.buildkite.com/94880b707695acea56c07125ec8e0d1220c746457d120ed022.svg)](https://buildkite.com/thoughtworks-Heartbeat/heartbeat)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Grade)[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Coverage)
+
+[![Docs](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml) [![Frontend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml) [![Backend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml) [![Security](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml) [![Build and Deploy](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat.svg?type=large)](https://app.fossa.com/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat?ref=badge_large)
 
 * [About HeartBeat](#1-about-heartbeat)
 * [Support tools](#2-support-tools)
@@ -46,10 +54,10 @@ State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics 
 
 **Here are the four Key meterics:**
 
-1. Deployment Frequency (DF)
-2. Lead Time for changes (LTC)
-3. Mean Time To Recover (MTTR)
-4. Change Failure Rate (CFR)
+1.  Deployment Frequency (DF)
+2.  Lead Time for changes (LTC)
+3.  Mean Time To Recover (MTTR)
+4.  Change Failure Rate (CFR)
 
 In HeartBeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So we can collect DF, LTC, CFR, Velocity, Cycle Time and Classification.
 
@@ -84,8 +92,8 @@ Users need to select a period of time, then all of the data that follows is base
 
 **Have two items of time period:**
 
-1. **Regular Calendar(Weekend Considered):** If you select this item, it means all data will exclude the weekend.
-2. **Calendar with Chinese Holiday:** If you select this item, it means all data will exclude the weekend and Chinese holiday. So if the time period you selected contains Chinese holiday, you need to select this item.
+1.  **Regular Calendar(Weekend Considered):** If you select this item, it means all data will exclude the weekend.
+2.  **Calendar with Chinese Holiday:** If you select this item, it means all data will exclude the weekend and Chinese holiday. So if the time period you selected contains Chinese holiday, you need to select this item.
 
 All need to select which data you want to get, for now, we support seven metrics data (Image 3-3). Those seven metrics are `Deployment Frequency (DF)`, `Lead Time for changes (LTC)`, `Mean Time To Recover (MTTR)`, `Change Failure Rate (CFR)`, and `Velocity`, `Cycle time`, `Classification`, where
 - `Velocity` : includes how many story points and cards we have completed within selected time period.
@@ -324,16 +332,17 @@ And MTTR is still under development.
 
 For Classic Jira users, before you use this tool, you need to do some settings for the jira board. Otherwise, you cannot get the data. Here are the steps you need to do:
 
-1. Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
-   ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
-   _Image 5-1_
+1.  Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
+    ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
+    _Image 5-1_
 
-2. You need to enable any items you want to know. In the above page, If you want to change any items' screens, you can click the screens link in the actions column for that item. Then in the next page, check the project you want to change, and update it. Like: Story points
-   ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
-   _Image 5-2_
+2.  You need to enable any items you want to know. In the above page, If you want to change any items' screens, you can click the screens link in the actions column for that item. Then in the next page, check the project you want to change, and update it. Like: Story points
 
-   ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
-   _Image 5-3_
+- ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
+  _Image 5-2_
+
+- ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
+  _Image 5-3_
 
 For the next-gen Jira, when you add story points item, the name should be Story Points or Story point estimate.
 
@@ -341,58 +350,70 @@ For the next-gen Jira, when you add story points item, the name should be Story 
 
 For now, we just can download the code in our local machine, please follow below steps:
 
-1. Clone the backend code in your local machine: https://github.com/thoughtworks/HeartBeat/
-2. Follow the steps as below
+1.  Clone the backend code in your local machine: https://github.com/thoughtworks/HeartBeat/
+2.  Follow the steps as below
 
 # 6 Run HeartBeat
 
-## Run via Docker
-
-```
-$ docker-compose up
-```
-
-## 6.1 How to run backend
-
-Install node modules:
-
-```shell script
-cd HearBeat/backend
-yarn install
-```
-
-Run backend:
-
-```shell script
-yarn start
-```
-
-swagger address: `http://localhost:3001/swagger-html`
-
-## 6.1.1 How to package it (optional)
-
-```shell script
-yarn package
-```
-
-you can build server to binary file, it will output 3 files:
-
-- heartbeat-backend-linux
-- heartbeat-backend-macos
-- heartbeat-backend-win.exe
-
-these files can run on different system, you do not need to install node environment
-
-## 6.2 How to run frontend
+## 6.1 How to run frontend
 
 ```
 cd HearBeat/frontend
-yarn install --pure-lockfile
-yarn start
+pnpm install
+pnpm start
 ```
 
-## 6.2.1 How to build it
+## 6.1.1 How to build and local preview
 
 ```
-yarn build
+pnpm build
+pnpm preview
+```
+
+## 6.1.2 How to run unit tests
+
+```
+pnpm test
+```
+
+## 6.1.3 How to generate a test report
+
+```
+pnpm coverage
+```
+
+## 6.1.4 How to run e2e tests
+
+```
+pnpm e2e
+```
+
+## 6.1.5 How to generate a e2e report
+
+```
+pnpm e2e:report
+```
+# 7 How to trigger BuildKite Pipeline
+1. Add `[stub]` tag to the title of a commit message or PR to trigger stub-related deployments.
+
+2. Add `[infra]` tag to the title of the commit message or PR to trigger infra-related deployments.
+
+3. Add `[backend]` tag to the title of the commit message or PR to trigger backend-related deployments.
+
+4. Add `[frontend]` tag to the title of the commit message or PR to trigger frontend-related deployments.
+
+
+## Release
+
+Release version follows  **[Software release life cycle](https://en.wikipedia.org/wiki/Software_release_life_cycle)**
+
+### Release command in main branch
+
+```sh
+git tag {tag name}
+git push origin {tag name}
+
+# Delete tag
+git tag -d {tag name}
+git push origin :refs/tags/{tag name}
 ```

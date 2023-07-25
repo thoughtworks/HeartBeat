@@ -1,0 +1,253 @@
+{
+  "metrics": [
+    "Velocity",
+    "Cycle time",
+    "Classification",
+    "Lead time for changes",
+    "Deployment frequency",
+    "Change failure rate"
+  ],
+  "startTime": 1661702400000,
+  "endTime": 1662739199000,
+  "buildKiteSetting": {
+    "type": "BuildKite",
+    "token": "0d6*********************************a57a",
+    "deploymentEnvList": [
+      {
+        "orgId": "xxxx",
+        "orgName": "XXXX",
+        "id": "fs-platform-payment-selector",
+        "name": "fs-platform-payment-selector",
+        "step": "RECORD RELEASE TO PROD"
+      },
+      {
+        "orgId": "xxxx",
+        "orgName": "XXXX",
+        "id": "fs-platform-onboarding",
+        "name": "fs-platform-onboarding",
+        "step": " :shipit: deploy to PROD"
+      },
+      {
+        "orgId": "xxxx",
+        "orgName": "XXXX",
+        "id": "fs-platform-environment-devops",
+        "name": "fs-platform-environment-devops",
+        "step": "RECORD RELEASE TO PROD"
+      }
+    ]
+  },
+  "jiraBoardSetting": {
+    "type": "classic jira",
+    "token": "Basic exxxxxhhbmdxxxxvYixxxxxxZzlxxxxxx3Rqaxxxxxlodxxxxx9BRUU3",
+    "site": "arlive",
+    "projectKey": "PLL",
+    "boardId": "1963",
+    "boardColumns": [
+      {
+        "name": "Ready For Test",
+        "value": "Waiting for testing"
+      },
+      {
+        "name": "In Analysis",
+        "value": "Analysis"
+      },
+      {
+        "name": "Ready For Dev",
+        "value": "Analysis"
+      },
+      {
+        "name": "Done",
+        "value": "Done"
+      },
+      {
+        "name": "Blocked",
+        "value": "Block"
+      },
+      {
+        "name": "In Dev",
+        "value": "In Dev"
+      },
+      {
+        "name": "Ready to Deploy",
+        "value": "Review"
+      },
+      {
+        "name": "In Test",
+        "value": "Testing"
+      }
+    ],
+    "treatFlagCardAsBlock": false,
+    "users": [
+      "Qian Zhang",
+      "Anthony Tse",
+      "Harsh Singal",
+      "Sumit Narang",
+      "Prashant Agarwal",
+      "Yu Zhang",
+      "Peihang Yu",
+      "Mengyang Sun",
+      "Gerard Ho",
+      "Brian Ong",
+      "HanWei Wang",
+      "Yonghee Jeon Jeon"
+    ],
+    "targetFields": [
+      {
+        "key": "issuetype",
+        "name": "Issue Type",
+        "flag": false
+      },
+      {
+        "key": "customfield_21212",
+        "name": "Has Dependancies",
+        "flag": false
+      },
+      {
+        "key": "customfield_22466",
+        "name": "FS R&D Classification",
+        "flag": false
+      },
+      {
+        "key": "parent",
+        "name": "Parent",
+        "flag": false
+      },
+      {
+        "key": "components",
+        "name": "Components",
+        "flag": false
+      },
+      {
+        "key": "customfield_22581",
+        "name": "FS Product",
+        "flag": false
+      },
+      {
+        "key": "project",
+        "name": "Project",
+        "flag": false
+      },
+      {
+        "key": "reporter",
+        "name": "Reporter",
+        "flag": false
+      },
+      {
+        "key": "customfield_16400",
+        "name": "Parent Link",
+        "flag": false
+      },
+      {
+        "key": "fixVersions",
+        "name": "Fix versions",
+        "flag": false
+      },
+      {
+        "key": "priority",
+        "name": "Priority",
+        "flag": false
+      },
+      {
+        "key": "customfield_16800",
+        "name": "Paired Member",
+        "flag": false
+      },
+      {
+        "key": "labels",
+        "name": "Labels",
+        "flag": false
+      },
+      {
+        "key": "customfield_10004",
+        "name": "Story Points",
+        "flag": false
+      },
+      {
+        "key": "customfield_10007",
+        "name": "Sprint",
+        "flag": false
+      },
+      {
+        "key": "customfield_10008",
+        "name": "Epic Link",
+        "flag": false
+      },
+      {
+        "key": "assignee",
+        "name": "Assignee",
+        "flag": false
+      },
+      {
+        "key": "customfield_22203",
+        "name": "FS Work Categorization",
+        "flag": false
+      },
+      {
+        "key": "customfield_21871",
+        "name": "FS Work Type",
+        "flag": true
+      },
+      {
+        "key": "customfield_10009",
+        "name": "Epic Name",
+        "flag": false
+      },
+      {
+        "key": "customfield_11700",
+        "name": "Acceptance Criteria",
+        "flag": false
+      },
+      {
+        "key": "environment",
+        "name": "Environment",
+        "flag": false
+      },
+      {
+        "key": "versions",
+        "name": "Affects versions",
+        "flag": false
+      },
+      {
+        "key": "customfield_22213",
+        "name": "FS Domains",
+        "flag": false
+      },
+      {
+        "key": "customfield_22231",
+        "name": "PIR Completed",
+        "flag": false
+      },
+      {
+        "key": "customfield_17000",
+        "name": "Team",
+        "flag": false
+      },
+      {
+        "key": "customfield_16302",
+        "name": "Incident Priority",
+        "flag": false
+      },
+      {
+        "key": "customfield_14603",
+        "name": "Resolution Details",
+        "flag": false
+      },
+      {
+        "key": "customfield_22229",
+        "name": "Time to Resolution - Hrs",
+        "flag": false
+      },
+      {
+        "key": "customfield_22228",
+        "name": "Time to Detect - Hrs",
+        "flag": false
+      },
+      {
+        "key": "customfield_22226",
+        "name": "Cause by - System",
+        "flag": false
+      }
+    ],
+    "doneColumn": ["DONE"]
+  }
+}

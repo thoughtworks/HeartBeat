@@ -1,9 +1,0 @@
-<div class="warning-message">
-  <div *ngIf="warningMessagesForImport.length > 1">
-    <h4>Warnings! Please double check!</h4>
-    <ul *ngFor="let message of warningMessagesForImport">
-      <li>{{ message }}</li>
-    </ul>
-  </div>
-  <div *ngIf="warningMessagesForImport.length === 1">Warning: {{ warningMessagesForImport[0] }}</div>
-</div>

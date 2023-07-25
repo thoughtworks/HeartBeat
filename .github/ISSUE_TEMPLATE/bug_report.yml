@@ -1,0 +1,93 @@
+name: Bug Report
+description: Report a bug to Heartbeat
+title: "[Bug] "
+labels: [bug]
+body:
+- type: markdown
+  attributes:
+    value: |
+      The issue list is reserved exclusively for bug reports and feature requests.
+
+      For usage questions, please use the following resources:
+
+      - Read the [docs](https://au-heartbeat.github.io/Heartbeat)
+
+      For non-technical support or general questions, you can email [heartbeat-dev@thoughtworks.com](mailto:heartbeat-dev@thoughtworks.com).
+
+      Also try to search for your issue - it may have already been answered or even fixed in the development branch. However, if you find that an old, closed issue still persists in the latest version, you should open a new issue using the form below instead of commenting on the old issue.
+
+- type: input
+  attributes:
+    label: Version
+    description: |
+      Check if the issue is reproducible with the latest stable version of Heartbeat.
+    placeholder: |
+      e.g. latest
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Summary
+    description: |
+      Please give us some info about your bug.
+
+    placeholder: |
+      1. I want to get the metrics report, but failed.
+      2. ......
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Steps to Reproduce
+    description: |
+      What do we need to do after opening your repo in order to make the bug happen? Clear and concise reproduction instructions are important for us to be able to triage your issue in a timely manner. Note that you can use [Markdown](https://guides.github.com/features/mastering-markdown/) to format lists and code.
+
+    placeholder: |
+      1. What's you input? Mask sensitive data
+      2. What's you select?
+      3. ......
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Current Behavior
+    description: A concise description of what you're experiencing.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Expected Behavior
+    description: A concise description of what you expected to happen.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Environment
+    description: |
+      e.g.
+        - **OS**: macOS Monterey
+        - **Browser**: Chrome 96.0.4664.55
+    value: |
+        - OS:
+        - Browser:
+    render: markdown
+
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Any additional comments?
+    description: |
+      e.g. some background/context of how you ran into this bug.
+
+  validations:
+    required: false

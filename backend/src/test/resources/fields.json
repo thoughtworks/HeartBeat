@@ -1,0 +1,64 @@
+{
+  "customfield_1001": null,
+  "customfield_1002": "test",
+  "customfield_1003": [],
+  "customfield_1004": [
+    {
+      "id": 1,
+      "name": "Sprint 1 name",
+      "state": "closed",
+      "boardId": 1,
+      "goal": "",
+      "startDate": "2023-05-15T03:09:23.000Z",
+      "endDate": "2023-05-28T16:00:00.000Z",
+      "completeDate": "2023-05-29T03:51:24.898Z"
+    }
+  ],
+  "customfield_1005": [
+    {
+      "id": 1,
+      "key": "Sprint 1 key",
+      "state": "closed",
+      "boardId": 1,
+      "goal": "",
+      "startDate": "2023-05-15T03:09:23.000Z",
+      "endDate": "2023-05-28T16:00:00.000Z",
+      "completeDate": "2023-05-29T03:51:24.898Z"
+    }
+  ],
+  "customfield_1006": [
+    {
+      "id": 1,
+      "displayName": "Sprint 1 displayName",
+      "state": "closed",
+      "boardId": 1,
+      "goal": "",
+      "startDate": "2023-05-15T03:09:23.000Z",
+      "endDate": "2023-05-28T16:00:00.000Z",
+      "completeDate": "2023-05-29T03:51:24.898Z"
+    }
+  ],
+  "customfield_1007": [
+    {
+      "id": 1,
+      "value": "Sprint 1 value",
+      "state": "closed",
+      "boardId": 1,
+      "goal": "",
+      "startDate": "2023-05-15T03:09:23.000Z",
+      "endDate": "2023-05-28T16:00:00.000Z",
+      "completeDate": "2023-05-29T03:51:24.898Z"
+    }
+  ],
+  "customfield_1008": 1.0,
+  "customfield_1009": {
+    "hasEpicLinkFieldDependency": false,
+    "showField": false,
+    "nonEditableReason": {
+      "reason": "reason",
+      "message": "message"
+    }
+  },
+  "customfield_1010": "null",
+  "customfield_1011": "{}"
+}

@@ -1,0 +1,17 @@
+server:
+  port: 4322
+  servlet:
+    context-path: /api/v1
+logging:
+  level:
+    root: DEBUG
+
+github:
+  url: ${MOCK_SERVER_URL:https://api.github.com}
+
+jira:
+  url: ${MOCK_SERVER_URL:https://%s.atlassian.net}
+
+buildKite:
+  url: ${MOCK_SERVER_URL:https://api.buildkite.com}
+

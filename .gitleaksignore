@@ -1,0 +1,17 @@
+230243c845a87e3057db40ec4789db3abd6039c1:frontend/cypress/fixtures/ConfigFileForImporting.json:github-pat:20
+53ca7b3159a8af6643c595806831d971eace49d0:frontend/cypress/fixtures/ConfigFileForImporting.json:github-pat:30
+b0cd685a795b7e8932b9de46852dea3189b47e52:backend/src/test/java/heartbeat/service/report/GenerateReporterServiceTest.java:github-pat:283
+53ca7b3159a8af6643c595806831d971eace49d0:frontend/cypress/fixtures/ConfigFileForImporting.json:30
+a617f8e5436afbdde3bdf797a58520bf572aa49d:frontend/cypress/fixtures/fixtures.ts:github-pat:37
+230243c845a87e3057db40ec4789db3abd6039c1:frontend/cypress/fixtures/ConfigFileForImporting.
+63d76c9d2e0543713a7b07f8e5bb5ba15b56df4c:frontend/cypress/fixtures/testFile.json:github-pat:20
+650c226f1bb8d318a321557c53a5728780bcb930:frontend/cypress/fixtures/testFile.json:github-pat:20
+26736a1a30ace3a9d056e6143d01f398647a31c2:frontend/cypress/fixtures/testFile.json:github-pat:20
+13d1ea6f1aa7b9b84e62b9dcd4895f0edeb8a66b:backend/src/test/java/heartbeat/util/TokenUtilTest.java:generic-api-key:11
+527a121bac53cb40910fd1591fb79c709663438f:frontend/__tests__/src/components/Metrics/ConfigStep/SourceControl.test.tsx:github-refresh-token:22
+37965f681e15ab84027d4bde2ffa39f62ed8cb47:frontend/cypress/e2e/createANewProject.cy.ts:github-pat:33
+33293c565ef39d6ea724c66bd6f48dcbb0adc576:frontend/__tests__/src/components/Metrics/ConfigStep/SourceControl.test.tsx:github-refresh-token:20
+33293c565ef39d6ea724c66bd6f48dcbb0adc576:frontend/cypress/e2e/createANewProject.cy.ts:github-refresh-token:24
+757ec6ca5ea5db0d4f3d1bb7fde44bb3ff9d6d78:backend/src/test/java/heartbeat/controller/source/GithubControllerTest.java:github-pat:38
+1cdc13e4639292d350a4c96da976e1288498f6b9:chunks/jsx-runtime.1f5acc6f.js:generic-api-key:1
+6b5bc00ef38ad7ef7ea5a94520b27c332bd2b4d8:backend/tests/services/kanban/Linear/Linear.test.ts:linear-api-key:10

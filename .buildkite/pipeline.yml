@@ -1,0 +1,100 @@
+env:
+  RETENTION_DAYS: "10"
+
+steps:
+  - label: ":white_check_mark: Check Shell"
+    key: "check-shell"
+    command: ./ops/check.sh shell
+
+  - label: ":lock: Check Security"
+    key: "check-security"
+    command: ./ops/check.sh security
+
+  - label: ":white_check_mark: Check Backend"
+    key: "check-backend"
+    command: ./ops/check.sh backend
+
+  - label: ":mag: Check Frontend License"
+    key: "check-frontend-license"
+    commands: ./ops/check.sh frontend-license
+
+  - label: ":mag: Check Backend License"
+    key: "check-backend-license"
+    commands: ./ops/check.sh backend-license
+    plugins:
+      - artifacts#v1.9.0:
+          upload:
+            - "backend/build/reports/dependency-license/**/*"
+          name: "backend-license-report"
+          expire_in: "${RETENTION_DAYS} days"
+
+  - label: ":cloudformation: Deploy infra"
+    if:  build.branch == "main" && build.message =~ /\[infra\]/
+    key: "deploy-infra"
+    depends_on:
+      - "check-shell"
+      - "check-security"
+      - "check-backend"
+      - "check-frontend-license"
+      - "check-backend-license"
+    env:
+      AWSHost: "$AWS_HOST"
+      AWSAccountId: "$AWS_ACCOUNT_ID"
+      AWSRegion: "$AWS_REGION"
+    command: ./ops/deploy.sh infra
+
+  - label: ":react: Build Frontend"
+    if:  build.branch == "main" && build.message =~ /\[frontend\]/
+    key: "build-frontend"
+    depends_on: "deploy-infra"
+    command: ./ops/build.sh frontend
+
+  - label: ":java: Build Backend"
+    if:  build.branch == "main" && build.message =~ /\[backend\]/
+    key: "build-backend"
+    depends_on: "deploy-infra"
+    command: ./ops/build.sh backend
+
+  - label: ":rocket: Build Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    key: "build-stub"
+    depends_on: "deploy-infra"
+    command: ./ops/build.sh stub
+
+  - label: ":rocket: Deploy Stub"
+    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    key: "deploy-stub"
+    depends_on: "build-stub"
+    command: ./ops/deploy.sh stub
+
+  - label: ":rocket: Deploy e2e"
+    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
+    key: "deploy-e2e"
+    depends_on:
+      - "build-frontend"
+      - "build-backend"
+    command: ./ops/deploy.sh e2e
+
+  - label: ":rocket: Run e2e"
+    branches: main
+    key: "check-e2e"
+    depends_on:
+      - "deploy-e2e"
+      - "deploy-stub"
+      - "check-shell"
+      - "check-security"
+      - "check-backend"
+      - "check-frontend-license"
+      - "check-backend-license"
+    command: ./ops/check.sh e2e
+    plugins:
+      - artifacts#v1.9.0:
+          upload:
+            - "frontend/cypress/videos/**/*"
+          name: "cypress-videos"
+          expire_in: "${RETENTION_DAYS} days"
+
+  - label: ":rocket: Deploy prod"
+    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
+    depends_on: "check-e2e"
+    command: ./ops/deploy.sh prod

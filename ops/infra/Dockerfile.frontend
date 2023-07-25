@@ -1,0 +1,12 @@
+FROM node:19-alpine as builder
+COPY ./frontend /app
+WORKDIR /app
+RUN npm install -g pnpm
+RUN pnpm install && pnpm build
+
+FROM nginx:latest
+LABEL app=Heartbeat
+LABEL arch=Frontend
+WORKDIR /app
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY ./ops/infra/nginx.conf /etc/nginx/nginx.conf

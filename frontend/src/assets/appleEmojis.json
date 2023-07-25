@@ -1,0 +1,9257 @@
+[
+  {
+    "name": "hash",
+    "image": "img-apple-64/0023-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "keycap_star",
+    "image": "img-apple-64/002a-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "zero",
+    "image": "img-apple-64/0030-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "one",
+    "image": "img-apple-64/0031-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "two",
+    "image": "img-apple-64/0032-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "three",
+    "image": "img-apple-64/0033-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "four",
+    "image": "img-apple-64/0034-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "five",
+    "image": "img-apple-64/0035-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "six",
+    "image": "img-apple-64/0036-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "seven",
+    "image": "img-apple-64/0037-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "eight",
+    "image": "img-apple-64/0038-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "nine",
+    "image": "img-apple-64/0039-fe0f-20e3.png",
+    "aliases": []
+  },
+  {
+    "name": "copyright",
+    "image": "img-apple-64/00a9-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "registered",
+    "image": "img-apple-64/00ae-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "mahjong",
+    "image": "img-apple-64/1f004.png",
+    "aliases": []
+  },
+  {
+    "name": "black_joker",
+    "image": "img-apple-64/1f0cf.png",
+    "aliases": []
+  },
+  {
+    "name": "a",
+    "image": "img-apple-64/1f170-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "b",
+    "image": "img-apple-64/1f171-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "o2",
+    "image": "img-apple-64/1f17e-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "parking",
+    "image": "img-apple-64/1f17f-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "ab",
+    "image": "img-apple-64/1f18e.png",
+    "aliases": []
+  },
+  {
+    "name": "cl",
+    "image": "img-apple-64/1f191.png",
+    "aliases": []
+  },
+  {
+    "name": "cool",
+    "image": "img-apple-64/1f192.png",
+    "aliases": []
+  },
+  {
+    "name": "free",
+    "image": "img-apple-64/1f193.png",
+    "aliases": []
+  },
+  {
+    "name": "id",
+    "image": "img-apple-64/1f194.png",
+    "aliases": []
+  },
+  {
+    "name": "new",
+    "image": "img-apple-64/1f195.png",
+    "aliases": []
+  },
+  {
+    "name": "ng",
+    "image": "img-apple-64/1f196.png",
+    "aliases": []
+  },
+  {
+    "name": "ok",
+    "image": "img-apple-64/1f197.png",
+    "aliases": []
+  },
+  {
+    "name": "sos",
+    "image": "img-apple-64/1f198.png",
+    "aliases": []
+  },
+  {
+    "name": "up",
+    "image": "img-apple-64/1f199.png",
+    "aliases": []
+  },
+  {
+    "name": "vs",
+    "image": "img-apple-64/1f19a.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ac",
+    "image": "img-apple-64/1f1e6-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ad",
+    "image": "img-apple-64/1f1e6-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ae",
+    "image": "img-apple-64/1f1e6-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-af",
+    "image": "img-apple-64/1f1e6-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ag",
+    "image": "img-apple-64/1f1e6-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ai",
+    "image": "img-apple-64/1f1e6-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-al",
+    "image": "img-apple-64/1f1e6-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-am",
+    "image": "img-apple-64/1f1e6-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ao",
+    "image": "img-apple-64/1f1e6-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-aq",
+    "image": "img-apple-64/1f1e6-1f1f6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ar",
+    "image": "img-apple-64/1f1e6-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-as",
+    "image": "img-apple-64/1f1e6-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-at",
+    "image": "img-apple-64/1f1e6-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-au",
+    "image": "img-apple-64/1f1e6-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-aw",
+    "image": "img-apple-64/1f1e6-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ax",
+    "image": "img-apple-64/1f1e6-1f1fd.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-az",
+    "image": "img-apple-64/1f1e6-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ba",
+    "image": "img-apple-64/1f1e7-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bb",
+    "image": "img-apple-64/1f1e7-1f1e7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bd",
+    "image": "img-apple-64/1f1e7-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-be",
+    "image": "img-apple-64/1f1e7-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bf",
+    "image": "img-apple-64/1f1e7-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bg",
+    "image": "img-apple-64/1f1e7-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bh",
+    "image": "img-apple-64/1f1e7-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bi",
+    "image": "img-apple-64/1f1e7-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bj",
+    "image": "img-apple-64/1f1e7-1f1ef.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bl",
+    "image": "img-apple-64/1f1e7-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bm",
+    "image": "img-apple-64/1f1e7-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bn",
+    "image": "img-apple-64/1f1e7-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bo",
+    "image": "img-apple-64/1f1e7-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bq",
+    "image": "img-apple-64/1f1e7-1f1f6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-br",
+    "image": "img-apple-64/1f1e7-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bs",
+    "image": "img-apple-64/1f1e7-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bt",
+    "image": "img-apple-64/1f1e7-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bv",
+    "image": "img-apple-64/1f1e7-1f1fb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bw",
+    "image": "img-apple-64/1f1e7-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-by",
+    "image": "img-apple-64/1f1e7-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-bz",
+    "image": "img-apple-64/1f1e7-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ca",
+    "image": "img-apple-64/1f1e8-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cc",
+    "image": "img-apple-64/1f1e8-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cd",
+    "image": "img-apple-64/1f1e8-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cf",
+    "image": "img-apple-64/1f1e8-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cg",
+    "image": "img-apple-64/1f1e8-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ch",
+    "image": "img-apple-64/1f1e8-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ci",
+    "image": "img-apple-64/1f1e8-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ck",
+    "image": "img-apple-64/1f1e8-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cl",
+    "image": "img-apple-64/1f1e8-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cm",
+    "image": "img-apple-64/1f1e8-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "cn",
+    "image": "img-apple-64/1f1e8-1f1f3.png",
+    "aliases": ["flag-cn"]
+  },
+  {
+    "name": "flag-co",
+    "image": "img-apple-64/1f1e8-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cp",
+    "image": "img-apple-64/1f1e8-1f1f5.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cr",
+    "image": "img-apple-64/1f1e8-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cu",
+    "image": "img-apple-64/1f1e8-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cv",
+    "image": "img-apple-64/1f1e8-1f1fb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cw",
+    "image": "img-apple-64/1f1e8-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cx",
+    "image": "img-apple-64/1f1e8-1f1fd.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cy",
+    "image": "img-apple-64/1f1e8-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-cz",
+    "image": "img-apple-64/1f1e8-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "de",
+    "image": "img-apple-64/1f1e9-1f1ea.png",
+    "aliases": ["flag-de"]
+  },
+  {
+    "name": "flag-dg",
+    "image": "img-apple-64/1f1e9-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-dj",
+    "image": "img-apple-64/1f1e9-1f1ef.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-dk",
+    "image": "img-apple-64/1f1e9-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-dm",
+    "image": "img-apple-64/1f1e9-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-do",
+    "image": "img-apple-64/1f1e9-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-dz",
+    "image": "img-apple-64/1f1e9-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ea",
+    "image": "img-apple-64/1f1ea-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ec",
+    "image": "img-apple-64/1f1ea-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ee",
+    "image": "img-apple-64/1f1ea-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-eg",
+    "image": "img-apple-64/1f1ea-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-eh",
+    "image": "img-apple-64/1f1ea-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-er",
+    "image": "img-apple-64/1f1ea-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "es",
+    "image": "img-apple-64/1f1ea-1f1f8.png",
+    "aliases": ["flag-es"]
+  },
+  {
+    "name": "flag-et",
+    "image": "img-apple-64/1f1ea-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-eu",
+    "image": "img-apple-64/1f1ea-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-fi",
+    "image": "img-apple-64/1f1eb-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-fj",
+    "image": "img-apple-64/1f1eb-1f1ef.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-fk",
+    "image": "img-apple-64/1f1eb-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-fm",
+    "image": "img-apple-64/1f1eb-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-fo",
+    "image": "img-apple-64/1f1eb-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "fr",
+    "image": "img-apple-64/1f1eb-1f1f7.png",
+    "aliases": ["flag-fr"]
+  },
+  {
+    "name": "flag-ga",
+    "image": "img-apple-64/1f1ec-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "gb",
+    "image": "img-apple-64/1f1ec-1f1e7.png",
+    "aliases": ["uk", "flag-gb"]
+  },
+  {
+    "name": "flag-gd",
+    "image": "img-apple-64/1f1ec-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ge",
+    "image": "img-apple-64/1f1ec-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gf",
+    "image": "img-apple-64/1f1ec-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gg",
+    "image": "img-apple-64/1f1ec-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gh",
+    "image": "img-apple-64/1f1ec-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gi",
+    "image": "img-apple-64/1f1ec-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gl",
+    "image": "img-apple-64/1f1ec-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gm",
+    "image": "img-apple-64/1f1ec-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gn",
+    "image": "img-apple-64/1f1ec-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gp",
+    "image": "img-apple-64/1f1ec-1f1f5.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gq",
+    "image": "img-apple-64/1f1ec-1f1f6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gr",
+    "image": "img-apple-64/1f1ec-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gs",
+    "image": "img-apple-64/1f1ec-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gt",
+    "image": "img-apple-64/1f1ec-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gu",
+    "image": "img-apple-64/1f1ec-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gw",
+    "image": "img-apple-64/1f1ec-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-gy",
+    "image": "img-apple-64/1f1ec-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-hk",
+    "image": "img-apple-64/1f1ed-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-hm",
+    "image": "img-apple-64/1f1ed-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-hn",
+    "image": "img-apple-64/1f1ed-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-hr",
+    "image": "img-apple-64/1f1ed-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ht",
+    "image": "img-apple-64/1f1ed-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-hu",
+    "image": "img-apple-64/1f1ed-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ic",
+    "image": "img-apple-64/1f1ee-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-id",
+    "image": "img-apple-64/1f1ee-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ie",
+    "image": "img-apple-64/1f1ee-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-il",
+    "image": "img-apple-64/1f1ee-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-im",
+    "image": "img-apple-64/1f1ee-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-in",
+    "image": "img-apple-64/1f1ee-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-io",
+    "image": "img-apple-64/1f1ee-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-iq",
+    "image": "img-apple-64/1f1ee-1f1f6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ir",
+    "image": "img-apple-64/1f1ee-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-is",
+    "image": "img-apple-64/1f1ee-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "it",
+    "image": "img-apple-64/1f1ee-1f1f9.png",
+    "aliases": ["flag-it"]
+  },
+  {
+    "name": "flag-je",
+    "image": "img-apple-64/1f1ef-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-jm",
+    "image": "img-apple-64/1f1ef-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-jo",
+    "image": "img-apple-64/1f1ef-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "jp",
+    "image": "img-apple-64/1f1ef-1f1f5.png",
+    "aliases": ["flag-jp"]
+  },
+  {
+    "name": "flag-ke",
+    "image": "img-apple-64/1f1f0-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-kg",
+    "image": "img-apple-64/1f1f0-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-kh",
+    "image": "img-apple-64/1f1f0-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ki",
+    "image": "img-apple-64/1f1f0-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-km",
+    "image": "img-apple-64/1f1f0-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-kn",
+    "image": "img-apple-64/1f1f0-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-kp",
+    "image": "img-apple-64/1f1f0-1f1f5.png",
+    "aliases": []
+  },
+  {
+    "name": "kr",
+    "image": "img-apple-64/1f1f0-1f1f7.png",
+    "aliases": ["flag-kr"]
+  },
+  {
+    "name": "flag-kw",
+    "image": "img-apple-64/1f1f0-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ky",
+    "image": "img-apple-64/1f1f0-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-kz",
+    "image": "img-apple-64/1f1f0-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-la",
+    "image": "img-apple-64/1f1f1-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-lb",
+    "image": "img-apple-64/1f1f1-1f1e7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-lc",
+    "image": "img-apple-64/1f1f1-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-li",
+    "image": "img-apple-64/1f1f1-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-lk",
+    "image": "img-apple-64/1f1f1-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-lr",
+    "image": "img-apple-64/1f1f1-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ls",
+    "image": "img-apple-64/1f1f1-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-lt",
+    "image": "img-apple-64/1f1f1-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-lu",
+    "image": "img-apple-64/1f1f1-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-lv",
+    "image": "img-apple-64/1f1f1-1f1fb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ly",
+    "image": "img-apple-64/1f1f1-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ma",
+    "image": "img-apple-64/1f1f2-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mc",
+    "image": "img-apple-64/1f1f2-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-md",
+    "image": "img-apple-64/1f1f2-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-me",
+    "image": "img-apple-64/1f1f2-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mf",
+    "image": "img-apple-64/1f1f2-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mg",
+    "image": "img-apple-64/1f1f2-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mh",
+    "image": "img-apple-64/1f1f2-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mk",
+    "image": "img-apple-64/1f1f2-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ml",
+    "image": "img-apple-64/1f1f2-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mm",
+    "image": "img-apple-64/1f1f2-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mn",
+    "image": "img-apple-64/1f1f2-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mo",
+    "image": "img-apple-64/1f1f2-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mp",
+    "image": "img-apple-64/1f1f2-1f1f5.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mq",
+    "image": "img-apple-64/1f1f2-1f1f6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mr",
+    "image": "img-apple-64/1f1f2-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ms",
+    "image": "img-apple-64/1f1f2-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mt",
+    "image": "img-apple-64/1f1f2-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mu",
+    "image": "img-apple-64/1f1f2-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mv",
+    "image": "img-apple-64/1f1f2-1f1fb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mw",
+    "image": "img-apple-64/1f1f2-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mx",
+    "image": "img-apple-64/1f1f2-1f1fd.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-my",
+    "image": "img-apple-64/1f1f2-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-mz",
+    "image": "img-apple-64/1f1f2-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-na",
+    "image": "img-apple-64/1f1f3-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-nc",
+    "image": "img-apple-64/1f1f3-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ne",
+    "image": "img-apple-64/1f1f3-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-nf",
+    "image": "img-apple-64/1f1f3-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ng",
+    "image": "img-apple-64/1f1f3-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ni",
+    "image": "img-apple-64/1f1f3-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-nl",
+    "image": "img-apple-64/1f1f3-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-no",
+    "image": "img-apple-64/1f1f3-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-np",
+    "image": "img-apple-64/1f1f3-1f1f5.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-nr",
+    "image": "img-apple-64/1f1f3-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-nu",
+    "image": "img-apple-64/1f1f3-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-nz",
+    "image": "img-apple-64/1f1f3-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-om",
+    "image": "img-apple-64/1f1f4-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pa",
+    "image": "img-apple-64/1f1f5-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pe",
+    "image": "img-apple-64/1f1f5-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pf",
+    "image": "img-apple-64/1f1f5-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pg",
+    "image": "img-apple-64/1f1f5-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ph",
+    "image": "img-apple-64/1f1f5-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pk",
+    "image": "img-apple-64/1f1f5-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pl",
+    "image": "img-apple-64/1f1f5-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pm",
+    "image": "img-apple-64/1f1f5-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pn",
+    "image": "img-apple-64/1f1f5-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pr",
+    "image": "img-apple-64/1f1f5-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ps",
+    "image": "img-apple-64/1f1f5-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pt",
+    "image": "img-apple-64/1f1f5-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-pw",
+    "image": "img-apple-64/1f1f5-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-py",
+    "image": "img-apple-64/1f1f5-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-qa",
+    "image": "img-apple-64/1f1f6-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-re",
+    "image": "img-apple-64/1f1f7-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ro",
+    "image": "img-apple-64/1f1f7-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-rs",
+    "image": "img-apple-64/1f1f7-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "ru",
+    "image": "img-apple-64/1f1f7-1f1fa.png",
+    "aliases": ["flag-ru"]
+  },
+  {
+    "name": "flag-rw",
+    "image": "img-apple-64/1f1f7-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sa",
+    "image": "img-apple-64/1f1f8-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sb",
+    "image": "img-apple-64/1f1f8-1f1e7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sc",
+    "image": "img-apple-64/1f1f8-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sd",
+    "image": "img-apple-64/1f1f8-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-se",
+    "image": "img-apple-64/1f1f8-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sg",
+    "image": "img-apple-64/1f1f8-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sh",
+    "image": "img-apple-64/1f1f8-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-si",
+    "image": "img-apple-64/1f1f8-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sj",
+    "image": "img-apple-64/1f1f8-1f1ef.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sk",
+    "image": "img-apple-64/1f1f8-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sl",
+    "image": "img-apple-64/1f1f8-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sm",
+    "image": "img-apple-64/1f1f8-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sn",
+    "image": "img-apple-64/1f1f8-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-so",
+    "image": "img-apple-64/1f1f8-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sr",
+    "image": "img-apple-64/1f1f8-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ss",
+    "image": "img-apple-64/1f1f8-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-st",
+    "image": "img-apple-64/1f1f8-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sv",
+    "image": "img-apple-64/1f1f8-1f1fb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sx",
+    "image": "img-apple-64/1f1f8-1f1fd.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sy",
+    "image": "img-apple-64/1f1f8-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-sz",
+    "image": "img-apple-64/1f1f8-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ta",
+    "image": "img-apple-64/1f1f9-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tc",
+    "image": "img-apple-64/1f1f9-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-td",
+    "image": "img-apple-64/1f1f9-1f1e9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tf",
+    "image": "img-apple-64/1f1f9-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tg",
+    "image": "img-apple-64/1f1f9-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-th",
+    "image": "img-apple-64/1f1f9-1f1ed.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tj",
+    "image": "img-apple-64/1f1f9-1f1ef.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tk",
+    "image": "img-apple-64/1f1f9-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tl",
+    "image": "img-apple-64/1f1f9-1f1f1.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tm",
+    "image": "img-apple-64/1f1f9-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tn",
+    "image": "img-apple-64/1f1f9-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-to",
+    "image": "img-apple-64/1f1f9-1f1f4.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tr",
+    "image": "img-apple-64/1f1f9-1f1f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tt",
+    "image": "img-apple-64/1f1f9-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tv",
+    "image": "img-apple-64/1f1f9-1f1fb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tw",
+    "image": "img-apple-64/1f1f9-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-tz",
+    "image": "img-apple-64/1f1f9-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ua",
+    "image": "img-apple-64/1f1fa-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ug",
+    "image": "img-apple-64/1f1fa-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-um",
+    "image": "img-apple-64/1f1fa-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-un",
+    "image": "img-apple-64/1f1fa-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "us",
+    "image": "img-apple-64/1f1fa-1f1f8.png",
+    "aliases": ["flag-us"]
+  },
+  {
+    "name": "flag-uy",
+    "image": "img-apple-64/1f1fa-1f1fe.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-uz",
+    "image": "img-apple-64/1f1fa-1f1ff.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-va",
+    "image": "img-apple-64/1f1fb-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-vc",
+    "image": "img-apple-64/1f1fb-1f1e8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ve",
+    "image": "img-apple-64/1f1fb-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-vg",
+    "image": "img-apple-64/1f1fb-1f1ec.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-vi",
+    "image": "img-apple-64/1f1fb-1f1ee.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-vn",
+    "image": "img-apple-64/1f1fb-1f1f3.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-vu",
+    "image": "img-apple-64/1f1fb-1f1fa.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-wf",
+    "image": "img-apple-64/1f1fc-1f1eb.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ws",
+    "image": "img-apple-64/1f1fc-1f1f8.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-xk",
+    "image": "img-apple-64/1f1fd-1f1f0.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-ye",
+    "image": "img-apple-64/1f1fe-1f1ea.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-yt",
+    "image": "img-apple-64/1f1fe-1f1f9.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-za",
+    "image": "img-apple-64/1f1ff-1f1e6.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-zm",
+    "image": "img-apple-64/1f1ff-1f1f2.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-zw",
+    "image": "img-apple-64/1f1ff-1f1fc.png",
+    "aliases": []
+  },
+  {
+    "name": "koko",
+    "image": "img-apple-64/1f201.png",
+    "aliases": []
+  },
+  {
+    "name": "sa",
+    "image": "img-apple-64/1f202-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "u7121",
+    "image": "img-apple-64/1f21a.png",
+    "aliases": []
+  },
+  {
+    "name": "u6307",
+    "image": "img-apple-64/1f22f.png",
+    "aliases": []
+  },
+  {
+    "name": "u7981",
+    "image": "img-apple-64/1f232.png",
+    "aliases": []
+  },
+  {
+    "name": "u7a7a",
+    "image": "img-apple-64/1f233.png",
+    "aliases": []
+  },
+  {
+    "name": "u5408",
+    "image": "img-apple-64/1f234.png",
+    "aliases": []
+  },
+  {
+    "name": "u6e80",
+    "image": "img-apple-64/1f235.png",
+    "aliases": []
+  },
+  {
+    "name": "u6709",
+    "image": "img-apple-64/1f236.png",
+    "aliases": []
+  },
+  {
+    "name": "u6708",
+    "image": "img-apple-64/1f237-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "u7533",
+    "image": "img-apple-64/1f238.png",
+    "aliases": []
+  },
+  {
+    "name": "u5272",
+    "image": "img-apple-64/1f239.png",
+    "aliases": []
+  },
+  {
+    "name": "u55b6",
+    "image": "img-apple-64/1f23a.png",
+    "aliases": []
+  },
+  {
+    "name": "ideograph_advantage",
+    "image": "img-apple-64/1f250.png",
+    "aliases": []
+  },
+  {
+    "name": "accept",
+    "image": "img-apple-64/1f251.png",
+    "aliases": []
+  },
+  {
+    "name": "cyclone",
+    "image": "img-apple-64/1f300.png",
+    "aliases": []
+  },
+  {
+    "name": "foggy",
+    "image": "img-apple-64/1f301.png",
+    "aliases": []
+  },
+  {
+    "name": "closed_umbrella",
+    "image": "img-apple-64/1f302.png",
+    "aliases": []
+  },
+  {
+    "name": "night_with_stars",
+    "image": "img-apple-64/1f303.png",
+    "aliases": []
+  },
+  {
+    "name": "sunrise_over_mountains",
+    "image": "img-apple-64/1f304.png",
+    "aliases": []
+  },
+  {
+    "name": "sunrise",
+    "image": "img-apple-64/1f305.png",
+    "aliases": []
+  },
+  {
+    "name": "city_sunset",
+    "image": "img-apple-64/1f306.png",
+    "aliases": []
+  },
+  {
+    "name": "city_sunrise",
+    "image": "img-apple-64/1f307.png",
+    "aliases": []
+  },
+  {
+    "name": "rainbow",
+    "image": "img-apple-64/1f308.png",
+    "aliases": []
+  },
+  {
+    "name": "bridge_at_night",
+    "image": "img-apple-64/1f309.png",
+    "aliases": []
+  },
+  {
+    "name": "ocean",
+    "image": "img-apple-64/1f30a.png",
+    "aliases": []
+  },
+  {
+    "name": "volcano",
+    "image": "img-apple-64/1f30b.png",
+    "aliases": []
+  },
+  {
+    "name": "milky_way",
+    "image": "img-apple-64/1f30c.png",
+    "aliases": []
+  },
+  {
+    "name": "earth_africa",
+    "image": "img-apple-64/1f30d.png",
+    "aliases": []
+  },
+  {
+    "name": "earth_americas",
+    "image": "img-apple-64/1f30e.png",
+    "aliases": []
+  },
+  {
+    "name": "earth_asia",
+    "image": "img-apple-64/1f30f.png",
+    "aliases": []
+  },
+  {
+    "name": "globe_with_meridians",
+    "image": "img-apple-64/1f310.png",
+    "aliases": []
+  },
+  {
+    "name": "new_moon",
+    "image": "img-apple-64/1f311.png",
+    "aliases": []
+  },
+  {
+    "name": "waxing_crescent_moon",
+    "image": "img-apple-64/1f312.png",
+    "aliases": []
+  },
+  {
+    "name": "first_quarter_moon",
+    "image": "img-apple-64/1f313.png",
+    "aliases": []
+  },
+  {
+    "name": "moon",
+    "image": "img-apple-64/1f314.png",
+    "aliases": ["waxing_gibbous_moon"]
+  },
+  {
+    "name": "full_moon",
+    "image": "img-apple-64/1f315.png",
+    "aliases": []
+  },
+  {
+    "name": "waning_gibbous_moon",
+    "image": "img-apple-64/1f316.png",
+    "aliases": []
+  },
+  {
+    "name": "last_quarter_moon",
+    "image": "img-apple-64/1f317.png",
+    "aliases": []
+  },
+  {
+    "name": "waning_crescent_moon",
+    "image": "img-apple-64/1f318.png",
+    "aliases": []
+  },
+  {
+    "name": "crescent_moon",
+    "image": "img-apple-64/1f319.png",
+    "aliases": []
+  },
+  {
+    "name": "new_moon_with_face",
+    "image": "img-apple-64/1f31a.png",
+    "aliases": []
+  },
+  {
+    "name": "first_quarter_moon_with_face",
+    "image": "img-apple-64/1f31b.png",
+    "aliases": []
+  },
+  {
+    "name": "last_quarter_moon_with_face",
+    "image": "img-apple-64/1f31c.png",
+    "aliases": []
+  },
+  {
+    "name": "full_moon_with_face",
+    "image": "img-apple-64/1f31d.png",
+    "aliases": []
+  },
+  {
+    "name": "sun_with_face",
+    "image": "img-apple-64/1f31e.png",
+    "aliases": []
+  },
+  {
+    "name": "star2",
+    "image": "img-apple-64/1f31f.png",
+    "aliases": []
+  },
+  {
+    "name": "stars",
+    "image": "img-apple-64/1f320.png",
+    "aliases": []
+  },
+  {
+    "name": "thermometer",
+    "image": "img-apple-64/1f321-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "mostly_sunny",
+    "image": "img-apple-64/1f324-fe0f.png",
+    "aliases": ["sun_small_cloud"]
+  },
+  {
+    "name": "barely_sunny",
+    "image": "img-apple-64/1f325-fe0f.png",
+    "aliases": ["sun_behind_cloud"]
+  },
+  {
+    "name": "partly_sunny_rain",
+    "image": "img-apple-64/1f326-fe0f.png",
+    "aliases": ["sun_behind_rain_cloud"]
+  },
+  {
+    "name": "rain_cloud",
+    "image": "img-apple-64/1f327-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "snow_cloud",
+    "image": "img-apple-64/1f328-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "lightning",
+    "image": "img-apple-64/1f329-fe0f.png",
+    "aliases": ["lightning_cloud"]
+  },
+  {
+    "name": "tornado",
+    "image": "img-apple-64/1f32a-fe0f.png",
+    "aliases": ["tornado_cloud"]
+  },
+  {
+    "name": "fog",
+    "image": "img-apple-64/1f32b-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "wind_blowing_face",
+    "image": "img-apple-64/1f32c-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "hotdog",
+    "image": "img-apple-64/1f32d.png",
+    "aliases": []
+  },
+  {
+    "name": "taco",
+    "image": "img-apple-64/1f32e.png",
+    "aliases": []
+  },
+  {
+    "name": "burrito",
+    "image": "img-apple-64/1f32f.png",
+    "aliases": []
+  },
+  {
+    "name": "chestnut",
+    "image": "img-apple-64/1f330.png",
+    "aliases": []
+  },
+  {
+    "name": "seedling",
+    "image": "img-apple-64/1f331.png",
+    "aliases": []
+  },
+  {
+    "name": "evergreen_tree",
+    "image": "img-apple-64/1f332.png",
+    "aliases": []
+  },
+  {
+    "name": "deciduous_tree",
+    "image": "img-apple-64/1f333.png",
+    "aliases": []
+  },
+  {
+    "name": "palm_tree",
+    "image": "img-apple-64/1f334.png",
+    "aliases": []
+  },
+  {
+    "name": "cactus",
+    "image": "img-apple-64/1f335.png",
+    "aliases": []
+  },
+  {
+    "name": "hot_pepper",
+    "image": "img-apple-64/1f336-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "tulip",
+    "image": "img-apple-64/1f337.png",
+    "aliases": []
+  },
+  {
+    "name": "cherry_blossom",
+    "image": "img-apple-64/1f338.png",
+    "aliases": []
+  },
+  {
+    "name": "rose",
+    "image": "img-apple-64/1f339.png",
+    "aliases": []
+  },
+  {
+    "name": "hibiscus",
+    "image": "img-apple-64/1f33a.png",
+    "aliases": []
+  },
+  {
+    "name": "sunflower",
+    "image": "img-apple-64/1f33b.png",
+    "aliases": []
+  },
+  {
+    "name": "blossom",
+    "image": "img-apple-64/1f33c.png",
+    "aliases": []
+  },
+  {
+    "name": "corn",
+    "image": "img-apple-64/1f33d.png",
+    "aliases": []
+  },
+  {
+    "name": "ear_of_rice",
+    "image": "img-apple-64/1f33e.png",
+    "aliases": []
+  },
+  {
+    "name": "herb",
+    "image": "img-apple-64/1f33f.png",
+    "aliases": []
+  },
+  {
+    "name": "four_leaf_clover",
+    "image": "img-apple-64/1f340.png",
+    "aliases": []
+  },
+  {
+    "name": "maple_leaf",
+    "image": "img-apple-64/1f341.png",
+    "aliases": []
+  },
+  {
+    "name": "fallen_leaf",
+    "image": "img-apple-64/1f342.png",
+    "aliases": []
+  },
+  {
+    "name": "leaves",
+    "image": "img-apple-64/1f343.png",
+    "aliases": []
+  },
+  {
+    "name": "mushroom",
+    "image": "img-apple-64/1f344.png",
+    "aliases": []
+  },
+  {
+    "name": "tomato",
+    "image": "img-apple-64/1f345.png",
+    "aliases": []
+  },
+  {
+    "name": "eggplant",
+    "image": "img-apple-64/1f346.png",
+    "aliases": []
+  },
+  {
+    "name": "grapes",
+    "image": "img-apple-64/1f347.png",
+    "aliases": []
+  },
+  {
+    "name": "melon",
+    "image": "img-apple-64/1f348.png",
+    "aliases": []
+  },
+  {
+    "name": "watermelon",
+    "image": "img-apple-64/1f349.png",
+    "aliases": []
+  },
+  {
+    "name": "tangerine",
+    "image": "img-apple-64/1f34a.png",
+    "aliases": []
+  },
+  {
+    "name": "lemon",
+    "image": "img-apple-64/1f34b.png",
+    "aliases": []
+  },
+  {
+    "name": "banana",
+    "image": "img-apple-64/1f34c.png",
+    "aliases": []
+  },
+  {
+    "name": "pineapple",
+    "image": "img-apple-64/1f34d.png",
+    "aliases": []
+  },
+  {
+    "name": "apple",
+    "image": "img-apple-64/1f34e.png",
+    "aliases": []
+  },
+  {
+    "name": "green_apple",
+    "image": "img-apple-64/1f34f.png",
+    "aliases": []
+  },
+  {
+    "name": "pear",
+    "image": "img-apple-64/1f350.png",
+    "aliases": []
+  },
+  {
+    "name": "peach",
+    "image": "img-apple-64/1f351.png",
+    "aliases": []
+  },
+  {
+    "name": "cherries",
+    "image": "img-apple-64/1f352.png",
+    "aliases": []
+  },
+  {
+    "name": "strawberry",
+    "image": "img-apple-64/1f353.png",
+    "aliases": []
+  },
+  {
+    "name": "hamburger",
+    "image": "img-apple-64/1f354.png",
+    "aliases": []
+  },
+  {
+    "name": "pizza",
+    "image": "img-apple-64/1f355.png",
+    "aliases": []
+  },
+  {
+    "name": "meat_on_bone",
+    "image": "img-apple-64/1f356.png",
+    "aliases": []
+  },
+  {
+    "name": "poultry_leg",
+    "image": "img-apple-64/1f357.png",
+    "aliases": []
+  },
+  {
+    "name": "rice_cracker",
+    "image": "img-apple-64/1f358.png",
+    "aliases": []
+  },
+  {
+    "name": "rice_ball",
+    "image": "img-apple-64/1f359.png",
+    "aliases": []
+  },
+  {
+    "name": "rice",
+    "image": "img-apple-64/1f35a.png",
+    "aliases": []
+  },
+  {
+    "name": "curry",
+    "image": "img-apple-64/1f35b.png",
+    "aliases": []
+  },
+  {
+    "name": "ramen",
+    "image": "img-apple-64/1f35c.png",
+    "aliases": []
+  },
+  {
+    "name": "spaghetti",
+    "image": "img-apple-64/1f35d.png",
+    "aliases": []
+  },
+  {
+    "name": "bread",
+    "image": "img-apple-64/1f35e.png",
+    "aliases": []
+  },
+  {
+    "name": "fries",
+    "image": "img-apple-64/1f35f.png",
+    "aliases": []
+  },
+  {
+    "name": "sweet_potato",
+    "image": "img-apple-64/1f360.png",
+    "aliases": []
+  },
+  {
+    "name": "dango",
+    "image": "img-apple-64/1f361.png",
+    "aliases": []
+  },
+  {
+    "name": "oden",
+    "image": "img-apple-64/1f362.png",
+    "aliases": []
+  },
+  {
+    "name": "sushi",
+    "image": "img-apple-64/1f363.png",
+    "aliases": []
+  },
+  {
+    "name": "fried_shrimp",
+    "image": "img-apple-64/1f364.png",
+    "aliases": []
+  },
+  {
+    "name": "fish_cake",
+    "image": "img-apple-64/1f365.png",
+    "aliases": []
+  },
+  {
+    "name": "icecream",
+    "image": "img-apple-64/1f366.png",
+    "aliases": []
+  },
+  {
+    "name": "shaved_ice",
+    "image": "img-apple-64/1f367.png",
+    "aliases": []
+  },
+  {
+    "name": "ice_cream",
+    "image": "img-apple-64/1f368.png",
+    "aliases": []
+  },
+  {
+    "name": "doughnut",
+    "image": "img-apple-64/1f369.png",
+    "aliases": []
+  },
+  {
+    "name": "cookie",
+    "image": "img-apple-64/1f36a.png",
+    "aliases": []
+  },
+  {
+    "name": "chocolate_bar",
+    "image": "img-apple-64/1f36b.png",
+    "aliases": []
+  },
+  {
+    "name": "candy",
+    "image": "img-apple-64/1f36c.png",
+    "aliases": []
+  },
+  {
+    "name": "lollipop",
+    "image": "img-apple-64/1f36d.png",
+    "aliases": []
+  },
+  {
+    "name": "custard",
+    "image": "img-apple-64/1f36e.png",
+    "aliases": []
+  },
+  {
+    "name": "honey_pot",
+    "image": "img-apple-64/1f36f.png",
+    "aliases": []
+  },
+  {
+    "name": "cake",
+    "image": "img-apple-64/1f370.png",
+    "aliases": []
+  },
+  {
+    "name": "bento",
+    "image": "img-apple-64/1f371.png",
+    "aliases": []
+  },
+  {
+    "name": "stew",
+    "image": "img-apple-64/1f372.png",
+    "aliases": []
+  },
+  {
+    "name": "fried_egg",
+    "image": "img-apple-64/1f373.png",
+    "aliases": ["cooking"]
+  },
+  {
+    "name": "fork_and_knife",
+    "image": "img-apple-64/1f374.png",
+    "aliases": []
+  },
+  {
+    "name": "tea",
+    "image": "img-apple-64/1f375.png",
+    "aliases": []
+  },
+  {
+    "name": "sake",
+    "image": "img-apple-64/1f376.png",
+    "aliases": []
+  },
+  {
+    "name": "wine_glass",
+    "image": "img-apple-64/1f377.png",
+    "aliases": []
+  },
+  {
+    "name": "cocktail",
+    "image": "img-apple-64/1f378.png",
+    "aliases": []
+  },
+  {
+    "name": "tropical_drink",
+    "image": "img-apple-64/1f379.png",
+    "aliases": []
+  },
+  {
+    "name": "beer",
+    "image": "img-apple-64/1f37a.png",
+    "aliases": []
+  },
+  {
+    "name": "beers",
+    "image": "img-apple-64/1f37b.png",
+    "aliases": []
+  },
+  {
+    "name": "baby_bottle",
+    "image": "img-apple-64/1f37c.png",
+    "aliases": []
+  },
+  {
+    "name": "knife_fork_plate",
+    "image": "img-apple-64/1f37d-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "champagne",
+    "image": "img-apple-64/1f37e.png",
+    "aliases": []
+  },
+  {
+    "name": "popcorn",
+    "image": "img-apple-64/1f37f.png",
+    "aliases": []
+  },
+  {
+    "name": "ribbon",
+    "image": "img-apple-64/1f380.png",
+    "aliases": []
+  },
+  {
+    "name": "gift",
+    "image": "img-apple-64/1f381.png",
+    "aliases": []
+  },
+  {
+    "name": "birthday",
+    "image": "img-apple-64/1f382.png",
+    "aliases": []
+  },
+  {
+    "name": "jack_o_lantern",
+    "image": "img-apple-64/1f383.png",
+    "aliases": []
+  },
+  {
+    "name": "christmas_tree",
+    "image": "img-apple-64/1f384.png",
+    "aliases": []
+  },
+  {
+    "name": "santa",
+    "image": "img-apple-64/1f385.png",
+    "aliases": []
+  },
+  {
+    "name": "fireworks",
+    "image": "img-apple-64/1f386.png",
+    "aliases": []
+  },
+  {
+    "name": "sparkler",
+    "image": "img-apple-64/1f387.png",
+    "aliases": []
+  },
+  {
+    "name": "balloon",
+    "image": "img-apple-64/1f388.png",
+    "aliases": []
+  },
+  {
+    "name": "tada",
+    "image": "img-apple-64/1f389.png",
+    "aliases": []
+  },
+  {
+    "name": "confetti_ball",
+    "image": "img-apple-64/1f38a.png",
+    "aliases": []
+  },
+  {
+    "name": "tanabata_tree",
+    "image": "img-apple-64/1f38b.png",
+    "aliases": []
+  },
+  {
+    "name": "crossed_flags",
+    "image": "img-apple-64/1f38c.png",
+    "aliases": []
+  },
+  {
+    "name": "bamboo",
+    "image": "img-apple-64/1f38d.png",
+    "aliases": []
+  },
+  {
+    "name": "dolls",
+    "image": "img-apple-64/1f38e.png",
+    "aliases": []
+  },
+  {
+    "name": "flags",
+    "image": "img-apple-64/1f38f.png",
+    "aliases": []
+  },
+  {
+    "name": "wind_chime",
+    "image": "img-apple-64/1f390.png",
+    "aliases": []
+  },
+  {
+    "name": "rice_scene",
+    "image": "img-apple-64/1f391.png",
+    "aliases": []
+  },
+  {
+    "name": "school_satchel",
+    "image": "img-apple-64/1f392.png",
+    "aliases": []
+  },
+  {
+    "name": "mortar_board",
+    "image": "img-apple-64/1f393.png",
+    "aliases": []
+  },
+  {
+    "name": "medal",
+    "image": "img-apple-64/1f396-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "reminder_ribbon",
+    "image": "img-apple-64/1f397-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "studio_microphone",
+    "image": "img-apple-64/1f399-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "level_slider",
+    "image": "img-apple-64/1f39a-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "control_knobs",
+    "image": "img-apple-64/1f39b-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "film_frames",
+    "image": "img-apple-64/1f39e-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "admission_tickets",
+    "image": "img-apple-64/1f39f-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "carousel_horse",
+    "image": "img-apple-64/1f3a0.png",
+    "aliases": []
+  },
+  {
+    "name": "ferris_wheel",
+    "image": "img-apple-64/1f3a1.png",
+    "aliases": []
+  },
+  {
+    "name": "roller_coaster",
+    "image": "img-apple-64/1f3a2.png",
+    "aliases": []
+  },
+  {
+    "name": "fishing_pole_and_fish",
+    "image": "img-apple-64/1f3a3.png",
+    "aliases": []
+  },
+  {
+    "name": "microphone",
+    "image": "img-apple-64/1f3a4.png",
+    "aliases": []
+  },
+  {
+    "name": "movie_camera",
+    "image": "img-apple-64/1f3a5.png",
+    "aliases": []
+  },
+  {
+    "name": "cinema",
+    "image": "img-apple-64/1f3a6.png",
+    "aliases": []
+  },
+  {
+    "name": "headphones",
+    "image": "img-apple-64/1f3a7.png",
+    "aliases": []
+  },
+  {
+    "name": "art",
+    "image": "img-apple-64/1f3a8.png",
+    "aliases": []
+  },
+  {
+    "name": "tophat",
+    "image": "img-apple-64/1f3a9.png",
+    "aliases": []
+  },
+  {
+    "name": "circus_tent",
+    "image": "img-apple-64/1f3aa.png",
+    "aliases": []
+  },
+  {
+    "name": "ticket",
+    "image": "img-apple-64/1f3ab.png",
+    "aliases": []
+  },
+  {
+    "name": "clapper",
+    "image": "img-apple-64/1f3ac.png",
+    "aliases": []
+  },
+  {
+    "name": "performing_arts",
+    "image": "img-apple-64/1f3ad.png",
+    "aliases": []
+  },
+  {
+    "name": "video_game",
+    "image": "img-apple-64/1f3ae.png",
+    "aliases": []
+  },
+  {
+    "name": "dart",
+    "image": "img-apple-64/1f3af.png",
+    "aliases": []
+  },
+  {
+    "name": "slot_machine",
+    "image": "img-apple-64/1f3b0.png",
+    "aliases": []
+  },
+  {
+    "name": "8ball",
+    "image": "img-apple-64/1f3b1.png",
+    "aliases": []
+  },
+  {
+    "name": "game_die",
+    "image": "img-apple-64/1f3b2.png",
+    "aliases": []
+  },
+  {
+    "name": "bowling",
+    "image": "img-apple-64/1f3b3.png",
+    "aliases": []
+  },
+  {
+    "name": "flower_playing_cards",
+    "image": "img-apple-64/1f3b4.png",
+    "aliases": []
+  },
+  {
+    "name": "musical_note",
+    "image": "img-apple-64/1f3b5.png",
+    "aliases": []
+  },
+  {
+    "name": "notes",
+    "image": "img-apple-64/1f3b6.png",
+    "aliases": []
+  },
+  {
+    "name": "saxophone",
+    "image": "img-apple-64/1f3b7.png",
+    "aliases": []
+  },
+  {
+    "name": "guitar",
+    "image": "img-apple-64/1f3b8.png",
+    "aliases": []
+  },
+  {
+    "name": "musical_keyboard",
+    "image": "img-apple-64/1f3b9.png",
+    "aliases": []
+  },
+  {
+    "name": "trumpet",
+    "image": "img-apple-64/1f3ba.png",
+    "aliases": []
+  },
+  {
+    "name": "violin",
+    "image": "img-apple-64/1f3bb.png",
+    "aliases": []
+  },
+  {
+    "name": "musical_score",
+    "image": "img-apple-64/1f3bc.png",
+    "aliases": []
+  },
+  {
+    "name": "running_shirt_with_sash",
+    "image": "img-apple-64/1f3bd.png",
+    "aliases": []
+  },
+  {
+    "name": "tennis",
+    "image": "img-apple-64/1f3be.png",
+    "aliases": []
+  },
+  {
+    "name": "ski",
+    "image": "img-apple-64/1f3bf.png",
+    "aliases": []
+  },
+  {
+    "name": "basketball",
+    "image": "img-apple-64/1f3c0.png",
+    "aliases": []
+  },
+  {
+    "name": "checkered_flag",
+    "image": "img-apple-64/1f3c1.png",
+    "aliases": []
+  },
+  {
+    "name": "snowboarder",
+    "image": "img-apple-64/1f3c2.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-running",
+    "image": "img-apple-64/1f3c3-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-running",
+    "image": "img-apple-64/1f3c3-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "runner",
+    "image": "img-apple-64/1f3c3.png",
+    "aliases": ["running"]
+  },
+  {
+    "name": "woman-surfing",
+    "image": "img-apple-64/1f3c4-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-surfing",
+    "image": "img-apple-64/1f3c4-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "surfer",
+    "image": "img-apple-64/1f3c4.png",
+    "aliases": []
+  },
+  {
+    "name": "sports_medal",
+    "image": "img-apple-64/1f3c5.png",
+    "aliases": []
+  },
+  {
+    "name": "trophy",
+    "image": "img-apple-64/1f3c6.png",
+    "aliases": []
+  },
+  {
+    "name": "horse_racing",
+    "image": "img-apple-64/1f3c7.png",
+    "aliases": []
+  },
+  {
+    "name": "football",
+    "image": "img-apple-64/1f3c8.png",
+    "aliases": []
+  },
+  {
+    "name": "rugby_football",
+    "image": "img-apple-64/1f3c9.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-swimming",
+    "image": "img-apple-64/1f3ca-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-swimming",
+    "image": "img-apple-64/1f3ca-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "swimmer",
+    "image": "img-apple-64/1f3ca.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-lifting-weights",
+    "image": "img-apple-64/1f3cb-fe0f-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-lifting-weights",
+    "image": "img-apple-64/1f3cb-fe0f-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "weight_lifter",
+    "image": "img-apple-64/1f3cb-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-golfing",
+    "image": "img-apple-64/1f3cc-fe0f-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-golfing",
+    "image": "img-apple-64/1f3cc-fe0f-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "golfer",
+    "image": "img-apple-64/1f3cc-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "racing_motorcycle",
+    "image": "img-apple-64/1f3cd-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "racing_car",
+    "image": "img-apple-64/1f3ce-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "cricket_bat_and_ball",
+    "image": "img-apple-64/1f3cf.png",
+    "aliases": []
+  },
+  {
+    "name": "volleyball",
+    "image": "img-apple-64/1f3d0.png",
+    "aliases": []
+  },
+  {
+    "name": "field_hockey_stick_and_ball",
+    "image": "img-apple-64/1f3d1.png",
+    "aliases": []
+  },
+  {
+    "name": "ice_hockey_stick_and_puck",
+    "image": "img-apple-64/1f3d2.png",
+    "aliases": []
+  },
+  {
+    "name": "table_tennis_paddle_and_ball",
+    "image": "img-apple-64/1f3d3.png",
+    "aliases": []
+  },
+  {
+    "name": "snow_capped_mountain",
+    "image": "img-apple-64/1f3d4-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "camping",
+    "image": "img-apple-64/1f3d5-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "beach_with_umbrella",
+    "image": "img-apple-64/1f3d6-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "building_construction",
+    "image": "img-apple-64/1f3d7-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "house_buildings",
+    "image": "img-apple-64/1f3d8-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "cityscape",
+    "image": "img-apple-64/1f3d9-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "derelict_house_building",
+    "image": "img-apple-64/1f3da-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "classical_building",
+    "image": "img-apple-64/1f3db-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "desert",
+    "image": "img-apple-64/1f3dc-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "desert_island",
+    "image": "img-apple-64/1f3dd-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "national_park",
+    "image": "img-apple-64/1f3de-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "stadium",
+    "image": "img-apple-64/1f3df-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "house",
+    "image": "img-apple-64/1f3e0.png",
+    "aliases": []
+  },
+  {
+    "name": "house_with_garden",
+    "image": "img-apple-64/1f3e1.png",
+    "aliases": []
+  },
+  {
+    "name": "office",
+    "image": "img-apple-64/1f3e2.png",
+    "aliases": []
+  },
+  {
+    "name": "post_office",
+    "image": "img-apple-64/1f3e3.png",
+    "aliases": []
+  },
+  {
+    "name": "european_post_office",
+    "image": "img-apple-64/1f3e4.png",
+    "aliases": []
+  },
+  {
+    "name": "hospital",
+    "image": "img-apple-64/1f3e5.png",
+    "aliases": []
+  },
+  {
+    "name": "bank",
+    "image": "img-apple-64/1f3e6.png",
+    "aliases": []
+  },
+  {
+    "name": "atm",
+    "image": "img-apple-64/1f3e7.png",
+    "aliases": []
+  },
+  {
+    "name": "hotel",
+    "image": "img-apple-64/1f3e8.png",
+    "aliases": []
+  },
+  {
+    "name": "love_hotel",
+    "image": "img-apple-64/1f3e9.png",
+    "aliases": []
+  },
+  {
+    "name": "convenience_store",
+    "image": "img-apple-64/1f3ea.png",
+    "aliases": []
+  },
+  {
+    "name": "school",
+    "image": "img-apple-64/1f3eb.png",
+    "aliases": []
+  },
+  {
+    "name": "department_store",
+    "image": "img-apple-64/1f3ec.png",
+    "aliases": []
+  },
+  {
+    "name": "factory",
+    "image": "img-apple-64/1f3ed.png",
+    "aliases": []
+  },
+  {
+    "name": "izakaya_lantern",
+    "image": "img-apple-64/1f3ee.png",
+    "aliases": ["lantern"]
+  },
+  {
+    "name": "japanese_castle",
+    "image": "img-apple-64/1f3ef.png",
+    "aliases": []
+  },
+  {
+    "name": "european_castle",
+    "image": "img-apple-64/1f3f0.png",
+    "aliases": []
+  },
+  {
+    "name": "rainbow-flag",
+    "image": "img-apple-64/1f3f3-fe0f-200d-1f308.png",
+    "aliases": []
+  },
+  {
+    "name": "transgender_flag",
+    "image": "img-apple-64/1f3f3-fe0f-200d-26a7-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "waving_white_flag",
+    "image": "img-apple-64/1f3f3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "pirate_flag",
+    "image": "img-apple-64/1f3f4-200d-2620-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-england",
+    "image": "img-apple-64/1f3f4-e0067-e0062-e0065-e006e-e0067-e007f.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-scotland",
+    "image": "img-apple-64/1f3f4-e0067-e0062-e0073-e0063-e0074-e007f.png",
+    "aliases": []
+  },
+  {
+    "name": "flag-wales",
+    "image": "img-apple-64/1f3f4-e0067-e0062-e0077-e006c-e0073-e007f.png",
+    "aliases": []
+  },
+  {
+    "name": "waving_black_flag",
+    "image": "img-apple-64/1f3f4.png",
+    "aliases": []
+  },
+  {
+    "name": "rosette",
+    "image": "img-apple-64/1f3f5-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "label",
+    "image": "img-apple-64/1f3f7-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "badminton_racquet_and_shuttlecock",
+    "image": "img-apple-64/1f3f8.png",
+    "aliases": []
+  },
+  {
+    "name": "bow_and_arrow",
+    "image": "img-apple-64/1f3f9.png",
+    "aliases": []
+  },
+  {
+    "name": "amphora",
+    "image": "img-apple-64/1f3fa.png",
+    "aliases": []
+  },
+  {
+    "name": "skin-tone-2",
+    "image": "img-apple-64/1f3fb.png",
+    "aliases": []
+  },
+  {
+    "name": "skin-tone-3",
+    "image": "img-apple-64/1f3fc.png",
+    "aliases": []
+  },
+  {
+    "name": "skin-tone-4",
+    "image": "img-apple-64/1f3fd.png",
+    "aliases": []
+  },
+  {
+    "name": "skin-tone-5",
+    "image": "img-apple-64/1f3fe.png",
+    "aliases": []
+  },
+  {
+    "name": "skin-tone-6",
+    "image": "img-apple-64/1f3ff.png",
+    "aliases": []
+  },
+  {
+    "name": "rat",
+    "image": "img-apple-64/1f400.png",
+    "aliases": []
+  },
+  {
+    "name": "mouse2",
+    "image": "img-apple-64/1f401.png",
+    "aliases": []
+  },
+  {
+    "name": "ox",
+    "image": "img-apple-64/1f402.png",
+    "aliases": []
+  },
+  {
+    "name": "water_buffalo",
+    "image": "img-apple-64/1f403.png",
+    "aliases": []
+  },
+  {
+    "name": "cow2",
+    "image": "img-apple-64/1f404.png",
+    "aliases": []
+  },
+  {
+    "name": "tiger2",
+    "image": "img-apple-64/1f405.png",
+    "aliases": []
+  },
+  {
+    "name": "leopard",
+    "image": "img-apple-64/1f406.png",
+    "aliases": []
+  },
+  {
+    "name": "rabbit2",
+    "image": "img-apple-64/1f407.png",
+    "aliases": []
+  },
+  {
+    "name": "black_cat",
+    "image": "img-apple-64/1f408-200d-2b1b.png",
+    "aliases": []
+  },
+  {
+    "name": "cat2",
+    "image": "img-apple-64/1f408.png",
+    "aliases": []
+  },
+  {
+    "name": "dragon",
+    "image": "img-apple-64/1f409.png",
+    "aliases": []
+  },
+  {
+    "name": "crocodile",
+    "image": "img-apple-64/1f40a.png",
+    "aliases": []
+  },
+  {
+    "name": "whale2",
+    "image": "img-apple-64/1f40b.png",
+    "aliases": []
+  },
+  {
+    "name": "snail",
+    "image": "img-apple-64/1f40c.png",
+    "aliases": []
+  },
+  {
+    "name": "snake",
+    "image": "img-apple-64/1f40d.png",
+    "aliases": []
+  },
+  {
+    "name": "racehorse",
+    "image": "img-apple-64/1f40e.png",
+    "aliases": []
+  },
+  {
+    "name": "ram",
+    "image": "img-apple-64/1f40f.png",
+    "aliases": []
+  },
+  {
+    "name": "goat",
+    "image": "img-apple-64/1f410.png",
+    "aliases": []
+  },
+  {
+    "name": "sheep",
+    "image": "img-apple-64/1f411.png",
+    "aliases": []
+  },
+  {
+    "name": "monkey",
+    "image": "img-apple-64/1f412.png",
+    "aliases": []
+  },
+  {
+    "name": "rooster",
+    "image": "img-apple-64/1f413.png",
+    "aliases": []
+  },
+  {
+    "name": "chicken",
+    "image": "img-apple-64/1f414.png",
+    "aliases": []
+  },
+  {
+    "name": "service_dog",
+    "image": "img-apple-64/1f415-200d-1f9ba.png",
+    "aliases": []
+  },
+  {
+    "name": "dog2",
+    "image": "img-apple-64/1f415.png",
+    "aliases": []
+  },
+  {
+    "name": "pig2",
+    "image": "img-apple-64/1f416.png",
+    "aliases": []
+  },
+  {
+    "name": "boar",
+    "image": "img-apple-64/1f417.png",
+    "aliases": []
+  },
+  {
+    "name": "elephant",
+    "image": "img-apple-64/1f418.png",
+    "aliases": []
+  },
+  {
+    "name": "octopus",
+    "image": "img-apple-64/1f419.png",
+    "aliases": []
+  },
+  {
+    "name": "shell",
+    "image": "img-apple-64/1f41a.png",
+    "aliases": []
+  },
+  {
+    "name": "bug",
+    "image": "img-apple-64/1f41b.png",
+    "aliases": []
+  },
+  {
+    "name": "ant",
+    "image": "img-apple-64/1f41c.png",
+    "aliases": []
+  },
+  {
+    "name": "bee",
+    "image": "img-apple-64/1f41d.png",
+    "aliases": ["honeybee"]
+  },
+  {
+    "name": "ladybug",
+    "image": "img-apple-64/1f41e.png",
+    "aliases": ["lady_beetle"]
+  },
+  {
+    "name": "fish",
+    "image": "img-apple-64/1f41f.png",
+    "aliases": []
+  },
+  {
+    "name": "tropical_fish",
+    "image": "img-apple-64/1f420.png",
+    "aliases": []
+  },
+  {
+    "name": "blowfish",
+    "image": "img-apple-64/1f421.png",
+    "aliases": []
+  },
+  {
+    "name": "turtle",
+    "image": "img-apple-64/1f422.png",
+    "aliases": []
+  },
+  {
+    "name": "hatching_chick",
+    "image": "img-apple-64/1f423.png",
+    "aliases": []
+  },
+  {
+    "name": "baby_chick",
+    "image": "img-apple-64/1f424.png",
+    "aliases": []
+  },
+  {
+    "name": "hatched_chick",
+    "image": "img-apple-64/1f425.png",
+    "aliases": []
+  },
+  {
+    "name": "bird",
+    "image": "img-apple-64/1f426.png",
+    "aliases": []
+  },
+  {
+    "name": "penguin",
+    "image": "img-apple-64/1f427.png",
+    "aliases": []
+  },
+  {
+    "name": "koala",
+    "image": "img-apple-64/1f428.png",
+    "aliases": []
+  },
+  {
+    "name": "poodle",
+    "image": "img-apple-64/1f429.png",
+    "aliases": []
+  },
+  {
+    "name": "dromedary_camel",
+    "image": "img-apple-64/1f42a.png",
+    "aliases": []
+  },
+  {
+    "name": "camel",
+    "image": "img-apple-64/1f42b.png",
+    "aliases": []
+  },
+  {
+    "name": "dolphin",
+    "image": "img-apple-64/1f42c.png",
+    "aliases": ["flipper"]
+  },
+  {
+    "name": "mouse",
+    "image": "img-apple-64/1f42d.png",
+    "aliases": []
+  },
+  {
+    "name": "cow",
+    "image": "img-apple-64/1f42e.png",
+    "aliases": []
+  },
+  {
+    "name": "tiger",
+    "image": "img-apple-64/1f42f.png",
+    "aliases": []
+  },
+  {
+    "name": "rabbit",
+    "image": "img-apple-64/1f430.png",
+    "aliases": []
+  },
+  {
+    "name": "cat",
+    "image": "img-apple-64/1f431.png",
+    "aliases": []
+  },
+  {
+    "name": "dragon_face",
+    "image": "img-apple-64/1f432.png",
+    "aliases": []
+  },
+  {
+    "name": "whale",
+    "image": "img-apple-64/1f433.png",
+    "aliases": []
+  },
+  {
+    "name": "horse",
+    "image": "img-apple-64/1f434.png",
+    "aliases": []
+  },
+  {
+    "name": "monkey_face",
+    "image": "img-apple-64/1f435.png",
+    "aliases": []
+  },
+  {
+    "name": "dog",
+    "image": "img-apple-64/1f436.png",
+    "aliases": []
+  },
+  {
+    "name": "pig",
+    "image": "img-apple-64/1f437.png",
+    "aliases": []
+  },
+  {
+    "name": "frog",
+    "image": "img-apple-64/1f438.png",
+    "aliases": []
+  },
+  {
+    "name": "hamster",
+    "image": "img-apple-64/1f439.png",
+    "aliases": []
+  },
+  {
+    "name": "wolf",
+    "image": "img-apple-64/1f43a.png",
+    "aliases": []
+  },
+  {
+    "name": "polar_bear",
+    "image": "img-apple-64/1f43b-200d-2744-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "bear",
+    "image": "img-apple-64/1f43b.png",
+    "aliases": []
+  },
+  {
+    "name": "panda_face",
+    "image": "img-apple-64/1f43c.png",
+    "aliases": []
+  },
+  {
+    "name": "pig_nose",
+    "image": "img-apple-64/1f43d.png",
+    "aliases": []
+  },
+  {
+    "name": "feet",
+    "image": "img-apple-64/1f43e.png",
+    "aliases": ["paw_prints"]
+  },
+  {
+    "name": "chipmunk",
+    "image": "img-apple-64/1f43f-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "eyes",
+    "image": "img-apple-64/1f440.png",
+    "aliases": []
+  },
+  {
+    "name": "eye-in-speech-bubble",
+    "image": "img-apple-64/1f441-fe0f-200d-1f5e8-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "eye",
+    "image": "img-apple-64/1f441-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "ear",
+    "image": "img-apple-64/1f442.png",
+    "aliases": []
+  },
+  {
+    "name": "nose",
+    "image": "img-apple-64/1f443.png",
+    "aliases": []
+  },
+  {
+    "name": "lips",
+    "image": "img-apple-64/1f444.png",
+    "aliases": []
+  },
+  {
+    "name": "tongue",
+    "image": "img-apple-64/1f445.png",
+    "aliases": []
+  },
+  {
+    "name": "point_up_2",
+    "image": "img-apple-64/1f446.png",
+    "aliases": []
+  },
+  {
+    "name": "point_down",
+    "image": "img-apple-64/1f447.png",
+    "aliases": []
+  },
+  {
+    "name": "point_left",
+    "image": "img-apple-64/1f448.png",
+    "aliases": []
+  },
+  {
+    "name": "point_right",
+    "image": "img-apple-64/1f449.png",
+    "aliases": []
+  },
+  {
+    "name": "facepunch",
+    "image": "img-apple-64/1f44a.png",
+    "aliases": ["punch"]
+  },
+  {
+    "name": "wave",
+    "image": "img-apple-64/1f44b.png",
+    "aliases": []
+  },
+  {
+    "name": "ok_hand",
+    "image": "img-apple-64/1f44c.png",
+    "aliases": []
+  },
+  {
+    "name": "+1",
+    "image": "img-apple-64/1f44d.png",
+    "aliases": ["thumbsup"]
+  },
+  {
+    "name": "-1",
+    "image": "img-apple-64/1f44e.png",
+    "aliases": ["thumbsdown"]
+  },
+  {
+    "name": "clap",
+    "image": "img-apple-64/1f44f.png",
+    "aliases": []
+  },
+  {
+    "name": "open_hands",
+    "image": "img-apple-64/1f450.png",
+    "aliases": []
+  },
+  {
+    "name": "crown",
+    "image": "img-apple-64/1f451.png",
+    "aliases": []
+  },
+  {
+    "name": "womans_hat",
+    "image": "img-apple-64/1f452.png",
+    "aliases": []
+  },
+  {
+    "name": "eyeglasses",
+    "image": "img-apple-64/1f453.png",
+    "aliases": []
+  },
+  {
+    "name": "necktie",
+    "image": "img-apple-64/1f454.png",
+    "aliases": []
+  },
+  {
+    "name": "shirt",
+    "image": "img-apple-64/1f455.png",
+    "aliases": ["tshirt"]
+  },
+  {
+    "name": "jeans",
+    "image": "img-apple-64/1f456.png",
+    "aliases": []
+  },
+  {
+    "name": "dress",
+    "image": "img-apple-64/1f457.png",
+    "aliases": []
+  },
+  {
+    "name": "kimono",
+    "image": "img-apple-64/1f458.png",
+    "aliases": []
+  },
+  {
+    "name": "bikini",
+    "image": "img-apple-64/1f459.png",
+    "aliases": []
+  },
+  {
+    "name": "womans_clothes",
+    "image": "img-apple-64/1f45a.png",
+    "aliases": []
+  },
+  {
+    "name": "purse",
+    "image": "img-apple-64/1f45b.png",
+    "aliases": []
+  },
+  {
+    "name": "handbag",
+    "image": "img-apple-64/1f45c.png",
+    "aliases": []
+  },
+  {
+    "name": "pouch",
+    "image": "img-apple-64/1f45d.png",
+    "aliases": []
+  },
+  {
+    "name": "mans_shoe",
+    "image": "img-apple-64/1f45e.png",
+    "aliases": ["shoe"]
+  },
+  {
+    "name": "athletic_shoe",
+    "image": "img-apple-64/1f45f.png",
+    "aliases": []
+  },
+  {
+    "name": "high_heel",
+    "image": "img-apple-64/1f460.png",
+    "aliases": []
+  },
+  {
+    "name": "sandal",
+    "image": "img-apple-64/1f461.png",
+    "aliases": []
+  },
+  {
+    "name": "boot",
+    "image": "img-apple-64/1f462.png",
+    "aliases": []
+  },
+  {
+    "name": "footprints",
+    "image": "img-apple-64/1f463.png",
+    "aliases": []
+  },
+  {
+    "name": "bust_in_silhouette",
+    "image": "img-apple-64/1f464.png",
+    "aliases": []
+  },
+  {
+    "name": "busts_in_silhouette",
+    "image": "img-apple-64/1f465.png",
+    "aliases": []
+  },
+  {
+    "name": "boy",
+    "image": "img-apple-64/1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "girl",
+    "image": "img-apple-64/1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "male-farmer",
+    "image": "img-apple-64/1f468-200d-1f33e.png",
+    "aliases": []
+  },
+  {
+    "name": "male-cook",
+    "image": "img-apple-64/1f468-200d-1f373.png",
+    "aliases": []
+  },
+  {
+    "name": "man_feeding_baby",
+    "image": "img-apple-64/1f468-200d-1f37c.png",
+    "aliases": []
+  },
+  {
+    "name": "male-student",
+    "image": "img-apple-64/1f468-200d-1f393.png",
+    "aliases": []
+  },
+  {
+    "name": "male-singer",
+    "image": "img-apple-64/1f468-200d-1f3a4.png",
+    "aliases": []
+  },
+  {
+    "name": "male-artist",
+    "image": "img-apple-64/1f468-200d-1f3a8.png",
+    "aliases": []
+  },
+  {
+    "name": "male-teacher",
+    "image": "img-apple-64/1f468-200d-1f3eb.png",
+    "aliases": []
+  },
+  {
+    "name": "male-factory-worker",
+    "image": "img-apple-64/1f468-200d-1f3ed.png",
+    "aliases": []
+  },
+  {
+    "name": "man-boy-boy",
+    "image": "img-apple-64/1f468-200d-1f466-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-boy",
+    "image": "img-apple-64/1f468-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-girl-boy",
+    "image": "img-apple-64/1f468-200d-1f467-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-girl-girl",
+    "image": "img-apple-64/1f468-200d-1f467-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "man-girl",
+    "image": "img-apple-64/1f468-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "man-man-boy",
+    "image": "img-apple-64/1f468-200d-1f468-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-man-boy-boy",
+    "image": "img-apple-64/1f468-200d-1f468-200d-1f466-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-man-girl",
+    "image": "img-apple-64/1f468-200d-1f468-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "man-man-girl-boy",
+    "image": "img-apple-64/1f468-200d-1f468-200d-1f467-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-man-girl-girl",
+    "image": "img-apple-64/1f468-200d-1f468-200d-1f467-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "man-woman-boy",
+    "image": "img-apple-64/1f468-200d-1f469-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-woman-boy-boy",
+    "image": "img-apple-64/1f468-200d-1f469-200d-1f466-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-woman-girl",
+    "image": "img-apple-64/1f468-200d-1f469-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "man-woman-girl-boy",
+    "image": "img-apple-64/1f468-200d-1f469-200d-1f467-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "man-woman-girl-girl",
+    "image": "img-apple-64/1f468-200d-1f469-200d-1f467-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "male-technologist",
+    "image": "img-apple-64/1f468-200d-1f4bb.png",
+    "aliases": []
+  },
+  {
+    "name": "male-office-worker",
+    "image": "img-apple-64/1f468-200d-1f4bc.png",
+    "aliases": []
+  },
+  {
+    "name": "male-mechanic",
+    "image": "img-apple-64/1f468-200d-1f527.png",
+    "aliases": []
+  },
+  {
+    "name": "male-scientist",
+    "image": "img-apple-64/1f468-200d-1f52c.png",
+    "aliases": []
+  },
+  {
+    "name": "male-astronaut",
+    "image": "img-apple-64/1f468-200d-1f680.png",
+    "aliases": []
+  },
+  {
+    "name": "male-firefighter",
+    "image": "img-apple-64/1f468-200d-1f692.png",
+    "aliases": []
+  },
+  {
+    "name": "man_with_probing_cane",
+    "image": "img-apple-64/1f468-200d-1f9af.png",
+    "aliases": []
+  },
+  {
+    "name": "red_haired_man",
+    "image": "img-apple-64/1f468-200d-1f9b0.png",
+    "aliases": []
+  },
+  {
+    "name": "curly_haired_man",
+    "image": "img-apple-64/1f468-200d-1f9b1.png",
+    "aliases": []
+  },
+  {
+    "name": "bald_man",
+    "image": "img-apple-64/1f468-200d-1f9b2.png",
+    "aliases": []
+  },
+  {
+    "name": "white_haired_man",
+    "image": "img-apple-64/1f468-200d-1f9b3.png",
+    "aliases": []
+  },
+  {
+    "name": "man_in_motorized_wheelchair",
+    "image": "img-apple-64/1f468-200d-1f9bc.png",
+    "aliases": []
+  },
+  {
+    "name": "man_in_manual_wheelchair",
+    "image": "img-apple-64/1f468-200d-1f9bd.png",
+    "aliases": []
+  },
+  {
+    "name": "male-doctor",
+    "image": "img-apple-64/1f468-200d-2695-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male-judge",
+    "image": "img-apple-64/1f468-200d-2696-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male-pilot",
+    "image": "img-apple-64/1f468-200d-2708-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-heart-man",
+    "image": "img-apple-64/1f468-200d-2764-fe0f-200d-1f468.png",
+    "aliases": []
+  },
+  {
+    "name": "man-kiss-man",
+    "image": "img-apple-64/1f468-200d-2764-fe0f-200d-1f48b-200d-1f468.png",
+    "aliases": []
+  },
+  {
+    "name": "man",
+    "image": "img-apple-64/1f468.png",
+    "aliases": []
+  },
+  {
+    "name": "female-farmer",
+    "image": "img-apple-64/1f469-200d-1f33e.png",
+    "aliases": []
+  },
+  {
+    "name": "female-cook",
+    "image": "img-apple-64/1f469-200d-1f373.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_feeding_baby",
+    "image": "img-apple-64/1f469-200d-1f37c.png",
+    "aliases": []
+  },
+  {
+    "name": "female-student",
+    "image": "img-apple-64/1f469-200d-1f393.png",
+    "aliases": []
+  },
+  {
+    "name": "female-singer",
+    "image": "img-apple-64/1f469-200d-1f3a4.png",
+    "aliases": []
+  },
+  {
+    "name": "female-artist",
+    "image": "img-apple-64/1f469-200d-1f3a8.png",
+    "aliases": []
+  },
+  {
+    "name": "female-teacher",
+    "image": "img-apple-64/1f469-200d-1f3eb.png",
+    "aliases": []
+  },
+  {
+    "name": "female-factory-worker",
+    "image": "img-apple-64/1f469-200d-1f3ed.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-boy-boy",
+    "image": "img-apple-64/1f469-200d-1f466-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-boy",
+    "image": "img-apple-64/1f469-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-girl-boy",
+    "image": "img-apple-64/1f469-200d-1f467-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-girl-girl",
+    "image": "img-apple-64/1f469-200d-1f467-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-girl",
+    "image": "img-apple-64/1f469-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-woman-boy",
+    "image": "img-apple-64/1f469-200d-1f469-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-woman-boy-boy",
+    "image": "img-apple-64/1f469-200d-1f469-200d-1f466-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-woman-girl",
+    "image": "img-apple-64/1f469-200d-1f469-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-woman-girl-boy",
+    "image": "img-apple-64/1f469-200d-1f469-200d-1f467-200d-1f466.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-woman-girl-girl",
+    "image": "img-apple-64/1f469-200d-1f469-200d-1f467-200d-1f467.png",
+    "aliases": []
+  },
+  {
+    "name": "female-technologist",
+    "image": "img-apple-64/1f469-200d-1f4bb.png",
+    "aliases": []
+  },
+  {
+    "name": "female-office-worker",
+    "image": "img-apple-64/1f469-200d-1f4bc.png",
+    "aliases": []
+  },
+  {
+    "name": "female-mechanic",
+    "image": "img-apple-64/1f469-200d-1f527.png",
+    "aliases": []
+  },
+  {
+    "name": "female-scientist",
+    "image": "img-apple-64/1f469-200d-1f52c.png",
+    "aliases": []
+  },
+  {
+    "name": "female-astronaut",
+    "image": "img-apple-64/1f469-200d-1f680.png",
+    "aliases": []
+  },
+  {
+    "name": "female-firefighter",
+    "image": "img-apple-64/1f469-200d-1f692.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_with_probing_cane",
+    "image": "img-apple-64/1f469-200d-1f9af.png",
+    "aliases": []
+  },
+  {
+    "name": "red_haired_woman",
+    "image": "img-apple-64/1f469-200d-1f9b0.png",
+    "aliases": []
+  },
+  {
+    "name": "curly_haired_woman",
+    "image": "img-apple-64/1f469-200d-1f9b1.png",
+    "aliases": []
+  },
+  {
+    "name": "bald_woman",
+    "image": "img-apple-64/1f469-200d-1f9b2.png",
+    "aliases": []
+  },
+  {
+    "name": "white_haired_woman",
+    "image": "img-apple-64/1f469-200d-1f9b3.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_in_motorized_wheelchair",
+    "image": "img-apple-64/1f469-200d-1f9bc.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_in_manual_wheelchair",
+    "image": "img-apple-64/1f469-200d-1f9bd.png",
+    "aliases": []
+  },
+  {
+    "name": "female-doctor",
+    "image": "img-apple-64/1f469-200d-2695-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "female-judge",
+    "image": "img-apple-64/1f469-200d-2696-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "female-pilot",
+    "image": "img-apple-64/1f469-200d-2708-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-heart-man",
+    "image": "img-apple-64/1f469-200d-2764-fe0f-200d-1f468.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-heart-woman",
+    "image": "img-apple-64/1f469-200d-2764-fe0f-200d-1f469.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-kiss-man",
+    "image": "img-apple-64/1f469-200d-2764-fe0f-200d-1f48b-200d-1f468.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-kiss-woman",
+    "image": "img-apple-64/1f469-200d-2764-fe0f-200d-1f48b-200d-1f469.png",
+    "aliases": []
+  },
+  {
+    "name": "woman",
+    "image": "img-apple-64/1f469.png",
+    "aliases": []
+  },
+  {
+    "name": "family",
+    "image": "img-apple-64/1f46a.png",
+    "aliases": []
+  },
+  {
+    "name": "man_and_woman_holding_hands",
+    "image": "img-apple-64/1f46b.png",
+    "aliases": ["woman_and_man_holding_hands", "couple"]
+  },
+  {
+    "name": "two_men_holding_hands",
+    "image": "img-apple-64/1f46c.png",
+    "aliases": ["men_holding_hands"]
+  },
+  {
+    "name": "two_women_holding_hands",
+    "image": "img-apple-64/1f46d.png",
+    "aliases": ["women_holding_hands"]
+  },
+  {
+    "name": "female-police-officer",
+    "image": "img-apple-64/1f46e-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male-police-officer",
+    "image": "img-apple-64/1f46e-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "cop",
+    "image": "img-apple-64/1f46e.png",
+    "aliases": []
+  },
+  {
+    "name": "women-with-bunny-ears-partying",
+    "image": "img-apple-64/1f46f-200d-2640-fe0f.png",
+    "aliases": ["woman-with-bunny-ears-partying"]
+  },
+  {
+    "name": "men-with-bunny-ears-partying",
+    "image": "img-apple-64/1f46f-200d-2642-fe0f.png",
+    "aliases": ["man-with-bunny-ears-partying"]
+  },
+  {
+    "name": "dancers",
+    "image": "img-apple-64/1f46f.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_with_veil",
+    "image": "img-apple-64/1f470-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_with_veil",
+    "image": "img-apple-64/1f470-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "bride_with_veil",
+    "image": "img-apple-64/1f470.png",
+    "aliases": []
+  },
+  {
+    "name": "blond-haired-woman",
+    "image": "img-apple-64/1f471-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "blond-haired-man",
+    "image": "img-apple-64/1f471-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_with_blond_hair",
+    "image": "img-apple-64/1f471.png",
+    "aliases": []
+  },
+  {
+    "name": "man_with_gua_pi_mao",
+    "image": "img-apple-64/1f472.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-wearing-turban",
+    "image": "img-apple-64/1f473-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-wearing-turban",
+    "image": "img-apple-64/1f473-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_with_turban",
+    "image": "img-apple-64/1f473.png",
+    "aliases": []
+  },
+  {
+    "name": "older_man",
+    "image": "img-apple-64/1f474.png",
+    "aliases": []
+  },
+  {
+    "name": "older_woman",
+    "image": "img-apple-64/1f475.png",
+    "aliases": []
+  },
+  {
+    "name": "baby",
+    "image": "img-apple-64/1f476.png",
+    "aliases": []
+  },
+  {
+    "name": "female-construction-worker",
+    "image": "img-apple-64/1f477-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male-construction-worker",
+    "image": "img-apple-64/1f477-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "construction_worker",
+    "image": "img-apple-64/1f477.png",
+    "aliases": []
+  },
+  {
+    "name": "princess",
+    "image": "img-apple-64/1f478.png",
+    "aliases": []
+  },
+  {
+    "name": "japanese_ogre",
+    "image": "img-apple-64/1f479.png",
+    "aliases": []
+  },
+  {
+    "name": "japanese_goblin",
+    "image": "img-apple-64/1f47a.png",
+    "aliases": []
+  },
+  {
+    "name": "ghost",
+    "image": "img-apple-64/1f47b.png",
+    "aliases": []
+  },
+  {
+    "name": "angel",
+    "image": "img-apple-64/1f47c.png",
+    "aliases": []
+  },
+  {
+    "name": "alien",
+    "image": "img-apple-64/1f47d.png",
+    "aliases": []
+  },
+  {
+    "name": "space_invader",
+    "image": "img-apple-64/1f47e.png",
+    "aliases": []
+  },
+  {
+    "name": "imp",
+    "image": "img-apple-64/1f47f.png",
+    "aliases": []
+  },
+  {
+    "name": "skull",
+    "image": "img-apple-64/1f480.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-tipping-hand",
+    "image": "img-apple-64/1f481-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-tipping-hand",
+    "image": "img-apple-64/1f481-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "information_desk_person",
+    "image": "img-apple-64/1f481.png",
+    "aliases": []
+  },
+  {
+    "name": "female-guard",
+    "image": "img-apple-64/1f482-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male-guard",
+    "image": "img-apple-64/1f482-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "guardsman",
+    "image": "img-apple-64/1f482.png",
+    "aliases": []
+  },
+  {
+    "name": "dancer",
+    "image": "img-apple-64/1f483.png",
+    "aliases": []
+  },
+  {
+    "name": "lipstick",
+    "image": "img-apple-64/1f484.png",
+    "aliases": []
+  },
+  {
+    "name": "nail_care",
+    "image": "img-apple-64/1f485.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-getting-massage",
+    "image": "img-apple-64/1f486-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-getting-massage",
+    "image": "img-apple-64/1f486-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "massage",
+    "image": "img-apple-64/1f486.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-getting-haircut",
+    "image": "img-apple-64/1f487-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-getting-haircut",
+    "image": "img-apple-64/1f487-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "haircut",
+    "image": "img-apple-64/1f487.png",
+    "aliases": []
+  },
+  {
+    "name": "barber",
+    "image": "img-apple-64/1f488.png",
+    "aliases": []
+  },
+  {
+    "name": "syringe",
+    "image": "img-apple-64/1f489.png",
+    "aliases": []
+  },
+  {
+    "name": "pill",
+    "image": "img-apple-64/1f48a.png",
+    "aliases": []
+  },
+  {
+    "name": "kiss",
+    "image": "img-apple-64/1f48b.png",
+    "aliases": []
+  },
+  {
+    "name": "love_letter",
+    "image": "img-apple-64/1f48c.png",
+    "aliases": []
+  },
+  {
+    "name": "ring",
+    "image": "img-apple-64/1f48d.png",
+    "aliases": []
+  },
+  {
+    "name": "gem",
+    "image": "img-apple-64/1f48e.png",
+    "aliases": []
+  },
+  {
+    "name": "couplekiss",
+    "image": "img-apple-64/1f48f.png",
+    "aliases": []
+  },
+  {
+    "name": "bouquet",
+    "image": "img-apple-64/1f490.png",
+    "aliases": []
+  },
+  {
+    "name": "couple_with_heart",
+    "image": "img-apple-64/1f491.png",
+    "aliases": []
+  },
+  {
+    "name": "wedding",
+    "image": "img-apple-64/1f492.png",
+    "aliases": []
+  },
+  {
+    "name": "heartbeat",
+    "image": "img-apple-64/1f493.png",
+    "aliases": []
+  },
+  {
+    "name": "broken_heart",
+    "image": "img-apple-64/1f494.png",
+    "aliases": []
+  },
+  {
+    "name": "two_hearts",
+    "image": "img-apple-64/1f495.png",
+    "aliases": []
+  },
+  {
+    "name": "sparkling_heart",
+    "image": "img-apple-64/1f496.png",
+    "aliases": []
+  },
+  {
+    "name": "heartpulse",
+    "image": "img-apple-64/1f497.png",
+    "aliases": []
+  },
+  {
+    "name": "cupid",
+    "image": "img-apple-64/1f498.png",
+    "aliases": []
+  },
+  {
+    "name": "blue_heart",
+    "image": "img-apple-64/1f499.png",
+    "aliases": []
+  },
+  {
+    "name": "green_heart",
+    "image": "img-apple-64/1f49a.png",
+    "aliases": []
+  },
+  {
+    "name": "yellow_heart",
+    "image": "img-apple-64/1f49b.png",
+    "aliases": []
+  },
+  {
+    "name": "purple_heart",
+    "image": "img-apple-64/1f49c.png",
+    "aliases": []
+  },
+  {
+    "name": "gift_heart",
+    "image": "img-apple-64/1f49d.png",
+    "aliases": []
+  },
+  {
+    "name": "revolving_hearts",
+    "image": "img-apple-64/1f49e.png",
+    "aliases": []
+  },
+  {
+    "name": "heart_decoration",
+    "image": "img-apple-64/1f49f.png",
+    "aliases": []
+  },
+  {
+    "name": "diamond_shape_with_a_dot_inside",
+    "image": "img-apple-64/1f4a0.png",
+    "aliases": []
+  },
+  {
+    "name": "bulb",
+    "image": "img-apple-64/1f4a1.png",
+    "aliases": []
+  },
+  {
+    "name": "anger",
+    "image": "img-apple-64/1f4a2.png",
+    "aliases": []
+  },
+  {
+    "name": "bomb",
+    "image": "img-apple-64/1f4a3.png",
+    "aliases": []
+  },
+  {
+    "name": "zzz",
+    "image": "img-apple-64/1f4a4.png",
+    "aliases": []
+  },
+  {
+    "name": "boom",
+    "image": "img-apple-64/1f4a5.png",
+    "aliases": ["collision"]
+  },
+  {
+    "name": "sweat_drops",
+    "image": "img-apple-64/1f4a6.png",
+    "aliases": []
+  },
+  {
+    "name": "droplet",
+    "image": "img-apple-64/1f4a7.png",
+    "aliases": []
+  },
+  {
+    "name": "dash",
+    "image": "img-apple-64/1f4a8.png",
+    "aliases": []
+  },
+  {
+    "name": "hankey",
+    "image": "img-apple-64/1f4a9.png",
+    "aliases": ["poop", "shit"]
+  },
+  {
+    "name": "muscle",
+    "image": "img-apple-64/1f4aa.png",
+    "aliases": []
+  },
+  {
+    "name": "dizzy",
+    "image": "img-apple-64/1f4ab.png",
+    "aliases": []
+  },
+  {
+    "name": "speech_balloon",
+    "image": "img-apple-64/1f4ac.png",
+    "aliases": []
+  },
+  {
+    "name": "thought_balloon",
+    "image": "img-apple-64/1f4ad.png",
+    "aliases": []
+  },
+  {
+    "name": "white_flower",
+    "image": "img-apple-64/1f4ae.png",
+    "aliases": []
+  },
+  {
+    "name": "100",
+    "image": "img-apple-64/1f4af.png",
+    "aliases": []
+  },
+  {
+    "name": "moneybag",
+    "image": "img-apple-64/1f4b0.png",
+    "aliases": []
+  },
+  {
+    "name": "currency_exchange",
+    "image": "img-apple-64/1f4b1.png",
+    "aliases": []
+  },
+  {
+    "name": "heavy_dollar_sign",
+    "image": "img-apple-64/1f4b2.png",
+    "aliases": []
+  },
+  {
+    "name": "credit_card",
+    "image": "img-apple-64/1f4b3.png",
+    "aliases": []
+  },
+  {
+    "name": "yen",
+    "image": "img-apple-64/1f4b4.png",
+    "aliases": []
+  },
+  {
+    "name": "dollar",
+    "image": "img-apple-64/1f4b5.png",
+    "aliases": []
+  },
+  {
+    "name": "euro",
+    "image": "img-apple-64/1f4b6.png",
+    "aliases": []
+  },
+  {
+    "name": "pound",
+    "image": "img-apple-64/1f4b7.png",
+    "aliases": []
+  },
+  {
+    "name": "money_with_wings",
+    "image": "img-apple-64/1f4b8.png",
+    "aliases": []
+  },
+  {
+    "name": "chart",
+    "image": "img-apple-64/1f4b9.png",
+    "aliases": []
+  },
+  {
+    "name": "seat",
+    "image": "img-apple-64/1f4ba.png",
+    "aliases": []
+  },
+  {
+    "name": "computer",
+    "image": "img-apple-64/1f4bb.png",
+    "aliases": []
+  },
+  {
+    "name": "briefcase",
+    "image": "img-apple-64/1f4bc.png",
+    "aliases": []
+  },
+  {
+    "name": "minidisc",
+    "image": "img-apple-64/1f4bd.png",
+    "aliases": []
+  },
+  {
+    "name": "floppy_disk",
+    "image": "img-apple-64/1f4be.png",
+    "aliases": []
+  },
+  {
+    "name": "cd",
+    "image": "img-apple-64/1f4bf.png",
+    "aliases": []
+  },
+  {
+    "name": "dvd",
+    "image": "img-apple-64/1f4c0.png",
+    "aliases": []
+  },
+  {
+    "name": "file_folder",
+    "image": "img-apple-64/1f4c1.png",
+    "aliases": []
+  },
+  {
+    "name": "open_file_folder",
+    "image": "img-apple-64/1f4c2.png",
+    "aliases": []
+  },
+  {
+    "name": "page_with_curl",
+    "image": "img-apple-64/1f4c3.png",
+    "aliases": []
+  },
+  {
+    "name": "page_facing_up",
+    "image": "img-apple-64/1f4c4.png",
+    "aliases": []
+  },
+  {
+    "name": "date",
+    "image": "img-apple-64/1f4c5.png",
+    "aliases": []
+  },
+  {
+    "name": "calendar",
+    "image": "img-apple-64/1f4c6.png",
+    "aliases": []
+  },
+  {
+    "name": "card_index",
+    "image": "img-apple-64/1f4c7.png",
+    "aliases": []
+  },
+  {
+    "name": "chart_with_upwards_trend",
+    "image": "img-apple-64/1f4c8.png",
+    "aliases": []
+  },
+  {
+    "name": "chart_with_downwards_trend",
+    "image": "img-apple-64/1f4c9.png",
+    "aliases": []
+  },
+  {
+    "name": "bar_chart",
+    "image": "img-apple-64/1f4ca.png",
+    "aliases": []
+  },
+  {
+    "name": "clipboard",
+    "image": "img-apple-64/1f4cb.png",
+    "aliases": []
+  },
+  {
+    "name": "pushpin",
+    "image": "img-apple-64/1f4cc.png",
+    "aliases": []
+  },
+  {
+    "name": "round_pushpin",
+    "image": "img-apple-64/1f4cd.png",
+    "aliases": []
+  },
+  {
+    "name": "paperclip",
+    "image": "img-apple-64/1f4ce.png",
+    "aliases": []
+  },
+  {
+    "name": "straight_ruler",
+    "image": "img-apple-64/1f4cf.png",
+    "aliases": []
+  },
+  {
+    "name": "triangular_ruler",
+    "image": "img-apple-64/1f4d0.png",
+    "aliases": []
+  },
+  {
+    "name": "bookmark_tabs",
+    "image": "img-apple-64/1f4d1.png",
+    "aliases": []
+  },
+  {
+    "name": "ledger",
+    "image": "img-apple-64/1f4d2.png",
+    "aliases": []
+  },
+  {
+    "name": "notebook",
+    "image": "img-apple-64/1f4d3.png",
+    "aliases": []
+  },
+  {
+    "name": "notebook_with_decorative_cover",
+    "image": "img-apple-64/1f4d4.png",
+    "aliases": []
+  },
+  {
+    "name": "closed_book",
+    "image": "img-apple-64/1f4d5.png",
+    "aliases": []
+  },
+  {
+    "name": "book",
+    "image": "img-apple-64/1f4d6.png",
+    "aliases": ["open_book"]
+  },
+  {
+    "name": "green_book",
+    "image": "img-apple-64/1f4d7.png",
+    "aliases": []
+  },
+  {
+    "name": "blue_book",
+    "image": "img-apple-64/1f4d8.png",
+    "aliases": []
+  },
+  {
+    "name": "orange_book",
+    "image": "img-apple-64/1f4d9.png",
+    "aliases": []
+  },
+  {
+    "name": "books",
+    "image": "img-apple-64/1f4da.png",
+    "aliases": []
+  },
+  {
+    "name": "name_badge",
+    "image": "img-apple-64/1f4db.png",
+    "aliases": []
+  },
+  {
+    "name": "scroll",
+    "image": "img-apple-64/1f4dc.png",
+    "aliases": []
+  },
+  {
+    "name": "memo",
+    "image": "img-apple-64/1f4dd.png",
+    "aliases": ["pencil"]
+  },
+  {
+    "name": "telephone_receiver",
+    "image": "img-apple-64/1f4de.png",
+    "aliases": []
+  },
+  {
+    "name": "pager",
+    "image": "img-apple-64/1f4df.png",
+    "aliases": []
+  },
+  {
+    "name": "fax",
+    "image": "img-apple-64/1f4e0.png",
+    "aliases": []
+  },
+  {
+    "name": "satellite_antenna",
+    "image": "img-apple-64/1f4e1.png",
+    "aliases": []
+  },
+  {
+    "name": "loudspeaker",
+    "image": "img-apple-64/1f4e2.png",
+    "aliases": []
+  },
+  {
+    "name": "mega",
+    "image": "img-apple-64/1f4e3.png",
+    "aliases": []
+  },
+  {
+    "name": "outbox_tray",
+    "image": "img-apple-64/1f4e4.png",
+    "aliases": []
+  },
+  {
+    "name": "inbox_tray",
+    "image": "img-apple-64/1f4e5.png",
+    "aliases": []
+  },
+  {
+    "name": "package",
+    "image": "img-apple-64/1f4e6.png",
+    "aliases": []
+  },
+  {
+    "name": "e-mail",
+    "image": "img-apple-64/1f4e7.png",
+    "aliases": []
+  },
+  {
+    "name": "incoming_envelope",
+    "image": "img-apple-64/1f4e8.png",
+    "aliases": []
+  },
+  {
+    "name": "envelope_with_arrow",
+    "image": "img-apple-64/1f4e9.png",
+    "aliases": []
+  },
+  {
+    "name": "mailbox_closed",
+    "image": "img-apple-64/1f4ea.png",
+    "aliases": []
+  },
+  {
+    "name": "mailbox",
+    "image": "img-apple-64/1f4eb.png",
+    "aliases": []
+  },
+  {
+    "name": "mailbox_with_mail",
+    "image": "img-apple-64/1f4ec.png",
+    "aliases": []
+  },
+  {
+    "name": "mailbox_with_no_mail",
+    "image": "img-apple-64/1f4ed.png",
+    "aliases": []
+  },
+  {
+    "name": "postbox",
+    "image": "img-apple-64/1f4ee.png",
+    "aliases": []
+  },
+  {
+    "name": "postal_horn",
+    "image": "img-apple-64/1f4ef.png",
+    "aliases": []
+  },
+  {
+    "name": "newspaper",
+    "image": "img-apple-64/1f4f0.png",
+    "aliases": []
+  },
+  {
+    "name": "iphone",
+    "image": "img-apple-64/1f4f1.png",
+    "aliases": []
+  },
+  {
+    "name": "calling",
+    "image": "img-apple-64/1f4f2.png",
+    "aliases": []
+  },
+  {
+    "name": "vibration_mode",
+    "image": "img-apple-64/1f4f3.png",
+    "aliases": []
+  },
+  {
+    "name": "mobile_phone_off",
+    "image": "img-apple-64/1f4f4.png",
+    "aliases": []
+  },
+  {
+    "name": "no_mobile_phones",
+    "image": "img-apple-64/1f4f5.png",
+    "aliases": []
+  },
+  {
+    "name": "signal_strength",
+    "image": "img-apple-64/1f4f6.png",
+    "aliases": []
+  },
+  {
+    "name": "camera",
+    "image": "img-apple-64/1f4f7.png",
+    "aliases": []
+  },
+  {
+    "name": "camera_with_flash",
+    "image": "img-apple-64/1f4f8.png",
+    "aliases": []
+  },
+  {
+    "name": "video_camera",
+    "image": "img-apple-64/1f4f9.png",
+    "aliases": []
+  },
+  {
+    "name": "tv",
+    "image": "img-apple-64/1f4fa.png",
+    "aliases": []
+  },
+  {
+    "name": "radio",
+    "image": "img-apple-64/1f4fb.png",
+    "aliases": []
+  },
+  {
+    "name": "vhs",
+    "image": "img-apple-64/1f4fc.png",
+    "aliases": []
+  },
+  {
+    "name": "film_projector",
+    "image": "img-apple-64/1f4fd-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "prayer_beads",
+    "image": "img-apple-64/1f4ff.png",
+    "aliases": []
+  },
+  {
+    "name": "twisted_rightwards_arrows",
+    "image": "img-apple-64/1f500.png",
+    "aliases": []
+  },
+  {
+    "name": "repeat",
+    "image": "img-apple-64/1f501.png",
+    "aliases": []
+  },
+  {
+    "name": "repeat_one",
+    "image": "img-apple-64/1f502.png",
+    "aliases": []
+  },
+  {
+    "name": "arrows_clockwise",
+    "image": "img-apple-64/1f503.png",
+    "aliases": []
+  },
+  {
+    "name": "arrows_counterclockwise",
+    "image": "img-apple-64/1f504.png",
+    "aliases": []
+  },
+  {
+    "name": "low_brightness",
+    "image": "img-apple-64/1f505.png",
+    "aliases": []
+  },
+  {
+    "name": "high_brightness",
+    "image": "img-apple-64/1f506.png",
+    "aliases": []
+  },
+  {
+    "name": "mute",
+    "image": "img-apple-64/1f507.png",
+    "aliases": []
+  },
+  {
+    "name": "speaker",
+    "image": "img-apple-64/1f508.png",
+    "aliases": []
+  },
+  {
+    "name": "sound",
+    "image": "img-apple-64/1f509.png",
+    "aliases": []
+  },
+  {
+    "name": "loud_sound",
+    "image": "img-apple-64/1f50a.png",
+    "aliases": []
+  },
+  {
+    "name": "battery",
+    "image": "img-apple-64/1f50b.png",
+    "aliases": []
+  },
+  {
+    "name": "electric_plug",
+    "image": "img-apple-64/1f50c.png",
+    "aliases": []
+  },
+  {
+    "name": "mag",
+    "image": "img-apple-64/1f50d.png",
+    "aliases": []
+  },
+  {
+    "name": "mag_right",
+    "image": "img-apple-64/1f50e.png",
+    "aliases": []
+  },
+  {
+    "name": "lock_with_ink_pen",
+    "image": "img-apple-64/1f50f.png",
+    "aliases": []
+  },
+  {
+    "name": "closed_lock_with_key",
+    "image": "img-apple-64/1f510.png",
+    "aliases": []
+  },
+  {
+    "name": "key",
+    "image": "img-apple-64/1f511.png",
+    "aliases": []
+  },
+  {
+    "name": "lock",
+    "image": "img-apple-64/1f512.png",
+    "aliases": []
+  },
+  {
+    "name": "unlock",
+    "image": "img-apple-64/1f513.png",
+    "aliases": []
+  },
+  {
+    "name": "bell",
+    "image": "img-apple-64/1f514.png",
+    "aliases": []
+  },
+  {
+    "name": "no_bell",
+    "image": "img-apple-64/1f515.png",
+    "aliases": []
+  },
+  {
+    "name": "bookmark",
+    "image": "img-apple-64/1f516.png",
+    "aliases": []
+  },
+  {
+    "name": "link",
+    "image": "img-apple-64/1f517.png",
+    "aliases": []
+  },
+  {
+    "name": "radio_button",
+    "image": "img-apple-64/1f518.png",
+    "aliases": []
+  },
+  {
+    "name": "back",
+    "image": "img-apple-64/1f519.png",
+    "aliases": []
+  },
+  {
+    "name": "end",
+    "image": "img-apple-64/1f51a.png",
+    "aliases": []
+  },
+  {
+    "name": "on",
+    "image": "img-apple-64/1f51b.png",
+    "aliases": []
+  },
+  {
+    "name": "soon",
+    "image": "img-apple-64/1f51c.png",
+    "aliases": []
+  },
+  {
+    "name": "top",
+    "image": "img-apple-64/1f51d.png",
+    "aliases": []
+  },
+  {
+    "name": "underage",
+    "image": "img-apple-64/1f51e.png",
+    "aliases": []
+  },
+  {
+    "name": "keycap_ten",
+    "image": "img-apple-64/1f51f.png",
+    "aliases": []
+  },
+  {
+    "name": "capital_abcd",
+    "image": "img-apple-64/1f520.png",
+    "aliases": []
+  },
+  {
+    "name": "abcd",
+    "image": "img-apple-64/1f521.png",
+    "aliases": []
+  },
+  {
+    "name": "1234",
+    "image": "img-apple-64/1f522.png",
+    "aliases": []
+  },
+  {
+    "name": "symbols",
+    "image": "img-apple-64/1f523.png",
+    "aliases": []
+  },
+  {
+    "name": "abc",
+    "image": "img-apple-64/1f524.png",
+    "aliases": []
+  },
+  {
+    "name": "fire",
+    "image": "img-apple-64/1f525.png",
+    "aliases": []
+  },
+  {
+    "name": "flashlight",
+    "image": "img-apple-64/1f526.png",
+    "aliases": []
+  },
+  {
+    "name": "wrench",
+    "image": "img-apple-64/1f527.png",
+    "aliases": []
+  },
+  {
+    "name": "hammer",
+    "image": "img-apple-64/1f528.png",
+    "aliases": []
+  },
+  {
+    "name": "nut_and_bolt",
+    "image": "img-apple-64/1f529.png",
+    "aliases": []
+  },
+  {
+    "name": "hocho",
+    "image": "img-apple-64/1f52a.png",
+    "aliases": ["knife"]
+  },
+  {
+    "name": "gun",
+    "image": "img-apple-64/1f52b.png",
+    "aliases": []
+  },
+  {
+    "name": "microscope",
+    "image": "img-apple-64/1f52c.png",
+    "aliases": []
+  },
+  {
+    "name": "telescope",
+    "image": "img-apple-64/1f52d.png",
+    "aliases": []
+  },
+  {
+    "name": "crystal_ball",
+    "image": "img-apple-64/1f52e.png",
+    "aliases": []
+  },
+  {
+    "name": "six_pointed_star",
+    "image": "img-apple-64/1f52f.png",
+    "aliases": []
+  },
+  {
+    "name": "beginner",
+    "image": "img-apple-64/1f530.png",
+    "aliases": []
+  },
+  {
+    "name": "trident",
+    "image": "img-apple-64/1f531.png",
+    "aliases": []
+  },
+  {
+    "name": "black_square_button",
+    "image": "img-apple-64/1f532.png",
+    "aliases": []
+  },
+  {
+    "name": "white_square_button",
+    "image": "img-apple-64/1f533.png",
+    "aliases": []
+  },
+  {
+    "name": "red_circle",
+    "image": "img-apple-64/1f534.png",
+    "aliases": []
+  },
+  {
+    "name": "large_blue_circle",
+    "image": "img-apple-64/1f535.png",
+    "aliases": []
+  },
+  {
+    "name": "large_orange_diamond",
+    "image": "img-apple-64/1f536.png",
+    "aliases": []
+  },
+  {
+    "name": "large_blue_diamond",
+    "image": "img-apple-64/1f537.png",
+    "aliases": []
+  },
+  {
+    "name": "small_orange_diamond",
+    "image": "img-apple-64/1f538.png",
+    "aliases": []
+  },
+  {
+    "name": "small_blue_diamond",
+    "image": "img-apple-64/1f539.png",
+    "aliases": []
+  },
+  {
+    "name": "small_red_triangle",
+    "image": "img-apple-64/1f53a.png",
+    "aliases": []
+  },
+  {
+    "name": "small_red_triangle_down",
+    "image": "img-apple-64/1f53b.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_up_small",
+    "image": "img-apple-64/1f53c.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_down_small",
+    "image": "img-apple-64/1f53d.png",
+    "aliases": []
+  },
+  {
+    "name": "om_symbol",
+    "image": "img-apple-64/1f549-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "dove_of_peace",
+    "image": "img-apple-64/1f54a-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "kaaba",
+    "image": "img-apple-64/1f54b.png",
+    "aliases": []
+  },
+  {
+    "name": "mosque",
+    "image": "img-apple-64/1f54c.png",
+    "aliases": []
+  },
+  {
+    "name": "synagogue",
+    "image": "img-apple-64/1f54d.png",
+    "aliases": []
+  },
+  {
+    "name": "menorah_with_nine_branches",
+    "image": "img-apple-64/1f54e.png",
+    "aliases": []
+  },
+  {
+    "name": "clock1",
+    "image": "img-apple-64/1f550.png",
+    "aliases": []
+  },
+  {
+    "name": "clock2",
+    "image": "img-apple-64/1f551.png",
+    "aliases": []
+  },
+  {
+    "name": "clock3",
+    "image": "img-apple-64/1f552.png",
+    "aliases": []
+  },
+  {
+    "name": "clock4",
+    "image": "img-apple-64/1f553.png",
+    "aliases": []
+  },
+  {
+    "name": "clock5",
+    "image": "img-apple-64/1f554.png",
+    "aliases": []
+  },
+  {
+    "name": "clock6",
+    "image": "img-apple-64/1f555.png",
+    "aliases": []
+  },
+  {
+    "name": "clock7",
+    "image": "img-apple-64/1f556.png",
+    "aliases": []
+  },
+  {
+    "name": "clock8",
+    "image": "img-apple-64/1f557.png",
+    "aliases": []
+  },
+  {
+    "name": "clock9",
+    "image": "img-apple-64/1f558.png",
+    "aliases": []
+  },
+  {
+    "name": "clock10",
+    "image": "img-apple-64/1f559.png",
+    "aliases": []
+  },
+  {
+    "name": "clock11",
+    "image": "img-apple-64/1f55a.png",
+    "aliases": []
+  },
+  {
+    "name": "clock12",
+    "image": "img-apple-64/1f55b.png",
+    "aliases": []
+  },
+  {
+    "name": "clock130",
+    "image": "img-apple-64/1f55c.png",
+    "aliases": []
+  },
+  {
+    "name": "clock230",
+    "image": "img-apple-64/1f55d.png",
+    "aliases": []
+  },
+  {
+    "name": "clock330",
+    "image": "img-apple-64/1f55e.png",
+    "aliases": []
+  },
+  {
+    "name": "clock430",
+    "image": "img-apple-64/1f55f.png",
+    "aliases": []
+  },
+  {
+    "name": "clock530",
+    "image": "img-apple-64/1f560.png",
+    "aliases": []
+  },
+  {
+    "name": "clock630",
+    "image": "img-apple-64/1f561.png",
+    "aliases": []
+  },
+  {
+    "name": "clock730",
+    "image": "img-apple-64/1f562.png",
+    "aliases": []
+  },
+  {
+    "name": "clock830",
+    "image": "img-apple-64/1f563.png",
+    "aliases": []
+  },
+  {
+    "name": "clock930",
+    "image": "img-apple-64/1f564.png",
+    "aliases": []
+  },
+  {
+    "name": "clock1030",
+    "image": "img-apple-64/1f565.png",
+    "aliases": []
+  },
+  {
+    "name": "clock1130",
+    "image": "img-apple-64/1f566.png",
+    "aliases": []
+  },
+  {
+    "name": "clock1230",
+    "image": "img-apple-64/1f567.png",
+    "aliases": []
+  },
+  {
+    "name": "candle",
+    "image": "img-apple-64/1f56f-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "mantelpiece_clock",
+    "image": "img-apple-64/1f570-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "hole",
+    "image": "img-apple-64/1f573-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_in_business_suit_levitating",
+    "image": "img-apple-64/1f574-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "female-detective",
+    "image": "img-apple-64/1f575-fe0f-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male-detective",
+    "image": "img-apple-64/1f575-fe0f-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "sleuth_or_spy",
+    "image": "img-apple-64/1f575-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "dark_sunglasses",
+    "image": "img-apple-64/1f576-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "spider",
+    "image": "img-apple-64/1f577-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "spider_web",
+    "image": "img-apple-64/1f578-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "joystick",
+    "image": "img-apple-64/1f579-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_dancing",
+    "image": "img-apple-64/1f57a.png",
+    "aliases": []
+  },
+  {
+    "name": "linked_paperclips",
+    "image": "img-apple-64/1f587-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "lower_left_ballpoint_pen",
+    "image": "img-apple-64/1f58a-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "lower_left_fountain_pen",
+    "image": "img-apple-64/1f58b-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "lower_left_paintbrush",
+    "image": "img-apple-64/1f58c-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "lower_left_crayon",
+    "image": "img-apple-64/1f58d-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "raised_hand_with_fingers_splayed",
+    "image": "img-apple-64/1f590-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "middle_finger",
+    "image": "img-apple-64/1f595.png",
+    "aliases": ["reversed_hand_with_middle_finger_extended"]
+  },
+  {
+    "name": "spock-hand",
+    "image": "img-apple-64/1f596.png",
+    "aliases": []
+  },
+  {
+    "name": "black_heart",
+    "image": "img-apple-64/1f5a4.png",
+    "aliases": []
+  },
+  {
+    "name": "desktop_computer",
+    "image": "img-apple-64/1f5a5-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "printer",
+    "image": "img-apple-64/1f5a8-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "three_button_mouse",
+    "image": "img-apple-64/1f5b1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "trackball",
+    "image": "img-apple-64/1f5b2-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "frame_with_picture",
+    "image": "img-apple-64/1f5bc-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "card_index_dividers",
+    "image": "img-apple-64/1f5c2-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "card_file_box",
+    "image": "img-apple-64/1f5c3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "file_cabinet",
+    "image": "img-apple-64/1f5c4-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "wastebasket",
+    "image": "img-apple-64/1f5d1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "spiral_note_pad",
+    "image": "img-apple-64/1f5d2-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "spiral_calendar_pad",
+    "image": "img-apple-64/1f5d3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "compression",
+    "image": "img-apple-64/1f5dc-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "old_key",
+    "image": "img-apple-64/1f5dd-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "rolled_up_newspaper",
+    "image": "img-apple-64/1f5de-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "dagger_knife",
+    "image": "img-apple-64/1f5e1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "speaking_head_in_silhouette",
+    "image": "img-apple-64/1f5e3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "left_speech_bubble",
+    "image": "img-apple-64/1f5e8-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "right_anger_bubble",
+    "image": "img-apple-64/1f5ef-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "ballot_box_with_ballot",
+    "image": "img-apple-64/1f5f3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "world_map",
+    "image": "img-apple-64/1f5fa-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "mount_fuji",
+    "image": "img-apple-64/1f5fb.png",
+    "aliases": []
+  },
+  {
+    "name": "tokyo_tower",
+    "image": "img-apple-64/1f5fc.png",
+    "aliases": []
+  },
+  {
+    "name": "statue_of_liberty",
+    "image": "img-apple-64/1f5fd.png",
+    "aliases": []
+  },
+  {
+    "name": "japan",
+    "image": "img-apple-64/1f5fe.png",
+    "aliases": []
+  },
+  {
+    "name": "moyai",
+    "image": "img-apple-64/1f5ff.png",
+    "aliases": []
+  },
+  {
+    "name": "grinning",
+    "image": "img-apple-64/1f600.png",
+    "aliases": []
+  },
+  {
+    "name": "grin",
+    "image": "img-apple-64/1f601.png",
+    "aliases": []
+  },
+  {
+    "name": "joy",
+    "image": "img-apple-64/1f602.png",
+    "aliases": []
+  },
+  {
+    "name": "smiley",
+    "image": "img-apple-64/1f603.png",
+    "aliases": []
+  },
+  {
+    "name": "smile",
+    "image": "img-apple-64/1f604.png",
+    "aliases": []
+  },
+  {
+    "name": "sweat_smile",
+    "image": "img-apple-64/1f605.png",
+    "aliases": []
+  },
+  {
+    "name": "laughing",
+    "image": "img-apple-64/1f606.png",
+    "aliases": ["satisfied"]
+  },
+  {
+    "name": "innocent",
+    "image": "img-apple-64/1f607.png",
+    "aliases": []
+  },
+  {
+    "name": "smiling_imp",
+    "image": "img-apple-64/1f608.png",
+    "aliases": []
+  },
+  {
+    "name": "wink",
+    "image": "img-apple-64/1f609.png",
+    "aliases": []
+  },
+  {
+    "name": "blush",
+    "image": "img-apple-64/1f60a.png",
+    "aliases": []
+  },
+  {
+    "name": "yum",
+    "image": "img-apple-64/1f60b.png",
+    "aliases": []
+  },
+  {
+    "name": "relieved",
+    "image": "img-apple-64/1f60c.png",
+    "aliases": []
+  },
+  {
+    "name": "heart_eyes",
+    "image": "img-apple-64/1f60d.png",
+    "aliases": []
+  },
+  {
+    "name": "sunglasses",
+    "image": "img-apple-64/1f60e.png",
+    "aliases": []
+  },
+  {
+    "name": "smirk",
+    "image": "img-apple-64/1f60f.png",
+    "aliases": []
+  },
+  {
+    "name": "neutral_face",
+    "image": "img-apple-64/1f610.png",
+    "aliases": []
+  },
+  {
+    "name": "expressionless",
+    "image": "img-apple-64/1f611.png",
+    "aliases": []
+  },
+  {
+    "name": "unamused",
+    "image": "img-apple-64/1f612.png",
+    "aliases": []
+  },
+  {
+    "name": "sweat",
+    "image": "img-apple-64/1f613.png",
+    "aliases": []
+  },
+  {
+    "name": "pensive",
+    "image": "img-apple-64/1f614.png",
+    "aliases": []
+  },
+  {
+    "name": "confused",
+    "image": "img-apple-64/1f615.png",
+    "aliases": []
+  },
+  {
+    "name": "confounded",
+    "image": "img-apple-64/1f616.png",
+    "aliases": []
+  },
+  {
+    "name": "kissing",
+    "image": "img-apple-64/1f617.png",
+    "aliases": []
+  },
+  {
+    "name": "kissing_heart",
+    "image": "img-apple-64/1f618.png",
+    "aliases": []
+  },
+  {
+    "name": "kissing_smiling_eyes",
+    "image": "img-apple-64/1f619.png",
+    "aliases": []
+  },
+  {
+    "name": "kissing_closed_eyes",
+    "image": "img-apple-64/1f61a.png",
+    "aliases": []
+  },
+  {
+    "name": "stuck_out_tongue",
+    "image": "img-apple-64/1f61b.png",
+    "aliases": []
+  },
+  {
+    "name": "stuck_out_tongue_winking_eye",
+    "image": "img-apple-64/1f61c.png",
+    "aliases": []
+  },
+  {
+    "name": "stuck_out_tongue_closed_eyes",
+    "image": "img-apple-64/1f61d.png",
+    "aliases": []
+  },
+  {
+    "name": "disappointed",
+    "image": "img-apple-64/1f61e.png",
+    "aliases": []
+  },
+  {
+    "name": "worried",
+    "image": "img-apple-64/1f61f.png",
+    "aliases": []
+  },
+  {
+    "name": "angry",
+    "image": "img-apple-64/1f620.png",
+    "aliases": []
+  },
+  {
+    "name": "rage",
+    "image": "img-apple-64/1f621.png",
+    "aliases": []
+  },
+  {
+    "name": "cry",
+    "image": "img-apple-64/1f622.png",
+    "aliases": []
+  },
+  {
+    "name": "persevere",
+    "image": "img-apple-64/1f623.png",
+    "aliases": []
+  },
+  {
+    "name": "triumph",
+    "image": "img-apple-64/1f624.png",
+    "aliases": []
+  },
+  {
+    "name": "disappointed_relieved",
+    "image": "img-apple-64/1f625.png",
+    "aliases": []
+  },
+  {
+    "name": "frowning",
+    "image": "img-apple-64/1f626.png",
+    "aliases": []
+  },
+  {
+    "name": "anguished",
+    "image": "img-apple-64/1f627.png",
+    "aliases": []
+  },
+  {
+    "name": "fearful",
+    "image": "img-apple-64/1f628.png",
+    "aliases": []
+  },
+  {
+    "name": "weary",
+    "image": "img-apple-64/1f629.png",
+    "aliases": []
+  },
+  {
+    "name": "sleepy",
+    "image": "img-apple-64/1f62a.png",
+    "aliases": []
+  },
+  {
+    "name": "tired_face",
+    "image": "img-apple-64/1f62b.png",
+    "aliases": []
+  },
+  {
+    "name": "grimacing",
+    "image": "img-apple-64/1f62c.png",
+    "aliases": []
+  },
+  {
+    "name": "sob",
+    "image": "img-apple-64/1f62d.png",
+    "aliases": []
+  },
+  {
+    "name": "face_exhaling",
+    "image": "img-apple-64/1f62e-200d-1f4a8.png",
+    "aliases": []
+  },
+  {
+    "name": "open_mouth",
+    "image": "img-apple-64/1f62e.png",
+    "aliases": []
+  },
+  {
+    "name": "hushed",
+    "image": "img-apple-64/1f62f.png",
+    "aliases": []
+  },
+  {
+    "name": "cold_sweat",
+    "image": "img-apple-64/1f630.png",
+    "aliases": []
+  },
+  {
+    "name": "scream",
+    "image": "img-apple-64/1f631.png",
+    "aliases": []
+  },
+  {
+    "name": "astonished",
+    "image": "img-apple-64/1f632.png",
+    "aliases": []
+  },
+  {
+    "name": "flushed",
+    "image": "img-apple-64/1f633.png",
+    "aliases": []
+  },
+  {
+    "name": "sleeping",
+    "image": "img-apple-64/1f634.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_spiral_eyes",
+    "image": "img-apple-64/1f635-200d-1f4ab.png",
+    "aliases": []
+  },
+  {
+    "name": "dizzy_face",
+    "image": "img-apple-64/1f635.png",
+    "aliases": []
+  },
+  {
+    "name": "face_in_clouds",
+    "image": "img-apple-64/1f636-200d-1f32b-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "no_mouth",
+    "image": "img-apple-64/1f636.png",
+    "aliases": []
+  },
+  {
+    "name": "mask",
+    "image": "img-apple-64/1f637.png",
+    "aliases": []
+  },
+  {
+    "name": "smile_cat",
+    "image": "img-apple-64/1f638.png",
+    "aliases": []
+  },
+  {
+    "name": "joy_cat",
+    "image": "img-apple-64/1f639.png",
+    "aliases": []
+  },
+  {
+    "name": "smiley_cat",
+    "image": "img-apple-64/1f63a.png",
+    "aliases": []
+  },
+  {
+    "name": "heart_eyes_cat",
+    "image": "img-apple-64/1f63b.png",
+    "aliases": []
+  },
+  {
+    "name": "smirk_cat",
+    "image": "img-apple-64/1f63c.png",
+    "aliases": []
+  },
+  {
+    "name": "kissing_cat",
+    "image": "img-apple-64/1f63d.png",
+    "aliases": []
+  },
+  {
+    "name": "pouting_cat",
+    "image": "img-apple-64/1f63e.png",
+    "aliases": []
+  },
+  {
+    "name": "crying_cat_face",
+    "image": "img-apple-64/1f63f.png",
+    "aliases": []
+  },
+  {
+    "name": "scream_cat",
+    "image": "img-apple-64/1f640.png",
+    "aliases": []
+  },
+  {
+    "name": "slightly_frowning_face",
+    "image": "img-apple-64/1f641.png",
+    "aliases": []
+  },
+  {
+    "name": "slightly_smiling_face",
+    "image": "img-apple-64/1f642.png",
+    "aliases": []
+  },
+  {
+    "name": "upside_down_face",
+    "image": "img-apple-64/1f643.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_rolling_eyes",
+    "image": "img-apple-64/1f644.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-gesturing-no",
+    "image": "img-apple-64/1f645-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-gesturing-no",
+    "image": "img-apple-64/1f645-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "no_good",
+    "image": "img-apple-64/1f645.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-gesturing-ok",
+    "image": "img-apple-64/1f646-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-gesturing-ok",
+    "image": "img-apple-64/1f646-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "ok_woman",
+    "image": "img-apple-64/1f646.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-bowing",
+    "image": "img-apple-64/1f647-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-bowing",
+    "image": "img-apple-64/1f647-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "bow",
+    "image": "img-apple-64/1f647.png",
+    "aliases": []
+  },
+  {
+    "name": "see_no_evil",
+    "image": "img-apple-64/1f648.png",
+    "aliases": []
+  },
+  {
+    "name": "hear_no_evil",
+    "image": "img-apple-64/1f649.png",
+    "aliases": []
+  },
+  {
+    "name": "speak_no_evil",
+    "image": "img-apple-64/1f64a.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-raising-hand",
+    "image": "img-apple-64/1f64b-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-raising-hand",
+    "image": "img-apple-64/1f64b-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "raising_hand",
+    "image": "img-apple-64/1f64b.png",
+    "aliases": []
+  },
+  {
+    "name": "raised_hands",
+    "image": "img-apple-64/1f64c.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-frowning",
+    "image": "img-apple-64/1f64d-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-frowning",
+    "image": "img-apple-64/1f64d-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_frowning",
+    "image": "img-apple-64/1f64d.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-pouting",
+    "image": "img-apple-64/1f64e-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-pouting",
+    "image": "img-apple-64/1f64e-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_with_pouting_face",
+    "image": "img-apple-64/1f64e.png",
+    "aliases": []
+  },
+  {
+    "name": "pray",
+    "image": "img-apple-64/1f64f.png",
+    "aliases": []
+  },
+  {
+    "name": "rocket",
+    "image": "img-apple-64/1f680.png",
+    "aliases": []
+  },
+  {
+    "name": "helicopter",
+    "image": "img-apple-64/1f681.png",
+    "aliases": []
+  },
+  {
+    "name": "steam_locomotive",
+    "image": "img-apple-64/1f682.png",
+    "aliases": []
+  },
+  {
+    "name": "railway_car",
+    "image": "img-apple-64/1f683.png",
+    "aliases": []
+  },
+  {
+    "name": "bullettrain_side",
+    "image": "img-apple-64/1f684.png",
+    "aliases": []
+  },
+  {
+    "name": "bullettrain_front",
+    "image": "img-apple-64/1f685.png",
+    "aliases": []
+  },
+  {
+    "name": "train2",
+    "image": "img-apple-64/1f686.png",
+    "aliases": []
+  },
+  {
+    "name": "metro",
+    "image": "img-apple-64/1f687.png",
+    "aliases": []
+  },
+  {
+    "name": "light_rail",
+    "image": "img-apple-64/1f688.png",
+    "aliases": []
+  },
+  {
+    "name": "station",
+    "image": "img-apple-64/1f689.png",
+    "aliases": []
+  },
+  {
+    "name": "tram",
+    "image": "img-apple-64/1f68a.png",
+    "aliases": []
+  },
+  {
+    "name": "train",
+    "image": "img-apple-64/1f68b.png",
+    "aliases": []
+  },
+  {
+    "name": "bus",
+    "image": "img-apple-64/1f68c.png",
+    "aliases": []
+  },
+  {
+    "name": "oncoming_bus",
+    "image": "img-apple-64/1f68d.png",
+    "aliases": []
+  },
+  {
+    "name": "trolleybus",
+    "image": "img-apple-64/1f68e.png",
+    "aliases": []
+  },
+  {
+    "name": "busstop",
+    "image": "img-apple-64/1f68f.png",
+    "aliases": []
+  },
+  {
+    "name": "minibus",
+    "image": "img-apple-64/1f690.png",
+    "aliases": []
+  },
+  {
+    "name": "ambulance",
+    "image": "img-apple-64/1f691.png",
+    "aliases": []
+  },
+  {
+    "name": "fire_engine",
+    "image": "img-apple-64/1f692.png",
+    "aliases": []
+  },
+  {
+    "name": "police_car",
+    "image": "img-apple-64/1f693.png",
+    "aliases": []
+  },
+  {
+    "name": "oncoming_police_car",
+    "image": "img-apple-64/1f694.png",
+    "aliases": []
+  },
+  {
+    "name": "taxi",
+    "image": "img-apple-64/1f695.png",
+    "aliases": []
+  },
+  {
+    "name": "oncoming_taxi",
+    "image": "img-apple-64/1f696.png",
+    "aliases": []
+  },
+  {
+    "name": "car",
+    "image": "img-apple-64/1f697.png",
+    "aliases": ["red_car"]
+  },
+  {
+    "name": "oncoming_automobile",
+    "image": "img-apple-64/1f698.png",
+    "aliases": []
+  },
+  {
+    "name": "blue_car",
+    "image": "img-apple-64/1f699.png",
+    "aliases": []
+  },
+  {
+    "name": "truck",
+    "image": "img-apple-64/1f69a.png",
+    "aliases": []
+  },
+  {
+    "name": "articulated_lorry",
+    "image": "img-apple-64/1f69b.png",
+    "aliases": []
+  },
+  {
+    "name": "tractor",
+    "image": "img-apple-64/1f69c.png",
+    "aliases": []
+  },
+  {
+    "name": "monorail",
+    "image": "img-apple-64/1f69d.png",
+    "aliases": []
+  },
+  {
+    "name": "mountain_railway",
+    "image": "img-apple-64/1f69e.png",
+    "aliases": []
+  },
+  {
+    "name": "suspension_railway",
+    "image": "img-apple-64/1f69f.png",
+    "aliases": []
+  },
+  {
+    "name": "mountain_cableway",
+    "image": "img-apple-64/1f6a0.png",
+    "aliases": []
+  },
+  {
+    "name": "aerial_tramway",
+    "image": "img-apple-64/1f6a1.png",
+    "aliases": []
+  },
+  {
+    "name": "ship",
+    "image": "img-apple-64/1f6a2.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-rowing-boat",
+    "image": "img-apple-64/1f6a3-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-rowing-boat",
+    "image": "img-apple-64/1f6a3-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "rowboat",
+    "image": "img-apple-64/1f6a3.png",
+    "aliases": []
+  },
+  {
+    "name": "speedboat",
+    "image": "img-apple-64/1f6a4.png",
+    "aliases": []
+  },
+  {
+    "name": "traffic_light",
+    "image": "img-apple-64/1f6a5.png",
+    "aliases": []
+  },
+  {
+    "name": "vertical_traffic_light",
+    "image": "img-apple-64/1f6a6.png",
+    "aliases": []
+  },
+  {
+    "name": "construction",
+    "image": "img-apple-64/1f6a7.png",
+    "aliases": []
+  },
+  {
+    "name": "rotating_light",
+    "image": "img-apple-64/1f6a8.png",
+    "aliases": []
+  },
+  {
+    "name": "triangular_flag_on_post",
+    "image": "img-apple-64/1f6a9.png",
+    "aliases": []
+  },
+  {
+    "name": "door",
+    "image": "img-apple-64/1f6aa.png",
+    "aliases": []
+  },
+  {
+    "name": "no_entry_sign",
+    "image": "img-apple-64/1f6ab.png",
+    "aliases": []
+  },
+  {
+    "name": "smoking",
+    "image": "img-apple-64/1f6ac.png",
+    "aliases": []
+  },
+  {
+    "name": "no_smoking",
+    "image": "img-apple-64/1f6ad.png",
+    "aliases": []
+  },
+  {
+    "name": "put_litter_in_its_place",
+    "image": "img-apple-64/1f6ae.png",
+    "aliases": []
+  },
+  {
+    "name": "do_not_litter",
+    "image": "img-apple-64/1f6af.png",
+    "aliases": []
+  },
+  {
+    "name": "potable_water",
+    "image": "img-apple-64/1f6b0.png",
+    "aliases": []
+  },
+  {
+    "name": "non-potable_water",
+    "image": "img-apple-64/1f6b1.png",
+    "aliases": []
+  },
+  {
+    "name": "bike",
+    "image": "img-apple-64/1f6b2.png",
+    "aliases": []
+  },
+  {
+    "name": "no_bicycles",
+    "image": "img-apple-64/1f6b3.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-biking",
+    "image": "img-apple-64/1f6b4-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-biking",
+    "image": "img-apple-64/1f6b4-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "bicyclist",
+    "image": "img-apple-64/1f6b4.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-mountain-biking",
+    "image": "img-apple-64/1f6b5-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-mountain-biking",
+    "image": "img-apple-64/1f6b5-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "mountain_bicyclist",
+    "image": "img-apple-64/1f6b5.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-walking",
+    "image": "img-apple-64/1f6b6-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-walking",
+    "image": "img-apple-64/1f6b6-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "walking",
+    "image": "img-apple-64/1f6b6.png",
+    "aliases": []
+  },
+  {
+    "name": "no_pedestrians",
+    "image": "img-apple-64/1f6b7.png",
+    "aliases": []
+  },
+  {
+    "name": "children_crossing",
+    "image": "img-apple-64/1f6b8.png",
+    "aliases": []
+  },
+  {
+    "name": "mens",
+    "image": "img-apple-64/1f6b9.png",
+    "aliases": []
+  },
+  {
+    "name": "womens",
+    "image": "img-apple-64/1f6ba.png",
+    "aliases": []
+  },
+  {
+    "name": "restroom",
+    "image": "img-apple-64/1f6bb.png",
+    "aliases": []
+  },
+  {
+    "name": "baby_symbol",
+    "image": "img-apple-64/1f6bc.png",
+    "aliases": []
+  },
+  {
+    "name": "toilet",
+    "image": "img-apple-64/1f6bd.png",
+    "aliases": []
+  },
+  {
+    "name": "wc",
+    "image": "img-apple-64/1f6be.png",
+    "aliases": []
+  },
+  {
+    "name": "shower",
+    "image": "img-apple-64/1f6bf.png",
+    "aliases": []
+  },
+  {
+    "name": "bath",
+    "image": "img-apple-64/1f6c0.png",
+    "aliases": []
+  },
+  {
+    "name": "bathtub",
+    "image": "img-apple-64/1f6c1.png",
+    "aliases": []
+  },
+  {
+    "name": "passport_control",
+    "image": "img-apple-64/1f6c2.png",
+    "aliases": []
+  },
+  {
+    "name": "customs",
+    "image": "img-apple-64/1f6c3.png",
+    "aliases": []
+  },
+  {
+    "name": "baggage_claim",
+    "image": "img-apple-64/1f6c4.png",
+    "aliases": []
+  },
+  {
+    "name": "left_luggage",
+    "image": "img-apple-64/1f6c5.png",
+    "aliases": []
+  },
+  {
+    "name": "couch_and_lamp",
+    "image": "img-apple-64/1f6cb-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "sleeping_accommodation",
+    "image": "img-apple-64/1f6cc.png",
+    "aliases": []
+  },
+  {
+    "name": "shopping_bags",
+    "image": "img-apple-64/1f6cd-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "bellhop_bell",
+    "image": "img-apple-64/1f6ce-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "bed",
+    "image": "img-apple-64/1f6cf-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "place_of_worship",
+    "image": "img-apple-64/1f6d0.png",
+    "aliases": []
+  },
+  {
+    "name": "octagonal_sign",
+    "image": "img-apple-64/1f6d1.png",
+    "aliases": []
+  },
+  {
+    "name": "shopping_trolley",
+    "image": "img-apple-64/1f6d2.png",
+    "aliases": []
+  },
+  {
+    "name": "hindu_temple",
+    "image": "img-apple-64/1f6d5.png",
+    "aliases": []
+  },
+  {
+    "name": "hut",
+    "image": "img-apple-64/1f6d6.png",
+    "aliases": []
+  },
+  {
+    "name": "elevator",
+    "image": "img-apple-64/1f6d7.png",
+    "aliases": []
+  },
+  {
+    "name": "playground_slide",
+    "image": "img-apple-64/1f6dd.png",
+    "aliases": []
+  },
+  {
+    "name": "wheel",
+    "image": "img-apple-64/1f6de.png",
+    "aliases": []
+  },
+  {
+    "name": "ring_buoy",
+    "image": "img-apple-64/1f6df.png",
+    "aliases": []
+  },
+  {
+    "name": "hammer_and_wrench",
+    "image": "img-apple-64/1f6e0-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "shield",
+    "image": "img-apple-64/1f6e1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "oil_drum",
+    "image": "img-apple-64/1f6e2-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "motorway",
+    "image": "img-apple-64/1f6e3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "railway_track",
+    "image": "img-apple-64/1f6e4-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "motor_boat",
+    "image": "img-apple-64/1f6e5-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "small_airplane",
+    "image": "img-apple-64/1f6e9-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "airplane_departure",
+    "image": "img-apple-64/1f6eb.png",
+    "aliases": []
+  },
+  {
+    "name": "airplane_arriving",
+    "image": "img-apple-64/1f6ec.png",
+    "aliases": []
+  },
+  {
+    "name": "satellite",
+    "image": "img-apple-64/1f6f0-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "passenger_ship",
+    "image": "img-apple-64/1f6f3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "scooter",
+    "image": "img-apple-64/1f6f4.png",
+    "aliases": []
+  },
+  {
+    "name": "motor_scooter",
+    "image": "img-apple-64/1f6f5.png",
+    "aliases": []
+  },
+  {
+    "name": "canoe",
+    "image": "img-apple-64/1f6f6.png",
+    "aliases": []
+  },
+  {
+    "name": "sled",
+    "image": "img-apple-64/1f6f7.png",
+    "aliases": []
+  },
+  {
+    "name": "flying_saucer",
+    "image": "img-apple-64/1f6f8.png",
+    "aliases": []
+  },
+  {
+    "name": "skateboard",
+    "image": "img-apple-64/1f6f9.png",
+    "aliases": []
+  },
+  {
+    "name": "auto_rickshaw",
+    "image": "img-apple-64/1f6fa.png",
+    "aliases": []
+  },
+  {
+    "name": "pickup_truck",
+    "image": "img-apple-64/1f6fb.png",
+    "aliases": []
+  },
+  {
+    "name": "roller_skate",
+    "image": "img-apple-64/1f6fc.png",
+    "aliases": []
+  },
+  {
+    "name": "large_orange_circle",
+    "image": "img-apple-64/1f7e0.png",
+    "aliases": []
+  },
+  {
+    "name": "large_yellow_circle",
+    "image": "img-apple-64/1f7e1.png",
+    "aliases": []
+  },
+  {
+    "name": "large_green_circle",
+    "image": "img-apple-64/1f7e2.png",
+    "aliases": []
+  },
+  {
+    "name": "large_purple_circle",
+    "image": "img-apple-64/1f7e3.png",
+    "aliases": []
+  },
+  {
+    "name": "large_brown_circle",
+    "image": "img-apple-64/1f7e4.png",
+    "aliases": []
+  },
+  {
+    "name": "large_red_square",
+    "image": "img-apple-64/1f7e5.png",
+    "aliases": []
+  },
+  {
+    "name": "large_blue_square",
+    "image": "img-apple-64/1f7e6.png",
+    "aliases": []
+  },
+  {
+    "name": "large_orange_square",
+    "image": "img-apple-64/1f7e7.png",
+    "aliases": []
+  },
+  {
+    "name": "large_yellow_square",
+    "image": "img-apple-64/1f7e8.png",
+    "aliases": []
+  },
+  {
+    "name": "large_green_square",
+    "image": "img-apple-64/1f7e9.png",
+    "aliases": []
+  },
+  {
+    "name": "large_purple_square",
+    "image": "img-apple-64/1f7ea.png",
+    "aliases": []
+  },
+  {
+    "name": "large_brown_square",
+    "image": "img-apple-64/1f7eb.png",
+    "aliases": []
+  },
+  {
+    "name": "heavy_equals_sign",
+    "image": "img-apple-64/1f7f0.png",
+    "aliases": []
+  },
+  {
+    "name": "pinched_fingers",
+    "image": "img-apple-64/1f90c.png",
+    "aliases": []
+  },
+  {
+    "name": "white_heart",
+    "image": "img-apple-64/1f90d.png",
+    "aliases": []
+  },
+  {
+    "name": "brown_heart",
+    "image": "img-apple-64/1f90e.png",
+    "aliases": []
+  },
+  {
+    "name": "pinching_hand",
+    "image": "img-apple-64/1f90f.png",
+    "aliases": []
+  },
+  {
+    "name": "zipper_mouth_face",
+    "image": "img-apple-64/1f910.png",
+    "aliases": []
+  },
+  {
+    "name": "money_mouth_face",
+    "image": "img-apple-64/1f911.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_thermometer",
+    "image": "img-apple-64/1f912.png",
+    "aliases": []
+  },
+  {
+    "name": "nerd_face",
+    "image": "img-apple-64/1f913.png",
+    "aliases": []
+  },
+  {
+    "name": "thinking_face",
+    "image": "img-apple-64/1f914.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_head_bandage",
+    "image": "img-apple-64/1f915.png",
+    "aliases": []
+  },
+  {
+    "name": "robot_face",
+    "image": "img-apple-64/1f916.png",
+    "aliases": []
+  },
+  {
+    "name": "hugging_face",
+    "image": "img-apple-64/1f917.png",
+    "aliases": []
+  },
+  {
+    "name": "the_horns",
+    "image": "img-apple-64/1f918.png",
+    "aliases": ["sign_of_the_horns"]
+  },
+  {
+    "name": "call_me_hand",
+    "image": "img-apple-64/1f919.png",
+    "aliases": []
+  },
+  {
+    "name": "raised_back_of_hand",
+    "image": "img-apple-64/1f91a.png",
+    "aliases": []
+  },
+  {
+    "name": "left-facing_fist",
+    "image": "img-apple-64/1f91b.png",
+    "aliases": []
+  },
+  {
+    "name": "right-facing_fist",
+    "image": "img-apple-64/1f91c.png",
+    "aliases": []
+  },
+  {
+    "name": "handshake",
+    "image": "img-apple-64/1f91d.png",
+    "aliases": []
+  },
+  {
+    "name": "crossed_fingers",
+    "image": "img-apple-64/1f91e.png",
+    "aliases": ["hand_with_index_and_middle_fingers_crossed"]
+  },
+  {
+    "name": "i_love_you_hand_sign",
+    "image": "img-apple-64/1f91f.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_cowboy_hat",
+    "image": "img-apple-64/1f920.png",
+    "aliases": []
+  },
+  {
+    "name": "clown_face",
+    "image": "img-apple-64/1f921.png",
+    "aliases": []
+  },
+  {
+    "name": "nauseated_face",
+    "image": "img-apple-64/1f922.png",
+    "aliases": []
+  },
+  {
+    "name": "rolling_on_the_floor_laughing",
+    "image": "img-apple-64/1f923.png",
+    "aliases": []
+  },
+  {
+    "name": "drooling_face",
+    "image": "img-apple-64/1f924.png",
+    "aliases": []
+  },
+  {
+    "name": "lying_face",
+    "image": "img-apple-64/1f925.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-facepalming",
+    "image": "img-apple-64/1f926-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-facepalming",
+    "image": "img-apple-64/1f926-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "face_palm",
+    "image": "img-apple-64/1f926.png",
+    "aliases": []
+  },
+  {
+    "name": "sneezing_face",
+    "image": "img-apple-64/1f927.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_raised_eyebrow",
+    "image": "img-apple-64/1f928.png",
+    "aliases": ["face_with_one_eyebrow_raised"]
+  },
+  {
+    "name": "star-struck",
+    "image": "img-apple-64/1f929.png",
+    "aliases": ["grinning_face_with_star_eyes"]
+  },
+  {
+    "name": "zany_face",
+    "image": "img-apple-64/1f92a.png",
+    "aliases": ["grinning_face_with_one_large_and_one_small_eye"]
+  },
+  {
+    "name": "shushing_face",
+    "image": "img-apple-64/1f92b.png",
+    "aliases": ["face_with_finger_covering_closed_lips"]
+  },
+  {
+    "name": "face_with_symbols_on_mouth",
+    "image": "img-apple-64/1f92c.png",
+    "aliases": ["serious_face_with_symbols_covering_mouth"]
+  },
+  {
+    "name": "face_with_hand_over_mouth",
+    "image": "img-apple-64/1f92d.png",
+    "aliases": ["smiling_face_with_smiling_eyes_and_hand_covering_mouth"]
+  },
+  {
+    "name": "face_vomiting",
+    "image": "img-apple-64/1f92e.png",
+    "aliases": ["face_with_open_mouth_vomiting"]
+  },
+  {
+    "name": "exploding_head",
+    "image": "img-apple-64/1f92f.png",
+    "aliases": ["shocked_face_with_exploding_head"]
+  },
+  {
+    "name": "pregnant_woman",
+    "image": "img-apple-64/1f930.png",
+    "aliases": []
+  },
+  {
+    "name": "breast-feeding",
+    "image": "img-apple-64/1f931.png",
+    "aliases": []
+  },
+  {
+    "name": "palms_up_together",
+    "image": "img-apple-64/1f932.png",
+    "aliases": []
+  },
+  {
+    "name": "selfie",
+    "image": "img-apple-64/1f933.png",
+    "aliases": []
+  },
+  {
+    "name": "prince",
+    "image": "img-apple-64/1f934.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_in_tuxedo",
+    "image": "img-apple-64/1f935-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_in_tuxedo",
+    "image": "img-apple-64/1f935-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_in_tuxedo",
+    "image": "img-apple-64/1f935.png",
+    "aliases": []
+  },
+  {
+    "name": "mrs_claus",
+    "image": "img-apple-64/1f936.png",
+    "aliases": ["mother_christmas"]
+  },
+  {
+    "name": "woman-shrugging",
+    "image": "img-apple-64/1f937-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-shrugging",
+    "image": "img-apple-64/1f937-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "shrug",
+    "image": "img-apple-64/1f937.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-cartwheeling",
+    "image": "img-apple-64/1f938-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-cartwheeling",
+    "image": "img-apple-64/1f938-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_doing_cartwheel",
+    "image": "img-apple-64/1f938.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-juggling",
+    "image": "img-apple-64/1f939-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-juggling",
+    "image": "img-apple-64/1f939-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "juggling",
+    "image": "img-apple-64/1f939.png",
+    "aliases": []
+  },
+  {
+    "name": "fencer",
+    "image": "img-apple-64/1f93a.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-wrestling",
+    "image": "img-apple-64/1f93c-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-wrestling",
+    "image": "img-apple-64/1f93c-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "wrestlers",
+    "image": "img-apple-64/1f93c.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-playing-water-polo",
+    "image": "img-apple-64/1f93d-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-playing-water-polo",
+    "image": "img-apple-64/1f93d-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "water_polo",
+    "image": "img-apple-64/1f93d.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-playing-handball",
+    "image": "img-apple-64/1f93e-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-playing-handball",
+    "image": "img-apple-64/1f93e-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "handball",
+    "image": "img-apple-64/1f93e.png",
+    "aliases": []
+  },
+  {
+    "name": "diving_mask",
+    "image": "img-apple-64/1f93f.png",
+    "aliases": []
+  },
+  {
+    "name": "wilted_flower",
+    "image": "img-apple-64/1f940.png",
+    "aliases": []
+  },
+  {
+    "name": "drum_with_drumsticks",
+    "image": "img-apple-64/1f941.png",
+    "aliases": []
+  },
+  {
+    "name": "clinking_glasses",
+    "image": "img-apple-64/1f942.png",
+    "aliases": []
+  },
+  {
+    "name": "tumbler_glass",
+    "image": "img-apple-64/1f943.png",
+    "aliases": []
+  },
+  {
+    "name": "spoon",
+    "image": "img-apple-64/1f944.png",
+    "aliases": []
+  },
+  {
+    "name": "goal_net",
+    "image": "img-apple-64/1f945.png",
+    "aliases": []
+  },
+  {
+    "name": "first_place_medal",
+    "image": "img-apple-64/1f947.png",
+    "aliases": []
+  },
+  {
+    "name": "second_place_medal",
+    "image": "img-apple-64/1f948.png",
+    "aliases": []
+  },
+  {
+    "name": "third_place_medal",
+    "image": "img-apple-64/1f949.png",
+    "aliases": []
+  },
+  {
+    "name": "boxing_glove",
+    "image": "img-apple-64/1f94a.png",
+    "aliases": []
+  },
+  {
+    "name": "martial_arts_uniform",
+    "image": "img-apple-64/1f94b.png",
+    "aliases": []
+  },
+  {
+    "name": "curling_stone",
+    "image": "img-apple-64/1f94c.png",
+    "aliases": []
+  },
+  {
+    "name": "lacrosse",
+    "image": "img-apple-64/1f94d.png",
+    "aliases": []
+  },
+  {
+    "name": "softball",
+    "image": "img-apple-64/1f94e.png",
+    "aliases": []
+  },
+  {
+    "name": "flying_disc",
+    "image": "img-apple-64/1f94f.png",
+    "aliases": []
+  },
+  {
+    "name": "croissant",
+    "image": "img-apple-64/1f950.png",
+    "aliases": []
+  },
+  {
+    "name": "avocado",
+    "image": "img-apple-64/1f951.png",
+    "aliases": []
+  },
+  {
+    "name": "cucumber",
+    "image": "img-apple-64/1f952.png",
+    "aliases": []
+  },
+  {
+    "name": "bacon",
+    "image": "img-apple-64/1f953.png",
+    "aliases": []
+  },
+  {
+    "name": "potato",
+    "image": "img-apple-64/1f954.png",
+    "aliases": []
+  },
+  {
+    "name": "carrot",
+    "image": "img-apple-64/1f955.png",
+    "aliases": []
+  },
+  {
+    "name": "baguette_bread",
+    "image": "img-apple-64/1f956.png",
+    "aliases": []
+  },
+  {
+    "name": "green_salad",
+    "image": "img-apple-64/1f957.png",
+    "aliases": []
+  },
+  {
+    "name": "shallow_pan_of_food",
+    "image": "img-apple-64/1f958.png",
+    "aliases": []
+  },
+  {
+    "name": "stuffed_flatbread",
+    "image": "img-apple-64/1f959.png",
+    "aliases": []
+  },
+  {
+    "name": "egg",
+    "image": "img-apple-64/1f95a.png",
+    "aliases": []
+  },
+  {
+    "name": "glass_of_milk",
+    "image": "img-apple-64/1f95b.png",
+    "aliases": []
+  },
+  {
+    "name": "peanuts",
+    "image": "img-apple-64/1f95c.png",
+    "aliases": []
+  },
+  {
+    "name": "kiwifruit",
+    "image": "img-apple-64/1f95d.png",
+    "aliases": []
+  },
+  {
+    "name": "pancakes",
+    "image": "img-apple-64/1f95e.png",
+    "aliases": []
+  },
+  {
+    "name": "dumpling",
+    "image": "img-apple-64/1f95f.png",
+    "aliases": []
+  },
+  {
+    "name": "fortune_cookie",
+    "image": "img-apple-64/1f960.png",
+    "aliases": []
+  },
+  {
+    "name": "takeout_box",
+    "image": "img-apple-64/1f961.png",
+    "aliases": []
+  },
+  {
+    "name": "chopsticks",
+    "image": "img-apple-64/1f962.png",
+    "aliases": []
+  },
+  {
+    "name": "bowl_with_spoon",
+    "image": "img-apple-64/1f963.png",
+    "aliases": []
+  },
+  {
+    "name": "cup_with_straw",
+    "image": "img-apple-64/1f964.png",
+    "aliases": []
+  },
+  {
+    "name": "coconut",
+    "image": "img-apple-64/1f965.png",
+    "aliases": []
+  },
+  {
+    "name": "broccoli",
+    "image": "img-apple-64/1f966.png",
+    "aliases": []
+  },
+  {
+    "name": "pie",
+    "image": "img-apple-64/1f967.png",
+    "aliases": []
+  },
+  {
+    "name": "pretzel",
+    "image": "img-apple-64/1f968.png",
+    "aliases": []
+  },
+  {
+    "name": "cut_of_meat",
+    "image": "img-apple-64/1f969.png",
+    "aliases": []
+  },
+  {
+    "name": "sandwich",
+    "image": "img-apple-64/1f96a.png",
+    "aliases": []
+  },
+  {
+    "name": "canned_food",
+    "image": "img-apple-64/1f96b.png",
+    "aliases": []
+  },
+  {
+    "name": "leafy_green",
+    "image": "img-apple-64/1f96c.png",
+    "aliases": []
+  },
+  {
+    "name": "mango",
+    "image": "img-apple-64/1f96d.png",
+    "aliases": []
+  },
+  {
+    "name": "moon_cake",
+    "image": "img-apple-64/1f96e.png",
+    "aliases": []
+  },
+  {
+    "name": "bagel",
+    "image": "img-apple-64/1f96f.png",
+    "aliases": []
+  },
+  {
+    "name": "smiling_face_with_3_hearts",
+    "image": "img-apple-64/1f970.png",
+    "aliases": []
+  },
+  {
+    "name": "yawning_face",
+    "image": "img-apple-64/1f971.png",
+    "aliases": []
+  },
+  {
+    "name": "smiling_face_with_tear",
+    "image": "img-apple-64/1f972.png",
+    "aliases": []
+  },
+  {
+    "name": "partying_face",
+    "image": "img-apple-64/1f973.png",
+    "aliases": []
+  },
+  {
+    "name": "woozy_face",
+    "image": "img-apple-64/1f974.png",
+    "aliases": []
+  },
+  {
+    "name": "hot_face",
+    "image": "img-apple-64/1f975.png",
+    "aliases": []
+  },
+  {
+    "name": "cold_face",
+    "image": "img-apple-64/1f976.png",
+    "aliases": []
+  },
+  {
+    "name": "ninja",
+    "image": "img-apple-64/1f977.png",
+    "aliases": []
+  },
+  {
+    "name": "disguised_face",
+    "image": "img-apple-64/1f978.png",
+    "aliases": []
+  },
+  {
+    "name": "face_holding_back_tears",
+    "image": "img-apple-64/1f979.png",
+    "aliases": []
+  },
+  {
+    "name": "pleading_face",
+    "image": "img-apple-64/1f97a.png",
+    "aliases": []
+  },
+  {
+    "name": "sari",
+    "image": "img-apple-64/1f97b.png",
+    "aliases": []
+  },
+  {
+    "name": "lab_coat",
+    "image": "img-apple-64/1f97c.png",
+    "aliases": []
+  },
+  {
+    "name": "goggles",
+    "image": "img-apple-64/1f97d.png",
+    "aliases": []
+  },
+  {
+    "name": "hiking_boot",
+    "image": "img-apple-64/1f97e.png",
+    "aliases": []
+  },
+  {
+    "name": "womans_flat_shoe",
+    "image": "img-apple-64/1f97f.png",
+    "aliases": []
+  },
+  {
+    "name": "crab",
+    "image": "img-apple-64/1f980.png",
+    "aliases": []
+  },
+  {
+    "name": "lion_face",
+    "image": "img-apple-64/1f981.png",
+    "aliases": []
+  },
+  {
+    "name": "scorpion",
+    "image": "img-apple-64/1f982.png",
+    "aliases": []
+  },
+  {
+    "name": "turkey",
+    "image": "img-apple-64/1f983.png",
+    "aliases": []
+  },
+  {
+    "name": "unicorn_face",
+    "image": "img-apple-64/1f984.png",
+    "aliases": []
+  },
+  {
+    "name": "eagle",
+    "image": "img-apple-64/1f985.png",
+    "aliases": []
+  },
+  {
+    "name": "duck",
+    "image": "img-apple-64/1f986.png",
+    "aliases": []
+  },
+  {
+    "name": "bat",
+    "image": "img-apple-64/1f987.png",
+    "aliases": []
+  },
+  {
+    "name": "shark",
+    "image": "img-apple-64/1f988.png",
+    "aliases": []
+  },
+  {
+    "name": "owl",
+    "image": "img-apple-64/1f989.png",
+    "aliases": []
+  },
+  {
+    "name": "fox_face",
+    "image": "img-apple-64/1f98a.png",
+    "aliases": []
+  },
+  {
+    "name": "butterfly",
+    "image": "img-apple-64/1f98b.png",
+    "aliases": []
+  },
+  {
+    "name": "deer",
+    "image": "img-apple-64/1f98c.png",
+    "aliases": []
+  },
+  {
+    "name": "gorilla",
+    "image": "img-apple-64/1f98d.png",
+    "aliases": []
+  },
+  {
+    "name": "lizard",
+    "image": "img-apple-64/1f98e.png",
+    "aliases": []
+  },
+  {
+    "name": "rhinoceros",
+    "image": "img-apple-64/1f98f.png",
+    "aliases": []
+  },
+  {
+    "name": "shrimp",
+    "image": "img-apple-64/1f990.png",
+    "aliases": []
+  },
+  {
+    "name": "squid",
+    "image": "img-apple-64/1f991.png",
+    "aliases": []
+  },
+  {
+    "name": "giraffe_face",
+    "image": "img-apple-64/1f992.png",
+    "aliases": []
+  },
+  {
+    "name": "zebra_face",
+    "image": "img-apple-64/1f993.png",
+    "aliases": []
+  },
+  {
+    "name": "hedgehog",
+    "image": "img-apple-64/1f994.png",
+    "aliases": []
+  },
+  {
+    "name": "sauropod",
+    "image": "img-apple-64/1f995.png",
+    "aliases": []
+  },
+  {
+    "name": "t-rex",
+    "image": "img-apple-64/1f996.png",
+    "aliases": []
+  },
+  {
+    "name": "cricket",
+    "image": "img-apple-64/1f997.png",
+    "aliases": []
+  },
+  {
+    "name": "kangaroo",
+    "image": "img-apple-64/1f998.png",
+    "aliases": []
+  },
+  {
+    "name": "llama",
+    "image": "img-apple-64/1f999.png",
+    "aliases": []
+  },
+  {
+    "name": "peacock",
+    "image": "img-apple-64/1f99a.png",
+    "aliases": []
+  },
+  {
+    "name": "hippopotamus",
+    "image": "img-apple-64/1f99b.png",
+    "aliases": []
+  },
+  {
+    "name": "parrot",
+    "image": "img-apple-64/1f99c.png",
+    "aliases": []
+  },
+  {
+    "name": "raccoon",
+    "image": "img-apple-64/1f99d.png",
+    "aliases": []
+  },
+  {
+    "name": "lobster",
+    "image": "img-apple-64/1f99e.png",
+    "aliases": []
+  },
+  {
+    "name": "mosquito",
+    "image": "img-apple-64/1f99f.png",
+    "aliases": []
+  },
+  {
+    "name": "microbe",
+    "image": "img-apple-64/1f9a0.png",
+    "aliases": []
+  },
+  {
+    "name": "badger",
+    "image": "img-apple-64/1f9a1.png",
+    "aliases": []
+  },
+  {
+    "name": "swan",
+    "image": "img-apple-64/1f9a2.png",
+    "aliases": []
+  },
+  {
+    "name": "mammoth",
+    "image": "img-apple-64/1f9a3.png",
+    "aliases": []
+  },
+  {
+    "name": "dodo",
+    "image": "img-apple-64/1f9a4.png",
+    "aliases": []
+  },
+  {
+    "name": "sloth",
+    "image": "img-apple-64/1f9a5.png",
+    "aliases": []
+  },
+  {
+    "name": "otter",
+    "image": "img-apple-64/1f9a6.png",
+    "aliases": []
+  },
+  {
+    "name": "orangutan",
+    "image": "img-apple-64/1f9a7.png",
+    "aliases": []
+  },
+  {
+    "name": "skunk",
+    "image": "img-apple-64/1f9a8.png",
+    "aliases": []
+  },
+  {
+    "name": "flamingo",
+    "image": "img-apple-64/1f9a9.png",
+    "aliases": []
+  },
+  {
+    "name": "oyster",
+    "image": "img-apple-64/1f9aa.png",
+    "aliases": []
+  },
+  {
+    "name": "beaver",
+    "image": "img-apple-64/1f9ab.png",
+    "aliases": []
+  },
+  {
+    "name": "bison",
+    "image": "img-apple-64/1f9ac.png",
+    "aliases": []
+  },
+  {
+    "name": "seal",
+    "image": "img-apple-64/1f9ad.png",
+    "aliases": []
+  },
+  {
+    "name": "guide_dog",
+    "image": "img-apple-64/1f9ae.png",
+    "aliases": []
+  },
+  {
+    "name": "probing_cane",
+    "image": "img-apple-64/1f9af.png",
+    "aliases": []
+  },
+  {
+    "name": "bone",
+    "image": "img-apple-64/1f9b4.png",
+    "aliases": []
+  },
+  {
+    "name": "leg",
+    "image": "img-apple-64/1f9b5.png",
+    "aliases": []
+  },
+  {
+    "name": "foot",
+    "image": "img-apple-64/1f9b6.png",
+    "aliases": []
+  },
+  {
+    "name": "tooth",
+    "image": "img-apple-64/1f9b7.png",
+    "aliases": []
+  },
+  {
+    "name": "female_superhero",
+    "image": "img-apple-64/1f9b8-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_superhero",
+    "image": "img-apple-64/1f9b8-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "superhero",
+    "image": "img-apple-64/1f9b8.png",
+    "aliases": []
+  },
+  {
+    "name": "female_supervillain",
+    "image": "img-apple-64/1f9b9-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_supervillain",
+    "image": "img-apple-64/1f9b9-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "supervillain",
+    "image": "img-apple-64/1f9b9.png",
+    "aliases": []
+  },
+  {
+    "name": "safety_vest",
+    "image": "img-apple-64/1f9ba.png",
+    "aliases": []
+  },
+  {
+    "name": "ear_with_hearing_aid",
+    "image": "img-apple-64/1f9bb.png",
+    "aliases": []
+  },
+  {
+    "name": "motorized_wheelchair",
+    "image": "img-apple-64/1f9bc.png",
+    "aliases": []
+  },
+  {
+    "name": "manual_wheelchair",
+    "image": "img-apple-64/1f9bd.png",
+    "aliases": []
+  },
+  {
+    "name": "mechanical_arm",
+    "image": "img-apple-64/1f9be.png",
+    "aliases": []
+  },
+  {
+    "name": "mechanical_leg",
+    "image": "img-apple-64/1f9bf.png",
+    "aliases": []
+  },
+  {
+    "name": "cheese_wedge",
+    "image": "img-apple-64/1f9c0.png",
+    "aliases": []
+  },
+  {
+    "name": "cupcake",
+    "image": "img-apple-64/1f9c1.png",
+    "aliases": []
+  },
+  {
+    "name": "salt",
+    "image": "img-apple-64/1f9c2.png",
+    "aliases": []
+  },
+  {
+    "name": "beverage_box",
+    "image": "img-apple-64/1f9c3.png",
+    "aliases": []
+  },
+  {
+    "name": "garlic",
+    "image": "img-apple-64/1f9c4.png",
+    "aliases": []
+  },
+  {
+    "name": "onion",
+    "image": "img-apple-64/1f9c5.png",
+    "aliases": []
+  },
+  {
+    "name": "falafel",
+    "image": "img-apple-64/1f9c6.png",
+    "aliases": []
+  },
+  {
+    "name": "waffle",
+    "image": "img-apple-64/1f9c7.png",
+    "aliases": []
+  },
+  {
+    "name": "butter",
+    "image": "img-apple-64/1f9c8.png",
+    "aliases": []
+  },
+  {
+    "name": "mate_drink",
+    "image": "img-apple-64/1f9c9.png",
+    "aliases": []
+  },
+  {
+    "name": "ice_cube",
+    "image": "img-apple-64/1f9ca.png",
+    "aliases": []
+  },
+  {
+    "name": "bubble_tea",
+    "image": "img-apple-64/1f9cb.png",
+    "aliases": []
+  },
+  {
+    "name": "troll",
+    "image": "img-apple-64/1f9cc.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_standing",
+    "image": "img-apple-64/1f9cd-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_standing",
+    "image": "img-apple-64/1f9cd-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "standing_person",
+    "image": "img-apple-64/1f9cd.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_kneeling",
+    "image": "img-apple-64/1f9ce-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_kneeling",
+    "image": "img-apple-64/1f9ce-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "kneeling_person",
+    "image": "img-apple-64/1f9ce.png",
+    "aliases": []
+  },
+  {
+    "name": "deaf_woman",
+    "image": "img-apple-64/1f9cf-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "deaf_man",
+    "image": "img-apple-64/1f9cf-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "deaf_person",
+    "image": "img-apple-64/1f9cf.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_monocle",
+    "image": "img-apple-64/1f9d0.png",
+    "aliases": []
+  },
+  {
+    "name": "farmer",
+    "image": "img-apple-64/1f9d1-200d-1f33e.png",
+    "aliases": []
+  },
+  {
+    "name": "cook",
+    "image": "img-apple-64/1f9d1-200d-1f373.png",
+    "aliases": []
+  },
+  {
+    "name": "person_feeding_baby",
+    "image": "img-apple-64/1f9d1-200d-1f37c.png",
+    "aliases": []
+  },
+  {
+    "name": "mx_claus",
+    "image": "img-apple-64/1f9d1-200d-1f384.png",
+    "aliases": []
+  },
+  {
+    "name": "student",
+    "image": "img-apple-64/1f9d1-200d-1f393.png",
+    "aliases": []
+  },
+  {
+    "name": "singer",
+    "image": "img-apple-64/1f9d1-200d-1f3a4.png",
+    "aliases": []
+  },
+  {
+    "name": "artist",
+    "image": "img-apple-64/1f9d1-200d-1f3a8.png",
+    "aliases": []
+  },
+  {
+    "name": "teacher",
+    "image": "img-apple-64/1f9d1-200d-1f3eb.png",
+    "aliases": []
+  },
+  {
+    "name": "factory_worker",
+    "image": "img-apple-64/1f9d1-200d-1f3ed.png",
+    "aliases": []
+  },
+  {
+    "name": "technologist",
+    "image": "img-apple-64/1f9d1-200d-1f4bb.png",
+    "aliases": []
+  },
+  {
+    "name": "office_worker",
+    "image": "img-apple-64/1f9d1-200d-1f4bc.png",
+    "aliases": []
+  },
+  {
+    "name": "mechanic",
+    "image": "img-apple-64/1f9d1-200d-1f527.png",
+    "aliases": []
+  },
+  {
+    "name": "scientist",
+    "image": "img-apple-64/1f9d1-200d-1f52c.png",
+    "aliases": []
+  },
+  {
+    "name": "astronaut",
+    "image": "img-apple-64/1f9d1-200d-1f680.png",
+    "aliases": []
+  },
+  {
+    "name": "firefighter",
+    "image": "img-apple-64/1f9d1-200d-1f692.png",
+    "aliases": []
+  },
+  {
+    "name": "people_holding_hands",
+    "image": "img-apple-64/1f9d1-200d-1f91d-200d-1f9d1.png",
+    "aliases": []
+  },
+  {
+    "name": "person_with_probing_cane",
+    "image": "img-apple-64/1f9d1-200d-1f9af.png",
+    "aliases": []
+  },
+  {
+    "name": "red_haired_person",
+    "image": "img-apple-64/1f9d1-200d-1f9b0.png",
+    "aliases": []
+  },
+  {
+    "name": "curly_haired_person",
+    "image": "img-apple-64/1f9d1-200d-1f9b1.png",
+    "aliases": []
+  },
+  {
+    "name": "bald_person",
+    "image": "img-apple-64/1f9d1-200d-1f9b2.png",
+    "aliases": []
+  },
+  {
+    "name": "white_haired_person",
+    "image": "img-apple-64/1f9d1-200d-1f9b3.png",
+    "aliases": []
+  },
+  {
+    "name": "person_in_motorized_wheelchair",
+    "image": "img-apple-64/1f9d1-200d-1f9bc.png",
+    "aliases": []
+  },
+  {
+    "name": "person_in_manual_wheelchair",
+    "image": "img-apple-64/1f9d1-200d-1f9bd.png",
+    "aliases": []
+  },
+  {
+    "name": "health_worker",
+    "image": "img-apple-64/1f9d1-200d-2695-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "judge",
+    "image": "img-apple-64/1f9d1-200d-2696-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "pilot",
+    "image": "img-apple-64/1f9d1-200d-2708-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "adult",
+    "image": "img-apple-64/1f9d1.png",
+    "aliases": []
+  },
+  {
+    "name": "child",
+    "image": "img-apple-64/1f9d2.png",
+    "aliases": []
+  },
+  {
+    "name": "older_adult",
+    "image": "img-apple-64/1f9d3.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_with_beard",
+    "image": "img-apple-64/1f9d4-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_with_beard",
+    "image": "img-apple-64/1f9d4-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "bearded_person",
+    "image": "img-apple-64/1f9d4.png",
+    "aliases": []
+  },
+  {
+    "name": "person_with_headscarf",
+    "image": "img-apple-64/1f9d5.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_in_steamy_room",
+    "image": "img-apple-64/1f9d6-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_in_steamy_room",
+    "image": "img-apple-64/1f9d6-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_in_steamy_room",
+    "image": "img-apple-64/1f9d6.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_climbing",
+    "image": "img-apple-64/1f9d7-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_climbing",
+    "image": "img-apple-64/1f9d7-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_climbing",
+    "image": "img-apple-64/1f9d7.png",
+    "aliases": []
+  },
+  {
+    "name": "woman_in_lotus_position",
+    "image": "img-apple-64/1f9d8-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man_in_lotus_position",
+    "image": "img-apple-64/1f9d8-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_in_lotus_position",
+    "image": "img-apple-64/1f9d8.png",
+    "aliases": []
+  },
+  {
+    "name": "female_mage",
+    "image": "img-apple-64/1f9d9-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_mage",
+    "image": "img-apple-64/1f9d9-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "mage",
+    "image": "img-apple-64/1f9d9.png",
+    "aliases": []
+  },
+  {
+    "name": "female_fairy",
+    "image": "img-apple-64/1f9da-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_fairy",
+    "image": "img-apple-64/1f9da-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "fairy",
+    "image": "img-apple-64/1f9da.png",
+    "aliases": []
+  },
+  {
+    "name": "female_vampire",
+    "image": "img-apple-64/1f9db-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_vampire",
+    "image": "img-apple-64/1f9db-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "vampire",
+    "image": "img-apple-64/1f9db.png",
+    "aliases": []
+  },
+  {
+    "name": "mermaid",
+    "image": "img-apple-64/1f9dc-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "merman",
+    "image": "img-apple-64/1f9dc-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "merperson",
+    "image": "img-apple-64/1f9dc.png",
+    "aliases": []
+  },
+  {
+    "name": "female_elf",
+    "image": "img-apple-64/1f9dd-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_elf",
+    "image": "img-apple-64/1f9dd-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "elf",
+    "image": "img-apple-64/1f9dd.png",
+    "aliases": []
+  },
+  {
+    "name": "female_genie",
+    "image": "img-apple-64/1f9de-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_genie",
+    "image": "img-apple-64/1f9de-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "genie",
+    "image": "img-apple-64/1f9de.png",
+    "aliases": []
+  },
+  {
+    "name": "female_zombie",
+    "image": "img-apple-64/1f9df-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "male_zombie",
+    "image": "img-apple-64/1f9df-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "zombie",
+    "image": "img-apple-64/1f9df.png",
+    "aliases": []
+  },
+  {
+    "name": "brain",
+    "image": "img-apple-64/1f9e0.png",
+    "aliases": []
+  },
+  {
+    "name": "orange_heart",
+    "image": "img-apple-64/1f9e1.png",
+    "aliases": []
+  },
+  {
+    "name": "billed_cap",
+    "image": "img-apple-64/1f9e2.png",
+    "aliases": []
+  },
+  {
+    "name": "scarf",
+    "image": "img-apple-64/1f9e3.png",
+    "aliases": []
+  },
+  {
+    "name": "gloves",
+    "image": "img-apple-64/1f9e4.png",
+    "aliases": []
+  },
+  {
+    "name": "coat",
+    "image": "img-apple-64/1f9e5.png",
+    "aliases": []
+  },
+  {
+    "name": "socks",
+    "image": "img-apple-64/1f9e6.png",
+    "aliases": []
+  },
+  {
+    "name": "red_envelope",
+    "image": "img-apple-64/1f9e7.png",
+    "aliases": []
+  },
+  {
+    "name": "firecracker",
+    "image": "img-apple-64/1f9e8.png",
+    "aliases": []
+  },
+  {
+    "name": "jigsaw",
+    "image": "img-apple-64/1f9e9.png",
+    "aliases": []
+  },
+  {
+    "name": "test_tube",
+    "image": "img-apple-64/1f9ea.png",
+    "aliases": []
+  },
+  {
+    "name": "petri_dish",
+    "image": "img-apple-64/1f9eb.png",
+    "aliases": []
+  },
+  {
+    "name": "dna",
+    "image": "img-apple-64/1f9ec.png",
+    "aliases": []
+  },
+  {
+    "name": "compass",
+    "image": "img-apple-64/1f9ed.png",
+    "aliases": []
+  },
+  {
+    "name": "abacus",
+    "image": "img-apple-64/1f9ee.png",
+    "aliases": []
+  },
+  {
+    "name": "fire_extinguisher",
+    "image": "img-apple-64/1f9ef.png",
+    "aliases": []
+  },
+  {
+    "name": "toolbox",
+    "image": "img-apple-64/1f9f0.png",
+    "aliases": []
+  },
+  {
+    "name": "bricks",
+    "image": "img-apple-64/1f9f1.png",
+    "aliases": []
+  },
+  {
+    "name": "magnet",
+    "image": "img-apple-64/1f9f2.png",
+    "aliases": []
+  },
+  {
+    "name": "luggage",
+    "image": "img-apple-64/1f9f3.png",
+    "aliases": []
+  },
+  {
+    "name": "lotion_bottle",
+    "image": "img-apple-64/1f9f4.png",
+    "aliases": []
+  },
+  {
+    "name": "thread",
+    "image": "img-apple-64/1f9f5.png",
+    "aliases": []
+  },
+  {
+    "name": "yarn",
+    "image": "img-apple-64/1f9f6.png",
+    "aliases": []
+  },
+  {
+    "name": "safety_pin",
+    "image": "img-apple-64/1f9f7.png",
+    "aliases": []
+  },
+  {
+    "name": "teddy_bear",
+    "image": "img-apple-64/1f9f8.png",
+    "aliases": []
+  },
+  {
+    "name": "broom",
+    "image": "img-apple-64/1f9f9.png",
+    "aliases": []
+  },
+  {
+    "name": "basket",
+    "image": "img-apple-64/1f9fa.png",
+    "aliases": []
+  },
+  {
+    "name": "roll_of_paper",
+    "image": "img-apple-64/1f9fb.png",
+    "aliases": []
+  },
+  {
+    "name": "soap",
+    "image": "img-apple-64/1f9fc.png",
+    "aliases": []
+  },
+  {
+    "name": "sponge",
+    "image": "img-apple-64/1f9fd.png",
+    "aliases": []
+  },
+  {
+    "name": "receipt",
+    "image": "img-apple-64/1f9fe.png",
+    "aliases": []
+  },
+  {
+    "name": "nazar_amulet",
+    "image": "img-apple-64/1f9ff.png",
+    "aliases": []
+  },
+  {
+    "name": "ballet_shoes",
+    "image": "img-apple-64/1fa70.png",
+    "aliases": []
+  },
+  {
+    "name": "one-piece_swimsuit",
+    "image": "img-apple-64/1fa71.png",
+    "aliases": []
+  },
+  {
+    "name": "briefs",
+    "image": "img-apple-64/1fa72.png",
+    "aliases": []
+  },
+  {
+    "name": "shorts",
+    "image": "img-apple-64/1fa73.png",
+    "aliases": []
+  },
+  {
+    "name": "thong_sandal",
+    "image": "img-apple-64/1fa74.png",
+    "aliases": []
+  },
+  {
+    "name": "drop_of_blood",
+    "image": "img-apple-64/1fa78.png",
+    "aliases": []
+  },
+  {
+    "name": "adhesive_bandage",
+    "image": "img-apple-64/1fa79.png",
+    "aliases": []
+  },
+  {
+    "name": "stethoscope",
+    "image": "img-apple-64/1fa7a.png",
+    "aliases": []
+  },
+  {
+    "name": "x-ray",
+    "image": "img-apple-64/1fa7b.png",
+    "aliases": []
+  },
+  {
+    "name": "crutch",
+    "image": "img-apple-64/1fa7c.png",
+    "aliases": []
+  },
+  {
+    "name": "yo-yo",
+    "image": "img-apple-64/1fa80.png",
+    "aliases": []
+  },
+  {
+    "name": "kite",
+    "image": "img-apple-64/1fa81.png",
+    "aliases": []
+  },
+  {
+    "name": "parachute",
+    "image": "img-apple-64/1fa82.png",
+    "aliases": []
+  },
+  {
+    "name": "boomerang",
+    "image": "img-apple-64/1fa83.png",
+    "aliases": []
+  },
+  {
+    "name": "magic_wand",
+    "image": "img-apple-64/1fa84.png",
+    "aliases": []
+  },
+  {
+    "name": "pinata",
+    "image": "img-apple-64/1fa85.png",
+    "aliases": []
+  },
+  {
+    "name": "nesting_dolls",
+    "image": "img-apple-64/1fa86.png",
+    "aliases": []
+  },
+  {
+    "name": "ringed_planet",
+    "image": "img-apple-64/1fa90.png",
+    "aliases": []
+  },
+  {
+    "name": "chair",
+    "image": "img-apple-64/1fa91.png",
+    "aliases": []
+  },
+  {
+    "name": "razor",
+    "image": "img-apple-64/1fa92.png",
+    "aliases": []
+  },
+  {
+    "name": "axe",
+    "image": "img-apple-64/1fa93.png",
+    "aliases": []
+  },
+  {
+    "name": "diya_lamp",
+    "image": "img-apple-64/1fa94.png",
+    "aliases": []
+  },
+  {
+    "name": "banjo",
+    "image": "img-apple-64/1fa95.png",
+    "aliases": []
+  },
+  {
+    "name": "military_helmet",
+    "image": "img-apple-64/1fa96.png",
+    "aliases": []
+  },
+  {
+    "name": "accordion",
+    "image": "img-apple-64/1fa97.png",
+    "aliases": []
+  },
+  {
+    "name": "long_drum",
+    "image": "img-apple-64/1fa98.png",
+    "aliases": []
+  },
+  {
+    "name": "coin",
+    "image": "img-apple-64/1fa99.png",
+    "aliases": []
+  },
+  {
+    "name": "carpentry_saw",
+    "image": "img-apple-64/1fa9a.png",
+    "aliases": []
+  },
+  {
+    "name": "screwdriver",
+    "image": "img-apple-64/1fa9b.png",
+    "aliases": []
+  },
+  {
+    "name": "ladder",
+    "image": "img-apple-64/1fa9c.png",
+    "aliases": []
+  },
+  {
+    "name": "hook",
+    "image": "img-apple-64/1fa9d.png",
+    "aliases": []
+  },
+  {
+    "name": "mirror",
+    "image": "img-apple-64/1fa9e.png",
+    "aliases": []
+  },
+  {
+    "name": "window",
+    "image": "img-apple-64/1fa9f.png",
+    "aliases": []
+  },
+  {
+    "name": "plunger",
+    "image": "img-apple-64/1faa0.png",
+    "aliases": []
+  },
+  {
+    "name": "sewing_needle",
+    "image": "img-apple-64/1faa1.png",
+    "aliases": []
+  },
+  {
+    "name": "knot",
+    "image": "img-apple-64/1faa2.png",
+    "aliases": []
+  },
+  {
+    "name": "bucket",
+    "image": "img-apple-64/1faa3.png",
+    "aliases": []
+  },
+  {
+    "name": "mouse_trap",
+    "image": "img-apple-64/1faa4.png",
+    "aliases": []
+  },
+  {
+    "name": "toothbrush",
+    "image": "img-apple-64/1faa5.png",
+    "aliases": []
+  },
+  {
+    "name": "headstone",
+    "image": "img-apple-64/1faa6.png",
+    "aliases": []
+  },
+  {
+    "name": "placard",
+    "image": "img-apple-64/1faa7.png",
+    "aliases": []
+  },
+  {
+    "name": "rock",
+    "image": "img-apple-64/1faa8.png",
+    "aliases": []
+  },
+  {
+    "name": "mirror_ball",
+    "image": "img-apple-64/1faa9.png",
+    "aliases": []
+  },
+  {
+    "name": "identification_card",
+    "image": "img-apple-64/1faaa.png",
+    "aliases": []
+  },
+  {
+    "name": "low_battery",
+    "image": "img-apple-64/1faab.png",
+    "aliases": []
+  },
+  {
+    "name": "hamsa",
+    "image": "img-apple-64/1faac.png",
+    "aliases": []
+  },
+  {
+    "name": "fly",
+    "image": "img-apple-64/1fab0.png",
+    "aliases": []
+  },
+  {
+    "name": "worm",
+    "image": "img-apple-64/1fab1.png",
+    "aliases": []
+  },
+  {
+    "name": "beetle",
+    "image": "img-apple-64/1fab2.png",
+    "aliases": []
+  },
+  {
+    "name": "cockroach",
+    "image": "img-apple-64/1fab3.png",
+    "aliases": []
+  },
+  {
+    "name": "potted_plant",
+    "image": "img-apple-64/1fab4.png",
+    "aliases": []
+  },
+  {
+    "name": "wood",
+    "image": "img-apple-64/1fab5.png",
+    "aliases": []
+  },
+  {
+    "name": "feather",
+    "image": "img-apple-64/1fab6.png",
+    "aliases": []
+  },
+  {
+    "name": "lotus",
+    "image": "img-apple-64/1fab7.png",
+    "aliases": []
+  },
+  {
+    "name": "coral",
+    "image": "img-apple-64/1fab8.png",
+    "aliases": []
+  },
+  {
+    "name": "empty_nest",
+    "image": "img-apple-64/1fab9.png",
+    "aliases": []
+  },
+  {
+    "name": "nest_with_eggs",
+    "image": "img-apple-64/1faba.png",
+    "aliases": []
+  },
+  {
+    "name": "anatomical_heart",
+    "image": "img-apple-64/1fac0.png",
+    "aliases": []
+  },
+  {
+    "name": "lungs",
+    "image": "img-apple-64/1fac1.png",
+    "aliases": []
+  },
+  {
+    "name": "people_hugging",
+    "image": "img-apple-64/1fac2.png",
+    "aliases": []
+  },
+  {
+    "name": "pregnant_man",
+    "image": "img-apple-64/1fac3.png",
+    "aliases": []
+  },
+  {
+    "name": "pregnant_person",
+    "image": "img-apple-64/1fac4.png",
+    "aliases": []
+  },
+  {
+    "name": "person_with_crown",
+    "image": "img-apple-64/1fac5.png",
+    "aliases": []
+  },
+  {
+    "name": "blueberries",
+    "image": "img-apple-64/1fad0.png",
+    "aliases": []
+  },
+  {
+    "name": "bell_pepper",
+    "image": "img-apple-64/1fad1.png",
+    "aliases": []
+  },
+  {
+    "name": "olive",
+    "image": "img-apple-64/1fad2.png",
+    "aliases": []
+  },
+  {
+    "name": "flatbread",
+    "image": "img-apple-64/1fad3.png",
+    "aliases": []
+  },
+  {
+    "name": "tamale",
+    "image": "img-apple-64/1fad4.png",
+    "aliases": []
+  },
+  {
+    "name": "fondue",
+    "image": "img-apple-64/1fad5.png",
+    "aliases": []
+  },
+  {
+    "name": "teapot",
+    "image": "img-apple-64/1fad6.png",
+    "aliases": []
+  },
+  {
+    "name": "pouring_liquid",
+    "image": "img-apple-64/1fad7.png",
+    "aliases": []
+  },
+  {
+    "name": "beans",
+    "image": "img-apple-64/1fad8.png",
+    "aliases": []
+  },
+  {
+    "name": "jar",
+    "image": "img-apple-64/1fad9.png",
+    "aliases": []
+  },
+  {
+    "name": "melting_face",
+    "image": "img-apple-64/1fae0.png",
+    "aliases": []
+  },
+  {
+    "name": "saluting_face",
+    "image": "img-apple-64/1fae1.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_open_eyes_and_hand_over_mouth",
+    "image": "img-apple-64/1fae2.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_peeking_eye",
+    "image": "img-apple-64/1fae3.png",
+    "aliases": []
+  },
+  {
+    "name": "face_with_diagonal_mouth",
+    "image": "img-apple-64/1fae4.png",
+    "aliases": []
+  },
+  {
+    "name": "dotted_line_face",
+    "image": "img-apple-64/1fae5.png",
+    "aliases": []
+  },
+  {
+    "name": "biting_lip",
+    "image": "img-apple-64/1fae6.png",
+    "aliases": []
+  },
+  {
+    "name": "bubbles",
+    "image": "img-apple-64/1fae7.png",
+    "aliases": []
+  },
+  {
+    "name": "hand_with_index_finger_and_thumb_crossed",
+    "image": "img-apple-64/1faf0.png",
+    "aliases": []
+  },
+  {
+    "name": "rightwards_hand",
+    "image": "img-apple-64/1faf1.png",
+    "aliases": []
+  },
+  {
+    "name": "leftwards_hand",
+    "image": "img-apple-64/1faf2.png",
+    "aliases": []
+  },
+  {
+    "name": "palm_down_hand",
+    "image": "img-apple-64/1faf3.png",
+    "aliases": []
+  },
+  {
+    "name": "palm_up_hand",
+    "image": "img-apple-64/1faf4.png",
+    "aliases": []
+  },
+  {
+    "name": "index_pointing_at_the_viewer",
+    "image": "img-apple-64/1faf5.png",
+    "aliases": []
+  },
+  {
+    "name": "heart_hands",
+    "image": "img-apple-64/1faf6.png",
+    "aliases": []
+  },
+  {
+    "name": "bangbang",
+    "image": "img-apple-64/203c-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "interrobang",
+    "image": "img-apple-64/2049-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "tm",
+    "image": "img-apple-64/2122-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "information_source",
+    "image": "img-apple-64/2139-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "left_right_arrow",
+    "image": "img-apple-64/2194-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_up_down",
+    "image": "img-apple-64/2195-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_upper_left",
+    "image": "img-apple-64/2196-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_upper_right",
+    "image": "img-apple-64/2197-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_lower_right",
+    "image": "img-apple-64/2198-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_lower_left",
+    "image": "img-apple-64/2199-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "leftwards_arrow_with_hook",
+    "image": "img-apple-64/21a9-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_right_hook",
+    "image": "img-apple-64/21aa-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "watch",
+    "image": "img-apple-64/231a.png",
+    "aliases": []
+  },
+  {
+    "name": "hourglass",
+    "image": "img-apple-64/231b.png",
+    "aliases": []
+  },
+  {
+    "name": "keyboard",
+    "image": "img-apple-64/2328-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "eject",
+    "image": "img-apple-64/23cf-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "fast_forward",
+    "image": "img-apple-64/23e9.png",
+    "aliases": []
+  },
+  {
+    "name": "rewind",
+    "image": "img-apple-64/23ea.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_double_up",
+    "image": "img-apple-64/23eb.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_double_down",
+    "image": "img-apple-64/23ec.png",
+    "aliases": []
+  },
+  {
+    "name": "black_right_pointing_double_triangle_with_vertical_bar",
+    "image": "img-apple-64/23ed-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_left_pointing_double_triangle_with_vertical_bar",
+    "image": "img-apple-64/23ee-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_right_pointing_triangle_with_double_vertical_bar",
+    "image": "img-apple-64/23ef-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "alarm_clock",
+    "image": "img-apple-64/23f0.png",
+    "aliases": []
+  },
+  {
+    "name": "stopwatch",
+    "image": "img-apple-64/23f1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "timer_clock",
+    "image": "img-apple-64/23f2-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "hourglass_flowing_sand",
+    "image": "img-apple-64/23f3.png",
+    "aliases": []
+  },
+  {
+    "name": "double_vertical_bar",
+    "image": "img-apple-64/23f8-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_square_for_stop",
+    "image": "img-apple-64/23f9-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_circle_for_record",
+    "image": "img-apple-64/23fa-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "m",
+    "image": "img-apple-64/24c2-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_small_square",
+    "image": "img-apple-64/25aa-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "white_small_square",
+    "image": "img-apple-64/25ab-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_forward",
+    "image": "img-apple-64/25b6-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_backward",
+    "image": "img-apple-64/25c0-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "white_medium_square",
+    "image": "img-apple-64/25fb-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_medium_square",
+    "image": "img-apple-64/25fc-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "white_medium_small_square",
+    "image": "img-apple-64/25fd.png",
+    "aliases": []
+  },
+  {
+    "name": "black_medium_small_square",
+    "image": "img-apple-64/25fe.png",
+    "aliases": []
+  },
+  {
+    "name": "sunny",
+    "image": "img-apple-64/2600-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "cloud",
+    "image": "img-apple-64/2601-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "umbrella",
+    "image": "img-apple-64/2602-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "snowman",
+    "image": "img-apple-64/2603-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "comet",
+    "image": "img-apple-64/2604-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "phone",
+    "image": "img-apple-64/260e-fe0f.png",
+    "aliases": ["telephone"]
+  },
+  {
+    "name": "ballot_box_with_check",
+    "image": "img-apple-64/2611-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "umbrella_with_rain_drops",
+    "image": "img-apple-64/2614.png",
+    "aliases": []
+  },
+  {
+    "name": "coffee",
+    "image": "img-apple-64/2615.png",
+    "aliases": []
+  },
+  {
+    "name": "shamrock",
+    "image": "img-apple-64/2618-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "point_up",
+    "image": "img-apple-64/261d-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "skull_and_crossbones",
+    "image": "img-apple-64/2620-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "radioactive_sign",
+    "image": "img-apple-64/2622-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "biohazard_sign",
+    "image": "img-apple-64/2623-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "orthodox_cross",
+    "image": "img-apple-64/2626-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "star_and_crescent",
+    "image": "img-apple-64/262a-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "peace_symbol",
+    "image": "img-apple-64/262e-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "yin_yang",
+    "image": "img-apple-64/262f-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "wheel_of_dharma",
+    "image": "img-apple-64/2638-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "white_frowning_face",
+    "image": "img-apple-64/2639-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "relaxed",
+    "image": "img-apple-64/263a-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "aries",
+    "image": "img-apple-64/2648.png",
+    "aliases": []
+  },
+  {
+    "name": "taurus",
+    "image": "img-apple-64/2649.png",
+    "aliases": []
+  },
+  {
+    "name": "gemini",
+    "image": "img-apple-64/264a.png",
+    "aliases": []
+  },
+  {
+    "name": "cancer",
+    "image": "img-apple-64/264b.png",
+    "aliases": []
+  },
+  {
+    "name": "leo",
+    "image": "img-apple-64/264c.png",
+    "aliases": []
+  },
+  {
+    "name": "virgo",
+    "image": "img-apple-64/264d.png",
+    "aliases": []
+  },
+  {
+    "name": "libra",
+    "image": "img-apple-64/264e.png",
+    "aliases": []
+  },
+  {
+    "name": "scorpius",
+    "image": "img-apple-64/264f.png",
+    "aliases": []
+  },
+  {
+    "name": "sagittarius",
+    "image": "img-apple-64/2650.png",
+    "aliases": []
+  },
+  {
+    "name": "capricorn",
+    "image": "img-apple-64/2651.png",
+    "aliases": []
+  },
+  {
+    "name": "aquarius",
+    "image": "img-apple-64/2652.png",
+    "aliases": []
+  },
+  {
+    "name": "pisces",
+    "image": "img-apple-64/2653.png",
+    "aliases": []
+  },
+  {
+    "name": "chess_pawn",
+    "image": "img-apple-64/265f-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "spades",
+    "image": "img-apple-64/2660-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "clubs",
+    "image": "img-apple-64/2663-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "hearts",
+    "image": "img-apple-64/2665-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "diamonds",
+    "image": "img-apple-64/2666-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "hotsprings",
+    "image": "img-apple-64/2668-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "recycle",
+    "image": "img-apple-64/267b-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "infinity",
+    "image": "img-apple-64/267e-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "wheelchair",
+    "image": "img-apple-64/267f.png",
+    "aliases": []
+  },
+  {
+    "name": "hammer_and_pick",
+    "image": "img-apple-64/2692-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "anchor",
+    "image": "img-apple-64/2693.png",
+    "aliases": []
+  },
+  {
+    "name": "crossed_swords",
+    "image": "img-apple-64/2694-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "scales",
+    "image": "img-apple-64/2696-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "alembic",
+    "image": "img-apple-64/2697-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "gear",
+    "image": "img-apple-64/2699-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "atom_symbol",
+    "image": "img-apple-64/269b-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "fleur_de_lis",
+    "image": "img-apple-64/269c-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "warning",
+    "image": "img-apple-64/26a0-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "zap",
+    "image": "img-apple-64/26a1.png",
+    "aliases": []
+  },
+  {
+    "name": "transgender_symbol",
+    "image": "img-apple-64/26a7-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "white_circle",
+    "image": "img-apple-64/26aa.png",
+    "aliases": []
+  },
+  {
+    "name": "black_circle",
+    "image": "img-apple-64/26ab.png",
+    "aliases": []
+  },
+  {
+    "name": "coffin",
+    "image": "img-apple-64/26b0-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "funeral_urn",
+    "image": "img-apple-64/26b1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "soccer",
+    "image": "img-apple-64/26bd.png",
+    "aliases": []
+  },
+  {
+    "name": "baseball",
+    "image": "img-apple-64/26be.png",
+    "aliases": []
+  },
+  {
+    "name": "snowman_without_snow",
+    "image": "img-apple-64/26c4.png",
+    "aliases": []
+  },
+  {
+    "name": "partly_sunny",
+    "image": "img-apple-64/26c5.png",
+    "aliases": []
+  },
+  {
+    "name": "thunder_cloud_and_rain",
+    "image": "img-apple-64/26c8-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "ophiuchus",
+    "image": "img-apple-64/26ce.png",
+    "aliases": []
+  },
+  {
+    "name": "pick",
+    "image": "img-apple-64/26cf-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "helmet_with_white_cross",
+    "image": "img-apple-64/26d1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "chains",
+    "image": "img-apple-64/26d3-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "no_entry",
+    "image": "img-apple-64/26d4.png",
+    "aliases": []
+  },
+  {
+    "name": "shinto_shrine",
+    "image": "img-apple-64/26e9-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "church",
+    "image": "img-apple-64/26ea.png",
+    "aliases": []
+  },
+  {
+    "name": "mountain",
+    "image": "img-apple-64/26f0-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "umbrella_on_ground",
+    "image": "img-apple-64/26f1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "fountain",
+    "image": "img-apple-64/26f2.png",
+    "aliases": []
+  },
+  {
+    "name": "golf",
+    "image": "img-apple-64/26f3.png",
+    "aliases": []
+  },
+  {
+    "name": "ferry",
+    "image": "img-apple-64/26f4-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "boat",
+    "image": "img-apple-64/26f5.png",
+    "aliases": ["sailboat"]
+  },
+  {
+    "name": "skier",
+    "image": "img-apple-64/26f7-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "ice_skate",
+    "image": "img-apple-64/26f8-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "woman-bouncing-ball",
+    "image": "img-apple-64/26f9-fe0f-200d-2640-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "man-bouncing-ball",
+    "image": "img-apple-64/26f9-fe0f-200d-2642-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "person_with_ball",
+    "image": "img-apple-64/26f9-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "tent",
+    "image": "img-apple-64/26fa.png",
+    "aliases": []
+  },
+  {
+    "name": "fuelpump",
+    "image": "img-apple-64/26fd.png",
+    "aliases": []
+  },
+  {
+    "name": "scissors",
+    "image": "img-apple-64/2702-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "white_check_mark",
+    "image": "img-apple-64/2705.png",
+    "aliases": []
+  },
+  {
+    "name": "airplane",
+    "image": "img-apple-64/2708-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "email",
+    "image": "img-apple-64/2709-fe0f.png",
+    "aliases": ["envelope"]
+  },
+  {
+    "name": "fist",
+    "image": "img-apple-64/270a.png",
+    "aliases": []
+  },
+  {
+    "name": "hand",
+    "image": "img-apple-64/270b.png",
+    "aliases": ["raised_hand"]
+  },
+  {
+    "name": "v",
+    "image": "img-apple-64/270c-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "writing_hand",
+    "image": "img-apple-64/270d-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "pencil2",
+    "image": "img-apple-64/270f-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_nib",
+    "image": "img-apple-64/2712-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "heavy_check_mark",
+    "image": "img-apple-64/2714-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "heavy_multiplication_x",
+    "image": "img-apple-64/2716-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "latin_cross",
+    "image": "img-apple-64/271d-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "star_of_david",
+    "image": "img-apple-64/2721-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "sparkles",
+    "image": "img-apple-64/2728.png",
+    "aliases": []
+  },
+  {
+    "name": "eight_spoked_asterisk",
+    "image": "img-apple-64/2733-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "eight_pointed_black_star",
+    "image": "img-apple-64/2734-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "snowflake",
+    "image": "img-apple-64/2744-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "sparkle",
+    "image": "img-apple-64/2747-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "x",
+    "image": "img-apple-64/274c.png",
+    "aliases": []
+  },
+  {
+    "name": "negative_squared_cross_mark",
+    "image": "img-apple-64/274e.png",
+    "aliases": []
+  },
+  {
+    "name": "question",
+    "image": "img-apple-64/2753.png",
+    "aliases": []
+  },
+  {
+    "name": "grey_question",
+    "image": "img-apple-64/2754.png",
+    "aliases": []
+  },
+  {
+    "name": "grey_exclamation",
+    "image": "img-apple-64/2755.png",
+    "aliases": []
+  },
+  {
+    "name": "exclamation",
+    "image": "img-apple-64/2757.png",
+    "aliases": ["heavy_exclamation_mark"]
+  },
+  {
+    "name": "heavy_heart_exclamation_mark_ornament",
+    "image": "img-apple-64/2763-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "heart_on_fire",
+    "image": "img-apple-64/2764-fe0f-200d-1f525.png",
+    "aliases": []
+  },
+  {
+    "name": "mending_heart",
+    "image": "img-apple-64/2764-fe0f-200d-1fa79.png",
+    "aliases": []
+  },
+  {
+    "name": "heart",
+    "image": "img-apple-64/2764-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "heavy_plus_sign",
+    "image": "img-apple-64/2795.png",
+    "aliases": []
+  },
+  {
+    "name": "heavy_minus_sign",
+    "image": "img-apple-64/2796.png",
+    "aliases": []
+  },
+  {
+    "name": "heavy_division_sign",
+    "image": "img-apple-64/2797.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_right",
+    "image": "img-apple-64/27a1-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "curly_loop",
+    "image": "img-apple-64/27b0.png",
+    "aliases": []
+  },
+  {
+    "name": "loop",
+    "image": "img-apple-64/27bf.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_heading_up",
+    "image": "img-apple-64/2934-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_heading_down",
+    "image": "img-apple-64/2935-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_left",
+    "image": "img-apple-64/2b05-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_up",
+    "image": "img-apple-64/2b06-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "arrow_down",
+    "image": "img-apple-64/2b07-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "black_large_square",
+    "image": "img-apple-64/2b1b.png",
+    "aliases": []
+  },
+  {
+    "name": "white_large_square",
+    "image": "img-apple-64/2b1c.png",
+    "aliases": []
+  },
+  {
+    "name": "star",
+    "image": "img-apple-64/2b50.png",
+    "aliases": []
+  },
+  {
+    "name": "o",
+    "image": "img-apple-64/2b55.png",
+    "aliases": []
+  },
+  {
+    "name": "wavy_dash",
+    "image": "img-apple-64/3030-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "part_alternation_mark",
+    "image": "img-apple-64/303d-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "congratulations",
+    "image": "img-apple-64/3297-fe0f.png",
+    "aliases": []
+  },
+  {
+    "name": "secret",
+    "image": "img-apple-64/3299-fe0f.png",
+    "aliases": []
+  }
+]

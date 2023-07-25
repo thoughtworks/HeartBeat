@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: default
+
+server:
+  port: 4322
+  servlet:
+    context-path: /api/v1
+logging:
+  level:
+    root: INFO
+
+github:
+  url: https://api.github.com
+
+jira:
+  url: https://%s.atlassian.net
+
+buildKite:
+  url: https://api.buildkite.com
+
+springdoc:
+  swagger-ui:
+    path: /docs
+  api-docs:
+    path: /api-docs

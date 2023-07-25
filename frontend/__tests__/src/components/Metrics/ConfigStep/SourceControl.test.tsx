@@ -20,6 +20,7 @@ import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
 import { navigateMock } from '../../../../setupTests'
 import { ERROR_PAGE_ROUTE } from '@src/constants'
+import userEvent from '@testing-library/user-event'
 
 export const fillSourceControlFieldsInformation = () => {
   const mockInfo = 'ghpghoghughsghr_1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b1A2b'
@@ -155,7 +156,7 @@ describe('SourceControl', () => {
 
     fillSourceControlFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: VERIFY }))
+    await userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(
@@ -172,7 +173,7 @@ describe('SourceControl', () => {
     const { getByRole } = setup()
     fillSourceControlFieldsInformation()
 
-    fireEvent.click(getByRole('button', { name: VERIFY }))
+    await userEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)

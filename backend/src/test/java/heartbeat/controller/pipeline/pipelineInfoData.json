@@ -1,0 +1,10 @@
+[
+  {
+    "id": "payment-selector-ui",
+    "name": "payment-selector-ui",
+    "orgId": "orgId",
+    "orgName": "orgName",
+    "repository": "https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git",
+    "steps": ["step1"]
+  }
+]

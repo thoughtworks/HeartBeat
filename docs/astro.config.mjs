@@ -1,7 +1,8 @@
-import { defineConfig } from "astro/config";
-import preact from "@astrojs/preact";
-import react from "@astrojs/react";
-
+import { defineConfig } from 'astro/config';
+import preact from '@astrojs/preact';
+import react from '@astrojs/react';
+import remarkPlantUML from '@akebifiky/remark-simple-plantuml';
+import { remarkDiagram } from './remark-plugins/remark-diagram.mjs';
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -10,7 +11,11 @@ export default defineConfig({
     // Enable React for the Algolia search component.
     react(),
   ],
-  site: `https://thoughtworks.github.io/HeartBeat`,
-  base: "/HeartBeat",
-  publicDir: "/HeartBeat",
+  site: `https://thoughtworks.github.io/Heartbeat`,
+  base: '/Heartbeat',
+  publicDir: '/Heartbeat',
+  markdown: {
+    extendDefaultPlugins: true,
+    remarkPlugins: [remarkPlantUML, remarkDiagram],
+  },
 });

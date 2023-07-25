@@ -1,6 +1,0 @@
-#!/bin/bash 
-
-AwsHost=${AWSHost}
-SshPublicKey=${SSHPublicKey}
-
-aws --region cn-north-1 cloudformation update-stack --stack-name heartbeat --template-body file://infra/cloudformation.yml --parameters ParameterKey=GitHubOrg,ParameterValue=au-heartbeat ParameterKey=RepositoryName,ParameterValue=HeartBeat ParameterKey=AwsHost,ParameterValue=${AwsHost} ParameterKey=SSHPublicKey,ParameterValue=${SshPublicKey} --capabilities CAPABILITY_NAMED_IAM

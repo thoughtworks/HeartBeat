@@ -1,0 +1,7 @@
+{
+  "scopes": [
+    "read_builds",
+    "read_organizations",
+    "read_pipelines"
+  ]
+}

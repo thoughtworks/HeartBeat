@@ -5,6 +5,7 @@ import {
   BOARD_TYPES,
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
+  ERROR_PAGE_ROUTE,
   MOCK_BOARD_URL_FOR_JIRA,
   RESET,
   VERIFY,
@@ -17,7 +18,6 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
 import { navigateMock } from '../../../../setupTests'
-import { ERROR_PAGE_ROUTE } from '@src/constants'
 import userEvent from '@testing-library/user-event'
 
 export const fillBoardFieldsInformation = () => {

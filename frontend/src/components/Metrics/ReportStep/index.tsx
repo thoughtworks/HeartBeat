@@ -5,6 +5,7 @@ import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
 import {
   CHINA_CALENDAR,
+  ERROR_PAGE_ROUTE,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   NAME,
@@ -23,10 +24,12 @@ import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
+import { useNavigate } from 'react-router-dom'
 
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
-  const { generateReport, isLoading, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const navigate = useNavigate()
+  const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
   const { fetchExportData, errorMessage } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
@@ -192,6 +195,8 @@ export const ReportStep = () => {
     <>
       {isLoading ? (
         <Loading />
+      ) : isServerError ? (
+        navigate(ERROR_PAGE_ROUTE)
       ) : (
         <>
           {reportErrorMsg && (

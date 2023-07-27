@@ -5,6 +5,7 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import {
   BACK,
   CONFIRM_DIALOG_DESCRIPTION,
+  HOME_PAGE_ROUTE,
   LEAD_TIME_FOR_CHANGES,
   MOCK_REPORT_URL,
   NEXT,
@@ -198,7 +199,7 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(YES))
 
     expect(navigateMock).toHaveBeenCalledTimes(1)
-    expect(navigateMock).toHaveBeenCalledWith('/home')
+    expect(navigateMock).toHaveBeenCalledWith(HOME_PAGE_ROUTE)
   })
 
   it('should disable next when required data is empty ', async () => {

@@ -6,6 +6,7 @@ import {
   CREATE_NEW_PROJECT,
   HOME_VERIFY_IMPORT_WARNING_MESSAGE,
   IMPORT_PROJECT_FROM_FILE,
+  METRICS_PAGE_ROUTE,
   IMPORTED_NEW_CONFIG_FIXTURE,
 } from '../../fixtures'
 import userEvent from '@testing-library/user-event'
@@ -88,7 +89,7 @@ describe('HomeGuide', () => {
 
     await waitFor(() => {
       expect(mockedUseAppDispatch).toHaveBeenCalledTimes(3)
-      expect(navigateMock).toHaveBeenCalledWith('/metrics')
+      expect(navigateMock).toHaveBeenCalledWith(METRICS_PAGE_ROUTE)
     })
   })
 
@@ -98,7 +99,7 @@ describe('HomeGuide', () => {
     await userEvent.click(getByText(CREATE_NEW_PROJECT))
 
     expect(navigateMock).toHaveBeenCalledTimes(1)
-    expect(navigateMock).toHaveBeenCalledWith('/metrics')
+    expect(navigateMock).toHaveBeenCalledWith(METRICS_PAGE_ROUTE)
   })
 
   describe('isValidImportedConfig', () => {

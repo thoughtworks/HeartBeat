@@ -1,10 +1,12 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
-import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE } from '../fixtures'
-import { InternalServerException } from '@src/exceptions/InternalServerException'
+import { INTERNAL_SERVER_ERROR_MESSAGE, MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE } from '../fixtures'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { reportMapper } from '@src/hooks/reportMapper/report'
+import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { UnknownException } from '@src/exceptions/UnkonwException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 jest.mock('@src/hooks/reportMapper/report', () => ({
   reportMapper: jest.fn(),
@@ -37,9 +39,9 @@ describe('use generate report effect', () => {
     expect(result.current.errorMessage).toEqual('')
   })
 
-  it('should set error message when generate report response status 500', async () => {
+  it('should set error message when generate report response status 404', async () => {
     reportClient.report = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message')
+      throw new NotFoundException('error message')
     })
     const { result } = renderHook(() => useGenerateReportEffect())
 
@@ -47,7 +49,7 @@ describe('use generate report effect', () => {
       result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
-    expect(result.current.errorMessage).toEqual('generate report: error message')
+    await waitFor(() => expect(result.current.errorMessage).toEqual('generate report: error message'))
   })
 
   it('should call reportMapper method when generate report response status 200', async () => {
@@ -62,5 +64,32 @@ describe('use generate report effect', () => {
     await waitFor(() => {
       expect(reportMapper).toHaveBeenCalledTimes(1)
     })
+  })
+
+  it('should set error message when generate report response status 500', async () => {
+    reportClient.report = jest.fn().mockImplementation(() => {
+      throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
+    })
+    const { result } = renderHook(() => useGenerateReportEffect())
+
+    act(() => {
+      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    })
+
+    await waitFor(() => expect(result.current.isServerError).toEqual(true))
+  })
+
+  it('should set isServerError is true when throw unknownException', async () => {
+    reportClient.report = jest.fn().mockImplementation(() => {
+      throw new UnknownException()
+    })
+
+    const { result } = renderHook(() => useGenerateReportEffect())
+
+    act(() => {
+      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    })
+
+    await waitFor(() => expect(result.current.isServerError).toEqual(true))
   })
 })

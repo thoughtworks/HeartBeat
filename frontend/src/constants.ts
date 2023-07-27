@@ -26,11 +26,6 @@ export enum REQUIRED_DATA {
   MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
 }
 
-export enum DATE_RANGE {
-  START_DATE = 0,
-  END_DATE = 1,
-}
-
 export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'Pipeline Tool',
@@ -67,11 +62,7 @@ export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 export const EMAIL = 'Email'
 
 export const VERIFY_FAILED_ERROR_MESSAGE = 'verify failed'
-export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal server error'
-export const INVALID_TOKEN_ERROR_MESSAGE = 'Token is incorrect'
-export const BAD_REQUEST_ERROR_MESSAGE = 'Please reconfirm the input'
-export const NOT_FOUND_ERROR_MESSAGE = '404 Not Found'
-export const PERMISSION_DENIED_ERROR_MESSAGE = 'Permission denied'
+export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error'
 export const UNKNOWN_ERROR_MESSAGE = 'Unknown'
 
 export const METRICS_CONSTANTS = {
@@ -192,3 +183,12 @@ export const STEP_WARNING_MESSAGE = 'Selected step of this pipeline in import da
 
 export const NO_STEP_WARNING_MESSAGE =
   'There is no step during this period for this pipeline! Please change the search time in the Config page!'
+
+export const HOME_PAGE_ROUTE = '/home'
+
+export const ERROR_PAGE_ROUTE = '/error-page'
+
+export const METRICS_PAGE_ROUTE = '/metrics'
+
+export const ERROR_PAGE_MESSAGE =
+  'Something on internet is not quite right. Perhaps head back to our homepage and try again.'

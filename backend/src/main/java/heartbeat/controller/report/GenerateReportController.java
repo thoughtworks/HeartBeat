@@ -26,9 +26,13 @@ public class GenerateReportController {
 
 	@PostMapping
 	public ReportResponse generateReport(@RequestBody GenerateReportRequest request) {
-		log.info("Start to generate Report, request: {} ", request);
+		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime());
 		ReportResponse reports = generateReporterService.generateReporter(request);
-		log.info("Successfully generate Report, request: {}, reports: {}", request, reports);
+		log.info(
+				"Successfully generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, reports: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
+				reports);
 		return reports;
 	}
 
@@ -37,7 +41,7 @@ public class GenerateReportController {
 		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, filename);
 		ExportCSVRequest request = new ExportCSVRequest(dataType, filename);
 		InputStreamResource result = generateReporterService.fetchCSVData(request);
-		log.info("Successfully get CSV file data, result: {}", result);
+		log.info("Successfully get CSV file, dataType: {}, time stamp: {}, result: {}", dataType, filename, result);
 		return result;
 	}
 

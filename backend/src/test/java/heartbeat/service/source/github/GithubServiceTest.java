@@ -401,19 +401,11 @@ class GithubServiceTest {
 
 	@Test
 	public void shouldThrowInternalServerErrorExceptionWhenFetchCommitInfo500Exception() {
-		CommitInfo commitInfo = CommitInfo.builder()
-			.commit(Commit.builder()
-				.author(Author.builder().name("XXXX").email("XXX@test.com").date("2023-05-10T06:43:02.653Z").build())
-				.committer(
-						Committer.builder().name("XXXX").email("XXX@test.com").date("2023-05-10T06:43:02.653Z").build())
-				.build())
-			.build();
+		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString())).thenReturn(null);
 
-		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString())).thenReturn(commitInfo);
-
-		assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "org/repo", ""))
+		assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "", ""))
 			.isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed to get commit info_repositoryId");
+			.hasMessageContaining("Failed to get commit info_repoId");
 	}
 
 }

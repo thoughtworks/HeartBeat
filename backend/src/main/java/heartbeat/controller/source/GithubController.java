@@ -2,7 +2,6 @@ package heartbeat.controller.source;
 
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.service.source.github.GitHubService;
-import heartbeat.util.TokenUtil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +31,9 @@ public class GithubController {
 	public GitHubResponse getRepos(@RequestParam @NotBlank(message = "token must not be blank") @Pattern(
 			regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$",
 			message = "token's pattern is incorrect") String token) {
-		String maskedToken = TokenUtil.mask(token);
-		log.info("Start to get repos_token: {}", maskedToken);
+		log.info("Start to get repos by token");
 		GitHubResponse gitHubRepos = gitHubService.verifyToken(token);
-		log.info("Successfully get the repos_token: {}, repos: {}", maskedToken, gitHubRepos);
+		log.info("Successfully get the repos by token, repos size: {}", gitHubRepos.getGithubRepos().size());
 		return gitHubRepos;
 
 	}

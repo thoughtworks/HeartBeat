@@ -8,11 +8,15 @@ export class CSVClient extends HttpClient {
     dayjs(csvTimeStamp).format('YYYY-MM-DD-HH-mm-ss')
 
   exportCSVData = async (params: CSVReportRequestDTO) => {
-    const response = await this.axiosInstance.get(`/reports/${params.dataType}/${params.csvTimeStamp}`, {
-      responseType: 'blob',
-    })
-    const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
-    downloadCSV(exportedFilename, response.data)
+    await this.axiosInstance
+      .get(`/reports/${params.dataType}/${params.csvTimeStamp}`, { responseType: 'blob' })
+      .then((res) => {
+        const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
+        downloadCSV(exportedFilename, res.data)
+      })
+      .catch((e) => {
+        throw e
+      })
   }
 }
 

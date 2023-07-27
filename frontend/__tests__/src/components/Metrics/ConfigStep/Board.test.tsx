@@ -5,7 +5,6 @@ import {
   BOARD_TYPES,
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  ERROR_PAGE_ROUTE,
   MOCK_BOARD_URL_FOR_JIRA,
   RESET,
   VERIFY,
@@ -17,8 +16,6 @@ import { setupStore } from '../../../utils/setupStoreUtil'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { HttpStatusCode } from 'axios'
-import { navigateMock } from '../../../../setupTests'
-import userEvent from '@testing-library/user-event'
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token']
@@ -199,13 +196,13 @@ describe('Board', () => {
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
-    await userEvent.click(getByRole('button', { name: VERIFY }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(getByText('Sorry there is no card has been done, please change your collection date!')).toBeInTheDocument()
     })
 
-    await userEvent.click(getByRole('button', { name: 'Ok' }))
+    fireEvent.click(getByRole('button', { name: 'Ok' }))
     expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
   })
 
@@ -218,26 +215,12 @@ describe('Board', () => {
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
 
-    await userEvent.click(getByRole('button', { name: VERIFY }))
+    fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
       expect(
         getByText(`${BOARD_TYPES.JIRA} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
       ).toBeInTheDocument()
-    })
-  })
-
-  it('should check error page show when isServerError is true', async () => {
-    server.use(
-      rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError)))
-    )
-    const { getByRole } = setup()
-    fillBoardFieldsInformation()
-
-    await userEvent.click(getByRole('button', { name: VERIFY }))
-
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
     })
   })
 })

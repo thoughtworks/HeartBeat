@@ -3,8 +3,7 @@ import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { boardClient } from '@src/clients/board/BoardClient'
 import { MOCK_BOARD_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
-import { NotFoundException } from '@src/exceptions/NotFoundException'
-import { UnknownException } from '@src/exceptions/UnknownException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 describe('use verify board state', () => {
   it('should initial data state when render hook', async () => {
@@ -12,7 +11,6 @@ describe('use verify board state', () => {
 
     expect(result.current.isLoading).toEqual(false)
   })
-
   it('should set error message when get verify board throw error', async () => {
     jest.useFakeTimers()
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => {
@@ -29,10 +27,9 @@ describe('use verify board state', () => {
 
     expect(result.current.errorMessage).toEqual('')
   })
-
-  it('should set error message when get verify board response status 404', async () => {
+  it('should set error message when get verify board response status 500', async () => {
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => {
-      throw new NotFoundException('error message')
+      throw new InternalServerException('error message')
     })
     const { result } = renderHook(() => useVerifyBoardEffect())
 
@@ -43,18 +40,5 @@ describe('use verify board state', () => {
     expect(result.current.errorMessage).toEqual(
       `${MOCK_BOARD_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`
     )
-  })
-
-  it('should set isServerError is true when error is unknown exception', async () => {
-    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => {
-      throw new UnknownException()
-    })
-    const { result } = renderHook(() => useVerifyBoardEffect())
-
-    act(() => {
-      result.current.verifyJira(MOCK_BOARD_VERIFY_REQUEST_PARAMS)
-    })
-
-    expect(result.current.isServerError).toEqual(true)
   })
 })

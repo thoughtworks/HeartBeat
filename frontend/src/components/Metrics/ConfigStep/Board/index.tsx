@@ -8,7 +8,6 @@ import {
   EMAIL,
   EMAIL_REG_EXP,
   EMPTY_STRING,
-  ERROR_PAGE_ROUTE,
 } from '@src/constants'
 import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
@@ -36,17 +35,15 @@ import {
 } from '@src/components/Common/ConfigForms'
 import dayjs from 'dayjs'
 import { updateMetricsState, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
-import { useNavigate } from 'react-router-dom'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
   const isVerified = useAppSelector(selectIsBoardVerified)
   const boardFields = useAppSelector(selectBoard)
   const DateRange = useAppSelector(selectDateRange)
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
-  const { verifyJira, isLoading, isServerError, errorMessage } = useVerifyBoardEffect()
+  const { verifyJira, isLoading, errorMessage } = useVerifyBoardEffect()
   const [fields, setFields] = useState([
     {
       key: 'Board',
@@ -204,69 +201,63 @@ export const Board = () => {
   }
 
   return (
-    <>
-      {isServerError ? (
-        navigate(ERROR_PAGE_ROUTE)
-      ) : (
-        <StyledSection>
-          <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
-          {errorMessage && <ErrorNotification message={errorMessage} />}
-          {isLoading && <Loading />}
-          <StyledTitle>{CONFIG_TITLE.BOARD}</StyledTitle>
-          <StyledForm
-            onSubmit={(e) => handleSubmitBoardFields(e)}
-            onChange={(e) => updateBoardFields(e)}
-            onReset={handleResetBoardFields}
-          >
-            {fields.map((field, index) =>
-              !index ? (
-                <StyledTypeSelections variant='standard' required key={index}>
-                  <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
-                  <Select
-                    labelId='board-type-checkbox-label'
-                    value={field.value}
-                    onChange={(e) => {
-                      onFormUpdate(index, e.target.value)
-                    }}
-                  >
-                    {Object.values(BOARD_TYPES).map((data) => (
-                      <MenuItem key={data} value={data}>
-                        <ListItemText primary={data} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </StyledTypeSelections>
-              ) : (
-                <StyledTextField
-                  data-testid={field.key}
-                  key={index}
-                  required
-                  label={field.key}
-                  variant='standard'
-                  value={field.value}
-                  onChange={(e) => {
-                    onFormUpdate(index, e.target.value)
-                  }}
-                  error={!field.isRequired || !field.isValid}
-                  type={field.key === 'Token' ? 'password' : 'text'}
-                  helperText={updateFieldHelpText(field)}
-                />
-              )
-            )}
-            <StyledButtonGroup>
-              {isVerified && !isLoading ? (
-                <VerifyButton>Verified</VerifyButton>
-              ) : (
-                <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
-                  Verify
-                </VerifyButton>
-              )}
+    <StyledSection>
+      <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
+      {errorMessage && <ErrorNotification message={errorMessage} />}
+      {isLoading && <Loading />}
+      <StyledTitle>{CONFIG_TITLE.BOARD}</StyledTitle>
+      <StyledForm
+        onSubmit={(e) => handleSubmitBoardFields(e)}
+        onChange={(e) => updateBoardFields(e)}
+        onReset={handleResetBoardFields}
+      >
+        {fields.map((field, index) =>
+          !index ? (
+            <StyledTypeSelections variant='standard' required key={index}>
+              <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
+              <Select
+                labelId='board-type-checkbox-label'
+                value={field.value}
+                onChange={(e) => {
+                  onFormUpdate(index, e.target.value)
+                }}
+              >
+                {Object.values(BOARD_TYPES).map((data) => (
+                  <MenuItem key={data} value={data}>
+                    <ListItemText primary={data} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </StyledTypeSelections>
+          ) : (
+            <StyledTextField
+              data-testid={field.key}
+              key={index}
+              required
+              label={field.key}
+              variant='standard'
+              value={field.value}
+              onChange={(e) => {
+                onFormUpdate(index, e.target.value)
+              }}
+              error={!field.isRequired || !field.isValid}
+              type={field.key === 'Token' ? 'password' : 'text'}
+              helperText={updateFieldHelpText(field)}
+            />
+          )
+        )}
+        <StyledButtonGroup>
+          {isVerified && !isLoading ? (
+            <VerifyButton>Verified</VerifyButton>
+          ) : (
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
+              Verify
+            </VerifyButton>
+          )}
 
-              {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
-            </StyledButtonGroup>
-          </StyledForm>
-        </StyledSection>
-      )}
-    </>
+          {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
+        </StyledButtonGroup>
+      </StyledForm>
+    </StyledSection>
   )
 }

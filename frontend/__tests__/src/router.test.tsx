@@ -3,12 +3,6 @@ import { MemoryRouter } from 'react-router-dom'
 import Router from '@src/router'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
-import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, HOME_PAGE_ROUTE } from './fixtures'
-
-jest.mock('@src/pages/Metrics', () => ({
-  __esModule: true,
-  default: () => <div>Mocked Metrics Page</div>,
-}))
 
 describe('router', () => {
   const setup = (routeUrl: string) =>
@@ -31,27 +25,22 @@ describe('router', () => {
   })
 
   it('should show home page when go home page', async () => {
-    setup(HOME_PAGE_ROUTE)
+    const homeRoute = '/home'
+
+    setup(homeRoute)
 
     await waitFor(() => {
       expect(window.location.pathname).toEqual('/')
     })
   })
 
-  it('should show Metrics page when go Metrics page', async () => {
-    const metricsRoute = '/metrics'
+  it('should show Metrics page when go Metrics page', () => {
+    const metricsRoute = '/Metrics'
+    const steps = ['Config', 'Metrics', 'Export']
 
-    const { getByText } = setup(metricsRoute)
-    await waitFor(() => {
-      expect(getByText('Mocked Metrics Page')).toBeInTheDocument()
-    })
-  })
-
-  it('should show error page when go error page', async () => {
-    const { getByText } = setup(ERROR_PAGE_ROUTE)
-
-    await waitFor(() => {
-      expect(getByText(ERROR_PAGE_MESSAGE)).toBeInTheDocument()
+    const { findByText } = setup(metricsRoute)
+    steps.map(async (label) => {
+      expect(await findByText(label)).toBeVisible()
     })
   })
 })

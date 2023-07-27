@@ -3,7 +3,6 @@ import { PipelineTool } from '@src/components/Metrics/ConfigStep/PipelineTool'
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  ERROR_PAGE_ROUTE,
   MOCK_PIPELINE_URL,
   MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
   PIPELINE_TOOL_FIELDS,
@@ -21,7 +20,6 @@ import { rest } from 'msw'
 import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
 import { act } from 'react-dom/test-utils'
-import { navigateMock } from '../../../../setupTests'
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
@@ -199,17 +197,5 @@ describe('PipelineTool', () => {
     expect(
       getByText(`${MOCK_PIPELINE_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
     ).toBeInTheDocument()
-  })
-
-  it('should check error page show when isServerError is true', async () => {
-    server.use(rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
-    const { getByRole } = setup()
-    await fillPipelineToolFieldsInformation()
-
-    await userEvent.click(getByRole('button', { name: VERIFY }))
-
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
-    })
   })
 })

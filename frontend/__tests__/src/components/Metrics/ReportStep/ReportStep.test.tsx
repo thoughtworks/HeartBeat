@@ -2,7 +2,6 @@ import { act, render, waitFor } from '@testing-library/react'
 import { ReportStep } from '@src/components/Metrics/ReportStep'
 import {
   BACK,
-  ERROR_PAGE_ROUTE,
   EXPECTED_REPORT_VALUES,
   EXPORT_BOARD_DATA,
   EXPORT_PIPELINE_DATA,
@@ -14,16 +13,11 @@ import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsS
 import { updateMetrics, updatePipelineToolVerifyResponse } from '@src/context/config/configSlice'
 import userEvent from '@testing-library/user-event'
 import { backStep } from '@src/context/stepper/StepperSlice'
-import { navigateMock } from '../../../../setupTests'
-import mocked = jest.mocked
-import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
-import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
-  useGenerateReportEffect: jest.fn().mockReturnValue({
+  useGenerateReportEffect: () => ({
     generateReport: jest.fn(() => Promise.resolve(EXPECTED_REPORT_VALUES)),
     isLoading: false,
-    isServerError: false,
   }),
 }))
 jest.mock('@src/context/stepper/StepperSlice', () => ({
@@ -32,10 +26,9 @@ jest.mock('@src/context/stepper/StepperSlice', () => ({
 }))
 
 jest.mock('@src/hooks/useExportCsvEffect', () => ({
-  useExportCsvEffect: jest.fn().mockReturnValue({
+  useExportCsvEffect: () => ({
     fetchExportData: jest.fn(),
     errorMessage: 'failed export csv',
-    isServerError: false,
   }),
 }))
 
@@ -85,7 +78,6 @@ describe('Report Step', () => {
     store = null
     jest.clearAllMocks()
   })
-
   it('should render report page', async () => {
     const { getByText } = await act(() => setup(['']))
 
@@ -141,19 +133,6 @@ describe('Report Step', () => {
     }
   )
 
-  it('should show errorMessage when generateReport has error message', async () => {
-    mocked(useGenerateReportEffect).mockReturnValue({
-      generateReport: jest.fn(),
-      isLoading: false,
-      errorMessage: 'error message',
-      isServerError: false,
-    })
-
-    const { getByText } = await act(() => setup(['']))
-
-    expect(getByText('error message')).toBeInTheDocument()
-  })
-
   it('should show errorMessage when click export pipeline button given csv not exist', async () => {
     const { getByText } = await act(() => setup([REQUIRED_DATA_LIST[4]]))
 
@@ -186,50 +165,5 @@ describe('Report Step', () => {
     await userEvent.click(getByText(EXPORT_BOARD_DATA))
 
     expect(getByText('failed export csv')).toBeInTheDocument()
-  })
-
-  it('should check error page show when isCSVError is true', async () => {
-    mocked(useExportCsvEffect).mockReturnValue({
-      fetchExportData: jest.fn(),
-      errorMessage: 'failed export csv',
-      isServerError: true,
-      isLoading: false,
-    })
-
-    await setup([REQUIRED_DATA_LIST[1]])
-
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
-    })
-  })
-
-  it('should check error page show when isReportError is true', async () => {
-    mocked(useGenerateReportEffect).mockReturnValue({
-      generateReport: jest.fn(),
-      isLoading: false,
-      errorMessage: 'error message',
-      isServerError: true,
-    })
-
-    await setup([REQUIRED_DATA_LIST[1]])
-
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
-    })
-  })
-
-  it('should render loading page when isLoading is true', async () => {
-    mocked(useGenerateReportEffect).mockReturnValue({
-      generateReport: jest.fn(),
-      isLoading: true,
-      errorMessage: '',
-      isServerError: false,
-    })
-
-    const { getByTestId } = await act(() => setup(['']))
-
-    await waitFor(() => {
-      expect(getByTestId('loading-page')).toBeInTheDocument()
-    })
   })
 })

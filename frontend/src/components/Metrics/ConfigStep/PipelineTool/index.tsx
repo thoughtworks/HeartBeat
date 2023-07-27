@@ -7,7 +7,6 @@ import {
   TOKEN_HELPER_TEXT,
   EMPTY_STRING,
   DEFAULT_HELPER_TEXT,
-  ERROR_PAGE_ROUTE,
 } from '@src/constants'
 import { FormEvent, useEffect, useState } from 'react'
 import {
@@ -37,16 +36,14 @@ import {
   initLeadTimeForChanges,
   updatePipelineSettings,
 } from '@src/context/Metrics/metricsSlice'
-import { useNavigate } from 'react-router-dom'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
   const pipelineToolFields = useAppSelector(selectPipelineTool)
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isPipelineToolVerified)
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
-  const { verifyPipelineTool, isLoading, isServerError, errorMessage } = useVerifyPipelineToolEffect()
+  const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect()
   const [fields, setFields] = useState([
     {
       key: 'PipelineTool',
@@ -153,62 +150,56 @@ export const PipelineTool = () => {
   }
 
   return (
-    <>
-      {isServerError ? (
-        navigate(ERROR_PAGE_ROUTE)
-      ) : (
-        <StyledSection>
-          {errorMessage && <ErrorNotification message={errorMessage} />}
-          {isLoading && <Loading />}
-          <StyledTitle>{CONFIG_TITLE.PIPELINE_TOOL}</StyledTitle>
-          <StyledForm
-            onSubmit={handleSubmitPipelineToolFields}
-            onChange={updatePipelineToolFields}
-            onReset={handleResetPipelineToolFields}
+    <StyledSection>
+      {errorMessage && <ErrorNotification message={errorMessage} />}
+      {isLoading && <Loading />}
+      <StyledTitle>{CONFIG_TITLE.PIPELINE_TOOL}</StyledTitle>
+      <StyledForm
+        onSubmit={handleSubmitPipelineToolFields}
+        onChange={updatePipelineToolFields}
+        onReset={handleResetPipelineToolFields}
+      >
+        <StyledTypeSelections variant='standard' required>
+          <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
+          <Select
+            labelId='pipelineTool-type-checkbox-label'
+            value={fields[0].value}
+            onChange={(e) => onFormUpdate(ZERO, e.target.value)}
           >
-            <StyledTypeSelections variant='standard' required>
-              <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
-              <Select
-                labelId='pipelineTool-type-checkbox-label'
-                value={fields[0].value}
-                onChange={(e) => onFormUpdate(ZERO, e.target.value)}
-              >
-                {Object.values(PIPELINE_TOOL_TYPES).map((toolType) => (
-                  <MenuItem key={toolType} value={toolType}>
-                    <ListItemText primary={toolType} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </StyledTypeSelections>
-            <StyledTextField
-              data-testid='pipelineToolTextField'
-              key={fields[1].key}
-              required
-              label={fields[1].key}
-              variant='standard'
-              type='password'
-              value={fields[1].value}
-              onChange={(e) => onFormUpdate(1, e.target.value)}
-              error={!fields[1].isValid || !fields[1].isRequired}
-              helperText={updateFieldHelpText(fields[1])}
-            />
-            <StyledButtonGroup>
-              {isVerified && !isLoading ? (
-                <VerifyButton>Verified</VerifyButton>
-              ) : (
-                <VerifyButton
-                  data-test-id='pipelineVerifyButton'
-                  type='submit'
-                  disabled={isDisableVerifyButton || isLoading}
-                >
-                  Verify
-                </VerifyButton>
-              )}
-              {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
-            </StyledButtonGroup>
-          </StyledForm>
-        </StyledSection>
-      )}
-    </>
+            {Object.values(PIPELINE_TOOL_TYPES).map((toolType) => (
+              <MenuItem key={toolType} value={toolType}>
+                <ListItemText primary={toolType} />
+              </MenuItem>
+            ))}
+          </Select>
+        </StyledTypeSelections>
+        <StyledTextField
+          data-testid='pipelineToolTextField'
+          key={fields[1].key}
+          required
+          label={fields[1].key}
+          variant='standard'
+          type='password'
+          value={fields[1].value}
+          onChange={(e) => onFormUpdate(1, e.target.value)}
+          error={!fields[1].isValid || !fields[1].isRequired}
+          helperText={updateFieldHelpText(fields[1])}
+        />
+        <StyledButtonGroup>
+          {isVerified && !isLoading ? (
+            <VerifyButton>Verified</VerifyButton>
+          ) : (
+            <VerifyButton
+              data-test-id='pipelineVerifyButton'
+              type='submit'
+              disabled={isDisableVerifyButton || isLoading}
+            >
+              Verify
+            </VerifyButton>
+          )}
+          {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
+        </StyledButtonGroup>
+      </StyledForm>
+    </StyledSection>
   )
 }

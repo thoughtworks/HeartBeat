@@ -14,7 +14,6 @@ import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
-import heartbeat.util.TokenUtil;
 import jakarta.annotation.PreDestroy;
 
 import java.time.Instant;
@@ -49,27 +48,25 @@ public class GitHubService {
 	public GitHubResponse verifyToken(String githubToken) {
 		try {
 			String token = "token " + githubToken;
-			String maskToken = TokenUtil.mask(token);
-			log.info("Start to query repository_url by token, token: {}", maskToken);
+			log.info("Start to query repository url by token");
 			CompletableFuture<List<GitHubRepo>> githubReposByUserFuture = CompletableFuture
 				.supplyAsync(() -> gitHubFeignClient.getAllRepos(token), customTaskExecutor);
 
-			log.info("Start to query organizations_token: {}", maskToken);
+			log.info("Start to query organizations by token");
 			CompletableFuture<List<GitHubOrganizationsInfo>> githubOrganizationsFuture = CompletableFuture
 				.supplyAsync(() -> gitHubFeignClient.getGithubOrganizationsInfo(token), customTaskExecutor);
 
 			return githubReposByUserFuture
 				.thenCombineAsync(githubOrganizationsFuture, (githubReposByUser, githubOrganizations) -> {
-					log.info("Successfully get repository_token: {}, githubReposByUser: {}", maskToken,
-							githubReposByUser);
-					log.info("Successfully get organizations_token: {} organizations: {}", maskToken,
-							githubOrganizations);
+					log.info("Successfully get repository by token, githubReposByUser size: {}",
+							githubReposByUser.size());
+					log.info("Successfully get organizations by token, githubOrganizations: {}", githubOrganizations);
 					List<String> githubReposMapped = githubReposByUser.stream().map(GitHubRepo::getHtmlUrl).toList();
 					LinkedHashSet<String> githubRepos = new LinkedHashSet<>(githubReposMapped);
 					CompletableFuture<Set<String>> githubReposByOrganizations = getAllGitHubReposAsync(token,
 							githubOrganizations);
 					Set<String> allGitHubRepos = githubReposByOrganizations.join();
-					log.info("Successfully get all repositories_token: {}, repos: {}", maskToken, allGitHubRepos);
+					log.info("Successfully get all repositories by token, repos size: {}", allGitHubRepos.size());
 					githubRepos.addAll(allGitHubRepos);
 					return GitHubResponse.builder().githubRepos(githubRepos).build();
 				}, customTaskExecutor)
@@ -88,16 +85,15 @@ public class GitHubService {
 
 	private CompletableFuture<Set<String>> getAllGitHubReposAsync(String token,
 			List<GitHubOrganizationsInfo> gitHubOrganizations) {
-		String maskToken = TokenUtil.mask(token);
 		List<CompletableFuture<List<String>>> repoFutures = gitHubOrganizations.stream()
 			.map(GitHubOrganizationsInfo::getLogin)
 			.map(org -> CompletableFuture.supplyAsync(() -> {
-				log.info("Start to query repository by organization_token: {}, gitHubOrganization: {}", maskToken, org);
+				log.info("Start to query repository by organization: {}", org);
 				List<String> repos = gitHubFeignClient.getReposByOrganizationName(org, token)
 					.stream()
 					.map(GitHubRepo::getHtmlUrl)
 					.toList();
-				log.info("End to queried repository by organization_token: {}, gitHubOrganization: {}", maskToken, org);
+				log.info("Successfully query repository by organization: {}, repos size: {}", org, repos.size());
 				return repos;
 			}, customTaskExecutor))
 			.toList();
@@ -254,12 +250,11 @@ public class GitHubService {
 
 	public CommitInfo fetchCommitInfo(String commitId, String repositoryId, String token) {
 		try {
-			String maskToken = TokenUtil.mask(token);
 			String realToken = "Bearer " + token;
-			log.info("Start to get commit info_token: {},repoId: {},commitId: {}", maskToken, repositoryId, commitId);
+			log.info("Start to get commit info, repoId: {},commitId: {}", repositoryId, commitId);
 			CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
-			log.info("Successfully get commit info_commitInfo_token: {}, commit: {}", maskToken,
-					commitInfo.getCommit());
+			log.info("Successfully get commit info, repoId: {},commitId: {}, author: {}", repositoryId, commitId,
+					commitInfo.getCommit().getAuthor());
 			return commitInfo;
 		}
 		catch (RuntimeException e) {
@@ -269,8 +264,8 @@ public class GitHubService {
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
-			throw new InternalServerErrorException(String
-				.format("Failed to get commit info_repositoryId: %s,cause is: %s", repositoryId, cause.getMessage()));
+			throw new InternalServerErrorException(String.format("Failed to get commit info_repoId: %s,cause is: %s",
+					repositoryId, cause.getMessage()));
 		}
 	}
 

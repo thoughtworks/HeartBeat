@@ -6,14 +6,10 @@ import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/
 import React, { useState } from 'react'
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 import { resetStep } from '@src/context/stepper/StepperSlice'
-import {
-  CHINA_CALENDAR,
-  HOME_VERIFY_IMPORT_WARNING_MESSAGE,
-  METRICS_PAGE_ROUTE,
-  REGULAR_CALENDAR,
-} from '@src/constants'
+import { HOME_VERIFY_IMPORT_WARNING_MESSAGE, METRICS_PAGE_ROUTE } from '@src/constants'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { GuideButton } from '@src/components/Common/Buttons'
+import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig'
 
 export const HomeGuide = () => {
   const navigate = useNavigate()
@@ -21,75 +17,7 @@ export const HomeGuide = () => {
   const [validConfig, setValidConfig] = useState(true)
 
   const getImportFileElement = () => document.getElementById('importJson') as HTMLInputElement
-
-  const convertToNewFileConfig = (fileConfig) => {
-    try {
-      if ('considerHoliday' in fileConfig) {
-        const {
-          projectName,
-          metrics,
-          startDate,
-          endDate,
-          considerHoliday,
-          board: { type: boardType, boardId, token: boardToken, site, email, projectKey },
-          pipelineTool: { type: pipelineType, token: pipelineToken },
-          sourceControl: { type: sourceType, token: sourceToken },
-          crews,
-          cycleTime,
-          doneStatus,
-          classifications,
-          deployment,
-          leadTime,
-        } = fileConfig
-        return {
-          projectName,
-          dateRange: {
-            startDate,
-            endDate,
-          },
-          calendarType: considerHoliday ? CHINA_CALENDAR : REGULAR_CALENDAR,
-          metrics,
-          board: {
-            type: boardType,
-            boardId,
-            email,
-            projectKey,
-            site,
-            token: boardToken,
-          },
-          pipelineTool: {
-            type: pipelineType,
-            token: pipelineToken,
-          },
-          sourceControl: {
-            type: sourceType,
-            token: sourceToken,
-          },
-          crews,
-          cycleTime,
-          doneStatus,
-          classification: classifications,
-          deployment: deployment.map((item, index) => ({
-            id: index,
-            organization: item?.orgId,
-            pipelineName: item?.pipelineId,
-            step: item?.step,
-          })),
-          leadTime: leadTime.map((item, index) => ({
-            id: index,
-            organization: item?.orgId,
-            pipelineName: item?.pipelineId,
-            step: item?.step,
-          })),
-        }
-      }
-      return fileConfig
-    } catch {
-      setValidConfig(false)
-    }
-  }
-
-  const isValidImportedConfig = (config) => {
+  const isValidImportedConfig = (config: NewFileConfig) => {
     try {
       const {
         projectName,
@@ -108,8 +36,8 @@ export const HomeGuide = () => {
     if (input) {
       reader.onload = () => {
         if (reader.result && typeof reader.result === 'string') {
-          const importedConfig = JSON.parse(reader.result)
-          const config = convertToNewFileConfig(importedConfig)
+          const importedConfig: OldFileConfig | NewFileConfig = JSON.parse(reader.result)
+          const config: NewFileConfig = convertToNewFileConfig(importedConfig)
           if (isValidImportedConfig(config)) {
             dispatch(updateProjectCreatedState(false))
             dispatch(updateBasicConfigState(config))

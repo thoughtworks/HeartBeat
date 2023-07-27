@@ -532,7 +532,7 @@ export const EXPECTED_REPORT_VALUES = {
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
   'Imported data is not perfectly matched. Please review carefully before going next!'
 
-export const IMPORTED_CONFIG_FIXTURE = {
+export const IMPORTED_NEW_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
   metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
   dateRange: {
@@ -566,6 +566,50 @@ export const IMPORTED_CONFIG_FIXTURE = {
     },
     {
       'Ready For Dev': 'Analysis',
+    },
+  ],
+}
+
+export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
+  projectName: 'ConfigFileForImporting',
+  metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
+  startDate: '2023-03-16T00:00:00.000+08:00',
+  endDate: '2023-03-30T23:59:59.999+08:00',
+  board: {
+    type: 'Classic Jira',
+    verifyToken: 'mockVerifyToken',
+    boardId: '1963',
+    token: 'mockToken',
+    site: 'mockSite',
+    email: 'test@test.com',
+    projectKey: 'PLL',
+  },
+  pipelineTool: {
+    type: 'BuildKite',
+    verifyToken: 'mockVerifyToken',
+    token: 'mockToken',
+  },
+  sourceControl: {
+    type: 'GitHub',
+    verifyToken: 'mockVerifyToken',
+    token: '',
+  },
+  crews: ['lucy', 'hi hi', 'Yu Zhang'],
+  classifications: ['type', 'Parent'],
+  cycleTime: {},
+  doneStatus: ['DONE'],
+  deployment: [
+    {
+      pipelineId: 'Heartbeat',
+      step: ':rocket: Deploy prod',
+      orgId: 'Thoughtworks-Heartbeat',
+    },
+  ],
+  leadTime: [
+    {
+      pipelineId: 'Heartbeat',
+      step: ':rocket: Deploy prod',
+      orgId: 'Thoughtworks-Heartbeat',
     },
   ],
 }

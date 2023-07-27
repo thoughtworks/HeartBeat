@@ -341,7 +341,7 @@ class BuildKiteServiceTest {
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
 				PipelineStepsParam.builder().build()))
 			.isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed to get pipeline steps_stepsParam");
+			.hasMessageContaining("Failed to get pipeline steps");
 
 	}
 

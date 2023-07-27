@@ -5,7 +5,6 @@ import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
-import heartbeat.util.TokenUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -40,14 +39,15 @@ public class PipelineController {
 			@PathVariable String pipelineType, @PathVariable String organizationId,
 			@PathVariable("buildId") String pipelineId, @Valid @ModelAttribute PipelineStepsParam params) {
 
-		log.info("Start to get pipeSteps_token: {}", TokenUtil.mask(token));
+		log.info("Start to get pipeline steps, organization id: {}, pipeline id: {}", organizationId, pipelineId);
 		PipelineStepsDTO pipelineSteps = buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId, params);
 		if (pipelineSteps.getSteps().isEmpty()) {
 			log.info("No steps in time range between {} and {}", params.getStartTime(), params.getEndTime());
 			return ResponseEntity.noContent().build();
 		}
 		else {
-			log.info("Successfully get pipeline steps {}", pipelineSteps.getSteps());
+			log.info("Successfully get pipeline steps, organization id: {}, pipeline id: {}, pipeline steps{}",
+					organizationId, pipelineId, pipelineSteps.getSteps());
 			return ResponseEntity.ok(pipelineSteps);
 		}
 	}

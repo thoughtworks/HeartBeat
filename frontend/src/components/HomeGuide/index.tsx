@@ -9,6 +9,7 @@ import { resetStep } from '@src/context/stepper/StepperSlice'
 import { HOME_VERIFY_IMPORT_WARNING_MESSAGE, METRICS_PAGE_ROUTE } from '@src/constants'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { GuideButton } from '@src/components/Common/Buttons'
+import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig'
 
 export const HomeGuide = () => {
   const navigate = useNavigate()
@@ -16,15 +17,13 @@ export const HomeGuide = () => {
   const [validConfig, setValidConfig] = useState(true)
 
   const getImportFileElement = () => document.getElementById('importJson') as HTMLInputElement
-
-  const isValidImportedConfig = (configStr: string) => {
+  const isValidImportedConfig = (config: NewFileConfig) => {
     try {
-      const importedConfig = JSON.parse(configStr)
       const {
         projectName,
         metrics,
         dateRange: { startDate, endDate },
-      } = importedConfig
+      } = config
       return projectName || startDate || endDate || metrics.length > 0
     } catch {
       return false
@@ -37,11 +36,12 @@ export const HomeGuide = () => {
     if (input) {
       reader.onload = () => {
         if (reader.result && typeof reader.result === 'string') {
-          if (isValidImportedConfig(reader.result)) {
+          const importedConfig: OldFileConfig | NewFileConfig = JSON.parse(reader.result)
+          const config: NewFileConfig = convertToNewFileConfig(importedConfig)
+          if (isValidImportedConfig(config)) {
             dispatch(updateProjectCreatedState(false))
-            const importedConfig = JSON.parse(reader.result)
-            dispatch(updateBasicConfigState(importedConfig))
-            dispatch(updateMetricsImportedData(importedConfig))
+            dispatch(updateBasicConfigState(config))
+            dispatch(updateMetricsImportedData(config))
             navigate(METRICS_PAGE_ROUTE)
           } else {
             setValidConfig(false)

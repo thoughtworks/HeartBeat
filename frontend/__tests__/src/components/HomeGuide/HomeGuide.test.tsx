@@ -6,7 +6,7 @@ import {
   CREATE_NEW_PROJECT,
   HOME_VERIFY_IMPORT_WARNING_MESSAGE,
   IMPORT_PROJECT_FROM_FILE,
-  IMPORTED_CONFIG_FIXTURE,
+  IMPORTED_NEW_CONFIG_FIXTURE,
 } from '../../fixtures'
 import userEvent from '@testing-library/user-event'
 import { navigateMock } from '../../../setupTests'
@@ -74,7 +74,7 @@ describe('HomeGuide', () => {
   it('should go to Metrics page and read file when click import file button', async () => {
     const { getByTestId } = setup()
 
-    const file = new File([`${JSON.stringify(IMPORTED_CONFIG_FIXTURE)}`], 'test.json', {
+    const file = new File([`${JSON.stringify(IMPORTED_NEW_CONFIG_FIXTURE)}`], 'test.json', {
       type: 'file',
     })
 
@@ -113,7 +113,7 @@ describe('HomeGuide', () => {
     })
 
     it('should no display warning message when  projectName dateRange metrics all exist', async () => {
-      const queryByText = setupInputFile(IMPORTED_CONFIG_FIXTURE)
+      const queryByText = setupInputFile(IMPORTED_NEW_CONFIG_FIXTURE)
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)

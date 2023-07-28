@@ -29,13 +29,8 @@ import { useNavigate } from 'react-router-dom'
 export const ReportStep = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const {
-    generateReport,
-    isLoading,
-    isServerError: isReportError,
-    errorMessage: reportErrorMsg,
-  } = useGenerateReportEffect()
-  const { fetchExportData, errorMessage, isServerError: isCSVError } = useExportCsvEffect()
+  const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const { fetchExportData, errorMessage } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [classificationState, setClassificationState] = useState({
@@ -200,7 +195,7 @@ export const ReportStep = () => {
     <>
       {isLoading ? (
         <Loading />
-      ) : isReportError || isCSVError ? (
+      ) : isServerError ? (
         navigate(ERROR_PAGE_ROUTE)
       ) : (
         <>

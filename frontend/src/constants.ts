@@ -62,6 +62,8 @@ export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 export const EMAIL = 'Email'
 
 export const VERIFY_FAILED_ERROR_MESSAGE = 'verify failed'
+export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error'
+export const UNKNOWN_ERROR_MESSAGE = 'Unknown'
 
 export const METRICS_CONSTANTS = {
   cycleTimeEmptyStr: '----',
@@ -187,8 +189,6 @@ export const HOME_PAGE_ROUTE = '/home'
 export const ERROR_PAGE_ROUTE = '/error-page'
 
 export const METRICS_PAGE_ROUTE = '/metrics'
-
-export const UNKNOWN_EXCEPTION = 'Unknown'
 
 export const ERROR_PAGE_MESSAGE =
   'Something on internet is not quite right. Perhaps head back to our homepage and try again.'

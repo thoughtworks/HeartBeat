@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import Router from '@src/router'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
-import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, HOME_PAGE_ROUTE } from './fixtures'
+import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, HOME_PAGE_ROUTE, METRICS_PAGE_ROUTE } from './fixtures'
 
 jest.mock('@src/pages/Metrics', () => ({
   __esModule: true,
@@ -39,9 +39,8 @@ describe('router', () => {
   })
 
   it('should show Metrics page when go Metrics page', async () => {
-    const metricsRoute = '/metrics'
+    const { getByText } = setup(METRICS_PAGE_ROUTE)
 
-    const { getByText } = setup(metricsRoute)
     await waitFor(() => {
       expect(getByText('Mocked Metrics Page')).toBeInTheDocument()
     })

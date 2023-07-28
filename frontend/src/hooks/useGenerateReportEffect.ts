@@ -1,9 +1,9 @@
 import { useState } from 'react'
+import { ERROR_MESSAGE_TIME_DURATION, INTERNAL_SERVER_ERROR_MESSAGE, UNKNOWN_ERROR_MESSAGE } from '@src/constants'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
-import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { reportMapper } from '@src/hooks/reportMapper/report'
-import { handleApiRequest } from '@src/hooks/HandleApiRequest/handleApiRequest'
+import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 
 export interface useGenerateReportEffectInterface {
   generateReport: (params: ReportRequestDTO) => Promise<
@@ -26,18 +26,26 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [isLoading, setIsLoading] = useState(false)
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const errorMessagesToCheck = [UNKNOWN_ERROR_MESSAGE, INTERNAL_SERVER_ERROR_MESSAGE]
 
   const generateReport = async (params: ReportRequestDTO) => {
-    const errorHandler = (err: Error) => {
-      setErrorMessage(`generate report: ${err.message}`)
-    }
-
-    const reportApiCall = async () => {
+    setIsLoading(true)
+    try {
       const res = await reportClient.report(params)
       return reportMapper(res.response)
+    } catch (e) {
+      const err = e as Error
+      if (errorMessagesToCheck.includes(err.message)) {
+        setIsServerError(true)
+      } else {
+        setErrorMessage(`generate report: ${err.message}`)
+        setTimeout(() => {
+          setErrorMessage('')
+        }, ERROR_MESSAGE_TIME_DURATION)
+      }
+    } finally {
+      setIsLoading(false)
     }
-
-    return await handleApiRequest(reportApiCall, errorHandler, setIsLoading, setIsServerError, setErrorMessage)
   }
 
   return {

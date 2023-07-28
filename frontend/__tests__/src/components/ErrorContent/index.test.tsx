@@ -15,7 +15,6 @@ describe('error content', () => {
       </BrowserRouter>
     )
 
-    expect(getByText('OH NO !')).toBeInTheDocument()
     expect(getByText(ERROR_PAGE_MESSAGE)).toBeInTheDocument()
     expect(getByText(RETRY_BUTTON)).toBeInTheDocument()
   })

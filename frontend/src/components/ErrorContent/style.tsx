@@ -9,28 +9,31 @@ export const Container = styled.div({
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
-  marginBottom: '5rem',
+  padding: '6rem',
+  minHeight: '30rem',
+  minWidth: '60rem',
 })
 
 export const ErrorTitle = styled.div({
-  paddingLeft: '7rem',
+  paddingLeft: '6rem',
+  position: 'relative',
 })
 
 export const ErrorImg = styled.img({
-  height: '9rem',
+  height: '7rem',
 })
 
 export const Some = styled.text({
-  fontSize: '3.5rem',
-  fontWeight: '700',
+  fontSize: '2.5rem',
+  fontWeight: '600',
   fontFamily: 'system-ui',
   paddingLeft: '1rem',
 })
 
 export const Error = styled.text({
   paddingLeft: '1rem',
-  fontSize: '6rem',
-  fontWeight: '700',
+  fontSize: '4.5rem',
+  fontWeight: '600',
   fontFamily: 'system-ui',
   letterSpacing: '-0.5rem',
   color: 'firebrick',
@@ -43,7 +46,7 @@ export const ErrorMessage = styled.div({
 })
 
 export const OhNo = styled.text({
-  fontSize: '9rem',
+  fontSize: '7rem',
   fontWeight: '750',
   fontFamily: 'system-ui',
   letterSpacing: '0.2rem',
@@ -52,16 +55,16 @@ export const OhNo = styled.text({
 export const Okay = styled.text({
   margin: 'auto 0',
   paddingLeft: '1rem',
-  fontSize: '2.5rem',
-  fontWeight: '300',
+  fontSize: '1.5rem',
+  fontWeight: '250',
   fontFamily: 'system-ui',
   color: theme.main.backgroundColor,
 })
 
 export const ErrorInfo = styled.div({
   padding: '2rem',
-  fontSize: '1.2rem',
-  fontWeight: '300',
+  fontSize: '1rem',
+  fontWeight: '250',
   fontFamily: 'system-ui',
 })
 

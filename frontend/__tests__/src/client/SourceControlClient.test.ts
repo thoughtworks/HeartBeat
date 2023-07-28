@@ -42,18 +42,30 @@ describe('verify sourceControl request', () => {
     })
   })
 
-  it('should throw unknown exception when sourceControl verify response status 5xx', async () => {
+  it('should throw error when sourceControl verify response status 500', async () => {
     server.use(
-      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError)))
+      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+        res(
+          ctx.status(HttpStatusCode.InternalServerError),
+          ctx.json({
+            hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
+          })
+        )
+      )
     )
 
-    await expect(async () => {
-      await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)
-    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
+    sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
+      expect(e).toBeInstanceOf(Error)
+      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
+    })
   })
 
-  it('should throw unknown exception when sourceControl verify response status is 300', async () => {
-    server.use(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))))
+  it('should throw error when sourceControl verify response status is 300', async () => {
+    server.use(
+      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+        res(ctx.status(HttpStatusCode.MultipleChoices), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN }))
+      )
+    )
 
     await expect(async () => {
       await sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS)

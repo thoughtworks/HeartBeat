@@ -23,6 +23,21 @@ describe('get steps from metrics response', () => {
     expect(result).toEqual({ response: ['step1'], haveStep: true })
   })
 
+  it('should throw error when getSteps response status 500', async () => {
+    server.use(
+      rest.get(getStepsUrl, (req, res, ctx) =>
+        res(
+          ctx.status(HttpStatusCode.InternalServerError),
+          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
+        )
+      )
+    )
+
+    await expect(async () => {
+      await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
+    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
+  })
+
   it('should throw error when getSteps response status 400', async () => {
     server.use(
       rest.get(getStepsUrl, (req, res, ctx) =>
@@ -41,13 +56,5 @@ describe('get steps from metrics response', () => {
     const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
 
     expect(result).toEqual({ response: [], haveStep: false })
-  })
-
-  it('should throw unknown exception when getSteps response status 5xx', async () => {
-    server.use(rest.get(getStepsUrl, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))))
-
-    await expect(async () => {
-      await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
-    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN)
   })
 })

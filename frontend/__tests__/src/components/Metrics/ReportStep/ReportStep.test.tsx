@@ -16,7 +16,6 @@ import userEvent from '@testing-library/user-event'
 import { backStep } from '@src/context/stepper/StepperSlice'
 import { navigateMock } from '../../../../setupTests'
 import mocked = jest.mocked
-import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
@@ -186,21 +185,6 @@ describe('Report Step', () => {
     await userEvent.click(getByText(EXPORT_BOARD_DATA))
 
     expect(getByText('failed export csv')).toBeInTheDocument()
-  })
-
-  it('should check error page show when isCSVError is true', async () => {
-    mocked(useExportCsvEffect).mockReturnValue({
-      fetchExportData: jest.fn(),
-      errorMessage: 'failed export csv',
-      isServerError: true,
-      isLoading: false,
-    })
-
-    await setup([REQUIRED_DATA_LIST[1]])
-
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
-    })
   })
 
   it('should check error page show when isReportError is true', async () => {

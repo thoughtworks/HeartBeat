@@ -3,8 +3,7 @@ import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEff
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient'
 import { MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
-import { NotFoundException } from '@src/exceptions/NotFoundException'
-import { UnknownException } from '@src/exceptions/UnknownException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 describe('use verify pipelineTool state', () => {
   it('should initial data state when render hook', async () => {
@@ -12,7 +11,6 @@ describe('use verify pipelineTool state', () => {
 
     expect(result.current.isLoading).toEqual(false)
   })
-
   it('should set error message when get verify pipelineTool throw error', async () => {
     jest.useFakeTimers()
     pipelineToolClient.verifyPipelineTool = jest.fn().mockImplementation(() => {
@@ -30,9 +28,9 @@ describe('use verify pipelineTool state', () => {
     expect(result.current.errorMessage).toEqual('')
   })
 
-  it('should set error message when get verify pipeline response status 404', async () => {
+  it('should set error message when get verify pipeline response status 500', async () => {
     pipelineToolClient.verifyPipelineTool = jest.fn().mockImplementation(() => {
-      throw new NotFoundException('error message')
+      throw new InternalServerException('error message')
     })
     const { result } = renderHook(() => useVerifyPipelineToolEffect())
 
@@ -43,18 +41,5 @@ describe('use verify pipelineTool state', () => {
     expect(result.current.errorMessage).toEqual(
       `${MOCK_PIPELINE_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`
     )
-  })
-
-  it('should set isServerError is true when error is unknown exception', async () => {
-    pipelineToolClient.verifyPipelineTool = jest.fn().mockImplementation(() => {
-      throw new UnknownException()
-    })
-    const { result } = renderHook(() => useVerifyPipelineToolEffect())
-
-    act(() => {
-      result.current.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)
-    })
-
-    expect(result.current.isServerError).toEqual(true)
   })
 })

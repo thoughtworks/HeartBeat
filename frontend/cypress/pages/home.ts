@@ -11,9 +11,7 @@ class Home {
     this.createANewProjectButton().click()
   }
 
-  importProjectFromFile() {
-    const configFixtureName = 'ConfigFileForImporting.json'
-
+  importProjectFromFile(configFixtureName) {
     this.importProjectFromFileButton().click()
     cy.fixture(configFixtureName).then((fileContent) => {
       cy.get<HTMLInputElement>('#importJson').then((e) => {

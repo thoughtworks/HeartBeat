@@ -82,10 +82,47 @@ const checkMeanTimeToRecovery = (testId: string) => {
 }
 
 describe('Import project from file', () => {
-  it('Should import a project manually', () => {
+  it('Should import a new config project manually', () => {
     homePage.navigate()
 
-    homePage.importProjectFromFile()
+    homePage.importProjectFromFile('NewConfigFileForImporting.json')
+    cy.url().should('include', '/metrics')
+    cy.contains('Pipeline Tool').should('exist')
+    cy.get('.MuiInput-input')
+      .invoke('val')
+      .then((value) => {
+        expect(value).to.equal('ConfigFileForImporting')
+      })
+
+    configPage.verifyAndClickNextToMetrics()
+
+    configPage.goMetricsStep()
+
+    checkFieldsExist(metricsTextList)
+
+    metricsPage.goReportStep()
+
+    cy.wait(10000)
+
+    checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+
+    reportPage.backToMetricsStep()
+
+    checkFieldsExist(metricsTextList)
+
+    metricsPage.BackToConfigStep()
+
+    checkFieldsExist(configTextList)
+
+    checkTextInputValuesExist(textInputValues)
+
+    checkTokenInputValuesExist(tokenInputValues)
+  })
+
+  it('Should import a old config project manually', () => {
+    homePage.navigate()
+
+    homePage.importProjectFromFile('OldConfigFileForImporting.json')
     cy.url().should('include', '/metrics')
     cy.contains('Pipeline Tool').should('exist')
     cy.get('.MuiInput-input')

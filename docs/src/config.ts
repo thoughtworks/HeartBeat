@@ -70,6 +70,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Emoji Flow', link: '/en/dev-center/emoji-flow' },
       { text: 'OriginCycleTime calculation', link: '/en/dev-center/origin-cycle-time-calculation' },
       { text: 'Solution of BuildKite issue', link: '/en/dev-center/solution-of-buildkite-issue' },
+      { text: 'Support multiple columns marked as done', link: '/en/dev-center/support-multiple-columns' },
     ],
   },
 };

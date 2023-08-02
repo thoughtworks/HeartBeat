@@ -81,18 +81,26 @@ const checkMeanTimeToRecovery = (testId: string) => {
   checkTimeToRecoveryPipelineCalculation(testId)
 }
 
+const checkPipelineToolExist = () => {
+  cy.contains('Pipeline Tool').should('exist')
+}
+
+const checkInputValue = (selector, expectedValue) => {
+  cy.get(selector)
+    .invoke('val')
+    .then((value) => {
+      expect(value).to.equal(expectedValue)
+    })
+}
+
 describe('Import project from file', () => {
   it('Should import a new config project manually', () => {
     homePage.navigate()
 
     homePage.importProjectFromFile('NewConfigFileForImporting.json')
     cy.url().should('include', '/metrics')
-    cy.contains('Pipeline Tool').should('exist')
-    cy.get('.MuiInput-input')
-      .invoke('val')
-      .then((value) => {
-        expect(value).to.equal('ConfigFileForImporting')
-      })
+    checkPipelineToolExist()
+    checkInputValue('.MuiInput-input', 'ConfigFileForImporting')
 
     configPage.verifyAndClickNextToMetrics()
 
@@ -124,12 +132,8 @@ describe('Import project from file', () => {
 
     homePage.importProjectFromFile('OldConfigFileForImporting.json')
     cy.url().should('include', '/metrics')
-    cy.contains('Pipeline Tool').should('exist')
-    cy.get('.MuiInput-input')
-      .invoke('val')
-      .then((value) => {
-        expect(value).to.equal('ConfigFileForImporting')
-      })
+    checkPipelineToolExist()
+    checkInputValue('.MuiInput-input', 'ConfigFileForImporting')
 
     configPage.verifyAndClickNextToMetrics()
 

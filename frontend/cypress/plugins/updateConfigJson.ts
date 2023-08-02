@@ -2,13 +2,7 @@
 import fs = require('fs')
 import { GITHUB_TOKEN } from '../fixtures/fixtures'
 
-module.exports = (on, config) => {
-  generateTestData()
-  return config
-}
-
-function generateTestData() {
-  const configJsonFilePath = './cypress/fixtures/ConfigFileForImporting.json'
+function generateTestData(configJsonFilePath) {
   fs.readFile(configJsonFilePath, (err, data) => {
     if (err) throw err
     const mockedImportConfigJSON = JSON.parse(data.toString())
@@ -22,4 +16,8 @@ function generateTestData() {
   })
 }
 
-module.exports = generateTestData
+module.exports = (on, config) => {
+  generateTestData('./cypress/fixtures/NewConfigFileForImporting.json')
+  generateTestData('./cypress/fixtures/OldConfigFileForImporting.json')
+  return config
+}

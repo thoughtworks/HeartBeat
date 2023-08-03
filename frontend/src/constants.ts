@@ -62,7 +62,7 @@ export const GITHUB_TOKEN_REGEXP = /^(ghp|gho|ghu|ghs|ghr)+_+([a-zA-Z0-9]{36})$/
 export const EMAIL = 'Email'
 
 export const VERIFY_FAILED_ERROR_MESSAGE = 'verify failed'
-export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error'
+
 export const UNKNOWN_ERROR_MESSAGE = 'Unknown'
 
 export const METRICS_CONSTANTS = {

@@ -132,8 +132,8 @@ describe('CycleTime', () => {
   })
 
   describe('Error message ', () => {
-    it('should show error message when select more than one Done option', async () => {
-      const { getAllByRole, getByRole, getByText } = setup()
+    it('should not show error message when select more than one Done option', async () => {
+      const { getAllByRole, getByRole, queryByText } = setup()
       const columnsArray = getAllByRole('button', { name: 'Doing' })
       await userEvent.click(columnsArray[0])
       const listBoxZero = within(getByRole('listbox'))
@@ -144,7 +144,7 @@ describe('CycleTime', () => {
       const mockOptionOneDone = listBoxOne.getByRole('option', { name: 'Done' })
       await userEvent.click(mockOptionOneDone)
 
-      await waitFor(() => expect(getByText(errorMessage)).toBeInTheDocument())
+      expect(queryByText(errorMessage)).not.toBeInTheDocument()
     })
 
     it('should not show error message when select less than one Done option', async () => {

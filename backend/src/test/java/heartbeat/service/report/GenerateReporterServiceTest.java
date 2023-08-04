@@ -155,16 +155,18 @@ class GenerateReporterServiceTest {
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
 
 		Velocity velocity = Velocity.builder().velocityForSP(0).velocityForCards(0).build();
-		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
-			.storyPointSum(0)
-			.cardsNumber(0)
-			.jiraCardDTOList(Collections.emptyList())
-			.build());
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
-			.storyPointSum(0)
-			.cardsNumber(0)
-			.jiraCardDTOList(Collections.emptyList())
-			.build());
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any()))
+			.thenReturn(CardCollection.builder()
+				.storyPointSum(0)
+				.cardsNumber(0)
+				.jiraCardDTOList(Collections.emptyList())
+				.build());
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any(), any()))
+			.thenReturn(CardCollection.builder()
+				.storyPointSum(0)
+				.cardsNumber(0)
+				.jiraCardDTOList(Collections.emptyList())
+				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(Collections.emptyList())
 			.doneColumns(Collections.emptyList())
@@ -203,7 +205,8 @@ class GenerateReporterServiceTest {
 			.pairList((List.of(ClassificationNameValuePair.builder().name("shawn").value(1.0D).build())))
 			.build();
 
-		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any())).thenReturn(CardCollection
+			.builder()
 			.storyPointSum(0)
 			.cardsNumber(0)
 			.jiraCardDTOList(List.of(JiraCardDTO.builder()
@@ -218,16 +221,18 @@ class GenerateReporterServiceTest {
 			.build();
 
 		when(classificationCalculator.calculate(any(), any())).thenReturn(List.of(mockClassification));
-		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
-			.storyPointSum(0)
-			.cardsNumber(0)
-			.jiraCardDTOList(Collections.emptyList())
-			.build());
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
-			.storyPointSum(0)
-			.cardsNumber(0)
-			.jiraCardDTOList(Collections.emptyList())
-			.build());
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any()))
+			.thenReturn(CardCollection.builder()
+				.storyPointSum(0)
+				.cardsNumber(0)
+				.jiraCardDTOList(Collections.emptyList())
+				.build());
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any(), any()))
+			.thenReturn(CardCollection.builder()
+				.storyPointSum(0)
+				.cardsNumber(0)
+				.jiraCardDTOList(Collections.emptyList())
+				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(Collections.emptyList())
 			.doneColumns(Collections.emptyList())
@@ -347,12 +352,13 @@ class GenerateReporterServiceTest {
 			.endTime("123")
 			.build();
 
-		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(cardCollection);
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
-			.storyPointSum(0)
-			.cardsNumber(0)
-			.jiraCardDTOList(Collections.emptyList())
-			.build());
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any())).thenReturn(cardCollection);
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any(), any()))
+			.thenReturn(CardCollection.builder()
+				.storyPointSum(0)
+				.cardsNumber(0)
+				.jiraCardDTOList(Collections.emptyList())
+				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(Collections.emptyList())
 			.doneColumns(Collections.emptyList())
@@ -608,16 +614,18 @@ class GenerateReporterServiceTest {
 
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
 
-		when(jiraService.getStoryPointsAndCycleTime(any(), any(), any())).thenReturn(CardCollection.builder()
-			.storyPointSum(2)
-			.cardsNumber(1)
-			.jiraCardDTOList(BoardCsvFixture.MOCK_DONE_CARD_LIST())
-			.build());
-		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any())).thenReturn(CardCollection.builder()
-			.storyPointSum(2)
-			.cardsNumber(1)
-			.jiraCardDTOList(BoardCsvFixture.MOCK_NON_DONE_CARD_LIST())
-			.build());
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any()))
+			.thenReturn(CardCollection.builder()
+				.storyPointSum(2)
+				.cardsNumber(1)
+				.jiraCardDTOList(BoardCsvFixture.MOCK_DONE_CARD_LIST())
+				.build());
+		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any(), any()))
+			.thenReturn(CardCollection.builder()
+				.storyPointSum(2)
+				.cardsNumber(1)
+				.jiraCardDTOList(BoardCsvFixture.MOCK_NON_DONE_CARD_LIST())
+				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(BoardCsvFixture.MOCK_JIRA_COLUMN_LIST())
 			.doneColumns(Collections.emptyList())

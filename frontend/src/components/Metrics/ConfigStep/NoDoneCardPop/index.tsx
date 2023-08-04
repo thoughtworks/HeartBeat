@@ -5,11 +5,14 @@ interface NoDoneCardPopProps {
   isOpen: boolean
   onClose: () => void
 }
-export const NoDoneCardPop = (props: NoDoneCardPopProps) => {
+
+export const NoCardPop = (props: NoDoneCardPopProps) => {
   const { isOpen, onClose } = props
   return (
     <StyledDialog open={isOpen}>
-      <DialogContent>Sorry there is no card has been done, please change your collection date!</DialogContent>
+      <DialogContent>
+        Sorry there is no card within selected date range, please change your collection date!
+      </DialogContent>
       <OkButton onClick={onClose}>Ok</OkButton>
     </StyledDialog>
   )

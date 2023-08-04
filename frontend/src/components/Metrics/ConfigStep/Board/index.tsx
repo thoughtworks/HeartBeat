@@ -22,7 +22,7 @@ import {
 } from '@src/context/config/configSlice'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
-import { NoDoneCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
+import { NoCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 import {
@@ -202,7 +202,7 @@ export const Board = () => {
 
   return (
     <StyledSection>
-      <NoDoneCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
+      <NoCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <StyledTitle>{CONFIG_TITLE.BOARD}</StyledTitle>

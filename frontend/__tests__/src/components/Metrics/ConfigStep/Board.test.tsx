@@ -6,6 +6,7 @@ import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
   MOCK_BOARD_URL_FOR_JIRA,
+  NO_CARD_ERROR_MESSAGE,
   RESET,
   VERIFY,
   VERIFY_ERROR_MESSAGE,
@@ -191,7 +192,7 @@ describe('Board', () => {
     })
   })
 
-  it('should check noDoneCardPop show and disappear when board verify response status is 204', async () => {
+  it('should check noCardPop show and disappear when board verify response status is 204', async () => {
     server.use(rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))))
     const { getByText, getByRole } = setup()
     fillBoardFieldsInformation()
@@ -199,11 +200,11 @@ describe('Board', () => {
     fireEvent.click(getByRole('button', { name: VERIFY }))
 
     await waitFor(() => {
-      expect(getByText('Sorry there is no card has been done, please change your collection date!')).toBeInTheDocument()
+      expect(getByText(NO_CARD_ERROR_MESSAGE)).toBeInTheDocument()
     })
 
     fireEvent.click(getByRole('button', { name: 'Ok' }))
-    expect(getByText('Sorry there is no card has been done, please change your collection date!')).not.toBeVisible()
+    expect(getByText(NO_CARD_ERROR_MESSAGE)).not.toBeVisible()
   })
 
   it('should check error notification show and disappear when board verify response status is 401', async () => {

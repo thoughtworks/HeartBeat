@@ -634,3 +634,6 @@ export const ERROR_PAGE_MESSAGE =
   'Something on internet is not quite right. Perhaps head back to our homepage and try again.'
 
 export const RETRY_BUTTON = 'Go to homepage'
+
+export const NO_CARD_ERROR_MESSAGE =
+  'Sorry there is no card within selected date range, please change your collection date!'

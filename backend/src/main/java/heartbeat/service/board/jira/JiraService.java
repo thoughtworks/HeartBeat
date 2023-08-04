@@ -581,14 +581,12 @@ public class JiraService {
 		JiraCardWithFields jiraCardWithFields = getAllNonDoneCardsForActiveSprint(baseUrl, request.getStatus(),
 				boardRequestParam);
 
-		List<JiraCard> allNonDoneCards = jiraCardWithFields.getJiraCards();
-		if (allNonDoneCards.isEmpty()) {
-			allNonDoneCards = getAllNonDoneCardsForKanBan(baseUrl, request.getStatus(), boardRequestParam)
-				.getJiraCards();
+		if (jiraCardWithFields.getJiraCards().isEmpty()) {
+			jiraCardWithFields = getAllNonDoneCardsForKanBan(baseUrl, request.getStatus(), boardRequestParam);
 		}
 
-		List<JiraCardDTO> matchedNonCards = getMatchedCards(request, boardColumns, users, baseUrl, allNonDoneCards,
-				jiraCardWithFields.getTargetFields(), true);
+		List<JiraCardDTO> matchedNonCards = getMatchedCards(request, boardColumns, users, baseUrl,
+				jiraCardWithFields.getJiraCards(), jiraCardWithFields.getTargetFields(), true);
 		int storyPointSum = matchedNonCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();

@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { ERROR_MESSAGE_TIME_DURATION, INTERNAL_SERVER_ERROR_MESSAGE, UNKNOWN_ERROR_MESSAGE } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+import { UnknownException } from '@src/exceptions/UnkonwException'
+import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 export interface useGenerateReportEffectInterface {
   generateReport: (params: ReportRequestDTO) => Promise<
@@ -26,7 +28,6 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [isLoading, setIsLoading] = useState(false)
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const errorMessagesToCheck = [UNKNOWN_ERROR_MESSAGE, INTERNAL_SERVER_ERROR_MESSAGE]
 
   const generateReport = async (params: ReportRequestDTO) => {
     setIsLoading(true)
@@ -35,7 +36,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       return reportMapper(res.response)
     } catch (e) {
       const err = e as Error
-      if (errorMessagesToCheck.includes(err.message)) {
+      if (err instanceof InternalServerException || err instanceof UnknownException) {
         setIsServerError(true)
       } else {
         setErrorMessage(`generate report: ${err.message}`)

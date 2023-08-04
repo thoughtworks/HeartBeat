@@ -58,7 +58,9 @@ describe('verify pipelineTool request', () => {
       rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
         res(
           ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
+          ctx.json({
+            hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
+          })
         )
       )
     )
@@ -70,7 +72,12 @@ describe('verify pipelineTool request', () => {
   it('should throw error when board verify response status 300', async () => {
     server.use(
       rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.MultipleChoices), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN }))
+        res(
+          ctx.status(HttpStatusCode.MultipleChoices),
+          ctx.json({
+            hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN,
+          })
+        )
       )
     )
 

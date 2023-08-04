@@ -70,7 +70,9 @@ describe('verify board request', () => {
       rest.get(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
         res(
           ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
+          ctx.json({
+            hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
+          })
         )
       )
     )

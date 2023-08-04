@@ -4,8 +4,8 @@ import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice'
-import { METRICS_CONSTANTS, REQUIRED_DATA } from '@src/constants'
-import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { REQUIRED_DATA } from '@src/constants'
+import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import { LeadTimeForChanges } from '@src/components/Metrics/MetricsStep/LeadTimeForChanges'
 
@@ -14,7 +14,6 @@ export const MetricsStep = () => {
   const users = useAppSelector(selectUsers)
   const jiraColumns = useAppSelector(selectJiraColumns)
   const targetFields = useAppSelector(selectMetricsContent).targetFields
-  const selectedCycleTimeSettings = useAppSelector(selectCycleTimeSettings)
   const isShowCrewsAndRealDone =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
@@ -26,10 +25,7 @@ export const MetricsStep = () => {
 
       {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
 
-      {isShowCrewsAndRealDone &&
-        selectedCycleTimeSettings.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length < 2 && (
-          <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as Done'} />
-        )}
+      {isShowCrewsAndRealDone && <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as Done'} />}
 
       {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
         <Classification targetFields={targetFields} title={'Classification setting'} label={'Distinguished By'} />

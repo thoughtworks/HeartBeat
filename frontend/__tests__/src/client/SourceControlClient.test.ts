@@ -63,7 +63,12 @@ describe('verify sourceControl request', () => {
   it('should throw error when sourceControl verify response status is 300', async () => {
     server.use(
       rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.MultipleChoices), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN }))
+        res(
+          ctx.status(HttpStatusCode.MultipleChoices),
+          ctx.json({
+            hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN,
+          })
+        )
       )
     )
 

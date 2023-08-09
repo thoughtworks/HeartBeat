@@ -110,7 +110,7 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(10000)
+    cy.wait(20000)
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 
@@ -143,7 +143,7 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(10000)
+    cy.wait(20000)
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 

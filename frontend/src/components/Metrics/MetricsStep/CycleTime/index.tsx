@@ -11,6 +11,7 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
+import { DONE } from '@src/constants'
 
 interface cycleTimeProps {
   title: string
@@ -21,6 +22,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
   const { cycleTimeSettings } = useAppSelector(selectMetricsContent)
   const warningMessage = useAppSelector(selectCycleTimeWarningMessage)
   const [cycleTimeOptions, setCycleTimeOptions] = useState(cycleTimeSettings)
+  const [saveDone, setSaveDone] = useState<string[]>([])
 
   const saveCycleTimeOptions = (name: string, value: string) => {
     setCycleTimeOptions(
@@ -33,7 +35,13 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
           : item
       )
     )
-    dispatch(saveDoneColumn([]))
+    if (value === DONE) {
+      setSaveDone([...saveDone, name])
+      dispatch(saveDoneColumn([]))
+    } else if (saveDone.includes(name)) {
+      setSaveDone(saveDone.filter((e) => e !== name))
+      dispatch(saveDoneColumn([]))
+    }
   }
 
   useEffect(() => {

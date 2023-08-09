@@ -255,11 +255,11 @@ public class GenerateReporterService {
 		return fetchedData;
 	}
 
-	private CardCollection fetchDoneCardCollection(GenerateReportRequest request) {
+	private CardCollection fetchCardCollection(GenerateReportRequest request) {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(
 				jiraBoardSetting, request.getStartTime(), request.getEndTime());
-		return jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
+		return jiraService.getStoryPointsAndCycleTime(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 	}
 
@@ -267,8 +267,7 @@ public class GenerateReporterService {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = getStoryPointsAndCycleTimeRequest(
 				jiraBoardSetting, request.getStartTime(), request.getEndTime());
-		return jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
+		return jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest);
 	}
 
 	private CardCollectionInfo fetchDataFromKanban(GenerateReportRequest request) {
@@ -282,7 +281,7 @@ public class GenerateReporterService {
 			.endTime(request.getEndTime())
 			.build();
 		CardCollection nonDoneCardCollection = fetchNonDoneCardCollection(request);
-		CardCollection cardCollection = fetchDoneCardCollection(request);
+		CardCollection cardCollection = fetchCardCollection(request);
 
 		CardCollectionInfo collectionInfo = CardCollectionInfo.builder()
 			.cardCollection(cardCollection)

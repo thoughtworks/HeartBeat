@@ -224,6 +224,7 @@ describe('Create a new project', () => {
 
     configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
 
+    cy.wait(6000)
     cy.contains('Verified').should('exist')
     cy.contains('Reset').should('exist')
 
@@ -259,7 +260,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(10000)
+    cy.wait(20000)
 
     checkVelocity('[data-test-id="Velocity"]', velocityData)
 

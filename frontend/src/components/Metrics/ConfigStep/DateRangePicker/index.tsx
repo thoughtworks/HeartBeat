@@ -32,7 +32,7 @@ export const DateRangePicker = () => {
       dispatch(
         updateDateRange({
           startDate: value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-          endDate: value.endOf('date').add(14, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+          endDate: value.endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
         })
       )
     }

@@ -51,9 +51,9 @@ describe('DateRangePicker', () => {
     expectDate(endDateInput)
   })
 
-  it('should Auto-fill endDate which is after startDate 13 days when fill right startDate ', () => {
+  it('should Auto-fill endDate which is after startDate 14 days when fill right startDate ', () => {
     const { getByRole } = setup()
-    const endDate = TODAY.add(13, 'day')
+    const endDate = TODAY.add(14, 'day')
     const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
     const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
 

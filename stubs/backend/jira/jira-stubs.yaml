@@ -64,7 +64,7 @@
     status: 200
     file: ./backend/jira/jsons/jira.issue.createmeta.targetfields.json
 
-# Done Cards History
+# History
 - request:
     method: GET
     url: ^/rest/internal/2/issue/(PLL-\d+)/activityfeed$
@@ -75,13 +75,3 @@
     status: 200
     file: ./backend/jira/jsons/jira.issue.<% url.1 %>.activityfeed.json
 
-# Non Done Cards History
-- request:
-    method: GET
-    url: ^/rest/internal/2/issue/(ADM-\d+)/activityfeed$
-
-  response:
-    headers:
-      content-type: application/json
-    status: 200
-    file: ./backend/jira/jsons/jira.issue.<% url.1 %>.activityfeed.json

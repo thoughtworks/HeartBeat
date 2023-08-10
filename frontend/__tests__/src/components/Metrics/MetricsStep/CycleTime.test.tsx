@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION } from '../../../fixtures'
+import { saveDoneColumn, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
 
 const DEFAULT_SELECTED = '----'
 
@@ -30,14 +31,13 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
       },
     ],
   }),
+  selectTreatFlagCardAsBlock: jest.fn().mockReturnValue(true),
   selectCycleTimeWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
 }))
 
-jest.mock('@src/context/config/configSlice', () => ({
-  ...jest.requireActual('@src/context/config/configSlice'),
-  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
-  selectPipelineNames: jest.fn().mockReturnValue(['']),
-  selectSteps: jest.fn().mockReturnValue(['']),
+const mockedUseAppDispatch = jest.fn()
+jest.mock('@src/hooks/useAppDispatch', () => ({
+  useAppDispatch: () => mockedUseAppDispatch,
 }))
 
 const setup = () =>
@@ -99,15 +99,33 @@ describe('CycleTime', () => {
       ])
     })
 
-    it('should show other selections when change option', async () => {
+    it('should show other selections when change option and will not affect Real done', async () => {
       const { getAllByRole, getByRole, getByText } = setup()
       const columnsArray = getAllByRole('button', { name: 'Doing' })
+
       await userEvent.click(columnsArray[2])
+
       const listBox = within(getByRole('listbox'))
       const mockOption = listBox.getByRole('option', { name: 'To do' })
+
       await userEvent.click(mockOption)
 
       expect(getByText('To do')).toBeInTheDocument()
+      await waitFor(() => expect(mockedUseAppDispatch).not.toHaveBeenCalledWith(saveDoneColumn([])))
+    })
+
+    it('should reset Real done when marked as done from other options', async () => {
+      const { getAllByRole, getByRole, getByText } = setup()
+      const columnsArray = getAllByRole('button', { name: 'Doing' })
+
+      await userEvent.click(columnsArray[0])
+
+      const listBox = within(getByRole('listbox'))
+
+      await userEvent.click(listBox.getByRole('option', { name: 'Done' }))
+
+      expect(getByText('Done')).toBeInTheDocument()
+      await waitFor(() => expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([])))
     })
   })
 
@@ -124,10 +142,12 @@ describe('CycleTime', () => {
 
     it('should change checked when click', async () => {
       const { getByRole } = setup()
+
       await userEvent.click(getByRole('checkbox'))
-      expect(getByRole('checkbox')).toHaveProperty('checked', false)
-      await userEvent.click(getByRole('checkbox'))
-      expect(getByRole('checkbox')).toHaveProperty('checked', true)
+
+      await waitFor(() => {
+        expect(mockedUseAppDispatch).toHaveBeenCalledWith(updateTreatFlagCardAsBlock(false))
+      })
     })
   })
 

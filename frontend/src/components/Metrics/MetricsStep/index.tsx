@@ -9,7 +9,7 @@ import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metr
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import { LeadTimeForChanges } from '@src/components/Metrics/MetricsStep/LeadTimeForChanges'
 
-export const MetricsStep = () => {
+const MetricsStep = () => {
   const requiredData = useAppSelector(selectMetrics)
   const users = useAppSelector(selectUsers)
   const jiraColumns = useAppSelector(selectJiraColumns)
@@ -43,3 +43,5 @@ export const MetricsStep = () => {
     </>
   )
 }
+
+export default MetricsStep

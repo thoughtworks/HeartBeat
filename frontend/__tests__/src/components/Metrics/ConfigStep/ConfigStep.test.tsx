@@ -1,5 +1,5 @@
 import { act, fireEvent, Matcher, render, waitFor, within } from '@testing-library/react'
-import { ConfigStep } from '@src/components/Metrics/ConfigStep'
+import ConfigStep from '@src/components/Metrics/ConfigStep'
 import {
   CHINA_CALENDAR,
   CONFIG_TITLE,

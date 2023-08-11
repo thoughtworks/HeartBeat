@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { MetricsStep } from '@src/components/Metrics/MetricsStep'
+import MetricsStep from '@src/components/Metrics/MetricsStep'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 

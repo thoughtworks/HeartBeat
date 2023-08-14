@@ -256,7 +256,7 @@ describe('MetricsStepper', () => {
     const { getByText } = setup()
 
     await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
+    fireEvent.click(getByText(NEXT))
 
     expect(getByText(METRICS)).toHaveStyle(`color:${stepperColor}`)
   })

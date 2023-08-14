@@ -17,7 +17,7 @@ import {
 } from '@src/context/config/configSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 
-export const ConfigStep = () => {
+const ConfigStep = () => {
   const dispatch = useAppDispatch()
   const projectName = useAppSelector(selectProjectName)
   const calendarType = useAppSelector(selectCalendarType)
@@ -61,3 +61,5 @@ export const ConfigStep = () => {
     </ConfigStepWrapper>
   )
 }
+
+export default ConfigStep

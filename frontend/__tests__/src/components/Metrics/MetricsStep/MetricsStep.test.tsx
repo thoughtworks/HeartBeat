@@ -16,10 +16,6 @@ import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice'
 
 let store = setupStore()
 
-beforeEach(() => {
-  store = setupStore()
-})
-
 const setup = () =>
   render(
     <Provider store={store}>
@@ -28,14 +24,23 @@ const setup = () =>
   )
 
 describe('MetricsStep', () => {
-  it('should render Crews and Real Done components when select velocity', async () => {
+  beforeEach(() => {
+    store = setupStore()
+  })
+
+  it('should render Crews when select velocity, and show Real done when have done column in Cycle time', async () => {
     await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
     const { getByText, queryByText } = setup()
 
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()
-    expect(getByText(REAL_DONE)).toBeInTheDocument()
     expect(queryByText(CYCLE_TIME_SETTINGS)).not.toBeInTheDocument()
     expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument()
+
+    act(() => {
+      store.dispatch(saveCycleTimeSettings([{ name: 'Testing', value: 'Done' }]))
+    })
+
+    expect(getByText(REAL_DONE)).toBeInTheDocument()
   })
 
   it('should show Cycle Time Settings when select cycle time in config page', async () => {
@@ -45,33 +50,11 @@ describe('MetricsStep', () => {
     expect(getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument()
   })
 
-  it('should show Real Done when select velocity and selectedColumns include done column', async () => {
-    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
-    const mockColumnsList = [
-      {
-        key: 'done',
-        value: {
-          name: 'Done',
-          statuses: ['DONE', 'CANCELLED'],
-        },
-      },
-    ]
-    await store.dispatch(saveCycleTimeSettings(mockColumnsList))
-    const { getByText } = setup()
-
-    expect(getByText(REAL_DONE)).toBeInTheDocument()
-  })
-
-  it('should hide Real Done when select two "Done" in cycleTime settings', async () => {
-    await store.dispatch(
-      saveCycleTimeSettings([
-        { name: 'Testing', value: 'Done' },
-        { name: 'TODO', value: 'Done' },
-      ])
-    )
+  it('should hide Real Done when no done column in cycleTime settings', async () => {
+    await store.dispatch(saveCycleTimeSettings([{ name: 'Testing', value: 'Block' }]))
     const { queryByText } = setup()
 
-    expect(queryByText('Real Done')).not.toBeInTheDocument()
+    expect(queryByText(REAL_DONE)).not.toBeInTheDocument()
   })
 
   it('should show Classification Setting when select classification in config page', async () => {

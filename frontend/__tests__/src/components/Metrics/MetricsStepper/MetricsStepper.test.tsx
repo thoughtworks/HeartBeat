@@ -85,11 +85,11 @@ Object.defineProperty(window, 'location', { value: mockLocation })
 
 let store = setupStore()
 const fillConfigPageData = async () => {
-  const projectNameInput = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL })
-  await userEvent.type(projectNameInput, TEST_PROJECT_NAME)
-
-  const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
+  const projectNameInput = await screen.findByRole('textbox', { name: PROJECT_NAME_LABEL })
+  fireEvent.change(projectNameInput, { target: { value: TEST_PROJECT_NAME } })
+  const startDateInput = (await screen.findByRole('textbox', { name: START_DATE_LABEL })) as HTMLInputElement
   fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
+
   await act(async () => {
     await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
     await store.dispatch(updateBoardVerifyState(true))

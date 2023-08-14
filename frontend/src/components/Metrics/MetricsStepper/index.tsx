@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
 import {
   BackButton,
   ButtonContainer,
@@ -188,9 +188,9 @@ const MetricsStepper = () => {
     setIsDialogShowing(false)
   }
 
-  const ConfigStep = React.lazy(() => import('@src/components/Metrics/ConfigStep'))
-  const MetricsStep = React.lazy(() => import('@src/components/Metrics/MetricsStep'))
-  const ReportStep = React.lazy(() => import('@src/components/Metrics/ReportStep'))
+  const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
+  const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
+  const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
 
   return (
     <>

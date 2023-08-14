@@ -1,5 +1,5 @@
 import { act, render, waitFor } from '@testing-library/react'
-import ReportStep from '@src/components/Metrics/ReportStep'
+import { ReportStep } from '@src/components/Metrics/ReportStep'
 import {
   BACK,
   ERROR_PAGE_ROUTE,

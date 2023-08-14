@@ -26,7 +26,7 @@ import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 
-const ReportStep = () => {
+export const ReportStep = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
@@ -265,5 +265,3 @@ const ReportStep = () => {
     </>
   )
 }
-
-export default ReportStep

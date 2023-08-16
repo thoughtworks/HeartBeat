@@ -202,8 +202,6 @@ public class CycleTimeInfo {
 
 - Mark other column as done, will not calculate this column days in board CSV.
 
-- Mark testing column as testing, will calculate `Total testing time / Total cycle time` in board CSV. But mark testing column as done, will not calculate that in board CSV.
-
 ### Origin Cycle Time
 
 - The calculation logic will not be affected by multi-done columns.
@@ -211,5 +209,6 @@ public class CycleTimeInfo {
 ### Support deduplication of Done cards
 
 - We need to exclude the cards with a status of `DONE` on the startDate at the very begining of our calculation.
-- The way to achieve:
+- Two possible ways to achieve:
+  - Use jql when fetching cards from jira
   - Use jira card history

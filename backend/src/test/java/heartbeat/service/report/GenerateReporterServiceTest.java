@@ -169,7 +169,7 @@ class GenerateReporterServiceTest {
 				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(Collections.emptyList())
-			.jiraColumns(Collections.emptyList())
+			.doneColumns(Collections.emptyList())
 			.build());
 		when(velocityCalculator.calculateVelocity(any())).thenReturn(velocity);
 		when(urlGenerator.getUri(any())).thenReturn(mockUrl);
@@ -235,7 +235,7 @@ class GenerateReporterServiceTest {
 				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(Collections.emptyList())
-			.jiraColumns(Collections.emptyList())
+			.doneColumns(Collections.emptyList())
 			.build());
 
 		ReportResponse result = generateReporterService.generateReporter(request);
@@ -361,7 +361,7 @@ class GenerateReporterServiceTest {
 				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(Collections.emptyList())
-			.jiraColumns(Collections.emptyList())
+			.doneColumns(Collections.emptyList())
 			.build());
 		when(cycleTimeCalculator.calculateCycleTime(cardCollection, request.getJiraBoardSetting().getBoardColumns()))
 			.thenReturn(CycleTime.builder().build());
@@ -628,7 +628,7 @@ class GenerateReporterServiceTest {
 				.build());
 		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
 			.jiraColumnResponse(BoardCsvFixture.MOCK_JIRA_COLUMN_LIST())
-			.jiraColumns(Collections.emptyList())
+			.doneColumns(Collections.emptyList())
 			.build());
 		when(urlGenerator.getUri(any())).thenReturn(mockUrl);
 		Mockito.doAnswer(invocation -> {

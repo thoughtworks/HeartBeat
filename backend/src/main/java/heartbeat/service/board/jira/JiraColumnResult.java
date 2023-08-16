@@ -13,6 +13,6 @@ public class JiraColumnResult {
 
 	private List<JiraColumnDTO> jiraColumnResponse;
 
-	private List<String> jiraColumns;
+	private List<String> doneColumns;
 
 }

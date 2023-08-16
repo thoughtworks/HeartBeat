@@ -20,7 +20,7 @@ public class FetchedData {
 	@Builder
 	public static class CardCollectionInfo {
 
-		private CardCollection realDoneCardCollection;
+		private CardCollection cardCollection;
 
 		private CardCollection nonDoneCardCollection;
 

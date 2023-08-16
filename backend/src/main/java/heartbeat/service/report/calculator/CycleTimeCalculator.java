@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +24,7 @@ public class CycleTimeCalculator {
 		Map<String, String> selectedStepsMap = selectedStepsArrayToMap(boardColumns);
 		Map<String, Double> totalTimeOfEachStepsMap = addAllCardsTimeUpForEachStep(cardCollection, selectedStepsMap);
 		Map<String, Double> aggregatedMap = aggregateResultBySelectedSteps(totalTimeOfEachStepsMap, selectedStepsMap);
-		CycleTimeResult cycleTimeResult = calculateAverageTimeAndTotalTime(aggregatedMap, cardCollection,
-				selectedStepsMap);
+		CycleTimeResult cycleTimeResult = calculateAverageTimeAndTotalTime(aggregatedMap, cardCollection);
 		double cycleTotalTime = cycleTimeResult.getTotalTime();
 		double averageCycleTimePerCard = getAverageCycleTimePerCard(cardCollection, cycleTotalTime);
 		double averageCycleTimePerSP = getAverageCycleTimePerSP(cardCollection, cycleTotalTime);
@@ -94,31 +91,26 @@ public class CycleTimeCalculator {
 		Map<String, Double> aggregateMap = new HashMap<>();
 
 		for (Map.Entry<String, Double> entry : totalTimeOfEachStepsMap.entrySet()) {
-			String column = entry.getKey();
-			Double days = entry.getValue();
-			String selectedKey = selectedStepsMap.get(column);
+			String key = entry.getKey();
+			Double value = entry.getValue();
+			String selectedKey = selectedStepsMap.get(key);
 			if (selectedKey != null) {
 				Double aggregateTime = aggregateMap.get(selectedKey);
-				aggregateMap.put(selectedKey, aggregateTime != null ? aggregateTime + days : days);
+				aggregateMap.put(selectedKey, aggregateTime != null ? aggregateTime + value : value);
 			}
 		}
 		return aggregateMap;
 	}
 
 	private CycleTimeResult calculateAverageTimeAndTotalTime(Map<String, Double> aggregatedMap,
-			CardCollection cardCollection, Map<String, String> selectedStepsMap) {
-		List<String> realDoneKeys = selectedStepsMap.entrySet()
-			.stream()
-			.filter(entry -> entry.getValue().equals(CardStepsEnum.DONE.getValue()))
-			.map(Map.Entry::getKey)
-			.toList();
+			CardCollection cardCollection) {
 		List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList = new ArrayList<>();
 		double totalTime = 0;
 		for (Map.Entry<String, Double> entry : aggregatedMap.entrySet()) {
 			String key = entry.getKey();
 			double value = BigDecimal.valueOf(entry.getValue()).setScale(2, RoundingMode.HALF_UP).doubleValue();
-			if (List.of(CardStepsEnum.ANALYSE, CardStepsEnum.TODO).contains(CardStepsEnum.fromValue(key))
-					|| realDoneKeys.contains(key.toUpperCase())) {
+			if (List.of(CardStepsEnum.ANALYSE, CardStepsEnum.TODO, CardStepsEnum.DONE)
+				.contains(CardStepsEnum.fromValue(key))) {
 				continue;
 			}
 			CycleTimeForSelectedStepItem cycleTimeOptionalItem = CycleTimeForSelectedStepItem.builder()

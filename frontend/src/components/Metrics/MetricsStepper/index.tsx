@@ -32,6 +32,10 @@ import {
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice'
 
+const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
+const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
+const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
+
 const MetricsStepper = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -187,10 +191,6 @@ const MetricsStepper = () => {
   const CancelDialog = () => {
     setIsDialogShowing(false)
   }
-
-  const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
-  const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
-  const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
 
   return (
     <>

@@ -18,7 +18,8 @@
     "baseUrl": ".",
     "paths": {
       "@src/*": ["./src/*"]
-    }
+    },
+    "types": ["vite-plugin-pwa/react"]
   },
   "include": ["src", "__tests__"],
   "exclude": ["__tests__/__mocks__/svgTransformer.ts"],

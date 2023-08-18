@@ -27,7 +27,22 @@
     query:
       maxResults: 100
       startAt: 0
-      jql: status in %28%27DONE%27%2C %27CLOSED%27%29 AND %28status changed to %27DONE%27 during %281678896000000%2C 1680105599999%29 or status changed to %27CLOSED%27 during %281678896000000%2C 1680105599999%29%29
+      jql: status in %28%27DONE%27%2C %27CLOSED%27%29 AND %28status changed to %27DONE%27 during %281661961600000%2C 1663171199999%29 or status changed to %27CLOSED%27 during %281661961600000%2C 1663171199999%29%29
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.board.1963.issue.alldone.json
+
+# All Cards issue
+- request:
+    method: GET
+    url: /rest/agile/1.0/board/1963/issue
+    query:
+      maxResults: 100
+      startAt: 0
+      jql: sprint in openSprints%28%29
+
 
   response:
     headers:

@@ -9,8 +9,8 @@
     "Mean time to recovery"
   ],
   "dateRange": {
-    "startDate": "2023-03-16T00:00:00.000+08:00",
-    "endDate": "2023-03-29T23:59:59.999+08:00"
+    "startDate": "2022-09-01T00:00:00.000+08:00",
+    "endDate": "2022-09-14T23:59:59.999+08:00"
   },
   "calendarType": "Calendar with Chinese Holiday",
   "board": {

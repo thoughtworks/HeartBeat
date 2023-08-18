@@ -58,7 +58,7 @@ class Config {
   }
 
   selectDateRange() {
-    this.collectionDateFrom().type('03162023')
+    this.collectionDateFrom().type('09012022')
   }
 
   selectMetricsData() {

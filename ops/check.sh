@@ -35,17 +35,14 @@ security_check() {
 }
 
 backend_license_check() {
-  docker run --rm -it \
-    -v "$PWD/backend":/home/gradle/project \
-    -w /home/gradle/project gradle \
-    gradle clean checkLicense
+  cd backend
+  ./gradlew clean checkLicense
 }
 
 frontend_license_check() {
-  docker run --rm -it \
-  -v "$PWD/frontend":/frontend \
-  -w /frontend node:alpine \
-  npm install && npm run license-compliance
+  cd frontend
+  npm install
+  npm run license-compliance
 }
 
 backend_check() {

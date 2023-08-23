@@ -35,5 +35,5 @@
       }
     }
   },
-  "ignorePatterns": ["dist/*", "coverage/*"]
+  "ignorePatterns": ["dist/*", "coverage/*", "dev-dist/*"]
 }

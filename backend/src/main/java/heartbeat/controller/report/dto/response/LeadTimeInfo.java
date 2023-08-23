@@ -26,9 +26,9 @@ public class LeadTimeInfo {
 	private String jobFinishTime;
 
 	@Nullable
-	private String prLeadTime;
+	private String prDelayTime;
 
-	private String pipelineLeadTime;
+	private String pipelineDelayTime;
 
 	@Nullable
 	private String totalTime;
@@ -50,10 +50,10 @@ public class LeadTimeInfo {
 
 			this.jobFinishTime = TimeUtil.convertToISOFormat(String.valueOf(leadTime.getJobFinishTime()));
 
-			this.pipelineLeadTime = TimeUtil.msToHMS(leadTime.getPipelineLeadTime());
+			this.pipelineDelayTime = TimeUtil.msToHMS(leadTime.getPipelineDelayTime());
 
-			if (leadTime.getPrLeadTime() != null) {
-				this.prLeadTime = TimeUtil.msToHMS(leadTime.getPrLeadTime());
+			if (leadTime.getPrDelayTime() != null) {
+				this.prDelayTime = TimeUtil.msToHMS(leadTime.getPrDelayTime());
 			}
 
 			if (leadTime.getTotalTime() != 0) {

@@ -60,7 +60,7 @@ layout: ../../layouts/MainLayout.astro
 ### Config
 
 - StartDate、EndDate
-- Board type, Board I'd, Email, Project key, Site, Token
+- Board type, Board Id, Email, Project key, Site, Token
 - Crews setting
 - Real done
 - Target Fields(Classification setting in metrics page)
@@ -80,7 +80,7 @@ layout: ../../layouts/MainLayout.astro
 | Metrics    | Description                                                   | Note |
 | :--------- | :------------------------------------------------------------ | :--- |
 | Field name | TargetFields selected in Metrics Page                         |      |
-| Subtitle   | Specific classification for each targetField                  |      |
+| Subtitle   | Spcific classification for each targetField                   |      |
 | Value      | The proportion of specific classification to Each targetField |      |
 
 ## Deployment Frequency
@@ -188,42 +188,29 @@ layout: ../../layouts/MainLayout.astro
 ### Calculate logic
 
 - Get deployment information according to pipeline config.
-- Get pull request information according to the repository in deployment information.
-- Get commit information according to the repository in deployment information.
+- Get pull request infomation according to the repository in deployment information.
+- Get commit infomation according to the repository in deployment information.
 - For each selected step:
-
   1. Get DeployTimes. (DeployTimes includes name、step、passed deployInfos and failed deployInfos).
   2. Filter the passed deployInfos.
   3. Get pull request info according to the repository in passed deployInfos.
-  4. Get commit info according to the commitId in pull request info.
+  4. Get commit info according to the commitid in pull request info.
   5. Now we get some deploy and commit times:
      - `jobFinishTime = job finishTime of the job`
      - `prMergedTime = time of the pull request be merged`
      - `firstCommitTimeInPr = the first time of the commit in this pull request`
-     - `firstCommitTime = the first time of the commit without pr`
   6. Calculate Lead Time for changes:
-
-     (1).None PR：
-
-     - `prLeadTime = 0`
-     - `pipelineLeadTime = jobFinishTime - firstCommitTime`
-     - `totalDelayTime = prLeadTime + pipelineLeadTime`
-
-     (2).PR：
-
-     - `prLeadTime = prMergedTime - firstCommitTimeInPr`
-     - `prLeadTime = prMergedTime - prCreateTime`(if no first commit time)
-     - `pipelineLeadTime = jobFinishTime - prMergedTime`
-     - `totalDelayTime = prLeadTime + pipelineLeadTime`
-
+     - `mergeDelayTime = prMergedTime - firstCommitTimeInPr`
+     - `pipelineDelayTime = jobFinishTime - prMergedTime`
+     - `totalDelayTine = mergeDelayTime + pipelineDelayTime`
 - Calculate Average Lead Time for changes:
-  - `AverageLeadMergeDelayTime = totalPrLeadTime / pipelineCount `
-  - `AveragePipelineDelayTime = totalPipelineLeadTime/pipelineCount`
-  - `AverageTotalDelayTime = AveragePrLeadTime + AveragePipelineLeadTime`
+  - `AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount `
+  - `AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
+  - `AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime`
 
 ### Definition
 
-| Metrics               | Description                                            | Note |
-| :-------------------- | :----------------------------------------------------- | :--- |
-| Lead Time for changes | The time from code commit to deploy production success |      |
-| Average               | The average of lead Time for per pipeline              |      |
+| Metrics               | Description                                             | Note |
+| :-------------------- | :------------------------------------------------------ | :--- |
+| Lead Time for changes | The time from code commit to deploy production successd |      |
+| Average               | The average of lead Time for per pipeline               |      |

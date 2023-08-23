@@ -15,9 +15,9 @@ public class LeadTimeForChangesOfPipelines {
 
 	private String step;
 
-	private Double prLeadTime;
+	private Double mergeDelayTime;
 
-	private Double pipelineLeadTime;
+	private Double pipelineDelayTime;
 
 	private Double totalDelayTime;
 

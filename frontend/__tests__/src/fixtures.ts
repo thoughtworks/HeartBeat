@@ -92,7 +92,7 @@ export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:fileName`
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
   UNAUTHORIZED = 'Token is incorrect',
-  INTERNAL_SERVER_ERROR = 'Internal server error',
+  INTERNAL_SERVER_ERROR = 'Internal Server Error',
   NOT_FOUND = '404 Not Found',
   PERMISSION_DENIED = 'Permission denied',
   REQUEST_TIMEOUT = 'Request Timeout',

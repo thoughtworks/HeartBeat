@@ -28,9 +28,9 @@ public class LeadTime {
 	private long pipelineCreateTime;
 
 	@Nullable
-	private Long prDelayTime;
+	private Long prLeadTime;
 
-	private long pipelineDelayTime;
+	private long pipelineLeadTime;
 
 	private long totalTime;
 

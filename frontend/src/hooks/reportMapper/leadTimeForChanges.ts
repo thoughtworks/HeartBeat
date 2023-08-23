@@ -17,20 +17,19 @@ export const leadTimeForChangesMapper = ({
     )
   }
 
-  const calculateTotalTime = (mergeDelayTime: number, pipelineDelayTime: number): string => {
-    const mergeDelayTimeMinutes = mergeDelayTime % minutesPerHour
-    const formatMergeDelayTimeMinutes =
-      0 < mergeDelayTimeMinutes && mergeDelayTimeMinutes <= 1 ? 1 : Math.floor(mergeDelayTimeMinutes)
+  const calculateTotalTime = (prLeadTime: number, pipelineLeadTime: number): string => {
+    const prLeadTimeMinutes = prLeadTime % minutesPerHour
+    const formatPrLeadTimeMinutes = 0 < prLeadTimeMinutes && prLeadTimeMinutes <= 1 ? 1 : Math.floor(prLeadTimeMinutes)
 
-    const pipelineDelayTimeMinutes = pipelineDelayTime % minutesPerHour
-    const formatPipelineDelayTimeMinutes =
-      0 < pipelineDelayTimeMinutes && pipelineDelayTimeMinutes <= 1 ? 1 : Math.floor(pipelineDelayTimeMinutes)
+    const pipelineLeadTimeMinutes = pipelineLeadTime % minutesPerHour
+    const formatPipelineLeadTimeMinutes =
+      0 < pipelineLeadTimeMinutes && pipelineLeadTimeMinutes <= 1 ? 1 : Math.floor(pipelineLeadTimeMinutes)
 
-    let totalDays: number = Math.floor(mergeDelayTime / minutesPerDay) + Math.floor(pipelineDelayTime / minutesPerDay)
+    let totalDays: number = Math.floor(prLeadTime / minutesPerDay) + Math.floor(pipelineLeadTime / minutesPerDay)
     let totalHours: number =
-      Math.floor((mergeDelayTime % minutesPerDay) / minutesPerHour) +
-      Math.floor((pipelineDelayTime % minutesPerDay) / minutesPerHour)
-    let totalMinutes: number = formatMergeDelayTimeMinutes + formatPipelineDelayTimeMinutes
+      Math.floor((prLeadTime % minutesPerDay) / minutesPerHour) +
+      Math.floor((pipelineLeadTime % minutesPerDay) / minutesPerHour)
+    let totalMinutes: number = formatPrLeadTimeMinutes + formatPipelineLeadTimeMinutes
 
     if (totalMinutes >= 60) {
       totalHours += Math.floor(totalMinutes / 60)
@@ -55,7 +54,7 @@ export const leadTimeForChangesMapper = ({
         .slice(-3)
         .map(([name, value], index) => ({
           name: name,
-          value: index == 2 ? calculateTotalTime(item.mergeDelayTime, item.pipelineDelayTime) : formatDuration(value),
+          value: index == 2 ? calculateTotalTime(item.prLeadTime, item.pipelineLeadTime) : formatDuration(value),
         })),
     }
   })

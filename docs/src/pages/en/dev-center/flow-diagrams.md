@@ -285,24 +285,31 @@ pipeline token, database token;
     :Get PullRequst info with the repositoy in DeployTime from service;
       :Get Commit info by pullrequest from service;
       :Filter the first commit info;
-      :Get firstCommitTimeInPr, prmergeTime, jobFinishTime;
+      :Get firstCommitTimeInPr, firstCommitTime, prmergeTime, jobFinishTime;
     backward: repeat for per passed deployTime;
     repeat while (Ready to calclulate LeadTime)
     :
       LeadTime of per pipeline deploy:
 
-      * mergeDelayTime = prMergedTime - firstCommitTimeInPr
-      * pipelineDelayTime = jobFinishTime - prMergedTime
-      * totalDelayTine = mergeDelayTime + pipelineDelayTime
+      (1).None PR:
+      * prLeadTime = 0
+      * pipelineLeadTime = jobFinishTime - firstCommitTime
+      * totalDelayTine = prLeadTime + pipelineLeadTime
+
+      (2).PR：
+      * prLeadTime = prMergedTime - firstCommitTimeInPr
+      * prLeadTime = prMergedTime - prCreateTime(if no first commit time)
+      * pipelineLeadTime = jobFinishTime - prMergedTime
+      * totalDelayTine = prLeadTime + pipelineLeadTime
       ;
   ->sum;
-  : Calclulate average LeadTime of all pipeline;
+  : Calculate average LeadTime of all pipeline;
 
   :
   Average LeadTime of total pipeline deploy:
-     *AverageLeadMergeDelayTime = totalMergeDelayTime / pipelineCount
-     * AveragePipelineDelayTime = totalPipelineDelayTime/pipelineCount`
-     * AverageTotalDelayTime = AverageLeadMergeDelayTime + AveragePipelineDelayTime;
+     * AverageLeadMergeDelayTime = totalPrLeadTime / pipelineCount
+     * AveragePipelineDelayTime = totalPipelineLeadTime/pipelineCount
+     * AverageTotalDelayTime = AveragePrLeadTime + AveragePipelineLeadTime
      : OutPut:
      LeadTimeForChanges;
 stop

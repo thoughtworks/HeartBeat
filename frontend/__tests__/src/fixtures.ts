@@ -276,6 +276,10 @@ export const ORGANIZATION = 'Organization'
 export const PIPELINE_NAME = 'Pipeline Name'
 export const STEP = 'Step'
 
+export const PR_LEAD_TIME = 'prLeadTime'
+export const PIPELINE_LEAD_TIME = 'pipelineLeadTime'
+export const TOTAL_DELAY_TIME = 'totalDelayTime'
+
 export const MOCK_REPORT_RESPONSE = {
   velocity: {
     velocityForSP: 20,
@@ -347,15 +351,15 @@ export const MOCK_REPORT_RESPONSE = {
       {
         name: 'fs-platform-payment-selector',
         step: 'RECORD RELEASE TO PROD',
-        mergeDelayTime: 2702.53,
-        pipelineDelayTime: 2587.42,
+        prLeadTime: 2702.53,
+        pipelineLeadTime: 2587.42,
         totalDelayTime: 5289.95,
       },
     ],
     avgLeadTimeForChanges: {
       name: 'Average',
-      mergeDelayTime: 3647.51,
-      pipelineDelayTime: 2341.72,
+      prLeadTime: 3647.51,
+      pipelineLeadTime: 2341.72,
       totalDelayTime: 5989.22,
     },
   },
@@ -492,18 +496,18 @@ export const EXPECTED_REPORT_VALUES = {
       id: 0,
       name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
       valuesList: [
-        { name: 'mergeDelayTime', value: '1day 21hours 2minutes' },
-        { name: 'pipelineDelayTime', value: '1day 19hours 7minutes' },
-        { name: 'totalDelayTime', value: '3day 16hours 9minutes' },
+        { name: PR_LEAD_TIME, value: '1day 21hours 2minutes' },
+        { name: PIPELINE_LEAD_TIME, value: '1day 19hours 7minutes' },
+        { name: TOTAL_DELAY_TIME, value: '3day 16hours 9minutes' },
       ],
     },
     {
       id: 1,
       name: 'Average',
       valuesList: [
-        { name: 'mergeDelayTime', value: '2day 12hours 47minutes' },
-        { name: 'pipelineDelayTime', value: '1day 15hours 1minutes' },
-        { name: 'totalDelayTime', value: '4day 3hours 49minutes' },
+        { name: PR_LEAD_TIME, value: '2day 12hours 47minutes' },
+        { name: PIPELINE_LEAD_TIME, value: '1day 15hours 1minutes' },
+        { name: TOTAL_DELAY_TIME, value: '4day 3hours 49minutes' },
       ],
     },
   ],

@@ -68,16 +68,16 @@ export interface DeploymentFrequencyOfPipeline {
 export interface LeadTimeOfPipeline {
   name: string
   step: string
-  mergeDelayTime: number
-  pipelineDelayTime: number
+  prLeadTime: number
+  pipelineLeadTime: number
   totalDelayTime: number
 }
 
 export interface AvgLeadTime {
   name: string
   step?: string
-  mergeDelayTime: number
-  pipelineDelayTime: number
+  prLeadTime: number
+  pipelineLeadTime: number
   totalDelayTime: number
 }
 

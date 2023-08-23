@@ -52,7 +52,6 @@ import heartbeat.util.GithubUtil;
 
 import java.io.File;
 import java.net.URI;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -518,14 +517,15 @@ public class GenerateReporterService {
 
 		List<PipelineCSVInfo> pipelineData = generateCSVForPipelineWithoutCodebase(
 				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime(),
-				buildKiteData.getBuildInfosList());
+				buildKiteData.getBuildInfosList(), buildKiteData);
 
 		leadTimeData.addAll(pipelineData);
 		csvFileGenerator.convertPipelineDataToCSV(leadTimeData, request.getCsvTimeStamp());
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
-			String startTime, String endTime, List<Entry<String, List<BuildKiteBuildInfo>>> buildInfosList) {
+			String startTime, String endTime, List<Entry<String, List<BuildKiteBuildInfo>>> buildInfosList,
+			BuildKiteData buildKiteData) {
 		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvList) {
@@ -543,14 +543,23 @@ public class GenerateReporterService {
 				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
 						startTime, endTime);
 
-				LeadTime noMergeDelayTime = getLeadTimeWithoutMergeDelayTime(deployInfo);
-
+				List<PipelineLeadTime> pipelineLeadTimes = buildKiteData.getPipelineLeadTimes();
+				LeadTime filteredLeadTime = null;
+				if (pipelineLeadTimes != null) {
+					filteredLeadTime = pipelineLeadTimes.stream()
+						.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
+								deploymentEnvironment.getName()))
+						.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
+						.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
+						.findFirst()
+						.orElse(null);
+				}
 				return PipelineCSVInfo.builder()
 					.pipeLineName(deploymentEnvironment.getName())
 					.stepName(deploymentEnvironment.getStep())
 					.buildInfo(buildInfo)
 					.deployInfo(deployInfo)
-					.leadTimeInfo(new LeadTimeInfo(noMergeDelayTime))
+					.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
 					.build();
 			}).toList();
 
@@ -629,19 +638,6 @@ public class GenerateReporterService {
 				file.delete();
 			}
 		}
-	}
-
-	private LeadTime getLeadTimeWithoutMergeDelayTime(DeployInfo deployInfo) {
-		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
-		long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
-		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
-
-		return LeadTime.builder()
-			.commitId(deployInfo.getCommitId())
-			.pipelineCreateTime(pipelineCreateTime)
-			.jobFinishTime(jobFinishTime)
-			.pipelineDelayTime(jobFinishTime - jobStartTime)
-			.build();
 	}
 
 }

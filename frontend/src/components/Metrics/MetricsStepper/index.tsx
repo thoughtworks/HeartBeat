@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
 import {
   BackButton,
   ButtonContainer,
@@ -12,7 +12,6 @@ import {
 } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice'
-import { ConfigStep } from '@src/components/Metrics/ConfigStep'
 import {
   HOME_PAGE_ROUTE,
   METRICS_CONSTANTS,
@@ -21,12 +20,10 @@ import {
   SAVE_CONFIG_TIPS,
   STEPS,
 } from '@src/constants'
-import { MetricsStep } from '@src/components/Metrics/MetricsStep'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
 import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
-import { ReportStep } from '@src/components/Metrics/ReportStep'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
 import {
@@ -34,6 +31,10 @@ import {
   selectCycleTimeSettings,
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice'
+
+const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
+const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
+const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
 
 const MetricsStepper = () => {
   const navigate = useNavigate()
@@ -201,9 +202,11 @@ const MetricsStepper = () => {
         ))}
       </StyledStepper>
       <MetricsStepperContent>
-        {activeStep === 0 && <ConfigStep />}
-        {activeStep === 1 && <MetricsStep />}
-        {activeStep === 2 && <ReportStep />}
+        <Suspense>
+          {activeStep === 0 && <ConfigStep />}
+          {activeStep === 1 && <MetricsStep />}
+          {activeStep === 2 && <ReportStep />}
+        </Suspense>
       </MetricsStepperContent>
       <ButtonContainer>
         {activeStep !== 2 && (

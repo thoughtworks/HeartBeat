@@ -14,15 +14,12 @@ export default defineConfig({
     react(),
     VitePWA({
       manifest: {
+        name: 'HeartBeat',
+        short_name: 'HeartBeat',
         icons: [
           {
             src: '/android-chrome-192x192.png',
             sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/android-chrome-512x512.png',
-            sizes: '512x512',
             type: 'image/png',
           },
         ],
@@ -31,21 +28,9 @@ export default defineConfig({
         display: 'standalone',
       },
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
-      includeAssets: ['favicon.svg'],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}'],
         runtimeCaching: [
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith('/api'),
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'api-cache',
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
           {
             urlPattern: /(.*?)\.(js|css|ts)/,
             handler: 'CacheFirst',
@@ -61,6 +46,9 @@ export default defineConfig({
             },
           },
         ],
+      },
+      devOptions: {
+        enabled: true,
       },
     }),
   ],

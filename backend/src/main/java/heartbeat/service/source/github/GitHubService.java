@@ -15,6 +15,10 @@ import heartbeat.exception.InternalServerErrorException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -25,11 +29,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -172,10 +171,9 @@ public class GitHubService {
 
 	private LeadTime getLeadTimeByPullRequest(String realToken, PipelineInfoOfRepository item, DeployInfo deployInfo,
 			List<PullRequestInfo> pullRequestInfos) {
-		LeadTime noMergeDelayTime = parseNoMergeLeadTime(deployInfo);
-
+		LeadTime noPrLeadTime = parseNoMergeLeadTime(deployInfo, item, realToken);
 		if (pullRequestInfos.isEmpty()) {
-			return noMergeDelayTime;
+			return noPrLeadTime;
 		}
 
 		Optional<PullRequestInfo> mergedPull = pullRequestInfos.stream()
@@ -183,7 +181,7 @@ public class GitHubService {
 			.findFirst();
 
 		if (mergedPull.isEmpty()) {
-			return noMergeDelayTime;
+			return noPrLeadTime;
 		}
 
 		List<CommitInfo> commitInfos = gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
@@ -192,18 +190,36 @@ public class GitHubService {
 		return mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);
 	}
 
-	private LeadTime parseNoMergeLeadTime(DeployInfo deployInfo) {
+	private LeadTime parseNoMergeLeadTime(DeployInfo deployInfo, PipelineInfoOfRepository item, String realToken) {
 		long jobFinishTime = Instant.parse(deployInfo.getJobFinishTime()).toEpochMilli();
 		long jobStartTime = Instant.parse(deployInfo.getJobStartTime()).toEpochMilli();
 		long pipelineCreateTime = Instant.parse(deployInfo.getPipelineCreateTime()).toEpochMilli();
+		long prLeadTime = 0;
+		long firstCommitTime;
+		CommitInfo commitInfo = new CommitInfo();
+		try {
+			commitInfo = gitHubFeignClient.getCommitInfo(item.getRepository(), deployInfo.getCommitId(), realToken);
+		}
+		catch (Exception e) {
+			log.error("Failed to get commit info_repoId: {},commitId: {}, error: {}", item.getRepository(),
+					deployInfo.getCommitId(), e.getMessage());
+		}
+
+		if (commitInfo.getCommit() != null && commitInfo.getCommit().getCommitter() != null
+				&& commitInfo.getCommit().getCommitter().getDate() != null) {
+			firstCommitTime = Instant.parse(commitInfo.getCommit().getCommitter().getDate()).toEpochMilli();
+		}
+		else {
+			firstCommitTime = jobStartTime;
+		}
 
 		return LeadTime.builder()
 			.commitId(deployInfo.getCommitId())
 			.pipelineCreateTime(pipelineCreateTime)
 			.jobFinishTime(jobFinishTime)
-			.pipelineDelayTime(jobFinishTime - jobStartTime)
-			.totalTime(jobFinishTime - jobStartTime)
-			.prDelayTime(0L)
+			.pipelineLeadTime(jobFinishTime - firstCommitTime)
+			.totalTime(jobFinishTime - firstCommitTime)
+			.prLeadTime(prLeadTime)
 			.build();
 	}
 
@@ -224,20 +240,20 @@ public class GitHubService {
 			firstCommitTimeInPr = 0;
 		}
 
-		long pipelineDelayTime = jobFinishTime - prMergedTime;
-		long prDelayTime;
+		long pipelineLeadTime = jobFinishTime - prMergedTime;
+		long prLeadTime;
 		long totalTime;
 		if (firstCommitTimeInPr > 0) {
-			prDelayTime = prMergedTime - firstCommitTimeInPr;
+			prLeadTime = prMergedTime - firstCommitTimeInPr;
 		}
 		else {
-			prDelayTime = prMergedTime - prCreatedTime;
+			prLeadTime = prMergedTime - prCreatedTime;
 		}
-		totalTime = prDelayTime + pipelineDelayTime;
+		totalTime = prLeadTime + pipelineLeadTime;
 
 		return LeadTime.builder()
-			.pipelineDelayTime(pipelineDelayTime)
-			.prDelayTime(prDelayTime)
+			.pipelineLeadTime(pipelineLeadTime)
+			.prLeadTime(prLeadTime)
 			.firstCommitTimeInPr(firstCommitTimeInPr)
 			.prMergedTime(prMergedTime)
 			.totalTime(totalTime)

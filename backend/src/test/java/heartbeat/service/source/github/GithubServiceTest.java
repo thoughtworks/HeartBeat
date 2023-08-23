@@ -13,11 +13,13 @@ import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.exception.InternalServerErrorException;
+import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RateLimitExceededException;
 import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -117,10 +119,10 @@ class GithubServiceTest {
 				.prMergedTime(1658549040000L)
 				.firstCommitTimeInPr(1658548980000L)
 				.jobFinishTime(1658549160000L)
-				.pipelineDelayTime(1658549100000L)
+				.pipelineLeadTime(1658549100000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(60000L)
-				.pipelineDelayTime(120000)
+				.prLeadTime(60000L)
+				.pipelineLeadTime(120000)
 				.totalTime(180000)
 				.build()))
 			.build());
@@ -220,10 +222,10 @@ class GithubServiceTest {
 			.prMergedTime(1658549040000L)
 			.firstCommitTimeInPr(1658548980000L)
 			.jobFinishTime(1658549160000L)
-			.pipelineDelayTime(1658549100000L)
+			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000L)
-			.pipelineDelayTime(120000)
+			.prLeadTime(60000L)
+			.pipelineLeadTime(120000)
 			.totalTime(180000)
 			.build();
 
@@ -240,10 +242,10 @@ class GithubServiceTest {
 			.prMergedTime(1658549040000L)
 			.firstCommitTimeInPr(0L)
 			.jobFinishTime(1658549160000L)
-			.pipelineDelayTime(1658549100000L)
+			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000L)
-			.pipelineDelayTime(120000)
+			.prLeadTime(60000L)
+			.pipelineLeadTime(120000)
 			.totalTime(180000)
 			.build();
 
@@ -260,10 +262,10 @@ class GithubServiceTest {
 			.prMergedTime(1658549040000L)
 			.firstCommitTimeInPr(0L)
 			.jobFinishTime(1658549160000L)
-			.pipelineDelayTime(1658549100000L)
+			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
-			.prDelayTime(60000L)
-			.pipelineDelayTime(120000)
+			.prLeadTime(60000L)
+			.pipelineLeadTime(120000)
 			.totalTime(180000L)
 			.build();
 
@@ -277,6 +279,7 @@ class GithubServiceTest {
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
 
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(commitInfo);
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(pipelineLeadTimes, result);
@@ -304,6 +307,8 @@ class GithubServiceTest {
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of());
 
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
+
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
@@ -313,8 +318,8 @@ class GithubServiceTest {
 				.commitId("111")
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(0L)
-				.pipelineDelayTime(120000)
+				.prLeadTime(0L)
+				.pipelineLeadTime(120000)
 				.totalTime(120000)
 				.build()))
 			.build());
@@ -329,6 +334,7 @@ class GithubServiceTest {
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
 
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
@@ -338,8 +344,8 @@ class GithubServiceTest {
 				.commitId("111")
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(1658549100000L)
-				.prDelayTime(0L)
-				.pipelineDelayTime(120000)
+				.prLeadTime(0L)
+				.pipelineLeadTime(120000)
 				.totalTime(120000)
 				.build()))
 			.build());
@@ -406,6 +412,20 @@ class GithubServiceTest {
 		assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "", ""))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to get commit info_repoId");
+	}
+
+	@Test
+	void shouldReturnPipeLineLeadTimeWhenDeployITimesIsNotEmptyAndCommitInfoError() {
+		String mockToken = "mockToken";
+
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
+
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any()))
+			.thenThrow(new NotFoundException("Failed to get commit"));
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
+
+		assertEquals(pipelineLeadTimes, result);
 	}
 
 }

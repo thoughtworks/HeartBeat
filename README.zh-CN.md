@@ -245,8 +245,8 @@ _Image 3-17，Exported Pipeline Data_
 |PR Merged Time|-- |
 |Deployment Completed Time|When it finished deploy |
 |Total Lead Time (mins)|--|
-|Time from PR Created to PR Merged (mins)|--|
-|Time from PR Merged to Deployment Completed (mins)|--|
+|PR lead time (mins)|--|
+|pipeline lead time (mins)|--|
 |Status|部署结果(Pass 或者 Failed)|
 
 # 4 已知的问题

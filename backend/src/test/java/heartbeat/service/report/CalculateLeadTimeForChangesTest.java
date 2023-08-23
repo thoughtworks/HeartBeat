@@ -36,8 +36,8 @@ public class CalculateLeadTimeForChangesTest {
 				.firstCommitTimeInPr(165854910000L)
 				.jobFinishTime(1658549160000L)
 				.pipelineCreateTime(165854910000L)
-				.prDelayTime(60000L)
-				.pipelineDelayTime(60000)
+				.prLeadTime(60000L)
+				.pipelineLeadTime(60000)
 				.totalTime(120000)
 				.build()))
 			.build();
@@ -62,14 +62,14 @@ public class CalculateLeadTimeForChangesTest {
 			.leadTimeForChangesOfPipelines(List.of(LeadTimeForChangesOfPipelines.builder()
 				.name("Name")
 				.step("Step")
-				.mergeDelayTime(1.0)
-				.pipelineDelayTime(1.0)
+				.prLeadTime(1.0)
+				.pipelineLeadTime(1.0)
 				.totalDelayTime(2.0)
 				.build()))
 			.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
 				.name("Average")
-				.mergeDelayTime(1.0)
-				.pipelineDelayTime(1.0)
+				.prLeadTime(1.0)
+				.pipelineLeadTime(1.0)
 				.totalDelayTime(2.0)
 				.build())
 			.build();
@@ -87,8 +87,8 @@ public class CalculateLeadTimeForChangesTest {
 			.leadTimeForChangesOfPipelines(List.of())
 			.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
 				.name("Average")
-				.mergeDelayTime(0.0)
-				.pipelineDelayTime(0.0)
+				.prLeadTime(0.0)
+				.pipelineLeadTime(0.0)
 				.totalDelayTime(0.0)
 				.build())
 			.build();
@@ -97,12 +97,12 @@ public class CalculateLeadTimeForChangesTest {
 	}
 
 	@Test
-	void shouldReturnFilteredResultWhenPrMergedTimeOrPrDelayTimeIsNull() {
+	void shouldReturnFilteredResultWhenPrMergedTimeOrPrLeadTimeIsNull() {
 		PipelineLeadTime noMergedTime = PipelineLeadTime.builder()
 			.pipelineStep("Step")
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder().prMergedTime(0L).build(),
-					LeadTime.builder().prMergedTime(1L).prDelayTime(0L).build(),
+					LeadTime.builder().prMergedTime(1L).prLeadTime(0L).build(),
 					LeadTime.builder()
 						.commitId("111")
 						.prCreatedTime(165854910000L)
@@ -110,8 +110,8 @@ public class CalculateLeadTimeForChangesTest {
 						.firstCommitTimeInPr(165854910000L)
 						.jobFinishTime(1658549160000L)
 						.pipelineCreateTime(165854910000L)
-						.prDelayTime(60000L)
-						.pipelineDelayTime(60000)
+						.prLeadTime(60000L)
+						.pipelineLeadTime(60000)
 						.totalTime(120000)
 						.build()))
 			.build();
@@ -121,15 +121,15 @@ public class CalculateLeadTimeForChangesTest {
 			.leadTimeForChangesOfPipelines(List.of(LeadTimeForChangesOfPipelines.builder()
 				.name("Name")
 				.step("Step")
-				.mergeDelayTime(1.0)
-				.pipelineDelayTime(1.0)
-				.totalDelayTime(2.0)
+				.prLeadTime(0.33)
+				.pipelineLeadTime(0.33)
+				.totalDelayTime(0.66)
 				.build()))
 			.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
 				.name("Average")
-				.mergeDelayTime(1.0)
-				.pipelineDelayTime(1.0)
-				.totalDelayTime(2.0)
+				.prLeadTime(0.33)
+				.pipelineLeadTime(0.33)
+				.totalDelayTime(0.66)
 				.build())
 			.build();
 

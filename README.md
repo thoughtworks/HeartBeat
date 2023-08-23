@@ -314,8 +314,8 @@ _Image 3-17，Exported Pipeline Data_
 |PR Merged Time|-- |
 |Deployment Completed Time|When it finished deploy |
 |Total Lead Time (mins)|--|
-|Time from PR Created to PR Merged (mins)|--|
-|Time from PR Merged to Deployment Completed (mins)|--|
+|PR lead time (mins)|--|
+|Pipeline lead time (mins)|--|
 |Status|Status for pipeline (Pass or Failed)|
 
 # 4 Known issues

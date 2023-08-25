@@ -276,9 +276,9 @@ export const ORGANIZATION = 'Organization'
 export const PIPELINE_NAME = 'Pipeline Name'
 export const STEP = 'Step'
 
-export const PR_LEAD_TIME = 'PR Lead Time'
-export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time'
-export const TOTAL_LEAD_TIME = 'Total Lead Time'
+export const PR_LEAD_TIME = 'prLeadTime'
+export const PIPELINE_LEAD_TIME = 'pipelineLeadTime'
+export const TOTAL_DELAY_TIME = 'totalDelayTime'
 
 export const MOCK_REPORT_RESPONSE = {
   velocity: {
@@ -498,7 +498,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         { name: PR_LEAD_TIME, value: '1day 21hours 2minutes' },
         { name: PIPELINE_LEAD_TIME, value: '1day 19hours 7minutes' },
-        { name: TOTAL_LEAD_TIME, value: '3day 16hours 9minutes' },
+        { name: TOTAL_DELAY_TIME, value: '3day 16hours 9minutes' },
       ],
     },
     {
@@ -507,7 +507,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         { name: PR_LEAD_TIME, value: '2day 12hours 47minutes' },
         { name: PIPELINE_LEAD_TIME, value: '1day 15hours 1minutes' },
-        { name: TOTAL_LEAD_TIME, value: '4day 3hours 49minutes' },
+        { name: TOTAL_DELAY_TIME, value: '4day 3hours 49minutes' },
       ],
     },
   ],

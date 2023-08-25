@@ -107,8 +107,8 @@ const configTextList = [
 
 const textInputValues = [
   { index: 0, value: 'E2E Project' },
-  { index: 1, value: '09 / 01 / 2022' },
-  { index: 2, value: '09 / 14 / 2022' },
+  { index: 1, value: '09/01/2022' },
+  { index: 2, value: '09/14/2022' },
   { index: 3, value: '1963' },
   { index: 4, value: 'test@test.com' },
   { index: 5, value: 'PLL' },

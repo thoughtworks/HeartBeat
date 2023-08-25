@@ -1,5 +1,5 @@
 import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges'
-import { PIPELINE_LEAD_TIME, PR_LEAD_TIME, TOTAL_DELAY_TIME } from '../../fixtures'
+import { PIPELINE_LEAD_TIME, PR_LEAD_TIME, TOTAL_LEAD_TIME } from '../../fixtures'
 
 describe('lead time for changes data mapper', () => {
   const mockLeadTimeForChangesRes = {
@@ -27,7 +27,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '1day 21hours 2minutes' },
           { name: PIPELINE_LEAD_TIME, value: '1day 19hours 7minutes' },
-          { name: TOTAL_DELAY_TIME, value: '3day 16hours 9minutes' },
+          { name: TOTAL_LEAD_TIME, value: '3day 16hours 9minutes' },
         ],
       },
       {
@@ -36,7 +36,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '2day 12hours 47minutes' },
           { name: PIPELINE_LEAD_TIME, value: '1day 15hours 1minutes' },
-          { name: TOTAL_DELAY_TIME, value: '4day 3hours 49minutes' },
+          { name: TOTAL_LEAD_TIME, value: '4day 3hours 49minutes' },
         ],
       },
     ]
@@ -71,7 +71,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '1day 19hours 59minutes' },
           { name: PIPELINE_LEAD_TIME, value: '1minutes' },
-          { name: TOTAL_DELAY_TIME, value: '1day 20hours 0minutes' },
+          { name: TOTAL_LEAD_TIME, value: '1day 20hours 0minutes' },
         ],
       },
       {
@@ -80,7 +80,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '1day 15hours 1minutes' },
           { name: PIPELINE_LEAD_TIME, value: '1minutes' },
-          { name: TOTAL_DELAY_TIME, value: '1day 15hours 2minutes' },
+          { name: TOTAL_LEAD_TIME, value: '1day 15hours 2minutes' },
         ],
       },
     ]
@@ -115,7 +115,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '1minutes' },
           { name: PIPELINE_LEAD_TIME, value: '1day 19hours 59minutes' },
-          { name: TOTAL_DELAY_TIME, value: '1day 20hours 0minutes' },
+          { name: TOTAL_LEAD_TIME, value: '1day 20hours 0minutes' },
         ],
       },
       {
@@ -124,7 +124,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '1day 15hours 1minutes' },
           { name: PIPELINE_LEAD_TIME, value: '1minutes' },
-          { name: TOTAL_DELAY_TIME, value: '1day 15hours 2minutes' },
+          { name: TOTAL_LEAD_TIME, value: '1day 15hours 2minutes' },
         ],
       },
     ]
@@ -159,7 +159,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '0minutes' },
           { name: PIPELINE_LEAD_TIME, value: '0minutes' },
-          { name: TOTAL_DELAY_TIME, value: '0minutes' },
+          { name: TOTAL_LEAD_TIME, value: '0minutes' },
         ],
       },
       {
@@ -168,7 +168,7 @@ describe('lead time for changes data mapper', () => {
         valuesList: [
           { name: PR_LEAD_TIME, value: '1minutes' },
           { name: PIPELINE_LEAD_TIME, value: '1day 15hours 1minutes' },
-          { name: TOTAL_DELAY_TIME, value: '1day 15hours 2minutes' },
+          { name: TOTAL_LEAD_TIME, value: '1day 15hours 2minutes' },
         ],
       },
     ]

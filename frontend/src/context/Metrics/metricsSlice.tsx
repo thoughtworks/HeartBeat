@@ -251,14 +251,13 @@ export const metricsSlice = createSlice({
         state.classificationWarningMessage = null
       }
 
+      state.cycleTimeSettings = setCycleTimeSettings(jiraColumns, importedCycleTime.importedCycleTimeSettings)
       if (!isProjectCreated && !!importedDoneStatus.length) {
         setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus).length <
         importedDoneStatus.length
           ? (state.realDoneWarningMessage = REAL_DONE_WARNING_MESSAGE)
           : (state.realDoneWarningMessage = null)
       }
-
-      state.cycleTimeSettings = setCycleTimeSettings(jiraColumns, importedCycleTime.importedCycleTimeSettings)
       state.doneColumn = isProjectCreated
         ? []
         : setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus)

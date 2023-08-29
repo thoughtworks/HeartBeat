@@ -276,9 +276,9 @@ export const ORGANIZATION = 'Organization'
 export const PIPELINE_NAME = 'Pipeline Name'
 export const STEP = 'Step'
 
-export const PR_LEAD_TIME = 'prLeadTime'
-export const PIPELINE_LEAD_TIME = 'pipelineLeadTime'
-export const TOTAL_DELAY_TIME = 'totalDelayTime'
+export const PR_LEAD_TIME = 'PR Lead Time'
+export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time'
+export const TOTAL_DELAY_TIME = 'Total Lead Time'
 
 export const MOCK_REPORT_RESPONSE = {
   velocity: {

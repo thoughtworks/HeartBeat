@@ -442,8 +442,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format(
-				"status in ('%s') AND status changed during (%s, %s)", "DONE",
+		String jql = String.format("status in ('%s') AND status changed during (%s, %s)", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
@@ -559,8 +558,7 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().startTime("5")
 			.build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().startTime("5").build();
-		String jql = String.format(
-				"status in ('%s') AND status changed during (%s, %s)", "DONE",
+		String jql = String.format("status in ('%s') AND status changed during (%s, %s)", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())

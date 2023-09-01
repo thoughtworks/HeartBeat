@@ -1,12 +1,5 @@
 package heartbeat.service.board.jira;
 
-import heartbeat.exception.BaseException;
-import heartbeat.exception.InternalServerErrorException;
-
-import static java.lang.Long.parseLong;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -21,9 +14,9 @@ import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
 import heartbeat.client.dto.board.jira.Issuetype;
-import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraColumn;
 import heartbeat.client.dto.board.jira.Sprint;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
@@ -45,9 +38,15 @@ import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.exception.BadRequestException;
+import heartbeat.exception.BaseException;
+import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -65,10 +64,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
+import static java.lang.Long.parseLong;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -274,7 +272,8 @@ public class JiraService {
 	private JiraCardWithFields getAllCards(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam) {
 		String jql;
 		if (BoardType.JIRA.equals(boardType) || BoardType.CLASSIC_JIRA.equals(boardType)) {
-			jql = "sprint in openSprints()";
+			jql = String.format("status changed during (%s, %s)", boardRequestParam.getStartTime(),
+				boardRequestParam.getEndTime());
 		}
 		else {
 			throw new BadRequestException("boardType param is not correct");

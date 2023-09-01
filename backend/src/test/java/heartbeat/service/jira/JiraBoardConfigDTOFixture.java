@@ -344,7 +344,7 @@ public class JiraBoardConfigDTOFixture {
 			.site(jiraBoardSetting.getSite())
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
-			.status(List.of("Done","Testing"))
+			.status(List.of("Done", "Testing"))
 			.startTime("1672556350000")
 			.endTime("1676908799000")
 			.targetFields(jiraBoardSetting.getTargetFields())

@@ -471,7 +471,7 @@ public class JiraService {
 	}
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
-											StoryPointsAndCycleTimeRequest request) {
+			StoryPointsAndCycleTimeRequest request) {
 		List<String> upperDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
 		long validStartTime = parseLong(request.getStartTime());
 

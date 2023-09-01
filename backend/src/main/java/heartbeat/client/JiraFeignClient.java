@@ -1,9 +1,6 @@
 package heartbeat.client;
 
-import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
-import heartbeat.client.dto.board.jira.FieldResponseDTO;
-import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
-import heartbeat.client.dto.board.jira.StatusSelfDTO;
+import heartbeat.client.dto.board.jira.*;
 
 import java.net.URI;
 
@@ -21,6 +18,10 @@ public interface JiraFeignClient {
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/configuration")
 	JiraBoardConfigDTO getJiraBoardConfiguration(URI baseUrl, @PathVariable String boardId,
 			@RequestHeader String authorization);
+
+	@Cacheable(cacheNames = "sprintInfo", key = "#boardId")
+	@GetMapping(path = "/rest/agile/1.0/board/{boardId}/sprint")
+	String getJiraBoardSprintInfo(URI baseUrl, @PathVariable String boardId, @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "jiraStatusCategory", key = "#statusNum")
 	@GetMapping(path = "/rest/api/2/status/{statusNum}")

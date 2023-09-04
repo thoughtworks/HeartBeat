@@ -12,7 +12,7 @@ jobs:
     name: Shellcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
@@ -21,7 +21,7 @@ jobs:
   fossa-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: FOSSA Check
         run: |
           curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
@@ -32,7 +32,7 @@ jobs:
     name: Credential Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
@@ -55,7 +55,7 @@ jobs:
   security-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
@@ -82,7 +82,7 @@ jobs:
       run:
         working-directory: ./backend
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -106,7 +106,7 @@ jobs:
       run:
         working-directory: ./backend
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -130,7 +130,7 @@ jobs:
       run:
         working-directory: ./frontend
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -155,7 +155,7 @@ jobs:
       run:
         working-directory: ./frontend
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -184,7 +184,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # - name: Configure AWS credentials
       #   if: ${{ contains(github.event.head_commit.message, '[infra]') }}
@@ -216,7 +216,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -265,7 +265,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -315,7 +315,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -364,7 +364,7 @@ jobs:
       - build-frontend
     steps:
       - name: Checkout repo
-        # uses: actions/checkout@v3
+        # uses: actions/checkout@v4
         run: echo "This is an empty step"
       # - name: Update docker-compose.yaml
       #   run: |
@@ -410,7 +410,7 @@ jobs:
       - build-mock-server
     steps:
       - name: Checkout repo
-        # uses: actions/checkout@v3
+        # uses: actions/checkout@v4
         run: echo "This is an empty step"
       # - name: Update docker-compose.yaml
       #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}
@@ -457,7 +457,7 @@ jobs:
       - deploy-stub
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           node-version: ${{ vars.NODE_VERSION }}
       - name: Install dependencies
@@ -481,7 +481,7 @@ jobs:
       - e2e
     steps:
       - name: Checkout repo
-        # uses: actions/checkout@v3
+        # uses: actions/checkout@v4
         run: echo "This is an empty step"
       # - name: Update docker-compose.yaml
       #   run: |

@@ -495,7 +495,7 @@ class JiraServiceTest {
 		// then
 
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), user);
 		assertThat(cardCollection.getStoryPointSum()).isEqualTo(0);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(0);
 	}

@@ -473,6 +473,7 @@ class JiraServiceTest {
 		// given
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
+		List<String> user = List.of("Zhang San");
 
 		JiraBoardSetting jiraBoardSetting = CLASSIC_JIRA_BOARD_SETTING_BUILD().build();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = CLASSIC_JIRA_STORY_POINTS_FORM_ALL_DONE_CARD()
@@ -494,7 +495,7 @@ class JiraServiceTest {
 		// then
 
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), user);
 		assertThat(cardCollection.getStoryPointSum()).isEqualTo(0);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(0);
 	}

@@ -26,7 +26,6 @@ public class CacheConfig {
 	public CacheManager ehCacheManager() {
 		CachingProvider provider = Caching.getCachingProvider();
 		CacheManager cacheManager = provider.getCacheManager();
-		cacheManager.createCache("sprintInfo", getCacheConfiguration(String.class));
 		cacheManager.createCache("jiraConfig", getCacheConfiguration(JiraBoardConfigDTO.class));
 		cacheManager.createCache("jiraStatusCategory", getCacheConfiguration(StatusSelfDTO.class));
 		cacheManager.createCache("jiraActivityfeed", getCacheConfiguration(CardHistoryResponseDTO.class));

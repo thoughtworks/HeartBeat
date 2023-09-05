@@ -26,8 +26,8 @@ const cycleTimeData = [
 ]
 const velocityData = [
   { label: 'Name', value: 'Value' },
-  { label: 'Velocity(Story Point)', value: '16' },
-  { label: 'Throughput(Cards Count)', value: '14' },
+  { label: 'Velocity(Story Point)', value: '20' },
+  { label: 'Throughput(Cards Count)', value: '15' },
 ]
 
 const metricsTextList = [

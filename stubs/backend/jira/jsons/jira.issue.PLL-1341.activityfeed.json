@@ -461,7 +461,7 @@
       "fieldSchema": {
         "type": "status"
       },
-      "timestamp": 1661762270946,
+      "timestamp": 1661034406100,
       "from": {
         "value": "10000",
         "displayValue": "In Analysis",
@@ -867,7 +867,7 @@
       "fieldSchema": {
         "type": "status"
       },
-      "timestamp": 1661828070006,
+      "timestamp": 1661034406105,
       "from": {
         "value": "10004",
         "displayValue": "Ready for Dev",
@@ -5013,7 +5013,7 @@
       "fieldSchema": {
         "type": "status"
       },
-      "timestamp": 1662096520915,
+      "timestamp": 1661034406177,
       "from": {
         "value": "10066",
         "displayValue": "In Dev",
@@ -5021,7 +5021,7 @@
       },
       "to": {
         "value": "10025",
-        "displayValue": "Blocked",
+        "displayValue": "Done",
         "categoryId": 2
       }
     },

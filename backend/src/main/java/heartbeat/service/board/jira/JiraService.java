@@ -273,7 +273,7 @@ public class JiraService {
 		String jql;
 		if (BoardType.JIRA.equals(boardType) || BoardType.CLASSIC_JIRA.equals(boardType)) {
 			jql = String.format("status changed during (%s, %s)", boardRequestParam.getStartTime(),
-				boardRequestParam.getEndTime());
+					boardRequestParam.getEndTime());
 		}
 		else {
 			throw new BadRequestException("boardType param is not correct");

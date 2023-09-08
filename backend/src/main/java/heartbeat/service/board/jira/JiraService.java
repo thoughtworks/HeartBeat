@@ -362,7 +362,7 @@ public class JiraService {
 	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
 		if (boardType == BoardType.JIRA) {
 			return String.format(
-					"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
+					"status in ('%s') AND status changed during (%s, %s)",
 					String.join("','", doneColumns), boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		}
 		else {

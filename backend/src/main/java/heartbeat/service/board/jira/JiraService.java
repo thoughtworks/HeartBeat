@@ -3,6 +3,7 @@ package heartbeat.service.board.jira;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.TODO;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -655,7 +656,8 @@ public class JiraService {
 					request.isTreatFlagCardAsBlock(), keyFlagged);
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
-			if (users.stream().anyMatch(assigneeSet::contains)) {
+			String cardStatus = card.getFields().getStatus().getName();
+			if (users.stream().anyMatch(assigneeSet::contains) && !TODO.getValue().equalsIgnoreCase(cardStatus)) {
 				CardCycleTime cardCycleTime = calculateCardCycleTime(card.getKey(),
 						cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns);
 

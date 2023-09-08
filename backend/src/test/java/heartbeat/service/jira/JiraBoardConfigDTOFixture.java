@@ -1,6 +1,7 @@
 package heartbeat.service.jira;
 
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
@@ -19,6 +20,7 @@ import heartbeat.client.dto.board.jira.StatusCategory;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
+import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.IssueType;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -131,17 +133,20 @@ public class JiraBoardConfigDTOFixture {
 								.assignee(new Assignee(ASSIGNEENAME))
 								.issuetype(IssueType.builder().name("缺陷").build())
 								.storyPoints(2)
+								.status(new Status(CardStepsEnum.TESTING.getValue()))
 								.build()),
 					new JiraCard("2",
 							JiraCardField.builder()
 								.assignee(new Assignee(ASSIGNEENAME))
 								.issuetype(IssueType.builder().name("缺陷").build())
+								.status(new Status(CardStepsEnum.TESTING.getValue()))
 								.storyPoints(1)
 								.build()),
 					new JiraCard("3",
 							JiraCardField.builder()
 								.assignee(new Assignee(ASSIGNEENAME))
 								.issuetype(IssueType.builder().name("缺陷").build())
+								.status(new Status(CardStepsEnum.DONE.getValue()))
 								.build())));
 	}
 

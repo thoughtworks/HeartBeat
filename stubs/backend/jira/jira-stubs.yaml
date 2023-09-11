@@ -20,7 +20,7 @@
     status: 200
     file: ./backend/jira/jsons/jira.status.<% url.1 %>.json
 
-# All Done issue
+# All Done issue and Jira Type is Classic Jira
 - request:
     method: GET
     url: /rest/agile/1.0/board/1963/issue
@@ -41,7 +41,7 @@
     query:
       maxResults: 100
       startAt: 0
-      jql: sprint in openSprints%28%29
+      jql: status changed during %281661961600000%2C 1663171199999%29
 
 
   response:

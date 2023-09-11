@@ -82,6 +82,8 @@ class JiraServiceTest {
 
 	private final BoardType boardTypeClassicJira = BoardType.fromValue("classic-jira");
 
+	private static final String ALL_CARDS_JQL = "status changed during (%s, %s)";
+
 	@Mock
 	JiraFeignClient jiraFeignClient;
 
@@ -126,7 +128,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = "sprint in openSprints()";
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		List<TargetField> expectTargetField = List.of(
 				new TargetField("customfield_10016", "Story point estimate", false),
 				new TargetField("customfield_10020", "Sprint", false),
@@ -167,7 +169,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = "sprint in openSprints()";
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		List<TargetField> expectTargetField = List.of(
 				new TargetField("customfield_10016", "Story point estimate", false),
 				new TargetField("customfield_10020", "Sprint", false),
@@ -208,7 +210,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = "sprint in openSprints()";
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		List<TargetField> expectTargetField = List.of(
 				new TargetField("customfield_10016", "Story point estimate", false),
 				new TargetField("customfield_10020", "Sprint", false),
@@ -267,7 +269,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = "sprint in openSprints()";
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
@@ -325,7 +327,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = "sprint in openSprints()";
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
 			.replaceAll("storyPoints", "customfield_10016");
 

@@ -275,7 +275,8 @@ public class JiraService {
 	private JiraCardWithFields getAllCards(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam) {
 		String jql;
 		if (BoardType.JIRA.equals(boardType) || BoardType.CLASSIC_JIRA.equals(boardType)) {
-			jql = "sprint in openSprints()";
+			jql = String.format("status changed during (%s, %s)", boardRequestParam.getStartTime(),
+					boardRequestParam.getEndTime());
 		}
 		else {
 			throw new BadRequestException("boardType param is not correct");

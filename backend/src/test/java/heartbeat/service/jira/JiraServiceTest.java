@@ -442,12 +442,9 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format(
-				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+		String jql = String.format("status in ('%s') AND status changed during (%s, %s)", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 
-		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
-		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
 			.replaceAll("\"storyPoints\":0", "\"customfield_10016\":null")
 			.replaceAll("storyPoints", "customfield_10016");
@@ -461,6 +458,8 @@ class JiraServiceTest {
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
 				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
 
@@ -473,7 +472,6 @@ class JiraServiceTest {
 		// given
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
-		List<String> user = List.of("Zhang San");
 
 		JiraBoardSetting jiraBoardSetting = CLASSIC_JIRA_BOARD_SETTING_BUILD().build();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = CLASSIC_JIRA_STORY_POINTS_FORM_ALL_DONE_CARD()
@@ -495,9 +493,8 @@ class JiraServiceTest {
 		// then
 
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), user);
-		assertThat(cardCollection.getStoryPointSum()).isEqualTo(0);
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(0);
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"));
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 	}
 
 	@Test
@@ -561,8 +558,7 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().startTime("5")
 			.build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().startTime("5").build();
-		String jql = String.format(
-				"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s", "DONE",
+		String jql = String.format("status in ('%s') AND status changed during (%s, %s)", "DONE",
 				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())

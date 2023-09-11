@@ -1,12 +1,6 @@
 package heartbeat.service.board.jira;
 
-import heartbeat.exception.BaseException;
-import heartbeat.exception.InternalServerErrorException;
-
-import static java.lang.Long.parseLong;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -21,9 +15,9 @@ import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
 import heartbeat.client.dto.board.jira.Issuetype;
-import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
+import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraColumn;
 import heartbeat.client.dto.board.jira.Sprint;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
@@ -45,9 +39,15 @@ import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.exception.BadRequestException;
+import heartbeat.exception.BaseException;
+import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -65,10 +65,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
+import static java.lang.Long.parseLong;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +80,8 @@ public class JiraService {
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
+
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private static final String DONE_CARD_TAG = "done";
 
@@ -360,9 +361,8 @@ public class JiraService {
 
 	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
 		if (boardType == BoardType.JIRA) {
-			return String.format(
-					"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
-					String.join("','", doneColumns), boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+			return String.format("status in ('%s') AND status changed during (%s, %s)", String.join("','", doneColumns),
+					boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		}
 		else {
 			StringBuilder subJql = new StringBuilder();
@@ -471,20 +471,14 @@ public class JiraService {
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
 			StoryPointsAndCycleTimeRequest request) {
-		HistoryDetail detail = jiraCardHistory.getItems()
+		List<String> upperDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
+		long validStartTime = parseLong(request.getStartTime());
+
+		return jiraCardHistory.getItems()
 			.stream()
-			.filter(historyDetail -> STATUS_FIELD_ID.equals(historyDetail.getFieldId()))
-			.filter((historyDetail) -> historyDetail.getTimestamp() > parseLong(request.getStartTime()))
-			.reduce((pre, next) -> next)
-			.orElse(null);
-		if (detail == null) {
-			return false;
-		}
-		else {
-			String displayName = detail.getTo().getDisplayName();
-			return request.getStatus().contains(displayName.toUpperCase())
-					|| CardStepsEnum.CLOSED.getValue().equalsIgnoreCase(displayName);
-		}
+			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
+			.filter(history -> upperDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
+			.allMatch(history -> history.getTimestamp() > validStartTime);
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,

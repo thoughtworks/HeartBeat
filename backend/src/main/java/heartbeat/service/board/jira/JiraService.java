@@ -1,5 +1,6 @@
 package heartbeat.service.board.jira;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -79,6 +80,8 @@ public class JiraService {
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
+
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private static final String DONE_CARD_TAG = "done";
 
@@ -359,9 +362,8 @@ public class JiraService {
 
 	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
 		if (boardType == BoardType.JIRA) {
-			return String.format(
-					"status in ('%s') AND statusCategoryChangedDate >= %s AND statusCategoryChangedDate <= %s",
-					String.join("','", doneColumns), boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+			return String.format("status in ('%s') AND status changed during (%s, %s)", String.join("','", doneColumns),
+					boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		}
 		else {
 			StringBuilder subJql = new StringBuilder();
@@ -470,20 +472,14 @@ public class JiraService {
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
 			StoryPointsAndCycleTimeRequest request) {
-		HistoryDetail detail = jiraCardHistory.getItems()
+		List<String> upperDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
+		long validStartTime = parseLong(request.getStartTime());
+
+		return jiraCardHistory.getItems()
 			.stream()
-			.filter(historyDetail -> STATUS_FIELD_ID.equals(historyDetail.getFieldId()))
-			.filter((historyDetail) -> historyDetail.getTimestamp() > parseLong(request.getStartTime()))
-			.reduce((pre, next) -> next)
-			.orElse(null);
-		if (detail == null) {
-			return false;
-		}
-		else {
-			String displayName = detail.getTo().getDisplayName();
-			return request.getStatus().contains(displayName.toUpperCase())
-					|| CardStepsEnum.CLOSED.getValue().equalsIgnoreCase(displayName);
-		}
+			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
+			.filter(history -> upperDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
+			.allMatch(history -> history.getTimestamp() > validStartTime);
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,

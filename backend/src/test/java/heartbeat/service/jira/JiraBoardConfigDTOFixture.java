@@ -165,7 +165,8 @@ public class JiraBoardConfigDTOFixture {
 			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do")),
 					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev")),
 					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW)),
-					new HistoryDetail(5, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING))));
+					new HistoryDetail(5, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING)),
+					new HistoryDetail(1662642750003L, "status", new Status("Done"), new Status(TESTING))));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER_TO_DONE() {
@@ -190,9 +191,9 @@ public class JiraBoardConfigDTOFixture {
 					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do")),
 					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev")),
 					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW)),
-					new HistoryDetail(5, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING)),
-					new HistoryDetail(6, "status", new Status(BLOCK), new Status(TESTING)),
-					new HistoryDetail(7, "status", new Status(FLAG), new Status(BLOCK)),
+					new HistoryDetail(1672642740000L, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING)),
+					new HistoryDetail(1672642740001L, "status", new Status(BLOCK), new Status(TESTING)),
+					new HistoryDetail(1672642740002L, "status", new Status(FLAG), new Status(BLOCK)),
 					new HistoryDetail(1672642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG)),
 					new HistoryDetail(1672642750002L, "flagged", new Status("Impediment"), new Status("removeFlag")),
 					new HistoryDetail(1672642750003L, "status", new Status("Done"), new Status(TESTING)),
@@ -348,7 +349,7 @@ public class JiraBoardConfigDTOFixture {
 			.site(jiraBoardSetting.getSite())
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
-			.status(jiraBoardSetting.getDoneColumn())
+			.status(List.of("Done", "Testing"))
 			.startTime("1672556350000")
 			.endTime("1676908799000")
 			.targetFields(jiraBoardSetting.getTargetFields())

@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -107,25 +107,38 @@ public class BuildKiteService {
 		}
 	}
 
+	public List<String> getPipelineStepNames(List<BuildKiteBuildInfo> buildKiteBuildInfos) {
+		return buildKiteBuildInfos.stream()
+			.flatMap(buildKiteBuildInfo -> buildKiteBuildInfo.getJobs().stream())
+			.filter(job -> job != null && job.getName() != null && !job.getName().isEmpty())
+			.map(BuildKiteJob::getName)
+			.distinct()
+			.toList();
+	}
+
+	public List<String> getStepsBeforeEndStep(String endStep, List<String> steps) {
+		int index = steps.indexOf(endStep);
+		if (index != -1) {
+			return steps.subList(0, index + 1);
+		}
+		return Collections.singletonList(endStep);
+	}
+
 	public PipelineStepsDTO fetchPipelineSteps(String token, String organizationId, String pipelineId,
 			PipelineStepsParam stepsParam) {
 		try {
 			log.info("Start to get pipeline steps, organization id: {}, pipeline id: {}", organizationId, pipelineId);
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = fetchPipelineStepsByPage(token, organizationId, pipelineId,
-					stepsParam);
 
-			List<String> buildSteps = buildKiteBuildInfos.stream()
-				.flatMap(buildKiteBuildInfo -> buildKiteBuildInfo.getJobs().stream())
-				.filter(job -> job != null && job.getName() != null && !job.getName().isEmpty())
-				.sorted(Comparator.comparing(BuildKiteJob::getName))
-				.map(BuildKiteJob::getName)
-				.distinct()
+			List<String> sortedSteps = getPipelineStepNames(fetchPipelineStepsByPage(token, organizationId, pipelineId,
+				stepsParam)).stream()
+				.sorted()
 				.toList();
+
 			log.info("Successfully get pipeline steps, organization id: {}, pipeline id: {}, build steps: {}",
-					organizationId, pipelineId, buildSteps);
+					organizationId, pipelineId, sortedSteps);
 			return PipelineStepsDTO.builder()
 				.pipelineId(pipelineId)
-				.steps(buildSteps)
+				.steps(sortedSteps)
 				.name(stepsParam.getOrgName())
 				.orgName(stepsParam.getOrgName())
 				.repository(stepsParam.getRepository())
@@ -256,7 +269,7 @@ public class BuildKiteService {
 	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
 			DeploymentEnvironment deploymentEnvironment, String state, String startTime, String endTime) {
 		return buildInfos.stream()
-			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), List.of(state), startTime, endTime))
+			.map(build -> build.mapToDeployInfo(getStepsBeforeEndStep(deploymentEnvironment.getStep(), getPipelineStepNames(buildInfos)), List.of(state), startTime, endTime))
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
 			.filter(job -> !job.getJobStartTime().isEmpty())
 			.toList();

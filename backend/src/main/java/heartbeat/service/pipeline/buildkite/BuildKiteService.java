@@ -129,8 +129,9 @@ public class BuildKiteService {
 		try {
 			log.info("Start to get pipeline steps, organization id: {}, pipeline id: {}", organizationId, pipelineId);
 
-			List<String> sortedSteps = getPipelineStepNames(fetchPipelineStepsByPage(token, organizationId, pipelineId,
-				stepsParam)).stream()
+			List<String> sortedSteps = getPipelineStepNames(
+					fetchPipelineStepsByPage(token, organizationId, pipelineId, stepsParam))
+				.stream()
 				.sorted()
 				.toList();
 
@@ -269,7 +270,9 @@ public class BuildKiteService {
 	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
 			DeploymentEnvironment deploymentEnvironment, String state, String startTime, String endTime) {
 		return buildInfos.stream()
-			.map(build -> build.mapToDeployInfo(getStepsBeforeEndStep(deploymentEnvironment.getStep(), getPipelineStepNames(buildInfos)), List.of(state), startTime, endTime))
+			.map(build -> build.mapToDeployInfo(
+					getStepsBeforeEndStep(deploymentEnvironment.getStep(), getPipelineStepNames(buildInfos)),
+					List.of(state), startTime, endTime))
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
 			.filter(job -> !job.getJobStartTime().isEmpty())
 			.toList();

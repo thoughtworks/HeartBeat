@@ -29,8 +29,8 @@ public class BuildKiteBuildInfo {
 
 	private int number;
 
-	public BuildKiteJob getBuildKiteJob(List<BuildKiteJob> jobs, List<String> steps, List<String> states, String startTime,
-			String endTime) {
+	public BuildKiteJob getBuildKiteJob(List<BuildKiteJob> jobs, List<String> steps, List<String> states,
+			String startTime, String endTime) {
 		Instant startDate = Instant.ofEpochMilli(Long.parseLong(startTime));
 		Instant endDate = Instant.ofEpochMilli(Long.parseLong(endTime));
 		return jobs.stream()

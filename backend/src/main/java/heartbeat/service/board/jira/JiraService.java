@@ -484,8 +484,8 @@ public class JiraService {
 		long validStartTime = parseLong(request.getStartTime());
 		long validEndTime = parseLong(request.getEndTime());
 
-		return doneTimes.stream().allMatch(time -> validStartTime <= time) &&
-			doneTimes.stream().anyMatch(time -> validEndTime >= time);
+		return doneTimes.stream().allMatch(time -> validStartTime <= time)
+				&& doneTimes.stream().anyMatch(time -> validEndTime >= time);
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,

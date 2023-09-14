@@ -7,6 +7,7 @@ import heartbeat.exception.UnauthorizedException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -41,6 +42,7 @@ import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionException;
@@ -535,6 +537,19 @@ class BuildKiteServiceTest {
 				mockStartTime, mockEndTime);
 
 		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
+	}
+
+	@Test
+	void shouldReturnStepBeforeEndStepsGivenStepsArray() {
+		String targetStep = "Deploy qa";
+		List<String> stepArray = Arrays.asList("Test", "Build", targetStep, "Deploy prod");
+
+		List<String> result = buildKiteService.getStepsBeforeEndStep(targetStep, stepArray);
+
+		assertEquals(3, result.size());
+		assertEquals("Test", result.get(0));
+		assertEquals("Build", result.get(1));
+		assertEquals(targetStep, result.get(2));
 	}
 
 }

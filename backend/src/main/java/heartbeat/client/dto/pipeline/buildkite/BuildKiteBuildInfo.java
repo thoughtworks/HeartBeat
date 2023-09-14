@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -39,8 +38,7 @@ public class BuildKiteBuildInfo {
 				Instant time = Instant.parse(item.getFinishedAt());
 				return TimeUtil.isAfterAndEqual(startDate, time) && TimeUtil.isBeforeAndEqual(endDate, time);
 			})
-			.sorted(Comparator.comparing(BuildKiteJob::getFinishedAt).reversed())
-			.findFirst()
+			.max(Comparator.comparing(BuildKiteJob::getFinishedAt))
 			.orElse(null);
 	}
 

@@ -122,6 +122,16 @@ public class JiraBoardConfigDTOFixture {
 							JiraCardField.builder().assignee(new Assignee(ASSIGNEENAME)).storyPoints(5).build())));
 	}
 
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder NEED_FILTERED_ALL_DONE_CARDS_BUILDER() {
+		return AllDoneCardsResponseDTO.builder()
+			.total("2")
+			.issues(List.of(
+					new JiraCard("1",
+							JiraCardField.builder().assignee(new Assignee(ASSIGNEENAME)).storyPoints(5).build()),
+					new JiraCard("2",
+							JiraCardField.builder().assignee(new Assignee(ASSIGNEENAME)).storyPoints(5).build())));
+	}
+
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("3")
@@ -195,6 +205,20 @@ public class JiraBoardConfigDTOFixture {
 					new HistoryDetail(1672642750004L, "status", new Status("Done"), new Status(TESTING)),
 					new HistoryDetail(1672642750005L, "customfield_10021", new Status(UNKNOWN),
 							new Status("removeFlag"))));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status(BLOCK)),
+					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do")),
+					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev")),
+					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW)),
+					new HistoryDetail(1682642740000L, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING)),
+					new HistoryDetail(1682642740001L, "status", new Status(BLOCK), new Status(TESTING)),
+					new HistoryDetail(1682642740002L, "status", new Status(FLAG), new Status(BLOCK)),
+					new HistoryDetail(1682642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG)),
+					new HistoryDetail(1682642750002L, "flagged", new Status("Impediment"), new Status("removeFlag")),
+					new HistoryDetail(1686908799000L, "status", new Status("Done"), new Status(TESTING))));
 	}
 
 	public static FieldResponseDTO.FieldResponseDTOBuilder FIELD_RESPONSE_BUILDER() {

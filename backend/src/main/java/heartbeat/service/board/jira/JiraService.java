@@ -471,13 +471,19 @@ public class JiraService {
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
 			StoryPointsAndCycleTimeRequest request) {
 		List<String> upperDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
-		long validStartTime = parseLong(request.getStartTime());
 
-		return jiraCardHistory.getItems()
+		List<Long> doneTimes = jiraCardHistory.getItems()
 			.stream()
 			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
 			.filter(history -> upperDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
-			.allMatch(history -> history.getTimestamp() > validStartTime);
+			.map(HistoryDetail::getTimestamp)
+			.toList();
+
+		long validStartTime = parseLong(request.getStartTime());
+		long validEndTime = parseLong(request.getEndTime());
+
+		return doneTimes.stream().allMatch(time -> validStartTime <= time)
+				&& doneTimes.stream().anyMatch(time -> validEndTime >= time);
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,

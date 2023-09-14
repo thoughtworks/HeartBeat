@@ -66,6 +66,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -519,8 +521,8 @@ class GenerateReporterServiceTest {
 			.metrics(List.of("lead time for changes", "deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
 			.codebaseSetting(codebaseSetting)
-			.startTime("1661702400000")
-			.endTime("1662739199000")
+			.startTime(String.valueOf(Instant.MIN.getEpochSecond()))
+			.endTime(String.valueOf(Instant.MAX.getEpochSecond()))
 			.csvTimeStamp("1683734399999")
 			.build();
 
@@ -533,6 +535,7 @@ class GenerateReporterServiceTest {
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any()))
 			.thenReturn(List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA()));
+		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(Arrays.asList("xx"));
 
 		Mockito.doAnswer(invocation -> {
 			Files.createFile(mockPipelineCsvPath);
@@ -543,6 +546,50 @@ class GenerateReporterServiceTest {
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
 		Assertions.assertTrue(isExists);
+		Files.deleteIfExists(mockPipelineCsvPath);
+	}
+
+	@Test
+	public void shouldNotGenerateCsvForPipelineWithPipelineLeadTimeIsNull() throws IOException {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+
+		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
+			.type("Github")
+			.token("github_fake_token")
+			.leadTime(List.of(mockDeployment))
+			.build();
+
+		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token("buildKite_fake_token")
+			.deploymentEnvList(List.of(mockDeployment))
+			.build();
+
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(true)
+			.metrics(List.of("lead time for changes", "deployment frequency"))
+			.buildKiteSetting(buildKiteSetting)
+			.codebaseSetting(codebaseSetting)
+			.startTime(String.valueOf(Instant.MIN.getEpochSecond()))
+			.endTime(String.valueOf(Instant.MAX.getEpochSecond()))
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
+			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
+				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.withPipelineCreateTime("2022-09-09T04:57:34Z")
+				.build()));
+		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
+				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
+		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(null);
+		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(Arrays.asList("xx"));
+
+		generateReporterService.generateReporter(request);
+
+		boolean isExists = Files.exists(mockPipelineCsvPath);
+		Assertions.assertFalse(isExists);
 		Files.deleteIfExists(mockPipelineCsvPath);
 	}
 

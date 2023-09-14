@@ -9,8 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -28,22 +28,22 @@ public class BuildKiteBuildInfo {
 
 	private int number;
 
-	public BuildKiteJob getBuildKiteJob(List<BuildKiteJob> jobs, String step, List<String> states, String startTime,
-			String endTime) {
+	public BuildKiteJob getBuildKiteJob(List<BuildKiteJob> jobs, List<String> steps, List<String> states,
+			String startTime, String endTime) {
 		Instant startDate = Instant.ofEpochMilli(Long.parseLong(startTime));
 		Instant endDate = Instant.ofEpochMilli(Long.parseLong(endTime));
 		return jobs.stream()
-			.filter(item -> Objects.equals(item.getName(), step) && states.contains(item.getState()))
+			.filter(item -> steps.contains(item.getName()) && states.contains(item.getState()))
 			.filter(item -> {
 				Instant time = Instant.parse(item.getFinishedAt());
 				return TimeUtil.isAfterAndEqual(startDate, time) && TimeUtil.isBeforeAndEqual(endDate, time);
 			})
-			.findFirst()
+			.max(Comparator.comparing(BuildKiteJob::getFinishedAt))
 			.orElse(null);
 	}
 
-	public DeployInfo mapToDeployInfo(String step, List<String> states, String startTime, String endTime) {
-		BuildKiteJob job = getBuildKiteJob(this.jobs, step, states, startTime, endTime);
+	public DeployInfo mapToDeployInfo(List<String> steps, List<String> states, String startTime, String endTime) {
+		BuildKiteJob job = getBuildKiteJob(this.jobs, steps, states, startTime, endTime);
 
 		if (this.pipelineCreateTime == null || job == null || job.getStartedAt() == null
 				|| job.getFinishedAt() == null) {
@@ -51,7 +51,7 @@ public class BuildKiteBuildInfo {
 		}
 
 		return new DeployInfo(this.pipelineCreateTime, job.getStartedAt(), job.getFinishedAt(), this.commit,
-				job.getState());
+				job.getState(), job.getName());
 	}
 
 }

@@ -517,55 +517,75 @@ public class GenerateReporterService {
 
 		List<PipelineCSVInfo> pipelineData = generateCSVForPipelineWithoutCodebase(
 				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime(),
-				buildKiteData.getBuildInfosList(), buildKiteData);
+				buildKiteData);
 
 		leadTimeData.addAll(pipelineData);
 		csvFileGenerator.convertPipelineDataToCSV(leadTimeData, request.getCsvTimeStamp());
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
-			String startTime, String endTime, List<Entry<String, List<BuildKiteBuildInfo>>> buildInfosList,
-			BuildKiteData buildKiteData) {
+			String startTime, String endTime, BuildKiteData buildKiteData) {
 		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvList) {
-			List<BuildKiteBuildInfo> buildInfos = buildInfosList.stream()
-				.filter(entry -> entry.getKey().equals(deploymentEnvironment.getId()))
-				.findFirst()
-				.map(Map.Entry::getValue)
-				.orElse(new ArrayList<>());
+			List<BuildKiteBuildInfo> buildInfos = getBuildInfos(buildKiteData.getBuildInfosList(),
+					deploymentEnvironment);
+			List<String> pipelineSteps = buildKiteService.getPipelineStepNames(buildInfos);
 
-			List<PipelineCSVInfo> pipelineCSVInfoList = buildInfos.stream().filter(buildInfo -> {
-				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
-						deploymentEnvironment.getStep(), REQUIRED_STATES, startTime, endTime);
-				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
-			}).map(buildInfo -> {
-				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
-						startTime, endTime);
+			List<PipelineCSVInfo> pipelineCSVInfoList = buildInfos.stream()
+				.filter(buildInfo -> isBuildInfoValid(buildInfo, deploymentEnvironment, pipelineSteps, startTime,
+						endTime))
+				.map(buildInfo -> {
+					DeployInfo deployInfo = buildInfo.mapToDeployInfo(
+							buildKiteService.getStepsBeforeEndStep(deploymentEnvironment.getStep(), pipelineSteps),
+							REQUIRED_STATES, startTime, endTime);
+					LeadTime filteredLeadTime = filterLeadTime(buildKiteData, deploymentEnvironment, deployInfo);
 
-				List<PipelineLeadTime> pipelineLeadTimes = buildKiteData.getPipelineLeadTimes();
-				LeadTime filteredLeadTime = null;
-				if (pipelineLeadTimes != null) {
-					filteredLeadTime = pipelineLeadTimes.stream()
-						.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
-								deploymentEnvironment.getName()))
-						.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
-						.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
-						.findFirst()
-						.orElse(null);
-				}
-				return PipelineCSVInfo.builder()
-					.pipeLineName(deploymentEnvironment.getName())
-					.stepName(deploymentEnvironment.getStep())
-					.buildInfo(buildInfo)
-					.deployInfo(deployInfo)
-					.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
-					.build();
-			}).toList();
+					return PipelineCSVInfo.builder()
+						.pipeLineName(deploymentEnvironment.getName())
+						.stepName(deployInfo.getJobName())
+						.buildInfo(buildInfo)
+						.deployInfo(deployInfo)
+						.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
+						.build();
+				})
+				.toList();
 
 			pipelineCSVInfos.addAll(pipelineCSVInfoList);
 		}
 		return pipelineCSVInfos;
+	}
+
+	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
+			List<String> steps, String startTime, String endTime) {
+		BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
+				buildKiteService.getStepsBeforeEndStep(deploymentEnvironment.getStep(), steps), REQUIRED_STATES,
+				startTime, endTime);
+		return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
+	}
+
+	private List<BuildKiteBuildInfo> getBuildInfos(List<Entry<String, List<BuildKiteBuildInfo>>> buildInfosList,
+			DeploymentEnvironment deploymentEnvironment) {
+		return buildInfosList.stream()
+			.filter(entry -> entry.getKey().equals(deploymentEnvironment.getId()))
+			.findFirst()
+			.map(Map.Entry::getValue)
+			.orElse(new ArrayList<>());
+	}
+
+	private LeadTime filterLeadTime(BuildKiteData buildKiteData, DeploymentEnvironment deploymentEnvironment,
+			DeployInfo deployInfo) {
+		if (Objects.isNull(buildKiteData.getPipelineLeadTimes())) {
+			return null;
+		}
+		return buildKiteData.getPipelineLeadTimes()
+			.stream()
+			.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
+					deploymentEnvironment.getName()))
+			.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
+			.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
+			.findFirst()
+			.orElse(null);
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
@@ -579,43 +599,31 @@ public class GenerateReporterService {
 		for (DeploymentEnvironment deploymentEnvironment : codebaseSetting.getLeadTime()) {
 			String repoId = GithubUtil
 				.getGithubUrlFullName(getRepoMap(codebaseSetting).get(deploymentEnvironment.getId()));
-			List<BuildKiteBuildInfo> buildInfos = buildKiteData.getLeadTimeBuildInfosList()
-				.stream()
-				.filter(entry -> entry.getKey().equals(deploymentEnvironment.getId()))
-				.findFirst()
-				.map(Map.Entry::getValue)
-				.orElse(new ArrayList<>());
+			List<BuildKiteBuildInfo> buildInfos = getBuildInfos(buildKiteData.getBuildInfosList(),
+					deploymentEnvironment);
+			List<String> pipelineSteps = buildKiteService.getPipelineStepNames(buildInfos);
 
-			List<PipelineCSVInfo> pipelineCSVInfoList = buildInfos.stream().filter(buildInfo -> {
-				BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
-						deploymentEnvironment.getStep(), REQUIRED_STATES, startTime, endTime);
-				return buildKiteJob != null && !buildInfo.getCommit().isEmpty();
-			}).map(buildInfo -> {
-				DeployInfo deployInfo = buildInfo.mapToDeployInfo(deploymentEnvironment.getStep(), REQUIRED_STATES,
-						startTime, endTime);
-				List<PipelineLeadTime> pipelineLeadTimes = buildKiteData.getPipelineLeadTimes();
+			List<PipelineCSVInfo> pipelineCSVInfoList = buildInfos.stream()
+				.filter(buildInfo -> isBuildInfoValid(buildInfo, deploymentEnvironment, pipelineSteps, startTime,
+						endTime))
+				.map(buildInfo -> {
+					DeployInfo deployInfo = buildInfo.mapToDeployInfo(
+							buildKiteService.getStepsBeforeEndStep(deploymentEnvironment.getStep(), pipelineSteps),
+							REQUIRED_STATES, startTime, endTime);
+					LeadTime filteredLeadTime = filterLeadTime(buildKiteData, deploymentEnvironment, deployInfo);
+					CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
+							codebaseSetting.getToken());
 
-				LeadTime filteredLeadTime = null;
-				if (pipelineLeadTimes != null) {
-					filteredLeadTime = pipelineLeadTimes.stream()
-						.filter(pipelineLeadTime -> Objects.equals(pipelineLeadTime.getPipelineName(),
-								deploymentEnvironment.getName()))
-						.flatMap(filteredPipeLineLeadTime -> filteredPipeLineLeadTime.getLeadTimes().stream())
-						.filter(leadTime -> leadTime.getCommitId().equals(deployInfo.getCommitId()))
-						.findFirst()
-						.orElse(null);
-				}
-				CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
-						codebaseSetting.getToken());
-				return PipelineCSVInfo.builder()
-					.pipeLineName(deploymentEnvironment.getName())
-					.stepName(deploymentEnvironment.getStep())
-					.buildInfo(buildInfo)
-					.deployInfo(deployInfo)
-					.commitInfo(commitInfo)
-					.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
-					.build();
-			}).toList();
+					return PipelineCSVInfo.builder()
+						.pipeLineName(deploymentEnvironment.getName())
+						.stepName(deployInfo.getJobName())
+						.buildInfo(buildInfo)
+						.deployInfo(deployInfo)
+						.commitInfo(commitInfo)
+						.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
+						.build();
+				})
+				.toList();
 			pipelineCSVInfos.addAll(pipelineCSVInfoList);
 		}
 		return pipelineCSVInfos;

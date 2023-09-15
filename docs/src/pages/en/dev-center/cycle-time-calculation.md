@@ -43,11 +43,40 @@ private JiraCardWithFields getAllNonDoneCardsForActiveSprint(URI baseUrl, List<S
 > selected date range: **2023.8.7 ~ 2023.8.20**
 > 
 > Real done columns: **'Testing' and 'Done'**
-> - card A moved to 'Testing' column in 2023.8.6 and moved 'Done' column in 2023.8.21
-> - card B moved to 'Testing' column in 2023.8.15
-> - card C moved to 'Done' column in 2023.8.21
->
-> Result: card A and B are done cards
+> - card A moved to 'Testing' column in 2023.8.6 and moved 'Done' column in 2023.8.9
+> - card B moved to 'Testing' column in 2023.8.8 and moved 'Done' column in 2023.8.10
+> - card C moved to 'Testing' column in 2023.8.15
+> - card D moved to 'Testing' column in 2023.8.21
+> 
+> Result: card B and C are done cards
+
+### JQL to get done cards
+```java
+private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
+    if (boardType == BoardType.JIRA) {
+    	return String.format("status in ('%s') AND status changed during (%s, %s)", String.join("','", doneColumns),
+    			boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+    }
+    else {
+    	StringBuilder subJql = new StringBuilder();
+    	for (int index = 0; index < doneColumns.size() - 1; index++) {
+    		subJql.append(String.format("status changed to '%s' during (%s, %s) or ", doneColumns.get(index),
+    				boardRequestParam.getStartTime(), boardRequestParam.getEndTime()));
+    	}
+    	subJql
+    		.append(String.format("status changed to '%s' during (%s, %s)", doneColumns.get(doneColumns.size() - 1),
+    				boardRequestParam.getStartTime(), boardRequestParam.getEndTime()));
+    	return String.format("status in ('%s') AND (%s)", String.join("', '", doneColumns), subJql);
+    }
+}
+```
+
+### Filter done card belonged to selected date range
+1. Get done card histories;
+2. Filter status changed histories;
+3. Filter status changed to real done statuses;
+4. Get the timestamps moved to real done statuses;
+5. Compare timestamps with selected date range to check whether it belongs to this range;
 
 ---
 

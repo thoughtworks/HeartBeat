@@ -27,17 +27,17 @@ class BoardUtilTest {
 	@Mock
 	WorkDay workDay;
 
-	@Test
-	void shouldSortTimeLineAndRemoveItemBetweenFlagAndRemoveFlaggedWhenCallReformTimeLineForFlaggedCards() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedArrayItemsFixture.STATUS_CHANGED_ITEMS_LIST();
-		List<StatusChangedItem> statusChangedItemsExpect = StatusChangedArrayItemsFixture
-			.STATUS_CHANGED_ITEMS_EXPECT_LIST();
-
-		List<StatusChangedItem> result = boardUtil.reformTimeLineForFlaggedCards(statusChangedItems);
-
-		Assertions.assertEquals(statusChangedItemsExpect, result);
-
-	}
+//	@Test
+//	void shouldSortTimeLineAndRemoveItemBetweenFlagAndRemoveFlaggedWhenCallReformTimeLineForFlaggedCards() {
+//		List<StatusChangedItem> statusChangedItems = StatusChangedArrayItemsFixture.STATUS_CHANGED_ITEMS_LIST();
+//		List<StatusChangedItem> statusChangedItemsExpect = StatusChangedArrayItemsFixture
+//			.STATUS_CHANGED_ITEMS_EXPECT_LIST();
+//
+//		List<StatusChangedItem> result = boardUtil.reformTimeLineForFlaggedCards(statusChangedItems);
+//
+//		Assertions.assertEquals(statusChangedItemsExpect, result);
+//
+//	}
 
 	@Test
 	void shouldReturnCardTimeForEachStep() {

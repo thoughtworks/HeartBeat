@@ -488,11 +488,9 @@ public class JiraService {
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				treatFlagCardAsBlock, keyFlagged);
 		List<StatusChangedItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
-				true, keyFlagged);
-		List<StatusChangedItem> statusChangedItems = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray);
-		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCardTimeForEachStep(statusChangedItems);
-		List<CycleTimeInfo> originCycleTimeInfos = boardUtil
-			.getCardTimeForEachStep(boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag));
+				false, keyFlagged);
+		List<CycleTimeInfo> cycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray);
+		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag);
 
 		return CycleTimeInfoDTO.builder()
 			.cycleTimeInfos(cycleTimeInfos)

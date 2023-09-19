@@ -13,6 +13,7 @@ import {
   REMOVE_BUTTON,
   STEP,
 } from '../../../../fixtures'
+import { PipelineSetting } from "@src/context/interface";
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -52,12 +53,13 @@ describe('PipelineMetricSelection', () => {
     organization: '',
     pipelineName: '',
     step: '',
+    branches: []
   }
   const mockHandleClickRemoveButton = jest.fn()
   const mockUpdatePipeline = jest.fn()
 
   const setup = async (
-    deploymentFrequencySetting: { id: number; organization: string; pipelineName: string; step: string },
+    deploymentFrequencySetting: PipelineSetting,
     isShowRemoveButton: boolean,
     isDuplicated: boolean
   ) => {
@@ -128,7 +130,7 @@ describe('PipelineMetricSelection', () => {
       throw new Error('error message')
     })
     const { getByText, getByRole } = await setup(
-      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
       false
     )
@@ -145,7 +147,7 @@ describe('PipelineMetricSelection', () => {
   it('should show no steps warning message when getSteps succeed but get no steps', async () => {
     metricsClient.getSteps = jest.fn().mockReturnValue({ response: [], haveStep: false })
     const { getByText, getByRole } = await setup(
-      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
       false
     )
@@ -166,7 +168,7 @@ describe('PipelineMetricSelection', () => {
   it('should show steps selection when getSteps succeed ', async () => {
     metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], haveStep: true })
     const { getByRole, getByText } = await setup(
-      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '' },
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
       false
     )
@@ -185,7 +187,7 @@ describe('PipelineMetricSelection', () => {
   it('should show duplicated message given duplicated id', async () => {
     metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], haveStep: true })
     const { getByText } = await setup(
-      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: 'step1' },
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: 'step1', branches: [] },
       false,
       true
     )

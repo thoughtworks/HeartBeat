@@ -13,6 +13,7 @@ export interface useGetMetricsStepsEffectInterface {
     | {
         haveStep: boolean
         response: string[]
+        branches: string[]
       }
     | undefined
   >

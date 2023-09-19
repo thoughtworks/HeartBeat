@@ -188,7 +188,7 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId,
@@ -204,7 +204,7 @@ class BuildKiteServiceTest {
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.getStatus()).thenReturn(500);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(mockException);
 
 		assertThrows(RequestFailedException.class,
@@ -229,14 +229,14 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		BuildKiteJob testJob3 = BuildKiteJob.builder().name("testJob3").build();
 		BuildKiteJob testJob4 = BuildKiteJob.builder().name("").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList2 = new ArrayList<>();
 		buildKiteBuildInfoList2.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob3, testJob4)).build());
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(buildKiteBuildInfoList2);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
@@ -261,10 +261,10 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(new CompletionException(new NotFoundException("Client Error")));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -285,10 +285,10 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(new CompletionException(new ServiceUnavailableException("Service Unavailable")));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -309,10 +309,10 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(new RequestFailedException(504, "Server Error"));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -334,10 +334,10 @@ class BuildKiteServiceTest {
 				httpHeaders, HttpStatus.OK);
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenReturn(buildKiteBuildInfoList);
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -362,7 +362,7 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
@@ -385,7 +385,7 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
 				HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
@@ -407,7 +407,7 @@ class BuildKiteServiceTest {
 				HttpStatus.OK);
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		List<BuildKiteBuildInfo> pipelineBuilds = buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment,
 				mockStartTime, mockEndTime);
@@ -422,7 +422,7 @@ class BuildKiteServiceTest {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenThrow(new UnauthorizedException("unauthorized"));
 
 		Assertions
@@ -444,7 +444,7 @@ class BuildKiteServiceTest {
 				HttpStatus.OK);
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment, null, mockEndTime))

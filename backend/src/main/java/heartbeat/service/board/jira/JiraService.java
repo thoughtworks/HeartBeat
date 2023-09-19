@@ -487,10 +487,8 @@ public class JiraService {
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				treatFlagCardAsBlock, keyFlagged);
-		List<StatusChangedItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
-				false, keyFlagged);
-		List<CycleTimeInfo> cycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray, realDoneStatus);
-		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag, realDoneStatus);
+		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCycleTimeInfos(statusChangedArray, realDoneStatus);
+		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.getOriginCycleTimeInfos(statusChangedArray);
 
 		return CycleTimeInfoDTO.builder()
 			.cycleTimeInfos(cycleTimeInfos)

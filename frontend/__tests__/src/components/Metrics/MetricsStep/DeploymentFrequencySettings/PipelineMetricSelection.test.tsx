@@ -12,10 +12,9 @@ import {
   PIPELINE_NAME,
   PIPELINE_SETTING_TYPES,
   REMOVE_BUTTON,
-  STEP
-} from "../../../../fixtures";
+  STEP,
+} from '../../../../fixtures'
 import { PipelineSetting } from '@src/context/interface'
-import _ from 'lodash'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -189,7 +188,9 @@ describe('PipelineMetricSelection', () => {
   })
 
   it('should show branches selection when getSteps succeed ', async () => {
-    metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], haveStep: true, branches: ['branch1', 'branch2'] })
+    metricsClient.getSteps = jest
+      .fn()
+      .mockReturnValue({ response: ['steps'], haveStep: true, branches: ['branch1', 'branch2'] })
     const { getByRole, getByText, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: ['branch1', 'branch2'] },
       false,
@@ -200,7 +201,6 @@ describe('PipelineMetricSelection', () => {
       expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
       expect(getByText(BRANCH)).toBeInTheDocument()
     })
-
 
     await userEvent.click(getAllByRole('button')[3])
     const branchesListBox = within(getByRole('listbox'))

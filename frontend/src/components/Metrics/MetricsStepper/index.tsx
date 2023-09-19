@@ -156,11 +156,11 @@ const MetricsStepper = () => {
       /* istanbul ignore next */
       cycleTime: cycleTimeSettings
         ? {
-          /* istanbul ignore next */
-          jiraColumns: cycleTimeSettings?.map(({ name, value }: { name: string; value: string }) => ({
+            /* istanbul ignore next */
+            jiraColumns: cycleTimeSettings?.map(({ name, value }: { name: string; value: string }) => ({
               [name]: value,
             })),
-          treatFlagCardAsBlock,
+            treatFlagCardAsBlock,
           }
         : undefined,
       doneStatus: doneColumn,

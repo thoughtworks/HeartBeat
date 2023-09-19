@@ -94,7 +94,9 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
     ])
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }])
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([
+      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
+    ])
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true)
     expect(savedMetricsSetting.importedData).toEqual({
       importedCrews: [],
@@ -222,7 +224,9 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
     ])
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual([{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }])
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual([
+      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
+    ])
   })
 
   it('should update metricsState when its value changed given isProjectCreated is false and selectedDoneColumns', () => {
@@ -531,7 +535,7 @@ describe('saveMetricsSetting reducer', () => {
         importedLeadTime: mockImportedLeadTime,
       },
       deploymentWarningMessage: [
-        { id: 0, organization: null, pipelineName: null, step: null},
+        { id: 0, organization: null, pipelineName: null, step: null },
         { id: 1, organization: null, pipelineName: null, step: null },
       ],
       leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
@@ -543,7 +547,13 @@ describe('saveMetricsSetting reducer', () => {
         steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         expectedSettings: [
-          { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
+          {
+            id: 0,
+            organization: 'mockOrganization1',
+            pipelineName: 'mockPipelineName1',
+            step: 'mockStep1',
+            branches: [],
+          },
           { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '', branches: [] },
         ],
         expectedWarning: [
@@ -574,7 +584,13 @@ describe('saveMetricsSetting reducer', () => {
         steps: mockSteps,
         type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
         expectedSettings: [
-          { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
+          {
+            id: 0,
+            organization: 'mockOrganization1',
+            pipelineName: 'mockPipelineName1',
+            step: 'mockStep1',
+            branches: [],
+          },
         ],
         expectedWarning: [{ id: 0, organization: null, pipelineName: null, step: null }],
       },
@@ -588,7 +604,7 @@ describe('saveMetricsSetting reducer', () => {
             organization: 'mockOrganization1',
             pipelineName: 'mockPipelineName1',
             step: '',
-            branches: []
+            branches: [],
           },
         ],
         expectedWarning: [{ id: 0, organization: null, pipelineName: null, step: null }],

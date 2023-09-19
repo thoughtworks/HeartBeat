@@ -321,7 +321,7 @@ export const metricsSlice = createSlice({
       const updatedImportedPipelineBranches =
         updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.branches ?? []
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
-      const validBranches = _.filter(branches, branch => updatedImportedPipelineBranches.includes(branch))
+      const validBranches = _.filter(branches, (branch) => updatedImportedPipelineBranches.includes(branch))
       const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>

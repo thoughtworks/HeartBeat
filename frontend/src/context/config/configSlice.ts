@@ -229,5 +229,4 @@ export const selectBranches = (state: RootState, organizationName: string, pipel
     (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
   )?.branches ?? []
 
-
 export default configSlice.reducer

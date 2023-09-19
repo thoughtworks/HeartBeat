@@ -452,7 +452,7 @@ describe('saveMetricsSetting reducer', () => {
         orgName: 'mockOrganization1',
         repository: 'mockRepository1',
         steps: ['mock step 1', 'mock step 2'],
-        branches: []
+        branches: [],
       },
     ]
     const testCases = [
@@ -522,7 +522,7 @@ describe('saveMetricsSetting reducer', () => {
           organization: 'mockOrganization1',
           pipelineName: 'mockPipelineName1',
           step: '',
-          branches: []
+          branches: [],
         },
       ],
       importedData: {

@@ -166,7 +166,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
         orgName: 'mockOrgName',
         repository: 'mockRep',
         step: 'step',
-        branches: []
+        branches: [],
       },
     ],
   },

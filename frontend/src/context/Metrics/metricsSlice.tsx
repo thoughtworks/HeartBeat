@@ -317,7 +317,8 @@ export const metricsSlice = createSlice({
       const updatedImportedPipeline =
         type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
       const updatedImportedPipelineStep = updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.step ?? ''
-      const updatedImportedPipelineBranches = updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.branches ?? []
+      const updatedImportedPipelineBranches =
+        updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.branches ?? []
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
       const validBranches = branches.filter((branch: any) => updatedImportedPipelineBranches.includes(branch))
       const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE

@@ -21,7 +21,15 @@ export interface ReportRequestDTO {
   codebaseSetting?: {
     type: string
     token: string
-    leadTime: { id: string; name: string; orgId: string; orgName: string; repository: string; step: string, branches: string[] }[]
+    leadTime: {
+      id: string
+      name: string
+      orgId: string
+      orgName: string
+      repository: string
+      step: string
+      branches: string[]
+    }[]
   }
   jiraBoardSetting?: {
     token: string

@@ -13,7 +13,7 @@ import {
   REMOVE_BUTTON,
   STEP,
 } from '../../../../fixtures'
-import { PipelineSetting } from "@src/context/interface";
+import { PipelineSetting } from '@src/context/interface'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -53,7 +53,7 @@ describe('PipelineMetricSelection', () => {
     organization: '',
     pipelineName: '',
     step: '',
-    branches: []
+    branches: [],
   }
   const mockHandleClickRemoveButton = jest.fn()
   const mockUpdatePipeline = jest.fn()

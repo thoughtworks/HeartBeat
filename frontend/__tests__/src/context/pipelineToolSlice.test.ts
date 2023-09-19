@@ -70,7 +70,7 @@ describe('pipelineTool reducer', () => {
               orgName: 'mock orgName',
               repository: 'mock repository url',
               steps: [],
-              branches: []
+              branches: [],
             },
           ],
         },

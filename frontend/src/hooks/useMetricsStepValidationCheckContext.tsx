@@ -2,12 +2,11 @@ import React, { createContext, useContext } from 'react'
 import { useAppSelector } from '@src/hooks/index'
 import { selectDeploymentFrequencySettings, selectLeadTimeForChanges } from '@src/context/Metrics/metricsSlice'
 import { PIPELINE_SETTING_TYPES } from '@src/constants'
+import { PipelineSetting } from '@src/context/interface'
 
 interface ProviderContextType {
   isPipelineValid: (type: string) => boolean
-  getDuplicatedPipeLineIds: (
-    pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[]
-  ) => number[]
+  getDuplicatedPipeLineIds: (pipelineSettings: PipelineSetting[]) => number[]
 }
 
 interface ContextProviderProps {
@@ -22,9 +21,7 @@ export const ValidationContext = createContext<ProviderContextType>({
 const assignErrorMessage = (label: string, value: string, id: number, duplicatedPipeLineIds: number[]) =>
   !value ? `${label} is required` : duplicatedPipeLineIds.includes(id) ? `duplicated ${label}` : ''
 
-const getDuplicatedPipeLineIds = (
-  pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[]
-) => {
+const getDuplicatedPipeLineIds = (pipelineSettings: PipelineSetting[]) => {
   const errors: { [key: string]: number[] } = {}
   pipelineSettings.forEach(({ id, organization, pipelineName, step }) => {
     if (organization && pipelineName && step) {
@@ -38,9 +35,7 @@ const getDuplicatedPipeLineIds = (
     .flat()
 }
 
-const getErrorMessages = (
-  pipelineSettings: { id: number; organization: string; pipelineName: string; step: string }[]
-) => {
+const getErrorMessages = (pipelineSettings: PipelineSetting[]) => {
   const duplicatedPipelineIds: number[] = getDuplicatedPipeLineIds(pipelineSettings)
   return pipelineSettings.map(({ id, organization, pipelineName, step }) => ({
     id,

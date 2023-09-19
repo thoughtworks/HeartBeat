@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import { StyledSection } from '@src/components/Common/ConfigForms'
 import { theme } from '@src/theme'
-import { FormControl } from "@mui/material";
+import { FormControl } from '@mui/material'
 
 export const PipelineMetricSelectionWrapper = styled(StyledSection)`
   width: 100%;

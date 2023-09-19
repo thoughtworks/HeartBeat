@@ -37,7 +37,7 @@ export class MetricsClient extends HttpClient {
     return {
       response: this.steps,
       haveStep: this.haveStep,
-      branches: this.branches
+      branches: this.branches,
     }
   }
 }

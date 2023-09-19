@@ -95,10 +95,18 @@ const ReportStep = () => {
           name,
           step,
           repository,
-          branches
+          branches,
         }
       }
-    }) as { id: string; name: string; orgId: string; orgName: string; repository: string; step: string, branches: string[] }[]
+    }) as {
+      id: string
+      name: string
+      orgId: string
+      orgName: string
+      repository: string
+      step: string
+      branches: string[]
+    }[]
   }
 
   const msg = `${email}:${token}`

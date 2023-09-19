@@ -13,8 +13,8 @@ import { LEAD_TIME_FOR_CHANGES, ORGANIZATION, REMOVE_BUTTON } from '../../../fix
 jest.mock('@src/hooks', () => ({
   useAppDispatch: () => jest.fn(),
   useAppSelector: jest.fn().mockReturnValue([
-    { id: 0, organization: '', pipelineName: '', steps: '' },
-    { id: 1, organization: '', pipelineName: '', steps: '' },
+    { id: 0, organization: '', pipelineName: '', steps: '', branches: [] },
+    { id: 1, organization: '', pipelineName: '', steps: '', branches: [] },
   ]),
 }))
 
@@ -32,6 +32,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
   selectPipelineNames: jest.fn().mockReturnValue(['']),
   selectSteps: jest.fn().mockReturnValue(['']),
+  selectBranches: jest.fn().mockReturnValue(['']),
 }))
 
 const mockValidationCheckContext = {

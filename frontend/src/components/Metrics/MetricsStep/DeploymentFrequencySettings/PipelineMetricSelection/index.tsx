@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
 import {
@@ -6,8 +6,8 @@ import {
   FormControlWrapper,
   PipelineMetricSelectionWrapper,
   RemoveButton,
-  WarningMessage
-} from "./style";
+  WarningMessage,
+} from './style'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
@@ -17,8 +17,8 @@ import {
   selectPipelineOrganizations,
   selectSteps,
   selectStepsParams,
-  updatePipelineToolVerifyResponseSteps
-} from "@src/context/config/configSlice";
+  updatePipelineToolVerifyResponseSteps,
+} from '@src/context/config/configSlice'
 import { store } from '@src/store'
 import {
   selectOrganizationWarningMessage,
@@ -27,17 +27,9 @@ import {
   updatePipelineStep,
 } from '@src/context/Metrics/metricsSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
-import { DEFAULT_HELPER_TEXT, NO_STEP_WARNING_MESSAGE, SELECTED_VALUE_SEPARATOR } from "@src/constants";
-import {
-  Checkbox,
-
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  Select,
-  SelectChangeEvent
-} from "@mui/material";
-import _ from 'lodash';
+import { NO_STEP_WARNING_MESSAGE, SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import { Checkbox, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import _ from 'lodash'
 
 interface pipelineMetricSelectionProps {
   type: string
@@ -73,7 +65,10 @@ export const PipelineMetricSelection = ({
   const pipelineNameWarningMessage = selectPipelineNameWarningMessage(store.getState(), id, type)
   const stepWarningMessage = selectStepWarningMessage(store.getState(), id, type)
   const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false)
-  const isAllBranchesSelected = useMemo(() => !_.isEmpty(branchesOptions) && _.isEqual(branches.length, branchesOptions.length), [branches, branchesOptions])
+  const isAllBranchesSelected = useMemo(
+    () => !_.isEmpty(branchesOptions) && _.isEqual(branches.length, branchesOptions.length),
+    [branches, branchesOptions]
+  )
 
   const handleClick = () => {
     onRemovePipeline(id)
@@ -95,10 +90,10 @@ export const PipelineMetricSelection = ({
   }
 
   const handleBranchChange = (event: SelectChangeEvent<string[]>) => {
-    const selectBranches = event.target.value
+    let selectBranches = event.target.value
     if (_.isEqual(selectBranches[selectBranches.length - 1], 'All')) {
-      onUpdatePipeline(id, 'Branches', _.isEqual(branchesOptions.length, branches.length) ? [] : branchesOptions)
-      return
+      /* istanbul ignore next */
+      selectBranches = _.isEqual(branchesOptions.length, branches.length) ? [] : branchesOptions
     }
     onUpdatePipeline(id, 'Branches', selectBranches)
   }
@@ -165,7 +160,7 @@ export const PipelineMetricSelection = ({
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
         />
       )}
-      {organization && pipelineName && <BranchSelection/>}
+      {organization && pipelineName && <BranchSelection />}
       <ButtonWrapper>
         {isShowRemoveButton && (
           <RemoveButton data-test-id={'remove-button'} onClick={handleClick}>

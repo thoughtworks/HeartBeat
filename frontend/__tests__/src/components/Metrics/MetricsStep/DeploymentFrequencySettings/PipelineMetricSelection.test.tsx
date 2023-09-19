@@ -6,6 +6,7 @@ import { PipelineMetricSelection } from '@src/components/Metrics/MetricsStep/Dep
 import { metricsClient } from '@src/clients/MetricsClient'
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice'
 import {
+  BRANCH,
   ERROR_MESSAGE_TIME_DURATION,
   ORGANIZATION,
   PIPELINE_NAME,
@@ -13,7 +14,7 @@ import {
   REMOVE_BUTTON,
   STEP,
 } from '../../../../fixtures'
-import { PipelineSetting } from "@src/context/interface";
+import { PipelineSetting } from '@src/context/interface'
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -28,6 +29,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName', 'mockOrgName2']),
   selectPipelineNames: jest.fn().mockReturnValue(['mockName', 'mockName2']),
   selectSteps: jest.fn().mockReturnValue(['step1', 'step2']),
+  selectBranches: jest.fn().mockReturnValue(['branch1', 'branch2']),
   selectStepsParams: jest.fn().mockReturnValue({
     buildId: '',
     organizationId: '',
@@ -53,7 +55,7 @@ describe('PipelineMetricSelection', () => {
     organization: '',
     pipelineName: '',
     step: '',
-    branches: []
+    branches: [],
   }
   const mockHandleClickRemoveButton = jest.fn()
   const mockUpdatePipeline = jest.fn()
@@ -122,6 +124,7 @@ describe('PipelineMetricSelection', () => {
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument()
     expect(getByText(PIPELINE_NAME)).toBeInTheDocument()
+    expect(getByText(BRANCH)).toBeInTheDocument()
     expect(getByText(STEP)).toBeInTheDocument()
   })
 
@@ -182,6 +185,35 @@ describe('PipelineMetricSelection', () => {
     await userEvent.click(stepsListBox.getByText('step2'))
 
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
+  })
+
+  it('should show branches selection when getSteps succeed ', async () => {
+    metricsClient.getSteps = jest
+      .fn()
+      .mockReturnValue({ response: ['steps'], haveStep: true, branches: ['branch1', 'branch2'] })
+    const { getByRole, getByText, getAllByRole } = await setup(
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: ['branch1', 'branch2'] },
+      false,
+      false
+    )
+
+    await waitFor(() => {
+      expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
+      expect(getByText(BRANCH)).toBeInTheDocument()
+    })
+
+    await userEvent.click(getAllByRole('button')[3])
+    const branchesListBox = within(getByRole('listbox'))
+    const allOption = branchesListBox.getByRole('option', { name: 'All' })
+    await userEvent.click(allOption)
+    expect(branchesListBox.getByRole('option', { name: 'branch1' })).toHaveProperty('selected', true)
+    expect(branchesListBox.getByRole('option', { name: 'branch2' })).toHaveProperty('selected', true)
+    await userEvent.click(allOption)
+    expect(branchesListBox.getByRole('option', { name: 'branch1' })).toHaveProperty('selected', true)
+    expect(branchesListBox.getByRole('option', { name: 'branch2' })).toHaveProperty('selected', true)
+    expect(getByText('branch2')).toBeInTheDocument()
+
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
   })
 
   it('should show duplicated message given duplicated id', async () => {

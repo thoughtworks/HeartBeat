@@ -28,6 +28,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName', 'mockOrgName2']),
   selectPipelineNames: jest.fn().mockReturnValue(['mockName', 'mockName2']),
   selectSteps: jest.fn().mockReturnValue(['step1', 'step2']),
+  selectBranches: jest.fn().mockReturnValue([]),
   selectStepsParams: jest.fn().mockReturnValue({
     buildId: '',
     organizationId: '',

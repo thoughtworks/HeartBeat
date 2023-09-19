@@ -66,6 +66,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mock new organization']),
   selectPipelineNames: jest.fn().mockReturnValue(['mock new pipelineName']),
   selectSteps: jest.fn().mockReturnValue(['mock new step']),
+  selectBranches: jest.fn().mockReturnValue(['mock new branch']),
 }))
 
 jest.mock('@src/emojis/emoji', () => ({
@@ -369,6 +370,7 @@ describe('MetricsStepper', () => {
           organization: 'mock new organization',
           pipelineName: 'mock new pipelineName',
           step: 'mock new step',
+          branches: ['mock new branch'],
         },
       ],
       doneStatus: ['Done', 'Canceled'],
@@ -378,6 +380,7 @@ describe('MetricsStepper', () => {
           organization: 'mock new organization',
           pipelineName: 'mock new pipelineName',
           step: 'mock new step',
+          branches: ['mock new branch']
         },
       ],
     }

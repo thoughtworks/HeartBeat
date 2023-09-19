@@ -10,12 +10,12 @@
 
 :root {
   --user-font-scale: 1rem - 16px;
-  --max-width: calc(100% - 1rem);
+  --max-width: 100vw;
 }
 
 @media (min-width: 50em) {
   :root {
-    --max-width: 46em;
+    --max-width: 100vw;
   }
 }
 
@@ -239,11 +239,13 @@ table {
 tr:nth-of-type(odd) {
   background: var(--theme-bg-hover);
 }
+
 th {
   background: var(--color-black);
   color: var(--theme-color);
   font-weight: bold;
 }
+
 td,
 th {
   padding: 6px;
@@ -346,9 +348,11 @@ h2.heading {
   color: var(--theme-text);
   text-decoration: underline;
 }
+
 .header-link svg {
   opacity: 0.6;
 }
+
 .header-link:hover svg {
   opacity: 0.8;
 }
@@ -357,9 +361,11 @@ h2.heading {
 .header-link {
   padding-inline-start: 1rem;
 }
+
 .header-link.depth-3 {
   padding-inline-start: 2rem;
 }
+
 .header-link.depth-4 {
   padding-inline-start: 3rem;
 }

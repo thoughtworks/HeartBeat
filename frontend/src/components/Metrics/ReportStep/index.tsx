@@ -82,7 +82,7 @@ const ReportStep = () => {
     if (!pipelineConfigs[0].organization && pipelineConfigs.length === 1) {
       return []
     }
-    return pipelineConfigs.map(({ organization, pipelineName, step }) => {
+    return pipelineConfigs.map(({ organization, pipelineName, step, branches }) => {
       const pipelineConfigFromPipelineList = configData.pipelineTool.verifiedResponse.pipelineList.find(
         (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization
       )
@@ -95,9 +95,18 @@ const ReportStep = () => {
           name,
           step,
           repository,
+          branches,
         }
       }
-    }) as { id: string; name: string; orgId: string; orgName: string; repository: string; step: string }[]
+    }) as {
+      id: string
+      name: string
+      orgId: string
+      orgName: string
+      repository: string
+      step: string
+      branches: string[]
+    }[]
   }
 
   const msg = `${email}:${token}`

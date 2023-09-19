@@ -54,8 +54,15 @@ class BuildKiteBuildInfoTest {
 			.withState("pass")
 			.withFinishedAt("2022-09-16T04:57:09.545Z")
 			.build();
+		BuildKiteJob successJob5 = BuildKiteJobBuilder.withDefault()
+			.withName("job9")
+			.withName("deploy uat")
+			.withState("pass")
+			.withFinishedAt(null)
+			.withStartedAt(null)
+			.build();
 		List<BuildKiteJob> failedJobs = Arrays.asList(failedJob1, failedJob2, failedJob3);
-		List<BuildKiteJob> successJobs = Arrays.asList(successJob1, successJob2, successJob3, successJob4);
+		List<BuildKiteJob> successJobs = Arrays.asList(successJob1, successJob2, successJob3, successJob4, successJob5);
 		List<String> steps = Arrays.asList("test", "build", "deploy qa", "deploy uat");
 
 		BuildKiteBuildInfo info = BuildKiteBuildInfoBuilder.withDefault().build();

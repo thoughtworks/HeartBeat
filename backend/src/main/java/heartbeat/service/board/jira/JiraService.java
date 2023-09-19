@@ -450,7 +450,7 @@ public class JiraService {
 		}
 		futures.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged);
+					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
 			List<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
@@ -483,14 +483,14 @@ public class JiraService {
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,
-			String keyFlagged) {
+			String keyFlagged, List<String> realDoneStatus) {
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				treatFlagCardAsBlock, keyFlagged);
 		List<StatusChangedItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				false, keyFlagged);
-		List<CycleTimeInfo> cycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray);
-		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag);
+		List<CycleTimeInfo> cycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray, realDoneStatus);
+		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag, realDoneStatus);
 
 		return CycleTimeInfoDTO.builder()
 			.cycleTimeInfos(cycleTimeInfos)
@@ -645,7 +645,7 @@ public class JiraService {
 
 		allNonDoneCards.forEach(card -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, card.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged);
+					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
 			if (users.stream().anyMatch(assigneeSet::contains)) {

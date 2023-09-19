@@ -12,6 +12,7 @@ import {
   STEP_WARNING_MESSAGE,
 } from '@src/constants'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
+import _ from 'lodash'
 
 export interface IPipelineConfig {
   id: number
@@ -320,7 +321,7 @@ export const metricsSlice = createSlice({
       const updatedImportedPipelineBranches =
         updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.branches ?? []
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
-      const validBranches = branches.filter((branch: any) => updatedImportedPipelineBranches.includes(branch))
+      const validBranches = _.filter(branches, branch => updatedImportedPipelineBranches.includes(branch))
       const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>

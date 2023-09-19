@@ -32,8 +32,8 @@ const initState = {
   users: [],
   doneColumn: [],
   cycleTimeSettings: [],
-  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
+  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
+  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   classification: [],
   treatFlagCardAsBlock: true,
   importedData: {
@@ -308,7 +308,7 @@ describe('saveMetricsSetting reducer', () => {
     )
 
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
-      { id: 0, organization: '', pipelineName: '', step: 'step1' },
+      { id: 0, organization: '', pipelineName: '', step: 'step1', branches: [] },
     ])
   })
 
@@ -316,13 +316,13 @@ describe('saveMetricsSetting reducer', () => {
     const multipleDeploymentFrequencySettingsInitState = {
       ...initState,
       deploymentFrequencySettings: [
-        { id: 0, organization: '', pipelineName: '', step: '' },
-        { id: 1, organization: '', pipelineName: '', step: '' },
+        { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
+        { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
       ],
     }
     const updatedDeploymentFrequencySettings = [
-      { id: 0, organization: 'mock new organization', pipelineName: '', step: '' },
-      { id: 1, organization: '', pipelineName: '', step: '' },
+      { id: 0, organization: 'mock new organization', pipelineName: '', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
     ]
     const savedMetricsSetting = saveMetricsSettingReducer(
       multipleDeploymentFrequencySettingsInitState,
@@ -334,8 +334,8 @@ describe('saveMetricsSetting reducer', () => {
 
   it('should add a deploymentFrequencySetting when handle addADeploymentFrequencySettings given initial state', () => {
     const addedDeploymentFrequencySettings = [
-      { id: 0, organization: '', pipelineName: '', step: '' },
-      { id: 1, organization: '', pipelineName: '', step: '' },
+      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
     ]
 
     const savedMetricsSetting = saveMetricsSettingReducer(initState, addADeploymentFrequencySetting())
@@ -357,8 +357,8 @@ describe('saveMetricsSetting reducer', () => {
     const multipleDeploymentFrequencySettingsInitState = {
       ...initState,
       deploymentFrequencySettings: [
-        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', step: 'step1' },
-        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', step: 'step2' },
+        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', step: 'step1', branches: [] },
+        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', step: 'step2', branches: [] },
       ],
     }
 
@@ -372,8 +372,8 @@ describe('saveMetricsSetting reducer', () => {
 
   it('should add a leadTimeForChange when handle leadTimeForChanges given initial state', () => {
     const addedLeadTimeForChanges = [
-      { id: 0, organization: '', pipelineName: '', step: '' },
-      { id: 1, organization: '', pipelineName: '', step: '' },
+      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
     ]
 
     const savedMetricsSetting = saveMetricsSettingReducer(initState, addALeadTimeForChanges())
@@ -391,13 +391,13 @@ describe('saveMetricsSetting reducer', () => {
     const multipleLeadTimeForChangesInitState = {
       ...initState,
       leadTimeForChanges: [
-        { id: 0, organization: '', pipelineName: '', step: '' },
-        { id: 1, organization: '', pipelineName: '', step: '' },
+        { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
+        { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
       ],
     }
     const updatedLeadTimeForChanges = [
-      { id: 0, organization: '', pipelineName: '', step: 'step1' },
-      { id: 1, organization: '', pipelineName: '', step: '' },
+      { id: 0, organization: '', pipelineName: '', step: 'step1', branches: [] },
+      { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
     ]
     const savedMetricsSetting = saveMetricsSettingReducer(
       multipleLeadTimeForChangesInitState,
@@ -411,8 +411,8 @@ describe('saveMetricsSetting reducer', () => {
     const multipleLeadTimeForChangesInitState = {
       ...initState,
       leadTimeForChanges: [
-        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', step: 'step1' },
-        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', step: 'step2' },
+        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', step: 'step1', branches: [] },
+        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', step: 'step2', branches: [] },
       ],
     }
 
@@ -429,12 +429,12 @@ describe('saveMetricsSetting reducer', () => {
 
   describe('updatePipelineSettings', () => {
     const mockImportedDeployment = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
-      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2' },
-      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3' },
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
+      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2', branches: [] },
+      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3', branches: [] },
     ]
     const mockImportedLeadTime = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
     ]
     const mockInitState = {
       ...initState,
@@ -452,6 +452,7 @@ describe('saveMetricsSetting reducer', () => {
         orgName: 'mockOrganization1',
         repository: 'mockRepository1',
         steps: ['mock step 1', 'mock step 2'],
+        branches: []
       },
     ]
     const testCases = [
@@ -459,26 +460,26 @@ describe('saveMetricsSetting reducer', () => {
         isProjectCreated: false,
         expectSetting: {
           deploymentFrequencySettings: [
-            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
-            { id: 1, organization: 'mockOrganization1', pipelineName: '', step: '' },
-            { id: 2, organization: '', pipelineName: '', step: '' },
+            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
+            { id: 1, organization: 'mockOrganization1', pipelineName: '', step: '', branches: [] },
+            { id: 2, organization: '', pipelineName: '', step: '', branches: [] },
           ],
           leadTimeForChanges: [
-            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
+            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
           ],
           deploymentWarningMessage: [
             { id: 0, organization: null, pipelineName: null, step: null },
-            { id: 1, organization: null, pipelineName: PIPELINE_NAME_WARNING_MESSAGE, step: null },
-            { id: 2, organization: ORGANIZATION_WARNING_MESSAGE, pipelineName: null, step: null },
+            { id: 1, organization: null, pipelineName: PIPELINE_NAME_WARNING_MESSAGE, step: null, branches: [] },
+            { id: 2, organization: ORGANIZATION_WARNING_MESSAGE, pipelineName: null, step: null, branches: [] },
           ],
-          leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
+          leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null, branches: [] }],
         },
       },
       {
         isProjectCreated: true,
         expectSetting: {
-          deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-          leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
+          deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
+          leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
           deploymentWarningMessage: [],
           leadTimeWarningMessage: [],
         },
@@ -502,18 +503,18 @@ describe('saveMetricsSetting reducer', () => {
 
   describe('updatePipelineSteps', () => {
     const mockImportedDeployment = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
-      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2' },
-      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3' },
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
+      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2', branches: [] },
+      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3', branches: [] },
     ]
     const mockImportedLeadTime = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1' },
+      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
     ]
     const mockInitState = {
       ...initState,
       deploymentFrequencySettings: [
-        { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '' },
-        { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '' },
+        { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
+        { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '', branches: [] },
       ],
       leadTimeForChanges: [
         {
@@ -521,6 +522,7 @@ describe('saveMetricsSetting reducer', () => {
           organization: 'mockOrganization1',
           pipelineName: 'mockPipelineName1',
           step: '',
+          branches: []
         },
       ],
       importedData: {
@@ -529,10 +531,10 @@ describe('saveMetricsSetting reducer', () => {
         importedLeadTime: mockImportedLeadTime,
       },
       deploymentWarningMessage: [
-        { id: 0, organization: null, pipelineName: null, step: null },
-        { id: 1, organization: null, pipelineName: null, step: null },
+        { id: 0, organization: null, pipelineName: null, step: null, branch: null },
+        { id: 1, organization: null, pipelineName: null, step: null, branch: null },
       ],
-      leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
+      leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null, branch: null }],
     }
     const mockSteps = ['mockStep1']
     const testSettingsCases = [

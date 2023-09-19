@@ -9,6 +9,7 @@ export interface pipeline {
   orgName: string
   repository: string
   steps: string[]
+  branches: string[]
 }
 
 export const initialPipelineToolVerifiedResponseState: IPipelineToolVerifyResponse = {

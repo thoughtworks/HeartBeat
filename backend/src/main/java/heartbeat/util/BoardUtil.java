@@ -78,7 +78,7 @@ public class BoardUtil {
 			totalFlagTimeInDays += flagTimeInDays;
 		}
 		double realColumnTimeInDays = 0.0;
-		if (Objects.equals(columnTimeStampItem.getStatus(), CardStepsEnum.BLOCK.getValue())) {
+		if (Objects.equals(columnTimeStampItem.getStatus(), CardStepsEnum.BLOCK.getValue().toUpperCase())) {
 			realColumnTimeInDays = originColumnTimeInDays + totalFlagTimeInDays - totalOverlapTimeInDays;
 		} else {
 			realColumnTimeInDays = originColumnTimeInDays - totalOverlapTimeInDays;

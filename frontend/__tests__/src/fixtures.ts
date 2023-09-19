@@ -277,6 +277,7 @@ export const REMOVE_BUTTON = 'Remove'
 export const ORGANIZATION = 'Organization'
 export const PIPELINE_NAME = 'Pipeline Name'
 export const STEP = 'Step'
+export const BRANCH = 'Branches'
 
 export const PR_LEAD_TIME = 'PR Lead Time'
 export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time'

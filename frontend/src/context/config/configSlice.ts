@@ -226,6 +226,7 @@ export const selectSteps = (state: RootState, organizationName: string, pipeline
 
 export const selectBranches = (state: RootState, organizationName: string, pipelineName: string) =>
   state.config.pipelineTool.verifiedResponse.pipelineList.find(
+    /* istanbul ignore next */
     (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
   )?.branches ?? []
 

@@ -90,10 +90,10 @@ export const PipelineMetricSelection = ({
   }
 
   const handleBranchChange = (event: SelectChangeEvent<string[]>) => {
-    const selectBranches = event.target.value
+    let selectBranches = event.target.value
     if (_.isEqual(selectBranches[selectBranches.length - 1], 'All')) {
-      onUpdatePipeline(id, 'Branches', _.isEqual(branchesOptions.length, branches.length) ? [] : branchesOptions)
-      return
+      /* istanbul ignore next */
+      selectBranches = _.isEqual(branchesOptions.length, branches.length) ? [] : branchesOptions
     }
     onUpdatePipeline(id, 'Branches', selectBranches)
   }

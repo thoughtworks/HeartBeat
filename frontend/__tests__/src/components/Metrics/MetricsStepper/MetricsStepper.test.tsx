@@ -380,7 +380,7 @@ describe('MetricsStepper', () => {
           organization: 'mock new organization',
           pipelineName: 'mock new pipelineName',
           step: 'mock new step',
-          branches: ['mock new branch']
+          branches: ['mock new branch'],
         },
       ],
     }

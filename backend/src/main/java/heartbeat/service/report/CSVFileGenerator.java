@@ -65,7 +65,7 @@ public class CSVFileGenerator {
 			String[] headers = { "Pipeline Name", "Pipeline Step", "Build Number", "Committer",
 					"First Code Committed Time In PR", "Code Committed Time", "PR Created Time", "PR Merged Time",
 					"Deployment Completed Time", "Total Lead Time (HH:mm:ss)", "PR Lead Time (HH:mm:ss)",
-					"Pipeline Lead Time (HH:mm:ss)", "Status" };
+					"Pipeline Lead Time (HH:mm:ss)", "Status", "Branch" };
 
 			csvWriter.writeNext(headers);
 
@@ -76,6 +76,7 @@ public class CSVFileGenerator {
 				String stepName = csvInfo.getStepName();
 				String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
 				String state = csvInfo.getDeployInfo().getState();
+				String branch = csvInfo.getBuildInfo().getBranch();
 				if (csvInfo.getCommitInfo() != null) {
 					committerName = csvInfo.getCommitInfo().getCommit().getCommitter().getName();
 					commitDate = csvInfo.getCommitInfo().getCommit().getCommitter().getDate();
@@ -92,7 +93,7 @@ public class CSVFileGenerator {
 
 				String[] rowData = { pipelineName, stepName, buildNumber, committerName, firstCommitTimeInPr,
 						commitDate, prCreatedTime, prMergedTime, jobFinishTime, totalTime, prLeadTime, pipelineLeadTime,
-						state };
+						state, branch };
 
 				csvWriter.writeNext(rowData);
 			}

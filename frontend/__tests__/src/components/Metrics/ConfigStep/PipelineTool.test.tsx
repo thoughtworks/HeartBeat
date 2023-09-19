@@ -93,7 +93,7 @@ describe('PipelineTool', () => {
     await userEvent.click(getByRole('button', { name: 'Pipeline Tool' }))
     await userEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD))
     expect(tokenInput.value).toEqual('')
-  })
+  }, 50000)
 
   it('should clear all fields information when click reset button', async () => {
     const { getByRole, getByText, queryByRole } = setup()

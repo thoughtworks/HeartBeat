@@ -12,12 +12,14 @@ import {
   STEP_WARNING_MESSAGE,
 } from '@src/constants'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
+import _ from 'lodash'
 
 export interface IPipelineConfig {
   id: number
   organization: string
   pipelineName: string
   step: string
+  branches: string[]
 }
 
 export interface IPipelineWarningMessageConfig {
@@ -60,8 +62,8 @@ const initialState: savedMetricsSettingState = {
   users: [],
   doneColumn: [],
   cycleTimeSettings: [],
-  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '' }],
-  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '' }],
+  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
+  leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   treatFlagCardAsBlock: true,
   importedData: {
     importedCrews: [],
@@ -177,7 +179,7 @@ export const metricsSlice = createSlice({
       const newId = state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
       state.deploymentFrequencySettings = [
         ...state.deploymentFrequencySettings,
-        { id: newId, organization: '', pipelineName: '', step: '' },
+        { id: newId, organization: '', pipelineName: '', step: '', branches: [] },
       ]
     },
 
@@ -273,12 +275,13 @@ export const metricsSlice = createSlice({
           .map((item: pipeline) => item.name)
       const getValidPipelines = (pipelines: IPipelineConfig[]) =>
         !pipelines.length || isProjectCreated
-          ? [{ id: 0, organization: '', pipelineName: '', step: '' }]
+          ? [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }]
           : pipelines.map(({ id, organization, pipelineName }) => ({
               id,
               organization: orgNames.has(organization) ? organization : '',
               pipelineName: filteredPipelineNames(organization).includes(pipelineName) ? pipelineName : '',
               step: '',
+              branches: [],
             }))
 
       const createPipelineWarning = ({ id, organization, pipelineName }: IPipelineConfig) => {
@@ -310,12 +313,15 @@ export const metricsSlice = createSlice({
     },
 
     updatePipelineStep: (state, action) => {
-      const { steps, id, type } = action.payload
+      const { steps, id, type, branches } = action.payload
       const { importedDeployment, importedLeadTime } = state.importedData
       const updatedImportedPipeline =
         type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
       const updatedImportedPipelineStep = updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.step ?? ''
+      const updatedImportedPipelineBranches =
+        updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.branches ?? []
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
+      const validBranches = _.filter(branches, (branch) => updatedImportedPipelineBranches.includes(branch))
       const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
@@ -324,6 +330,7 @@ export const metricsSlice = createSlice({
             ? {
                 ...pipeline,
                 step: validStep,
+                branches: validBranches,
               }
             : pipeline
         )
@@ -361,7 +368,7 @@ export const metricsSlice = createSlice({
       const newId = state.leadTimeForChanges[state.leadTimeForChanges.length - 1].id + 1
       state.leadTimeForChanges = [
         ...state.leadTimeForChanges,
-        { id: newId, organization: '', pipelineName: '', step: '' },
+        { id: newId, organization: '', pipelineName: '', step: '', branches: [] },
       ]
     },
 

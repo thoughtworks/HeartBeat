@@ -475,7 +475,6 @@ class BuildKiteServiceTest {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().withStep("xxxx").build();
 		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build());
 
-
 		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
 				mockStartTime, mockEndTime);
 

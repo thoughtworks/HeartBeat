@@ -21,4 +21,6 @@ public class DeployInfo {
 
 	private String state;
 
+	private String jobName;
+
 }

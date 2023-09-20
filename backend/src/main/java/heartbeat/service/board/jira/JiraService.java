@@ -1,6 +1,5 @@
 package heartbeat.service.board.jira;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -65,6 +64,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.TODO;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -80,8 +80,6 @@ public class JiraService {
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
-
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private static final String DONE_CARD_TAG = "done";
 
@@ -656,7 +654,8 @@ public class JiraService {
 					request.isTreatFlagCardAsBlock(), keyFlagged);
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
-			if (users.stream().anyMatch(assigneeSet::contains)) {
+			String cardStatus = card.getFields().getStatus().getName();
+			if (users.stream().anyMatch(assigneeSet::contains) && !TODO.getValue().equalsIgnoreCase(cardStatus)) {
 				CardCycleTime cardCycleTime = calculateCardCycleTime(card.getKey(),
 						cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns);
 

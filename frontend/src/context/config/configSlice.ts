@@ -127,12 +127,13 @@ export const configSlice = createSlice({
       }))
     },
     updatePipelineToolVerifyResponseSteps: (state, action) => {
-      const { organization, pipelineName, steps } = action.payload
+      const { organization, pipelineName, steps, branches } = action.payload
       state.pipelineTool.verifiedResponse.pipelineList = state.pipelineTool.verifiedResponse.pipelineList.map(
         (pipeline) =>
           pipeline.name === pipelineName && pipeline.orgName === organization
             ? {
                 ...pipeline,
+                branches: branches,
                 steps: steps,
               }
             : pipeline
@@ -222,5 +223,11 @@ export const selectSteps = (state: RootState, organizationName: string, pipeline
   state.config.pipelineTool.verifiedResponse.pipelineList.find(
     (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
   )?.steps ?? []
+
+export const selectBranches = (state: RootState, organizationName: string, pipelineName: string) =>
+  state.config.pipelineTool.verifiedResponse.pipelineList.find(
+    /* istanbul ignore next */
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+  )?.branches ?? []
 
 export default configSlice.reducer

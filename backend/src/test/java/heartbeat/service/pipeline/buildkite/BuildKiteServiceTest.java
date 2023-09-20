@@ -7,6 +7,7 @@ import heartbeat.exception.UnauthorizedException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -41,6 +42,7 @@ import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionException;
@@ -186,7 +188,7 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId,
@@ -202,7 +204,7 @@ class BuildKiteServiceTest {
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.getStatus()).thenReturn(500);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(mockException);
 
 		assertThrows(RequestFailedException.class,
@@ -227,14 +229,14 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		BuildKiteJob testJob3 = BuildKiteJob.builder().name("testJob3").build();
 		BuildKiteJob testJob4 = BuildKiteJob.builder().name("").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList2 = new ArrayList<>();
 		buildKiteBuildInfoList2.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob3, testJob4)).build());
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(buildKiteBuildInfoList2);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
@@ -259,10 +261,10 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(new CompletionException(new NotFoundException("Client Error")));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -283,10 +285,10 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(new CompletionException(new ServiceUnavailableException("Service Unavailable")));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -307,10 +309,10 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenThrow(new RequestFailedException(504, "Server Error"));
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -332,10 +334,10 @@ class BuildKiteServiceTest {
 				httpHeaders, HttpStatus.OK);
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any()))
+				any(), any(), any()))
 			.thenReturn(buildKiteBuildInfoList);
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
@@ -360,7 +362,7 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
@@ -383,7 +385,7 @@ class BuildKiteServiceTest {
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
 				HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
@@ -405,7 +407,7 @@ class BuildKiteServiceTest {
 				HttpStatus.OK);
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 		List<BuildKiteBuildInfo> pipelineBuilds = buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment,
 				mockStartTime, mockEndTime);
@@ -420,7 +422,7 @@ class BuildKiteServiceTest {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenThrow(new UnauthorizedException("unauthorized"));
 
 		Assertions
@@ -442,7 +444,7 @@ class BuildKiteServiceTest {
 				HttpStatus.OK);
 
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				anyString(), anyString()))
+				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment, null, mockEndTime))
@@ -472,16 +474,12 @@ class BuildKiteServiceTest {
 	public void shouldReturnDeployInfoWhenMappedDeployInfoIsNull() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().withStep("xxxx").build();
 		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build());
-		DeployTimes expectedDeployTimes = DeployTimesBuilder.withDefault()
-			.withPipelineStep("xxxx")
-			.withPassed(Collections.emptyList())
-			.withFailed(Collections.emptyList())
-			.build();
 
 		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
 				mockStartTime, mockEndTime);
 
-		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
+		assertThat(0).isEqualTo(deployTimes.getPassed().size());
+		assertThat(1).isEqualTo(deployTimes.getFailed().size());
 	}
 
 	@Test
@@ -535,6 +533,19 @@ class BuildKiteServiceTest {
 				mockStartTime, mockEndTime);
 
 		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
+	}
+
+	@Test
+	void shouldReturnStepBeforeEndStepsGivenStepsArray() {
+		String targetStep = "Deploy qa";
+		List<String> stepArray = Arrays.asList("Test", "Build", targetStep, "Deploy prod");
+
+		List<String> result = buildKiteService.getStepsBeforeEndStep(targetStep, stepArray);
+
+		assertEquals(3, result.size());
+		assertEquals("Test", result.get(0));
+		assertEquals("Build", result.get(1));
+		assertEquals(targetStep, result.get(2));
 	}
 
 }

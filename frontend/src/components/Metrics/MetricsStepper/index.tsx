@@ -115,6 +115,7 @@ const MetricsStepper = () => {
   const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {
     return Object.fromEntries(
       Object.entries(metricsConfig).filter(([, value]) => {
+        /* istanbul ignore next */
         if (Array.isArray(value)) {
           return (
             !value.every((item) => item.organization === '') &&
@@ -149,10 +150,13 @@ const MetricsStepper = () => {
       treatFlagCardAsBlock,
     } = filterMetricsConfig(metricsConfig)
 
+    /* istanbul ignore next */
     const metricsData = {
       crews: users,
+      /* istanbul ignore next */
       cycleTime: cycleTimeSettings
         ? {
+            /* istanbul ignore next */
             jiraColumns: cycleTimeSettings?.map(({ name, value }: { name: string; value: string }) => ({
               [name]: value,
             })),

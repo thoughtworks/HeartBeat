@@ -60,7 +60,7 @@ describe('MetricsTypeCheckbox', () => {
     await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }))
 
     expect(getByText([VELOCITY, CYCLE_TIME].join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
-  }, 50000)
+  })
 
   it('should show all selections when all option are select', async () => {
     const { getByRole, getByText } = setup()

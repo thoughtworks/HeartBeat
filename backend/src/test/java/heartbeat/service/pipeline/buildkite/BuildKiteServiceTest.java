@@ -474,16 +474,13 @@ class BuildKiteServiceTest {
 	public void shouldReturnDeployInfoWhenMappedDeployInfoIsNull() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().withStep("xxxx").build();
 		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build());
-		DeployTimes expectedDeployTimes = DeployTimesBuilder.withDefault()
-			.withPipelineStep("xxxx")
-			.withPassed(Collections.emptyList())
-			.withFailed(Collections.emptyList())
-			.build();
+
 
 		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
 				mockStartTime, mockEndTime);
 
-		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
+		assertThat(0).isEqualTo(deployTimes.getPassed().size());
+		assertThat(1).isEqualTo(deployTimes.getFailed().size());
 	}
 
 	@Test

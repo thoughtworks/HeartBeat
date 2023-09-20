@@ -4,20 +4,67 @@ description: CycleTime calculation
 layout: ../../../layouts/MainLayout.astro
 ---
 
+## General process
+
+```plantuml
+@startuml
+skin rose
+start
+
+:get card from board;
+:filter card(done card or undone card);
+:calculate card cycle time;
+stop
+
+@enduml
+```
+
 ## Undone card
+
 ### Definition
+
 - **In current open sprint and status not in real done status.**
 
 > example:
 >
 > Real done columns: **'Testing' and 'Done'**
+>
 > - card A in 'In Dev' column
 > - card B in 'Review' column
 > - card C in 'Testing' column
-> 
+>
 > Result: card A and B are undone cards
 
+### Flow chart
+
+```plantuml
+@startuml
+skin rose
+
+start
+if (if the 'real done' column of the request is empty) then (yes)
+    :get all cards in open sprints;
+else (no)
+    :get cards in open sprints and which are not in 'real done' column;
+endif
+
+if (is the card list result empty) then (yes)
+    if (if the 'real done' column of the request is empty) then (yes)
+        :get all cards;
+    else (no)
+        :get cards which are not in 'real done' column;
+    endif
+else (no)
+
+endif
+:calculate card cycle time;
+stop
+@enduml
+
+```
+
 ### JQL to get undone cards
+
 ```java
 private JiraCardWithFields getAllNonDoneCardsForActiveSprint(URI baseUrl, List<String> status, BoardRequestParam boardRequestParam) {
     String jql;
@@ -31,26 +78,51 @@ private JiraCardWithFields getAllNonDoneCardsForActiveSprint(URI baseUrl, List<S
     return getCardList(baseUrl, boardRequestParam, jql, "nonDone");
 }
 ```
-	
+
 ---
 
 ## Done card
+
 ### Definition
+
 - **The earliest time move to real done column is in the date range user selected**
 
 > example:
 >
 > selected date range: **2023.8.7 ~ 2023.8.20**
-> 
+>
 > Real done columns: **'Testing' and 'Done'**
+>
 > - card A moved to 'Testing' column in 2023.8.6 and moved 'Done' column in 2023.8.9
 > - card B moved to 'Testing' column in 2023.8.8 and moved 'Done' column in 2023.8.10
 > - card C moved to 'Testing' column in 2023.8.15
 > - card D moved to 'Testing' column in 2023.8.21
-> 
+>
 > Result: card B and C are done cards
 
+### Flow chart
+
+```plantuml
+@startuml
+skin rose
+start
+
+:get cards which in the 'real done' column within the selected time range;
+:go through each card and get its history;
+:get the timestamp when the card was first moved to the 'real done' column;
+if (determine if this timestamp falls within the selected time range) then (yes)
+    :real done card in the selected time range;
+    :calculate card cycle time;
+    stop
+else (no)
+    stop
+endif
+@enduml
+
+```
+
 ### JQL to get done cards
+
 ```java
 private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
     if (boardType == BoardType.JIRA) {
@@ -72,8 +144,9 @@ private String parseJiraJql(BoardType boardType, List<String> doneColumns, Board
 ```
 
 ### Filter done card belonged to selected date range
+
 1. Get done card histories;
-2. Filter status changed histories;
+2. Filter histories about status changed;
 3. Filter status changed to real done statuses;
 4. Get the timestamps moved to real done statuses;
 5. Compare timestamps with selected date range to check whether it belongs to this range;

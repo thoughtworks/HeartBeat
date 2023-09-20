@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,18 +35,18 @@ public interface BuildKiteFeignClient {
 			@PathVariable String organizationId, @PathVariable String page, @PathVariable String perPage,
 			@RequestParam String startTime, @RequestParam String endTime);
 
-	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds")
+	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE )
 	@ResponseStatus(HttpStatus.OK)
 	ResponseEntity<List<BuildKiteBuildInfo>> getPipelineSteps(@RequestHeader("Authorization") String token,
 			@PathVariable String organizationId, @PathVariable String pipelineId, @RequestParam String page,
 			@RequestParam("per_page") String perPage, @RequestParam("created_from") String createdFrom,
-			@RequestParam("created_to") String createdTo, @RequestParam List<String> branch);
+			@RequestParam("created_to") String createdTo, @RequestParam("branch[]") List<String> branch);
 
-	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds")
+	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE )
 	@ResponseStatus(HttpStatus.OK)
 	List<BuildKiteBuildInfo> getPipelineStepsInfo(@RequestHeader("Authorization") String token,
 			@PathVariable String organizationId, @PathVariable String pipelineId, @RequestParam String page,
 			@RequestParam("per_page") String perPage, @RequestParam("created_from") String createdFrom,
-			@RequestParam("created_to") String createdTo, @RequestParam List<String> branch);
+			@RequestParam("created_to") String createdTo, @RequestParam("branch[]") List<String> branch);
 
 }

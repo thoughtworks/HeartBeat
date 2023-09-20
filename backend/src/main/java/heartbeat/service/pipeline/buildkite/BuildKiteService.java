@@ -121,7 +121,7 @@ public class BuildKiteService {
 		if (index != -1) {
 			return steps.subList(0, index + 1);
 		}
-		return Collections.singletonList(endStep);
+		return steps;
 	}
 
 	public PipelineStepsDTO fetchPipelineSteps(String token, String organizationId, String pipelineId,

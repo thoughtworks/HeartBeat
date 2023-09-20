@@ -213,13 +213,13 @@ public class BuildKiteService {
 	}
 
 	private CompletableFuture<List<BuildKiteBuildInfo>> getBuildKiteStepsAsync(String token, String organizationId,
-			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, List<String> branchStr) {
+			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, List<String> branch) {
 		return CompletableFuture.supplyAsync(() -> {
 			log.info("Start to paginated pipeline steps info, orgId: {}, pipelineId: {}, stepsParam: {}, page:{}",
 					organizationId, pipelineId, stepsParam, page);
 			List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
 					organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
-					stepsParam.getEndTime(), branchStr);
+					stepsParam.getEndTime(), branch);
 			log.info(
 					"Successfully get paginated pipeline steps info, orgId: {}, pipelineId: {}, pipeline steps size: {}, page:{}",
 					organizationId, pipelineId, pipelineStepsInfo.size(), page);

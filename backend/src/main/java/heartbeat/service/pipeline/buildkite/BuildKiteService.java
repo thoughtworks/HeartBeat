@@ -22,6 +22,7 @@ import heartbeat.util.TimeUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -30,14 +31,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.net.URLEncoder;
 
 @Service
 @RequiredArgsConstructor
@@ -181,6 +184,7 @@ public class BuildKiteService {
 
 		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(realToken,
 				orgId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime(), branches);
+
 		log.info(
 				"Successfully get paginated pipeline steps pagination info, orgId: {},pipelineId: {}, stepsParam: {}, result status code: {}, page:{}",
 				orgId, pipelineId, stepsParam, pipelineStepsInfo.getStatusCode(), page);
@@ -209,13 +213,13 @@ public class BuildKiteService {
 	}
 
 	private CompletableFuture<List<BuildKiteBuildInfo>> getBuildKiteStepsAsync(String token, String organizationId,
-			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, List<String> branches) {
+			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, List<String> branch) {
 		return CompletableFuture.supplyAsync(() -> {
 			log.info("Start to paginated pipeline steps info, orgId: {}, pipelineId: {}, stepsParam: {}, page:{}",
 					organizationId, pipelineId, stepsParam, page);
 			List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
 					organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
-					stepsParam.getEndTime(), branches);
+					stepsParam.getEndTime(), branch);
 			log.info(
 					"Successfully get paginated pipeline steps info, orgId: {}, pipelineId: {}, pipeline steps size: {}, page:{}",
 					organizationId, pipelineId, pipelineStepsInfo.size(), page);

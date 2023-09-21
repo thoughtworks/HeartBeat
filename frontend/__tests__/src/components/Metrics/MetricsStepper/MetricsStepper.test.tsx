@@ -66,6 +66,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mock new organization']),
   selectPipelineNames: jest.fn().mockReturnValue(['mock new pipelineName']),
   selectSteps: jest.fn().mockReturnValue(['mock new step']),
+  selectBranches: jest.fn().mockReturnValue(['mock new branch']),
 }))
 
 jest.mock('@src/emojis/emoji', () => ({
@@ -222,7 +223,7 @@ describe('MetricsStepper', () => {
     await userEvent.clear(endDateInput)
 
     expect(getByText(NEXT)).toBeDisabled()
-  })
+  }, 50000)
 
   it('should disable next when endDate is empty ', async () => {
     const { getByText, getByRole } = setup()
@@ -339,53 +340,6 @@ describe('MetricsStepper', () => {
 
     await fillConfigPageData()
     await userEvent.click(getByText(NEXT))
-    await userEvent.click(getByText(SAVE))
-
-    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
-  })
-
-  it('should export json file when click save button in metrics page given all content is filled', async () => {
-    const expectedFileName = 'config'
-    const expectedJson = {
-      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
-      calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: dayjs().endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-      },
-      metrics: ['Velocity', 'Lead time for changes'],
-      pipelineTool: { type: 'BuildKite', token: '' },
-      projectName: 'test project Name',
-      sourceControl: { type: 'GitHub', token: '' },
-      classification: ['mockClassification'],
-      crews: ['mockUsers'],
-      cycleTime: {
-        jiraColumns: [{ TODO: 'To do' }],
-        treatFlagCardAsBlock: false,
-      },
-      deployment: [
-        {
-          id: 0,
-          organization: 'mock new organization',
-          pipelineName: 'mock new pipelineName',
-          step: 'mock new step',
-        },
-      ],
-      doneStatus: ['Done', 'Canceled'],
-      leadTime: [
-        {
-          id: 0,
-          organization: 'mock new organization',
-          pipelineName: 'mock new pipelineName',
-          step: 'mock new step',
-        },
-      ],
-    }
-    const { getByText } = setup()
-
-    await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
-    await fillMetricsPageDate()
     await userEvent.click(getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)

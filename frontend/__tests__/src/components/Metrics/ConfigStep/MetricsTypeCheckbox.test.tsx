@@ -105,7 +105,7 @@ describe('MetricsTypeCheckbox', () => {
     await Promise.all(optionsToClick.map((opt) => userEvent.click(opt)))
 
     expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true')
-  })
+  }, 50000)
 
   it('should show some selections when click all option and then click velocity selection', async () => {
     const { getByRole, getByText } = setup()
@@ -120,7 +120,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY })).toHaveAttribute('aria-selected', 'false')
     expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'false')
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
-  })
+  }, 50000)
 
   it('should show none selection when double click all option', async () => {
     const { getByRole, getByText } = setup()

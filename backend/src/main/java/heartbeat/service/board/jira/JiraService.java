@@ -1,6 +1,5 @@
 package heartbeat.service.board.jira;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -65,6 +64,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.TODO;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -80,8 +80,6 @@ public class JiraService {
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
-
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private static final String DONE_CARD_TAG = "done";
 
@@ -473,13 +471,19 @@ public class JiraService {
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
 			StoryPointsAndCycleTimeRequest request) {
 		List<String> upperDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
-		long validStartTime = parseLong(request.getStartTime());
 
-		return jiraCardHistory.getItems()
+		List<Long> doneTimes = jiraCardHistory.getItems()
 			.stream()
 			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
 			.filter(history -> upperDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
-			.allMatch(history -> history.getTimestamp() > validStartTime);
+			.map(HistoryDetail::getTimestamp)
+			.toList();
+
+		long validStartTime = parseLong(request.getStartTime());
+		long validEndTime = parseLong(request.getEndTime());
+
+		return doneTimes.stream().allMatch(time -> validStartTime <= time)
+				&& doneTimes.stream().anyMatch(time -> validEndTime >= time);
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,
@@ -646,7 +650,8 @@ public class JiraService {
 					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
-			if (users.stream().anyMatch(assigneeSet::contains)) {
+			String cardStatus = card.getFields().getStatus().getName();
+			if (users.stream().anyMatch(assigneeSet::contains) && !TODO.getValue().equalsIgnoreCase(cardStatus)) {
 				CardCycleTime cardCycleTime = calculateCardCycleTime(card.getKey(),
 						cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns);
 

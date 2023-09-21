@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -107,29 +107,49 @@ public class BuildKiteService {
 		}
 	}
 
+	public List<String> getPipelineStepNames(List<BuildKiteBuildInfo> buildKiteBuildInfos) {
+		return buildKiteBuildInfos.stream()
+			.flatMap(buildKiteBuildInfo -> buildKiteBuildInfo.getJobs().stream())
+			.filter(job -> job != null && job.getName() != null && !job.getName().isEmpty())
+			.map(BuildKiteJob::getName)
+			.distinct()
+			.toList();
+	}
+
+	public List<String> getStepsBeforeEndStep(String endStep, List<String> steps) {
+		int index = steps.indexOf(endStep);
+		if (index != -1) {
+			return steps.subList(0, index + 1);
+		}
+		return steps;
+	}
+
 	public PipelineStepsDTO fetchPipelineSteps(String token, String organizationId, String pipelineId,
 			PipelineStepsParam stepsParam) {
 		try {
 			log.info("Start to get pipeline steps, organization id: {}, pipeline id: {}", organizationId, pipelineId);
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = fetchPipelineStepsByPage(token, organizationId, pipelineId,
-					stepsParam);
 
-			List<String> buildSteps = buildKiteBuildInfos.stream()
-				.flatMap(buildKiteBuildInfo -> buildKiteBuildInfo.getJobs().stream())
-				.filter(job -> job != null && job.getName() != null && !job.getName().isEmpty())
-				.sorted(Comparator.comparing(BuildKiteJob::getName))
-				.map(BuildKiteJob::getName)
+			List<BuildKiteBuildInfo> buildKiteBuildInfos = fetchPipelineStepsByPage(token,
+					DeploymentEnvironment.builder().id(pipelineId).orgId(organizationId).build(), stepsParam);
+
+			List<String> sortedSteps = getPipelineStepNames(buildKiteBuildInfos).stream().sorted().toList();
+
+			List<String> sortedBranches = buildKiteBuildInfos.stream()
+				.map(BuildKiteBuildInfo::getBranch)
 				.distinct()
+				.sorted()
 				.toList();
+
 			log.info("Successfully get pipeline steps, organization id: {}, pipeline id: {}, build steps: {}",
-					organizationId, pipelineId, buildSteps);
+					organizationId, pipelineId, sortedSteps);
 			return PipelineStepsDTO.builder()
 				.pipelineId(pipelineId)
-				.steps(buildSteps)
+				.steps(sortedSteps)
 				.name(stepsParam.getOrgName())
 				.orgName(stepsParam.getOrgName())
 				.repository(stepsParam.getRepository())
 				.orgId(organizationId)
+				.branches(sortedBranches)
 				.build();
 		}
 		catch (RuntimeException e) {
@@ -145,10 +165,13 @@ public class BuildKiteService {
 		}
 	}
 
-	private List<BuildKiteBuildInfo> fetchPipelineStepsByPage(String token, String orgId, String pipelineId,
+	private List<BuildKiteBuildInfo> fetchPipelineStepsByPage(String token, DeploymentEnvironment deploymentEnvironment,
 			PipelineStepsParam stepsParam) {
 		String page = "1";
 		String perPage = "100";
+		String orgId = deploymentEnvironment.getOrgId();
+		String pipelineId = deploymentEnvironment.getId();
+		List<String> branches = deploymentEnvironment.getBranches();
 		log.info(
 				"Start to paginated pipeline steps pagination info, orgId: {}, pipelineId: {}, stepsParam: {}, page:{}",
 				orgId, pipelineId, stepsParam, page);
@@ -157,7 +180,7 @@ public class BuildKiteService {
 		stepsParam.setEndTime(TimeUtil.convertToISOFormat(stepsParam.getEndTime()));
 
 		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(realToken,
-				orgId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime());
+				orgId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime(), branches);
 		log.info(
 				"Successfully get paginated pipeline steps pagination info, orgId: {},pipelineId: {}, stepsParam: {}, result status code: {}, page:{}",
 				orgId, pipelineId, stepsParam, pipelineStepsInfo.getStatusCode(), page);
@@ -174,7 +197,7 @@ public class BuildKiteService {
 			List<CompletableFuture<List<BuildKiteBuildInfo>>> futures = IntStream
 				.range(Integer.parseInt(page) + 1, totalPage + 1)
 				.mapToObj(currentPage -> getBuildKiteStepsAsync(realToken, orgId, pipelineId, stepsParam, perPage,
-						currentPage))
+						currentPage, branches))
 				.toList();
 			List<BuildKiteBuildInfo> buildKiteBuildInfos = futures.stream()
 				.map(CompletableFuture::join)
@@ -186,13 +209,13 @@ public class BuildKiteService {
 	}
 
 	private CompletableFuture<List<BuildKiteBuildInfo>> getBuildKiteStepsAsync(String token, String organizationId,
-			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page) {
+			String pipelineId, PipelineStepsParam stepsParam, String perPage, int page, List<String> branches) {
 		return CompletableFuture.supplyAsync(() -> {
 			log.info("Start to paginated pipeline steps info, orgId: {}, pipelineId: {}, stepsParam: {}, page:{}",
 					organizationId, pipelineId, stepsParam, page);
 			List<BuildKiteBuildInfo> pipelineStepsInfo = buildKiteFeignClient.getPipelineStepsInfo(token,
 					organizationId, pipelineId, String.valueOf(page), perPage, stepsParam.getStartTime(),
-					stepsParam.getEndTime());
+					stepsParam.getEndTime(), branches);
 			log.info(
 					"Successfully get paginated pipeline steps info, orgId: {}, pipelineId: {}, pipeline steps size: {}, page:{}",
 					organizationId, pipelineId, pipelineStepsInfo.size(), page);
@@ -217,8 +240,8 @@ public class BuildKiteService {
 		try {
 			log.info("Start to get pipeline builds, param: {}", deploymentEnvironment);
 			PipelineStepsParam stepsParam = PipelineStepsParam.builder().startTime(startTime).endTime(endTime).build();
-			List<BuildKiteBuildInfo> buildKiteBuildInfos = fetchPipelineStepsByPage(token,
-					deploymentEnvironment.getOrgId(), deploymentEnvironment.getId(), stepsParam);
+			List<BuildKiteBuildInfo> buildKiteBuildInfos = fetchPipelineStepsByPage(token, deploymentEnvironment,
+					stepsParam);
 			log.info("Successfully get pipeline builds, param: {}, buildKite build info size: {}",
 					deploymentEnvironment, buildKiteBuildInfos.size());
 			return buildKiteBuildInfos;
@@ -256,7 +279,9 @@ public class BuildKiteService {
 	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
 			DeploymentEnvironment deploymentEnvironment, String state, String startTime, String endTime) {
 		return buildInfos.stream()
-			.map(build -> build.mapToDeployInfo(deploymentEnvironment.getStep(), List.of(state), startTime, endTime))
+			.map(build -> build.mapToDeployInfo(
+					getStepsBeforeEndStep(deploymentEnvironment.getStep(), getPipelineStepNames(buildInfos)),
+					List.of(state), startTime, endTime))
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
 			.filter(job -> !job.getJobStartTime().isEmpty())
 			.toList();

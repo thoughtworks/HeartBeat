@@ -30,6 +30,7 @@ public class PipelineCsvFixture {
 					.startedAt("2023-05-10T06:42:47.498Z")
 					.finishedAt("2023-05-10T06:43:02.653Z")
 					.build()))
+				.branch("branch")
 				.build())
 			.commitInfo(CommitInfo.builder()
 				.commit(Commit.builder()

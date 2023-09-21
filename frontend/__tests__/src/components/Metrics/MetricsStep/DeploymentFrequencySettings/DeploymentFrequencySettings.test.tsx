@@ -21,8 +21,8 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   deleteADeploymentFrequencySetting: jest.fn(),
   updateDeploymentFrequencySettings: jest.fn(),
   selectDeploymentFrequencySettings: jest.fn().mockReturnValue([
-    { id: 0, organization: '', pipelineName: '', steps: '' },
-    { id: 1, organization: '', pipelineName: '', steps: '' },
+    { id: 0, organization: '', pipelineName: '', steps: '', branches: [] },
+    { id: 1, organization: '', pipelineName: '', steps: '', branches: [] },
   ]),
   selectOrganizationWarningMessage: jest.fn().mockReturnValue(null),
   selectPipelineNameWarningMessage: jest.fn().mockReturnValue(null),
@@ -34,6 +34,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
   selectPipelineNames: jest.fn().mockReturnValue(['']),
   selectSteps: jest.fn().mockReturnValue(['']),
+  selectBranches: jest.fn().mockReturnValue(['']),
 }))
 
 const mockValidationCheckContext = {

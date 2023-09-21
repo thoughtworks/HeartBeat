@@ -68,7 +68,7 @@ export const SIDEBAR: Sidebar = {
       { text: 'Export CSV', link: '/en/dev-center/export-csv' },
       { text: 'Error Handle', link: '/en/dev-center/error-handle' },
       { text: 'Emoji Flow', link: '/en/dev-center/emoji-flow' },
-      { text: 'OriginCycleTime calculation', link: '/en/dev-center/origin-cycle-time-calculation' },
+      { text: 'OriginCycleTime calculation', link: '/en/dev-center/cycle-time-calculation' },
       { text: 'Solution of BuildKite issue', link: '/en/dev-center/solution-of-buildkite-issue' },
       { text: 'Support multiple columns marked as done', link: '/en/dev-center/support-multiple-columns' },
     ],

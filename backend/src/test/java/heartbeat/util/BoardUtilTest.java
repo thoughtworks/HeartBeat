@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BoardUtilTest {
 
-
 	@InjectMocks
 	BoardUtil boardUtil;
 
@@ -27,48 +26,57 @@ class BoardUtilTest {
 
 	@Test
 	void calculateCycleTimeOfRealDoneColumns() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture.STATUS_CHANGED_ITEMS_LIST_OF_REAL_DONE_COLUMN();
+		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.STATUS_CHANGED_ITEMS_LIST_OF_REAL_DONE_COLUMN();
 		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
 			.CYCLE_TIME_INFOS_LIST_OF_REAL_DONE_COLUMN();
 		List<String> realDoneStatus = List.of("DONE");
 
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong())).thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
+			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
 		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
 
 	@Test
 	void calculateCycleTimeOfBlockColumn() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture.STATUS_CHANGED_ITEMS_LIST_OF_BLOCK_COLUMN();
+		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.STATUS_CHANGED_ITEMS_LIST_OF_BLOCK_COLUMN();
 		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
 			.CYCLE_TIME_INFOS_LIST_OF_BLOCK_COLUMN();
 		List<String> realDoneStatus = List.of("DONE");
 
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong())).thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
+			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
 		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
 
 	@Test
 	void calculateCycleTimeOfOthersColumns() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture.STATUS_CHANGED_ITEMS_LIST_OF_OTHER_COLUMN();
+		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.STATUS_CHANGED_ITEMS_LIST_OF_OTHER_COLUMN();
 		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
 			.CYCLE_TIME_INFOS_LIST_OF_OTHER_COLUMN();
 		List<String> realDoneStatus = List.of("DONE");
 
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong())).thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
+			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
 		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
 
 	@Test
 	void calculateOriginCycleTimeOfColumn() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture.STATUS_CHANGED_ITEMS_LIST_OF_ORIGIN();
+		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.STATUS_CHANGED_ITEMS_LIST_OF_ORIGIN();
 		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
 			.CYCLE_TIME_INFOS_LIST_OF_ORIGIN();
 
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong())).thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
+			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
 		List<CycleTimeInfo> result = boardUtil.getOriginCycleTimeInfos(statusChangedItems);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
+
 }

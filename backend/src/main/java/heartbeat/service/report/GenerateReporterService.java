@@ -53,6 +53,7 @@ import heartbeat.util.GithubUtil;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -133,9 +135,9 @@ public class GenerateReporterService {
 			.build();
 	}
 
-	private Map<String, String> getRepoMap(CodebaseSetting codebaseSetting) {
+	private Map<String, String> getRepoMap(List<DeploymentEnvironment> deploymentEnvironments) {
 		Map<String, String> repoMap = new HashMap<>();
-		for (DeploymentEnvironment currentValue : codebaseSetting.getLeadTime()) {
+		for (DeploymentEnvironment currentValue : deploymentEnvironments) {
 			repoMap.put(currentValue.getId(), currentValue.getRepository());
 		}
 		return repoMap;
@@ -473,7 +475,7 @@ public class GenerateReporterService {
 	private FetchedData.BuildKiteData fetchGithubData(GenerateReportRequest request) {
 		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
 				request.getCodebaseSetting().getLeadTime(), request.getBuildKiteSetting().getToken());
-		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting());
+		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting().getLeadTime());
 		List<PipelineLeadTime> pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(
 				buildKiteData.getDeployTimesList(), repoMap, request.getCodebaseSetting().getToken());
 		return BuildKiteData.builder()
@@ -512,48 +514,11 @@ public class GenerateReporterService {
 	}
 
 	private void generateCSVForPipeline(GenerateReportRequest request, BuildKiteData buildKiteData) {
-		List<PipelineCSVInfo> leadTimeData = generateCSVForPipelineWithCodebase(request.getCodebaseSetting(),
-				request.getStartTime(), request.getEndTime(), buildKiteData);
+		List<PipelineCSVInfo> pipelineData = generateCSVForPipelineWithCodebase(request.getCodebaseSetting(),
+				request.getStartTime(), request.getEndTime(), buildKiteData,
+				request.getBuildKiteSetting().getDeploymentEnvList());
 
-		List<PipelineCSVInfo> pipelineData = generateCSVForPipelineWithoutCodebase(
-				request.getBuildKiteSetting().getDeploymentEnvList(), request.getStartTime(), request.getEndTime(),
-				buildKiteData);
-
-		leadTimeData.addAll(pipelineData);
-		csvFileGenerator.convertPipelineDataToCSV(leadTimeData, request.getCsvTimeStamp());
-	}
-
-	private List<PipelineCSVInfo> generateCSVForPipelineWithoutCodebase(List<DeploymentEnvironment> deploymentEnvList,
-			String startTime, String endTime, BuildKiteData buildKiteData) {
-		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
-
-		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvList) {
-			List<BuildKiteBuildInfo> buildInfos = getBuildInfos(buildKiteData.getBuildInfosList(),
-					deploymentEnvironment);
-			List<String> pipelineSteps = buildKiteService.getPipelineStepNames(buildInfos);
-
-			List<PipelineCSVInfo> pipelineCSVInfoList = buildInfos.stream()
-				.filter(buildInfo -> isBuildInfoValid(buildInfo, deploymentEnvironment, pipelineSteps, startTime,
-						endTime))
-				.map(buildInfo -> {
-					DeployInfo deployInfo = buildInfo.mapToDeployInfo(
-							buildKiteService.getStepsBeforeEndStep(deploymentEnvironment.getStep(), pipelineSteps),
-							REQUIRED_STATES, startTime, endTime);
-					LeadTime filteredLeadTime = filterLeadTime(buildKiteData, deploymentEnvironment, deployInfo);
-
-					return PipelineCSVInfo.builder()
-						.pipeLineName(deploymentEnvironment.getName())
-						.stepName(deployInfo.getJobName())
-						.buildInfo(buildInfo)
-						.deployInfo(deployInfo)
-						.leadTimeInfo(new LeadTimeInfo(filteredLeadTime))
-						.build();
-				})
-				.toList();
-
-			pipelineCSVInfos.addAll(pipelineCSVInfoList);
-		}
-		return pipelineCSVInfos;
+		csvFileGenerator.convertPipelineDataToCSV(pipelineData, request.getCsvTimeStamp());
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -589,16 +554,16 @@ public class GenerateReporterService {
 	}
 
 	private List<PipelineCSVInfo> generateCSVForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
-			String endTime, BuildKiteData buildKiteData) {
+			String endTime, BuildKiteData buildKiteData, List<DeploymentEnvironment> deploymentEnvironments) {
 		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
 
-		if (codebaseSetting == null) {
+		if (codebaseSetting == null && CollectionUtils.isEmpty(deploymentEnvironments)) {
 			return pipelineCSVInfos;
 		}
 
-		for (DeploymentEnvironment deploymentEnvironment : codebaseSetting.getLeadTime()) {
-			String repoId = GithubUtil
-				.getGithubUrlFullName(getRepoMap(codebaseSetting).get(deploymentEnvironment.getId()));
+		Map<String, String> repoIdMap = getRepoMap(deploymentEnvironments);
+		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
+			String repoId = GithubUtil.getGithubUrlFullName(repoIdMap.get(deploymentEnvironment.getId()));
 			List<BuildKiteBuildInfo> buildInfos = getBuildInfos(buildKiteData.getBuildInfosList(),
 					deploymentEnvironment);
 			List<String> pipelineSteps = buildKiteService.getPipelineStepNames(buildInfos);
@@ -611,9 +576,12 @@ public class GenerateReporterService {
 							buildKiteService.getStepsBeforeEndStep(deploymentEnvironment.getStep(), pipelineSteps),
 							REQUIRED_STATES, startTime, endTime);
 					LeadTime filteredLeadTime = filterLeadTime(buildKiteData, deploymentEnvironment, deployInfo);
-					CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
-							codebaseSetting.getToken());
-
+					CommitInfo commitInfo = null;
+					if (Objects.nonNull(codebaseSetting) && Objects.nonNull(codebaseSetting.getToken())
+							&& Objects.nonNull(deployInfo.getCommitId())) {
+						commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
+								codebaseSetting.getToken());
+					}
 					return PipelineCSVInfo.builder()
 						.pipeLineName(deploymentEnvironment.getName())
 						.stepName(deployInfo.getJobName())

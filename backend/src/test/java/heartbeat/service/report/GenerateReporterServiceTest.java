@@ -331,6 +331,36 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
+	public void testNotGenerateReporterWithNullDevelpomentMetric() {
+		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token(BUILDKITE_TOKEN)
+			.deploymentEnvList(Collections.emptyList())
+			.build();
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of("change failure rate"))
+			.buildKiteSetting(buildKiteSetting)
+			.startTime("1661702400000")
+			.endTime("1662739199000")
+			.codebaseSetting(null)
+			.build();
+
+		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
+			.thenReturn(List.of(BuildKiteBuildInfoBuilder.withDefault()
+				.withJobs(List.of(BuildKiteJobBuilder.withDefault().build()))
+				.withPipelineCreateTime("2022-09-09T04:57:34Z")
+				.build()));
+
+		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
+				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
+
+		ReportResponse response = generateReporterService.generateReporter(request);
+
+		assertThat(response.getChangeFailureRate()).isNull();
+	}
+
+	@Test
 	void shouldReturnGenerateReportResponseWithCycleTimeModelWhenCallGenerateReporterWithCycleTimeMetrics() {
 		CardCollection cardCollection = MOCK_CARD_COLLECTION();
 		List<RequestJiraBoardColumnSetting> boardColumns = JIRA_BOARD_COLUMNS_SETTING();

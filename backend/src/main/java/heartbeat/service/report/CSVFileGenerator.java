@@ -78,8 +78,8 @@ public class CSVFileGenerator {
 				String state = csvInfo.getDeployInfo().getState();
 				String branch = csvInfo.getBuildInfo().getBranch();
 				if (csvInfo.getCommitInfo() != null) {
-					committerName = csvInfo.getCommitInfo().getCommit().getCommitter().getName();
-					commitDate = csvInfo.getCommitInfo().getCommit().getCommitter().getDate();
+					committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();
+					commitDate = csvInfo.getCommitInfo().getCommit().getAuthor().getDate();
 				}
 
 				LeadTimeInfo leadTimeInfo = csvInfo.getLeadTimeInfo();

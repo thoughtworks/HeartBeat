@@ -1,6 +1,7 @@
 package heartbeat.service.report;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -299,6 +300,9 @@ public class CSVFileGenerator {
 		}
 		else if (fieldValue.toString().equals("null")) {
 			return "";
+		}
+		else if (fieldValue instanceof JsonObject jsonObjValue && jsonObjValue.get("value") != null) {
+			return jsonObjValue.get("value").getAsString();
 		}
 		else {
 			return fieldValue.toString().replaceAll("\"", "");

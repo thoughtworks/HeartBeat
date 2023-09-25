@@ -64,4 +64,4 @@
     status: 200
     headers:
       content-type: application/json
-    file: ./backend/github/jsons/github.repos.commits.<% url.2 %>.json
+    file: ./backend/github/jsons/github.repos.commits.fb1b445a113ef2d1ed465732a5dd02c2e07ca1c4.json

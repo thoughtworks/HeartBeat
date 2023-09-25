@@ -471,12 +471,12 @@ Resources:
   EC2SSHSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Enable SSH access via port 20
+      GroupDescription: Enable SSH access via port 22
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 20
-        ToPort: 23
-        CidrIp: 0.0.0.0/0
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 202.66.38.0/0
   EC2OldAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

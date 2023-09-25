@@ -476,7 +476,7 @@ Resources:
       - IpProtocol: tcp
         FromPort: 22
         ToPort: 22
-        CidrIp: 202.66.38.0/0
+        CidrIp: 202.66.38.0/24
   EC2OldAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

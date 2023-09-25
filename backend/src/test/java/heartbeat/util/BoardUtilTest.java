@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -18,6 +19,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BoardUtilTest {
 
+	public static final double EXPECT_DAYS = 4.0;
+
 	@InjectMocks
 	BoardUtil boardUtil;
 
@@ -25,58 +28,37 @@ class BoardUtilTest {
 	WorkDay workDay;
 
 	@Test
-	void calculateCycleTimeOfRealDoneColumns() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.STATUS_CHANGED_ITEMS_LIST_OF_REAL_DONE_COLUMN();
-		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.CYCLE_TIME_INFOS_LIST_OF_REAL_DONE_COLUMN();
-		List<String> realDoneStatus = List.of("DONE");
+	void shouldSortTimeLineAndRemoveItemBetweenFlagAndRemoveFlaggedWhenCallReformTimeLineForFlaggedCards() {
+		List<StatusChangedItem> statusChangedItems = StatusChangedArrayItemsFixture.STATUS_CHANGED_ITEMS_LIST();
+		List<StatusChangedItem> statusChangedItemsExpect = StatusChangedArrayItemsFixture
+			.STATUS_CHANGED_ITEMS_EXPECT_LIST();
 
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
-			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
+		List<StatusChangedItem> result = boardUtil.reformTimeLineForFlaggedCards(statusChangedItems);
+
 		Assertions.assertEquals(statusChangedItemsExpect, result);
+
 	}
 
 	@Test
-	void calculateCycleTimeOfBlockColumn() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.STATUS_CHANGED_ITEMS_LIST_OF_BLOCK_COLUMN();
-		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.CYCLE_TIME_INFOS_LIST_OF_BLOCK_COLUMN();
-		List<String> realDoneStatus = List.of("DONE");
+	void shouldReturnCardTimeForEachStep() {
+		List<StatusChangedItem> statusChangedItems = StatusChangedArrayItemsFixture.STATUS_CHANGED_ITEMS_LIST();
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong())).thenReturn(2.0);
 
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
-			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
-		Assertions.assertEquals(statusChangedItemsExpect, result);
+		List<CycleTimeInfo> expect = List.of(CycleTimeInfo.builder().column("UNKNOWN").day(EXPECT_DAYS).build(),
+				CycleTimeInfo.builder().column("FLAG").day(EXPECT_DAYS).build(),
+				CycleTimeInfo.builder().column("REMOVEFLAG").day(EXPECT_DAYS).build());
+		List<CycleTimeInfo> result = boardUtil.getCardTimeForEachStep(statusChangedItems);
+
+		Assertions.assertEquals(expect, result);
 	}
 
 	@Test
-	void calculateCycleTimeOfOthersColumns() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.STATUS_CHANGED_ITEMS_LIST_OF_OTHER_COLUMN();
-		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.CYCLE_TIME_INFOS_LIST_OF_OTHER_COLUMN();
-		List<String> realDoneStatus = List.of("DONE");
+	void shouldReturnNullWhenCallGetCardTimeForEachStepWithChangedItemIsEmpty() {
+		List<StatusChangedItem> statusChangedItems = Collections.emptyList();
 
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
-			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
-		Assertions.assertEquals(statusChangedItemsExpect, result);
-	}
+		List<CycleTimeInfo> result = boardUtil.getCardTimeForEachStep(statusChangedItems);
 
-	@Test
-	void calculateOriginCycleTimeOfColumn() {
-		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.STATUS_CHANGED_ITEMS_LIST_OF_ORIGIN();
-		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
-			.CYCLE_TIME_INFOS_LIST_OF_ORIGIN();
-
-		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
-			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getOriginCycleTimeInfos(statusChangedItems);
-		Assertions.assertEquals(statusChangedItemsExpect, result);
+		Assertions.assertNull(result);
 	}
 
 }

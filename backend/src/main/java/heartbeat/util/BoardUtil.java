@@ -27,8 +27,8 @@ public class BoardUtil {
 		return getCollectRemovedDuplicates(originCycleTimeInfos);
 	}
 
-
-	public List<CycleTimeInfo> getCycleTimeInfos(List<StatusChangedItem> statusChangedArray, List<String> realDoneStatus) {
+	public List<CycleTimeInfo> getCycleTimeInfos(List<StatusChangedItem> statusChangedArray,
+			List<String> realDoneStatus) {
 		List<StatusChangedItem> statusChangedBySorted = getStatusChangedBySorted(statusChangedArray);
 		List<StatusTimeStamp> flagTimeStamp = getFlagTimeStamps(statusChangedBySorted);
 		List<StatusTimeStamp> columnTimeStamp = getColumnTimeStamps(statusChangedBySorted);
@@ -38,32 +38,41 @@ public class BoardUtil {
 		return getCollectRemovedDuplicates(cycleTimeInfos);
 	}
 
-	private List<CycleTimeInfo> calculateOriginCycleTime(List<StatusTimeStamp> flagTimeStamp, List<StatusTimeStamp> columnTimeStamp) {
+	private List<CycleTimeInfo> calculateOriginCycleTime(List<StatusTimeStamp> flagTimeStamp,
+			List<StatusTimeStamp> columnTimeStamp) {
 		List<CycleTimeInfo> originCycleTimeInfos = new ArrayList<>();
 
 		for (StatusTimeStamp columnTimeStampItem : columnTimeStamp) {
-			double originColumnTimeInDays = workDay.calculateWorkDaysBy24Hours(columnTimeStampItem.getStartTimestamp(), columnTimeStampItem.getEndTimestamp());
-			originCycleTimeInfos.add(CycleTimeInfo.builder().day(originColumnTimeInDays).column(columnTimeStampItem.getStatus().toUpperCase()).build());
+			double originColumnTimeInDays = workDay.calculateWorkDaysBy24Hours(columnTimeStampItem.getStartTimestamp(),
+					columnTimeStampItem.getEndTimestamp());
+			originCycleTimeInfos.add(CycleTimeInfo.builder()
+				.day(originColumnTimeInDays)
+				.column(columnTimeStampItem.getStatus().toUpperCase())
+				.build());
 		}
 
 		double totalFlagTimeInDays = calculateTotalFlagCycleTime(flagTimeStamp);
-		originCycleTimeInfos.add(CycleTimeInfo.builder().day(totalFlagTimeInDays).column(CardStepsEnum.FLAG.getValue()).build());
+		originCycleTimeInfos
+			.add(CycleTimeInfo.builder().day(totalFlagTimeInDays).column(CardStepsEnum.FLAG.getValue()).build());
 
 		return originCycleTimeInfos;
 	}
 
-	private List<CycleTimeInfo> calculateCycleTime(List<String> realDoneStatus, List<StatusTimeStamp> flagTimeStamp, List<StatusTimeStamp> columnTimeStamp) {
+	private List<CycleTimeInfo> calculateCycleTime(List<String> realDoneStatus, List<StatusTimeStamp> flagTimeStamp,
+			List<StatusTimeStamp> columnTimeStamp) {
 		List<CycleTimeInfo> cycleTimeInfos = new ArrayList<>();
 		double totalFlagTimeInDays = calculateTotalFlagCycleTime(flagTimeStamp);
 		double totalFlagAndRealDoneOverlapTime = calculateTotalFlagAndRealDoneOverlapTime(realDoneStatus, flagTimeStamp,
 				columnTimeStamp);
 		for (StatusTimeStamp columnTimeStampItem : columnTimeStamp) {
-			double originColumnTimeInDays = workDay.calculateWorkDaysBy24Hours(columnTimeStampItem.getStartTimestamp(), columnTimeStampItem.getEndTimestamp());
+			double originColumnTimeInDays = workDay.calculateWorkDaysBy24Hours(columnTimeStampItem.getStartTimestamp(),
+					columnTimeStampItem.getEndTimestamp());
 			double realColumnTimeInDays;
 
 			if (realDoneStatus.contains(columnTimeStampItem.getStatus().toUpperCase())) {
 				realColumnTimeInDays = originColumnTimeInDays;
-			} else {
+			}
+			else {
 				double totalOverlapTimeInDays = calculateTotalOverlapTime(columnTimeStampItem, flagTimeStamp);
 				if (Objects.equals(columnTimeStampItem.getStatus(), CardStepsEnum.BLOCK.getValue().toUpperCase())) {
 					realColumnTimeInDays = originColumnTimeInDays + totalFlagTimeInDays - totalOverlapTimeInDays
@@ -202,7 +211,8 @@ public class BoardUtil {
 	private long getColumnEndTimestamp(int index, List<StatusChangedItem> statusChangedItems) {
 		if (index < statusChangedItems.size() - 1) {
 			return statusChangedItems.get(index + 1).getTimestamp();
-		} else {
+		}
+		else {
 			return System.currentTimeMillis();
 		}
 	}

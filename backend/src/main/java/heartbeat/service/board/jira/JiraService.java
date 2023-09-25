@@ -448,7 +448,7 @@ public class JiraService {
 		}
 		futures.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
+					request.isTreatFlagCardAsBlock(), keyFlagged);
 			List<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
@@ -487,12 +487,16 @@ public class JiraService {
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,
-			String keyFlagged, List<String> realDoneStatus) {
+			String keyFlagged) {
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				treatFlagCardAsBlock, keyFlagged);
-		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCycleTimeInfos(statusChangedArray, realDoneStatus);
-		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.getOriginCycleTimeInfos(statusChangedArray);
+		List<StatusChangedItem> statusChangeArrayWithoutFlag = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
+				true, keyFlagged);
+		List<StatusChangedItem> statusChangedItems = boardUtil.reformTimeLineForFlaggedCards(statusChangedArray);
+		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCardTimeForEachStep(statusChangedItems);
+		List<CycleTimeInfo> originCycleTimeInfos = boardUtil
+			.getCardTimeForEachStep(boardUtil.reformTimeLineForFlaggedCards(statusChangeArrayWithoutFlag));
 
 		return CycleTimeInfoDTO.builder()
 			.cycleTimeInfos(cycleTimeInfos)
@@ -647,7 +651,7 @@ public class JiraService {
 
 		allNonDoneCards.forEach(card -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, card.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
+					request.isTreatFlagCardAsBlock(), keyFlagged);
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
 			String cardStatus = card.getFields().getStatus().getName();

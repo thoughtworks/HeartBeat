@@ -47,6 +47,7 @@ Thumbs.db
 volume
 csv
 
+
 # Stubby4j
 /stubs/logs
 gitleaks-report.json

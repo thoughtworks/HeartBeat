@@ -135,6 +135,12 @@ public class BoardCsvFixture {
 		.originKey("customfield_1011")
 		.build();
 
+	private static final BoardCSVConfig CUSTOM_FIELD_10052_CONFIG = BoardCSVConfig.builder()
+		.label("DevCommit")
+		.value("baseInfo.fields.customFields.customfield_10052")
+		.originKey("customfield_10052")
+		.build();
+
 	private static final BoardCSVConfig ORIGIN_CYCLE_BLOCKED_CONFIG = BoardCSVConfig.builder()
 		.label("OriginCycleTime: BLOCKED")
 		.value("cycleTimeFlat.BLOCKED")
@@ -206,6 +212,10 @@ public class BoardCsvFixture {
 				REVIEW_DAYS_CONFIG, ORIGIN_CYCLE_TIME_DOING_CONFIG, ORIGIN_CYCLE_BLOCKED_CONFIG);
 	}
 
+	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS_WITH_CUSTOM() {
+		return List.of(CUSTOM_FIELD_10052_CONFIG);
+	}
+
 	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS() {
 		return List.of(STORY_POINT_ESTIMATE_CONFIG, FLAGGED, CUSTOM_FIELD_1010_CONFIG, CUSTOM_FIELD_1011_CONFIG);
 	}
@@ -264,6 +274,34 @@ public class BoardCsvFixture {
 			.cycleTimeFlat(cycleTimeFlat)
 			.totalCycleTimeDivideStoryPoints("0.90")
 			.build();
+		return List.of(jiraCardDTO);
+	}
+
+	public static List<JiraCardDTO> MOCK_JIRA_CARD_DTO_WITH_BASE_INFO_CUSTOM_DATA() {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("value", "dev");
+		jsonObject.addProperty("ref", "red");
+
+		HashMap<String, JsonElement> fields = new HashMap<String, JsonElement>();
+		fields.put("customfield_10052", jsonObject);
+
+		JiraCardField field = JiraCardField.builder()
+			.summary("summary")
+			.issuetype(IssueType.builder().name("issue type").build())
+			.status(Status.builder().displayValue("done").build())
+			.storyPoints(2)
+			.assignee(Assignee.builder().displayName("name").build())
+			.reporter(Reporter.builder().displayName("name").build())
+			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
+			.priority(Priority.builder().name("Medium").build())
+			.parent(CardParent.builder().fields(Fields.builder().summary("parent").build()).build())
+			.sprint(Sprint.builder().name("sprint 1").build())
+			.labels(Collections.emptyList())
+			.customFields(fields)
+			.build();
+
+		JiraCardDTO jiraCardDTO = JiraCardDTO.builder().baseInfo(JiraCard.builder().fields(field).build()).build();
+
 		return List.of(jiraCardDTO);
 	}
 

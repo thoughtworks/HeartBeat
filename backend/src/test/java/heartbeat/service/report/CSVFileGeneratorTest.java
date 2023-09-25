@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -158,6 +159,29 @@ class CSVFileGeneratorTest {
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File csvFile = new File(fileName);
 		Assertions.assertTrue(csvFile.exists());
+		csvFile.delete();
+	}
+
+	@Test
+	public void shouldGetValueWhenConvertBoardDataToCsvGivenExtraFields() throws IOException {
+		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO_WITH_BASE_INFO_CUSTOM_DATA();
+		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
+		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS_WITH_CUSTOM();
+
+		csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, mockTimeStamp);
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("board",
+				Long.parseLong(mockTimeStamp));
+		InputStream csvDataInputStream = inputStreamResource.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(csvDataInputStream));
+		String header = reader.readLine();
+		String firstRow = reader.readLine();
+		String labelName = extraFields.get(0).getLabel();
+		String[] headerFields = header.split(",");
+		String[] rowFields = firstRow.split(",");
+		int index = Arrays.asList(headerFields).indexOf("\"" + labelName + "\"");
+		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
+		File csvFile = new File(fileName);
+		Assertions.assertEquals("\"dev\"", rowFields[index]);
 		csvFile.delete();
 	}
 

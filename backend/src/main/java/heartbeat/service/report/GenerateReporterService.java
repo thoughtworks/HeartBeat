@@ -67,6 +67,7 @@ import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -476,8 +477,11 @@ public class GenerateReporterService {
 		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
 				request.getCodebaseSetting().getLeadTime(), request.getBuildKiteSetting().getToken());
 		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting().getLeadTime());
-		List<PipelineLeadTime> pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(
+		List<PipelineLeadTime> pipelineLeadTimes = Collections.emptyList();
+		if (Objects.nonNull(request.getCodebaseSetting()) && StringUtils.hasLength(request.getCodebaseSetting().getToken())) {
+			pipelineLeadTimes = gitHubService.fetchPipelinesLeadTime(
 				buildKiteData.getDeployTimesList(), repoMap, request.getCodebaseSetting().getToken());
+		}
 		return BuildKiteData.builder()
 			.pipelineLeadTimes(pipelineLeadTimes)
 			.buildInfosList(buildKiteData.getBuildInfosList())
@@ -577,7 +581,7 @@ public class GenerateReporterService {
 							REQUIRED_STATES, startTime, endTime);
 					LeadTime filteredLeadTime = filterLeadTime(buildKiteData, deploymentEnvironment, deployInfo);
 					CommitInfo commitInfo = null;
-					if (Objects.nonNull(codebaseSetting) && Objects.nonNull(codebaseSetting.getToken())
+					if (Objects.nonNull(codebaseSetting) && StringUtils.hasLength(codebaseSetting.getToken())
 							&& Objects.nonNull(deployInfo.getCommitId())) {
 						commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(), repoId,
 								codebaseSetting.getToken());

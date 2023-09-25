@@ -360,6 +360,7 @@ Resources:
           Value: "SIT"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
+        - !Ref EC2SSHSecurityGroupForBuildkite
         - !Ref EC2AppSecurityGroup
         - !Ref EC2OldAppSecurityGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
@@ -392,6 +393,7 @@ Resources:
           Value: "E2E"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
+        - !Ref EC2SSHSecurityGroupForBuildkite
         - !Ref EC2AppSecurityGroup
         - !Ref EC2Stubby4jGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
@@ -472,15 +474,36 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable SSH access via port 22
+      Tags:
+        - Key: "Name"
+          Value: "SSH for dev"
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 22
         ToPort: 22
         CidrIp: 202.66.38.0/24
+
+  EC2SSHSecurityGroupForBuildkite:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable Buildkite to access EC2
+      Tags:
+        - Key: "Name"
+          Value: "SSH for Buildkite"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 13.214.134.0/24
+
+
   EC2OldAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable access application
+      Tags:
+        - Key: "Name"
+          Value: "Old app port"
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 4325
@@ -490,6 +513,9 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable access application
+      Tags:
+        - Key: "Name"
+          Value: "New app port"
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 4321
@@ -499,6 +525,9 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Stub mock server
+      Tags:
+        - Key: "Name"
+          Value: "Stub app port"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 4323

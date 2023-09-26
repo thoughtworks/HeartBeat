@@ -34,7 +34,7 @@ class BoardUtilTest {
 
 		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
 			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
+		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus, true);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
 
@@ -48,7 +48,7 @@ class BoardUtilTest {
 
 		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
 			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
+		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus, true);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
 
@@ -62,7 +62,21 @@ class BoardUtilTest {
 
 		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
 			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus);
+		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus, true);
+		Assertions.assertEquals(statusChangedItemsExpect, result);
+	}
+
+	@Test
+	void calculateCycleTimeWhenTreatFlagCardAsBlockIsFalse() {
+		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.STATUS_CHANGED_ITEMS_LIST_WHEN_NOT_TREAT_FLAG_AS_BLOCK();
+		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.CYCLE_TIME_INFOS_LIST_WHEN_NOT_TREAT_FLAG_AS_BLOCK();
+		List<String> realDoneStatus = List.of("DONE");
+
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
+			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
+		List<CycleTimeInfo> result = boardUtil.getCycleTimeInfos(statusChangedItems, realDoneStatus, false);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
 

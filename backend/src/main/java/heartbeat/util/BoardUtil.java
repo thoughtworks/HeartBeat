@@ -28,8 +28,19 @@ public class BoardUtil {
 	}
 
 	public List<CycleTimeInfo> getCycleTimeInfos(List<StatusChangedItem> statusChangedArray,
-			List<String> realDoneStatus) {
-		List<StatusChangedItem> statusChangedBySorted = getStatusChangedBySorted(statusChangedArray);
+			List<String> realDoneStatus, Boolean treatFlagCardAsBlock) {
+		List<StatusChangedItem> statusChangedByFiltered;
+		if (treatFlagCardAsBlock) {
+			statusChangedByFiltered = statusChangedArray;
+		}
+		else {
+			statusChangedByFiltered = statusChangedArray.stream()
+				.filter(item -> !(CardStepsEnum.FLAG.getValue().equals(item.getStatus())
+						|| CardStepsEnum.REMOVEFLAG.getValue().equals(item.getStatus())))
+				.collect(Collectors.toList());
+		}
+
+		List<StatusChangedItem> statusChangedBySorted = getStatusChangedBySorted(statusChangedByFiltered);
 		List<StatusTimeStamp> flagTimeStamp = getFlagTimeStamps(statusChangedBySorted);
 		List<StatusTimeStamp> columnTimeStamp = getColumnTimeStamps(statusChangedBySorted);
 

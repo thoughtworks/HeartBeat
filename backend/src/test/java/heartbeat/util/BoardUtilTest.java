@@ -92,4 +92,5 @@ class BoardUtilTest {
 		List<CycleTimeInfo> result = boardUtil.getOriginCycleTimeInfos(statusChangedItems);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
 	}
+
 }

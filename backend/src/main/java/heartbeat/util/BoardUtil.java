@@ -32,8 +32,12 @@ public class BoardUtil {
 		List<StatusChangedItem> statusChangedByFiltered;
 		if (treatFlagCardAsBlock) {
 			statusChangedByFiltered = statusChangedArray;
-		} else {
-			statusChangedByFiltered = statusChangedArray.stream().filter(item -> !(CardStepsEnum.FLAG.getValue().equals(item.getStatus()) || CardStepsEnum.REMOVEFLAG.getValue().equals(item.getStatus()))).collect(Collectors.toList());
+		}
+		else {
+			statusChangedByFiltered = statusChangedArray.stream()
+				.filter(item -> !(CardStepsEnum.FLAG.getValue().equals(item.getStatus())
+						|| CardStepsEnum.REMOVEFLAG.getValue().equals(item.getStatus())))
+				.collect(Collectors.toList());
 		}
 
 		List<StatusChangedItem> statusChangedBySorted = getStatusChangedBySorted(statusChangedByFiltered);

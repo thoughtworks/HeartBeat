@@ -414,6 +414,8 @@ pnpm e2e:report
 
 4. Add `[frontend]` tag to the title of the commit message or PR to trigger frontend-related deployments.
 
+5. Add `[docs]` tag to the title of the commit message or PR to trigger docs-related deployments.
+
 
 ## Release
 

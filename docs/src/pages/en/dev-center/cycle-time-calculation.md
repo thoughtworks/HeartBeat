@@ -109,7 +109,7 @@ start
 
 :get cards which in the 'real done' column within the selected time range;
 :go through each card and get its history;
-:get the timestamp when the card was first moved to the 'real done' column;
+:get the timestamp when the card was last moved from 'undone' column to 'real done' column;
 if (determine if this timestamp falls within the selected time range) then (yes)
     :real done card in the selected time range;
     :calculate card cycle time;

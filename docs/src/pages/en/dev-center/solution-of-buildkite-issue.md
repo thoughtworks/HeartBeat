@@ -16,6 +16,7 @@ Error: Cannot perform an interactive login from a non TTY device
 **Solution**
 
 - Login AWS and Select Singapore region.
+- Choose EC2 and click to enter instance.
 - Connect to `HeartbeatBuildKiteAgent` EC2 environment.
 - Execute the command `sudo vim /etc/buildkite-agent/hooks/environment`
 - Change this part with current cmd line env
@@ -39,5 +40,20 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 **Solution**
 
 - Login AWS and Select Singapore region.
+- Choose EC2 and click to enter instance.
 - Connect to `HeartbeatBuildKiteAgent` EC2 environment.
 - Execute the command `sudo chmod 666 /var/run/docker.sock`
+
+## Connection Time Out
+
+**Issue**
+
+```
+Error: The command exited with status 255
+```
+
+**Solution**
+
+- Login AWS and Select Singapore region.
+- Choose EC2 and click to enter instance.
+- Reboot all instances.

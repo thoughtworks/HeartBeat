@@ -449,7 +449,7 @@ public class JiraService {
 		futures.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
-			List<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
+			List<String> assigneeSet = new ArrayList<>();
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());

@@ -449,7 +449,7 @@ public class JiraService {
 		futures.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
-			List<String> assigneeSet = new ArrayList<>(getAssigneeSet(baseUrl, doneCard, request.getToken()));
+			List<String> assigneeSet = new ArrayList<>();
 			if (doneCard.getFields().getAssignee() != null
 					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
 				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
@@ -472,18 +472,19 @@ public class JiraService {
 			StoryPointsAndCycleTimeRequest request) {
 		List<String> upperDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
 
-		List<Long> doneTimes = jiraCardHistory.getItems()
+		Optional<Long> lastTimeFromUndoneToRealDone = jiraCardHistory.getItems()
 			.stream()
 			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
 			.filter(history -> upperDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
+			.filter(history -> !upperDoneStatuses.contains(history.getFrom().getDisplayValue().toUpperCase()))
 			.map(HistoryDetail::getTimestamp)
-			.toList();
+			.max(Long::compareTo);
 
 		long validStartTime = parseLong(request.getStartTime());
 		long validEndTime = parseLong(request.getEndTime());
 
-		return doneTimes.stream().allMatch(time -> validStartTime <= time)
-				&& doneTimes.stream().anyMatch(time -> validEndTime >= time);
+		return validStartTime <= lastTimeFromUndoneToRealDone.get()
+				&& validEndTime >= lastTimeFromUndoneToRealDone.get();
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,

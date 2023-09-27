@@ -14,7 +14,12 @@ start
 :Create a personal code branch based on the latest main branch;
   repeat
     repeat :Start coding;
-      :Small step commit pull request;
+      :Small step commit;
+      if(E2E test passed？) then (no)
+        :fix e2e test;
+      else(yes)
+      endif
+      :Pull request;
       :Pr review;
       if(Pr review passed？) then (yes)
       else (no)
@@ -43,3 +48,9 @@ start
 stop
 @enduml
 ```
+
+## Notes
+
+- How to start E2E test please look at docs: start-e2e-test-in-local.
+- When creating PR, the base repository is `au-heartbeat/Heartbeat`, and the base is `main`.
+- When merging pr to main branch, please make sure add tags to trigger buildKite pipeline, you can refer to the `README.md` for details

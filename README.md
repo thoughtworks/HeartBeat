@@ -43,9 +43,9 @@
   * [Prepare env to use Heartbeat tool](#52-prepare-env-to-use-heartbeat-tool)
 * [Run Heartbeat](#6-run-heartbeat)
   * [How to run backend](#61-how-to-run-backend)
-    *[How to package it (optional)](#611-how-to-package-it-optional)
+    * [How to package it (optional)](#611-how-to-package-it-optional)
   * [How to run frontend](#62-how-to-run-frontend)
-    *[How to build it](#621-how-to-build-it)
+    * [How to build it](#621-how-to-build-it)
 * [How to use](#7-how-to-use)
     * [Docker-compose](#71-docker-compose)
 
@@ -434,9 +434,9 @@ git tag -d {tag name}
 git push origin :refs/tags/{tag name}
 ```
 
-# How to use
+# 7 How to use
 
-## Docker-compose
+## 7.1 Docker-compose
 
 First, create a `docker-compose.yml` file, and copy below code into the file.
 

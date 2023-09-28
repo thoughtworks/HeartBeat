@@ -82,7 +82,6 @@ public class MeanToRecoveryCalculator {
 				failedJobFinishedTime = currentJobFinishTime;
 			}
 		}
-
 		return new TotalTimeAndRecoveryTimes(totalTimeToRecovery, recoveryTimes);
 	}
 

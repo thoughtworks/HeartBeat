@@ -87,7 +87,7 @@ public class CSVFileGenerator {
 				String firstCommitTimeInPr = leadTimeInfo.getFirstCommitTimeInPr();
 				String prCreatedTime = leadTimeInfo.getPrCreatedTime();
 				String prMergedTime = leadTimeInfo.getPrMergedTime();
-				String jobFinishTime = leadTimeInfo.getJobFinishTime();
+				String jobFinishTime = csvInfo.getDeployInfo().getJobFinishTime();
 				String totalTime = leadTimeInfo.getTotalTime();
 				String prLeadTime = leadTimeInfo.getPrLeadTime();
 				String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();

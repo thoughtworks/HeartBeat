@@ -68,6 +68,8 @@ State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics 
 
 In Heartbeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So we can collect DF, LTC, CFR, Velocity, Cycle Time and Classification.
 
+For MTTR meter, specifically, if the pipeline stay in failed status during the selected period, the unfixed part will not be included for MTTR calculation.
+
 # 2 Support tools
 
 Here is the user manaul for Version 1 on 2020/06. For now, we just can support Jira/Buildkite/Github to generate the corresponding metrics data.

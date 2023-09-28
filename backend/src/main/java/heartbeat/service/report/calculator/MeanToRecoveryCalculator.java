@@ -65,7 +65,7 @@ public class MeanToRecoveryCalculator {
 	private TotalTimeAndRecoveryTimes getTotalRecoveryTimeAndRecoveryTimes(DeployTimes deploy) {
 		List<DeployInfo> sortedJobs = new ArrayList<>(deploy.getFailed());
 		sortedJobs.addAll(deploy.getPassed());
-		sortedJobs.sort(Comparator.comparing(DeployInfo::getJobFinishTime));
+		sortedJobs.sort(Comparator.comparing(DeployInfo::getPipelineCreateTime));
 
 		long totalTimeToRecovery = 0;
 		long failedJobFinishedTime = 0;

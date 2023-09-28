@@ -84,4 +84,5 @@ public class MeanToRecoveryCalculator {
 		}
 		return new TotalTimeAndRecoveryTimes(totalTimeToRecovery, recoveryTimes);
 	}
+
 }

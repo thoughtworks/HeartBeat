@@ -84,16 +84,14 @@ class MeanToRecoveryCalculatorTest {
 		for (int i = 1; i <= failedCount; i++) {
 			DeployInfo failedJob = new DeployInfo();
 			failedJob.setState("failed");
-			failedJob
-				.setPipelineCreateTime(DateTimeFormatter.ISO_INSTANT.format(baseTimestamp.minusMillis(i * interval)));
+			failedJob.setJobFinishTime(DateTimeFormatter.ISO_INSTANT.format(baseTimestamp.minusMillis(i * interval)));
 			failed.add(failedJob);
 		}
 
 		for (int i = 1; i <= passedCount; i++) {
 			DeployInfo passedJob = new DeployInfo();
 			passedJob.setState("passed");
-			passedJob
-				.setPipelineCreateTime(DateTimeFormatter.ISO_INSTANT.format(baseTimestamp.plusMillis(i * interval)));
+			passedJob.setJobFinishTime(DateTimeFormatter.ISO_INSTANT.format(baseTimestamp.plusMillis(i * interval)));
 			passed.add(passedJob);
 		}
 

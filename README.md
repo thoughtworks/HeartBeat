@@ -43,9 +43,11 @@
   * [Prepare env to use Heartbeat tool](#52-prepare-env-to-use-heartbeat-tool)
 * [Run Heartbeat](#6-run-heartbeat)
   * [How to run backend](#61-how-to-run-backend)
-    *[How to package it (optional)](#611-how-to-package-it-optional)
+    * [How to package it (optional)](#611-how-to-package-it-optional)
   * [How to run frontend](#62-how-to-run-frontend)
-    *[How to build it](#621-how-to-build-it)
+    * [How to build it](#621-how-to-build-it)
+* [How to use](#7-how-to-use)
+    * [Docker-compose](#71-docker-compose)
 
 # News
 
@@ -416,6 +418,8 @@ pnpm e2e:report
 
 4. Add `[frontend]` tag to the title of the commit message or PR to trigger frontend-related deployments.
 
+5. Add `[docs]` tag to the title of the commit message or PR to trigger docs-related deployments.
+
 
 ## Release
 
@@ -430,4 +434,36 @@ git push origin {tag name}
 # Delete tag
 git tag -d {tag name}
 git push origin :refs/tags/{tag name}
+```
+
+# 7 How to use
+
+## 7.1 Docker-compose
+
+First, create a `docker-compose.yml` file, and copy below code into the file.
+
+```yaml
+version: "3.4"
+
+services:
+  backend:
+    image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+    container_name: backend
+    ports:
+      - 4322:4322
+    restart: always
+  frontend:
+    image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+    container_name: frontend
+    ports:
+      - 4321:80
+    depends_on:
+      - backend
+    restart: always
+```
+
+Then, execute this command
+
+```sh
+docker-compose up -d frontend
 ```

@@ -271,21 +271,25 @@ export const metricsSlice = createSlice({
       const orgNames = new Set(pipelineList.map((item: pipeline) => item.orgName))
       const filteredPipelineNames = (organization: string) =>
         pipelineList
-          .filter((pipeline: pipeline) => pipeline.orgName === organization)
+          .filter((pipeline: pipeline) => pipeline.orgName.toLowerCase() === organization.toLowerCase())
           .map((item: pipeline) => item.name)
       const getValidPipelines = (pipelines: IPipelineConfig[]) =>
         !pipelines.length || isProjectCreated
           ? [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }]
           : pipelines.map(({ id, organization, pipelineName }) => ({
               id,
-              organization: orgNames.has(organization) ? organization : '',
+              organization: [...orgNames].some((i) => i.toLowerCase() === organization.toLowerCase())
+                ? [...orgNames].find((i) => i.toLowerCase() === organization.toLowerCase())
+                : '',
               pipelineName: filteredPipelineNames(organization).includes(pipelineName) ? pipelineName : '',
               step: '',
               branches: [],
             }))
 
       const createPipelineWarning = ({ id, organization, pipelineName }: IPipelineConfig) => {
-        const orgWarning = orgNames.has(organization) ? null : ORGANIZATION_WARNING_MESSAGE
+        const orgWarning = [...orgNames].some((i) => i.toLowerCase() === organization.toLowerCase())
+          ? null
+          : ORGANIZATION_WARNING_MESSAGE
         const pipelineNameWarning =
           orgWarning || filteredPipelineNames(organization).includes(pipelineName)
             ? null

@@ -225,7 +225,7 @@ export const selectSteps = (state: RootState, organizationName: string, pipeline
     state.config.pipelineTool.verifiedResponse.pipelineList.find(
       (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
     )?.steps ?? []
-  return steps ? sortArrayWithoutEmoji(steps) : []
+  return sortArrayWithoutEmoji(steps)
 }
 
 export const selectBranches = (state: RootState, organizationName: string, pipelineName: string) =>

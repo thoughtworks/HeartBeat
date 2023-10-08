@@ -27,3 +27,15 @@ export const transformToCleanedBuildKiteEmoji = (input: OriginBuildKiteEmoji[]):
     image,
     aliases: [...new Set([...aliases, name])],
   }))
+
+export const sortArrayWithoutEmoji = (arr: string[]) => {
+  function extractTextWithoutEmoji(text: string) {
+    return text.replace(/:[^:]+:/g, '').trim()
+  }
+
+  return arr.slice().sort((a, b) => {
+    const textA = extractTextWithoutEmoji(a)
+    const textB = extractTextWithoutEmoji(b)
+    return textA.localeCompare(textB)
+  })
+}

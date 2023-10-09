@@ -86,6 +86,9 @@ export const PipelineMetricSelection = ({
       dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps, branches }))
       res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches }))
       res && setIsShowNoStepWarning(!res.haveStep)
+      if (res && !res.haveStep && isShowRemoveButton) {
+        handleClick()
+      }
     })
   }
 

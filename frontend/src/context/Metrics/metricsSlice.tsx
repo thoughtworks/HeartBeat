@@ -176,7 +176,10 @@ export const metricsSlice = createSlice({
       state.cycleTimeSettings = action.payload
     },
     addADeploymentFrequencySetting: (state) => {
-      const newId = state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
+      const newId =
+        state.deploymentFrequencySettings.length >= 1
+          ? state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
+          : 0
       state.deploymentFrequencySettings = [
         ...state.deploymentFrequencySettings,
         { id: newId, organization: '', pipelineName: '', step: '', branches: [] },
@@ -367,7 +370,8 @@ export const metricsSlice = createSlice({
     },
 
     addALeadTimeForChanges: (state) => {
-      const newId = state.leadTimeForChanges[state.leadTimeForChanges.length - 1].id + 1
+      const newId =
+        state.leadTimeForChanges.length >= 1 ? state.leadTimeForChanges[state.leadTimeForChanges.length - 1].id + 1 : 0
       state.leadTimeForChanges = [
         ...state.leadTimeForChanges,
         { id: newId, organization: '', pipelineName: '', step: '', branches: [] },

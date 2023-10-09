@@ -6,7 +6,6 @@ import { initialPipelineToolState, IPipelineToolState } from '@src/context/confi
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
 import dayjs from 'dayjs'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
-import { sortArrayWithoutEmoji } from '@src/utils/util'
 
 export interface BasicConfigState {
   isProjectCreated: boolean
@@ -196,6 +195,7 @@ export const selectPipelineNames = (state: RootState, organization: string) =>
   state.config.pipelineTool.verifiedResponse.pipelineList
     .filter((pipeline) => pipeline.orgName === organization)
     .map((item) => item.name)
+    .sort()
 
 export const selectStepsParams = (state: RootState, organizationName: string, pipelineName: string) => {
   const pipeline = state.config.pipelineTool.verifiedResponse.pipelineList.find(
@@ -220,13 +220,10 @@ export const selectStepsParams = (state: RootState, organizationName: string, pi
   }
 }
 
-export const selectSteps = (state: RootState, organizationName: string, pipelineName: string) => {
-  const steps =
-    state.config.pipelineTool.verifiedResponse.pipelineList.find(
-      (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
-    )?.steps ?? []
-  return sortArrayWithoutEmoji(steps)
-}
+export const selectSteps = (state: RootState, organizationName: string, pipelineName: string) =>
+  state.config.pipelineTool.verifiedResponse.pipelineList.find(
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+  )?.steps ?? []
 
 export const selectBranches = (state: RootState, organizationName: string, pipelineName: string) =>
   state.config.pipelineTool.verifiedResponse.pipelineList.find(

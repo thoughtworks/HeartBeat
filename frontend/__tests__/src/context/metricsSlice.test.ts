@@ -347,6 +347,22 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings)
   })
 
+  it('should add a deploymentFrequencySetting when handle addADeploymentFrequencySettings but initState dont have DeploymentFrequencySettings', () => {
+    const addedDeploymentFrequencySettings = [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }]
+
+    const initStateWithoutDeploymentFrequencySettings = {
+      ...initState,
+      deploymentFrequencySettings: [],
+    }
+
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      initStateWithoutDeploymentFrequencySettings,
+      addADeploymentFrequencySetting()
+    )
+
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings)
+  })
+
   it('should delete a deploymentFrequencySetting when handle deleteADeploymentFrequencySettings given initial state', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(initState, deleteADeploymentFrequencySetting(0))
 
@@ -381,6 +397,19 @@ describe('saveMetricsSetting reducer', () => {
     ]
 
     const savedMetricsSetting = saveMetricsSettingReducer(initState, addALeadTimeForChanges())
+
+    expect(savedMetricsSetting.leadTimeForChanges).toEqual(addedLeadTimeForChanges)
+  })
+
+  it('should add a leadTimeForChange when handle leadTimeForChanges given initial state but', () => {
+    const addedLeadTimeForChanges = [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }]
+
+    const initStateWithoutLeadTimeForChanges = {
+      ...initState,
+      leadTimeForChanges: [],
+    }
+
+    const savedMetricsSetting = saveMetricsSettingReducer(initStateWithoutLeadTimeForChanges, addALeadTimeForChanges())
 
     expect(savedMetricsSetting.leadTimeForChanges).toEqual(addedLeadTimeForChanges)
   })

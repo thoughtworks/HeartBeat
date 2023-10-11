@@ -22,6 +22,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
     const newValue = event.target.value
     setSelectedOptions(newValue)
     if (onGetSteps) {
+      console.log('handleChange', newValue)
       onUpDatePipeline(id, 'Step', '')
       onGetSteps(newValue)
     }
@@ -30,6 +31,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
 
   useEffect(() => {
     if (onGetSteps && !!selectedOptions && !step) {
+      console.log('selectedOptions', selectedOptions, step)
       onGetSteps(selectedOptions)
     }
   }, [])

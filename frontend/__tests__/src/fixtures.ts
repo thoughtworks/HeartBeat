@@ -412,7 +412,7 @@ export const EXPECTED_REPORT_VALUES = {
     {
       id: 1,
       name: 'Total development time / Total cycle time',
-      valueList: [{ value: 0.57 }],
+      valueList: [{ value: '57.25%' }],
     },
     {
       id: 2,
@@ -459,7 +459,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Mean Time To Recovery',
-          value: '4hours 19minutes',
+          value: '4.32',
         },
       ],
     },
@@ -469,7 +469,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Mean Time To Recovery',
-          value: '0minutes',
+          value: '0.00',
         },
       ],
     },
@@ -479,7 +479,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Mean Time To Recovery',
-          value: '7hours 40minutes',
+          value: '7.67',
         },
       ],
     },
@@ -489,7 +489,7 @@ export const EXPECTED_REPORT_VALUES = {
       valuesList: [
         {
           name: 'Mean Time To Recovery',
-          value: '3hours 59minutes',
+          value: '4.00',
         },
       ],
     },
@@ -499,18 +499,18 @@ export const EXPECTED_REPORT_VALUES = {
       id: 0,
       name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
       valuesList: [
-        { name: PR_LEAD_TIME, value: '1day 21hours 2minutes' },
-        { name: PIPELINE_LEAD_TIME, value: '1day 19hours 7minutes' },
-        { name: TOTAL_DELAY_TIME, value: '3day 16hours 9minutes' },
+        { name: PR_LEAD_TIME, value: '45.04' },
+        { name: PIPELINE_LEAD_TIME, value: '43.12' },
+        { name: TOTAL_DELAY_TIME, value: '88.17' },
       ],
     },
     {
       id: 1,
       name: 'Average',
       valuesList: [
-        { name: PR_LEAD_TIME, value: '2day 12hours 47minutes' },
-        { name: PIPELINE_LEAD_TIME, value: '1day 15hours 1minutes' },
-        { name: TOTAL_DELAY_TIME, value: '4day 3hours 49minutes' },
+        { name: PR_LEAD_TIME, value: '60.79' },
+        { name: PIPELINE_LEAD_TIME, value: '39.03' },
+        { name: TOTAL_DELAY_TIME, value: '99.82' },
       ],
     },
   ],

@@ -109,7 +109,7 @@ describe('Report Step', () => {
     await waitFor(() => {
       expect(getByText('30.26(days/card)')).toBeInTheDocument()
       expect(getByText('21.18(days/SP)')).toBeInTheDocument()
-      expect(getByText('0.57')).toBeInTheDocument()
+      expect(getByText('57.25%')).toBeInTheDocument()
       expect(getByText('12.13(days/SP)')).toBeInTheDocument()
     })
   })

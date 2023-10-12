@@ -32,9 +32,13 @@ export class MetricsClient extends HttpClient {
         params,
       }
     )
-    result.status === HttpStatusCode.NoContent ? (this.haveStep = false) : (this.steps = result.data.steps)
+    if (result.status === HttpStatusCode.NoContent) {
+      this.haveStep = false
+    } else {
+      this.steps = result.data.steps
+      this.haveStep = true
+    }
     this.branches = result.status === HttpStatusCode.NoContent ? [] : (this.branches = result.data.branches)
-    console.log('发请求', organizationId, buildId, '====', result.status, this.haveStep)
     return {
       response: this.steps,
       haveStep: this.haveStep,

@@ -70,7 +70,7 @@ export const PipelineMetricSelection = ({
     [branches, branchesOptions]
   )
 
-  const handleClick = () => {
+  const handleRemoveClick = () => {
     onRemovePipeline(id)
   }
 
@@ -81,16 +81,15 @@ export const PipelineMetricSelection = ({
       _pipelineName
     )
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-      console.log('getSteps-res:', organizationId, buildId, res)
-      const steps = res?.response ?? []
-      const branches = res?.branches ?? []
-      dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps, branches }))
-      res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches }))
-      res && setIsShowNoStepWarning(!res.haveStep)
-      if (res && isShowRemoveButton && !res.haveStep) {
-        console.log('执行删除，', res, isShowRemoveButton)
-        handleClick()
+      if (res && !res.haveStep) {
+        isShowRemoveButton && handleRemoveClick()
+      } else {
+        const steps = res?.response ?? []
+        const branches = res?.branches ?? []
+        dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps, branches }))
+        res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches }))
       }
+      res && setIsShowNoStepWarning(!res.haveStep)
     })
   }
 
@@ -168,7 +167,7 @@ export const PipelineMetricSelection = ({
       {organization && pipelineName && <BranchSelection />}
       <ButtonWrapper>
         {isShowRemoveButton && (
-          <RemoveButton data-test-id={'remove-button'} onClick={handleClick}>
+          <RemoveButton data-test-id={'remove-button'} onClick={handleRemoveClick}>
             Remove
           </RemoveButton>
         )}

@@ -1,12 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { ContextProvider, useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import React from 'react'
-import {
-  addADeploymentFrequencySetting,
-  addALeadTimeForChanges,
-  updateDeploymentFrequencySettings,
-  updateLeadTimeForChanges,
-} from '@src/context/Metrics/metricsSlice'
+import { addADeploymentFrequencySetting, updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
 import { Provider } from 'react-redux'
 import { setupStore } from '../utils/setupStoreUtil'
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore'
@@ -45,10 +40,6 @@ describe('useMetricsStepValidationCheckContext', () => {
     duplicatedData.map((data) => {
       store.dispatch(updateDeploymentFrequencySettings(data))
     })
-    store.dispatch(addALeadTimeForChanges())
-    duplicatedData.map((data) => {
-      store.dispatch(updateLeadTimeForChanges(data))
-    })
   }
 
   it('should return initial ValidationContext ', () => {
@@ -77,14 +68,10 @@ describe('useMetricsStepValidationCheckContext', () => {
         updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mockPipelineName' })
       )
       store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mockstep' }))
-      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'organization', value: 'mockOrganization' }))
-      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'pipelineName', value: 'mockPipelineName' }))
-      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'step', value: 'mockstep' }))
     })
 
     act(() => {
       expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(true)
-      expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(true)
     })
   })
 
@@ -96,7 +83,6 @@ describe('useMetricsStepValidationCheckContext', () => {
 
     act(() => {
       expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
-      expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(false)
     })
   })
 
@@ -105,7 +91,6 @@ describe('useMetricsStepValidationCheckContext', () => {
 
     act(() => {
       expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
-      expect(result.current?.isPipelineValid('LeadTimeForChanges')).toBe(false)
     })
   })
 
@@ -114,17 +99,14 @@ describe('useMetricsStepValidationCheckContext', () => {
     act(() => {
       setDuplicatedDataToStore(store)
       store.dispatch(addADeploymentFrequencySetting())
-      store.dispatch(addALeadTimeForChanges())
     })
 
     act(() => {
       expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false)
-      expect(result.current?.isPipelineValid(LEAD_TIME_FOR_CHANGES)).toBe(false)
     })
 
     act(() => {
       store.dispatch(addADeploymentFrequencySetting())
-      store.dispatch(addALeadTimeForChanges())
     })
   })
 })

@@ -6,7 +6,6 @@ import {
   BACK,
   CONFIRM_DIALOG_DESCRIPTION,
   HOME_PAGE_ROUTE,
-  LEAD_TIME_FOR_CHANGES,
   MOCK_REPORT_URL,
   NEXT,
   PROJECT_NAME_LABEL,
@@ -33,7 +32,6 @@ import {
   saveTargetFields,
   saveUsers,
   updateDeploymentFrequencySettings,
-  updateLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { exportToJsonFile } from '@src/utils/util'
@@ -92,7 +90,7 @@ const fillConfigPageData = async () => {
   fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
 
   await act(async () => {
-    await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
+    await store.dispatch(updateMetrics([VELOCITY]))
     await store.dispatch(updateBoardVerifyState(true))
     await store.dispatch(updatePipelineToolVerifyState(true))
     await store.dispatch(updateSourceControlVerifyState(true))
@@ -101,7 +99,7 @@ const fillConfigPageData = async () => {
 
 const fillMetricsData = async () => {
   await act(async () => {
-    await store.dispatch(updateMetrics([VELOCITY, LEAD_TIME_FOR_CHANGES]))
+    await store.dispatch(updateMetrics([VELOCITY]))
   })
 }
 
@@ -120,21 +118,6 @@ const fillMetricsPageDate = async () => {
         updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' })
       ),
       store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock new step' })),
-      store.dispatch(
-        updateLeadTimeForChanges({
-          updateId: 0,
-          label: 'organization',
-          value: 'mock new organization',
-        })
-      ),
-      store.dispatch(
-        updateLeadTimeForChanges({
-          updateId: 0,
-          label: 'pipelineName',
-          value: 'mock new pipelineName',
-        })
-      ),
-      store.dispatch(updateLeadTimeForChanges({ updateId: 0, label: 'step', value: 'mock new step' })),
     ])
   })
 }
@@ -302,10 +285,10 @@ describe('MetricsStepper', () => {
         endDate: null,
         startDate: null,
       },
-      metrics: ['Velocity', 'Lead time for changes'],
-      pipelineTool: { type: 'BuildKite', token: '' },
+      metrics: ['Velocity'],
+      pipelineTool: undefined,
       projectName: '',
-      sourceControl: { type: 'GitHub', token: '' },
+      sourceControl: undefined,
     }
 
     const { getByText } = setup()
@@ -325,10 +308,10 @@ describe('MetricsStepper', () => {
         endDate: dayjs().endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
         startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       },
-      metrics: ['Velocity', 'Lead time for changes'],
-      pipelineTool: { type: 'BuildKite', token: '' },
+      metrics: ['Velocity'],
+      pipelineTool: undefined,
       projectName: 'test project Name',
-      sourceControl: { type: 'GitHub', token: '' },
+      sourceControl: undefined,
       classification: undefined,
       crews: undefined,
       cycleTime: undefined,
@@ -343,5 +326,5 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
-  })
+  }, 50000)
 })

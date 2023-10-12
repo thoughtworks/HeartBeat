@@ -482,9 +482,8 @@ public class JiraService {
 
 		long validStartTime = parseLong(request.getStartTime());
 		long validEndTime = parseLong(request.getEndTime());
-
-		return validStartTime <= lastTimeFromUndoneToRealDone.get()
-				&& validEndTime >= lastTimeFromUndoneToRealDone.get();
+		return lastTimeFromUndoneToRealDone.filter(lastTime -> validStartTime <= lastTime && validEndTime >= lastTime)
+			.isPresent();
 	}
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,

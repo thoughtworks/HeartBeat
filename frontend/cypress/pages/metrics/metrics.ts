@@ -49,7 +49,7 @@ class Metrics {
 
   private readonly classificationSelectAllOption = () => cy.contains('All')
 
-  private readonly deploymentFrequencySettingTitle = () => cy.contains('Deployment frequency settings')
+  private readonly deploymentFrequencySettingTitle = () => cy.contains('Pipeline settings')
 
   private readonly organizationSelect = () =>
     cy.get('[id="single-selection-organization"]:contains("Organization")').eq(0).siblings()

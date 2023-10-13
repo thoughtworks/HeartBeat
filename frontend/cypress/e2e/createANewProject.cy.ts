@@ -315,8 +315,6 @@ describe('Create a new project', () => {
 
     metricsPage.checkDeploymentFrequencySettings()
 
-    metricsPage.checkLeadTimeForChanges()
-
     checkFieldsExist(metricsTextList)
 
     metricsPage.goReportStep()

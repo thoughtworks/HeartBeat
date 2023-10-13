@@ -49,7 +49,7 @@ const getErrorMessages = (pipelineSettings: PipelineSetting[]) => {
 export const ContextProvider = ({ children }: ContextProviderProps) => {
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings)
 
-  const isPipelineValid = (type: string) => {
+  const isPipelineValid = () => {
     const pipelines = deploymentFrequencySettings
     const errorMessages = getErrorMessages(pipelines)
     return errorMessages.every(({ error }) => Object.values(error).every((val) => !val))

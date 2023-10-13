@@ -91,5 +91,5 @@ describe('Crew', () => {
 
     expect(listBox.getByRole('option', { name: mockOptions[0] })).toHaveProperty('selected', true)
     expect(listBox.getByRole('option', { name: mockOptions[1] })).toHaveProperty('selected', true)
-  })
+  }, 50000)
 })

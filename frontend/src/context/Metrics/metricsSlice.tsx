@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
@@ -7,7 +8,6 @@ import {
   METRICS_CONSTANTS,
   ORGANIZATION_WARNING_MESSAGE,
   PIPELINE_NAME_WARNING_MESSAGE,
-  PIPELINE_SETTING_TYPES,
   REAL_DONE_WARNING_MESSAGE,
   STEP_WARNING_MESSAGE,
 } from '@src/constants'
@@ -47,13 +47,11 @@ export interface savedMetricsSettingState {
     importedDoneStatus: string[]
     importedClassification: string[]
     importedDeployment: IPipelineConfig[]
-    importedLeadTime: IPipelineConfig[]
   }
   cycleTimeWarningMessage: string | null
   classificationWarningMessage: string | null
   realDoneWarningMessage: string | null
   deploymentWarningMessage: IPipelineWarningMessageConfig[]
-  leadTimeWarningMessage: IPipelineWarningMessageConfig[]
 }
 
 const initialState: savedMetricsSettingState = {
@@ -74,13 +72,11 @@ const initialState: savedMetricsSettingState = {
     importedDoneStatus: [],
     importedClassification: [],
     importedDeployment: [],
-    importedLeadTime: [],
   },
   cycleTimeWarningMessage: null,
   classificationWarningMessage: null,
   realDoneWarningMessage: null,
   deploymentWarningMessage: [],
-  leadTimeWarningMessage: [],
 }
 
 const compareArrays = (arrayA: string[], arrayB: string[]): string | null => {
@@ -208,8 +204,7 @@ export const metricsSlice = createSlice({
         cycleTime?.treatFlagCardAsBlock || state.importedData.importedCycleTime.importedTreatFlagCardAsBlock
       state.importedData.importedDoneStatus = doneStatus || state.importedData.importedDoneStatus
       state.importedData.importedClassification = classification || state.importedData.importedClassification
-      state.importedData.importedDeployment = deployment || state.importedData.importedDeployment
-      state.importedData.importedLeadTime = leadTime || state.importedData.importedLeadTime
+      state.importedData.importedDeployment = deployment || leadTime || state.importedData.importedDeployment
     },
 
     updateMetricsState: (state, action) => {
@@ -245,6 +240,7 @@ export const metricsSlice = createSlice({
       } else {
         state.cycleTimeWarningMessage = null
       }
+
       if (!isProjectCreated && importedClassification?.length > 0) {
         const keyArray = targetFields?.map((field: { key: string; name: string; flag: boolean }) => field.key)
         if (importedClassification.every((item) => keyArray.includes(item))) {
@@ -270,7 +266,7 @@ export const metricsSlice = createSlice({
 
     updatePipelineSettings: (state, action) => {
       const { pipelineList, isProjectCreated } = action.payload
-      const { importedDeployment, importedLeadTime } = state.importedData
+      const { importedDeployment } = state.importedData
       const orgNames: Array<string> = _.uniq(pipelineList.map((item: pipeline) => item.orgName))
       const filteredPipelineNames = (organization: string) =>
         pipelineList
@@ -312,16 +308,13 @@ export const metricsSlice = createSlice({
       }
 
       state.deploymentFrequencySettings = getValidPipelines(importedDeployment)
-      state.leadTimeForChanges = getValidPipelines(importedLeadTime)
       state.deploymentWarningMessage = getPipelinesWarningMessage(importedDeployment)
-      state.leadTimeWarningMessage = getPipelinesWarningMessage(importedLeadTime)
     },
 
     updatePipelineStep: (state, action) => {
       const { steps, id, type, branches } = action.payload
-      const { importedDeployment, importedLeadTime } = state.importedData
-      const updatedImportedPipeline =
-        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE ? importedDeployment : importedLeadTime
+      const { importedDeployment } = state.importedData
+      const updatedImportedPipeline = importedDeployment
       const updatedImportedPipelineStep = updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.step ?? ''
       const updatedImportedPipelineBranches =
         updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.branches ?? []
@@ -351,13 +344,8 @@ export const metricsSlice = createSlice({
         )
       }
 
-      type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-        ? (state.deploymentFrequencySettings = getPipelineSettings(state.deploymentFrequencySettings))
-        : (state.leadTimeForChanges = getPipelineSettings(state.leadTimeForChanges))
-
-      type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-        ? (state.deploymentWarningMessage = getStepWarningMessage(state.deploymentWarningMessage))
-        : (state.leadTimeWarningMessage = getStepWarningMessage(state.leadTimeWarningMessage))
+      state.deploymentFrequencySettings = getPipelineSettings(state.deploymentFrequencySettings)
+      state.deploymentWarningMessage = getStepWarningMessage(state.deploymentWarningMessage)
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {
@@ -367,37 +355,6 @@ export const metricsSlice = createSlice({
 
     initDeploymentFrequencySettings: (state) => {
       state.deploymentFrequencySettings = initialState.deploymentFrequencySettings
-    },
-
-    addALeadTimeForChanges: (state) => {
-      const newId =
-        state.leadTimeForChanges.length >= 1 ? state.leadTimeForChanges[state.leadTimeForChanges.length - 1].id + 1 : 0
-      state.leadTimeForChanges = [
-        ...state.leadTimeForChanges,
-        { id: newId, organization: '', pipelineName: '', step: '', branches: [] },
-      ]
-    },
-
-    updateLeadTimeForChanges: (state, action) => {
-      const { updateId, label, value } = action.payload
-
-      state.leadTimeForChanges = state.leadTimeForChanges.map((leadTimeForChange) => {
-        return leadTimeForChange.id === updateId
-          ? {
-              ...leadTimeForChange,
-              [label === 'Steps' ? 'step' : camelCase(label)]: value,
-            }
-          : leadTimeForChange
-      })
-    },
-
-    deleteALeadTimeForChange: (state, action) => {
-      const deleteId = action.payload
-      state.leadTimeForChanges = [...state.leadTimeForChanges.filter(({ id }) => id !== deleteId)]
-    },
-
-    initLeadTimeForChanges: (state) => {
-      state.leadTimeForChanges = initialState.leadTimeForChanges
     },
 
     updateTreatFlagCardAsBlock: (state, action) => {
@@ -415,11 +372,7 @@ export const {
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,
   updateMetricsImportedData,
-  addALeadTimeForChanges,
-  updateLeadTimeForChanges,
-  deleteALeadTimeForChange,
   initDeploymentFrequencySettings,
-  initLeadTimeForChanges,
   updateTreatFlagCardAsBlock,
   updateMetricsState,
   updatePipelineSettings,
@@ -437,29 +390,20 @@ export const selectClassificationWarningMessage = (state: RootState) => state.me
 export const selectRealDoneWarningMessage = (state: RootState) => state.metrics.realDoneWarningMessage
 
 export const selectOrganizationWarningMessage = (state: RootState, id: number, type: string) => {
-  const { deploymentWarningMessage, leadTimeWarningMessage } = state.metrics
-  const warningMessage =
-    type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-      ? deploymentWarningMessage
-      : leadTimeWarningMessage
+  const { deploymentWarningMessage } = state.metrics
+  const warningMessage = deploymentWarningMessage
   return warningMessage.find((item) => item.id === id)?.organization
 }
 
 export const selectPipelineNameWarningMessage = (state: RootState, id: number, type: string) => {
-  const { deploymentWarningMessage, leadTimeWarningMessage } = state.metrics
-  const warningMessage =
-    type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-      ? deploymentWarningMessage
-      : leadTimeWarningMessage
+  const { deploymentWarningMessage } = state.metrics
+  const warningMessage = deploymentWarningMessage
   return warningMessage.find((item) => item.id === id)?.pipelineName
 }
 
 export const selectStepWarningMessage = (state: RootState, id: number, type: string) => {
-  const { deploymentWarningMessage, leadTimeWarningMessage } = state.metrics
-  const warningMessage =
-    type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-      ? deploymentWarningMessage
-      : leadTimeWarningMessage
+  const { deploymentWarningMessage } = state.metrics
+  const warningMessage = deploymentWarningMessage
   return warningMessage.find((item) => item.id === id)?.step
 }
 

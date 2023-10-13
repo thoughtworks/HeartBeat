@@ -1,10 +1,7 @@
 import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
-  addALeadTimeForChanges,
   deleteADeploymentFrequencySetting,
-  deleteALeadTimeForChange,
   initDeploymentFrequencySettings,
-  initLeadTimeForChanges,
   saveCycleTimeSettings,
   saveDoneColumn,
   saveTargetFields,
@@ -14,7 +11,6 @@ import saveMetricsSettingReducer, {
   selectPipelineNameWarningMessage,
   selectStepWarningMessage,
   updateDeploymentFrequencySettings,
-  updateLeadTimeForChanges,
   updateMetricsImportedData,
   updateMetricsState,
   updatePipelineSettings,
@@ -94,9 +90,6 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
     ])
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual([
-      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-    ])
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true)
     expect(savedMetricsSetting.importedData).toEqual({
       importedCrews: [],
@@ -107,7 +100,6 @@ describe('saveMetricsSetting reducer', () => {
       importedDoneStatus: [],
       importedClassification: [],
       importedDeployment: [],
-      importedLeadTime: [],
     })
   })
 
@@ -183,7 +175,7 @@ describe('saveMetricsSetting reducer', () => {
       doneStatus: ['mockDoneStatus'],
       classification: ['mockClassification'],
       deployment: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
-      leadTime: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
+      leadTime: [],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))
 
@@ -222,9 +214,6 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
     expect(savedMetricsSetting.treatFlagCardAsBlock).toEqual(true)
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
-      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-    ])
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
     ])
   })
@@ -390,70 +379,6 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(initState.deploymentFrequencySettings)
   })
 
-  it('should add a leadTimeForChange when handle leadTimeForChanges given initial state', () => {
-    const addedLeadTimeForChanges = [
-      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-      { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
-    ]
-
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, addALeadTimeForChanges())
-
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual(addedLeadTimeForChanges)
-  })
-
-  it('should add a leadTimeForChange when handle leadTimeForChanges given initial state but', () => {
-    const addedLeadTimeForChanges = [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }]
-
-    const initStateWithoutLeadTimeForChanges = {
-      ...initState,
-      leadTimeForChanges: [],
-    }
-
-    const savedMetricsSetting = saveMetricsSettingReducer(initStateWithoutLeadTimeForChanges, addALeadTimeForChanges())
-
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual(addedLeadTimeForChanges)
-  })
-
-  it('should delete a leadTimeForChange when handle deleteALeadTimeForChange given initial state', async () => {
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, deleteALeadTimeForChange(0))
-
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual([])
-  })
-
-  it('should update a leadTimeForChange when handle updateLeadTimeForChanges given multiple leadTimeForChanges', () => {
-    const multipleLeadTimeForChangesInitState = {
-      ...initState,
-      leadTimeForChanges: [
-        { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-        { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
-      ],
-    }
-    const updatedLeadTimeForChanges = [
-      { id: 0, organization: '', pipelineName: '', step: 'step1', branches: [] },
-      { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
-    ]
-    const savedMetricsSetting = saveMetricsSettingReducer(
-      multipleLeadTimeForChangesInitState,
-      updateLeadTimeForChanges({ updateId: 0, label: 'Steps', value: 'step1' })
-    )
-
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual(updatedLeadTimeForChanges)
-  })
-
-  it('should init leadTimeForChanges when handle initLeadTimeForChanges given multiple leadTimeForChanges', () => {
-    const multipleLeadTimeForChangesInitState = {
-      ...initState,
-      leadTimeForChanges: [
-        { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', step: 'step1', branches: [] },
-        { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', step: 'step2', branches: [] },
-      ],
-    }
-
-    const savedMetricsSetting = saveMetricsSettingReducer(multipleLeadTimeForChangesInitState, initLeadTimeForChanges())
-
-    expect(savedMetricsSetting.leadTimeForChanges).toEqual(initState.leadTimeForChanges)
-  })
-
   it('should return false when update TreatFlagCardAsBlock value  given false', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateTreatFlagCardAsBlock(false))
 
@@ -527,9 +452,7 @@ describe('saveMetricsSetting reducer', () => {
         )
 
         expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(expectSetting.deploymentFrequencySettings)
-        expect(savedMetricsSetting.leadTimeForChanges).toEqual(expectSetting.leadTimeForChanges)
         expect(savedMetricsSetting.deploymentWarningMessage).toEqual(expectSetting.deploymentWarningMessage)
-        expect(savedMetricsSetting.leadTimeWarningMessage).toEqual(expectSetting.leadTimeWarningMessage)
       })
     })
   })
@@ -608,47 +531,11 @@ describe('saveMetricsSetting reducer', () => {
           },
         ],
       },
-      {
-        id: 0,
-        steps: mockSteps,
-        type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
-        expectedSettings: [
-          {
-            id: 0,
-            organization: 'mockOrganization1',
-            pipelineName: 'mockPipelineName1',
-            step: 'mockStep1',
-            branches: [],
-          },
-        ],
-        expectedWarning: [{ id: 0, organization: null, pipelineName: null, step: null }],
-      },
-      {
-        id: 1,
-        steps: mockSteps,
-        type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE,
-        expectedSettings: [
-          {
-            id: 0,
-            organization: 'mockOrganization1',
-            pipelineName: 'mockPipelineName1',
-            step: '',
-            branches: [],
-          },
-        ],
-        expectedWarning: [{ id: 0, organization: null, pipelineName: null, step: null }],
-      },
     ]
 
     testSettingsCases.forEach(({ id, type, steps, expectedSettings, expectedWarning }) => {
-      const settingsKey =
-        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-          ? 'deploymentFrequencySettings'
-          : 'leadTimeForChanges'
-      const warningKey =
-        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-          ? 'deploymentWarningMessage'
-          : 'leadTimeWarningMessage'
+      const settingsKey = 'deploymentFrequencySettings'
+      const warningKey = 'deploymentWarningMessage'
 
       it(`should update ${settingsKey} step when call updatePipelineSteps with id ${id}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(
@@ -992,12 +879,6 @@ describe('saveMetricsSetting reducer', () => {
           type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         })
       )
-      await store.dispatch(
-        updatePipelineStep({ steps: mockSteps, id: 0, type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE })
-      )
-      await store.dispatch(
-        updatePipelineStep({ steps: mockSteps, id: 1, type: PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE })
-      )
     })
     afterEach(() => {
       jest.clearAllMocks()
@@ -1009,12 +890,6 @@ describe('saveMetricsSetting reducer', () => {
       expect(
         selectOrganizationWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
       ).toBeNull()
-      expect(
-        selectOrganizationWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
-      ).toEqual(ORGANIZATION_WARNING_MESSAGE)
-      expect(
-        selectOrganizationWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
-      ).toBeNull()
     })
 
     it('should return pipelineName warning message given its id and type', () => {
@@ -1023,12 +898,6 @@ describe('saveMetricsSetting reducer', () => {
       ).toBeNull()
       expect(
         selectPipelineNameWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-      ).toEqual(PIPELINE_NAME_WARNING_MESSAGE)
-      expect(
-        selectPipelineNameWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
-      ).toBeNull()
-      expect(
-        selectPipelineNameWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
       ).toEqual(PIPELINE_NAME_WARNING_MESSAGE)
     })
 
@@ -1039,12 +908,6 @@ describe('saveMetricsSetting reducer', () => {
       expect(
         selectStepWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
       ).toEqual(STEP_WARNING_MESSAGE)
-      expect(
-        selectStepWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
-      ).toBeNull()
-      expect(selectStepWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)).toEqual(
-        STEP_WARNING_MESSAGE
-      )
     })
   })
 })

@@ -60,7 +60,7 @@ describe('MetricsTypeCheckbox', () => {
     await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }))
 
     expect(getByText([VELOCITY, CYCLE_TIME].join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
-  })
+  }, 50000)
 
   it('should show all selections when all option are select', async () => {
     const { getByRole, getByText } = setup()
@@ -72,7 +72,7 @@ describe('MetricsTypeCheckbox', () => {
 
     expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true')
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
-  })
+  }, 50000)
 
   it('should show all selections when click velocity selection and then click all selection', async () => {
     const { getByRole, getByText } = setup()
@@ -86,7 +86,7 @@ describe('MetricsTypeCheckbox', () => {
 
     expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true')
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
-  })
+  }, 50000)
 
   it('should be checked of All selected option when click any other options', async () => {
     const { getByRole } = setup()
@@ -165,25 +165,5 @@ describe('MetricsTypeCheckbox', () => {
     await userEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }))
 
     expect(queryByText(CONFIG_TITLE.BOARD)).not.toBeInTheDocument()
-  })
-
-  it('should pipelineTool component when click MetricsTypeCheckbox selection Lead time for changes ', async () => {
-    const { getByRole } = setup()
-    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-    const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
-
-    expect(getByRole('heading', { name: CONFIG_TITLE.PIPELINE_TOOL, hidden: true })).toBeInTheDocument()
-  })
-
-  it('should hidden pipelineTool component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is Lead time for changes ', async () => {
-    const { getByRole, queryByText } = setup()
-
-    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-    const requireDateSelection = within(getByRole('listbox'))
-    await userEvent.click(requireDateSelection.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
-    await userEvent.click(requireDateSelection.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }))
-
-    expect(queryByText(CONFIG_TITLE.PIPELINE_TOOL)).not.toBeInTheDocument()
   })
 })

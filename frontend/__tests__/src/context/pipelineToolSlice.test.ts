@@ -28,6 +28,28 @@ describe('pipelineTool reducer', () => {
       },
     ],
   }
+
+  const MOCK_PIPElINE_TOOL_VERIFY_RESPONSE_SORT = {
+    pipelineList: [
+      {
+        id: 'mockId',
+        name: 'mockName',
+        orgId: 'mockOrgId',
+        orgName: 'mockOrgName',
+        repository: 'mockRepository',
+        steps: ['step1', 'step2'],
+      },
+      {
+        id: 'mockId2',
+        name: 'MockName',
+        orgId: 'mockOrgId',
+        orgName: 'mockOrgName',
+        repository: 'mockRepository',
+        steps: ['step3', 'step4'],
+      },
+    ],
+  }
+
   const MOCK_DATE_RANGE = {
     startDate: '2023-04-04T00:00:00+08:00',
     endDate: '2023-04-18T00:00:00+08:00',
@@ -191,6 +213,12 @@ describe('pipelineTool reducer', () => {
       const store = setupStore()
       await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
       expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName'])
+    })
+
+    it('should sort PipelineNames when call selectPipelineNames function', async () => {
+      const store = setupStore()
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE_SORT))
+      expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName', 'MockName'])
     })
   })
 

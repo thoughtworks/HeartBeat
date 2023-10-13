@@ -195,7 +195,7 @@ export const selectPipelineNames = (state: RootState, organization: string) =>
   state.config.pipelineTool.verifiedResponse.pipelineList
     .filter((pipeline) => pipeline.orgName === organization)
     .map((item) => item.name)
-    .sort()
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
 
 export const selectStepsParams = (state: RootState, organizationName: string, pipelineName: string) => {
   const pipeline = state.config.pipelineTool.verifiedResponse.pipelineList.find(

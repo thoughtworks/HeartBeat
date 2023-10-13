@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react'
 import { useAppSelector } from '@src/hooks/index'
-import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice'
+import { selectDeploymentFrequencySettings, selectLeadTimeForChanges } from '@src/context/Metrics/metricsSlice'
+import { PIPELINE_SETTING_TYPES } from '@src/constants'
 import { PipelineSetting } from '@src/context/interface'
 
 interface ProviderContextType {
@@ -48,9 +49,11 @@ const getErrorMessages = (pipelineSettings: PipelineSetting[]) => {
 
 export const ContextProvider = ({ children }: ContextProviderProps) => {
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings)
+  const leadTimeForChanges = useAppSelector(selectLeadTimeForChanges)
 
   const isPipelineValid = (type: string) => {
-    const pipelines = deploymentFrequencySettings
+    const pipelines =
+      type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE ? leadTimeForChanges : deploymentFrequencySettings
     const errorMessages = getErrorMessages(pipelines)
     return errorMessages.every(({ error }) => Object.values(error).every((val) => !val))
   }

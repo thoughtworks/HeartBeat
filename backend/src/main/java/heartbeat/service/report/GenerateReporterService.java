@@ -475,8 +475,8 @@ public class GenerateReporterService {
 
 	private FetchedData.BuildKiteData fetchGithubData(GenerateReportRequest request) {
 		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
-				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken());
-		Map<String, String> repoMap = getRepoMap(request.getBuildKiteSetting().getDeploymentEnvList());
+				request.getCodebaseSetting().getLeadTime(), request.getBuildKiteSetting().getToken());
+		Map<String, String> repoMap = getRepoMap(request.getCodebaseSetting().getLeadTime());
 		List<PipelineLeadTime> pipelineLeadTimes = Collections.emptyList();
 		if (Objects.nonNull(request.getCodebaseSetting())
 				&& StringUtils.hasLength(request.getCodebaseSetting().getToken())) {

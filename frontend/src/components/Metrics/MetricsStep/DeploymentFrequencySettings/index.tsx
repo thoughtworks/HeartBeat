@@ -31,7 +31,7 @@ export const DeploymentFrequencySettings = () => {
 
   return (
     <>
-      <MetricsSettingTitle title={'Pipeline settings'} />
+      <MetricsSettingTitle title={'Deployment frequency settings'} />
       {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
         <PipelineMetricSelection
           key={deploymentFrequencySetting.id}

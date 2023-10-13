@@ -49,7 +49,7 @@ class Metrics {
 
   private readonly classificationSelectAllOption = () => cy.contains('All')
 
-  private readonly deploymentFrequencySettingTitle = () => cy.contains('Pipeline settings')
+  private readonly deploymentFrequencySettingTitle = () => cy.contains('Deployment frequency settings')
 
   private readonly organizationSelect = () =>
     cy.get('[id="single-selection-organization"]:contains("Organization")').eq(0).siblings()
@@ -149,6 +149,24 @@ class Metrics {
     this.stepOfSomePipelineSelect(1).click()
     this.stepSelectSomeOption().click()
     this.checkDuplicatedMessage()
+    this.pipelineRemoveButton().click()
+  }
+
+  checkLeadTimeForChanges() {
+    this.leadTimeForChangesTitle().should('exist')
+    this.organizationSecondSelect(1).click()
+    this.pipelineOfOrgXXXX().click()
+    this.pipelineSelect(1).click()
+    this.pipelineSelectOnboardingOption().click()
+    this.stepOfSomePipelineSelect(1).click()
+    this.pipelineStepSelectXXOption().click()
+
+    this.leadTimeForChangeAddOneButton().click()
+    this.organizationSecondSelect(2).click()
+    this.pipelineOfOrgXXXX().click()
+    this.pipelineSelect(2).click()
+    this.pipelineStepXXOption().click()
+    this.buildKiteStepNotFoundTips().should('exist')
     this.pipelineRemoveButton().click()
   }
 

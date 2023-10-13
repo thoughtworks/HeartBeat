@@ -36,7 +36,6 @@ const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
 const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
 
-/* istanbul ignore next */
 const MetricsStepper = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -129,8 +128,6 @@ const MetricsStepper = () => {
       })
     )
   }
-
-  /* istanbul ignore next */
   const handleSave = () => {
     const { projectName, dateRange, calendarType, metrics } = config.basic
     const configData = {
@@ -138,11 +135,8 @@ const MetricsStepper = () => {
       dateRange,
       calendarType,
       metrics,
-
       board: isShowBoard ? config.board.config : undefined,
-      /* istanbul ignore next */
       pipelineTool: isShowPipeline ? config.pipelineTool.config : undefined,
-      /* istanbul ignore next */
       sourceControl: isShowSourceControl ? config.sourceControl.config : undefined,
     }
 

@@ -42,10 +42,14 @@
   * [Prepare for Jira Project](#51-prepare-for-jira-project)
   * [Prepare env to use Heartbeat tool](#52-prepare-env-to-use-heartbeat-tool)
 * [Run Heartbeat](#6-run-heartbeat)
-  * [How to run backend](#61-how-to-run-backend)
-    * [How to package it (optional)](#611-how-to-package-it-optional)
-  * [How to run frontend](#62-how-to-run-frontend)
-    * [How to build it](#621-how-to-build-it)
+  * [How to run frontend](#61-how-to-run-frontend)
+    * [How to build it](#611-how-to-build-and-local-preview)
+    * [How to run unit tests](#612-how-to-run-unit-tests)
+    * [How to generate a test report](#613-how-to-generate-a-test-report)
+    * [how to run e2e tests](#614-how-to-run-e2e-tests)
+    * [How to generate a e2e report](#615-how-to-generate-a-e2e-report)
+  * [How to run backend](backend/README.md)
+
 * [How to use](#7-how-to-use)
     * [Docker-compose](#71-docker-compose)
 

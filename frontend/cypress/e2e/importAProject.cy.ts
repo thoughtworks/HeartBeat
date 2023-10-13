@@ -20,14 +20,10 @@ const metricsTextList = [
   'DONE, CLOSED',
   'Classification setting',
   'Issue Type, Has Dependancies, FS R&D Classification, Parent',
-  'Deployment frequency settings',
+  'Pipeline settings',
   'XXXX',
-  'fs-platform-onboarding',
   'publish gradle-cache image to cloudsmith',
-  'Lead time for changes',
   'XXXX',
-  'fs-platform-payment-selector',
-  'publish maven-cache image to cloudsmith',
 ]
 
 const configTextList = [

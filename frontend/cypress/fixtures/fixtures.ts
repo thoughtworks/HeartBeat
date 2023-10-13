@@ -44,6 +44,7 @@ export const JSON_FILE_CONTENT = {
       organization: 'XXXX',
       pipelineName: 'fs-platform-payment-selector',
       steps: 'RECORD RELEASE TO PROD',
+      branches: ['PLL-1326', 'PLL-1286', 'PLL-1406', 'PLL-1406-1', 'master'],
     },
   ],
   leadTime: [

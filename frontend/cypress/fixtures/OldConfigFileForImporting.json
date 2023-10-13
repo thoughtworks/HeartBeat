@@ -65,14 +65,8 @@
     {
       "orgId": "XXXX",
       "pipelineId": "fs-platform-onboarding",
-      "step": " :docker: publish gradle-cache image to cloudsmith"
-    }
-  ],
-  "leadTime": [
-    {
-      "orgId": "XXXX",
-      "pipelineId": "fs-platform-payment-selector",
-      "step": " :docker: publish maven-cache image to cloudsmith"
+      "step": " :docker: publish gradle-cache image to cloudsmith",
+      "branches": ["PLL-1326", "PLL-1286", "PLL-1406", "PLL-1406-1", "master"]
     }
   ]
 }

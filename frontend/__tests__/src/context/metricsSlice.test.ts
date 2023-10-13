@@ -534,14 +534,8 @@ describe('saveMetricsSetting reducer', () => {
     ]
 
     testSettingsCases.forEach(({ id, type, steps, expectedSettings, expectedWarning }) => {
-      const settingsKey =
-        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-          ? 'deploymentFrequencySettings'
-          : 'leadTimeForChanges'
-      const warningKey =
-        type === PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE
-          ? 'deploymentWarningMessage'
-          : 'leadTimeWarningMessage'
+      const settingsKey = 'deploymentFrequencySettings'
+      const warningKey = 'deploymentWarningMessage'
 
       it(`should update ${settingsKey} step when call updatePipelineSteps with id ${id}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(

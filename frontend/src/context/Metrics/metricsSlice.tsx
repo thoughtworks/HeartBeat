@@ -312,7 +312,7 @@ export const metricsSlice = createSlice({
     },
 
     updatePipelineStep: (state, action) => {
-      const { steps, id, branches } = action.payload
+      const { steps, id, type, branches } = action.payload
       const { importedDeployment } = state.importedData
       const updatedImportedPipeline = importedDeployment
       const updatedImportedPipelineStep = updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.step ?? ''
@@ -389,19 +389,19 @@ export const selectCycleTimeWarningMessage = (state: RootState) => state.metrics
 export const selectClassificationWarningMessage = (state: RootState) => state.metrics.classificationWarningMessage
 export const selectRealDoneWarningMessage = (state: RootState) => state.metrics.realDoneWarningMessage
 
-export const selectOrganizationWarningMessage = (state: RootState, id: number) => {
+export const selectOrganizationWarningMessage = (state: RootState, id: number, type: string) => {
   const { deploymentWarningMessage } = state.metrics
   const warningMessage = deploymentWarningMessage
   return warningMessage.find((item) => item.id === id)?.organization
 }
 
-export const selectPipelineNameWarningMessage = (state: RootState, id: number) => {
+export const selectPipelineNameWarningMessage = (state: RootState, id: number, type: string) => {
   const { deploymentWarningMessage } = state.metrics
   const warningMessage = deploymentWarningMessage
   return warningMessage.find((item) => item.id === id)?.pipelineName
 }
 
-export const selectStepWarningMessage = (state: RootState, id: number) => {
+export const selectStepWarningMessage = (state: RootState, id: number, type: string) => {
   const { deploymentWarningMessage } = state.metrics
   const warningMessage = deploymentWarningMessage
   return warningMessage.find((item) => item.id === id)?.step

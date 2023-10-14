@@ -77,7 +77,7 @@ jest.mock('@src/utils/util', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn(),
 }))
 
-const server = setupServer(rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
+const server = setupServer(rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
 
 const mockLocation = { reload: jest.fn() }
 Object.defineProperty(window, 'location', { value: mockLocation })
@@ -89,17 +89,17 @@ const fillConfigPageData = async () => {
   const startDateInput = (await screen.findByRole('textbox', { name: START_DATE_LABEL })) as HTMLInputElement
   fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
 
-  await act(async () => {
-    await store.dispatch(updateMetrics([VELOCITY]))
-    await store.dispatch(updateBoardVerifyState(true))
-    await store.dispatch(updatePipelineToolVerifyState(true))
-    await store.dispatch(updateSourceControlVerifyState(true))
+  act(() => {
+    store.dispatch(updateMetrics([VELOCITY]))
+    store.dispatch(updateBoardVerifyState(true))
+    store.dispatch(updatePipelineToolVerifyState(true))
+    store.dispatch(updateSourceControlVerifyState(true))
   })
 }
 
-const fillMetricsData = async () => {
-  await act(async () => {
-    await store.dispatch(updateMetrics([VELOCITY]))
+const fillMetricsData = () => {
+  act(() => {
+    store.dispatch(updateMetrics([VELOCITY]))
   })
 }
 
@@ -188,8 +188,8 @@ describe('MetricsStepper', () => {
 
   it('should disable next when required data is empty ', async () => {
     const { getByText } = setup()
-    await act(async () => {
-      await store.dispatch(updateMetrics([]))
+    act(() => {
+      store.dispatch(updateMetrics([]))
     })
 
     expect(getByText(NEXT)).toBeDisabled()
@@ -228,9 +228,9 @@ describe('MetricsStepper', () => {
 
   it('should disable next when board component is exist but not verified successfully', async () => {
     const { getByText } = setup()
-    await act(async () => {
-      await store.dispatch(updateMetrics([VELOCITY]))
-      await store.dispatch(updateBoardVerifyState(false))
+    act(() => {
+      store.dispatch(updateMetrics([VELOCITY]))
+      store.dispatch(updateBoardVerifyState(false))
     })
 
     expect(getByText(NEXT)).toBeDisabled()

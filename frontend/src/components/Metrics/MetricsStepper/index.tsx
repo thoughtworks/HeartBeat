@@ -31,6 +31,7 @@ import {
   selectCycleTimeSettings,
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice'
+import _ from 'lodash'
 
 const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
@@ -59,7 +60,11 @@ const MetricsStepper = () => {
       type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
         ? metricsConfig.leadTimeForChanges
         : metricsConfig.deploymentFrequencySettings
-    return pipelines.every(({ step }) => step !== '') && getDuplicatedPipeLineIds(pipelines).length === 0
+    return (
+      pipelines.every(({ step }) => step !== '') &&
+      pipelines.every(({ branches }) => !_.isEmpty(branches)) &&
+      getDuplicatedPipeLineIds(pipelines).length === 0
+    )
   }
 
   const isShowCrewsSetting = isShowBoard

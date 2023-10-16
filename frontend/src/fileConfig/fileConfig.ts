@@ -45,6 +45,7 @@ interface NewConfigSetting {
   organization?: string
   pipelineName?: string
   step?: string
+  branch?: string[]
 }
 
 export interface NewFileConfig {
@@ -94,7 +95,6 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       doneStatus,
       classifications,
       deployment,
-      leadTime,
     } = fileConfig
     return {
       projectName,

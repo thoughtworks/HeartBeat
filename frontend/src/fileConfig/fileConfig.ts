@@ -126,7 +126,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
         organization: item?.orgId,
         pipelineName: item?.pipelineId,
         step: item?.step,
-        branches: item?.branches
+        branches: item?.branches,
       })),
     }
   }

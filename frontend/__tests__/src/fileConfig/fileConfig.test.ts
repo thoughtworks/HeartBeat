@@ -36,20 +36,21 @@ describe('#fileConfig', () => {
     doneStatus: ['DONE'],
     deployment: [
       {
+        branches: undefined,
         id: 0,
         pipelineName: 'Heartbeat',
         step: ':rocket: Deploy prod',
         organization: 'Thoughtworks-Heartbeat',
       },
     ],
-    leadTime: [
-      {
-        id: 0,
-        pipelineName: 'Heartbeat',
-        step: ':rocket: Deploy prod',
-        organization: 'Thoughtworks-Heartbeat',
-      },
-    ],
+    // leadTime: [
+    //   {
+    //     id: 0,
+    //     pipelineName: 'Heartbeat',
+    //     step: ':rocket: Deploy prod',
+    //     organization: 'Thoughtworks-Heartbeat',
+    //   },
+    // ],
   }
 
   it('should return original config when it is not old config', () => {

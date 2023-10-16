@@ -168,6 +168,23 @@ describe('PipelineMetricSelection', () => {
     })
   })
 
+  it('should show no steps warning message when getSteps succeed but get no steps and isShowRemoveButton is true', async () => {
+    metricsClient.getSteps = jest.fn().mockReturnValue({ response: [], haveStep: false })
+    const { getByRole } = await setup(
+      { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
+      true,
+      false
+    )
+
+    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
+    const listBox = within(getByRole('listbox'))
+    await userEvent.click(listBox.getByText('mockName2'))
+
+    await waitFor(() => {
+      expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(2)
+    })
+  })
+
   it('should show steps selection when getSteps succeed ', async () => {
     metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], haveStep: true })
     const { getByRole, getByText } = await setup(

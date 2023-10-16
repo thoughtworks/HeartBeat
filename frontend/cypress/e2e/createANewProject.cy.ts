@@ -88,13 +88,10 @@ const metricsTextList = [
   'Time to Resolution - Hrs',
   'Time to Detect - Hrs',
   'Cause by - System',
-  'Deployment frequency settings',
+  'Pipeline settings',
   'XXXX',
-  'fs-platform-payment-selector',
   'RECORD RELEASE TO PROD',
-  'Lead time for changes',
   'XXXX',
-  'fs-platform-onboarding',
   'RECORD RELEASE TO PROD',
 ]
 
@@ -255,8 +252,6 @@ describe('Create a new project', () => {
 
     metricsPage.checkDeploymentFrequencySettings()
 
-    metricsPage.checkLeadTimeForChanges()
-
     nextButton().should('be.enabled')
 
     metricsPage.goReportStep()
@@ -316,8 +311,6 @@ describe('Create a new project', () => {
     metricsPage.checkClassification()
 
     metricsPage.checkDeploymentFrequencySettings()
-
-    metricsPage.checkLeadTimeForChanges()
 
     checkFieldsExist(metricsTextList)
 

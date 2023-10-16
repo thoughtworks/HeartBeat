@@ -49,7 +49,7 @@ class Metrics {
 
   private readonly classificationSelectAllOption = () => cy.contains('All')
 
-  private readonly deploymentFrequencySettingTitle = () => cy.contains('Deployment frequency settings')
+  private readonly deploymentFrequencySettingTitle = () => cy.contains('Pipeline settings')
 
   private readonly organizationSelect = () =>
     cy.get('[id="single-selection-organization"]:contains("Organization")').eq(0).siblings()
@@ -86,7 +86,9 @@ class Metrics {
   private readonly checkDuplicatedMessage = () =>
     cy.contains('This pipeline is the same as another one!').should('exist')
 
-  private readonly leadTimeForChangesTitle = () => cy.contains('Lead time for changes')
+  private readonly branchSelect = () => cy.contains('Branches').eq(0).siblings()
+
+  private readonly branchSelectSomeOption = () => cy.contains('All')
 
   private readonly pipelineStepSelectXXOption = () =>
     cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO UAT"):last')
@@ -132,6 +134,8 @@ class Metrics {
     this.pipelineSelectOneOption().click()
     this.stepOfSomePipelineSelect(0).click()
     this.stepSelectSomeOption().click()
+    this.branchSelect().click()
+    this.branchSelectSomeOption().click()
 
     this.addOnePipelineButton().click()
     this.organizationSecondSelect(1).click()
@@ -152,35 +156,12 @@ class Metrics {
     this.pipelineRemoveButton().click()
   }
 
-  checkLeadTimeForChanges() {
-    this.leadTimeForChangesTitle().should('exist')
-    this.organizationSecondSelect(1).click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(1).click()
-    this.pipelineSelectOnboardingOption().click()
-    this.stepOfSomePipelineSelect(1).click()
-    this.pipelineStepSelectXXOption().click()
-
-    this.leadTimeForChangeAddOneButton().click()
-    this.organizationSecondSelect(2).click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(2).click()
-    this.pipelineStepXXOption().click()
-    this.buildKiteStepNotFoundTips().should('exist')
-    this.pipelineRemoveButton().click()
-  }
-
   goReportStep() {
     this.nextButton().click()
   }
 
   BackToConfigStep() {
     this.backButton().click()
-  }
-
-  checkClassificationValueExist() {
-    this.classificationSelect().click()
-    cy.get('input[type="checkbox"]').should('be.checked')
   }
 }
 

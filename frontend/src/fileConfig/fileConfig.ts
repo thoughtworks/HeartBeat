@@ -37,6 +37,7 @@ interface OldConfigSetting {
   pipelineId?: string
   step?: string
   orgId?: string
+  branches?: string[]
 }
 
 interface NewConfigSetting {
@@ -44,6 +45,7 @@ interface NewConfigSetting {
   organization?: string
   pipelineName?: string
   step?: string
+  branch?: string[]
 }
 
 export interface NewFileConfig {
@@ -93,7 +95,6 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       doneStatus,
       classifications,
       deployment,
-      leadTime,
     } = fileConfig
     return {
       projectName,
@@ -125,12 +126,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
         organization: item?.orgId,
         pipelineName: item?.pipelineId,
         step: item?.step,
-      })),
-      leadTime: leadTime?.map((item, index) => ({
-        id: index,
-        organization: item?.orgId,
-        pipelineName: item?.pipelineId,
-        step: item?.step,
+        branches: item?.branches,
       })),
     }
   }

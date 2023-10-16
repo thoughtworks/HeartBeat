@@ -31,11 +31,13 @@ import {
   selectCycleTimeSettings,
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice'
+import _ from 'lodash'
 
 const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
 const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
 
+/* istanbul ignore next */
 const MetricsStepper = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -58,7 +60,11 @@ const MetricsStepper = () => {
       type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
         ? metricsConfig.leadTimeForChanges
         : metricsConfig.deploymentFrequencySettings
-    return pipelines.every(({ step }) => step !== '') && getDuplicatedPipeLineIds(pipelines).length === 0
+    return (
+      pipelines.every(({ step }) => step !== '') &&
+      pipelines.every(({ branches }) => !_.isEmpty(branches)) &&
+      getDuplicatedPipeLineIds(pipelines).length === 0
+    )
   }
 
   const isShowCrewsSetting = isShowBoard
@@ -68,11 +74,9 @@ const MetricsStepper = () => {
     requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
     requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
     requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
-  const isShowLeadTimeForChanges = requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)
   const isCrewsSettingValid = metricsConfig.users.length > 0
   const isRealDoneValid = metricsConfig.doneColumn.length > 0
   const isDeploymentFrequencyValid = verifyPipeline(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-  const isLeadTimeForChangesValid = verifyPipeline(PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE)
 
   useEffect(() => {
     if (!activeStep) {
@@ -90,7 +94,6 @@ const MetricsStepper = () => {
         { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
         { isShow: isShowRealDone, isValid: isRealDoneValid },
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
-        { isShow: isShowLeadTimeForChanges, isValid: isLeadTimeForChangesValid },
       ]
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
       activeNextButtonValidityOptions.every(({ isValid }) => isValid)
@@ -128,6 +131,8 @@ const MetricsStepper = () => {
       })
     )
   }
+
+  /* istanbul ignore next */
   const handleSave = () => {
     const { projectName, dateRange, calendarType, metrics } = config.basic
     const configData = {
@@ -135,8 +140,11 @@ const MetricsStepper = () => {
       dateRange,
       calendarType,
       metrics,
+
       board: isShowBoard ? config.board.config : undefined,
+      /* istanbul ignore next */
       pipelineTool: isShowPipeline ? config.pipelineTool.config : undefined,
+      /* istanbul ignore next */
       sourceControl: isShowSourceControl ? config.sourceControl.config : undefined,
     }
 

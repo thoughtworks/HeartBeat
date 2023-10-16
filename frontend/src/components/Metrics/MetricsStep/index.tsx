@@ -7,7 +7,6 @@ import { selectJiraColumns, selectMetrics, selectUsers } from '@src/context/conf
 import { DONE, REQUIRED_DATA } from '@src/constants'
 import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
-import { LeadTimeForChanges } from '@src/components/Metrics/MetricsStep/LeadTimeForChanges'
 
 const MetricsStep = () => {
   const requiredData = useAppSelector(selectMetrics)
@@ -37,9 +36,8 @@ const MetricsStep = () => {
 
       {(requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
         requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
+        requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
         requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && <DeploymentFrequencySettings />}
-
-      {requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) && <LeadTimeForChanges />}
     </>
   )
 }

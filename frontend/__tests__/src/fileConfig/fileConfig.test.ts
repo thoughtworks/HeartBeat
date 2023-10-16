@@ -36,14 +36,7 @@ describe('#fileConfig', () => {
     doneStatus: ['DONE'],
     deployment: [
       {
-        id: 0,
-        pipelineName: 'Heartbeat',
-        step: ':rocket: Deploy prod',
-        organization: 'Thoughtworks-Heartbeat',
-      },
-    ],
-    leadTime: [
-      {
+        branches: undefined,
         id: 0,
         pipelineName: 'Heartbeat',
         step: ':rocket: Deploy prod',

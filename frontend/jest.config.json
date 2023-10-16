@@ -1,4 +1,5 @@
 {
+  "maxConcurrency": 1,
   "transform": {
     "^.+\\.tsx?$": "ts-jest",
     ".+\\.svg": "<rootDir>/__tests__/__mocks__/svgTransformer.ts"

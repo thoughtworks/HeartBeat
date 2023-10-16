@@ -14,6 +14,10 @@ steps:
     key: "check-backend"
     command: ./ops/check.sh backend
 
+  - label: ":white_check_mark: Check Frontend"
+    key: "check-frontend"
+    command: ./ops/check.sh frontend
+
   - label: ":mag: Check Frontend License"
     key: "check-frontend-license"
     commands: ./ops/check.sh frontend-license

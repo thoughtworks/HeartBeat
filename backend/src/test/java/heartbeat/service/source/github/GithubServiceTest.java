@@ -122,8 +122,8 @@ class GithubServiceTest {
 				.pipelineLeadTime(1658549100000L)
 				.pipelineCreateTime(1658549100000L)
 				.prLeadTime(60000L)
-				.pipelineLeadTime(120000)
-				.totalTime(180000)
+				.pipelineLeadTime(60000)
+				.totalTime(120000)
 				.build()))
 			.build());
 
@@ -225,8 +225,8 @@ class GithubServiceTest {
 			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
 			.prLeadTime(60000L)
-			.pipelineLeadTime(120000)
-			.totalTime(180000)
+			.pipelineLeadTime(60000)
+			.totalTime(120000)
 			.build();
 
 		assertEquals(expect, result);
@@ -245,8 +245,8 @@ class GithubServiceTest {
 			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
 			.prLeadTime(60000L)
-			.pipelineLeadTime(120000)
-			.totalTime(180000)
+			.pipelineLeadTime(60000)
+			.totalTime(120000)
 			.build();
 
 		assertEquals(expect, result);
@@ -265,8 +265,8 @@ class GithubServiceTest {
 			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
 			.prLeadTime(60000L)
-			.pipelineLeadTime(120000)
-			.totalTime(180000L)
+			.pipelineLeadTime(60000)
+			.totalTime(120000L)
 			.build();
 
 		assertEquals(expect, result);

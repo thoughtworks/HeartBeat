@@ -240,7 +240,7 @@ public class GitHubService {
 			firstCommitTimeInPr = 0;
 		}
 
-		long pipelineLeadTime = jobFinishTime - pipelineCreateTime;
+		long pipelineLeadTime = jobFinishTime - prMergedTime;
 		long prLeadTime;
 		long totalTime;
 		if (firstCommitTimeInPr > 0) {

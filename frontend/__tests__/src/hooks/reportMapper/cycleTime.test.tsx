@@ -30,8 +30,8 @@ describe('cycleTime data mapper', () => {
           { value: '30.26', unit: '(days/card)' },
         ],
       },
-      { id: 1, name: 'Total development time / Total cycle time', valueList: [{ value: 0.57 }] },
-      { id: 2, name: 'Total waiting for testing time / Total cycle time', valueList: [{ value: 0.01 }] },
+      { id: 1, name: 'Total development time / Total cycle time', valueList: [{ value: '57.25%' }] },
+      { id: 2, name: 'Total waiting for testing time / Total cycle time', valueList: [{ value: '0.76%' }] },
       {
         id: 3,
         name: 'Average development time',

@@ -22,7 +22,7 @@ describe('mean time to recovery data mapper', () => {
         valuesList: [
           {
             name: 'Mean Time To Recovery',
-            value: '1day 21hours 2minutes',
+            value: '45.03',
           },
         ],
       },
@@ -32,7 +32,7 @@ describe('mean time to recovery data mapper', () => {
         valuesList: [
           {
             name: 'Mean Time To Recovery',
-            value: '1day 21hours 2minutes',
+            value: '45.03',
           },
         ],
       },
@@ -42,7 +42,7 @@ describe('mean time to recovery data mapper', () => {
     expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery)
   })
 
-  it('should map time to 1 minute when timeToRecovery is greater than 0 but less than 1', () => {
+  it('should format time when timeToRecovery is greater than 0 but less than 1', () => {
     const mockMeanTimeToRecovery = {
       avgMeanTimeToRecovery: {
         name: 'Average',
@@ -63,7 +63,7 @@ describe('mean time to recovery data mapper', () => {
         valuesList: [
           {
             name: 'Mean Time To Recovery',
-            value: '1minutes',
+            value: '0.00',
           },
         ],
       },
@@ -73,7 +73,7 @@ describe('mean time to recovery data mapper', () => {
         valuesList: [
           {
             name: 'Mean Time To Recovery',
-            value: '1minutes',
+            value: '0.00',
           },
         ],
       },
@@ -104,7 +104,7 @@ describe('mean time to recovery data mapper', () => {
         valuesList: [
           {
             name: 'Mean Time To Recovery',
-            value: '0minutes',
+            value: '0.00',
           },
         ],
       },
@@ -114,7 +114,7 @@ describe('mean time to recovery data mapper', () => {
         valuesList: [
           {
             name: 'Mean Time To Recovery',
-            value: '0minutes',
+            value: '0.00',
           },
         ],
       },

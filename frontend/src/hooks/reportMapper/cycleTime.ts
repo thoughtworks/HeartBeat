@@ -15,7 +15,7 @@ export const cycleTimeMapper = ({
   }
   const calPerColumnTotalTimeDivTotalTime = (itemName: string): ValueWithUnits[] => {
     const swimlane = getSwimlaneByItemName(itemName)
-    return swimlane ? [{ value: parseFloat((swimlane.totalTime / totalTimeForCards).toFixed(2)) }] : []
+    return swimlane ? [{ value: `${parseFloat(((swimlane.totalTime / totalTimeForCards) * 100).toFixed(2))}%` }] : []
   }
   const getAverageTimeForPerColumn = (itemName: string) => {
     const swimlane = getSwimlaneByItemName(itemName)

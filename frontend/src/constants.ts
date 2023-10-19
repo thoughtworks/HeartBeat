@@ -140,6 +140,7 @@ export const AVERAGE_FIELD = 'Average'
 export enum Unit {
   PER_SP = '(days/SP)',
   PER_CARD = '(days/card)',
+  HOURS = '(hours)',
 }
 
 export const INIT_REPORT_DATA_WITH_TWO_COLUMNS: ReportDataWithTwoColumns[] = [

@@ -3,7 +3,7 @@ import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style'
 import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { AVERAGE_FIELD } from '@src/constants'
+import { AVERAGE_FIELD, Unit } from '@src/constants'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
 import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
 
@@ -57,7 +57,9 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
             <TableRow>
               <TableCell>{fieldName}</TableCell>
               <TableCell>{listName}</TableCell>
-              <TableCell>Value</TableCell>
+              <TableCell>
+                Value{title === 'Lead time for changes' || title === 'Mean Time To Recovery' ? Unit.HOURS : ''}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{renderRows()}</TableBody>

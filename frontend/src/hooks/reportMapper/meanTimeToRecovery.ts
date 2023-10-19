@@ -6,19 +6,11 @@ export const meanTimeToRecoveryMapper = ({
   avgMeanTimeToRecovery,
   meanTimeRecoveryPipelines,
 }: MeanTimeToRecoveryResponse) => {
-  const minutesPerDay = 1440
   const minutesPerHour = 60
   const milliscondMinute = 60000
   const formatDuration = (duration: number) => {
     const minutesDuration = duration / milliscondMinute
-    const days = Math.floor(minutesDuration / minutesPerDay)
-    const hours = Math.floor((minutesDuration % minutesPerDay) / minutesPerHour)
-    const minutes = minutesDuration % minutesPerHour
-    return (
-      (days ? days + 'day ' : '') +
-      (hours ? hours + 'hours ' : '') +
-      (0 < minutes && minutes <= 1 ? '1minutes' : Math.floor(minutes) + 'minutes').trim()
-    )
+    return (minutesDuration / minutesPerHour).toFixed(2)
   }
 
   const mappedMeanTimeToRecoveryValue: ReportDataWithThreeColumns[] = []

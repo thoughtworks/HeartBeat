@@ -1,4 +1,4 @@
-import { Checkbox, createFilterOptions, FormHelperText, TextField } from '@mui/material'
+import { FormHelperText } from '@mui/material'
 import { DEFAULT_HELPER_TEXT } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'

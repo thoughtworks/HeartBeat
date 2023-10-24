@@ -33,7 +33,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
     dispatch(saveUsers(selectedCrews))
   }, [selectedCrews, dispatch])
 
-  const handleCrewChange = (event, value) => {
+  const handleCrewChange = (event: React.SyntheticEvent, value: string[]) => {
     if (value[value.length - 1] === 'All') {
       setSelectedCrews(selectedCrews.length === options.length ? [] : options)
       return

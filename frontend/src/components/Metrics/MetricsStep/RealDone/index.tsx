@@ -44,7 +44,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const [selectedDoneStatus, setSelectedDoneStatus] = useState<string[]>([])
   const isAllSelected = savedDoneColumns.length === status.length
 
-  const handleRealDoneChange = (event, value) => {
+  const handleRealDoneChange = (event: React.SyntheticEvent, value: string[]) => {
     if (value[value.length - 1] === 'All') {
       setSelectedDoneStatus(selectedDoneStatus.length === status.length ? [] : status)
       dispatch(saveDoneColumn(selectedDoneStatus.length === status.length ? [] : status))

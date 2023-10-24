@@ -21,7 +21,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
   const [selectedClassification, setSelectedClassification] = useState<string[]>(classificationSettings)
   const isAllSelected = selectedClassification.length > 0 && selectedClassification.length === targetFields.length
 
-  const handleChange = (event, value) => {
+  const handleChange = (event: React.SyntheticEvent, value: string[]) => {
     const newClassificationSettings =
       value[value.length - 1] === 'All'
         ? isAllSelected

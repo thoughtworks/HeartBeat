@@ -10,6 +10,7 @@ type Props = {
   isSelectAll: boolean
   textFieldLabel: string
   isError: boolean
+  testId?: string
 }
 const MultiAutoComplete = ({
   optionList,
@@ -18,12 +19,14 @@ const MultiAutoComplete = ({
   isSelectAll,
   textFieldLabel,
   isError,
+  testId,
 }: Props) => {
   const filter = createFilterOptions()
 
   return (
     <StyledAutocompleted
       multiple
+      data-testid={testId}
       options={optionList}
       disableCloseOnSelect
       value={selectedOption}

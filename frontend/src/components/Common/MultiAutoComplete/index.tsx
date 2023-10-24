@@ -5,7 +5,8 @@ import { StyledAutocompleted } from './styles'
 type Props = {
   optionList: string[]
   selectedOption: string[]
-  onChangeHandler: (event: React.SyntheticEvent, value: string[], reason?: string, details?: string) => void
+  // There is an any because m-ui strictly define its type, but the parameters are not that strict. Maybe because of version diff
+  onChangeHandler: any
   isSelectAll: boolean
   textFieldLabel: string
   isError: boolean
@@ -30,7 +31,7 @@ const MultiAutoComplete = ({
         const filtered = filter(options, params)
         return ['All', ...filtered]
       }}
-      getOptionLabel={(option: string) => option}
+      getOptionLabel={(option) => option as string}
       onChange={onChangeHandler}
       renderOption={(props, option, { selected }) => {
         const selectAllProps =
@@ -40,7 +41,8 @@ const MultiAutoComplete = ({
         return (
           <li {...props}>
             <Checkbox style={{ marginRight: 8 }} checked={selected} {...selectAllProps} />
-            {option}
+            {/*The same reason. m-ui declare its type to unknown, but actually it can/should be string here. Maybe caused by diff version*/}
+            {option as string}
           </li>
         )
       }}

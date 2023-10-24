@@ -93,7 +93,7 @@ export const PipelineMetricSelection = ({
     })
   }
 
-  const handleBranchChange = (event, value) => {
+  const handleBranchChange = (event: React.SyntheticEvent, value: string[]) => {
     let selectBranches = value
     if (_.isEqual(selectBranches[selectBranches.length - 1], 'All')) {
       /* istanbul ignore next */

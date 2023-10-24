@@ -1,7 +1,6 @@
 package heartbeat.service.source.github;
 
 import heartbeat.client.GitHubFeignClient;
-import heartbeat.client.dto.codebase.github.Branch;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepo;

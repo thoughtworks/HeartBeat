@@ -1,7 +1,7 @@
-import { Checkbox, createFilterOptions, FormHelperText, TextField } from '@mui/material'
+import { Checkbox, createFilterOptions, TextField } from '@mui/material'
 import React from 'react'
 import { StyledAutocompleted } from './styles'
-import { DEFAULT_HELPER_TEXT } from '@src/constants'
+
 type Props = {
   optionList: string[]
   selectedOption: string[]

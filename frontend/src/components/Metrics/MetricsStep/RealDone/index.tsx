@@ -44,7 +44,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const [selectedDoneStatus, setSelectedDoneStatus] = useState<string[]>([])
   const isAllSelected = savedDoneColumns.length === status.length
 
-  const handleRealDoneChangeNew = (event, value) => {
+  const handleRealDoneChange = (event, value) => {
     if (value[value.length - 1] === 'All') {
       setSelectedDoneStatus(selectedDoneStatus.length === status.length ? [] : status)
       dispatch(saveDoneColumn(selectedDoneStatus.length === status.length ? [] : status))
@@ -63,7 +63,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
         selectedOption={savedDoneColumns}
         textFieldLabel={label}
         isError={!savedDoneColumns.length}
-        onChangeHandler={handleRealDoneChangeNew}
+        onChangeHandler={handleRealDoneChange}
         isSelectAll={isAllSelected}
       />
       <FormHelperText>

@@ -84,7 +84,7 @@ describe('DeploymentFrequencySettings', () => {
   it('should call updateDeploymentFrequencySetting function and clearErrorMessages function when select organization', async () => {
     const { getAllByRole, getByRole } = setup()
 
-    await userEvent.click(getAllByRole('button', { name: ORGANIZATION })[0])
+    await userEvent.click(getAllByRole('button', { name: 'Open' })[0])
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByText('mockOrgName'))
 

@@ -57,63 +57,53 @@ describe('RealDone', () => {
 
   it('should show detail options when click Consider as Done button', async () => {
     const { getByRole } = setup()
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
     const listBox = within(getByRole('listbox'))
-    const options = listBox.getAllByRole('option')
-    const optionValue = options.map((li) => li.getAttribute('data-value'))
-
-    expect(optionValue).toEqual(['All', 'DONE', 'CANCELLED'])
+    expect(listBox.getByRole('option', { name: 'All' })).toBeInTheDocument()
+    expect(listBox.getByRole('option', { name: 'DONE' })).toBeInTheDocument()
+    expect(listBox.getByRole('option', { name: 'CANCELLED' })).toBeInTheDocument()
   })
 
   it('should show other selections when cancel one option given default all selections in RealDone', async () => {
-    const { getByRole } = setup()
+    const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
 
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] }))
 
-    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[1] })).toHaveProperty(
-      'selected',
-      false
-    )
+    expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[0] })).toBeInTheDocument()
+    expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[1] })).not.toBeInTheDocument()
   })
 
   it('should clear RealDone data when check all option', async () => {
-    const { getByRole } = setup()
+    const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
     const listBox = within(getByRole('listbox'))
     const allOption = listBox.getByRole('option', { name: 'All' })
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[1] })).toHaveProperty('selected', true)
+    expect(getByRole('button', { name: mockColumnsList[0].value.statuses[0] })).toBeInTheDocument()
+    expect(getByRole('button', { name: mockColumnsList[0].value.statuses[1] })).toBeInTheDocument()
 
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] })).toHaveProperty(
-      'selected',
-      false
-    )
-    expect(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[1] })).toHaveProperty(
-      'selected',
-      false
-    )
+    expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[0] })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[1] })).not.toBeInTheDocument()
   })
 
   it('should show doing when choose Testing column is Done', async () => {
     await store.dispatch(saveCycleTimeSettings([{ name: 'Done', value: 'Done' }]))
     const { getByRole } = setup()
 
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
     const listBox = within(getByRole('listbox'))
     const allOption = listBox.getByRole('option', { name: 'All' })
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: 'DONE' })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: 'CANCELLED' })).toHaveProperty('selected', true)
+    expect(getByRole('button', { name: 'DONE' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'CANCELLED' })).toBeInTheDocument()
   })
 
   it('should show warning message when realDone warning message has a value in realDone component', () => {

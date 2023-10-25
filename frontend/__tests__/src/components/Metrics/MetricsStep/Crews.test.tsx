@@ -39,25 +39,24 @@ describe('Crew', () => {
   })
 
   it('should selected all options by default when initializing', () => {
-    const { getByText } = setup()
-    const require = getByText('crew A, crew B')
+    const { getByRole } = setup()
 
-    expect(require).toBeInTheDocument()
+    expect(getByRole('button', { name: 'crew A' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'crew B' })).toBeInTheDocument()
   })
 
   it('should show detail options when click Included crews button', async () => {
     const { getByRole } = setup()
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
     const listBox = within(getByRole('listbox'))
-    const options = listBox.getAllByRole('option')
-    const optionValue = options.map((li) => li.getAttribute('data-value'))
-
-    expect(optionValue).toEqual(['All', 'crew A', 'crew B'])
+    expect(listBox.getByRole('option', { name: 'All' })).toBeVisible()
+    expect(listBox.getByRole('option', { name: 'crew A' })).toBeVisible()
+    expect(listBox.getByRole('option', { name: 'crew B' })).toBeVisible()
   })
 
   it('should show error message when crews is null', async () => {
     const { getByRole, getByText } = setup()
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
     await userEvent.click(getByText('All'))
 
     const requiredText = getByText('required')
@@ -65,31 +64,31 @@ describe('Crew', () => {
   })
 
   it('should show other selections when cancel one option given default all selections in crews', async () => {
-    const { getByRole } = setup()
+    const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
 
     const listBox = within(getByRole('listbox'))
     await userEvent.click(listBox.getByRole('option', { name: mockOptions[0] }))
 
-    expect(listBox.getByRole('option', { name: mockOptions[0] })).toHaveProperty('selected', false)
-    expect(listBox.getByRole('option', { name: mockOptions[1] })).toHaveProperty('selected', true)
+    expect(queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument()
   })
 
   it('should clear crews data when check all option', async () => {
-    const { getByRole } = setup()
+    const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    await userEvent.click(getByRole('combobox', { name: mockLabel }))
     const listBox = within(getByRole('listbox'))
     const allOption = listBox.getByRole('option', { name: 'All' })
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: mockOptions[0] })).toHaveProperty('selected', false)
-    expect(listBox.getByRole('option', { name: mockOptions[1] })).toHaveProperty('selected', false)
+    expect(queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: mockOptions[1] })).not.toBeInTheDocument()
 
     await userEvent.click(allOption)
 
-    expect(listBox.getByRole('option', { name: mockOptions[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: mockOptions[1] })).toHaveProperty('selected', true)
+    expect(queryByRole('button', { name: mockOptions[0] })).toBeInTheDocument()
+    expect(queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument()
   }, 50000)
 })

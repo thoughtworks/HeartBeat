@@ -1,4 +1,4 @@
-import { InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { Autocomplete, Box, ListItemText, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
@@ -18,15 +18,15 @@ interface Props {
 export const SingleSelection = ({ options, label, value, id, onGetSteps, step, onUpDatePipeline }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
   const [selectedOptions, setSelectedOptions] = useState(value)
+  const [inputValue, setInputValue] = useState<string>('')
 
-  const handleChange = (event: SelectChangeEvent) => {
-    const newValue = event.target.value
-    setSelectedOptions(newValue)
+  const handleSelectedOptionsChange = (value: string) => {
+    setSelectedOptions(value)
     if (onGetSteps) {
       onUpDatePipeline(id, 'Step', '')
-      onGetSteps(newValue)
+      onGetSteps(value)
     }
-    onUpDatePipeline(id, label, newValue)
+    onUpDatePipeline(id, label, value)
   }
 
   useEffect(() => {
@@ -43,17 +43,29 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
   return (
     <>
       <FormControlWrapper variant='standard' required>
-        <InputLabel id={labelId}>{label}</InputLabel>
-        <Select labelId={labelId} value={value} onChange={handleChange}>
-          {options.map((data) => (
-            <MenuItem key={data} value={data} data-test-id={labelId}>
+        <Autocomplete
+          disableClearable
+          id={labelId}
+          options={options}
+          getOptionLabel={(option: string) => removeExtraEmojiName(option).trim()}
+          renderOption={(props, option: string) => (
+            <Box component='li' {...props}>
               <EmojiWrap>
-                {emojiView(data)}
-                <ListItemText primary={removeExtraEmojiName(data)} />
+                {emojiView(option)}
+                <ListItemText primary={removeExtraEmojiName(option)} data-test-id={'single-option'} />
               </EmojiWrap>
-            </MenuItem>
-          ))}
-        </Select>
+            </Box>
+          )}
+          value={value}
+          onChange={(event, newValue: string) => {
+            handleSelectedOptionsChange(newValue)
+          }}
+          inputValue={inputValue}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue)
+          }}
+          renderInput={(params) => <TextField required {...params} label={label} variant='standard' />}
+        />
       </FormControlWrapper>
     </>
   )

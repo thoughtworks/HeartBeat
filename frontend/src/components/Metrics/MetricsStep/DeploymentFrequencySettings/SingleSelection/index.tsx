@@ -45,7 +45,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
       <FormControlWrapper variant='standard' required>
         <Autocomplete
           disableClearable
-          id={labelId}
+          data-test-id={labelId}
           options={options}
           getOptionLabel={(option: string) => removeExtraEmojiName(option).trim()}
           renderOption={(props, option: string) => (

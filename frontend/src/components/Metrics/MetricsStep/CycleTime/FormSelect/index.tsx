@@ -22,7 +22,7 @@ export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: for
     <FormControlSelection variant='standard' required>
       <Autocomplete
         id='cycletime-data-combo-box'
-        data-test-id='cycle-time-data-combo-box'
+        data-test-id={label}
         disableClearable
         options={CYCLE_TIME_LIST}
         value={selectedCycleTime}

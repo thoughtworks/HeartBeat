@@ -1,42 +1,42 @@
 class Metrics {
   private readonly cycleTimeSettingAnalysis = () => {
     cy.contains('In Analysis').siblings().eq(0).click()
-    cy.get('[data-test-id="Analysis"]:contains(Analysis)').click()
+    cy.get('li[role="option"]').contains('Analysis').click()
   }
 
   private readonly cycleTimeSettingTodo = () => {
     cy.contains('Ready For Dev').siblings().eq(0).click()
-    cy.get('[data-test-id="To do"]:contains(To do)').click()
+    cy.get('li[role="option"]').contains('To do').click()
   }
 
   private readonly cycleTimeSettingInDev = () => {
     cy.contains('In Dev').siblings().eq(0).click()
-    cy.get('[data-test-id="In Dev"]:contains(In Dev)').click()
+    cy.get('li[role="option"]').contains('In Dev').click()
   }
 
   private readonly cycleTimeSettingBlock = () => {
     cy.contains('Blocked').siblings().eq(0).click()
-    cy.get('[data-test-id="Block"]:contains(Block)').click()
+    cy.get('li[role="option"]').contains('Block').click()
   }
 
   private readonly cycleTimeSettingWaitTest = () => {
     cy.contains('Ready For Test').siblings().eq(0).click()
-    cy.get('[data-test-id="Waiting for testing"]:contains(Waiting for testing)').click()
+    cy.get('li[role="option"]').contains('Waiting for testing').click()
   }
 
   private readonly cycleTimeSettingTesting = () => {
     cy.contains('In Test').siblings().eq(0).click()
-    cy.get('[data-test-id="Testing"]:contains(Testing)').click()
+    cy.get('li[role="option"]').contains('Testing').click()
   }
 
   private readonly cycleTimeSettingReview = () => {
     cy.contains('Ready to Deploy').siblings().eq(0).click()
-    cy.get('[data-test-id="Review"]:contains(Review)').click()
+    cy.get('li[role="option"]').contains('Review').click()
   }
 
   private readonly cycleTimeSettingDone = () => {
     cy.contains('Done').siblings().eq(0).click()
-    cy.get('[data-test-id="Done"]:contains(Done)').click()
+    cy.get('li[role="option"]').contains('Done').click()
   }
 
   private readonly realDoneSelect = () => cy.contains('Consider as Done').siblings().eq(0)
@@ -51,33 +51,27 @@ class Metrics {
 
   private readonly deploymentFrequencySettingTitle = () => cy.contains('Pipeline settings')
 
-  private readonly organizationSelect = () =>
-    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(0).siblings()
+  private readonly organizationSelect = () => cy.get('[data-test-id="single-selection-organization"]')
 
-  private readonly pipelineOfOrgXXXX = () => cy.get('[data-test-id="single-selection-organization"]:contains("XXXX")')
+  private readonly pipelineOfOrgXXXX = () => cy.get('li[role="option"]').contains('XXXX')
 
-  private readonly pipelineSelect = (i: number) =>
-    cy.get('[id="single-selection-pipeline-name"]:contains("Pipeline Name")').eq(i).siblings()
+  private readonly pipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
 
-  private readonly pipelineSelectOneOption = () =>
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-payment-selector")')
+  private readonly pipelineSelectOneOption = () => cy.get('li[role="option"]').contains('fs-platform-payment-selector')
 
-  private readonly stepOfSomePipelineSelect = (i: number) =>
-    cy.get('[id="single-selection-step"]:contains("Step")').eq(i).siblings()
+  private readonly stepOfSomePipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-step"]').eq(i)
 
-  private readonly stepSelectSomeOption = () =>
-    cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO PROD")')
+  private readonly stepSelectSomeOption = () => cy.get('li[role="option"]').contains('RECORD RELEASE TO PROD')
 
   private readonly addOnePipelineButton = () => cy.get('[data-testid="AddIcon"]:first')
 
   private readonly organizationSecondSelect = (i: number) =>
-    cy.get('[id="single-selection-organization"]:contains("Organization")').eq(i).siblings()
+    cy.get('[data-test-id="single-selection-organization"]').eq(i)
 
   private readonly pipelineSelectOnboardingOption = () =>
     cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")')
 
-  private readonly pipelineSelectUIOption = () =>
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
+  private readonly pipelineSelectUIOption = () => cy.get('li[role="option"]').contains('payment-selector-ui')
 
   private readonly buildKiteStepNotFoundTips = () => cy.contains('BuildKite get steps failed: 404 Not Found')
 

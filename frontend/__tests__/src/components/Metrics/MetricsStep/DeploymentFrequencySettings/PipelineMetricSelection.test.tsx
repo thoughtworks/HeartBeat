@@ -208,7 +208,7 @@ describe('PipelineMetricSelection', () => {
     metricsClient.getSteps = jest
       .fn()
       .mockReturnValue({ response: ['steps'], haveStep: true, branches: ['branch1', 'branch2'] })
-    const { getByRole, getByText, getAllByRole } = await setup(
+    const { getByRole, getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: ['branch1', 'branch2'] },
       false,
       false
@@ -219,16 +219,15 @@ describe('PipelineMetricSelection', () => {
       expect(getByText(BRANCH)).toBeInTheDocument()
     })
 
-    await userEvent.click(getAllByRole('button')[3])
+    await userEvent.click(getByRole('combobox', { name: 'Branches' }))
     const branchesListBox = within(getByRole('listbox'))
     const allOption = branchesListBox.getByRole('option', { name: 'All' })
     await userEvent.click(allOption)
-    expect(branchesListBox.getByRole('option', { name: 'branch1' })).toHaveProperty('selected', true)
-    expect(branchesListBox.getByRole('option', { name: 'branch2' })).toHaveProperty('selected', true)
+    expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument()
     await userEvent.click(allOption)
-    expect(branchesListBox.getByRole('option', { name: 'branch1' })).toHaveProperty('selected', true)
-    expect(branchesListBox.getByRole('option', { name: 'branch2' })).toHaveProperty('selected', true)
-    expect(getByText('branch2')).toBeInTheDocument()
+    expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument()
 
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
   })

@@ -47,10 +47,12 @@ describe('Crew', () => {
 
   it('should show detail options when click Included crews button', async () => {
     const { getByRole } = setup()
+
     await act(async () => {
       await userEvent.click(getByRole('combobox', { name: mockLabel }))
     })
     const listBox = within(getByRole('listbox'))
+
     expect(listBox.getByRole('option', { name: 'All' })).toBeVisible()
     expect(listBox.getByRole('option', { name: 'crew A' })).toBeVisible()
     expect(listBox.getByRole('option', { name: 'crew B' })).toBeVisible()

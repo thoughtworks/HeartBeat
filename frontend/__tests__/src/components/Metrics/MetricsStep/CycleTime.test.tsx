@@ -3,7 +3,7 @@ import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION } from '../../../fixtures'
+import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION, LIST_OPEN, NO_RESULT_DASH } from '../../../fixtures'
 import { saveDoneColumn, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
@@ -23,7 +23,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
       },
       {
         name: 'TODO',
-        value: '----',
+        value: NO_RESULT_DASH,
       },
     ],
   }),
@@ -73,14 +73,14 @@ describe('CycleTime', () => {
       const inputElements = getAllByRole('combobox')
       const selectedInputValues = inputElements.map((input) => input.getAttribute('value'))
 
-      const expectedInputValues = ['Analysis', 'Review', '----']
+      const expectedInputValues = ['Analysis', 'Review', NO_RESULT_DASH]
 
       expect(selectedInputValues).toEqual(expectedInputValues)
     })
 
     it('should show detail options when click included button', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Open' })
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
         await userEvent.click(columnsArray[0])
       })
@@ -89,7 +89,7 @@ describe('CycleTime', () => {
       const optionText = options.map((option) => option.textContent)
 
       const expectedOptions = [
-        '----',
+        NO_RESULT_DASH,
         'To do',
         'Analysis',
         'In Dev',
@@ -107,7 +107,7 @@ describe('CycleTime', () => {
 
     it('should show the right options when input the keyword to search', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Open' })
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
         await userEvent.type(columnsArray[0], 'Done')
       })
@@ -122,7 +122,7 @@ describe('CycleTime', () => {
 
     it('should show no options when enter the wrong keyword', async () => {
       const { getAllByRole, getByText } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Open' })
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
         await userEvent.type(columnsArray[0], 'xxx')
       })
@@ -132,7 +132,7 @@ describe('CycleTime', () => {
 
     it('should show selected option when click the dropDown button ', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Open' })
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
         await userEvent.click(columnsArray[2])
       })
@@ -143,12 +143,12 @@ describe('CycleTime', () => {
 
       const selectedOptionText = selectedOption?.textContent
 
-      expect(selectedOptionText).toBe('----')
+      expect(selectedOptionText).toBe(NO_RESULT_DASH)
     })
 
     it('should show other selections when change option and will not affect Real done', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Open' })
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
         await userEvent.click(columnsArray[2])
       })
@@ -168,7 +168,7 @@ describe('CycleTime', () => {
 
     it('should reset Real done when marked as done from other options', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Open' })
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
         await userEvent.click(columnsArray[0])
       })
@@ -188,7 +188,7 @@ describe('CycleTime', () => {
 
     it('should show the right selected value when cancel the done', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Open' })
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
         await userEvent.click(columnsArray[0])
       })

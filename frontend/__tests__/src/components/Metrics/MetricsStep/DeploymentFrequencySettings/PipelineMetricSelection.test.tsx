@@ -8,6 +8,7 @@ import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/confi
 import {
   BRANCH,
   ERROR_MESSAGE_TIME_DURATION,
+  LIST_OPEN,
   ORGANIZATION,
   PIPELINE_NAME,
   PIPELINE_SETTING_TYPES,
@@ -140,7 +141,7 @@ describe('PipelineMetricSelection', () => {
       false
     )
     await act(async () => {
-      await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1])
     })
 
     const listBox = within(getByRole('listbox'))
@@ -161,7 +162,7 @@ describe('PipelineMetricSelection', () => {
       false
     )
     await act(async () => {
-      await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1])
     })
 
     const listBox = within(getByRole('listbox'))
@@ -186,7 +187,7 @@ describe('PipelineMetricSelection', () => {
       false
     )
     await act(async () => {
-      await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1])
     })
 
     const listBox = within(getByRole('listbox'))
@@ -213,7 +214,7 @@ describe('PipelineMetricSelection', () => {
     })
 
     await act(async () => {
-      await userEvent.click(getAllByRole('button', { name: 'Open' })[2])
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[2])
     })
 
     const stepsListBox = within(getByRole('listbox'))

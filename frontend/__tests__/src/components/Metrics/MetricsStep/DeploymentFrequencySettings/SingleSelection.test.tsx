@@ -1,8 +1,9 @@
-import { act, getByText, render, within } from '@testing-library/react'
+import { act, render, within } from '@testing-library/react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../../utils/setupStoreUtil'
+import { LIST_OPEN } from '../../../../fixtures'
 
 const mockValidationCheckContext = {
   checkDuplicatedPipeLine: jest.fn(),
@@ -51,7 +52,7 @@ describe('SingleSelection', () => {
 
   it('should show detail options when click the dropdown button', async () => {
     const { getAllByRole, getByRole } = setup()
-    const buttonElements = getAllByRole('button', { name: 'Open' })
+    const buttonElements = getAllByRole('button', { name: LIST_OPEN })
     await act(async () => {
       await userEvent.click(buttonElements[0])
     })
@@ -65,7 +66,7 @@ describe('SingleSelection', () => {
 
   it('should show the right options when search the keyword', async () => {
     const { getAllByRole, getByRole } = setup()
-    const buttonElements = getAllByRole('button', { name: 'Open' })
+    const buttonElements = getAllByRole('button', { name: LIST_OPEN })
 
     await act(async () => {
       await userEvent.type(buttonElements[0], '1')
@@ -82,7 +83,7 @@ describe('SingleSelection', () => {
 
   it('should show no options when search the wrong keyword', async () => {
     const { getAllByRole, getByText } = setup()
-    const buttonElements = getAllByRole('button', { name: 'Open' })
+    const buttonElements = getAllByRole('button', { name: LIST_OPEN })
 
     await act(async () => {
       await userEvent.type(buttonElements[0], 'xxx')
@@ -94,7 +95,7 @@ describe('SingleSelection', () => {
   it('should call update option function and OnGetSteps function when change option given mockValue as default', async () => {
     const { getByText, getByRole } = setup()
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: 'Open' }))
+      await userEvent.click(getByRole('button', { name: LIST_OPEN }))
     })
 
     await act(async () => {

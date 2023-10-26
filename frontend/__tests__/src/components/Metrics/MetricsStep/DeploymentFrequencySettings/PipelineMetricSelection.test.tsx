@@ -101,7 +101,9 @@ describe('PipelineMetricSelection', () => {
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
     const { getByRole } = await setup(deploymentFrequencySetting, true, false)
 
-    await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
+    await act(async () => {
+      await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
+    })
 
     expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(1)
     expect(mockHandleClickRemoveButton).toHaveBeenCalledWith(mockId)
@@ -137,10 +139,14 @@ describe('PipelineMetricSelection', () => {
       false,
       false
     )
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
+    })
 
-    await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockName2'))
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockName2'))
+    })
 
     await waitFor(() => {
       expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument()
@@ -154,10 +160,14 @@ describe('PipelineMetricSelection', () => {
       false,
       false
     )
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
+    })
 
-    await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockName2'))
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockName2'))
+    })
 
     await waitFor(() => {
       expect(
@@ -175,10 +185,14 @@ describe('PipelineMetricSelection', () => {
       true,
       false
     )
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
+    })
 
-    await userEvent.click(getAllByRole('button', { name: 'Open' })[1])
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockName2'))
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockName2'))
+    })
 
     await waitFor(() => {
       expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(2)
@@ -197,9 +211,15 @@ describe('PipelineMetricSelection', () => {
       expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
       expect(getByText(STEP)).toBeInTheDocument()
     })
-    await userEvent.click(getAllByRole('button', { name: 'Open' })[2])
+
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: 'Open' })[2])
+    })
+
     const stepsListBox = within(getByRole('listbox'))
-    await userEvent.click(stepsListBox.getByText('step2'))
+    await act(async () => {
+      await userEvent.click(stepsListBox.getByText('step2'))
+    })
 
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
   })
@@ -219,13 +239,22 @@ describe('PipelineMetricSelection', () => {
       expect(getByText(BRANCH)).toBeInTheDocument()
     })
 
-    await userEvent.click(getByRole('combobox', { name: 'Branches' }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: 'Branches' }))
+    })
+
     const branchesListBox = within(getByRole('listbox'))
     const allOption = branchesListBox.getByRole('option', { name: 'All' })
-    await userEvent.click(allOption)
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
+
     expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument()
     expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument()
-    await userEvent.click(allOption)
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
+
     expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument()
     expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument()
 

@@ -1,4 +1,4 @@
-import { getByText, render, within } from '@testing-library/react'
+import { act, getByText, render, within } from '@testing-library/react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
@@ -51,8 +51,11 @@ describe('SingleSelection', () => {
 
   it('should show detail options when click the dropdown button', async () => {
     const { getAllByRole, getByRole } = setup()
-    const columnsArray = getAllByRole('button', { name: 'Open' })
-    await userEvent.click(columnsArray[0])
+    const buttonElements = getAllByRole('button', { name: 'Open' })
+    await act(async () => {
+      await userEvent.click(buttonElements[0])
+    })
+
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionText = options.map((option) => option.textContent)
@@ -62,8 +65,12 @@ describe('SingleSelection', () => {
 
   it('should show the right options when search the keyword', async () => {
     const { getAllByRole, getByRole } = setup()
-    const columnsArray = getAllByRole('button', { name: 'Open' })
-    await userEvent.type(columnsArray[0], '1')
+    const buttonElements = getAllByRole('button', { name: 'Open' })
+
+    await act(async () => {
+      await userEvent.type(buttonElements[0], '1')
+    })
+
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionTexts = options.map((option) => option.textContent)
@@ -75,17 +82,24 @@ describe('SingleSelection', () => {
 
   it('should show no options when search the wrong keyword', async () => {
     const { getAllByRole, getByText } = setup()
-    const columnsArray = getAllByRole('button', { name: 'Open' })
-    await userEvent.type(columnsArray[0], 'xxx')
+    const buttonElements = getAllByRole('button', { name: 'Open' })
+
+    await act(async () => {
+      await userEvent.type(buttonElements[0], 'xxx')
+    })
 
     expect(getByText('No options')).toBeInTheDocument()
   })
 
   it('should call update option function and OnGetSteps function when change option given mockValue as default', async () => {
     const { getByText, getByRole } = setup()
+    await act(async () => {
+      await userEvent.click(getByRole('button', { name: 'Open' }))
+    })
 
-    await userEvent.click(getByRole('button', { name: 'Open' }))
-    await userEvent.click(getByText(mockOptions[1]))
+    await act(async () => {
+      await userEvent.click(getByText(mockOptions[1]))
+    })
 
     expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)

@@ -82,6 +82,7 @@ class GithubServiceTest {
 		pullRequestInfo = PullRequestInfo.builder()
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
+			.mergeCommitSha("111")
 			.number(1)
 			.build();
 		deployInfo = DeployInfo.builder()
@@ -122,8 +123,8 @@ class GithubServiceTest {
 				.pipelineLeadTime(1658549100000L)
 				.pipelineCreateTime(1658549100000L)
 				.prLeadTime(60000L)
-				.pipelineLeadTime(60000)
-				.totalTime(120000)
+				.pipelineLeadTime(120000)
+				.totalTime(180000)
 				.build()))
 			.build());
 
@@ -225,8 +226,8 @@ class GithubServiceTest {
 			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
 			.prLeadTime(60000L)
-			.pipelineLeadTime(60000)
-			.totalTime(120000)
+			.pipelineLeadTime(120000)
+			.totalTime(180000)
 			.build();
 
 		assertEquals(expect, result);
@@ -245,8 +246,8 @@ class GithubServiceTest {
 			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
 			.prLeadTime(60000L)
-			.pipelineLeadTime(60000)
-			.totalTime(120000)
+			.pipelineLeadTime(120000)
+			.totalTime(180000)
 			.build();
 
 		assertEquals(expect, result);
@@ -265,8 +266,8 @@ class GithubServiceTest {
 			.pipelineLeadTime(1658549100000L)
 			.pipelineCreateTime(1658549100000L)
 			.prLeadTime(60000L)
-			.pipelineLeadTime(60000)
-			.totalTime(120000L)
+			.pipelineLeadTime(120000)
+			.totalTime(180000L)
 			.build();
 
 		assertEquals(expect, result);
@@ -417,6 +418,41 @@ class GithubServiceTest {
 	@Test
 	void shouldReturnPipeLineLeadTimeWhenDeployITimesIsNotEmptyAndCommitInfoError() {
 		String mockToken = "mockToken";
+
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
+
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any()))
+			.thenThrow(new NotFoundException("Failed to get commit"));
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
+
+		assertEquals(pipelineLeadTimes, result);
+	}
+
+	@Test
+	void shouldReturnPipeLineLeadTimeWhenDeployCommitShaIsDifferent() {
+		String mockToken = "mockToken";
+
+		pullRequestInfo = PullRequestInfo.builder()
+			.mergedAt("2022-07-23T04:04:00.000+00:00")
+			.createdAt("2022-07-23T04:03:00.000+00:00")
+			.mergeCommitSha("222")
+			.number(1)
+			.build();
+
+		pipelineLeadTimes = List.of(PipelineLeadTime.builder()
+			.pipelineName("Name")
+			.pipelineStep("Step")
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("111")
+				.jobFinishTime(1658549160000L)
+				.pipelineLeadTime(1658549100000L)
+				.pipelineCreateTime(1658549100000L)
+				.prLeadTime(0L)
+				.pipelineLeadTime(120000)
+				.totalTime(120000)
+				.build()))
+			.build());
 
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
 

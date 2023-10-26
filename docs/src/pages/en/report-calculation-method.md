@@ -205,6 +205,12 @@ layout: ../../layouts/MainLayout.astro
 
      (1).None PR：
 
+     ```
+     Two scenario for none pr:
+     1. Get none PR response from github api
+     2. Got PR, but PR commit sha is not equal to deploy commit sha
+     ```
+
      - `prLeadTime = 0`
      - `pipelineLeadTime = jobFinishTime - firstCommitTime`
      - `totalDelayTime = prLeadTime + pipelineLeadTime`

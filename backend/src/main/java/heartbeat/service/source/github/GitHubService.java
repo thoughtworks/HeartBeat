@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +179,7 @@ public class GitHubService {
 
 		Optional<PullRequestInfo> mergedPull = pullRequestInfos.stream()
 			.filter(gitHubPull -> gitHubPull.getMergedAt() != null)
-			.findFirst();
+			.min(Comparator.comparing(PullRequestInfo::getNumber));
 
 		if (mergedPull.isEmpty()) {
 			return noPrLeadTime;
@@ -187,6 +188,9 @@ public class GitHubService {
 		List<CommitInfo> commitInfos = gitHubFeignClient.getPullRequestCommitInfo(item.getRepository(),
 				mergedPull.get().getNumber().toString(), realToken);
 		CommitInfo firstCommitInfo = commitInfos.get(0);
+		if (!mergedPull.get().getMergeCommitSha().equals(deployInfo.getCommitId())) {
+			return noPrLeadTime;
+		}
 		return mapLeadTimeWithInfo(mergedPull.get(), deployInfo, firstCommitInfo);
 	}
 
@@ -240,7 +244,7 @@ public class GitHubService {
 			firstCommitTimeInPr = 0;
 		}
 
-		long pipelineLeadTime = jobFinishTime - pipelineCreateTime;
+		long pipelineLeadTime = jobFinishTime - prMergedTime;
 		long prLeadTime;
 		long totalTime;
 		if (firstCommitTimeInPr > 0) {

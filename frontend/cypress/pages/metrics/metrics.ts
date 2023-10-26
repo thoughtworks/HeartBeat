@@ -43,7 +43,10 @@ class Metrics {
 
   private readonly RealDoneSelectAllOption = () => cy.contains('All')
 
-  private readonly closeModelElement = () => cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop')
+  private readonly closeModelElement = () =>
+    cy.get(
+      '.Mui-expanded > .MuiFormControl-root > .MuiInputBase-root > .MuiAutocomplete-endAdornment > .MuiAutocomplete-popupIndicator > [data-testid="ArrowDropDownIcon"] > path'
+    )
 
   private readonly classificationSelect = () => cy.contains('Distinguished By').siblings()
 

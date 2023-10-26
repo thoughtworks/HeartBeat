@@ -9,9 +9,14 @@ const metricsTextList = [
   'Yu Zhang',
   'Cycle time settings',
   'Real done',
-  'DONE, CLOSED',
+  'DONE',
+  'CLOSED',
   'Classification setting',
-  'Issue Type, Has Dependancies, FS R&D Classification, Parent',
+  'Issue',
+  'Type',
+  'Has Dependancies',
+  'FS R&D Classification',
+  'Parent',
   'Pipeline settings',
 ]
 

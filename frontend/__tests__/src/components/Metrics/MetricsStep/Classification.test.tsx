@@ -68,6 +68,8 @@ describe('Classification', () => {
     const { getByText, getByRole, queryByRole } = setup()
     await act(async () => {
       await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+    await act(async () => {
       await userEvent.click(getByText('All'))
     })
     const names = mockTargetFields.map((item) => item.name)
@@ -89,7 +91,11 @@ describe('Classification', () => {
 
     await act(async () => {
       await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+    await act(async () => {
       await userEvent.click(getByText('All'))
+    })
+    await act(async () => {
       await userEvent.click(getByText('All'))
     })
 

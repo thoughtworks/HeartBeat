@@ -60,6 +60,8 @@ describe('Crew', () => {
     const { getByRole, getByText } = setup()
     await act(async () => {
       await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+    await act(async () => {
       await userEvent.click(getByText('All'))
     })
 

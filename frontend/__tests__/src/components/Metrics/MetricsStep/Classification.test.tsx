@@ -1,4 +1,4 @@
-import { act, queryByRole, render, waitFor, within } from '@testing-library/react'
+import { act, render, waitFor, within } from '@testing-library/react'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'

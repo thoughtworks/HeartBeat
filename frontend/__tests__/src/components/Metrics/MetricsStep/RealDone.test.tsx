@@ -57,7 +57,10 @@ describe('RealDone', () => {
 
   it('should show detail options when click Consider as Done button', async () => {
     const { getByRole } = setup()
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+
     const listBox = within(getByRole('listbox'))
     expect(listBox.getByRole('option', { name: 'All' })).toBeInTheDocument()
     expect(listBox.getByRole('option', { name: 'DONE' })).toBeInTheDocument()
@@ -67,10 +70,14 @@ describe('RealDone', () => {
   it('should show other selections when cancel one option given default all selections in RealDone', async () => {
     const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
 
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] }))
+    await act(async () => {
+      await userEvent.click(listBox.getByRole('option', { name: mockColumnsList[0].value.statuses[0] }))
+    })
 
     expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[0] })).toBeInTheDocument()
     expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[1] })).not.toBeInTheDocument()
@@ -79,15 +86,22 @@ describe('RealDone', () => {
   it('should clear RealDone data when check all option', async () => {
     const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+
     const listBox = within(getByRole('listbox'))
     const allOption = listBox.getByRole('option', { name: 'All' })
-    await userEvent.click(allOption)
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
 
     expect(getByRole('button', { name: mockColumnsList[0].value.statuses[0] })).toBeInTheDocument()
     expect(getByRole('button', { name: mockColumnsList[0].value.statuses[1] })).toBeInTheDocument()
 
-    await userEvent.click(allOption)
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
 
     expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[0] })).not.toBeInTheDocument()
     expect(queryByRole('button', { name: mockColumnsList[0].value.statuses[1] })).not.toBeInTheDocument()
@@ -97,10 +111,14 @@ describe('RealDone', () => {
     await store.dispatch(saveCycleTimeSettings([{ name: 'Done', value: 'Done' }]))
     const { getByRole } = setup()
 
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
     const listBox = within(getByRole('listbox'))
     const allOption = listBox.getByRole('option', { name: 'All' })
-    await userEvent.click(allOption)
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
 
     expect(getByRole('button', { name: 'DONE' })).toBeInTheDocument()
     expect(getByRole('button', { name: 'CANCELLED' })).toBeInTheDocument()

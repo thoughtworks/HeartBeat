@@ -1,4 +1,4 @@
-import { render, within } from '@testing-library/react'
+import { act, render, within } from '@testing-library/react'
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
 import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -47,7 +47,9 @@ describe('Crew', () => {
 
   it('should show detail options when click Included crews button', async () => {
     const { getByRole } = setup()
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
     const listBox = within(getByRole('listbox'))
     expect(listBox.getByRole('option', { name: 'All' })).toBeVisible()
     expect(listBox.getByRole('option', { name: 'crew A' })).toBeVisible()
@@ -56,8 +58,10 @@ describe('Crew', () => {
 
   it('should show error message when crews is null', async () => {
     const { getByRole, getByText } = setup()
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
-    await userEvent.click(getByText('All'))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+      await userEvent.click(getByText('All'))
+    })
 
     const requiredText = getByText('required')
     expect(requiredText.tagName).toBe('STRONG')
@@ -66,10 +70,14 @@ describe('Crew', () => {
   it('should show other selections when cancel one option given default all selections in crews', async () => {
     const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
 
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByRole('option', { name: mockOptions[0] }))
+    await act(async () => {
+      await userEvent.click(listBox.getByRole('option', { name: mockOptions[0] }))
+    })
 
     expect(queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument()
     expect(queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument()
@@ -78,15 +86,22 @@ describe('Crew', () => {
   it('should clear crews data when check all option', async () => {
     const { getByRole, queryByRole } = setup()
 
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+
     const listBox = within(getByRole('listbox'))
     const allOption = listBox.getByRole('option', { name: 'All' })
-    await userEvent.click(allOption)
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
 
     expect(queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument()
     expect(queryByRole('button', { name: mockOptions[1] })).not.toBeInTheDocument()
 
-    await userEvent.click(allOption)
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
 
     expect(queryByRole('button', { name: mockOptions[0] })).toBeInTheDocument()
     expect(queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument()

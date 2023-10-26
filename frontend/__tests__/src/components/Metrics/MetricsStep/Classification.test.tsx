@@ -56,7 +56,9 @@ describe('Classification', () => {
 
   it('should show all options when click selectBox', async () => {
     const { getByRole } = setup()
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
 
     expect(getByRole('option', { name: 'Issue' })).toBeInTheDocument()
     expect(getByRole('option', { name: 'Type' })).toBeInTheDocument()
@@ -64,14 +66,18 @@ describe('Classification', () => {
 
   it('should show all targetField when click All and show nothing when cancel click', async () => {
     const { getByText, getByRole, queryByRole } = setup()
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
-    await userEvent.click(getByText('All'))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+      await userEvent.click(getByText('All'))
+    })
     const names = mockTargetFields.map((item) => item.name)
 
     expect(getByRole('button', { name: names[0] })).toBeVisible()
     expect(getByRole('button', { name: names[1] })).toBeVisible()
 
-    await userEvent.click(getByText('All'))
+    await act(async () => {
+      await userEvent.click(getByText('All'))
+    })
 
     expect(queryByRole('button', { name: names[0] })).not.toBeInTheDocument()
     expect(queryByRole('button', { name: names[1] })).not.toBeInTheDocument()
@@ -81,13 +87,17 @@ describe('Classification', () => {
     const { getByRole, getByText, queryByRole } = setup()
     const names = mockTargetFields.map((item) => item.name)
 
-    await userEvent.click(getByRole('combobox', { name: mockLabel }))
-    await userEvent.click(getByText('All'))
-    await userEvent.click(getByText('All'))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+      await userEvent.click(getByText('All'))
+      await userEvent.click(getByText('All'))
+    })
 
     const listBox = within(getByRole('listbox'))
 
-    await userEvent.click(listBox.getByRole('option', { name: names[0] }))
+    await act(async () => {
+      await userEvent.click(listBox.getByRole('option', { name: names[0] }))
+    })
 
     expect(queryByRole('button', { name: names[0] })).toBeInTheDocument()
     expect(queryByRole('button', { name: names[1] })).not.toBeInTheDocument()

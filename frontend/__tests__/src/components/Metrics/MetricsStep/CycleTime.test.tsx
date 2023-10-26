@@ -23,7 +23,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
       },
       {
         name: 'TODO',
-        value: NO_RESULT_DASH,
+        value: '----',
       },
     ],
   }),

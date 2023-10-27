@@ -26,6 +26,7 @@ export interface OldFileConfig {
     token?: string
   }
   crews?: string[]
+  assigneeFilter?: string
   cycleTime?: unknown
   doneStatus?: string[]
   classifications?: string[]
@@ -73,6 +74,7 @@ export interface NewFileConfig {
     token?: string
   }
   crews?: string[]
+  assigneeFilter?: string
   cycleTime?: unknown
   doneStatus?: string[]
   classification?: string[]
@@ -91,6 +93,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       pipelineTool,
       sourceControl,
       crews,
+      assigneeFilter,
       cycleTime,
       doneStatus,
       classifications,
@@ -118,6 +121,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
         token: sourceControl?.token,
       },
       crews,
+      assigneeFilter,
       cycleTime,
       doneStatus,
       classification: classifications,

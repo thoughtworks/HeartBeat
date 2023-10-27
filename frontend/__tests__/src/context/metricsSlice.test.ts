@@ -19,7 +19,12 @@ import saveMetricsSettingReducer, {
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 import { CLASSIFICATION_WARNING_MESSAGE, NO_RESULT_DASH, PIPELINE_SETTING_TYPES } from '../fixtures'
-import { ORGANIZATION_WARNING_MESSAGE, PIPELINE_NAME_WARNING_MESSAGE, REAL_DONE_WARNING_MESSAGE } from '@src/constants'
+import {
+  ASSIGNEE_FILTER_TYPES,
+  ORGANIZATION_WARNING_MESSAGE,
+  PIPELINE_NAME_WARNING_MESSAGE,
+  REAL_DONE_WARNING_MESSAGE,
+} from '@src/constants'
 import { setupStore } from '../utils/setupStoreUtil'
 
 const initState = {
@@ -32,8 +37,10 @@ const initState = {
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   classification: [],
   treatFlagCardAsBlock: true,
+  assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
   importedData: {
     importedCrews: [],
+    importedAssigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
     importedCycleTime: {
       importedCycleTimeSettings: [],
       importedTreatFlagCardAsBlock: true,
@@ -91,8 +98,10 @@ describe('saveMetricsSetting reducer', () => {
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
     ])
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true)
+    expect(savedMetricsSetting.assigneeFilter).toBe(ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE)
     expect(savedMetricsSetting.importedData).toEqual({
       importedCrews: [],
+      importedAssigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       importedCycleTime: {
         importedCycleTimeSettings: [],
         importedTreatFlagCardAsBlock: true,
@@ -168,6 +177,7 @@ describe('saveMetricsSetting reducer', () => {
   it('should update metricsImportedData when its value changed given initial state', () => {
     const mockMetricsImportedData = {
       crews: ['mockUser'],
+      assigneeFilter: ASSIGNEE_FILTER_TYPES.HISTORICAL_ASSIGNEE,
       cycleTime: {
         jiraColumns: ['mockCycleTimeSettings'],
         treatFlagCardAsBlock: true,
@@ -181,6 +191,7 @@ describe('saveMetricsSetting reducer', () => {
 
     expect(savedMetricsSetting.importedData).toEqual({
       importedCrews: mockMetricsImportedData.crews,
+      importedAssigneeFilter: ASSIGNEE_FILTER_TYPES.HISTORICAL_ASSIGNEE,
       importedCycleTime: {
         importedCycleTimeSettings: mockMetricsImportedData.cycleTime.jiraColumns,
         importedTreatFlagCardAsBlock: mockMetricsImportedData.cycleTime.treatFlagCardAsBlock,

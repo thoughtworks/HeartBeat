@@ -179,6 +179,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     boardColumns: [{ name: 'In Analysis', value: 'In Analysis' }],
     treatFlagCardAsBlock: true,
     users: ['user1', 'user2'],
+    assigneeFilter: 'lastAssignee',
     targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
     doneColumn: ['Done'],
   },

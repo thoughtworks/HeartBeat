@@ -35,6 +35,7 @@ import {
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { exportToJsonFile } from '@src/utils/util'
+import { ASSIGNEE_FILTER_TYPES } from '@src/constants'
 
 const START_DATE_LABEL = 'From *'
 const TODAY = dayjs()
@@ -302,6 +303,7 @@ describe('MetricsStepper', () => {
   it('should export json file when click save button in metrics page given all content is empty', async () => {
     const expectedFileName = 'config'
     const expectedJson = {
+      assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
       dateRange: {

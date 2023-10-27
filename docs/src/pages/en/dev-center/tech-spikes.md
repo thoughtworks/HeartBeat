@@ -1,10 +1,10 @@
 ---
-title: Tech Spikes
-description: Tech Spikes
+title: Calculating pipeline metrics with selected user
+description: Calculating pipeline metrics with selected user
 layout: ../../../layouts/MainLayout.astro
 ---
 
-# Spike -- Add GitHub user field for pipeline setting in metrics page
+# Spike -- Add buildKite user field for pipeline setting in metrics page
 
 ## Current situation
 
@@ -18,13 +18,13 @@ If user could select related crew member(Buildkite User) for their pipeline trig
 
 ### 1. Get all committers by buildkite API
 
-#### 1.1 buildkite API
+#### 1.1 BuildKite API
 
 ```shell
 curl "https://api.buildkite.com/v2/organizations/{org.slug}/pipelines/{pipeline.slug}/builds"
 ```
 
-#### 1.2 response body
+#### 1.2 Response body
 
 ```json
 [
@@ -52,23 +52,19 @@ curl "https://api.buildkite.com/v2/organizations/{org.slug}/pipelines/{pipeline.
 ]
 ```
 
-#### 1.3 description
+#### 1.3 Description
 
-```java
-we need the creator field. for example, in this piece buildkite build information, the creator is guzhongren.
-```
+We need the creator field. for example, in this piece buildKite build information, the creator is guzhongren.
 
 ![img1.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/buildkite-build-example.png)
 
-```java
-We need to add a new api to get all creators within the selected time range, and return the buildkite creators to fronted render selected box like this
-```
+We need to add a new api to get all creators within the selected time range, and return the buildKite creators to fronted render selected box like this
 
 ![img1.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/selected-box.png)
 
-#### 1.4 sequence diagram (C3 - Heartbeat - Metrics)
+#### 1.4 Sequence Diagram (C3 - Heartbeat - Metrics)
 
-```java
+```plantuml
 @startuml Export csv file
 skin rose
 title C3 - Heartbeat - Metrics
@@ -92,25 +88,26 @@ group Get BuildKite creators
        BuildKiteService <-- BuildKiteFeignClient: return pipeline build infomation
        deactivate BuildKiteFeignClient
     end loop
+    BuildKiteService -> BuildKiteService: filter out non-empty creators.
     FrontEnd <-- BuildKiteService : return buildkite's creator names
     deactivate BuildKiteService
 end
 @enduml
 ```
 
-![img1.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/get-buildkite-creators.png)
+#### 1.5 Example
 
-#### 1.5 example
+Using the BuildKite API, we can get all pipeline build records, including failed records, which may be auto-triggered by Dependabot. We should filter out these records and get non-empty creators
 
 ![img1.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/buildkite-committers.png)
 
 ![img1.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/buildkite-commit-record.png)
 
-### 2. filter selected username and generate CSV file
+### 2. Filter selected username and generate CSV file
 
-#### 2.1 sequence diagram (C3 - Generate CSV for pipeline)
+#### 2.1 Sequence Diagram (C3 - Generate CSV for pipeline)
 
-```java
+```plantuml
 @startuml report
 
 group generate csv for pipeline
@@ -141,24 +138,18 @@ end
 
 ```
 
-![img1.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/generate-filtered-csc-data.png)
-
-```shell
 1. existed code:
-  when generate pipeline csv data default for every committers within the selected time range
+   When generate pipeline csv data default for every committers within the selected time range
 2. expected:
-  Generate report data only for the selected person. The selected person is a parameter passed from the front end.
+   Generate report data only for the selected person. The selected person is a parameter passed from the front end.
 3. Code implementation:
- extend the parameter of CodebaseSetting with selected committers in the method of generateCSVForPipelineWithCodebase, use stream api to filter commit information and get selected committers' infomation to generate pipeline csv data
-```
+   Extend the parameter of CodebaseSetting with selected committers in the method of generateCSVForPipelineWithCodebase, use stream api to filter commit information and get selected committers' infomation to generate pipeline csv data
 
 #### 2.2 example
 
-```java
 We tried to complete it at local, and the result of the generated CSV file as follows:
 
 In this case, we just only want the information of the two specify Committers(also known as GitHub user) - [guzhongren, wangwang.zhang], The generated CSV shows that we successfully obtained only the information of these two Committers.
-```
 
 ![img1.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/export-filtered-csv-data.png)
 

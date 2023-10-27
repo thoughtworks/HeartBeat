@@ -40,6 +40,7 @@ export interface ReportRequestDTO {
     boardColumns: { name: string; value: string }[]
     treatFlagCardAsBlock: boolean
     users: string[]
+    assigneeFilter: string
     targetFields: { key: string; name: string; flag: boolean }[]
     doneColumn: string[]
   }

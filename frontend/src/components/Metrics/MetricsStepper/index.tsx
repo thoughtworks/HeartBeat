@@ -156,11 +156,13 @@ const MetricsStepper = () => {
       targetFields,
       cycleTimeSettings,
       treatFlagCardAsBlock,
+      assigneeFilter,
     } = filterMetricsConfig(metricsConfig)
 
     /* istanbul ignore next */
     const metricsData = {
       crews: users,
+      assigneeFilter: assigneeFilter,
       /* istanbul ignore next */
       cycleTime: cycleTimeSettings
         ? {

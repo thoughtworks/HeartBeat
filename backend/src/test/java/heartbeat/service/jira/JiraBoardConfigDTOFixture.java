@@ -451,11 +451,11 @@ public class JiraBoardConfigDTOFixture {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(
-				new JiraCard("ADM-475", JiraCardField.builder() //history : only xiao pei
+				new JiraCard("ADM-475", JiraCardField.builder()
 					.assignee(new Assignee("da pei"))
 					.status(new Status(CardStepsEnum.DONE.getValue()))
 					.build()),
-				new JiraCard("ADM-524", JiraCardField.builder() //history : da pei && xiao pei
+				new JiraCard("ADM-524", JiraCardField.builder()
 					.assignee(new Assignee("xiao pei"))
 					.status(new Status(CardStepsEnum.DONE.getValue()))
 					.build())));

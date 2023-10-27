@@ -124,7 +124,7 @@ describe('CycleTime', () => {
       const { getAllByRole, getByText } = setup()
       const columnsArray = getAllByRole('button', { name: LIST_OPEN })
       await act(async () => {
-        await userEvent.type(columnsArray[0], 'xxx')
+        await userEvent.type(columnsArray[0], 'wrong keyword')
       })
 
       expect(getByText('No options')).toBeInTheDocument()

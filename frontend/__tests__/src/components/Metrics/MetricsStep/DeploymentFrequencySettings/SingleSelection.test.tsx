@@ -53,10 +53,10 @@ describe('SingleSelection', () => {
   it('should show detail options when click the dropdown button', async () => {
     const { getAllByRole, getByRole } = setup()
     const buttonElements = getAllByRole('button', { name: LIST_OPEN })
+
     await act(async () => {
       await userEvent.click(buttonElements[0])
     })
-
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionText = options.map((option) => option.textContent)
@@ -86,7 +86,7 @@ describe('SingleSelection', () => {
     const buttonElements = getAllByRole('button', { name: LIST_OPEN })
 
     await act(async () => {
-      await userEvent.type(buttonElements[0], 'xxx')
+      await userEvent.type(buttonElements[0], 'wrong keyword')
     })
 
     expect(getByText('No options')).toBeInTheDocument()

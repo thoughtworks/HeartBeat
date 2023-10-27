@@ -65,13 +65,7 @@ const checkFieldsExist = (fields: string[]) => {
 
 const checkAutoCompleteFieldsExist = (fields: { name: string; value: string }[]) => {
   fields.forEach((item) => {
-    cy.contains(item?.name)
-      // 获取同级的 input 元素
-      .siblings()
-      .eq(0)
-      .find('input')
-      // 验证输入框的值
-      .should('have.value', item?.value)
+    cy.contains(item?.name).siblings().eq(0).find('input').should('have.value', item?.value)
   })
 }
 

@@ -3,12 +3,8 @@ import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
-import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION } from '../../../fixtures'
+import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION, LIST_OPEN, NO_RESULT_DASH } from '../../../fixtures'
 import { saveDoneColumn, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
-
-const DEFAULT_SELECTED = '----'
-
-const errorMessage = 'Only one column can be selected as "Done"'
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"'
 
@@ -72,22 +68,28 @@ describe('CycleTime', () => {
       expect(getByText('TODO')).toBeInTheDocument()
     })
 
-    it('should show "----" in selector by create default when initializing', () => {
-      const { getAllByText } = setup()
+    it('should show right input value when initializing', async () => {
+      const { getAllByRole } = setup()
+      const inputElements = getAllByRole('combobox')
+      const selectedInputValues = inputElements.map((input) => input.getAttribute('value'))
 
-      expect(getAllByText(DEFAULT_SELECTED)).toHaveLength(1)
+      const expectedInputValues = ['Analysis', 'Review', NO_RESULT_DASH]
+
+      expect(selectedInputValues).toEqual(expectedInputValues)
     })
 
     it('should show detail options when click included button', async () => {
       const { getAllByRole, getByRole } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Doing' })
-      await userEvent.click(columnsArray[0])
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
+      await act(async () => {
+        await userEvent.click(columnsArray[0])
+      })
       const listBox = within(getByRole('listbox'))
       const options = listBox.getAllByRole('option')
-      const optionValue = options.map((li) => li.getAttribute('data-value'))
+      const optionText = options.map((option) => option.textContent)
 
-      expect(optionValue).toEqual([
-        '----',
+      const expectedOptions = [
+        NO_RESULT_DASH,
         'To do',
         'Analysis',
         'In Dev',
@@ -96,35 +98,119 @@ describe('CycleTime', () => {
         'Testing',
         'Review',
         'Done',
-      ])
+      ]
+
+      expectedOptions.forEach((expectedOption) => {
+        expect(optionText).toContain(expectedOption)
+      })
+    })
+
+    it('should show the right options when input the keyword to search', async () => {
+      const { getAllByRole, getByRole } = setup()
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
+      await act(async () => {
+        await userEvent.type(columnsArray[0], 'Done')
+      })
+      const listBox = within(getByRole('listbox'))
+      const options = listBox.getAllByRole('option')
+      const optionTexts = options.map((option) => option.textContent)
+
+      const expectedOptions = ['Done']
+
+      expect(optionTexts).toEqual(expectedOptions)
+    })
+
+    it('should show no options when enter the wrong keyword', async () => {
+      const { getAllByRole, getByText } = setup()
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
+      await act(async () => {
+        await userEvent.type(columnsArray[0], 'wrong keyword')
+      })
+
+      expect(getByText('No options')).toBeInTheDocument()
+    })
+
+    it('should show selected option when click the dropDown button ', async () => {
+      const { getAllByRole, getByRole } = setup()
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
+      await act(async () => {
+        await userEvent.click(columnsArray[2])
+      })
+
+      const listBox = within(getByRole('listbox'))
+      const options = listBox.getAllByRole('option')
+      const selectedOption = options.find((option) => option.getAttribute('aria-selected') === 'true')
+
+      const selectedOptionText = selectedOption?.textContent
+
+      expect(selectedOptionText).toBe(NO_RESULT_DASH)
     })
 
     it('should show other selections when change option and will not affect Real done', async () => {
-      const { getAllByRole, getByRole, getByText } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Doing' })
-
-      await userEvent.click(columnsArray[2])
+      const { getAllByRole, getByRole } = setup()
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
+      await act(async () => {
+        await userEvent.click(columnsArray[2])
+      })
 
       const listBox = within(getByRole('listbox'))
-      const mockOption = listBox.getByRole('option', { name: 'To do' })
+      const mockOptions = listBox.getAllByRole('option')
+      await act(async () => {
+        await userEvent.click(mockOptions[1])
+      })
 
-      await userEvent.click(mockOption)
+      const inputElements = getAllByRole('combobox')
+      const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[2]
 
-      expect(getByText('To do')).toBeInTheDocument()
+      expect(selectedInputValue).toBe('To do')
       await waitFor(() => expect(mockedUseAppDispatch).not.toHaveBeenCalledWith(saveDoneColumn([])))
     })
 
     it('should reset Real done when marked as done from other options', async () => {
-      const { getAllByRole, getByRole, getByText } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Doing' })
-
-      await userEvent.click(columnsArray[0])
+      const { getAllByRole, getByRole } = setup()
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
+      await act(async () => {
+        await userEvent.click(columnsArray[0])
+      })
 
       const listBox = within(getByRole('listbox'))
+      await act(async () => {
+        await userEvent.click(listBox.getAllByRole('option')[8])
+      })
 
-      await userEvent.click(listBox.getByRole('option', { name: 'Done' }))
+      const inputElements = getAllByRole('combobox')
 
-      expect(getByText('Done')).toBeInTheDocument()
+      const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0]
+
+      expect(selectedInputValue).toBe('Done')
+      await waitFor(() => expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([])))
+    })
+
+    it('should show the right selected value when cancel the done', async () => {
+      const { getAllByRole, getByRole } = setup()
+      const columnsArray = getAllByRole('button', { name: LIST_OPEN })
+      await act(async () => {
+        await userEvent.click(columnsArray[0])
+      })
+
+      const listBox = within(getByRole('listbox'))
+      await act(async () => {
+        await userEvent.click(listBox.getAllByRole('option')[8])
+      })
+
+      await act(async () => {
+        await userEvent.click(columnsArray[0])
+      })
+
+      const newListBox = within(getByRole('listbox'))
+      await act(async () => {
+        await userEvent.click(newListBox.getAllByRole('option')[7])
+      })
+
+      const inputElements = getAllByRole('combobox')
+      const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0]
+
+      expect(selectedInputValue).toBe('Review')
       await waitFor(() => expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([])))
     })
   })
@@ -142,48 +228,13 @@ describe('CycleTime', () => {
 
     it('should change checked when click', async () => {
       const { getByRole } = setup()
-
-      await userEvent.click(getByRole('checkbox'))
+      await act(async () => {
+        await userEvent.click(getByRole('checkbox'))
+      })
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledWith(updateTreatFlagCardAsBlock(false))
       })
-    })
-  })
-
-  describe('Error message ', () => {
-    it('should not show error message when select more than one Done option', async () => {
-      const { getAllByRole, getByRole, queryByText } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Doing' })
-      await userEvent.click(columnsArray[0])
-      const listBoxZero = within(getByRole('listbox'))
-      const mockOptionDone = listBoxZero.getByRole('option', { name: 'Done' })
-      await userEvent.click(mockOptionDone)
-      await userEvent.click(columnsArray[1])
-      const listBoxOne = within(getByRole('listbox'))
-      const mockOptionOneDone = listBoxOne.getByRole('option', { name: 'Done' })
-      await userEvent.click(mockOptionOneDone)
-
-      expect(queryByText(errorMessage)).not.toBeInTheDocument()
-    })
-
-    it('should not show error message when select less than one Done option', async () => {
-      const { getAllByRole, getByRole, queryByText } = setup()
-      const columnsArray = getAllByRole('button', { name: 'Doing' })
-      await userEvent.click(columnsArray[0])
-      const listBoxZero = within(getByRole('listbox'))
-      const mockOptionDone = listBoxZero.getByRole('option', { name: 'Done' })
-      await userEvent.click(mockOptionDone)
-      await userEvent.click(columnsArray[1])
-      const listBoxOne = within(getByRole('listbox'))
-      const mockOptionOneDone = listBoxOne.getByRole('option', { name: 'Done' })
-      await userEvent.click(mockOptionOneDone)
-      await userEvent.click(columnsArray[0])
-      const listBoxTwo = within(getByRole('listbox'))
-      const mockOptionTwoDone = listBoxTwo.getByRole('option', { name: 'To do' })
-      await userEvent.click(mockOptionTwoDone)
-
-      expect(queryByText(errorMessage)).not.toBeInTheDocument()
     })
   })
 

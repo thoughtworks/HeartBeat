@@ -643,3 +643,11 @@ export const RETRY_BUTTON = 'Go to homepage'
 
 export const NO_CARD_ERROR_MESSAGE =
   'Sorry there is no card within selected date range, please change your collection date!'
+
+export const LIST_OPEN = 'Open'
+
+export const NO_RESULT_DASH = '----'
+
+export const MOCK_AUTOCOMPLETE_LIST = ['Option 1', 'Option 2', 'Option 3']
+
+export const AUTOCOMPLETE_SELECT_ACTION = 'selectOption'

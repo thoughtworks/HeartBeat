@@ -8,22 +8,29 @@ const metricsTextList = [
   'Crews setting',
   'Yu Zhang',
   'Cycle time settings',
-  'Analysis',
-  'To do',
-  'In Dev',
-  'Block',
-  'Waiting for testing',
-  'Testing',
-  'Review',
-  'Done',
   'Real done',
-  'DONE, CLOSED',
+  'DONE',
+  'CLOSED',
   'Classification setting',
-  'Issue Type, Has Dependancies, FS R&D Classification, Parent',
+  'Issue',
+  'Type',
+  'Has Dependancies',
+  'FS R&D Classification',
+  'Parent',
   'Pipeline settings',
-  'XXXX',
-  'publish gradle-cache image to cloudsmith',
-  'XXXX',
+]
+
+const metricsAutoCompleteTextList = [
+  { name: 'In Analysis', value: 'Analysis' },
+  { name: 'Ready For Dev', value: 'To do' },
+  { name: 'In Dev', value: 'In Dev' },
+  { name: 'Blocked', value: 'Block' },
+  { name: 'Ready For Test', value: 'Waiting for testing' },
+  { name: 'In Test', value: 'Testing' },
+  { name: 'Ready to Deploy', value: 'Review' },
+  { name: 'Done', value: 'Done' },
+  { name: 'Organization', value: 'XXXX' },
+  { name: 'Step', value: 'publish gradle-cache image to cloudsmith' },
 ]
 
 const configTextList = [
@@ -53,6 +60,12 @@ const tokenInputValues = [
 const checkFieldsExist = (fields: string[]) => {
   fields.forEach((item) => {
     cy.contains(item).should('exist')
+  })
+}
+
+const checkAutoCompleteFieldsExist = (fields: { name: string; value: string }[]) => {
+  fields.forEach((item) => {
+    cy.contains(item?.name).siblings().eq(0).find('input').should('have.value', item?.value)
   })
 }
 
@@ -103,6 +116,7 @@ describe('Import project from file', () => {
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
+    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
     metricsPage.goReportStep()
 
@@ -113,6 +127,7 @@ describe('Import project from file', () => {
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
+    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
     metricsPage.BackToConfigStep()
 
@@ -136,6 +151,7 @@ describe('Import project from file', () => {
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
+    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
     metricsPage.goReportStep()
 
@@ -146,6 +162,7 @@ describe('Import project from file', () => {
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
+    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
     metricsPage.BackToConfigStep()
 

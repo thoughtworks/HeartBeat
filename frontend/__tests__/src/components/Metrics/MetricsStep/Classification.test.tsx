@@ -55,42 +55,58 @@ describe('Classification', () => {
   })
 
   it('should show all options when click selectBox', async () => {
-    const { getByRole, getByText } = setup()
-    await userEvent.click(getByRole('button', { name: mockLabel }))
+    const { getByRole } = setup()
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
 
-    expect(getByText('Type')).toBeInTheDocument()
+    expect(getByRole('option', { name: 'Issue' })).toBeInTheDocument()
+    expect(getByRole('option', { name: 'Type' })).toBeInTheDocument()
   })
 
   it('should show all targetField when click All and show nothing when cancel click', async () => {
-    const { getByText, getByRole } = setup()
-    await userEvent.click(getByRole('button', { name: mockLabel }))
-    await userEvent.click(getByText('All'))
-    const listBox = within(getByRole('listbox'))
+    const { getByText, getByRole, queryByRole } = setup()
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+    await act(async () => {
+      await userEvent.click(getByText('All'))
+    })
     const names = mockTargetFields.map((item) => item.name)
 
-    expect(listBox.getByRole('option', { name: names[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: names[1] })).toHaveProperty('selected', true)
+    expect(getByRole('button', { name: names[0] })).toBeVisible()
+    expect(getByRole('button', { name: names[1] })).toBeVisible()
 
-    await userEvent.click(getByText('All'))
+    await act(async () => {
+      await userEvent.click(getByText('All'))
+    })
 
-    expect(listBox.getByRole('option', { name: names[0] })).toHaveProperty('selected', false)
-    expect(listBox.getByRole('option', { name: names[1] })).toHaveProperty('selected', false)
+    expect(queryByRole('button', { name: names[0] })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: names[1] })).not.toBeInTheDocument()
   })
 
   it('should show selected targetField when click selected field', async () => {
-    const { getByRole, getByText } = setup()
+    const { getByRole, getByText, queryByRole } = setup()
     const names = mockTargetFields.map((item) => item.name)
 
-    await userEvent.click(getByRole('button', { name: mockLabel }))
-    await userEvent.click(getByText('All'))
-    await userEvent.click(getByText('All'))
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: mockLabel }))
+    })
+    await act(async () => {
+      await userEvent.click(getByText('All'))
+    })
+    await act(async () => {
+      await userEvent.click(getByText('All'))
+    })
 
     const listBox = within(getByRole('listbox'))
 
-    await userEvent.click(listBox.getByRole('option', { name: names[0] }))
+    await act(async () => {
+      await userEvent.click(listBox.getByRole('option', { name: names[0] }))
+    })
 
-    expect(listBox.getByRole('option', { name: names[0] })).toHaveProperty('selected', true)
-    expect(listBox.getByRole('option', { name: names[1] })).toHaveProperty('selected', false)
+    expect(queryByRole('button', { name: names[0] })).toBeInTheDocument()
+    expect(queryByRole('button', { name: names[1] })).not.toBeInTheDocument()
   })
 
   it('should show warning message when classification warning message has a value in cycleTime component', () => {

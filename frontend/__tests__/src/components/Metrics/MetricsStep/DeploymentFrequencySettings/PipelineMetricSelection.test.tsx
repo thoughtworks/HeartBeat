@@ -8,6 +8,7 @@ import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/confi
 import {
   BRANCH,
   ERROR_MESSAGE_TIME_DURATION,
+  LIST_OPEN,
   ORGANIZATION,
   PIPELINE_NAME,
   PIPELINE_SETTING_TYPES,
@@ -101,7 +102,9 @@ describe('PipelineMetricSelection', () => {
   it('should call deleteADeploymentFrequencySetting function when click remove this pipeline button', async () => {
     const { getByRole } = await setup(deploymentFrequencySetting, true, false)
 
-    await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
+    await act(async () => {
+      await userEvent.click(getByRole('button', { name: REMOVE_BUTTON }))
+    })
 
     expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(1)
     expect(mockHandleClickRemoveButton).toHaveBeenCalledWith(mockId)
@@ -132,15 +135,19 @@ describe('PipelineMetricSelection', () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => {
       throw new Error('error message')
     })
-    const { getByText, getByRole } = await setup(
+    const { getByText, getByRole, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
       false
     )
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1])
+    })
 
-    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockName2'))
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockName2'))
+    })
 
     await waitFor(() => {
       expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument()
@@ -149,15 +156,19 @@ describe('PipelineMetricSelection', () => {
   })
   it('should show no steps warning message when getSteps succeed but get no steps', async () => {
     metricsClient.getSteps = jest.fn().mockReturnValue({ response: [], haveStep: false })
-    const { getByText, getByRole } = await setup(
+    const { getByText, getByRole, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
       false
     )
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1])
+    })
 
-    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockName2'))
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockName2'))
+    })
 
     await waitFor(() => {
       expect(
@@ -170,15 +181,19 @@ describe('PipelineMetricSelection', () => {
 
   it('should show no steps warning message when getSteps succeed but get no steps and isShowRemoveButton is true', async () => {
     metricsClient.getSteps = jest.fn().mockReturnValue({ response: [], haveStep: false })
-    const { getByRole } = await setup(
+    const { getByRole, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       true,
       false
     )
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1])
+    })
 
-    await userEvent.click(getByRole('button', { name: PIPELINE_NAME }))
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockName2'))
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockName2'))
+    })
 
     await waitFor(() => {
       expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(2)
@@ -187,7 +202,7 @@ describe('PipelineMetricSelection', () => {
 
   it('should show steps selection when getSteps succeed ', async () => {
     metricsClient.getSteps = jest.fn().mockReturnValue({ response: ['steps'], haveStep: true })
-    const { getByRole, getByText } = await setup(
+    const { getByRole, getByText, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
       false
@@ -197,9 +212,15 @@ describe('PipelineMetricSelection', () => {
       expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1)
       expect(getByText(STEP)).toBeInTheDocument()
     })
-    await userEvent.click(getByRole('button', { name: STEP }))
+
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[2])
+    })
+
     const stepsListBox = within(getByRole('listbox'))
-    await userEvent.click(stepsListBox.getByText('step2'))
+    await act(async () => {
+      await userEvent.click(stepsListBox.getByText('step2'))
+    })
 
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(1)
   })
@@ -208,7 +229,7 @@ describe('PipelineMetricSelection', () => {
     metricsClient.getSteps = jest
       .fn()
       .mockReturnValue({ response: ['steps'], haveStep: true, branches: ['branch1', 'branch2'] })
-    const { getByRole, getByText, getAllByRole } = await setup(
+    const { getByRole, getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: ['branch1', 'branch2'] },
       false,
       false
@@ -219,16 +240,24 @@ describe('PipelineMetricSelection', () => {
       expect(getByText(BRANCH)).toBeInTheDocument()
     })
 
-    await userEvent.click(getAllByRole('button')[3])
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: 'Branches' }))
+    })
+
     const branchesListBox = within(getByRole('listbox'))
     const allOption = branchesListBox.getByRole('option', { name: 'All' })
-    await userEvent.click(allOption)
-    expect(branchesListBox.getByRole('option', { name: 'branch1' })).toHaveProperty('selected', true)
-    expect(branchesListBox.getByRole('option', { name: 'branch2' })).toHaveProperty('selected', true)
-    await userEvent.click(allOption)
-    expect(branchesListBox.getByRole('option', { name: 'branch1' })).toHaveProperty('selected', true)
-    expect(branchesListBox.getByRole('option', { name: 'branch2' })).toHaveProperty('selected', true)
-    expect(getByText('branch2')).toBeInTheDocument()
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
+
+    expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument()
+    await act(async () => {
+      await userEvent.click(allOption)
+    })
+
+    expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument()
 
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
   })

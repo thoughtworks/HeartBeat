@@ -1,42 +1,63 @@
 class Metrics {
+  static CYCLE_TIME_LABEL = {
+    analysisLabel: 'In Analysis',
+    todoLabel: 'Ready For Dev',
+    inDevLabel: 'In Dev',
+    blockLabel: 'Blocked',
+    waitingLabel: 'Ready For Test',
+    testingLabel: 'In Test',
+    reviewLabel: 'Ready to Deploy',
+    doneLabel: 'Done',
+  }
+  static CYCLE_TIME_VALUE = {
+    analysisValue: 'Analysis',
+    todoValue: 'To do',
+    inDevValue: 'In Dev',
+    blockValue: 'Block',
+    waitingValue: 'Waiting for testing',
+    testingValue: 'Testing',
+    reviewValue: 'Review',
+    doneValue: 'Done',
+  }
+
   private readonly cycleTimeSettingAnalysis = () => {
-    cy.contains('In Analysis').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('Analysis').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.analysisLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.analysisValue).click()
   }
 
   private readonly cycleTimeSettingTodo = () => {
-    cy.contains('Ready For Dev').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('To do').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.todoLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.todoValue).click()
   }
 
   private readonly cycleTimeSettingInDev = () => {
-    cy.contains('In Dev').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('In Dev').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.inDevLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.inDevValue).click()
   }
 
   private readonly cycleTimeSettingBlock = () => {
-    cy.contains('Blocked').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('Block').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.blockLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.blockValue).click()
   }
 
   private readonly cycleTimeSettingWaitTest = () => {
-    cy.contains('Ready For Test').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('Waiting for testing').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.waitingLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.waitingValue).click()
   }
 
   private readonly cycleTimeSettingTesting = () => {
-    cy.contains('In Test').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('Testing').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.testingLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.testingValue).click()
   }
 
   private readonly cycleTimeSettingReview = () => {
-    cy.contains('Ready to Deploy').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('Review').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.reviewLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.reviewValue).click()
   }
 
   private readonly cycleTimeSettingDone = () => {
-    cy.contains('Done').siblings().eq(0).click()
-    cy.get('li[role="option"]').contains('Done').click()
+    cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
+    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.doneValue).click()
   }
 
   private readonly realDoneSelect = () => cy.contains('Consider as Done').siblings().eq(0)

@@ -18,7 +18,7 @@ interface Props {
 export const SingleSelection = ({ options, label, value, id, onGetSteps, step, onUpDatePipeline }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
   const [selectedOptions, setSelectedOptions] = useState(value)
-  const [inputValue, setInputValue] = useState<string>('')
+  const [inputValue, setInputValue] = useState<string>(value)
 
   const handleSelectedOptionsChange = (value: string) => {
     setSelectedOptions(value)

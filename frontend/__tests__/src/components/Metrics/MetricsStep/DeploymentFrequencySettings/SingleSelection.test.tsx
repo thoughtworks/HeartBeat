@@ -17,6 +17,8 @@ jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useEffect: jest.fn(),
 }))
+let store = setupStore()
+
 describe('SingleSelection', () => {
   const mockOptions = ['mockOptions 1', 'mockOptions 2', 'mockOptions 3']
   const mockLabel = 'mockLabel'
@@ -24,10 +26,12 @@ describe('SingleSelection', () => {
   const mockOnGetSteps = jest.fn()
   const mockUpdatePipeline = jest.fn()
 
-  let store = setupStore()
-
   beforeEach(() => {
     store = setupStore()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   const setup = () =>
@@ -44,10 +48,14 @@ describe('SingleSelection', () => {
       </Provider>
     )
 
-  it('should show selectors title when render SingleSelection', () => {
-    const { getByText } = setup()
+  it('should show selected label and value when render a SingleSelection', () => {
+    const { getByText, getAllByRole } = setup()
+    const inputElements = getAllByRole('combobox')
+
+    const selectedInputValues = inputElements.map((input) => input.getAttribute('value'))
 
     expect(getByText(mockLabel)).toBeInTheDocument()
+    expect(selectedInputValues).toEqual([mockValue])
   })
 
   it('should show detail options when click the dropdown button', async () => {
@@ -94,10 +102,10 @@ describe('SingleSelection', () => {
 
   it('should call update option function and OnGetSteps function when change option given mockValue as default', async () => {
     const { getByText, getByRole } = setup()
+
     await act(async () => {
       await userEvent.click(getByRole('button', { name: LIST_OPEN }))
     })
-
     await act(async () => {
       await userEvent.click(getByText(mockOptions[1]))
     })

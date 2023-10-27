@@ -206,9 +206,7 @@ export const metricsSlice = createSlice({
       state.importedData.importedCycleTime.importedCycleTimeSettings =
         cycleTime?.jiraColumns || state.importedData.importedCycleTime.importedCycleTimeSettings
       state.importedData.importedCycleTime.importedTreatFlagCardAsBlock =
-        'treatFlagCardAsBlock' in cycleTime
-          ? cycleTime?.treatFlagCardAsBlock
-          : state.importedData.importedCycleTime.importedTreatFlagCardAsBlock
+        cycleTime?.treatFlagCardAsBlock && state.importedData.importedCycleTime.importedTreatFlagCardAsBlock
       state.importedData.importedAssigneeFilter = assigneeFilter || state.importedData.importedAssigneeFilter
       state.importedData.importedDoneStatus = doneStatus || state.importedData.importedDoneStatus
       state.importedData.importedClassification = classification || state.importedData.importedClassification

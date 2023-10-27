@@ -5,18 +5,14 @@ import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveUsers, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
-import { styled } from '@mui/material/styles'
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
+import { WarningMessage } from '@src/components/Metrics/MetricsStep/Crews/style'
 
 interface crewsProps {
   options: string[]
   title: string
   label: string
 }
-
-export const WarningMessage = styled('p')({
-  color: 'red',
-})
 
 export const Crews = ({ options, title, label }: crewsProps) => {
   const dispatch = useAppDispatch()

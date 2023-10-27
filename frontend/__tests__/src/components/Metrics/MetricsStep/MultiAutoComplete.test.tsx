@@ -1,8 +1,9 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
 import { act } from 'react-dom/test-utils'
+import { ALL, AUTOCOMPLETE_SELECT_ACTION, MOCK_AUTOCOMPLETE_LIST } from '../../../fixtures'
 
 describe('MultiAutoComplete', () => {
   const optionList = ['Option 1', 'Option 2', 'Option 3']
@@ -12,8 +13,7 @@ describe('MultiAutoComplete', () => {
   const textFieldLabel = 'Select Options'
   const isError = false
   const testId = 'multi-auto-complete'
-
-  it('renders the component', () => {
+  const setup = () =>
     render(
       <MultiAutoComplete
         optionList={optionList}
@@ -26,49 +26,36 @@ describe('MultiAutoComplete', () => {
       />
     )
 
-    const autoCompleteComponent = screen.getByTestId(testId)
-    expect(autoCompleteComponent).toBeInTheDocument()
+  it('renders the component', () => {
+    const { getByTestId } = setup()
+
+    expect(getByTestId(testId)).toBeInTheDocument()
   })
 
   it('When passed selectedoption changed, the correct option would be displayed', async () => {
-    render(
-      <MultiAutoComplete
-        optionList={optionList}
-        selectedOption={selectedOption}
-        onChangeHandler={onChangeHandler}
-        isSelectAll={isSelectAll}
-        textFieldLabel={textFieldLabel}
-        isError={isError}
-        testId={testId}
-      />
-    )
+    const { getByRole } = setup()
 
-    expect(screen.getByRole('button', { name: 'Option 1' })).toBeVisible()
+    expect(getByRole('button', { name: 'Option 1' })).toBeVisible()
   })
 
-  it('When All, All would be called by onChange function', async () => {
-    render(
-      <MultiAutoComplete
-        optionList={optionList}
-        selectedOption={selectedOption}
-        onChangeHandler={onChangeHandler}
-        isSelectAll={isSelectAll}
-        textFieldLabel={textFieldLabel}
-        isError={isError}
-        testId={testId}
-      />
-    )
+  it('When user select All option, all options in drop box would be selected', async () => {
+    const { getByRole } = setup()
 
-    const inputField = screen.getByRole('combobox')
+    const inputField = getByRole('combobox')
+    const allOption = getByRole('option', { name: 'All' })
+
     await userEvent.click(inputField)
-
-    const allOption = screen.getByRole('option', { name: 'All' })
     await act(async () => {
       await userEvent.click(allOption)
     })
 
-    expect(onChangeHandler).toHaveBeenCalledWith(expect.anything(), ['Option 1', 'All'], 'selectOption', {
-      option: 'All',
-    })
+    expect(onChangeHandler).toHaveBeenCalledWith(
+      expect.anything(),
+      [MOCK_AUTOCOMPLETE_LIST[0], ALL],
+      AUTOCOMPLETE_SELECT_ACTION,
+      {
+        option: ALL,
+      }
+    )
   })
 })

@@ -37,14 +37,10 @@ const MultiAutoComplete = ({
       getOptionLabel={(option) => option as string}
       onChange={onChangeHandler}
       renderOption={(props, option, { selected }) => {
-        const selectAllProps =
-          option === 'All' // To control the state of 'select-all' checkbox
-            ? { checked: isSelectAll }
-            : {}
+        const selectAllProps = option === 'All' ? { checked: isSelectAll } : {}
         return (
           <li {...props}>
             <Checkbox style={{ marginRight: 8 }} checked={selected} {...selectAllProps} />
-            {/*The same reason. m-ui declare its type to unknown, but actually it can/should be string here. Maybe caused by diff version*/}
             {option as string}
           </li>
         )

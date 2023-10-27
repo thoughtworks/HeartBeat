@@ -51,6 +51,11 @@ export enum PIPELINE_SETTING_TYPES {
   LEAD_TIME_FOR_CHANGES_TYPE = 'LeadTimeForChanges',
 }
 
+export const ASSIGNEE_FILTER_TYPES = {
+  LAST_ASSIGNEE: 'lastAssignee',
+  HISTORICAL_ASSIGNEE: 'historicalAssignee',
+}
+
 export const EMAIL_REG_EXP = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 export const BOARD_TOKEN_REG_EXP = /^[a-zA-Z0-9\-=_]{1,500}$/

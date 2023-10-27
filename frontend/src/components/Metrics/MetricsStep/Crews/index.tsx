@@ -5,6 +5,7 @@ import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveUsers, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
+import { AssigneeFilter } from '@src/components/Metrics/MetricsStep/Crews/AssigneeFilter'
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
 import { WarningMessage } from '@src/components/Metrics/MetricsStep/Crews/style'
 
@@ -48,6 +49,7 @@ export const Crews = ({ options, title, label }: crewsProps) => {
         selectedOption={selectedCrews}
         textFieldLabel={label}
       />
+      <AssigneeFilter />
       <FormHelperText>
         {isEmptyCrewData ? (
           <WarningMessage>

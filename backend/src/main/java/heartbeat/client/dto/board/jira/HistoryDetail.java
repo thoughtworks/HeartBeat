@@ -22,8 +22,6 @@ public class HistoryDetail implements Serializable {
 
 	private Actor actor;
 
-	private String fieldDisplayName;
-
 	@Getter
 	@Setter
 	@Builder

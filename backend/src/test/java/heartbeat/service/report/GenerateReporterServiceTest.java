@@ -157,7 +157,7 @@ class GenerateReporterServiceTest {
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
 
 		Velocity velocity = Velocity.builder().velocityForSP(0).velocityForCards(0).build();
-		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any()))
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any()))
 			.thenReturn(CardCollection.builder()
 				.storyPointSum(0)
 				.cardsNumber(0)
@@ -207,7 +207,7 @@ class GenerateReporterServiceTest {
 			.pairList((List.of(ClassificationNameValuePair.builder().name("shawn").value(1.0D).build())))
 			.build();
 
-		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any())).thenReturn(CardCollection
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any())).thenReturn(CardCollection
 			.builder()
 			.storyPointSum(0)
 			.cardsNumber(0)
@@ -223,7 +223,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		when(classificationCalculator.calculate(any(), any())).thenReturn(List.of(mockClassification));
-		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any()))
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any()))
 			.thenReturn(CardCollection.builder()
 				.storyPointSum(0)
 				.cardsNumber(0)
@@ -384,7 +384,7 @@ class GenerateReporterServiceTest {
 			.endTime("123")
 			.build();
 
-		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any())).thenReturn(cardCollection);
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any())).thenReturn(cardCollection);
 		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any(), any()))
 			.thenReturn(CardCollection.builder()
 				.storyPointSum(0)
@@ -691,7 +691,7 @@ class GenerateReporterServiceTest {
 
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
 
-		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any()))
+		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any()))
 			.thenReturn(CardCollection.builder()
 				.storyPointSum(2)
 				.cardsNumber(1)

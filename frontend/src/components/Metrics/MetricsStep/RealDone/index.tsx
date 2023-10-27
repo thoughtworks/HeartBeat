@@ -12,7 +12,7 @@ import { DEFAULT_HELPER_TEXT, METRICS_CONSTANTS } from '@src/constants'
 import { useAppSelector } from '@src/hooks'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
-import { WarningMessage } from '@src/components/Metrics/MetricsStep/Crews'
+import { WarningMessage } from '@src/components/Metrics/MetricsStep/Crews/style'
 
 interface realDoneProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[]

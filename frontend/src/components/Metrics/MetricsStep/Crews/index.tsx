@@ -1,5 +1,4 @@
 import { FormHelperText } from '@mui/material'
-import { DEFAULT_HELPER_TEXT } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
@@ -51,12 +50,10 @@ export const Crews = ({ options, title, label }: crewsProps) => {
       />
       <AssigneeFilter />
       <FormHelperText>
-        {isEmptyCrewData ? (
+        {isEmptyCrewData && (
           <WarningMessage>
             {label} is <strong>required</strong>
           </WarningMessage>
-        ) : (
-          DEFAULT_HELPER_TEXT
         )}
       </FormHelperText>
     </>

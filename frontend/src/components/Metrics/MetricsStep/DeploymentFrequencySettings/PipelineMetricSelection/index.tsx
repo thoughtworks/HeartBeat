@@ -74,7 +74,7 @@ export const PipelineMetricSelection = ({
     onRemovePipeline(id)
   }
 
-  const handleGetSteps = (_pipelineName: string) => {
+  const handleGetPipelineData = (_pipelineName: string) => {
     const { params, buildId, organizationId, pipelineType, token } = selectStepsParams(
       store.getState(),
       organization,
@@ -86,8 +86,17 @@ export const PipelineMetricSelection = ({
       } else {
         const steps = res?.response ?? []
         const branches = res?.branches ?? []
-        dispatch(updatePipelineToolVerifyResponseSteps({ organization, pipelineName: _pipelineName, steps, branches }))
-        res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches }))
+        const pipelineCrews = res?.pipelineCrews ?? []
+        dispatch(
+          updatePipelineToolVerifyResponseSteps({
+            organization,
+            pipelineName: _pipelineName,
+            steps,
+            branches,
+            pipelineCrews,
+          })
+        )
+        res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches, pipelineCrews }))
       }
       res && setIsShowNoStepWarning(!res.haveStep)
     })
@@ -138,7 +147,7 @@ export const PipelineMetricSelection = ({
           label={'Pipeline Name'}
           value={pipelineName}
           step={step}
-          onGetSteps={handleGetSteps}
+          onGetSteps={handleGetPipelineData}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
         />
       )}

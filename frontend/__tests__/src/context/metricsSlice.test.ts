@@ -26,6 +26,7 @@ const initState = {
   jiraColumns: [],
   targetFields: [],
   users: [],
+  pipelineCrews: [],
   doneColumn: [],
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
@@ -34,6 +35,7 @@ const initState = {
   treatFlagCardAsBlock: true,
   importedData: {
     importedCrews: [],
+    importedPipelineCrews: [],
     importedCycleTime: {
       importedCycleTimeSettings: [],
       importedTreatFlagCardAsBlock: true,
@@ -100,6 +102,7 @@ describe('saveMetricsSetting reducer', () => {
       importedDoneStatus: [],
       importedClassification: [],
       importedDeployment: [],
+      importedPipelineCrews: [],
     })
   })
 
@@ -176,11 +179,13 @@ describe('saveMetricsSetting reducer', () => {
       classification: ['mockClassification'],
       deployment: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
       leadTime: [],
+      pipelineCrews: [],
     }
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))
 
     expect(savedMetricsSetting.importedData).toEqual({
       importedCrews: mockMetricsImportedData.crews,
+      importedPipelineCrews: mockMetricsImportedData.pipelineCrews,
       importedCycleTime: {
         importedCycleTimeSettings: mockMetricsImportedData.cycleTime.jiraColumns,
         importedTreatFlagCardAsBlock: mockMetricsImportedData.cycleTime.treatFlagCardAsBlock,

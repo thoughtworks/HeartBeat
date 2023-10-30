@@ -6,6 +6,7 @@ export interface ReportRequestDTO {
   buildKiteSetting?: {
     type: string
     token: string
+    pipelineCrews: string[]
     deploymentEnvList:
       | {
           id: string

@@ -57,6 +57,6 @@ describe('get steps from metrics response', () => {
 
     const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token)
 
-    expect(result).toEqual({ branches: [], response: [], haveStep: false })
+    expect(result).toEqual({ branches: [], response: [], haveStep: false, pipelineCrews: [] })
   })
 })

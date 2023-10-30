@@ -6,6 +6,7 @@ import { initialPipelineToolState, IPipelineToolState } from '@src/context/confi
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
 import dayjs from 'dayjs'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
+import _ from 'lodash'
 
 export interface BasicConfigState {
   isProjectCreated: boolean
@@ -127,7 +128,7 @@ export const configSlice = createSlice({
       }))
     },
     updatePipelineToolVerifyResponseSteps: (state, action) => {
-      const { organization, pipelineName, steps, branches } = action.payload
+      const { organization, pipelineName, steps, branches, pipelineCrews } = action.payload
       state.pipelineTool.verifiedResponse.pipelineList = state.pipelineTool.verifiedResponse.pipelineList.map(
         (pipeline) =>
           pipeline.name === pipelineName && pipeline.orgName === organization
@@ -137,6 +138,11 @@ export const configSlice = createSlice({
                 steps: steps,
               }
             : pipeline
+      )
+
+      state.pipelineTool.verifiedResponse.pipelineCrews = _.union(
+        state.pipelineTool.verifiedResponse.pipelineCrews,
+        pipelineCrews
       )
     },
     updateSourceControlVerifyState: (state, action) => {
@@ -230,5 +236,7 @@ export const selectBranches = (state: RootState, organizationName: string, pipel
     /* istanbul ignore next */
     (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
   )?.branches ?? []
+
+export const selectPipelineCrews = (state: RootState) => state.config.pipelineTool.verifiedResponse.pipelineCrews
 
 export default configSlice.reducer

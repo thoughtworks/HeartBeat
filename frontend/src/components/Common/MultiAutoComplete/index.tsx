@@ -11,6 +11,7 @@ type Props = {
   textFieldLabel: string
   isError: boolean
   testId?: string
+  isBoardCrews?: boolean
 }
 const MultiAutoComplete = ({
   optionList,
@@ -20,6 +21,7 @@ const MultiAutoComplete = ({
   textFieldLabel,
   isError,
   testId,
+  isBoardCrews = true,
 }: Props) => {
   const filter = createFilterOptions()
 
@@ -46,7 +48,13 @@ const MultiAutoComplete = ({
         )
       }}
       renderInput={(params) => (
-        <TextField {...params} required error={isError} variant='standard' label={textFieldLabel} />
+        <TextField
+          {...params}
+          required={isBoardCrews}
+          error={isError && isBoardCrews}
+          variant='standard'
+          label={textFieldLabel}
+        />
       )}
     />
   )

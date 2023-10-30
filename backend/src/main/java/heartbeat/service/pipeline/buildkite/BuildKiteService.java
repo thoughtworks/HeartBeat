@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
@@ -116,6 +117,15 @@ public class BuildKiteService {
 			.toList();
 	}
 
+	public List<String> getPipelineCrewNames(List<BuildKiteBuildInfo> buildKiteBuildInfos) {
+		return buildKiteBuildInfos.stream()
+			.filter(buildKiteBuildInfo -> Objects.nonNull(buildKiteBuildInfo.getAuthor()))
+			.map(buildKiteBuildInfo -> buildKiteBuildInfo.getAuthor().getName())
+			.distinct()
+			.sorted()
+			.collect(Collectors.toList());
+	}
+
 	public List<String> getStepsBeforeEndStep(String endStep, List<String> steps) {
 		int index = steps.indexOf(endStep);
 		if (index != -1) {
@@ -133,6 +143,7 @@ public class BuildKiteService {
 					DeploymentEnvironment.builder().id(pipelineId).orgId(organizationId).build(), stepsParam);
 
 			List<String> sortedSteps = getPipelineStepNames(buildKiteBuildInfos).stream().sorted().toList();
+			List<String> pipelineCrews = getPipelineCrewNames(buildKiteBuildInfos);
 
 			List<String> sortedBranches = buildKiteBuildInfos.stream()
 				.map(BuildKiteBuildInfo::getBranch)
@@ -150,6 +161,7 @@ public class BuildKiteService {
 				.repository(stepsParam.getRepository())
 				.orgId(organizationId)
 				.branches(sortedBranches)
+				.pipelineCrews(pipelineCrews)
 				.build();
 		}
 		catch (RuntimeException e) {

@@ -11,11 +11,15 @@ import {
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton'
 import { PIPELINE_SETTING_TYPES } from '@src/constants'
+import { selectPipelineCrews } from '@src/context/config/configSlice'
+import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
+import _ from 'lodash'
 
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch()
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings)
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext()
+  const pipelineCrews = useAppSelector(selectPipelineCrews)
 
   const handleAddPipeline = () => {
     dispatch(addADeploymentFrequencySetting())
@@ -44,6 +48,9 @@ export const DeploymentFrequencySettings = () => {
         />
       ))}
       <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />
+      {!_.isEmpty(pipelineCrews) && (
+        <Crews options={pipelineCrews} title={'Pipeline crews (optional)'} label={'Included Crews'} type={'pipeline'} />
+      )}
     </>
   )
 }

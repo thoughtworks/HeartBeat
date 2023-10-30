@@ -33,6 +33,7 @@ export interface savedMetricsSettingState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
   targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
+  pipelineCrews: string[]
   doneColumn: string[]
   cycleTimeSettings: { name: string; value: string }[]
   deploymentFrequencySettings: IPipelineConfig[]
@@ -40,6 +41,7 @@ export interface savedMetricsSettingState {
   treatFlagCardAsBlock: boolean
   importedData: {
     importedCrews: string[]
+    importedPipelineCrews: string[]
     importedCycleTime: {
       importedCycleTimeSettings: { [key: string]: string }[]
       importedTreatFlagCardAsBlock: boolean
@@ -58,6 +60,7 @@ const initialState: savedMetricsSettingState = {
   jiraColumns: [],
   targetFields: [],
   users: [],
+  pipelineCrews: [],
   doneColumn: [],
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
@@ -65,6 +68,7 @@ const initialState: savedMetricsSettingState = {
   treatFlagCardAsBlock: true,
   importedData: {
     importedCrews: [],
+    importedPipelineCrews: [],
     importedCycleTime: {
       importedCycleTimeSettings: [],
       importedTreatFlagCardAsBlock: true,
@@ -113,6 +117,13 @@ const findKeyByValues = (arrayA: { [key: string]: string }[], arrayB: string[]):
 
 const setSelectUsers = (users: string[], importedCrews: string[]) =>
   users.filter((item: string) => importedCrews?.includes(item))
+
+const setPipelineCrews = (pipelineCrews: string[], importedPipelineCrews: string[]) => {
+  if (_.isEmpty(pipelineCrews)) {
+    return []
+  }
+  return pipelineCrews.filter((item: string) => importedPipelineCrews?.includes(item))
+}
 
 const setSelectTargetFields = (
   targetFields: { name: string; key: string; flag: boolean }[],
@@ -168,6 +179,9 @@ export const metricsSlice = createSlice({
     saveUsers: (state, action) => {
       state.users = action.payload
     },
+    savePipelineCrews: (state, action) => {
+      state.pipelineCrews = action.payload
+    },
     saveCycleTimeSettings: (state, action) => {
       state.cycleTimeSettings = action.payload
     },
@@ -196,8 +210,9 @@ export const metricsSlice = createSlice({
     },
 
     updateMetricsImportedData: (state, action) => {
-      const { crews, cycleTime, doneStatus, classification, deployment, leadTime } = action.payload
+      const { crews, cycleTime, doneStatus, classification, deployment, leadTime, pipelineCrews } = action.payload
       state.importedData.importedCrews = crews || state.importedData.importedCrews
+      state.importedData.importedPipelineCrews = pipelineCrews || state.importedData.importedPipelineCrews
       state.importedData.importedCycleTime.importedCycleTimeSettings =
         cycleTime?.jiraColumns || state.importedData.importedCycleTime.importedCycleTimeSettings
       state.importedData.importedCycleTime.importedTreatFlagCardAsBlock =
@@ -265,8 +280,9 @@ export const metricsSlice = createSlice({
     },
 
     updatePipelineSettings: (state, action) => {
-      const { pipelineList, isProjectCreated } = action.payload
-      const { importedDeployment } = state.importedData
+      const { pipelineList, isProjectCreated, pipelineCrews } = action.payload
+      const { importedDeployment, importedPipelineCrews } = state.importedData
+      state.pipelineCrews = isProjectCreated ? pipelineCrews : setPipelineCrews(pipelineCrews, importedPipelineCrews)
       const orgNames: Array<string> = _.uniq(pipelineList.map((item: pipeline) => item.orgName))
       const filteredPipelineNames = (organization: string) =>
         pipelineList
@@ -312,14 +328,16 @@ export const metricsSlice = createSlice({
     },
 
     updatePipelineStep: (state, action) => {
-      const { steps, id, type, branches } = action.payload
-      const { importedDeployment } = state.importedData
+      const { steps, id, branches, pipelineCrews } = action.payload
+      const { importedDeployment, importedPipelineCrews } = state.importedData
       const updatedImportedPipeline = importedDeployment
       const updatedImportedPipelineStep = updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.step ?? ''
       const updatedImportedPipelineBranches =
         updatedImportedPipeline.find((pipeline) => pipeline.id === id)?.branches ?? []
       const validStep = steps.includes(updatedImportedPipelineStep) ? updatedImportedPipelineStep : ''
       const validBranches = _.filter(branches, (branch) => updatedImportedPipelineBranches.includes(branch))
+      const validPipelineCrews = _.filter(pipelineCrews, (crew) => importedPipelineCrews.includes(crew))
+      state.pipelineCrews = validPipelineCrews
       const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
@@ -367,6 +385,7 @@ export const {
   saveTargetFields,
   saveDoneColumn,
   saveUsers,
+  savePipelineCrews,
   saveCycleTimeSettings,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,

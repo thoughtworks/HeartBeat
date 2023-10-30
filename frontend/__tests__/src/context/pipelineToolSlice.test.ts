@@ -95,6 +95,7 @@ describe('pipelineTool reducer', () => {
               branches: [],
             },
           ],
+          pipelineCrews: [],
         },
       },
     }
@@ -142,6 +143,7 @@ describe('pipelineTool reducer', () => {
               branches: [],
             },
           ],
+          pipelineCrews: [],
         },
       },
     }

@@ -143,6 +143,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
   buildKiteSetting: {
     token: 'mockToken',
     type: PIPELINE_TOOL_TYPES.BUILD_KITE,
+    pipelineCrews: [],
     deploymentEnvList: [
       {
         id: 'mockPipelineId',

@@ -12,4 +12,5 @@ public enum AssigneeFilterMethod {
 	HISTORICAL_ASSIGNEE("historicalAssignee");
 
 	private final String description;
+
 }

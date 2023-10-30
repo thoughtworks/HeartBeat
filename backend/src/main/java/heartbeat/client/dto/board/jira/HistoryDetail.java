@@ -27,7 +27,7 @@ public class HistoryDetail implements Serializable {
 	@Builder
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class Actor implements Serializable{
+	public static class Actor implements Serializable {
 
 		private String displayName;
 

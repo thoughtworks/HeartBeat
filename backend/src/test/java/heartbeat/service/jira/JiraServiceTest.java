@@ -470,7 +470,7 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"),"");
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
 
 		assertThat(cardCollection.getStoryPointSum()).isEqualTo(0);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
@@ -502,7 +502,7 @@ class JiraServiceTest {
 		// then
 
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"),"");
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 	}
 
@@ -529,7 +529,7 @@ class JiraServiceTest {
 		// then
 
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"),"");
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 	}
 
@@ -543,7 +543,7 @@ class JiraServiceTest {
 		// then
 
 		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"),null))
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), null))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("Board type does not find!");
 	}
@@ -564,7 +564,7 @@ class JiraServiceTest {
 		when(boardUtil.getOriginCycleTimeInfos(any())).thenReturn(CYCLE_TIME_INFO_LIST());
 
 		CardCollection doneCards = jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"),"");
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
 		assertThat(doneCards.getStoryPointSum()).isEqualTo(1);
 		assertThat(doneCards.getCardsNumber()).isEqualTo(1);
 	}
@@ -583,7 +583,7 @@ class JiraServiceTest {
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER_TO_DONE().build());
 
 		CardCollection doneCards = jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"),null);
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), null);
 		assertThat(doneCards.getStoryPointSum()).isEqualTo(0);
 		assertThat(doneCards.getCardsNumber()).isEqualTo(0);
 	}
@@ -607,7 +607,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
-				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"),null))
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), null))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("Type does not find!");
 	}
@@ -726,18 +726,20 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldGetRealDoneCardWhenCallGetStoryPointsAndCycleTimeWhenUseHistoricalAssigneeFilterMethod() throws JsonProcessingException {
+	void shouldGetRealDoneCardWhenCallGetStoryPointsAndCycleTimeWhenUseHistoricalAssigneeFilterMethod()
+			throws JsonProcessingException {
 		// given
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		String assigneeFilter = "historicalAssignee";
 
-		//request param
+		// request param
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
 		StoryPointsAndCycleTimeRequest request = STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD().build();
 
-		//return value
-		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+		// return value
+		String allDoneCards = objectMapper
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
@@ -753,25 +755,26 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
 		// then
-		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-			request, jiraBoardSetting.getBoardColumns(), List.of("da pei"),assigneeFilter);
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(2);
 	}
 
-
 	@Test
-	void shouldGetRealDoneCardWhenCallGetStoryPointsAndCycleTimeWhenUseLastAssigneeFilterMethod() throws JsonProcessingException {
+	void shouldGetRealDoneCardWhenCallGetStoryPointsAndCycleTimeWhenUseLastAssigneeFilterMethod()
+			throws JsonProcessingException {
 		// given
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		String assigneeFilter = "lastAssignee";
 
-		//request param
+		// request param
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
 		StoryPointsAndCycleTimeRequest request = STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD().build();
 
-		//return value
-		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+		// return value
+		String allDoneCards = objectMapper
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
@@ -787,8 +790,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
 		// then
-		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
-			request, jiraBoardSetting.getBoardColumns(), List.of("da pei"),assigneeFilter);
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 	}
 

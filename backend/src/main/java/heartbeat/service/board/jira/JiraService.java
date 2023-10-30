@@ -471,7 +471,8 @@ public class JiraService {
 		return realDoneCards;
 	}
 
-	private List<String> getAssigneeSet(StoryPointsAndCycleTimeRequest request, URI baseUrl, String filterMethod, JiraCard doneCard) {
+	private List<String> getAssigneeSet(StoryPointsAndCycleTimeRequest request, URI baseUrl, String filterMethod,
+			JiraCard doneCard) {
 		List<String> assigneeSet = new ArrayList<>();
 		Assignee assignee = doneCard.getFields().getAssignee();
 
@@ -479,7 +480,7 @@ public class JiraService {
 			assigneeSet.add(assignee.getDisplayName());
 		}
 
-		if (assignee != null && filterMethod.equals(AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription())){
+		if (assignee != null && filterMethod.equals(AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription())) {
 			List<String> historyDisplayName = getHistoricalAssignees(baseUrl, doneCard.getKey(), request.getToken());
 			assigneeSet.addAll(historyDisplayName);
 		}
@@ -489,15 +490,12 @@ public class JiraService {
 
 	private List<String> getHistoricalAssignees(URI baseUrl, String cardKey, String token) {
 		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, cardKey, token);
-		return jiraCardHistory.getItems().stream()
-			.map(item -> item.getActor().getDisplayName())
-			.distinct()
-			.toList();
+		return jiraCardHistory.getItems().stream().map(item -> item.getActor().getDisplayName()).distinct().toList();
 	}
 
-
-	private  boolean useLastAssignee(String filterMethod) {
-		return filterMethod.equals(AssigneeFilterMethod.LAST_ASSIGNEE.getDescription()) || StringUtils.isEmpty(filterMethod);
+	private boolean useLastAssignee(String filterMethod) {
+		return filterMethod.equals(AssigneeFilterMethod.LAST_ASSIGNEE.getDescription())
+				|| StringUtils.isEmpty(filterMethod);
 	}
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,

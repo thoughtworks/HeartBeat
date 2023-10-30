@@ -1,5 +1,6 @@
 export interface IPipelineToolVerifyResponse {
   pipelineList: pipeline[]
+  pipelineCrews: string[]
 }
 
 export interface pipeline {
@@ -14,4 +15,5 @@ export interface pipeline {
 
 export const initialPipelineToolVerifiedResponseState: IPipelineToolVerifyResponse = {
   pipelineList: [],
+  pipelineCrews: [],
 }

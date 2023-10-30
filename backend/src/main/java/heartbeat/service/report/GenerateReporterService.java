@@ -475,7 +475,8 @@ public class GenerateReporterService {
 
 	private FetchedData.BuildKiteData fetchGithubData(GenerateReportRequest request) {
 		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
-				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken());
+				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken(),
+				request.getBuildKiteSetting().getPipelineCrews());
 		Map<String, String> repoMap = getRepoMap(request.getBuildKiteSetting().getDeploymentEnvList());
 		List<PipelineLeadTime> pipelineLeadTimes = Collections.emptyList();
 		if (Objects.nonNull(request.getCodebaseSetting())
@@ -493,18 +494,19 @@ public class GenerateReporterService {
 
 	private FetchedData.BuildKiteData fetchBuildKiteInfo(GenerateReportRequest request) {
 		return fetchBuildKiteData(request.getStartTime(), request.getEndTime(),
-				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken());
+				request.getBuildKiteSetting().getDeploymentEnvList(), request.getBuildKiteSetting().getToken(),
+				request.getBuildKiteSetting().getPipelineCrews());
 	}
 
 	private FetchedData.BuildKiteData fetchBuildKiteData(String startTime, String endTime,
-			List<DeploymentEnvironment> deploymentEnvironments, String token) {
+			List<DeploymentEnvironment> deploymentEnvironments, String token, List<String> pipelineCrews) {
 		List<DeployTimes> deployTimesList = new ArrayList<>();
 		List<Map.Entry<String, List<BuildKiteBuildInfo>>> buildInfosList = new ArrayList<>();
 		List<Map.Entry<String, List<BuildKiteBuildInfo>>> leadTimeBuildInfosList = new ArrayList<>();
 
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
-			List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService.fetchPipelineBuilds(token,
-					deploymentEnvironment, startTime, endTime);
+			List<BuildKiteBuildInfo> buildKiteBuildInfo = getBuildKiteBuildInfo(startTime, endTime,
+					deploymentEnvironment, token, pipelineCrews);
 			DeployTimes deployTimes = buildKiteService.countDeployTimes(deploymentEnvironment, buildKiteBuildInfo,
 					startTime, endTime);
 			deployTimesList.add(deployTimes);
@@ -516,6 +518,19 @@ public class GenerateReporterService {
 			.buildInfosList(buildInfosList)
 			.leadTimeBuildInfosList(leadTimeBuildInfosList)
 			.build();
+	}
+
+	private List<BuildKiteBuildInfo> getBuildKiteBuildInfo(String startTime, String endTime,
+			DeploymentEnvironment deploymentEnvironment, String token, List<String> pipelineCrews) {
+		List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService.fetchPipelineBuilds(token, deploymentEnvironment,
+				startTime, endTime);
+
+		if (!CollectionUtils.isEmpty(pipelineCrews)) {
+			buildKiteBuildInfo = buildKiteBuildInfo.stream()
+				.filter(info -> Objects.nonNull(info.getAuthor()) && pipelineCrews.contains(info.getAuthor().getName()))
+				.collect(Collectors.toList());
+		}
+		return buildKiteBuildInfo;
 	}
 
 	private void generateCSVForPipeline(GenerateReportRequest request, BuildKiteData buildKiteData) {

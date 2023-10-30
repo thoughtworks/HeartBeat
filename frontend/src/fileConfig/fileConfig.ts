@@ -31,6 +31,7 @@ export interface OldFileConfig {
   classifications?: string[]
   deployment?: OldConfigSetting[]
   leadTime?: OldConfigSetting[]
+  pipelineCrews?: string[]
 }
 
 interface OldConfigSetting {
@@ -78,6 +79,7 @@ export interface NewFileConfig {
   classification?: string[]
   deployment?: NewConfigSetting[]
   leadTime?: NewConfigSetting[]
+  pipelineCrews?: string[]
 }
 export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig): NewFileConfig => {
   if ('considerHoliday' in fileConfig) {
@@ -95,6 +97,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       doneStatus,
       classifications,
       deployment,
+      pipelineCrews,
     } = fileConfig
     return {
       projectName,
@@ -118,6 +121,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
         token: sourceControl?.token,
       },
       crews,
+      pipelineCrews,
       cycleTime,
       doneStatus,
       classification: classifications,

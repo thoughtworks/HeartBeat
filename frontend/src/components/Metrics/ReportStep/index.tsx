@@ -59,6 +59,7 @@ const ReportStep = () => {
     cycleTimeSettings,
     treatFlagCardAsBlock,
     users,
+    pipelineCrews,
     targetFields,
     doneColumn,
     deploymentFrequencySettings,
@@ -117,6 +118,7 @@ const ReportStep = () => {
     endTime: dayjs(dateRange.endDate).valueOf().toString(),
     considerHoliday: calendarType === CHINA_CALENDAR,
     buildKiteSetting: {
+      pipelineCrews,
       ...pipelineTool.config,
       deploymentEnvList: getPipelineConfig(deploymentFrequencySettings),
     },

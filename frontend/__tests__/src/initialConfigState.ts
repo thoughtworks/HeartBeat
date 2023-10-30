@@ -39,6 +39,7 @@ const initialConfigState: BasicConfigState = {
     isShow: false,
     verifiedResponse: {
       pipelineList: [],
+      pipelineCrews: [],
     },
   },
   sourceControl: {

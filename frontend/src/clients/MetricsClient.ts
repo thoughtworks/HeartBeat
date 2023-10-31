@@ -13,6 +13,7 @@ export class MetricsClient extends HttpClient {
   steps: string[] = []
   haveStep = true
   branches: string[] = []
+  pipelineCrews: string[] = []
 
   getSteps = async (
     params: getStepsParams,
@@ -38,11 +39,13 @@ export class MetricsClient extends HttpClient {
       this.steps = result.data.steps
       this.haveStep = true
     }
-    this.branches = result.status === HttpStatusCode.NoContent ? [] : (this.branches = result.data.branches)
+    this.branches = result.status === HttpStatusCode.NoContent ? [] : result.data.branches
+    this.pipelineCrews = result.status === HttpStatusCode.NoContent ? [] : result.data.pipelineCrews
     return {
       response: this.steps,
       haveStep: this.haveStep,
       branches: this.branches,
+      pipelineCrews: this.pipelineCrews,
     }
   }
 }

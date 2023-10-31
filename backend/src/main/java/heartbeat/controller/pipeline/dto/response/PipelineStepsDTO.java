@@ -26,4 +26,6 @@ public class PipelineStepsDTO {
 
 	private List<String> branches;
 
+	private List<String> pipelineCrews;
+
 }

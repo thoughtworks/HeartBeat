@@ -184,7 +184,10 @@ class BuildKiteServiceTest {
 		stepsParam.setEndTime(mockEndTime);
 		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder()
+			.jobs(List.of(testJob))
+			.author(BuildKiteBuildInfo.Author.builder().name("xx").build())
+			.build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),

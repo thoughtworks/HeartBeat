@@ -152,6 +152,7 @@ const MetricsStepper = () => {
       leadTimeForChanges,
       deploymentFrequencySettings,
       users,
+      pipelineCrews,
       doneColumn,
       targetFields,
       cycleTimeSettings,
@@ -164,6 +165,7 @@ const MetricsStepper = () => {
       crews: users,
       assigneeFilter: assigneeFilter,
       /* istanbul ignore next */
+      pipelineCrews,
       cycleTime: cycleTimeSettings
         ? {
             /* istanbul ignore next */

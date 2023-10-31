@@ -29,7 +29,24 @@ public class BuildKiteBuildInfo {
 
 	private int number;
 
+	private Author author;
+
 	private String branch;
+
+	@Data
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Builder
+	public static class Author {
+
+		private String userName;
+
+		private String name;
+
+		private String email;
+
+	}
 
 	public BuildKiteJob getBuildKiteJob(List<BuildKiteJob> jobs, List<String> steps, List<String> states,
 			String startTime, String endTime) {

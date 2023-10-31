@@ -19,6 +19,7 @@ public class BuildKiteBuildInfoBuilder {
 		buildInfo.setCommit("xx");
 		buildInfo.setNumber(1);
 		buildInfo.setPipelineCreateTime("xx");
+		buildInfo.setAuthor(BuildKiteBuildInfo.Author.builder().name("xx").build());
 		return new BuildKiteBuildInfoBuilder(buildInfo);
 	}
 

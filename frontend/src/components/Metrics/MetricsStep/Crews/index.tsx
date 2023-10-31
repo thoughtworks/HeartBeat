@@ -1,10 +1,10 @@
 import { FormHelperText } from '@mui/material'
-import { DEFAULT_HELPER_TEXT } from '@src/constants'
 import React, { useEffect, useState } from 'react'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveUsers, selectMetricsContent, savePipelineCrews } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
+import { AssigneeFilter } from '@src/components/Metrics/MetricsStep/Crews/AssigneeFilter'
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
 import { WarningMessage } from '@src/components/Metrics/MetricsStep/Crews/style'
 
@@ -51,13 +51,12 @@ export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => 
         textFieldLabel={label}
         isBoardCrews={isBoardCrews}
       />
+      {isBoardCrews && <AssigneeFilter />}
       <FormHelperText>
-        {isEmptyCrewData && isBoardCrews ? (
+        {isEmptyCrewData && isBoardCrews && (
           <WarningMessage>
             {label} is <strong>required</strong>
           </WarningMessage>
-        ) : (
-          DEFAULT_HELPER_TEXT
         )}
       </FormHelperText>
     </>

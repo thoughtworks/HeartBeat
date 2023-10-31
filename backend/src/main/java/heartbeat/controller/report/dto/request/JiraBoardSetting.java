@@ -33,6 +33,8 @@ public class JiraBoardSetting {
 
 	private List<String> users;
 
+	private String assigneeFilter;
+
 	private List<TargetField> targetFields;
 
 }

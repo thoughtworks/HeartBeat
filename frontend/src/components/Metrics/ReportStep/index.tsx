@@ -64,6 +64,7 @@ const ReportStep = () => {
     doneColumn,
     deploymentFrequencySettings,
     leadTimeForChanges,
+    assigneeFilter,
   } = useAppSelector(selectMetricsContent)
   const { metrics, calendarType, dateRange } = configData.basic
   const { board, pipelineTool, sourceControl } = configData
@@ -136,6 +137,7 @@ const ReportStep = () => {
       boardColumns: cycleTimeSettings.filter((item) => item.value != '----'),
       treatFlagCardAsBlock,
       users,
+      assigneeFilter,
       targetFields,
       doneColumn,
     },

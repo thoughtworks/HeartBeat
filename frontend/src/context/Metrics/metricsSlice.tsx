@@ -10,6 +10,7 @@ import {
   PIPELINE_NAME_WARNING_MESSAGE,
   REAL_DONE_WARNING_MESSAGE,
   STEP_WARNING_MESSAGE,
+  ASSIGNEE_FILTER_TYPES,
 } from '@src/constants'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 import _ from 'lodash'
@@ -39,8 +40,10 @@ export interface savedMetricsSettingState {
   deploymentFrequencySettings: IPipelineConfig[]
   leadTimeForChanges: IPipelineConfig[]
   treatFlagCardAsBlock: boolean
+  assigneeFilter: string
   importedData: {
     importedCrews: string[]
+    importedAssigneeFilter: string
     importedPipelineCrews: string[]
     importedCycleTime: {
       importedCycleTimeSettings: { [key: string]: string }[]
@@ -66,8 +69,10 @@ const initialState: savedMetricsSettingState = {
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   treatFlagCardAsBlock: true,
+  assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
   importedData: {
     importedCrews: [],
+    importedAssigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
     importedPipelineCrews: [],
     importedCycleTime: {
       importedCycleTimeSettings: [],
@@ -210,13 +215,15 @@ export const metricsSlice = createSlice({
     },
 
     updateMetricsImportedData: (state, action) => {
-      const { crews, cycleTime, doneStatus, classification, deployment, leadTime, pipelineCrews } = action.payload
+      const { crews, cycleTime, doneStatus, classification, deployment, leadTime, assigneeFilter, pipelineCrews } =
+        action.payload
       state.importedData.importedCrews = crews || state.importedData.importedCrews
       state.importedData.importedPipelineCrews = pipelineCrews || state.importedData.importedPipelineCrews
       state.importedData.importedCycleTime.importedCycleTimeSettings =
         cycleTime?.jiraColumns || state.importedData.importedCycleTime.importedCycleTimeSettings
       state.importedData.importedCycleTime.importedTreatFlagCardAsBlock =
-        cycleTime?.treatFlagCardAsBlock || state.importedData.importedCycleTime.importedTreatFlagCardAsBlock
+        cycleTime?.treatFlagCardAsBlock && state.importedData.importedCycleTime.importedTreatFlagCardAsBlock
+      state.importedData.importedAssigneeFilter = assigneeFilter || state.importedData.importedAssigneeFilter
       state.importedData.importedDoneStatus = doneStatus || state.importedData.importedDoneStatus
       state.importedData.importedClassification = classification || state.importedData.importedClassification
       state.importedData.importedDeployment = deployment || leadTime || state.importedData.importedDeployment
@@ -224,7 +231,8 @@ export const metricsSlice = createSlice({
 
     updateMetricsState: (state, action) => {
       const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
-      const { importedCrews, importedClassification, importedCycleTime, importedDoneStatus } = state.importedData
+      const { importedCrews, importedClassification, importedCycleTime, importedDoneStatus, importedAssigneeFilter } =
+        state.importedData
       state.users = isProjectCreated ? users : setSelectUsers(users, importedCrews)
       state.targetFields = isProjectCreated ? targetFields : setSelectTargetFields(targetFields, importedClassification)
 
@@ -277,6 +285,17 @@ export const metricsSlice = createSlice({
       state.doneColumn = isProjectCreated
         ? []
         : setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus)
+
+      state.assigneeFilter =
+        importedAssigneeFilter === ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE ||
+        importedAssigneeFilter === ASSIGNEE_FILTER_TYPES.HISTORICAL_ASSIGNEE
+          ? importedAssigneeFilter
+          : ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE
+
+      state.treatFlagCardAsBlock =
+        typeof importedCycleTime.importedTreatFlagCardAsBlock === 'boolean'
+          ? importedCycleTime.importedTreatFlagCardAsBlock
+          : true
     },
 
     updatePipelineSettings: (state, action) => {
@@ -378,6 +397,10 @@ export const metricsSlice = createSlice({
     updateTreatFlagCardAsBlock: (state, action) => {
       state.treatFlagCardAsBlock = action.payload
     },
+
+    updateAssigneeFilter: (state, action) => {
+      state.assigneeFilter = action.payload
+    },
   },
 })
 
@@ -393,6 +416,7 @@ export const {
   updateMetricsImportedData,
   initDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
+  updateAssigneeFilter,
   updateMetricsState,
   updatePipelineSettings,
   updatePipelineStep,
@@ -404,6 +428,7 @@ export const selectLeadTimeForChanges = (state: RootState) => state.metrics.lead
 export const selectCycleTimeSettings = (state: RootState) => state.metrics.cycleTimeSettings
 export const selectMetricsContent = (state: RootState) => state.metrics
 export const selectTreatFlagCardAsBlock = (state: RootState) => state.metrics.treatFlagCardAsBlock
+export const selectAssigneeFilter = (state: RootState) => state.metrics.assigneeFilter
 export const selectCycleTimeWarningMessage = (state: RootState) => state.metrics.cycleTimeWarningMessage
 export const selectClassificationWarningMessage = (state: RootState) => state.metrics.classificationWarningMessage
 export const selectRealDoneWarningMessage = (state: RootState) => state.metrics.realDoneWarningMessage

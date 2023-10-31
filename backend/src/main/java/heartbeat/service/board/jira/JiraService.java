@@ -9,6 +9,7 @@ import com.google.gson.JsonPrimitive;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.HistoryDetail;
@@ -37,6 +38,7 @@ import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
+import heartbeat.enums.AssigneeFilterMethod;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
@@ -45,6 +47,7 @@ import heartbeat.util.BoardUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -75,6 +78,8 @@ import static java.util.Objects.nonNull;
 public class JiraService {
 
 	public static final String STATUS_FIELD_ID = "status";
+
+	private static final String JIRA_CARD_FINAL_ASSIGNEE = "Assignee";
 
 	public static final int QUERY_COUNT = 100;
 
@@ -128,7 +133,7 @@ public class JiraService {
 	}
 
 	public CardCollection getStoryPointsAndCycleTimeForDoneCards(StoryPointsAndCycleTimeRequest request,
-			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users) {
+			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, String assigneeFilter) {
 		BoardType boardType = BoardType.fromValue(request.getType());
 		URI baseUrl = urlGenerator.getUri(request.getSite());
 		BoardRequestParam boardRequestParam = BoardRequestParam.builder()
@@ -148,7 +153,7 @@ public class JiraService {
 			CardStepsEnum.fromValue(boardColumn.getValue());
 		}
 		List<JiraCardDTO> realDoneCards = getRealDoneCards(request, boardColumns, users, baseUrl, allDoneCards,
-				jiraCardWithFields.getTargetFields());
+				jiraCardWithFields.getTargetFields(), assigneeFilter);
 		int storyPointSum = realDoneCards.stream()
 			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
@@ -434,11 +439,13 @@ public class JiraService {
 
 	private List<JiraCardDTO> getRealDoneCards(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, URI baseUrl,
-			List<JiraCard> allDoneCards, List<TargetField> targetFields) {
+			List<JiraCard> allDoneCards, List<TargetField> targetFields, String filterMethod) {
+
 		CardCustomFieldKey cardCustomFieldKey = covertCustomFieldKey(targetFields);
 		String keyFlagged = cardCustomFieldKey.getFlagged();
 		List<JiraCardDTO> realDoneCards = new ArrayList<>();
 		List<JiraCard> futures = new ArrayList<>();
+
 		for (JiraCard allDoneCard : allDoneCards) {
 			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, allDoneCard.getKey(),
 					request.getToken());
@@ -449,11 +456,7 @@ public class JiraService {
 		futures.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
-			List<String> assigneeSet = new ArrayList<>();
-			if (doneCard.getFields().getAssignee() != null
-					&& doneCard.getFields().getAssignee().getDisplayName() != null) {
-				assigneeSet.add(doneCard.getFields().getAssignee().getDisplayName());
-			}
+			List<String> assigneeSet = getAssigneeSet(request, baseUrl, filterMethod, doneCard);
 			if (users.stream().anyMatch(assigneeSet::contains)) {
 				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
@@ -466,6 +469,33 @@ public class JiraService {
 			}
 		});
 		return realDoneCards;
+	}
+
+	private List<String> getAssigneeSet(StoryPointsAndCycleTimeRequest request, URI baseUrl, String filterMethod,
+			JiraCard doneCard) {
+		List<String> assigneeSet = new ArrayList<>();
+		Assignee assignee = doneCard.getFields().getAssignee();
+
+		if (assignee != null && useLastAssignee(filterMethod)) {
+			assigneeSet.add(assignee.getDisplayName());
+		}
+
+		if (assignee != null && filterMethod.equals(AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription())) {
+			List<String> historyDisplayName = getHistoricalAssignees(baseUrl, doneCard.getKey(), request.getToken());
+			assigneeSet.addAll(historyDisplayName);
+		}
+
+		return assigneeSet;
+	}
+
+	private List<String> getHistoricalAssignees(URI baseUrl, String cardKey, String token) {
+		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, cardKey, token);
+		return jiraCardHistory.getItems().stream().map(item -> item.getActor().getDisplayName()).distinct().toList();
+	}
+
+	private boolean useLastAssignee(String filterMethod) {
+		return filterMethod.equals(AssigneeFilterMethod.LAST_ASSIGNEE.getDescription())
+				|| StringUtils.isEmpty(filterMethod);
 	}
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,

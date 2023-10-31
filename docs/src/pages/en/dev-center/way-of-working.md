@@ -14,7 +14,7 @@ start
 :Create a personal code branch based on the latest main branch;
   repeat
     repeat :Start coding;
-      :Small step commit;
+      repeat :Small step commit;
       if(E2E test passed？) then (no)
         :fix e2e test;
       else(yes)
@@ -28,9 +28,11 @@ start
       :Merge pr to main branch;
       :Pipeline is triggered;
       if(Pipeline run passed？) then (yes)
-      else(no)
-        :Repair pipeline firstly;
+      break
       endif
+      ->no;
+      backward: revert;
+      repeat while (Repair pipeline within 30 minutes？) is (no) not (yes)
     backward: Complete the rest of functional code;
     repeat while (All functional code completed？) is (no)
     ->yes;

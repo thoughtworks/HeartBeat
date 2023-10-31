@@ -522,12 +522,15 @@ public class GenerateReporterService {
 
 	private List<BuildKiteBuildInfo> getBuildKiteBuildInfo(String startTime, String endTime,
 			DeploymentEnvironment deploymentEnvironment, String token, List<String> pipelineCrews) {
-		List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService.fetchPipelineBuilds(token, deploymentEnvironment,
-				startTime, endTime);
+		List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService
+			.fetchPipelineBuilds(token, deploymentEnvironment, startTime, endTime)
+			.stream()
+			.filter(info -> Objects.nonNull(info.getAuthor()))
+			.collect(Collectors.toList());
 
 		if (!CollectionUtils.isEmpty(pipelineCrews)) {
 			buildKiteBuildInfo = buildKiteBuildInfo.stream()
-				.filter(info -> Objects.nonNull(info.getAuthor()) && pipelineCrews.contains(info.getAuthor().getName()))
+				.filter(info -> pipelineCrews.contains(info.getAuthor().getName()))
 				.collect(Collectors.toList());
 		}
 		return buildKiteBuildInfo;

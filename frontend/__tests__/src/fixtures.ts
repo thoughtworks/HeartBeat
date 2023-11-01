@@ -12,7 +12,7 @@ export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
 
 export const NEXT = 'Next'
 
-export const BACK = 'Back'
+export const BACK = 'Previous'
 
 export const SAVE = 'Save'
 
@@ -248,10 +248,10 @@ export const MOCK_GITHUB_VERIFY_RESPONSE = {
   githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
 }
 
-export const CREWS_SETTING = 'Crews setting'
+export const CREWS_SETTING = 'Crews settings'
 export const CYCLE_TIME_SETTINGS = 'Cycle time settings'
 export const CLASSIFICATION_SETTING = 'Classification setting'
-export const REAL_DONE = 'Real done'
+export const REAL_DONE = 'Real done setting'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Pipeline settings'
 
 export enum PIPELINE_SETTING_TYPES {

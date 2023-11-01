@@ -5,7 +5,9 @@ import reportPage from '../pages/metrics/report'
 import { GITHUB_TOKEN } from '../fixtures/fixtures'
 
 const metricsTextList = [
-  'Crews setting',
+  'Board configuration',
+  'Pipeline configuration',
+  'Crews settings',
   'Yu Zhang',
   'Cycle time settings',
   'Real done',

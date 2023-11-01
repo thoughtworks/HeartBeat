@@ -1,8 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style'
 import { Fragment } from 'react'
 import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 interface ReportForTwoColumnsProps {
   title: string
@@ -30,8 +30,8 @@ export const ReportForTwoColumns = ({ title, data }: ReportForTwoColumnsProps) =
 
   return (
     <>
-      <MetricsSettingTitle title={title} />
       <Container>
+        <ReportSelectionTitle>{title}</ReportSelectionTitle>
         <Table data-test-id={title}>
           <TableHead>
             <TableRow id={title}>

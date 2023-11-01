@@ -1,7 +1,9 @@
-import { IconButton } from '@mui/material'
 import { Add } from '@mui/icons-material'
-import { MetricsSettingButtonContainer } from '@src/components/Common/MetricsSettingTitle'
 import React from 'react'
+import {
+  MetricsSettingAddButtonContainer,
+  MetricsSettingAddButtonItem,
+} from '@src/components/Common/MetricsSettingButton/style'
 
 interface metricsSettingAddButtonProps {
   onAddPipeline: () => void
@@ -9,10 +11,10 @@ interface metricsSettingAddButtonProps {
 
 export const MetricsSettingAddButton = ({ onAddPipeline }: metricsSettingAddButtonProps) => {
   return (
-    <MetricsSettingButtonContainer>
-      <IconButton onClick={onAddPipeline}>
-        <Add />
-      </IconButton>
-    </MetricsSettingButtonContainer>
+    <MetricsSettingAddButtonContainer>
+      <MetricsSettingAddButtonItem startIcon={<Add />} onClick={onAddPipeline}>
+        New Pipeline
+      </MetricsSettingAddButtonItem>
+    </MetricsSettingAddButtonContainer>
   )
 }

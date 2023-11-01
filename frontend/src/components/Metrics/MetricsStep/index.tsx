@@ -7,6 +7,7 @@ import { selectJiraColumns, selectMetrics, selectUsers } from '@src/context/conf
 import { DONE, REQUIRED_DATA } from '@src/constants'
 import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
+import { MetricSelectionWrapper, MetricsSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 const MetricsStep = () => {
   const requiredData = useAppSelector(selectMetrics)
@@ -22,22 +23,30 @@ const MetricsStep = () => {
 
   return (
     <>
-      {isShowCrewsAndRealDone && <Crews options={users} title={'Crews setting'} label={'Included Crews'} />}
+      <MetricSelectionWrapper>
+        <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
+        {isShowCrewsAndRealDone && <Crews options={users} title={'Crews setting'} label={'Included Crews'} />}
 
-      {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
+        {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
 
-      {isShowCrewsAndRealDone && !isShowRealDone && (
-        <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as Done'} />
-      )}
+        {isShowCrewsAndRealDone && !isShowRealDone && (
+          <RealDone columns={jiraColumns} title={'Real done setting'} label={'Consider as Done'} />
+        )}
 
-      {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
-        <Classification targetFields={targetFields} title={'Classification setting'} label={'Distinguished By'} />
-      )}
+        {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
+          <Classification targetFields={targetFields} title={'Classification setting'} label={'Distinguished By'} />
+        )}
+      </MetricSelectionWrapper>
 
       {(requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
         requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
         requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
-        requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && <DeploymentFrequencySettings />}
+        requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && (
+        <MetricSelectionWrapper>
+          <MetricsSelectionTitle>Pipeline configuration</MetricsSelectionTitle>
+          <DeploymentFrequencySettings />
+        </MetricSelectionWrapper>
+      )}
     </>
   )
 }

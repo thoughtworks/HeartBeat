@@ -265,7 +265,9 @@ const ReportStep = () => {
             />
           )}
           <ButtonGroupStyle>
-            <BackButton onClick={handleBack}>Back</BackButton>
+            <BackButton onClick={handleBack} variant='outlined'>
+              Previous
+            </BackButton>
             {isShowExportBoardButton && (
               <ExportButton onClick={() => handleDownload('board')}>Export board data</ExportButton>
             )}

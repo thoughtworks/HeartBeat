@@ -5,7 +5,10 @@ import { theme } from '@src/theme'
 
 export const PipelineMetricSelectionWrapper = styled(StyledSection)`
   width: 100%;
-  padding: 1rem 0 0 0;
+  padding: 1.5rem 0 0.5rem 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+  margin-top: 0rem;
 `
 
 export const ButtonWrapper = styled('div')({

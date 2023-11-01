@@ -25,7 +25,7 @@ const MetricsStep = () => {
     <>
       <MetricSelectionWrapper>
         <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
-        {isShowCrewsAndRealDone && <Crews options={users} title={'Crews setting'} label={'Included Crews'} />}
+        {isShowCrewsAndRealDone && <Crews options={users} title={'Crews settings'} label={'Included Crews'} />}
 
         {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
 

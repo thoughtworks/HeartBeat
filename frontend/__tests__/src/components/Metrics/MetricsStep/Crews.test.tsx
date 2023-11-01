@@ -8,7 +8,7 @@ import { updateAssigneeFilter } from '@src/context/Metrics/metricsSlice'
 const mockOptions = ['crew A', 'crew B']
 const mockTitle = 'Crews Setting'
 const mockLabel = 'Included Crews'
-const assigneeFilterLabels = ['Last Assignee', 'Historical Assignee']
+const assigneeFilterLabels = ['Last assignee', 'Historical assignee']
 const assigneeFilterValues = ['lastAssignee', 'historicalAssignee']
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({

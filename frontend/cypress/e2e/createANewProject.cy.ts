@@ -32,7 +32,9 @@ const velocityData = [
 ]
 
 const metricsTextList = [
-  'Crews setting',
+  'Board configuration',
+  'Pipeline configuration',
+  'Crews settings',
   'Brian Ong',
   'Harsh Singal',
   'Prashant Agarwal',
@@ -246,7 +248,7 @@ describe('Create a new project', () => {
 
     nextButton().should('be.disabled')
 
-    cy.contains('Crews setting').should('exist')
+    cy.contains('Crews settings').should('exist')
 
     cy.contains('Cycle time settings').should('exist')
 

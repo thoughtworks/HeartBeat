@@ -22,8 +22,8 @@ export const AssigneeFilter = () => {
         onChange={handleChange}
         style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
       >
-        <FormControlLabel value='lastAssignee' control={<Radio />} label='Last Assignee' />
-        <FormControlLabel value='historicalAssignee' control={<Radio />} label='Historical Assignee' />
+        <FormControlLabel value='lastAssignee' control={<Radio />} label='Last assignee' />
+        <FormControlLabel value='historicalAssignee' control={<Radio />} label='Historical assignee' />
       </RadioGroup>
     </AssigneeFilterContainer>
   )

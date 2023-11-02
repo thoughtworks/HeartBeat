@@ -248,7 +248,7 @@ export const MOCK_GITHUB_VERIFY_RESPONSE = {
   githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
 }
 
-export const CREWS_SETTING = 'Crews settings'
+export const CREWS_SETTING = 'Crew settings'
 export const CYCLE_TIME_SETTINGS = 'Cycle time settings'
 export const CLASSIFICATION_SETTING = 'Classification setting'
 export const REAL_DONE = 'Real done setting'

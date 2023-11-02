@@ -15,6 +15,10 @@ export const StyledStepper = styled(Stepper)({
 })
 
 export const StyledStep = styled(Step)({
+  svg: {
+    width: '2rem',
+    height: '2rem',
+  },
   [theme.breakpoints.down('md')]: {
     padding: '0.25rem 0',
   },
@@ -23,6 +27,10 @@ export const StyledStep = styled(Step)({
 export const StyledStepLabel = styled(StepLabel)({
   width: '5rem',
   padding: '0 1rem',
+  span: {
+    fontSize: '1rem',
+    lineHeight: '1.5rem',
+  },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.5rem',
   },
@@ -31,7 +39,7 @@ export const StyledStepLabel = styled(StepLabel)({
 export const MetricsStepperContent = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  width: '65%',
+  width: '70%',
   margin: '0 auto',
   textAlign: 'left',
   [theme.breakpoints.down('md')]: {
@@ -82,5 +90,5 @@ export const ButtonContainer = styled('div')({
   justifyContent: 'space-between',
   margin: '0 auto',
   padding: '0 0 2rem 0',
-  width: '65%',
+  width: '70%',
 })

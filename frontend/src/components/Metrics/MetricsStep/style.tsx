@@ -15,8 +15,7 @@ export const MetricSelectionWrapper = styled('div')({
 })
 
 export const MetricsSelectionTitle = styled(Divider)({
-  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-  fontSize: '1rem',
+  fontSize: '1.2rem',
   lineHeight: '1.25rem',
   fontWeight: '600',
 })

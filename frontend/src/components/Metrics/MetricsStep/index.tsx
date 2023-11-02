@@ -29,7 +29,7 @@ const MetricsStep = () => {
         <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
         {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
 
-      {isShowCrewsAndRealDone && <Crews options={users} title={'Crews settings'} label={'Included Crews'} />}
+        {isShowCrewsAndRealDone && <Crews options={users} title={'Crews settings'} label={'Included Crews'} />}
 
         {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
 

@@ -5,7 +5,7 @@ import { theme } from '@src/theme'
 export const CollectionDateContainer = styled('div')({
   display: 'flex',
   alignItems: 'flex-end',
-  margin: '2rem auto 0',
+  margin: '0.5rem auto 0',
 })
 
 export const TextBox = styled(Paper)({

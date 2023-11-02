@@ -12,6 +12,7 @@ import {
 import { useAppSelector } from '@src/hooks'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { DONE } from '@src/constants'
+import { CycleTimeContainer } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 
 interface cycleTimeProps {
   title: string
@@ -57,9 +58,11 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
   return (
     <>
       <MetricsSettingTitle title={title} />
-      {warningMessage && <WarningNotification message={warningMessage} />}
-      <FormSelectPart selectedOptions={cycleTimeOptions} saveCycleTimeOptions={saveCycleTimeOptions} />
-      <FlagCard />
+      <CycleTimeContainer>
+        {warningMessage && <WarningNotification message={warningMessage} />}
+        <FormSelectPart selectedOptions={cycleTimeOptions} saveCycleTimeOptions={saveCycleTimeOptions} />
+        <FlagCard />
+      </CycleTimeContainer>
     </>
   )
 }

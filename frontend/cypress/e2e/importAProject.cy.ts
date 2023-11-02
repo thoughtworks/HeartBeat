@@ -7,7 +7,7 @@ import { GITHUB_TOKEN } from '../fixtures/fixtures'
 const metricsTextList = [
   'Board configuration',
   'Pipeline configuration',
-  'Crews settings',
+  'Crew settings',
   'Yu Zhang',
   'Cycle time settings',
   'Real done',

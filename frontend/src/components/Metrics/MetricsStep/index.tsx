@@ -25,9 +25,9 @@ const MetricsStep = () => {
 
   return (
     <>
+      {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
       <MetricSelectionWrapper>
         <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
-        {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
 
         {isShowCrewsAndRealDone && <Crews options={users} title={'Crews settings'} label={'Included Crews'} />}
 

@@ -56,13 +56,11 @@ const CollectionDuration = ({ startDate, endDate }: Props) => {
   }
 
   return (
-    <>
-      <CollectionDateContainer>
-        <DateDisplay dateTittle='START' formattedDate={startDateInfo} />
-        <GreyTransitionBox />
-        <DateDisplay dateTittle='END' formattedDate={endDateInfo} />
-      </CollectionDateContainer>
-    </>
+    <CollectionDateContainer>
+      <DateDisplay dateTittle='START' formattedDate={startDateInfo} />
+      <GreyTransitionBox />
+      <DateDisplay dateTittle='END' formattedDate={endDateInfo} />
+    </CollectionDateContainer>
   )
 }
 

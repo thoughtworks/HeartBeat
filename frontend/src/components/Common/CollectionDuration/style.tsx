@@ -5,12 +5,12 @@ import { theme } from '@src/theme'
 export const CollectionDateContainer = styled('div')({
   display: 'flex',
   alignItems: 'flex-end',
-  margin: '0.5rem auto 0',
+  margin: '0 auto 2rem',
 })
 
 export const TextBox = styled(Paper)({
-  width: '2.5rem',
-  height: '1.25rem',
+  width: '3rem',
+  height: '2rem',
   padding: '0.75rem',
   border: '0 solid #ccc',
   boxShadow: '0 0.125rem 0.5rem rgba(0, 0, 0, 0.2)',
@@ -24,7 +24,7 @@ export const TextBox = styled(Paper)({
 
 export const GreyTransitionBox = styled('div')({
   width: '10rem',
-  height: '2.8rem',
+  height: '3.5rem',
   backgroundColor: 'rgba(204, 204, 204, 0.28)',
   border: 0,
   borderRadius: 0,
@@ -49,11 +49,11 @@ export const DateTitle = styled('div')((props: { isStart: boolean }) => ({
 }))
 
 export const DateText = styled('div')({
-  fontSize: '1.25rem',
+  fontSize: '1.5rem',
   letterSpacing: '0.1rem',
 })
 
 export const MonthYearText = styled('div')({
   fontSize: '0.625rem',
-  marginBottom: '0.125rem',
+  marginBottom: '0.3rem',
 })

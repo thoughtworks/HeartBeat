@@ -1,13 +1,11 @@
 import {
   CollectionDateContainer,
-  StartColoredTopArea,
   GreyTransitionBox,
   TextBox,
-  EndColoredTopArea,
-  StartTitle,
-  EndTitle,
   DateText,
   MonthYearText,
+  DateTitle,
+  ColoredTopArea,
 } from '@src/components/Common/CollectionDuration/style'
 import dayjs from 'dayjs'
 
@@ -22,42 +20,47 @@ type DisplayedDateInfo = {
   day: string
 }
 
+type DateInformation = {
+  formattedDate: DisplayedDateInfo
+  dateTittle: string
+}
+
 const CollectionDuration = ({ startDate, endDate }: Props) => {
+  const toBeFormattedStartDate = dayjs(startDate)
+  const toBeFormattedEndDate = dayjs(endDate)
   const startDateInfo: DisplayedDateInfo = {
-    year: dayjs(startDate).format('YY'),
-    month: dayjs(startDate).format('MMM'),
-    day: dayjs(startDate).format('DD'),
+    year: toBeFormattedStartDate.format('YY'),
+    month: toBeFormattedStartDate.format('MMM'),
+    day: toBeFormattedStartDate.format('DD'),
   }
   const endDateInfo: DisplayedDateInfo = {
-    year: dayjs(endDate).format('YY'),
-    month: dayjs(endDate).format('MMM'),
-    day: dayjs(endDate).format('DD'),
+    year: toBeFormattedEndDate.format('YY'),
+    month: toBeFormattedEndDate.format('MMM'),
+    day: toBeFormattedEndDate.format('DD'),
+  }
+
+  const DateDisplay = (props: DateInformation) => {
+    const { dateTittle, formattedDate } = props
+    return (
+      <div>
+        <DateTitle isStart={dateTittle === 'START'}>{dateTittle}</DateTitle>
+        <ColoredTopArea isStart={dateTittle === 'START'} />
+        <TextBox>
+          <DateText>{formattedDate.day}</DateText>
+          <MonthYearText>
+            {formattedDate.month} {formattedDate.year}
+          </MonthYearText>
+        </TextBox>
+      </div>
+    )
   }
 
   return (
     <>
       <CollectionDateContainer>
-        <div>
-          <StartTitle>START</StartTitle>
-          <StartColoredTopArea />
-          <TextBox>
-            <DateText>{startDateInfo.day}</DateText>
-            <MonthYearText>
-              {startDateInfo.month} {startDateInfo.year}
-            </MonthYearText>
-          </TextBox>
-        </div>
+        <DateDisplay dateTittle='START' formattedDate={startDateInfo} />
         <GreyTransitionBox />
-        <div>
-          <EndTitle>END</EndTitle>
-          <EndColoredTopArea />
-          <TextBox>
-            <DateText>{endDateInfo.day}</DateText>
-            <MonthYearText>
-              {endDateInfo.month} {endDateInfo.year}
-            </MonthYearText>
-          </TextBox>
-        </div>
+        <DateDisplay dateTittle='END' formattedDate={endDateInfo} />
       </CollectionDateContainer>
     </>
   )

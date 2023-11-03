@@ -80,7 +80,9 @@ public class JiraService {
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
-	public static final List<String> IGNORE_CUSTOM_FIELDS = List.of("customfield_10000", "customfield_10015", "customfield_10017", "customfield_10019");
+
+	public static final List<String> IGNORE_CUSTOM_FIELDS = List.of("customfield_10000", "customfield_10015",
+			"customfield_10017", "customfield_10019");
 
 	private static final String DONE_CARD_TAG = "done";
 

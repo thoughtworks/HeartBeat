@@ -22,7 +22,7 @@ export const MetricsSelectionTitle = styled(Divider)({
 })
 
 export const ReportSelectionTitle = styled(MetricsSelectionTitle)({
-  marginBottom: '1rem',
+  marginBottom: '1.5rem',
 })
 
 export const ConfigSelectionTitle = styled(ReportSelectionTitle)({})

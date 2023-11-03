@@ -44,6 +44,10 @@ export const theme = createTheme({
       main: '#3498db',
       light: '#b9c4cc',
     },
+    table: {
+      backgroundColor: '#f7f7f7',
+      text: 'rgba(0, 0, 0, 0.65)',
+    },
   },
   main: {
     backgroundColor: indigo[FIVE_HUNDRED],

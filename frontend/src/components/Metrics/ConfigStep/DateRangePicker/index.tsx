@@ -66,7 +66,6 @@ export const DateRangePicker = () => {
             openPickerIcon: CalendarTodayIcon,
           }}
           slotProps={{
-            openPickerIcon: { fontSize: 'middle' },
             textField: {
               variant: 'standard',
             },
@@ -81,7 +80,6 @@ export const DateRangePicker = () => {
             openPickerIcon: CalendarTodayIcon,
           }}
           slotProps={{
-            // openPickerIcon: { fontSize: 'middle' },
             textField: {
               variant: 'standard',
             },

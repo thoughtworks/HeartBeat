@@ -32,6 +32,7 @@ import {
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice'
 import _ from 'lodash'
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
 
 const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
@@ -157,11 +158,13 @@ const MetricsStepper = () => {
       targetFields,
       cycleTimeSettings,
       treatFlagCardAsBlock,
+      assigneeFilter,
     } = filterMetricsConfig(metricsConfig)
 
     /* istanbul ignore next */
     const metricsData = {
       crews: users,
+      assigneeFilter: assigneeFilter,
       /* istanbul ignore next */
       pipelineCrews,
       cycleTime: cycleTimeSettings
@@ -226,10 +229,14 @@ const MetricsStepper = () => {
         {activeStep !== 2 && (
           <>
             <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
-              <SaveButton onClick={handleSave}>Save</SaveButton>
+              <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
+                Save
+              </SaveButton>
             </Tooltip>
             <ButtonGroup>
-              <BackButton onClick={handleBack}>Back</BackButton>
+              <BackButton variant='outlined' onClick={handleBack}>
+                Previous
+              </BackButton>
               <NextButton onClick={handleNext} disabled={isDisableNextButton}>
                 Next
               </NextButton>

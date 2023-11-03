@@ -3,10 +3,12 @@ import { useAppSelector } from '@src/hooks'
 import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
-import { selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice'
+import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice'
 import { DONE, REQUIRED_DATA } from '@src/constants'
 import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
+import CollectionDuration from '@src/components/Common/CollectionDuration'
+import { MetricSelectionWrapper, MetricsSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 const MetricsStep = () => {
   const requiredData = useAppSelector(selectMetrics)
@@ -14,6 +16,7 @@ const MetricsStep = () => {
   const jiraColumns = useAppSelector(selectJiraColumns)
   const targetFields = useAppSelector(selectMetricsContent).targetFields
   const cycleTimeSettings = useAppSelector(selectCycleTimeSettings)
+  const { startDate, endDate } = useAppSelector(selectDateRange)
   const isShowCrewsAndRealDone =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
@@ -22,22 +25,32 @@ const MetricsStep = () => {
 
   return (
     <>
-      {isShowCrewsAndRealDone && <Crews options={users} title={'Crews setting'} label={'Included Crews'} />}
+      {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
+      <MetricSelectionWrapper>
+        <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
 
-      {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
+        {isShowCrewsAndRealDone && <Crews options={users} title={'Crew settings'} label={'Included Crews'} />}
 
-      {isShowCrewsAndRealDone && !isShowRealDone && (
-        <RealDone columns={jiraColumns} title={'Real done'} label={'Consider as Done'} />
-      )}
+        {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
 
-      {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
-        <Classification targetFields={targetFields} title={'Classification setting'} label={'Distinguished By'} />
-      )}
+        {isShowCrewsAndRealDone && !isShowRealDone && (
+          <RealDone columns={jiraColumns} title={'Real done setting'} label={'Consider as Done'} />
+        )}
+
+        {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
+          <Classification targetFields={targetFields} title={'Classification setting'} label={'Distinguished By'} />
+        )}
+      </MetricSelectionWrapper>
 
       {(requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
         requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
         requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
-        requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && <DeploymentFrequencySettings />}
+        requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && (
+        <MetricSelectionWrapper>
+          <MetricsSelectionTitle>Pipeline configuration</MetricsSelectionTitle>
+          <DeploymentFrequencySettings />
+        </MetricSelectionWrapper>
+      )}
     </>
   )
 }

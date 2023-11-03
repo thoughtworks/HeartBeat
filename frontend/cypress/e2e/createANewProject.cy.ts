@@ -32,7 +32,9 @@ const velocityData = [
 ]
 
 const metricsTextList = [
-  'Crews setting',
+  'Board configuration',
+  'Pipeline configuration',
+  'Crew settings',
   'Brian Ong',
   'Harsh Singal',
   'Prashant Agarwal',
@@ -170,14 +172,14 @@ const checkMeanTimeToRecovery = (testId: string) => {
 const checkPipelineCSV = () => {
   cy.wait(2000)
   return cy.task('readDir', 'cypress/downloads').then((files) => {
-    expect(files).to.match(new RegExp(/pipeline-data-.*\.csv/))
+    expect(files).to.match(new RegExp(/pipeline-.*\.csv/))
   })
 }
 
 const checkBoardCSV = () => {
   cy.wait(2000)
   return cy.task('readDir', 'cypress/downloads').then((files) => {
-    expect(files).to.match(new RegExp(/board-data-.*\.csv/))
+    expect(files).to.match(new RegExp(/board-.*\.csv/))
   })
 }
 
@@ -246,7 +248,7 @@ describe('Create a new project', () => {
 
     nextButton().should('be.disabled')
 
-    cy.contains('Crews setting').should('exist')
+    cy.contains('Crew settings').should('exist')
 
     cy.contains('Cycle time settings').should('exist')
 

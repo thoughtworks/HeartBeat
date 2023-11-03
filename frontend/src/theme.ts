@@ -40,6 +40,10 @@ export const theme = createTheme({
     primary: {
       main: indigo[FIVE_HUNDRED],
     },
+    info: {
+      main: '#3498db',
+      light: '#b9c4cc',
+    },
   },
   main: {
     backgroundColor: indigo[FIVE_HUNDRED],

@@ -1,11 +1,11 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
-import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style'
 import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { AVERAGE_FIELD, Unit } from '@src/constants'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
 import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
+import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 interface ReportForThreeColumnsProps {
   title: string
@@ -50,8 +50,8 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
 
   return (
     <>
-      <MetricsSettingTitle title={title} />
       <Container>
+        <ReportSelectionTitle>{title}</ReportSelectionTitle>
         <Table data-test-id={title}>
           <TableHead>
             <TableRow>

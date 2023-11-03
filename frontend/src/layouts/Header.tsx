@@ -24,6 +24,7 @@ const Header = () => {
     padding: '0 1rem',
     alignItems: 'center',
     backgroundColor: theme.main.backgroundColor,
+    fontFamily: 'Times',
   })
 
   const LogoTitle = styled.span({

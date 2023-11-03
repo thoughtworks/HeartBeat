@@ -12,7 +12,7 @@ export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
 
 export const NEXT = 'Next'
 
-export const BACK = 'Back'
+export const BACK = 'Previous'
 
 export const SAVE = 'Save'
 
@@ -180,13 +180,55 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     boardColumns: [{ name: 'In Analysis', value: 'In Analysis' }],
     treatFlagCardAsBlock: true,
     users: ['user1', 'user2'],
+    assigneeFilter: 'lastAssignee',
     targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
     doneColumn: ['Done'],
   },
 }
+
+export const IMPORTED_NEW_CONFIG_FIXTURE = {
+  projectName: 'ConfigFileForImporting',
+  metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
+  dateRange: {
+    startDate: '2023-03-16T00:00:00.000+08:00',
+    endDate: '2023-03-30T23:59:59.999+08:00',
+  },
+  calendarType: 'Calendar with Chinese Holiday',
+  board: {
+    type: 'Classic Jira',
+    verifyToken: 'mockVerifyToken',
+    boardId: '1963',
+    token: 'mockToken',
+    site: 'mockSite',
+    email: 'test@test.com',
+    projectKey: 'PLL',
+  },
+  pipeline: 'mockToken',
+  pipelineTool: {
+    type: 'BuildKite',
+    token: 'mockToken',
+  },
+  sourceControl: {
+    type: 'GitHub',
+    token: '',
+  },
+  crews: ['lucy', 'hi hi', 'Yu Zhang'],
+  classification: ['type', 'Parent'],
+  cycleTime: [
+    {
+      'In Analysis': 'To do',
+    },
+    {
+      'Ready For Dev': 'Analysis',
+    },
+  ],
+}
+
 export const MOCK_EXPORT_CSV_REQUEST_PARAMS: CSVReportRequestDTO = {
   csvTimeStamp: 1613664000000,
   dataType: 'pipeline',
+  startDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.startDate,
+  endDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.endDate,
 }
 
 export const MOCK_IMPORT_FILE = {
@@ -247,10 +289,10 @@ export const MOCK_GITHUB_VERIFY_RESPONSE = {
   githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
 }
 
-export const CREWS_SETTING = 'Crews setting'
+export const CREWS_SETTING = 'Crew settings'
 export const CYCLE_TIME_SETTINGS = 'Cycle time settings'
 export const CLASSIFICATION_SETTING = 'Classification setting'
-export const REAL_DONE = 'Real done'
+export const REAL_DONE = 'Real done setting'
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Pipeline settings'
 
 export enum PIPELINE_SETTING_TYPES {
@@ -541,44 +583,6 @@ export const EXPECTED_REPORT_VALUES = {
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
   'Imported data is not perfectly matched. Please review carefully before going next!'
 
-export const IMPORTED_NEW_CONFIG_FIXTURE = {
-  projectName: 'ConfigFileForImporting',
-  metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
-  dateRange: {
-    startDate: '2023-03-16T00:00:00.000+08:00',
-    endDate: '2023-03-30T23:59:59.999+08:00',
-  },
-  calendarType: 'Calendar with Chinese Holiday',
-  board: {
-    type: 'Classic Jira',
-    verifyToken: 'mockVerifyToken',
-    boardId: '1963',
-    token: 'mockToken',
-    site: 'mockSite',
-    email: 'test@test.com',
-    projectKey: 'PLL',
-  },
-  pipeline: 'mockToken',
-  pipelineTool: {
-    type: 'BuildKite',
-    token: 'mockToken',
-  },
-  sourceControl: {
-    type: 'GitHub',
-    token: '',
-  },
-  crews: ['lucy', 'hi hi', 'Yu Zhang'],
-  classification: ['type', 'Parent'],
-  cycleTime: [
-    {
-      'In Analysis': 'To do',
-    },
-    {
-      'Ready For Dev': 'Analysis',
-    },
-  ],
-}
-
 export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
   metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
@@ -652,3 +656,6 @@ export const NO_RESULT_DASH = '----'
 export const MOCK_AUTOCOMPLETE_LIST = ['Option 1', 'Option 2', 'Option 3']
 
 export const AUTOCOMPLETE_SELECT_ACTION = 'selectOption'
+
+export const TIME_DISPLAY_TITTLE_START = 'START'
+export const TIME_DISPLAY_TITTLE_END = 'END'

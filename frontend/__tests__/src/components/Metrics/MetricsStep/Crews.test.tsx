@@ -1,16 +1,24 @@
-import { act, render, within } from '@testing-library/react'
+import { act, render, waitFor, within } from '@testing-library/react'
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
 import userEvent from '@testing-library/user-event'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
+import { updateAssigneeFilter } from '@src/context/Metrics/metricsSlice'
 
 const mockOptions = ['crew A', 'crew B']
 const mockTitle = 'Crews Setting'
 const mockLabel = 'Included Crews'
+const assigneeFilterLabels = ['Last assignee', 'Historical assignee']
+const assigneeFilterValues = ['lastAssignee', 'historicalAssignee']
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
   selectMetricsContent: jest.fn().mockReturnValue({ users: ['crew A', 'crew B'] }),
+}))
+
+const mockedUseAppDispatch = jest.fn()
+jest.mock('@src/hooks/useAppDispatch', () => ({
+  useAppDispatch: () => mockedUseAppDispatch,
 }))
 
 let store = setupStore()
@@ -110,4 +118,37 @@ describe('Crew', () => {
     expect(queryByRole('button', { name: mockOptions[0] })).toBeInTheDocument()
     expect(queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument()
   }, 50000)
+
+  it('should show radio group when render Crews component', async () => {
+    const { getByRole, getByText } = setup()
+
+    expect(getByText(assigneeFilterLabels[0])).toBeInTheDocument()
+    expect(getByText(assigneeFilterLabels[1])).toBeInTheDocument()
+    expect(getByRole('radiogroup', { name: 'assigneeFilter' })).toBeVisible()
+  })
+
+  it('should show radio group with init value when render Crews component', async () => {
+    const { getAllByRole } = setup()
+
+    const radioGroups = getAllByRole('radio')
+    const optionValues = radioGroups.map((option) => option.getAttribute('value'))
+    const checkedValues = radioGroups.map((option) => option.getAttribute('checked'))
+
+    const expectedCheckedValues = ['', null]
+    expect(optionValues).toEqual(assigneeFilterValues)
+    expect(checkedValues).toEqual(expectedCheckedValues)
+  })
+
+  it('should call update function when change radio option', async () => {
+    const { getByRole } = setup()
+
+    await act(async () => {
+      await userEvent.click(getByRole('radio', { name: assigneeFilterLabels[1] }))
+    })
+
+    await waitFor(() => {
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(2)
+      expect(mockedUseAppDispatch).toHaveBeenCalledWith(updateAssigneeFilter(assigneeFilterValues[1]))
+    })
+  })
 })

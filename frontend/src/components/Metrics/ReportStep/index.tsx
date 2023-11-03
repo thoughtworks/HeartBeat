@@ -25,6 +25,7 @@ import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
+import CollectionDuration from '@src/components/Common/CollectionDuration'
 
 const ReportStep = () => {
   const dispatch = useAppDispatch()
@@ -64,10 +65,12 @@ const ReportStep = () => {
     doneColumn,
     deploymentFrequencySettings,
     leadTimeForChanges,
+    assigneeFilter,
   } = useAppSelector(selectMetricsContent)
   const { metrics, calendarType, dateRange } = configData.basic
   const { board, pipelineTool, sourceControl } = configData
   const { token, type, site, projectKey, boardId, email } = board.config
+  const { startDate, endDate } = dateRange
   const requiredData = useAppSelector(selectMetrics)
   const isShowExportBoardButton =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
@@ -114,8 +117,8 @@ const ReportStep = () => {
   const encodeToken = `Basic ${btoa(msg)}`
   const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,
-    startTime: dayjs(dateRange.startDate).valueOf().toString(),
-    endTime: dayjs(dateRange.endDate).valueOf().toString(),
+    startTime: dayjs(startDate).valueOf().toString(),
+    endTime: dayjs(endDate).valueOf().toString(),
     considerHoliday: calendarType === CHINA_CALENDAR,
     buildKiteSetting: {
       pipelineCrews,
@@ -136,15 +139,18 @@ const ReportStep = () => {
       boardColumns: cycleTimeSettings.filter((item) => item.value != '----'),
       treatFlagCardAsBlock,
       users,
+      assigneeFilter,
       targetFields,
       doneColumn,
     },
     csvTimeStamp: csvTimeStamp,
   })
 
-  const getExportCSV = (dataType: string): CSVReportRequestDTO => ({
+  const getExportCSV = (dataType: string, startDate: string | null, endDate: string | null): CSVReportRequestDTO => ({
     dataType: dataType,
     csvTimeStamp: csvTimeStamp,
+    startDate: startDate ?? '',
+    endDate: endDate ?? '',
   })
 
   const fetchReportData: () => Promise<
@@ -194,8 +200,8 @@ const ReportStep = () => {
     })
   }, [fetchReportData])
 
-  const handleDownload = (dataType: string) => {
-    fetchExportData(getExportCSV(dataType))
+  const handleDownload = (dataType: string, startDate: string | null, endDate: string | null) => {
+    fetchExportData(getExportCSV(dataType, startDate, endDate))
   }
 
   const handleBack = () => {
@@ -210,6 +216,7 @@ const ReportStep = () => {
         navigate(ERROR_PAGE_ROUTE)
       ) : (
         <>
+          {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
           {reportErrorMsg && (
             <ErrorNotificationContainer>
               <ErrorNotification message={reportErrorMsg} />
@@ -263,12 +270,16 @@ const ReportStep = () => {
             />
           )}
           <ButtonGroupStyle>
-            <BackButton onClick={handleBack}>Back</BackButton>
+            <BackButton onClick={handleBack} variant='outlined'>
+              Previous
+            </BackButton>
             {isShowExportBoardButton && (
-              <ExportButton onClick={() => handleDownload('board')}>Export board data</ExportButton>
+              <ExportButton onClick={() => handleDownload('board', startDate, endDate)}>Export board data</ExportButton>
             )}
             {isShowExportPipelineButton && (
-              <ExportButton onClick={() => handleDownload('pipeline')}>Export pipeline data</ExportButton>
+              <ExportButton onClick={() => handleDownload('pipeline', startDate, endDate)}>
+                Export pipeline data
+              </ExportButton>
             )}
           </ButtonGroupStyle>
         </>

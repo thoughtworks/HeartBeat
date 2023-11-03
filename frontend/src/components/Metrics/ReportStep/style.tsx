@@ -3,10 +3,9 @@ import { Button } from '@mui/material'
 import { theme } from '@src/theme'
 
 export const basicButtonStyle = {
-  boxShadow: theme.main.boxShadow,
-  height: '2rem',
+  height: '2.5rem',
   padding: '0 1rem',
-  margin: '0 1rem',
+  marginLeft: '0.5rem',
   fontSize: '1rem',
   fontWeight: '500',
   textTransform: theme.typography.button.textTransform,
@@ -25,11 +24,11 @@ export const ExportButton = styled(Button)({
 })
 
 export const ButtonGroupStyle = styled('div')({
-  padding: '1rem',
-  display: 'block',
+  boxSizing: 'border-box',
+  display: 'flex',
   textAlign: 'center',
   margin: '0 auto',
-  justifyContent: 'space-around',
+  justifyContent: 'flex-end',
   width: '100%',
 })
 

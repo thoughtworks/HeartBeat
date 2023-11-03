@@ -117,7 +117,7 @@ class Metrics {
   private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
 
   private readonly nextButton = () => cy.contains('Next')
-  private readonly backButton = () => cy.contains('Back')
+  private readonly backButton = () => cy.contains('Previous')
 
   checkCycleTime() {
     this.cycleTimeSettingAnalysis()

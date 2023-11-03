@@ -1,5 +1,5 @@
 class Config {
-  private readonly backButton = () => cy.contains('Back')
+  private readonly backButton = () => cy.contains('Previous')
 
   private readonly yesButton = () => cy.contains('Yes')
 

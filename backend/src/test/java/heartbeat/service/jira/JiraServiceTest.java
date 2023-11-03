@@ -57,6 +57,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CYCLE_TIME_INFO_L
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DOING_STATUS_SELF_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.DONE_STATUS_SELF_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.FIELD_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.INCORRECT_JIRA_BOARD_SETTING_BUILD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.INCORRECT_JIRA_STORY_POINTS_FORM_ALL_DONE_CARD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
@@ -718,6 +719,42 @@ class JiraServiceTest {
 		JiraBoardConfigDTO result = jiraService.getJiraBoardConfig(baseUrl, BOARD_ID, token);
 
 		assertThat(mockResponse).isEqualTo(result);
+	}
+
+	@Test
+	void shouldFilterOutUnreasonableTargetField() throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO completeStatusSelf = COMPLETE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		List<TargetField> expectTargetField = List.of(
+			new TargetField("customfield_10021", "Flagged", false),
+			new TargetField("priority", "Priority", false),
+			new TargetField("timetracking", "Time tracking", false));
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("storyPoints", "customfield_10016");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER().build());
+
+		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeClassicJira, boardRequestParam);
+
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
+		assertThat(boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10000", "Development", false))).isFalse();
+		assertThat(boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10019", "Rank", false))).isFalse();
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 
 }

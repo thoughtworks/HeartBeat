@@ -21,6 +21,7 @@ import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.util.BoardUtil;
+import heartbeat.util.SystemUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletionException;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
@@ -104,11 +107,15 @@ class JiraServiceTest {
 	@Mock
 	BoardUtil boardUtil;
 
+	@Mock
+	SystemUtil systemUtil;
+
 	ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	public void setUp() {
-		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator, boardUtil);
+		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator, boardUtil,
+				systemUtil);
 	}
 
 	@AfterEach
@@ -312,6 +319,39 @@ class JiraServiceTest {
 		});
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed when call Jira to get board config, cause is");
+	}
+
+	@Test
+	void shouldGetCardsWhenCallGetStoryPointsAndCycleTimeGiveStoryPointKey() throws JsonProcessingException {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format("status in ('%s') AND status changed during (%s, %s)", "DONE",
+				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		Map<String, String> envMap = new HashMap<>();
+		envMap.put("STORY_POINT_KEY", "customfield_10016");
+
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("\"storyPoints\":0", "\"customfield_10016\":null")
+			.replaceAll("storyPoints", "customfield_10016");
+
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
+			.thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
+		when(systemUtil.getEnvMap()).thenReturn(envMap);
+
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
+
+		assertThat(cardCollection.getStoryPointSum()).isEqualTo(11);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(4);
 	}
 
 	@Test

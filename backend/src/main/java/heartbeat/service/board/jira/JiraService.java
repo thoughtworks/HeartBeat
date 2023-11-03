@@ -44,6 +44,7 @@ import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.util.BoardUtil;
+import heartbeat.util.SystemUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -95,6 +96,8 @@ public class JiraService {
 	private final JiraUriGenerator urlGenerator;
 
 	private final BoardUtil boardUtil;
+
+	private final SystemUtil systemUtil;
 
 	private static final String STORY_POINT_KEY = "STORY_POINT_KEY";
 
@@ -635,7 +638,7 @@ public class JiraService {
 				}
 			}
 		}
-		Map<String, String> envMap = boardUtil.getEnvMap();
+		Map<String, String> envMap = systemUtil.getEnvMap();
 		if (Objects.nonNull(envMap.get(STORY_POINT_KEY))) {
 			cardCustomFieldKey.setStoryPoints(envMap.get(STORY_POINT_KEY));
 		}

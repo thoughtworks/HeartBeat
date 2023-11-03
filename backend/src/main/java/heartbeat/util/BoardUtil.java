@@ -229,8 +229,4 @@ public class BoardUtil {
 		}
 	}
 
-	public Map<String, String> getEnvMap() {
-		return System.getenv();
-	}
-
 }

@@ -21,6 +21,7 @@ import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.util.BoardUtil;
+import heartbeat.util.SystemUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,8 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -108,11 +107,15 @@ class JiraServiceTest {
 	@Mock
 	BoardUtil boardUtil;
 
+	@Mock
+	SystemUtil systemUtil;
+
 	ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	public void setUp() {
-		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator, boardUtil);
+		jiraService = new JiraService(executor = getTaskExecutor(), jiraFeignClient, urlGenerator, boardUtil,
+				systemUtil);
 	}
 
 	@AfterEach
@@ -340,7 +343,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
-		when(boardUtil.getEnvMap()).thenReturn(envMap);
+		when(systemUtil.getEnvMap()).thenReturn(envMap);
 
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();

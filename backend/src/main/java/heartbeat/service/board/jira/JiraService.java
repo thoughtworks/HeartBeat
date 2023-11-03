@@ -87,6 +87,9 @@ public class JiraService {
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
 
+	public static final List<String> IGNORE_CUSTOM_FIELDS = List.of("customfield_10000", "customfield_10015",
+			"customfield_10017", "customfield_10019");
+
 	private static final String DONE_CARD_TAG = "done";
 
 	private final ThreadPoolTaskExecutor customTaskExecutor;
@@ -428,6 +431,7 @@ public class JiraService {
 		List<TargetField> targetFields = issueTypes.stream()
 			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
 			.distinct()
+			.filter(targetField -> !IGNORE_CUSTOM_FIELDS.contains(targetField.getKey()))
 			.toList();
 		log.info("Successfully get target field, project key: {}, board id: {}, target fields size: {},",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(), targetFields.size());

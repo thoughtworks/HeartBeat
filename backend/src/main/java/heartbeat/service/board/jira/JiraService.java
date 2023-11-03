@@ -96,6 +96,8 @@ public class JiraService {
 
 	private final BoardUtil boardUtil;
 
+	private static final String STORY_POINT_KEY = "STORY_POINT_KEY";
+
 	@PreDestroy
 	public void shutdownExecutor() {
 		customTaskExecutor.shutdown();
@@ -632,6 +634,10 @@ public class JiraService {
 
 				}
 			}
+		}
+		Map<String, String> envMap = boardUtil.getEnvMap();
+		if (Objects.nonNull(envMap.get(STORY_POINT_KEY))) {
+			cardCustomFieldKey.setStoryPoints(envMap.get(STORY_POINT_KEY));
 		}
 		return cardCustomFieldKey;
 	}

@@ -731,10 +731,9 @@ class JiraServiceTest {
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
-		List<TargetField> expectTargetField = List.of(
-			new TargetField("customfield_10021", "Flagged", false),
-			new TargetField("priority", "Priority", false),
-			new TargetField("timetracking", "Time tracking", false));
+		List<TargetField> expectTargetField = List.of(new TargetField("customfield_10021", "Flagged", false),
+				new TargetField("priority", "Priority", false),
+				new TargetField("timetracking", "Time tracking", false));
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
 			.replaceAll("storyPoints", "customfield_10016");
 
@@ -752,8 +751,11 @@ class JiraServiceTest {
 		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeClassicJira, boardRequestParam);
 
 		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
-		assertThat(boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10000", "Development", false))).isFalse();
-		assertThat(boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10019", "Rank", false))).isFalse();
+		assertThat(
+				boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10000", "Development", false)))
+			.isFalse();
+		assertThat(boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10019", "Rank", false)))
+			.isFalse();
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
 

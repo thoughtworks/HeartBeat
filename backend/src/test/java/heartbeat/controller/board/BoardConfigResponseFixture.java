@@ -10,7 +10,7 @@ public class BoardConfigResponseFixture {
 
 	public static BoardConfigDTO.BoardConfigDTOBuilder BOARD_CONFIG_RESPONSE_BUILDER() {
 		return BoardConfigDTO.builder()
-			.jiraColumnRespons(
+			.jiraColumnResponse(
 					List.of(JiraColumnDTO.builder().value(ColumnValue.builder().name("TODO").build()).build()))
 			.users(List.of("Zhang San"))
 			.targetFields(List.of(new TargetField("priority", "Priority", false),

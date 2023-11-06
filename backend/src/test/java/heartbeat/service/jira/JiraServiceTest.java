@@ -167,11 +167,11 @@ class JiraServiceTest {
 		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 		jiraService.shutdownExecutor();
 
-		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigDTO.getUsers()).hasSize(1);
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
 	}
@@ -205,11 +205,11 @@ class JiraServiceTest {
 
 		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 
-		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigDTO.getUsers()).hasSize(1);
 		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
@@ -246,11 +246,11 @@ class JiraServiceTest {
 
 		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeClassicJira, boardRequestParam);
 
-		assertThat(boardConfigDTO.getJiraColumnRespons()).hasSize(1);
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getName()).isEqualTo("TODO");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
-		assertThat(boardConfigDTO.getJiraColumnRespons().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigDTO.getUsers()).hasSize(1);
 		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);

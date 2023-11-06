@@ -15,10 +15,12 @@ import lombok.NoArgsConstructor;
 public class BoardConfigDTO {
 
 	@JsonProperty("jiraColumns")
-	private List<JiraColumnDTO> jiraColumnRespons;
+	private List<JiraColumnDTO> jiraColumnResponse;
 
 	private List<String> users;
 
 	private List<TargetField> targetFields;
+
+	private List<TargetField> ignoredTargetFields;
 
 }

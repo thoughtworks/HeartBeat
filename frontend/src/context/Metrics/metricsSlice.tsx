@@ -230,7 +230,7 @@ export const metricsSlice = createSlice({
     },
 
     updateMetricsState: (state, action) => {
-      const { targetFields, users, jiraColumns, isProjectCreated } = action.payload
+      const { targetFields, users, jiraColumns, isProjectCreated, ignoredTargetFields } = action.payload
       const { importedCrews, importedClassification, importedCycleTime, importedDoneStatus, importedAssigneeFilter } =
         state.importedData
       state.users = isProjectCreated ? users : setSelectUsers(users, importedCrews)
@@ -266,7 +266,11 @@ export const metricsSlice = createSlice({
 
       if (!isProjectCreated && importedClassification?.length > 0) {
         const keyArray = targetFields?.map((field: { key: string; name: string; flag: boolean }) => field.key)
-        if (importedClassification.every((item) => keyArray.includes(item))) {
+        const ignoredKeyArray = ignoredTargetFields?.map(
+          (field: { key: string; name: string; flag: boolean }) => field.key
+        )
+        const filteredImportedClassification = importedClassification.filter((item) => !ignoredKeyArray.includes(item))
+        if (filteredImportedClassification.every((item) => keyArray.includes(item))) {
           state.classificationWarningMessage = null
         } else {
           state.classificationWarningMessage = CLASSIFICATION_WARNING_MESSAGE

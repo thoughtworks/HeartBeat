@@ -160,7 +160,7 @@ export const SourceControl = () => {
         <StyledButtonGroup>
           {isVerified && !isLoading ? (
             <>
-              <VerifyButton>Verified</VerifyButton>
+              <VerifyButton disabled>Verified</VerifyButton>
               <ResetButton type='reset'>Reset</ResetButton>
             </>
           ) : (

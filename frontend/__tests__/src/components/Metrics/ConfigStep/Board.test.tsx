@@ -8,6 +8,7 @@ import {
   MOCK_BOARD_URL_FOR_JIRA,
   NO_CARD_ERROR_MESSAGE,
   RESET,
+  VERIFIED,
   VERIFY,
   VERIFY_ERROR_MESSAGE,
   VERIFY_FAILED,
@@ -161,7 +162,7 @@ describe('Board', () => {
     expect(verifyButton).toBeEnabled()
   })
 
-  it('should show reset button when verify succeed ', async () => {
+  it('should show reset button and verified button when verify succeed ', async () => {
     const { getByText } = setup()
     fillBoardFieldsInformation()
 
@@ -169,6 +170,10 @@ describe('Board', () => {
 
     await waitFor(() => {
       expect(getByText(RESET)).toBeVisible()
+    })
+
+    await waitFor(() => {
+      expect(getByText(VERIFIED)).toBeTruthy()
     })
   })
 

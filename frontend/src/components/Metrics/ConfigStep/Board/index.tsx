@@ -248,7 +248,7 @@ export const Board = () => {
         )}
         <StyledButtonGroup>
           {isVerified && !isLoading ? (
-            <VerifyButton>Verified</VerifyButton>
+            <VerifyButton disabled>Verified</VerifyButton>
           ) : (
             <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
               Verify

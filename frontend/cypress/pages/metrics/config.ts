@@ -7,7 +7,7 @@ class Config {
 
   private readonly collectionDateFrom = () => cy.contains('From').parent()
 
-  private readonly requiredDataSelect = () => cy.contains('Required data').siblings()
+  private readonly requiredDataSelect = () => cy.contains('Required metrics').siblings()
 
   private readonly requiredDataAllSelectOption = () => cy.contains('All')
 

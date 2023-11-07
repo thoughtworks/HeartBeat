@@ -112,21 +112,25 @@ public class JiraService {
 			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequestParam, baseUrl,
 					jiraBoardConfigDTO);
 			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
-			List<TargetField> ignoredTargetFields = getTargetFieldAsync(baseUrl, boardRequestParam).join()
+			List<TargetField> ignoredTargetFields = targetFieldFuture.join()
 				.stream()
 				.filter(this::isIgnoredTargetField)
 				.toList();
+			List<TargetField> neededTargetFields = targetFieldFuture.join()
+				.stream()
+				.filter(targetField -> !isIgnoredTargetField(targetField))
+				.toList();
 
-			return jiraColumnsFuture.thenCombine(targetFieldFuture, (jiraColumnResult, targetFields) -> getUserAsync(
-					boardType, baseUrl, boardRequestParam)
-				.thenApply(users -> BoardConfigDTO.builder()
-					.targetFields(
-							targetFields.stream().filter(targetField -> !isIgnoredTargetField(targetField)).toList())
-					.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
-					.ignoredTargetFields(ignoredTargetFields)
-					.users(users)
-					.build())
-				.join()).join();
+			return jiraColumnsFuture.thenCombine(targetFieldFuture,
+					(jiraColumnResult, targetFields) -> getUserAsync(boardType, baseUrl, boardRequestParam)
+						.thenApply(users -> BoardConfigDTO.builder()
+							.targetFields(neededTargetFields)
+							.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
+							.ignoredTargetFields(ignoredTargetFields)
+							.users(users)
+							.build())
+						.join())
+				.join();
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);

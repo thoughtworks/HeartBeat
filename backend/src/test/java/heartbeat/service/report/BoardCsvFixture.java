@@ -141,6 +141,12 @@ public class BoardCsvFixture {
 		.originKey("customfield_10052")
 		.build();
 
+	private static final BoardCSVConfig CUSTOM_FIELD_10053_CONFIG = BoardCSVConfig.builder()
+		.label("10053")
+		.value("baseInfo.fields.customFields.customfield_10053")
+		.originKey("customfield_10053")
+		.build();
+
 	private static final BoardCSVConfig ORIGIN_CYCLE_BLOCKED_CONFIG = BoardCSVConfig.builder()
 		.label("OriginCycleTime: BLOCKED")
 		.value("cycleTimeFlat.BLOCKED")
@@ -213,7 +219,7 @@ public class BoardCsvFixture {
 	}
 
 	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS_WITH_CUSTOM() {
-		return List.of(CUSTOM_FIELD_10052_CONFIG);
+		return List.of(CUSTOM_FIELD_10052_CONFIG, CUSTOM_FIELD_10053_CONFIG);
 	}
 
 	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS() {
@@ -282,8 +288,12 @@ public class BoardCsvFixture {
 		jsonObject.addProperty("value", "dev");
 		jsonObject.addProperty("ref", "red");
 
+		JsonArray jsonArray = new JsonArray();
+		jsonArray.add(jsonObject);
+
 		HashMap<String, JsonElement> fields = new HashMap<String, JsonElement>();
 		fields.put("customfield_10052", jsonObject);
+		fields.put("customfield_10053", jsonArray);
 
 		JiraCardField field = JiraCardField.builder()
 			.summary("summary")

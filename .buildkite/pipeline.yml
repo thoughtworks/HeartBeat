@@ -11,10 +11,12 @@ steps:
     command: ./ops/check.sh security
 
   - label: ":white_check_mark: Check Backend"
+    if: build.branch == "main" && build.message =~ /\[backend\]/
     key: "check-backend"
     command: ./ops/check.sh backend
 
   - label: ":white_check_mark: Check Frontend"
+    if: build.branch == "main" && build.message =~ /\[frontend\]/
     key: "check-frontend"
     command: ./ops/check.sh frontend
 

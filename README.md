@@ -471,3 +471,27 @@ Then, execute this command
 ```sh
 docker-compose up -d frontend
 ```
+
+### 7.1.1
+Specifically, story point field can be indicated in `docker-compose.yml`. You can do it as below.
+```yaml
+version: "3.4"
+
+services:
+  backend:
+    image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+    container_name: backend
+    ports:
+      - 4322:4322
+    restart: always
+    environment:
+      STORY_POINT_KEY: customfield_10061
+  frontend:
+    image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+    container_name: frontend
+    ports:
+      - 4321:80
+    depends_on:
+      - backend
+    restart: always
+```

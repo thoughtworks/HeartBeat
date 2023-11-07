@@ -61,6 +61,7 @@ const initState = {
 
 const mockJiraResponse = {
   targetFields: [{ key: 'issuetype', name: 'Issue Type', flag: false }],
+  ignoredTargetFields: [{ key: 'issuecolor', name: 'Issue Color', flag: false }],
   users: ['User A', 'User B'],
   jiraColumns: [
     {

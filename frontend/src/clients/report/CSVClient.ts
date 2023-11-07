@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import { downloadCSV } from '@src/utils/util'
 
 export class CSVClient extends HttpClient {
-  parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string => dayjs(csvTimeStamp).format('SSS')
+  parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string => dayjs(csvTimeStamp).format('HHmmSSS')
   parseCollectionDateToHumanDate = (date: string) => dayjs(date).format('YYYYMMDD')
 
   exportCSVData = async (params: CSVReportRequestDTO) => {
@@ -13,7 +13,7 @@ export class CSVClient extends HttpClient {
       .then((res) => {
         const exportedFilename = `${params.dataType}-${this.parseCollectionDateToHumanDate(
           params.startDate
-        )}-to-${this.parseCollectionDateToHumanDate(params.endDate)}-${this.parseTimeStampToHumanDate(
+        )}-${this.parseCollectionDateToHumanDate(params.endDate)}-${this.parseTimeStampToHumanDate(
           params.csvTimeStamp
         )}.csv`
         downloadCSV(exportedFilename, res.data)

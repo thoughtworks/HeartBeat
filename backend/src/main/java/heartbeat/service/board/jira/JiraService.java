@@ -44,6 +44,7 @@ import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.util.BoardUtil;
+import heartbeat.util.SystemUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -79,12 +80,13 @@ public class JiraService {
 
 	public static final String STATUS_FIELD_ID = "status";
 
-	private static final String JIRA_CARD_FINAL_ASSIGNEE = "Assignee";
-
 	public static final int QUERY_COUNT = 100;
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
+
+	public static final List<String> IGNORE_CUSTOM_FIELDS = List.of("customfield_10000", "customfield_10015",
+			"customfield_10017", "customfield_10019");
 
 	private static final String DONE_CARD_TAG = "done";
 
@@ -95,6 +97,10 @@ public class JiraService {
 	private final JiraUriGenerator urlGenerator;
 
 	private final BoardUtil boardUtil;
+
+	private final SystemUtil systemUtil;
+
+	private static final String STORY_POINT_KEY = "STORY_POINT_KEY";
 
 	@PreDestroy
 	public void shutdownExecutor() {
@@ -107,6 +113,8 @@ public class JiraService {
 			JiraBoardConfigDTO jiraBoardConfigDTO = getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(),
 					boardRequestParam.getToken());
 			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
+			CompletableFuture<List<TargetField>> ignoredTargetFieldFuture = getIgnoredTargetFieldAsync(baseUrl,
+					boardRequestParam);
 			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequestParam, baseUrl,
 					jiraBoardConfigDTO);
 
@@ -114,7 +122,8 @@ public class JiraService {
 					(jiraColumnResult, targetFields) -> getUserAsync(boardType, baseUrl, boardRequestParam)
 						.thenApply(users -> BoardConfigDTO.builder()
 							.targetFields(targetFields)
-							.jiraColumnRespons(jiraColumnResult.getJiraColumnResponse())
+							.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
+							.ignoredTargetFields(ignoredTargetFieldFuture.join())
 							.users(users)
 							.build())
 						.join())
@@ -409,6 +418,25 @@ public class JiraService {
 		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequestParam), customTaskExecutor);
 	}
 
+	private CompletableFuture<List<TargetField>> getIgnoredTargetFieldAsync(URI baseUrl,
+			BoardRequestParam boardRequestParam) {
+		return CompletableFuture.supplyAsync(() -> getIgnoredTargetField(baseUrl, boardRequestParam),
+				customTaskExecutor);
+	}
+
+	private List<TargetField> getIgnoredTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
+		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(),
+				boardRequestParam.getToken());
+
+		List<Issuetype> issueTypes = fieldResponse.getProjects().get(0).getIssuetypes();
+
+		return issueTypes.stream()
+			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
+			.distinct()
+			.filter(targetField -> IGNORE_CUSTOM_FIELDS.contains(targetField.getKey()))
+			.toList();
+	}
+
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
 		log.info("Start to get target field, project key: {}, board id: {},", boardRequestParam.getProjectKey(),
 				boardRequestParam.getBoardId());
@@ -423,6 +451,7 @@ public class JiraService {
 		List<TargetField> targetFields = issueTypes.stream()
 			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
 			.distinct()
+			.filter(targetField -> !IGNORE_CUSTOM_FIELDS.contains(targetField.getKey()))
 			.toList();
 		log.info("Successfully get target field, project key: {}, board id: {}, target fields size: {},",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(), targetFields.size());
@@ -632,6 +661,10 @@ public class JiraService {
 
 				}
 			}
+		}
+		Map<String, String> envMap = systemUtil.getEnvMap();
+		if (Objects.nonNull(envMap.get(STORY_POINT_KEY))) {
+			cardCustomFieldKey.setStoryPoints(envMap.get(STORY_POINT_KEY));
 		}
 		return cardCustomFieldKey;
 	}

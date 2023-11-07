@@ -249,6 +249,24 @@ public class JiraBoardConfigDTOFixture {
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}
 
+	public static FieldResponseDTO.FieldResponseDTOBuilder INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER() {
+		IssueField timetrackingIssueField = new IssueField("timetracking", "Time tracking");
+		IssueField priorityIssueField = new IssueField("priority", "Priority");
+		IssueField flaggedIssueField = new IssueField("customfield_10021", "Flagged");
+		IssueField developmentField = new IssueField("customfield_10000", "Development");
+		IssueField rankField = new IssueField("customfield_10019", "Rank");
+
+		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
+
+		issueFieldMap.put("customfield_10021", flaggedIssueField);
+		issueFieldMap.put("timetracking", timetrackingIssueField);
+		issueFieldMap.put("priority", priorityIssueField);
+		issueFieldMap.put("customfield_10000", developmentField);
+		issueFieldMap.put("customfield_10019", rankField);
+
+		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
+	}
+
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_BUILD() {
 		return JiraBoardSetting.builder()
 			.boardId(BOARD_ID)

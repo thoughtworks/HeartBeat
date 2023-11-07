@@ -20,7 +20,7 @@ export const DateRangePicker = () => {
     dispatch(updatePipelineToolVerifyState(false))
     dispatch(updateSourceControlVerifyState(false))
   }
-  const changeStartDate = (value: dayjs.Dayjs | null) => {
+  const changeStartDate = (value: any) => {
     if (value === null) {
       dispatch(
         updateDateRange({
@@ -39,7 +39,7 @@ export const DateRangePicker = () => {
     updateVerifyStates()
   }
 
-  const changeEndDate = (value: dayjs.Dayjs | null) => {
+  const changeEndDate = (value: any) => {
     if (value === null) {
       dispatch(
         updateDateRange({

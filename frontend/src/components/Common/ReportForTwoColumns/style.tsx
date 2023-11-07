@@ -9,7 +9,7 @@ export const Container = styled(MetricSelectionWrapper)({})
 export const Row = styled(TableRow)({})
 export const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.table.backgroundColor,
+    backgroundColor: theme.palette.secondary.dark,
     fontWeight: 600,
   },
 }))
@@ -17,9 +17,9 @@ export const StyledTableCell = styled(TableCell)(() => ({
 export const BorderTableCell = styled(TableCell)(() => ({
   border: '1px solid rgba(224, 224, 224, 1)',
   borderRight: 'none',
-  color: theme.palette.table.text,
+  color: theme.palette.secondary.contrastText,
 }))
 
 export const ColumnTableCell = styled(TableCell)(() => ({
-  color: theme.palette.table.text,
+  color: theme.palette.secondary.contrastText,
 }))

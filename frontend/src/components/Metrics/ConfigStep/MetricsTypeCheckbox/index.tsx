@@ -112,7 +112,7 @@ export const MetricsTypeCheckbox = () => {
   return (
     <>
       <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
-        <InputLabel id='require-data-multiple-checkbox-label'>Required data</InputLabel>
+        <InputLabel id='require-data-multiple-checkbox-label'>Required metrics</InputLabel>
         <Select
           labelId='require-data-multiple-checkbox-label'
           multiple

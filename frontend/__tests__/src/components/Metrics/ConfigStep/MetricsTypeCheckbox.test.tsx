@@ -17,6 +17,7 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import userEvent from '@testing-library/user-event'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import BasicInfo from '@src/components/Metrics/ConfigStep/BasicInfo'
 let store = null
 
 describe('MetricsTypeCheckbox', () => {
@@ -24,6 +25,7 @@ describe('MetricsTypeCheckbox', () => {
     store = setupStore()
     return render(
       <Provider store={store}>
+        <BasicInfo />
         <MetricsTypeCheckbox />
       </Provider>
     )

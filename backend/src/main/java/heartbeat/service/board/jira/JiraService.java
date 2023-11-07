@@ -85,8 +85,8 @@ public class JiraService {
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks");
 
-	public static final List<String> IGNORE_CUSTOM_FIELDS = List.of("customfield_10000", "customfield_10015",
-			"customfield_10017", "customfield_10019");
+	public static final List<String> IGNORE_CUSTOM_FIELDS_NAME = List.of("Development", "Start date", "Rank",
+			"Issue color");
 
 	private static final String DONE_CARD_TAG = "done";
 
@@ -433,7 +433,7 @@ public class JiraService {
 		return issueTypes.stream()
 			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
 			.distinct()
-			.filter(targetField -> IGNORE_CUSTOM_FIELDS.contains(targetField.getKey()))
+			.filter(targetField -> IGNORE_CUSTOM_FIELDS_NAME.contains(targetField.getName()))
 			.toList();
 	}
 
@@ -451,7 +451,7 @@ public class JiraService {
 		List<TargetField> targetFields = issueTypes.stream()
 			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
 			.distinct()
-			.filter(targetField -> !IGNORE_CUSTOM_FIELDS.contains(targetField.getKey()))
+			.filter(targetField -> !IGNORE_CUSTOM_FIELDS_NAME.contains(targetField.getName()))
 			.toList();
 		log.info("Successfully get target field, project key: {}, board id: {}, target fields size: {},",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(), targetFields.size());
@@ -463,7 +463,7 @@ public class JiraService {
 			.stream()
 			.filter(issueField -> !FIELDS_IGNORE.contains(issueField.getKey()))
 			.map(issueField -> new TargetField(issueField.getKey(), issueField.getName(), false))
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	private List<JiraCardDTO> getRealDoneCards(StoryPointsAndCycleTimeRequest request,

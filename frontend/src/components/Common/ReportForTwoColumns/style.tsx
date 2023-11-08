@@ -15,11 +15,11 @@ export const StyledTableCell = styled(TableCell)(() => ({
 }))
 
 export const BorderTableCell = styled(TableCell)(() => ({
-  border: '1px solid rgba(224, 224, 224, 1)',
+  border: '0.06rem solid #E0E0E0',
   borderRight: 'none',
   color: theme.palette.secondary.contrastText,
 }))
 
-export const ColumnTableCell = styled(TableCell)(() => ({
-  color: theme.palette.secondary.contrastText,
+export const ColumnTableCell = styled(BorderTableCell)(() => ({
+  borderLeft: 'none',
 }))

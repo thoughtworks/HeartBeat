@@ -92,8 +92,6 @@ export const RequiredMetrics = () => {
       target: { value },
     } = event
 
-    console.log('value', value)
-
     dispatch(updateMetrics(handleSelectOptionsChange(value)))
     handleSelectOptionsChange(value).length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false)
     updateBoardState()

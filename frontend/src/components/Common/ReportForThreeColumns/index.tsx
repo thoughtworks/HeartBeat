@@ -1,4 +1,4 @@
-import { Table, TableBody, TableHead, TableRow } from '@mui/material'
+import { Table, TableBody, TableHead, TableRow, Typography } from '@mui/material'
 import {
   BorderTableCell,
   ColumnTableCell,
@@ -10,7 +10,7 @@ import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { AVERAGE_FIELD, Unit } from '@src/constants'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
-import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
+import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style'
 import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 interface ReportForThreeColumnsProps {
@@ -28,15 +28,15 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
       const [prefix, suffix] = row.name.split('/')
       return (
         <EmojiWrap>
-          <div>{prefix}/</div>
+          <StyledTypography>{prefix}/</StyledTypography>
           {emojiUrls.map((url) => (
             <StyledAvatar key={url} src={url} />
           ))}
-          <div>{removeExtraEmojiName(suffix)}</div>
+          <StyledTypography>{removeExtraEmojiName(suffix)}</StyledTypography>
         </EmojiWrap>
       )
     }
-    return <div>{name}</div>
+    return <StyledTypography>{name}</StyledTypography>
   }
 
   const renderRows = () =>

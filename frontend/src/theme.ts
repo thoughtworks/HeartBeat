@@ -43,7 +43,7 @@ export const theme = createTheme({
     secondary: {
       main: indigo[FIVE_HUNDRED],
       dark: '#f7f7f7',
-      contrastText: 'rgba(0, 0, 0, 0.65)',
+      contrastText: '#000000A6',
     },
     info: {
       main: '#3498db',

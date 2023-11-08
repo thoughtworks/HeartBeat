@@ -1,7 +1,7 @@
 package heartbeat.service.report;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -12,6 +12,7 @@ import heartbeat.exception.FileIOException;
 import heartbeat.util.DecimalUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import static heartbeat.service.report.calculator.ClassificationCalculator.pickDisplayNameFromObj;
 
 @RequiredArgsConstructor
 @Component
@@ -301,11 +304,17 @@ public class CSVFileGenerator {
 		else if (fieldValue.toString().equals("null")) {
 			return "";
 		}
-		else if (fieldValue instanceof JsonObject jsonObjValue && jsonObjValue.get("value") != null) {
-			return jsonObjValue.get("value").getAsString();
+		else if (fieldValue instanceof JsonArray objectArray) {
+			List<String> objectList = new ArrayList<>();
+			for (JsonElement element : objectArray) {
+				if (element.isJsonObject()) {
+					objectList.add(pickDisplayNameFromObj(element.getAsJsonObject()));
+				}
+			}
+			return StringUtils.join(objectList, ",");
 		}
 		else {
-			return fieldValue.toString().replaceAll("\"", "");
+			return pickDisplayNameFromObj(fieldValue);
 		}
 	}
 

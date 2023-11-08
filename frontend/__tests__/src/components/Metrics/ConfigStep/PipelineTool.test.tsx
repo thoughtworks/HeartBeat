@@ -9,6 +9,7 @@ import {
   PIPELINE_TOOL_TYPES,
   RESET,
   TOKEN_ERROR_MESSAGE,
+  VERIFIED,
   VERIFY,
   VERIFY_ERROR_MESSAGE,
   VERIFY_FAILED,
@@ -156,13 +157,17 @@ describe('PipelineTool', () => {
     expect(getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR)
   })
 
-  it('should show reset button when verify succeed ', async () => {
+  it('should show reset button and verified button when verify succeed ', async () => {
     const { getByText } = setup()
     await fillPipelineToolFieldsInformation()
     await userEvent.click(getByText(VERIFY))
 
     act(() => {
       expect(getByText(RESET)).toBeVisible()
+    })
+
+    await waitFor(() => {
+      expect(getByText(VERIFIED)).toBeTruthy()
     })
   })
 

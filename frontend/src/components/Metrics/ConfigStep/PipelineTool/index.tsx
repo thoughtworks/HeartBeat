@@ -182,7 +182,7 @@ export const PipelineTool = () => {
         />
         <StyledButtonGroup>
           {isVerified && !isLoading ? (
-            <VerifyButton>Verified</VerifyButton>
+            <VerifyButton disabled>Verified</VerifyButton>
           ) : (
             <VerifyButton
               data-test-id='pipelineVerifyButton'

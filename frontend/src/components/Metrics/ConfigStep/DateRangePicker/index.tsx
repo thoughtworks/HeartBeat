@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DatePicker } from '@mui/x-date-pickers'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
   selectDateRange,
@@ -10,7 +9,8 @@ import {
   updatePipelineToolVerifyState,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
-import { StyledDateRangePicker } from './style'
+import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch()
@@ -20,7 +20,7 @@ export const DateRangePicker = () => {
     dispatch(updatePipelineToolVerifyState(false))
     dispatch(updateSourceControlVerifyState(false))
   }
-  const changeStartDate = (value: dayjs.Dayjs | null) => {
+  const changeStartDate = (value: any) => {
     if (value === null) {
       dispatch(
         updateDateRange({
@@ -39,7 +39,7 @@ export const DateRangePicker = () => {
     updateVerifyStates()
   }
 
-  const changeEndDate = (value: dayjs.Dayjs | null) => {
+  const changeEndDate = (value: any) => {
     if (value === null) {
       dispatch(
         updateDateRange({
@@ -57,19 +57,35 @@ export const DateRangePicker = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <StyledDateRangePicker>
-        <DatePicker
+      <StyledDateRangePickerContainer>
+        <StyledDateRangePicker
           label='From *'
           value={startDate ? dayjs(startDate) : null}
           onChange={(newValue) => changeStartDate(newValue)}
+          slots={{
+            openPickerIcon: CalendarTodayIcon,
+          }}
+          slotProps={{
+            textField: {
+              variant: 'standard',
+            },
+          }}
         />
-        <DatePicker
+        <StyledDateRangePicker
           label='To *'
           value={endDate ? dayjs(endDate) : null}
           minDate={dayjs(startDate)}
           onChange={(newValue) => changeEndDate(newValue)}
+          slots={{
+            openPickerIcon: CalendarTodayIcon,
+          }}
+          slotProps={{
+            textField: {
+              variant: 'standard',
+            },
+          }}
         />
-      </StyledDateRangePicker>
+      </StyledDateRangePickerContainer>
     </LocalizationProvider>
   )
 }

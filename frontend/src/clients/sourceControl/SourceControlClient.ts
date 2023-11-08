@@ -7,7 +7,12 @@ export class SourceControlClient extends HttpClient {
 
   getVerifySourceControl = async (params: SourceControlRequestDTO) => {
     try {
-      const result = await this.axiosInstance.get('/source-control', { params: { ...params } })
+      const result = await this.axiosInstance.request({
+        url: '/source-control',
+        method: 'POST',
+        data: params.token,
+        headers: { 'Content-Type': 'text/plain' },
+      })
       this.handleSourceControlVerifySucceed(result.data)
     } catch (e) {
       this.isSourceControlVerify = false

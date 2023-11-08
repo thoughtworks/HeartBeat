@@ -7,7 +7,7 @@ export class PipelineToolClient extends HttpClient {
 
   verifyPipelineTool = async (params: PipelineRequestDTO) => {
     try {
-      const result = await this.axiosInstance.get(`/pipelines/${params.type}`, { params: { ...params } })
+      const result = await this.axiosInstance.post(`/pipelines/${params.type}`, params)
       this.handlePipelineToolVerifySucceed(result.data)
     } catch (e) {
       this.isPipelineToolVerified = false

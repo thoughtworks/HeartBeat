@@ -7,8 +7,9 @@ import heartbeat.service.board.jira.JiraService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,9 +20,9 @@ public class JiraController {
 
 	private final JiraService jiraService;
 
-	@GetMapping("/{boardType}")
+	@PostMapping("/{boardType}")
 	public BoardConfigDTO getBoard(@PathVariable @NotBlank BoardType boardType,
-			@Valid BoardRequestParam boardRequestParam) {
+			@Valid @RequestBody BoardRequestParam boardRequestParam) {
 		return jiraService.getJiraConfiguration(boardType, boardRequestParam);
 	}
 

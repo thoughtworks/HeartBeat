@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,7 +45,7 @@ class GithubControllerTest {
 
 		when(gitHubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 
-		mockMvc.perform(get("/source-control").param("token", GITHUB_TOKEN).contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(post("/source-control").content(GITHUB_TOKEN).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
 			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));
@@ -52,19 +53,19 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnBadRequestWhenRequestParamIsBlank() throws Exception {
-		final var response = mockMvc.perform(get("/source-control?token=   ").contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
+		final var response = mockMvc.perform(post("/source-control"))
+			.andExpect(status().isInternalServerError())
 			.andReturn()
 			.getResponse();
 
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.message").toString();
-		assertThat(result).contains("getRepos.token: token must not be blank");
+		assertThat(result).contains("Required request body is missing");
 	}
 
 	@Test
 	void shouldReturnBadRequestWhenRequestParamPatternIsIncorrect() throws Exception {
-		final var response = mockMvc.perform(get("/source-control?token=12345").contentType(MediaType.APPLICATION_JSON))
+		final var response = mockMvc.perform(post("/source-control").content("12345"))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();

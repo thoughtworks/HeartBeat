@@ -26,15 +26,15 @@ import { NoCardPop } from '@src/components/Metrics/ConfigStep/NoDoneCardPop'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 import {
+  ConfigSectionContainer,
   StyledButtonGroup,
   StyledForm,
-  StyledSection,
   StyledTextField,
-  StyledTitle,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
 import dayjs from 'dayjs'
 import { updateMetricsState, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
+import { ConfigSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -201,11 +201,11 @@ export const Board = () => {
   }
 
   return (
-    <StyledSection>
+    <ConfigSectionContainer>
       <NoCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
-      <StyledTitle>{CONFIG_TITLE.BOARD}</StyledTitle>
+      <ConfigSelectionTitle>{CONFIG_TITLE.BOARD}</ConfigSelectionTitle>
       <StyledForm
         onSubmit={(e) => handleSubmitBoardFields(e)}
         onChange={(e) => updateBoardFields(e)}
@@ -248,7 +248,7 @@ export const Board = () => {
         )}
         <StyledButtonGroup>
           {isVerified && !isLoading ? (
-            <VerifyButton>Verified</VerifyButton>
+            <VerifyButton disabled>Verified</VerifyButton>
           ) : (
             <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
               Verify
@@ -258,6 +258,6 @@ export const Board = () => {
           {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
         </StyledButtonGroup>
       </StyledForm>
-    </StyledSection>
+    </ConfigSectionContainer>
   )
 }

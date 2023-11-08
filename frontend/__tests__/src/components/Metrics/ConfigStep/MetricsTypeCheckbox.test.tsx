@@ -17,6 +17,7 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import userEvent from '@testing-library/user-event'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import BasicInfo from '@src/components/Metrics/ConfigStep/BasicInfo'
 let store = null
 
 describe('MetricsTypeCheckbox', () => {
@@ -24,6 +25,7 @@ describe('MetricsTypeCheckbox', () => {
     store = setupStore()
     return render(
       <Provider store={store}>
+        <BasicInfo />
         <MetricsTypeCheckbox />
       </Provider>
     )
@@ -177,7 +179,7 @@ describe('MetricsTypeCheckbox', () => {
   })
 
   it('should show board component when click MetricsTypeCheckbox selection velocity ', async () => {
-    const { getByRole } = setup()
+    const { getByRole, getAllByText } = setup()
     await act(async () => {
       await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
     })
@@ -186,7 +188,7 @@ describe('MetricsTypeCheckbox', () => {
       await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))
     })
 
-    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD, hidden: true })).toBeInTheDocument()
+    expect(getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument()
   })
 
   it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', async () => {

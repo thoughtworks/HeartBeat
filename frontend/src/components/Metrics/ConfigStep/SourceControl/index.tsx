@@ -8,11 +8,10 @@ import {
   TOKEN_HELPER_TEXT,
 } from '@src/constants'
 import {
+  ConfigSectionContainer,
   StyledButtonGroup,
   StyledForm,
-  StyledSection,
   StyledTextField,
-  StyledTitle,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
@@ -28,6 +27,7 @@ import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlE
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
+import { ConfigSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
@@ -126,10 +126,10 @@ export const SourceControl = () => {
   }
 
   return (
-    <StyledSection>
+    <ConfigSectionContainer>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
-      <StyledTitle>{CONFIG_TITLE.SOURCE_CONTROL}</StyledTitle>
+      <ConfigSelectionTitle>{CONFIG_TITLE.SOURCE_CONTROL}</ConfigSelectionTitle>
       <StyledForm
         onSubmit={(e) => handleSubmitSourceControlFields(e)}
         onChange={(e) => updateSourceControlFields(e)}
@@ -160,7 +160,7 @@ export const SourceControl = () => {
         <StyledButtonGroup>
           {isVerified && !isLoading ? (
             <>
-              <VerifyButton>Verified</VerifyButton>
+              <VerifyButton disabled>Verified</VerifyButton>
               <ResetButton type='reset'>Reset</ResetButton>
             </>
           ) : (
@@ -174,6 +174,6 @@ export const SourceControl = () => {
           )}
         </StyledButtonGroup>
       </StyledForm>
-    </StyledSection>
+    </ConfigSectionContainer>
   )
 }

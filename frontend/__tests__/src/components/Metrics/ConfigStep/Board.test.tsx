@@ -8,6 +8,7 @@ import {
   MOCK_BOARD_URL_FOR_JIRA,
   NO_CARD_ERROR_MESSAGE,
   RESET,
+  VERIFIED,
   VERIFY,
   VERIFY_ERROR_MESSAGE,
   VERIFY_FAILED,
@@ -53,12 +54,12 @@ describe('Board', () => {
   })
 
   it('should show board title and fields when render board component ', () => {
-    const { getByRole, getByLabelText } = setup()
+    const { getByLabelText, getAllByText } = setup()
 
     BOARD_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
     })
-    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD })).toBeInTheDocument()
+    expect(getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument()
   })
 
   it('should show default value jira when init board component', () => {
@@ -161,7 +162,7 @@ describe('Board', () => {
     expect(verifyButton).toBeEnabled()
   })
 
-  it('should show reset button when verify succeed ', async () => {
+  it('should show reset button and verified button when verify succeed ', async () => {
     const { getByText } = setup()
     fillBoardFieldsInformation()
 
@@ -169,6 +170,10 @@ describe('Board', () => {
 
     await waitFor(() => {
       expect(getByText(RESET)).toBeVisible()
+    })
+
+    await waitFor(() => {
+      expect(getByText(VERIFIED)).toBeTruthy()
     })
   })
 

@@ -10,11 +10,10 @@ import {
 } from '@src/constants'
 import { FormEvent, useEffect, useState } from 'react'
 import {
+  ConfigSectionContainer,
   StyledButtonGroup,
   StyledForm,
-  StyledSection,
   StyledTextField,
-  StyledTitle,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
@@ -32,6 +31,7 @@ import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 import { initDeploymentFrequencySettings, updatePipelineSettings } from '@src/context/Metrics/metricsSlice'
+import { ConfigSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -145,10 +145,10 @@ export const PipelineTool = () => {
   }
 
   return (
-    <StyledSection>
+    <ConfigSectionContainer>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
-      <StyledTitle>{CONFIG_TITLE.PIPELINE_TOOL}</StyledTitle>
+      <ConfigSelectionTitle>{CONFIG_TITLE.PIPELINE_TOOL}</ConfigSelectionTitle>
       <StyledForm
         onSubmit={handleSubmitPipelineToolFields}
         onChange={updatePipelineToolFields}
@@ -182,7 +182,7 @@ export const PipelineTool = () => {
         />
         <StyledButtonGroup>
           {isVerified && !isLoading ? (
-            <VerifyButton>Verified</VerifyButton>
+            <VerifyButton disabled>Verified</VerifyButton>
           ) : (
             <VerifyButton
               data-test-id='pipelineVerifyButton'
@@ -195,6 +195,6 @@ export const PipelineTool = () => {
           {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
         </StyledButtonGroup>
       </StyledForm>
-    </StyledSection>
+    </ConfigSectionContainer>
   )
 }

@@ -83,10 +83,7 @@ public class JiraService {
 	public static final int QUERY_COUNT = 100;
 
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
-			"issuelinks");
-
-	public static final List<String> IGNORE_CUSTOM_FIELDS_NAME = List.of("Development", "Start date", "Rank",
-			"Issue color");
+			"issuelinks", "Development", "Start date", "Rank", "Issue color");
 
 	private static final String DONE_CARD_TAG = "done";
 
@@ -112,18 +109,24 @@ public class JiraService {
 		try {
 			JiraBoardConfigDTO jiraBoardConfigDTO = getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(),
 					boardRequestParam.getToken());
-			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
-			CompletableFuture<List<TargetField>> ignoredTargetFieldFuture = getIgnoredTargetFieldAsync(baseUrl,
-					boardRequestParam);
 			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequestParam, baseUrl,
 					jiraBoardConfigDTO);
+			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
+			List<TargetField> ignoredTargetFields = targetFieldFuture.join()
+				.stream()
+				.filter(this::isIgnoredTargetField)
+				.toList();
+			List<TargetField> neededTargetFields = targetFieldFuture.join()
+				.stream()
+				.filter(targetField -> !isIgnoredTargetField(targetField))
+				.toList();
 
 			return jiraColumnsFuture.thenCombine(targetFieldFuture,
 					(jiraColumnResult, targetFields) -> getUserAsync(boardType, baseUrl, boardRequestParam)
 						.thenApply(users -> BoardConfigDTO.builder()
-							.targetFields(targetFields)
+							.targetFields(neededTargetFields)
 							.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
-							.ignoredTargetFields(ignoredTargetFieldFuture.join())
+							.ignoredTargetFields(ignoredTargetFields)
 							.users(users)
 							.build())
 						.join())
@@ -139,6 +142,10 @@ public class JiraService {
 			throw new InternalServerErrorException(
 					String.format("Failed when call Jira to get board config, cause is %s", cause.getMessage()));
 		}
+	}
+
+	private boolean isIgnoredTargetField(TargetField targetField) {
+		return (FIELDS_IGNORE.contains(targetField.getKey())) || FIELDS_IGNORE.contains(targetField.getName());
 	}
 
 	public CardCollection getStoryPointsAndCycleTimeForDoneCards(StoryPointsAndCycleTimeRequest request,
@@ -418,25 +425,6 @@ public class JiraService {
 		return CompletableFuture.supplyAsync(() -> getTargetField(baseUrl, boardRequestParam), customTaskExecutor);
 	}
 
-	private CompletableFuture<List<TargetField>> getIgnoredTargetFieldAsync(URI baseUrl,
-			BoardRequestParam boardRequestParam) {
-		return CompletableFuture.supplyAsync(() -> getIgnoredTargetField(baseUrl, boardRequestParam),
-				customTaskExecutor);
-	}
-
-	private List<TargetField> getIgnoredTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
-		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(),
-				boardRequestParam.getToken());
-
-		List<Issuetype> issueTypes = fieldResponse.getProjects().get(0).getIssuetypes();
-
-		return issueTypes.stream()
-			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
-			.distinct()
-			.filter(targetField -> IGNORE_CUSTOM_FIELDS_NAME.contains(targetField.getName()))
-			.toList();
-	}
-
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
 		log.info("Start to get target field, project key: {}, board id: {},", boardRequestParam.getProjectKey(),
 				boardRequestParam.getBoardId());
@@ -451,7 +439,6 @@ public class JiraService {
 		List<TargetField> targetFields = issueTypes.stream()
 			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
 			.distinct()
-			.filter(targetField -> !IGNORE_CUSTOM_FIELDS_NAME.contains(targetField.getName()))
 			.toList();
 		log.info("Successfully get target field, project key: {}, board id: {}, target fields size: {},",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(), targetFields.size());
@@ -461,7 +448,6 @@ public class JiraService {
 	private List<TargetField> getTargetIssueField(Map<String, IssueField> fields) {
 		return fields.values()
 			.stream()
-			.filter(issueField -> !FIELDS_IGNORE.contains(issueField.getKey()))
 			.map(issueField -> new TargetField(issueField.getKey(), issueField.getName(), false))
 			.toList();
 	}

@@ -1,14 +1,16 @@
 import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
-import { StyledSection } from '@src/components/Common/ConfigForms'
 import { theme } from '@src/theme'
 
-export const PipelineMetricSelectionWrapper = styled(StyledSection)`
+export const PipelineMetricSelectionWrapper = styled('div')`
+  position: relative;
   width: 100%;
   padding: 1.5rem 0 0.5rem 0;
   border: 0.07rem solid rgba(0, 0, 0, 0.1);
   box-shadow: none;
-  margin-top: 0rem;
+  margin-bottom: 1rem;
+  line-height: '2rem';
+  boarder-radius: 0.25rem;
 `
 
 export const ButtonWrapper = styled('div')({

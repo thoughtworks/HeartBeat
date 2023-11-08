@@ -11,4 +11,5 @@ export const ResetButton = styled(Button)({
   fontSize: '0.8rem',
   fontWeight: '550',
   color: '#f44336',
+  marginLeft: '0.5rem',
 })

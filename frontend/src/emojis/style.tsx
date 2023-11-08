@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import { Avatar } from '@mui/material'
+import { Avatar, Typography } from '@mui/material'
 
 export const StyledAvatar = styled(Avatar)({
   width: '1.25rem',
@@ -10,4 +10,8 @@ export const StyledAvatar = styled(Avatar)({
 export const EmojiWrap = styled('div')({
   display: 'flex',
   alignItems: 'center',
+})
+
+export const StyledTypography = styled(Typography)({
+  fontSize: '0.88rem',
 })

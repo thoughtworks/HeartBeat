@@ -33,7 +33,7 @@ export const fillPipelineToolFieldsInformation = async () => {
 let store = null
 
 const server = setupServer(
-  rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
     res(
       ctx.json({
         pipelineList: [
@@ -191,7 +191,7 @@ describe('PipelineTool', () => {
 
   it('should check error notification show when pipelineTool verify response status is 401', async () => {
     server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+      rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
       )
     )

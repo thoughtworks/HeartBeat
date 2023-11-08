@@ -5,7 +5,7 @@ import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient'
 import { HttpStatusCode } from 'axios'
 
 const server = setupServer(
-  rest.get(MOCK_PIPELINE_URL, (req, res, ctx) => {
+  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) => {
     return res(ctx.status(HttpStatusCode.Ok))
   })
 )
@@ -22,7 +22,7 @@ describe('verify pipelineTool request', () => {
 
   it('should throw error when pipelineTool verify response status 400', async () => {
     server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+      rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST }))
       )
     )
@@ -33,7 +33,7 @@ describe('verify pipelineTool request', () => {
 
   it('should throw error when pipelineTool verify response status is 401', async () => {
     server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+      rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
       )
     )
@@ -44,7 +44,7 @@ describe('verify pipelineTool request', () => {
 
   it('should throw error when pipelineTool verify response status is 403', async () => {
     server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+      rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.Forbidden), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.PERMISSION_DENIED }))
       )
     )
@@ -55,7 +55,7 @@ describe('verify pipelineTool request', () => {
 
   it('should throw error when pipelineTool verify response status 500', async () => {
     server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+      rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
         res(
           ctx.status(HttpStatusCode.InternalServerError),
           ctx.json({
@@ -71,7 +71,7 @@ describe('verify pipelineTool request', () => {
 
   it('should throw error when board verify response status 300', async () => {
     server.use(
-      rest.get(MOCK_PIPELINE_URL, (req, res, ctx) =>
+      rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
         res(
           ctx.status(HttpStatusCode.MultipleChoices),
           ctx.json({

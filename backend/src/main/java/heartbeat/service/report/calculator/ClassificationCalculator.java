@@ -111,7 +111,7 @@ public class ClassificationCalculator {
 		}
 	}
 
-	private static String pickDisplayNameFromObj(Object object) {
+	public static String pickDisplayNameFromObj(Object object) {
 		if (object instanceof ICardFieldDisplayName) {
 			return ((ICardFieldDisplayName) object).getDisplayName();
 		}
@@ -147,7 +147,6 @@ public class ClassificationCalculator {
 		return value.replaceAll("\"", "");
 	}
 
-	// TODO private to public
 	public Map<String, Object> extractFields(JiraCardField jiraCardFields) {
 		Map<String, Object> tempFields = new HashMap<>();
 		for (Map.Entry<String, JsonElement> entry : jiraCardFields.getCustomFields().entrySet()) {

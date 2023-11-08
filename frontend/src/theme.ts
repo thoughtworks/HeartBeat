@@ -40,6 +40,11 @@ export const theme = createTheme({
     primary: {
       main: indigo[FIVE_HUNDRED],
     },
+    secondary: {
+      main: indigo[FIVE_HUNDRED],
+      dark: '#f7f7f7',
+      contrastText: '#000000A6',
+    },
     info: {
       main: '#3498db',
       light: '#b9c4cc',

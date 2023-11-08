@@ -12,6 +12,7 @@ export const MetricSelectionWrapper = styled('div')({
   borderRadius: '0.75rem',
   border: '0.1rem',
   boxShadow: '0 0.25rem 1rem 0 rgba(0, 0, 0, 0.08)',
+  position: 'relative',
 })
 
 export const MetricsSelectionTitle = styled(Divider)({
@@ -21,5 +22,7 @@ export const MetricsSelectionTitle = styled(Divider)({
 })
 
 export const ReportSelectionTitle = styled(MetricsSelectionTitle)({
-  marginBottom: '1rem',
+  marginBottom: '1.5rem',
 })
+
+export const ConfigSelectionTitle = styled(ReportSelectionTitle)({})

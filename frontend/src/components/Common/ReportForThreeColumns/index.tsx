@@ -1,10 +1,16 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
-import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style'
+import { Table, TableBody, TableHead, TableRow, Typography } from '@mui/material'
+import {
+  BorderTableCell,
+  ColumnTableCell,
+  Container,
+  Row,
+  StyledTableCell,
+} from '@src/components/Common/ReportForTwoColumns/style'
 import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { AVERAGE_FIELD, Unit } from '@src/constants'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
-import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
+import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style'
 import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 
 interface ReportForThreeColumnsProps {
@@ -22,27 +28,27 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
       const [prefix, suffix] = row.name.split('/')
       return (
         <EmojiWrap>
-          <Typography>{prefix}/</Typography>
+          <StyledTypography>{prefix}/</StyledTypography>
           {emojiUrls.map((url) => (
             <StyledAvatar key={url} src={url} />
           ))}
-          <Typography>{removeExtraEmojiName(suffix)}</Typography>
+          <StyledTypography>{removeExtraEmojiName(suffix)}</StyledTypography>
         </EmojiWrap>
       )
     }
-    return <Typography>{name}</Typography>
+    return <StyledTypography>{name}</StyledTypography>
   }
 
   const renderRows = () =>
     data.slice(0, data.length === 2 && data[1].name === AVERAGE_FIELD ? 1 : data.length).map((row) => (
       <Fragment key={row.id}>
         <TableRow>
-          <TableCell rowSpan={row.valuesList.length + 1}>{emojiRow(row)}</TableCell>
+          <ColumnTableCell rowSpan={row.valuesList.length + 1}>{emojiRow(row)}</ColumnTableCell>
         </TableRow>
         {row.valuesList.map((valuesList) => (
           <Row key={valuesList.name}>
-            <TableCell>{valuesList.name}</TableCell>
-            <TableCell>{valuesList.value}</TableCell>
+            <BorderTableCell>{valuesList.name}</BorderTableCell>
+            <BorderTableCell>{valuesList.value}</BorderTableCell>
           </Row>
         ))}
       </Fragment>
@@ -55,11 +61,11 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
         <Table data-test-id={title}>
           <TableHead>
             <TableRow>
-              <TableCell>{fieldName}</TableCell>
-              <TableCell>{listName}</TableCell>
-              <TableCell>
+              <StyledTableCell>{fieldName}</StyledTableCell>
+              <StyledTableCell>{listName}</StyledTableCell>
+              <StyledTableCell>
                 Value{title === 'Lead time for changes' || title === 'Mean Time To Recovery' ? Unit.HOURS : ''}
-              </TableCell>
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>{renderRows()}</TableBody>

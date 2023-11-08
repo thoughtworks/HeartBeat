@@ -65,13 +65,13 @@ describe('PipelineTool', () => {
   })
 
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
-    const { getByRole, getByLabelText } = setup()
+    const { getByLabelText, getAllByText } = setup()
 
     PIPELINE_TOOL_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
     })
 
-    expect(getByRole('heading', { name: CONFIG_TITLE.PIPELINE_TOOL })).toBeInTheDocument()
+    expect(getAllByText(CONFIG_TITLE.PIPELINE_TOOL)[0]).toBeInTheDocument()
   })
 
   it('should show default value buildKite when init pipelineTool component', () => {

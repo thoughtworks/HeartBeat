@@ -54,12 +54,12 @@ describe('Board', () => {
   })
 
   it('should show board title and fields when render board component ', () => {
-    const { getByRole, getByLabelText } = setup()
+    const { getByLabelText, getAllByText } = setup()
 
     BOARD_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
     })
-    expect(getByRole('heading', { name: CONFIG_TITLE.BOARD })).toBeInTheDocument()
+    expect(getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument()
   })
 
   it('should show default value jira when init board component', () => {

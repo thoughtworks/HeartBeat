@@ -58,9 +58,9 @@ describe('SourceControl', () => {
   })
 
   it('should show sourceControl title and fields when render sourceControl component', () => {
-    const { getByRole, getByLabelText } = setup()
+    const { getByLabelText, getAllByText } = setup()
 
-    expect(getByRole('heading', { name: CONFIG_TITLE.SOURCE_CONTROL })).toBeInTheDocument()
+    expect(getAllByText(CONFIG_TITLE.SOURCE_CONTROL)[0]).toBeInTheDocument()
     SOURCE_CONTROL_FIELDS.map((field) => {
       expect(getByLabelText(`${field} *`)).toBeInTheDocument()
     })

@@ -1,5 +1,11 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-import { Container, Row } from '@src/components/Common/ReportForTwoColumns/style'
+import { Table, TableBody, TableHead, TableRow } from '@mui/material'
+import {
+  BorderTableCell,
+  ColumnTableCell,
+  Container,
+  Row,
+  StyledTableCell,
+} from '@src/components/Common/ReportForTwoColumns/style'
 import { Fragment } from 'react'
 import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
@@ -14,14 +20,14 @@ export const ReportForTwoColumns = ({ title, data }: ReportForTwoColumnsProps) =
     return data.map((row) => (
       <Fragment key={row.id}>
         <Row>
-          <TableCell rowSpan={row.valueList.length}>{row.name}</TableCell>
-          <TableCell>
+          <ColumnTableCell rowSpan={row.valueList.length}>{row.name}</ColumnTableCell>
+          <BorderTableCell>
             {row.valueList[0]?.unit ? `${row.valueList[0].value}${row.valueList[0].unit}` : row.valueList[0].value}
-          </TableCell>
+          </BorderTableCell>
         </Row>
         {row.valueList.slice(1).map((data) => (
           <Row key={row.id}>
-            <TableCell>{`${data.value}${data.unit}`}</TableCell>
+            <BorderTableCell>{`${data.value}${data.unit}`}</BorderTableCell>
           </Row>
         ))}
       </Fragment>
@@ -35,8 +41,8 @@ export const ReportForTwoColumns = ({ title, data }: ReportForTwoColumnsProps) =
         <Table data-test-id={title}>
           <TableHead>
             <TableRow id={title}>
-              <TableCell>Name</TableCell>
-              <TableCell>Value</TableCell>
+              <StyledTableCell>Name</StyledTableCell>
+              <StyledTableCell>Value</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody key={title}>{renderRows()}</TableBody>

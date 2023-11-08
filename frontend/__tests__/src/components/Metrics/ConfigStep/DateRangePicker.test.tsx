@@ -30,8 +30,8 @@ describe('DateRangePicker', () => {
   it('should render DateRangePicker', () => {
     const { queryAllByText } = setup()
 
-    expect(queryAllByText(START_DATE_LABEL)).toHaveLength(2)
-    expect(queryAllByText(END_DATE_LABEL)).toHaveLength(2)
+    expect(queryAllByText(START_DATE_LABEL)).toHaveLength(1)
+    expect(queryAllByText(END_DATE_LABEL)).toHaveLength(1)
   })
 
   it('should show right start date when input a valid date given init start date is null ', () => {

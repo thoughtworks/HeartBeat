@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
@@ -50,11 +52,14 @@ public class BuildKiteControllerTest {
 				});
 		BuildKiteResponseDTO buildKiteResponseDTO = BuildKiteResponseDTO.builder().pipelineList(pipelines).build();
 		when(buildKiteService.fetchPipelineInfo(any())).thenReturn(buildKiteResponseDTO);
+		PipelineParam pipelineParam = PipelineParam.builder()
+			.token("test_token")
+			.startTime("16737733")
+			.endTime("17657557")
+			.build();
 		MockHttpServletResponse response = mockMvc
-			.perform(get("/pipelines/buildKite").contentType(MediaType.APPLICATION_JSON)
-				.queryParam("token", "test_token")
-				.queryParam("startTime", "16737733")
-				.queryParam("endTime", "17657557"))
+			.perform(post("/pipelines/buildKite").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(pipelineParam)))
 			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();

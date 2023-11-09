@@ -2,14 +2,14 @@ package heartbeat.controller.board;
 
 import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_CONFIG_RESPONSE_BUILDER;
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
-import static heartbeat.controller.board.BoardRequestFixture.buildParameter;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.exception.RequestFailedException;
@@ -20,9 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.MultiValueMap;
 
 @WebMvcTest(JiraController.class)
 @ExtendWith(SpringExtension.class)
@@ -39,11 +39,12 @@ public class JiraControllerTest {
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
 		BoardConfigDTO boardConfigDTO = BOARD_CONFIG_RESPONSE_BUILDER().build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
 
 		when(jiraService.getJiraConfiguration(any(), any())).thenReturn(boardConfigDTO);
 
-		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters))
+		mockMvc
+			.perform(post("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"))
 			.andExpect(jsonPath("$.users[0]").value("Zhang San"))
@@ -59,27 +60,31 @@ public class JiraControllerTest {
 		when(mockException.getStatus()).thenReturn(400);
 
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
 
-		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters))
+		mockMvc
+			.perform(post("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value(message));
 	}
 
 	@Test
 	void shouldVerifyRequestTokenNotBlank() throws Exception {
-		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token("").build();
-		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token(null).build();
 
-		mockMvc.perform(get("/boards/{boardType}", "jira").params(parameters)).andExpect(status().isBadRequest());
+		mockMvc
+			.perform(post("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void shouldThrowExceptionWhenBoardTypeNotSupported() throws Exception {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token("").build();
-		MultiValueMap<String, String> parameters = buildParameter(boardRequestParam);
 
-		mockMvc.perform(get("/boards/{boardType}", "invalid").params(parameters))
+		mockMvc
+			.perform(post("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").isNotEmpty());
 	}

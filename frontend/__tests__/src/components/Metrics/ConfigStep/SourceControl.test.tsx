@@ -31,7 +31,7 @@ export const fillSourceControlFieldsInformation = () => {
 let store = null
 
 const server = setupServer(
-  rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+  rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
     res(
       ctx.json({
         githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
@@ -145,7 +145,7 @@ describe('SourceControl', () => {
 
   it('should show error notification when sourceControl verify response status is 401', async () => {
     server.use(
-      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+      rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
       )
     )

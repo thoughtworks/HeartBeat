@@ -294,9 +294,7 @@ public class CSVFileGenerator {
 			if (extraField.getLabel().contains("OriginCycleTime")) {
 				return "0";
 			}
-			else {
-				return "";
-			}
+			return "";
 		}
 		else if (fieldValue instanceof Double) {
 			return DecimalUtil.formatDecimalTwo((Double) fieldValue);
@@ -313,9 +311,7 @@ public class CSVFileGenerator {
 			}
 			return StringUtils.join(objectList, ",");
 		}
-		else {
-			return pickDisplayNameFromObj(fieldValue);
-		}
+		return pickDisplayNameFromObj(fieldValue);
 	}
 
 }

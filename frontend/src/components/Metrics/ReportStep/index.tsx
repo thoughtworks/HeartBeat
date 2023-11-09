@@ -115,6 +115,7 @@ const ReportStep = () => {
 
   const msg = `${email}:${token}`
   const encodeToken = `Basic ${btoa(msg)}`
+  const filteredCycleTime = cycleTimeSettings.filter((item) => item.value != '----')
   const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,
     startTime: dayjs(startDate).valueOf().toString(),
@@ -136,7 +137,7 @@ const ReportStep = () => {
       site,
       projectKey,
       boardId,
-      boardColumns: cycleTimeSettings.filter((item) => item.value != '----'),
+      boardColumns: filteredCycleTime,
       treatFlagCardAsBlock,
       users,
       assigneeFilter,

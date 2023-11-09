@@ -13,16 +13,28 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import {
+  BOARD_TYPES,
   HOME_PAGE_ROUTE,
   METRICS_CONSTANTS,
   PIPELINE_SETTING_TYPES,
+  PIPELINE_TOOL_TYPES,
   REQUIRED_DATA,
   SAVE_CONFIG_TIPS,
+  SOURCE_CONTROL_TYPES,
   STEPS,
 } from '@src/constants'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
-import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
+import {
+  selectConfig,
+  selectMetrics,
+  updateBoard,
+  updateBoardVerifyState,
+  updatePipelineTool,
+  updatePipelineToolVerifyState,
+  updateSourceControl,
+  updateSourceControlVerifyState,
+} from '@src/context/config/configSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { Tooltip } from '@mui/material'
 import { exportToJsonFile } from '@src/utils/util'
@@ -191,6 +203,11 @@ const MetricsStepper = () => {
     if (activeStep === 1) {
       dispatch(updateTimeStamp(new Date().getTime()))
     }
+    if (activeStep === 0) {
+      cleanBoardState()
+      cleanPipelineToolConfiguration()
+      cleanSourceControlState()
+    }
     dispatch(nextStep())
   }
 
@@ -207,6 +224,35 @@ const MetricsStepper = () => {
 
   const CancelDialog = () => {
     setIsDialogShowing(false)
+  }
+
+  const cleanPipelineToolConfiguration = () => {
+    !isShowPipeline && dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
+    isShowPipeline
+      ? dispatch(updatePipelineToolVerifyState(isPipelineToolVerified))
+      : dispatch(updatePipelineToolVerifyState(false))
+  }
+
+  const cleanSourceControlState = () => {
+    !isShowSourceControl && dispatch(updateSourceControl({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' }))
+    isShowSourceControl
+      ? dispatch(updateSourceControlVerifyState(isSourceControlVerified))
+      : dispatch(updateSourceControlVerifyState(false))
+  }
+
+  const cleanBoardState = () => {
+    !isShowBoard &&
+      dispatch(
+        updateBoard({
+          type: BOARD_TYPES.JIRA,
+          boardId: '',
+          email: '',
+          projectKey: '',
+          site: '',
+          token: '',
+        })
+      )
+    isShowBoard ? dispatch(updateBoardVerifyState(isBoardVerified)) : dispatch(updateBoardVerifyState(false))
   }
 
   return (

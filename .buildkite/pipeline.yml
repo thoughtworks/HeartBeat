@@ -35,11 +35,12 @@ steps:
           expire_in: "${RETENTION_DAYS} days"
 
   - label: ":cloudformation: Deploy infra"
-    if:  build.branch == "main" && build.message =~ /\[infra\]/
+    if: build.branch == "main" && build.message =~ /\[infra\]/
     key: "deploy-infra"
     depends_on:
       - "check-shell"
       - "check-security"
+      - "check-frontend"
       - "check-backend"
       - "check-frontend-license"
       - "check-backend-license"
@@ -50,25 +51,25 @@ steps:
     command: ./ops/deploy.sh infra
 
   - label: ":react: Build Frontend"
-    if:  build.branch == "main" && build.message =~ /\[frontend\]/
+    if: build.branch == "main" && build.message =~ /\[frontend\]/
     key: "build-frontend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh frontend
 
   - label: ":java: Build Backend"
-    if:  build.branch == "main" && build.message =~ /\[backend\]/
+    if: build.branch == "main" && build.message =~ /\[backend\]/
     key: "build-backend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh backend
 
   - label: ":rocket: Build Stub"
-    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    if: build.branch == "main" && build.message =~ /\[stub\]/
     key: "build-stub"
     depends_on: "deploy-infra"
     command: ./ops/build.sh stub
 
   - label: ":rocket: Deploy Stub"
-    if:  build.branch == "main" && build.message =~ /\[stub\]/
+    if: build.branch == "main" && build.message =~ /\[stub\]/
     key: "deploy-stub"
     depends_on: "build-stub"
     command: ./ops/deploy.sh stub
@@ -89,6 +90,7 @@ steps:
       - "deploy-stub"
       - "check-shell"
       - "check-security"
+      - "check-frontend"
       - "check-backend"
       - "check-frontend-license"
       - "check-backend-license"

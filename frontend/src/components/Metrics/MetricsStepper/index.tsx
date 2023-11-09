@@ -205,7 +205,7 @@ const MetricsStepper = () => {
     }
     if (activeStep === 0) {
       cleanBoardState()
-      cleanPipelineToolState()
+      cleanPipelineToolConfiguration()
       cleanSourceControlState()
     }
     dispatch(nextStep())
@@ -226,7 +226,7 @@ const MetricsStepper = () => {
     setIsDialogShowing(false)
   }
 
-  const cleanPipelineToolState = () => {
+  const cleanPipelineToolConfiguration = () => {
     !isShowPipeline && dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }))
     isShowPipeline
       ? dispatch(updatePipelineToolVerifyState(isPipelineToolVerified))

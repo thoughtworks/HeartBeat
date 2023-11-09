@@ -16,9 +16,12 @@ import {
 } from '../../../fixtures'
 import userEvent from '@testing-library/user-event'
 import {
+  updateBoard,
   updateBoardVerifyState,
   updateMetrics,
+  updatePipelineTool,
   updatePipelineToolVerifyState,
+  updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice'
 import dayjs from 'dayjs'
@@ -35,7 +38,7 @@ import {
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { exportToJsonFile } from '@src/utils/util'
-import { ASSIGNEE_FILTER_TYPES } from '@src/constants'
+import { ASSIGNEE_FILTER_TYPES, BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 const START_DATE_LABEL = 'From *'
 const TODAY = dayjs()
@@ -66,6 +69,9 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectPipelineNames: jest.fn().mockReturnValue(['mock new pipelineName']),
   selectSteps: jest.fn().mockReturnValue(['mock new step']),
   selectBranches: jest.fn().mockReturnValue(['mock new branch']),
+  updateSourceControl: jest.fn().mockReturnValue({ type: 'UPDATE_SOURCE_CONTROL' }),
+  updatePipelineTool: jest.fn().mockReturnValue({ type: 'UPDATE_PIPELINE_TOOL' }),
+  updateBoard: jest.fn().mockReturnValue({ type: 'UPDATE_BOARD' }),
 }))
 
 jest.mock('@src/emojis/emoji', () => ({
@@ -328,5 +334,23 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
+  }, 50000)
+
+  it('should clean the config information that is hidden when click next button', async () => {
+    const { getByText } = setup()
+
+    await fillConfigPageData()
+    await userEvent.click(getByText(NEXT))
+
+    expect(updateBoard).not.toHaveBeenCalledWith({
+      type: BOARD_TYPES.JIRA,
+      boardId: '',
+      email: '',
+      projectKey: '',
+      site: '',
+      token: '',
+    })
+    expect(updateSourceControl).toHaveBeenCalledWith({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' })
+    expect(updatePipelineTool).toHaveBeenCalledWith({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' })
   }, 50000)
 })

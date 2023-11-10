@@ -37,7 +37,7 @@ import {
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
-import { exportToJsonFile } from '@src/utils/util'
+import { exportToJsonFile, findCaseInsensitiveType } from '@src/utils/util'
 import { ASSIGNEE_FILTER_TYPES, BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 const START_DATE_LABEL = 'From *'
@@ -83,6 +83,7 @@ jest.mock('@src/utils/util', () => ({
   exportToJsonFile: jest.fn(),
   getJiraBoardToken: jest.fn(),
   transformToCleanedBuildKiteEmoji: jest.fn(),
+  findCaseInsensitiveType: jest.fn(),
 }))
 
 const server = setupServer(rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))

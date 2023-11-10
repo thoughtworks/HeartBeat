@@ -36,3 +36,8 @@ export const getJiraBoardToken = (token: string, email: string) => {
     return ''
   }
 }
+
+export const findCaseInsensitiveType = (option: string[], value: string): string => {
+  const newValue = option.find((item) => value.toLowerCase() === item.toLowerCase())
+  return newValue ? newValue : value
+}

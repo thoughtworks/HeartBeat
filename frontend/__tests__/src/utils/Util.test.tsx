@@ -1,4 +1,4 @@
-import { exportToJsonFile, transformToCleanedBuildKiteEmoji } from '@src/utils/util'
+import { exportToJsonFile, getJiraBoardToken, transformToCleanedBuildKiteEmoji } from '@src/utils/util'
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
 
 describe('exportToJsonFile function', () => {
@@ -29,5 +29,26 @@ describe('transformToCleanedBuildKiteEmoji function', () => {
     const [result] = transformToCleanedBuildKiteEmoji([mockOriginEmoji])
 
     expect(result).toEqual(expectedCleanedEmoji)
+  })
+})
+
+describe('getJiraToken function', () => {
+  it('should return an valid string when token is not empty string', () => {
+    const email = 'test@example.com'
+    const token = 'myToken'
+
+    const jiraToken = getJiraBoardToken(token, email)
+    const encodedMsg = `Basic ${btoa(`${email}:${token}`)}`
+
+    expect(jiraToken).toBe(encodedMsg)
+  })
+
+  it('should return an empty string when token is missing', () => {
+    const email = 'test@example.com'
+    const token = ''
+
+    const jiraToken = getJiraBoardToken(token, email)
+
+    expect(jiraToken).toBe('')
   })
 })

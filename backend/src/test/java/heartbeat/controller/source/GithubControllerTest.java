@@ -72,7 +72,9 @@ class GithubControllerTest {
 	void shouldReturnBadRequestWhenRequestParamPatternIsIncorrect() throws Exception {
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token("12345").build();
 
-		final var response = mockMvc.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO)).contentType(MediaType.APPLICATION_JSON))
+		final var response = mockMvc
+			.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO))
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();

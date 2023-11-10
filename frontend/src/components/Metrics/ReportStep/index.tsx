@@ -26,6 +26,7 @@ import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
+import { getJiraBoardToken } from '@src/utils/util'
 
 const ReportStep = () => {
   const dispatch = useAppDispatch()
@@ -113,9 +114,8 @@ const ReportStep = () => {
     }[]
   }
 
-  const msg = `${email}:${token}`
-  const encodeToken = `Basic ${btoa(msg)}`
   const filteredCycleTime = cycleTimeSettings.filter((item) => item.value != '----')
+  const jiraToken = getJiraBoardToken(token, email)
   const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,
     startTime: dayjs(startDate).valueOf().toString(),
@@ -132,7 +132,7 @@ const ReportStep = () => {
       leadTime: getPipelineConfig(leadTimeForChanges),
     },
     jiraBoardSetting: {
-      token: encodeToken,
+      token: jiraToken,
       type: type.toLowerCase().replace(' ', '-'),
       site,
       projectKey,

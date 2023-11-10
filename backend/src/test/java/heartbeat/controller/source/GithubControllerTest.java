@@ -1,7 +1,9 @@
 package heartbeat.controller.source;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.source.dto.GitHubResponse;
+import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.service.source.github.GitHubService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,15 +46,18 @@ class GithubControllerTest {
 		GitHubResponse githubReposResponse = GitHubResponse.builder().githubRepos(repos).build();
 
 		when(gitHubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
+		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
 
-		mockMvc.perform(post("/source-control").content(GITHUB_TOKEN).contentType(MediaType.APPLICATION_JSON))
+		mockMvc
+			.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO))
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
 			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));
 	}
 
 	@Test
-	void shouldReturnBadRequestWhenRequestParamIsBlank() throws Exception {
+	void shouldReturnBadRequestWhenRequestBodyIsBlank() throws Exception {
 		final var response = mockMvc.perform(post("/source-control"))
 			.andExpect(status().isInternalServerError())
 			.andReturn()
@@ -65,14 +70,16 @@ class GithubControllerTest {
 
 	@Test
 	void shouldReturnBadRequestWhenRequestParamPatternIsIncorrect() throws Exception {
-		final var response = mockMvc.perform(post("/source-control").content("12345"))
+		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token("12345").build();
+
+		final var response = mockMvc.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO)).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();
 
 		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.message").toString();
-		assertThat(result).isEqualTo("getRepos.token: token's pattern is incorrect");
+		final var result = JsonPath.parse(content).read("$.token").toString();
+		assertThat(result).isEqualTo("token's pattern is incorrect");
 	}
 
 }

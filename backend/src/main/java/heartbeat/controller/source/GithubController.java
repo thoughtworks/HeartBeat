@@ -1,7 +1,9 @@
 package heartbeat.controller.source;
 
 import heartbeat.controller.source.dto.GitHubResponse;
+import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.service.source.github.GitHubService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,10 +29,9 @@ public class GithubController {
 	@PostMapping
 	@CrossOrigin
 	@ResponseStatus(HttpStatus.OK)
-	public GitHubResponse getRepos(@RequestBody @Pattern(regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$",
-			message = "token's pattern is incorrect") String token) {
+	public GitHubResponse getRepos(@RequestBody @Valid SourceControlDTO sourceControlDTO) {
 		log.info("Start to get repos by token");
-		GitHubResponse gitHubRepos = gitHubService.verifyToken(token);
+		GitHubResponse gitHubRepos = gitHubService.verifyToken(sourceControlDTO.getToken());
 		log.info("Successfully get the repos by token, repos size: {}", gitHubRepos.getGithubRepos().size());
 		return gitHubRepos;
 

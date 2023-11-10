@@ -4,7 +4,7 @@ import { MOCK_SOURCE_CONTROL_URL, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VER
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient'
 import { HttpStatusCode } from 'axios'
 
-const server = setupServer(rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))))
+const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))))
 
 describe('verify sourceControl request', () => {
   beforeAll(() => server.listen())
@@ -18,7 +18,7 @@ describe('verify sourceControl request', () => {
 
   it('should throw error when sourceControl verify response status is 400', () => {
     server.use(
-      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+      rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST }))
       )
     )
@@ -31,7 +31,7 @@ describe('verify sourceControl request', () => {
 
   it('should throw error when sourceControl verify response status is 404', async () => {
     server.use(
-      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+      rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.NotFound), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.NOT_FOUND }))
       )
     )
@@ -44,7 +44,7 @@ describe('verify sourceControl request', () => {
 
   it('should throw error when sourceControl verify response status 500', async () => {
     server.use(
-      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+      rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
         res(
           ctx.status(HttpStatusCode.InternalServerError),
           ctx.json({
@@ -62,7 +62,7 @@ describe('verify sourceControl request', () => {
 
   it('should throw error when sourceControl verify response status is 300', async () => {
     server.use(
-      rest.get(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
+      rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
         res(
           ctx.status(HttpStatusCode.MultipleChoices),
           ctx.json({

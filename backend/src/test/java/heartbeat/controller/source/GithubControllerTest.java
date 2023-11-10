@@ -1,7 +1,9 @@
 package heartbeat.controller.source;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.source.dto.GitHubResponse;
+import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.service.source.github.GitHubService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,35 +46,40 @@ class GithubControllerTest {
 		GitHubResponse githubReposResponse = GitHubResponse.builder().githubRepos(repos).build();
 
 		when(gitHubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
+		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
 
-		mockMvc.perform(get("/source-control").param("token", GITHUB_TOKEN).contentType(MediaType.APPLICATION_JSON))
+		mockMvc
+			.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO))
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
 			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));
 	}
 
 	@Test
-	void shouldReturnBadRequestWhenRequestParamIsBlank() throws Exception {
-		final var response = mockMvc.perform(get("/source-control?token=   ").contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
+	void shouldReturnBadRequestWhenRequestBodyIsBlank() throws Exception {
+		final var response = mockMvc.perform(post("/source-control"))
+			.andExpect(status().isInternalServerError())
 			.andReturn()
 			.getResponse();
 
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.message").toString();
-		assertThat(result).contains("getRepos.token: token must not be blank");
+		assertThat(result).contains("Required request body is missing");
 	}
 
 	@Test
 	void shouldReturnBadRequestWhenRequestParamPatternIsIncorrect() throws Exception {
-		final var response = mockMvc.perform(get("/source-control?token=12345").contentType(MediaType.APPLICATION_JSON))
+		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token("12345").build();
+
+		final var response = mockMvc.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO)).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();
 
 		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.message").toString();
-		assertThat(result).isEqualTo("getRepos.token: token's pattern is incorrect");
+		final var result = JsonPath.parse(content).read("$.token").toString();
+		assertThat(result).isEqualTo("token's pattern is incorrect");
 	}
 
 }

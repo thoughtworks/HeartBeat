@@ -32,6 +32,7 @@ import { Loading } from '@src/components/Loading'
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 import { initDeploymentFrequencySettings, updatePipelineSettings } from '@src/context/Metrics/metricsSlice'
 import { ConfigSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
+import { findCaseInsensitiveType } from '@src/utils/util'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -40,10 +41,11 @@ export const PipelineTool = () => {
   const isVerified = useAppSelector(isPipelineToolVerified)
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
   const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect()
+  const type = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), pipelineToolFields.type)
   const [fields, setFields] = useState([
     {
       key: 'PipelineTool',
-      value: pipelineToolFields.type,
+      value: type,
       isValid: true,
       isRequired: true,
     },

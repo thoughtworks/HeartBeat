@@ -53,12 +53,6 @@ public class RestResponseEntityExceptionHandler {
 			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Token is incorrect"));
 	}
 
-	@ExceptionHandler(value = RateLimitExceededException.class)
-	protected ResponseEntity<Object> handleRateLimitExceededException(RateLimitExceededException ex) {
-		return ResponseEntity.status(ex.getStatus())
-			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "GitHub api rate limit"));
-	}
-
 	@ExceptionHandler(value = PermissionDenyException.class)
 	protected ResponseEntity<Object> handlePermissionDenyException(PermissionDenyException ex) {
 		return ResponseEntity.status(ex.getStatus())

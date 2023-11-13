@@ -14,12 +14,11 @@ import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
-import heartbeat.exception.RateLimitExceededException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -397,12 +396,12 @@ class GithubServiceTest {
 	}
 
 	@Test
-    public void shouldThrowRateLimitExceededExceptionWhenFetchCommitInfoRateLimit() {
+    public void shouldThrowPermissionDenyExceptionWhenFetchCommitInfo403Forbidden() {
         when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString()))
-                .thenThrow(new RateLimitExceededException("request forbidden"));
+                .thenThrow(new PermissionDenyException("request forbidden"));
 
         assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "org/repo", "mockToken"))
-                .isInstanceOf(RateLimitExceededException.class)
+                .isInstanceOf(PermissionDenyException.class)
                 .hasMessageContaining("request forbidden");
     }
 

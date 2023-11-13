@@ -166,19 +166,6 @@ class RestResponseEntityExceptionHandlerTest {
 	}
 
 	@Test
-	public void shouldHandleRateLimitExceededException() {
-		RateLimitExceededException ex = new RateLimitExceededException("Rate limit");
-
-		ResponseEntity<Object> response = restExceptionHandler.handleRateLimitExceededException(ex);
-
-		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-		assertNotNull(response.getBody());
-		assertTrue(response.getBody() instanceof RestApiErrorResponse);
-		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
-		assertEquals("Rate limit", errorResponse.getMessage());
-	}
-
-	@Test
 	public void shouldHandleFileIOException() {
 		FileIOException ex = new FileIOException(new IOException("File read failed"));
 

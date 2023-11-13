@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
-import heartbeat.controller.report.dto.response.BoardCSVConfig;
-import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
-import heartbeat.controller.report.dto.response.LeadTimeInfo;
-import heartbeat.controller.report.dto.response.PipelineCSVInfo;
+import heartbeat.controller.report.dto.response.*;
 import heartbeat.exception.FileIOException;
 import heartbeat.util.DecimalUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +19,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,8 +107,69 @@ public class CSVFileGenerator {
 		}
 	}
 
+	public void convertMetricDataToCSV(ReportResponse reportResponse, String csvTimeStamp) {
+		log.info("Start to create csv directory");
+		boolean created = createCsvDirectory();
+		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
+		log.info(message);
+
+		String fileName = CSVFileNameEnum.METRIC.getValue() + "-" + csvTimeStamp + ".csv";
+		File file = new File(fileName);
+
+		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
+			String[] headers = {"Group", "Metrics", "Value"};
+
+			csvWriter.writeNext(headers);
+
+			Field[] fields = reportResponse.getClass().getDeclaredFields();
+
+			for (Field field : fields) {
+				field.setAccessible(true);
+				try {
+					Object fieldValue = field.get(reportResponse);
+					if (fieldValue == null) {
+						continue;
+					}
+					switch (field.getName()) {
+						case "velocity" -> {
+							Velocity velocity = (Velocity) fieldValue;
+							getRowsFormVelocity(velocity).forEach(csvWriter::writeNext);
+						}
+						case "classificationList" -> {
+							List<Classification> classificationList = (List<Classification>) fieldValue;
+							classificationList.forEach(classification -> getRowsFormClassification(classification).forEach(csvWriter::writeNext));
+						}
+						default -> {
+						}
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (IOException e) {
+			log.error("Failed to write file", e);
+			throw new FileIOException(e);
+		}
+	}
+
+	private List<String[]> getRowsFormVelocity(Velocity velocity) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[]{"Velocity", "Velocity(Story Point)", String.valueOf(velocity.getVelocityForSP())});
+		rows.add(new String[]{"Velocity", "Throughput(Cards Count)", String.valueOf(velocity.getVelocityForCards())});
+		return rows;
+	}
+
+	private List<String[]> getRowsFormClassification(Classification classificationList) {
+		List<String[]> rows = new ArrayList<>();
+		String fieldName = String.valueOf((classificationList.getFieldName()));
+		List<ClassificationNameValuePair> pairList = classificationList.getPairList();
+		pairList.forEach(nameValuePair -> rows.add(new String[]{"Classifications", fieldName + "/" + nameValuePair.getName(), String.valueOf((Math.round(nameValuePair.getValue()*10000))/100.0)}));
+		return rows;
+	}
+
 	public InputStreamResource getDataFromCSV(String dataType, long csvTimeStamp) {
 		return switch (dataType) {
+			case "metric" -> readStringFromCsvFile(CSVFileNameEnum.METRIC.getValue() + "-" + csvTimeStamp + ".csv");
 			case "pipeline" -> readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
 			case "board" -> readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv");
 			default -> new InputStreamResource(new ByteArrayInputStream("".getBytes()));

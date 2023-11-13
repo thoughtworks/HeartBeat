@@ -227,6 +227,7 @@ public class GenerateReporterService {
 				}
 			}
 		});
+		generateCSVForMetric(reportResponse, request.getCsvTimeStamp());
 
 		return reportResponse;
 	}
@@ -542,6 +543,10 @@ public class GenerateReporterService {
 				request.getBuildKiteSetting().getDeploymentEnvList());
 
 		csvFileGenerator.convertPipelineDataToCSV(pipelineData, request.getCsvTimeStamp());
+	}
+
+	private void generateCSVForMetric(ReportResponse reportResponse, String csvTimeStamp) {
+		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,

@@ -37,7 +37,7 @@ import {
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
-import { exportToJsonFile, findCaseInsensitiveType } from '@src/utils/util'
+import { exportToJsonFile } from '@src/utils/util'
 import { ASSIGNEE_FILTER_TYPES, BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
 
 const START_DATE_LABEL = 'From *'

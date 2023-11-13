@@ -60,32 +60,33 @@ describe('getJiraToken function', () => {
 })
 
 describe('findCaseInsensitiveType function', () => {
-  it('Should return as expected when passing in a type that gives case insensitive input bUildkite', () => {
+  it('Should return "BuildKite" when passing a type given case insensitive input bUildkite', () => {
     const selectedValue = 'bUildkite'
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
     expect(value).toBe(PIPELINE_TOOL_TYPES.BUILD_KITE)
   })
 
-  it('Should return as expected when passing in a type that gives case sensitive input GoCD', () => {
+  it('Should return "GoCD" when passing a type given case sensitive input GoCD', () => {
     const selectedValue = 'GoCD'
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
     expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD)
   })
 
-  it('Should return as expected when passing in a type that gives case insensitive input Gocd', () => {
+  it('Should return "GoCD" when passing a type given case insensitive input Gocd', () => {
     const selectedValue = 'Gocd'
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
     expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD)
   })
 
-  it('Should return as expected when passing in a type that gives the value mismatched', () => {
+  it('Should return "_BuildKite" when passing a type given the value mismatches with PIPELINE_TOOL_TYPES', () => {
     const selectedValue = '_BuildKite'
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
     expect(value).not.toBe(PIPELINE_TOOL_TYPES.BUILD_KITE)
     expect(value).not.toBe(PIPELINE_TOOL_TYPES.GO_CD)
+    expect(value).toBe(selectedValue)
   })
 
-  it('Should return empty string when passing in a type that gives empty string ', () => {
+  it('Should return empty string when passing a type given empty string', () => {
     const selectedValue = ''
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
     expect(value).toBe(EMPTY_STRING)

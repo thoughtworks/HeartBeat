@@ -35,6 +35,7 @@ import {
 import dayjs from 'dayjs'
 import { updateMetricsState, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice'
 import { ConfigSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
+import { findCaseInsensitiveType } from '@src/utils/util'
 
 export const Board = () => {
   const dispatch = useAppDispatch()
@@ -44,10 +45,11 @@ export const Board = () => {
   const isProjectCreated = useAppSelector(selectIsProjectCreated)
   const [isShowNoDoneCard, setIsNoDoneCard] = useState(false)
   const { verifyJira, isLoading, errorMessage } = useVerifyBoardEffect()
+  const type = findCaseInsensitiveType(Object.values(BOARD_TYPES), boardFields.type)
   const [fields, setFields] = useState([
     {
       key: 'Board',
-      value: boardFields.type,
+      value: type,
       isRequired: true,
       isValid: true,
     },

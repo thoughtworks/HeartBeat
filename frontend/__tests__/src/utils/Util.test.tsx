@@ -1,5 +1,11 @@
-import { exportToJsonFile, getJiraBoardToken, transformToCleanedBuildKiteEmoji } from '@src/utils/util'
+import {
+  exportToJsonFile,
+  findCaseInsensitiveType,
+  getJiraBoardToken,
+  transformToCleanedBuildKiteEmoji,
+} from '@src/utils/util'
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
+import { EMPTY_STRING, PIPELINE_TOOL_TYPES } from '@src/constants'
 
 describe('exportToJsonFile function', () => {
   it('should create a link element with the correct attributes and click it', () => {
@@ -50,5 +56,39 @@ describe('getJiraToken function', () => {
     const jiraToken = getJiraBoardToken(token, email)
 
     expect(jiraToken).toBe('')
+  })
+})
+
+describe('findCaseInsensitiveType function', () => {
+  it('Should return "BuildKite" when passing a type given case insensitive input bUildkite', () => {
+    const selectedValue = 'bUildkite'
+    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
+    expect(value).toBe(PIPELINE_TOOL_TYPES.BUILD_KITE)
+  })
+
+  it('Should return "GoCD" when passing a type given case sensitive input GoCD', () => {
+    const selectedValue = 'GoCD'
+    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
+    expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD)
+  })
+
+  it('Should return "GoCD" when passing a type given case insensitive input Gocd', () => {
+    const selectedValue = 'Gocd'
+    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
+    expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD)
+  })
+
+  it('Should return "_BuildKite" when passing a type given the value mismatches with PIPELINE_TOOL_TYPES', () => {
+    const selectedValue = '_BuildKite'
+    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
+    expect(value).not.toBe(PIPELINE_TOOL_TYPES.BUILD_KITE)
+    expect(value).not.toBe(PIPELINE_TOOL_TYPES.GO_CD)
+    expect(value).toBe(selectedValue)
+  })
+
+  it('Should return empty string when passing a type given empty string', () => {
+    const selectedValue = ''
+    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
+    expect(value).toBe(EMPTY_STRING)
   })
 })

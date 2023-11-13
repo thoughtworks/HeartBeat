@@ -28,6 +28,7 @@ import { ErrorNotification } from '@src/components/ErrorNotification'
 import { Loading } from '@src/components/Loading'
 import { VerifyButton, ResetButton } from '@src/components/Common/Buttons'
 import { ConfigSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
+import { findCaseInsensitiveType } from '@src/utils/util'
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch()
@@ -35,10 +36,11 @@ export const SourceControl = () => {
   const DateRange = useAppSelector(selectDateRange)
   const isVerified = useAppSelector(isSourceControlVerified)
   const { verifyGithub, isLoading, errorMessage } = useVerifySourceControlEffect()
+  const type = findCaseInsensitiveType(Object.values(SOURCE_CONTROL_TYPES), sourceControlFields.type)
   const [fields, setFields] = useState([
     {
       key: 'SourceControl',
-      value: sourceControlFields.type,
+      value: type,
       isValid: true,
       isRequired: true,
     },

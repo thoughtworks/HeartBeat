@@ -20,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -139,6 +138,10 @@ public class CSVFileGenerator {
 							List<Classification> classificationList = (List<Classification>) fieldValue;
 							classificationList.forEach(classification -> getRowsFormClassification(classification).forEach(csvWriter::writeNext));
 						}
+						case "cycleTime" -> {
+							CycleTime cycleTime = (CycleTime) fieldValue;
+							getRowsFormCycleTime(cycleTime).forEach(csvWriter::writeNext);
+						}
 						default -> {
 						}
 					}
@@ -163,7 +166,41 @@ public class CSVFileGenerator {
 		List<String[]> rows = new ArrayList<>();
 		String fieldName = String.valueOf((classificationList.getFieldName()));
 		List<ClassificationNameValuePair> pairList = classificationList.getPairList();
-		pairList.forEach(nameValuePair -> rows.add(new String[]{"Classifications", fieldName + "/" + nameValuePair.getName(), String.valueOf((Math.round(nameValuePair.getValue()*10000))/100.0)}));
+		pairList.forEach(nameValuePair -> rows.add(new String[]{"Classifications", fieldName + "/" + nameValuePair.getName(), String.valueOf((Math.round(nameValuePair.getValue() * 10000)) / 100.0)}));
+		return rows;
+	}
+
+	private List<String[]> getRowsFormCycleTime(CycleTime cycleTime) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[]{"Cycle time", "Average cycle time(days/storyPoint)", String.valueOf((Math.round(cycleTime.getAverageCycleTimePerSP() * 10000)) / 100.0)});
+		rows.add(new String[]{"Cycle time", "Average cycle time(days/card)", String.valueOf((Math.round(cycleTime.getAverageCycleTimePerCard() * 10000)) / 100.0)});
+		List<CycleTimeForSelectedStepItem> swimlaneList = cycleTime.getSwimlaneList();
+		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
+			String optionalItemName = cycleTimeForSelectedStepItem.getOptionalItemName();
+			String StepName = switch (optionalItemName) {
+				case "In Dev" -> "development";
+				case "Block" -> "development";
+				case "Review" -> "development";
+				case "Testing" -> "development";
+				default -> "";
+			};
+			double proportion = cycleTimeForSelectedStepItem.getTotalTime()/cycleTime.getTotalTimeForCards();
+			rows.add(new String[]{"Cycle time", "Total " + StepName + " time / Total cycle time", String.valueOf((Math.round(proportion * 10000)) / 100.0)});
+		});
+
+		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
+			String optionalItemName = cycleTimeForSelectedStepItem.getOptionalItemName();
+			String StepName = switch (optionalItemName) {
+				case "In Dev" -> "development";
+				case "Block" -> "development";
+				case "Review" -> "development";
+				case "Testing" -> "development";
+				default -> "";
+			};
+			rows.add(new String[]{"Cycle time", "Average "+StepName+" time(days/storyPoint)", String.valueOf((Math.round(cycleTimeForSelectedStepItem.getAverageTimeForSP() * 10000)) / 100.0)});
+			rows.add(new String[]{"Cycle time", "Average "+StepName+" time(days/card)", String.valueOf((Math.round(cycleTimeForSelectedStepItem.getAverageTimeForCards() * 10000)) / 100.0)});
+		});
+
 		return rows;
 	}
 

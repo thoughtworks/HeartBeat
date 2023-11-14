@@ -175,33 +175,29 @@ public class CSVFileGenerator {
 		rows.add(new String[]{"Cycle time", "Average cycle time(days/storyPoint)", String.valueOf((Math.round(cycleTime.getAverageCycleTimePerSP() * 10000)) / 100.0)});
 		rows.add(new String[]{"Cycle time", "Average cycle time(days/card)", String.valueOf((Math.round(cycleTime.getAverageCycleTimePerCard() * 10000)) / 100.0)});
 		List<CycleTimeForSelectedStepItem> swimlaneList = cycleTime.getSwimlaneList();
+
 		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
-			String optionalItemName = cycleTimeForSelectedStepItem.getOptionalItemName();
-			String StepName = switch (optionalItemName) {
-				case "In Dev" -> "development";
-				case "Block" -> "development";
-				case "Review" -> "development";
-				case "Testing" -> "development";
-				default -> "";
-			};
-			double proportion = cycleTimeForSelectedStepItem.getTotalTime()/cycleTime.getTotalTimeForCards();
-			rows.add(new String[]{"Cycle time", "Total " + StepName + " time / Total cycle time", String.valueOf((Math.round(proportion * 10000)) / 100.0)});
+			double proportion = cycleTimeForSelectedStepItem.getTotalTime() / cycleTime.getTotalTimeForCards();
+			rows.add(new String[]{"Cycle time", "Total " + getStepName(cycleTimeForSelectedStepItem) + " time / Total cycle time", String.valueOf((Math.round(proportion * 10000)) / 100.0)});
 		});
 
 		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
-			String optionalItemName = cycleTimeForSelectedStepItem.getOptionalItemName();
-			String StepName = switch (optionalItemName) {
-				case "In Dev" -> "development";
-				case "Block" -> "development";
-				case "Review" -> "development";
-				case "Testing" -> "development";
-				default -> "";
-			};
-			rows.add(new String[]{"Cycle time", "Average "+StepName+" time(days/storyPoint)", String.valueOf((Math.round(cycleTimeForSelectedStepItem.getAverageTimeForSP() * 10000)) / 100.0)});
-			rows.add(new String[]{"Cycle time", "Average "+StepName+" time(days/card)", String.valueOf((Math.round(cycleTimeForSelectedStepItem.getAverageTimeForCards() * 10000)) / 100.0)});
+			String StepName = getStepName(cycleTimeForSelectedStepItem);
+			rows.add(new String[]{"Cycle time", "Average " + StepName + " time(days/storyPoint)", String.valueOf((Math.round(cycleTimeForSelectedStepItem.getAverageTimeForSP() * 10000)) / 100.0)});
+			rows.add(new String[]{"Cycle time", "Average " + StepName + " time(days/card)", String.valueOf((Math.round(cycleTimeForSelectedStepItem.getAverageTimeForCards() * 10000)) / 100.0)});
 		});
 
 		return rows;
+	}
+
+	private String getStepName(CycleTimeForSelectedStepItem cycleTimeForSelectedStepItem) {
+		return switch (cycleTimeForSelectedStepItem.getOptionalItemName()) {
+			case "In Dev" -> "development";
+			case "Block" -> "block";
+			case "Review" -> "review";
+			case "Testing" -> "testing";
+			default -> "";
+		};
 	}
 
 	public InputStreamResource getDataFromCSV(String dataType, long csvTimeStamp) {

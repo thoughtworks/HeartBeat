@@ -161,6 +161,7 @@ public class CSVFileGenerator {
 
 	private List<String[]> getRowsFromCycleTime(CycleTime cycleTime) {
 		List<String[]> rows = new ArrayList<>();
+		List<String[]> rowsForSelectedStepItemAverageTime = new ArrayList<>();
 		rows.add(new String[]{"Cycle time", "Average cycle time(days/storyPoint)",
 			String.valueOf(cycleTime.getAverageCycleTimePerSP())});
 		rows.add(new String[]{"Cycle time", "Average cycle time(days/card)",
@@ -168,18 +169,16 @@ public class CSVFileGenerator {
 		List<CycleTimeForSelectedStepItem> swimlaneList = cycleTime.getSwimlaneList();
 
 		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
-			double proportion = cycleTimeForSelectedStepItem.getTotalTime() / cycleTime.getTotalTimeForCards();
-			rows.add(new String[]{"Cycle time", "Total " + formatStepName(cycleTimeForSelectedStepItem)
-				+ " time / Total cycle time", DecimalUtil.formatDecimalTwo(proportion * 100)});
-		});
-
-		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
 			String StepName = formatStepName(cycleTimeForSelectedStepItem);
-			rows.add(new String[]{"Cycle time", "Average " + StepName + " time(days/storyPoint)",
+			double proportion = cycleTimeForSelectedStepItem.getTotalTime() / cycleTime.getTotalTimeForCards();
+			rows.add(new String[]{"Cycle time", "Total " + StepName
+				+ " time / Total cycle time", DecimalUtil.formatDecimalTwo(proportion * 100)});
+			rowsForSelectedStepItemAverageTime.add(new String[]{"Cycle time", "Average " + StepName + " time(days/storyPoint)",
 				DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForSP())});
-			rows.add(new String[]{"Cycle time", "Average " + StepName + " time(days/card)",
+			rowsForSelectedStepItemAverageTime.add(new String[]{"Cycle time", "Average " + StepName + " time(days/card)",
 				DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForCards())});
 		});
+		rows.addAll(rowsForSelectedStepItemAverageTime);
 
 		return rows;
 	}

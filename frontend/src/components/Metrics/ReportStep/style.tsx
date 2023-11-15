@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
 import { theme } from '@src/theme'
+import { Z_INDEX } from '@src/constants'
 
 export const basicButtonStyle = {
   height: '2.5rem',
@@ -37,6 +38,6 @@ export const ErrorNotificationContainer = styled('div')({
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  zIndex: 9999,
+  zIndex: Z_INDEX.MODAL_BACKDROP,
   width: '80%',
 })

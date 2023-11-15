@@ -1,7 +1,7 @@
 import { Autocomplete, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlSelection } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelect/style'
-import { CYCLE_TIME_LIST } from '@src/constants'
+import { CYCLE_TIME_LIST, Z_INDEX } from '@src/constants'
 
 interface formSelectProps {
   label: string
@@ -34,6 +34,13 @@ export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: for
           setInputValue(newInputValue)
         }}
         renderInput={(params) => <TextField required {...params} label={label} variant='standard' />}
+        slotProps={{
+          popper: {
+            sx: {
+              zIndex: Z_INDEX.DROPDOWN,
+            },
+          },
+        }}
       />
     </FormControlSelection>
   )

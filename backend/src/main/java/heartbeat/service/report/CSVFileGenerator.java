@@ -7,6 +7,7 @@ import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.*;
 import heartbeat.exception.FileIOException;
 import heartbeat.util.DecimalUtil;
+import heartbeat.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -19,9 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -172,21 +170,21 @@ public class CSVFileGenerator {
 		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
 			double proportion = cycleTimeForSelectedStepItem.getTotalTime() / cycleTime.getTotalTimeForCards();
 			rows.add(new String[]{"Cycle time", "Total " + formatStepName(cycleTimeForSelectedStepItem)
-				+ " time / Total cycle time", new DecimalFormat("0.00").format(proportion * 100)});
+				+ " time / Total cycle time", DecimalUtil.formatDecimalTwo(proportion * 100)});
 		});
 
 		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
 			String StepName = formatStepName(cycleTimeForSelectedStepItem);
 			rows.add(new String[]{"Cycle time", "Average " + StepName + " time(days/storyPoint)",
-				new DecimalFormat("0.00").format(cycleTimeForSelectedStepItem.getAverageTimeForSP())});
+				DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForSP())});
 			rows.add(new String[]{"Cycle time", "Average " + StepName + " time(days/card)",
-				new DecimalFormat("0.00").format(cycleTimeForSelectedStepItem.getAverageTimeForCards())});
+				DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForCards())});
 		});
 
 		return rows;
 	}
 
-	private String getStepName(CycleTimeForSelectedStepItem cycleTimeForSelectedStepItem) {
+	private String formatStepName(CycleTimeForSelectedStepItem cycleTimeForSelectedStepItem) {
 		return switch (cycleTimeForSelectedStepItem.getOptionalItemName()) {
 			case "In Dev" -> "development";
 			case "Block" -> "block";
@@ -201,23 +199,24 @@ public class CSVFileGenerator {
 		String fieldName = String.valueOf((classificationList.getFieldName()));
 		List<ClassificationNameValuePair> pairList = classificationList.getPairList();
 		pairList.forEach(nameValuePair -> rows.add(new String[]{"Classifications", fieldName + " / "
-			+ nameValuePair.getName(), new DecimalFormat("0.00").format(nameValuePair.getValue() * 100)}));
+			+ nameValuePair.getName(), DecimalUtil.formatDecimalTwo(nameValuePair.getValue() * 100)}));
 		return rows;
 	}
 
 	private List<String[]> getRowsFromDeploymentFrequency(DeploymentFrequency deploymentFrequency) {
 		List<String[]> rows = new ArrayList<>();
-		List<DeploymentFrequencyOfPipeline> deploymentFrequencyOfPipelines = deploymentFrequency.getDeploymentFrequencyOfPipelines();
+		List<DeploymentFrequencyOfPipeline> deploymentFrequencyOfPipelines
+			= deploymentFrequency.getDeploymentFrequencyOfPipelines();
 		deploymentFrequencyOfPipelines.forEach(pipeline ->
 			rows.add(new String[]{"Deployment frequency", pipeline.getName() + " / " +
 				pipeline.getStep().replaceAll(":\\w+:", "") + " / Deployment frequency(deployments/day)",
-				new DecimalFormat("0.00").format(pipeline.getDeploymentFrequency())}));
+				DecimalUtil.formatDecimalTwo(pipeline.getDeploymentFrequency())}));
 
 		AvgDeploymentFrequency avgDeploymentFrequency = deploymentFrequency.getAvgDeploymentFrequency();
 		if (deploymentFrequencyOfPipelines.size() > 1)
 			rows.add(new String[]{"Deployment frequency", avgDeploymentFrequency.getName() +
 				" / Deployment frequency(deployments/day)",
-				new DecimalFormat("0.00").format(avgDeploymentFrequency.getDeploymentFrequency())});
+				DecimalUtil.formatDecimalTwo(avgDeploymentFrequency.getDeploymentFrequency())});
 
 		return rows;
 	}
@@ -225,20 +224,26 @@ public class CSVFileGenerator {
 	private List<String[]> getRowsFromLeadTimeForChanges(LeadTimeForChanges leadTimeForChanges) {
 		List<String[]> rows = new ArrayList<>();
 		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines = leadTimeForChanges.getLeadTimeForChangesOfPipelines();
-		int minutesPerHour = 60;
 		leadTimeForChangesOfPipelines.forEach(pipeline -> {
 			String pipelineStep = pipeline.getStep().replaceAll(":\\w+:", "");
-			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep + " / PR Lead Time", new DecimalFormat("0.00").format(pipeline.getPrLeadTime() / minutesPerHour)});
-			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep + " / Pipeline Lead Time", new DecimalFormat("0.00").format(pipeline.getPipelineLeadTime() / minutesPerHour)});
-			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep + " / Total Lead Time", new DecimalFormat("0.00").format(pipeline.getTotalDelayTime() / minutesPerHour)});
+			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
+				+ " / PR Lead Time", DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(pipeline.getPrLeadTime()))});
+			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
+				+ " / Pipeline Lead Time", DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(pipeline.getPipelineLeadTime()))});
+			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
+				+ " / Total Lead Time", DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(pipeline.getTotalDelayTime()))});
 		});
 
 		AvgLeadTimeForChanges avgLeadTimeForChanges = leadTimeForChanges.getAvgLeadTimeForChanges();
 		if (leadTimeForChangesOfPipelines.size() > 1) {
-			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / PR Lead Time", new DecimalFormat("0.00").format(avgLeadTimeForChanges.getPrLeadTime() / minutesPerHour)});
-			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Pipeline Lead Time", new DecimalFormat("0.00").format(avgLeadTimeForChanges.getPipelineLeadTime() / minutesPerHour)});
-			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Total Lead Time", new DecimalFormat("0.00").format(avgLeadTimeForChanges.getTotalDelayTime() / minutesPerHour)});
+			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / PR Lead Time",
+				DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(avgLeadTimeForChanges.getPrLeadTime()))});
+			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Pipeline Lead Time",
+				DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(avgLeadTimeForChanges.getPipelineLeadTime()))});
+			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Total Lead Time",
+				DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(avgLeadTimeForChanges.getTotalDelayTime()))});
 		}
+
 		return rows;
 	}
 
@@ -246,11 +251,16 @@ public class CSVFileGenerator {
 		List<String[]> rows = new ArrayList<>();
 		List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines = changeFailureRate.getChangeFailureRateOfPipelines();
 		changeFailureRateOfPipelines.forEach(pipeline ->
-			rows.add(new String[]{"Change failure rate", pipeline.getName() + " / " + pipeline.getStep().replaceAll(":\\w+:", "") + " / Failure rate", new DecimalFormat("0.00").format(pipeline.getFailureRate() * 100) + "(" + pipeline.getFailedTimesOfPipeline() + "/" + pipeline.getTotalTimesOfPipeline() + ")"}));
+			rows.add(new String[]{"Change failure rate", pipeline.getName() + " / "
+				+ pipeline.getStep().replaceAll(":\\w+:", "") + " / Failure rate",
+				DecimalUtil.formatDecimalTwo(pipeline.getFailureRate() * 100) + "("
+					+ pipeline.getFailedTimesOfPipeline() + "/" + pipeline.getTotalTimesOfPipeline() + ")"}));
 
 		AvgChangeFailureRate avgChangeFailureRate = changeFailureRate.getAvgChangeFailureRate();
 		if (changeFailureRateOfPipelines.size() > 1)
-			rows.add(new String[]{"Change failure rate", avgChangeFailureRate.getName() + " / Failure rate", new DecimalFormat("0.00").format(avgChangeFailureRate.getFailureRate() * 100) + "(" + avgChangeFailureRate.getTotalFailedTimes() + "/" + avgChangeFailureRate.getTotalTimes() + ")"});
+			rows.add(new String[]{"Change failure rate", avgChangeFailureRate.getName() + " / Failure rate",
+				DecimalUtil.formatDecimalTwo(avgChangeFailureRate.getFailureRate() * 100) + "("
+					+ avgChangeFailureRate.getTotalFailedTimes() + "/" + avgChangeFailureRate.getTotalTimes() + ")"});
 
 		return rows;
 	}
@@ -259,11 +269,14 @@ public class CSVFileGenerator {
 		List<String[]> rows = new ArrayList<>();
 		List<MeanTimeToRecoveryOfPipeline> meanTimeRecoveryPipelines = meanTimeToRecovery.getMeanTimeRecoveryPipelines();
 		meanTimeRecoveryPipelines.forEach(pipeline ->
-			rows.add(new String[]{"Mean Time To Recovery", pipeline.getPipelineName() + " / " + pipeline.getPipelineStep().replaceAll(":\\w+:", "") + " / Mean Time To Recovery", new DecimalFormat("0.00").format(pipeline.getTimeToRecovery().divide(BigDecimal.valueOf(3600000), 2, RoundingMode.HALF_UP))}));
+			rows.add(new String[]{"Mean Time To Recovery", pipeline.getPipelineName() + " / "
+				+ pipeline.getPipelineStep().replaceAll(":\\w+:", "") + " / Mean Time To Recovery",
+				DecimalUtil.formatDecimalTwo(TimeUtil.convertMillisecondsToHours(pipeline.getTimeToRecovery()))}));
 
 		AvgMeanTimeToRecovery avgMeanTimeToRecovery = meanTimeToRecovery.getAvgMeanTimeToRecovery();
 		if (meanTimeRecoveryPipelines.size() > 1)
-			rows.add(new String[]{"Mean Time To Recovery", avgMeanTimeToRecovery.getName() + " / Mean Time To Recovery", new DecimalFormat("0.00").format(avgMeanTimeToRecovery.getTimeToRecovery().divide(BigDecimal.valueOf(3600000), 2, RoundingMode.HALF_UP))});
+			rows.add(new String[]{"Mean Time To Recovery", avgMeanTimeToRecovery.getName() + " / Mean Time To Recovery",
+				DecimalUtil.formatDecimalTwo(TimeUtil.convertMillisecondsToHours(avgMeanTimeToRecovery.getTimeToRecovery()))});
 
 		return rows;
 	}

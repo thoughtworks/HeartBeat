@@ -402,9 +402,11 @@ public class CSVFileGenerator {
 			double proportion = cycleTimeForSelectedStepItem.getTotalTime() / cycleTime.getTotalTimeForCards();
 			rows.add(new String[]{"Cycle time", "Total " + StepName
 				+ " time / Total cycle time", DecimalUtil.formatDecimalTwo(proportion * 100)});
-			rowsForSelectedStepItemAverageTime.add(new String[]{"Cycle time", "Average " + StepName + " time(days/storyPoint)",
+			rowsForSelectedStepItemAverageTime.add(new String[]{"Cycle time", "Average " + StepName
+				+ " time(days/storyPoint)",
 				DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForSP())});
-			rowsForSelectedStepItemAverageTime.add(new String[]{"Cycle time", "Average " + StepName + " time(days/card)",
+			rowsForSelectedStepItemAverageTime.add(new String[]{"Cycle time", "Average " + StepName
+				+ " time(days/card)",
 				DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForCards())});
 		});
 		rows.addAll(rowsForSelectedStepItemAverageTime);
@@ -436,14 +438,15 @@ public class CSVFileGenerator {
 		List<DeploymentFrequencyOfPipeline> deploymentFrequencyOfPipelines
 			= deploymentFrequency.getDeploymentFrequencyOfPipelines();
 		deploymentFrequencyOfPipelines.forEach(pipeline ->
-			rows.add(new String[]{"Deployment frequency", pipeline.getName() + " / " +
-				pipeline.getStep().replaceAll(":\\w+:", "") + " / Deployment frequency(deployments/day)",
+			rows.add(new String[]{"Deployment frequency", pipeline.getName() + " / "
+				+ pipeline.getStep().replaceAll(":\\w+: ", "")
+				+ " / Deployment frequency(deployments/day)",
 				DecimalUtil.formatDecimalTwo(pipeline.getDeploymentFrequency())}));
 
 		AvgDeploymentFrequency avgDeploymentFrequency = deploymentFrequency.getAvgDeploymentFrequency();
 		if (deploymentFrequencyOfPipelines.size() > 1)
-			rows.add(new String[]{"Deployment frequency", avgDeploymentFrequency.getName() +
-				" / Deployment frequency(deployments/day)",
+			rows.add(new String[]{"Deployment frequency", avgDeploymentFrequency.getName()
+				+ " / Deployment frequency(deployments/day)",
 				DecimalUtil.formatDecimalTwo(avgDeploymentFrequency.getDeploymentFrequency())});
 
 		return rows;
@@ -451,24 +454,28 @@ public class CSVFileGenerator {
 
 	private List<String[]> getRowsFromLeadTimeForChanges(LeadTimeForChanges leadTimeForChanges) {
 		List<String[]> rows = new ArrayList<>();
-		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines = leadTimeForChanges.getLeadTimeForChangesOfPipelines();
+		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines
+			= leadTimeForChanges.getLeadTimeForChangesOfPipelines();
 		leadTimeForChangesOfPipelines.forEach(pipeline -> {
-			String pipelineStep = pipeline.getStep().replaceAll(":\\w+:", "");
+			String pipelineStep = pipeline.getStep().replaceAll(":\\w+: ", "");
 			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
-				+ " / PR Lead Time", DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPrLeadTime(), HOURS))});
+				+ " / PR Lead Time",
+				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPrLeadTime(), HOURS))});
 			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
-				+ " / Pipeline Lead Time", DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPipelineLeadTime(), HOURS))});
+				+ " / Pipeline Lead Time",
+				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPipelineLeadTime(), HOURS))});
 			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
-				+ " / Total Lead Time", DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getTotalDelayTime(), HOURS))});
+				+ " / Total Lead Time",
+				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getTotalDelayTime(), HOURS))});
 		});
 
 		AvgLeadTimeForChanges avgLeadTimeForChanges = leadTimeForChanges.getAvgLeadTimeForChanges();
 		if (leadTimeForChangesOfPipelines.size() > 1) {
-			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / PR Lead Time",
+			rows.add(new String[]{"Lead time for changes", avgLeadTimeForChanges.getName() + " / PR Lead Time",
 				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPrLeadTime(), HOURS))});
-			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Pipeline Lead Time",
+			rows.add(new String[]{"Lead time for changes", avgLeadTimeForChanges.getName() + " / Pipeline Lead Time",
 				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPipelineLeadTime(), HOURS))});
-			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Total Lead Time",
+			rows.add(new String[]{"Lead time for changes", avgLeadTimeForChanges.getName() + " / Total Lead Time",
 				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getTotalDelayTime(), HOURS))});
 		}
 
@@ -477,18 +484,17 @@ public class CSVFileGenerator {
 
 	private List<String[]> getRowsFromChangeFailureRate(ChangeFailureRate changeFailureRate) {
 		List<String[]> rows = new ArrayList<>();
-		List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines = changeFailureRate.getChangeFailureRateOfPipelines();
+		List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines
+			= changeFailureRate.getChangeFailureRateOfPipelines();
 		changeFailureRateOfPipelines.forEach(pipeline ->
 			rows.add(new String[]{"Change failure rate", pipeline.getName() + " / "
-				+ pipeline.getStep().replaceAll(":\\w+:", "") + " / Failure rate",
-				DecimalUtil.formatDecimalTwo(pipeline.getFailureRate() * 100) + "("
-					+ pipeline.getFailedTimesOfPipeline() + "/" + pipeline.getTotalTimesOfPipeline() + ")"}));
+				+ pipeline.getStep().replaceAll(":\\w+: ", "") + " / Failure rate",
+				DecimalUtil.formatDecimalTwo(pipeline.getFailureRate() * 100)}));
 
 		AvgChangeFailureRate avgChangeFailureRate = changeFailureRate.getAvgChangeFailureRate();
 		if (changeFailureRateOfPipelines.size() > 1)
 			rows.add(new String[]{"Change failure rate", avgChangeFailureRate.getName() + " / Failure rate",
-				DecimalUtil.formatDecimalTwo(avgChangeFailureRate.getFailureRate() * 100) + "("
-					+ avgChangeFailureRate.getTotalFailedTimes() + "/" + avgChangeFailureRate.getTotalTimes() + ")"});
+				DecimalUtil.formatDecimalTwo(avgChangeFailureRate.getFailureRate() * 100)});
 
 		return rows;
 	}
@@ -498,7 +504,7 @@ public class CSVFileGenerator {
 		List<MeanTimeToRecoveryOfPipeline> meanTimeRecoveryPipelines = meanTimeToRecovery.getMeanTimeRecoveryPipelines();
 		meanTimeRecoveryPipelines.forEach(pipeline ->
 			rows.add(new String[]{"Mean Time To Recovery", pipeline.getPipelineName() + " / "
-				+ pipeline.getPipelineStep().replaceAll(":\\w+:", "") + " / Mean Time To Recovery",
+				+ pipeline.getPipelineStep().replaceAll(":\\w+: ", "") + " / Mean Time To Recovery",
 				DecimalUtil.formatDecimalTwo(TimeUtils.millisToUnit(pipeline.getTimeToRecovery().doubleValue(), HOURS))}));
 
 		AvgMeanTimeToRecovery avgMeanTimeToRecovery = meanTimeToRecovery.getAvgMeanTimeToRecovery();

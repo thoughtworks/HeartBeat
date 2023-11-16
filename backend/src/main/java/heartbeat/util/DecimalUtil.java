@@ -1,6 +1,5 @@
 package heartbeat.util;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
@@ -15,12 +14,6 @@ public interface DecimalUtil {
 	}
 
 	static String formatDecimalTwo(float value) {
-		DecimalFormat decimalFormat = new DecimalFormat(FORMAT_2_DECIMALS);
-
-		return Objects.equals(decimalFormat.format(value), "0.00") ? "0" : decimalFormat.format(value);
-	}
-
-	static String formatDecimalTwo(BigDecimal value) {
 		DecimalFormat decimalFormat = new DecimalFormat(FORMAT_2_DECIMALS);
 
 		return Objects.equals(decimalFormat.format(value), "0.00") ? "0" : decimalFormat.format(value);

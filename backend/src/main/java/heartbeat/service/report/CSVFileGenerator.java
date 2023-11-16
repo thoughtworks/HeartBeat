@@ -7,7 +7,6 @@ import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.*;
 import heartbeat.exception.FileIOException;
 import heartbeat.util.DecimalUtil;
-import heartbeat.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import io.micrometer.core.instrument.util.TimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static heartbeat.service.report.calculator.ClassificationCalculator.pickDisplayNameFromObj;
+import static java.util.concurrent.TimeUnit.HOURS;
 
 @RequiredArgsConstructor
 @Component
@@ -226,21 +227,21 @@ public class CSVFileGenerator {
 		leadTimeForChangesOfPipelines.forEach(pipeline -> {
 			String pipelineStep = pipeline.getStep().replaceAll(":\\w+:", "");
 			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
-				+ " / PR Lead Time", DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(pipeline.getPrLeadTime()))});
+				+ " / PR Lead Time", DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPrLeadTime(),HOURS))});
 			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
-				+ " / Pipeline Lead Time", DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(pipeline.getPipelineLeadTime()))});
+				+ " / Pipeline Lead Time", DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPipelineLeadTime(), HOURS))});
 			rows.add(new String[]{"Lead time for changes", pipeline.getName() + " / " + pipelineStep
-				+ " / Total Lead Time", DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(pipeline.getTotalDelayTime()))});
+				+ " / Total Lead Time", DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getTotalDelayTime(), HOURS))});
 		});
 
 		AvgLeadTimeForChanges avgLeadTimeForChanges = leadTimeForChanges.getAvgLeadTimeForChanges();
 		if (leadTimeForChangesOfPipelines.size() > 1) {
 			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / PR Lead Time",
-				DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(avgLeadTimeForChanges.getPrLeadTime()))});
+				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPrLeadTime(), HOURS))});
 			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Pipeline Lead Time",
-				DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(avgLeadTimeForChanges.getPipelineLeadTime()))});
+				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPipelineLeadTime(), HOURS))});
 			rows.add(new String[]{"Mean Time To Recovery", avgLeadTimeForChanges.getName() + " / Total Lead Time",
-				DecimalUtil.formatDecimalTwo(TimeUtil.convertMinutesToHours(avgLeadTimeForChanges.getTotalDelayTime()))});
+				DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getTotalDelayTime(), HOURS))});
 		}
 
 		return rows;
@@ -270,12 +271,12 @@ public class CSVFileGenerator {
 		meanTimeRecoveryPipelines.forEach(pipeline ->
 			rows.add(new String[]{"Mean Time To Recovery", pipeline.getPipelineName() + " / "
 				+ pipeline.getPipelineStep().replaceAll(":\\w+:", "") + " / Mean Time To Recovery",
-				DecimalUtil.formatDecimalTwo(TimeUtil.convertMillisecondsToHours(pipeline.getTimeToRecovery()))}));
+				DecimalUtil.formatDecimalTwo(TimeUtils.millisToUnit(pipeline.getTimeToRecovery().doubleValue(), HOURS))}));
 
 		AvgMeanTimeToRecovery avgMeanTimeToRecovery = meanTimeToRecovery.getAvgMeanTimeToRecovery();
 		if (meanTimeRecoveryPipelines.size() > 1)
 			rows.add(new String[]{"Mean Time To Recovery", avgMeanTimeToRecovery.getName() + " / Mean Time To Recovery",
-				DecimalUtil.formatDecimalTwo(TimeUtil.convertMillisecondsToHours(avgMeanTimeToRecovery.getTimeToRecovery()))});
+				DecimalUtil.formatDecimalTwo(TimeUtils.millisToUnit(avgMeanTimeToRecovery.getTimeToRecovery().doubleValue(), HOURS))});
 
 		return rows;
 	}

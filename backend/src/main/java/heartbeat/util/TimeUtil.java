@@ -1,7 +1,5 @@
 package heartbeat.util;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -11,14 +9,6 @@ public interface TimeUtil {
 
 	static Double convertMillisecondToMinutes(Double millisecond) {
 		return Math.round((millisecond / 1000 / 60) * 100.0) / 100.0;
-	}
-
-	static Double convertMinutesToHours(Double minutes) {
-		return minutes / 60;
-	}
-
-	static BigDecimal convertMillisecondsToHours(BigDecimal milliseconds) {
-		return milliseconds.divide(BigDecimal.valueOf(1000 * 60 * 60), 2, RoundingMode.HALF_UP);
 	}
 
 	static boolean isBeforeAndEqual(Instant endDate, Instant time) {

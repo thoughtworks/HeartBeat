@@ -32,6 +32,9 @@ declare module '@mui/material/styles' {
     waringMessage: {
       color: string
     }
+    tip: {
+      color: string
+    }
   }
 }
 
@@ -80,6 +83,9 @@ export const theme = createTheme({
     },
     waringMessage: {
       color: '#cd5e32',
+    },
+    tip: {
+      color: 'rgba(237,109,3,0.8)',
     },
   },
 })

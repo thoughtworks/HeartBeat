@@ -213,3 +213,9 @@ export const Z_INDEX = {
   STICKY: 1060,
   FIXED: 1070,
 }
+
+export const METRICS_STEPS = {
+  CONFIG: 0,
+  METRICS: 1,
+  REPORT: 2,
+}

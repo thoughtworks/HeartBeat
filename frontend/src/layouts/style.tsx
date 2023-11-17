@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { theme } from '@src/theme'
 import HomeIcon from '@mui/icons-material/Home'
-import { NotificationsRounded } from '@mui/icons-material'
 import { Z_INDEX } from '@src/constants'
 
 export const LogoWarp = styled.div({
@@ -10,7 +9,7 @@ export const LogoWarp = styled.div({
   padding: '0 1rem',
   alignItems: 'center',
   backgroundColor: theme.main.backgroundColor,
-  fontFamily: 'Times',
+  fontFamily: theme.typography.fontFamily,
   zIndex: Z_INDEX.STICKY,
   position: 'sticky',
   top: 0,
@@ -35,7 +34,7 @@ export const LogoContainer = styled.div({
 })
 
 export const IconContainer = styled.div({
-  alignItems: 'end',
+  display: 'inherit',
   color: theme.main.color,
 })
 
@@ -48,7 +47,6 @@ export const HomeIconElement = styled(HomeIcon)`
   margin-left: 0.75rem;
 `
 
-export const AlertIconElement = styled(NotificationsRounded)`
-  color: ${theme.main.color};
-  margin-right: 0.75rem;
-`
+export const NotificationIconContainer = styled.span({
+  left: 0,
+})

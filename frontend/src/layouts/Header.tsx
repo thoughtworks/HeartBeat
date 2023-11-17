@@ -1,11 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import Logo from '@src/assets/Logo.svg'
 
-import { PROJECT_NAME } from '@src/constants'
+import { METRICS_STEPS, PROJECT_NAME } from '@src/constants'
 import { useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectStepNumber } from '@src/context/stepper/StepperSlice'
 import {
-  AlertIconElement,
   HomeIconContainer,
   HomeIconElement,
   IconContainer,
@@ -13,7 +12,12 @@ import {
   LogoImage,
   LogoTitle,
   LogoWarp,
+  NotificationIconContainer,
 } from '@src/layouts/style'
+import {
+  NotificationButton,
+  NotificationButtonProps,
+} from '@src/components/Common/NotificationButton/NotificationButton'
 
 const Header = () => {
   const location = useLocation()
@@ -24,8 +28,15 @@ const Header = () => {
     navigate('/')
   }
 
-  const onNotificationClick = () => {
-    // todo
+  const notificationProps = (value: number): NotificationButtonProps => {
+    switch (value) {
+      case METRICS_STEPS.REPORT:
+        return { title: 'The file needs to be exported within thirty minutes, otherwise it will expire.', open: true }
+      case METRICS_STEPS.CONFIG:
+      case METRICS_STEPS.METRICS:
+      default:
+        return { title: '', open: false }
+    }
   }
 
   const shouldShowHomeIcon = () => {
@@ -33,7 +44,7 @@ const Header = () => {
   }
 
   const shouldShowNotificationIcon = () => {
-    return activeStep == 2 && ['/metrics'].includes(location.pathname)
+    return ['/metrics'].includes(location.pathname)
   }
 
   return (
@@ -44,9 +55,9 @@ const Header = () => {
       </LogoContainer>
       <IconContainer>
         {shouldShowNotificationIcon() && (
-          <HomeIconContainer title='Notification' onClick={onNotificationClick}>
-            <AlertIconElement />
-          </HomeIconContainer>
+          <NotificationIconContainer title='Notification'>
+            <NotificationButton {...notificationProps(activeStep)} />
+          </NotificationIconContainer>
         )}
         {shouldShowHomeIcon() && (
           <IconContainer title='Home' onClick={goHome}>

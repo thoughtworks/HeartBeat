@@ -16,6 +16,7 @@ import {
   BOARD_TYPES,
   HOME_PAGE_ROUTE,
   METRICS_CONSTANTS,
+  METRICS_STEPS,
   PIPELINE_SETTING_TYPES,
   PIPELINE_TOOL_TYPES,
   REQUIRED_DATA,
@@ -102,7 +103,7 @@ const MetricsStepper = () => {
       projectName && dateRange.startDate && dateRange.endDate && metrics.length
         ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
         : setIsDisableNextButton(true)
-    } else if (activeStep === 1) {
+    } else if (activeStep === METRICS_STEPS.METRICS) {
       const nextButtonValidityOptions = [
         { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
         { isShow: isShowRealDone, isValid: isRealDoneValid },
@@ -195,15 +196,15 @@ const MetricsStepper = () => {
       deployment: deploymentFrequencySettings,
       leadTime: leadTimeForChanges,
     }
-    const jsonData = activeStep === 0 ? configData : { ...configData, ...metricsData }
+    const jsonData = activeStep === METRICS_STEPS.CONFIG ? configData : { ...configData, ...metricsData }
     exportToJsonFile('config', jsonData)
   }
 
   const handleNext = () => {
-    if (activeStep === 1) {
+    if (activeStep === METRICS_STEPS.METRICS) {
       dispatch(updateTimeStamp(new Date().getTime()))
     }
-    if (activeStep === 0) {
+    if (activeStep === METRICS_STEPS.CONFIG) {
       cleanBoardState()
       cleanPipelineToolConfiguration()
       cleanSourceControlState()
@@ -266,13 +267,13 @@ const MetricsStepper = () => {
       </StyledStepper>
       <MetricsStepperContent>
         <Suspense>
-          {activeStep === 0 && <ConfigStep />}
-          {activeStep === 1 && <MetricsStep />}
-          {activeStep === 2 && <ReportStep />}
+          {activeStep === METRICS_STEPS.CONFIG && <ConfigStep />}
+          {activeStep === METRICS_STEPS.METRICS && <MetricsStep />}
+          {activeStep === METRICS_STEPS.REPORT && <ReportStep />}
         </Suspense>
       </MetricsStepperContent>
       <ButtonContainer>
-        {activeStep !== 2 && (
+        {activeStep !== METRICS_STEPS.REPORT && (
           <>
             <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
               <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>

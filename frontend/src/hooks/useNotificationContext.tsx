@@ -13,7 +13,7 @@ export interface NotificationContextType {
 export const NotificationContext = createContext<NotificationContextType>({
   notificationProps: { title: '', open: false },
   setNotificationProps: () => {
-    // Do nothing
+    // Just set default value
   },
 })
 

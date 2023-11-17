@@ -6,12 +6,10 @@ export const NotificationButton = (props: NotificationContextType) => {
   const { notificationProps, setNotificationProps } = props
 
   const handleTooltipClose = () => {
-    setTimeout(() => {
-      setNotificationProps({
-        ...notificationProps,
-        open: false,
-      })
-    }, 50)
+    setNotificationProps({
+      ...notificationProps,
+      open: false,
+    })
   }
   const toggleTooltip = () => {
     setNotificationProps({
@@ -35,6 +33,7 @@ export const NotificationButton = (props: NotificationContextType) => {
         disableFocusListener
         disableHoverListener
         disableTouchListener
+        disableInteractive
         slotProps={{
           tooltip: {
             sx: { ...sx },

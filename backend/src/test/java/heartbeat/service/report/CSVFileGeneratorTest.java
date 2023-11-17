@@ -273,13 +273,9 @@ class CSVFileGeneratorTest {
 		FileInputStream fileInputStream = new FileInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
 		String headers = reader.readLine();
-		Assertions.assertEquals(
-			"\"Group\",\"Metrics\",\"Value\"",
-			headers);
+		Assertions.assertEquals("\"Group\",\"Metrics\",\"Value\"", headers);
 		String firstLine = reader.readLine();
-		Assertions.assertEquals(
-			"\"Velocity\",\"Velocity(Story Point)\",\"7\"",
-			firstLine);
+		Assertions.assertEquals("\"Velocity\",\"Velocity(Story Point)\",\"7\"", firstLine);
 		reader.close();
 		fileInputStream.close();
 		file.delete();
@@ -306,7 +302,7 @@ class CSVFileGeneratorTest {
 
 		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("metric", 1686710104536L));
 		assertThrows(FileIOException.class,
-			() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "15469:89/033"));
+				() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "15469:89/033"));
 	}
 
 	@Test
@@ -315,49 +311,47 @@ class CSVFileGeneratorTest {
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
 		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("metric",
-			Long.parseLong(mockTimeStamp));
+				Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
 
-		Assertions.assertEquals(metricCsvData,
-			"\"Group\",\"Metrics\",\"Value\"\n" +
-				"\"Velocity\",\"Velocity(Story Point)\",\"7\"\n" +
-				"\"Velocity\",\"Throughput(Cards Count)\",\"2\"\n" +
-				"\"Cycle time\",\"Average cycle time(days/storyPoint)\",\"4.18\"\n" +
-				"\"Cycle time\",\"Average cycle time(days/card)\",\"9.75\"\n" +
-				"\"Cycle time\",\"Total development time / Total cycle time\",\"62.10\"\n" +
-				"\"Cycle time\",\"Total block time / Total cycle time\",\"0.34\"\n" +
-				"\"Cycle time\",\"Total review time / Total cycle time\",\"37.39\"\n" +
-				"\"Cycle time\",\"Total testing time / Total cycle time\",\"0.17\"\n" +
-				"\"Cycle time\",\"Average development time(days/storyPoint)\",\"2.60\"\n" +
-				"\"Cycle time\",\"Average development time(days/card)\",\"6.06\"\n" +
-				"\"Cycle time\",\"Average block time(days/storyPoint)\",\"0.01\"\n" +
-				"\"Cycle time\",\"Average block time(days/card)\",\"0.03\"\n" +
-				"\"Cycle time\",\"Average review time(days/storyPoint)\",\"1.56\"\n" +
-				"\"Cycle time\",\"Average review time(days/card)\",\"3.65\"\n" +
-				"\"Cycle time\",\"Average testing time(days/storyPoint)\",\"0.01\"\n" +
-				"\"Cycle time\",\"Average testing time(days/card)\",\"0.02\"\n" +
-				"\"Classifications\",\"Issue Type / Bug\",\"33.33\"\n" +
-				"\"Classifications\",\"Issue Type / Story\",\"66.67\"\n" +
-				"\"Deployment frequency\",\"Heartbeat / Deploy prod / Deployment frequency(deployments/day)\",\"0.78\"\n" +
-				"\"Deployment frequency\",\"Heartbeat / Check Frontend License / Deployment frequency(deployments/day)\",\"0.56\"\n" +
-				"\"Deployment frequency\",\"Average / Deployment frequency(deployments/day)\",\"0.67\"\n" +
-				"\"Lead time for changes\",\"Heartbeat / Deploy prod / PR Lead Time\",\"0\"\n" +
-				"\"Lead time for changes\",\"Heartbeat / Deploy prod / Pipeline Lead Time\",\"0.02\"\n" +
-				"\"Lead time for changes\",\"Heartbeat / Deploy prod / Total Lead Time\",\"0.02\"\n" +
-				"\"Lead time for changes\",\"Heartbeat / Check Frontend License / PR Lead Time\",\"0\"\n" +
-				"\"Lead time for changes\",\"Heartbeat / Check Frontend License / Pipeline Lead Time\",\"0.09\"\n" +
-				"\"Lead time for changes\",\"Heartbeat / Check Frontend License / Total Lead Time\",\"0.09\"\n" +
-				"\"Lead time for changes\",\"Average / PR Lead Time\",\"0\"\n" +
-				"\"Lead time for changes\",\"Average / Pipeline Lead Time\",\"0.05\"\n" +
-				"\"Lead time for changes\",\"Average / Total Lead Time\",\"0.05\"\n" +
-				"\"Change failure rate\",\"Heartbeat / Deploy prod / Failure rate\",\"0\"\n" +
-				"\"Change failure rate\",\"Heartbeat / Check Frontend License / Failure rate\",\"0\"\n" +
-				"\"Change failure rate\",\"Average / Failure rate\",\"0\"\n" +
-				"\"Mean Time To Recovery\",\"Heartbeat / Deploy prod / Mean Time To Recovery\",\"0\"\n" +
-				"\"Mean Time To Recovery\",\"Heartbeat / Check Frontend License / Mean Time To Recovery\",\"0\"\n" +
-				"\"Mean Time To Recovery\",\"Average / Mean Time To Recovery\",\"0\"");
+		Assertions.assertEquals(metricCsvData, "\"Group\",\"Metrics\",\"Value\"\n"
+				+ "\"Velocity\",\"Velocity(Story Point)\",\"7\"\n" + "\"Velocity\",\"Throughput(Cards Count)\",\"2\"\n"
+				+ "\"Cycle time\",\"Average cycle time(days/storyPoint)\",\"4.18\"\n"
+				+ "\"Cycle time\",\"Average cycle time(days/card)\",\"9.75\"\n"
+				+ "\"Cycle time\",\"Total development time / Total cycle time\",\"62.10\"\n"
+				+ "\"Cycle time\",\"Total block time / Total cycle time\",\"0.34\"\n"
+				+ "\"Cycle time\",\"Total review time / Total cycle time\",\"37.39\"\n"
+				+ "\"Cycle time\",\"Total testing time / Total cycle time\",\"0.17\"\n"
+				+ "\"Cycle time\",\"Average development time(days/storyPoint)\",\"2.60\"\n"
+				+ "\"Cycle time\",\"Average development time(days/card)\",\"6.06\"\n"
+				+ "\"Cycle time\",\"Average block time(days/storyPoint)\",\"0.01\"\n"
+				+ "\"Cycle time\",\"Average block time(days/card)\",\"0.03\"\n"
+				+ "\"Cycle time\",\"Average review time(days/storyPoint)\",\"1.56\"\n"
+				+ "\"Cycle time\",\"Average review time(days/card)\",\"3.65\"\n"
+				+ "\"Cycle time\",\"Average testing time(days/storyPoint)\",\"0.01\"\n"
+				+ "\"Cycle time\",\"Average testing time(days/card)\",\"0.02\"\n"
+				+ "\"Classifications\",\"Issue Type / Bug\",\"33.33\"\n"
+				+ "\"Classifications\",\"Issue Type / Story\",\"66.67\"\n"
+				+ "\"Deployment frequency\",\"Heartbeat / Deploy prod / Deployment frequency(deployments/day)\",\"0.78\"\n"
+				+ "\"Deployment frequency\",\"Heartbeat / Check Frontend License / Deployment frequency(deployments/day)\",\"0.56\"\n"
+				+ "\"Deployment frequency\",\"Average / Deployment frequency(deployments/day)\",\"0.67\"\n"
+				+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / PR Lead Time\",\"0\"\n"
+				+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / Pipeline Lead Time\",\"0.02\"\n"
+				+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / Total Lead Time\",\"0.02\"\n"
+				+ "\"Lead time for changes\",\"Heartbeat / Check Frontend License / PR Lead Time\",\"0\"\n"
+				+ "\"Lead time for changes\",\"Heartbeat / Check Frontend License / Pipeline Lead Time\",\"0.09\"\n"
+				+ "\"Lead time for changes\",\"Heartbeat / Check Frontend License / Total Lead Time\",\"0.09\"\n"
+				+ "\"Lead time for changes\",\"Average / PR Lead Time\",\"0\"\n"
+				+ "\"Lead time for changes\",\"Average / Pipeline Lead Time\",\"0.05\"\n"
+				+ "\"Lead time for changes\",\"Average / Total Lead Time\",\"0.05\"\n"
+				+ "\"Change failure rate\",\"Heartbeat / Deploy prod / Failure rate\",\"0\"\n"
+				+ "\"Change failure rate\",\"Heartbeat / Check Frontend License / Failure rate\",\"0\"\n"
+				+ "\"Change failure rate\",\"Average / Failure rate\",\"0\"\n"
+				+ "\"Mean Time To Recovery\",\"Heartbeat / Deploy prod / Mean Time To Recovery\",\"0\"\n"
+				+ "\"Mean Time To Recovery\",\"Heartbeat / Check Frontend License / Mean Time To Recovery\",\"0\"\n"
+				+ "\"Mean Time To Recovery\",\"Average / Mean Time To Recovery\",\"0\"");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);

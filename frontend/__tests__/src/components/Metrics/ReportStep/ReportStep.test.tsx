@@ -5,6 +5,7 @@ import {
   ERROR_PAGE_ROUTE,
   EXPECTED_REPORT_VALUES,
   EXPORT_BOARD_DATA,
+  EXPORT_METRIC_DATA,
   EXPORT_PIPELINE_DATA,
   REQUIRED_DATA_LIST,
 } from '../../../fixtures'
@@ -186,6 +187,21 @@ describe('Report Step', () => {
     await userEvent.click(getByText(EXPORT_BOARD_DATA))
 
     expect(getByText('failed export csv')).toBeInTheDocument()
+  })
+
+  it('should show errorMessage when click export metric button given csv not exist', async () => {
+    const { getByText } = await act(() => setup(['']))
+
+    await userEvent.click(getByText(EXPORT_METRIC_DATA))
+
+    expect(getByText('Export metric data')).toBeInTheDocument()
+  })
+
+  it('should show export metric button when visiting this page', async () => {
+    const { getByText } = await act(() => setup(['']))
+
+    const exportMetricButton = getByText(EXPORT_METRIC_DATA)
+    expect(exportMetricButton).toBeInTheDocument()
   })
 
   it('should check error page show when isReportError is true', async () => {

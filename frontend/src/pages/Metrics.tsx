@@ -1,13 +1,16 @@
 import Header from '@src/layouts/Header'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext'
+import { NotificationProvider } from '@src/hooks/useNotificationContext'
 
 const Metrics = () => (
   <>
-    <Header />
-    <ContextProvider>
-      <MetricsStepper />
-    </ContextProvider>
+    <NotificationProvider>
+      <Header />
+      <ContextProvider>
+        <MetricsStepper />
+      </ContextProvider>
+    </NotificationProvider>
   </>
 )
 

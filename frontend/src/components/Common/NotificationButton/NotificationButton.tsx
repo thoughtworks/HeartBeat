@@ -1,29 +1,33 @@
-import { NotificationIconWrapper, sx, TooltipWrapper } from '@src/components/Common/NotificationButton/style'
-import { useState } from 'react'
+import { NotificationIconWrapper, sx } from '@src/components/Common/NotificationButton/style'
 import { ClickAwayListener, Tooltip } from '@mui/material'
+import { NotificationContextType } from '@src/hooks/useNotificationContext'
 
-export interface NotificationButtonProps {
-  open?: boolean
-  title: string
-}
+export const NotificationButton = (props: NotificationContextType) => {
+  const { notificationProps, setNotificationProps } = props
 
-export const NotificationButton = (props: NotificationButtonProps) => {
-  const [open, setOpen] = useState(props.open)
   const handleTooltipClose = () => {
-    setOpen(false)
+    setTimeout(() => {
+      setNotificationProps({
+        ...notificationProps,
+        open: false,
+      })
+    }, 50)
   }
   const toggleTooltip = () => {
-    setOpen(!open)
+    setNotificationProps({
+      ...notificationProps,
+      open: !notificationProps.open,
+    })
   }
 
   return (
     <ClickAwayListener onClickAway={handleTooltipClose}>
       <Tooltip
-        {...props}
         arrow
         onClick={toggleTooltip}
         onClose={handleTooltipClose}
-        open={open}
+        open={notificationProps.open}
+        title={notificationProps.title}
         placement={'bottom-start'}
         PopperProps={{
           disablePortal: true,

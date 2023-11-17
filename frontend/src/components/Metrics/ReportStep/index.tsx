@@ -6,6 +6,7 @@ import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
 import {
   CHINA_CALENDAR,
   ERROR_PAGE_ROUTE,
+  HEADER_NOTIFICATION_MESSAGE,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   NAME,
@@ -28,10 +29,12 @@ import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { getJiraBoardToken } from '@src/utils/util'
+import { useNotificationContext } from '@src/hooks/useNotificationContext'
 
 const ReportStep = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { setNotificationProps } = useNotificationContext()
   const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
@@ -168,6 +171,13 @@ const ReportStep = () => {
     | undefined
   > = useCallback(async () => {
     return await generateReport(getReportRequestBody())
+  }, [])
+
+  useEffect(() => {
+    setNotificationProps({
+      open: true,
+      title: HEADER_NOTIFICATION_MESSAGE.REPORT.replace('%s', '30'),
+    })
   }, [])
 
   useEffect(() => {

@@ -219,3 +219,7 @@ export const METRICS_STEPS = {
   METRICS: 1,
   REPORT: 2,
 }
+
+export const HEADER_NOTIFICATION_MESSAGE = {
+  REPORT: 'The file needs to be exported within %s minutes, otherwise it will expire.',
+}

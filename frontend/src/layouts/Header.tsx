@@ -1,9 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import Logo from '@src/assets/Logo.svg'
 
-import { METRICS_STEPS, PROJECT_NAME } from '@src/constants'
-import { useAppSelector } from '@src/hooks/useAppDispatch'
-import { selectStepNumber } from '@src/context/stepper/StepperSlice'
+import { PROJECT_NAME } from '@src/constants'
 import {
   HomeIconContainer,
   HomeIconElement,
@@ -14,29 +12,16 @@ import {
   LogoWarp,
   NotificationIconContainer,
 } from '@src/layouts/style'
-import {
-  NotificationButton,
-  NotificationButtonProps,
-} from '@src/components/Common/NotificationButton/NotificationButton'
+import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
+import { useNotificationContext } from '@src/hooks/useNotificationContext'
 
 const Header = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const activeStep = useAppSelector(selectStepNumber)
+  const notificationContext = useNotificationContext()
 
   const goHome = () => {
     navigate('/')
-  }
-
-  const notificationProps = (value: number): NotificationButtonProps => {
-    switch (value) {
-      case METRICS_STEPS.REPORT:
-        return { title: 'The file needs to be exported within thirty minutes, otherwise it will expire.', open: true }
-      case METRICS_STEPS.CONFIG:
-      case METRICS_STEPS.METRICS:
-      default:
-        return { title: '', open: false }
-    }
   }
 
   const shouldShowHomeIcon = () => {
@@ -56,7 +41,7 @@ const Header = () => {
       <IconContainer>
         {shouldShowNotificationIcon() && (
           <NotificationIconContainer title='Notification'>
-            <NotificationButton {...notificationProps(activeStep)} />
+            <NotificationButton {...notificationContext} />
           </NotificationIconContainer>
         )}
         {shouldShowHomeIcon() && (

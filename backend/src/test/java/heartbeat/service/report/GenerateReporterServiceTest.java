@@ -67,7 +67,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -109,6 +108,8 @@ class GenerateReporterServiceTest {
 	Path mockPipelineCsvPath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
 
 	Path mockBoardCsvPath = Path.of("./csv/exportBoard-1683734399999.csv");
+
+	Path mockMetricCsvPath = Path.of("./csv/exportMetric-1683734399999.csv");
 
 	@Mock
 	private BuildKiteService buildKiteService;
@@ -817,6 +818,28 @@ class GenerateReporterServiceTest {
 			.meanTimeRecoveryPipelines(List.of(MeanTimeToRecoveryOfPipeline.builder().build()))
 			.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().build())
 			.build();
+	}
+
+	@Test
+	void shouldGenerateForMetricCsvWhenCallGenerateReporter() throws IOException {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.metrics(List.of())
+			.considerHoliday(false)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		Mockito.doAnswer(invocation -> {
+			Files.createFile(mockMetricCsvPath);
+			return null;
+		}).when(csvFileGenerator).convertMetricDataToCSV(any(), any());
+
+		generateReporterService.generateReporter(request);
+
+		boolean isExists = Files.exists(mockMetricCsvPath);
+		Assertions.assertTrue(isExists);
+		Files.deleteIfExists(mockMetricCsvPath);
 	}
 
 }

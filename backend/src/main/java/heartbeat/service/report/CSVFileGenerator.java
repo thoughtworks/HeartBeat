@@ -358,39 +358,46 @@ public class CSVFileGenerator {
 
 			csvWriter.writeNext(headers);
 
-			Velocity velocity = reportResponse.getVelocity();
-			if (velocity != null)
-				getRowsFormVelocity(velocity).forEach(csvWriter::writeNext);
-
-			CycleTime cycleTime = reportResponse.getCycleTime();
-			if (cycleTime != null)
-				getRowsFromCycleTime(cycleTime).forEach(csvWriter::writeNext);
-
-			List<Classification> classificationList = reportResponse.getClassificationList();
-			if (classificationList != null)
-				classificationList
-					.forEach(classification -> getRowsFormClassification(classification).forEach(csvWriter::writeNext));
-
-			DeploymentFrequency deploymentFrequency = reportResponse.getDeploymentFrequency();
-			if (deploymentFrequency != null)
-				getRowsFromDeploymentFrequency(deploymentFrequency).forEach(csvWriter::writeNext);
-
-			LeadTimeForChanges leadTimeForChanges = reportResponse.getLeadTimeForChanges();
-			if (leadTimeForChanges != null)
-				getRowsFromLeadTimeForChanges(leadTimeForChanges).forEach(csvWriter::writeNext);
-
-			ChangeFailureRate changeFailureRate = reportResponse.getChangeFailureRate();
-			if (changeFailureRate != null)
-				getRowsFromChangeFailureRate(changeFailureRate).forEach(csvWriter::writeNext);
-
-			MeanTimeToRecovery meanTimeToRecovery = reportResponse.getMeanTimeToRecovery();
-			if (meanTimeToRecovery != null)
-				getRowsFromMeanTimeToRecovery(meanTimeToRecovery).forEach(csvWriter::writeNext);
+			csvWriter.writeAll(convertReportResponseToCSVRows(reportResponse));
 		}
 		catch (IOException e) {
 			log.error("Failed to write file", e);
 			throw new FileIOException(e);
 		}
+	}
+
+	private List<String[]> convertReportResponseToCSVRows(ReportResponse reportResponse) {
+		List<String[]> rows = new ArrayList<>();
+
+		Velocity velocity = reportResponse.getVelocity();
+		if (velocity != null)
+			rows.addAll(getRowsFormVelocity(velocity));
+
+		CycleTime cycleTime = reportResponse.getCycleTime();
+		if (cycleTime != null)
+			rows.addAll(getRowsFromCycleTime(cycleTime));
+
+		List<Classification> classificationList = reportResponse.getClassificationList();
+		if (classificationList != null)
+			classificationList.forEach(classification -> rows.addAll(getRowsFormClassification(classification)));
+
+		DeploymentFrequency deploymentFrequency = reportResponse.getDeploymentFrequency();
+		if (deploymentFrequency != null)
+			rows.addAll(getRowsFromDeploymentFrequency(deploymentFrequency));
+
+		LeadTimeForChanges leadTimeForChanges = reportResponse.getLeadTimeForChanges();
+		if (leadTimeForChanges != null)
+			rows.addAll(getRowsFromLeadTimeForChanges(leadTimeForChanges));
+
+		ChangeFailureRate changeFailureRate = reportResponse.getChangeFailureRate();
+		if (changeFailureRate != null)
+			rows.addAll(getRowsFromChangeFailureRate(changeFailureRate));
+
+		MeanTimeToRecovery meanTimeToRecovery = reportResponse.getMeanTimeToRecovery();
+		if (meanTimeToRecovery != null)
+			rows.addAll(getRowsFromMeanTimeToRecovery(meanTimeToRecovery));
+
+		return rows;
 	}
 
 	private List<String[]> getRowsFormVelocity(Velocity velocity) {

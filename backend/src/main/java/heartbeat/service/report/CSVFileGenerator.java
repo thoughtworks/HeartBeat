@@ -57,6 +57,10 @@ import static java.util.concurrent.TimeUnit.HOURS;
 @Log4j2
 public class CSVFileGenerator {
 
+	private static final char FILENAME_SEPARATOR = '-';
+
+	private static final String CSV_EXTENSION = ".csv";
+
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
 			InputStream inputStream = new FileInputStream(fileName);
@@ -84,7 +88,7 @@ public class CSVFileGenerator {
 		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
 		log.info(message);
 
-		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv";
+		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		File file = new File(fileName);
 
 		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
@@ -132,9 +136,12 @@ public class CSVFileGenerator {
 
 	public InputStreamResource getDataFromCSV(String dataType, long csvTimeStamp) {
 		return switch (dataType) {
-			case "metric" -> readStringFromCsvFile(CSVFileNameEnum.METRIC.getValue() + "-" + csvTimeStamp + ".csv");
-			case "pipeline" -> readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
-			case "board" -> readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv");
+			case "metric" ->
+				readStringFromCsvFile(CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case "pipeline" ->
+				readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case "board" ->
+				readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
 			default -> new InputStreamResource(new ByteArrayInputStream("".getBytes()));
 		};
 	}
@@ -152,7 +159,7 @@ public class CSVFileGenerator {
 		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
 		log.info(message);
 
-		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv";
+		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
 			List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
 			fixedFields.removeAll(extraFields);
@@ -343,7 +350,7 @@ public class CSVFileGenerator {
 		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
 		log.info(message);
 
-		String fileName = CSVFileNameEnum.METRIC.getValue() + "-" + csvTimeStamp + ".csv";
+		String fileName = CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		File file = new File(fileName);
 
 		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {

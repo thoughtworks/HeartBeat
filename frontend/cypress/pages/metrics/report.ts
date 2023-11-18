@@ -4,11 +4,16 @@ class Report {
   readonly deploymentFrequencyTitle = () => cy.contains('Deployment frequency')
   readonly meanTimeToRecoveryTitle = () => cy.contains('Mean Time To Recovery')
   readonly backButton = () => cy.contains('Previous')
+  readonly exportMetricDataButton = () => cy.contains('Export metric data')
   readonly exportPipelineDataButton = () => cy.contains('Export pipeline data')
   readonly exportBoardDataButton = () => cy.contains('Export board data')
 
   backToMetricsStep() {
     this.backButton().click()
+  }
+
+  exportMetricData() {
+    this.exportMetricDataButton().click()
   }
 
   exportPipelineData() {

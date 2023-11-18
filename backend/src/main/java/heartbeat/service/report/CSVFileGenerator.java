@@ -136,12 +136,12 @@ public class CSVFileGenerator {
 
 	public InputStreamResource getDataFromCSV(String dataType, long csvTimeStamp) {
 		return switch (dataType) {
-			case "metric" ->
-				readStringFromCsvFile(CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
-			case "pipeline" ->
-				readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
-			case "board" ->
-				readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case "metric" -> readStringFromCsvFile(
+					CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case "pipeline" -> readStringFromCsvFile(
+					CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case "board" -> readStringFromCsvFile(
+					CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
 			default -> new InputStreamResource(new ByteArrayInputStream("".getBytes()));
 		};
 	}

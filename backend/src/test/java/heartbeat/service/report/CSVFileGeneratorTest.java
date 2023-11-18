@@ -42,7 +42,8 @@ class CSVFileGeneratorTest {
 				for (File file : files) {
 					if (file.isDirectory()) {
 						deleteDirectory(file);
-					} else {
+					}
+					else {
 						file.delete();
 					}
 				}
@@ -65,12 +66,12 @@ class CSVFileGeneratorTest {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
 		String headers = reader.readLine();
 		Assertions.assertEquals(
-			"\"Pipeline Name\",\"Pipeline Step\",\"Build Number\",\"Committer\",\"First Code Committed Time In PR\",\"Code Committed Time\",\"PR Created Time\",\"PR Merged Time\",\"Deployment Completed Time\",\"Total Lead Time (HH:mm:ss)\",\"PR Lead Time (HH:mm:ss)\",\"Pipeline Lead Time (HH:mm:ss)\",\"Status\",\"Branch\"",
-			headers);
+				"\"Pipeline Name\",\"Pipeline Step\",\"Build Number\",\"Committer\",\"First Code Committed Time In PR\",\"Code Committed Time\",\"PR Created Time\",\"PR Merged Time\",\"Deployment Completed Time\",\"Total Lead Time (HH:mm:ss)\",\"PR Lead Time (HH:mm:ss)\",\"Pipeline Lead Time (HH:mm:ss)\",\"Status\",\"Branch\"",
+				headers);
 		String firstLine = reader.readLine();
 		Assertions.assertEquals(
-			"\"Heartbeat\",\":rocket: Deploy prod\",\"880\",\"XXXX\",\"2023-05-08T07:18:18Z\",\"2023-05-10T06:43:02.653Z\",\"168369327000\",\"1683793037000\",\"1684793037000\",\"8379303\",\"16837\",\"653037000\",\"passed\",\"branch\"",
-			firstLine);
+				"\"Heartbeat\",\":rocket: Deploy prod\",\"880\",\"XXXX\",\"2023-05-08T07:18:18Z\",\"2023-05-10T06:43:02.653Z\",\"168369327000\",\"1683793037000\",\"1684793037000\",\"8379303\",\"16837\",\"653037000\",\"passed\",\"branch\"",
+				firstLine);
 		reader.close();
 		fileInputStream.close();
 		file.delete();
@@ -97,15 +98,15 @@ class CSVFileGeneratorTest {
 		csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, mockTimeStamp);
 
 		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("pipeline",
-			Long.parseLong(mockTimeStamp));
+				Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String csvPipelineData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
 
 		Assertions.assertEquals(
-			"\"Pipeline Name\",\"Pipeline Step\",\"Build Number\",\"Committer\",\"First Code Committed Time In PR\",\"Code Committed Time\",\"PR Created Time\",\"PR Merged Time\",\"Deployment Completed Time\",\"Total Lead Time (HH:mm:ss)\",\"PR Lead Time (HH:mm:ss)\",\"Pipeline Lead Time (HH:mm:ss)\",\"Status\",\"Branch\"\n"
-				+ "\"Heartbeat\",\":rocket: Deploy prod\",\"880\",\"XXXX\",\"2023-05-08T07:18:18Z\",\"2023-05-10T06:43:02.653Z\",\"168369327000\",\"1683793037000\",\"1684793037000\",\"8379303\",\"16837\",\"653037000\",\"passed\",\"branch\"",
-			csvPipelineData);
+				"\"Pipeline Name\",\"Pipeline Step\",\"Build Number\",\"Committer\",\"First Code Committed Time In PR\",\"Code Committed Time\",\"PR Created Time\",\"PR Merged Time\",\"Deployment Completed Time\",\"Total Lead Time (HH:mm:ss)\",\"PR Lead Time (HH:mm:ss)\",\"Pipeline Lead Time (HH:mm:ss)\",\"Status\",\"Branch\"\n"
+						+ "\"Heartbeat\",\":rocket: Deploy prod\",\"880\",\"XXXX\",\"2023-05-08T07:18:18Z\",\"2023-05-10T06:43:02.653Z\",\"168369327000\",\"1683793037000\",\"1684793037000\",\"8379303\",\"16837\",\"653037000\",\"passed\",\"branch\"",
+				csvPipelineData);
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
@@ -128,7 +129,7 @@ class CSVFileGeneratorTest {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("pipeline", 123456L));
 		assertThrows(FileIOException.class,
-			() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "15469:89/033"));
+				() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "15469:89/033"));
 	}
 
 	@Test
@@ -170,7 +171,7 @@ class CSVFileGeneratorTest {
 
 		csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, mockTimeStamp);
 		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("board",
-			Long.parseLong(mockTimeStamp));
+				Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(csvDataInputStream));
 		String header = reader.readLine();
@@ -235,7 +236,7 @@ class CSVFileGeneratorTest {
 
 		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("board", 1686710104536L));
 		assertThrows(FileIOException.class,
-			() -> csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, "15469:89/033"));
+				() -> csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, "15469:89/033"));
 	}
 
 	@Test
@@ -246,14 +247,14 @@ class CSVFileGeneratorTest {
 
 		csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, mockTimeStamp);
 		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("board",
-			Long.parseLong(mockTimeStamp));
+				Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String boardCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
 
 		Assertions.assertEquals(boardCsvData,
-			"\"Issue key\",\"Summary\",\"Issue Type\",\"Status\",\"Story Points\",\"assignee\",\"Reporter\",\"Project Key\",\"Project Name\",\"Priority\",\"Parent Summary\",\"Sprint\",\"Labels\",\"Cycle Time\",\"Story point estimate\",\"Flagged\",\"1010\",\"1011\",\"Cycle Time / Story Points\",\"Analysis Days\",\"In Dev Days\",\"Waiting Days\",\"Testing Days\",\"Block Days\",\"Review Days\",\"OriginCycleTime: DOING\",\"OriginCycleTime: BLOCKED\"\n"
-				+ "\"ADM-489\",\"summary\",\"issue type\",,\"2\",\"name\",\"name\",\"ADM\",\"Auto Dora Metrics\",\"Medium\",\"parent\",\"sprint 1\",\"\",\"0.90\",\"1.00\",\"\",\"\",\"{}\",\"0.90\",\"0\",\"0.90\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"");
+				"\"Issue key\",\"Summary\",\"Issue Type\",\"Status\",\"Story Points\",\"assignee\",\"Reporter\",\"Project Key\",\"Project Name\",\"Priority\",\"Parent Summary\",\"Sprint\",\"Labels\",\"Cycle Time\",\"Story point estimate\",\"Flagged\",\"1010\",\"1011\",\"Cycle Time / Story Points\",\"Analysis Days\",\"In Dev Days\",\"Waiting Days\",\"Testing Days\",\"Block Days\",\"Review Days\",\"OriginCycleTime: DOING\",\"OriginCycleTime: BLOCKED\"\n"
+						+ "\"ADM-489\",\"summary\",\"issue type\",,\"2\",\"name\",\"name\",\"ADM\",\"Auto Dora Metrics\",\"Medium\",\"parent\",\"sprint 1\",\"\",\"0.90\",\"1.00\",\"\",\"\",\"{}\",\"0.90\",\"0\",\"0.90\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
@@ -302,7 +303,7 @@ class CSVFileGeneratorTest {
 
 		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("metric", 1686710104536L));
 		assertThrows(FileIOException.class,
-			() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "15469:89/033"));
+				() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "15469:89/033"));
 	}
 
 	@Test
@@ -312,50 +313,53 @@ class CSVFileGeneratorTest {
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
 
 		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("metric",
-			Long.parseLong(mockTimeStamp));
+				Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
 
-		Assertions.assertEquals(metricCsvData, "\"Group\",\"Metrics\",\"Value\"\n"
-			+ "\"Velocity\",\"Velocity(Story Point)\",\"7\"\n" + "\"Velocity\",\"Throughput(Cards Count)\",\"2\"\n"
-			+ "\"Cycle time\",\"Average cycle time(days/storyPoint)\",\"4.18\"\n"
-			+ "\"Cycle time\",\"Average cycle time(days/card)\",\"9.75\"\n"
-			+ "\"Cycle time\",\"Total development time / Total cycle time\",\"62.10\"\n"
-			+ "\"Cycle time\",\"Total block time / Total cycle time\",\"0.34\"\n"
-			+ "\"Cycle time\",\"Total review time / Total cycle time\",\"37.39\"\n"
-			+ "\"Cycle time\",\"Total testing time / Total cycle time\",\"0.17\"\n"
-			+ "\"Cycle time\",\"Total  time / Total cycle time\",\"0.17\"\n"
-			+ "\"Cycle time\",\"Average development time(days/storyPoint)\",\"2.60\"\n"
-			+ "\"Cycle time\",\"Average development time(days/card)\",\"6.06\"\n"
-			+ "\"Cycle time\",\"Average block time(days/storyPoint)\",\"0.01\"\n"
-			+ "\"Cycle time\",\"Average block time(days/card)\",\"0.03\"\n"
-			+ "\"Cycle time\",\"Average review time(days/storyPoint)\",\"1.56\"\n"
-			+ "\"Cycle time\",\"Average review time(days/card)\",\"3.65\"\n"
-			+ "\"Cycle time\",\"Average testing time(days/storyPoint)\",\"0.01\"\n"
-			+ "\"Cycle time\",\"Average testing time(days/card)\",\"0.02\"\n"
-			+ "\"Cycle time\",\"Average  time(days/storyPoint)\",\"0.01\"\n"
-			+ "\"Cycle time\",\"Average  time(days/card)\",\"0.02\"\n"
-			+ "\"Classifications\",\"Issue Type / Bug\",\"33.33\"\n"
-			+ "\"Classifications\",\"Issue Type / Story\",\"66.67\"\n"
-			+ "\"Deployment frequency\",\"Heartbeat / Deploy prod / Deployment frequency(deployments/day)\",\"0.78\"\n"
-			+ "\"Deployment frequency\",\"Heartbeat / Check Frontend License / Deployment frequency(deployments/day)\",\"0.56\"\n"
-			+ "\"Deployment frequency\",\"Average / Deployment frequency(deployments/day)\",\"0.67\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / PR Lead Time\",\"0\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / Pipeline Lead Time\",\"0.02\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / Total Lead Time\",\"0.02\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Check Frontend License / PR Lead Time\",\"0\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Check Frontend License / Pipeline Lead Time\",\"0.09\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Check Frontend License / Total Lead Time\",\"0.09\"\n"
-			+ "\"Lead time for changes\",\"Average / PR Lead Time\",\"0\"\n"
-			+ "\"Lead time for changes\",\"Average / Pipeline Lead Time\",\"0.05\"\n"
-			+ "\"Lead time for changes\",\"Average / Total Lead Time\",\"0.05\"\n"
-			+ "\"Change failure rate\",\"Heartbeat / Deploy prod / Failure rate\",\"0\"\n"
-			+ "\"Change failure rate\",\"Heartbeat / Check Frontend License / Failure rate\",\"0\"\n"
-			+ "\"Change failure rate\",\"Average / Failure rate\",\"0\"\n"
-			+ "\"Mean Time To Recovery\",\"Heartbeat / Deploy prod / Mean Time To Recovery\",\"0\"\n"
-			+ "\"Mean Time To Recovery\",\"Heartbeat / Check Frontend License / Mean Time To Recovery\",\"0\"\n"
-			+ "\"Mean Time To Recovery\",\"Average / Mean Time To Recovery\",\"0\"");
+		Assertions.assertEquals(metricCsvData,
+				"""
+						"Group","Metrics","Value"
+						"Velocity","Velocity(Story Point)","7"
+						"Velocity","Throughput(Cards Count)","2"
+						"Cycle time","Average cycle time(days/storyPoint)","4.18"
+						"Cycle time","Average cycle time(days/card)","9.75"
+						"Cycle time","Total development time / Total cycle time","62.10"
+						"Cycle time","Total block time / Total cycle time","0.34"
+						"Cycle time","Total review time / Total cycle time","37.39"
+						"Cycle time","Total testing time / Total cycle time","0.17"
+						"Cycle time","Total  time / Total cycle time","0.17"
+						"Cycle time","Average development time(days/storyPoint)","2.60"
+						"Cycle time","Average development time(days/card)","6.06"
+						"Cycle time","Average block time(days/storyPoint)","0.01"
+						"Cycle time","Average block time(days/card)","0.03"
+						"Cycle time","Average review time(days/storyPoint)","1.56"
+						"Cycle time","Average review time(days/card)","3.65"
+						"Cycle time","Average testing time(days/storyPoint)","0.01"
+						"Cycle time","Average testing time(days/card)","0.02"
+						"Cycle time","Average  time(days/storyPoint)","0.01"
+						"Cycle time","Average  time(days/card)","0.02"
+						"Classifications","Issue Type / Bug","33.33"
+						"Classifications","Issue Type / Story","66.67"
+						"Deployment frequency","Heartbeat / Deploy prod / Deployment frequency(deployments/day)","0.78"
+						"Deployment frequency","Heartbeat / Check Frontend License / Deployment frequency(deployments/day)","0.56"
+						"Deployment frequency","Average / Deployment frequency(deployments/day)","0.67"
+						"Lead time for changes","Heartbeat / Deploy prod / PR Lead Time","0"
+						"Lead time for changes","Heartbeat / Deploy prod / Pipeline Lead Time","0.02"
+						"Lead time for changes","Heartbeat / Deploy prod / Total Lead Time","0.02"
+						"Lead time for changes","Heartbeat / Check Frontend License / PR Lead Time","0"
+						"Lead time for changes","Heartbeat / Check Frontend License / Pipeline Lead Time","0.09"
+						"Lead time for changes","Heartbeat / Check Frontend License / Total Lead Time","0.09"
+						"Lead time for changes","Average / PR Lead Time","0"
+						"Lead time for changes","Average / Pipeline Lead Time","0.05"
+						"Lead time for changes","Average / Total Lead Time","0.05"
+						"Change failure rate","Heartbeat / Deploy prod / Failure rate","0"
+						"Change failure rate","Heartbeat / Check Frontend License / Failure rate","0"
+						"Change failure rate","Average / Failure rate","0"
+						"Mean Time To Recovery","Heartbeat / Deploy prod / Mean Time To Recovery","0"
+						"Mean Time To Recovery","Heartbeat / Check Frontend License / Mean Time To Recovery","0"
+						"Mean Time To Recovery","Average / Mean Time To Recovery","0\"""");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
@@ -368,7 +372,7 @@ class CSVFileGeneratorTest {
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
 		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("metric",
-			Long.parseLong(mockTimeStamp));
+				Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
@@ -381,23 +385,25 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldHasNoContentForAveragesWhenGetDataFromCsvGivenDataTypeIsMetricAndTheQuantityOfPipelineIsEqualToOne() throws IOException {
+	public void shouldHasNoContentForAveragesWhenGetDataFromCsvGivenDataTypeIsMetricAndTheQuantityOfPipelineIsEqualToOne()
+			throws IOException {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
 		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("metric",
-			Long.parseLong(mockTimeStamp));
+				Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
 
-		Assertions.assertEquals(metricCsvData, "\"Group\",\"Metrics\",\"Value\"\n"
-			+ "\"Deployment frequency\",\"Heartbeat / Deploy prod / Deployment frequency(deployments/day)\",\"0.78\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / PR Lead Time\",\"0\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / Pipeline Lead Time\",\"0.02\"\n"
-			+ "\"Lead time for changes\",\"Heartbeat / Deploy prod / Total Lead Time\",\"0.02\"\n"
-			+ "\"Change failure rate\",\"Heartbeat / Deploy prod / Failure rate\",\"0\"\n"
-			+ "\"Mean Time To Recovery\",\"Heartbeat / Deploy prod / Mean Time To Recovery\",\"0\"");
+		Assertions.assertEquals(metricCsvData, """
+				"Group","Metrics","Value"
+				"Deployment frequency","Heartbeat / Deploy prod / Deployment frequency(deployments/day)","0.78"
+				"Lead time for changes","Heartbeat / Deploy prod / PR Lead Time","0"
+				"Lead time for changes","Heartbeat / Deploy prod / Pipeline Lead Time","0.02"
+				"Lead time for changes","Heartbeat / Deploy prod / Total Lead Time","0.02"
+				"Change failure rate","Heartbeat / Deploy prod / Failure rate","0"
+				"Mean Time To Recovery","Heartbeat / Deploy prod / Mean Time To Recovery","0\"""");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);

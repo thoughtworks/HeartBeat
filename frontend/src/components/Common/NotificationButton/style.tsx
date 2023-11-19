@@ -14,9 +14,9 @@ export const sx = {
   fontSize: '1rem',
   fontWeight: '250',
   fontFamily: theme.typography.fontFamily,
-  backgroundColor: theme.components ? theme.components.tip.color : theme.main.backgroundColor,
+  backgroundColor: theme.components!.tip.color,
   '& .MuiTooltip-arrow': {
-    color: theme.components ? theme.components.tip.color : theme.main.backgroundColor,
+    color: theme.components!.tip.color,
   },
   zIndex: Z_INDEX.TOOLTIP,
 }

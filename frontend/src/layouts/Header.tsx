@@ -12,13 +12,14 @@ import {
   LogoWarp,
   NotificationIconContainer,
 } from '@src/layouts/style'
-import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
-import { useNotificationContext } from '@src/hooks/useNotificationContext'
+import {
+  NotificationButton,
+  NotificationButtonProps,
+} from '@src/components/Common/NotificationButton/NotificationButton'
 
-const Header = () => {
+const Header = (props: NotificationButtonProps) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const notificationContext = useNotificationContext()
 
   const goHome = () => {
     navigate('/')
@@ -39,9 +40,9 @@ const Header = () => {
         <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
       </LogoContainer>
       <IconContainer>
-        {shouldShowNotificationIcon() && (
-          <NotificationIconContainer title='Notification'>
-            <NotificationButton {...notificationContext} />
+        {shouldShowNotificationIcon() && props && (
+          <NotificationIconContainer title='Notification' data-testid='NotificationButton'>
+            <NotificationButton {...props} />
           </NotificationIconContainer>
         )}
         {shouldShowHomeIcon() && (

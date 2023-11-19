@@ -1,13 +1,7 @@
 import React, { useState } from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
-import {
-  ButtonWrapper,
-  BranchSelectionWrapper,
-  PipelineMetricSelectionWrapper,
-  RemoveButton,
-  WarningMessage,
-} from './style'
+import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
@@ -27,7 +21,7 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { NO_STEP_WARNING_MESSAGE } from '@src/constants'
-import { BranchSelection } from '@src/components/Metrics/ConfigStep/BranchSelection/BranchSelection'
+import { BranchSelection } from '@src/components/Metrics/ConfigStep/BranchSelection'
 
 interface pipelineMetricSelectionProps {
   type: string

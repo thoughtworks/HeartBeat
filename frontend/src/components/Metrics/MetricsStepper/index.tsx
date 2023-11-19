@@ -46,13 +46,14 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import _ from 'lodash'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
+import { NotificationButtonProps } from '@src/components/Common/NotificationButton/NotificationButton'
 
 const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
 const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
 
 /* istanbul ignore next */
-const MetricsStepper = () => {
+const MetricsStepper = (props: NotificationButtonProps) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStepNumber)
@@ -269,7 +270,7 @@ const MetricsStepper = () => {
         <Suspense>
           {activeStep === METRICS_STEPS.CONFIG && <ConfigStep />}
           {activeStep === METRICS_STEPS.METRICS && <MetricsStep />}
-          {activeStep === METRICS_STEPS.REPORT && <ReportStep />}
+          {activeStep === METRICS_STEPS.REPORT && <ReportStep {...props} />}
         </Suspense>
       </MetricsStepperContent>
       <ButtonContainer>

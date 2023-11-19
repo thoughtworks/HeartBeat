@@ -1,21 +1,34 @@
 import { NotificationIconWrapper, sx } from '@src/components/Common/NotificationButton/style'
 import { ClickAwayListener, Tooltip } from '@mui/material'
-import { NotificationContextType } from '@src/hooks/useNotificationContext'
+import { Dispatch, SetStateAction } from 'react'
 
-export const NotificationButton = (props: NotificationContextType) => {
+interface NotificationTipProps {
+  title: string
+  open: boolean
+}
+
+export interface NotificationButtonProps {
+  notificationProps?: NotificationTipProps
+  setNotificationProps?: Dispatch<SetStateAction<NotificationTipProps>>
+}
+
+export const NotificationButton = (props: NotificationButtonProps) => {
   const { notificationProps, setNotificationProps } = props
-
   const handleTooltipClose = () => {
-    setNotificationProps({
-      ...notificationProps,
-      open: false,
-    })
+    setNotificationProps &&
+      notificationProps &&
+      setNotificationProps({
+        ...notificationProps,
+        open: false,
+      })
   }
   const toggleTooltip = () => {
-    setNotificationProps({
-      ...notificationProps,
-      open: !notificationProps.open,
-    })
+    setNotificationProps &&
+      notificationProps &&
+      setNotificationProps({
+        title: notificationProps.title,
+        open: !notificationProps.open,
+      })
   }
 
   return (
@@ -24,8 +37,8 @@ export const NotificationButton = (props: NotificationContextType) => {
         arrow
         onClick={toggleTooltip}
         onClose={handleTooltipClose}
-        open={notificationProps.open}
-        title={notificationProps.title}
+        open={notificationProps?.open}
+        title={notificationProps?.title}
         placement={'bottom-start'}
         PopperProps={{
           disablePortal: true,
@@ -40,7 +53,7 @@ export const NotificationButton = (props: NotificationContextType) => {
           },
         }}
       >
-        <NotificationIconWrapper />
+        <NotificationIconWrapper data-testid='NotificationIcon' />
       </Tooltip>
     </ClickAwayListener>
   )

@@ -53,6 +53,8 @@ let store = null
 
 describe('Report Step', () => {
   const setup = async (params: [string]) => {
+    const openNotificationProps = { open: true, title: 'NotificationPopper' }
+    const setNotificationProps = jest.fn()
     store = setupStore()
     await store.dispatch(updateMetrics(params))
     await store.dispatch(
@@ -78,7 +80,7 @@ describe('Report Step', () => {
     )
     return render(
       <Provider store={store}>
-        <ReportStep />
+        <ReportStep notificationProps={openNotificationProps} setNotificationProps={setNotificationProps} />
       </Provider>
     )
   }

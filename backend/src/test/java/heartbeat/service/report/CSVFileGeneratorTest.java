@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
+import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.FileIOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -254,6 +255,155 @@ class CSVFileGeneratorTest {
 		Assertions.assertEquals(boardCsvData,
 				"\"Issue key\",\"Summary\",\"Issue Type\",\"Status\",\"Story Points\",\"assignee\",\"Reporter\",\"Project Key\",\"Project Name\",\"Priority\",\"Parent Summary\",\"Sprint\",\"Labels\",\"Cycle Time\",\"Story point estimate\",\"Flagged\",\"1010\",\"1011\",\"Cycle Time / Story Points\",\"Analysis Days\",\"In Dev Days\",\"Waiting Days\",\"Testing Days\",\"Block Days\",\"Review Days\",\"OriginCycleTime: DOING\",\"OriginCycleTime: BLOCKED\"\n"
 						+ "\"ADM-489\",\"summary\",\"issue type\",,\"2\",\"name\",\"name\",\"ADM\",\"Auto Dora Metrics\",\"Medium\",\"parent\",\"sprint 1\",\"\",\"0.90\",\"1.00\",\"\",\"\",\"{}\",\"0.90\",\"0\",\"0.90\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"");
+
+		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
+		File file = new File(fileName);
+		file.delete();
+	}
+
+	@Test
+	void shouldConvertMetricDataToCsv() throws IOException {
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+
+		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
+
+		String fileName = CSVFileNameEnum.METRIC.getValue() + "-" + mockTimeStamp + ".csv";
+		File file = new File(fileName);
+		Assertions.assertTrue(file.exists());
+
+		FileInputStream fileInputStream = new FileInputStream(file);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+		String headers = reader.readLine();
+		Assertions.assertEquals("\"Group\",\"Metrics\",\"Value\"", headers);
+		String firstLine = reader.readLine();
+		Assertions.assertEquals("\"Velocity\",\"Velocity(Story Point)\",\"7\"", firstLine);
+		reader.close();
+		fileInputStream.close();
+		file.delete();
+	}
+
+	@Test
+	public void shouldMakeCsvDirWhenNotExistGivenDataTypeIsMetric() {
+		String csvDirPath = "./csv";
+		File csvDir = new File(csvDirPath);
+		deleteDirectory(csvDir);
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+
+		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
+
+		String fileName = CSVFileNameEnum.METRIC.getValue() + "-" + mockTimeStamp + ".csv";
+		File file = new File(fileName);
+		Assertions.assertTrue(file.exists());
+		file.delete();
+	}
+
+	@Test
+	public void shouldThrowExceptionWhenMetricCsvNotExist() {
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+
+		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("metric", 1686710104536L));
+		assertThrows(FileIOException.class,
+				() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "15469:89/033"));
+	}
+
+	@Test
+	public void shouldHasContentWhenGetDataFromCsvGivenDataTypeIsMetric() throws IOException {
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+
+		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
+
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("metric",
+				Long.parseLong(mockTimeStamp));
+		InputStream csvDataInputStream = inputStreamResource.getInputStream();
+		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
+			.collect(Collectors.joining("\n"));
+
+		Assertions.assertEquals(metricCsvData,
+				"""
+						"Group","Metrics","Value"
+						"Velocity","Velocity(Story Point)","7"
+						"Velocity","Throughput(Cards Count)","2"
+						"Cycle time","Average cycle time(days/storyPoint)","4.18"
+						"Cycle time","Average cycle time(days/card)","9.75"
+						"Cycle time","Total development time / Total cycle time","62.10"
+						"Cycle time","Total block time / Total cycle time","0.34"
+						"Cycle time","Total review time / Total cycle time","37.39"
+						"Cycle time","Total testing time / Total cycle time","0.17"
+						"Cycle time","Total  time / Total cycle time","0.17"
+						"Cycle time","Average development time(days/storyPoint)","2.60"
+						"Cycle time","Average development time(days/card)","6.06"
+						"Cycle time","Average block time(days/storyPoint)","0.01"
+						"Cycle time","Average block time(days/card)","0.03"
+						"Cycle time","Average review time(days/storyPoint)","1.56"
+						"Cycle time","Average review time(days/card)","3.65"
+						"Cycle time","Average testing time(days/storyPoint)","0.01"
+						"Cycle time","Average testing time(days/card)","0.02"
+						"Cycle time","Average  time(days/storyPoint)","0.01"
+						"Cycle time","Average  time(days/card)","0.02"
+						"Classifications","Issue Type / Bug","33.33"
+						"Classifications","Issue Type / Story","66.67"
+						"Deployment frequency","Heartbeat / Deploy prod / Deployment frequency(deployments/day)","0.78"
+						"Deployment frequency","Heartbeat / Check Frontend License / Deployment frequency(deployments/day)","0.56"
+						"Deployment frequency","Average / Deployment frequency(deployments/day)","0.67"
+						"Lead time for changes","Heartbeat / Deploy prod / PR Lead Time","0"
+						"Lead time for changes","Heartbeat / Deploy prod / Pipeline Lead Time","0.02"
+						"Lead time for changes","Heartbeat / Deploy prod / Total Lead Time","0.02"
+						"Lead time for changes","Heartbeat / Check Frontend License / PR Lead Time","0"
+						"Lead time for changes","Heartbeat / Check Frontend License / Pipeline Lead Time","0.09"
+						"Lead time for changes","Heartbeat / Check Frontend License / Total Lead Time","0.09"
+						"Lead time for changes","Average / PR Lead Time","0"
+						"Lead time for changes","Average / Pipeline Lead Time","0.05"
+						"Lead time for changes","Average / Total Lead Time","0.05"
+						"Change failure rate","Heartbeat / Deploy prod / Failure rate","0"
+						"Change failure rate","Heartbeat / Check Frontend License / Failure rate","0"
+						"Change failure rate","Average / Failure rate","0"
+						"Mean Time To Recovery","Heartbeat / Deploy prod / Mean Time To Recovery","0"
+						"Mean Time To Recovery","Heartbeat / Check Frontend License / Mean Time To Recovery","0"
+						"Mean Time To Recovery","Average / Mean Time To Recovery","0\"""");
+
+		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
+		File file = new File(fileName);
+		file.delete();
+	}
+
+	@Test
+	public void shouldHasNoContentWhenGetDataFromCsvGivenDataTypeIsMetricAndResponseIsEmpty() throws IOException {
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_EMPTY_METRIC_CSV_DATA();
+
+		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("metric",
+				Long.parseLong(mockTimeStamp));
+		InputStream csvDataInputStream = inputStreamResource.getInputStream();
+		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
+			.collect(Collectors.joining("\n"));
+
+		Assertions.assertEquals(metricCsvData, "\"Group\",\"Metrics\",\"Value\"");
+
+		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
+		File file = new File(fileName);
+		file.delete();
+	}
+
+	@Test
+	public void shouldHasNoContentForAveragesWhenGetDataFromCsvGivenDataTypeIsMetricAndTheQuantityOfPipelineIsEqualToOne()
+			throws IOException {
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
+
+		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV("metric",
+				Long.parseLong(mockTimeStamp));
+		InputStream csvDataInputStream = inputStreamResource.getInputStream();
+		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
+			.collect(Collectors.joining("\n"));
+
+		Assertions.assertEquals(metricCsvData, """
+				"Group","Metrics","Value"
+				"Deployment frequency","Heartbeat / Deploy prod / Deployment frequency(deployments/day)","0.78"
+				"Lead time for changes","Heartbeat / Deploy prod / PR Lead Time","0"
+				"Lead time for changes","Heartbeat / Deploy prod / Pipeline Lead Time","0.02"
+				"Lead time for changes","Heartbeat / Deploy prod / Total Lead Time","0.02"
+				"Change failure rate","Heartbeat / Deploy prod / Failure rate","0"
+				"Mean Time To Recovery","Heartbeat / Deploy prod / Mean Time To Recovery","0\"""");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);

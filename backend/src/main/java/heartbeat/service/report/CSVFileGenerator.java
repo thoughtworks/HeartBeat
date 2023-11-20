@@ -5,9 +5,27 @@ import com.google.gson.JsonElement;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
-import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
+import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
+import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.controller.report.dto.response.CycleTime;
+import heartbeat.controller.report.dto.response.CycleTimeForSelectedStepItem;
+import heartbeat.controller.report.dto.response.Classification;
+import heartbeat.controller.report.dto.response.DeploymentFrequency;
+import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
+import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
+import heartbeat.controller.report.dto.response.LeadTimeForChanges;
+import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
+import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
+import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
+import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.ChangeFailureRate;
+import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
+import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
+import heartbeat.controller.report.dto.response.ChangeFailureRateOfPipeline;
 import heartbeat.exception.FileIOException;
 import heartbeat.util.DecimalUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +40,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+
+import io.micrometer.core.instrument.util.TimeUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,11 +50,16 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static heartbeat.service.report.calculator.ClassificationCalculator.pickDisplayNameFromObj;
+import static java.util.concurrent.TimeUnit.HOURS;
 
 @RequiredArgsConstructor
 @Component
 @Log4j2
 public class CSVFileGenerator {
+
+	private static final char FILENAME_SEPARATOR = '-';
+
+	private static final String CSV_EXTENSION = ".csv";
 
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
@@ -62,7 +88,7 @@ public class CSVFileGenerator {
 		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
 		log.info(message);
 
-		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv";
+		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		File file = new File(fileName);
 
 		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
@@ -110,8 +136,12 @@ public class CSVFileGenerator {
 
 	public InputStreamResource getDataFromCSV(String dataType, long csvTimeStamp) {
 		return switch (dataType) {
-			case "pipeline" -> readStringFromCsvFile(CSVFileNameEnum.PIPELINE.getValue() + "-" + csvTimeStamp + ".csv");
-			case "board" -> readStringFromCsvFile(CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv");
+			case "metric" -> readStringFromCsvFile(
+					CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case "pipeline" -> readStringFromCsvFile(
+					CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case "board" -> readStringFromCsvFile(
+					CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
 			default -> new InputStreamResource(new ByteArrayInputStream("".getBytes()));
 		};
 	}
@@ -129,7 +159,7 @@ public class CSVFileGenerator {
 		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
 		log.info(message);
 
-		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + csvTimeStamp + ".csv";
+		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
 			List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
 			fixedFields.removeAll(extraFields);
@@ -312,6 +342,202 @@ public class CSVFileGenerator {
 			return StringUtils.join(objectList, ",");
 		}
 		return pickDisplayNameFromObj(fieldValue);
+	}
+
+	public void convertMetricDataToCSV(ReportResponse reportResponse, String csvTimeStamp) {
+		log.info("Start to create csv directory");
+		boolean created = createCsvDirectory();
+		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
+		log.info(message);
+
+		String fileName = CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
+		File file = new File(fileName);
+
+		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
+			String[] headers = { "Group", "Metrics", "Value" };
+
+			csvWriter.writeNext(headers);
+
+			csvWriter.writeAll(convertReportResponseToCSVRows(reportResponse));
+		}
+		catch (IOException e) {
+			log.error("Failed to write file", e);
+			throw new FileIOException(e);
+		}
+	}
+
+	private List<String[]> convertReportResponseToCSVRows(ReportResponse reportResponse) {
+		List<String[]> rows = new ArrayList<>();
+
+		Velocity velocity = reportResponse.getVelocity();
+		if (velocity != null)
+			rows.addAll(getRowsFormVelocity(velocity));
+
+		CycleTime cycleTime = reportResponse.getCycleTime();
+		if (cycleTime != null)
+			rows.addAll(getRowsFromCycleTime(cycleTime));
+
+		List<Classification> classificationList = reportResponse.getClassificationList();
+		if (classificationList != null)
+			classificationList.forEach(classification -> rows.addAll(getRowsFormClassification(classification)));
+
+		DeploymentFrequency deploymentFrequency = reportResponse.getDeploymentFrequency();
+		if (deploymentFrequency != null)
+			rows.addAll(getRowsFromDeploymentFrequency(deploymentFrequency));
+
+		LeadTimeForChanges leadTimeForChanges = reportResponse.getLeadTimeForChanges();
+		if (leadTimeForChanges != null)
+			rows.addAll(getRowsFromLeadTimeForChanges(leadTimeForChanges));
+
+		ChangeFailureRate changeFailureRate = reportResponse.getChangeFailureRate();
+		if (changeFailureRate != null)
+			rows.addAll(getRowsFromChangeFailureRate(changeFailureRate));
+
+		MeanTimeToRecovery meanTimeToRecovery = reportResponse.getMeanTimeToRecovery();
+		if (meanTimeToRecovery != null)
+			rows.addAll(getRowsFromMeanTimeToRecovery(meanTimeToRecovery));
+
+		return rows;
+	}
+
+	private List<String[]> getRowsFormVelocity(Velocity velocity) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { "Velocity", "Velocity(Story Point)", String.valueOf(velocity.getVelocityForSP()) });
+		rows.add(
+				new String[] { "Velocity", "Throughput(Cards Count)", String.valueOf(velocity.getVelocityForCards()) });
+		return rows;
+	}
+
+	private List<String[]> getRowsFromCycleTime(CycleTime cycleTime) {
+		List<String[]> rows = new ArrayList<>();
+		List<String[]> rowsForSelectedStepItemAverageTime = new ArrayList<>();
+		rows.add(new String[] { "Cycle time", "Average cycle time(days/storyPoint)",
+				String.valueOf(cycleTime.getAverageCycleTimePerSP()) });
+		rows.add(new String[] { "Cycle time", "Average cycle time(days/card)",
+				String.valueOf(cycleTime.getAverageCycleTimePerCard()) });
+		List<CycleTimeForSelectedStepItem> swimlaneList = cycleTime.getSwimlaneList();
+
+		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
+			String StepName = formatStepName(cycleTimeForSelectedStepItem);
+			double proportion = cycleTimeForSelectedStepItem.getTotalTime() / cycleTime.getTotalTimeForCards();
+			rows.add(new String[] { "Cycle time", "Total " + StepName + " time / Total cycle time",
+					DecimalUtil.formatDecimalTwo(proportion * 100) });
+			rowsForSelectedStepItemAverageTime
+				.add(new String[] { "Cycle time", "Average " + StepName + " time(days/storyPoint)",
+						DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForSP()) });
+			rowsForSelectedStepItemAverageTime
+				.add(new String[] { "Cycle time", "Average " + StepName + " time(days/card)",
+						DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForCards()) });
+		});
+		rows.addAll(rowsForSelectedStepItemAverageTime);
+
+		return rows;
+	}
+
+	private String formatStepName(CycleTimeForSelectedStepItem cycleTimeForSelectedStepItem) {
+		return switch (cycleTimeForSelectedStepItem.getOptionalItemName()) {
+			case "In Dev" -> "development";
+			case "Block" -> "block";
+			case "Review" -> "review";
+			case "Testing" -> "testing";
+			default -> "";
+		};
+	}
+
+	private List<String[]> getRowsFormClassification(Classification classificationList) {
+		List<String[]> rows = new ArrayList<>();
+		String fieldName = String.valueOf((classificationList.getFieldName()));
+		List<ClassificationNameValuePair> pairList = classificationList.getPairList();
+		pairList.forEach(
+				nameValuePair -> rows.add(new String[] { "Classifications", fieldName + " / " + nameValuePair.getName(),
+						DecimalUtil.formatDecimalTwo(nameValuePair.getValue() * 100) }));
+		return rows;
+	}
+
+	private List<String[]> getRowsFromDeploymentFrequency(DeploymentFrequency deploymentFrequency) {
+		List<String[]> rows = new ArrayList<>();
+		List<DeploymentFrequencyOfPipeline> deploymentFrequencyOfPipelines = deploymentFrequency
+			.getDeploymentFrequencyOfPipelines();
+		deploymentFrequencyOfPipelines.forEach(pipeline -> rows.add(new String[] { "Deployment frequency",
+				pipeline.getName() + " / " + pipeline.getStep().replaceAll(":\\w+: ", "")
+						+ " / Deployment frequency(deployments/day)",
+				DecimalUtil.formatDecimalTwo(pipeline.getDeploymentFrequency()) }));
+
+		AvgDeploymentFrequency avgDeploymentFrequency = deploymentFrequency.getAvgDeploymentFrequency();
+		if (deploymentFrequencyOfPipelines.size() > 1)
+			rows.add(new String[] { "Deployment frequency",
+					avgDeploymentFrequency.getName() + " / Deployment frequency(deployments/day)",
+					DecimalUtil.formatDecimalTwo(avgDeploymentFrequency.getDeploymentFrequency()) });
+
+		return rows;
+	}
+
+	private List<String[]> getRowsFromLeadTimeForChanges(LeadTimeForChanges leadTimeForChanges) {
+		List<String[]> rows = new ArrayList<>();
+		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines = leadTimeForChanges
+			.getLeadTimeForChangesOfPipelines();
+		leadTimeForChangesOfPipelines.forEach(pipeline -> {
+			String pipelineStep = pipeline.getStep().replaceAll(":\\w+: ", "");
+			rows.add(new String[] { "Lead time for changes",
+					pipeline.getName() + " / " + pipelineStep + " / PR Lead Time",
+					DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPrLeadTime(), HOURS)) });
+			rows.add(new String[] { "Lead time for changes",
+					pipeline.getName() + " / " + pipelineStep + " / Pipeline Lead Time",
+					DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPipelineLeadTime(), HOURS)) });
+			rows.add(new String[] { "Lead time for changes",
+					pipeline.getName() + " / " + pipelineStep + " / Total Lead Time",
+					DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getTotalDelayTime(), HOURS)) });
+		});
+
+		AvgLeadTimeForChanges avgLeadTimeForChanges = leadTimeForChanges.getAvgLeadTimeForChanges();
+		if (leadTimeForChangesOfPipelines.size() > 1) {
+			rows.add(new String[] { "Lead time for changes", avgLeadTimeForChanges.getName() + " / PR Lead Time",
+					DecimalUtil
+						.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPrLeadTime(), HOURS)) });
+			rows.add(new String[] { "Lead time for changes", avgLeadTimeForChanges.getName() + " / Pipeline Lead Time",
+					DecimalUtil.formatDecimalTwo(
+							TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPipelineLeadTime(), HOURS)) });
+			rows.add(new String[] { "Lead time for changes", avgLeadTimeForChanges.getName() + " / Total Lead Time",
+					DecimalUtil
+						.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getTotalDelayTime(), HOURS)) });
+		}
+
+		return rows;
+	}
+
+	private List<String[]> getRowsFromChangeFailureRate(ChangeFailureRate changeFailureRate) {
+		List<String[]> rows = new ArrayList<>();
+		List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines = changeFailureRate
+			.getChangeFailureRateOfPipelines();
+		changeFailureRateOfPipelines.forEach(pipeline -> rows.add(new String[] { "Change failure rate",
+				pipeline.getName() + " / " + pipeline.getStep().replaceAll(":\\w+: ", "") + " / Failure rate",
+				DecimalUtil.formatDecimalTwo(pipeline.getFailureRate() * 100) }));
+
+		AvgChangeFailureRate avgChangeFailureRate = changeFailureRate.getAvgChangeFailureRate();
+		if (changeFailureRateOfPipelines.size() > 1)
+			rows.add(new String[] { "Change failure rate", avgChangeFailureRate.getName() + " / Failure rate",
+					DecimalUtil.formatDecimalTwo(avgChangeFailureRate.getFailureRate() * 100) });
+
+		return rows;
+	}
+
+	private List<String[]> getRowsFromMeanTimeToRecovery(MeanTimeToRecovery meanTimeToRecovery) {
+		List<String[]> rows = new ArrayList<>();
+		List<MeanTimeToRecoveryOfPipeline> meanTimeRecoveryPipelines = meanTimeToRecovery
+			.getMeanTimeRecoveryPipelines();
+		meanTimeRecoveryPipelines.forEach(pipeline -> rows.add(new String[] { "Mean Time To Recovery",
+				pipeline.getPipelineName() + " / " + pipeline.getPipelineStep().replaceAll(":\\w+: ", "")
+						+ " / Mean Time To Recovery",
+				DecimalUtil
+					.formatDecimalTwo(TimeUtils.millisToUnit(pipeline.getTimeToRecovery().doubleValue(), HOURS)) }));
+
+		AvgMeanTimeToRecovery avgMeanTimeToRecovery = meanTimeToRecovery.getAvgMeanTimeToRecovery();
+		if (meanTimeRecoveryPipelines.size() > 1)
+			rows.add(new String[] { "Mean Time To Recovery",
+					avgMeanTimeToRecovery.getName() + " / Mean Time To Recovery", DecimalUtil.formatDecimalTwo(
+							TimeUtils.millisToUnit(avgMeanTimeToRecovery.getTimeToRecovery().doubleValue(), HOURS)) });
+
+		return rows;
 	}
 
 }

@@ -1,5 +1,5 @@
 import { FormHelperText } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   saveDoneColumn,
   selectCycleTimeSettings,
@@ -54,8 +54,14 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
     dispatch(saveDoneColumn([...value]))
   }
 
+  useEffect(() => {
+    dispatch(saveDoneColumn([]))
+  }, [status.length])
+
   if (status.length === 1) {
-    dispatch(saveDoneColumn(status))
+    if (savedDoneColumns.length !== 1) {
+      dispatch(saveDoneColumn(status))
+    }
     return null
   }
 

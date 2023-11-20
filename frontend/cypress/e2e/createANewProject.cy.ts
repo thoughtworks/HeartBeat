@@ -169,6 +169,13 @@ const checkMeanTimeToRecovery = (testId: string) => {
   checkTimeToRecoveryPipelineCalculation(testId)
 }
 
+const checkMetricCSV = () => {
+  cy.wait(2000)
+  return cy.task('readDir', 'cypress/downloads').then((files) => {
+    expect(files).to.match(new RegExp(/metric-.*\.csv/))
+  })
+}
+
 const checkPipelineCSV = () => {
   cy.wait(2000)
   return cy.task('readDir', 'cypress/downloads').then((files) => {

@@ -54,6 +54,8 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
     dispatch(saveDoneColumn([...value]))
   }
 
+  if (status.length === 1) return null
+
   return (
     <>
       <MetricsSettingTitle title={title} />

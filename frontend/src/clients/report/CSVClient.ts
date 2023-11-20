@@ -9,7 +9,9 @@ export class CSVClient extends HttpClient {
 
   exportCSVData = async (params: CSVReportRequestDTO) => {
     await this.axiosInstance
-      .get(`/reports/${params.dataType}/${params.csvTimeStamp}`, { responseType: 'blob' })
+      .get(`/reports/${params.dataType}/${dayjs(params.csvTimeStamp).format('YYYY-MM-DD-HH-mm-SS')}`, {
+        responseType: 'blob',
+      })
       .then((res) => {
         const exportedFilename = `${params.dataType}-${this.parseCollectionDateToHumanDate(
           params.startDate

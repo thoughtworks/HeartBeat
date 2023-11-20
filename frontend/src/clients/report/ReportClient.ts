@@ -1,6 +1,5 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
-import dayjs from 'dayjs'
 
 export class ReportClient extends HttpClient {
   reportResponse = {
@@ -55,10 +54,8 @@ export class ReportClient extends HttpClient {
   }
 
   report = async (params: ReportRequestDTO) => {
-    const parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string =>
-      dayjs(csvTimeStamp).format('YYYY-MM-DD-HH-mm-SS')
     await this.axiosInstance
-      .post(`/reports`, { ...params, csvTimeStamp: parseTimeStampToHumanDate(params.csvTimeStamp) }, {})
+      .post(`/reports`, params, {})
       .then((res) => {
         this.reportResponse = res.data
       })

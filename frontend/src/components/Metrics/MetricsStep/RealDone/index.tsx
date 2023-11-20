@@ -54,7 +54,10 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
     dispatch(saveDoneColumn([...value]))
   }
 
-  if (status.length === 1) return null
+  if (status.length === 1) {
+    dispatch(saveDoneColumn(status))
+    return null
+  }
 
   return (
     <>

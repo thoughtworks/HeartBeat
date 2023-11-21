@@ -1,4 +1,4 @@
-import { act, render, waitFor } from '@testing-library/react'
+import { act, render, renderHook, waitFor } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -18,6 +18,7 @@ import { backStep } from '@src/context/stepper/StepperSlice'
 import { navigateMock } from '../../../../setupTests'
 import mocked = jest.mocked
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
@@ -53,8 +54,6 @@ let store = null
 
 describe('Report Step', () => {
   const setup = async (params: [string]) => {
-    const openNotificationProps = { open: true, title: 'NotificationPopper' }
-    const setNotificationProps = jest.fn()
     store = setupStore()
     await store.dispatch(updateMetrics(params))
     await store.dispatch(
@@ -78,9 +77,10 @@ describe('Report Step', () => {
         ],
       })
     )
+    const { result } = renderHook(() => useNotificationLayoutEffect())
     return render(
       <Provider store={store}>
-        <ReportStep notificationProps={openNotificationProps} setNotificationProps={setNotificationProps} />
+        <ReportStep {...result.current} />
       </Provider>
     )
   }

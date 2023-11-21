@@ -12,12 +12,10 @@ import {
   LogoWarp,
   NotificationIconContainer,
 } from '@src/layouts/style'
-import {
-  NotificationButton,
-  NotificationButtonProps,
-} from '@src/components/Common/NotificationButton/NotificationButton'
+import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
-const Header = (props: NotificationButtonProps) => {
+const Header = (props: useNotificationLayoutEffectInterface) => {
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -40,7 +38,7 @@ const Header = (props: NotificationButtonProps) => {
         <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
       </LogoContainer>
       <IconContainer>
-        {shouldShowNotificationIcon() && props && (
+        {shouldShowNotificationIcon() && (
           <NotificationIconContainer title='Notification' data-testid='NotificationButton'>
             <NotificationButton {...props} />
           </NotificationIconContainer>

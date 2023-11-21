@@ -9,10 +9,10 @@ import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metr
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { MetricSelectionWrapper, MetricsSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
-import { NotificationButtonProps } from '@src/components/Common/NotificationButton/NotificationButton'
 import { useLayoutEffect } from 'react'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
-const MetricsStep = (props: NotificationButtonProps) => {
+const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
   const requiredData = useAppSelector(selectMetrics)
   const users = useAppSelector(selectUsers)
   const jiraColumns = useAppSelector(selectJiraColumns)
@@ -24,13 +24,9 @@ const MetricsStep = (props: NotificationButtonProps) => {
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
     requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
   const isShowRealDone = cycleTimeSettings.every((e) => e.value !== DONE)
-  const { setNotificationProps } = props
 
   useLayoutEffect(() => {
-    setNotificationProps?.(() => ({
-      open: false,
-      title: '',
-    }))
+    resetProps?.()
   }, [])
 
   return (

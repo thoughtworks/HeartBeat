@@ -29,12 +29,11 @@ import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { getJiraBoardToken } from '@src/utils/util'
-import { NotificationButtonProps } from '@src/components/Common/NotificationButton/NotificationButton'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
-const ReportStep = (props: NotificationButtonProps) => {
+const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { setNotificationProps } = props
   const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
@@ -177,7 +176,7 @@ const ReportStep = (props: NotificationButtonProps) => {
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
-      setNotificationProps?.({
+      updateProps?.({
         open: true,
         title: HEADER_NOTIFICATION_MESSAGE.REPORT.replace('%s', exportValidityTimeMin.toString()),
       })

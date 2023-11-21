@@ -1,15 +1,16 @@
 import Header from '@src/layouts/Header'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext'
-import { useState } from 'react'
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 
 const Metrics = () => {
-  const [notificationProps, setNotificationProps] = useState({ open: false, title: '' })
+  const props = useNotificationLayoutEffect()
+
   return (
     <>
-      <Header notificationProps={notificationProps} setNotificationProps={setNotificationProps} />
+      <Header {...props} />
       <ContextProvider>
-        <MetricsStepper notificationProps={notificationProps} setNotificationProps={setNotificationProps} />
+        <MetricsStepper {...props} />
       </ContextProvider>
     </>
   )

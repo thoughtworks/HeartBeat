@@ -1,17 +1,12 @@
 import { ConfigStepWrapper } from './style'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import BasicInfo from '@src/components/Metrics/ConfigStep/BasicInfo'
-import { useEffect, useLayoutEffect } from 'react'
-import { NotificationButtonProps } from '@src/components/Common/NotificationButton/NotificationButton'
+import { useLayoutEffect } from 'react'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
-const ConfigStep = (props: NotificationButtonProps) => {
-  const { setNotificationProps } = props
-
+const ConfigStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
   useLayoutEffect(() => {
-    setNotificationProps?.({
-      open: false,
-      title: '',
-    })
+    resetProps?.()
   }, [])
 
   return (

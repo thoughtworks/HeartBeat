@@ -1,35 +1,24 @@
 import { NotificationIconWrapper, sx } from '@src/components/Common/NotificationButton/style'
 import { ClickAwayListener, Tooltip } from '@mui/material'
-import { Dispatch, SetStateAction } from 'react'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
-interface NotificationTipProps {
-  title: string
-  open: boolean
-}
-
-export interface NotificationButtonProps {
-  notificationProps?: NotificationTipProps
-  setNotificationProps?: Dispatch<SetStateAction<NotificationTipProps>>
-}
-
-export const NotificationButton = ({ notificationProps, setNotificationProps }: NotificationButtonProps) => {
+export const NotificationButton = ({ notificationProps, updateProps }: useNotificationLayoutEffectInterface) => {
   const handleTooltipClose = () => {
-    const title = notificationProps?.title ? notificationProps.title : ''
-    setNotificationProps?.(() => ({
-      title: title,
+    updateProps!({
+      title: notificationProps!.title,
       open: false,
-    }))
+    })
   }
   const toggleTooltip = () => {
-    setNotificationProps?.((prevState) => ({
-      title: prevState.title,
-      open: !prevState.open,
-    }))
+    updateProps!({
+      title: notificationProps!.title,
+      open: !notificationProps!.open,
+    })
   }
 
   return (
     <>
-      {notificationProps && (
+      {notificationProps && updateProps && (
         <ClickAwayListener onClickAway={handleTooltipClose}>
           <Tooltip
             arrow

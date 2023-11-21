@@ -26,13 +26,14 @@ import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
+import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { getJiraBoardToken } from '@src/utils/util'
 
 const ReportStep = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
-  const { fetchExportData, errorMessage } = useExportCsvEffect()
+  const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [classificationState, setClassificationState] = useState({
@@ -284,6 +285,7 @@ const ReportStep = () => {
               </ExportButton>
             )}
           </ButtonGroupStyle>
+          {<ExpiredDialog isExpired={isExpired} handleOk={handleBack} />}
         </>
       )}
     </>

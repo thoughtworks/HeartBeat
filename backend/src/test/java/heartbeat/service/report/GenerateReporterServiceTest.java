@@ -31,6 +31,7 @@ import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.exception.NotFoundException;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -60,6 +61,8 @@ import org.springframework.core.io.InputStreamResource;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -75,8 +78,11 @@ import java.util.stream.Collectors;
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
@@ -180,7 +186,7 @@ class GenerateReporterServiceTest {
 
 		ReportResponse result = generateReporterService.generateReporter(request);
 
-		assertThat(result).isEqualTo(ReportResponse.builder().velocity(velocity).build());
+		assertThat(result).isEqualTo(ReportResponse.builder().velocity(velocity).exportValidityTime(1800000L).build());
 	}
 
 	@Test
@@ -401,7 +407,10 @@ class GenerateReporterServiceTest {
 			.thenReturn(CycleTime.builder().build());
 
 		ReportResponse result = generateReporterService.generateReporter(request);
-		ReportResponse expect = ReportResponse.builder().cycleTime(CycleTime.builder().build()).build();
+		ReportResponse expect = ReportResponse.builder()
+			.cycleTime(CycleTime.builder().build())
+			.exportValidityTime(1800000L)
+			.build();
 
 		assertThat(result).isEqualTo(expect);
 	}
@@ -717,11 +726,23 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
+	public void shouldThrowNotFoundExceptionWhenExportCsvExpire() {
+		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
+			.dataType("pipeline")
+			.csvTimeStamp("1685010080107") // csvTimeStamp convert to 2023-5-25 18:21:20
+			.build();
+
+		assertThatThrownBy(() -> generateReporterService.fetchCSVData(mockExportCSVRequest))
+			.isInstanceOf(NotFoundException.class)
+			.hasMessageContaining("csv not found");
+	}
+
+	@Test
 	public void shouldReturnCsvDataForPipelineWhenExportCsv() throws IOException {
 		String mockedCsvData = "csv data";
 		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
-			.csvTimeStamp("1685010080107")
+			.csvTimeStamp(String.valueOf(System.currentTimeMillis()))
 			.build();
 
 		InputStream inputStream = new ByteArrayInputStream(mockedCsvData.getBytes());
@@ -734,37 +755,6 @@ class GenerateReporterServiceTest {
 			.collect(Collectors.joining("\n"));
 
 		assertThat(csvData).isEqualTo(mockedCsvData);
-	}
-
-	@Test
-	public void shouldDeleteOldCsvWhenExportCsvWithOldCsvOutsideTenHours() throws IOException {
-		Files.createFile(mockPipelineCsvPath);
-		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
-			.dataType("pipeline")
-			.csvTimeStamp("1685010080107")
-			.build();
-
-		generateReporterService.fetchCSVData(mockExportCSVRequest);
-
-		boolean isFileDeleted = Files.notExists(mockPipelineCsvPath);
-		Assertions.assertTrue(isFileDeleted);
-	}
-
-	@Test
-	public void shouldNotDeleteOldCsvWhenExportCsvWithoutOldCsvInsideTenHours() throws IOException {
-		long currentTimeStamp = System.currentTimeMillis();
-		Path csvFilePath = Path.of(String.format("./csv/exportPipelineMetrics-%s.csv", currentTimeStamp));
-		Files.createFile(csvFilePath);
-		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
-			.dataType("pipeline")
-			.csvTimeStamp("1685010080107")
-			.build();
-
-		generateReporterService.fetchCSVData(mockExportCSVRequest);
-
-		boolean isFileDeleted = Files.notExists(csvFilePath);
-		Assertions.assertFalse(isFileDeleted);
-		Files.deleteIfExists(csvFilePath);
 	}
 
 	@Test
@@ -811,6 +801,57 @@ class GenerateReporterServiceTest {
 		boolean isExists = Files.exists(mockBoardCsvPath);
 		Assertions.assertTrue(isExists);
 		Files.deleteIfExists(mockBoardCsvPath);
+	}
+
+	@Test
+	public void shouldDeleteExpireCsvWhenExportCsvWithCsvOutsideThirtyMinutes() throws IOException {
+		Files.createFile(mockPipelineCsvPath);
+
+		generateReporterService.deleteExpireCSV(System.currentTimeMillis(), new File("./csv/"));
+
+		boolean isFileDeleted = Files.notExists(mockPipelineCsvPath);
+		Assertions.assertTrue(isFileDeleted);
+	}
+
+	@Test
+	public void shouldNotDeleteOldCsvWhenExportCsvWithoutOldCsvInsideThirtyMinutes() throws IOException {
+		long currentTimeStamp = System.currentTimeMillis();
+		Path csvFilePath = Path.of(String.format("./csv/exportPipelineMetrics-%s.csv", currentTimeStamp));
+		Files.createFile(csvFilePath);
+
+		generateReporterService.deleteExpireCSV(currentTimeStamp - 800000, new File("./csv/"));
+
+		boolean isFileDeleted = Files.notExists(csvFilePath);
+		Assertions.assertFalse(isFileDeleted);
+		Files.deleteIfExists(csvFilePath);
+	}
+
+	@Test
+	public void shouldDeleteFailWhenDeleteCSV() {
+		File mockFile = mock(File.class);
+		when(mockFile.getName()).thenReturn("file1-1683734399999.CSV");
+		when(mockFile.delete()).thenReturn(false);
+		File[] mockFiles = new File[] { mockFile };
+		File directory = mock(File.class);
+		when(directory.listFiles()).thenReturn(mockFiles);
+
+		Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
+
+		Assertions.assertTrue(deleteStatus);
+	}
+
+	@Test
+	public void shouldThrowExceptionWhenDeleteCSV() {
+		File mockFile = mock(File.class);
+		when(mockFile.getName()).thenReturn("file1-1683734399999.CSV");
+		when(mockFile.delete()).thenThrow(new RuntimeException("test"));
+		File[] mockFiles = new File[] { mockFile };
+		File directory = mock(File.class);
+		when(directory.listFiles()).thenReturn(mockFiles);
+
+		Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
+
+		Assertions.assertFalse(deleteStatus);
 	}
 
 	private MeanTimeToRecovery createMockMeanToRecovery() {

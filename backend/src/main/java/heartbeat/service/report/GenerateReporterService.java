@@ -34,6 +34,7 @@ import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.NotFoundException;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -59,18 +60,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class GenerateReporterService {
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
@@ -78,6 +83,8 @@ public class GenerateReporterService {
 			"labels" };
 
 	private static final List<String> REQUIRED_STATES = List.of("passed", "failed");
+
+	private static final Long EXPORT_CSV_VALIDITY_TIME = 1800000L;
 
 	private final JiraService jiraService;
 
@@ -202,7 +209,7 @@ public class GenerateReporterService {
 			generateCSVForPipeline(request, fetchedData.getBuildKiteData());
 		}
 
-		ReportResponse reportResponse = new ReportResponse();
+		ReportResponse reportResponse = new ReportResponse(EXPORT_CSV_VALIDITY_TIME);
 		request.getMetrics().forEach((metrics) -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(velocityCalculator
@@ -626,21 +633,46 @@ public class GenerateReporterService {
 	}
 
 	public InputStreamResource fetchCSVData(ExportCSVRequest request) {
-		deleteOldCSV();
-		return csvFileGenerator.getDataFromCSV(request.getDataType(), Long.parseLong(request.getCsvTimeStamp()));
+		long csvTimeStamp = Long.parseLong(request.getCsvTimeStamp());
+		validateExpire(csvTimeStamp);
+		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
-	private void deleteOldCSV() {
-		File directory = new File("./csv/");
+	private void validateExpire(long csvTimeStamp) {
+		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
+			throw new NotFoundException("csv not found");
+		}
+	}
+
+	private void deleteOldCSV(long currentTimeStamp, File directory) {
 		File[] files = directory.listFiles();
-		long currentTimeStamp = System.currentTimeMillis();
-		for (File file : files) {
-			String fileName = file.getName();
-			String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
-			String timeStamp = splitResult[1];
-			if (Long.parseLong(timeStamp) < currentTimeStamp - 36000000) {
-				file.delete();
+		if (!ObjectUtils.isEmpty(files)) {
+			for (File file : files) {
+				String fileName = file.getName();
+				String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
+				String timeStamp = splitResult[1];
+				if (validateExpire(currentTimeStamp, Long.parseLong(timeStamp)) && !file.delete()) {
+					log.error("Failed to deleted expired CSV file, file name: {}", fileName);
+				}
 			}
+		}
+	}
+
+	private boolean validateExpire(long currentTimeStamp, long timeStamp) {
+		return timeStamp < currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
+	}
+
+	public Boolean deleteExpireCSV(Long currentTimeStamp, File directory) {
+		try {
+			deleteOldCSV(currentTimeStamp, directory);
+			log.info("Successfully deleted expired CSV files, currentTimeStamp: {}", currentTimeStamp);
+			return true;
+		}
+		catch (Exception exception) {
+			Throwable cause = Optional.ofNullable(exception.getCause()).orElse(exception);
+			log.error("Failed to deleted expired CSV files, currentTimeStamp：{}, exception: {}", currentTimeStamp,
+					cause.getMessage());
+			return false;
 		}
 	}
 

@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import HomeIcon from '@mui/icons-material/Home'
-
+import NotificationsIcon from '@mui/icons-material/Notifications'
 import Logo from '@src/assets/Logo.svg'
 import styled from '@emotion/styled'
 import { theme } from '@src/theme'
@@ -45,11 +45,17 @@ const Header = () => {
     color: theme.main.color,
   })
 
-  const HomeIconContainer = styled.span`
+  const IconContainer = styled.span`
     cursor: pointer;
   `
 
   const HomeIconElement = styled(HomeIcon)`
+    color: ${theme.main.color};
+    margin-left: 0.75rem;
+  `
+
+  const IconGroup = styled('div')`
+    display: flex;
     color: ${theme.main.color};
   `
 
@@ -60,9 +66,14 @@ const Header = () => {
         <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
       </LogoContainer>
       {shouldShowHomeIcon() && (
-        <HomeIconContainer title='Home' onClick={goHome}>
-          <HomeIconElement />
-        </HomeIconContainer>
+        <IconGroup>
+          <IconContainer>
+            <NotificationsIcon />
+          </IconContainer>
+          <IconContainer title='Home' onClick={goHome}>
+            <HomeIconElement />
+          </IconContainer>
+        </IconGroup>
       )}
     </LogoWarp>
   )

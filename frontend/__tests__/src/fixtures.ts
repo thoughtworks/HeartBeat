@@ -58,6 +58,7 @@ export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
 export const ERROR_DATE = '02/03/'
 export const CREATE_NEW_PROJECT = 'Create a new project'
 export const IMPORT_PROJECT_FROM_FILE = 'Import project from file'
+export const EXPORT_EXPIRED_CSV_MESSAGE = 'The report has been expired, please generate it again'
 
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',

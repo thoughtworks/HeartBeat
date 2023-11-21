@@ -183,7 +183,6 @@ describe('Report Step', () => {
 
   it('should show errorMessage when click export board button given csv not exist', async () => {
     const { getByText } = await act(() => setup([REQUIRED_DATA_LIST[1]]))
-
     await userEvent.click(getByText(EXPORT_BOARD_DATA))
 
     expect(getByText('failed export csv')).toBeInTheDocument()

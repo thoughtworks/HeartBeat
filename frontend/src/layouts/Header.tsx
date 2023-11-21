@@ -46,9 +46,9 @@ const Header = (props: NotificationButtonProps) => {
           </NotificationIconContainer>
         )}
         {shouldShowHomeIcon() && (
-          <IconContainer title='Home' onClick={goHome}>
+          <HomeIconContainer title='Home' onClick={goHome}>
             <HomeIconElement />
-          </IconContainer>
+          </HomeIconContainer>
         )}
       </IconContainer>
     </LogoWarp>

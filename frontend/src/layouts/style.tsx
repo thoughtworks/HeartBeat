@@ -44,7 +44,6 @@ export const HomeIconContainer = styled.span`
 
 export const HomeIconElement = styled(HomeIcon)`
   color: ${theme.main.color};
-  margin-left: 0.75rem;
 `
 
 export const NotificationIconContainer = styled.span({

@@ -59,6 +59,7 @@ const ReportStep = (props: NotificationButtonProps) => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
+  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined>(undefined)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
   const {
@@ -167,6 +168,7 @@ const ReportStep = (props: NotificationButtonProps) => {
         meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
         leadTimeForChangesList?: ReportDataWithThreeColumns[]
         changeFailureRateList?: ReportDataWithThreeColumns[]
+        exportValidityTimeMin?: number
       }
     | undefined
   > = useCallback(async () => {
@@ -174,11 +176,12 @@ const ReportStep = (props: NotificationButtonProps) => {
   }, [])
 
   useLayoutEffect(() => {
-    setNotificationProps?.({
-      open: true,
-      title: HEADER_NOTIFICATION_MESSAGE.REPORT.replace('%s', '30'),
-    })
-  }, [])
+    exportValidityTimeMin &&
+      setNotificationProps?.({
+        open: true,
+        title: HEADER_NOTIFICATION_MESSAGE.REPORT.replace('%s', exportValidityTimeMin.toString()),
+      })
+  }, [exportValidityTimeMin])
 
   useEffect(() => {
     fetchReportData().then((res) => {
@@ -209,6 +212,7 @@ const ReportStep = (props: NotificationButtonProps) => {
           value: res.leadTimeForChangesList,
           isShow: true,
         })
+      res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
     })
   }, [fetchReportData])
 

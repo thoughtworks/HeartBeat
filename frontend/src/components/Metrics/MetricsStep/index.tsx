@@ -4,13 +4,13 @@ import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice'
-import { DONE, HEADER_NOTIFICATION_MESSAGE, REQUIRED_DATA } from '@src/constants'
+import { DONE, REQUIRED_DATA } from '@src/constants'
 import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { MetricSelectionWrapper, MetricsSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 import { NotificationButtonProps } from '@src/components/Common/NotificationButton/NotificationButton'
-import { useEffect, useLayoutEffect } from 'react'
+import { useLayoutEffect } from 'react'
 
 const MetricsStep = (props: NotificationButtonProps) => {
   const requiredData = useAppSelector(selectMetrics)

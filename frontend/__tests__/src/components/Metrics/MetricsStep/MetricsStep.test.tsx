@@ -70,4 +70,16 @@ describe('MetricsStep', () => {
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
   })
+
+  it(' should call setNotificationProps when notificationProps is not undefined', async () => {
+    const setNotificationProps = jest.fn().mockImplementation(() => {
+      // do noting
+    })
+    render(
+      <Provider store={store}>
+        <MetricsStep setNotificationProps={setNotificationProps} />
+      </Provider>
+    )
+    expect(setNotificationProps).toBeCalledTimes(1)
+  })
 })

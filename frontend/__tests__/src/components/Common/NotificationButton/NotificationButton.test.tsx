@@ -16,6 +16,14 @@ describe('NotificationButton', () => {
     expect(getByTestId('NotificationIcon')).toBeInTheDocument()
   })
 
+  it('should hide NotificationIcon when notificationProps is undefined', () => {
+    const notificationProps = undefined
+    const { queryByTestId } = render(
+      <NotificationButton notificationProps={notificationProps} setNotificationProps={setNotificationProps} />
+    )
+    expect(queryByTestId('NotificationIcon')).not.toBeInTheDocument()
+  })
+
   it('should show NotificationPopper when the "open" value is true before clicking on the component.', async () => {
     const { getByTestId, getByText } = render(
       <NotificationButton notificationProps={openNotificationProps} setNotificationProps={setNotificationProps} />
@@ -47,5 +55,24 @@ describe('NotificationButton', () => {
     const content = await waitFor(() => getByText('OutSideSection'))
     fireEvent.click(content)
     expect(setNotificationProps).toHaveBeenCalledTimes(1)
+  })
+
+  it('should return the empty string for title when notificationProps is undefined.', async () => {
+    let resultNotificationProps = { title: 'not empty', open: false }
+    const setNotificationProps = jest.fn().mockImplementation((preState) => {
+      resultNotificationProps = preState
+    })
+
+    const { getByText } = render(
+      <div>
+        <title> OutSideSection </title>
+        <NotificationButton notificationProps={openNotificationProps} setNotificationProps={setNotificationProps} />
+      </div>
+    )
+
+    const content = await waitFor(() => getByText('OutSideSection'))
+    fireEvent.click(content)
+    expect(setNotificationProps).toHaveBeenCalledTimes(1)
+    expect(resultNotificationProps.title).toEqual(undefined)
   })
 })

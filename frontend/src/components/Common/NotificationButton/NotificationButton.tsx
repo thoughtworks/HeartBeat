@@ -12,13 +12,11 @@ export interface NotificationButtonProps {
   setNotificationProps?: Dispatch<SetStateAction<NotificationTipProps>>
 }
 
-export const NotificationButton = ({
-  notificationProps = { title: '', open: false },
-  setNotificationProps,
-}: NotificationButtonProps) => {
+export const NotificationButton = ({ notificationProps, setNotificationProps }: NotificationButtonProps) => {
   const handleTooltipClose = () => {
+    const title = notificationProps?.title ? notificationProps.title : ''
     setNotificationProps?.(() => ({
-      title: notificationProps.title,
+      title: title,
       open: false,
     }))
   }

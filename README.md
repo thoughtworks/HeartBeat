@@ -52,11 +52,15 @@
 
 * [How to use](#7-how-to-use)
     * [Docker-compose](#71-docker-compose)
+      * [Customize story point field in Jira](#711)
 
 # News
 
  - [Feb 28 2023 - Released Heartbeat - 0.9.0](release-notes/20230228.md)
  - [July 27 2023 - Release Heartbeat - 1.0.0](release-notes/20230726.md)
+ - [Oct 9 2023 - Release Heartbeat - 1.1.0](release-notes/20231009.md)
+ - [Nov 6 2023 - Release Heartbeat - 1.1.2](release-notes/20231106.md)
+ - [Nov 21 2023 - Release Heartbeat - 1.1.3](release-notes/20231121.md)
 
 # 1 About Heartbeat
 
@@ -472,7 +476,7 @@ Then, execute this command
 docker-compose up -d frontend
 ```
 
-### 7.1.1
+### 7.1.1 Customize story point field in Jira
 Specifically, story point field can be indicated in `docker-compose.yml`. You can do it as below.
 ```yaml
 version: "3.4"

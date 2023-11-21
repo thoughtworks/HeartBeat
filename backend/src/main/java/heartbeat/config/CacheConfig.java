@@ -29,7 +29,7 @@ public class CacheConfig {
 		cacheManager.createCache("sprintInfo", getCacheConfiguration(String.class));
 		cacheManager.createCache("jiraConfig", getCacheConfiguration(JiraBoardConfigDTO.class));
 		cacheManager.createCache("jiraStatusCategory", getCacheConfiguration(StatusSelfDTO.class));
-		cacheManager.createCache("jiraActivityfeed", getCacheConfiguration(CardHistoryResponseDTO.class));
+		cacheManager.createCache("jiraActivityFeed", getCacheConfiguration(CardHistoryResponseDTO.class));
 		cacheManager.createCache("targetField", getCacheConfiguration(FieldResponseDTO.class));
 		return cacheManager;
 	}

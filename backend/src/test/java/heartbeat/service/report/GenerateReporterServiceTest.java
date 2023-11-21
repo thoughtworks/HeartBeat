@@ -62,7 +62,6 @@ import org.springframework.core.io.InputStreamResource;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,7 +69,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,7 +79,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -190,7 +187,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void testGenerateReportWithClassification() {
+	void testGenerateReportWithClassification() {
 		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
 			.boardId("")
 			.boardColumns(List.of())
@@ -254,7 +251,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void testGenerateReporterWithDeploymentFrequencyMetric() {
+	void testGenerateReporterWithDeploymentFrequencyMetric() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
@@ -297,7 +294,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void testGenerateReporterWithChangeFailureRateMetric() {
+	void testGenerateReporterWithChangeFailureRateMetric() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
@@ -339,7 +336,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void testNotGenerateReporterWithNullDevelpomentMetric() {
+	void testNotGenerateReporterWithNullDevelopmentMetric() {
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
 			.type("BuildKite")
 			.token(BUILDKITE_TOKEN)
@@ -416,7 +413,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void testGenerateReporterWithLeadTimeForChangesMetric() {
+	void testGenerateReporterWithLeadTimeForChangesMetric() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
 
@@ -491,7 +488,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldGenerateCsvForPipelineWithPipelineMetricAndBuildInfoIsEmpty() throws IOException {
+	void shouldGenerateCsvForPipelineWithPipelineMetricAndBuildInfoIsEmpty() throws IOException {
 		Path csvFilePath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
@@ -541,7 +538,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldGenerateCsvForPipelineWithPipelineMetric() throws IOException {
+	void shouldGenerateCsvForPipelineWithPipelineMetric() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
 
@@ -576,7 +573,7 @@ class GenerateReporterServiceTest {
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any()))
 			.thenReturn(List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA()));
-		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(Arrays.asList("xx"));
+		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
 		Mockito.doAnswer(invocation -> {
 			Files.createFile(mockPipelineCsvPath);
@@ -591,7 +588,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldNotGenerateCsvForPipelineWithPipelineLeadTimeIsNull() throws IOException {
+	void shouldNotGenerateCsvForPipelineWithPipelineLeadTimeIsNull() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
 
@@ -627,7 +624,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(null);
-		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(Arrays.asList("xx"));
+		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
 		generateReporterService.generateReporter(request);
 
@@ -637,7 +634,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldNotGenerateCsvForPipelineWithCommitIsNull() throws IOException {
+	void shouldNotGenerateCsvForPipelineWithCommitIsNull() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
 
@@ -672,7 +669,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(null);
-		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(Arrays.asList("xx"));
+		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
 		generateReporterService.generateReporter(request);
 
@@ -682,7 +679,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldNotGenerateCsvForPipeline() throws IOException {
+	void shouldNotGenerateCsvForPipeline() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
 
@@ -716,7 +713,7 @@ class GenerateReporterServiceTest {
 		when(buildKiteService.countDeployTimes(any(), any(), any(), any())).thenReturn(
 				DeployTimesBuilder.withDefault().withPassed(List.of(DeployInfoBuilder.withDefault().build())).build());
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(null);
-		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(Arrays.asList("xx"));
+		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
 		generateReporterService.generateReporter(request);
 
@@ -726,7 +723,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldThrowNotFoundExceptionWhenExportCsvExpire() {
+	void shouldThrowNotFoundExceptionWhenExportCsvExpire() {
 		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
 			.csvTimeStamp("1685010080107") // csvTimeStamp convert to 2023-5-25 18:21:20
@@ -738,7 +735,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldReturnCsvDataForPipelineWhenExportCsv() throws IOException {
+	void shouldReturnCsvDataForPipelineWhenExportCsv() throws IOException {
 		String mockedCsvData = "csv data";
 		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
 			.dataType("pipeline")
@@ -804,7 +801,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldDeleteExpireCsvWhenExportCsvWithCsvOutsideThirtyMinutes() throws IOException {
+	void shouldDeleteExpireCsvWhenExportCsvWithCsvOutsideThirtyMinutes() throws IOException {
 		Files.createFile(mockPipelineCsvPath);
 
 		generateReporterService.deleteExpireCSV(System.currentTimeMillis(), new File("./csv/"));
@@ -814,7 +811,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldNotDeleteOldCsvWhenExportCsvWithoutOldCsvInsideThirtyMinutes() throws IOException {
+	void shouldNotDeleteOldCsvWhenExportCsvWithoutOldCsvInsideThirtyMinutes() throws IOException {
 		long currentTimeStamp = System.currentTimeMillis();
 		Path csvFilePath = Path.of(String.format("./csv/exportPipelineMetrics-%s.csv", currentTimeStamp));
 		Files.createFile(csvFilePath);
@@ -827,7 +824,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldDeleteFailWhenDeleteCSV() {
+	void shouldDeleteFailWhenDeleteCSV() {
 		File mockFile = mock(File.class);
 		when(mockFile.getName()).thenReturn("file1-1683734399999.CSV");
 		when(mockFile.delete()).thenReturn(false);
@@ -841,7 +838,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenDeleteCSV() {
+	void shouldThrowExceptionWhenDeleteCSV() {
 		File mockFile = mock(File.class);
 		when(mockFile.getName()).thenReturn("file1-1683734399999.CSV");
 		when(mockFile.delete()).thenThrow(new RuntimeException("test"));

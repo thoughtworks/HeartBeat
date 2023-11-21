@@ -30,7 +30,7 @@ public interface JiraFeignClient {
 	String getJiraCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "jiraActivityfeed", key = "#jiraCardKey")
+	@Cacheable(cacheNames = "jiraActivityFeed", key = "#jiraCardKey")
 	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")
 	CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
 			@RequestHeader String authorization);

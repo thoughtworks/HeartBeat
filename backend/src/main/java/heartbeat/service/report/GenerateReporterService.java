@@ -368,11 +368,11 @@ public class GenerateReporterService {
 		if (card.getBaseInfo() == null || card.getCardCycleTime() == null) {
 			return "";
 		}
-		int storyPoints = card.getBaseInfo().getFields().getStoryPoints();
+		double storyPoints = card.getBaseInfo().getFields().getStoryPoints();
 		double cardCycleTime = card.getCardCycleTime().getTotal() == 0.0 ? 0.0 : card.getCardCycleTime().getTotal();
 
 		String formattedResult = DecimalUtil.formatDecimalTwo(cardCycleTime / storyPoints);
-		return storyPoints > 0 ? formattedResult : "";
+		return storyPoints > 0.0 ? formattedResult : "";
 	}
 
 	private Object buildCycleTimeFlatObject(JiraCardDTO card) {

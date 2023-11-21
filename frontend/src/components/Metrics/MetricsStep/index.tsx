@@ -4,13 +4,15 @@ import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone'
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime'
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification'
 import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice'
-import { DONE, REQUIRED_DATA } from '@src/constants'
+import { DONE, HEADER_NOTIFICATION_MESSAGE, REQUIRED_DATA } from '@src/constants'
 import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { MetricSelectionWrapper, MetricsSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
+import { NotificationButtonProps } from '@src/components/Common/NotificationButton/NotificationButton'
+import { useEffect, useLayoutEffect } from 'react'
 
-const MetricsStep = () => {
+const MetricsStep = (props: NotificationButtonProps) => {
   const requiredData = useAppSelector(selectMetrics)
   const users = useAppSelector(selectUsers)
   const jiraColumns = useAppSelector(selectJiraColumns)
@@ -22,6 +24,14 @@ const MetricsStep = () => {
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
     requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
   const isShowRealDone = cycleTimeSettings.every((e) => e.value !== DONE)
+  const { setNotificationProps } = props
+
+  useLayoutEffect(() => {
+    setNotificationProps?.(() => ({
+      open: false,
+      title: '',
+    }))
+  }, [])
 
   return (
     <>

@@ -268,8 +268,8 @@ const MetricsStepper = (props: NotificationButtonProps) => {
       </StyledStepper>
       <MetricsStepperContent>
         <Suspense>
-          {activeStep === METRICS_STEPS.CONFIG && <ConfigStep />}
-          {activeStep === METRICS_STEPS.METRICS && <MetricsStep />}
+          {activeStep === METRICS_STEPS.CONFIG && <ConfigStep {...props} />}
+          {activeStep === METRICS_STEPS.METRICS && <MetricsStep {...props} />}
           {activeStep === METRICS_STEPS.REPORT && <ReportStep {...props} />}
         </Suspense>
       </MetricsStepperContent>

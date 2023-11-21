@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
@@ -173,12 +173,11 @@ const ReportStep = (props: NotificationButtonProps) => {
     return await generateReport(getReportRequestBody())
   }, [])
 
-  useEffect(() => {
-    setNotificationProps &&
-      setNotificationProps({
-        open: true,
-        title: HEADER_NOTIFICATION_MESSAGE.REPORT.replace('%s', '30'),
-      })
+  useLayoutEffect(() => {
+    setNotificationProps?.({
+      open: true,
+      title: HEADER_NOTIFICATION_MESSAGE.REPORT.replace('%s', '30'),
+    })
   }, [])
 
   useEffect(() => {

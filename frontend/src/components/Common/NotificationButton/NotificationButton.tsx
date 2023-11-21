@@ -12,49 +12,51 @@ export interface NotificationButtonProps {
   setNotificationProps?: Dispatch<SetStateAction<NotificationTipProps>>
 }
 
-export const NotificationButton = (props: NotificationButtonProps) => {
-  const { notificationProps, setNotificationProps } = props
+export const NotificationButton = ({
+  notificationProps = { title: '', open: false },
+  setNotificationProps,
+}: NotificationButtonProps) => {
   const handleTooltipClose = () => {
-    setNotificationProps &&
-      notificationProps &&
-      setNotificationProps({
-        ...notificationProps,
-        open: false,
-      })
+    setNotificationProps?.(() => ({
+      title: notificationProps.title,
+      open: false,
+    }))
   }
   const toggleTooltip = () => {
-    setNotificationProps &&
-      notificationProps &&
-      setNotificationProps({
-        title: notificationProps.title,
-        open: !notificationProps.open,
-      })
+    setNotificationProps?.((prevState) => ({
+      title: prevState.title,
+      open: !prevState.open,
+    }))
   }
 
   return (
-    <ClickAwayListener onClickAway={handleTooltipClose}>
-      <Tooltip
-        arrow
-        onClick={toggleTooltip}
-        onClose={handleTooltipClose}
-        open={notificationProps?.open}
-        title={notificationProps?.title}
-        placement={'bottom-start'}
-        PopperProps={{
-          disablePortal: true,
-        }}
-        disableFocusListener
-        disableHoverListener
-        disableTouchListener
-        disableInteractive
-        slotProps={{
-          tooltip: {
-            sx: { ...sx },
-          },
-        }}
-      >
-        <NotificationIconWrapper data-testid='NotificationIcon' />
-      </Tooltip>
-    </ClickAwayListener>
+    <>
+      {notificationProps && (
+        <ClickAwayListener onClickAway={handleTooltipClose}>
+          <Tooltip
+            arrow
+            onClick={toggleTooltip}
+            onClose={handleTooltipClose}
+            open={notificationProps.open}
+            title={notificationProps.title}
+            placement={'bottom-start'}
+            PopperProps={{
+              disablePortal: true,
+            }}
+            disableFocusListener
+            disableHoverListener
+            disableTouchListener
+            disableInteractive
+            slotProps={{
+              tooltip: {
+                sx: { ...sx },
+              },
+            }}
+          >
+            <NotificationIconWrapper data-testid='NotificationIcon' />
+          </Tooltip>
+        </ClickAwayListener>
+      )}
+    </>
   )
 }

@@ -58,9 +58,9 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   useEffect(() => {
     if (status.length === 1) {
       if (savedDoneColumns.length !== 1) {
-        setUseDefaultValue(true)
         dispatch(saveDoneColumn(status))
       }
+      setUseDefaultValue(true)
     } else {
       setUseDefaultValue(false)
     }

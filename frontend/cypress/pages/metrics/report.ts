@@ -10,6 +10,8 @@ class Report {
   readonly firstNotification = () =>
     cy.contains('The file needs to be exported within 30 minutes, otherwise it will expire.')
 
+  readonly notificationButton = () => cy.get('[data-testid="NotificationIcon"]')
+
   backToMetricsStep() {
     this.backButton().click()
   }
@@ -24,6 +26,22 @@ class Report {
 
   exportBoardData() {
     this.exportBoardDataButton().click()
+  }
+
+  checkNotification() {
+    this.notificationButton().click()
+    cy.contains('otherwise it will expire.').should('exist')
+
+    cy.get('[data-test-id="Header"]').click()
+    cy.contains('otherwise it will expire.').should('not.exist')
+
+    this.notificationButton().click()
+    cy.contains('otherwise it will expire.').should('exist')
+
+    this.notificationButton().click()
+    cy.contains('otherwise it will expire.').should('not.exist')
+
+    cy.get('[data-test-id="Header"]').click()
   }
 }
 

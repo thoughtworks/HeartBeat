@@ -32,7 +32,7 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
   }
 
   return (
-    <LogoWarp>
+    <LogoWarp data-test-id={'Header'}>
       <LogoContainer onClick={goHome}>
         <LogoImage src={Logo} alt='logo' />
         <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>

@@ -170,8 +170,8 @@ public class JiraService {
 		}
 		List<JiraCardDTO> realDoneCards = getRealDoneCards(request, boardColumns, users, baseUrl, allDoneCards,
 				jiraCardWithFields.getTargetFields(), assigneeFilter);
-		int storyPointSum = realDoneCards.stream()
-			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
+		double storyPointSum = realDoneCards.stream()
+			.mapToDouble(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
 
 		return CardCollection.builder()
@@ -314,7 +314,7 @@ public class JiraService {
 			.get("issues")
 			.getAsJsonArray();
 		List<Map<String, JsonElement>> customFieldMapList = new ArrayList<>();
-		ArrayList<Integer> storyPointList = new ArrayList<>();
+		ArrayList<Double> storyPointList = new ArrayList<>();
 		ArrayList<Sprint> sprintList = new ArrayList<>();
 		Map<String, String> resultMap = targetFields.stream()
 			.collect(Collectors.toMap(TargetField::getKey, TargetField::getName));
@@ -323,10 +323,12 @@ public class JiraService {
 			JsonObject jsonElement = element.getAsJsonObject().get("fields").getAsJsonObject();
 			JsonElement storyPoints = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints());
 			if (storyPoints == null || storyPoints.isJsonNull()) {
-				storyPointList.add(0);
+				storyPointList.add(0.0);
 			}
 			else {
-				int storyPoint = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints()).getAsInt();
+				Double storyPoint = jsonElement.getAsJsonObject()
+					.get(cardCustomFieldKey.getStoryPoints())
+					.getAsDouble();
 				storyPointList.add(storyPoint);
 			}
 			for (int index = 0; index < jiraCards.size(); index++) {
@@ -676,8 +678,8 @@ public class JiraService {
 
 		List<JiraCardDTO> matchedNonCards = getMatchedNonDoneCards(request, boardColumns, users, baseUrl,
 				jiraCardWithFields.getJiraCards(), jiraCardWithFields.getTargetFields());
-		int storyPointSum = matchedNonCards.stream()
-			.mapToInt(card -> card.getBaseInfo().getFields().getStoryPoints())
+		double storyPointSum = matchedNonCards.stream()
+			.mapToDouble(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
 
 		return CardCollection.builder()

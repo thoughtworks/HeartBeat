@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Velocity {
 
-	private int velocityForSP;
+	private double velocityForSP;
 
 	private int velocityForCards;
 

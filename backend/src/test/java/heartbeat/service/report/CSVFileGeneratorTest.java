@@ -254,7 +254,7 @@ class CSVFileGeneratorTest {
 
 		Assertions.assertEquals(boardCsvData,
 				"\"Issue key\",\"Summary\",\"Issue Type\",\"Status\",\"Story Points\",\"assignee\",\"Reporter\",\"Project Key\",\"Project Name\",\"Priority\",\"Parent Summary\",\"Sprint\",\"Labels\",\"Cycle Time\",\"Story point estimate\",\"Flagged\",\"1010\",\"1011\",\"Cycle Time / Story Points\",\"Analysis Days\",\"In Dev Days\",\"Waiting Days\",\"Testing Days\",\"Block Days\",\"Review Days\",\"OriginCycleTime: DOING\",\"OriginCycleTime: BLOCKED\"\n"
-						+ "\"ADM-489\",\"summary\",\"issue type\",,\"2\",\"name\",\"name\",\"ADM\",\"Auto Dora Metrics\",\"Medium\",\"parent\",\"sprint 1\",\"\",\"0.90\",\"1.00\",\"\",\"\",\"{}\",\"0.90\",\"0\",\"0.90\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"");
+						+ "\"ADM-489\",\"summary\",\"issue type\",,\"2.0\",\"name\",\"name\",\"ADM\",\"Auto Dora Metrics\",\"Medium\",\"parent\",\"sprint 1\",\"\",\"0.90\",\"1.00\",\"\",\"\",\"{}\",\"0.90\",\"0\",\"0.90\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
@@ -276,7 +276,7 @@ class CSVFileGeneratorTest {
 		String headers = reader.readLine();
 		Assertions.assertEquals("\"Group\",\"Metrics\",\"Value\"", headers);
 		String firstLine = reader.readLine();
-		Assertions.assertEquals("\"Velocity\",\"Velocity(Story Point)\",\"7\"", firstLine);
+		Assertions.assertEquals("\"Velocity\",\"Velocity(Story Point)\",\"7.0\"", firstLine);
 		reader.close();
 		fileInputStream.close();
 		file.delete();
@@ -321,7 +321,7 @@ class CSVFileGeneratorTest {
 		Assertions.assertEquals(metricCsvData,
 				"""
 						"Group","Metrics","Value"
-						"Velocity","Velocity(Story Point)","7"
+						"Velocity","Velocity(Story Point)","7.0"
 						"Velocity","Throughput(Cards Count)","2"
 						"Cycle time","Average cycle time(days/storyPoint)","4.18"
 						"Cycle time","Average cycle time(days/card)","9.75"

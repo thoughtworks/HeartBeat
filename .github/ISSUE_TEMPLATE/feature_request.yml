@@ -23,7 +23,6 @@ body:
         Explain your use case, context, and rationale behind this feature request. More importantly, what is the end user experience you are trying to build that led to the need for this feature?
 
         An important design goal of Heartbeat is keeping the API surface small and straightforward. In general, we only consider adding new features that solve a problem that cannot be easily dealt with using existing APIs (i.e. not just an alternative way of doing things that can already be done). The problem should also be common enough to justify the addition.
-
     validations:
       required: true
 
@@ -36,5 +35,18 @@ body:
         1. Show data with chart
         2. Can see the calculation method
         3. ......
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Tools
+      description: What tools will support your request feature?
+      multiple: true
+      options:
+        - Board
+        - Pipeline Tool
+        - Source Control
     validations:
       required: true

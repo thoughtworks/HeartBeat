@@ -178,9 +178,30 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
     exportValidityTimeMin &&
       updateProps?.({
         open: true,
-        title: HEADER_NOTIFICATION_MESSAGE.REPORT.replace('%s', exportValidityTimeMin.toString()),
+        title: HEADER_NOTIFICATION_MESSAGE.FIRST_REPORT.replace('%s', exportValidityTimeMin.toString()),
       })
   }, [exportValidityTimeMin])
+
+  useEffect(() => {
+    const startTime = Date.now()
+
+    const timer = setInterval(() => {
+      const currentTime = Date.now()
+      const elapsedTime = currentTime - startTime
+
+      const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime
+      if (remainingTime <= 5 * 60 * 1000) {
+        updateProps?.({
+          open: true,
+          title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+        })
+      }
+    }, 10000)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
 
   useEffect(() => {
     fetchReportData().then((res) => {

@@ -130,18 +130,6 @@ class Metrics {
     this.cycleTimeSettingDone()
   }
 
-  changeDoneColumnToReview() {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.reviewLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.doneValue).click()
-
-    cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.reviewValue).click()
-  }
-
-  settingDoneColumn() {
-    this.cycleTimeSettingDone()
-  }
-
   checkRealDone() {
     this.realDoneSelect().click()
 

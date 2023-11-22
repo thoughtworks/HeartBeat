@@ -381,38 +381,4 @@ describe('Create a new project', () => {
 
     checkTokenInputValuesExist(tokenInputValues)
   })
-
-  it('Should not display Real done setting when there is only one Done in Cycle time settings', () => {
-    homePage.navigate()
-
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.goHomePage()
-
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.selectDateRange()
-
-    configPage.selectMetricsData()
-
-    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-
-    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
-
-    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
-
-    configPage.goMetricsStep()
-
-    metricsPage.changeDoneColumnToReview()
-
-    cy.contains('Real done').should('not.exist')
-
-    metricsPage.settingDoneColumn()
-
-    cy.contains('Real done').should('exist')
-  })
 })

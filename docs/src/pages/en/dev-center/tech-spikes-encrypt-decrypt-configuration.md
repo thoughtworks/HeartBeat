@@ -16,12 +16,12 @@ The encrypted config file will be download when user click save button in config
 
 ## Solutions
 
-### 1. Solution detail
+### Solution detail
 The solution is like below:
-
-![img.png]()
-
-![img.png]()
+#### Encrypt process
+![encrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/encrypt-process.png)
+#### Decrypt process
+![decrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/decrypt-process.png)
 
 To prevent unauthorized users from attempting password cracking by continuously invoking the API, and due to the current absence of stored user information in our backend to identify whether it is the same user or to track error counts, it is necessary to implement rate limiting at the gateway.
 

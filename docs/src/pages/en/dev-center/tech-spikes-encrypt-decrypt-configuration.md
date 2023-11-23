@@ -16,7 +16,7 @@ The encrypted config file will be download when user click save button in config
 
 ## Solutions
 
-### Solution detail
+### 1. Solution detail
 The solution is like below:
 #### Encrypt process
 ![encrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/encrypt-process.png)
@@ -36,3 +36,155 @@ Notes:
 
 * Answer: Using a dynamic IV and storing it in the encrypted file is a more secure approach. A dynamic IV is randomly generated for each encryption, ensuring that the same data produces different ciphertexts each time. This enhances the security of the encryption, especially against specific attacks like known-plaintext attacks.      A fixed IV may introduce security risks, as encrypting the same data could result in identical ciphertexts, potentially leading to vulnerabilities such as stream cipher attacks.
 Therefore, it is generally recommended to use a dynamic IV instead of a fixed IV. Storing the dynamic IV in the encrypted file is reasonable, as long as the integrity and security of the file are ensured.
+
+### 2. C3
+![encrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/encrypt-decrypt-system-c3.png)
+The front-end will call the corresponding interface in the CryptoController during the encryption process, and the interface will call the corresponding method in the EncryptDecryptService. In the method, follow the process to call the methods in the EncryptDecryptUtil tool class.
+* Encryption process
+  ```plantuml
+  @startuml
+  skin rose
+  title C3 - Heartbeat - Encrypted configuration data
+  participant FrontEnd
+  participant CryptoController
+  participant EncryptDecryptService
+  participant EncryptDecryptUtil
+  group Export Encrypted configuration data
+  FrontEnd -> CryptoController: request configuration data, password
+  activate CryptoController
+  CryptoController -> EncryptDecryptService: configuration data, password
+  activate EncryptDecryptService
+  EncryptDecryptService -> EncryptDecryptUtil: Backend Secret Key + password + Fixed Salt
+  activate EncryptDecryptUtil
+  EncryptDecryptUtil --> EncryptDecryptService: return secret key
+  deactivate EncryptDecryptUtil
+  EncryptDecryptService -> EncryptDecryptUtil: random iv, secret key, configuration data
+  activate EncryptDecryptUtil
+  EncryptDecryptUtil --> EncryptDecryptService: return Encrypted data
+  deactivate EncryptDecryptUtil
+  EncryptDecryptService -> EncryptDecryptUtil: secret key, Encrypted data
+  activate EncryptDecryptUtil
+  EncryptDecryptUtil --> EncryptDecryptService: return MacBytes
+  deactivate EncryptDecryptUtil
+  EncryptDecryptService --> CryptoController: return iv + encrypt data + MacBytes
+  deactivate EncryptDecryptService
+  CryptoController --> FrontEnd: response iv + encrypt data + MacBytes
+  deactivate CryptoController
+  end
+  @enduml
+  ```
+* Decryption process
+  ```plantuml
+  @startuml
+  skin rose
+  title C3 - Heartbeat - Decrypted configuration data
+  
+  participant FrontEnd
+  participant CryptoController
+  participant EncryptDecryptService
+  participant EncryptDecryptUtil
+  participant RestResponseEntityExceptionHandler
+  
+  ' group Import Decrypted configuration data
+  FrontEnd -> CryptoController: request iv + encrypted data + MacBytes, password
+  activate CryptoController
+  CryptoController -> EncryptDecryptService: iv + encrypted data + MacBytes, password
+  activate EncryptDecryptService
+  EncryptDecryptService -> EncryptDecryptUtil: secret key, MacBytes, encrypted data
+  activate EncryptDecryptUtil
+  note right of EncryptDecryptUtil
+  Verify whether
+  the encrypted data
+  has been modified
+  end note
+  alt Integrity check pass
+  EncryptDecryptUtil --> EncryptDecryptService
+  deactivate EncryptDecryptUtil
+
+  EncryptDecryptService -> EncryptDecryptUtil: secret key, iv, encrypted data
+  activate EncryptDecryptUtil
+  note right of EncryptDecryptUtil
+  Decrypt encrypted files
+  end note
+  alt decrypt success
+  EncryptDecryptUtil --> EncryptDecryptService: return Decrypted configuration data
+  deactivate EncryptDecryptUtil
+  EncryptDecryptService --> CryptoController: return Decrypted configuration data
+  deactivate EncryptDecryptService
+  CryptoController --> FrontEnd: response Decrypted configuration data
+  deactivate CryptoController
+  else wrong password
+  EncryptDecryptUtil --> RestResponseEntityExceptionHandler: throw 401 Unauthorized: Incorrect password
+  activate RestResponseEntityExceptionHandler
+  RestResponseEntityExceptionHandler --> FrontEnd: response 401 Unauthorized: Incorrect password
+  deactivate RestResponseEntityExceptionHandler
+  deactivate EncryptDecryptUtil
+  deactivate EncryptDecryptService
+  deactivate CryptoController
+  end
+  else Integrity check failed
+  activate EncryptDecryptUtil
+  EncryptDecryptUtil --> RestResponseEntityExceptionHandler: throw 400 Bad Request: Invalid file
+  activate RestResponseEntityExceptionHandler
+  RestResponseEntityExceptionHandler --> FrontEnd: response 400 Bad Request: Invalid file
+  deactivate RestResponseEntityExceptionHandler
+  deactivate EncryptDecryptUtil
+  ' deactivate EncryptDecryptService
+  ' deactivate CryptoController
+  end
+  @enduml
+  ```
+### 3. API Design
+
+* Encryption Api
+  - Path: /encrypt
+  - Method: POST
+  - Parameters:
+  ```
+  configData(string, required): config data
+  password(string, required): download config data password
+  ```
+  - Request Example:
+  ```
+  {
+    configData: "{projectName: "",dateRange: {startDate: null,endDate: null}...}",
+    password: "******"
+  }
+  ```
+ 
+  - Success Request:
+  - Status Code: 200
+  - Response Example:
+  ```
+   {
+     encryptedData: "iv + encrypted data + macBytes"
+   }
+  ```
+  
+* Decryption Api
+  - Path: /decrypt
+  - Method: POST
+  - Parameters:
+  ```
+  encryptedData(string, required): encrypted data
+  password(string, required): download config data password
+  ```
+  - Request Example:
+  ```
+  {
+    encryptedData: "iv + encrypted data + macBytes",
+    password: "*******"
+  }
+  ```
+  - Success Request:
+  - Status Code: 200
+  - Response Example:
+  ```
+  {
+    configData: "{"projectName": "","dateRange": {"startDate": null,"endDate": null}...}",
+  }
+  ```
+* Error Handling
+  - 400: Bad Request: Invalid file
+  - 401: Unauthorized: Incorrect password
+  - 500: Internal Server Error: Server internal error

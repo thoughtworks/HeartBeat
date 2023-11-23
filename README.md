@@ -402,9 +402,25 @@ pnpm test
 pnpm coverage
 ```
 
-## 6.1.4 How to run e2e tests
-
+## 6.1.4 How to run e2e tests locally
+1. Start the mock server
 ```
+cd HearBeat/stubs
+docker-compose up -d
+```
+2. Start the backend service
+```
+cd HearBeat/backend
+./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://localhost:4323'
+```
+3. Start the frontend service
+```
+cd HearBeat/frontend
+pnpm start
+```
+4. Run the e2e tests
+```
+cd HearBeat/frontend
 pnpm e2e
 ```
 

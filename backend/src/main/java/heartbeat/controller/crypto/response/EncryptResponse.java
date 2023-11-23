@@ -12,5 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EncryptResponse {
+
 	private String encryptedData;
+
 }

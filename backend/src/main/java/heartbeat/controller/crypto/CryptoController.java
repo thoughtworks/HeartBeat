@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
-@Validated
 @RestController
 @RequiredArgsConstructor
 public class CryptoController {
@@ -19,8 +18,9 @@ public class CryptoController {
 	private final EncryptDecryptService encryptDecryptService;
 
 	@PostMapping("/encrypt")
-	public EncryptResponse encrypt(@RequestBody EncryptRequest request) {
+	public EncryptResponse encrypt(@RequestBody @Validated EncryptRequest request) {
 		String encryptedData = encryptDecryptService.encryptConfigData(request.getConfigData(), request.getPassword());
 		return EncryptResponse.builder().encryptedData(encryptedData).build();
 	}
+
 }

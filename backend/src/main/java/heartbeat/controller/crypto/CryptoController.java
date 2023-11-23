@@ -1,6 +1,8 @@
 package heartbeat.controller.crypto;
 
 import heartbeat.controller.crypto.request.EncryptRequest;
+import heartbeat.controller.crypto.response.EncryptResponse;
+import heartbeat.service.crypto.EncryptDecryptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.validation.annotation.Validated;
@@ -13,8 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class CryptoController {
+
+	private final EncryptDecryptService encryptDecryptService;
+
 	@PostMapping("/encrypt")
-	public String encrypt(@RequestBody EncryptRequest request) {
-		return "";
+	public EncryptResponse encrypt(@RequestBody EncryptRequest request) {
+		String encryptedData = encryptDecryptService.encryptConfigData(request.getConfigData(), request.getPassword());
+		return EncryptResponse.builder().encryptedData(encryptedData).build();
 	}
 }

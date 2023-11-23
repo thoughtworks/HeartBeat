@@ -86,6 +86,7 @@ describe('MetricsStep', () => {
         </Provider>
       )
     )
+
     expect(result.current.resetProps).toBeCalled()
   })
 })

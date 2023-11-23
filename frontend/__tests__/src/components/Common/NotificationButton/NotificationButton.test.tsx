@@ -3,6 +3,7 @@ import { NotificationButton } from '@src/components/Common/NotificationButton/No
 import React from 'react'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 import { act } from 'react-dom/test-utils'
+import { HEADER_NOTIFICATION_MESSAGE } from '@src/constants'
 
 describe('NotificationButton', () => {
   afterEach(cleanup)
@@ -12,6 +13,7 @@ describe('NotificationButton', () => {
 
   it('should show NotificationIcon when render NotificationButton component', () => {
     const { getByTestId } = render(<NotificationButton {...result.current} />)
+
     expect(getByTestId('NotificationIcon')).toBeInTheDocument()
   })
 
@@ -20,6 +22,7 @@ describe('NotificationButton', () => {
       result.current.notificationProps = undefined
     })
     const { queryByTestId } = render(<NotificationButton {...result.current} />)
+
     expect(queryByTestId('NotificationIcon')).not.toBeInTheDocument()
   })
 
@@ -38,7 +41,9 @@ describe('NotificationButton', () => {
       result.current.notificationProps = closeNotificationProps
     })
     const { getByTestId, queryByText } = render(<NotificationButton {...result.current} />)
+
     fireEvent.click(getByTestId('NotificationIcon'))
+
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
 
@@ -55,10 +60,13 @@ describe('NotificationButton', () => {
         <NotificationButton {...result.current} />
       </div>
     )
+
     expect(getByRole('tooltip')).toBeInTheDocument()
 
     const content = await waitFor(() => getByText('OutSideSection'))
+
     fireEvent.click(content)
+
     expect(result.current.updateProps).toBeCalledTimes(1)
     expect(checkProps).toEqual(closeNotificationProps)
   })
@@ -68,6 +76,7 @@ describe('NotificationButton', () => {
       result.current.notificationProps = undefined
     })
     const { queryByText } = render(<NotificationButton {...result.current} />)
+
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
 
@@ -76,6 +85,7 @@ describe('NotificationButton', () => {
       result.current.updateProps = undefined
     })
     const { queryByText } = render(<NotificationButton {...result.current} />)
+
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
 
@@ -85,6 +95,38 @@ describe('NotificationButton', () => {
       result.current.updateProps = undefined
     })
     const { queryByText } = render(<NotificationButton {...result.current} />)
+
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
+  })
+
+  it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', async () => {
+    const resetProps = jest.fn()
+    const updateProps = jest.fn()
+    jest.useFakeTimers()
+    render(
+      <div>
+        <title> The file will expire in five minutes, please download it in time. </title>
+        <NotificationButton {...result.current} />
+      </div>
+    )
+
+    expect(resetProps).not.toBeCalled()
+    expect(updateProps).not.toBeCalled()
+
+    jest.advanceTimersByTime(5000)
+
+    expect(resetProps).not.toBeCalled()
+    expect(updateProps).not.toBeCalled()
+
+    jest.advanceTimersByTime(1600000)
+
+    expect(resetProps).toBeCalledTimes(1)
+    expect(updateProps).toBeCalledTimes(1)
+    expect(updateProps).toBeCalledWith({
+      open: true,
+      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+    })
+
+    jest.useRealTimers()
   })
 })

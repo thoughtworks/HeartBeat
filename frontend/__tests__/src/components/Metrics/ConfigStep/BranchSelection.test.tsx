@@ -39,6 +39,7 @@ describe('BranchSelection', () => {
 
   it('should show branches selection when getSteps succeed ', async () => {
     const { getByRole, getByText } = setup()
+
     expect(getByText(BRANCH)).toBeInTheDocument()
 
     await act(async () => {
@@ -51,11 +52,13 @@ describe('BranchSelection', () => {
     })
 
     const optionOne = getByRole('button', { name: 'Option 1' })
+
     expect(optionOne).toBeVisible()
 
     await act(async () => {
       await userEvent.click(optionOne)
     })
+
     expect(onUpdatePipeline).toHaveBeenCalledTimes(1)
   })
 })

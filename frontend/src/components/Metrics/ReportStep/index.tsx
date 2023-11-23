@@ -58,7 +58,7 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
-  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined>(undefined)
+  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number>(30)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
   const {
@@ -171,8 +171,9 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
       }
     | undefined
   > = useCallback(async () => {
+    console.log(666666)
     return await generateReport(getReportRequestBody())
-  }, [])
+  }, [exportValidityTimeMin])
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
@@ -182,8 +183,10 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
       })
   }, [exportValidityTimeMin])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    console.log(1111, exportValidityTimeMin)
     if (exportValidityTimeMin) {
+      console.log(exportValidityTimeMin)
       const startTime = Date.now()
       const timer = setInterval(() => {
         const currentTime = Date.now()
@@ -191,13 +194,14 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
 
         const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime
         if (remainingTime <= 5 * 60 * 1000) {
+          console.log(remainingTime,2222)
           resetProps?.()
           updateProps?.({
             open: true,
             title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
           })
         }
-      }, 10000)
+      }, 1000)
       return () => {
         clearInterval(timer)
       }
@@ -205,7 +209,11 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
   }, [exportValidityTimeMin])
 
   useEffect(() => {
+    console.log(555555,fetchReportData)
+    debugger
     fetchReportData().then((res) => {
+      debugger
+      console.log(res,4444)
       res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
       res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
       res?.classification && setClassificationState({ value: res.classification, isShow: true })
@@ -234,6 +242,9 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
           isShow: true,
         })
       res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
+    }
+  ).catch((e)=>{
+      console.log(e,333333)
     })
   }, [fetchReportData])
 

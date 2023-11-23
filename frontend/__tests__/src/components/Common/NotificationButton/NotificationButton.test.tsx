@@ -98,35 +98,4 @@ describe('NotificationButton', () => {
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
-
-  it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', async () => {
-    const resetProps = jest.fn()
-    const updateProps = jest.fn()
-    jest.useFakeTimers()
-    render(
-      <div>
-        <title> The file will expire in five minutes, please download it in time. </title>
-        <NotificationButton {...result.current} />
-      </div>
-    )
-
-    expect(resetProps).not.toBeCalled()
-    expect(updateProps).not.toBeCalled()
-
-    jest.advanceTimersByTime(5000)
-
-    expect(resetProps).not.toBeCalled()
-    expect(updateProps).not.toBeCalled()
-
-    jest.advanceTimersByTime(1600000)
-
-    expect(resetProps).toBeCalledTimes(1)
-    expect(updateProps).toBeCalledTimes(1)
-    expect(updateProps).toBeCalledWith({
-      open: true,
-      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
-    })
-
-    jest.useRealTimers()
-  })
 })

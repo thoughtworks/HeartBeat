@@ -183,26 +183,26 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
   }, [exportValidityTimeMin])
 
   useEffect(() => {
-    const startTime = Date.now()
+    if (exportValidityTimeMin) {
+      const startTime = Date.now()
+      const timer = setInterval(() => {
+        const currentTime = Date.now()
+        const elapsedTime = currentTime - startTime
 
-    const timer = setInterval(() => {
-      const currentTime = Date.now()
-      const elapsedTime = currentTime - startTime
-
-      const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime
-      if (remainingTime <= 5 * 60 * 1000) {
-        resetProps?.()
-        updateProps?.({
-          open: true,
-          title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
-        })
+        const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime
+        if (remainingTime <= 5 * 60 * 1000) {
+          resetProps?.()
+          updateProps?.({
+            open: true,
+            title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+          })
+        }
+      }, 10000)
+      return () => {
+        clearInterval(timer)
       }
-    }, 10000)
-
-    return () => {
-      clearInterval(timer)
     }
-  }, [])
+  }, [exportValidityTimeMin])
 
   useEffect(() => {
     fetchReportData().then((res) => {

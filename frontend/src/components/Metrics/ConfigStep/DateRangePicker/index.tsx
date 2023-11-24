@@ -11,7 +11,6 @@ import {
 } from '@src/context/config/configSlice'
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import zIndex from '@mui/material/styles/zIndex'
 import { Z_INDEX } from '@src/constants'
 
 export const DateRangePicker = () => {

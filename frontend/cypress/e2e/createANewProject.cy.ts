@@ -283,6 +283,8 @@ describe('Create a new project', () => {
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 
+    reportPage.firstNotification().should('exist')
+
     reportPage.exportMetricDataButton().should('be.enabled')
 
     reportPage.exportMetricData()

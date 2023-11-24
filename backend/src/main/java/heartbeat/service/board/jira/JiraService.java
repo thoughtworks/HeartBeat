@@ -201,7 +201,7 @@ public class JiraService {
 					customTaskExecutor))
 			.toList();
 
-		List<JiraColumnDTO> columnResponse = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+		List<JiraColumnDTO> columnResponse = futures.stream().map(CompletableFuture::join).toList();
 
 		JiraColumnResult jiraColumnResult = JiraColumnResult.builder()
 			.jiraColumnResponse(columnResponse)
@@ -227,7 +227,7 @@ public class JiraService {
 				.name(jiraColumn.getName())
 				.statuses(statusSelfList.stream()
 					.map(statusSelf -> statusSelf.getUntranslatedName().toUpperCase())
-					.collect(Collectors.toList()))
+					.toList())
 				.build())
 			.build();
 		log.info("Successfully get column and status, the column key: {}, status: {}", jiraColumnDTO.getKey(),
@@ -245,7 +245,7 @@ public class JiraService {
 			.toList();
 		log.info("Successfully get columns status self list, column name: {}", jiraColumn.getName());
 
-		return futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+		return futures.stream().map(CompletableFuture::join).toList();
 	}
 
 	private String handleColumKey(List<String> doneColumn, List<StatusSelfDTO> statusSelfList) {
@@ -355,8 +355,8 @@ public class JiraService {
 						JsonPrimitive jsonPrimitive = fieldValue.getAsJsonPrimitive();
 						if (jsonPrimitive.isNumber()) {
 							Number numberValue = jsonPrimitive.getAsNumber();
-							int intValue = numberValue.intValue();
-							fieldValue = new JsonPrimitive(intValue);
+							double doubleValue = numberValue.doubleValue();
+							fieldValue = new JsonPrimitive(doubleValue);
 						}
 					}
 					else if (customFieldValue.equals("Flagged") && !fieldValue.isJsonNull()

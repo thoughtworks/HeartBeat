@@ -30,7 +30,6 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [errorMessage, setErrorMessage] = useState('')
 
   const generateReport = async (params: ReportRequestDTO) => {
-    console.log(777777)
     setIsLoading(true)
     try {
       const res = await reportClient.report(params)

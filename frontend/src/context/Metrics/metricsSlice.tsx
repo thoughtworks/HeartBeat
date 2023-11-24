@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
 import {
+  ASSIGNEE_FILTER_TYPES,
   CLASSIFICATION_WARNING_MESSAGE,
   CYCLE_TIME_LIST,
   METRICS_CONSTANTS,
@@ -10,7 +11,6 @@ import {
   PIPELINE_NAME_WARNING_MESSAGE,
   REAL_DONE_WARNING_MESSAGE,
   STEP_WARNING_MESSAGE,
-  ASSIGNEE_FILTER_TYPES,
 } from '@src/constants'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 import _ from 'lodash'

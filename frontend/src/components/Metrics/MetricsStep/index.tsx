@@ -23,7 +23,7 @@ const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
     requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
-  const isShowRealDone = cycleTimeSettings.every((e) => e.value !== DONE)
+  const isShowRealDone = cycleTimeSettings.some((e) => e.value === DONE)
 
   useLayoutEffect(() => {
     resetProps?.()
@@ -39,7 +39,7 @@ const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
 
         {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
 
-        {isShowCrewsAndRealDone && !isShowRealDone && (
+        {isShowCrewsAndRealDone && isShowRealDone && (
           <RealDone columns={jiraColumns} title={'Real done setting'} label={'Consider as Done'} />
         )}
 

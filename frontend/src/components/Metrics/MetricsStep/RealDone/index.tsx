@@ -1,5 +1,5 @@
 import { FormHelperText } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   saveDoneColumn,
   selectCycleTimeSettings,
@@ -43,6 +43,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const status = selectedDoneColumns.length < 1 ? doneStatus : filteredStatus
   const [selectedDoneStatus, setSelectedDoneStatus] = useState<string[]>([])
   const isAllSelected = savedDoneColumns.length === status.length
+  const [useDefaultValue, setUseDefaultValue] = useState(false)
 
   const handleRealDoneChange = (event: React.SyntheticEvent, value: string[]) => {
     if (value[value.length - 1] === 'All') {
@@ -54,7 +55,20 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
     dispatch(saveDoneColumn([...value]))
   }
 
-  return (
+  useEffect(() => {
+    if (status.length === 1) {
+      if (savedDoneColumns.length !== 1) {
+        dispatch(saveDoneColumn(status))
+      }
+      setUseDefaultValue(true)
+    } else {
+      setUseDefaultValue(false)
+    }
+  }, [status.length, useDefaultValue])
+
+  return useDefaultValue ? (
+    <></>
+  ) : (
     <>
       <MetricsSettingTitle title={title} />
       {realDoneWarningMessage && <WarningNotification message={realDoneWarningMessage} />}

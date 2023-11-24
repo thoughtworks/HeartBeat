@@ -1,4 +1,4 @@
-import { Table, TableBody, TableHead, TableRow, Typography } from '@mui/material'
+import { Table, TableBody, TableHead, TableRow } from '@mui/material'
 import {
   BorderTableCell,
   ColumnTableCell,

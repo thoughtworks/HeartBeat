@@ -30,13 +30,18 @@ export interface IPipelineWarningMessageConfig {
   step: string | null
 }
 
+export interface ICycleTimeSetting {
+  name: string
+  value: string
+}
+
 export interface savedMetricsSettingState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]
   targetFields: { name: string; key: string; flag: boolean }[]
   users: string[]
   pipelineCrews: string[]
   doneColumn: string[]
-  cycleTimeSettings: { name: string; value: string }[]
+  cycleTimeSettings: ICycleTimeSetting[]
   deploymentFrequencySettings: IPipelineConfig[]
   leadTimeForChanges: IPipelineConfig[]
   treatFlagCardAsBlock: boolean

@@ -170,7 +170,7 @@ const checkMeanTimeToRecovery = (testId: string) => {
 }
 
 const clearDownloadFile = () => {
-  cy.task('clearDownloads');
+  cy.task('clearDownloads')
   cy.wait(500)
 }
 
@@ -182,10 +182,10 @@ const checkMetricCSV = () => {
       files.forEach((file) => {
         if (file.match(/metric-.*\.csv/)) {
           cy.readFile(`cypress/downloads/${file}`).then((fileContent) => {
-            expect(fileContent).to.equal(localFileContent);
-          });
+            expect(fileContent).to.equal(localFileContent)
+          })
         }
-      });
+      })
     })
   })
 }

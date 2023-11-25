@@ -26,7 +26,6 @@ export default defineConfig({
 	// online
 	site: `https://thoughtworks.github.io/Heartbeat/`,
 	base: '/Heartbeat',
-	// publicDir: '/Heartbeat',
 	integrations: [
 		AutoImport({
 			imports: [asideAutoImport],

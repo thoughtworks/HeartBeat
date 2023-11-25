@@ -63,7 +63,7 @@ const t = useTranslations(Astro);
 					</a>
 				</li>
 				<li>
-					<a class="docs" href={`/${lang || 'en'}/getting-started/`}>
+					<a class="docs" href={`${import.meta.env.BASE_URL}/${lang || 'en'}/getting-started/`}>
 						<span class="sr-only">Docs</span>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

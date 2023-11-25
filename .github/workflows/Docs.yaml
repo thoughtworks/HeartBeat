@@ -26,7 +26,7 @@ jobs:
           pnpm install --no-frozen-lockfile
           pnpm lint
       - name: Build docs
-        run: pnpm build
+        run: pnpm run build
       - name: Deploy to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:

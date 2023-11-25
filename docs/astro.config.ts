@@ -20,12 +20,12 @@ import { remarkDiagram } from './plugins/remark-diagram.mjs';
 
 // https://astro.build/config
 export default defineConfig({
-	// lcoal dev
-	site: 'https://docs.astro.build/',
+	// local dev
+	// site: 'https://docs.astro.build/',
 
 	// online
 	site: `https://thoughtworks.github.io/Heartbeat/`,
-	// base: '/Heartbeat',
+	base: '/Heartbeat',
 	// publicDir: '/Heartbeat',
 	integrations: [
 		AutoImport({

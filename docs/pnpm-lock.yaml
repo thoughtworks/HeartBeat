@@ -742,7 +742,7 @@ packages:
       '@babel/core': 7.18.10
       '@babel/helper-validator-option': 7.18.6
       browserslist: 4.21.3
-      semver: 6.3.0
+      semver: 6.3.1
     dev: true
 
   /@babel/helper-compilation-targets@7.22.10:
@@ -2411,7 +2411,7 @@ packages:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.3.7
+      semver: 7.5.4
       tsutils: 3.21.0(typescript@5.0.2)
       typescript: 5.0.2
     transitivePeerDependencies:
@@ -2432,7 +2432,7 @@ packages:
       eslint: 8.29.0
       eslint-scope: 5.1.1
       eslint-utils: 3.0.0(eslint@8.29.0)
-      semver: 7.3.7
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -2856,7 +2856,7 @@ packages:
       resolve: 1.22.4
       semver: 7.5.4
       server-destroy: 1.0.1
-      sharp: 0.32.5
+      sharp: 0.32.6
       shiki: 0.14.4
       string-width: 6.1.0
       strip-ansi: 7.1.0
@@ -7299,8 +7299,8 @@ packages:
     resolution: {integrity: sha512-rb+9B5YBIEzYcD6x2VKidaa+cqYBJQKnU4oe4E3ANwRRN56yk/ua1YCJT1n21NTS8w6CcOclAKNP3PhdCXKYtQ==}
     dev: true
 
-  /sharp@0.32.5:
-    resolution: {integrity: sha512-0dap3iysgDkNaPOaOL4X/0akdu0ma62GcdC2NBQ+93eqpePdDdr2/LM0sFdDSMmN7yS+odyZtPsb7tx/cYBKnQ==}
+  /sharp@0.32.6:
+    resolution: {integrity: sha512-KyLTWwgcR9Oe4d9HwCwNM2l7+J0dUQwn/yf7S0EnTtb0eVS4RxO0eUSvxPtzT4F3SY+C4K6fqdv/DO27sJ/v/w==}
     engines: {node: '>=14.15.0'}
     requiresBuild: true
     dependencies:

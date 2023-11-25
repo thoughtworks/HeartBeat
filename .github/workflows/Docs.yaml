@@ -33,3 +33,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/dist
           publish_branch: gh-pages
+      - name: upload index to Algolia
+        run: pnpm run algolia

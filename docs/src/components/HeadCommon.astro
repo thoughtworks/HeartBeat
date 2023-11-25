@@ -13,11 +13,11 @@ import '@fontsource/ibm-plex-mono/400-italic.css';
 <link rel="sitemap" href="/sitemap-index.xml" />
 
 <!-- Global CSS -->
-<link rel="stylesheet" href="/theme.css" />
-<link rel="stylesheet" href="/index.css" />
+<link rel="stylesheet" href=`/${document.location.pathname.split('/')[1]}/theme.css` />
+<link rel="stylesheet" href=`/${document.location.pathname.split('/')[1]}/index.css` />
 
 <!-- Scrollable a11y code helper -->
-<script type="module" src="/make-scrollable-code-focusable.js"></script>
+<script type="module" src=`/${document.location.pathname.split('/')[1]}/make-scrollable-code-focusable.js`></script>
 
 <!-- This is intentionally inlined to avoid FOUC -->
 <script is:inline>

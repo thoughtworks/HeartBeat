@@ -49,16 +49,16 @@ export default function Search({ lang = 'en', labels }: Props) {
 			initialQuery={initialQuery}
 			initialScrollY={window.scrollY}
 			onClose={onClose}
-			indexName="astro"
-			appId="7AFBU8EPJU"
-			apiKey="4440670147c44d744fd8da35ff652518"
-			searchParameters={{ facetFilters: [[`lang:${lang}`]] }}
-			insights
-			getMissingResultsUrl={({ query }: { query: string }) =>
-				`https://github.com/withastro/docs/issues/new?title=Missing+results+for+query+%22${encodeURIComponent(
-					query
-				)}%22`
-			}
+			indexName="Heartbeat"
+			appId="VU887LTWYS"
+			apiKey="9c2d2fe7427b702ed94e71739cca84a6"
+			// searchParameters={{ facetFilters: [[`lang:${lang}`]] }}
+			// insights
+			// getMissingResultsUrl={({ query }: { query: string }) =>
+			// 	`https://github.com/withastro/docs/issues/new?title=Missing+results+for+query+%22${encodeURIComponent(
+			// 		query
+			// 	)}%22`
+			// }
 			transformItems={(items) => {
 				return items.map((item) => {
 					// We transform the absolute URL into a relative URL to
@@ -72,7 +72,7 @@ export default function Search({ lang = 'en', labels }: Props) {
 				});
 			}}
 			placeholder={labels.placeholder}
-			translations={labels.modal}
+			// translations={labels.modal}
 			resultsFooterComponent={() => (
 				<div style={{ marginBlock: '2em' }}>
 					<p>{labels.resultsFooterLede}</p>

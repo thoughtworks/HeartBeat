@@ -46,7 +46,6 @@ const processData = async (filenames: string[]) =>  {
 //   }
 // })
 
-
 // 2. Send the dataset in JSON format
 const upload = async (data: unknown) => {
 	console.log(`Start to upload to algolia${JSON.stringify(data)}`)

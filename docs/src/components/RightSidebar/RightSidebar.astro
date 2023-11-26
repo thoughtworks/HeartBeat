@@ -1,34 +1,36 @@
 ---
-import TableOfContents from "./TableOfContents";
-import MoreMenu from "./MoreMenu.astro";
-import type { MarkdownHeading } from "astro";
+import TableOfContents from './TableOfContents';
+import ContributeMenu from './ContributeMenu.astro';
+import CommunityMenu from './CommunityMenu.astro';
+import { useTranslations } from '../../i18n/util';
+import generateToc from '../../util/generateToc';
 
-type Props = {
-  headings: MarkdownHeading[];
-  githubEditUrl: string;
-};
+const t = useTranslations(Astro);
 
-const { headings, githubEditUrl } = Astro.props as Props;
+const { content, githubEditUrl, headings } = Astro.props;
+const overview = t('rightSidebar.overview');
 ---
 
-<nav class="sidebar-nav" aria-labelledby="grid-right">
-  <div class="sidebar-nav-inner">
-    <TableOfContents client:media="(min-width: 50em)" headings={headings} />
-    <MoreMenu editHref={githubEditUrl} />
-  </div>
+<nav aria-label={t('rightSidebar.a11yTitle')}>
+	{
+		headings && (
+			<TableOfContents
+				client:media="(min-width: 50em)"
+				toc={generateToc(headings, overview)}
+				labels={{ onThisPage: t('rightSidebar.onThisPage') }}
+				isMobile={false}
+			/>
+		)
+	}
+	<ContributeMenu i18nReady={content.i18nReady} editHref={githubEditUrl} />
+	<CommunityMenu />
 </nav>
 
 <style>
-  .sidebar-nav {
-    width: 100%;
-    position: sticky;
-    top: 0;
-  }
-
-  .sidebar-nav-inner {
-    height: 100%;
-    padding: 0;
-    padding-top: var(--doc-padding);
-    overflow: auto;
-  }
+	nav {
+		width: 100%;
+		padding: var(--doc-padding-block) 0;
+		overflow: auto;
+		font-size: var(--theme-text-xs);
+	}
 </style>

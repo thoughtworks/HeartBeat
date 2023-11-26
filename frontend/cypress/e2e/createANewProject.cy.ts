@@ -6,20 +6,20 @@ import reportPage from '../pages/metrics/report'
 
 const cycleTimeData = [
   { label: 'Name', value: 'Value' },
-  { label: 'Average cycle time', value: '8.35(days/SP)' },
+  { label: 'Average cycle time', value: '8.1(days/SP)' },
   { label: '9.55(days/card)' },
   { label: 'Total development time / Total cycle time', value: '62.04%' },
   { label: 'Total waiting for testing time / Total cycle time', value: '2.39%' },
   { label: 'Total block time / Total cycle time', value: '30.27%' },
   { label: 'Total review time / Total cycle time', value: '3.82%' },
   { label: 'Total testing time / Total cycle time', value: '1.48%' },
-  { label: 'Average development time', value: '5.18(days/SP)' },
+  { label: 'Average development time', value: '5.02(days/SP)' },
   { label: '5.92(days/card)' },
-  { label: 'Average waiting for testing time', value: '0.20(days/SP)' },
+  { label: 'Average waiting for testing time', value: '0.19(days/SP)' },
   { label: '0.23(days/card)' },
-  { label: 'Average block time', value: '2.53(days/SP)' },
+  { label: 'Average block time', value: '2.45(days/SP)' },
   { label: '2.89(days/card)' },
-  { label: 'Average review time', value: '0.32(days/SP)' },
+  { label: 'Average review time', value: '0.31(days/SP)' },
   { label: '0.37(days/card)' },
   { label: 'Average testing time', value: '0.12(days/SP)' },
   { label: '0.14(days/card)' },
@@ -169,10 +169,24 @@ const checkMeanTimeToRecovery = (testId: string) => {
   checkTimeToRecoveryPipelineCalculation(testId)
 }
 
+const clearDownloadFile = () => {
+  cy.task('clearDownloads')
+  cy.wait(500)
+}
+
 const checkMetricCSV = () => {
   cy.wait(2000)
-  return cy.task('readDir', 'cypress/downloads').then((files) => {
-    expect(files).to.match(new RegExp(/metric-.*\.csv/))
+  cy.fixture('metric-20220901-20220914-1031253.csv').then((localFileContent) => {
+    cy.task('readDir', 'cypress/downloads').then((files) => {
+      expect(files).to.match(new RegExp(/metric-.*\.csv/))
+      files.forEach((file) => {
+        if (file.match(/metric-.*\.csv/)) {
+          cy.readFile(`cypress/downloads/${file}`).then((fileContent) => {
+            expect(fileContent).to.equal(localFileContent)
+          })
+        }
+      })
+    })
   })
 }
 
@@ -282,6 +296,8 @@ describe('Create a new project', () => {
     checkDeploymentFrequency('[data-test-id="Deployment frequency"]')
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+
+    clearDownloadFile()
 
     reportPage.exportMetricDataButton().should('be.enabled')
 

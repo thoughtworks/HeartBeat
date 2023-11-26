@@ -9,6 +9,8 @@ export default defineConfig({
       require('./cypress/plugins/updateConfigJson.ts')(on, config)
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('./cypress/plugins/readDir.ts')(on, config)
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      require('./cypress/plugins/clearDownloadFile.ts')(on, config)
       return config
     },
   },

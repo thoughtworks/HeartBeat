@@ -253,6 +253,8 @@ describe('Report Step', () => {
   })
 
   it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', async () => {
+    const initExportValidityTimeMin = 30
+    React.useState = jest.fn().mockReturnValue([initExportValidityTimeMin, () => {}])
     const resetProps = jest.fn()
     const updateProps = jest.fn()
     result.current.resetProps = resetProps

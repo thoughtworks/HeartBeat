@@ -6,6 +6,7 @@ export interface ReportResponseDTO {
   leadTimeForChanges?: LeadTimeForChangesResponse
   changeFailureRate?: ChangeFailureRateResponse
   classificationList?: Array<ClassificationResponse>
+  exportValidityTime?: number
 }
 
 export interface VelocityResponse {

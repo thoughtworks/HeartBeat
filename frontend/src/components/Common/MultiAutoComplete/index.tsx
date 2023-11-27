@@ -1,6 +1,7 @@
 import { Checkbox, createFilterOptions, TextField } from '@mui/material'
 import React from 'react'
 import { StyledAutocompleted } from './styles'
+import { Z_INDEX } from '@src/constants'
 
 type Props = {
   optionList: string[]
@@ -56,6 +57,13 @@ const MultiAutoComplete = ({
           label={textFieldLabel}
         />
       )}
+      slotProps={{
+        popper: {
+          sx: {
+            zIndex: Z_INDEX.DROPDOWN,
+          },
+        },
+      }}
     />
   )
 }

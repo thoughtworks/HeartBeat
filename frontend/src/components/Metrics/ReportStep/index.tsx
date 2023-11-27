@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
@@ -6,6 +6,7 @@ import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
 import {
   CHINA_CALENDAR,
   ERROR_PAGE_ROUTE,
+  HEADER_NOTIFICATION_MESSAGE,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   NAME,
@@ -29,8 +30,9 @@ import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { getJiraBoardToken } from '@src/utils/util'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
-const ReportStep = () => {
+const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInterface) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
@@ -57,6 +59,7 @@ const ReportStep = () => {
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
+  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined>(undefined)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
   const {
@@ -184,11 +187,42 @@ const ReportStep = () => {
         meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
         leadTimeForChangesList?: ReportDataWithThreeColumns[]
         changeFailureRateList?: ReportDataWithThreeColumns[]
+        exportValidityTimeMin?: number
       }
     | undefined
   > = useCallback(async () => {
     return await generateReport(getReportRequestBody())
-  }, [])
+  }, [exportValidityTimeMin])
+
+  useLayoutEffect(() => {
+    exportValidityTimeMin &&
+      updateProps?.({
+        open: true,
+        title: HEADER_NOTIFICATION_MESSAGE.FIRST_REPORT.replace('%s', exportValidityTimeMin.toString()),
+      })
+  }, [exportValidityTimeMin])
+
+  useLayoutEffect(() => {
+    if (exportValidityTimeMin) {
+      const startTime = Date.now()
+      const timer = setInterval(() => {
+        const currentTime = Date.now()
+        const elapsedTime = currentTime - startTime
+
+        const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime
+        if (remainingTime <= 5 * 60 * 1000) {
+          resetProps?.()
+          updateProps?.({
+            open: true,
+            title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+          })
+        }
+      }, 1000)
+      return () => {
+        clearInterval(timer)
+      }
+    }
+  }, [exportValidityTimeMin])
 
   useEffect(() => {
     fetchReportData().then((res) => {
@@ -219,6 +253,7 @@ const ReportStep = () => {
           value: res.leadTimeForChangesList,
           isShow: true,
         })
+      res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
     })
   }, [fetchReportData])
 

@@ -1,12 +1,21 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import HomeIcon from '@mui/icons-material/Home'
-import NotificationsIcon from '@mui/icons-material/Notifications'
 import Logo from '@src/assets/Logo.svg'
-import styled from '@emotion/styled'
-import { theme } from '@src/theme'
-import { PROJECT_NAME } from '@src/constants'
 
-const Header = () => {
+import { PROJECT_NAME } from '@src/constants'
+import {
+  HomeIconContainer,
+  HomeIconElement,
+  IconContainer,
+  LogoContainer,
+  LogoImage,
+  LogoTitle,
+  LogoWarp,
+  NotificationIconContainer,
+} from '@src/layouts/style'
+import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+
+const Header = (props: useNotificationLayoutEffectInterface) => {
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -18,46 +27,9 @@ const Header = () => {
     return !['/', '/index.html'].includes(location.pathname)
   }
 
-  const LogoWarp = styled.div({
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '0 1rem',
-    alignItems: 'center',
-    backgroundColor: theme.main.backgroundColor,
-    fontFamily: 'Times',
-  })
-
-  const LogoTitle = styled.span({
-    color: theme.main.color,
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
-  })
-
-  const LogoImage = styled.img({
-    height: '4rem',
-    width: '4rem',
-  })
-
-  const LogoContainer = styled.div({
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-    color: theme.main.color,
-  })
-
-  const IconContainer = styled.span`
-    cursor: pointer;
-  `
-
-  const HomeIconElement = styled(HomeIcon)`
-    color: ${theme.main.color};
-    margin-left: 0.75rem;
-  `
-
-  const IconGroup = styled('div')`
-    display: flex;
-    color: ${theme.main.color};
-  `
+  const shouldShowNotificationIcon = () => {
+    return ['/metrics'].includes(location.pathname)
+  }
 
   return (
     <LogoWarp>
@@ -65,16 +37,18 @@ const Header = () => {
         <LogoImage src={Logo} alt='logo' />
         <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
       </LogoContainer>
-      {shouldShowHomeIcon() && (
-        <IconGroup>
-          <IconContainer>
-            <NotificationsIcon />
-          </IconContainer>
-          <IconContainer title='Home' onClick={goHome}>
+      <IconContainer>
+        {shouldShowNotificationIcon() && (
+          <NotificationIconContainer title='Notification' data-testid='NotificationButton'>
+            <NotificationButton {...props} />
+          </NotificationIconContainer>
+        )}
+        {shouldShowHomeIcon() && (
+          <HomeIconContainer title='Home' onClick={goHome}>
             <HomeIconElement />
-          </IconContainer>
-        </IconGroup>
-      )}
+          </HomeIconContainer>
+        )}
+      </IconContainer>
     </LogoWarp>
   )
 }

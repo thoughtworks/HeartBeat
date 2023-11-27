@@ -1,5 +1,8 @@
+import Button, { ButtonProps } from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material/styles'
 
+import { theme } from '@src/theme'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice'
@@ -9,7 +12,31 @@ import { resetStep } from '@src/context/stepper/StepperSlice'
 import { HOME_VERIFY_IMPORT_WARNING_MESSAGE, METRICS_PAGE_ROUTE } from '@src/constants'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig'
-import { GuideButton, HomeGuideContainer } from '@src/components/HomeGuide/style'
+
+const basicStyle = {
+  backgroundColor: theme.main.backgroundColor,
+  color: theme.main.color,
+  margin: '2rem',
+  width: '15rem',
+  minWidth: '10rem',
+  minHeight: '3rem',
+  [theme.breakpoints.down('md')]: {
+    width: '80%',
+    maxWidth: '15rem',
+  },
+}
+const GuideButton = styled(Button)<ButtonProps>({
+  ...basicStyle,
+  '&:hover': {
+    ...basicStyle,
+  },
+  '&:active': {
+    ...basicStyle,
+  },
+  '&:focus': {
+    ...basicStyle,
+  },
+})
 
 export const HomeGuide = () => {
   const navigate = useNavigate()
@@ -67,13 +94,13 @@ export const HomeGuide = () => {
   }
 
   return (
-    <HomeGuideContainer>
+    <>
       {!validConfig && <WarningNotification message={HOME_VERIFY_IMPORT_WARNING_MESSAGE} />}
       <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
         <GuideButton onClick={openFileImportBox}>Import project from file</GuideButton>
         <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange} />
         <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
       </Stack>
-    </HomeGuideContainer>
+    </>
   )
 }

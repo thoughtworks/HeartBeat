@@ -7,7 +7,6 @@ import { deploymentFrequencyMapper } from '@src/hooks/reportMapper/deploymentFre
 import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges'
 import { meanTimeToRecoveryMapper } from '@src/hooks/reportMapper/meanTimeToRecovery'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
 
 export const reportMapper = ({
   velocity,
@@ -17,7 +16,6 @@ export const reportMapper = ({
   meanTimeToRecovery,
   leadTimeForChanges,
   changeFailureRate,
-  exportValidityTime,
 }: ReportResponseDTO): {
   velocityList?: ReportDataWithTwoColumns[]
   cycleTimeList?: ReportDataWithTwoColumns[]
@@ -26,7 +24,6 @@ export const reportMapper = ({
   meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
   leadTimeForChangesList?: ReportDataWithThreeColumns[]
   changeFailureRateList?: ReportDataWithThreeColumns[]
-  exportValidityTimeMin?: number
 } => {
   const velocityList = velocity && velocityMapper(velocity)
 
@@ -42,8 +39,6 @@ export const reportMapper = ({
 
   const changeFailureRateList = changeFailureRate && changeFailureRateMapper(changeFailureRate)
 
-  const exportValidityTimeMin = exportValidityTimeMapper(exportValidityTime)
-
   return {
     velocityList,
     cycleTimeList,
@@ -52,6 +47,5 @@ export const reportMapper = ({
     meanTimeToRecoveryList,
     leadTimeForChangesList,
     changeFailureRateList,
-    exportValidityTimeMin,
   }
 }

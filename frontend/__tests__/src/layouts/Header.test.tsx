@@ -99,14 +99,5 @@ describe('Header', () => {
 
       expect(window.location.pathname).toEqual('/')
     })
-
-    it('should render notification button when location equals to "/metrics".', () => {
-      const { getByTestId } = render(
-        <MemoryRouter initialEntries={[{ pathname: '/metrics' }]}>
-          <Header />
-        </MemoryRouter>
-      )
-      expect(getByTestId('NotificationButton')).toBeInTheDocument()
-    })
   })
 })

@@ -3,7 +3,7 @@ html,
 body,
 .app {
   width: 100%;
-  height: fit-content;
+  height: 100%;
   min-width: 25rem;
   font-family: 'Roboto', sans-serif;
 }

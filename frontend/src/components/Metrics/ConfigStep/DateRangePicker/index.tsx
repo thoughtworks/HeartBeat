@@ -11,7 +11,6 @@ import {
 } from '@src/context/config/configSlice'
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import { Z_INDEX } from '@src/constants'
 
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch()
@@ -70,9 +69,6 @@ export const DateRangePicker = () => {
             textField: {
               variant: 'standard',
             },
-            popper: {
-              sx: { zIndex: Z_INDEX.DROPDOWN },
-            },
           }}
         />
         <StyledDateRangePicker
@@ -86,9 +82,6 @@ export const DateRangePicker = () => {
           slotProps={{
             textField: {
               variant: 'standard',
-            },
-            popper: {
-              sx: { zIndex: Z_INDEX.DROPDOWN },
             },
           }}
         />

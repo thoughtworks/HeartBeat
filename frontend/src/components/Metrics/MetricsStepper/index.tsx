@@ -16,7 +16,6 @@ import {
   BOARD_TYPES,
   HOME_PAGE_ROUTE,
   METRICS_CONSTANTS,
-  METRICS_STEPS,
   PIPELINE_SETTING_TYPES,
   PIPELINE_TOOL_TYPES,
   REQUIRED_DATA,
@@ -46,14 +45,13 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import _ from 'lodash'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
 const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
 const ReportStep = lazy(() => import('@src/components/Metrics/ReportStep'))
 
 /* istanbul ignore next */
-const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
+const MetricsStepper = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const activeStep = useAppSelector(selectStepNumber)
@@ -104,7 +102,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       projectName && dateRange.startDate && dateRange.endDate && metrics.length
         ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
         : setIsDisableNextButton(true)
-    } else if (activeStep === METRICS_STEPS.METRICS) {
+    } else if (activeStep === 1) {
       const nextButtonValidityOptions = [
         { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
         { isShow: isShowRealDone, isValid: isRealDoneValid },
@@ -197,15 +195,15 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       deployment: deploymentFrequencySettings,
       leadTime: leadTimeForChanges,
     }
-    const jsonData = activeStep === METRICS_STEPS.CONFIG ? configData : { ...configData, ...metricsData }
+    const jsonData = activeStep === 0 ? configData : { ...configData, ...metricsData }
     exportToJsonFile('config', jsonData)
   }
 
   const handleNext = () => {
-    if (activeStep === METRICS_STEPS.METRICS) {
+    if (activeStep === 1) {
       dispatch(updateTimeStamp(new Date().getTime()))
     }
-    if (activeStep === METRICS_STEPS.CONFIG) {
+    if (activeStep === 0) {
       cleanBoardState()
       cleanPipelineToolConfiguration()
       cleanSourceControlState()
@@ -268,13 +266,13 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       </StyledStepper>
       <MetricsStepperContent>
         <Suspense>
-          {activeStep === METRICS_STEPS.CONFIG && <ConfigStep {...props} />}
-          {activeStep === METRICS_STEPS.METRICS && <MetricsStep {...props} />}
-          {activeStep === METRICS_STEPS.REPORT && <ReportStep {...props} />}
+          {activeStep === 0 && <ConfigStep />}
+          {activeStep === 1 && <MetricsStep />}
+          {activeStep === 2 && <ReportStep />}
         </Suspense>
       </MetricsStepperContent>
       <ButtonContainer>
-        {activeStep !== METRICS_STEPS.REPORT && (
+        {activeStep !== 2 && (
           <>
             <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
               <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>

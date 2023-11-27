@@ -18,17 +18,11 @@ export const StyledForm = styled('form')({
 
 export const StyledTypeSelections = styled(FormControl)({})
 
-export const StyledTextField = styled(TextField)`
-  input {
-    padding: 0.56rem 0;
-  }
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    transition: background-color 5000s ease-in-out 0s;
-  }
-`
+export const StyledTextField = styled(TextField)({
+  input: {
+    padding: '0.56rem 0',
+  },
+})
 
 export const StyledButtonGroup = styled('div')({
   justifySelf: 'end',

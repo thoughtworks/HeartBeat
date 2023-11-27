@@ -2,13 +2,11 @@ import { Snackbar } from '@mui/material'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import { styled } from '@mui/material/styles'
 import { forwardRef } from 'react'
-import { Z_INDEX } from '@src/constants'
 
 export const WarningBar = styled(Snackbar)({
   position: 'relative',
   display: 'flex',
   justifyContent: 'center',
-  zIndex: Z_INDEX.SNACKBARS,
 })
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {

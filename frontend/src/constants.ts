@@ -198,29 +198,3 @@ export const METRICS_PAGE_ROUTE = '/metrics'
 
 export const ERROR_PAGE_MESSAGE =
   'Something on internet is not quite right. Perhaps head back to our homepage and try again.'
-
-export const Z_INDEX = {
-  DEFAULT: 0,
-  BUTTONS: 1,
-  INPUTS: 2,
-  INPUT_GROUPS: 3,
-  DROPDOWN: 1000,
-  SNACKBARS: 1010,
-  MODAL_BACKDROP: 1020,
-  MODAL: 1030,
-  POPOVER: 1040,
-  TOOLTIP: 1050,
-  STICKY: 1060,
-  FIXED: 1070,
-}
-
-export const METRICS_STEPS = {
-  CONFIG: 0,
-  METRICS: 1,
-  REPORT: 2,
-}
-
-export const HEADER_NOTIFICATION_MESSAGE = {
-  FIRST_REPORT: 'The file needs to be exported within %s minutes, otherwise it will expire.',
-  EXPIRE_IN_FIVE_MINUTES: 'The file will expire in five minutes, please download it in time.',
-}

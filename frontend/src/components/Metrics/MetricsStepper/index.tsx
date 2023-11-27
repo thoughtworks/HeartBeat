@@ -69,9 +69,14 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl
   const { isShow: isShowCycleTimeSettings, isVerified: isCycleTimeSettingsVerified } = {
-    isShow: true,
+    isShow: requiredData.includes(REQUIRED_DATA.CYCLE_TIME),
     isVerified: cycleTimeSettings.some((e) => e.value === DONE),
   }
+  const { isShow: isShowClassificationSetting, isVerified: isClassificationSettingVerified } = {
+    isShow: requiredData.includes(REQUIRED_DATA.CLASSIFICATION),
+    isVerified: metricsConfig.targetFields.some((item) => item.flag),
+  }
+
   const { metrics, projectName, dateRange } = config.basic
 
   const selectedBoardColumns = useAppSelector(selectCycleTimeSettings)
@@ -115,6 +120,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
         { isShow: isShowRealDone, isValid: isRealDoneValid },
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
         { isShow: isShowCycleTimeSettings, isValid: isCycleTimeSettingsVerified },
+        { isShow: isShowClassificationSetting, isValid: isClassificationSettingVerified },
       ]
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
       activeNextButtonValidityOptions.every(({ isValid }) => isValid)

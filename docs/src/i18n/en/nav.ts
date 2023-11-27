@@ -61,6 +61,11 @@ export default [
 		key: 'designs/origin-cycle-time-calculation',
 	},
 	{
+		text: 'Refinement on generate report to solve timeout issue',
+		slug: 'designs/refinement-on-generate-report',
+		key: 'designs/refinement-on-generate-report',
+	},
+	{
 		text: 'Sequence diagrams',
 		slug: 'designs/sequence-diagrams',
 		key: 'designs/sequence-diagrams',

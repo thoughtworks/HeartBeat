@@ -47,7 +47,6 @@
     * [How to run unit tests](#612-how-to-run-unit-tests)
     * [How to generate a test report](#613-how-to-generate-a-test-report)
     * [how to run e2e tests](#614-how-to-run-e2e-tests)
-    * [How to generate a e2e report](#615-how-to-generate-a-e2e-report)
   * [How to run backend](backend/README.md)
 
 * [How to use](#7-how-to-use)
@@ -356,7 +355,7 @@ And MTTR is still under development.
 
 For Classic Jira users, before you use this tool, you need to do some settings for the jira board. Otherwise, you cannot get the data. Here are the steps you need to do:
 
-1.  Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=  
+1.  Open https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=
     ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
     _Image 5-1_
 
@@ -428,11 +427,6 @@ cd HearBeat/frontend
 pnpm e2e
 ```
 
-## 6.1.5 How to generate a e2e report
-
-```
-pnpm e2e:report
-```
 # 7 How to trigger BuildKite Pipeline
 1. Add `[stub]` tag to the title of a commit message or PR to trigger stub-related deployments.
 

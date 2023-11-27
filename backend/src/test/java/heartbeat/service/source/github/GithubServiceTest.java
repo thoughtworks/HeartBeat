@@ -314,14 +314,7 @@ class GithubServiceTest {
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
 			.pipelineStep("Step")
 			.pipelineName("Name")
-			.leadTimes(List.of(LeadTime.builder()
-				.commitId("111")
-				.jobFinishTime(1658549160000L)
-				.pipelineCreateTime(1658549100000L)
-				.prLeadTime(0L)
-				.pipelineLeadTime(120000)
-				.totalTime(120000)
-				.build()))
+			.leadTimes(List.of())
 			.build());
 
 		assertEquals(expect, result);

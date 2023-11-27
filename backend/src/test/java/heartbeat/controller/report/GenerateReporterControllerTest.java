@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -75,7 +76,37 @@ class GenerateReporterControllerTest {
 	}
 
 	@Test
-	public void shouldReturnWhenExportCsv() throws Exception {
+	void shouldReturnAcceptedStatusAndCallbackUrl() throws Exception {
+		ReportResponse expectedResponse = ReportResponse.builder()
+			.velocity(Velocity.builder().velocityForSP(10).build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
+			.build();
+
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest request = mapper
+			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
+		String currentTimeStamp = Long.toString(System.currentTimeMillis());
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		when(generateReporterService.generateReporter(request)).thenReturn(expectedResponse);
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/reports/callback").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString())
+			.read("$.callback")
+			.toString();
+		assertEquals("/report/" + currentTimeStamp, callbackUrl);
+	}
+
+	@Test
+	void shouldReturnWhenExportCsv() throws Exception {
 		String dataType = "pipeline";
 		String csvTimeStamp = "1685010080107";
 		String expectedResponse = "csv data";

@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import {
   BOARD_TYPES,
+  DONE,
   METRICS_CONSTANTS,
   PIPELINE_SETTING_TYPES,
   PIPELINE_TOOL_TYPES,
@@ -62,10 +63,15 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const metricsConfig = useAppSelector(selectMetricsContent)
   const [isDisableNextButton, setIsDisableNextButton] = useState(true)
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext()
+  const cycleTimeSettings = useAppSelector(selectCycleTimeSettings)
 
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl
+  const { isShow: isShowCycleTimeSettings, isVerified: isCycleTimeSettingsVerified } = {
+    isShow: true,
+    isVerified: cycleTimeSettings.some((e) => e.value === DONE),
+  }
   const { metrics, projectName, dateRange } = config.basic
 
   const selectedBoardColumns = useAppSelector(selectCycleTimeSettings)
@@ -108,6 +114,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
         { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
         { isShow: isShowRealDone, isValid: isRealDoneValid },
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
+        { isShow: isShowCycleTimeSettings, isValid: isCycleTimeSettingsVerified },
       ]
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
       activeNextButtonValidityOptions.every(({ isValid }) => isValid)

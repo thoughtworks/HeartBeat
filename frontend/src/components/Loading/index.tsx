@@ -1,11 +1,15 @@
 import { CircularProgress } from '@mui/material'
 import { LoadingDrop, LoadingTypography } from './style'
 
-export const Loading = ({ wording }: { wording: string }) => {
+export interface LoadingProps {
+  message?: string
+}
+
+export const Loading = ({ message }: LoadingProps) => {
   return (
     <LoadingDrop open>
       <CircularProgress size='8rem' data-testid='loading-page' />
-      {wording && <LoadingTypography>wording</LoadingTypography>}
+      {message && <LoadingTypography>{message}</LoadingTypography>}
     </LoadingDrop>
   )
 }

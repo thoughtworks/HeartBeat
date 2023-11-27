@@ -11,6 +11,7 @@ import {
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   NAME,
   PIPELINE_STEP,
+  REPORT_LOADING_MESSAGE,
   REQUIRED_DATA,
 } from '@src/constants'
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
@@ -270,7 +271,7 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   return (
     <>
       {isLoading ? (
-        <Loading />
+        <Loading message={REPORT_LOADING_MESSAGE} />
       ) : isServerError ? (
         navigate(ERROR_PAGE_ROUTE)
       ) : (

@@ -153,21 +153,17 @@ public class GitHubService {
 
 	private List<CompletableFuture<LeadTime>> getLeadTimeFutures(String realToken, PipelineInfoOfRepository item) {
 		return item.getPassedDeploy().stream().map(deployInfo -> {
-			CompletableFuture<List<PullRequestInfo>> pullRequestInfoFuture = CompletableFuture
-				.supplyAsync(() -> {
-					try{
-						return gitHubFeignClient.getPullRequestListInfo(item.getRepository(), deployInfo.getCommitId(), realToken);
-					}catch (NotFoundException e){
-						return Collections.emptyList();
-					}
-				});
+			CompletableFuture<List<PullRequestInfo>> pullRequestInfoFuture = CompletableFuture.supplyAsync(() -> {
+				try {
+					return gitHubFeignClient.getPullRequestListInfo(item.getRepository(), deployInfo.getCommitId(),
+							realToken);
+				}
+				catch (NotFoundException e) {
+					return Collections.emptyList();
+				}
+			});
 			return pullRequestInfoFuture
-				.thenApply(pullRequestInfos -> {
-					if(pullRequestInfos.isEmpty()){
-						return null;
-					}
-					return getLeadTimeByPullRequest(realToken, item, deployInfo, pullRequestInfos);
-				});
+				.thenApply(pullRequestInfos -> getLeadTimeByPullRequest(realToken, item, deployInfo, pullRequestInfos));
 		}).filter(Objects::nonNull).toList();
 	}
 
@@ -295,7 +291,7 @@ public class GitHubService {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to get commit info_repoId: {},commitId: {}, error: {}", repositoryId, commitId,
 					cause.getMessage());
-			if(cause instanceof NotFoundException){
+			if (cause instanceof NotFoundException) {
 				return null;
 			}
 			if (cause instanceof BaseException baseException) {

@@ -314,7 +314,41 @@ class GithubServiceTest {
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
 			.pipelineStep("Step")
 			.pipelineName("Name")
-			.leadTimes(List.of())
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("111")
+				.jobFinishTime(1658549160000L)
+				.pipelineCreateTime(1658549100000L)
+				.prLeadTime(0L)
+				.pipelineLeadTime(120000)
+				.totalTime(120000)
+				.build()))
+			.build());
+
+		assertEquals(expect, result);
+	}
+
+	@Test
+	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoGot404Error() {
+		String mockToken = "mockToken";
+
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenThrow(new NotFoundException(""));
+
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
+
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
+
+		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
+			.pipelineStep("Step")
+			.pipelineName("Name")
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("111")
+				.jobFinishTime(1658549160000L)
+				.pipelineCreateTime(1658549100000L)
+				.prLeadTime(0L)
+				.pipelineLeadTime(120000)
+				.totalTime(120000)
+				.build()))
 			.build());
 
 		assertEquals(expect, result);
@@ -405,6 +439,13 @@ class GithubServiceTest {
 		assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "", ""))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to get commit info_repoId");
+	}
+
+	@Test
+	public void shouldReturnNullWhenFetchCommitInfo404Exception() {
+		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString())).thenThrow(new NotFoundException(""));
+
+		assertNull(githubService.fetchCommitInfo("12344", "", ""));
 	}
 
 	@Test

@@ -59,7 +59,7 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
     value: INIT_REPORT_DATA_WITH_THREE_COLUMNS,
     isShow: false,
   })
-  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number>(30)
+  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined>(undefined)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
   const {

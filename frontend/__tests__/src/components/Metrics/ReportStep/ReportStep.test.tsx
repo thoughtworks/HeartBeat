@@ -25,7 +25,7 @@ import mocked = jest.mocked
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 import { HEADER_NOTIFICATION_MESSAGE } from '@src/constants'
-import React, { useState } from 'react'
+import React from 'react'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({

@@ -15,7 +15,8 @@ import {
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
-import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { selectJiraColumns } from '@src/context/config/configSlice'
+import { ICycleTimeSetting, IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
@@ -115,7 +116,26 @@ const ReportStep = () => {
     }[]
   }
 
-  const filteredCycleTime = cycleTimeSettings.filter((item) => item.value != '----')
+  const jiraColumns = useAppSelector(selectJiraColumns)
+
+  const tempMapper = new Map<string, string>()
+  jiraColumns.forEach((jiraColumn) => {
+    const value = jiraColumn.value
+    tempMapper.set(value.name, value.statuses[0])
+  })
+
+  const filteredCycleTime = cycleTimeSettings
+    .filter((item) => item.value != '----')
+    .map((cycleTimeSetting) => {
+      const previousName = cycleTimeSetting.name
+
+      const cycleTimeSettingObj: ICycleTimeSetting = {
+        name: tempMapper.get(previousName) || previousName,
+        value: cycleTimeSetting.value,
+      }
+      return cycleTimeSettingObj
+    })
+
   const jiraToken = getJiraBoardToken(token, email)
   const getReportRequestBody = (): ReportRequestDTO => ({
     metrics: metrics,

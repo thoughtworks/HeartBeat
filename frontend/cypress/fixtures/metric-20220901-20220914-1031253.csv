@@ -1,0 +1,168 @@
+"Group","Metrics","Value"
+"Velocity","Velocity(Story Point)","16.5"
+"Velocity","Throughput(Cards Count)","14"
+"Cycle time","Average cycle time(days/storyPoint)","8.1"
+"Cycle time","Average cycle time(days/card)","9.55"
+"Cycle time","Total  time / Total cycle time","2.39"
+"Cycle time","Total development time / Total cycle time","62.04"
+"Cycle time","Total block time / Total cycle time","30.27"
+"Cycle time","Total review time / Total cycle time","3.82"
+"Cycle time","Total testing time / Total cycle time","1.48"
+"Cycle time","Average  time(days/storyPoint)","0.19"
+"Cycle time","Average  time(days/card)","0.23"
+"Cycle time","Average development time(days/storyPoint)","5.02"
+"Cycle time","Average development time(days/card)","5.92"
+"Cycle time","Average block time(days/storyPoint)","2.45"
+"Cycle time","Average block time(days/card)","2.89"
+"Cycle time","Average review time(days/storyPoint)","0.31"
+"Cycle time","Average review time(days/card)","0.37"
+"Cycle time","Average testing time(days/storyPoint)","0.12"
+"Cycle time","Average testing time(days/card)","0.14"
+"Classifications","Issue Type / Task","50.00"
+"Classifications","Issue Type / FS Incidents","7.14"
+"Classifications","Issue Type / Story","42.86"
+"Classifications","Parent / PLL-1285","14.29"
+"Classifications","Parent / PLL-1264","57.14"
+"Classifications","Parent / PLL-634","28.57"
+"Classifications","FS Domains / Payment Rails","7.14"
+"Classifications","FS Domains / None","92.86"
+"Classifications","Components / None","100.00"
+"Classifications","PIR Completed / N/A","7.14"
+"Classifications","PIR Completed / None","92.86"
+"Classifications","Team / Payment Rails (portfolio)","92.86"
+"Classifications","Team / None","7.14"
+"Classifications","Project / FS Apollo","100.00"
+"Classifications","Fix versions / Apple Pay Integration","14.29"
+"Classifications","Fix versions / None","35.71"
+"Classifications","Fix versions / Phoenix Credit Card Payment Migration","50.00"
+"Classifications","Sprint / Apollo Sprint 65","64.29"
+"Classifications","Sprint / Apollo Sprint 66","100.00"
+"Classifications","Sprint / Apollo Sprint 67","14.29"
+"Classifications","Sprint / Apollo Sprint 68","14.29"
+"Classifications","Sprint / Apollo Sprint 63","7.14"
+"Classifications","Sprint / Apollo Sprint 64","14.29"
+"Classifications","Resolution Details / It was resolved automatically. no action required.","7.14"
+"Classifications","Resolution Details / None","92.86"
+"Classifications","Epic Link / PLL-1285","14.29"
+"Classifications","Epic Link / PLL-1264","57.14"
+"Classifications","Epic Link / PLL-634","28.57"
+"Classifications","Epic Name / None","100.00"
+"Classifications","Time to Resolution - Hrs / 1","7.14"
+"Classifications","Time to Resolution - Hrs / None","92.86"
+"Classifications","Time to Detect - Hrs / 1","7.14"
+"Classifications","Time to Detect - Hrs / None","92.86"
+"Classifications","Cause by - System / Others","7.14"
+"Classifications","Cause by - System / None","92.86"
+"Classifications","FS Work Categorization / Support Request","14.29"
+"Classifications","FS Work Categorization / Stories","78.57"
+"Classifications","FS Work Categorization / Incident handling","7.14"
+"Classifications","Has Dependancies / None","100.00"
+"Classifications","FS R&D Classification / Programs","78.57"
+"Classifications","FS R&D Classification / Unplanned Operational","21.43"
+"Classifications","FS Work Type / Feature Work - Unplanned","7.14"
+"Classifications","FS Work Type / Operational Work - Unplanned","14.29"
+"Classifications","FS Work Type / Operational Work - Planned","28.57"
+"Classifications","FS Work Type / Feature Work - Planned","50.00"
+"Classifications","Incident Priority / P4","100.00"
+"Classifications","Reporter / Anthony Tse","28.57"
+"Classifications","Reporter / Bruce Lund","7.14"
+"Classifications","Reporter / Yu Zhang","7.14"
+"Classifications","Reporter / Gerard Ho","35.71"
+"Classifications","Reporter / Qian Zhang","14.29"
+"Classifications","Reporter / HanWei Wang","7.14"
+"Classifications","Parent Link / None","100.00"
+"Classifications","Priority / High","21.43"
+"Classifications","Priority / Could","78.57"
+"Classifications","Paired Member / Anthony Tse","7.14"
+"Classifications","Paired Member / Harsh Singal","7.14"
+"Classifications","Paired Member / Yu Zhang","7.14"
+"Classifications","Paired Member / None","71.43"
+"Classifications","Paired Member / HanWei Wang","7.14"
+"Classifications","Labels / Tech_Usability_Issues","7.14"
+"Classifications","Labels / Leave","14.29"
+"Classifications","Labels / None","78.57"
+"Classifications","Story Points / 0","28.57"
+"Classifications","Story Points / 1","28.57"
+"Classifications","Story Points / 2","35.71"
+"Classifications","Story Points / 2.5","7.14"
+"Classifications","Acceptance Criteria / * Successful transactions should be uploaded
+* Unsuccessful transactions where response code is not null should be uploaded
+* AUD and NZD transactions should be uploaded in separate folders","7.14"
+"Classifications","Acceptance Criteria / To request the access for Yonghee based on the request template above","7.14"
+"Classifications","Acceptance Criteria / * Add API test for this new rest endpoint.
+* Add transaction into payment_transaction table
+** create transaction status entries
+*** Initialized
+*** completed
+*** failed
+* Add into payment table
+* Validate request body fields
+** all not null
+** currency value is AUD and NZD
+* Cover Unhappy path:
+** follow current OIP error handling for payment
+** pass error message from FZ and forward to Phoenix in error message body.
+
+
+
+Test Scenarios: [https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8870461970/Card+Payment|https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8870461970/Card+Payment|smart-link] ","7.14"
+"Classifications","Acceptance Criteria / See this for more details: [https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8864302061/Phoenix+FatZebra+Integration+-+Token+Migration+Plan|https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8864302061/Phoenix+FatZebra+Integration+-+Token+Migration+Plan|smart-link] ","7.14"
+"Classifications","Acceptance Criteria / # Change the title of this page.
+{{Save card}}
+# Add the XXXX logo beneath the card form
+# Change success page.  {{Card captured successfully}}","7.14"
+"Classifications","Acceptance Criteria / When we onboard a new client to FZ, the payment can be successful even though we don’t email to FZ to make the Switch set up to “Test“.","7.14"
+"Classifications","Acceptance Criteria / * Happy path
+* Error path (error alert)","7.14"
+"Classifications","Acceptance Criteria / * Complete End to end flow with Phoenix","7.14"
+"Classifications","Acceptance Criteria / * Create new endpoint to fetch token transaction info by using token_transaction_id
+* Update postman collection
+* API tests
+
+Test Scenarios: [https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8900084163/Fetch+token+transaction+information|https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8900084163/Fetch+token+transaction+information|smart-link] ","7.14"
+"Classifications","Acceptance Criteria / #  Merchant Validation should be successful and use should be able to see the Payment Sheet with Button to Authorise the payment.
+# !image-20220804-054828.png|width=467,height=288!
+
+
+Test Scenarios
+[https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8887108205/Initiate+ApplePay+Payment+Processing|https://XXXXconfluence.atlassian.net/wiki/spaces/FSP/pages/8887108205/Initiate+ApplePay+Payment+Processing|smart-link] ","7.14"
+"Classifications","Acceptance Criteria / * Able to generate a card token using Fat Zebra api in Merchant test UI application for all card types
+* UI tests about tokenizing credit cards via FZ passed","7.14"
+"Classifications","Acceptance Criteria / h4. Happy path
+
+*Given* invoke Fatzebra API successfully 
+
+*When* a new merchant is onboarded to FatZebra
+
+*Then* onboarding API return 200
+
+*And* Fatzebra get APi return ACTIVE [https://docs.fatzebra.com/reference/check-get-an-apple-pay-on-the-web-domain|https://docs.fatzebra.com/reference/check-get-an-apple-pay-on-the-web-domain|smart-link] 
+
+h4. Unhappy path
+
+*Given* invoke Fatzebra API failed 
+
+*When* a new merchant is onboarded to FatZebra
+
+*Then* onboarding API return 500
+
+*And* an Alert should be send to {{cr-apollo-alert}} channel","7.14"
+"Classifications","Acceptance Criteria / None","7.14"
+"Classifications","Acceptance Criteria / To request the access for Brian based on the request template above","7.14"
+"Classifications","Environment / None","100.00"
+"Classifications","Affects versions / None","100.00"
+"Classifications","Assignee / Yonghee Jeon Jeon","7.14"
+"Classifications","Assignee / Brian Ong","7.14"
+"Classifications","Assignee / Harsh Singal","14.29"
+"Classifications","Assignee / Mengyang Sun","7.14"
+"Classifications","Assignee / Aaron Camilleri","7.14"
+"Classifications","Assignee / Gerard Ho","14.29"
+"Classifications","Assignee / Qian Zhang","14.29"
+"Classifications","Assignee / Peihang Yu","7.14"
+"Classifications","Assignee / Sumit Narang","21.43"
+"Deployment frequency","fs-platform-payment-selector / RECORD RELEASE TO PROD / Deployment frequency(deployments/day)","2.36"
+"Lead time for changes","fs-platform-payment-selector / RECORD RELEASE TO PROD / PR Lead Time","0"
+"Lead time for changes","fs-platform-payment-selector / RECORD RELEASE TO PROD / Pipeline Lead Time","-4.87"
+"Lead time for changes","fs-platform-payment-selector / RECORD RELEASE TO PROD / Total Lead Time","-4.87"
+"Change failure rate","fs-platform-payment-selector / RECORD RELEASE TO PROD / Failure rate","49.02"
+"Mean Time To Recovery","fs-platform-payment-selector / RECORD RELEASE TO PROD / Mean Time To Recovery","4.43"

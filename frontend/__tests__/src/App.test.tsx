@@ -2,7 +2,7 @@ import { render, RenderResult, waitFor } from '@testing-library/react'
 import App from '@src/App'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
-
+jest.useFakeTimers()
 describe('render app', () => {
   const setup = (): RenderResult =>
     render(

@@ -9,7 +9,7 @@ jest.mock('@src/pages/Metrics', () => ({
   __esModule: true,
   default: () => <div>Mocked Metrics Page</div>,
 }))
-
+jest.useFakeTimers()
 describe('router', () => {
   const setup = (routeUrl: string) =>
     render(

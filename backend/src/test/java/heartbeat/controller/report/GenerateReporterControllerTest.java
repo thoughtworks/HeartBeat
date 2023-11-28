@@ -77,7 +77,7 @@ class GenerateReporterControllerTest {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(generateReporterService.checkGenerateReportIsOver(Long.parseLong(reportId))).thenReturn(false);
+		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId))).thenReturn(true);
 		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
@@ -91,7 +91,7 @@ class GenerateReporterControllerTest {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(generateReporterService.checkGenerateReportIsOver(Long.parseLong(reportId))).thenReturn(true);
+		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId))).thenReturn(false);
 		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))

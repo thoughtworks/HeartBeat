@@ -53,6 +53,8 @@ import heartbeat.util.GithubUtil;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -77,6 +79,10 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 @Log4j2
 public class GenerateReporterService {
+
+	private static final char FILENAME_SEPARATOR = '-';
+
+	private static final String CSV_EXTENSION = ".csv";
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
 			"timetracking", "statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority",
@@ -638,11 +644,15 @@ public class GenerateReporterService {
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
-	public Boolean checkGenerateReportIsOver(long csvTimeStamp) {
-		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
-			throw new NotFoundException("report not found");
-		}
-		return true;
+	public Boolean checkGenerateReportIsDone(long csvTimeStamp) {
+		validateExpire(csvTimeStamp);
+
+		List<String> fileNameList = List.of(
+				CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION,
+				CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION,
+				CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+
+		return fileNameList.stream().allMatch(it -> Files.exists(Path.of(it)));
 	}
 
 	private void validateExpire(long csvTimeStamp) {

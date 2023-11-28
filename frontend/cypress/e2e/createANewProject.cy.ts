@@ -299,6 +299,8 @@ describe('Create a new project', () => {
 
     clearDownloadFile()
 
+    reportPage.firstNotification().should('exist')
+
     reportPage.exportMetricDataButton().should('be.enabled')
 
     reportPage.exportMetricData()

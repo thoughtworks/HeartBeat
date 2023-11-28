@@ -7,6 +7,8 @@ class Report {
   readonly exportMetricDataButton = () => cy.contains('Export metric data')
   readonly exportPipelineDataButton = () => cy.contains('Export pipeline data')
   readonly exportBoardDataButton = () => cy.contains('Export board data')
+  readonly firstNotification = () =>
+    cy.contains('The file needs to be exported within 30 minutes, otherwise it will expire.')
 
   backToMetricsStep() {
     this.backButton().click()

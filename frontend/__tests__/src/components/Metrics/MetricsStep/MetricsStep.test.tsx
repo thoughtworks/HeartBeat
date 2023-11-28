@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { act, render, renderHook, waitFor } from '@testing-library/react'
 import MetricsStep from '@src/components/Metrics/MetricsStep'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -13,6 +13,7 @@ import {
   REQUIRED_DATA_LIST,
 } from '../../../fixtures'
 import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice'
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 
 let store = setupStore()
 
@@ -27,6 +28,8 @@ describe('MetricsStep', () => {
   beforeEach(() => {
     store = setupStore()
   })
+
+  const { result } = renderHook(() => useNotificationLayoutEffect())
 
   it('should render Crews when select velocity, and show Real done when have done column in Cycle time', async () => {
     await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
@@ -69,5 +72,21 @@ describe('MetricsStep', () => {
     const { getByText } = setup()
 
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
+  })
+
+  it('should call resetProps when resetProps is not undefined', async () => {
+    act(() => {
+      result.current.resetProps = jest.fn()
+    })
+
+    await waitFor(() =>
+      render(
+        <Provider store={store}>
+          <MetricsStep {...result.current} />
+        </Provider>
+      )
+    )
+
+    expect(result.current.resetProps).toBeCalled()
   })
 })

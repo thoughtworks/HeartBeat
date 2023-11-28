@@ -439,6 +439,7 @@ export const MOCK_REPORT_RESPONSE = {
       ],
     },
   ],
+  exportValidityTime: 1800000,
 }
 export const EXPECTED_REPORT_VALUES = {
   velocityList: [
@@ -581,6 +582,7 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
   ],
+  exportValidityTimeMin: 30,
 }
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

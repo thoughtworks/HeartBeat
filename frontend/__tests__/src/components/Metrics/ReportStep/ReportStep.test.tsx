@@ -1,4 +1,4 @@
-import { act, render, waitFor } from '@testing-library/react'
+import { act, render, renderHook, waitFor } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -23,6 +23,9 @@ import { backStep } from '@src/context/stepper/StepperSlice'
 import { navigateMock } from '../../../../setupTests'
 import mocked = jest.mocked
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
+import { HEADER_NOTIFICATION_MESSAGE } from '@src/constants'
+import React from 'react'
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
@@ -57,6 +60,8 @@ jest.mock('@src/utils/util', () => ({
 let store = null
 
 describe('Report Step', () => {
+  const { result } = renderHook(() => useNotificationLayoutEffect())
+
   const setup = async (params: [string]) => {
     store = setupStore()
     await store.dispatch(
@@ -90,7 +95,7 @@ describe('Report Step', () => {
     )
     return render(
       <Provider store={store}>
-        <ReportStep />
+        <ReportStep {...result.current} />
       </Provider>
     )
   }
@@ -245,5 +250,45 @@ describe('Report Step', () => {
     await waitFor(() => {
       expect(getByTestId('loading-page')).toBeInTheDocument()
     })
+  })
+
+  it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', async () => {
+    const initExportValidityTimeMin = 30
+    React.useState = jest.fn().mockReturnValue([
+      initExportValidityTimeMin,
+      () => {
+        //do noting
+      },
+    ])
+    const resetProps = jest.fn()
+    const updateProps = jest.fn()
+    result.current.resetProps = resetProps
+    result.current.updateProps = updateProps
+    jest.useFakeTimers()
+    await setup([''])
+
+    expect(resetProps).not.toBeCalled()
+    expect(updateProps).not.toBeCalledWith({
+      open: true,
+      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+    })
+
+    jest.advanceTimersByTime(500000)
+
+    expect(resetProps).not.toBeCalled()
+    expect(updateProps).not.toBeCalledWith({
+      open: true,
+      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+    })
+
+    jest.advanceTimersByTime(1000000)
+
+    expect(resetProps).toBeCalled()
+    expect(updateProps).toBeCalledWith({
+      open: true,
+      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+    })
+
+    jest.useRealTimers()
   })
 })

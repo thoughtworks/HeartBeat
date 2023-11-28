@@ -1,18 +1,11 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
 import { useAppDispatch } from '@src/hooks'
-import {
-  ButtonWrapper,
-  BranchSelectionWrapper,
-  PipelineMetricSelectionWrapper,
-  RemoveButton,
-  WarningMessage,
-} from './style'
+import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style'
 import { Loading } from '@src/components/Loading'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import {
-  selectBranches,
   selectPipelineNames,
   selectPipelineOrganizations,
   selectSteps,
@@ -28,8 +21,7 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { NO_STEP_WARNING_MESSAGE } from '@src/constants'
-import _ from 'lodash'
-import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
+import { BranchSelection } from '@src/components/Metrics/ConfigStep/BranchSelection'
 
 interface pipelineMetricSelectionProps {
   type: string
@@ -54,21 +46,16 @@ export const PipelineMetricSelection = ({
   onUpdatePipeline,
   isDuplicated,
 }: pipelineMetricSelectionProps) => {
-  const { id, organization, pipelineName, step, branches } = pipelineSetting
+  const { id, organization, pipelineName, step } = pipelineSetting
   const dispatch = useAppDispatch()
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect()
   const organizationNameOptions = selectPipelineOrganizations(store.getState())
   const pipelineNameOptions = selectPipelineNames(store.getState(), organization)
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName)
-  const branchesOptions: string[] = selectBranches(store.getState(), organization, pipelineName)
   const organizationWarningMessage = selectOrganizationWarningMessage(store.getState(), id, type)
   const pipelineNameWarningMessage = selectPipelineNameWarningMessage(store.getState(), id, type)
   const stepWarningMessage = selectStepWarningMessage(store.getState(), id, type)
   const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false)
-  const isAllBranchesSelected = useMemo(
-    () => !_.isEmpty(branchesOptions) && _.isEqual(branches.length, branchesOptions.length),
-    [branches, branchesOptions]
-  )
 
   const handleRemoveClick = () => {
     onRemovePipeline(id)
@@ -101,28 +88,6 @@ export const PipelineMetricSelection = ({
       res && setIsShowNoStepWarning(!res.haveStep)
     })
   }
-
-  const handleBranchChange = (event: React.SyntheticEvent, value: string[]) => {
-    let selectBranches = value
-    if (_.isEqual(selectBranches[selectBranches.length - 1], 'All')) {
-      /* istanbul ignore next */
-      selectBranches = _.isEqual(branchesOptions.length, branches.length) ? [] : branchesOptions
-    }
-    onUpdatePipeline(id, 'Branches', selectBranches)
-  }
-
-  const BranchSelection = () => (
-    <BranchSelectionWrapper>
-      <MultiAutoComplete
-        optionList={branchesOptions}
-        selectedOption={branches}
-        textFieldLabel='Branches'
-        isError={false}
-        onChangeHandler={handleBranchChange}
-        isSelectAll={isAllBranchesSelected}
-      />
-    </BranchSelectionWrapper>
-  )
 
   return (
     <PipelineMetricSelectionWrapper>
@@ -160,7 +125,7 @@ export const PipelineMetricSelection = ({
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
         />
       )}
-      {organization && pipelineName && <BranchSelection />}
+      {organization && pipelineName && <BranchSelection {...pipelineSetting} onUpdatePipeline={onUpdatePipeline} />}
       <ButtonWrapper>
         {isShowRemoveButton && (
           <RemoveButton data-test-id={'remove-button'} onClick={handleRemoveClick}>

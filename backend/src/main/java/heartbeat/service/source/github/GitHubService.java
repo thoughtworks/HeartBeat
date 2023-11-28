@@ -12,6 +12,7 @@ import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
+import heartbeat.exception.NotFoundException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import jakarta.annotation.PreDestroy;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Objects;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -123,6 +126,7 @@ public class GitHubService {
 						.allOf(leadTimeFutures.toArray(new CompletableFuture[0]))
 						.thenApply(v -> leadTimeFutures.stream()
 							.map(CompletableFuture::join)
+							.filter(Objects::nonNull)
 							.collect(Collectors.toList()));
 
 					return allLeadTimesFuture.thenApply(leadTimes -> PipelineLeadTime.builder()
@@ -149,12 +153,18 @@ public class GitHubService {
 
 	private List<CompletableFuture<LeadTime>> getLeadTimeFutures(String realToken, PipelineInfoOfRepository item) {
 		return item.getPassedDeploy().stream().map(deployInfo -> {
-			CompletableFuture<List<PullRequestInfo>> pullRequestInfoFuture = CompletableFuture
-				.supplyAsync(() -> gitHubFeignClient.getPullRequestListInfo(item.getRepository(),
-						deployInfo.getCommitId(), realToken));
+			CompletableFuture<List<PullRequestInfo>> pullRequestInfoFuture = CompletableFuture.supplyAsync(() -> {
+				try {
+					return gitHubFeignClient.getPullRequestListInfo(item.getRepository(), deployInfo.getCommitId(),
+							realToken);
+				}
+				catch (NotFoundException e) {
+					return Collections.emptyList();
+				}
+			});
 			return pullRequestInfoFuture
 				.thenApply(pullRequestInfos -> getLeadTimeByPullRequest(realToken, item, deployInfo, pullRequestInfos));
-		}).toList();
+		}).filter(Objects::nonNull).toList();
 	}
 
 	private List<PipelineInfoOfRepository> getInfoOfRepositories(List<DeployTimes> deployTimes,
@@ -281,6 +291,9 @@ public class GitHubService {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to get commit info_repoId: {},commitId: {}, error: {}", repositoryId, commitId,
 					cause.getMessage());
+			if (cause instanceof NotFoundException) {
+				return null;
+			}
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}

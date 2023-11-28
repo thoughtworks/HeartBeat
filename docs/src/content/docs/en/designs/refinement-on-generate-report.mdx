@@ -1,0 +1,175 @@
+---
+title: Refinement on generate report
+description: Solve 504 timeout issue on M Account
+---
+
+# Context
+Considering there are some constrains that API call could not longer than 59 seconds from M Account, we have to re-fine our implementation by changing sync call to async. 
+
+While it's not easy to make it at a once, we will do it step by step. Below are the design including C2 design with 
+- AS-IS
+- Transition
+- TO-BE 
+
+
+# Design
+## C2 - Generate report - AS-IS
+
+### Sequence Diagram
+```plantuml
+@startuml report
+skin rose
+title C2 - Heartbeat - Generate Report - AS-IS
+participant Frontend
+participant Backend
+participant Jira
+participant Buildkite
+participant Github
+
+Frontend -> Backend: generate report
+activate Backend
+Backend -> Jira: get Jira raw data
+activate Jira
+Jira --> Backend: Jira raw data
+deactivate Jira
+Backend -> Buildkite: get Buildkite raw data
+activate Buildkite
+Buildkite --> Backend: Buildkite raw data
+deactivate Buildkite
+Backend -> Github: get Github raw data
+activate  Github
+Github --> Backend: Github raw data
+deactivate Github
+Backend -> Backend: process and generate report
+Backend --> Frontend
+deactivate Backend
+
+@enduml
+```
+## C2 - Generate report - Transition
+### Sequence Diagram
+```plantuml
+@startuml report
+skin rose
+title C2 - Heartbeat - Generate Report - Transition
+participant Frontend
+participant Backend
+participant Jira
+participant Buildkite
+participant Github
+
+Frontend -> Backend: generate report
+activate Backend
+Backend --> Frontend: response 202 with callback
+deactivate Backend
+
+
+Backend -> Jira: get Jira raw data
+activate Backend
+activate Jira
+Jira --> Backend: Jira raw data
+deactivate Jira
+Backend -> Buildkite: get Buildkite raw data
+activate Buildkite
+Buildkite --> Backend: Buildkite raw data
+deactivate Buildkite
+Backend -> Github: get Github raw data
+activate  Github
+Github --> Backend: Github raw data
+deactivate Github
+Backend -> Backend: process and generate report
+deactivate Backend
+
+Frontend -> Backend: keep polling the report
+activate Backend
+alt report is not ready
+Backend --> Frontend: response 200
+else report is ready
+Backend --> Frontend: response 201 with report
+end
+deactivate Backend
+@enduml
+```
+### API Design
+
+## C2 - Generate report - TO-BE
+### Sequence Diagram
+```plantuml
+@startuml report
+skin rose
+title C2 - Heartbeat - Generate Report - Transition
+participant Frontend
+participant Backend
+participant Jira
+participant Buildkite
+participant Github
+
+Frontend -> Backend: generate metrics for board related
+activate Backend
+Backend --> Frontend: response 202 with callback
+deactivate Backend
+
+group async process board related metrics
+    Backend -> Jira: get Jira raw data
+    activate Backend
+    activate Jira
+    Jira --> Backend: Jira raw 
+    deactivate Jira
+    Backend -> Backend: calculate metrics for velocity, cicle time and classification
+    Backend -> Backend: generate board report csv
+    deactivate Backend
+    note left
+        board metrics are ready for display
+        board csv is ready for download
+    end note
+end
+
+Frontend -> Backend: generate metrics for pipeline,Source control(if required) related
+activate Backend
+Backend --> Frontend: response 202 with callback
+deactivate Backend
+
+group async process pipeline and sourcecontrol related metrics
+    Backend -> Buildkite: get Buildkite raw data
+    activate Backend
+    activate Buildkite
+    Buildkite --> Backend: Buildkite raw data
+    deactivate Buildkite
+    Backend -> Backend: calculate metrics for deployment frequency, \nchange failure rate and mean time to recovery
+    note left
+        pipeline metrics are ready for display
+    end note
+    opt if lead time for change required
+        Backend -> Github: get Github raw data
+        activate  Github
+        Github --> Backend: Github raw data
+        deactivate Github
+        Backend -> Backend: calculate metrics for lead time for change
+        note left
+            LTFC is ready for display
+        end note
+    end
+    Backend -> Backend: generate pipeline report csv with github data if required
+    note left
+        pipeline report is ready for download
+    end note
+    deactivate Backend
+end
+
+
+loop until response code is not 200
+    Frontend -> Backend: Polling the report
+    activate Backend
+    alt report is not ready
+        Backend --> Frontend: response 200
+    else report is ready
+        Backend --> Frontend: response 201 with report
+    else fail to process 
+        Backend --> Frontend: response 5xx
+    end
+    deactivate Backend
+end 
+@enduml
+```
+
+### API Design

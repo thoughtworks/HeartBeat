@@ -77,6 +77,8 @@ import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTI
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -878,6 +880,19 @@ class GenerateReporterServiceTest {
 		boolean isExists = Files.exists(mockMetricCsvPath);
 		Assertions.assertTrue(isExists);
 		Files.deleteIfExists(mockMetricCsvPath);
+	}
+
+	@Test
+	void shouldReturnBooleanWhenAllCsvIsReady() {
+		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsOver(System.currentTimeMillis());
+		assertTrue(generateReportIsOver);
+	}
+
+	@Test
+	void shouldThrowExceptionWhenTimeOutOf30m() {
+		Long fileExpiredTimeStamp = System.currentTimeMillis() - 1900000L;
+		assertThrows(NotFoundException.class,
+				() -> generateReporterService.checkGenerateReportIsOver(fileExpiredTimeStamp));
 	}
 
 }

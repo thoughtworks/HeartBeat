@@ -32,7 +32,7 @@ public class GenerateReportController {
 	@PostMapping()
 	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
 		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}",
-			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime());
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime());
 		CompletableFuture.runAsync(() -> generateReporterService.generateReporter(request));
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
@@ -49,8 +49,12 @@ public class GenerateReportController {
 	}
 
 	@GetMapping("/{reportId}")
-	public void generateReport(@PathVariable String reportId) {
-
+	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
+		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsOver(Long.parseLong(reportId));
+		if (Boolean.TRUE.equals(generateReportIsOver)) {
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+		}
+		return ResponseEntity.ok(ReportResponse.builder().build());
 	}
 
 }

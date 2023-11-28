@@ -638,6 +638,13 @@ public class GenerateReporterService {
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
+	public Boolean checkGenerateReportIsOver(long csvTimeStamp) {
+		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
+			throw new NotFoundException("report not found");
+		}
+		return true;
+	}
+
 	private void validateExpire(long csvTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
 			throw new NotFoundException("csv not found");

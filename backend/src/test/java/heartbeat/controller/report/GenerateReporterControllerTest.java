@@ -54,7 +54,7 @@ class GenerateReporterControllerTest {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest request = mapper
 			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
-		String currentTimeStamp = Long.toString(System.currentTimeMillis());
+		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
 		when(generateReporterService.generateReporter(request)).thenReturn(expectedResponse);
@@ -74,11 +74,28 @@ class GenerateReporterControllerTest {
 
 	@Test
 	void shouldReturnOkStatus() throws Exception {
+		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-
+		// when
+		when(generateReporterService.checkGenerateReportIsOver(Long.parseLong(reportId))).thenReturn(false);
+		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse();
+	}
+
+	@Test
+	void shouldReturnCreatedStatus() throws Exception {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(generateReporterService.checkGenerateReportIsOver(Long.parseLong(reportId))).thenReturn(true);
+		// then
+		MockHttpServletResponse response = mockMvc
+			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isCreated())
 			.andReturn()
 			.getResponse();
 	}

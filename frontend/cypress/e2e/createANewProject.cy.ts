@@ -320,7 +320,7 @@ describe('Create a new project', () => {
     checkBoardCSV()
   })
 
-  it('Should have data in metrics page when back from report page', () => {
+  function goToMetricsPageFromHome() {
     homePage.navigate()
 
     homePage.createANewProject()
@@ -344,6 +344,10 @@ describe('Create a new project', () => {
     configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
 
     configPage.goMetricsStep()
+  }
+
+  it('Should have data in metrics page when back from report page', () => {
+    goToMetricsPageFromHome()
 
     metricsPage.checkCycleTime()
 
@@ -358,7 +362,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(10000)
+    cy.wait(20000)
 
     reportPage.backToMetricsStep()
 
@@ -367,29 +371,7 @@ describe('Create a new project', () => {
   })
 
   it('Should have data in config page when back from metrics page', () => {
-    homePage.navigate()
-
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.goHomePage()
-
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.selectDateRange()
-
-    configPage.selectMetricsData()
-
-    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-
-    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
-
-    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
-
-    configPage.goMetricsStep()
+    goToMetricsPageFromHome()
 
     metricsPage.BackToConfigStep()
 
@@ -398,5 +380,23 @@ describe('Create a new project', () => {
     checkTextInputValuesExist(textInputValues)
 
     checkTokenInputValuesExist(tokenInputValues)
+  })
+
+  it('Should have notification button in report page', () => {
+    goToMetricsPageFromHome()
+
+    metricsPage.checkCycleTime()
+
+    metricsPage.checkRealDone()
+
+    metricsPage.checkClassification()
+
+    metricsPage.checkDeploymentFrequencySettings()
+
+    metricsPage.goReportStep()
+
+    cy.wait(20000)
+
+    reportPage.checkNotification()
   })
 })

@@ -1,9 +1,8 @@
-import { cleanup, fireEvent, render, renderHook, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, getByTestId, render, renderHook, waitFor } from '@testing-library/react'
 import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
 import React from 'react'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 import { act } from 'react-dom/test-utils'
-import { HEADER_NOTIFICATION_MESSAGE } from '@src/constants'
 
 describe('NotificationButton', () => {
   afterEach(cleanup)
@@ -17,22 +16,14 @@ describe('NotificationButton', () => {
     expect(getByTestId('NotificationIcon')).toBeInTheDocument()
   })
 
-  it('should hide NotificationIcon when notificationProps is undefined', () => {
-    act(() => {
-      result.current.notificationProps = undefined
-    })
-    const { queryByTestId } = render(<NotificationButton {...result.current} />)
-
-    expect(queryByTestId('NotificationIcon')).not.toBeInTheDocument()
-  })
-
-  it('should show NotificationPopper when clicking the component given the "open" value is true', async () => {
+  it('should show NotificationPopper when clicking the component given the "open" value is true', () => {
     act(() => {
       result.current.notificationProps = openNotificationProps
     })
     const { getByTestId, getByText } = render(<NotificationButton {...result.current} />)
 
     fireEvent.click(getByTestId('NotificationIcon'))
+
     expect(getByText('NotificationPopper')).toBeInTheDocument()
   })
 
@@ -71,7 +62,7 @@ describe('NotificationButton', () => {
     expect(checkProps).toEqual(closeNotificationProps)
   })
 
-  it('should hide the NotificationPopper component when call render given notificationProps is undefined.', async () => {
+  it('should hide the NotificationPopper component when call render given notificationProps is undefined.', () => {
     act(() => {
       result.current.notificationProps = undefined
     })
@@ -80,7 +71,7 @@ describe('NotificationButton', () => {
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
 
-  it('should hide the NotificationPopper component when call render given updateProps is undefined.', async () => {
+  it('should hide the NotificationPopper component when call render given updateProps is undefined.', () => {
     act(() => {
       result.current.updateProps = undefined
     })
@@ -89,7 +80,7 @@ describe('NotificationButton', () => {
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
 
-  it('should hide the Notification component when call render given updateProps and notificationProps are undefined.', async () => {
+  it('should hide the Notification component when call render given updateProps and notificationProps are undefined.', () => {
     act(() => {
       result.current.notificationProps = undefined
       result.current.updateProps = undefined
@@ -97,5 +88,51 @@ describe('NotificationButton', () => {
     const { queryByText } = render(<NotificationButton {...result.current} />)
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
+  })
+
+  it('should not call updateProps when clicking icon given notificationProps is undefined.', () => {
+    act(() => {
+      result.current.notificationProps = undefined
+      result.current.updateProps = jest.fn()
+    })
+    const { getByTestId } = render(<NotificationButton {...result.current} />)
+
+    fireEvent.click(getByTestId('NotificationIcon'))
+
+    expect(result.current.updateProps).not.toBeCalled()
+  })
+
+  it('should call updateProps when clicking icon given notificationProps and updateProps are not undefined.', () => {
+    act(() => {
+      result.current.notificationProps = openNotificationProps
+      result.current.updateProps = jest.fn()
+    })
+    const { getByTestId } = render(<NotificationButton {...result.current} />)
+
+    fireEvent.click(getByTestId('NotificationIcon'))
+
+    expect(result.current.updateProps).toBeCalledTimes(1)
+  })
+
+  it('should not call updateProps when clicking outside the component given the notificationProps is undefined.', async () => {
+    act(() => {
+      result.current.notificationProps = undefined
+      result.current.updateProps = jest.fn()
+    })
+
+    const { getByText, getByTestId } = render(
+      <div>
+        <title> OutSideSection </title>
+        <NotificationButton {...result.current} />
+      </div>
+    )
+
+    expect(getByTestId('NotificationIcon')).toBeInTheDocument()
+
+    const content = await waitFor(() => getByText('OutSideSection'))
+
+    fireEvent.click(content)
+
+    expect(result.current.updateProps).not.toBeCalled()
   })
 })

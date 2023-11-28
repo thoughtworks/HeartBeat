@@ -154,6 +154,7 @@ class Metrics {
     this.stepSelectSomeOption().click()
     this.branchSelect().click()
     this.branchSelectSomeOption().click()
+    this.closeOptions()
 
     this.addOnePipelineButton().click()
     this.organizationSecondSelect(1).click()
@@ -172,6 +173,10 @@ class Metrics {
     this.stepSelectSomeOption().click()
     this.checkDuplicatedMessage()
     this.pipelineRemoveButton().click()
+  }
+
+  closeOptions() {
+    cy.get('[data-test-id="Header"]').click()
   }
 
   goReportStep() {

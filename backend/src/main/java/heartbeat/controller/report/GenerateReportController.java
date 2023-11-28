@@ -29,25 +29,14 @@ public class GenerateReportController {
 
 	private final GenerateReporterService generateReporterService;
 
-	@PostMapping
-	public ReportResponse generateReport(@RequestBody GenerateReportRequest request) {
-		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}",
-				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime());
-		ReportResponse reports = generateReporterService.generateReporter(request);
-		log.info(
-				"Successfully generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, reports: {}",
-				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
-				reports);
-		return reports;
-	}
-
-	@PostMapping("/callback")
-	public ResponseEntity<CallbackResponse> refactorGenerateReport(@RequestBody GenerateReportRequest request) {
+	@PostMapping()
+	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
 		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}",
 			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime());
 		CompletableFuture.runAsync(() -> generateReporterService.generateReporter(request));
-		String callback = "/report/" + request.getCsvTimeStamp();
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(CallbackResponse.builder().callback(callback).build());
+		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
+		return ResponseEntity.status(HttpStatus.ACCEPTED)
+			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(5).build());
 	}
 
 	@GetMapping("/{dataType}/{filename}")
@@ -57,6 +46,11 @@ public class GenerateReportController {
 		InputStreamResource result = generateReporterService.fetchCSVData(request);
 		log.info("Successfully get CSV file, dataType: {}, time stamp: {}, result: {}", dataType, filename, result);
 		return result;
+	}
+
+	@GetMapping("/{reportId}")
+	public void generateReport(@PathVariable String reportId) {
+
 	}
 
 }

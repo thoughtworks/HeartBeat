@@ -12,5 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CallbackResponse {
-	private String callback;
+
+	private String callbackUrl;
+
+	private Integer interval;
+
 }

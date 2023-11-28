@@ -43,40 +43,7 @@ class GenerateReporterControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
-		ReportResponse expectedResponse = ReportResponse.builder()
-			.velocity(Velocity.builder().velocityForSP(10).build())
-			.deploymentFrequency(DeploymentFrequency.builder()
-				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
-				.build())
-			.build();
-
-		ObjectMapper mapper = new ObjectMapper();
-		GenerateReportRequest request = mapper
-			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
-
-		when(generateReporterService.generateReporter(request)).thenReturn(expectedResponse);
-
-		MockHttpServletResponse response = mockMvc
-			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(request)))
-			.andExpect(status().isOk())
-			.andReturn()
-			.getResponse();
-
-		final var resultVelocity = JsonPath.parse(response.getContentAsString())
-			.read("$.velocity.velocityForSP")
-			.toString();
-		assertThat(resultVelocity).contains("10");
-
-		final var resultDeployment = JsonPath.parse(response.getContentAsString())
-			.read("$.deploymentFrequency.avgDeploymentFrequency.deploymentFrequency")
-			.toString();
-		assertThat(resultDeployment).contains("0.1");
-	}
-
-	@Test
-	void shouldReturnAcceptedStatusAndCallbackUrl() throws Exception {
+	void shouldReturnAcceptedStatusAndCallbackUrlAndInterval() throws Exception {
 		ReportResponse expectedResponse = ReportResponse.builder()
 			.velocity(Velocity.builder().velocityForSP(10).build())
 			.deploymentFrequency(DeploymentFrequency.builder()
@@ -93,16 +60,27 @@ class GenerateReporterControllerTest {
 		when(generateReporterService.generateReporter(request)).thenReturn(expectedResponse);
 
 		MockHttpServletResponse response = mockMvc
-			.perform(post("/reports/callback").contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andReturn()
 			.getResponse();
 
-		final var callbackUrl = JsonPath.parse(response.getContentAsString())
-			.read("$.callback")
-			.toString();
-		assertEquals("/report/" + currentTimeStamp, callbackUrl);
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("5", interval);
+	}
+
+	@Test
+	void shouldReturnOkStatus() throws Exception {
+		String reportId = Long.toString(System.currentTimeMillis());
+
+		MockHttpServletResponse response = mockMvc
+			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse();
 	}
 
 	@Test

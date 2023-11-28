@@ -890,9 +890,11 @@ class GenerateReporterServiceTest {
 		Path pipelineFilePath = Path.of("./csv/pipeline-" + fileTimeStamp + ".csv");
 		Path boardFilePath = Path.of("./csv/board-" + fileTimeStamp + ".csv");
 		Path metricFilePath = Path.of("./csv/metric-" + fileTimeStamp + ".csv");
+		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
 		Files.createFile(pipelineFilePath);
 		Files.createFile(boardFilePath);
 		Files.createFile(metricFilePath);
+		Files.createFile(reportFilePath);
 		// when
 		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
@@ -901,6 +903,7 @@ class GenerateReporterServiceTest {
 		Files.deleteIfExists(pipelineFilePath);
 		Files.deleteIfExists(boardFilePath);
 		Files.deleteIfExists(metricFilePath);
+		Files.deleteIfExists(reportFilePath);
 	}
 
 	@Test
@@ -918,6 +921,26 @@ class GenerateReporterServiceTest {
 
 		Files.deleteIfExists(pipelineFilePath);
 		Files.deleteIfExists(boardFilePath);
+	}
+
+	@Test
+	void shouldReturnFalseWhenReportIsNotReady() throws IOException {
+		// given
+		long fileTimeStamp = System.currentTimeMillis();
+		Path pipelineFilePath = Path.of("./csv/pipeline-" + fileTimeStamp + ".csv");
+		Path boardFilePath = Path.of("./csv/board-" + fileTimeStamp + ".csv");
+		Path metricFilePath = Path.of("./csv/metric-" + fileTimeStamp + ".csv");
+		Files.createFile(pipelineFilePath);
+		Files.createFile(boardFilePath);
+		Files.createFile(metricFilePath);
+		// when
+		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
+		// then
+		assertFalse(generateReportIsOver);
+
+		Files.deleteIfExists(pipelineFilePath);
+		Files.deleteIfExists(boardFilePath);
+		Files.deleteIfExists(metricFilePath);
 	}
 
 	@Test

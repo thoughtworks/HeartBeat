@@ -34,6 +34,7 @@ import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.FileIOException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
@@ -52,6 +53,9 @@ import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -242,7 +246,20 @@ public class GenerateReporterService {
 		});
 		generateCSVForMetric(reportResponse, request.getCsvTimeStamp());
 
+		generateReporterJson(reportResponse, request.getCsvTimeStamp());
 		return reportResponse;
+	}
+
+	private void generateReporterJson(ReportResponse reportResponse, String csvTimeStamp) {
+		String reportJson = new Gson().toJson(reportResponse);
+		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp;
+		try (FileWriter writer = new FileWriter(fileName)) {
+			writer.write(reportJson);
+		}
+		catch (IOException e) {
+			log.error("Failed to write file", e);
+			throw new FileIOException(e);
+		}
 	}
 
 	private FetchedData fetchOriginalData(GenerateReportRequest request, List<String> lowMetrics) {
@@ -652,7 +669,8 @@ public class GenerateReporterService {
 				CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION,
 				CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
 
-		return fileNameList.stream().allMatch(it -> Files.exists(Path.of(it)));
+		return fileNameList.stream().allMatch(it -> Files.exists(Path.of(it)))
+				&& Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp));
 	}
 
 	private void validateExpire(long csvTimeStamp) {
@@ -691,6 +709,23 @@ public class GenerateReporterService {
 					cause.getMessage());
 			return false;
 		}
+	}
+
+	public ReportResponse parseReporterJson(String reportId) {
+		StringBuilder content = new StringBuilder();
+		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportId;
+		try (FileReader reader = new FileReader(fileName)) {
+			int c;
+			while ((c = reader.read()) != -1) {
+				content.append((char) c);
+			}
+		}
+		catch (IOException e) {
+			throw new FileIOException(e);
+		}
+		String reportJson = content.toString();
+		Gson gson = new Gson();
+		return gson.fromJson(reportJson, ReportResponse.class);
 	}
 
 }

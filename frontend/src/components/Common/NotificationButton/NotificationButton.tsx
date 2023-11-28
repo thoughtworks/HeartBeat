@@ -4,46 +4,46 @@ import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotification
 
 export const NotificationButton = ({ notificationProps, updateProps }: useNotificationLayoutEffectInterface) => {
   const handleTooltipClose = () => {
-    updateProps!({
-      title: notificationProps!.title,
+    if (notificationProps === undefined) return
+    updateProps?.({
+      title: notificationProps.title,
       open: false,
     })
   }
   const toggleTooltip = () => {
-    updateProps!({
-      title: notificationProps!.title,
-      open: !notificationProps!.open,
+    if (notificationProps === undefined) return
+    updateProps?.({
+      title: notificationProps.title,
+      open: !notificationProps.open,
     })
   }
 
   return (
     <>
-      {notificationProps && updateProps && (
-        <ClickAwayListener onClickAway={handleTooltipClose}>
-          <Tooltip
-            arrow
-            onClick={toggleTooltip}
-            onClose={handleTooltipClose}
-            open={notificationProps.open}
-            title={notificationProps.title}
-            placement={'bottom-start'}
-            PopperProps={{
-              disablePortal: true,
-            }}
-            disableFocusListener
-            disableHoverListener
-            disableTouchListener
-            disableInteractive
-            slotProps={{
-              tooltip: {
-                sx: { ...sx },
-              },
-            }}
-          >
-            <NotificationIconWrapper data-testid='NotificationIcon' />
-          </Tooltip>
-        </ClickAwayListener>
-      )}
+      <ClickAwayListener onClickAway={handleTooltipClose}>
+        <Tooltip
+          arrow
+          onClick={toggleTooltip}
+          onClose={handleTooltipClose}
+          open={notificationProps?.open}
+          title={notificationProps?.title}
+          placement={'bottom-start'}
+          PopperProps={{
+            disablePortal: true,
+          }}
+          disableFocusListener
+          disableHoverListener
+          disableTouchListener
+          disableInteractive
+          slotProps={{
+            tooltip: {
+              sx: { ...sx },
+            },
+          }}
+        >
+          <NotificationIconWrapper data-testid='NotificationIcon' />
+        </Tooltip>
+      </ClickAwayListener>
     </>
   )
 }

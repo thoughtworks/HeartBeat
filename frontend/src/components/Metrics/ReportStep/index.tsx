@@ -209,9 +209,9 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
         const currentTime = Date.now()
         const elapsedTime = currentTime - startTime
 
+        const remainingExpireTime = 5 * 60 * 1000
         const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime
-        if (remainingTime <= 5 * 60 * 1000) {
-          resetProps?.()
+        if (remainingTime <= remainingExpireTime) {
           updateProps?.({
             open: true,
             title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,

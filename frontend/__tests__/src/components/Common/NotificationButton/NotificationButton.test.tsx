@@ -1,9 +1,11 @@
-import { cleanup, fireEvent, getByTestId, render, renderHook, waitFor } from '@testing-library/react'
+import { cleanup, render, renderHook, waitFor } from '@testing-library/react'
 import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
 import React from 'react'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 import { act } from 'react-dom/test-utils'
+import userEvent from '@testing-library/user-event'
 
+const notificationIcon = 'NotificationIcon'
 describe('NotificationButton', () => {
   afterEach(cleanup)
   const closeNotificationProps = { open: false, title: 'NotificationPopper' }
@@ -13,7 +15,7 @@ describe('NotificationButton', () => {
   it('should show NotificationIcon when render NotificationButton component', () => {
     const { getByTestId } = render(<NotificationButton {...result.current} />)
 
-    expect(getByTestId('NotificationIcon')).toBeInTheDocument()
+    expect(getByTestId(notificationIcon)).toBeInTheDocument()
   })
 
   it('should show NotificationPopper when clicking the component given the "open" value is true', () => {
@@ -22,8 +24,7 @@ describe('NotificationButton', () => {
     })
     const { getByTestId, getByText } = render(<NotificationButton {...result.current} />)
 
-    fireEvent.click(getByTestId('NotificationIcon'))
-
+    userEvent.click(getByTestId(notificationIcon))
     expect(getByText('NotificationPopper')).toBeInTheDocument()
   })
 
@@ -33,7 +34,7 @@ describe('NotificationButton', () => {
     })
     const { getByTestId, queryByText } = render(<NotificationButton {...result.current} />)
 
-    fireEvent.click(getByTestId('NotificationIcon'))
+    userEvent.click(getByTestId(notificationIcon))
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
@@ -56,7 +57,7 @@ describe('NotificationButton', () => {
 
     const content = await waitFor(() => getByText('OutSideSection'))
 
-    fireEvent.click(content)
+    await userEvent.click(content)
 
     expect(result.current.updateProps).toBeCalledTimes(1)
     expect(checkProps).toEqual(closeNotificationProps)
@@ -90,26 +91,26 @@ describe('NotificationButton', () => {
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
 
-  it('should not call updateProps when clicking icon given notificationProps is undefined.', () => {
+  it('should not call updateProps when clicking icon given notificationProps is undefined.', async () => {
     act(() => {
       result.current.notificationProps = undefined
       result.current.updateProps = jest.fn()
     })
     const { getByTestId } = render(<NotificationButton {...result.current} />)
 
-    fireEvent.click(getByTestId('NotificationIcon'))
+    await userEvent.click(getByTestId(notificationIcon))
 
     expect(result.current.updateProps).not.toBeCalled()
   })
 
-  it('should call updateProps when clicking icon given notificationProps and updateProps are not undefined.', () => {
+  it('should call updateProps when clicking icon given notificationProps and updateProps are not undefined.', async () => {
     act(() => {
       result.current.notificationProps = openNotificationProps
       result.current.updateProps = jest.fn()
     })
     const { getByTestId } = render(<NotificationButton {...result.current} />)
 
-    fireEvent.click(getByTestId('NotificationIcon'))
+    await userEvent.click(getByTestId(notificationIcon))
 
     expect(result.current.updateProps).toBeCalledTimes(1)
   })
@@ -127,11 +128,11 @@ describe('NotificationButton', () => {
       </div>
     )
 
-    expect(getByTestId('NotificationIcon')).toBeInTheDocument()
+    expect(getByTestId(notificationIcon)).toBeInTheDocument()
 
     const content = await waitFor(() => getByText('OutSideSection'))
 
-    fireEvent.click(content)
+    await userEvent.click(content)
 
     expect(result.current.updateProps).not.toBeCalled()
   })

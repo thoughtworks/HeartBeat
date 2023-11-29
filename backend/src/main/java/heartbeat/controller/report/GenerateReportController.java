@@ -7,6 +7,7 @@ import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.service.report.GenerateReporterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ public class GenerateReportController {
 
 	private final GenerateReporterService generateReporterService;
 
+	@Value("${callback.interval}")
+	private Integer interval;
+
 	@PostMapping()
 	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
 		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}",
@@ -36,7 +40,7 @@ public class GenerateReportController {
 		CompletableFuture.runAsync(() -> generateReporterService.generateReporter(request));
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(5).build());
+			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());
 	}
 
 	@GetMapping("/{dataType}/{filename}")

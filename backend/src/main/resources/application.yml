@@ -19,6 +19,9 @@ jira:
 buildKite:
   url: https://api.buildkite.com
 
+callback:
+  interval: 5
+
 springdoc:
   swagger-ui:
     path: /docs

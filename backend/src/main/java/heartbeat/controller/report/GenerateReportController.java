@@ -50,12 +50,12 @@ public class GenerateReportController {
 
 	@GetMapping("/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
-		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId));
-		if (Boolean.TRUE.equals(generateReportIsOver)) {
+		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId));
+		if (generateReportIsOver) {
 			ReportResponse reportResponse = generateReporterService.parseReporterJson(reportId);
-			return ResponseEntity.ok(reportResponse);
+			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 }

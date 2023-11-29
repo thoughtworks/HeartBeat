@@ -73,7 +73,7 @@ class GenerateReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnOkStatus() throws Exception {
+	void shouldReturnCreatedStatus() throws Exception {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
@@ -81,13 +81,13 @@ class GenerateReporterControllerTest {
 		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
+			.andExpect(status().isCreated())
 			.andReturn()
 			.getResponse();
 	}
 
 	@Test
-	void shouldReturnCreatedStatus() throws Exception {
+	void shouldReturnNoContentStatus() throws Exception {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
@@ -95,7 +95,7 @@ class GenerateReporterControllerTest {
 		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isCreated())
+			.andExpect(status().isNoContent())
 			.andReturn()
 			.getResponse();
 	}

@@ -5,6 +5,7 @@ import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.FileIOException;
+import heartbeat.exception.GenerateReportException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -440,6 +442,66 @@ class CSVFileGeneratorTest {
 		assertFalse(generateReportIsOver);
 
 		Files.deleteIfExists(reportFilePath);
+	}
+
+	@Test
+	void shouldCreateFileWhenConvertReportToJson() throws IOException {
+		// given
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+		long fileTimeStamp = System.currentTimeMillis();
+		// when
+		csvFileGenerator.convertReportToJson(reportResponse, Long.toString(fileTimeStamp));
+		// then
+		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
+		assertTrue(Files.exists(reportFilePath));
+
+		Files.deleteIfExists(reportFilePath);
+	}
+
+	@Test
+	void shouldThrowExceptionWhenConvertReportToJson() {
+		// given
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+		String fileTimeStamp = "15469:89/033";
+		// when
+		var exception = assertThrows(GenerateReportException.class,
+				() -> csvFileGenerator.convertReportToJson(reportResponse, fileTimeStamp));
+		// then
+		assertEquals(500, exception.getStatus());
+		assertEquals("Failed to write report file", exception.getMessage());
+		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
+		assertFalse(Files.exists(reportFilePath));
+	}
+
+	@Test
+	void shouldReturnReportResponseWhenConvertReportToJson() {
+		// given
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+		long fileTimeStamp = System.currentTimeMillis();
+		csvFileGenerator.convertReportToJson(reportResponse, Long.toString(fileTimeStamp));
+		// when
+		ReportResponse convertedReportResponse = csvFileGenerator
+			.convertJsonToReportResponse(Long.toString(fileTimeStamp));
+		// then
+		assertEquals(reportResponse.getCycleTime(), convertedReportResponse.getCycleTime());
+		assertEquals(reportResponse.getExportValidityTime(), convertedReportResponse.getExportValidityTime());
+		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
+		assertFalse(Files.exists(reportFilePath));
+	}
+
+	@Test
+	void shouldThrowExceptionWhenConvertJsonToReport() {
+		// given
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
+		String fileTimeStamp = "15469:89/033";
+		// when
+		var exception = assertThrows(GenerateReportException.class,
+				() -> csvFileGenerator.convertJsonToReportResponse(fileTimeStamp));
+		// then
+		assertEquals(500, exception.getStatus());
+		assertEquals("Failed to convert to report response", exception.getMessage());
+		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
+		assertFalse(Files.exists(reportFilePath));
 	}
 
 }

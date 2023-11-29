@@ -79,12 +79,20 @@ class GenerateReporterControllerTest {
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
 		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId))).thenReturn(true);
+		when(generateReporterService.parseReportJson(reportId))
+			.thenReturn(ReportResponse.builder().exportValidityTime(180000L).build());
 		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isCreated())
 			.andReturn()
 			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var exportValidityTime = JsonPath.parse(content).read("$.exportValidityTime");
+
+		assertEquals(180000, exportValidityTime);
+
 	}
 
 	@Test

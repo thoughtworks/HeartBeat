@@ -29,6 +29,7 @@ import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ChangeFailureRateOfPipeline;
 import heartbeat.exception.FileIOException;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.util.DecimalUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -555,11 +556,10 @@ public class CSVFileGenerator {
 		try (FileWriter writer = new FileWriter(tmpFileName)) {
 			writer.write(reportJson);
 			Files.move(Path.of(tmpFileName), Path.of(fileName), StandardCopyOption.ATOMIC_MOVE,
-				StandardCopyOption.REPLACE_EXISTING);
+					StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (IOException e) {
-			log.error("Failed to write file", e);
-			throw new FileIOException(e);
+			throw new GenerateReportException("Failed to write report file");
 		}
 	}
 
@@ -573,11 +573,12 @@ public class CSVFileGenerator {
 		try (JsonReader reader = new JsonReader(new FileReader(fileName))) {
 			Gson gson = new Gson();
 			reportResponse = gson.fromJson(reader, ReportResponse.class);
-		} catch (IOException e) {
-			// todo
-			log.error("Failed to write file", e);
-			throw new FileIOException(e);
+			Files.deleteIfExists(Path.of(fileName));
+		}
+		catch (IOException e) {
+			throw new GenerateReportException("Failed to convert to report response");
 		}
 		return reportResponse;
 	}
+
 }

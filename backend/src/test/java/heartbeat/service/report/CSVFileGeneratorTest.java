@@ -27,10 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -84,7 +84,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldMakeCsvDirWhenNotExistGivenDataTypeIsPipeline() {
+	void shouldMakeCsvDirWhenNotExistGivenDataTypeIsPipeline() {
 		String csvDirPath = "./csv";
 		File csvDir = new File(csvDirPath);
 		deleteDirectory(csvDir);
@@ -94,12 +94,12 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
-		Assertions.assertTrue(file.exists());
+		assertTrue(file.exists());
 		file.delete();
 	}
 
 	@Test
-	public void shouldHasContentWhenGetDataFromCsvGivenDataTypeIsPipeline() throws IOException {
+	void shouldHasContentWhenGetDataFromCsvGivenDataTypeIsPipeline() throws IOException {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, mockTimeStamp);
 
@@ -120,7 +120,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldReturnEmptyWhenDataTypeNotMatch() throws IOException {
+	void shouldReturnEmptyWhenDataTypeNotMatch() throws IOException {
 
 		InputStreamResource result = csvFileGenerator.getDataFromCSV("mockDataType", Long.parseLong(mockTimeStamp));
 		InputStream csvDataInputStream = result.getInputStream();
@@ -131,7 +131,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenFileNotExist() {
+	void shouldThrowExceptionWhenFileNotExist() {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("pipeline", 123456L));
 		assertThrows(FileIOException.class,
@@ -139,7 +139,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldMakeCsvDirWhenNotExistGivenDataTypeIsBoard() {
+	void shouldMakeCsvDirWhenNotExistGivenDataTypeIsBoard() {
 		String csvDirPath = "./csv";
 		File csvDir = new File(csvDirPath);
 		deleteDirectory(csvDir);
@@ -156,7 +156,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldGenerateBoardCsvWhenConvertBoardDataToCsv() {
+	void shouldGenerateBoardCsvWhenConvertBoardDataToCsv() {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
@@ -170,7 +170,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldGetValueWhenConvertBoardDataToCsvGivenExtraFields() throws IOException {
+	void shouldGetValueWhenConvertBoardDataToCsvGivenExtraFields() throws IOException {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO_WITH_BASE_INFO_CUSTOM_DATA();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS_WITH_CUSTOM();
@@ -193,7 +193,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldGenerateBoardCsvWhenConvertBoardDataToCsvGivenBaseInfoIsEmpty() {
+	void shouldGenerateBoardCsvWhenConvertBoardDataToCsvGivenBaseInfoIsEmpty() {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO_WITH_EMPTY_BASE_INFO();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
@@ -207,7 +207,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldGenerateBoardCsvWhenConvertBoardDataToCsvGivenBaseInfoFieldsIsNull() {
+	void shouldGenerateBoardCsvWhenConvertBoardDataToCsvGivenBaseInfoFieldsIsNull() {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO_WITH_EMPTY_BASE_INFO_FIELDS();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
@@ -221,7 +221,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldGenerateBoardCsvWhenConvertBoardDataToCsvGivenCycleTimeIsNull() {
+	void shouldGenerateBoardCsvWhenConvertBoardDataToCsvGivenCycleTimeIsNull() {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO_WITH_EMPTY_CARD_CYCLE_TIME();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
@@ -235,7 +235,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenBoardCsvNotExist() {
+	void shouldThrowExceptionWhenBoardCsvNotExist() {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO_WITH_EMPTY_BASE_INFO();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
@@ -246,7 +246,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldHasContentWhenGetDataFromCsvGivenDataTypeIsBoard() throws IOException {
+	void shouldHasContentWhenGetDataFromCsvGivenDataTypeIsBoard() throws IOException {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
@@ -263,8 +263,7 @@ class CSVFileGeneratorTest {
 						+ "\"ADM-489\",\"summary\",\"issue type\",,\"2.0\",\"name\",\"name\",\"ADM\",\"Auto Dora Metrics\",\"Medium\",\"parent\",\"sprint 1\",\"\",\"0.90\",\"1.00\",\"\",\"\",\"{}\",\"0.90\",\"0\",\"0.90\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
-		File file = new File(fileName);
-		file.delete();
+		Files.deleteIfExists(Path.of(fileName));
 	}
 
 	@Test
@@ -285,11 +284,12 @@ class CSVFileGeneratorTest {
 		Assertions.assertEquals("\"Velocity\",\"Velocity(Story Point)\",\"7.0\"", firstLine);
 		reader.close();
 		fileInputStream.close();
-		file.delete();
+		boolean delete = file.delete();
+		assertTrue(delete);
 	}
 
 	@Test
-	public void shouldMakeCsvDirWhenNotExistGivenDataTypeIsMetric() {
+	void shouldMakeCsvDirWhenNotExistGivenDataTypeIsMetric() throws IOException {
 		String csvDirPath = "./csv";
 		File csvDir = new File(csvDirPath);
 		deleteDirectory(csvDir);
@@ -297,14 +297,13 @@ class CSVFileGeneratorTest {
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
 
-		String fileName = CSVFileNameEnum.METRIC.getValue() + "-" + mockTimeStamp + ".csv";
-		File file = new File(fileName);
-		Assertions.assertTrue(file.exists());
-		file.delete();
+		Path filePath = Path.of(CSVFileNameEnum.METRIC.getValue() + "-" + mockTimeStamp + ".csv");
+		assertTrue(Files.exists(filePath));
+		Files.deleteIfExists(filePath);
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenMetricCsvNotExist() {
+	void shouldThrowExceptionWhenMetricCsvNotExist() {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
 
 		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV("metric", 1686710104536L));
@@ -313,7 +312,7 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	public void shouldHasContentWhenGetDataFromCsvGivenDataTypeIsMetric() throws IOException {
+	void shouldHasContentWhenGetDataFromCsvGivenDataTypeIsMetric() throws IOException {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
@@ -367,13 +366,12 @@ class CSVFileGeneratorTest {
 						"Mean Time To Recovery","Heartbeat / Check Frontend License / Mean Time To Recovery","0"
 						"Mean Time To Recovery","Average / Mean Time To Recovery","0\"""");
 
-		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
-		File file = new File(fileName);
-		file.delete();
+		String fileName = CSVFileNameEnum.METRIC.getValue() + "-" + mockTimeStamp + ".csv";
+		Files.deleteIfExists(Path.of(fileName));
 	}
 
 	@Test
-	public void shouldHasNoContentWhenGetDataFromCsvGivenDataTypeIsMetricAndResponseIsEmpty() throws IOException {
+	void shouldHasNoContentWhenGetDataFromCsvGivenDataTypeIsMetricAndResponseIsEmpty() throws IOException {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_EMPTY_METRIC_CSV_DATA();
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
@@ -386,12 +384,11 @@ class CSVFileGeneratorTest {
 		Assertions.assertEquals(metricCsvData, "\"Group\",\"Metrics\",\"Value\"");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
-		File file = new File(fileName);
-		file.delete();
+		Files.deleteIfExists(Path.of(fileName));
 	}
 
 	@Test
-	public void shouldHasNoContentForAveragesWhenGetDataFromCsvGivenDataTypeIsMetricAndTheQuantityOfPipelineIsEqualToOne()
+	void shouldHasNoContentForAveragesWhenGetDataFromCsvGivenDataTypeIsMetricAndTheQuantityOfPipelineIsEqualToOne()
 			throws IOException {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
 
@@ -412,8 +409,7 @@ class CSVFileGeneratorTest {
 				"Mean Time To Recovery","Heartbeat / Deploy prod / Mean Time To Recovery","0\"""");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
-		File file = new File(fileName);
-		file.delete();
+		Files.deleteIfExists(Path.of(fileName));
 	}
 
 	@Test

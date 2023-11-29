@@ -115,6 +115,7 @@ class Metrics {
     cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
 
   private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
+  private readonly headerBar = () => cy.get('[data-test-id="Header"]')
 
   private readonly nextButton = () => cy.contains('Next')
   private readonly backButton = () => cy.contains('Previous')
@@ -176,7 +177,7 @@ class Metrics {
   }
 
   closeOptions() {
-    cy.get('[data-test-id="Header"]').click()
+    this.headerBar().click()
   }
 
   goReportStep() {

@@ -70,7 +70,7 @@ class GenerateReporterControllerTest {
 		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
 		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
 		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
-		assertEquals("5", interval);
+		assertEquals("10", interval);
 	}
 
 	@Test

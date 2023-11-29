@@ -20,7 +20,7 @@ buildKite:
   url: https://api.buildkite.com
 
 callback:
-  interval: 5
+  interval: 10
 
 springdoc:
   swagger-ui:

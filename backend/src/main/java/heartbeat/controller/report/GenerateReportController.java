@@ -52,7 +52,7 @@ public class GenerateReportController {
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId));
 		if (generateReportIsOver) {
-			ReportResponse reportResponse = generateReporterService.parseReporterJson(reportId);
+			ReportResponse reportResponse = generateReporterService.parseReportJson(reportId);
 			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

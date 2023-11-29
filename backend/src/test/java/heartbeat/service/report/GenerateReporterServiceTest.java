@@ -886,10 +886,9 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldReturnTrueWhenReportFileIsReady() throws IOException {
+	void shouldReturnTrueWhenReportFileIsReady() {
 		// given
 		long fileTimeStamp = System.currentTimeMillis();
-		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
 		// when
 		when(csvFileGenerator.checkReportFileIsExists(fileTimeStamp)).thenReturn(true);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
@@ -918,6 +917,15 @@ class GenerateReporterServiceTest {
 				() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
 		assertEquals(500, generateReportException.getStatus());
 		assertEquals("Report time expires", generateReportException.getMessage());
+	}
+
+	@Test
+	void shouldReturnReportResponse() {
+		// when
+		when(csvFileGenerator.convertJsonToReportResponse(any())).thenReturn(ReportResponse.builder().exportValidityTime(1800000L).build());
+		ReportResponse reportResponse = generateReporterService.parseReportJson(Long.toString(System.currentTimeMillis()));
+		// then
+		assertEquals(1800000L, reportResponse.getExportValidityTime());
 	}
 
 }

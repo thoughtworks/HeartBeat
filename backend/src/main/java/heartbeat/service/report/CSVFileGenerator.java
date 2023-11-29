@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonReader;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -563,5 +565,19 @@ public class CSVFileGenerator {
 
 	boolean checkReportFileIsExists(long reportTimeStamp) {
 		return Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportTimeStamp));
+	}
+
+	public ReportResponse convertJsonToReportResponse(String reportId) {
+		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportId;
+		ReportResponse reportResponse;
+		try (JsonReader reader = new JsonReader(new FileReader(fileName))) {
+			Gson gson = new Gson();
+			reportResponse = gson.fromJson(reader, ReportResponse.class);
+		} catch (IOException e) {
+			// todo
+			log.error("Failed to write file", e);
+			throw new FileIOException(e);
+		}
+		return reportResponse;
 	}
 }

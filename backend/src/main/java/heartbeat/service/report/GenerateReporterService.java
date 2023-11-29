@@ -34,7 +34,6 @@ import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.exception.FileIOException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.service.board.jira.JiraColumnResult;
@@ -54,8 +53,6 @@ import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,14 +74,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import static heartbeat.service.report.CSVFileNameEnum.REPORT;
-
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class GenerateReporterService {
-
-	private static final char FILENAME_SEPARATOR = '-';
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
 			"timetracking", "statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority",
@@ -696,21 +689,8 @@ public class GenerateReporterService {
 		}
 	}
 
-	public ReportResponse parseReporterJson(String reportId) {
-		StringBuilder content = new StringBuilder();
-		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportId;
-		try (FileReader reader = new FileReader(fileName)) {
-			int c;
-			while ((c = reader.read()) != -1) {
-				content.append((char) c);
-			}
-		}
-		catch (IOException e) {
-			throw new FileIOException(e);
-		}
-		String reportJson = content.toString();
-		Gson gson = new Gson();
-		return gson.fromJson(reportJson, ReportResponse.class);
+	public ReportResponse parseReportJson(String reportId) {
+		return csvFileGenerator.convertJsonToReportResponse(reportId);
 	}
 
 }

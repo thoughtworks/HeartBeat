@@ -444,11 +444,11 @@ class CSVFileGeneratorTest {
 	void shouldCreateFileWhenConvertReportToJson() throws IOException {
 		// given
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
-		long fileTimeStamp = System.currentTimeMillis();
-		// when
-		csvFileGenerator.convertReportToJson(reportResponse, Long.toString(fileTimeStamp));
-		// then
+		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
+		// when
+		csvFileGenerator.convertReportToJson(reportResponse, fileTimeStamp);
+		// then
 		assertTrue(Files.exists(reportFilePath));
 
 		Files.deleteIfExists(reportFilePath);

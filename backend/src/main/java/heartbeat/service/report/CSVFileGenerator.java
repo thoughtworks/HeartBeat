@@ -93,9 +93,7 @@ public class CSVFileGenerator {
 
 	public void convertPipelineDataToCSV(List<PipelineCSVInfo> leadTimeData, String csvTimeStamp) {
 		log.info("Start to create csv directory");
-		boolean created = createCsvDirectory();
-		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
-		log.info(message);
+		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		File file = new File(fileName);
@@ -155,18 +153,17 @@ public class CSVFileGenerator {
 		};
 	}
 
-	private boolean createCsvDirectory() {
+	private void createCsvDirToConvertData() {
 		String directoryPath = "./csv";
 		File directory = new File(directoryPath);
-		return directory.mkdirs();
+		String message = directory.mkdirs() ? "Successfully create csv directory" : "CSV directory is already exist";
+		log.info(message);
 	}
 
 	public void convertBoardDataToCSV(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
 			List<BoardCSVConfig> extraFields, String csvTimeStamp) {
 		log.info("Start to create board csv directory");
-		boolean created = createCsvDirectory();
-		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
-		log.info(message);
+		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
@@ -355,9 +352,7 @@ public class CSVFileGenerator {
 
 	public void convertMetricDataToCSV(ReportResponse reportResponse, String csvTimeStamp) {
 		log.info("Start to create csv directory");
-		boolean created = createCsvDirectory();
-		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
-		log.info(message);
+		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		File file = new File(fileName);
@@ -550,11 +545,11 @@ public class CSVFileGenerator {
 	}
 
 	public void convertReportToJson(ReportResponse reportResponse, String csvTimeStamp) {
-		String reportJson = new Gson().toJson(reportResponse);
+		createCsvDirToConvertData();
 		String tmpFileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp + TMP_EXTENSION;
 		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp;
 		try (FileWriter writer = new FileWriter(tmpFileName)) {
-			writer.write(reportJson);
+			writer.write(new Gson().toJson(reportResponse));
 			Files.move(Path.of(tmpFileName), Path.of(fileName), StandardCopyOption.ATOMIC_MOVE,
 					StandardCopyOption.REPLACE_EXISTING);
 		}
@@ -571,8 +566,7 @@ public class CSVFileGenerator {
 		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportId;
 		ReportResponse reportResponse;
 		try (JsonReader reader = new JsonReader(new FileReader(fileName))) {
-			Gson gson = new Gson();
-			reportResponse = gson.fromJson(reader, ReportResponse.class);
+			reportResponse = new Gson().fromJson(reader, ReportResponse.class);
 			Files.deleteIfExists(Path.of(fileName));
 		}
 		catch (IOException e) {

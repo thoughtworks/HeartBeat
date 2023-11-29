@@ -177,9 +177,9 @@ const clearDownloadFile = () => {
 const checkMetricCSV = () => {
   cy.wait(2000)
   cy.fixture('metric.csv').then((localFileContent) => {
-    cy.task('readDir', 'cypress/downloads').then((files) => {
+    cy.task('readDir', 'cypress/downloads').then((files: string[]) => {
       expect(files).to.match(new RegExp(/metric-.*\.csv/))
-      files.forEach((file) => {
+      files.forEach((file: string) => {
         if (file.match(/metric-.*\.csv/)) {
           cy.readFile(`cypress/downloads/${file}`).then((fileContent) => {
             expect(fileContent).to.contains(localFileContent)
@@ -253,7 +253,6 @@ describe('Create a new project', () => {
 
     configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
 
-    cy.wait(6000)
     cy.contains('Verified').should('exist')
     cy.contains('Reset').should('exist')
 
@@ -288,7 +287,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(20000)
+    reportPage.waitingForProgressBar()
 
     checkVelocity('[data-test-id="Velocity"]', velocityData)
 
@@ -364,7 +363,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(20000)
+    reportPage.waitingForProgressBar()
 
     reportPage.backToMetricsStep()
 
@@ -397,7 +396,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(20000)
+    reportPage.waitingForProgressBar()
 
     reportPage.checkNotification()
   })

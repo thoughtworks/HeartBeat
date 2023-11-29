@@ -12,6 +12,8 @@ class Report {
 
   private readonly headerBar = () => cy.get('[data-test-id="Header"]')
 
+  private readonly progressBar = () => cy.get('[data-testid="loading-page"]', { timeout: 60000 })
+
   backToMetricsStep() {
     this.backButton().click()
   }
@@ -36,6 +38,11 @@ class Report {
     cy.contains('otherwise it will expire.').should('not.exist')
 
     this.headerBar().click()
+  }
+
+  waitingForProgressBar() {
+    this.progressBar().should('be.visible')
+    this.progressBar().should('not.exist')
   }
 }
 

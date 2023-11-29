@@ -890,13 +890,11 @@ class GenerateReporterServiceTest {
 		// given
 		long fileTimeStamp = System.currentTimeMillis();
 		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
-		Files.createFile(reportFilePath);
 		// when
-		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
+		when(csvFileGenerator.checkReportFileIsExists(fileTimeStamp)).thenReturn(true);
+		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertTrue(generateReportIsOver);
-
-		Files.deleteIfExists(reportFilePath);
 	}
 
 	@Test
@@ -904,7 +902,8 @@ class GenerateReporterServiceTest {
 		// given
 		long fileTimeStamp = System.currentTimeMillis();
 		// when
-		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
+		when(csvFileGenerator.checkReportFileIsExists(fileTimeStamp)).thenReturn(false);
+		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertFalse(generateReportIsOver);
 

@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.opencsv.CSVWriter;
@@ -43,6 +44,9 @@ import java.io.InputStream;
 
 import io.micrometer.core.instrument.util.TimeUtils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,6 +64,8 @@ public class CSVFileGenerator {
 	private static final char FILENAME_SEPARATOR = '-';
 
 	private static final String CSV_EXTENSION = ".csv";
+
+	private static final String TMP_EXTENSION = ".tmp";
 
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
@@ -540,4 +546,22 @@ public class CSVFileGenerator {
 		return rows;
 	}
 
+	public void convertReportToJson(ReportResponse reportResponse, String csvTimeStamp) {
+		String reportJson = new Gson().toJson(reportResponse);
+		String tmpFileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp + TMP_EXTENSION;
+		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp;
+		try (FileWriter writer = new FileWriter(tmpFileName)) {
+			writer.write(reportJson);
+			Files.move(Path.of(tmpFileName), Path.of(fileName), StandardCopyOption.ATOMIC_MOVE,
+				StandardCopyOption.REPLACE_EXISTING);
+		}
+		catch (IOException e) {
+			log.error("Failed to write file", e);
+			throw new FileIOException(e);
+		}
+	}
+
+	boolean checkReportFileIsExists(long reportTimeStamp) {
+		return Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportTimeStamp));
+	}
 }

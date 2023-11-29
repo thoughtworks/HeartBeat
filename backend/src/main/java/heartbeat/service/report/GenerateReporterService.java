@@ -55,11 +55,8 @@ import heartbeat.util.GithubUtil;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,14 +77,14 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import static heartbeat.service.report.CSVFileNameEnum.REPORT;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class GenerateReporterService {
 
 	private static final char FILENAME_SEPARATOR = '-';
-
-	private static final String CSV_EXTENSION = ".csv";
 
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
 			"timetracking", "statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority",
@@ -249,18 +246,6 @@ public class GenerateReporterService {
 
 		generateReporterJson(reportResponse, request.getCsvTimeStamp());
 		return reportResponse;
-	}
-
-	private void generateReporterJson(ReportResponse reportResponse, String csvTimeStamp) {
-		String reportJson = new Gson().toJson(reportResponse);
-		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp;
-		try (FileWriter writer = new FileWriter(fileName)) {
-			writer.write(reportJson);
-		}
-		catch (IOException e) {
-			log.error("Failed to write file", e);
-			throw new FileIOException(e);
-		}
 	}
 
 	private FetchedData fetchOriginalData(GenerateReportRequest request, List<String> lowMetrics) {
@@ -580,6 +565,10 @@ public class GenerateReporterService {
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
 	}
 
+	private void generateReporterJson(ReportResponse reportResponse, String csvTimeStamp) {
+		csvFileGenerator.convertReportToJson(reportResponse, csvTimeStamp);
+	}
+
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
 			List<String> steps, String startTime, String endTime) {
 		BuildKiteJob buildKiteJob = buildInfo.getBuildKiteJob(buildInfo.getJobs(),
@@ -662,12 +651,11 @@ public class GenerateReporterService {
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
-	public Boolean checkGenerateReportIsDone(long reportTimeStamp) {
+	public boolean checkGenerateReportIsDone(long reportTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), reportTimeStamp)) {
 			throw new GenerateReportException("Report time expires");
 		}
-
-		return Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportTimeStamp));
+		return csvFileGenerator.checkReportFileIsExists(reportTimeStamp);
 	}
 
 	private void validateExpire(long csvTimeStamp) {

@@ -20,11 +20,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -408,6 +412,34 @@ class CSVFileGeneratorTest {
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
 		file.delete();
+	}
+
+	@Test
+	void shouldReturnTrueWhenReportFileIsExist() throws IOException {
+		// given
+		long fileTimeStamp = System.currentTimeMillis();
+		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
+		Files.createFile(reportFilePath);
+		// when
+		boolean generateReportIsOver = csvFileGenerator.checkReportFileIsExists(fileTimeStamp);
+		// then
+		assertTrue(generateReportIsOver);
+
+		Files.deleteIfExists(reportFilePath);
+	}
+
+	@Test
+	void shouldReturnFalseWhenReportFileIsNotExist() throws IOException {
+		// given
+		long fileTimeStamp = System.currentTimeMillis();
+		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp + ".tmp");
+		Files.createFile(reportFilePath);
+		// when
+		boolean generateReportIsOver = csvFileGenerator.checkReportFileIsExists(fileTimeStamp);
+		// then
+		assertFalse(generateReportIsOver);
+
+		Files.deleteIfExists(reportFilePath);
 	}
 
 }

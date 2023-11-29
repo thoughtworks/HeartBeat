@@ -35,6 +35,7 @@ import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.FileIOException;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
@@ -661,16 +662,12 @@ public class GenerateReporterService {
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
-	public Boolean checkGenerateReportIsDone(long csvTimeStamp) {
-		validateExpire(csvTimeStamp);
+	public Boolean checkGenerateReportIsDone(long reportTimeStamp) {
+		if (validateExpire(System.currentTimeMillis(), reportTimeStamp)) {
+			throw new GenerateReportException("Report time expires");
+		}
 
-		List<String> fileNameList = List.of(
-				CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION,
-				CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION,
-				CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
-
-		return fileNameList.stream().allMatch(it -> Files.exists(Path.of(it)))
-				&& Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp));
+		return Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportTimeStamp));
 	}
 
 	private void validateExpire(long csvTimeStamp) {

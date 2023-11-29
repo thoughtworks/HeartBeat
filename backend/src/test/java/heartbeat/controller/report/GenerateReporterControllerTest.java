@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
@@ -73,7 +74,7 @@ class GenerateReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnCreatedStatus() throws Exception {
+	void shouldReturnCreatedStatusWhenCheckGenerateReportIsTrue() throws Exception {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
@@ -87,17 +88,38 @@ class GenerateReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnNoContentStatus() throws Exception {
+	void shouldReturnNoContentStatusWhenCheckGenerateReportIsFalse() throws Exception {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
 		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId))).thenReturn(false);
 		// then
-		MockHttpServletResponse response = mockMvc
-			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent())
 			.andReturn()
 			.getResponse();
+	}
+
+	@Test
+	void shouldReturnInternalServerErrorStatusWhenCheckGenerateReportThrowException() throws Exception {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId)))
+			.thenThrow(new GenerateReportException("Report time expires"));
+		// then
+		var response = mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isInternalServerError())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var errorMessage = JsonPath.parse(content).read("$.message").toString();
+		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
+
+		assertEquals("Report time expires", errorMessage);
+		assertEquals("Generate report failed", hintInfo);
+
 	}
 
 	@Test

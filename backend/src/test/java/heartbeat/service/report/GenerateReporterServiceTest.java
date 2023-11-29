@@ -31,6 +31,7 @@ import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
@@ -77,6 +78,7 @@ import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTI
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -884,63 +886,28 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldReturnTrueWhenAllCsvIsReady() throws IOException {
+	void shouldReturnTrueWhenReportFileIsReady() throws IOException {
 		// given
 		long fileTimeStamp = System.currentTimeMillis();
-		Path pipelineFilePath = Path.of("./csv/pipeline-" + fileTimeStamp + ".csv");
-		Path boardFilePath = Path.of("./csv/board-" + fileTimeStamp + ".csv");
-		Path metricFilePath = Path.of("./csv/metric-" + fileTimeStamp + ".csv");
 		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
-		Files.createFile(pipelineFilePath);
-		Files.createFile(boardFilePath);
-		Files.createFile(metricFilePath);
 		Files.createFile(reportFilePath);
 		// when
 		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertTrue(generateReportIsOver);
 
-		Files.deleteIfExists(pipelineFilePath);
-		Files.deleteIfExists(boardFilePath);
-		Files.deleteIfExists(metricFilePath);
 		Files.deleteIfExists(reportFilePath);
 	}
 
 	@Test
-	void shouldReturnFalseWhenHaveAnyCsvIsNotReady() throws IOException {
+	void shouldReturnFalseWhenReportFileIsNotReady() {
 		// given
 		long fileTimeStamp = System.currentTimeMillis();
-		Path pipelineFilePath = Path.of("./csv/pipeline-" + fileTimeStamp + ".csv");
-		Path boardFilePath = Path.of("./csv/board-" + fileTimeStamp + ".csv");
-		Files.createFile(pipelineFilePath);
-		Files.createFile(boardFilePath);
 		// when
 		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertFalse(generateReportIsOver);
 
-		Files.deleteIfExists(pipelineFilePath);
-		Files.deleteIfExists(boardFilePath);
-	}
-
-	@Test
-	void shouldReturnFalseWhenReportIsNotReady() throws IOException {
-		// given
-		long fileTimeStamp = System.currentTimeMillis();
-		Path pipelineFilePath = Path.of("./csv/pipeline-" + fileTimeStamp + ".csv");
-		Path boardFilePath = Path.of("./csv/board-" + fileTimeStamp + ".csv");
-		Path metricFilePath = Path.of("./csv/metric-" + fileTimeStamp + ".csv");
-		Files.createFile(pipelineFilePath);
-		Files.createFile(boardFilePath);
-		Files.createFile(metricFilePath);
-		// when
-		Boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
-		// then
-		assertFalse(generateReportIsOver);
-
-		Files.deleteIfExists(pipelineFilePath);
-		Files.deleteIfExists(boardFilePath);
-		Files.deleteIfExists(metricFilePath);
 	}
 
 	@Test
@@ -948,8 +915,10 @@ class GenerateReporterServiceTest {
 		// given
 		long fileExpiredTimeStamp = System.currentTimeMillis() - 1900000L;
 		// when & then
-		assertThrows(NotFoundException.class,
+		GenerateReportException generateReportException = assertThrows(GenerateReportException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
+		assertEquals(500, generateReportException.getStatus());
+		assertEquals("Report time expires", generateReportException.getMessage());
 	}
 
 }

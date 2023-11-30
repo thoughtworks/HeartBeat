@@ -82,7 +82,7 @@ class GenerateReporterControllerTest {
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(true);
-		when(generateReporterService.parseReportJson(reportId))
+		when(generateReporterService.getReportFromHandler(reportId))
 			.thenReturn(ReportResponse.builder().exportValidityTime(180000L).build());
 		// then
 		MockHttpServletResponse response = mockMvc

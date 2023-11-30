@@ -900,7 +900,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldReturnTrueWhenReportFileIsReady() {
+	void shouldReturnTrueWhenReportIsReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		AsyncReportRequestHandler.put(fileTimeStamp, MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
@@ -911,7 +911,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldReturnFalseWhenReportFileIsNotReady() {
+	void shouldReturnFalseWhenReportIsNotReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		AsyncReportRequestHandler.put("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
@@ -938,7 +938,7 @@ class GenerateReporterServiceTest {
 		String reportId = Long.toString(System.currentTimeMillis());
 		AsyncReportRequestHandler.put(reportId, MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
-		ReportResponse reportResponse = generateReporterService.parseReportJson(reportId);
+		ReportResponse reportResponse = generateReporterService.getReportFromHandler(reportId);
 		// then
 		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getClassificationList(),
 				reportResponse.getClassificationList());

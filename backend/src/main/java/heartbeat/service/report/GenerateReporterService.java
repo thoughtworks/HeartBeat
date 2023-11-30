@@ -244,7 +244,7 @@ public class GenerateReporterService {
 		});
 		generateCSVForMetric(reportResponse, request.getCsvTimeStamp());
 
-		generateReporterJson(reportResponse, request.getCsvTimeStamp());
+		saveReporterInHandler(reportResponse, request.getCsvTimeStamp());
 		return reportResponse;
 	}
 
@@ -565,7 +565,7 @@ public class GenerateReporterService {
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
 	}
 
-	private void generateReporterJson(ReportResponse reportResponse, String csvTimeStamp) {
+	private void saveReporterInHandler(ReportResponse reportResponse, String csvTimeStamp) {
 		AsyncReportRequestHandler.put(csvTimeStamp, reportResponse);
 	}
 
@@ -707,7 +707,7 @@ public class GenerateReporterService {
 		}
 	}
 
-	public ReportResponse parseReportJson(String reportId) {
+	public ReportResponse getReportFromHandler(String reportId) {
 		return AsyncReportRequestHandler.get(reportId);
 	}
 

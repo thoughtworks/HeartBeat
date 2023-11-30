@@ -2,7 +2,7 @@ package heartbeat.service.report;
 
 public enum CSVFileNameEnum {
 
-	METRIC("./csv/metric"), BOARD("./csv/board"), PIPELINE("./csv/pipeline"), REPORT("./csv/report");
+	METRIC("./csv/metric"), BOARD("./csv/board"), PIPELINE("./csv/pipeline");
 
 	private final String value;
 

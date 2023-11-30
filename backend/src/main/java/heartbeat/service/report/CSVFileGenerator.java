@@ -68,8 +68,6 @@ public class CSVFileGenerator {
 
 	private static final String CSV_EXTENSION = ".csv";
 
-	private static final String TMP_EXTENSION = ".tmp";
-
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
 			InputStream inputStream = new FileInputStream(fileName);

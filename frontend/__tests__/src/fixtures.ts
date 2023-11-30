@@ -441,6 +441,12 @@ export const MOCK_REPORT_RESPONSE = {
   ],
   exportValidityTime: 1800000,
 }
+
+export const MOCK_RETRIEVE_REPORT_RESPONSE = {
+  callbackUrl: 'reports/123',
+  interval: 10,
+}
+
 export const EXPECTED_REPORT_VALUES = {
   velocityList: [
     { id: 0, name: 'Velocity(Story Point)', valueList: [{ value: 20 }] },

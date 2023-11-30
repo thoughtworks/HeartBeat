@@ -6,7 +6,6 @@ import { classificationMapper } from '@src/hooks/reportMapper/classification'
 import { deploymentFrequencyMapper } from '@src/hooks/reportMapper/deploymentFrequency'
 import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges'
 import { meanTimeToRecoveryMapper } from '@src/hooks/reportMapper/meanTimeToRecovery'
-import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
 
 export const reportMapper = ({

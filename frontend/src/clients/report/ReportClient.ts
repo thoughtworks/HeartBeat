@@ -3,13 +3,12 @@ import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { ReportCallbackResponse } from '@src/clients/report/dto/response'
 
 export class ReportClient extends HttpClient {
+  status = 0
   reportCallbackResponse: ReportCallbackResponse = {
-    status: 0,
-    callbackURL: '',
+    callbackUrl: '',
     interval: 0,
   }
   reportResponse = {
-    status: 0,
     velocity: {
       velocityForSP: 0,
       velocityForCards: 0,
@@ -78,12 +77,14 @@ export class ReportClient extends HttpClient {
     await this.axiosInstance
       .get(url)
       .then((res) => {
+        this.status = res.status
         this.reportResponse = res.data
       })
       .catch((e) => {
         throw e
       })
     return {
+      status: this.status,
       response: this.reportResponse,
     }
   }

@@ -2,7 +2,6 @@ import { useRef, useState } from 'react'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
-import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { HttpStatusCode } from 'axios'
@@ -29,7 +28,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
     setIsLoading(true)
     reportClient
       .retrieveReport(params)
-      .then((res) => pollingReport(res.response.callbackURL, res.response.interval))
+      .then((res) => pollingReport(res.response.callbackUrl, res.response.interval))
       .catch((e) => {
         const err = e as Error
         if (err instanceof InternalServerException || err instanceof UnknownException) {
@@ -48,7 +47,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
     reportClient
       .pollingReport(url)
       .then((res) => {
-        if (res.response.status === HttpStatusCode.Created) {
+        if (res.status === HttpStatusCode.Created) {
           stopPollingReports()
           setReports(reportMapper(res.response))
         } else {

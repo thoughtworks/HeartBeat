@@ -122,8 +122,7 @@ export interface ClassificationNameValuePair {
 }
 
 export interface ReportCallbackResponse {
-  status: number
-  callbackURL: string
+  callbackUrl: string
   interval: number
 }
 

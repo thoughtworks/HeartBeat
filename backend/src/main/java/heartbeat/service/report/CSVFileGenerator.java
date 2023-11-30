@@ -558,7 +558,7 @@ public class CSVFileGenerator {
 		}
 	}
 
-	boolean checkReportFileIsExists(long reportTimeStamp) {
+	boolean checkReportFileIsExists(String reportTimeStamp) {
 		return Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportTimeStamp));
 	}
 

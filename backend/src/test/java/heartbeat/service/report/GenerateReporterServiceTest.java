@@ -888,7 +888,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnTrueWhenReportFileIsReady() {
 		// given
-		long fileTimeStamp = System.currentTimeMillis();
+		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		// when
 		when(csvFileGenerator.checkReportFileIsExists(fileTimeStamp)).thenReturn(true);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
@@ -899,7 +899,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnFalseWhenReportFileIsNotReady() {
 		// given
-		long fileTimeStamp = System.currentTimeMillis();
+		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		// when
 		when(csvFileGenerator.checkReportFileIsExists(fileTimeStamp)).thenReturn(false);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
@@ -911,7 +911,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowExceptionWhenTimeOutOf30m() {
 		// given
-		long fileExpiredTimeStamp = System.currentTimeMillis() - 1900000L;
+		String fileExpiredTimeStamp = Long.toString(System.currentTimeMillis() - 1900000L);
 		// when & then
 		GenerateReportException generateReportException = assertThrows(GenerateReportException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));

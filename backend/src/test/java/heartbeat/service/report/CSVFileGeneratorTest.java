@@ -415,7 +415,7 @@ class CSVFileGeneratorTest {
 	@Test
 	void shouldReturnTrueWhenReportFileIsExist() throws IOException {
 		// given
-		long fileTimeStamp = System.currentTimeMillis();
+		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp);
 		Files.createFile(reportFilePath);
 		// when
@@ -429,7 +429,7 @@ class CSVFileGeneratorTest {
 	@Test
 	void shouldReturnFalseWhenReportFileIsNotExist() throws IOException {
 		// given
-		long fileTimeStamp = System.currentTimeMillis();
+		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		Path reportFilePath = Path.of("./csv/report-" + fileTimeStamp + ".tmp");
 		Files.createFile(reportFilePath);
 		// when

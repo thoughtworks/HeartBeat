@@ -54,6 +54,7 @@ import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.util.AsyncExceptionHandler;
+import heartbeat.util.AsyncReportRequestHandler;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -168,6 +169,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
@@ -216,6 +218,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		Classification classification = Classification.builder()
@@ -277,6 +280,7 @@ class GenerateReporterServiceTest {
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		DeploymentFrequency deploymentFrequency = DeploymentFrequency.builder()
@@ -319,6 +323,7 @@ class GenerateReporterServiceTest {
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		ChangeFailureRate changeFailureRate = ChangeFailureRate.builder()
@@ -360,6 +365,7 @@ class GenerateReporterServiceTest {
 			.startTime("1661702400000")
 			.endTime("1662739199000")
 			.codebaseSetting(null)
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -398,6 +404,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any())).thenReturn(cardCollection);
@@ -447,6 +454,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		PipelineLeadTime pipelineLeadTime = PipelineLeadTime.builder()
@@ -895,8 +903,8 @@ class GenerateReporterServiceTest {
 	void shouldReturnTrueWhenReportFileIsReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
+		AsyncReportRequestHandler.put(fileTimeStamp, MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
-		when(csvFileGenerator.checkReportFileIsExists(fileTimeStamp)).thenReturn(true);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertTrue(generateReportIsOver);
@@ -906,8 +914,8 @@ class GenerateReporterServiceTest {
 	void shouldReturnFalseWhenReportFileIsNotReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
+		AsyncReportRequestHandler.put("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
-		when(csvFileGenerator.checkReportFileIsExists(fileTimeStamp)).thenReturn(false);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertFalse(generateReportIsOver);
@@ -927,11 +935,17 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldReturnReportResponse() {
+		String reportId = Long.toString(System.currentTimeMillis());
+		AsyncReportRequestHandler.put(reportId, MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
-		when(csvFileGenerator.convertJsonToReportResponse(any())).thenReturn(ReportResponse.builder().exportValidityTime(1800000L).build());
-		ReportResponse reportResponse = generateReporterService.parseReportJson(Long.toString(System.currentTimeMillis()));
+		ReportResponse reportResponse = generateReporterService.parseReportJson(reportId);
 		// then
-		assertEquals(1800000L, reportResponse.getExportValidityTime());
+		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getClassificationList(),
+				reportResponse.getClassificationList());
+		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getExportValidityTime(),
+				reportResponse.getExportValidityTime());
+		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getCycleTime(),
+				reportResponse.getCycleTime());
 	}
 
 	@Test

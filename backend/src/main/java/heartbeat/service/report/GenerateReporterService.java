@@ -55,6 +55,7 @@ import heartbeat.service.report.calculator.model.FetchedData;
 import heartbeat.service.report.calculator.model.FetchedData.BuildKiteData;
 import heartbeat.service.report.calculator.model.FetchedData.CardCollectionInfo;
 import heartbeat.service.source.github.GitHubService;
+import heartbeat.util.AsyncReportRequestHandler;
 import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
 
@@ -565,7 +566,7 @@ public class GenerateReporterService {
 	}
 
 	private void generateReporterJson(ReportResponse reportResponse, String csvTimeStamp) {
-		csvFileGenerator.convertReportToJson(reportResponse, csvTimeStamp);
+		AsyncReportRequestHandler.put(csvTimeStamp, reportResponse);
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -665,7 +666,7 @@ public class GenerateReporterService {
 				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
 			}
 		}
-		return csvFileGenerator.checkReportFileIsExists(reportTimeStamp);
+		return AsyncReportRequestHandler.isReportIsExists(reportTimeStamp);
 	}
 
 	private void validateExpire(long csvTimeStamp) {
@@ -707,7 +708,7 @@ public class GenerateReporterService {
 	}
 
 	public ReportResponse parseReportJson(String reportId) {
-		return csvFileGenerator.convertJsonToReportResponse(reportId);
+		return AsyncReportRequestHandler.get(reportId);
 	}
 
 }

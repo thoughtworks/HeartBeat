@@ -544,35 +544,4 @@ public class CSVFileGenerator {
 		return rows;
 	}
 
-	public void convertReportToJson(ReportResponse reportResponse, String csvTimeStamp) {
-		createCsvDirToConvertData();
-		String tmpFileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp + TMP_EXTENSION;
-		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + csvTimeStamp;
-		try (FileWriter writer = new FileWriter(tmpFileName)) {
-			writer.write(new Gson().toJson(reportResponse));
-			Files.move(Path.of(tmpFileName), Path.of(fileName), StandardCopyOption.ATOMIC_MOVE,
-					StandardCopyOption.REPLACE_EXISTING);
-		}
-		catch (IOException e) {
-			throw new GenerateReportException("Failed to write report file");
-		}
-	}
-
-	boolean checkReportFileIsExists(String reportTimeStamp) {
-		return Files.exists(Path.of(CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportTimeStamp));
-	}
-
-	public ReportResponse convertJsonToReportResponse(String reportId) {
-		String fileName = CSVFileNameEnum.REPORT.getValue() + FILENAME_SEPARATOR + reportId;
-		ReportResponse reportResponse;
-		try (JsonReader reader = new JsonReader(new FileReader(fileName))) {
-			reportResponse = new Gson().fromJson(reader, ReportResponse.class);
-			Files.deleteIfExists(Path.of(fileName));
-		}
-		catch (IOException e) {
-			throw new GenerateReportException("Failed to convert to report response");
-		}
-		return reportResponse;
-	}
-
 }

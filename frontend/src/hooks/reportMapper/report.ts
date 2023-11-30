@@ -1,4 +1,4 @@
-import { ReportResponseDTO } from '@src/clients/report/dto/response'
+import { ReportResponse, ReportResponseDTO } from '@src/clients/report/dto/response'
 import { changeFailureRateMapper } from '@src/hooks/reportMapper/changeFailureRate'
 import { velocityMapper } from '@src/hooks/reportMapper/velocity'
 import { cycleTimeMapper } from '@src/hooks/reportMapper/cycleTime'
@@ -18,16 +18,7 @@ export const reportMapper = ({
   leadTimeForChanges,
   changeFailureRate,
   exportValidityTime,
-}: ReportResponseDTO): {
-  velocityList?: ReportDataWithTwoColumns[]
-  cycleTimeList?: ReportDataWithTwoColumns[]
-  classification?: ReportDataWithThreeColumns[]
-  deploymentFrequencyList?: ReportDataWithThreeColumns[]
-  meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
-  leadTimeForChangesList?: ReportDataWithThreeColumns[]
-  changeFailureRateList?: ReportDataWithThreeColumns[]
-  exportValidityTimeMin?: number
-} => {
+}: ReportResponseDTO): ReportResponse => {
   const velocityList = velocity && velocityMapper(velocity)
 
   const cycleTimeList = cycleTime && cycleTimeMapper(cycleTime)

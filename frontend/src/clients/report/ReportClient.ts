@@ -1,8 +1,15 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
+import { ReportCallbackResponse } from '@src/clients/report/dto/response'
 
 export class ReportClient extends HttpClient {
+  reportCallbackResponse: ReportCallbackResponse = {
+    status: 0,
+    callbackURL: '',
+    interval: 0,
+  }
   reportResponse = {
+    status: 0,
     velocity: {
       velocityForSP: 0,
       velocityForCards: 0,
@@ -53,9 +60,23 @@ export class ReportClient extends HttpClient {
     },
   }
 
-  report = async (params: ReportRequestDTO) => {
+  retrieveReport = async (params: ReportRequestDTO) => {
     await this.axiosInstance
       .post(`/reports`, params, {})
+      .then((res) => {
+        this.reportCallbackResponse = res.data
+      })
+      .catch((e) => {
+        throw e
+      })
+    return {
+      response: this.reportCallbackResponse,
+    }
+  }
+
+  pollingReport = async (url: string) => {
+    await this.axiosInstance
+      .get(url)
       .then((res) => {
         this.reportResponse = res.data
       })

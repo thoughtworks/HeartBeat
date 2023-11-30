@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
-import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
+import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
 import {
   CHINA_CALENDAR,
   ERROR_PAGE_ROUTE,
@@ -17,10 +17,8 @@ import {
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
-import { selectJiraColumns } from '@src/context/config/configSlice'
 import { ICycleTimeSetting, IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
-import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
@@ -32,11 +30,19 @@ import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { getJiraBoardToken } from '@src/utils/util'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { ReportResponse } from '@src/clients/report/dto/response'
 
 const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const {
+    startPollingReports,
+    stopPollingReports,
+    reports,
+    isLoading,
+    isServerError,
+    errorMessage: reportErrorMsg,
+  } = useGenerateReportEffect()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
@@ -179,22 +185,6 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
     endDate: endDate ?? '',
   })
 
-  const fetchReportData: () => Promise<
-    | {
-        velocityList?: ReportDataWithTwoColumns[]
-        cycleTimeList?: ReportDataWithTwoColumns[]
-        classification?: ReportDataWithThreeColumns[]
-        deploymentFrequencyList?: ReportDataWithThreeColumns[]
-        meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
-        leadTimeForChangesList?: ReportDataWithThreeColumns[]
-        changeFailureRateList?: ReportDataWithThreeColumns[]
-        exportValidityTimeMin?: number
-      }
-    | undefined
-  > = useCallback(async () => {
-    return await generateReport(getReportRequestBody())
-  }, [exportValidityTimeMin])
-
   useLayoutEffect(() => {
     exportValidityTimeMin &&
       updateProps?.({
@@ -228,37 +218,46 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   }, [exportValidityTimeMin])
 
   useEffect(() => {
-    fetchReportData().then((res) => {
-      res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
-      res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
-      res?.classification && setClassificationState({ value: res.classification, isShow: true })
-      res?.deploymentFrequencyList &&
-        setDeploymentFrequencyState({
-          ...deploymentFrequencyState,
-          value: res.deploymentFrequencyList,
-          isShow: true,
-        })
-      res?.meanTimeToRecoveryList &&
-        setMeanTimeToRecoveryState({
-          ...meanTimeToRecoveryState,
-          value: res.meanTimeToRecoveryList,
-          isShow: true,
-        })
-      res?.changeFailureRateList &&
-        setChangeFailureRateState({
-          ...changeFailureRateState,
-          value: res.changeFailureRateList,
-          isShow: true,
-        })
-      res?.leadTimeForChangesList &&
-        setLeadTimeForChangesState({
-          ...leadTimeForChangesState,
-          value: res.leadTimeForChangesList,
-          isShow: true,
-        })
-      res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
-    })
-  }, [fetchReportData])
+    startPollingReports(getReportRequestBody())
+  }, [])
+
+  useEffect(() => {
+    updateReportData(reports)
+    return () => {
+      stopPollingReports()
+    }
+  }, [reports])
+
+  const updateReportData = (res: ReportResponse | undefined) => {
+    res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
+    res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
+    res?.classification && setClassificationState({ value: res.classification, isShow: true })
+    res?.deploymentFrequencyList &&
+      setDeploymentFrequencyState({
+        ...deploymentFrequencyState,
+        value: res.deploymentFrequencyList,
+        isShow: true,
+      })
+    res?.meanTimeToRecoveryList &&
+      setMeanTimeToRecoveryState({
+        ...meanTimeToRecoveryState,
+        value: res.meanTimeToRecoveryList,
+        isShow: true,
+      })
+    res?.changeFailureRateList &&
+      setChangeFailureRateState({
+        ...changeFailureRateState,
+        value: res.changeFailureRateList,
+        isShow: true,
+      })
+    res?.leadTimeForChangesList &&
+      setLeadTimeForChangesState({
+        ...leadTimeForChangesState,
+        value: res.leadTimeForChangesList,
+        isShow: true,
+      })
+    res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
+  }
 
   const handleDownload = (dataType: string, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))

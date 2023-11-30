@@ -24,7 +24,7 @@ describe('use generate report effect', () => {
   })
   it('should set error message when generate report throw error', async () => {
     jest.useFakeTimers()
-    reportClient.report = jest.fn().mockImplementation(() => {
+    reportClient.retrieveReport = jest.fn().mockImplementation(() => {
       throw new Error('error')
     })
     const { result } = renderHook(() => useGenerateReportEffect())
@@ -32,7 +32,7 @@ describe('use generate report effect', () => {
     expect(result.current.isLoading).toEqual(false)
 
     act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
       jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
     })
 
@@ -40,25 +40,25 @@ describe('use generate report effect', () => {
   })
 
   it('should set error message when generate report response status 404', async () => {
-    reportClient.report = jest.fn().mockImplementation(() => {
+    reportClient.retrieveReport = jest.fn().mockImplementation(() => {
       throw new NotFoundException('error message')
     })
     const { result } = renderHook(() => useGenerateReportEffect())
 
     act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
     await waitFor(() => expect(result.current.errorMessage).toEqual('generate report: error message'))
   })
 
   it('should call reportMapper method when generate report response status 200', async () => {
-    reportClient.report = jest.fn().mockReturnValue(MOCK_REPORT_RESPONSE)
+    reportClient.retrieveReport = jest.fn().mockReturnValue(MOCK_REPORT_RESPONSE)
 
     const { result } = renderHook(() => useGenerateReportEffect())
 
     act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
     await waitFor(() => {
@@ -67,27 +67,27 @@ describe('use generate report effect', () => {
   })
 
   it('should set error message when generate report response status 500', async () => {
-    reportClient.report = jest.fn().mockImplementation(() => {
+    reportClient.retrieveReport = jest.fn().mockImplementation(() => {
       throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
     })
     const { result } = renderHook(() => useGenerateReportEffect())
 
     act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
     await waitFor(() => expect(result.current.isServerError).toEqual(true))
   })
 
   it('should set isServerError is true when throw unknownException', async () => {
-    reportClient.report = jest.fn().mockImplementation(() => {
+    reportClient.retrieveReport = jest.fn().mockImplementation(() => {
       throw new UnknownException()
     })
 
     const { result } = renderHook(() => useGenerateReportEffect())
 
     act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
     await waitFor(() => expect(result.current.isServerError).toEqual(true))

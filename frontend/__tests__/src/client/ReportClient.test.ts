@@ -11,7 +11,7 @@ describe('report client', () => {
   afterAll(() => server.close())
 
   it('should get response when generate report request status 200', async () => {
-    const result = await reportClient.report(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    const result = await reportClient.retrieveReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
 
     expect(result.response).not.toBeNull()
   })
@@ -29,7 +29,7 @@ describe('report client', () => {
     )
 
     await expect(async () => {
-      await reportClient.report(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      await reportClient.retrieveReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
   })
 
@@ -46,7 +46,7 @@ describe('report client', () => {
     )
 
     await expect(async () => {
-      await reportClient.report(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      await reportClient.retrieveReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.BAD_REQUEST)
   })
 })

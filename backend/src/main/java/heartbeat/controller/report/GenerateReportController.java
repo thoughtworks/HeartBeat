@@ -35,8 +35,8 @@ public class GenerateReportController {
 
 	@PostMapping()
 	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
-		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}",
-				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime());
+		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(), request.getCsvTimeStamp());
 		CompletableFuture.runAsync(() -> generateReporterService.generateReporter(request));
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
@@ -57,6 +57,7 @@ public class GenerateReportController {
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId));
 		if (generateReportIsOver) {
 			ReportResponse reportResponse = generateReporterService.parseReportJson(reportId);
+			log.info("Successfully generate Report, report id: {}, reports: {}", reportId, reportResponse);
 			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -113,7 +112,7 @@ public class CycleTimeCalculator {
 			.map(Map.Entry::getKey)
 			.toList();
 		List<CycleTimeForSelectedStepItem> cycleTimeForSelectedStepsList = new ArrayList<>();
-		double totalTime = 0;
+		double totalTime = 0.0;
 		for (Map.Entry<String, Double> entry : aggregatedMap.entrySet()) {
 			String key = entry.getKey();
 			double value = BigDecimal.valueOf(entry.getValue()).setScale(2, RoundingMode.HALF_UP).doubleValue();

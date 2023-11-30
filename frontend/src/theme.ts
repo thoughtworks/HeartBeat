@@ -85,7 +85,7 @@ export const theme = createTheme({
       color: '#cd5e32',
     },
     tip: {
-      color: 'rgba(237,109,3,0.8)',
+      color: '#ED6D03CC',
     },
   },
 })

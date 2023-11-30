@@ -112,10 +112,12 @@ class GenerateReporterControllerTest {
 		// when
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
 		// then
-		mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
+		MockHttpServletResponse response = mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent())
 			.andReturn()
 			.getResponse();
+
+		assertEquals(204, response.getStatus());
 	}
 
 	@Test

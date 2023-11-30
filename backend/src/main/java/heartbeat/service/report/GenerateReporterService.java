@@ -222,7 +222,7 @@ public class GenerateReporterService {
 		}
 
 		ReportResponse reportResponse = new ReportResponse(EXPORT_CSV_VALIDITY_TIME);
-		request.getMetrics().forEach((metrics) -> {
+		request.getMetrics().forEach(metrics -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(velocityCalculator
 					.calculateVelocity(fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
@@ -357,9 +357,7 @@ public class GenerateReporterService {
 			}
 		}).map(CycleTimeInfo::getColumn).distinct().toList();
 
-		List<TargetField> activeTargetFields = targetFields.stream()
-			.filter(TargetField::isFlag)
-			.collect(Collectors.toList());
+		List<TargetField> activeTargetFields = targetFields.stream().filter(TargetField::isFlag).toList();
 
 		List<BoardCSVConfig> fields = getFixedBoardFields();
 		List<BoardCSVConfig> extraFields = getExtraFields(activeTargetFields, fields);
@@ -370,7 +368,7 @@ public class GenerateReporterService {
 		columns.forEach(column -> allBoardFields.add(
 				BoardCSVConfig.builder().label("OriginCycleTime: " + column).value("cycleTimeFlat." + column).build()));
 
-		cardDTOList.forEach((card) -> {
+		cardDTOList.forEach(card -> {
 			card.setCycleTimeFlat(buildCycleTimeFlatObject(card));
 			card.setTotalCycleTimeDivideStoryPoints(calculateTotalCycleTimeDivideStoryPoints(card));
 		});
@@ -547,12 +545,12 @@ public class GenerateReporterService {
 			.fetchPipelineBuilds(token, deploymentEnvironment, startTime, endTime)
 			.stream()
 			.filter(info -> Objects.nonNull(info.getAuthor()))
-			.collect(Collectors.toList());
+			.toList();
 
 		if (!CollectionUtils.isEmpty(pipelineCrews)) {
 			buildKiteBuildInfo = buildKiteBuildInfo.stream()
 				.filter(info -> pipelineCrews.contains(info.getAuthor().getName()))
-				.collect(Collectors.toList());
+				.toList();
 		}
 		return buildKiteBuildInfo;
 	}

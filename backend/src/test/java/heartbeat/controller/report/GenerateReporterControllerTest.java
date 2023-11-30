@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
-import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.RequestFailedException;
-import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
@@ -16,7 +14,6 @@ import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.handler.AsyncExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,7 +29,6 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -112,7 +108,8 @@ class GenerateReporterControllerTest {
 		// when
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
 		// then
-		MockHttpServletResponse response = mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
+		MockHttpServletResponse response = mockMvc
+			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent())
 			.andReturn()
 			.getResponse();

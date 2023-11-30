@@ -1,8 +1,6 @@
 package heartbeat.handler;
 
 import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.exception.BaseException;
-import heartbeat.exception.UnauthorizedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

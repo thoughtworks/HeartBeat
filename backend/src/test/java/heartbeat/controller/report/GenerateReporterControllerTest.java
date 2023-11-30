@@ -81,7 +81,7 @@ class GenerateReporterControllerTest {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId))).thenReturn(true);
+		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(true);
 		when(generateReporterService.parseReportJson(reportId))
 			.thenReturn(ReportResponse.builder().exportValidityTime(180000L).build());
 		// then
@@ -103,7 +103,7 @@ class GenerateReporterControllerTest {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId))).thenReturn(false);
+		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
 		// then
 		mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent())
@@ -116,7 +116,7 @@ class GenerateReporterControllerTest {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId)))
+		when(generateReporterService.checkGenerateReportIsDone(reportId))
 			.thenThrow(new GenerateReportException("Report time expires"));
 		// then
 		var response = mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))

@@ -62,7 +62,7 @@ public class GenerateReportController {
 
 	@GetMapping("/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
-		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(Long.parseLong(reportId));
+		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(reportId);
 		if (generateReportIsOver) {
 			ReportResponse reportResponse = generateReporterService.parseReportJson(reportId);
 			log.info("Successfully generate Report, report id: {}, reports: {}", reportId, reportResponse);

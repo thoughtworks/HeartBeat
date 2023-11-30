@@ -644,8 +644,8 @@ public class GenerateReporterService {
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
-	public boolean checkGenerateReportIsDone(long reportTimeStamp) {
-		if (validateExpire(System.currentTimeMillis(), reportTimeStamp)) {
+	public boolean checkGenerateReportIsDone(String reportTimeStamp) {
+		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Report time expires");
 		}
 		return csvFileGenerator.checkReportFileIsExists(reportTimeStamp);

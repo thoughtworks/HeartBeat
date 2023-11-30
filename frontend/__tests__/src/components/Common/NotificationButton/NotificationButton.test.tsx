@@ -34,7 +34,7 @@ describe('NotificationButton', () => {
     })
     const { getByTestId, queryByText } = render(<NotificationButton {...result.current} />)
 
-    userEvent.click(getByTestId(notificationIcon))
+    await userEvent.click(getByTestId(notificationIcon))
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })

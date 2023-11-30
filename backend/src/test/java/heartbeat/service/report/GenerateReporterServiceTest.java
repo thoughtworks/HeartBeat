@@ -31,8 +31,13 @@ import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
+import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -48,6 +53,7 @@ import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
+import heartbeat.util.AsyncExceptionHandler;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -926,6 +932,91 @@ class GenerateReporterServiceTest {
 		ReportResponse reportResponse = generateReporterService.parseReportJson(Long.toString(System.currentTimeMillis()));
 		// then
 		assertEquals(1800000L, reportResponse.getExportValidityTime());
+	}
+
+	@Test
+	void shouldThrowUnauthorizedExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		AsyncExceptionHandler.put(reportId,
+				new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
+		// when
+		BaseException exception = assertThrows(UnauthorizedException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(401, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowPermissionDenyExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		AsyncExceptionHandler.put(reportId,
+				new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
+		// when
+		BaseException exception = assertThrows(PermissionDenyException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(403, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowNotFoundExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		AsyncExceptionHandler.put(reportId,
+				new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
+		// when
+		BaseException exception = assertThrows(NotFoundException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(404, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowGenerateReportExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		AsyncExceptionHandler.put(reportId,
+				new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
+		// when
+		BaseException exception = assertThrows(GenerateReportException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(500, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 500, reason: GenerateReport", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowServiceUnavailableExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		AsyncExceptionHandler.put(reportId,
+				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
+		// when
+		BaseException exception = assertThrows(ServiceUnavailableException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(503, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 503, reason: ServiceUnavailable", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowRequestFailedExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		AsyncExceptionHandler.put(reportId, new RequestFailedException(405, "RequestFailedException"));
+		// when
+		BaseException exception = assertThrows(RequestFailedException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(405, exception.getStatus());
+		assertEquals(
+				"Request failed with status statusCode 405, error: Request failed with status statusCode 405, error: RequestFailedException",
+				exception.getMessage());
 	}
 
 }

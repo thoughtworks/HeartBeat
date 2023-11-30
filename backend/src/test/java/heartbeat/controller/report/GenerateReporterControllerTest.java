@@ -161,7 +161,8 @@ class GenerateReporterControllerTest {
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
-		when(generateReporterService.generateReporter(request)).thenThrow(new RequestFailedException(402, "Client Error"));
+		when(generateReporterService.generateReporter(request))
+			.thenThrow(new RequestFailedException(402, "Client Error"));
 
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)

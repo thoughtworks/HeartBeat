@@ -37,12 +37,15 @@ public class GenerateReportController {
 
 	@PostMapping()
 	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
-		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
-			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(), request.getCsvTimeStamp());
+		log.info(
+				"Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
+				request.getCsvTimeStamp());
 		CompletableFuture.runAsync(() -> {
 			try {
 				generateReporterService.generateReporter(request);
-			} catch (BaseException e) {
+			}
+			catch (BaseException e) {
 				AsyncExceptionHandler.put(request.getCsvTimeStamp(), e);
 			}
 		});

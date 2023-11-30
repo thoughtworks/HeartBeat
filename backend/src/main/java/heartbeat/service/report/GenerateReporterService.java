@@ -34,8 +34,14 @@ import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
+import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.UnauthorizedException;
+import heartbeat.util.AsyncExceptionHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -647,6 +653,17 @@ public class GenerateReporterService {
 	public boolean checkGenerateReportIsDone(String reportTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Report time expires");
+		}
+		BaseException exception = AsyncExceptionHandler.get(reportTimeStamp);
+		if (Objects.nonNull(exception)) {
+			switch (exception.getStatus()) {
+				case 401 -> throw new UnauthorizedException(exception.getMessage());
+				case 403 -> throw new PermissionDenyException(exception.getMessage());
+				case 404 -> throw new NotFoundException(exception.getMessage());
+				case 500 -> throw new GenerateReportException(exception.getMessage());
+				case 503 -> throw new ServiceUnavailableException(exception.getMessage());
+				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
+			}
 		}
 		return csvFileGenerator.checkReportFileIsExists(reportTimeStamp);
 	}

@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
+import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
+import heartbeat.exception.RequestFailedException;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.util.AsyncExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +151,33 @@ class GenerateReporterControllerTest {
 
 		assertThat(response.getContentAsString()).isEqualTo(expectedResponse);
 
+	}
+
+	@Test
+	void shouldGetExceptionAndPutInExceptionMap() throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest request = mapper
+			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		when(generateReporterService.generateReporter(request)).thenThrow(new RequestFailedException(402, "Client Error"));
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
+
+		BaseException baseException = AsyncExceptionHandler.get(currentTimeStamp);
+		assertEquals(402, baseException.getStatus());
+		assertEquals("Request failed with status statusCode 402, error: Client Error", baseException.getMessage());
 	}
 
 }

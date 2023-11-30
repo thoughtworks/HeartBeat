@@ -4,6 +4,8 @@ import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.BaseException;
+import heartbeat.util.AsyncExceptionHandler;
 import heartbeat.service.report.GenerateReporterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,8 +38,14 @@ public class GenerateReportController {
 	@PostMapping()
 	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
 		log.info("Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
-				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(), request.getCsvTimeStamp());
-		CompletableFuture.runAsync(() -> generateReporterService.generateReporter(request));
+			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(), request.getCsvTimeStamp());
+		CompletableFuture.runAsync(() -> {
+			try {
+				generateReporterService.generateReporter(request);
+			} catch (BaseException e) {
+				AsyncExceptionHandler.put(request.getCsvTimeStamp(), e);
+			}
+		});
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
 			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());

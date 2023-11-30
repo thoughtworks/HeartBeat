@@ -1,8 +1,8 @@
 package heartbeat.service.report.scheduler;
 
+import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.report.GenerateReporterService;
-import heartbeat.util.AsyncExceptionHandler;
-import heartbeat.util.AsyncReportRequestHandler;
+import heartbeat.handler.AsyncExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,13 +20,17 @@ public class DeleteExpireCSVScheduler {
 
 	private final GenerateReporterService generateReporterService;
 
+	private final AsyncReportRequestHandler asyncReportRequestHandler;
+
+	private final AsyncExceptionHandler asyncExceptionHandler;
+
 	@Scheduled(fixedRate = DELETE_INTERVAL_IN_MINUTES, timeUnit = TimeUnit.MINUTES)
 	public void triggerBatchDelete() {
 		long currentTimeStamp = System.currentTimeMillis();
 		log.info("Start to delete expired CSV files, currentTimeStamp: {}", currentTimeStamp);
 		generateReporterService.deleteExpireCSV(currentTimeStamp, new File("./csv/"));
-		AsyncReportRequestHandler.deleteExpireReport(currentTimeStamp);
-		AsyncExceptionHandler.deleteExpireException(currentTimeStamp);
+		asyncReportRequestHandler.deleteExpireReport(currentTimeStamp);
+		asyncExceptionHandler.deleteExpireException(currentTimeStamp);
 	}
 
 }

@@ -1,5 +1,7 @@
 package heartbeat.service.report;
 
+import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.report.scheduler.DeleteExpireCSVScheduler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class DeleteExpireCSVSchedulerTest {
+class DeleteExpireCSVSchedulerTest {
 
 	@InjectMocks
 	private DeleteExpireCSVScheduler deleteExpireCSVScheduler;
@@ -26,14 +28,18 @@ public class DeleteExpireCSVSchedulerTest {
 	@Mock
 	private GenerateReporterService generateReporterService;
 
+	@Mock
+	private AsyncReportRequestHandler asyncReportRequestHandler;
+
+	@Mock
+	private AsyncExceptionHandler asyncExceptionHandler;
+
 	@Test
-	public void shouldTriggerBatchDeleteCSV() {
+	void shouldTriggerBatchDeleteCSV() {
 
 		when(generateReporterService.deleteExpireCSV(any(),any())).thenReturn(true);
 
-		assertDoesNotThrow(() -> {
-			deleteExpireCSVScheduler.triggerBatchDelete();
-		});
+		assertDoesNotThrow(() -> deleteExpireCSVScheduler.triggerBatchDelete());
 		verify(generateReporterService, times(1)).deleteExpireCSV(any(), any());
 
 	}

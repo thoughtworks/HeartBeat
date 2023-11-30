@@ -38,6 +38,7 @@ import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.UnauthorizedException;
+import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -53,8 +54,7 @@ import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
-import heartbeat.util.AsyncExceptionHandler;
-import heartbeat.util.AsyncReportRequestHandler;
+import heartbeat.handler.AsyncExceptionHandler;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -149,6 +149,12 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	private JiraUriGenerator urlGenerator;
+
+	@Mock
+	private AsyncReportRequestHandler asyncReportRequestHandler;
+
+	@Mock
+	private AsyncExceptionHandler asyncExceptionHandler;
 
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
@@ -903,8 +909,8 @@ class GenerateReporterServiceTest {
 	void shouldReturnTrueWhenReportIsReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
-		AsyncReportRequestHandler.put(fileTimeStamp, MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
+		when(asyncReportRequestHandler.isReportIsExists(fileTimeStamp)).thenReturn(true);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertTrue(generateReportIsOver);
@@ -914,7 +920,7 @@ class GenerateReporterServiceTest {
 	void shouldReturnFalseWhenReportIsNotReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
-		AsyncReportRequestHandler.put("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
+		asyncReportRequestHandler.put("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
@@ -936,8 +942,9 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnReportResponse() {
 		String reportId = Long.toString(System.currentTimeMillis());
-		AsyncReportRequestHandler.put(reportId, MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
+		when(asyncReportRequestHandler.get(reportId))
+			.thenReturn(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		ReportResponse reportResponse = generateReporterService.getReportFromHandler(reportId);
 		// then
 		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getClassificationList(),
@@ -952,9 +959,9 @@ class GenerateReporterServiceTest {
 	void shouldThrowUnauthorizedExceptionWhenCheckGenerateReportIsDone() {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		AsyncExceptionHandler.put(reportId,
-				new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
 		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
 		BaseException exception = assertThrows(UnauthorizedException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(reportId));
 		// then
@@ -966,9 +973,11 @@ class GenerateReporterServiceTest {
 	void shouldThrowPermissionDenyExceptionWhenCheckGenerateReportIsDone() {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		AsyncExceptionHandler.put(reportId,
+		asyncExceptionHandler.put(reportId,
 				new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 		BaseException exception = assertThrows(PermissionDenyException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(reportId));
 		// then
@@ -980,9 +989,9 @@ class GenerateReporterServiceTest {
 	void shouldThrowNotFoundExceptionWhenCheckGenerateReportIsDone() {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		AsyncExceptionHandler.put(reportId,
-				new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
 		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
 		BaseException exception = assertThrows(NotFoundException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(reportId));
 		// then
@@ -994,9 +1003,9 @@ class GenerateReporterServiceTest {
 	void shouldThrowGenerateReportExceptionWhenCheckGenerateReportIsDone() {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		AsyncExceptionHandler.put(reportId,
-				new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
 		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
 		BaseException exception = assertThrows(GenerateReportException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(reportId));
 		// then
@@ -1008,9 +1017,9 @@ class GenerateReporterServiceTest {
 	void shouldThrowServiceUnavailableExceptionWhenCheckGenerateReportIsDone() {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		AsyncExceptionHandler.put(reportId,
-				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
 		// when
+		when(asyncExceptionHandler.get(reportId)).thenReturn(
+				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
 		BaseException exception = assertThrows(ServiceUnavailableException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(reportId));
 		// then
@@ -1022,8 +1031,8 @@ class GenerateReporterServiceTest {
 	void shouldThrowRequestFailedExceptionWhenCheckGenerateReportIsDone() {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		AsyncExceptionHandler.put(reportId, new RequestFailedException(405, "RequestFailedException"));
 		// when
+		when(asyncExceptionHandler.get(reportId)).thenReturn(new RequestFailedException(405, "RequestFailedException"));
 		BaseException exception = assertThrows(RequestFailedException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(reportId));
 		// then

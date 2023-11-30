@@ -5,7 +5,7 @@ import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.BaseException;
-import heartbeat.util.AsyncExceptionHandler;
+import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.service.report.GenerateReporterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +32,8 @@ public class GenerateReportController {
 
 	private final GenerateReporterService generateReporterService;
 
+	private final AsyncExceptionHandler asyncExceptionHandler;
+
 	@Value("${callback.interval}")
 	private Integer interval;
 
@@ -46,7 +48,7 @@ public class GenerateReportController {
 				generateReporterService.generateReporter(request);
 			}
 			catch (BaseException e) {
-				AsyncExceptionHandler.put(request.getCsvTimeStamp(), e);
+				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
 			}
 		});
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();

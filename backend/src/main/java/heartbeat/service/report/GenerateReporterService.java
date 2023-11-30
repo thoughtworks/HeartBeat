@@ -41,7 +41,8 @@ import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.UnauthorizedException;
-import heartbeat.util.AsyncExceptionHandler;
+import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -55,7 +56,6 @@ import heartbeat.service.report.calculator.model.FetchedData;
 import heartbeat.service.report.calculator.model.FetchedData.BuildKiteData;
 import heartbeat.service.report.calculator.model.FetchedData.CardCollectionInfo;
 import heartbeat.service.source.github.GitHubService;
-import heartbeat.util.AsyncReportRequestHandler;
 import heartbeat.util.DecimalUtil;
 import heartbeat.util.GithubUtil;
 
@@ -119,6 +119,10 @@ public class GenerateReporterService {
 	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
 
 	private final JiraUriGenerator urlGenerator;
+
+	private final AsyncReportRequestHandler asyncReportRequestHandler;
+
+	private final AsyncExceptionHandler asyncExceptionHandler;
 
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
@@ -566,7 +570,7 @@ public class GenerateReporterService {
 	}
 
 	private void saveReporterInHandler(ReportResponse reportResponse, String csvTimeStamp) {
-		AsyncReportRequestHandler.put(csvTimeStamp, reportResponse);
+		asyncReportRequestHandler.put(csvTimeStamp, reportResponse);
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -655,7 +659,7 @@ public class GenerateReporterService {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Report time expires");
 		}
-		BaseException exception = AsyncExceptionHandler.get(reportTimeStamp);
+		BaseException exception = asyncExceptionHandler.get(reportTimeStamp);
 		if (Objects.nonNull(exception)) {
 			switch (exception.getStatus()) {
 				case 401 -> throw new UnauthorizedException(exception.getMessage());
@@ -666,7 +670,7 @@ public class GenerateReporterService {
 				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
 			}
 		}
-		return AsyncReportRequestHandler.isReportIsExists(reportTimeStamp);
+		return asyncReportRequestHandler.isReportIsExists(reportTimeStamp);
 	}
 
 	private void validateExpire(long csvTimeStamp) {
@@ -708,7 +712,7 @@ public class GenerateReporterService {
 	}
 
 	public ReportResponse getReportFromHandler(String reportId) {
-		return AsyncReportRequestHandler.get(reportId);
+		return asyncReportRequestHandler.get(reportId);
 	}
 
 }

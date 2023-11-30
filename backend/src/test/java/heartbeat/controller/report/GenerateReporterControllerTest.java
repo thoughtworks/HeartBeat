@@ -7,14 +7,16 @@ import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
-import heartbeat.util.AsyncExceptionHandler;
+import heartbeat.handler.AsyncExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +32,8 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,6 +46,9 @@ class GenerateReporterControllerTest {
 
 	@MockBean
 	private GenerateReporterService generateReporterService;
+
+	@MockBean
+	private AsyncExceptionHandler asyncExceptionHandler;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -161,8 +168,8 @@ class GenerateReporterControllerTest {
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
-		when(generateReporterService.generateReporter(request))
-			.thenThrow(new RequestFailedException(402, "Client Error"));
+		RequestFailedException requestFailedException = new RequestFailedException(402, "Client Error");
+		when(generateReporterService.generateReporter(request)).thenThrow(requestFailedException);
 
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
@@ -176,9 +183,7 @@ class GenerateReporterControllerTest {
 		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
 		assertEquals("10", interval);
 
-		BaseException baseException = AsyncExceptionHandler.get(currentTimeStamp);
-		assertEquals(402, baseException.getStatus());
-		assertEquals("Request failed with status statusCode 402, error: Client Error", baseException.getMessage());
+		verify(asyncExceptionHandler).put(currentTimeStamp, requestFailedException);
 	}
 
 }

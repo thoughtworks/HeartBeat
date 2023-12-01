@@ -173,3 +173,73 @@ end
 ```
 
 ### API Design
++ Accepted generate report API
+```
+Method POST
+URI: /api/v1/reports
+Request payload:
+{
+  reoprtRequest...
+}
+Response:
+202 Accepted
+{
+    "callbackUrl": "/api/v1/reports/{reportId}",
+    "interval": 10
+}
+```
++ Callback generate report API
+```
+Method GET
+URI: /api/v1/reports/{reportId}
+Response:
+204:
+{
+    "status": 204,   
+}
+201:
+{
+    "status": 201,
+    reoprtData...   
+}
+401:
+{
+    "status": 401
+    "message": "Failed to get BuildKite info_status: 401..."
+    "message": "Failed to get GitHub info_status: 401..."
+    "message": "Failed to get Jira info_status: 401..."
+    "hintInfo": "Token is incorrect"
+}
+403:
+{
+    "status": 403
+    "message": "Failed to get BuildKite info_status: 403..."
+    "message": "Failed to get GitHub info_status: 403..."
+    "message": "Failed to get Jira info_status: 403..."
+    "hintInfo": "Permission deny"
+}
+404:
+{
+    "status": 404
+    "message": "Failed to get BuildKite info_status: 404..."
+    "message": "Failed to get GitHub info_status: 404..."
+    "message": "Failed to get Jira info_status: 404..."
+    "hintInfo": "404 Not Found"
+}
+500:
+{
+  "status": 500,
+  "message": "Report time expires",
+  "message": "Failed to write report file",
+  "message": "Failed to convert to report response",
+  "hintInfo": "Generate report failed",
+}
+503:
+{
+  "status": 503,
+  "message": "Failed to get BuildKite info_status: 503..."
+  "message": "Failed to get GitHub info_status: 503..."
+  "message": "Failed to get Jira info_status: 503..."
+  "hintInfo": "Service Unavailable",
+}
+```

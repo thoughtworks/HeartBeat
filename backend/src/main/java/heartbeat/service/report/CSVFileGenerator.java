@@ -1,7 +1,9 @@
 package heartbeat.service.report;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonReader;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -27,6 +29,7 @@ import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ChangeFailureRateOfPipeline;
 import heartbeat.exception.FileIOException;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.util.DecimalUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -37,12 +40,16 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
 import io.micrometer.core.instrument.util.TimeUtils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,9 +91,7 @@ public class CSVFileGenerator {
 
 	public void convertPipelineDataToCSV(List<PipelineCSVInfo> leadTimeData, String csvTimeStamp) {
 		log.info("Start to create csv directory");
-		boolean created = createCsvDirectory();
-		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
-		log.info(message);
+		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		File file = new File(fileName);
@@ -146,18 +151,17 @@ public class CSVFileGenerator {
 		};
 	}
 
-	private boolean createCsvDirectory() {
+	private void createCsvDirToConvertData() {
 		String directoryPath = "./csv";
 		File directory = new File(directoryPath);
-		return directory.mkdirs();
+		String message = directory.mkdirs() ? "Successfully create csv directory" : "CSV directory is already exist";
+		log.info(message);
 	}
 
 	public void convertBoardDataToCSV(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
 			List<BoardCSVConfig> extraFields, String csvTimeStamp) {
 		log.info("Start to create board csv directory");
-		boolean created = createCsvDirectory();
-		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
-		log.info(message);
+		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
@@ -346,9 +350,7 @@ public class CSVFileGenerator {
 
 	public void convertMetricDataToCSV(ReportResponse reportResponse, String csvTimeStamp) {
 		log.info("Start to create csv directory");
-		boolean created = createCsvDirectory();
-		String message = created ? "Successfully create csv directory" : "CSV directory is already exist";
-		log.info(message);
+		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		File file = new File(fileName);

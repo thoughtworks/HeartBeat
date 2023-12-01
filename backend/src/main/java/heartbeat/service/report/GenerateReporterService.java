@@ -34,7 +34,15 @@ import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.BaseException;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
+import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.UnauthorizedException;
+import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -61,7 +69,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.RequiredArgsConstructor;
@@ -73,6 +80,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -83,8 +92,6 @@ public class GenerateReporterService {
 			"labels" };
 
 	private static final List<String> REQUIRED_STATES = List.of("passed", "failed");
-
-	private static final Long EXPORT_CSV_VALIDITY_TIME = 1800000L;
 
 	private final JiraService jiraService;
 
@@ -111,6 +118,10 @@ public class GenerateReporterService {
 	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
 
 	private final JiraUriGenerator urlGenerator;
+
+	private final AsyncReportRequestHandler asyncReportRequestHandler;
+
+	private final AsyncExceptionHandler asyncExceptionHandler;
 
 	private final List<String> kanbanMetrics = Stream
 		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
@@ -210,7 +221,7 @@ public class GenerateReporterService {
 		}
 
 		ReportResponse reportResponse = new ReportResponse(EXPORT_CSV_VALIDITY_TIME);
-		request.getMetrics().forEach((metrics) -> {
+		request.getMetrics().forEach(metrics -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(velocityCalculator
 					.calculateVelocity(fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
@@ -236,6 +247,7 @@ public class GenerateReporterService {
 		});
 		generateCSVForMetric(reportResponse, request.getCsvTimeStamp());
 
+		saveReporterInHandler(reportResponse, request.getCsvTimeStamp());
 		return reportResponse;
 	}
 
@@ -344,9 +356,7 @@ public class GenerateReporterService {
 			}
 		}).map(CycleTimeInfo::getColumn).distinct().toList();
 
-		List<TargetField> activeTargetFields = targetFields.stream()
-			.filter(TargetField::isFlag)
-			.collect(Collectors.toList());
+		List<TargetField> activeTargetFields = targetFields.stream().filter(TargetField::isFlag).toList();
 
 		List<BoardCSVConfig> fields = getFixedBoardFields();
 		List<BoardCSVConfig> extraFields = getExtraFields(activeTargetFields, fields);
@@ -357,7 +367,7 @@ public class GenerateReporterService {
 		columns.forEach(column -> allBoardFields.add(
 				BoardCSVConfig.builder().label("OriginCycleTime: " + column).value("cycleTimeFlat." + column).build()));
 
-		cardDTOList.forEach((card) -> {
+		cardDTOList.forEach(card -> {
 			card.setCycleTimeFlat(buildCycleTimeFlatObject(card));
 			card.setTotalCycleTimeDivideStoryPoints(calculateTotalCycleTimeDivideStoryPoints(card));
 		});
@@ -534,12 +544,12 @@ public class GenerateReporterService {
 			.fetchPipelineBuilds(token, deploymentEnvironment, startTime, endTime)
 			.stream()
 			.filter(info -> Objects.nonNull(info.getAuthor()))
-			.collect(Collectors.toList());
+			.toList();
 
 		if (!CollectionUtils.isEmpty(pipelineCrews)) {
 			buildKiteBuildInfo = buildKiteBuildInfo.stream()
 				.filter(info -> pipelineCrews.contains(info.getAuthor().getName()))
-				.collect(Collectors.toList());
+				.toList();
 		}
 		return buildKiteBuildInfo;
 	}
@@ -554,6 +564,10 @@ public class GenerateReporterService {
 
 	private void generateCSVForMetric(ReportResponse reportResponse, String csvTimeStamp) {
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
+	}
+
+	private void saveReporterInHandler(ReportResponse reportResponse, String csvTimeStamp) {
+		asyncReportRequestHandler.put(csvTimeStamp, reportResponse);
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -638,6 +652,24 @@ public class GenerateReporterService {
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
+	public boolean checkGenerateReportIsDone(String reportTimeStamp) {
+		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
+			throw new GenerateReportException("Report time expires");
+		}
+		BaseException exception = asyncExceptionHandler.get(reportTimeStamp);
+		if (Objects.nonNull(exception)) {
+			switch (exception.getStatus()) {
+				case 401 -> throw new UnauthorizedException(exception.getMessage());
+				case 403 -> throw new PermissionDenyException(exception.getMessage());
+				case 404 -> throw new NotFoundException(exception.getMessage());
+				case 500 -> throw new GenerateReportException(exception.getMessage());
+				case 503 -> throw new ServiceUnavailableException(exception.getMessage());
+				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
+			}
+		}
+		return asyncReportRequestHandler.isReportIsExists(reportTimeStamp);
+	}
+
 	private void validateExpire(long csvTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
 			throw new NotFoundException("csv not found");
@@ -674,6 +706,10 @@ public class GenerateReporterService {
 					cause.getMessage());
 			return false;
 		}
+	}
+
+	public ReportResponse getReportFromHandler(String reportId) {
+		return asyncReportRequestHandler.get(reportId);
 	}
 
 }

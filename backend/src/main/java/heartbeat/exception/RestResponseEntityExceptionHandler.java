@@ -17,6 +17,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
+	@ExceptionHandler(value = GenerateReportException.class)
+	protected ResponseEntity<Object> handleGenerateReportException(GenerateReportException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Generate report failed"));
+	}
+
 	@ExceptionHandler(value = NotFoundException.class)
 	protected ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
 		return ResponseEntity.status(ex.getStatus())

@@ -11,14 +11,8 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
-import { CYCLE_TIME_TOOLTIP, DONE } from '@src/constants'
-import {
-  CycleTimeContainer,
-  TitleAndTooltipContainer,
-  TooltipContainer,
-} from '@src/components/Metrics/MetricsStep/CycleTime/style'
-import { IconButton, Tooltip } from '@mui/material'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { DONE } from '@src/constants'
+import { CycleTimeContainer } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 
 interface cycleTimeProps {
   title: string
@@ -63,16 +57,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
 
   return (
     <>
-      <TitleAndTooltipContainer>
-        <MetricsSettingTitle title={title} />
-        <TooltipContainer>
-          <Tooltip title={CYCLE_TIME_TOOLTIP}>
-            <IconButton aria-label='info'>
-              <InfoOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-        </TooltipContainer>
-      </TitleAndTooltipContainer>
+      <MetricsSettingTitle title={title} />
       <CycleTimeContainer>
         {warningMessage && <WarningNotification message={warningMessage} />}
         <FormSelectPart selectedOptions={cycleTimeOptions} saveCycleTimeOptions={saveCycleTimeOptions} />

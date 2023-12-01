@@ -84,7 +84,6 @@ jest.mock('@src/utils/util', () => ({
   getJiraBoardToken: jest.fn(),
   transformToCleanedBuildKiteEmoji: jest.fn(),
   findCaseInsensitiveType: jest.fn(),
-  filterAndMapCycleTimeSettings: jest.fn(),
 }))
 
 const server = setupServer(rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))

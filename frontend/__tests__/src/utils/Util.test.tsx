@@ -1,13 +1,11 @@
 import {
   exportToJsonFile,
-  filterAndMapCycleTimeSettings,
   findCaseInsensitiveType,
   getJiraBoardToken,
   transformToCleanedBuildKiteEmoji,
 } from '@src/utils/util'
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
 import { EMPTY_STRING, PIPELINE_TOOL_TYPES } from '@src/constants'
-import { filterCycleTimeSettings, MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING } from '../fixtures'
 
 describe('exportToJsonFile function', () => {
   it('should create a link element with the correct attributes and click it', () => {
@@ -92,34 +90,5 @@ describe('findCaseInsensitiveType function', () => {
     const selectedValue = ''
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue)
     expect(value).toBe(EMPTY_STRING)
-  })
-})
-
-describe('filterAndMapCycleTimeSettings function', () => {
-  it('should filter and map CycleTimeSettings when generate report', () => {
-    const value = filterAndMapCycleTimeSettings(MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING)
-    expect(value).toStrictEqual(filterCycleTimeSettings)
-  })
-
-  it('should filter and map CycleTimeSettings when generate report', () => {
-    const filterCycleTimeSettings = [
-      { name: 'IN DEV', value: 'IN DEV' },
-      { name: 'DOING', value: 'IN DEV' },
-      { name: 'DONE', value: 'DONE' },
-    ]
-
-    const MOCK_CYCLE_TIME_SETTING = [
-      { name: 'TODO', value: 'TODO' },
-      { name: 'IN DEV', value: 'IN DEV' },
-      { name: 'DONE', value: 'DONE' },
-    ]
-
-    const MOCK_JIRA_WITH_STATUES_SETTING = [
-      { name: 'todo', statuses: ['TODO', 'BACKLOG'] },
-      { name: 'IN DEV', statuses: ['IN DEV', 'DOING'] },
-      { name: 'DONE', statuses: ['DONE'] },
-    ]
-    const value = filterAndMapCycleTimeSettings(MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING)
-    expect(value).toStrictEqual(filterCycleTimeSettings)
   })
 })

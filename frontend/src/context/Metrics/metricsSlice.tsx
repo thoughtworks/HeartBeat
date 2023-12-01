@@ -34,10 +34,6 @@ export interface ICycleTimeSetting {
   name: string
   value: string
 }
-export interface IJiraColumnsWithValue {
-  name: string
-  statuses: string[]
-}
 
 export interface savedMetricsSettingState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]

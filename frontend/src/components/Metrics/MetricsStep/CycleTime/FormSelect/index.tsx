@@ -1,32 +1,21 @@
-import { Autocomplete, TextField, Tooltip } from '@mui/material'
+import { Autocomplete, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlSelection } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelect/style'
 import { CYCLE_TIME_LIST, Z_INDEX } from '@src/constants'
 
 interface formSelectProps {
   label: string
-  name: string
   defaultSelected: string
   saveCycleTimeOptions: (name: string, value: string) => void
 }
 
-export const FormSelect = ({ label, name, defaultSelected, saveCycleTimeOptions }: formSelectProps) => {
+export const FormSelect = ({ label, defaultSelected, saveCycleTimeOptions }: formSelectProps) => {
   const [selectedCycleTime, setSelectedCycleTime] = useState(defaultSelected)
   const [inputValue, setInputValue] = useState<string>('')
 
   const handleSelectedCycleTimeChange = (value: string) => {
-    saveCycleTimeOptions(name, value)
+    saveCycleTimeOptions(label, value)
     setSelectedCycleTime(value)
-  }
-  const renderInputLabel = () => {
-    if (label.length > 25) {
-      return (
-        <Tooltip title={label} placement={'right'}>
-          <span>{label}</span>
-        </Tooltip>
-      )
-    }
-    return label
   }
 
   return (
@@ -44,7 +33,7 @@ export const FormSelect = ({ label, name, defaultSelected, saveCycleTimeOptions 
         onInputChange={(event, newInputValue) => {
           setInputValue(newInputValue)
         }}
-        renderInput={(params) => <TextField required {...params} label={renderInputLabel()} variant='standard' />}
+        renderInput={(params) => <TextField required {...params} label={label} variant='standard' />}
         slotProps={{
           popper: {
             sx: {

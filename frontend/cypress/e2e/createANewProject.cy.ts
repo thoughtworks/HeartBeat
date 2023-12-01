@@ -229,96 +229,96 @@ const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) 
 }
 
 describe('Create a new project', () => {
-  // it('Should create a new project manually', () => {
-  //   homePage.navigate()
-  //
-  //   homePage.createANewProject()
-  //   cy.url().should('include', '/metrics')
-  //
-  //   configPage.typeProjectName('E2E Project')
-  //
-  //   configPage.goHomePage()
-  //
-  //   homePage.createANewProject()
-  //   cy.contains('Project name *').should('have.value', '')
-  //
-  //   configPage.typeProjectName('E2E Project')
-  //
-  //   configPage.selectDateRange()
-  //
-  //   const nextButton = () => cy.get('button:contains("Next")')
-  //   nextButton().should('be.disabled')
-  //
-  //   configPage.selectMetricsData()
-  //
-  //   configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-  //
-  //   cy.wait(6000)
-  //   cy.contains('Verified').should('exist')
-  //   cy.contains('Reset').should('exist')
-  //
-  //   configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
-  //
-  //   configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
-  //
-  //   nextButton().should('be.enabled')
-  //
-  //   configPage.CancelBackToHomePage()
-  //
-  //   configPage.goMetricsStep()
-  //
-  //   nextButton().should('be.disabled')
-  //
-  //   cy.contains('Crew settings').should('exist')
-  //
-  //   cy.contains('Cycle time settings').should('exist')
-  //
-  //   metricsPage.checkCycleTime()
-  //
-  //   cy.contains('Real done').should('exist')
-  //
-  //   metricsPage.checkRealDone()
-  //
-  //   metricsPage.checkClassification()
-  //
-  //   metricsPage.checkDeploymentFrequencySettings()
-  //
-  //   nextButton().should('be.enabled')
-  //
-  //   metricsPage.goReportStep()
-  //
-  //   cy.wait(20000)
-  //
-  //   checkVelocity('[data-test-id="Velocity"]', velocityData)
-  //
-  //   checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
-  //
-  //   checkDeploymentFrequency('[data-test-id="Deployment frequency"]')
-  //
-  //   checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
-  //
-  //   clearDownloadFile()
-  //
-  //   reportPage.firstNotification().should('exist')
-  //
-  //   reportPage.exportMetricDataButton().should('be.enabled')
-  //
-  //   reportPage.exportMetricData()
-  //
-  //   checkMetricCSV()
-  //
-  //   reportPage.exportPipelineDataButton().should('be.enabled')
-  //
-  //   reportPage.exportPipelineData()
-  //
-  //   checkPipelineCSV()
-  //
-  //   reportPage.exportBoardDataButton().should('be.enabled')
-  //
-  //   reportPage.exportBoardData()
-  //
-  //   checkBoardCSV()
-  // })
+  it('Should create a new project manually', () => {
+    homePage.navigate()
+
+    homePage.createANewProject()
+    cy.url().should('include', '/metrics')
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.goHomePage()
+
+    homePage.createANewProject()
+    cy.contains('Project name *').should('have.value', '')
+
+    configPage.typeProjectName('E2E Project')
+
+    configPage.selectDateRange()
+
+    const nextButton = () => cy.get('button:contains("Next")')
+    nextButton().should('be.disabled')
+
+    configPage.selectMetricsData()
+
+    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
+
+    cy.wait(6000)
+    cy.contains('Verified').should('exist')
+    cy.contains('Reset').should('exist')
+
+    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
+
+    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
+
+    nextButton().should('be.enabled')
+
+    configPage.CancelBackToHomePage()
+
+    configPage.goMetricsStep()
+
+    nextButton().should('be.disabled')
+
+    cy.contains('Crew settings').should('exist')
+
+    cy.contains('Cycle time settings').should('exist')
+
+    metricsPage.checkCycleTime()
+
+    cy.contains('Real done').should('exist')
+
+    metricsPage.checkRealDone()
+
+    metricsPage.checkClassification()
+
+    metricsPage.checkDeploymentFrequencySettings()
+
+    nextButton().should('be.enabled')
+
+    metricsPage.goReportStep()
+
+    cy.wait(20000)
+
+    checkVelocity('[data-test-id="Velocity"]', velocityData)
+
+    checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
+
+    checkDeploymentFrequency('[data-test-id="Deployment frequency"]')
+
+    checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+
+    clearDownloadFile()
+
+    reportPage.firstNotification().should('exist')
+
+    reportPage.exportMetricDataButton().should('be.enabled')
+
+    reportPage.exportMetricData()
+
+    checkMetricCSV()
+
+    reportPage.exportPipelineDataButton().should('be.enabled')
+
+    reportPage.exportPipelineData()
+
+    checkPipelineCSV()
+
+    reportPage.exportBoardDataButton().should('be.enabled')
+
+    reportPage.exportBoardData()
+
+    checkBoardCSV()
+  })
 
   function goToMetricsPageFromHome() {
     homePage.navigate()
@@ -358,7 +358,6 @@ describe('Create a new project', () => {
     metricsPage.checkDeploymentFrequencySettings()
 
     checkFieldsExist(metricsTextList)
-
     checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
     metricsPage.goReportStep()
@@ -383,21 +382,21 @@ describe('Create a new project', () => {
     checkTokenInputValuesExist(tokenInputValues)
   })
 
-  // it('Should have notification button in report page', () => {
-  //   goToMetricsPageFromHome()
-  //
-  //   metricsPage.checkCycleTime()
-  //
-  //   metricsPage.checkRealDone()
-  //
-  //   metricsPage.checkClassification()
-  //
-  //   metricsPage.checkDeploymentFrequencySettings()
-  //
-  //   metricsPage.goReportStep()
-  //
-  //   cy.wait(20000)
-  //
-  //   reportPage.checkNotification()
-  // })
+  it('Should have notification button in report page', () => {
+    goToMetricsPageFromHome()
+
+    metricsPage.checkCycleTime()
+
+    metricsPage.checkRealDone()
+
+    metricsPage.checkClassification()
+
+    metricsPage.checkDeploymentFrequencySettings()
+
+    metricsPage.goReportStep()
+
+    cy.wait(20000)
+
+    reportPage.checkNotification()
+  })
 })

@@ -226,6 +226,6 @@ export const HEADER_NOTIFICATION_MESSAGE = {
 }
 
 export const REPORT_LOADING_MESSAGE =
-  'Report is being generated, please do not refresh the page otherwise all the data will be disappear.'
+  'The report is being generated, please do not refresh the page or all the data will be disappeared.'
 
 export const CYCLE_TIME_TOOLTIP = 'The report page will sum all the status in the column for cycletime calculation'

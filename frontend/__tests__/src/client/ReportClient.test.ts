@@ -29,6 +29,7 @@ describe('report client', () => {
         res(ctx.status(HttpStatusCode.Accepted), ctx.json(MOCK_RETRIEVE_REPORT_RESPONSE))
       )
     )
+
     await expect(reportClient.retrieveReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)).resolves.toStrictEqual(excepted)
   })
 
@@ -93,6 +94,7 @@ describe('report client', () => {
         res(ctx.status(HttpStatusCode.Created), ctx.json(MOCK_REPORT_RESPONSE))
       )
     )
+
     await expect(reportClient.pollingReport(MOCK_REPORT_URL)).resolves.toEqual(excepted)
   })
 })

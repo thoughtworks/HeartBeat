@@ -17,5 +17,5 @@ export const LoadingDrop = styled(Backdrop)({
 export const LoadingTypography = styled(Typography)({
   fontSize: '1rem',
   marginTop: '2rem',
-  color: 'black',
+  color: theme.main.secondColor,
 })

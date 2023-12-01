@@ -18,6 +18,8 @@ public class DeleteExpireCSVScheduler {
 
 	public static final int DELETE_INTERVAL_IN_MINUTES = 5;
 
+	public static final Long EXPORT_CSV_VALIDITY_TIME = 1800000L;
+
 	private final GenerateReporterService generateReporterService;
 
 	private final AsyncReportRequestHandler asyncReportRequestHandler;

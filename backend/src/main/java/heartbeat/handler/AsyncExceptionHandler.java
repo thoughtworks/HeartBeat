@@ -9,13 +9,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+
 @Component
 @RequiredArgsConstructor
 public class AsyncExceptionHandler {
 
 	private final Map<String, BaseException> exceptionMap = new ConcurrentHashMap<>();
-
-	private static final Long EXPORT_CSV_VALIDITY_TIME = 1800000L;
 
 	public void put(String reportId, BaseException e) {
 		exceptionMap.put(reportId, e);

@@ -69,7 +69,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.RequiredArgsConstructor;
@@ -81,6 +80,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -91,8 +92,6 @@ public class GenerateReporterService {
 			"labels" };
 
 	private static final List<String> REQUIRED_STATES = List.of("passed", "failed");
-
-	private static final Long EXPORT_CSV_VALIDITY_TIME = 1800000L;
 
 	private final JiraService jiraService;
 

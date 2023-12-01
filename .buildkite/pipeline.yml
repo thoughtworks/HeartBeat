@@ -11,12 +11,12 @@ steps:
     command: ./ops/check.sh security
 
   - label: ":white_check_mark: Check Backend"
-    if: build.branch == "main" && build.message =~ /\[backend\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
     key: "check-backend"
     command: ./ops/check.sh backend
 
   - label: ":white_check_mark: Check Frontend"
-    if: build.branch == "main" && build.message =~ /\[frontend\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[frontend\]/
     key: "check-frontend"
     command: ./ops/check.sh frontend
 
@@ -35,7 +35,7 @@ steps:
           expire_in: "${RETENTION_DAYS} days"
 
   - label: ":cloudformation: Deploy infra"
-    if: build.branch == "main" && build.message =~ /\[infra\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[infra\]/
     key: "deploy-infra"
     depends_on:
       - "check-shell"
@@ -51,31 +51,31 @@ steps:
     command: ./ops/deploy.sh infra
 
   - label: ":react: Build Frontend"
-    if: build.branch == "main" && build.message =~ /\[frontend\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[frontend\]/
     key: "build-frontend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh frontend
 
   - label: ":java: Build Backend"
-    if: build.branch == "main" && build.message =~ /\[backend\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
     key: "build-backend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh backend
 
   - label: ":rocket: Build Stub"
-    if: build.branch == "main" && build.message =~ /\[stub\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[stub\]/
     key: "build-stub"
     depends_on: "deploy-infra"
     command: ./ops/build.sh stub
 
   - label: ":rocket: Deploy Stub"
-    if: build.branch == "main" && build.message =~ /\[stub\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[stub\]/
     key: "deploy-stub"
     depends_on: "build-stub"
     command: ./ops/deploy.sh stub
 
   - label: ":rocket: Deploy e2e"
-    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
+    if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
     key: "deploy-e2e"
     depends_on:
       - "build-frontend"
@@ -103,6 +103,6 @@ steps:
           expire_in: "${RETENTION_DAYS} days"
 
   - label: ":rocket: Deploy prod"
-    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
+    if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
     depends_on: "check-e2e"
     command: ./ops/deploy.sh prod

@@ -202,44 +202,67 @@ Response:
     "status": 201,
     reoprtData...   
 }
-401:
-{
-    "status": 401
-    "message": "Failed to get BuildKite info_status: 401..."
-    "message": "Failed to get GitHub info_status: 401..."
-    "message": "Failed to get Jira info_status: 401..."
-    "hintInfo": "Token is incorrect"
-}
-403:
-{
-    "status": 403
-    "message": "Failed to get BuildKite info_status: 403..."
-    "message": "Failed to get GitHub info_status: 403..."
-    "message": "Failed to get Jira info_status: 403..."
-    "hintInfo": "Permission deny"
-}
-404:
-{
-    "status": 404
-    "message": "Failed to get BuildKite info_status: 404..."
-    "message": "Failed to get GitHub info_status: 404..."
-    "message": "Failed to get Jira info_status: 404..."
-    "hintInfo": "404 Not Found"
-}
-500:
-{
-  "status": 500,
-  "message": "Report time expires",
-  "message": "Failed to write report file",
-  "message": "Failed to convert to report response",
-  "hintInfo": "Generate report failed",
-}
-503:
-{
-  "status": 503,
-  "message": "Failed to get BuildKite info_status: 503..."
-  "message": "Failed to get GitHub info_status: 503..."
-  "message": "Failed to get Jira info_status: 503..."
-  "hintInfo": "Service Unavailable",
-}
 ```
+Exception Table
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="3">401</td>
+    <td>Failed to get BuildKite info_status: 401...</td>
+    <td rowspan="3">Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 401...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 401...</td>
+  </tr>
+  <tr>
+    <td rowspan="3">403</td>
+    <td>Failed to get BuildKite info_status: 403...</td>
+    <td rowspan="3">Permission deny</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 403...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 403...</td>
+  </tr>
+  <tr>
+    <td rowspan="3">404</td>
+    <td>Failed to get BuildKite info_status: 404...</td>
+    <td rowspan="3">404 Not Found</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 404...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 404...</td>
+  </tr>
+  <tr>
+    <td rowspan="3">500</td>
+    <td>Report time expires</td>
+    <td rowspan="3">Generate report failed</td>
+  </tr>
+  <tr>
+    <td>Failed to write report file</td>
+  </tr>
+  <tr>
+    <td>Failed to convert to report response</td>
+  </tr>
+  <tr>
+    <td rowspan="3">503</td>
+    <td>Failed to get BuildKite info_status: 503...</td>
+    <td rowspan="3">Service Unavailable</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 503...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 503...</td>
+  </tr>
+</table>

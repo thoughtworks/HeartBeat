@@ -146,14 +146,18 @@ describe('Report Step', () => {
 
   it('should call handleBack method when click back button given back button enabled', async () => {
     const { getByText } = setup([''])
+
     const back = getByText(BACK)
     await userEvent.click(back)
+
     expect(backStep).toHaveBeenCalledTimes(1)
   })
 
   it('should not show export pipeline button when not select deployment frequency', () => {
     const { queryByText } = setup([REQUIRED_DATA_LIST[1]])
+
     const exportPipelineButton = queryByText(EXPORT_PIPELINE_DATA)
+
     expect(exportPipelineButton).not.toBeInTheDocument()
   })
 
@@ -161,27 +165,35 @@ describe('Report Step', () => {
     'should show export pipeline button when select %s',
     (requiredData) => {
       const { getByText } = setup([requiredData])
+
       const exportPipelineButton = getByText(EXPORT_PIPELINE_DATA)
+
       expect(exportPipelineButton).toBeInTheDocument()
     }
   )
 
   it('should show errorMessage when generateReport has error message', () => {
     reportHook.current.errorMessage = 'error message'
+
     const { getByText } = setup([''])
+
     expect(getByText('error message')).toBeInTheDocument()
   })
 
   it('should show errorMessage when click export pipeline button given csv not exist', () => {
     const { getByText } = setup([REQUIRED_DATA_LIST[4]])
+
     userEvent.click(getByText(EXPORT_PIPELINE_DATA))
+
     expect(getByText('failed export csv')).toBeInTheDocument()
   })
 
   describe('export board data', () => {
     it('should not show export board button when not select board metrics', () => {
       const { queryByText } = setup([REQUIRED_DATA_LIST[4]])
+
       const exportPipelineButton = queryByText(EXPORT_BOARD_DATA)
+
       expect(exportPipelineButton).not.toBeInTheDocument()
     })
 
@@ -189,27 +201,35 @@ describe('Report Step', () => {
       'should show export board button when select %s',
       (requiredData) => {
         const { getByText } = setup([requiredData])
+
         const exportPipelineButton = getByText(EXPORT_BOARD_DATA)
+
         expect(exportPipelineButton).toBeInTheDocument()
       }
     )
 
     it('should show errorMessage when click export board button given csv not exist', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[1]])
+
       userEvent.click(getByText(EXPORT_BOARD_DATA))
+
       expect(getByText('failed export csv')).toBeInTheDocument()
     })
   })
 
   it('should show errorMessage when click export metric button given csv not exist', () => {
     const { getByText } = setup([''])
+
     userEvent.click(getByText(EXPORT_METRIC_DATA))
+
     expect(getByText('Export metric data')).toBeInTheDocument()
   })
 
   it('should show export metric button when visiting this page', () => {
     const { getByText } = setup([''])
+
     const exportMetricButton = getByText(EXPORT_METRIC_DATA)
+
     expect(exportMetricButton).toBeInTheDocument()
   })
 
@@ -275,7 +295,8 @@ describe('Report Step', () => {
     const exportButton = getByText(EXPORT_METRIC_DATA)
     expect(exportButton).toBeInTheDocument()
     await userEvent.click(exportButton)
-    expect(result.current.fetchExportData).toBeCalled()
+
+    expect(result.current.fetchExportData).toBeCalledTimes(1)
   })
 
   it('should call fetchExportData when clicking "Export board data"', async () => {
@@ -285,7 +306,8 @@ describe('Report Step', () => {
     const exportButton = getByText(EXPORT_BOARD_DATA)
     expect(exportButton).toBeInTheDocument()
     await userEvent.click(exportButton)
-    expect(result.current.fetchExportData).toBeCalled()
+
+    expect(result.current.fetchExportData).toBeCalledTimes(1)
   })
 
   it('should call fetchExportData when clicking "Export pipeline data"', async () => {
@@ -295,6 +317,7 @@ describe('Report Step', () => {
     const exportButton = getByText(EXPORT_PIPELINE_DATA)
     expect(exportButton).toBeInTheDocument()
     await userEvent.click(exportButton)
-    expect(result.current.fetchExportData).toBeCalled()
+
+    expect(result.current.fetchExportData).toBeCalledTimes(1)
   })
 })

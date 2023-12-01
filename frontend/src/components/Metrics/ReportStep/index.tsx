@@ -17,7 +17,7 @@ import {
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
-import { ICycleTimeSetting, IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
 import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
@@ -28,7 +28,7 @@ import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
-import { getJiraBoardToken } from '@src/utils/util'
+import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 import { ReportResponse } from '@src/clients/report/dto/response'
 
@@ -127,24 +127,9 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   }
 
   const jiraColumns = useAppSelector(selectJiraColumns)
-
-  const tempMapper = new Map<string, string>()
-  jiraColumns.forEach((jiraColumn) => {
-    const value = jiraColumn.value
-    tempMapper.set(value.name, value.statuses[0])
-  })
-
-  const filteredCycleTime = cycleTimeSettings
-    .filter((item) => item.value != '----')
-    .map((cycleTimeSetting) => {
-      const previousName = cycleTimeSetting.name
-
-      const cycleTimeSettingObj: ICycleTimeSetting = {
-        name: tempMapper.get(previousName) || previousName,
-        value: cycleTimeSetting.value,
-      }
-      return cycleTimeSettingObj
-    })
+  const jiraColumnsWithValue = jiraColumns?.map(
+    (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
+  )
 
   const jiraToken = getJiraBoardToken(token, email)
   const getReportRequestBody = (): ReportRequestDTO => ({
@@ -168,7 +153,7 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
       site,
       projectKey,
       boardId,
-      boardColumns: filteredCycleTime,
+      boardColumns: filterAndMapCycleTimeSettings(cycleTimeSettings, jiraColumnsWithValue),
       treatFlagCardAsBlock,
       users,
       assigneeFilter,

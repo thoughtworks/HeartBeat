@@ -30,3 +30,13 @@ export const CycleTimeContainer = styled(PipelineMetricSelectionWrapper)({
   padding: '1rem',
   boxSizing: 'border-box',
 })
+
+export const TitleAndTooltipContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+})
+
+export const TooltipContainer = styled('div')({
+  marginLeft: '4px',
+})

@@ -1,95 +1,171 @@
-import { act, renderHook, waitFor } from '@testing-library/react'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import { renderHook, waitFor } from '@testing-library/react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
-import { INTERNAL_SERVER_ERROR_MESSAGE, MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE } from '../fixtures'
+import {
+  ERROR_MESSAGE_TIME_DURATION,
+  INTERNAL_SERVER_ERROR_MESSAGE,
+  MOCK_GENERATE_REPORT_REQUEST_PARAMS,
+  MOCK_REPORT_RESPONSE,
+  MOCK_RETRIEVE_REPORT_RESPONSE,
+} from '../fixtures'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
+import { HttpStatusCode } from 'axios'
+import clearAllMocks = jest.clearAllMocks
 
 jest.mock('@src/hooks/reportMapper/report', () => ({
   reportMapper: jest.fn(),
 }))
-
+jest.useFakeTimers()
 describe('use generate report effect', () => {
-  afterEach(() => {
-    jest.resetAllMocks()
+  afterAll(() => {
+    clearAllMocks()
   })
 
-  it('should init data state when render hook', async () => {
+  it('should init data state when render hook', () => {
     const { result } = renderHook(() => useGenerateReportEffect())
-
     expect(result.current.isLoading).toEqual(false)
   })
+
   it('should set error message when generate report throw error', async () => {
-    jest.useFakeTimers()
-    reportClient.report = jest.fn().mockImplementation(() => {
+    const { result } = renderHook(() => useGenerateReportEffect())
+    const setTimeout = jest.spyOn(global, 'setTimeout')
+    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
       throw new Error('error')
     })
-    const { result } = renderHook(() => useGenerateReportEffect())
-
-    expect(result.current.isLoading).toEqual(false)
-
-    act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
-      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    await waitFor(() => {
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      expect(result.current.errorMessage).toEqual('generate report: error')
     })
 
-    expect(result.current.errorMessage).toEqual('')
+    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+
+    await waitFor(() => {
+      expect(setTimeout).toBeCalled()
+      expect(result.current.errorMessage).toEqual('')
+    })
   })
 
   it('should set error message when generate report response status 404', async () => {
-    reportClient.report = jest.fn().mockImplementation(() => {
+    const { result } = renderHook(() => useGenerateReportEffect())
+    const setTimeout = jest.spyOn(global, 'setTimeout')
+    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
       throw new NotFoundException('error message')
     })
-    const { result } = renderHook(() => useGenerateReportEffect())
-
-    act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    await waitFor(() => {
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      expect(result.current.errorMessage).toEqual('generate report: error message')
     })
 
-    await waitFor(() => expect(result.current.errorMessage).toEqual('generate report: error message'))
+    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+
+    await waitFor(() => {
+      expect(setTimeout).toBeCalled()
+      expect(result.current.errorMessage).toEqual('')
+    })
   })
 
   it('should call reportMapper method when generate report response status 200', async () => {
-    reportClient.report = jest.fn().mockReturnValue(MOCK_REPORT_RESPONSE)
-
     const { result } = renderHook(() => useGenerateReportEffect())
-
-    act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
-    })
+    reportClient.retrieveReport = jest
+      .fn()
+      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
+    reportClient.pollingReport = jest.fn().mockImplementation(async () => ({
+      status: HttpStatusCode.Created,
+      response: MOCK_REPORT_RESPONSE,
+    }))
 
     await waitFor(() => {
-      expect(reportMapper).toHaveBeenCalledTimes(1)
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
+
+    expect(reportMapper).toHaveBeenCalledTimes(1)
   })
 
   it('should set error message when generate report response status 500', async () => {
-    reportClient.report = jest.fn().mockImplementation(() => {
+    const { result } = renderHook(() => useGenerateReportEffect())
+    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
       throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
     })
-    const { result } = renderHook(() => useGenerateReportEffect())
-
-    act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+    await waitFor(() => {
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      expect(result.current.isServerError).toEqual(true)
     })
-
-    await waitFor(() => expect(result.current.isServerError).toEqual(true))
   })
 
   it('should set isServerError is true when throw unknownException', async () => {
-    reportClient.report = jest.fn().mockImplementation(() => {
+    const { result } = renderHook(() => useGenerateReportEffect())
+    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
       throw new UnknownException()
     })
 
-    const { result } = renderHook(() => useGenerateReportEffect())
+    await waitFor(() => {
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      expect(result.current.isServerError).toEqual(true)
+    })
+  })
 
-    act(() => {
-      result.current.generateReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+  it('should call polling report and setTimeout when calling startPollingReports given pollingReport response return 204 ', async () => {
+    const setTimeout = jest.spyOn(global, 'setTimeout')
+    const { result } = renderHook(() => useGenerateReportEffect())
+    reportClient.pollingReport = jest
+      .fn()
+      .mockImplementation(async () => ({ status: HttpStatusCode.NoContent, response: MOCK_REPORT_RESPONSE }))
+
+    reportClient.retrieveReport = jest
+      .fn()
+      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
+
+    await waitFor(() => {
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      expect(reportClient.pollingReport).toBeCalled()
+      expect(setTimeout).toBeCalled()
     })
 
-    await waitFor(() => expect(result.current.isServerError).toEqual(true))
+    jest.runOnlyPendingTimers()
+    expect(reportClient.pollingReport).toBeCalled()
+  })
+
+  it('should return error message when calling startPollingReports given pollingReport response return 5xx ', async () => {
+    const { result } = renderHook(() => useGenerateReportEffect())
+    reportClient.pollingReport = jest.fn().mockImplementation(async () => {
+      throw new InternalServerException('error')
+    })
+
+    reportClient.retrieveReport = jest
+      .fn()
+      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
+
+    await waitFor(() => {
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      expect(reportClient.pollingReport).toBeCalled()
+      expect(result.current.isServerError).toEqual(true)
+    })
+  })
+
+  it('should return error message when calling startPollingReports given pollingReport response return 4xx ', async () => {
+    const setTimeout = jest.spyOn(global, 'setTimeout')
+    const { result } = renderHook(() => useGenerateReportEffect())
+    result.current.stopPollingReports = jest.fn()
+    reportClient.pollingReport = jest.fn().mockImplementation(async () => {
+      throw new NotFoundException('file not found')
+    })
+    reportClient.retrieveReport = jest
+      .fn()
+      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
+
+    await waitFor(() => {
+      result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      expect(result.current.errorMessage).toEqual('generate report: file not found')
+    })
+
+    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+
+    await waitFor(() => {
+      expect(setTimeout).toBeCalled()
+      expect(result.current.errorMessage).toEqual('')
+    })
   })
 })

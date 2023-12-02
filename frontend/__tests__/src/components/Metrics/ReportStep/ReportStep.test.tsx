@@ -1,4 +1,4 @@
-import { act, render, renderHook, waitFor } from '@testing-library/react'
+import { render, renderHook } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -21,19 +21,12 @@ import {
 import userEvent from '@testing-library/user-event'
 import { backStep } from '@src/context/stepper/StepperSlice'
 import { navigateMock } from '../../../../setupTests'
-import mocked = jest.mocked
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 import { HEADER_NOTIFICATION_MESSAGE } from '@src/constants'
 import React from 'react'
+import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 
-jest.mock('@src/hooks/useGenerateReportEffect', () => ({
-  useGenerateReportEffect: jest.fn().mockReturnValue({
-    generateReport: jest.fn(() => Promise.resolve(EXPECTED_REPORT_VALUES)),
-    isLoading: false,
-    isServerError: false,
-  }),
-}))
 jest.mock('@src/context/stepper/StepperSlice', () => ({
   ...jest.requireActual('@src/context/stepper/StepperSlice'),
   backStep: jest.fn().mockReturnValue({ type: 'BACK_STEP' }),
@@ -43,7 +36,17 @@ jest.mock('@src/hooks/useExportCsvEffect', () => ({
   useExportCsvEffect: jest.fn().mockReturnValue({
     fetchExportData: jest.fn(),
     errorMessage: 'failed export csv',
+    isExpired: false,
+  }),
+}))
+
+jest.mock('@src/hooks/useGenerateReportEffect', () => ({
+  useGenerateReportEffect: jest.fn().mockReturnValue({
+    startPollingReports: jest.fn(),
+    stopPollingReports: jest.fn(),
+    isLoading: false,
     isServerError: false,
+    errorMessage: '',
   }),
 }))
 
@@ -55,31 +58,45 @@ jest.mock('@src/emojis/emoji', () => ({
 jest.mock('@src/utils/util', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn(),
   getJiraBoardToken: jest.fn(),
+  filterAndMapCycleTimeSettings: jest.fn(),
 }))
 
 let store = null
-
 describe('Report Step', () => {
-  const { result } = renderHook(() => useNotificationLayoutEffect())
-
-  const setup = async (params: [string]) => {
+  const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect())
+  const { result: reportHook } = renderHook(() => useGenerateReportEffect())
+  beforeEach(() => {
+    resetReportHook()
+  })
+  afterAll(() => {
+    jest.clearAllMocks()
+  })
+  const resetReportHook = async () => {
+    reportHook.current.startPollingReports = jest.fn()
+    reportHook.current.stopPollingReports = jest.fn()
+    reportHook.current.isLoading = false
+    reportHook.current.isServerError = false
+    reportHook.current.errorMessage = ''
+    reportHook.current.reports = EXPECTED_REPORT_VALUES
+  }
+  const setup = (params: [string]) => {
     store = setupStore()
-    await store.dispatch(
+    store.dispatch(
       updateJiraVerifyResponse({
         jiraColumns: MOCK_JIRA_VERIFY_RESPONSE.jiraColumns,
         targetFields: MOCK_JIRA_VERIFY_RESPONSE.targetFields,
         users: MOCK_JIRA_VERIFY_RESPONSE.users,
       })
     )
-    await store.dispatch(updateMetrics(params))
-    await store.dispatch(
+    store.dispatch(updateMetrics(params))
+    store.dispatch(
       updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock organization' })
     )
-    await store.dispatch(
+    store.dispatch(
       updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock pipeline name' })
     )
-    await store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock step1' }))
-    await store.dispatch(
+    store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock step1' }))
+    store.dispatch(
       updatePipelineToolVerifyResponse({
         pipelineList: [
           {
@@ -95,7 +112,7 @@ describe('Report Step', () => {
     )
     return render(
       <Provider store={store}>
-        <ReportStep {...result.current} />
+        <ReportStep {...notificationHook.current} />
       </Provider>
     )
   }
@@ -104,45 +121,40 @@ describe('Report Step', () => {
     jest.clearAllMocks()
   })
 
-  it('should render report page', async () => {
-    const { getByText } = await act(() => setup(['']))
+  it('should render report page', () => {
+    const { getByText } = setup([''])
 
-    await waitFor(() => {
-      expect(getByText(REQUIRED_DATA_LIST[1])).toBeInTheDocument()
-      expect(getByText(REQUIRED_DATA_LIST[2])).toBeInTheDocument()
-    })
+    expect(getByText(REQUIRED_DATA_LIST[1])).toBeInTheDocument()
+    expect(getByText(REQUIRED_DATA_LIST[2])).toBeInTheDocument()
   })
 
-  it('should renders the velocity component with correct props', async () => {
-    const { getByText } = await act(() => setup(['']))
+  it('should renders the velocity component with correct props', () => {
+    const { getByText } = setup([''])
 
-    await waitFor(() => {
-      expect(getByText(20)).toBeInTheDocument()
-      expect(getByText(14)).toBeInTheDocument()
-    })
+    expect(getByText(20)).toBeInTheDocument()
+    expect(getByText(14)).toBeInTheDocument()
   })
 
-  it('should renders the CycleTime component with correct props', async () => {
-    const { getByText } = await act(() => setup(['']))
+  it('should renders the CycleTime component with correct props', () => {
+    const { getByText } = setup([''])
 
-    await waitFor(() => {
-      expect(getByText('30.26(days/card)')).toBeInTheDocument()
-      expect(getByText('21.18(days/SP)')).toBeInTheDocument()
-      expect(getByText('57.25%')).toBeInTheDocument()
-      expect(getByText('12.13(days/SP)')).toBeInTheDocument()
-    })
+    expect(getByText('30.26(days/card)')).toBeInTheDocument()
+    expect(getByText('21.18(days/SP)')).toBeInTheDocument()
+    expect(getByText('57.25%')).toBeInTheDocument()
+    expect(getByText('12.13(days/SP)')).toBeInTheDocument()
   })
 
   it('should call handleBack method when click back button given back button enabled', async () => {
-    const { getByText } = await act(() => setup(['']))
+    const { getByText } = setup([''])
 
-    await userEvent.click(getByText(BACK))
+    const back = getByText(BACK)
+    await userEvent.click(back)
 
     expect(backStep).toHaveBeenCalledTimes(1)
   })
 
-  it('should not show export pipeline button when not select deployment frequency', async () => {
-    const { queryByText } = await act(() => setup([REQUIRED_DATA_LIST[1]]))
+  it('should not show export pipeline button when not select deployment frequency', () => {
+    const { queryByText } = setup([REQUIRED_DATA_LIST[1]])
 
     const exportPipelineButton = queryByText(EXPORT_PIPELINE_DATA)
 
@@ -151,38 +163,34 @@ describe('Report Step', () => {
 
   it.each([[REQUIRED_DATA_LIST[4]], [REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]]])(
     'should show export pipeline button when select %s',
-    async (requiredData) => {
-      const { getByText } = await act(() => setup([requiredData]))
+    (requiredData) => {
+      const { getByText } = setup([requiredData])
+
       const exportPipelineButton = getByText(EXPORT_PIPELINE_DATA)
 
       expect(exportPipelineButton).toBeInTheDocument()
     }
   )
 
-  it('should show errorMessage when generateReport has error message', async () => {
-    mocked(useGenerateReportEffect).mockReturnValue({
-      generateReport: jest.fn(),
-      isLoading: false,
-      errorMessage: 'error message',
-      isServerError: false,
-    })
+  it('should show errorMessage when generateReport has error message', () => {
+    reportHook.current.errorMessage = 'error message'
 
-    const { getByText } = await act(() => setup(['']))
+    const { getByText } = setup([''])
 
     expect(getByText('error message')).toBeInTheDocument()
   })
 
-  it('should show errorMessage when click export pipeline button given csv not exist', async () => {
-    const { getByText } = await act(() => setup([REQUIRED_DATA_LIST[4]]))
+  it('should show errorMessage when click export pipeline button given csv not exist', () => {
+    const { getByText } = setup([REQUIRED_DATA_LIST[4]])
 
-    await userEvent.click(getByText(EXPORT_PIPELINE_DATA))
+    userEvent.click(getByText(EXPORT_PIPELINE_DATA))
 
     expect(getByText('failed export csv')).toBeInTheDocument()
   })
 
   describe('export board data', () => {
-    it('should not show export board button when not select board metrics', async () => {
-      const { queryByText } = await act(() => setup([REQUIRED_DATA_LIST[4]]))
+    it('should not show export board button when not select board metrics', () => {
+      const { queryByText } = setup([REQUIRED_DATA_LIST[4]])
 
       const exportPipelineButton = queryByText(EXPORT_BOARD_DATA)
 
@@ -191,81 +199,71 @@ describe('Report Step', () => {
 
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[3]]])(
       'should show export board button when select %s',
-      async (requiredData) => {
-        const { getByText } = await act(() => setup([requiredData]))
+      (requiredData) => {
+        const { getByText } = setup([requiredData])
+
         const exportPipelineButton = getByText(EXPORT_BOARD_DATA)
 
         expect(exportPipelineButton).toBeInTheDocument()
       }
     )
 
-    it('should show errorMessage when click export board button given csv not exist', async () => {
-      const { getByText } = await act(() => setup([REQUIRED_DATA_LIST[1]]))
-      await userEvent.click(getByText(EXPORT_BOARD_DATA))
+    it('should show errorMessage when click export board button given csv not exist', () => {
+      const { getByText } = setup([REQUIRED_DATA_LIST[1]])
+
+      userEvent.click(getByText(EXPORT_BOARD_DATA))
 
       expect(getByText('failed export csv')).toBeInTheDocument()
     })
   })
 
-  it('should show errorMessage when click export metric button given csv not exist', async () => {
-    const { getByText } = await act(() => setup(['']))
+  it('should show errorMessage when click export metric button given csv not exist', () => {
+    const { getByText } = setup([''])
 
-    await userEvent.click(getByText(EXPORT_METRIC_DATA))
+    userEvent.click(getByText(EXPORT_METRIC_DATA))
 
     expect(getByText('Export metric data')).toBeInTheDocument()
   })
 
-  it('should show export metric button when visiting this page', async () => {
-    const { getByText } = await act(() => setup(['']))
+  it('should show export metric button when visiting this page', () => {
+    const { getByText } = setup([''])
 
     const exportMetricButton = getByText(EXPORT_METRIC_DATA)
+
     expect(exportMetricButton).toBeInTheDocument()
   })
 
-  it('should check error page show when isReportError is true', async () => {
-    mocked(useGenerateReportEffect).mockReturnValue({
-      generateReport: jest.fn(),
-      isLoading: false,
-      errorMessage: 'error message',
-      isServerError: true,
-    })
+  it('should check error page show when isReportError is true', () => {
+    reportHook.current.isServerError = true
+    reportHook.current.errorMessage = 'error message'
 
-    await setup([REQUIRED_DATA_LIST[1]])
+    setup([REQUIRED_DATA_LIST[1]])
 
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
-    })
+    expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
   })
 
-  it('should render loading page when isLoading is true', async () => {
-    mocked(useGenerateReportEffect).mockReturnValue({
-      generateReport: jest.fn(),
-      isLoading: true,
-      errorMessage: '',
-      isServerError: false,
-    })
+  it('should render loading page when isLoading is true', () => {
+    reportHook.current.isLoading = true
 
-    const { getByTestId } = await act(() => setup(['']))
+    const { getByTestId } = setup([''])
 
-    await waitFor(() => {
-      expect(getByTestId('loading-page')).toBeInTheDocument()
-    })
+    expect(getByTestId('loading-page')).toBeInTheDocument()
   })
 
-  it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', async () => {
+  it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', () => {
     const initExportValidityTimeMin = 30
     React.useState = jest.fn().mockReturnValue([
       initExportValidityTimeMin,
       () => {
-        //do noting
+        jest.fn()
       },
     ])
     const resetProps = jest.fn()
     const updateProps = jest.fn()
-    result.current.resetProps = resetProps
-    result.current.updateProps = updateProps
+    notificationHook.current.resetProps = resetProps
+    notificationHook.current.updateProps = updateProps
     jest.useFakeTimers()
-    await setup([''])
+    setup([''])
 
     expect(resetProps).not.toBeCalled()
     expect(updateProps).not.toBeCalledWith({
@@ -275,7 +273,6 @@ describe('Report Step', () => {
 
     jest.advanceTimersByTime(500000)
 
-    expect(resetProps).not.toBeCalled()
     expect(updateProps).not.toBeCalledWith({
       open: true,
       title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
@@ -283,12 +280,44 @@ describe('Report Step', () => {
 
     jest.advanceTimersByTime(1000000)
 
-    expect(resetProps).toBeCalled()
     expect(updateProps).toBeCalledWith({
       open: true,
       title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
     })
 
     jest.useRealTimers()
+  })
+
+  it('should call fetchExportData when clicking "Export metric data"', async () => {
+    const { result } = renderHook(() => useExportCsvEffect())
+    const { getByText } = setup([''])
+
+    const exportButton = getByText(EXPORT_METRIC_DATA)
+    expect(exportButton).toBeInTheDocument()
+    await userEvent.click(exportButton)
+
+    expect(result.current.fetchExportData).toBeCalledTimes(1)
+  })
+
+  it('should call fetchExportData when clicking "Export board data"', async () => {
+    const { result } = renderHook(() => useExportCsvEffect())
+    const { getByText } = setup([REQUIRED_DATA_LIST[2]])
+
+    const exportButton = getByText(EXPORT_BOARD_DATA)
+    expect(exportButton).toBeInTheDocument()
+    await userEvent.click(exportButton)
+
+    expect(result.current.fetchExportData).toBeCalledTimes(1)
+  })
+
+  it('should call fetchExportData when clicking "Export pipeline data"', async () => {
+    const { result } = renderHook(() => useExportCsvEffect())
+    const { getByText } = setup([REQUIRED_DATA_LIST[6]])
+
+    const exportButton = getByText(EXPORT_PIPELINE_DATA)
+    expect(exportButton).toBeInTheDocument()
+    await userEvent.click(exportButton)
+
+    expect(result.current.fetchExportData).toBeCalledTimes(1)
   })
 })

@@ -28,6 +28,6 @@ export const GuideButton = styled(Button)<ButtonProps>({
 })
 
 export const HomeGuideContainer = styled.div({
-  height: '80vh',
+  height: '44rem',
   display: 'flex',
 })

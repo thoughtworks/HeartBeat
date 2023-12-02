@@ -1,3 +1,5 @@
+import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+
 export interface ReportResponseDTO {
   velocity?: VelocityResponse
   cycleTime?: CycleTimeResponse
@@ -117,4 +119,20 @@ export interface MeanTimeToRecoveryResponse {
 export interface ClassificationNameValuePair {
   name: string
   value: number
+}
+
+export interface ReportCallbackResponse {
+  callbackUrl: string
+  interval: number
+}
+
+export interface ReportResponse {
+  velocityList?: ReportDataWithTwoColumns[]
+  cycleTimeList?: ReportDataWithTwoColumns[]
+  classification?: ReportDataWithThreeColumns[]
+  deploymentFrequencyList?: ReportDataWithThreeColumns[]
+  meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
+  leadTimeForChangesList?: ReportDataWithThreeColumns[]
+  changeFailureRateList?: ReportDataWithThreeColumns[]
+  exportValidityTimeMin?: number
 }

@@ -12,6 +12,8 @@ class Report {
 
   readonly notificationButton = () => cy.get('[data-testid="NotificationIcon"]')
 
+  private readonly headerBar = () => cy.get('[data-test-id="Header"]')
+
   backToMetricsStep() {
     this.backButton().click()
   }
@@ -41,7 +43,7 @@ class Report {
     this.notificationButton().click()
     cy.contains('otherwise it will expire.').should('not.exist')
 
-    cy.get('[data-test-id="Header"]').click()
+    this.headerBar().click()
   }
 }
 

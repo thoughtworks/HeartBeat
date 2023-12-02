@@ -31,7 +31,14 @@ import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.exception.BaseException;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
+import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.UnauthorizedException;
+import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
@@ -47,6 +54,7 @@ import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
+import heartbeat.handler.AsyncExceptionHandler;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -77,6 +85,10 @@ import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTI
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -138,6 +150,12 @@ class GenerateReporterServiceTest {
 	@Mock
 	private JiraUriGenerator urlGenerator;
 
+	@Mock
+	private AsyncReportRequestHandler asyncReportRequestHandler;
+
+	@Mock
+	private AsyncExceptionHandler asyncExceptionHandler;
+
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
 		JiraBoardSetting jiraBoardSetting = JiraBoardSetting.builder()
@@ -157,6 +175,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
@@ -205,6 +224,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		Classification classification = Classification.builder()
@@ -266,6 +286,7 @@ class GenerateReporterServiceTest {
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		DeploymentFrequency deploymentFrequency = DeploymentFrequency.builder()
@@ -308,6 +329,7 @@ class GenerateReporterServiceTest {
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		ChangeFailureRate changeFailureRate = ChangeFailureRate.builder()
@@ -349,6 +371,7 @@ class GenerateReporterServiceTest {
 			.startTime("1661702400000")
 			.endTime("1662739199000")
 			.codebaseSetting(null)
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -387,6 +410,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any())).thenReturn(cardCollection);
@@ -436,6 +460,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
+			.csvTimeStamp("1683734399999")
 			.build();
 
 		PipelineLeadTime pipelineLeadTime = PipelineLeadTime.builder()
@@ -878,6 +903,143 @@ class GenerateReporterServiceTest {
 		boolean isExists = Files.exists(mockMetricCsvPath);
 		Assertions.assertTrue(isExists);
 		Files.deleteIfExists(mockMetricCsvPath);
+	}
+
+	@Test
+	void shouldReturnTrueWhenReportIsReady() {
+		// given
+		String fileTimeStamp = Long.toString(System.currentTimeMillis());
+		// when
+		when(asyncReportRequestHandler.isReportIsExists(fileTimeStamp)).thenReturn(true);
+		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
+		// then
+		assertTrue(generateReportIsOver);
+	}
+
+	@Test
+	void shouldReturnFalseWhenReportIsNotReady() {
+		// given
+		String fileTimeStamp = Long.toString(System.currentTimeMillis());
+		asyncReportRequestHandler.put("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
+		// when
+		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
+		// then
+		assertFalse(generateReportIsOver);
+
+	}
+
+	@Test
+	void shouldThrowExceptionWhenTimeOutOf30m() {
+		// given
+		String fileExpiredTimeStamp = Long.toString(System.currentTimeMillis() - 1900000L);
+		// when & then
+		GenerateReportException generateReportException = assertThrows(GenerateReportException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
+		assertEquals(500, generateReportException.getStatus());
+		assertEquals("Report time expires", generateReportException.getMessage());
+	}
+
+	@Test
+	void shouldReturnReportResponse() {
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(asyncReportRequestHandler.get(reportId))
+			.thenReturn(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
+		ReportResponse reportResponse = generateReporterService.getReportFromHandler(reportId);
+		// then
+		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getClassificationList(),
+				reportResponse.getClassificationList());
+		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getExportValidityTime(),
+				reportResponse.getExportValidityTime());
+		assertEquals(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE().getCycleTime(),
+				reportResponse.getCycleTime());
+	}
+
+	@Test
+	void shouldThrowUnauthorizedExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
+		BaseException exception = assertThrows(UnauthorizedException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(401, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowPermissionDenyExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		asyncExceptionHandler.put(reportId,
+				new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
+		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
+		BaseException exception = assertThrows(PermissionDenyException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(403, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowNotFoundExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
+		BaseException exception = assertThrows(NotFoundException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(404, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowGenerateReportExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(asyncExceptionHandler.get(reportId))
+			.thenReturn(new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
+		BaseException exception = assertThrows(GenerateReportException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(500, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 500, reason: GenerateReport", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowServiceUnavailableExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(asyncExceptionHandler.get(reportId)).thenReturn(
+				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
+		BaseException exception = assertThrows(ServiceUnavailableException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(503, exception.getStatus());
+		assertEquals("Failed to get GitHub info_status: 503, reason: ServiceUnavailable", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowRequestFailedExceptionWhenCheckGenerateReportIsDone() {
+		// given
+		String reportId = Long.toString(System.currentTimeMillis());
+		// when
+		when(asyncExceptionHandler.get(reportId)).thenReturn(new RequestFailedException(405, "RequestFailedException"));
+		BaseException exception = assertThrows(RequestFailedException.class,
+				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+		// then
+		assertEquals(405, exception.getStatus());
+		assertEquals(
+				"Request failed with status statusCode 405, error: Request failed with status statusCode 405, error: RequestFailedException",
+				exception.getMessage());
 	}
 
 }

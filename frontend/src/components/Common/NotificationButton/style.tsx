@@ -9,7 +9,7 @@ export const NotificationIconWrapper = styled(NotificationsRounded)({
 })
 
 export const sx = {
-  width: '20vh',
+  width: '12rem',
   padding: '1rem',
   fontSize: '1rem',
   fontWeight: '250',

@@ -1,56 +1,82 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
-import { reportMapper } from '@src/hooks/reportMapper/report'
-import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
+import { HttpStatusCode } from 'axios'
+import { reportMapper } from '@src/hooks/reportMapper/report'
+import { ReportResponse } from '@src/clients/report/dto/response'
 
 export interface useGenerateReportEffectInterface {
-  generateReport: (params: ReportRequestDTO) => Promise<
-    | {
-        velocityList?: ReportDataWithTwoColumns[]
-        cycleTimeList?: ReportDataWithTwoColumns[]
-        classification?: ReportDataWithThreeColumns[]
-        deploymentFrequencyList?: ReportDataWithThreeColumns[]
-        leadTimeForChangesList?: ReportDataWithThreeColumns[]
-        changeFailureRateList?: ReportDataWithThreeColumns[]
-      }
-    | undefined
-  >
+  startPollingReports: (params: ReportRequestDTO) => void
+  stopPollingReports: () => void
   isLoading: boolean
   isServerError: boolean
   errorMessage: string
+  reports: ReportResponse | undefined
 }
 
 export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [isLoading, setIsLoading] = useState(false)
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [reports, setReports] = useState<ReportResponse>()
+  const timerIdRef = useRef<NodeJS.Timer>()
 
-  const generateReport = async (params: ReportRequestDTO) => {
+  const startPollingReports = (params: ReportRequestDTO) => {
     setIsLoading(true)
-    try {
-      const res = await reportClient.report(params)
-      return reportMapper(res.response)
-    } catch (e) {
-      const err = e as Error
-      if (err instanceof InternalServerException || err instanceof UnknownException) {
-        setIsServerError(true)
-      } else {
-        setErrorMessage(`generate report: ${err.message}`)
-        setTimeout(() => {
-          setErrorMessage('')
-        }, ERROR_MESSAGE_TIME_DURATION)
-      }
-    } finally {
-      setIsLoading(false)
-    }
+    reportClient
+      .retrieveReport(params)
+      .then((res) => pollingReport(res.response.callbackUrl, res.response.interval))
+      .catch((e) => {
+        const err = e as Error
+        if (err instanceof InternalServerException || err instanceof UnknownException) {
+          setIsServerError(true)
+        } else {
+          setErrorMessage(`generate report: ${err.message}`)
+          setTimeout(() => {
+            setErrorMessage('')
+          }, ERROR_MESSAGE_TIME_DURATION)
+        }
+        stopPollingReports()
+      })
+  }
+
+  const pollingReport = (url: string, interval: number) => {
+    reportClient
+      .pollingReport(url)
+      .then((res) => {
+        if (res.status === HttpStatusCode.Created) {
+          stopPollingReports()
+          setReports(reportMapper(res.response))
+        } else {
+          timerIdRef.current = setTimeout(() => pollingReport(url, interval), interval * 1000)
+        }
+      })
+      .catch((e) => {
+        const err = e as Error
+        if (err instanceof InternalServerException || err instanceof UnknownException) {
+          setIsServerError(true)
+        } else {
+          setErrorMessage(`generate report: ${err.message}`)
+          setTimeout(() => {
+            setErrorMessage('')
+          }, ERROR_MESSAGE_TIME_DURATION)
+        }
+        stopPollingReports()
+      })
+  }
+
+  const stopPollingReports = () => {
+    setIsLoading(false)
+    clearInterval(timerIdRef.current)
   }
 
   return {
-    generateReport,
+    startPollingReports,
+    stopPollingReports,
+    reports,
     isLoading,
     isServerError,
     errorMessage,

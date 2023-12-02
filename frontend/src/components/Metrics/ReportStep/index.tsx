@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
-import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
+import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
 import {
   CHINA_CALENDAR,
   ERROR_PAGE_ROUTE,
@@ -11,15 +11,14 @@ import {
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
   NAME,
   PIPELINE_STEP,
+  REPORT_LOADING_MESSAGE,
   REQUIRED_DATA,
 } from '@src/constants'
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
-import { selectJiraColumns } from '@src/context/config/configSlice'
-import { ICycleTimeSetting, IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
-import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
@@ -29,13 +28,21 @@ import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
-import { getJiraBoardToken } from '@src/utils/util'
+import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { ReportResponse } from '@src/clients/report/dto/response'
 
-const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInterface) => {
+const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { generateReport, isLoading, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const {
+    startPollingReports,
+    stopPollingReports,
+    reports,
+    isLoading,
+    isServerError,
+    errorMessage: reportErrorMsg,
+  } = useGenerateReportEffect()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
@@ -120,24 +127,9 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
   }
 
   const jiraColumns = useAppSelector(selectJiraColumns)
-
-  const tempMapper = new Map<string, string>()
-  jiraColumns.forEach((jiraColumn) => {
-    const value = jiraColumn.value
-    tempMapper.set(value.name, value.statuses[0])
-  })
-
-  const filteredCycleTime = cycleTimeSettings
-    .filter((item) => item.value != '----')
-    .map((cycleTimeSetting) => {
-      const previousName = cycleTimeSetting.name
-
-      const cycleTimeSettingObj: ICycleTimeSetting = {
-        name: tempMapper.get(previousName) || previousName,
-        value: cycleTimeSetting.value,
-      }
-      return cycleTimeSettingObj
-    })
+  const jiraColumnsWithValue = jiraColumns?.map(
+    (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
+  )
 
   const jiraToken = getJiraBoardToken(token, email)
   const getReportRequestBody = (): ReportRequestDTO => ({
@@ -161,7 +153,7 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
       site,
       projectKey,
       boardId,
-      boardColumns: filteredCycleTime,
+      boardColumns: filterAndMapCycleTimeSettings(cycleTimeSettings, jiraColumnsWithValue),
       treatFlagCardAsBlock,
       users,
       assigneeFilter,
@@ -178,22 +170,6 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
     endDate: endDate ?? '',
   })
 
-  const fetchReportData: () => Promise<
-    | {
-        velocityList?: ReportDataWithTwoColumns[]
-        cycleTimeList?: ReportDataWithTwoColumns[]
-        classification?: ReportDataWithThreeColumns[]
-        deploymentFrequencyList?: ReportDataWithThreeColumns[]
-        meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
-        leadTimeForChangesList?: ReportDataWithThreeColumns[]
-        changeFailureRateList?: ReportDataWithThreeColumns[]
-        exportValidityTimeMin?: number
-      }
-    | undefined
-  > = useCallback(async () => {
-    return await generateReport(getReportRequestBody())
-  }, [exportValidityTimeMin])
-
   useLayoutEffect(() => {
     exportValidityTimeMin &&
       updateProps?.({
@@ -209,15 +185,17 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
         const currentTime = Date.now()
         const elapsedTime = currentTime - startTime
 
+        const remainingExpireTime = 5 * 60 * 1000
         const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime
-        if (remainingTime <= 5 * 60 * 1000) {
-          resetProps?.()
+        if (remainingTime <= remainingExpireTime) {
           updateProps?.({
             open: true,
             title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
           })
+          clearInterval(timer)
         }
       }, 1000)
+
       return () => {
         clearInterval(timer)
       }
@@ -225,37 +203,46 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
   }, [exportValidityTimeMin])
 
   useEffect(() => {
-    fetchReportData().then((res) => {
-      res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
-      res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
-      res?.classification && setClassificationState({ value: res.classification, isShow: true })
-      res?.deploymentFrequencyList &&
-        setDeploymentFrequencyState({
-          ...deploymentFrequencyState,
-          value: res.deploymentFrequencyList,
-          isShow: true,
-        })
-      res?.meanTimeToRecoveryList &&
-        setMeanTimeToRecoveryState({
-          ...meanTimeToRecoveryState,
-          value: res.meanTimeToRecoveryList,
-          isShow: true,
-        })
-      res?.changeFailureRateList &&
-        setChangeFailureRateState({
-          ...changeFailureRateState,
-          value: res.changeFailureRateList,
-          isShow: true,
-        })
-      res?.leadTimeForChangesList &&
-        setLeadTimeForChangesState({
-          ...leadTimeForChangesState,
-          value: res.leadTimeForChangesList,
-          isShow: true,
-        })
-      res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
-    })
-  }, [fetchReportData])
+    startPollingReports(getReportRequestBody())
+  }, [])
+
+  useEffect(() => {
+    updateReportData(reports)
+    return () => {
+      stopPollingReports()
+    }
+  }, [reports])
+
+  const updateReportData = (res: ReportResponse | undefined) => {
+    res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })
+    res?.cycleTimeList && setCycleTimeState({ ...cycleTimeState, value: res.cycleTimeList, isShow: true })
+    res?.classification && setClassificationState({ value: res.classification, isShow: true })
+    res?.deploymentFrequencyList &&
+      setDeploymentFrequencyState({
+        ...deploymentFrequencyState,
+        value: res.deploymentFrequencyList,
+        isShow: true,
+      })
+    res?.meanTimeToRecoveryList &&
+      setMeanTimeToRecoveryState({
+        ...meanTimeToRecoveryState,
+        value: res.meanTimeToRecoveryList,
+        isShow: true,
+      })
+    res?.changeFailureRateList &&
+      setChangeFailureRateState({
+        ...changeFailureRateState,
+        value: res.changeFailureRateList,
+        isShow: true,
+      })
+    res?.leadTimeForChangesList &&
+      setLeadTimeForChangesState({
+        ...leadTimeForChangesState,
+        value: res.leadTimeForChangesList,
+        isShow: true,
+      })
+    res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
+  }
 
   const handleDownload = (dataType: string, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))
@@ -268,7 +255,7 @@ const ReportStep = ({ updateProps, resetProps }: useNotificationLayoutEffectInte
   return (
     <>
       {isLoading ? (
-        <Loading />
+        <Loading message={REPORT_LOADING_MESSAGE} />
       ) : isServerError ? (
         navigate(ERROR_PAGE_ROUTE)
       ) : (

@@ -1,4 +1,5 @@
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
+import { ICycleTimeSetting, IJiraColumnsWithValue } from '@src/context/Metrics/metricsSlice'
 
 export const exportToJsonFile = (filename: string, json: object) => {
   const dataStr = JSON.stringify(json, null, 4)
@@ -35,6 +36,23 @@ export const getJiraBoardToken = (token: string, email: string) => {
   } else {
     return ''
   }
+}
+
+export const filterAndMapCycleTimeSettings = (
+  cycleTimeSettings: ICycleTimeSetting[],
+  jiraColumnsWithValue: IJiraColumnsWithValue[]
+) => {
+  return cycleTimeSettings
+    .filter((item) => item.value !== '----')
+    .flatMap((cycleTimeSetting) => {
+      const previousName = cycleTimeSetting.name
+      const jiraColumnsStatuses = jiraColumnsWithValue.find((item) => item.name === previousName)?.statuses || []
+
+      return jiraColumnsStatuses.map((item) => ({
+        name: item,
+        value: cycleTimeSetting.value,
+      }))
+    })
 }
 
 export const findCaseInsensitiveType = (option: string[], value: string): string => {

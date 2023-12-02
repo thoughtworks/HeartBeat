@@ -91,7 +91,99 @@ deactivate Backend
 @enduml
 ```
 ### API Design
-
++ Accepted generate report API
+```
+Method POST
+URI: /api/v1/reports
+Request payload:
+{
+  reoprtRequest...
+}
+Response:
+202 Accepted
+{
+    "callbackUrl": "/api/v1/reports/{reportId}",
+    "interval": 10
+}
+```
++ Callback generate report API
+```
+Method GET
+URI: /api/v1/reports/{reportId}
+Response:
+204:
+{
+    "status": 204,   
+}
+201:
+{
+    "status": 201,
+    reoprtData...   
+}
+```
+Exception Table
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="3">401</td>
+    <td>Failed to get BuildKite info_status: 401...</td>
+    <td rowspan="3">Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 401...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 401...</td>
+  </tr>
+  <tr>
+    <td rowspan="3">403</td>
+    <td>Failed to get BuildKite info_status: 403...</td>
+    <td rowspan="3">Permission deny</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 403...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 403...</td>
+  </tr>
+  <tr>
+    <td rowspan="3">404</td>
+    <td>Failed to get BuildKite info_status: 404...</td>
+    <td rowspan="3">404 Not Found</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 404...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 404...</td>
+  </tr>
+  <tr>
+    <td rowspan="3">500</td>
+    <td>Report time expires</td>
+    <td rowspan="3">Generate report failed</td>
+  </tr>
+  <tr>
+    <td>Failed to write report file</td>
+  </tr>
+  <tr>
+    <td>Failed to convert to report response</td>
+  </tr>
+  <tr>
+    <td rowspan="3">503</td>
+    <td>Failed to get BuildKite info_status: 503...</td>
+    <td rowspan="3">Service Unavailable</td>
+  </tr>
+  <tr>
+    <td>Failed to get GitHub info_status: 503...</td>
+  </tr>
+  <tr>
+    <td>Failed to get Jira info_status: 503...</td>
+  </tr>
+</table>
 ## C2 - Generate report - TO-BE
 ### Sequence Diagram
 ```plantuml

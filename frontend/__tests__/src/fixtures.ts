@@ -288,6 +288,25 @@ export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
   ],
 }
 
+export const filterCycleTimeSettings = [
+  { name: 'TODO', value: 'TODO' },
+  { name: 'BACKLOG', value: 'TODO' },
+  { name: 'IN DEV', value: 'IN DEV' },
+  { name: 'DOING', value: 'IN DEV' },
+  { name: 'DONE', value: 'DONE' },
+]
+
+export const MOCK_CYCLE_TIME_SETTING = [
+  { name: 'TODO', value: 'TODO' },
+  { name: 'IN DEV', value: 'IN DEV' },
+  { name: 'DONE', value: 'DONE' },
+]
+export const MOCK_JIRA_WITH_STATUES_SETTING = [
+  { name: 'TODO', statuses: ['TODO', 'BACKLOG'] },
+  { name: 'IN DEV', statuses: ['IN DEV', 'DOING'] },
+  { name: 'DONE', statuses: ['DONE'] },
+]
+
 export const MOCK_GITHUB_VERIFY_RESPONSE = {
   githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
 }
@@ -441,6 +460,12 @@ export const MOCK_REPORT_RESPONSE = {
   ],
   exportValidityTime: 1800000,
 }
+
+export const MOCK_RETRIEVE_REPORT_RESPONSE = {
+  callbackUrl: 'reports/123',
+  interval: 10,
+}
+
 export const EXPECTED_REPORT_VALUES = {
   velocityList: [
     { id: 0, name: 'Velocity(Story Point)', valueList: [{ value: 20 }] },

@@ -110,6 +110,7 @@ class CryptoControllerTest {
 			.andReturn()
 			.getResponse();
 
+		assertThat(toLongPassword).hasSize(51);
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.password").toString();
 		assertThat(result).isEqualTo("Password is longer than 50");

@@ -1,8 +1,8 @@
 package heartbeat.util;
 
-import org.apache.logging.log4j.util.Strings;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import com.google.gson.Gson;
+import heartbeat.exception.EncryptProcessException;
+import heartbeat.service.report.MetricCsvFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +14,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,18 +26,6 @@ class EncryptDecryptUtilTest {
 
 	@Mock
 	SystemUtil systemUtil;
-
-	@Test
-	void shouldToFix() {
-		String randomIv = encryptDecryptUtil.getRandomIv();
-		String secretKey = encryptDecryptUtil.getSecretKey("");
-		String encryptedData = encryptDecryptUtil.getEncryptedData("", "", "");
-		String macBytes = encryptDecryptUtil.getMacBytes("", "");
-		assertEquals(Strings.EMPTY, randomIv);
-		assertEquals(Strings.EMPTY, secretKey);
-		assertEquals(Strings.EMPTY, encryptedData);
-		assertEquals(Strings.EMPTY, macBytes);
-	}
 
 	@Test
 	void shouldEncryptPasswordToSecretKeyBySha256() {
@@ -50,12 +40,82 @@ class EncryptDecryptUtilTest {
 	}
 
 	@Test
+	void shouldThrowExceptionWhenBackendSecretKeyOrFixedSaltIsNull() {
+		Map<String, String> withOutSalt = new HashMap<>();
+		Map<String, String> withOutSecretKey = new HashMap<>();
+		withOutSalt.put("BACKEND_SECRET_KEY", "fakeSecretKey");
+		withOutSecretKey.put("FIXED_SALT", "fakeFixedSalt");
+		when(systemUtil.getEnvMap()).thenReturn(withOutSalt).thenReturn(withOutSecretKey);
+		var errMessageForWithOutSalt = assertThrows(EncryptProcessException.class,
+				() -> encryptDecryptUtil.getSecretKey("fakePassword"));
+		var errMessageForWithOutSecretKey = assertThrows(EncryptProcessException.class,
+				() -> encryptDecryptUtil.getSecretKey("fakePassword"));
+		assertEquals("Get secret key failed with reason: No backend secret key or fixed salt in the environment",
+				errMessageForWithOutSecretKey.getMessage());
+		assertEquals(errMessageForWithOutSecretKey.getMessage(), errMessageForWithOutSalt.getMessage());
+	}
+
+	@Test
 	void shouldGetRandomIv() {
 		String randomIv1 = encryptDecryptUtil.getRandomIv();
 		String randomIv2 = encryptDecryptUtil.getRandomIv();
 		assertEquals(32, randomIv1.length());
 		assertEquals(32, randomIv1.length());
 		assertNotEquals(randomIv1, randomIv2);
+	}
+
+	@Test
+	void shouldGetEncryptedData() {
+		var fakeData = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
+		String jsonFakeData = new Gson().toJson(fakeData);
+		String randomIv1 = encryptDecryptUtil.getRandomIv();
+		String randomIv2 = encryptDecryptUtil.getRandomIv();
+		String encryptedData1 = encryptDecryptUtil.getEncryptedData(randomIv1,
+				"67464eaa64b0719eecfa5380f8aba2c45ffc7de693fa7a6429f9c1312f005693", jsonFakeData);
+		String encryptedData2 = encryptDecryptUtil.getEncryptedData(randomIv2,
+				"67464eaa64b0719eecfa5380f8aba2c45ffc7de693fa7a6429f9c1312f005693", jsonFakeData);
+		assertNotNull(encryptedData1);
+		assertNotNull(encryptedData2);
+		assertNotEquals(encryptedData1, encryptedData2);
+	}
+
+	@Test
+	void shouldThrowExceptionWhenGetEncryptedData() {
+		var fakeData = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
+		String jsonFakeData = new Gson().toJson(fakeData);
+		String randomIv = encryptDecryptUtil.getRandomIv();
+		var exception = assertThrows(EncryptProcessException.class,
+				() -> encryptDecryptUtil.getEncryptedData(randomIv + randomIv,
+						"67464eaa64b0719eecfa5380f8aba2c45ffc7de693fa7a6429f9c1312f005693", jsonFakeData));
+		assertEquals("Encrypted data failed", exception.getMessage());
+		assertEquals(500, exception.getStatus());
+	}
+
+	@Test
+	void shouldGetMacBytes() {
+		var fakeData = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
+		String jsonFakeData = new Gson().toJson(fakeData);
+		String randomIv = encryptDecryptUtil.getRandomIv();
+		String encryptedData = encryptDecryptUtil.getEncryptedData(randomIv,
+				"67464eaa64b0719eecfa5380f8aba2c45ffc7de693fa7a6429f9c1312f005693", jsonFakeData);
+		String macBytes = encryptDecryptUtil
+			.getMacBytes("67464eaa64b0719eecfa5380f8aba2c45ffc7de693fa7a6429f9c1312f005693", encryptedData);
+		assertNotNull(macBytes);
+
+	}
+
+	@Test
+	void shouldThrowExceptionWhenGetMacBytes() {
+		var fakeData = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
+		String jsonFakeData = new Gson().toJson(fakeData);
+		String randomIv = encryptDecryptUtil.getRandomIv();
+		String encryptedData1 = encryptDecryptUtil.getEncryptedData(randomIv,
+				"67464eaa64b0719eecfa5380f8aba2c45ffc7de693fa7a6429f9c1312f005693", jsonFakeData);
+		var exception = assertThrows(EncryptProcessException.class,
+				() -> encryptDecryptUtil.getMacBytes("", encryptedData1));
+		assertEquals("Get macBytes failed", exception.getMessage());
+		assertEquals(500, exception.getStatus());
+
 	}
 
 }

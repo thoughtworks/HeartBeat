@@ -71,14 +71,16 @@ export default [
 		key: 'designs/sequence-diagrams',
 	},
 	{
-		text: 'Solution of buildkite issue',
-		slug: 'designs/solution-of-buildkite-issue',
-		key: 'designs/solution-of-buildkite-issue',
-	},
-	{
 		text: 'Support multiple columns',
 		slug: 'designs/support-multiple-columns',
 		key: 'designs/support-multiple-columns',
+	},
+
+	{ text: 'Issue Solutions', header: true, type: 'tech', key: 'solutions' },
+	{
+		text: 'Solutions of buildKite issue',
+		slug: 'issue-solutions/solution-of-buildKite-issue',
+		key: 'issue-solutions/solution-of-buildKite-issue',
 	},
 
 	{ text: 'Spikes', header: true, type: 'tech', key: 'spikes' },

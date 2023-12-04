@@ -14,10 +14,11 @@ import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { CYCLE_TIME_TOOLTIP, DONE } from '@src/constants'
 import {
   CycleTimeContainer,
+  StyledTooltip,
   TitleAndTooltipContainer,
   TooltipContainer,
 } from '@src/components/Metrics/MetricsStep/CycleTime/style'
-import { IconButton, Tooltip } from '@mui/material'
+import { IconButton } from '@mui/material'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 
 interface cycleTimeProps {
@@ -66,11 +67,11 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
       <TitleAndTooltipContainer>
         <MetricsSettingTitle title={title} />
         <TooltipContainer>
-          <Tooltip title={CYCLE_TIME_TOOLTIP}>
+          <StyledTooltip title={CYCLE_TIME_TOOLTIP}>
             <IconButton aria-label='info'>
               <InfoOutlinedIcon />
             </IconButton>
-          </Tooltip>
+          </StyledTooltip>
         </TooltipContainer>
       </TitleAndTooltipContainer>
       <CycleTimeContainer>

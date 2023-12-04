@@ -18,6 +18,15 @@ body:
 
       Last please double confirm that you had already verified it can be replicated in the latest version, otherwise use the latest stable version could be the fastest way to resolve your issue.
 
+- type: input
+  id: contact
+  attributes:
+    label: Contact Details
+    description: How can we get in touch with you if we need more info?
+    placeholder: ex. email@example.com or full name that we can connect you in Slack or WeCom
+  validations:
+    required: true
+
 - type: dropdown
   id: browsers
   attributes:

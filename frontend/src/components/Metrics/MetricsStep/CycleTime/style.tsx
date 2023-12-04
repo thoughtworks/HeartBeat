@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import { Checkbox } from '@mui/material'
+import { Checkbox, Tooltip } from '@mui/material'
 import { PipelineMetricSelectionWrapper } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection/style'
 
 export const FlagCardItem = styled('div')({
@@ -40,3 +40,10 @@ export const TitleAndTooltipContainer = styled('div')({
 export const TooltipContainer = styled('div')({
   marginLeft: '4px',
 })
+
+export const StyledTooltip = styled(({ className, ...props }: any) => (
+  <Tooltip placement='right-start' {...props} componentsProps={{ tooltip: { className: className } }} />
+))(`
+    max-width: 500px;
+    margin-top: 10px;
+`)

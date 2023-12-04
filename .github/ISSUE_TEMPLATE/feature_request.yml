@@ -16,6 +16,15 @@ body:
 
               Also try to search for your issue - it may have already been answered or even fixed in the development branch. However, if you find that an old, closed issue still persists in the latest version, you should open a new issue using the form below instead of commenting on the old issue.
 
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com or full name that we can connect you in Slack or WeCom
+    validations:
+      required: true
+
   - type: textarea
     attributes:
       label: Summary - What problem does this feature solve?

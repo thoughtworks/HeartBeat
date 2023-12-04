@@ -1,6 +1,7 @@
 package heartbeat.util;
 
 import org.apache.logging.log4j.util.Strings;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +47,15 @@ class EncryptDecryptUtilTest {
 		String secretKey2 = encryptDecryptUtil.getSecretKey("Password");
 		assertEquals(64, secretKey1.length());
 		assertEquals(64, secretKey2.length());
+	}
+
+	@Test
+	void shouldGetRandomIv() {
+		String randomIv1 = encryptDecryptUtil.getRandomIv();
+		String randomIv2 = encryptDecryptUtil.getRandomIv();
+		assertEquals(32, randomIv1.length());
+		assertEquals(32, randomIv1.length());
+		assertNotEquals(randomIv1, randomIv2);
 	}
 
 }

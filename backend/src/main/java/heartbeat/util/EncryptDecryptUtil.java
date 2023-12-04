@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,7 +22,18 @@ public class EncryptDecryptUtil {
 
 	private static final String FIXED_SALT = "FIXED_SALT";
 
+	public static final int RANDOM_IV_SIZE = 16;
+
 	public final SystemUtil systemUtil;
+
+	public String getRandomIv() {
+		SecureRandom secureRandom = new SecureRandom();
+		byte[] ivByteList = new byte[RANDOM_IV_SIZE];
+		secureRandom.nextBytes(ivByteList);
+		return IntStream.range(0, ivByteList.length)
+			.mapToObj(i -> String.format("%02x", 0xff & ivByteList[i]))
+			.collect(Collectors.joining());
+	}
 
 	public String getSecretKey(String password) {
 		Map<String, String> envMap = systemUtil.getEnvMap();
@@ -47,10 +59,6 @@ public class EncryptDecryptUtil {
 	}
 
 	public String getMacBytes(String secretKey, String encryptedData) {
-		return "";
-	}
-
-	public String getRandomIv() {
 		return "";
 	}
 

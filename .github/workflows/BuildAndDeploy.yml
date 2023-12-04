@@ -2,9 +2,9 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ "*" ]
+    branches: ["*"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
-          scandir: './ops'
+          scandir: "./ops"
 
   fossa-check:
     runs-on: ubuntu-latest
@@ -62,19 +62,19 @@ jobs:
       - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
+          scan-type: "fs"
           ignore-unfixed: true
-          exit-code: '1'
-          severity: 'CRITICAL'
+          exit-code: "1"
+          severity: "CRITICAL"
           trivyignores: .trivyignore
 
       - name: Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'config'
-          exit-code: '1'
+          scan-type: "config"
+          exit-code: "1"
           ignore-unfixed: true
-          severity: 'CRITICAL'
+          severity: "CRITICAL"
           trivyignores: .trivyignore
   backend-check:
     runs-on: ubuntu-latest
@@ -140,6 +140,8 @@ jobs:
           npm install -g pnpm
           pnpm install --no-frozen-lockfile
           pnpm lint
+      - name: Audit for vulnerabilities
+        run: pnpm dlx audit-ci@^6 --critical --report-type full
       - name: Testing and coverage
         run: |
           pnpm coverage
@@ -241,11 +243,11 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_backend:latest
-          format: 'table'
-          exit-code: '1'
+          format: "table"
+          exit-code: "1"
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-          trivyignores: '.trivyignore'
+          severity: "CRITICAL,HIGH"
+          trivyignores: ".trivyignore"
       # - name: Push for Backend
       #   env:
       #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -290,11 +292,11 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_frontend:latest
-          format: 'table'
-          exit-code: '1'
+          format: "table"
+          exit-code: "1"
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-          trivyignores: '.trivyignore'
+          severity: "CRITICAL,HIGH"
+          trivyignores: ".trivyignore"
 
       # - name: Push for Frontend
       #   env:
@@ -341,11 +343,11 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_stub:latest
-          format: 'table'
-          exit-code: '1'
+          format: "table"
+          exit-code: "1"
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-          trivyignores: '.trivyignore'
+          severity: "CRITICAL,HIGH"
+          trivyignores: ".trivyignore"
 
       # - name: Push for MockServer
       #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}
@@ -517,4 +519,3 @@ jobs:
       #       docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_backend:$IMAGE_TAG
       #       docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_frontend:$IMAGE_TAG
       #       docker-compose up -d frontend
-

@@ -273,6 +273,7 @@ describe('Create a new project', () => {
 
     cy.contains('Cycle time settings').should('exist')
 
+    metricsPage.checkCycleTimeTooltip()
     metricsPage.checkCycleTime()
 
     cy.contains('Real done').should('exist')

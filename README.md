@@ -60,6 +60,7 @@
  - [Oct 9 2023 - Release Heartbeat - 1.1.0](release-notes/20231009.md)
  - [Nov 6 2023 - Release Heartbeat - 1.1.2](release-notes/20231106.md)
  - [Nov 21 2023 - Release Heartbeat - 1.1.3](release-notes/20231121.md)
+ - [Dev 4 2023 - Release Heartbeat - 1.1.4](release-notes/20231204.md)
 
 # 1 About Heartbeat
 

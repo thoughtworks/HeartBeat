@@ -11,6 +11,7 @@ import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.exception.BaseException;
+import heartbeat.exception.GithubRepoEmptyException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
@@ -104,7 +105,13 @@ public class GitHubService {
 			.thenApply(v -> repoFutures.stream()
 				.map(CompletableFuture::join)
 				.flatMap(Collection::stream)
-				.collect(Collectors.toSet()));
+				.collect(Collectors.collectingAndThen(Collectors.toSet(), allRepos -> {
+					if (allRepos.isEmpty()) {
+						throw new GithubRepoEmptyException("No GitHub repositories found.");
+					}
+					return allRepos;
+				})));
+
 	}
 
 	public List<PipelineLeadTime> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,

@@ -59,6 +59,13 @@ public class RestResponseEntityExceptionHandler {
 			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Token is incorrect"));
 	}
 
+	@ExceptionHandler(value = GithubRepoEmptyException.class)
+	protected ResponseEntity<Object> handleGithubRepoEmptyException(GithubRepoEmptyException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(),
+					"The GitHub repo size is 0, please recheck the token!"));
+	}
+
 	@ExceptionHandler(value = PermissionDenyException.class)
 	protected ResponseEntity<Object> handlePermissionDenyException(PermissionDenyException ex) {
 		return ResponseEntity.status(ex.getStatus())

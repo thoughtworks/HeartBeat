@@ -66,7 +66,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
     <>
       <TitleAndTooltipContainer>
         <MetricsSettingTitle title={title} />
-        <TooltipContainer>
+        <TooltipContainer data-test-id={'tooltip'}>
           <StyledTooltip title={CYCLE_TIME_TOOLTIP}>
             <IconButton aria-label='info'>
               <InfoOutlinedIcon />

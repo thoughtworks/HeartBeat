@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CryptoController.class)
@@ -44,11 +43,16 @@ class CryptoControllerTest {
 		// when
 		when(encryptDecryptService.encryptConfigData(any(), any())).thenReturn(fakeEncryptedData);
 		// then
-		mockMvc
+		var response = mockMvc
 			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.encryptedData").value(fakeEncryptedData));
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.encryptedData").toString();
+		assertThat(result).isEqualTo(fakeEncryptedData);
 	}
 
 	@ParameterizedTest

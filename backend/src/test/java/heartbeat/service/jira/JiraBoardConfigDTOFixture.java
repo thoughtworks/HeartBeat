@@ -543,8 +543,6 @@ public class JiraBoardConfigDTOFixture {
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_WITH_NO_STATUS_FIELD() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(
-					new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(REVIEW),
-							new HistoryDetail.Actor("da pei")),
 					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null),
 					new HistoryDetail(1682642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG),
 							null),

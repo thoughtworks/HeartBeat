@@ -956,7 +956,7 @@
       },
       "to": {
         "value": null,
-        "displayValue": "1"
+        "displayValue": "2"
       }
     },
     {
@@ -2284,8 +2284,8 @@
         "categoryId": 2
       },
       "to": {
-        "value": "14205",
-        "displayValue": "Done",
+        "value": "6",
+        "displayValue": "Closed",
         "categoryId": 3
       }
     },

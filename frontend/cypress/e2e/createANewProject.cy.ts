@@ -6,28 +6,28 @@ import reportPage from '../pages/metrics/report'
 
 const cycleTimeData = [
   { label: 'Name', value: 'Value' },
-  { label: 'Average cycle time', value: '8.1(days/SP)' },
+  { label: 'Average cycle time', value: '7.64(days/SP)' },
   { label: '9.55(days/card)' },
   { label: 'Total development time / Total cycle time', value: '62.04%' },
   { label: 'Total waiting for testing time / Total cycle time', value: '2.39%' },
   { label: 'Total block time / Total cycle time', value: '30.27%' },
   { label: 'Total review time / Total cycle time', value: '3.82%' },
   { label: 'Total testing time / Total cycle time', value: '1.48%' },
-  { label: 'Average development time', value: '5.02(days/SP)' },
+  { label: 'Average development time', value: '4.74(days/SP)' },
   { label: '5.92(days/card)' },
-  { label: 'Average waiting for testing time', value: '0.19(days/SP)' },
+  { label: 'Average waiting for testing time', value: '0.18(days/SP)' },
   { label: '0.23(days/card)' },
-  { label: 'Average block time', value: '2.45(days/SP)' },
+  { label: 'Average block time', value: '2.31(days/SP)' },
   { label: '2.89(days/card)' },
-  { label: 'Average review time', value: '0.31(days/SP)' },
+  { label: 'Average review time', value: '0.29(days/SP)' },
   { label: '0.37(days/card)' },
-  { label: 'Average testing time', value: '0.12(days/SP)' },
+  { label: 'Average testing time', value: '0.11(days/SP)' },
   { label: '0.14(days/card)' },
 ]
 
 const velocityData = [
   { label: 'Name', value: 'Value' },
-  { label: 'Velocity(Story Point)', value: '16' },
+  { label: 'Velocity(Story Point)', value: '17.5' },
   { label: 'Throughput(Cards Count)', value: '14' },
 ]
 
@@ -176,7 +176,7 @@ const clearDownloadFile = () => {
 
 const checkMetricCSV = () => {
   cy.wait(2000)
-  cy.fixture('metric-20220901-20220914-1031253.csv').then((localFileContent) => {
+  cy.fixture('metric.csv').then((localFileContent) => {
     cy.task('readDir', 'cypress/downloads').then((files) => {
       expect(files).to.match(new RegExp(/metric-.*\.csv/))
       files.forEach((file) => {

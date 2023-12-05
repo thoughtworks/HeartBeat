@@ -3,6 +3,7 @@ package heartbeat.controller.crypto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.crypto.request.EncryptRequest;
+import heartbeat.exception.EncryptProcessException;
 import heartbeat.service.crypto.EncryptDecryptService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -114,6 +115,28 @@ class CryptoControllerTest {
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.password").toString();
 		assertThat(result).isEqualTo("Password is longer than 50");
+	}
+
+	@Test
+	void shouldReturn500StatusWhenServiceThrowException() throws Exception {
+		// given
+		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password("1234567890").build();
+		// when
+		when(encryptDecryptService.encryptConfigData(any(), any()))
+			.thenThrow(new EncryptProcessException("Encrypt process message"));
+		// then
+		var response = mockMvc
+			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isInternalServerError())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var message = JsonPath.parse(content).read("$.message").toString();
+		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
+		assertThat(message).isEqualTo("Encrypt process message");
+		assertThat(hintInfo).isEqualTo("Encrypt config failed");
 	}
 
 }

@@ -125,6 +125,7 @@ export const SourceControl = () => {
       return field
     })
     setFields(newFieldsValue)
+    dispatch(updateSourceControlVerifyState(false))
   }
 
   return (

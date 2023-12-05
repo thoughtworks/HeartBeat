@@ -166,6 +166,19 @@ class RestResponseEntityExceptionHandlerTest {
 	}
 
 	@Test
+	public void shouldHandleGithubRepoEmptyException() {
+		GithubRepoEmptyException ex = new GithubRepoEmptyException("No GitHub repositories found.");
+
+		ResponseEntity<Object> response = restExceptionHandler.handleGithubRepoEmptyException(ex);
+
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertTrue(response.getBody() instanceof RestApiErrorResponse);
+		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
+		assertEquals("No GitHub repositories found.", errorResponse.getMessage());
+	}
+
+	@Test
 	public void shouldHandleFileIOException() {
 		FileIOException ex = new FileIOException(new IOException("File read failed"));
 

@@ -32,7 +32,7 @@ describe('MetricsStep', () => {
   const { result } = renderHook(() => useNotificationLayoutEffect())
 
   it('should render Crews when select velocity, and show Real done when have done column in Cycle time', async () => {
-    await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
+    store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]))
     const { getByText, queryByText } = setup()
 
     expect(getByText(CREWS_SETTING)).toBeInTheDocument()

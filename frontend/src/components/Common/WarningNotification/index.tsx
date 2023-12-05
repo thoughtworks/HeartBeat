@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { StyledAlert, WarningBar } from './style'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import { DURATION } from '@src/constants/commons'
 
 export const WarningNotification = (props: { message: string }) => {
   const { message } = props
@@ -8,7 +8,7 @@ export const WarningNotification = (props: { message: string }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setOpen(false)
-    }, ERROR_MESSAGE_TIME_DURATION)
+    }, DURATION.ERROR_MESSAGE_TIME)
 
     return () => {
       clearTimeout(timer)

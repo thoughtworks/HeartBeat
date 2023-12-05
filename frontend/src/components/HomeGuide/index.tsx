@@ -6,10 +6,11 @@ import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/
 import React, { useState } from 'react'
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 import { resetStep } from '@src/context/stepper/StepperSlice'
-import { HOME_VERIFY_IMPORT_WARNING_MESSAGE, METRICS_PAGE_ROUTE } from '@src/constants'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig'
 import { GuideButton, HomeGuideContainer } from '@src/components/HomeGuide/style'
+import { MESSAGE } from '@src/constants/resources'
+import { ROUTE } from '@src/constants/router'
 
 export const HomeGuide = () => {
   const navigate = useNavigate()
@@ -42,7 +43,7 @@ export const HomeGuide = () => {
             dispatch(updateProjectCreatedState(false))
             dispatch(updateBasicConfigState(config))
             dispatch(updateMetricsImportedData(config))
-            navigate(METRICS_PAGE_ROUTE)
+            navigate(ROUTE.METRICS_PAGE)
           } else {
             setValidConfig(false)
           }
@@ -63,12 +64,12 @@ export const HomeGuide = () => {
 
   const createNewProject = () => {
     dispatch(resetStep())
-    navigate(METRICS_PAGE_ROUTE)
+    navigate(ROUTE.METRICS_PAGE)
   }
 
   return (
     <HomeGuideContainer>
-      {!validConfig && <WarningNotification message={HOME_VERIFY_IMPORT_WARNING_MESSAGE} />}
+      {!validConfig && <WarningNotification message={MESSAGE.HOME_VERIFY_IMPORT_WARNING} />}
       <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
         <GuideButton onClick={openFileImportBox}>Import project from file</GuideButton>
         <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange} />

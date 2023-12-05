@@ -4,12 +4,15 @@ import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import {
   BACK,
+  BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
   HOME_PAGE_ROUTE,
   MOCK_REPORT_URL,
   NEXT,
+  PIPELINE_TOOL_TYPES,
   PROJECT_NAME_LABEL,
   SAVE,
+  SOURCE_CONTROL_TYPES,
   STEPPER,
   TEST_PROJECT_NAME,
   VELOCITY,
@@ -38,7 +41,7 @@ import {
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice'
 import { exportToJsonFile } from '@src/utils/util'
-import { ASSIGNEE_FILTER_TYPES, BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
+import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources'
 
 const START_DATE_LABEL = 'From *'
 const TODAY = dayjs()

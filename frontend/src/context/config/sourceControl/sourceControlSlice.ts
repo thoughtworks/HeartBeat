@@ -1,4 +1,4 @@
-import { SOURCE_CONTROL_TYPES } from '@src/constants'
+import { SOURCE_CONTROL_TYPES } from '@src/constants/resources'
 import { initSourceControlVerifyResponseState, ISourceControlVerifyResponse } from './verifyResponseSlice'
 
 export interface ISourceControl {

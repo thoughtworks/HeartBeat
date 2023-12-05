@@ -1,8 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { boardClient } from '@src/clients/board/BoardClient'
-import { MOCK_BOARD_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
+import { ERROR_MESSAGE_TIME_DURATION, MOCK_BOARD_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 
 describe('use verify board state', () => {

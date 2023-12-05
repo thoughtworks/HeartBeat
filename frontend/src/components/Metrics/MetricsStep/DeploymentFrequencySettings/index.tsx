@@ -10,7 +10,7 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext'
 import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton'
-import { PIPELINE_SETTING_TYPES } from '@src/constants'
+import { PIPELINE_SETTING_TYPES } from '@src/constants/resources'
 import { selectPipelineCrews } from '@src/context/config/configSlice'
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews'
 import _ from 'lodash'

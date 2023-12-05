@@ -16,7 +16,7 @@ import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsT
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import userEvent from '@testing-library/user-event'
-import { SELECTED_VALUE_SEPARATOR } from '@src/constants'
+import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons'
 import BasicInfo from '@src/components/Metrics/ConfigStep/BasicInfo'
 let store = null
 

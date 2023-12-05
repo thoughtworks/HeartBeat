@@ -1,10 +1,10 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { SELECTED_VALUE_SEPARATOR, REQUIRED_DATA } from '@src/constants'
+import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons'
+import { REQUIRED_DATA } from '@src/constants/resources'
 import { useEffect, useState } from 'react'
 import { RequireDataSelections } from '@src/components/Metrics/ConfigStep/BasicInfo/RequiredMetrics/style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { selectConfig, updateMetrics } from '@src/context/config/configSlice'
-import { REQUIRED_DATA_LIST } from '../../../../../../__tests__/src/fixtures'
 
 export const RequiredMetrics = () => {
   const dispatch = useAppDispatch()
@@ -20,7 +20,7 @@ export const RequiredMetrics = () => {
     if (selectOptions.includes(REQUIRED_DATA.All) && !isAllSelected) {
       setIsAllSelected(true)
       selectOptions = Object.values(REQUIRED_DATA)
-    } else if (selectOptions.length == REQUIRED_DATA_LIST.length - 1 && !isAllSelected) {
+    } else if (selectOptions.length == Object.values(REQUIRED_DATA).length - 1 && !isAllSelected) {
       setIsAllSelected(true)
       selectOptions = Object.values(REQUIRED_DATA)
     } else if (selectOptions.includes(REQUIRED_DATA.All)) {

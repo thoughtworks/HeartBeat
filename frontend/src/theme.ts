@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 import { indigo } from '@mui/material/colors'
-import { FIVE_HUNDRED } from '@src/constants'
+import { FIVE_HUNDRED } from '@src/constants/commons'
 
 declare module '@mui/material/styles' {
   interface Theme {

@@ -1,5 +1,4 @@
-import { REGULAR_CALENDAR } from './fixtures'
-import { BOARD_TYPES, PIPELINE_TOOL_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants'
+import { BOARD_TYPES, PIPELINE_TOOL_TYPES, REGULAR_CALENDAR, SOURCE_CONTROL_TYPES } from './fixtures'
 import { BasicConfigState } from '@src/context/config/configSlice'
 
 const initialConfigState: BasicConfigState = {

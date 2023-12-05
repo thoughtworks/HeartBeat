@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FormControlWrapper } from './style'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
 import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
-import { Z_INDEX } from '@src/constants'
+import { Z_INDEX } from '@src/constants/commons'
 
 interface Props {
   options: string[]

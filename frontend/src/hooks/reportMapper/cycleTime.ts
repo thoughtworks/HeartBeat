@@ -1,4 +1,4 @@
-import { CYCLE_TIME_METRICS_NAME, METRICS_CONSTANTS, Unit } from '@src/constants'
+import { CYCLE_TIME_METRICS_NAME, METRICS_CONSTANTS, Unit } from '@src/constants/resources'
 import { ReportDataWithTwoColumns, ValueWithUnits } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { CycleTimeResponse, Swimlane } from '@src/clients/report/dto/response'
 

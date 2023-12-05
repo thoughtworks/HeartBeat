@@ -1,6 +1,7 @@
 import { Radio, RadioGroup } from '@mui/material'
 import { useState } from 'react'
-import { CHINA_CALENDAR, DEFAULT_HELPER_TEXT, REGULAR_CALENDAR } from '@src/constants'
+import { CALENDAR } from '@src/constants/resources'
+import { DEFAULT_HELPER_TEXT } from '@src/constants/commons'
 import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker'
 import { CollectionDateLabel, ProjectNameInput, StyledFormControlLabel } from './style'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
@@ -56,8 +57,8 @@ const BasicInfo = () => {
             dispatch(updateCalendarType(e.target.value))
           }}
         >
-          <StyledFormControlLabel value={REGULAR_CALENDAR} control={<Radio />} label={REGULAR_CALENDAR} />
-          <StyledFormControlLabel value={CHINA_CALENDAR} control={<Radio />} label={CHINA_CALENDAR} />
+          <StyledFormControlLabel value={CALENDAR.REGULAR} control={<Radio />} label={CALENDAR.REGULAR} />
+          <StyledFormControlLabel value={CALENDAR.CHINA} control={<Radio />} label={CALENDAR.CHINA} />
         </RadioGroup>
         <DateRangePicker />
         <RequiredMetrics />

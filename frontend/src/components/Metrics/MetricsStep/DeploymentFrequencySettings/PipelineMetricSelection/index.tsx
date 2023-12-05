@@ -20,8 +20,8 @@ import {
   updatePipelineStep,
 } from '@src/context/Metrics/metricsSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
-import { NO_STEP_WARNING_MESSAGE } from '@src/constants'
 import { BranchSelection } from '@src/components/Metrics/ConfigStep/BranchSelection'
+import { MESSAGE } from '@src/constants/resources'
 
 interface pipelineMetricSelectionProps {
   type: string
@@ -94,7 +94,7 @@ export const PipelineMetricSelection = ({
       {organizationWarningMessage && <WarningNotification message={organizationWarningMessage} />}
       {pipelineNameWarningMessage && <WarningNotification message={pipelineNameWarningMessage} />}
       {stepWarningMessage && <WarningNotification message={stepWarningMessage} />}
-      {isShowNoStepWarning && <WarningNotification message={NO_STEP_WARNING_MESSAGE} />}
+      {isShowNoStepWarning && <WarningNotification message={MESSAGE.NO_STEP_WARNING} />}
       {isLoading && <Loading />}
       {isDuplicated && <WarningMessage>This pipeline is the same as another one!</WarningMessage>}
       {errorMessage && <ErrorNotification message={errorMessage} />}

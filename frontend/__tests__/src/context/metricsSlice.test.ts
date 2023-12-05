@@ -19,12 +19,7 @@ import saveMetricsSettingReducer, {
 } from '@src/context/Metrics/metricsSlice'
 import { store } from '@src/store'
 import { CLASSIFICATION_WARNING_MESSAGE, NO_RESULT_DASH, PIPELINE_SETTING_TYPES } from '../fixtures'
-import {
-  ASSIGNEE_FILTER_TYPES,
-  ORGANIZATION_WARNING_MESSAGE,
-  PIPELINE_NAME_WARNING_MESSAGE,
-  REAL_DONE_WARNING_MESSAGE,
-} from '@src/constants'
+import { ASSIGNEE_FILTER_TYPES, MESSAGE } from '@src/constants/resources'
 import { setupStore } from '../utils/setupStoreUtil'
 
 const initState = {
@@ -444,8 +439,8 @@ describe('saveMetricsSetting reducer', () => {
           ],
           deploymentWarningMessage: [
             { id: 0, organization: null, pipelineName: null, step: null },
-            { id: 1, organization: null, pipelineName: PIPELINE_NAME_WARNING_MESSAGE, step: null },
-            { id: 2, organization: ORGANIZATION_WARNING_MESSAGE, pipelineName: null, step: null },
+            { id: 1, organization: null, pipelineName: MESSAGE.PIPELINE_NAME_WARNING, step: null },
+            { id: 2, organization: MESSAGE.ORGANIZATION_WARNING, pipelineName: null, step: null },
           ],
           leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
         },
@@ -782,7 +777,7 @@ describe('saveMetricsSetting reducer', () => {
       updateMetricsState(mockUpdateMetricsStateArguments)
     )
 
-    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(REAL_DONE_WARNING_MESSAGE)
+    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(MESSAGE.REAL_DONE_WARNING)
   })
 
   it('should set realDone warning message null when doneColumns in imported file matches the value in cycleTimeSettings', () => {
@@ -840,7 +835,7 @@ describe('saveMetricsSetting reducer', () => {
       updateMetricsState(mockUpdateMetricsStateArguments)
     )
 
-    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(REAL_DONE_WARNING_MESSAGE)
+    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(MESSAGE.REAL_DONE_WARNING)
   })
 
   describe('select pipeline settings warning message', () => {

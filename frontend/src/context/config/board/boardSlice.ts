@@ -1,4 +1,4 @@
-import { BOARD_TYPES } from '@src/constants'
+import { BOARD_TYPES } from '@src/constants/resources'
 
 export interface IBoardVerifyResponseState {
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[]

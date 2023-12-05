@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NOTIFICATION_TIME_DURATION } from '@src/constants'
+import { DURATION } from '@src/constants/commons'
 
 export interface NotificationTipProps {
   title: string
@@ -19,7 +19,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
     open: false,
     title: '',
     closeAutomatically: false,
-    durationTimeout: NOTIFICATION_TIME_DURATION,
+    durationTimeout: DURATION.NOTIFICATION_TIME,
   })
 
   const resetProps = () => {
@@ -27,7 +27,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
       open: false,
       title: '',
       closeAutomatically: false,
-      durationTimeout: NOTIFICATION_TIME_DURATION,
+      durationTimeout: DURATION.NOTIFICATION_TIME,
     }))
   }
 
@@ -38,7 +38,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
   const closeAutomatically = () => {
     const durationTimeout = notificationProps.durationTimeout
       ? notificationProps.durationTimeout
-      : NOTIFICATION_TIME_DURATION
+      : DURATION.NOTIFICATION_TIME
     const timerId: NodeJS.Timer = setTimeout(() => {
       resetProps()
       return clearTimeout(timerId)

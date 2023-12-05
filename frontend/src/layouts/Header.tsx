@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import Logo from '@src/assets/Logo.svg'
 
-import { PROJECT_NAME } from '@src/constants'
+import { PROJECT_NAME } from '@src/constants/commons'
 import {
   HomeIconContainer,
   HomeIconElement,

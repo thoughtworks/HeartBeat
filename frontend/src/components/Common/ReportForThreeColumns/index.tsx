@@ -8,7 +8,7 @@ import {
 } from '@src/components/Common/ReportForTwoColumns/style'
 import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { AVERAGE_FIELD, Unit } from '@src/constants'
+import { AVERAGE_FIELD, Unit } from '@src/constants/resources'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
 import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style'
 import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'

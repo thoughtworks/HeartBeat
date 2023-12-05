@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Backdrop, Typography } from '@mui/material'
 import { theme } from '@src/theme'
-import { Z_INDEX } from '@src/constants'
+import { Z_INDEX } from '@src/constants/commons'
 
 export const LoadingDrop = styled(Backdrop)({
   position: 'absolute',

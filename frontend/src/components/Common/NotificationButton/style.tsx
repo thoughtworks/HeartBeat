@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { theme } from '@src/theme'
-import { Z_INDEX } from '@src/constants'
+import { Z_INDEX } from '@src/constants/commons'
 import { NotificationsRounded } from '@mui/icons-material'
 
 export const NotificationIconWrapper = styled(NotificationsRounded)({

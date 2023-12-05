@@ -6,8 +6,13 @@ import {
   transformToCleanedBuildKiteEmoji,
 } from '@src/utils/util'
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
-import { EMPTY_STRING, PIPELINE_TOOL_TYPES } from '@src/constants'
-import { filterCycleTimeSettings, MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING } from '../fixtures'
+import { EMPTY_STRING } from '@src/constants/commons'
+import {
+  filterCycleTimeSettings,
+  MOCK_CYCLE_TIME_SETTING,
+  MOCK_JIRA_WITH_STATUES_SETTING,
+  PIPELINE_TOOL_TYPES,
+} from '../fixtures'
 
 describe('exportToJsonFile function', () => {
   it('should create a link element with the correct attributes and click it', () => {

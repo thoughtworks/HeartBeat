@@ -11,9 +11,8 @@ import {
 } from '@src/context/config/configSlice'
 import configReducer from '@src/context/config/configSlice'
 import initialConfigState from '../initialConfigState'
-import { MOCK_BUILD_KITE_VERIFY_RESPONSE } from '../fixtures'
+import { MOCK_BUILD_KITE_VERIFY_RESPONSE, PIPELINE_TOOL_TYPES } from '../fixtures'
 import { setupStore } from '../utils/setupStoreUtil'
-import { PIPELINE_TOOL_TYPES } from '@src/constants'
 
 describe('pipelineTool reducer', () => {
   const MOCK_PIPElINE_TOOL_VERIFY_RESPONSE = {

@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { ERROR_PAGE_MESSAGE, HOME_PAGE_ROUTE } from '@src/constants'
 import ErrorIcon from '@src/assets/ErrorIcon.svg'
 import React from 'react'
 import {
@@ -14,12 +13,14 @@ import {
   ErrorInfo,
   RetryButton,
 } from '@src/components/ErrorContent/style'
+import { ROUTE } from '@src/constants/router'
+import { MESSAGE } from '@src/constants/resources'
 
 export const ErrorContent = () => {
   const navigate = useNavigate()
 
   const backToHomePage = () => {
-    navigate(HOME_PAGE_ROUTE)
+    navigate(ROUTE.HOME_PAGE)
   }
 
   return (
@@ -34,7 +35,7 @@ export const ErrorContent = () => {
         <Okay>But that is okay !</Okay>
       </ErrorMessage>
       <ErrorInfo>
-        <p>{ERROR_PAGE_MESSAGE}</p>
+        <p>{MESSAGE.ERROR_PAGE}</p>
       </ErrorInfo>
       <RetryButton onClick={backToHomePage}>Go to homepage</RetryButton>
     </Container>

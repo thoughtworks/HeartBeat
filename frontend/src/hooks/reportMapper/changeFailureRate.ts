@@ -1,6 +1,6 @@
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { ChangeFailureRateResponse } from '@src/clients/report/dto/response'
-import { FAILURE_RATE_NAME } from '@src/constants'
+import { FAILURE_RATE_NAME } from '@src/constants/resources'
 
 export const changeFailureRateMapper = ({
   avgChangeFailureRate,

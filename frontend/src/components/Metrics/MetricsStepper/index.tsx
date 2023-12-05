@@ -14,16 +14,14 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import {
   BOARD_TYPES,
-  HOME_PAGE_ROUTE,
   METRICS_CONSTANTS,
-  METRICS_STEPS,
   PIPELINE_SETTING_TYPES,
   PIPELINE_TOOL_TYPES,
   REQUIRED_DATA,
-  SAVE_CONFIG_TIPS,
   SOURCE_CONTROL_TYPES,
-  STEPS,
-} from '@src/constants'
+  TIPS,
+} from '@src/constants/resources'
+import { METRICS_STEPS, STEPS } from '@src/constants/commons'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -47,6 +45,7 @@ import {
 import _ from 'lodash'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { ROUTE } from '@src/constants/router'
 
 const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
@@ -219,7 +218,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   }
 
   const backToHomePage = () => {
-    navigate(HOME_PAGE_ROUTE)
+    navigate(ROUTE.HOME_PAGE)
     setIsDialogShowing(false)
     window.location.reload()
   }
@@ -276,7 +275,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       <ButtonContainer>
         {activeStep !== METRICS_STEPS.REPORT && (
           <>
-            <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
+            <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
               <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
                 Save
               </SaveButton>

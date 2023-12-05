@@ -17,6 +17,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
+	@ExceptionHandler(value = EncryptProcessException.class)
+	protected ResponseEntity<Object> handleEncryptProcessException(EncryptProcessException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Encrypt config failed"));
+	}
+
 	@ExceptionHandler(value = GenerateReportException.class)
 	protected ResponseEntity<Object> handleGenerateReportException(GenerateReportException ex) {
 		return ResponseEntity.status(ex.getStatus())

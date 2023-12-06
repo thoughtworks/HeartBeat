@@ -517,19 +517,18 @@ public class JiraService {
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
 			StoryPointsAndCycleTimeRequest request) {
-		List<String> upperDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
+		List<String> realDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
 
-		Optional<Long> lastTimeFromUndoneToRealDone = jiraCardHistory.getItems()
+		Optional<Long> lastTimeToRealDone = jiraCardHistory.getItems()
 			.stream()
 			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
-			.filter(history -> upperDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
-			.filter(history -> !upperDoneStatuses.contains(history.getFrom().getDisplayValue().toUpperCase()))
+			.filter(history -> realDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
 			.map(HistoryDetail::getTimestamp)
 			.max(Long::compareTo);
 
 		long validStartTime = parseLong(request.getStartTime());
 		long validEndTime = parseLong(request.getEndTime());
-		return lastTimeFromUndoneToRealDone.filter(lastTime -> validStartTime <= lastTime && validEndTime >= lastTime)
+		return lastTimeToRealDone.filter(lastTime -> validStartTime <= lastTime && validEndTime >= lastTime)
 			.isPresent();
 	}
 
@@ -627,6 +626,10 @@ public class JiraService {
 					}
 					case REVIEW -> {
 						stepsDay.setReview(stepsDay.getReview() + cycleTimeInfo.getDay());
+						total += cycleTimeInfo.getDay();
+					}
+					case ANALYSE -> {
+						stepsDay.setAnalyse(stepsDay.getAnalyse() + cycleTimeInfo.getDay());
 						total += cycleTimeInfo.getDay();
 					}
 					default -> {

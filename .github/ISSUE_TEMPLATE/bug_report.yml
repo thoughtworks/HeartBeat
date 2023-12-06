@@ -27,6 +27,14 @@ body:
   validations:
     required: true
 
+- type: input
+  id: version
+  attributes:
+    label: Version
+    description: What version of our software are you running? You can get the version by add "api/v1/version" after the host address you visit the heartbeat. If none, you can input "none" as well
+  validations:
+    required: true
+
 - type: dropdown
   id: browsers
   attributes:

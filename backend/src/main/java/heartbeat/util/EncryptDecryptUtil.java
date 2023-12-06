@@ -1,15 +1,21 @@
 package heartbeat.util;
 
+import heartbeat.exception.DecryptProcessException;
 import heartbeat.exception.EncryptProcessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Map;
@@ -28,6 +34,8 @@ public class EncryptDecryptUtil {
 	private static final String FIXED_SALT = "FIXED_SALT";
 
 	public static final String AES_CBC_PADDING = "AES/CBC/PKCS5Padding";
+
+	public static final String HMAC_SHA_256 = "HmacSHA256";
 
 	public static final int RANDOM_IV_SIZE = 16;
 
@@ -58,14 +66,11 @@ public class EncryptDecryptUtil {
 	}
 
 	public String getEncryptedData(String iv, String secretKey, String configData) {
-		byte[] ivByteList = convertByteList(iv);
-		byte[] secretKeyByteList = convertByteList(secretKey);
-		byte[] configDataByteList = configData.getBytes(StandardCharsets.UTF_8);
 		try {
-			Cipher cipher = Cipher.getInstance(AES_CBC_PADDING);
-			SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyByteList, "AES");
-			IvParameterSpec ivParameterSpec = new IvParameterSpec(ivByteList);
-			cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+			byte[] ivByteList = convertByteList(iv);
+			byte[] secretKeyByteList = convertByteList(secretKey);
+			byte[] configDataByteList = configData.getBytes(StandardCharsets.UTF_8);
+			Cipher cipher = obtainAesAlgorithm(secretKeyByteList, ivByteList, Cipher.ENCRYPT_MODE);
 			return Base64.getEncoder().encodeToString(cipher.doFinal(configDataByteList));
 		}
 		catch (Exception e) {
@@ -73,17 +78,41 @@ public class EncryptDecryptUtil {
 		}
 	}
 
+	public String getDecryptedData(String iv, String secretKey, String encryptedData) {
+		try {
+			byte[] ivByteList = convertByteList(iv);
+			byte[] secretKeyByteList = convertByteList(secretKey);
+			Cipher cipher = obtainAesAlgorithm(secretKeyByteList, ivByteList, Cipher.DECRYPT_MODE);
+			byte[] encryptedDataBytes = Base64.getDecoder().decode(encryptedData);
+			byte[] decryptedDataBytes = cipher.doFinal(encryptedDataBytes);
+			return new String(decryptedDataBytes, StandardCharsets.UTF_8);
+		}
+		catch (Exception e) {
+			throw new DecryptProcessException("Decryption failed", 500);
+		}
+	}
+
 	public String getMacBytes(String secretKey, String encryptedData) {
 		try {
-			Mac sha256Hmac = Mac.getInstance("HmacSHA256");
-			SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HmacSHA256");
-			sha256Hmac.init(secretKeySpec);
-
+			Mac sha256Hmac = obtainChecksumAlgorithm(secretKey);
 			byte[] hmacData = sha256Hmac.doFinal(encryptedData.getBytes());
 			return Base64.getEncoder().encodeToString(hmacData);
 		}
 		catch (Exception e) {
-			throw new EncryptProcessException("Get macBytes failed");
+			throw new EncryptProcessException("Obtain checksum algorithm failed");
+		}
+	}
+
+	public boolean verifyMacBytes(String secretKey, String encryptedData, String macBytes) {
+		try {
+			Mac sha256Hmac = obtainChecksumAlgorithm(secretKey);
+			byte[] computedMacBytes = sha256Hmac.doFinal(encryptedData.getBytes());
+			byte[] receivedMacBytes = Base64.getDecoder().decode(macBytes);
+			return MessageDigest.isEqual(computedMacBytes, receivedMacBytes);
+		}
+		catch (Exception e) {
+			throw new DecryptProcessException("Obtain checksum algorithm failed",
+					HttpStatus.INTERNAL_SERVER_ERROR.value());
 		}
 	}
 
@@ -103,6 +132,23 @@ public class EncryptDecryptUtil {
 		}
 
 		return byteArray;
+	}
+
+	private Cipher obtainAesAlgorithm(byte[] secretKeyByteList, byte[] ivByteList, int decryptMode)
+			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+			InvalidAlgorithmParameterException {
+		Cipher cipher = Cipher.getInstance(AES_CBC_PADDING);
+		SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyByteList, "AES");
+		IvParameterSpec ivParameterSpec = new IvParameterSpec(ivByteList);
+		cipher.init(decryptMode, secretKeySpec, ivParameterSpec);
+		return cipher;
+	}
+
+	private Mac obtainChecksumAlgorithm(String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
+		Mac sha256Hmac = Mac.getInstance(HMAC_SHA_256);
+		SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), HMAC_SHA_256);
+		sha256Hmac.init(secretKeySpec);
+		return sha256Hmac;
 	}
 
 }

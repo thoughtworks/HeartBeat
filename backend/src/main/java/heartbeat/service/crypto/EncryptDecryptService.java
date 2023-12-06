@@ -1,5 +1,6 @@
 package heartbeat.service.crypto;
 
+import heartbeat.exception.DecryptProcessException;
 import heartbeat.util.EncryptDecryptUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,14 @@ public class EncryptDecryptService {
 	}
 
 	public String decryptConfigData(String encryptedData, String password) {
-		return "";
+		String iv = encryptedData.substring(0, 32);
+		String data = encryptedData.substring(32, encryptedData.length() - 44);
+		String macBytes = encryptedData.substring(encryptedData.length() - 44);
+		String secretKey = encryptDecryptUtil.getSecretKey(password);
+		if (!encryptDecryptUtil.verifyMacBytes(secretKey, data, macBytes)) {
+			throw new DecryptProcessException("", 400);
+		}
+		return encryptDecryptUtil.getDecryptedData(iv, secretKey, data);
 	}
 
 }

@@ -1,3 +1,5 @@
+import { CYCLE_TIME_TOOLTIP } from '../../../src/constants'
+
 class Metrics {
   static CYCLE_TIME_LABEL = {
     analysisLabel: 'In Analysis',
@@ -119,6 +121,13 @@ class Metrics {
 
   private readonly nextButton = () => cy.contains('Next')
   private readonly backButton = () => cy.contains('Previous')
+
+  private readonly cycleTimeTitleTooltip = () => cy.get('[data-test-id="tooltip')
+
+  checkCycleTimeTooltip() {
+    this.cycleTimeTitleTooltip().trigger('mouseover')
+    cy.contains(CYCLE_TIME_TOOLTIP).should('be.visible')
+  }
 
   checkCycleTime() {
     this.cycleTimeSettingAnalysis()

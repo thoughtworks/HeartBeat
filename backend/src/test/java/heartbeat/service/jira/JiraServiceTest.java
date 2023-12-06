@@ -47,11 +47,14 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_FIELD_RESPONS
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_MULTIPLE_STATUSES;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_MULTIPLE_STATUSES;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_MULTI_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER_TO_DONE;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_WITH_NO_STATUS_FIELD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CLASSIC_JIRA_BOARD_SETTING_BUILD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CLASSIC_JIRA_STORY_POINTS_FORM_ALL_DONE_CARD;
@@ -76,6 +79,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ONE_PAGE_NO_DONE_
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -864,6 +868,79 @@ class JiraServiceTest {
 		assertThat(boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10019", "Rank", false)))
 			.isFalse();
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
+	}
+
+	@Test
+	void shouldGetRealDoneCardsGivenMultipleStatuesMappingToDoneStatusWhenCallGetStoryPointsAndCycleTime()
+			throws JsonProcessingException {
+		// given
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		String assigneeFilter = "lastAssignee";
+
+		// request param
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
+		StoryPointsAndCycleTimeRequest request = STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES().build();
+
+		// return value
+		String allDoneCards = objectMapper
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+			.replaceAll("sprint", "customfield_10020")
+			.replaceAll("partner", "customfield_10037")
+			.replaceAll("flagged", "customfield_10021")
+			.replaceAll("development", "customfield_10000");
+
+		// when
+
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-475", token))
+			.thenReturn(CARD1_HISTORY_FOR_MULTIPLE_STATUSES().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", token))
+			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
+
+		// then
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getBaseInfo().getKey()).isEqualTo("ADM-475");
+	}
+
+	@Test
+	void shouldGetRealDoneCardsGivenHistoryWithNoStatusFieldWhenCallGetStoryPointsAndCycleTime()
+			throws JsonProcessingException {
+		// given
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		String assigneeFilter = "lastAssignee";
+
+		// request param
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
+		StoryPointsAndCycleTimeRequest request = STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES().build();
+
+		// return value
+		String allDoneCards = objectMapper
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+			.replaceAll("sprint", "customfield_10020")
+			.replaceAll("partner", "customfield_10037")
+			.replaceAll("flagged", "customfield_10021")
+			.replaceAll("development", "customfield_10000");
+
+		// when
+
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-475", token))
+			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", token))
+			.thenReturn(CARD_HISTORY_WITH_NO_STATUS_FIELD().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
+
+		// then
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
+		assertThat(cardCollection.getCardsNumber()).isZero();
 	}
 
 }

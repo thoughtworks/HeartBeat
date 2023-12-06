@@ -8,13 +8,7 @@ export const NotificationButton = ({ notificationProps, updateProps }: useNotifi
     updateProps?.({
       title: notificationProps.title,
       open: false,
-    })
-  }
-  const toggleTooltip = () => {
-    if (notificationProps === undefined) return
-    updateProps?.({
-      title: notificationProps.title,
-      open: !notificationProps.open,
+      closeAutomatically: false,
     })
   }
 
@@ -23,7 +17,6 @@ export const NotificationButton = ({ notificationProps, updateProps }: useNotifi
       <ClickAwayListener onClickAway={handleTooltipClose}>
         <Tooltip
           arrow
-          onClick={toggleTooltip}
           onClose={handleTooltipClose}
           open={notificationProps?.open}
           title={notificationProps?.title}

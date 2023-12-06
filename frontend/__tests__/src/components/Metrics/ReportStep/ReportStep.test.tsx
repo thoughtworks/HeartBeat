@@ -269,6 +269,7 @@ describe('Report Step', () => {
     expect(updateProps).not.toBeCalledWith({
       open: true,
       title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+      closeAutomatically: true,
     })
 
     jest.advanceTimersByTime(500000)
@@ -276,6 +277,7 @@ describe('Report Step', () => {
     expect(updateProps).not.toBeCalledWith({
       open: true,
       title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+      closeAutomatically: true,
     })
 
     jest.advanceTimersByTime(1000000)
@@ -283,6 +285,7 @@ describe('Report Step', () => {
     expect(updateProps).toBeCalledWith({
       open: true,
       title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+      closeAutomatically: true,
     })
 
     jest.useRealTimers()

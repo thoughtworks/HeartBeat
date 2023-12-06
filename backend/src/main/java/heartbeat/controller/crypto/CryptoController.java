@@ -1,6 +1,8 @@
 package heartbeat.controller.crypto;
 
+import heartbeat.controller.crypto.request.DecryptRequest;
 import heartbeat.controller.crypto.request.EncryptRequest;
+import heartbeat.controller.crypto.response.DecryptResponse;
 import heartbeat.controller.crypto.response.EncryptResponse;
 import heartbeat.service.crypto.EncryptDecryptService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,12 @@ public class CryptoController {
 	public EncryptResponse encrypt(@RequestBody @Validated EncryptRequest request) {
 		String encryptedData = encryptDecryptService.encryptConfigData(request.getConfigData(), request.getPassword());
 		return EncryptResponse.builder().encryptedData(encryptedData).build();
+	}
+
+	@PostMapping("/decrypt")
+	public DecryptResponse decrypt(@RequestBody @Validated DecryptRequest request) {
+		String configData = encryptDecryptService.decryptConfigData(request.getEncryptedData(), request.getPassword());
+		return DecryptResponse.builder().configData(configData).build();
 	}
 
 }

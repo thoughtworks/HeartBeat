@@ -18,4 +18,8 @@ public class EncryptDecryptService {
 		return iv + encryptedData + macBytes;
 	}
 
+	public String decryptConfigData(String encryptedData, String password) {
+		return "";
+	}
+
 }

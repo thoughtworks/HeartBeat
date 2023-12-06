@@ -12,6 +12,7 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.exception.GithubRepoEmptyException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
@@ -36,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -202,6 +204,16 @@ class GithubServiceTest {
         assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(InternalServerErrorException.class)
                 .hasMessageContaining("UnExpected Exception");
     }
+
+	@Test
+	void shouldGithubReturnEmptyWhenVerifyGithubThrowGithubRepoEmptyException() {
+		String githubEmptyToken = "123456";
+		when(gitHubFeignClient.getReposByOrganizationName("org1", githubEmptyToken)).thenReturn(new ArrayList<>());
+
+		assertThatThrownBy(() -> githubService.verifyToken(githubEmptyToken))
+			.isInstanceOf(GithubRepoEmptyException.class)
+			.hasMessageContaining("No GitHub repositories found.");
+	}
 
 	@Test
 	void shouldReturnNullWhenMergeTimeIsNull() {

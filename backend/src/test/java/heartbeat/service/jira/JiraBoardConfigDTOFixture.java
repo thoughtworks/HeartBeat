@@ -46,6 +46,10 @@ public class JiraBoardConfigDTOFixture {
 
 	public static final String BLOCK = "Block";
 
+	public static final String ANALYSE = "Analysis";
+
+	public static final String IN_DEV = "In Dev";
+
 	public static final String REVIEW = "Review";
 
 	public static final String TESTING = "Testing";
@@ -270,7 +274,8 @@ public class JiraBoardConfigDTOFixture {
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_BUILD() {
 		return JiraBoardSetting.builder()
 			.boardId(BOARD_ID)
-			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name("In Dev").value("In Dev").build(),
+			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name(IN_DEV).value(IN_DEV).build(),
+					RequestJiraBoardColumnSetting.builder().name(ANALYSE).value(ANALYSE).build(),
 					RequestJiraBoardColumnSetting.builder()
 						.name(WAITING_FOR_TESTING)
 						.value(WAITING_FOR_TESTING)
@@ -428,6 +433,7 @@ public class JiraBoardConfigDTOFixture {
 				CycleTimeInfo.builder().column("TESTING").day(2.0).build(),
 				CycleTimeInfo.builder().column("IN DEV").day(3.0).build(),
 				CycleTimeInfo.builder().column("REVIEW").day(4.0).build(),
+				CycleTimeInfo.builder().column("ANALYSIS").day(9.0).build(),
 				CycleTimeInfo.builder().column(UNKNOWN).day(5.0).build(),
 				CycleTimeInfo.builder().column(FLAG).day(6.0).build());
 	}
@@ -435,7 +441,7 @@ public class JiraBoardConfigDTOFixture {
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD() {
 		return JiraBoardSetting.builder()
 			.boardId(BOARD_ID)
-			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name("In Dev").value("In Dev").build(),
+			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name(IN_DEV).value(IN_DEV).build(),
 					RequestJiraBoardColumnSetting.builder()
 						.name(WAITING_FOR_TESTING)
 						.value(WAITING_FOR_TESTING)
@@ -467,6 +473,21 @@ public class JiraBoardConfigDTOFixture {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(jiraBoardSetting.getDoneColumn())
+			.startTime("1672556350000")
+			.endTime("1676908799000")
+			.targetFields(jiraBoardSetting.getTargetFields())
+			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
+	}
+
+	public static StoryPointsAndCycleTimeRequest.StoryPointsAndCycleTimeRequestBuilder STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES() {
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
+		return StoryPointsAndCycleTimeRequest.builder()
+			.token("token")
+			.type(jiraBoardSetting.getType())
+			.site(jiraBoardSetting.getSite())
+			.project(jiraBoardSetting.getProjectKey())
+			.boardId(jiraBoardSetting.getBoardId())
+			.status(List.of(DONE, IN_DEV))
 			.startTime("1672556350000")
 			.endTime("1676908799000")
 			.targetFields(jiraBoardSetting.getTargetFields())
@@ -505,6 +526,27 @@ public class JiraBoardConfigDTOFixture {
 							new HistoryDetail.Actor("da pei")),
 					new HistoryDetail(1674556350000L, "status", new Status(DONE), new Status(TESTING),
 							new HistoryDetail.Actor("xiao pei"))));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_MULTIPLE_STATUSES() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(new HistoryDetail(1673556350000L, "status", new Status(IN_DEV), new Status(ANALYSE),
+					new HistoryDetail.Actor("da pei"))));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD2_HISTORY_FOR_MULTIPLE_STATUSES() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(ANALYSE),
+					new HistoryDetail.Actor("da pei"))));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_WITH_NO_STATUS_FIELD() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null),
+					new HistoryDetail(1682642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG),
+							null),
+					new HistoryDetail(1682642750002L, "flagged", new Status("Impediment"), new Status("removeFlag"),
+							null)));
 	}
 
 }

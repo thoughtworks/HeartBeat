@@ -182,6 +182,7 @@ class GenerateReporterControllerTest {
 		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
 		assertEquals("10", interval);
 
+		Thread.sleep(2000L);
 		verify(asyncExceptionHandler).put(currentTimeStamp, requestFailedException);
 	}
 

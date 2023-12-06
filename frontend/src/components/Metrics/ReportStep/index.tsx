@@ -175,6 +175,7 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
       updateProps?.({
         open: true,
         title: HEADER_NOTIFICATION_MESSAGE.FIRST_REPORT.replace('%s', exportValidityTimeMin.toString()),
+        closeAutomatically: true,
       })
   }, [exportValidityTimeMin])
 
@@ -191,6 +192,7 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
           updateProps?.({
             open: true,
             title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+            closeAutomatically: true,
           })
           clearInterval(timer)
         }

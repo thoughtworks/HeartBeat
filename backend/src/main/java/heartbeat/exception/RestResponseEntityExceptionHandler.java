@@ -17,6 +17,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
+	@ExceptionHandler(value = EncryptProcessException.class)
+	protected ResponseEntity<Object> handleEncryptProcessException(EncryptProcessException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Encrypt config failed"));
+	}
+
 	@ExceptionHandler(value = GenerateReportException.class)
 	protected ResponseEntity<Object> handleGenerateReportException(GenerateReportException ex) {
 		return ResponseEntity.status(ex.getStatus())
@@ -57,6 +63,13 @@ public class RestResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex) {
 		return ResponseEntity.status(ex.getStatus())
 			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Token is incorrect"));
+	}
+
+	@ExceptionHandler(value = GithubRepoEmptyException.class)
+	protected ResponseEntity<Object> handleGithubRepoEmptyException(GithubRepoEmptyException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(),
+					"The GitHub repo size is 0, please recheck the token!"));
 	}
 
 	@ExceptionHandler(value = PermissionDenyException.class)

@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress'
 
 export default defineConfig({
+  video: true,
   videoCompression: 15,
   e2e: {
     baseUrl: process.env.APP_ORIGIN || 'http://localhost:4321',

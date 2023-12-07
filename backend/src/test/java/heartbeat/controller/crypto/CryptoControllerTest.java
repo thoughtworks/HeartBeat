@@ -3,7 +3,7 @@ package heartbeat.controller.crypto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.crypto.request.EncryptRequest;
-import heartbeat.exception.EncryptProcessException;
+import heartbeat.exception.EncryptDecryptProcessException;
 import heartbeat.service.crypto.EncryptDecryptService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -125,7 +125,7 @@ class CryptoControllerTest {
 		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password("A234567890").build();
 		// when
 		when(encryptDecryptService.encryptConfigData(any(), any()))
-			.thenThrow(new EncryptProcessException("Encrypt process message"));
+			.thenThrow(new EncryptDecryptProcessException("Encrypt process message"));
 		// then
 		var response = mockMvc
 			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
@@ -138,7 +138,7 @@ class CryptoControllerTest {
 		final var message = JsonPath.parse(content).read("$.message").toString();
 		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
 		assertThat(message).isEqualTo("Encrypt process message");
-		assertThat(hintInfo).isEqualTo("Encrypt config failed");
+		assertThat(hintInfo).isEqualTo("Encrypt or decrypt process failed");
 	}
 
 }

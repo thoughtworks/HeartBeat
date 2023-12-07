@@ -1,7 +1,7 @@
 package heartbeat.util;
 
-import heartbeat.exception.DecryptProcessException;
-import heartbeat.exception.EncryptProcessException;
+import heartbeat.exception.DecryptDataOrPasswordException;
+import heartbeat.exception.EncryptDecryptProcessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -69,7 +69,7 @@ public class EncryptDecryptUtil {
 
 		try {
 			if (Objects.isNull(envMap.get(BACKEND_SECRET_KEY)) || Objects.isNull(envMap.get(FIXED_SALT))) {
-				throw new EncryptProcessException("No backend secret key or fixed salt in the environment");
+				throw new EncryptDecryptProcessException("No backend secret key or fixed salt in the environment");
 			}
 			String passwordWithSecretKeySalt = envMap.get(BACKEND_SECRET_KEY) + password + envMap.get(FIXED_SALT);
 			MessageDigest sha256 = MessageDigest.getInstance(SHA_256);
@@ -77,7 +77,8 @@ public class EncryptDecryptUtil {
 			return convertHexadecimalString(secretKeyByteList);
 		}
 		catch (Exception e) {
-			throw new EncryptProcessException(String.format("Get secret key failed with reason: %s", e.getMessage()));
+			throw new EncryptDecryptProcessException(
+					String.format("Get secret key failed with reason: %s", e.getMessage()));
 		}
 	}
 
@@ -90,7 +91,7 @@ public class EncryptDecryptUtil {
 			return Base64.getEncoder().encodeToString(cipher.doFinal(configDataByteList));
 		}
 		catch (Exception e) {
-			throw new EncryptProcessException("Encrypted data failed");
+			throw new EncryptDecryptProcessException("Encrypted data failed");
 		}
 	}
 
@@ -103,8 +104,12 @@ public class EncryptDecryptUtil {
 			byte[] decryptedDataBytes = cipher.doFinal(encryptedDataBytes);
 			return new String(decryptedDataBytes, StandardCharsets.UTF_8);
 		}
+		catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+				| InvalidAlgorithmParameterException e) {
+			throw new EncryptDecryptProcessException("Decrypted data failed");
+		}
 		catch (Exception e) {
-			throw new DecryptProcessException("Decryption failed", 500);
+			throw new DecryptDataOrPasswordException("Incorrect password", HttpStatus.UNAUTHORIZED.value());
 		}
 	}
 
@@ -115,7 +120,7 @@ public class EncryptDecryptUtil {
 			return Base64.getEncoder().encodeToString(hmacData);
 		}
 		catch (Exception e) {
-			throw new EncryptProcessException("Obtain checksum algorithm failed");
+			throw new EncryptDecryptProcessException("Obtain checksum algorithm in encrypt failed");
 		}
 	}
 
@@ -127,8 +132,7 @@ public class EncryptDecryptUtil {
 			return MessageDigest.isEqual(computedMacBytes, receivedMacBytes);
 		}
 		catch (Exception e) {
-			throw new DecryptProcessException("Obtain checksum algorithm failed",
-					HttpStatus.INTERNAL_SERVER_ERROR.value());
+			throw new EncryptDecryptProcessException("Obtain checksum algorithm in decrypt failed");
 		}
 	}
 

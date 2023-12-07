@@ -17,10 +17,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = EncryptProcessException.class)
-	protected ResponseEntity<Object> handleEncryptProcessException(EncryptProcessException ex) {
+	@ExceptionHandler(value = DecryptDataOrPasswordException.class)
+	protected ResponseEntity<Object> handleDecryptProcessException(DecryptDataOrPasswordException ex) {
 		return ResponseEntity.status(ex.getStatus())
-			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Encrypt config failed"));
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Config file or password error"));
+	}
+
+	@ExceptionHandler(value = EncryptDecryptProcessException.class)
+	protected ResponseEntity<Object> handleEncryptProcessException(EncryptDecryptProcessException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Encrypt or decrypt process failed"));
 	}
 
 	@ExceptionHandler(value = GenerateReportException.class)

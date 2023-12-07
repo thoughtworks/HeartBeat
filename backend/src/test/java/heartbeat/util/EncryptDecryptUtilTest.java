@@ -1,8 +1,7 @@
 package heartbeat.util;
 
 import com.google.gson.Gson;
-import heartbeat.exception.DecryptProcessException;
-import heartbeat.exception.EncryptProcessException;
+import heartbeat.exception.EncryptDecryptProcessException;
 import heartbeat.service.report.MetricCsvFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,9 +48,9 @@ class EncryptDecryptUtilTest {
 		withOutSalt.put("BACKEND_SECRET_KEY", "fakeSecretKey");
 		withOutSecretKey.put("FIXED_SALT", "fakeFixedSalt");
 		when(systemUtil.getEnvMap()).thenReturn(withOutSalt).thenReturn(withOutSecretKey);
-		var errMessageForWithOutSalt = assertThrows(EncryptProcessException.class,
+		var errMessageForWithOutSalt = assertThrows(EncryptDecryptProcessException.class,
 				() -> encryptDecryptUtil.getSecretKey("fakePassword"));
-		var errMessageForWithOutSecretKey = assertThrows(EncryptProcessException.class,
+		var errMessageForWithOutSecretKey = assertThrows(EncryptDecryptProcessException.class,
 				() -> encryptDecryptUtil.getSecretKey("fakePassword"));
 		assertEquals("Get secret key failed with reason: No backend secret key or fixed salt in the environment",
 				errMessageForWithOutSecretKey.getMessage());
@@ -109,7 +108,7 @@ class EncryptDecryptUtilTest {
 		when(systemUtil.getEnvMap()).thenReturn(envMap);
 		String secretKey = encryptDecryptUtil.getSecretKey("fakePassword");
 		// when
-		var exception = assertThrows(EncryptProcessException.class,
+		var exception = assertThrows(EncryptDecryptProcessException.class,
 				() -> encryptDecryptUtil.getEncryptedData(randomIv + randomIv, secretKey, jsonFakeData));
 		// then
 		assertEquals("Encrypted data failed", exception.getMessage());
@@ -125,10 +124,10 @@ class EncryptDecryptUtilTest {
 		when(systemUtil.getEnvMap()).thenReturn(envMap);
 		String secretKey = encryptDecryptUtil.getSecretKey("fakePassword");
 		// when
-		var exception = assertThrows(DecryptProcessException.class,
+		var exception = assertThrows(EncryptDecryptProcessException.class,
 				() -> encryptDecryptUtil.getDecryptedData(randomIv + randomIv, secretKey, jsonFakeData));
 		// then
-		assertEquals("Decryption failed", exception.getMessage());
+		assertEquals("Decrypted data failed", exception.getMessage());
 		assertEquals(500, exception.getStatus());
 	}
 
@@ -205,10 +204,10 @@ class EncryptDecryptUtilTest {
 
 		String encryptedData = encryptDecryptUtil.getEncryptedData(randomIv, secretKey, jsonFakeData);
 		// when
-		var exception = assertThrows(EncryptProcessException.class,
+		var exception = assertThrows(EncryptDecryptProcessException.class,
 				() -> encryptDecryptUtil.getMacBytes("", encryptedData));
 		// then
-		assertEquals("Obtain checksum algorithm failed", exception.getMessage());
+		assertEquals("Obtain checksum algorithm in encrypt failed", exception.getMessage());
 		assertEquals(500, exception.getStatus());
 
 	}
@@ -224,10 +223,10 @@ class EncryptDecryptUtilTest {
 
 		String encryptedData = encryptDecryptUtil.getEncryptedData(randomIv, secretKey, jsonFakeData);
 		// when
-		var exception = assertThrows(DecryptProcessException.class,
+		var exception = assertThrows(EncryptDecryptProcessException.class,
 				() -> encryptDecryptUtil.verifyMacBytes("", encryptedData, ""));
 		// then
-		assertEquals("Obtain checksum algorithm failed", exception.getMessage());
+		assertEquals("Obtain checksum algorithm in decrypt failed", exception.getMessage());
 		assertEquals(500, exception.getStatus());
 
 	}

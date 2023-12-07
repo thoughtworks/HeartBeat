@@ -1,8 +1,9 @@
 package heartbeat.service.crypto;
 
-import heartbeat.exception.DecryptProcessException;
+import heartbeat.exception.DecryptDataOrPasswordException;
 import heartbeat.util.EncryptDecryptUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,11 +30,11 @@ public class EncryptDecryptService {
 			macBytes = encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData);
 		}
 		catch (StringIndexOutOfBoundsException e) {
-			throw new DecryptProcessException("", 400);
+			throw new DecryptDataOrPasswordException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 		String secretKey = encryptDecryptUtil.getSecretKey(password);
 		if (!encryptDecryptUtil.verifyMacBytes(secretKey, data, macBytes)) {
-			throw new DecryptProcessException("", 400);
+			throw new DecryptDataOrPasswordException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 		return encryptDecryptUtil.getDecryptedData(iv, secretKey, data);
 	}

@@ -3,6 +3,7 @@ package heartbeat.controller.crypto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.crypto.request.EncryptRequest;
+import heartbeat.exception.DecryptDataOrPasswordException;
 import heartbeat.exception.EncryptDecryptProcessException;
 import heartbeat.service.crypto.EncryptDecryptService;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -139,6 +141,50 @@ class CryptoControllerTest {
 		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
 		assertThat(message).isEqualTo("Encrypt process message");
 		assertThat(hintInfo).isEqualTo("Encrypt or decrypt process failed");
+	}
+
+	@Test
+	void shouldReturn500StatusWhenDecryptServiceThrowException() throws Exception {
+		// given
+		DecryptRequest request = DecryptRequest.builder().encryptedData("encryptedData").password("1234567890").build();
+		// when
+		when(encryptDecryptService.decryptConfigData(any(), any()))
+			.thenThrow(new EncryptDecryptProcessException("Encrypt process message"));
+		// then
+		var response = mockMvc
+			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isInternalServerError())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var message = JsonPath.parse(content).read("$.message").toString();
+		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
+		assertThat(message).isEqualTo("Encrypt process message");
+		assertThat(hintInfo).isEqualTo("Encrypt or decrypt process failed");
+	}
+
+	@Test
+	void shouldReturn4xxStatusWhenDecryptServiceThrowException() throws Exception {
+		// given
+		DecryptRequest request = DecryptRequest.builder().encryptedData("encryptedData").password("1234567890").build();
+		// when
+		when(encryptDecryptService.decryptConfigData(any(), any()))
+			.thenThrow(new DecryptDataOrPasswordException("message", HttpStatus.BAD_REQUEST.value()));
+		// then
+		var response = mockMvc
+			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var message = JsonPath.parse(content).read("$.message").toString();
+		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
+		assertThat(message).isEqualTo("message");
+		assertThat(hintInfo).isEqualTo("Config file or password error");
 	}
 
 }

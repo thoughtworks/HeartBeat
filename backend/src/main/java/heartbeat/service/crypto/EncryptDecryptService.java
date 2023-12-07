@@ -15,9 +15,9 @@ public class EncryptDecryptService {
 	public String encryptConfigData(String configData, String password) {
 		String iv = encryptDecryptUtil.getRandomIv();
 		String secretKey = encryptDecryptUtil.getSecretKey(password);
-		String encryptedData = encryptDecryptUtil.getEncryptedData(iv, secretKey, configData);
-		String macBytes = encryptDecryptUtil.getMacBytes(secretKey, encryptedData);
-		return iv + encryptedData + macBytes;
+		String encryptedConfigData = encryptDecryptUtil.getEncryptedData(iv, secretKey, configData);
+		String macBytes = encryptDecryptUtil.getMacBytes(secretKey, encryptedConfigData);
+		return iv + encryptedConfigData + macBytes;
 	}
 
 	public String decryptConfigData(String encryptedData, String password) {

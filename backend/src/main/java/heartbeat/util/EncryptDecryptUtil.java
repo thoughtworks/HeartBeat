@@ -95,12 +95,12 @@ public class EncryptDecryptUtil {
 		}
 	}
 
-	public String getDecryptedData(String iv, String secretKey, String encryptedData) {
+	public String getDecryptedData(String iv, String secretKey, String encryptedConfigData) {
 		try {
 			byte[] ivByteList = convertByteList(iv);
 			byte[] secretKeyByteList = convertByteList(secretKey);
 			Cipher cipher = obtainAesAlgorithm(secretKeyByteList, ivByteList, Cipher.DECRYPT_MODE);
-			byte[] encryptedDataBytes = Base64.getDecoder().decode(encryptedData);
+			byte[] encryptedDataBytes = Base64.getDecoder().decode(encryptedConfigData);
 			byte[] decryptedDataBytes = cipher.doFinal(encryptedDataBytes);
 			return new String(decryptedDataBytes, StandardCharsets.UTF_8);
 		}
@@ -113,10 +113,10 @@ public class EncryptDecryptUtil {
 		}
 	}
 
-	public String getMacBytes(String secretKey, String encryptedData) {
+	public String getMacBytes(String secretKey, String encryptedConfigData) {
 		try {
 			Mac sha256Hmac = obtainChecksumAlgorithm(secretKey);
-			byte[] hmacData = sha256Hmac.doFinal(encryptedData.getBytes());
+			byte[] hmacData = sha256Hmac.doFinal(encryptedConfigData.getBytes());
 			return Base64.getEncoder().encodeToString(hmacData);
 		}
 		catch (Exception e) {
@@ -124,10 +124,10 @@ public class EncryptDecryptUtil {
 		}
 	}
 
-	public boolean verifyMacBytes(String secretKey, String encryptedData, String macBytes) {
+	public boolean verifyMacBytes(String secretKey, String encryptedConfigData, String macBytes) {
 		try {
 			Mac sha256Hmac = obtainChecksumAlgorithm(secretKey);
-			byte[] computedMacBytes = sha256Hmac.doFinal(encryptedData.getBytes());
+			byte[] computedMacBytes = sha256Hmac.doFinal(encryptedConfigData.getBytes());
 			byte[] receivedMacBytes = Base64.getDecoder().decode(macBytes);
 			return MessageDigest.isEqual(computedMacBytes, receivedMacBytes);
 		}

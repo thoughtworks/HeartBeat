@@ -157,7 +157,7 @@ class Metrics {
   }
 
   checkDeploymentFrequencySettings() {
-    this.deploymentFrequencySettingTitle().should('exist')
+    this.deploymentFrequencySettingTitle().should('be.exist')
     this.organizationSelect().click()
     this.pipelineOfOrgXXXX().click()
     this.pipelineSelect(0).click()

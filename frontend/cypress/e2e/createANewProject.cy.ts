@@ -6,29 +6,29 @@ import reportPage from '../pages/metrics/report'
 
 const cycleTimeData = [
   { label: 'Name', value: 'Value' },
-  { label: 'Average cycle time', value: '7.64(days/SP)' },
-  { label: '9.55(days/card)' },
-  { label: 'Total development time / Total cycle time', value: '62.04%' },
-  { label: 'Total waiting for testing time / Total cycle time', value: '2.39%' },
-  { label: 'Total block time / Total cycle time', value: '30.27%' },
-  { label: 'Total review time / Total cycle time', value: '3.82%' },
-  { label: 'Total testing time / Total cycle time', value: '1.48%' },
+  { label: 'Average cycle time', value: '6.75(days/SP)' },
+  { label: '9.85(days/card)' },
+  { label: 'Total development time / Total cycle time', value: '70.13%' },
+  { label: 'Total waiting for testing time / Total cycle time', value: '2.7%' },
+  { label: 'Total block time / Total cycle time', value: '21.17%' },
+  { label: 'Total review time / Total cycle time', value: '4.32%' },
+  { label: 'Total testing time / Total cycle time', value: '1.68%' },
   { label: 'Average development time', value: '4.74(days/SP)' },
-  { label: '5.92(days/card)' },
+  { label: '6.91(days/card)' },
   { label: 'Average waiting for testing time', value: '0.18(days/SP)' },
-  { label: '0.23(days/card)' },
-  { label: 'Average block time', value: '2.31(days/SP)' },
-  { label: '2.89(days/card)' },
+  { label: '0.27(days/card)' },
+  { label: 'Average block time', value: '1.43(days/SP)' },
+  { label: '2.09(days/card)' },
   { label: 'Average review time', value: '0.29(days/SP)' },
-  { label: '0.37(days/card)' },
+  { label: '0.43(days/card)' },
   { label: 'Average testing time', value: '0.11(days/SP)' },
-  { label: '0.14(days/card)' },
+  { label: '0.17(days/card)' },
 ]
 
 const velocityData = [
   { label: 'Name', value: 'Value' },
   { label: 'Velocity(Story Point)', value: '17.5' },
-  { label: 'Throughput(Cards Count)', value: '14' },
+  { label: 'Throughput(Cards Count)', value: '12' },
 ]
 
 const metricsTextList = [

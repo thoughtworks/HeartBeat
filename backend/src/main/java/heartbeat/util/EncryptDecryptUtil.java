@@ -37,13 +37,29 @@ public class EncryptDecryptUtil {
 
 	public static final String HMAC_SHA_256 = "HmacSHA256";
 
-	public static final int RANDOM_IV_SIZE = 16;
+	public static final int RANDOM_IV_BYTE_SIZE = 16;
+
+	public static final int IV_STRING_SIZE = 32;
+
+	public static final int MAC_BYTES_STRING_SIZE = 44;
 
 	public final SystemUtil systemUtil;
 
+	public String cutIvFromEncryptedData(String encryptedConfigData) {
+		return encryptedConfigData.substring(0, IV_STRING_SIZE);
+	}
+
+	public String cutDataFromEncryptedData(String encryptedConfigData) {
+		return encryptedConfigData.substring(IV_STRING_SIZE, encryptedConfigData.length() - MAC_BYTES_STRING_SIZE);
+	}
+
+	public String cutMacBytesFromEncryptedData(String encryptedConfigData) {
+		return encryptedConfigData.substring(encryptedConfigData.length() - MAC_BYTES_STRING_SIZE);
+	}
+
 	public String getRandomIv() {
 		SecureRandom secureRandom = new SecureRandom();
-		byte[] ivByteList = new byte[RANDOM_IV_SIZE];
+		byte[] ivByteList = new byte[RANDOM_IV_BYTE_SIZE];
 		secureRandom.nextBytes(ivByteList);
 		return convertHexadecimalString(ivByteList);
 	}

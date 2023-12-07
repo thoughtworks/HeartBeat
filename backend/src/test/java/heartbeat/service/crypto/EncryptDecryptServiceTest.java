@@ -55,11 +55,31 @@ class EncryptDecryptServiceTest {
 		String fakeConfigData = "fakeConfigData";
 		// when
 		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(fakeSecretKey);
+		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(fakeIv);
+		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(fakeEncryptedData);
+		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(fakeMacBytes);
 		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeEncryptedData, fakeMacBytes)).thenReturn(true);
 		when(encryptDecryptUtil.getDecryptedData(fakeIv, fakeSecretKey, fakeEncryptedData)).thenReturn(fakeConfigData);
 		// then
 		String decryptedData = encryptDecryptService.decryptConfigData(encryptedData, "fakePassword");
 		assertNotNull(decryptedData);
+	}
+
+	@Test
+	void shouldThrowExceptionWhenEncryptedDataSizeTooShort() {
+		// given
+		String fakeIv = "b3";
+		String fakeEncryptedData = "qA";
+		String fakeMacBytes = "sB1sVk";
+		String encryptedData = fakeIv + fakeEncryptedData + fakeMacBytes;
+		// when
+		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData))
+			.thenThrow(new StringIndexOutOfBoundsException());
+		// then
+		var exception = assertThrows(DecryptProcessException.class,
+				() -> encryptDecryptService.decryptConfigData(encryptedData, "fakePassword"));
+		assertEquals(400, exception.getStatus());
+		assertEquals("", exception.getMessage());
 	}
 
 	@Test
@@ -72,6 +92,9 @@ class EncryptDecryptServiceTest {
 		String fakeSecretKey = "fakeSecretKey";
 		// when
 		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(fakeSecretKey);
+		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(fakeIv);
+		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(fakeEncryptedData);
+		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(fakeMacBytes);
 		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeEncryptedData, fakeMacBytes)).thenReturn(false);
 		// then
 		var exception = assertThrows(DecryptProcessException.class,

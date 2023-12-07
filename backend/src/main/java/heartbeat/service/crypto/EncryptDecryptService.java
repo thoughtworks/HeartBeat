@@ -20,9 +20,17 @@ public class EncryptDecryptService {
 	}
 
 	public String decryptConfigData(String encryptedData, String password) {
-		String iv = encryptedData.substring(0, 32);
-		String data = encryptedData.substring(32, encryptedData.length() - 44);
-		String macBytes = encryptedData.substring(encryptedData.length() - 44);
+		String iv;
+		String data;
+		String macBytes;
+		try {
+			iv = encryptDecryptUtil.cutIvFromEncryptedData(encryptedData);
+			data = encryptDecryptUtil.cutDataFromEncryptedData(encryptedData);
+			macBytes = encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData);
+		}
+		catch (StringIndexOutOfBoundsException e) {
+			throw new DecryptProcessException("", 400);
+		}
 		String secretKey = encryptDecryptUtil.getSecretKey(password);
 		if (!encryptDecryptUtil.verifyMacBytes(secretKey, data, macBytes)) {
 			throw new DecryptProcessException("", 400);

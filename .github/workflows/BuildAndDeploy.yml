@@ -168,7 +168,30 @@ jobs:
       - name: License compliance check
         run: |
           npm run license-compliance
+  check-buildkite-status:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Check BuildKite status
+        run: |
+          buildkite_status=$(curl -H "Authorization: Bearer ${{ secrets.BUILDKITE_TOKEN }}" "https://api.buildkite.com/v2/organizations/thoughtworks-Heartbeat/pipelines/heartbeat/builds?branch=main"| jq -r '.[0].state')
+
+          if [ "$buildkite_status" != "passed" ]; then
+            echo "BuildKite build failed. Cannot merge the PR."
+            exit 1
+          fi
   deploy-infra:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:

@@ -124,6 +124,8 @@ class Metrics {
 
   private readonly cycleTimeTitleTooltip = () => cy.get('[data-test-id="tooltip')
 
+  private readonly progressBar = () => cy.get('[data-testid="loading-page"]', { timeout: 10000 })
+
   checkCycleTimeTooltip() {
     this.cycleTimeTitleTooltip().trigger('mouseover')
     cy.contains(CYCLE_TIME_TOOLTIP).should('be.visible')
@@ -155,11 +157,12 @@ class Metrics {
   }
 
   checkDeploymentFrequencySettings() {
-    this.deploymentFrequencySettingTitle().should('exist')
+    this.deploymentFrequencySettingTitle().should('be.exist')
     this.organizationSelect().click()
     this.pipelineOfOrgXXXX().click()
     this.pipelineSelect(0).click()
     this.pipelineSelectOneOption().click()
+    this.waitingForProgressBar()
     this.stepOfSomePipelineSelect(0).click()
     this.stepSelectSomeOption().click()
     this.branchSelect().click()
@@ -179,6 +182,7 @@ class Metrics {
     this.pipelineOfOrgXXXX().click()
     this.pipelineSelect(1).click()
     this.pipelineSelectOneOption().click()
+    this.waitingForProgressBar()
     this.stepOfSomePipelineSelect(1).click()
     this.stepSelectSomeOption().click()
     this.checkDuplicatedMessage()
@@ -195,6 +199,11 @@ class Metrics {
 
   BackToConfigStep() {
     this.backButton().click()
+  }
+
+  waitingForProgressBar() {
+    this.progressBar().should('be.visible')
+    this.progressBar().should('not.exist')
   }
 }
 

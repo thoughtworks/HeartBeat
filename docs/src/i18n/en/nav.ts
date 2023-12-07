@@ -79,8 +79,8 @@ export default [
 	{ text: 'Issue Solutions', header: true, type: 'tech', key: 'Issue Solutions' },
 	{
 		text: 'Solutions of buildKite issue',
-		slug: 'issue-solutions/solution-of-buildKite-issue',
-		key: 'issue-solutions/solution-of-buildKite-issue',
+		slug: 'issue-solutions/solution-of-buildkite-issue',
+		key: 'issue-solutions/solution-of-buildkite-issue',
 	},
 
 	{ text: 'Spikes', header: true, type: 'tech', key: 'spikes' },

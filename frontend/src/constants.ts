@@ -98,6 +98,7 @@ export const CYCLE_TIME_LIST = [
 export const BOARD_TOKEN = 'Token'
 
 export const ERROR_MESSAGE_TIME_DURATION = 4000
+export const NOTIFICATION_TIME_DURATION = 10000
 
 export const TOKEN_HELPER_TEXT = {
   RequiredTokenText: 'Token is required',

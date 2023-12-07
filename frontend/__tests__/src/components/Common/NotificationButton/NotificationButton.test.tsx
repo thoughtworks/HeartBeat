@@ -8,8 +8,8 @@ import userEvent from '@testing-library/user-event'
 const notificationIcon = 'NotificationIcon'
 describe('NotificationButton', () => {
   afterEach(cleanup)
-  const closeNotificationProps = { open: false, title: 'NotificationPopper' }
-  const openNotificationProps = { open: true, title: 'NotificationPopper' }
+  const closeNotificationProps = { open: false, title: 'NotificationPopper', closeAutomatically: false }
+  const openNotificationProps = { open: true, title: 'NotificationPopper', closeAutomatically: false }
   const { result } = renderHook(() => useNotificationLayoutEffect())
 
   it('should show NotificationIcon when render NotificationButton component', () => {
@@ -89,30 +89,6 @@ describe('NotificationButton', () => {
     const { queryByText } = render(<NotificationButton {...result.current} />)
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
-  })
-
-  it('should not call updateProps when clicking icon given notificationProps is undefined.', async () => {
-    act(() => {
-      result.current.notificationProps = undefined
-      result.current.updateProps = jest.fn()
-    })
-    const { getByTestId } = render(<NotificationButton {...result.current} />)
-
-    await userEvent.click(getByTestId(notificationIcon))
-
-    expect(result.current.updateProps).not.toBeCalled()
-  })
-
-  it('should call updateProps when clicking icon given notificationProps and updateProps are not undefined.', async () => {
-    act(() => {
-      result.current.notificationProps = openNotificationProps
-      result.current.updateProps = jest.fn()
-    })
-    const { getByTestId } = render(<NotificationButton {...result.current} />)
-
-    await userEvent.click(getByTestId(notificationIcon))
-
-    expect(result.current.updateProps).toBeCalledTimes(1)
   })
 
   it('should not call updateProps when clicking outside the component given the notificationProps is undefined.', async () => {

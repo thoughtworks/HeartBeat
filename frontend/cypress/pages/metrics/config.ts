@@ -38,6 +38,8 @@ class Config {
 
   private readonly sourceControlVerifyButton = () => cy.get('[data-test-id="sourceControlVerifyButton"]')
 
+  private readonly progressBar = () => cy.get('[data-testid="loading-page"]', { timeout: 10000 })
+
   private readonly cancelButton = () => cy.contains('Cancel')
 
   private readonly goToMetricsStepButton = () => cy.contains('Next')
@@ -84,8 +86,8 @@ class Config {
     this.boardInfoProjectKeyInput().type(projectKey)
     this.boardInfoSiteInput().type(site)
     this.boardInfoTokenInput().type(token)
-
     this.boardInfoVerifyButton().click()
+    this.waitingForProgressBar()
   }
 
   fillPipelineToolFieldsInfoAndVerify(token: string) {
@@ -113,6 +115,11 @@ class Config {
 
   goMetricsStep() {
     this.goToMetricsStepButton().click()
+  }
+
+  waitingForProgressBar() {
+    this.progressBar().should('be.visible')
+    this.progressBar().should('not.exist')
   }
 }
 

@@ -54,6 +54,7 @@ backend_check() {
 
 frontend_check(){
   cd frontend
+  pnpm dlx audit-ci@^6 --config ./audit-ci.jsonc
   pnpm install --no-frozen-lockfile
   pnpm lint
   pnpm coverage

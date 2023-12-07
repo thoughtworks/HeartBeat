@@ -115,6 +115,8 @@ describe('Import project from file', () => {
 
     configPage.verifyAndClickNextToMetrics()
 
+    configPage.waitingForProgressBar()
+
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
@@ -122,7 +124,7 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(20000)
+    reportPage.waitingForProgressBar()
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 
@@ -151,6 +153,8 @@ describe('Import project from file', () => {
 
     configPage.verifyAndClickNextToMetrics()
 
+    configPage.waitingForProgressBar()
+
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
@@ -159,7 +163,7 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
-    cy.wait(20000)
+    reportPage.waitingForProgressBar()
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 

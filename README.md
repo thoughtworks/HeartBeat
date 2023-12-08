@@ -51,7 +51,7 @@
 
 * [How to use](#7-how-to-use)
     * [Docker-compose](#71-docker-compose)
-      * [Customize story point field in Jira](#711)
+      * [Customize story point field in Jira](#711-customize-story-point-field-in-jira)
 
 # News
 

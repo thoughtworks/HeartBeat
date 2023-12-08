@@ -68,14 +68,10 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl
-  const { isShow: isShowCycleTimeSettings, isVerified: isCycleTimeSettingsVerified } = {
-    isShow: requiredData.includes(REQUIRED_DATA.CYCLE_TIME),
-    isVerified: cycleTimeSettings.some((e) => e.value === DONE),
-  }
-  const { isShow: isShowClassificationSetting, isVerified: isClassificationSettingVerified } = {
-    isShow: requiredData.includes(REQUIRED_DATA.CLASSIFICATION),
-    isVerified: metricsConfig.targetFields.some((item) => item.flag),
-  }
+  const isShowCycleTimeSettings = requiredData.includes(REQUIRED_DATA.CYCLE_TIME)
+  const isCycleTimeSettingsVerified = cycleTimeSettings.some((e) => e.value === DONE)
+  const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
+  const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag)
 
   const { metrics, projectName, dateRange } = config.basic
 

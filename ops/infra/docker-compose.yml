@@ -12,6 +12,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default}
       - MOCK_SERVER_URL=${MOCK_SERVER_URL:-localhost:4323}
+      - BACKEND_SECRET_KEY=fake
+      - FIXED_SALT=fake
   frontend:
     image: heartbeat_frontend:latest
     container_name: frontend

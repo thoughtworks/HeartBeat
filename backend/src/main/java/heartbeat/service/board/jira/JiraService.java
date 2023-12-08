@@ -44,6 +44,7 @@ import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.util.BoardUtil;
+import heartbeat.util.DecimalUtil;
 import heartbeat.util.SystemUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -626,10 +627,6 @@ public class JiraService {
 					}
 					case REVIEW -> {
 						stepsDay.setReview(stepsDay.getReview() + cycleTimeInfo.getDay());
-						total += cycleTimeInfo.getDay();
-					}
-					case ANALYSE -> {
-						stepsDay.setAnalyse(stepsDay.getAnalyse() + cycleTimeInfo.getDay());
 						total += cycleTimeInfo.getDay();
 					}
 					default -> {

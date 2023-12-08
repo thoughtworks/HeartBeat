@@ -8,12 +8,12 @@ const cycleTimeData = [
   { label: 'Name', value: 'Value' },
   { label: 'Average cycle time', value: '6.75(days/SP)' },
   { label: '9.85(days/card)' },
-  { label: 'Total development time / Total cycle time', value: '70.13%' },
-  { label: 'Total waiting for testing time / Total cycle time', value: '2.7%' },
-  { label: 'Total block time / Total cycle time', value: '21.17%' },
+  { label: 'Total development time / Total cycle time', value: '70.12%' },
+  { label: 'Total waiting for testing time / Total cycle time', value: '2.72%' },
+  { label: 'Total block time / Total cycle time', value: '21.18%' },
   { label: 'Total review time / Total cycle time', value: '4.32%' },
-  { label: 'Total testing time / Total cycle time', value: '1.68%' },
-  { label: 'Average development time', value: '4.74(days/SP)' },
+  { label: 'Total testing time / Total cycle time', value: '1.67%' },
+  { label: 'Average development time', value: '4.73(days/SP)' },
   { label: '6.91(days/card)' },
   { label: 'Average waiting for testing time', value: '0.18(days/SP)' },
   { label: '0.27(days/card)' },
@@ -22,7 +22,7 @@ const cycleTimeData = [
   { label: 'Average review time', value: '0.29(days/SP)' },
   { label: '0.43(days/card)' },
   { label: 'Average testing time', value: '0.11(days/SP)' },
-  { label: '0.17(days/card)' },
+  { label: '0.16(days/card)' },
 ]
 
 const velocityData = [

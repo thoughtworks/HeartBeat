@@ -1,3 +1,5 @@
+import { GITHUB_TOKEN } from '../fixtures/fixtures'
+
 class Home {
   private readonly createANewProjectButton = () => cy.contains('Create a new project')
 
@@ -14,6 +16,9 @@ class Home {
   importProjectFromFile(configFixtureName) {
     this.importProjectFromFileButton().click()
     cy.fixture(configFixtureName).then((fileContent) => {
+      // Add Randomly generated token
+      fileContent.sourceControl.token = GITHUB_TOKEN
+
       cy.get<HTMLInputElement>('#importJson').then((e) => {
         const testFile = new File([JSON.stringify(fileContent)], configFixtureName, {
           type: 'application/json',

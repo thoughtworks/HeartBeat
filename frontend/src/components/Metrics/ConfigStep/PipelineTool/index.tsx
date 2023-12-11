@@ -141,7 +141,7 @@ export const PipelineTool = () => {
   }
 
   return (
-    <ConfigSectionContainer>
+    <ConfigSectionContainer aria-label='Pipeline Tool Config'>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.PIPELINE_TOOL}</ConfigSelectionTitle>

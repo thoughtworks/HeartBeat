@@ -14,6 +14,8 @@ class Config {
   private readonly requiredDataModelCloseElement = () =>
     cy.get('div.MuiBackdrop-root.MuiBackdrop-invisible.MuiModal-backdrop')
 
+  private readonly boardInfoConfigSection = () => cy.get('[aria-label="Board Config"]')
+
   private readonly boardInfoSelectionJira = () => cy.contains('Jira')
 
   private readonly boardInfoSelectionClassicJira = () => cy.contains('Classic Jira')
@@ -28,7 +30,7 @@ class Config {
 
   private readonly boardInfoTokenInput = () => cy.contains('Token').siblings().first()
 
-  private readonly boardInfoVerifyButton = () => cy.contains('Verify')
+  private readonly boardInfoVerifyButton = () => this.boardInfoConfigSection().contains('Verify')
 
   private readonly pipelineToolTokenInput = () => cy.contains("[data-testid='pipelineToolTextField']", 'Token')
 

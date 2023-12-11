@@ -124,7 +124,7 @@ export const SourceControl = () => {
   }
 
   return (
-    <ConfigSectionContainer>
+    <ConfigSectionContainer aria-label='Source Control Config'>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.SOURCE_CONTROL}</ConfigSelectionTitle>

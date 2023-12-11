@@ -702,8 +702,7 @@ public class JiraService {
 					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
-			String cardStatus = card.getFields().getStatus().getName();
-			if (users.stream().anyMatch(assigneeSet::contains) && !TODO.getValue().equalsIgnoreCase(cardStatus)) {
+			if (users.stream().anyMatch(assigneeSet::contains)) {
 				CardCycleTime cardCycleTime = calculateCardCycleTime(card.getKey(),
 						cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns);
 

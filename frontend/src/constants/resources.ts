@@ -117,7 +117,7 @@ export const NAME = 'Name'
 
 export const AVERAGE_FIELD = 'Average'
 
-export enum Unit {
+export enum REPORT_SUFFIX_UNITS {
   PER_SP = '(days/SP)',
   PER_CARD = '(days/card)',
   HOURS = '(hours)',

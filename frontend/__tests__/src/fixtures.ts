@@ -288,7 +288,7 @@ export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
   ],
 }
 
-export const filterCycleTimeSettings = [
+export const FILTER_CYCLE_TIME_SETTINGS = [
   { name: 'TODO', value: 'TODO' },
   { name: 'BACKLOG', value: 'TODO' },
   { name: 'IN DEV', value: 'IN DEV' },

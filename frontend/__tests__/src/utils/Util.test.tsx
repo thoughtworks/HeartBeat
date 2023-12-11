@@ -8,7 +8,7 @@ import {
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
 import { EMPTY_STRING } from '@src/constants/commons'
 import {
-  filterCycleTimeSettings,
+  FILTER_CYCLE_TIME_SETTINGS,
   MOCK_CYCLE_TIME_SETTING,
   MOCK_JIRA_WITH_STATUES_SETTING,
   PIPELINE_TOOL_TYPES,
@@ -103,7 +103,7 @@ describe('findCaseInsensitiveType function', () => {
 describe('filterAndMapCycleTimeSettings function', () => {
   it('should filter and map CycleTimeSettings when generate report', () => {
     const value = filterAndMapCycleTimeSettings(MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING)
-    expect(value).toStrictEqual(filterCycleTimeSettings)
+    expect(value).toStrictEqual(FILTER_CYCLE_TIME_SETTINGS)
   })
 
   it('should filter and map CycleTimeSettings when generate report', () => {

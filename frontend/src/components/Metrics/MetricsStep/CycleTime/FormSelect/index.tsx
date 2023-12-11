@@ -1,7 +1,8 @@
 import { Autocomplete, TextField, Tooltip } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlSelection } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelect/style'
-import { CYCLE_TIME_LIST, Z_INDEX } from '@src/constants'
+import { Z_INDEX } from '@src/constants/commons'
+import { CYCLE_TIME_LIST } from '@src/constants/resources'
 
 interface formSelectProps {
   label: string

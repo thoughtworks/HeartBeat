@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
-import { NOTIFICATION_TIME_DURATION } from '@src/constants'
 import clearAllMocks = jest.clearAllMocks
+import { DURATION } from '@src/constants/commons'
 
 describe('useNotificationLayoutEffect', () => {
   afterAll(() => {
@@ -11,7 +11,7 @@ describe('useNotificationLayoutEffect', () => {
     title: '',
     open: false,
     closeAutomatically: false,
-    durationTimeout: NOTIFICATION_TIME_DURATION,
+    durationTimeout: DURATION.NOTIFICATION_TIME,
   }
   it('should init the state of notificationProps when render hook', async () => {
     const { result } = renderHook(() => useNotificationLayoutEffect())
@@ -53,14 +53,14 @@ describe('useNotificationLayoutEffect', () => {
       result.current.updateProps?.(mockProps)
     })
 
-    jest.advanceTimersByTime(NOTIFICATION_TIME_DURATION)
+    jest.advanceTimersByTime(DURATION.NOTIFICATION_TIME)
 
     await waitFor(() => {
       expect(result.current.notificationProps).toEqual({
         open: false,
         title: '',
         closeAutomatically: false,
-        durationTimeout: NOTIFICATION_TIME_DURATION,
+        durationTimeout: DURATION.NOTIFICATION_TIME,
       })
     })
 
@@ -76,7 +76,7 @@ describe('useNotificationLayoutEffect', () => {
       open: false,
       title: '',
       closeAutomatically: false,
-      durationTimeout: NOTIFICATION_TIME_DURATION,
+      durationTimeout: DURATION.NOTIFICATION_TIME,
     }
 
     act(() => {

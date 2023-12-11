@@ -14,16 +14,15 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice'
 import {
   BOARD_TYPES,
-  HOME_PAGE_ROUTE,
+  DONE,
   METRICS_CONSTANTS,
-  METRICS_STEPS,
   PIPELINE_SETTING_TYPES,
   PIPELINE_TOOL_TYPES,
   REQUIRED_DATA,
-  SAVE_CONFIG_TIPS,
   SOURCE_CONTROL_TYPES,
-  STEPS,
-} from '@src/constants'
+  TIPS,
+} from '@src/constants/resources'
+import { METRICS_STEPS, STEPS } from '@src/constants/commons'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -47,6 +46,7 @@ import {
 import _ from 'lodash'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { ROUTE } from '@src/constants/router'
 
 const ConfigStep = lazy(() => import('@src/components/Metrics/ConfigStep'))
 const MetricsStep = lazy(() => import('@src/components/Metrics/MetricsStep'))
@@ -63,10 +63,16 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const metricsConfig = useAppSelector(selectMetricsContent)
   const [isDisableNextButton, setIsDisableNextButton] = useState(true)
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext()
+  const cycleTimeSettings = useAppSelector(selectCycleTimeSettings)
 
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl
+  const isShowCycleTimeSettings = requiredData.includes(REQUIRED_DATA.CYCLE_TIME)
+  const isCycleTimeSettingsVerified = cycleTimeSettings.some((e) => e.value === DONE)
+  const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
+  const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag)
+
   const { metrics, projectName, dateRange } = config.basic
 
   const selectedBoardColumns = useAppSelector(selectCycleTimeSettings)
@@ -109,6 +115,8 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
         { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
         { isShow: isShowRealDone, isValid: isRealDoneValid },
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
+        { isShow: isShowCycleTimeSettings, isValid: isCycleTimeSettingsVerified },
+        { isShow: isShowClassificationSetting, isValid: isClassificationSettingVerified },
       ]
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow)
       activeNextButtonValidityOptions.every(({ isValid }) => isValid)
@@ -219,7 +227,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   }
 
   const backToHomePage = () => {
-    navigate(HOME_PAGE_ROUTE)
+    navigate(ROUTE.HOME_PAGE)
     setIsDialogShowing(false)
     window.location.reload()
   }
@@ -276,7 +284,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       <ButtonContainer>
         {activeStep !== METRICS_STEPS.REPORT && (
           <>
-            <Tooltip title={SAVE_CONFIG_TIPS} placement={'right'}>
+            <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
               <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
                 Save
               </SaveButton>

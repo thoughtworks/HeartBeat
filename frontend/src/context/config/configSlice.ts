@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE, REGULAR_CALENDAR, REQUIRED_DATA } from '@src/constants'
+import { CALENDAR, MESSAGE } from '@src/constants/resources'
+import { REQUIRED_DATA } from '@src/constants/resources'
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice'
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice'
@@ -29,7 +30,7 @@ export const initialBasicConfigState: BasicConfigState = {
   isProjectCreated: true,
   basic: {
     projectName: '',
-    calendarType: REGULAR_CALENDAR,
+    calendarType: CALENDAR.REGULAR,
     dateRange: {
       startDate: null,
       endDate: null,
@@ -92,7 +93,7 @@ export const configSlice = createSlice({
         state.warningMessage =
           projectName && dateRange.startDate && dateRange.endDate && metrics.length > 0
             ? null
-            : CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE
+            : MESSAGE.CONFIG_PAGE_VERIFY_IMPORT_ERROR
       }
       state.board.config = action.payload.board || state.board.config
       state.pipelineTool.config = action.payload.pipelineTool || state.pipelineTool.config

@@ -23,9 +23,9 @@ import { backStep } from '@src/context/stepper/StepperSlice'
 import { navigateMock } from '../../../../setupTests'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
-import { HEADER_NOTIFICATION_MESSAGE } from '@src/constants'
 import React from 'react'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
+import { MESSAGE } from '@src/constants/resources'
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({
   ...jest.requireActual('@src/context/stepper/StepperSlice'),
@@ -268,7 +268,7 @@ describe('Report Step', () => {
     expect(resetProps).not.toBeCalled()
     expect(updateProps).not.toBeCalledWith({
       open: true,
-      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+      title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
       closeAutomatically: true,
     })
 
@@ -276,7 +276,7 @@ describe('Report Step', () => {
 
     expect(updateProps).not.toBeCalledWith({
       open: true,
-      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+      title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
       closeAutomatically: true,
     })
 
@@ -284,7 +284,7 @@ describe('Report Step', () => {
 
     expect(updateProps).toBeCalledWith({
       open: true,
-      title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+      title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
       closeAutomatically: true,
     })
 

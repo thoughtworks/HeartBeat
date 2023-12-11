@@ -1,4 +1,4 @@
-import { CYCLE_TIME_TOOLTIP } from '../../../src/constants'
+import { TIPS } from '../../../src/constants/resources'
 
 class Metrics {
   static CYCLE_TIME_LABEL = {
@@ -128,7 +128,7 @@ class Metrics {
 
   checkCycleTimeTooltip() {
     this.cycleTimeTitleTooltip().trigger('mouseover')
-    cy.contains(CYCLE_TIME_TOOLTIP).should('be.visible')
+    cy.contains(TIPS.CYCLE_TIME).should('be.visible')
   }
 
   checkCycleTime() {

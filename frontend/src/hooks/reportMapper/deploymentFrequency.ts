@@ -1,6 +1,6 @@
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { DeploymentFrequencyResponse } from '@src/clients/report/dto/response'
-import { DEPLOYMENT_FREQUENCY_NAME } from '@src/constants'
+import { DEPLOYMENT_FREQUENCY_NAME } from '@src/constants/resources'
 
 export const deploymentFrequencyMapper = ({
   avgDeploymentFrequency,

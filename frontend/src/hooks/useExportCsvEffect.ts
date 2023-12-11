@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
 import { csvClient } from '@src/clients/report/CSVClient'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { DURATION } from '@src/constants/commons'
 
 export interface useExportCsvEffectInterface {
   fetchExportData: (params: CSVReportRequestDTO) => void
@@ -26,7 +26,7 @@ export const useExportCsvEffect = (): useExportCsvEffectInterface => {
         setErrorMessage(`failed to export csv: ${err.message}`)
         setTimeout(() => {
           setErrorMessage('')
-        }, ERROR_MESSAGE_TIME_DURATION)
+        }, DURATION.ERROR_MESSAGE_TIME)
       }
     }
   }

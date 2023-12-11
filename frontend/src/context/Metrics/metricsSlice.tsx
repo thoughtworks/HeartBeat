@@ -2,16 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import camelCase from 'lodash.camelcase'
 import { RootState } from '@src/store'
-import {
-  ASSIGNEE_FILTER_TYPES,
-  CLASSIFICATION_WARNING_MESSAGE,
-  CYCLE_TIME_LIST,
-  METRICS_CONSTANTS,
-  ORGANIZATION_WARNING_MESSAGE,
-  PIPELINE_NAME_WARNING_MESSAGE,
-  REAL_DONE_WARNING_MESSAGE,
-  STEP_WARNING_MESSAGE,
-} from '@src/constants'
+import { ASSIGNEE_FILTER_TYPES, CYCLE_TIME_LIST, MESSAGE, METRICS_CONSTANTS } from '@src/constants/resources'
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
 import _ from 'lodash'
 
@@ -282,7 +273,7 @@ export const metricsSlice = createSlice({
         if (filteredImportedClassification.every((item) => keyArray.includes(item))) {
           state.classificationWarningMessage = null
         } else {
-          state.classificationWarningMessage = CLASSIFICATION_WARNING_MESSAGE
+          state.classificationWarningMessage = MESSAGE.CLASSIFICATION_WARNING
         }
       } else {
         state.classificationWarningMessage = null
@@ -292,7 +283,7 @@ export const metricsSlice = createSlice({
       if (!isProjectCreated && !!importedDoneStatus.length) {
         setSelectDoneColumns(jiraColumns, state.cycleTimeSettings, importedDoneStatus).length <
         importedDoneStatus.length
-          ? (state.realDoneWarningMessage = REAL_DONE_WARNING_MESSAGE)
+          ? (state.realDoneWarningMessage = MESSAGE.REAL_DONE_WARNING)
           : (state.realDoneWarningMessage = null)
       }
       state.doneColumn = isProjectCreated
@@ -334,11 +325,11 @@ export const metricsSlice = createSlice({
       const createPipelineWarning = ({ id, organization, pipelineName }: IPipelineConfig) => {
         const orgWarning = orgNames.some((i) => (i as string).toLowerCase() === organization.toLowerCase())
           ? null
-          : ORGANIZATION_WARNING_MESSAGE
+          : MESSAGE.ORGANIZATION_WARNING
         const pipelineNameWarning =
           orgWarning || filteredPipelineNames(organization).includes(pipelineName)
             ? null
-            : PIPELINE_NAME_WARNING_MESSAGE
+            : MESSAGE.PIPELINE_NAME_WARNING
 
         return {
           id,
@@ -370,7 +361,7 @@ export const metricsSlice = createSlice({
       const validBranches = _.filter(branches, (branch) => updatedImportedPipelineBranches.includes(branch))
       const validPipelineCrews = _.filter(pipelineCrews, (crew) => importedPipelineCrews.includes(crew))
       state.pipelineCrews = validPipelineCrews
-      const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : STEP_WARNING_MESSAGE
+      const stepWarningMessage = steps.includes(updatedImportedPipelineStep) ? null : MESSAGE.STEP_WARNING
 
       const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
         pipelines.map((pipeline) =>

@@ -1,4 +1,4 @@
-import { CYCLE_TIME_METRICS_NAME, METRICS_CONSTANTS, Unit } from '@src/constants'
+import { CYCLE_TIME_METRICS_NAME, METRICS_CONSTANTS, REPORT_SUFFIX_UNITS } from '@src/constants/resources'
 import { ReportDataWithTwoColumns, ValueWithUnits } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { CycleTimeResponse, Swimlane } from '@src/clients/report/dto/response'
 
@@ -21,10 +21,10 @@ export const cycleTimeMapper = ({
     const swimlane = getSwimlaneByItemName(itemName)
     return swimlane
       ? [
-          { value: swimlane.averageTimeForSP.toFixed(2), unit: Unit.PER_SP },
+          { value: swimlane.averageTimeForSP.toFixed(2), unit: REPORT_SUFFIX_UNITS.PER_SP },
           {
             value: swimlane.averageTimeForCards.toFixed(2),
-            unit: Unit.PER_CARD,
+            unit: REPORT_SUFFIX_UNITS.PER_CARD,
           },
         ]
       : []
@@ -32,10 +32,10 @@ export const cycleTimeMapper = ({
 
   const cycleTimeValue: { [key: string]: ValueWithUnits[] } = {
     AVERAGE_CYCLE_TIME: [
-      { value: Number(averageCycleTimePerSP.toFixed(2)), unit: Unit.PER_SP },
+      { value: Number(averageCycleTimePerSP.toFixed(2)), unit: REPORT_SUFFIX_UNITS.PER_SP },
       {
         value: averageCycleTimePerCard.toFixed(2),
-        unit: Unit.PER_CARD,
+        unit: REPORT_SUFFIX_UNITS.PER_CARD,
       },
     ],
     DEVELOPMENT_PROPORTION: calPerColumnTotalTimeDivTotalTime(METRICS_CONSTANTS.inDevValue),

@@ -1,12 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
-import {
-  CONFIG_TITLE,
-  DEFAULT_HELPER_TEXT,
-  EMPTY_STRING,
-  GITHUB_TOKEN_REGEXP,
-  SOURCE_CONTROL_TYPES,
-  TOKEN_HELPER_TEXT,
-} from '@src/constants'
+import { REGEX } from '@src/constants/regex'
+import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons'
+import { CONFIG_TITLE, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources'
 import {
   ConfigSectionContainer,
   StyledButtonGroup,
@@ -109,7 +104,7 @@ export const SourceControl = () => {
 
     if (value === EMPTY_STRING) {
       helperText = TOKEN_HELPER_TEXT.RequiredTokenText
-    } else if (!GITHUB_TOKEN_REGEXP.test(value)) {
+    } else if (!REGEX.GITHUB_TOKEN.test(value)) {
       helperText = TOKEN_HELPER_TEXT.InvalidTokenText
     }
     setSourceControlHelperText(helperText)

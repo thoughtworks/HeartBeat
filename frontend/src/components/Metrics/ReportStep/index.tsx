@@ -3,17 +3,8 @@ import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
-import {
-  CHINA_CALENDAR,
-  ERROR_PAGE_ROUTE,
-  HEADER_NOTIFICATION_MESSAGE,
-  INIT_REPORT_DATA_WITH_THREE_COLUMNS,
-  INIT_REPORT_DATA_WITH_TWO_COLUMNS,
-  NAME,
-  PIPELINE_STEP,
-  REPORT_LOADING_MESSAGE,
-  REQUIRED_DATA,
-} from '@src/constants'
+import { CALENDAR, PIPELINE_STEP, NAME, REQUIRED_DATA, MESSAGE } from '@src/constants/resources'
+import { INIT_REPORT_DATA_WITH_THREE_COLUMNS, INIT_REPORT_DATA_WITH_TWO_COLUMNS } from '@src/constants/commons'
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
@@ -31,6 +22,7 @@ import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 import { ReportResponse } from '@src/clients/report/dto/response'
+import { ROUTE } from '@src/constants/router'
 
 const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   const dispatch = useAppDispatch()
@@ -136,7 +128,7 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
     metrics: metrics,
     startTime: dayjs(startDate).valueOf().toString(),
     endTime: dayjs(endDate).valueOf().toString(),
-    considerHoliday: calendarType === CHINA_CALENDAR,
+    considerHoliday: calendarType === CALENDAR.CHINA,
     buildKiteSetting: {
       pipelineCrews,
       ...pipelineTool.config,
@@ -174,7 +166,7 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
     exportValidityTimeMin &&
       updateProps?.({
         open: true,
-        title: HEADER_NOTIFICATION_MESSAGE.FIRST_REPORT.replace('%s', exportValidityTimeMin.toString()),
+        title: MESSAGE.NOTIFICATION_FIRST_REPORT.replace('%s', exportValidityTimeMin.toString()),
         closeAutomatically: true,
       })
   }, [exportValidityTimeMin])
@@ -191,7 +183,7 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
         if (remainingTime <= remainingExpireTime) {
           updateProps?.({
             open: true,
-            title: HEADER_NOTIFICATION_MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+            title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
             closeAutomatically: true,
           })
           clearInterval(timer)
@@ -257,9 +249,9 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
   return (
     <>
       {isLoading ? (
-        <Loading message={REPORT_LOADING_MESSAGE} />
+        <Loading message={MESSAGE.REPORT_LOADING} />
       ) : isServerError ? (
-        navigate(ERROR_PAGE_ROUTE)
+        navigate(ROUTE.ERROR_PAGE)
       ) : (
         <>
           {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}

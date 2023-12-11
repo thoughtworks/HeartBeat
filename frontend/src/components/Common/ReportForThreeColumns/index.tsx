@@ -8,7 +8,7 @@ import {
 } from '@src/components/Common/ReportForTwoColumns/style'
 import React, { Fragment } from 'react'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { AVERAGE_FIELD, Unit } from '@src/constants'
+import { AVERAGE_FIELD, REPORT_SUFFIX_UNITS } from '@src/constants/resources'
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
 import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style'
 import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
@@ -64,7 +64,10 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
               <StyledTableCell>{fieldName}</StyledTableCell>
               <StyledTableCell>{listName}</StyledTableCell>
               <StyledTableCell>
-                Value{title === 'Lead time for changes' || title === 'Mean Time To Recovery' ? Unit.HOURS : ''}
+                Value
+                {title === 'Lead time for changes' || title === 'Mean Time To Recovery'
+                  ? REPORT_SUFFIX_UNITS.HOURS
+                  : ''}
               </StyledTableCell>
             </TableRow>
           </TableHead>

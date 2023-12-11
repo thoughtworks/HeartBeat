@@ -1,14 +1,7 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import {
-  BOARD_TOKEN,
-  BOARD_TOKEN_REG_EXP,
-  BOARD_TYPES,
-  CONFIG_TITLE,
-  DEFAULT_HELPER_TEXT,
-  EMAIL,
-  EMAIL_REG_EXP,
-  EMPTY_STRING,
-} from '@src/constants'
+import { REGEX } from '@src/constants/regex'
+import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons'
+import { BOARD_TYPES, CONFIG_TITLE, EMAIL, BOARD_TOKEN } from '@src/constants/resources'
 import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
 import {
@@ -110,9 +103,9 @@ export const Board = () => {
       const isValueEmpty = !!newValue
       const isValueValid =
         field.key === EMAIL
-          ? EMAIL_REG_EXP.test(newValue)
+          ? REGEX.EMAIL.test(newValue)
           : field.key === BOARD_TOKEN
-          ? BOARD_TOKEN_REG_EXP.test(newValue)
+          ? REGEX.BOARD_TOKEN.test(newValue)
           : true
       return {
         ...field,

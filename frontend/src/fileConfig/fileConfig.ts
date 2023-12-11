@@ -1,4 +1,4 @@
-import { CHINA_CALENDAR, REGULAR_CALENDAR } from '@src/constants'
+import { CALENDAR } from '@src/constants/resources'
 
 export interface OldFileConfig {
   projectName: string
@@ -105,7 +105,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
     return {
       projectName,
       dateRange: { startDate, endDate },
-      calendarType: considerHoliday ? CHINA_CALENDAR : REGULAR_CALENDAR,
+      calendarType: considerHoliday ? CALENDAR.CHINA : CALENDAR.REGULAR,
       metrics,
       board: {
         type: board?.type,

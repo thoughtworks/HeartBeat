@@ -1,6 +1,6 @@
 import { MeanTimeToRecoveryResponse } from '@src/clients/report/dto/response'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { MEAN_TIME_TO_RECOVERY_NAME } from '@src/constants'
+import { MEAN_TIME_TO_RECOVERY_NAME } from '@src/constants/resources'
 
 export const meanTimeToRecoveryMapper = ({
   avgMeanTimeToRecovery,

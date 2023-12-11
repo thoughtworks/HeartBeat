@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react'
 import Header from '@src/layouts/Header'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import { navigateMock } from '../../setupTests'
-import { PROJECT_NAME } from '@src/constants'
+import { PROJECT_NAME } from '../fixtures'
 
 describe('Header', () => {
   it('should show project name', () => {

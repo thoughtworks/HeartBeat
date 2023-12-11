@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { reportClient } from '@src/clients/report/ReportClient'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { UnknownException } from '@src/exceptions/UnkonwException'
@@ -7,6 +6,7 @@ import { InternalServerException } from '@src/exceptions/InternalServerException
 import { HttpStatusCode } from 'axios'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import { ReportResponse } from '@src/clients/report/dto/response'
+import { DURATION } from '@src/constants/commons'
 
 export interface useGenerateReportEffectInterface {
   startPollingReports: (params: ReportRequestDTO) => void
@@ -37,7 +37,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
           setErrorMessage(`generate report: ${err.message}`)
           setTimeout(() => {
             setErrorMessage('')
-          }, ERROR_MESSAGE_TIME_DURATION)
+          }, DURATION.ERROR_MESSAGE_TIME)
         }
         stopPollingReports()
       })
@@ -62,7 +62,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
           setErrorMessage(`generate report: ${err.message}`)
           setTimeout(() => {
             setErrorMessage('')
-          }, ERROR_MESSAGE_TIME_DURATION)
+          }, DURATION.ERROR_MESSAGE_TIME)
         }
         stopPollingReports()
       })

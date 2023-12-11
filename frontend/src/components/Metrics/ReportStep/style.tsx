@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
 import { theme } from '@src/theme'
-import { Z_INDEX } from '@src/constants'
+import { Z_INDEX } from '@src/constants/commons'
 
 export const basicButtonStyle = {
   height: '2.5rem',

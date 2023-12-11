@@ -1,7 +1,7 @@
-import { UNKNOWN_ERROR_MESSAGE } from '@src/constants'
+import { MESSAGE } from '@src/constants/resources'
 
 export class UnknownException extends Error {
   constructor() {
-    super(UNKNOWN_ERROR_MESSAGE)
+    super(MESSAGE.UNKNOWN_ERROR)
   }
 }

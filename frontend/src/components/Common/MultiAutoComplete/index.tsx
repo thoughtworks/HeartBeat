@@ -1,7 +1,7 @@
 import { Checkbox, createFilterOptions, TextField } from '@mui/material'
 import React from 'react'
 import { StyledAutocompleted } from './styles'
-import { Z_INDEX } from '@src/constants'
+import { Z_INDEX } from '@src/constants/commons'
 
 type Props = {
   optionList: string[]

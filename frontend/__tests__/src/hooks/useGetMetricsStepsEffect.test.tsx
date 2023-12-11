@@ -1,9 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
-import { ERROR_MESSAGE_TIME_DURATION } from '@src/constants'
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect'
 import { metricsClient } from '@src/clients/MetricsClient'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
-import { MOCK_GET_STEPS_PARAMS } from '../fixtures'
+import { ERROR_MESSAGE_TIME_DURATION, MOCK_GET_STEPS_PARAMS } from '../fixtures'
 
 describe('use get steps effect', () => {
   const { params, buildId, organizationId, pipelineType, token } = MOCK_GET_STEPS_PARAMS

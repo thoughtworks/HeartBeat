@@ -1,13 +1,6 @@
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
-import {
-  PIPELINE_TOOL_TYPES,
-  CONFIG_TITLE,
-  ZERO,
-  BUILDKITE_TOKEN_REGEXP,
-  TOKEN_HELPER_TEXT,
-  EMPTY_STRING,
-  DEFAULT_HELPER_TEXT,
-} from '@src/constants'
+import { DEFAULT_HELPER_TEXT, EMPTY_STRING, ZERO } from '@src/constants/commons'
+import { CONFIG_TITLE, PIPELINE_TOOL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources'
 import { FormEvent, useEffect, useState } from 'react'
 import {
   ConfigSectionContainer,
@@ -33,6 +26,7 @@ import { ResetButton, VerifyButton } from '@src/components/Common/Buttons'
 import { initDeploymentFrequencySettings, updatePipelineSettings } from '@src/context/Metrics/metricsSlice'
 import { ConfigSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
 import { findCaseInsensitiveType } from '@src/utils/util'
+import { REGEX } from '@src/constants/regex'
 
 export const PipelineTool = () => {
   const dispatch = useAppDispatch()
@@ -85,7 +79,7 @@ export const PipelineTool = () => {
           ...field,
           value,
           isRequired: !!value,
-          isValid: BUILDKITE_TOKEN_REGEXP.test(value),
+          isValid: REGEX.BUILDKITE_TOKEN.test(value),
         }
       }
       return field

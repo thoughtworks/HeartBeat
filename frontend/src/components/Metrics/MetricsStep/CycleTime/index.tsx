@@ -11,7 +11,7 @@ import {
 } from '@src/context/Metrics/metricsSlice'
 import { useAppSelector } from '@src/hooks'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
-import { CYCLE_TIME_TOOLTIP, DONE } from '@src/constants'
+import { DONE, TIPS } from '@src/constants/resources'
 import {
   CycleTimeContainer,
   StyledTooltip,
@@ -67,7 +67,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
       <TitleAndTooltipContainer>
         <MetricsSettingTitle title={title} />
         <TooltipContainer data-test-id={'tooltip'}>
-          <StyledTooltip title={CYCLE_TIME_TOOLTIP}>
+          <StyledTooltip title={TIPS.CYCLE_TIME}>
             <IconButton aria-label='info'>
               <InfoOutlinedIcon />
             </IconButton>

@@ -2,7 +2,7 @@ import { Snackbar } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { forwardRef } from 'react'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
-import { Z_INDEX } from '@src/constants'
+import { Z_INDEX } from '@src/constants/commons'
 
 export const ErrorBar = styled(Snackbar)({
   position: 'relative',

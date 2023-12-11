@@ -38,7 +38,7 @@ class EncryptDecryptServiceTest {
 		when(encryptDecryptUtil.getRandomIv()).thenReturn(fakeIv);
 		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(fakeSecretKey);
 		when(encryptDecryptUtil.getEncryptedData(fakeIv, fakeSecretKey, fakeConfigData)).thenReturn(fakeEncryptedData);
-		when(encryptDecryptUtil.getMacBytes(fakeSecretKey, fakeEncryptedData)).thenReturn(fakeMacBytes);
+		when(encryptDecryptUtil.getMacBytes(fakeSecretKey, fakeIv + fakeEncryptedData)).thenReturn(fakeMacBytes);
 		// then
 		String encryptedData = encryptDecryptService.encryptConfigData(fakeConfigData, "fakePassword");
 		assertEquals(fakeIv + fakeEncryptedData + fakeMacBytes, encryptedData);
@@ -58,7 +58,8 @@ class EncryptDecryptServiceTest {
 		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(fakeIv);
 		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(fakeEncryptedData);
 		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(fakeMacBytes);
-		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeEncryptedData, fakeMacBytes)).thenReturn(true);
+		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeIv + fakeEncryptedData, fakeMacBytes))
+			.thenReturn(true);
 		when(encryptDecryptUtil.getDecryptedData(fakeIv, fakeSecretKey, fakeEncryptedData)).thenReturn(fakeConfigData);
 		// then
 		String decryptedData = encryptDecryptService.decryptConfigData(encryptedData, "fakePassword");
@@ -95,7 +96,8 @@ class EncryptDecryptServiceTest {
 		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(fakeIv);
 		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(fakeEncryptedData);
 		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(fakeMacBytes);
-		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeEncryptedData, fakeMacBytes)).thenReturn(false);
+		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeIv + fakeEncryptedData, fakeMacBytes))
+			.thenReturn(false);
 		// then
 		var exception = assertThrows(DecryptDataOrPasswordException.class,
 				() -> encryptDecryptService.decryptConfigData(encryptedData, "fakePassword"));

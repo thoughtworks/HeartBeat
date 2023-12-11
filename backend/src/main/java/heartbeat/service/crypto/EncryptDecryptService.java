@@ -16,27 +16,27 @@ public class EncryptDecryptService {
 		String iv = encryptDecryptUtil.getRandomIv();
 		String secretKey = encryptDecryptUtil.getSecretKey(password);
 		String encryptedConfigData = encryptDecryptUtil.getEncryptedData(iv, secretKey, configData);
-		String macBytes = encryptDecryptUtil.getMacBytes(secretKey, encryptedConfigData);
+		String macBytes = encryptDecryptUtil.getMacBytes(secretKey, iv + encryptedConfigData);
 		return iv + encryptedConfigData + macBytes;
 	}
 
 	public String decryptConfigData(String encryptedData, String password) {
 		String iv;
-		String data;
+		String encryptedConfigData;
 		String macBytes;
 		try {
 			iv = encryptDecryptUtil.cutIvFromEncryptedData(encryptedData);
-			data = encryptDecryptUtil.cutDataFromEncryptedData(encryptedData);
+			encryptedConfigData = encryptDecryptUtil.cutDataFromEncryptedData(encryptedData);
 			macBytes = encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData);
 		}
 		catch (StringIndexOutOfBoundsException e) {
 			throw new DecryptDataOrPasswordException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 		String secretKey = encryptDecryptUtil.getSecretKey(password);
-		if (!encryptDecryptUtil.verifyMacBytes(secretKey, data, macBytes)) {
+		if (!encryptDecryptUtil.verifyMacBytes(secretKey, iv + encryptedConfigData, macBytes)) {
 			throw new DecryptDataOrPasswordException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
-		return encryptDecryptUtil.getDecryptedData(iv, secretKey, data);
+		return encryptDecryptUtil.getDecryptedData(iv, secretKey, encryptedConfigData);
 	}
 
 }

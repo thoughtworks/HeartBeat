@@ -2,6 +2,7 @@ package heartbeat.controller.crypto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import heartbeat.controller.crypto.request.DecryptRequest;
 import heartbeat.controller.crypto.request.EncryptRequest;
 import heartbeat.exception.DecryptDataOrPasswordException;
 import heartbeat.exception.EncryptDecryptProcessException;
@@ -82,11 +83,8 @@ class CryptoControllerTest {
 	@Test
 	void shouldReturn400StatusWhenPasswordIsNull() throws Exception {
 		// given
-		String fakeEncryptedData = "fakeEncryptedData";
 		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password(null).build();
-		// when
-		when(encryptDecryptService.encryptConfigData(any(), any())).thenReturn(fakeEncryptedData);
-		// then
+		// when & then
 		var response = mockMvc
 			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
@@ -103,11 +101,8 @@ class CryptoControllerTest {
 	@ValueSource(strings = { "Aa345678901234567890123456789012345678901234567890A", "A2345", "#$%^&*@!", "123456", "" })
 	void shouldReturn400StatusWhenPasswordIsWrong(String invalidPassword) throws Exception {
 		// given
-		String fakeEncryptedData = "fakeEncryptedData";
 		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password(invalidPassword).build();
-		// when
-		when(encryptDecryptService.encryptConfigData(any(), any())).thenReturn(fakeEncryptedData);
-		// then
+		// when & then
 		var response = mockMvc
 			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
@@ -144,9 +139,74 @@ class CryptoControllerTest {
 	}
 
 	@Test
+	void shouldReturnOkStatusAndConfigData() throws Exception {
+		// given
+		String fakeEncryptedData = "fakeEncryptedData";
+		DecryptRequest request = DecryptRequest.builder()
+			.encryptedData("encryptedData")
+			.password("fakePassword1")
+			.build();
+		// when
+		when(encryptDecryptService.decryptConfigData(any(), any())).thenReturn(fakeEncryptedData);
+		// then
+		var response = mockMvc
+			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.configData").toString();
+		assertThat(result).isEqualTo(fakeEncryptedData);
+	}
+
+	@Test
+	void shouldReturn400StatusWhenPasswordIsNullInDecryptProcess() throws Exception {
+		// given
+		DecryptRequest request = DecryptRequest.builder().encryptedData("encryptedData").password(null).build();
+		// when & then
+		var response = mockMvc
+			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.password").toString();
+		assertThat(result).isEqualTo("Password cannot be null.");
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = { "Aa345678901234567890123456789012345678901234567890A", "A2345", "#$%^&*@!", "123456", "" })
+	void shouldReturn400StatusWhenPasswordIsWrongInDecryptProcess(String invalidPassword) throws Exception {
+		// given
+		DecryptRequest request = DecryptRequest.builder()
+			.encryptedData("fakeEncryptedData")
+			.password(invalidPassword)
+			.build();
+		// when & then
+		var response = mockMvc
+			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.password").toString();
+		assertThat(result)
+			.isEqualTo("Password length can only be within 6-50 characters and can only contain letters and numbers.");
+	}
+
+	@Test
 	void shouldReturn500StatusWhenDecryptServiceThrowException() throws Exception {
 		// given
-		DecryptRequest request = DecryptRequest.builder().encryptedData("encryptedData").password("1234567890").build();
+		DecryptRequest request = DecryptRequest.builder()
+			.encryptedData("encryptedData")
+			.password("A1234567890")
+			.build();
 		// when
 		when(encryptDecryptService.decryptConfigData(any(), any()))
 			.thenThrow(new EncryptDecryptProcessException("Encrypt process message"));
@@ -168,7 +228,10 @@ class CryptoControllerTest {
 	@Test
 	void shouldReturn4xxStatusWhenDecryptServiceThrowException() throws Exception {
 		// given
-		DecryptRequest request = DecryptRequest.builder().encryptedData("encryptedData").password("1234567890").build();
+		DecryptRequest request = DecryptRequest.builder()
+			.encryptedData("encryptedData")
+			.password("A1234567890")
+			.build();
 		// when
 		when(encryptDecryptService.decryptConfigData(any(), any()))
 			.thenThrow(new DecryptDataOrPasswordException("message", HttpStatus.BAD_REQUEST.value()));

@@ -248,11 +248,15 @@ class EncryptDecryptUtilTest {
 
 		String encryptedData = encryptDecryptUtil.getEncryptedData(randomIv, secretKey, jsonFakeData);
 		// when
-		var exception = assertThrows(EncryptDecryptProcessException.class,
+		var exception = assertThrows(DecryptDataOrPasswordException.class,
 				() -> encryptDecryptUtil.verifyMacBytes("", encryptedData, ""));
+		var exception2 = assertThrows(EncryptDecryptProcessException.class,
+				() -> encryptDecryptUtil.verifyMacBytes(null, encryptedData, ""));
 		// then
-		assertEquals("Obtain checksum algorithm in decrypt failed", exception.getMessage());
-		assertEquals(500, exception.getStatus());
+		assertEquals("Invalid file", exception.getMessage());
+		assertEquals(400, exception.getStatus());
+		assertEquals("Obtain checksum algorithm in decrypt failed", exception2.getMessage());
+		assertEquals(500, exception2.getStatus());
 
 	}
 

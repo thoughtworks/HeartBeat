@@ -113,10 +113,10 @@ public class EncryptDecryptUtil {
 		}
 	}
 
-	public String getMacBytes(String secretKey, String encryptedConfigData) {
+	public String getMacBytes(String secretKey, String encryptedData) {
 		try {
 			Mac sha256Hmac = obtainChecksumAlgorithm(secretKey);
-			byte[] hmacData = sha256Hmac.doFinal(encryptedConfigData.getBytes());
+			byte[] hmacData = sha256Hmac.doFinal(encryptedData.getBytes());
 			return Base64.getEncoder().encodeToString(hmacData);
 		}
 		catch (Exception e) {
@@ -125,14 +125,18 @@ public class EncryptDecryptUtil {
 	}
 
 	public boolean verifyMacBytes(String secretKey, String encryptedConfigData, String macBytes) {
+		Mac sha256Hmac;
 		try {
-			Mac sha256Hmac = obtainChecksumAlgorithm(secretKey);
+			sha256Hmac = obtainChecksumAlgorithm(secretKey);
 			byte[] computedMacBytes = sha256Hmac.doFinal(encryptedConfigData.getBytes());
 			byte[] receivedMacBytes = Base64.getDecoder().decode(macBytes);
 			return MessageDigest.isEqual(computedMacBytes, receivedMacBytes);
 		}
-		catch (Exception e) {
+		catch (NoSuchAlgorithmException | InvalidKeyException | NullPointerException | IllegalStateException e) {
 			throw new EncryptDecryptProcessException("Obtain checksum algorithm in decrypt failed");
+		}
+		catch (Exception e) {
+			throw new DecryptDataOrPasswordException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 	}
 

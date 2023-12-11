@@ -39,7 +39,7 @@ class CryptoControllerTest {
 	void shouldReturnOkStatusAndEncryptedData() throws Exception {
 		// given
 		String fakeEncryptedData = "fakeEncryptedData";
-		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password("fakePassword").build();
+		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password("fakePassword1").build();
 		// when
 		when(encryptDecryptService.encryptConfigData(any(), any())).thenReturn(fakeEncryptedData);
 		// then
@@ -74,13 +74,32 @@ class CryptoControllerTest {
 
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.configData").toString();
-		assertThat(result).isEqualTo("ConfigData must not be blank");
+		assertThat(result).isEqualTo("ConfigData cannot be blank.");
+	}
+
+	@Test
+	void shouldReturn400StatusWhenPasswordIsNull() throws Exception {
+		// given
+		String fakeEncryptedData = "fakeEncryptedData";
+		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password(null).build();
+		// when
+		when(encryptDecryptService.encryptConfigData(any(), any())).thenReturn(fakeEncryptedData);
+		// then
+		var response = mockMvc
+			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse();
+
+		final var content = response.getContentAsString();
+		final var result = JsonPath.parse(content).read("$.password").toString();
+		assertThat(result).isEqualTo("Password cannot be null.");
 	}
 
 	@ParameterizedTest
-	@NullSource
-	@ValueSource(strings = { "" })
-	void shouldReturn400StatusWhenPasswordIsBlankOrNull(String invalidPassword) throws Exception {
+	@ValueSource(strings = { "Aa345678901234567890123456789012345678901234567890A", "A2345", "#$%^&*@!", "123456", "" })
+	void shouldReturn400StatusWhenPasswordIsWrong(String invalidPassword) throws Exception {
 		// given
 		String fakeEncryptedData = "fakeEncryptedData";
 		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password(invalidPassword).build();
@@ -96,35 +115,14 @@ class CryptoControllerTest {
 
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.password").toString();
-		assertThat(result).isEqualTo("Password must not be blank");
-	}
-
-	@Test
-	void shouldReturn400StatusWhenPasswordToLong() throws Exception {
-		// given
-		String toLongPassword = "123456789012345678901234567890123456789012345678901";
-		String fakeEncryptedData = "fakeEncryptedData";
-		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password(toLongPassword).build();
-		// when
-		when(encryptDecryptService.encryptConfigData(any(), any())).thenReturn(fakeEncryptedData);
-		// then
-		var response = mockMvc
-			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
-			.andReturn()
-			.getResponse();
-
-		assertThat(toLongPassword).hasSize(51);
-		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.password").toString();
-		assertThat(result).isEqualTo("Password is longer than 50");
+		assertThat(result)
+			.isEqualTo("Password length can only be within 6-50 characters and can only contain letters and numbers.");
 	}
 
 	@Test
 	void shouldReturn500StatusWhenServiceThrowException() throws Exception {
 		// given
-		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password("1234567890").build();
+		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password("A234567890").build();
 		// when
 		when(encryptDecryptService.encryptConfigData(any(), any()))
 			.thenThrow(new EncryptProcessException("Encrypt process message"));

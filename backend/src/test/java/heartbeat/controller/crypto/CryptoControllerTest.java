@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.crypto.request.DecryptRequest;
 import heartbeat.controller.crypto.request.EncryptRequest;
-import heartbeat.exception.DecryptDataOrPasswordException;
+import heartbeat.exception.DecryptDataOrPasswordWrongException;
 import heartbeat.exception.EncryptDecryptProcessException;
 import heartbeat.service.crypto.EncryptDecryptService;
 import org.junit.jupiter.api.Test;
@@ -234,7 +234,7 @@ class CryptoControllerTest {
 			.build();
 		// when
 		when(encryptDecryptService.decryptConfigData(any(), any()))
-			.thenThrow(new DecryptDataOrPasswordException("message", HttpStatus.BAD_REQUEST.value()));
+			.thenThrow(new DecryptDataOrPasswordWrongException("message", HttpStatus.BAD_REQUEST.value()));
 		// then
 		var response = mockMvc
 			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))

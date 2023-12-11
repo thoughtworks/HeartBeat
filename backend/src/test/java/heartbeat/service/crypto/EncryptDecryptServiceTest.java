@@ -1,6 +1,6 @@
 package heartbeat.service.crypto;
 
-import heartbeat.exception.DecryptDataOrPasswordException;
+import heartbeat.exception.DecryptDataOrPasswordWrongException;
 import heartbeat.util.EncryptDecryptUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +77,7 @@ class EncryptDecryptServiceTest {
 		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData))
 			.thenThrow(new StringIndexOutOfBoundsException());
 		// then
-		var exception = assertThrows(DecryptDataOrPasswordException.class,
+		var exception = assertThrows(DecryptDataOrPasswordWrongException.class,
 				() -> encryptDecryptService.decryptConfigData(encryptedData, "fakePassword"));
 		assertEquals(400, exception.getStatus());
 		assertEquals("Invalid file", exception.getMessage());
@@ -99,7 +99,7 @@ class EncryptDecryptServiceTest {
 		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeIv + fakeEncryptedData, fakeMacBytes))
 			.thenReturn(false);
 		// then
-		var exception = assertThrows(DecryptDataOrPasswordException.class,
+		var exception = assertThrows(DecryptDataOrPasswordWrongException.class,
 				() -> encryptDecryptService.decryptConfigData(encryptedData, "fakePassword"));
 		assertEquals(400, exception.getStatus());
 		assertEquals("Invalid file", exception.getMessage());

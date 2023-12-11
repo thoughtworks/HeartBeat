@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = DecryptDataOrPasswordException.class)
-	protected ResponseEntity<Object> handleDecryptProcessException(DecryptDataOrPasswordException ex) {
+	@ExceptionHandler(value = DecryptDataOrPasswordWrongException.class)
+	protected ResponseEntity<Object> handleDecryptProcessException(DecryptDataOrPasswordWrongException ex) {
 		return ResponseEntity.status(ex.getStatus())
 			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Config file or password error"));
 	}

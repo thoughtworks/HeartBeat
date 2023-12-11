@@ -1,6 +1,6 @@
 package heartbeat.util;
 
-import heartbeat.exception.DecryptDataOrPasswordException;
+import heartbeat.exception.DecryptDataOrPasswordWrongException;
 import heartbeat.exception.EncryptDecryptProcessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -109,7 +109,7 @@ public class EncryptDecryptUtil {
 			throw new EncryptDecryptProcessException("Decrypted data failed");
 		}
 		catch (Exception e) {
-			throw new DecryptDataOrPasswordException("Incorrect password", HttpStatus.UNAUTHORIZED.value());
+			throw new DecryptDataOrPasswordWrongException("Incorrect password", HttpStatus.UNAUTHORIZED.value());
 		}
 	}
 
@@ -136,7 +136,7 @@ public class EncryptDecryptUtil {
 			throw new EncryptDecryptProcessException("Obtain checksum algorithm in decrypt failed");
 		}
 		catch (Exception e) {
-			throw new DecryptDataOrPasswordException("Invalid file", HttpStatus.BAD_REQUEST.value());
+			throw new DecryptDataOrPasswordWrongException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 	}
 

@@ -1,7 +1,7 @@
 package heartbeat.util;
 
 import com.google.gson.Gson;
-import heartbeat.exception.DecryptDataOrPasswordException;
+import heartbeat.exception.DecryptDataOrPasswordWrongException;
 import heartbeat.exception.EncryptDecryptProcessException;
 import heartbeat.service.report.MetricCsvFixture;
 import org.junit.jupiter.api.Test;
@@ -149,7 +149,7 @@ class EncryptDecryptUtilTest {
 		String encryptedData = encryptDecryptUtil.getEncryptedData(randomIv, secretKey, jsonFakeData);
 		String wrongSecretKey = encryptDecryptUtil.getSecretKey("fakePassword1");
 		// when
-		var exception = assertThrows(DecryptDataOrPasswordException.class,
+		var exception = assertThrows(DecryptDataOrPasswordWrongException.class,
 				() -> encryptDecryptUtil.getDecryptedData(randomIv, wrongSecretKey, encryptedData));
 		// then
 		assertEquals("Incorrect password", exception.getMessage());
@@ -248,7 +248,7 @@ class EncryptDecryptUtilTest {
 
 		String encryptedData = encryptDecryptUtil.getEncryptedData(randomIv, secretKey, jsonFakeData);
 		// when
-		var exception = assertThrows(DecryptDataOrPasswordException.class,
+		var exception = assertThrows(DecryptDataOrPasswordWrongException.class,
 				() -> encryptDecryptUtil.verifyMacBytes("", encryptedData, ""));
 		var exception2 = assertThrows(EncryptDecryptProcessException.class,
 				() -> encryptDecryptUtil.verifyMacBytes(null, encryptedData, ""));

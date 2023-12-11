@@ -68,8 +68,8 @@ class EncryptDecryptUtilTest {
 		String randomIv1 = encryptDecryptUtil.getRandomIv();
 		String randomIv2 = encryptDecryptUtil.getRandomIv();
 
-		assertEquals(32, randomIv1.length());
-		assertEquals(32, randomIv1.length());
+		assertEquals(24, randomIv1.length());
+		assertEquals(24, randomIv1.length());
 		assertNotEquals(randomIv1, randomIv2);
 	}
 
@@ -107,16 +107,15 @@ class EncryptDecryptUtilTest {
 	}
 
 	@Test
-	void shouldThrowExceptionWhenGetEncryptedData() {
+	void shouldThrow500ExceptionWhenGetEncryptedData() {
 		// given
 		var fakeData = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
 		String jsonFakeData = new Gson().toJson(fakeData);
-		String randomIv = encryptDecryptUtil.getRandomIv();
 		when(systemUtil.getEnvMap()).thenReturn(envMap);
 		String secretKey = encryptDecryptUtil.getSecretKey("fakePassword");
 		// when
 		var exception = assertThrows(EncryptDecryptProcessException.class,
-				() -> encryptDecryptUtil.getEncryptedData(randomIv + randomIv, secretKey, jsonFakeData));
+				() -> encryptDecryptUtil.getEncryptedData("", secretKey, jsonFakeData));
 		// then
 		assertEquals("Encrypted data failed", exception.getMessage());
 		assertEquals(500, exception.getStatus());
@@ -127,12 +126,11 @@ class EncryptDecryptUtilTest {
 		// given
 		var fakeData = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
 		String jsonFakeData = new Gson().toJson(fakeData);
-		String randomIv = encryptDecryptUtil.getRandomIv();
 		when(systemUtil.getEnvMap()).thenReturn(envMap);
 		String secretKey = encryptDecryptUtil.getSecretKey("fakePassword");
 		// when
 		var exception = assertThrows(EncryptDecryptProcessException.class,
-				() -> encryptDecryptUtil.getDecryptedData(randomIv + randomIv, secretKey, jsonFakeData));
+				() -> encryptDecryptUtil.getDecryptedData("", secretKey, jsonFakeData));
 		// then
 		assertEquals("Decrypted data failed", exception.getMessage());
 		assertEquals(500, exception.getStatus());
@@ -263,7 +261,7 @@ class EncryptDecryptUtilTest {
 	@Test
 	void shouldCutDataCorrect() {
 		// given
-		String fakeIv = "b361141b5669f5dfd6d90033b2c4599c";
+		String fakeIv = "b361141b5669f5dfd6d90033";
 		String fakeEncryptedConfigData = "qAx5C94jxoBe7T";
 		String fakeMacBytes = "sB1sVkLLhugkOWPWlifN0HHfrjcRfxzimoenRrQEcmI=";
 		String encryptedData = fakeIv + fakeEncryptedConfigData + fakeMacBytes;

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -33,13 +33,11 @@ public class EncryptDecryptUtil {
 
 	private static final String FIXED_SALT = "FIXED_SALT";
 
-	public static final String AES_CBC_PADDING = "AES/CBC/PKCS5Padding";
-
 	public static final String HMAC_SHA_256 = "HmacSHA256";
 
-	public static final int RANDOM_IV_BYTE_SIZE = 16;
+	public static final int RANDOM_IV_BYTE_SIZE = 12;
 
-	public static final int IV_STRING_SIZE = 32;
+	public static final int IV_STRING_SIZE = RANDOM_IV_BYTE_SIZE + RANDOM_IV_BYTE_SIZE;
 
 	public static final int MAC_BYTES_STRING_SIZE = 44;
 
@@ -158,13 +156,13 @@ public class EncryptDecryptUtil {
 		return byteArray;
 	}
 
-	private Cipher obtainAesAlgorithm(byte[] secretKeyByteList, byte[] ivByteList, int decryptMode)
+	private Cipher obtainAesAlgorithm(byte[] secretKeyByteList, byte[] ivByteList, int cryptMode)
 			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
 			InvalidAlgorithmParameterException {
-		Cipher cipher = Cipher.getInstance(AES_CBC_PADDING);
+		Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
 		SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyByteList, "AES");
-		IvParameterSpec ivParameterSpec = new IvParameterSpec(ivByteList);
-		cipher.init(decryptMode, secretKeySpec, ivParameterSpec);
+		GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, ivByteList);
+		cipher.init(cryptMode, secretKeySpec, gcmParameterSpec);
 		return cipher;
 	}
 

@@ -59,6 +59,7 @@
     "audit-ci": "^6.6.1",
     "autoprefixer": "^10.4.14",
     "cypress": "^13.6.0",
+    "cypress-mochawesome-reporter": "^3.7.0",
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "^34.0.1",

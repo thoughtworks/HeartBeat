@@ -122,6 +122,8 @@ describe('Import project from file', () => {
     checkFieldsExist(metricsTextList)
     checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
+    metricsPage.checkRequiredFields()
+
     metricsPage.goReportStep()
 
     reportPage.waitingForProgressBar()

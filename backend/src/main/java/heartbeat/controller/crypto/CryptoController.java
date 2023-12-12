@@ -21,13 +21,19 @@ public class CryptoController {
 
 	@PostMapping("/encrypt")
 	public EncryptResponse encrypt(@RequestBody @Validated EncryptRequest request) {
+		Long timeStamp = System.currentTimeMillis();
+		log.info("Start to get encrypt data at time stamp: {}", timeStamp);
 		String encryptedData = encryptDecryptService.encryptConfigData(request.getConfigData(), request.getPassword());
+		log.info("Successfully get encrypt data start from time stamp: {}", timeStamp);
 		return EncryptResponse.builder().encryptedData(encryptedData).build();
 	}
 
 	@PostMapping("/decrypt")
 	public DecryptResponse decrypt(@RequestBody @Validated DecryptRequest request) {
+		long timeStamp = System.currentTimeMillis();
+		log.info("Start to get decrypt data at time stamp: {}", timeStamp);
 		String configData = encryptDecryptService.decryptConfigData(request.getEncryptedData(), request.getPassword());
+		log.info("Successfully get decrypt data start from time stamp: {}", timeStamp);
 		return DecryptResponse.builder().configData(configData).build();
 	}
 

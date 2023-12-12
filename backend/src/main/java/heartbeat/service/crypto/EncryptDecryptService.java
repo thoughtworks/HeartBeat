@@ -3,10 +3,12 @@ package heartbeat.service.crypto;
 import heartbeat.exception.DecryptDataOrPasswordWrongException;
 import heartbeat.util.EncryptDecryptUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class EncryptDecryptService {
 
@@ -30,10 +32,12 @@ public class EncryptDecryptService {
 			macBytes = encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData);
 		}
 		catch (StringIndexOutOfBoundsException e) {
+			log.error("Failed to get iv encryptedConfigData macBytes, because of encryptedData length is incorrect");
 			throw new DecryptDataOrPasswordWrongException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 		String secretKey = encryptDecryptUtil.getSecretKey(password);
 		if (!encryptDecryptUtil.verifyMacBytes(secretKey, iv + encryptedConfigData, macBytes)) {
+			log.error("Failed to verify mac bytes, because of the file may be changed");
 			throw new DecryptDataOrPasswordWrongException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 		return encryptDecryptUtil.getDecryptedData(iv, secretKey, encryptedConfigData);

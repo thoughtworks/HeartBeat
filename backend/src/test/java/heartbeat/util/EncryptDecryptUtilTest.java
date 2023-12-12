@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,12 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EncryptDecryptUtilTest {
+
+	public static final String FAKE_IV = "b361141b5669f5dfd6d90033";
+
+	public static final String FAKE_ENCRYPTED_CONFIG_DATA = "qAx5C94jxoBe7T";
+
+	public static final String FAKE_MAC_BYTES = "sB1sVkLLhugkOWPWlifN0HHfrjcRfxzimoenRrQEcmI=";
 
 	@InjectMocks
 	EncryptDecryptUtil encryptDecryptUtil;
@@ -118,7 +125,7 @@ class EncryptDecryptUtilTest {
 				() -> encryptDecryptUtil.getEncryptedData("", secretKey, jsonFakeData));
 		// then
 		assertEquals("Encrypted data failed", exception.getMessage());
-		assertEquals(500, exception.getStatus());
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getStatus());
 	}
 
 	@Test
@@ -133,7 +140,7 @@ class EncryptDecryptUtilTest {
 				() -> encryptDecryptUtil.getDecryptedData("", secretKey, jsonFakeData));
 		// then
 		assertEquals("Decrypted data failed", exception.getMessage());
-		assertEquals(500, exception.getStatus());
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getStatus());
 	}
 
 	@Test
@@ -151,7 +158,7 @@ class EncryptDecryptUtilTest {
 				() -> encryptDecryptUtil.getDecryptedData(randomIv, wrongSecretKey, encryptedData));
 		// then
 		assertEquals("Incorrect password", exception.getMessage());
-		assertEquals(401, exception.getStatus());
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getStatus());
 	}
 
 	@Test
@@ -231,7 +238,7 @@ class EncryptDecryptUtilTest {
 				() -> encryptDecryptUtil.getMacBytes("", encryptedData));
 		// then
 		assertEquals("Obtain checksum algorithm in encrypt failed", exception.getMessage());
-		assertEquals(500, exception.getStatus());
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getStatus());
 
 	}
 
@@ -252,27 +259,24 @@ class EncryptDecryptUtilTest {
 				() -> encryptDecryptUtil.verifyMacBytes(null, encryptedData, ""));
 		// then
 		assertEquals("Invalid file", exception.getMessage());
-		assertEquals(400, exception.getStatus());
+		assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatus());
 		assertEquals("Obtain checksum algorithm in decrypt failed", exception2.getMessage());
-		assertEquals(500, exception2.getStatus());
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception2.getStatus());
 
 	}
 
 	@Test
 	void shouldCutDataCorrect() {
 		// given
-		String fakeIv = "b361141b5669f5dfd6d90033";
-		String fakeEncryptedConfigData = "qAx5C94jxoBe7T";
-		String fakeMacBytes = "sB1sVkLLhugkOWPWlifN0HHfrjcRfxzimoenRrQEcmI=";
-		String encryptedData = fakeIv + fakeEncryptedConfigData + fakeMacBytes;
+		String encryptedData = FAKE_IV + FAKE_ENCRYPTED_CONFIG_DATA + FAKE_MAC_BYTES;
 		// when
 		String iv = encryptDecryptUtil.cutIvFromEncryptedData(encryptedData);
 		String encryptedConfigData = encryptDecryptUtil.cutDataFromEncryptedData(encryptedData);
 		String macBytes = encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData);
 		// then
-		assertEquals(fakeIv, iv);
-		assertEquals(fakeEncryptedConfigData, encryptedConfigData);
-		assertEquals(fakeMacBytes, macBytes);
+		assertEquals(FAKE_IV, iv);
+		assertEquals(FAKE_ENCRYPTED_CONFIG_DATA, encryptedConfigData);
+		assertEquals(FAKE_MAC_BYTES, macBytes);
 
 	}
 

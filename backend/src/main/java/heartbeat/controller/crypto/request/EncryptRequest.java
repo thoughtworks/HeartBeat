@@ -21,7 +21,7 @@ public class EncryptRequest {
 
 	@NotNull(message = "Password cannot be null.")
 	@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,50}$",
-			message = "Password length can only be within 6-50 characters and can only contain letters and numbers.")
+			message = "Password length can only be within 6-50 characters and contain letters and numbers.")
 	private String password;
 
 }

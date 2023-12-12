@@ -3,6 +3,7 @@ package heartbeat.util;
 import heartbeat.exception.DecryptDataOrPasswordWrongException;
 import heartbeat.exception.EncryptDecryptProcessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
+@Log4j2
 @RequiredArgsConstructor
 public class EncryptDecryptUtil {
 
@@ -67,6 +69,7 @@ public class EncryptDecryptUtil {
 
 		try {
 			if (Objects.isNull(envMap.get(BACKEND_SECRET_KEY)) || Objects.isNull(envMap.get(FIXED_SALT))) {
+				log.error("Failed to get secretKey, because of backend secret key or fixed salt not in environment");
 				throw new EncryptDecryptProcessException("No backend secret key or fixed salt in the environment");
 			}
 			String passwordWithSecretKeySalt = envMap.get(BACKEND_SECRET_KEY) + password + envMap.get(FIXED_SALT);
@@ -75,6 +78,7 @@ public class EncryptDecryptUtil {
 			return convertHexadecimalString(secretKeyByteList);
 		}
 		catch (Exception e) {
+			log.error("Failed to get secretKey, because of e:{}", e.getMessage());
 			throw new EncryptDecryptProcessException(
 					String.format("Get secret key failed with reason: %s", e.getMessage()));
 		}
@@ -89,6 +93,7 @@ public class EncryptDecryptUtil {
 			return Base64.getEncoder().encodeToString(cipher.doFinal(configDataByteList));
 		}
 		catch (Exception e) {
+			log.error("Failed to encryptedData, because of e:{}", e.getMessage());
 			throw new EncryptDecryptProcessException("Encrypted data failed");
 		}
 	}
@@ -104,9 +109,11 @@ public class EncryptDecryptUtil {
 		}
 		catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
 				| InvalidAlgorithmParameterException e) {
+			log.error("Failed to decryptedData, because of encryption algorithm acquisition error");
 			throw new EncryptDecryptProcessException("Decrypted data failed");
 		}
 		catch (Exception e) {
+			log.error("Failed to decryptedData, because of e: {}", e.getMessage());
 			throw new DecryptDataOrPasswordWrongException("Incorrect password", HttpStatus.UNAUTHORIZED.value());
 		}
 	}
@@ -118,6 +125,7 @@ public class EncryptDecryptUtil {
 			return Base64.getEncoder().encodeToString(hmacData);
 		}
 		catch (Exception e) {
+			log.error("Fail to get mac bytes, because of e: {}", e.getMessage());
 			throw new EncryptDecryptProcessException("Obtain checksum algorithm in encrypt failed");
 		}
 	}
@@ -131,9 +139,12 @@ public class EncryptDecryptUtil {
 			return MessageDigest.isEqual(computedMacBytes, receivedMacBytes);
 		}
 		catch (NoSuchAlgorithmException | InvalidKeyException | NullPointerException | IllegalStateException e) {
+			log.error("Failed to verify mac bytes, because of checksum algorithm acquisition error e:{}",
+					e.getMessage());
 			throw new EncryptDecryptProcessException("Obtain checksum algorithm in decrypt failed");
 		}
 		catch (Exception e) {
+			log.error("Failed to verify mac bytes, because of the file been changed e:{}", e.getMessage());
 			throw new DecryptDataOrPasswordWrongException("Invalid file", HttpStatus.BAD_REQUEST.value());
 		}
 	}

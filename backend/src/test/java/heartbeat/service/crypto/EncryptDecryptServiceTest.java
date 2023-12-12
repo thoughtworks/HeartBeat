@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,6 +16,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EncryptDecryptServiceTest {
+
+	public static final String FAKE_IV = "b361141b5669f5dfd6d90033b2c4599c";
+
+	public static final String FAKE_MAC_BYTES = "sB1sVkLLhugkOWPWlifN0HHfrjcRfxzimoenRrQEcmI=";
+
+	public static final String FAKE_SECRET_KEY = "fakeSecretKey";
+
+	public static final String FAKE_ENCRYPTED_DATA = "qAx5C94jxoBe7T";
 
 	@Mock
 	EncryptDecryptUtil encryptDecryptUtil;
@@ -29,38 +38,31 @@ class EncryptDecryptServiceTest {
 	@Test
 	void shouldReturnEncryptConfigData() {
 		// given
-		String fakeSecretKey = "fakeSecretKey";
-		String fakeEncryptedData = "fakeEncryptedData";
 		String fakeConfigData = "fakeConfigData";
-		String fakeMacBytes = "fakeMacBytes";
-		String fakeIv = "fakeIv";
 		// when
-		when(encryptDecryptUtil.getRandomIv()).thenReturn(fakeIv);
-		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(fakeSecretKey);
-		when(encryptDecryptUtil.getEncryptedData(fakeIv, fakeSecretKey, fakeConfigData)).thenReturn(fakeEncryptedData);
-		when(encryptDecryptUtil.getMacBytes(fakeSecretKey, fakeIv + fakeEncryptedData)).thenReturn(fakeMacBytes);
+		when(encryptDecryptUtil.getRandomIv()).thenReturn(FAKE_IV);
+		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(FAKE_SECRET_KEY);
+		when(encryptDecryptUtil.getEncryptedData(FAKE_IV, FAKE_SECRET_KEY, fakeConfigData))
+			.thenReturn(FAKE_ENCRYPTED_DATA);
+		when(encryptDecryptUtil.getMacBytes(FAKE_SECRET_KEY, FAKE_IV + FAKE_ENCRYPTED_DATA)).thenReturn(FAKE_MAC_BYTES);
 		// then
 		String encryptedData = encryptDecryptService.encryptConfigData(fakeConfigData, "fakePassword");
-		assertEquals(fakeIv + fakeEncryptedData + fakeMacBytes, encryptedData);
+		assertEquals(FAKE_IV + FAKE_ENCRYPTED_DATA + FAKE_MAC_BYTES, encryptedData);
 	}
 
 	@Test
 	void shouldReturnConfigData() {
 		// given
-		String fakeIv = "b361141b5669f5dfd6d90033b2c4599c";
-		String fakeEncryptedData = "qAx5C94jxoBe7T";
-		String fakeMacBytes = "sB1sVkLLhugkOWPWlifN0HHfrjcRfxzimoenRrQEcmI=";
-		String encryptedData = fakeIv + fakeEncryptedData + fakeMacBytes;
-		String fakeSecretKey = "fakeSecretKey";
-		String fakeConfigData = "fakeConfigData";
+		String encryptedData = FAKE_IV + FAKE_ENCRYPTED_DATA + FAKE_MAC_BYTES;
 		// when
-		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(fakeSecretKey);
-		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(fakeIv);
-		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(fakeEncryptedData);
-		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(fakeMacBytes);
-		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeIv + fakeEncryptedData, fakeMacBytes))
+		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(FAKE_SECRET_KEY);
+		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(FAKE_IV);
+		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(FAKE_ENCRYPTED_DATA);
+		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(FAKE_MAC_BYTES);
+		when(encryptDecryptUtil.verifyMacBytes(FAKE_SECRET_KEY, FAKE_IV + FAKE_ENCRYPTED_DATA, FAKE_MAC_BYTES))
 			.thenReturn(true);
-		when(encryptDecryptUtil.getDecryptedData(fakeIv, fakeSecretKey, fakeEncryptedData)).thenReturn(fakeConfigData);
+		when(encryptDecryptUtil.getDecryptedData(FAKE_IV, FAKE_SECRET_KEY, FAKE_ENCRYPTED_DATA))
+			.thenReturn("fakeConfigData");
 		// then
 		String decryptedData = encryptDecryptService.decryptConfigData(encryptedData, "fakePassword");
 		assertNotNull(decryptedData);
@@ -79,29 +81,25 @@ class EncryptDecryptServiceTest {
 		// then
 		var exception = assertThrows(DecryptDataOrPasswordWrongException.class,
 				() -> encryptDecryptService.decryptConfigData(encryptedData, "fakePassword"));
-		assertEquals(400, exception.getStatus());
+		assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatus());
 		assertEquals("Invalid file", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowExceptionWhenVerifyMacBytesIsFalse() {
 		// given
-		String fakeIv = "b361141b5669f5dfd6d90033b2c4599c";
-		String fakeEncryptedData = "qAx5C94jxoBe";
-		String fakeMacBytes = "sB1sVkLLhugkOWPWlifN0HHfrjcRfxzimoenRrQEcmI=";
-		String encryptedData = fakeIv + fakeEncryptedData + fakeMacBytes;
-		String fakeSecretKey = "fakeSecretKey";
+		String encryptedData = FAKE_IV + FAKE_ENCRYPTED_DATA + FAKE_MAC_BYTES;
 		// when
-		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(fakeSecretKey);
-		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(fakeIv);
-		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(fakeEncryptedData);
-		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(fakeMacBytes);
-		when(encryptDecryptUtil.verifyMacBytes(fakeSecretKey, fakeIv + fakeEncryptedData, fakeMacBytes))
+		when(encryptDecryptUtil.getSecretKey("fakePassword")).thenReturn(FAKE_SECRET_KEY);
+		when(encryptDecryptUtil.cutIvFromEncryptedData(encryptedData)).thenReturn(FAKE_IV);
+		when(encryptDecryptUtil.cutDataFromEncryptedData(encryptedData)).thenReturn(FAKE_ENCRYPTED_DATA);
+		when(encryptDecryptUtil.cutMacBytesFromEncryptedData(encryptedData)).thenReturn(FAKE_MAC_BYTES);
+		when(encryptDecryptUtil.verifyMacBytes(FAKE_SECRET_KEY, FAKE_IV + FAKE_ENCRYPTED_DATA, FAKE_MAC_BYTES))
 			.thenReturn(false);
 		// then
 		var exception = assertThrows(DecryptDataOrPasswordWrongException.class,
 				() -> encryptDecryptService.decryptConfigData(encryptedData, "fakePassword"));
-		assertEquals(400, exception.getStatus());
+		assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatus());
 		assertEquals("Invalid file", exception.getMessage());
 	}
 

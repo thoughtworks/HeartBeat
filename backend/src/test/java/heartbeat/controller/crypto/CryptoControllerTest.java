@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureJsonTesters
 class CryptoControllerTest {
 
+	private static final String FAKE_EXCEPTION_MESSAGE = "Encrypt process message";
+
 	@Autowired
 	MockMvc mockMvc;
 
@@ -113,7 +115,7 @@ class CryptoControllerTest {
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.password").toString();
 		assertThat(result)
-			.isEqualTo("Password length can only be within 6-50 characters and can only contain letters and numbers.");
+			.isEqualTo("Password length can only be within 6-50 characters and contain letters and numbers.");
 	}
 
 	@Test
@@ -122,7 +124,7 @@ class CryptoControllerTest {
 		EncryptRequest request = EncryptRequest.builder().configData("fakeConfig").password("A234567890").build();
 		// when
 		when(encryptDecryptService.encryptConfigData(any(), any()))
-			.thenThrow(new EncryptDecryptProcessException("Encrypt process message"));
+			.thenThrow(new EncryptDecryptProcessException(FAKE_EXCEPTION_MESSAGE));
 		// then
 		var response = mockMvc
 			.perform(post("/encrypt").content(new ObjectMapper().writeValueAsString(request))
@@ -134,7 +136,7 @@ class CryptoControllerTest {
 		final var content = response.getContentAsString();
 		final var message = JsonPath.parse(content).read("$.message").toString();
 		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
-		assertThat(message).isEqualTo("Encrypt process message");
+		assertThat(message).isEqualTo(FAKE_EXCEPTION_MESSAGE);
 		assertThat(hintInfo).isEqualTo("Encrypt or decrypt process failed");
 	}
 
@@ -197,57 +199,45 @@ class CryptoControllerTest {
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.password").toString();
 		assertThat(result)
-			.isEqualTo("Password length can only be within 6-50 characters and can only contain letters and numbers.");
+			.isEqualTo("Password length can only be within 6-50 characters and contain letters and numbers.");
 	}
 
 	@Test
-	void shouldReturn500StatusWhenDecryptServiceThrowException() throws Exception {
-		// given
+	void shouldReturn5xxOr4xxWhenDecryptServiceThrowException() throws Exception {
+
 		DecryptRequest request = DecryptRequest.builder()
 			.encryptedData("encryptedData")
 			.password("A1234567890")
 			.build();
-		// when
+
 		when(encryptDecryptService.decryptConfigData(any(), any()))
-			.thenThrow(new EncryptDecryptProcessException("Encrypt process message"));
-		// then
-		var response = mockMvc
+			.thenThrow(new EncryptDecryptProcessException(FAKE_EXCEPTION_MESSAGE))
+			.thenThrow(new DecryptDataOrPasswordWrongException(FAKE_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.value()));
+
+		var internalServerResponse = mockMvc
 			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isInternalServerError())
 			.andReturn()
 			.getResponse();
+		final var internalServerContent = internalServerResponse.getContentAsString();
+		final var internalServerMessage = JsonPath.parse(internalServerContent).read("$.message").toString();
+		final var internalServerHintInfo = JsonPath.parse(internalServerContent).read("$.hintInfo").toString();
+		assertThat(internalServerMessage).isEqualTo(FAKE_EXCEPTION_MESSAGE);
+		assertThat(internalServerHintInfo).isEqualTo("Encrypt or decrypt process failed");
 
-		final var content = response.getContentAsString();
-		final var message = JsonPath.parse(content).read("$.message").toString();
-		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
-		assertThat(message).isEqualTo("Encrypt process message");
-		assertThat(hintInfo).isEqualTo("Encrypt or decrypt process failed");
-	}
-
-	@Test
-	void shouldReturn4xxStatusWhenDecryptServiceThrowException() throws Exception {
-		// given
-		DecryptRequest request = DecryptRequest.builder()
-			.encryptedData("encryptedData")
-			.password("A1234567890")
-			.build();
-		// when
-		when(encryptDecryptService.decryptConfigData(any(), any()))
-			.thenThrow(new DecryptDataOrPasswordWrongException("message", HttpStatus.BAD_REQUEST.value()));
-		// then
-		var response = mockMvc
+		var badRequestResponse = mockMvc
 			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();
 
-		final var content = response.getContentAsString();
-		final var message = JsonPath.parse(content).read("$.message").toString();
-		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
-		assertThat(message).isEqualTo("message");
-		assertThat(hintInfo).isEqualTo("Config file or password error");
+		final var badRequestContent = badRequestResponse.getContentAsString();
+		final var badRequestMessage = JsonPath.parse(badRequestContent).read("$.message").toString();
+		final var badRequestHintInfo = JsonPath.parse(badRequestContent).read("$.hintInfo").toString();
+		assertThat(badRequestMessage).isEqualTo(FAKE_EXCEPTION_MESSAGE);
+		assertThat(badRequestHintInfo).isEqualTo("Config file or password error");
 	}
 
 }

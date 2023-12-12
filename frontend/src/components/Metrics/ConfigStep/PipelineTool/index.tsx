@@ -180,11 +180,7 @@ export const PipelineTool = () => {
           {isVerified && !isLoading ? (
             <VerifyButton disabled>Verified</VerifyButton>
           ) : (
-            <VerifyButton
-              data-test-id='pipelineVerifyButton'
-              type='submit'
-              disabled={isDisableVerifyButton || isLoading}
-            >
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
               Verify
             </VerifyButton>
           )}

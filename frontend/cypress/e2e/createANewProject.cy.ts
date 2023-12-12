@@ -246,27 +246,25 @@ describe('Create a new project', () => {
 
     configPage.selectDateRange()
 
-    const nextButton = () => cy.get('button:contains("Next")')
-    nextButton().should('be.disabled')
+    configPage.nextStepButton.should('be.disabled')
 
     configPage.selectMetricsData()
 
     configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-
-    cy.contains('Verified').should('exist')
-    cy.contains('Reset').should('exist')
+    configPage.getVerifiedButton(configPage.boardConfigSection).should('be.disabled')
+    configPage.getResetButton(configPage.boardConfigSection).should('be.enabled')
 
     configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
 
     configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
 
-    nextButton().should('be.enabled')
+    configPage.nextStepButton.should('be.enabled')
 
     configPage.CancelBackToHomePage()
 
     configPage.goMetricsStep()
 
-    nextButton().should('be.disabled')
+    configPage.nextStepButton.should('be.disabled')
 
     cy.contains('Crew settings').should('exist')
 
@@ -283,7 +281,7 @@ describe('Create a new project', () => {
 
     metricsPage.checkDeploymentFrequencySettings()
 
-    nextButton().should('be.enabled')
+    configPage.nextStepButton.should('be.enabled')
 
     metricsPage.goReportStep()
 

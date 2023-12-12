@@ -7,7 +7,7 @@ description: Encrypt and decrypt exported and imported files
 
 ## Background
 
-Current user can export project configuation file from system. But there is many scurity data which is plain text in the file. It’s doesn’t unsafe. The file should be encrypted and don’t allow user to update as well. It will be decrypted when import.
+Current user can export project configuration file from system. But there is many security data which is plain text in the file. It doesn't unsafe. The file should be encrypted and don’t allow user to update as well. It will be decrypted when import.
 
 ## Story
 
@@ -174,7 +174,36 @@ The front-end will call the corresponding interface in the CryptoController duri
      encryptedData: "iv + encrypted data + macBytes"
    }
   ```
-
+  - Error Handling
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="3">400</td>
+    <td>ConfigData cannot not be blank.</td>
+    <td rowspan="3"></td>
+  </tr>
+  <tr>
+    <td>Password cannot be null.</td>
+  </tr>
+  <tr>
+    <td>Password length can only be within 6-50 characters and contain letters and numbers.</td>
+  </tr>
+  <tr>
+    <td rowspan="3">500</td>
+    <td>Encrypted data failed</td>
+    <td rowspan="3">Encrypt or decrypt process failed</td>
+  </tr>
+  <tr>
+    <td>Obtain checksum algorithm in encrypt failed</td>
+  </tr>
+  <tr>
+    <td>Get secret key failed with reason: No backend secret key or fixed salt in the environment</td>
+  </tr>
+</table>
 - Decryption Api
   - Path: /decrypt
   - Method: POST
@@ -198,7 +227,41 @@ The front-end will call the corresponding interface in the CryptoController duri
     configData: "{"projectName": "","dateRange": {"startDate": null,"endDate": null}...}",
   }
   ```
-- Error Handling
-  - 400: Bad Request: Invalid file
-  - 401: Unauthorized: Incorrect password
-  - 500: Internal Server Error: Server internal error
+  - Error Handling
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="4">400</td>
+    <td>Invalid file</td>
+    <td>Config file or password error</td>
+  </tr>
+  <tr>
+    <td>EncryptedData cannot not be blank.</td>
+  </tr>
+  <tr>
+    <td>Password cannot be null.</td>
+  </tr>
+  <tr>
+    <td>Password length can only be within 6-50 characters and contain letters and numbers.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Incorrect password</td>
+    <td>Config file or password error</td>
+  </tr>
+  <tr>
+    <td rowspan="3">500</td>
+    <td>Decrypted data failed</td>
+    <td rowspan="3">Encrypt or decrypt process failed</td>
+  </tr>
+  <tr>
+    <td>Obtain checksum algorithm in decrypt failed</td>
+  </tr>
+  <tr>
+    <td>Get secret key failed with reason: No backend secret key or fixed salt in the environment</td>
+  </tr>
+</table>

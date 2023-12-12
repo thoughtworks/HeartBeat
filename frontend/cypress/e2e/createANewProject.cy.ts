@@ -146,17 +146,17 @@ const checkPipelineCalculation = (testId: string) => {
 }
 
 const checkDeploymentFrequency = (testId: string) => {
-  reportPage.deploymentFrequencyTitle().should('exist')
+  reportPage.deploymentFrequencyTitle.should('exist')
   checkPipelineCalculation(testId)
 }
 
 const checkVelocity = (testId: string, velocityData: BoardDataItem[]) => {
-  reportPage.velocityTitle().should('exist')
+  reportPage.velocityTitle.should('exist')
   checkBoardCalculation(testId, velocityData)
 }
 
 const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
-  reportPage.cycleTimeTitle().should('exist')
+  reportPage.cycleTimeTitle.should('exist')
   checkBoardCalculation(testId, cycleTimeData)
 }
 
@@ -165,7 +165,7 @@ const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
 }
 
 const checkMeanTimeToRecovery = (testId: string) => {
-  reportPage.meanTimeToRecoveryTitle().should('exist')
+  reportPage.meanTimeToRecoveryTitle.should('exist')
   checkTimeToRecoveryPipelineCalculation(testId)
 }
 
@@ -297,21 +297,21 @@ describe('Create a new project', () => {
 
     clearDownloadFile()
 
-    reportPage.firstNotification().should('exist')
+    reportPage.firstNotification.should('exist')
 
-    reportPage.exportMetricDataButton().should('be.enabled')
+    reportPage.exportMetricDataButton.should('be.enabled')
 
     reportPage.exportMetricData()
 
     checkMetricCSV()
 
-    reportPage.exportPipelineDataButton().should('be.enabled')
+    reportPage.exportPipelineDataButton.should('be.enabled')
 
     reportPage.exportPipelineData()
 
     checkPipelineCSV()
 
-    reportPage.exportBoardDataButton().should('be.enabled')
+    reportPage.exportBoardDataButton.should('be.enabled')
 
     reportPage.exportBoardData()
 

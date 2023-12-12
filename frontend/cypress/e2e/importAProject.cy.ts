@@ -88,7 +88,7 @@ const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
 }
 
 const checkMeanTimeToRecovery = (testId: string) => {
-  reportPage.meanTimeToRecoveryTitle().should('exist')
+  reportPage.meanTimeToRecoveryTitle.should('exist')
   checkTimeToRecoveryPipelineCalculation(testId)
 }
 

@@ -23,6 +23,112 @@ class Metrics {
     noneValue: '----',
   }
 
+  get realDoneSelect() {
+    return cy.contains('Consider as Done').siblings().eq(0)
+  }
+
+  get RealDoneSelectAllOption() {
+    return cy.contains('All')
+  }
+
+  get closeModelElement() {
+    return cy.get(
+      '.Mui-expanded > .MuiFormControl-root > .MuiInputBase-root > .MuiAutocomplete-endAdornment > .MuiAutocomplete-popupIndicator > [data-testid="ArrowDropDownIcon"] > path'
+    )
+  }
+
+  get classificationSelect() {
+    return cy.contains('Distinguished By').siblings()
+  }
+
+  get classificationSelectAllOption() {
+    return cy.contains('All')
+  }
+
+  get deploymentFrequencySettingTitle() {
+    return cy.contains('Pipeline settings')
+  }
+
+  get organizationSelect() {
+    return cy.get('[data-test-id="single-selection-organization"]')
+  }
+
+  get pipelineOfOrgXXXX() {
+    return cy.get('li[role="option"]').contains('XXXX')
+  }
+
+  get pipelineSelectOneOption() {
+    return cy.get('li[role="option"]').contains('fs-platform-payment-selector')
+  }
+
+  get stepSelectSomeOption() {
+    return cy.get('li[role="option"]').contains('RECORD RELEASE TO PROD')
+  }
+
+  get addOnePipelineButton() {
+    return cy.get('[data-testid="AddIcon"]:first')
+  }
+
+  get classificationClear() {
+    return this.classificationSelect.find('[aria-label="Clear"]')
+  }
+
+  get pipelineSelectOnboardingOption() {
+    return cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")')
+  }
+
+  get pipelineSelectUIOption() {
+    return cy.get('li[role="option"]').contains('payment-selector-ui')
+  }
+
+  get buildKiteStepNotFoundTips() {
+    return cy.contains('BuildKite get steps failed: 404 Not Found')
+  }
+
+  get pipelineRemoveButton() {
+    return cy.get('[data-test-id="remove-button"]').eq(1)
+  }
+
+  get branchSelect() {
+    return cy.contains('Branches').eq(0).siblings()
+  }
+
+  get branchSelectSomeOption() {
+    return cy.contains('All')
+  }
+
+  get pipelineStepSelectXXOption() {
+    return cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO UAT"):last')
+  }
+
+  get pipelineStepXXOption() {
+    return cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
+  }
+
+  get leadTimeForChangeAddOneButton() {
+    return cy.get('[data-testid="AddIcon"]:last')
+  }
+
+  get headerBar() {
+    return cy.get('[data-test-id="Header"]')
+  }
+
+  get nextButton() {
+    return cy.contains('Next')
+  }
+
+  get backButton() {
+    return cy.contains('Previous')
+  }
+
+  get cycleTimeTitleTooltip() {
+    return cy.get('[data-test-id="tooltip')
+  }
+
+  get progressBar() {
+    return cy.get('[data-testid="loading-page"]', { timeout: 10000 })
+  }
+
   private readonly cycleTimeSettingAnalysis = () => {
     cy.contains(Metrics.CYCLE_TIME_LABEL.analysisLabel).siblings().eq(0).click()
     cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.analysisValue).click()
@@ -68,74 +174,16 @@ class Metrics {
     cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.noneValue).click()
   }
 
-  private readonly realDoneSelect = () => cy.contains('Consider as Done').siblings().eq(0)
+  checkDuplicatedMessage = () => cy.contains('This pipeline is the same as another one!').should('exist')
 
-  private readonly RealDoneSelectAllOption = () => cy.contains('All')
+  getStepOfSomePipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-step"]').eq(i)
 
-  private readonly closeModelElement = () =>
-    cy.get(
-      '.Mui-expanded > .MuiFormControl-root > .MuiInputBase-root > .MuiAutocomplete-endAdornment > .MuiAutocomplete-popupIndicator > [data-testid="ArrowDropDownIcon"] > path'
-    )
+  getOrganizationSecondSelect = (i: number) => cy.get('[data-test-id="single-selection-organization"]').eq(i)
 
-  private readonly classificationSelect = () => cy.contains('Distinguished By').siblings()
-
-  private readonly classificationSelectAllOption = () => cy.contains('All')
-
-  private readonly deploymentFrequencySettingTitle = () => cy.contains('Pipeline settings')
-
-  private readonly organizationSelect = () => cy.get('[data-test-id="single-selection-organization"]')
-
-  private readonly pipelineOfOrgXXXX = () => cy.get('li[role="option"]').contains('XXXX')
-
-  private readonly pipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
-
-  private readonly pipelineSelectOneOption = () => cy.get('li[role="option"]').contains('fs-platform-payment-selector')
-
-  private readonly stepOfSomePipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-step"]').eq(i)
-
-  private readonly stepSelectSomeOption = () => cy.get('li[role="option"]').contains('RECORD RELEASE TO PROD')
-
-  private readonly addOnePipelineButton = () => cy.get('[data-testid="AddIcon"]:first')
-
-  private readonly classificationClear = () => this.classificationSelect().find('[aria-label="Clear"]')
-
-  private readonly organizationSecondSelect = (i: number) =>
-    cy.get('[data-test-id="single-selection-organization"]').eq(i)
-
-  private readonly pipelineSelectOnboardingOption = () =>
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")')
-
-  private readonly pipelineSelectUIOption = () => cy.get('li[role="option"]').contains('payment-selector-ui')
-
-  private readonly buildKiteStepNotFoundTips = () => cy.contains('BuildKite get steps failed: 404 Not Found')
-
-  private readonly pipelineRemoveButton = () => cy.get('[data-test-id="remove-button"]').eq(1)
-
-  private readonly checkDuplicatedMessage = () =>
-    cy.contains('This pipeline is the same as another one!').should('exist')
-
-  private readonly branchSelect = () => cy.contains('Branches').eq(0).siblings()
-
-  private readonly branchSelectSomeOption = () => cy.contains('All')
-
-  private readonly pipelineStepSelectXXOption = () =>
-    cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO UAT"):last')
-
-  private readonly pipelineStepXXOption = () =>
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
-
-  private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
-  private readonly headerBar = () => cy.get('[data-test-id="Header"]')
-
-  private readonly nextButton = () => cy.contains('Next')
-  private readonly backButton = () => cy.contains('Previous')
-
-  private readonly cycleTimeTitleTooltip = () => cy.get('[data-test-id="tooltip')
-
-  private readonly progressBar = () => cy.get('[data-testid="loading-page"]', { timeout: 10000 })
+  getPipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
 
   checkCycleTimeTooltip() {
-    this.cycleTimeTitleTooltip().trigger('mouseover')
+    this.cycleTimeTitleTooltip.trigger('mouseover')
     cy.contains(TIPS.CYCLE_TIME).should('be.visible')
   }
 
@@ -151,80 +199,80 @@ class Metrics {
   }
 
   checkRealDone() {
-    this.realDoneSelect().click()
+    this.realDoneSelect.click()
 
-    this.RealDoneSelectAllOption().click()
-    this.closeModelElement().click({ force: true })
+    this.RealDoneSelectAllOption.click()
+    this.closeModelElement.click({ force: true })
   }
 
   checkClassification() {
-    this.classificationSelect().click()
+    this.classificationSelect.click()
 
-    this.classificationSelectAllOption().click()
-    this.closeModelElement().click({ force: true })
+    this.classificationSelectAllOption.click()
+    this.closeModelElement.click({ force: true })
   }
 
   checkDeploymentFrequencySettings() {
-    this.deploymentFrequencySettingTitle().should('be.exist')
-    this.organizationSelect().click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(0).click()
-    this.pipelineSelectOneOption().click()
+    this.deploymentFrequencySettingTitle.should('be.exist')
+    this.organizationSelect.click()
+    this.pipelineOfOrgXXXX.click()
+    this.getPipelineSelect(0).click()
+    this.pipelineSelectOneOption.click()
     this.waitingForProgressBar()
-    this.stepOfSomePipelineSelect(0).click()
-    this.stepSelectSomeOption().click()
-    this.branchSelect().click()
-    this.branchSelectSomeOption().click()
+    this.getStepOfSomePipelineSelect(0).click()
+    this.stepSelectSomeOption.click()
+    this.branchSelect.click()
+    this.branchSelectSomeOption.click()
     this.closeOptions()
 
-    this.addOnePipelineButton().click()
-    this.organizationSecondSelect(1).click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(1).click()
-    this.pipelineSelectUIOption().click()
-    this.buildKiteStepNotFoundTips().should('exist')
-    this.pipelineRemoveButton().click()
+    this.addOnePipelineButton.click()
+    this.getOrganizationSecondSelect(1).click()
+    this.pipelineOfOrgXXXX.click()
+    this.getPipelineSelect(1).click()
+    this.pipelineSelectUIOption.click()
+    this.buildKiteStepNotFoundTips.should('exist')
+    this.pipelineRemoveButton.click()
 
-    this.addOnePipelineButton().click()
-    this.organizationSecondSelect(1).click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(1).click()
-    this.pipelineSelectOneOption().click()
+    this.addOnePipelineButton.click()
+    this.getOrganizationSecondSelect(1).click()
+    this.pipelineOfOrgXXXX.click()
+    this.getPipelineSelect(1).click()
+    this.pipelineSelectOneOption.click()
     this.waitingForProgressBar()
-    this.stepOfSomePipelineSelect(1).click()
-    this.stepSelectSomeOption().click()
+    this.getStepOfSomePipelineSelect(1).click()
+    this.stepSelectSomeOption.click()
     this.checkDuplicatedMessage()
-    this.pipelineRemoveButton().click()
+    this.pipelineRemoveButton.click()
   }
 
   closeOptions() {
-    this.headerBar().click()
+    this.headerBar.click()
   }
 
   goReportStep() {
-    this.nextButton().click()
+    this.nextButton.click()
   }
 
   BackToConfigStep() {
-    this.backButton().click()
+    this.backButton.click()
   }
 
   waitingForProgressBar() {
-    this.progressBar().should('be.visible')
-    this.progressBar().should('not.exist')
+    this.progressBar.should('be.visible')
+    this.progressBar.should('not.exist')
   }
 
   checkRequiredFields() {
     this.cycleTimeSettingDoneColumnToNone()
-    this.nextButton().should('be.disabled')
+    this.nextButton.should('be.disabled')
     this.cycleTimeSettingDone()
     this.checkRealDone()
-    this.nextButton().should('be.enabled')
+    this.nextButton.should('be.enabled')
 
-    this.classificationClear().click({ force: true })
-    this.nextButton().should('be.disabled')
+    this.classificationClear.click({ force: true })
+    this.nextButton.should('be.disabled')
     this.checkClassification()
-    this.nextButton().should('be.enabled')
+    this.nextButton.should('be.enabled')
   }
 }
 

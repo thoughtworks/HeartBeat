@@ -16,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DecryptRequest {
 
-	@NotBlank(message = "EncryptedData cannot be blank")
+	@NotBlank(message = "EncryptedData cannot be blank.")
 	private String encryptedData;
 
 	@NotNull(message = "Password cannot be null.")

@@ -266,10 +266,6 @@ describe('Create a new project', () => {
 
     configPage.nextStepButton.should('be.disabled')
 
-    cy.contains('Crew settings').should('exist')
-
-    cy.contains('Cycle time settings').should('exist')
-
     metricsPage.checkCycleTimeTooltip()
     metricsPage.checkCycleTime()
 

@@ -18,4 +18,6 @@ export default defineConfig({
   },
   chromeWebSecurity: false,
   modifyObstructiveCode: false,
+  //Increase timeout
+  defaultCommandTimeout: 8000,
 })

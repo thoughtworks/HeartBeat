@@ -129,49 +129,9 @@ class Metrics {
     return cy.get('[data-testid="loading-page"]', { timeout: 10000 })
   }
 
-  private readonly cycleTimeSettingAnalysis = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.analysisLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.analysisValue).click()
-  }
-
-  private readonly cycleTimeSettingTodo = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.todoLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.todoValue).click()
-  }
-
-  private readonly cycleTimeSettingInDev = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.inDevLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.inDevValue).click()
-  }
-
-  private readonly cycleTimeSettingBlock = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.blockLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.blockValue).click()
-  }
-
-  private readonly cycleTimeSettingWaitTest = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.waitingLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.waitingValue).click()
-  }
-
-  private readonly cycleTimeSettingTesting = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.testingLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.testingValue).click()
-  }
-
-  private readonly cycleTimeSettingReview = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.reviewLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.reviewValue).click()
-  }
-
-  private readonly cycleTimeSettingDone = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.doneValue).click()
-  }
-
-  private readonly cycleTimeSettingDoneColumnToNone = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.noneValue).click()
+  chooseDropdownOption = (label: string, value: string) => {
+    cy.contains('label', label).parent().click()
+    cy.get('li[role="option"]').contains(value).click()
   }
 
   checkDuplicatedMessage = () => cy.contains('This pipeline is the same as another one!').should('exist')
@@ -188,14 +148,14 @@ class Metrics {
   }
 
   checkCycleTime() {
-    this.cycleTimeSettingAnalysis()
-    this.cycleTimeSettingTodo()
-    this.cycleTimeSettingInDev()
-    this.cycleTimeSettingBlock()
-    this.cycleTimeSettingWaitTest()
-    this.cycleTimeSettingTesting()
-    this.cycleTimeSettingReview()
-    this.cycleTimeSettingDone()
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.analysisLabel, Metrics.CYCLE_TIME_VALUE.analysisValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.todoLabel, Metrics.CYCLE_TIME_VALUE.todoValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.inDevLabel, Metrics.CYCLE_TIME_VALUE.inDevValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.blockLabel, Metrics.CYCLE_TIME_VALUE.blockValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.waitingLabel, Metrics.CYCLE_TIME_VALUE.waitingValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.testingLabel, Metrics.CYCLE_TIME_VALUE.testingValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.reviewLabel, Metrics.CYCLE_TIME_VALUE.reviewValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.doneValue)
   }
 
   checkRealDone() {
@@ -263,9 +223,9 @@ class Metrics {
   }
 
   checkRequiredFields() {
-    this.cycleTimeSettingDoneColumnToNone()
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.noneValue)
     this.nextButton.should('be.disabled')
-    this.cycleTimeSettingDone()
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.doneValue)
     this.checkRealDone()
     this.nextButton.should('be.enabled')
 

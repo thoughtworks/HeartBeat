@@ -3,6 +3,7 @@ import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'
 import reportPage from '../pages/metrics/report'
+import { TIPS } from '../../src/constants/resources'
 
 const cycleTimeData = [
   { label: 'Name', value: 'Value' },
@@ -160,6 +161,11 @@ const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
   checkBoardCalculation(testId, cycleTimeData)
 }
 
+const checkCycleTimeTooltip = () => {
+  metricsPage.cycleTimeTitleTooltip.trigger('mouseover')
+  cy.contains(TIPS.CYCLE_TIME).should('be.visible')
+}
+
 const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
   cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
 }
@@ -266,14 +272,17 @@ describe('Create a new project', () => {
 
     configPage.nextStepButton.should('be.disabled')
 
-    metricsPage.checkCycleTimeTooltip()
+    checkCycleTimeTooltip()
+
     metricsPage.checkCycleTime()
 
     cy.contains('Real done').should('exist')
 
-    metricsPage.checkRealDone()
+    metricsPage.clickRealDone()
 
-    metricsPage.checkClassification()
+    metricsPage.clickClassification()
+
+    metricsPage.pipelineSettingTitle.should('be.exist')
 
     metricsPage.checkDeploymentFrequencySettings()
 
@@ -345,9 +354,9 @@ describe('Create a new project', () => {
 
     metricsPage.checkCycleTime()
 
-    metricsPage.checkRealDone()
+    metricsPage.clickRealDone()
 
-    metricsPage.checkClassification()
+    metricsPage.clickClassification()
 
     metricsPage.checkDeploymentFrequencySettings()
 
@@ -382,9 +391,9 @@ describe('Create a new project', () => {
 
     metricsPage.checkCycleTime()
 
-    metricsPage.checkRealDone()
+    metricsPage.clickRealDone()
 
-    metricsPage.checkClassification()
+    metricsPage.clickClassification()
 
     metricsPage.checkDeploymentFrequencySettings()
 

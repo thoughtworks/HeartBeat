@@ -1,5 +1,3 @@
-import { TIPS } from '../../../src/constants/resources'
-
 class Metrics {
   static CYCLE_TIME_LABEL = {
     analysisLabel: 'In Analysis',
@@ -24,7 +22,7 @@ class Metrics {
   }
 
   get realDoneSelect() {
-    return cy.contains('Consider as Done').siblings().eq(0)
+    return cy.contains('label', 'Consider as Done').parent()
   }
 
   get RealDoneSelectAllOption() {
@@ -38,14 +36,14 @@ class Metrics {
   }
 
   get classificationSelect() {
-    return cy.contains('Distinguished By').siblings()
+    return cy.contains('label', 'Distinguished By').parent()
   }
 
   get classificationSelectAllOption() {
     return cy.contains('All')
   }
 
-  get deploymentFrequencySettingTitle() {
+  get pipelineSettingTitle() {
     return cy.contains('Pipeline settings')
   }
 
@@ -142,11 +140,6 @@ class Metrics {
 
   getPipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
 
-  checkCycleTimeTooltip() {
-    this.cycleTimeTitleTooltip.trigger('mouseover')
-    cy.contains(TIPS.CYCLE_TIME).should('be.visible')
-  }
-
   checkCycleTime() {
     this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.analysisLabel, Metrics.CYCLE_TIME_VALUE.analysisValue)
     this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.todoLabel, Metrics.CYCLE_TIME_VALUE.todoValue)
@@ -158,14 +151,14 @@ class Metrics {
     this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.doneValue)
   }
 
-  checkRealDone() {
+  clickRealDone() {
     this.realDoneSelect.click()
 
     this.RealDoneSelectAllOption.click()
     this.closeModelElement.click({ force: true })
   }
 
-  checkClassification() {
+  clickClassification() {
     this.classificationSelect.click()
 
     this.classificationSelectAllOption.click()
@@ -173,7 +166,6 @@ class Metrics {
   }
 
   checkDeploymentFrequencySettings() {
-    this.deploymentFrequencySettingTitle.should('be.exist')
     this.organizationSelect.click()
     this.pipelineOfOrgXXXX.click()
     this.getPipelineSelect(0).click()
@@ -226,12 +218,12 @@ class Metrics {
     this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.noneValue)
     this.nextButton.should('be.disabled')
     this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.doneValue)
-    this.checkRealDone()
+    this.clickRealDone()
     this.nextButton.should('be.enabled')
 
     this.classificationClear.click({ force: true })
     this.nextButton.should('be.disabled')
-    this.checkClassification()
+    this.clickClassification()
     this.nextButton.should('be.enabled')
   }
 }

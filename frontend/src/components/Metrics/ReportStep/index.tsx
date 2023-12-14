@@ -3,18 +3,23 @@ import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
-import { CALENDAR, PIPELINE_STEP, NAME, REQUIRED_DATA, MESSAGE } from '@src/constants/resources'
+import { CALENDAR, PIPELINE_STEP, NAME, REQUIRED_DATA, MESSAGE, TIPS } from '@src/constants/resources'
 import { INIT_REPORT_DATA_WITH_THREE_COLUMNS, INIT_REPORT_DATA_WITH_TWO_COLUMNS } from '@src/constants/commons'
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
-import { BackButton } from '@src/components/Metrics/MetricsStepper/style'
+import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src/components/Metrics/ReportStep/style'
+import {
+  ButtonGroup,
+  ButtonGroupStyle,
+  ErrorNotificationContainer,
+  ExportButton,
+} from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
@@ -23,8 +28,14 @@ import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/uti
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 import { ReportResponse } from '@src/clients/report/dto/response'
 import { ROUTE } from '@src/constants/router'
+import { Tooltip } from '@mui/material'
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
 
-const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
+interface ReportStepInterface extends useNotificationLayoutEffectInterface {
+  handleSave: () => void
+}
+
+const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const {
@@ -308,18 +319,29 @@ const ReportStep = ({ updateProps }: useNotificationLayoutEffectInterface) => {
             />
           )}
           <ButtonGroupStyle>
-            <BackButton onClick={handleBack} variant='outlined'>
-              Previous
-            </BackButton>
-            <ExportButton onClick={() => handleDownload('metric', startDate, endDate)}>Export metric data</ExportButton>
-            {isShowExportBoardButton && (
-              <ExportButton onClick={() => handleDownload('board', startDate, endDate)}>Export board data</ExportButton>
-            )}
-            {isShowExportPipelineButton && (
-              <ExportButton onClick={() => handleDownload('pipeline', startDate, endDate)}>
-                Export pipeline data
+            <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
+              <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
+                Save
+              </SaveButton>
+            </Tooltip>
+            <ButtonGroup>
+              <BackButton onClick={handleBack} variant='outlined'>
+                Previous
+              </BackButton>
+              <ExportButton onClick={() => handleDownload('metric', startDate, endDate)}>
+                Export metric data
               </ExportButton>
-            )}
+              {isShowExportBoardButton && (
+                <ExportButton onClick={() => handleDownload('board', startDate, endDate)}>
+                  Export board data
+                </ExportButton>
+              )}
+              {isShowExportPipelineButton && (
+                <ExportButton onClick={() => handleDownload('pipeline', startDate, endDate)}>
+                  Export pipeline data
+                </ExportButton>
+              )}
+            </ButtonGroup>
           </ButtonGroupStyle>
           {<ExpiredDialog isExpired={isExpired} handleOk={handleBack} />}
         </>

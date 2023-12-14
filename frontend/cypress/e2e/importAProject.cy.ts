@@ -104,6 +104,19 @@ const checkInputValue = (selector, expectedValue) => {
     })
 }
 
+const checkRequiredFields = () => {
+  metricsPage.cycleTimeSettingDoneColumnToNone()
+  metricsPage.nextButton().should('be.disabled')
+  metricsPage.cycleTimeSettingDone()
+  metricsPage.checkRealDone()
+  metricsPage.nextButton().should('be.enabled')
+
+  metricsPage.classificationClear().click({ force: true })
+  metricsPage.nextButton().should('be.disabled')
+  metricsPage.checkClassification()
+  metricsPage.nextButton().should('be.enabled')
+}
+
 describe('Import project from file', () => {
   it('Should import a new config project manually', () => {
     homePage.navigate()
@@ -120,9 +133,10 @@ describe('Import project from file', () => {
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
+
     checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
-    metricsPage.checkRequiredFields()
+    checkRequiredFields()
 
     metricsPage.goReportStep()
 

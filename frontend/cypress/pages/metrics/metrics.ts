@@ -58,12 +58,12 @@ class Metrics {
     cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.reviewValue).click()
   }
 
-  private readonly cycleTimeSettingDone = () => {
+  readonly cycleTimeSettingDone = () => {
     cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
     cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.doneValue).click()
   }
 
-  private readonly cycleTimeSettingDoneColumnToNone = () => {
+  readonly cycleTimeSettingDoneColumnToNone = () => {
     cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
     cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.noneValue).click()
   }
@@ -97,7 +97,7 @@ class Metrics {
 
   private readonly addOnePipelineButton = () => cy.get('[data-testid="AddIcon"]:first')
 
-  private readonly classificationClear = () => this.classificationSelect().find('[aria-label="Clear"]')
+  readonly classificationClear = () => this.classificationSelect().find('[aria-label="Clear"]')
 
   private readonly organizationSecondSelect = (i: number) =>
     cy.get('[data-test-id="single-selection-organization"]').eq(i)
@@ -127,7 +127,7 @@ class Metrics {
   private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
   private readonly headerBar = () => cy.get('[data-test-id="Header"]')
 
-  private readonly nextButton = () => cy.contains('Next')
+  readonly nextButton = () => cy.contains('Next')
   private readonly backButton = () => cy.contains('Previous')
 
   private readonly cycleTimeTitleTooltip = () => cy.get('[data-test-id="tooltip')
@@ -212,19 +212,6 @@ class Metrics {
   waitingForProgressBar() {
     this.progressBar().should('be.visible')
     this.progressBar().should('not.exist')
-  }
-
-  checkRequiredFields() {
-    this.cycleTimeSettingDoneColumnToNone()
-    this.nextButton().should('be.disabled')
-    this.cycleTimeSettingDone()
-    this.checkRealDone()
-    this.nextButton().should('be.enabled')
-
-    this.classificationClear().click({ force: true })
-    this.nextButton().should('be.disabled')
-    this.checkClassification()
-    this.nextButton().should('be.enabled')
   }
 }
 

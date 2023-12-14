@@ -31,6 +31,19 @@ export const LogoContainer = styled.div({
   alignItems: 'center',
   cursor: 'pointer',
   color: theme.main.color,
+  marginRight: '1rem',
+})
+
+export const StyledHeaderInfo = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  color: theme.main.color,
+})
+
+export const StyledVersion = styled.div({
+  color: '#ddd',
+  fontSize: '0.8rem',
+  paddingTop: '0.5rem',
 })
 
 export const IconContainer = styled.div({

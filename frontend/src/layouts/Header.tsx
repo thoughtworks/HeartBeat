@@ -11,6 +11,8 @@ import {
   LogoTitle,
   LogoWarp,
   NotificationIconContainer,
+  StyledHeaderInfo,
+  StyledVersion,
 } from '@src/layouts/style'
 import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
@@ -33,10 +35,13 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
 
   return (
     <LogoWarp data-test-id={'Header'}>
-      <LogoContainer onClick={goHome}>
-        <LogoImage src={Logo} alt='logo' />
-        <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
-      </LogoContainer>
+      <StyledHeaderInfo>
+        <LogoContainer onClick={goHome}>
+          <LogoImage src={Logo} alt='logo' />
+          <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
+        </LogoContainer>
+        <StyledVersion>Version 1.11</StyledVersion>
+      </StyledHeaderInfo>
       <IconContainer>
         {shouldShowNotificationIcon() && (
           <NotificationIconContainer title='Notification' data-testid='NotificationButton'>

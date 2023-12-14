@@ -1,4 +1,7 @@
 class Report {
+  get pageIndicator() {
+    return cy.contains('Velocity', { timeout: 30000 })
+  }
   get velocityTitle() {
     return cy.contains('Velocity')
   }
@@ -67,11 +70,6 @@ class Report {
     cy.contains('otherwise it will expire.').should('not.exist')
 
     this.headerBar.click()
-  }
-
-  waitingForProgressBar() {
-    this.progressBar.should('be.visible')
-    this.progressBar.should('not.exist')
   }
 }
 

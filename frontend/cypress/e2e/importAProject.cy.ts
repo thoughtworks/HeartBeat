@@ -104,7 +104,7 @@ const checkInputValue = (selector, expectedValue) => {
     })
 }
 
-describe('Import project from file', () => {
+describe.only('Import project from file', () => {
   beforeEach(() => {
     cy.waitForNetworkIdlePrepare({
       method: '*',
@@ -133,7 +133,7 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 
@@ -169,7 +169,7 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 

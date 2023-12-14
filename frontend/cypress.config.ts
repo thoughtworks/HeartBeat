@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress'
 
 export default defineConfig({
-  video: true,
+  video: process.env.APP_ENV !== 'local',
   videoCompression: 15,
   reporter: 'cypress-mochawesome-reporter',
   e2e: {

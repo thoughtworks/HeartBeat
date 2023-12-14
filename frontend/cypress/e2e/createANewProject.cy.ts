@@ -298,7 +298,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
 
     checkVelocity('[data-test-id="Velocity"]', velocityData)
 
@@ -374,7 +374,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
 
     reportPage.backToMetricsStep()
 
@@ -407,7 +407,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
 
     reportPage.checkNotification()
   })

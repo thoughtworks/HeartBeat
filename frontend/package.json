@@ -16,6 +16,7 @@
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
     "e2e:open": "TZ='PRC' cypress open",
     "e2e": "TZ='PRC' cypress run --spec cypress/",
+    "e2e:local": "APP_ENV=local  TZ='PRC' cypress run --spec cypress/",
     "prepare": "cd .. && husky install frontend/.husky",
     "license-compliance": "license-compliance -r detailed"
   },

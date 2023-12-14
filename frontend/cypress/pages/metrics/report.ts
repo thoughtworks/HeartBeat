@@ -42,10 +42,6 @@ class Report {
     return cy.get('[data-test-id="Header"]')
   }
 
-  get progressBar() {
-    return cy.get('[data-testid="loading-page"]', { timeout: 60000 })
-  }
-
   backToMetricsStep() {
     this.backButton.click()
   }

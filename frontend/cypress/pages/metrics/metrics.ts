@@ -47,10 +47,6 @@ class Metrics {
     return cy.contains('Pipeline settings')
   }
 
-  get organizationSelect() {
-    return cy.get('[data-test-id="single-selection-organization"]')
-  }
-
   get pipelineOfOrgXXXX() {
     return cy.get('li[role="option"]').contains('XXXX')
   }
@@ -123,20 +119,14 @@ class Metrics {
     return cy.get('[data-test-id="tooltip')
   }
 
-  get progressBar() {
-    return cy.get('[data-testid="loading-page"]', { timeout: 10000 })
-  }
-
   chooseDropdownOption = (label: string, value: string) => {
     cy.contains('label', label).parent().click()
     cy.get('li[role="option"]').contains(value).click()
   }
 
-  checkDuplicatedMessage = () => cy.contains('This pipeline is the same as another one!').should('exist')
-
   getStepOfSomePipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-step"]').eq(i)
 
-  getOrganizationSecondSelect = (i: number) => cy.get('[data-test-id="single-selection-organization"]').eq(i)
+  getOrganizationSelect = (i: number) => cy.get('[data-test-id="single-selection-organization"]').eq(i)
 
   getPipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
 
@@ -165,36 +155,28 @@ class Metrics {
     this.closeModelElement.click({ force: true })
   }
 
-  checkDeploymentFrequencySettings() {
-    this.organizationSelect.click()
+  addOneCorrectPipelineConfig(position = 0) {
+    this.getOrganizationSelect(position).click()
     this.pipelineOfOrgXXXX.click()
-    this.getPipelineSelect(0).click()
+    this.getPipelineSelect(position).click()
     cy.waitForNetworkIdle('@api', 2000)
     this.pipelineSelectOneOption.click()
-    this.getStepOfSomePipelineSelect(0).click()
+    this.getStepOfSomePipelineSelect(position).click()
     this.stepSelectSomeOption.click()
+  }
+
+  selectBranchOption() {
     this.branchSelect.click()
     this.branchSelectSomeOption.click()
     this.closeOptions()
+  }
 
-    this.addOnePipelineButton.click()
-    this.getOrganizationSecondSelect(1).click()
+  addOneErrorPipelineConfig(position = 0) {
+    this.getOrganizationSelect(position).click()
     this.pipelineOfOrgXXXX.click()
-    this.getPipelineSelect(1).click()
-    this.pipelineSelectUIOption.click()
-    this.buildKiteStepNotFoundTips.should('exist')
-    this.pipelineRemoveButton.click()
-
-    this.addOnePipelineButton.click()
-    this.getOrganizationSecondSelect(1).click()
-    this.pipelineOfOrgXXXX.click()
-    this.getPipelineSelect(1).click()
+    this.getPipelineSelect(position).click()
     cy.waitForNetworkIdle('@api', 2000)
-    this.pipelineSelectOneOption.click()
-    this.getStepOfSomePipelineSelect(1).click()
-    this.stepSelectSomeOption.click()
-    this.checkDuplicatedMessage()
-    this.pipelineRemoveButton.click()
+    this.pipelineSelectUIOption.click()
   }
 
   closeOptions() {

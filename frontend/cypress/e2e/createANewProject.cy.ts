@@ -252,6 +252,7 @@ describe('Create a new project', () => {
     configPage.typeProjectName('E2E Project')
 
     configPage.goHomePage()
+    cy.url().should('include', '/home')
 
     homePage.createANewProject()
     cy.contains('Project name *').should('have.value', '')
@@ -292,7 +293,18 @@ describe('Create a new project', () => {
 
     metricsPage.pipelineSettingTitle.should('be.exist')
 
-    metricsPage.checkDeploymentFrequencySettings()
+    metricsPage.addOneCorrectPipelineConfig(0)
+    metricsPage.selectBranchOption()
+
+    metricsPage.addOnePipelineButton.click()
+    metricsPage.addOneErrorPipelineConfig(1)
+    metricsPage.buildKiteStepNotFoundTips.should('exist')
+    metricsPage.pipelineRemoveButton.click()
+
+    metricsPage.addOnePipelineButton.click()
+    metricsPage.addOneCorrectPipelineConfig(1)
+    cy.contains('This pipeline is the same as another one!').should('exist')
+    metricsPage.pipelineRemoveButton.click()
 
     configPage.nextStepButton.should('be.enabled')
 

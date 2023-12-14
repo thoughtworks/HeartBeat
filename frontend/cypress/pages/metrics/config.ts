@@ -59,10 +59,6 @@ class Config {
     return this.boardConfigSection.contains('label', 'Token').parent()
   }
 
-  get progressBar() {
-    return cy.get('[data-testid="loading-page"]', { timeout: 10000 })
-  }
-
   get basicInformationConfigSection() {
     return cy.get('[aria-label="Basic information"]')
   }
@@ -122,8 +118,6 @@ class Config {
   goHomePage() {
     this.backButton.click()
     this.yesButton.click()
-
-    cy.url().should('include', '/home')
   }
 
   typeProjectName(projectName: string) {

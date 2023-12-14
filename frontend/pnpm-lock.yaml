@@ -103,6 +103,9 @@ devDependencies:
   cypress-mochawesome-reporter:
     specifier: ^3.7.0
     version: 3.7.0(cypress@13.6.1)(mocha@10.2.0)
+  cypress-network-idle:
+    specifier: ^1.14.2
+    version: 1.14.2
   eslint:
     specifier: ^8.37.0
     version: 8.47.0
@@ -4382,6 +4385,10 @@ packages:
       mochawesome-report-generator: 6.2.0
     transitivePeerDependencies:
       - mocha
+    dev: true
+
+  /cypress-network-idle@1.14.2:
+    resolution: {integrity: sha512-xAdR8dH58KFPv8eCDWjviScITrJOcUpuMXYfYTc175nk2/NvnJ+I6ylSn1CM7yZmoV/gLbFa36QLiH5NfNEaLQ==}
     dev: true
 
   /cypress@13.6.1:

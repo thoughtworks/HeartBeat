@@ -169,8 +169,8 @@ class Metrics {
     this.organizationSelect.click()
     this.pipelineOfOrgXXXX.click()
     this.getPipelineSelect(0).click()
+    cy.waitForNetworkIdle('@api', 2000)
     this.pipelineSelectOneOption.click()
-    this.waitingForProgressBar()
     this.getStepOfSomePipelineSelect(0).click()
     this.stepSelectSomeOption.click()
     this.branchSelect.click()
@@ -189,8 +189,8 @@ class Metrics {
     this.getOrganizationSecondSelect(1).click()
     this.pipelineOfOrgXXXX.click()
     this.getPipelineSelect(1).click()
+    cy.waitForNetworkIdle('@api', 2000)
     this.pipelineSelectOneOption.click()
-    this.waitingForProgressBar()
     this.getStepOfSomePipelineSelect(1).click()
     this.stepSelectSomeOption.click()
     this.checkDuplicatedMessage()
@@ -207,11 +207,6 @@ class Metrics {
 
   BackToConfigStep() {
     this.backButton.click()
-  }
-
-  waitingForProgressBar() {
-    this.progressBar.should('be.visible')
-    this.progressBar.should('not.exist')
   }
 
   checkRequiredFields() {

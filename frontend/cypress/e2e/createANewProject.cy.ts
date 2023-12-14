@@ -235,6 +235,14 @@ const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) 
 }
 
 describe('Create a new project', () => {
+  beforeEach(() => {
+    cy.waitForNetworkIdlePrepare({
+      method: '*',
+      pattern: '/api/**',
+      alias: 'api',
+    })
+  })
+
   it('Should create a new project manually', () => {
     homePage.navigate()
 

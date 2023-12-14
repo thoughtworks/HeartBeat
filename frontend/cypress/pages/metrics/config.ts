@@ -186,11 +186,6 @@ class Config {
   goMetricsStep() {
     this.nextStepButton.click()
   }
-
-  waitingForProgressBar() {
-    this.progressBar.should('be.visible')
-    this.progressBar.should('not.exist')
-  }
 }
 
 const configPage = new Config()

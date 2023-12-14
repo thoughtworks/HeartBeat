@@ -104,7 +104,7 @@ const checkInputValue = (selector, expectedValue) => {
     })
 }
 
-describe.only('Import project from file', () => {
+describe('Import project from file', () => {
   beforeEach(() => {
     cy.waitForNetworkIdlePrepare({
       method: '*',

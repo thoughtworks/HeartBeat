@@ -61,16 +61,6 @@ class Report {
   exportBoardData() {
     this.exportBoardDataButton.click()
   }
-
-  checkNotification() {
-    cy.contains('otherwise it will expire.').should('exist')
-
-    cy.wait(10000)
-
-    cy.contains('otherwise it will expire.').should('not.exist')
-
-    this.headerBar.click()
-  }
 }
 
 const reportPage = new Report()

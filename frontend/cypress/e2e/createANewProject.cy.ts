@@ -300,6 +300,8 @@ describe('Create a new project', () => {
 
     reportPage.pageIndicator.should('exist')
 
+    reportPage.firstNotification.should('exist')
+
     checkVelocity('[data-test-id="Velocity"]', velocityData)
 
     checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
@@ -309,8 +311,6 @@ describe('Create a new project', () => {
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 
     clearDownloadFile()
-
-    reportPage.firstNotification.should('exist')
 
     reportPage.exportMetricDataButton.should('be.enabled')
 
@@ -329,86 +329,20 @@ describe('Create a new project', () => {
     reportPage.exportBoardData()
 
     checkBoardCSV()
-  })
 
-  function goToMetricsPageFromHome() {
-    homePage.navigate()
+    reportPage.firstNotification.should('not.exist')
 
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.goHomePage()
-
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.selectDateRange()
-
-    configPage.selectMetricsData()
-
-    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-
-    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
-
-    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
-
-    configPage.goMetricsStep()
-  }
-
-  it('Should have data in metrics page when back from report page', () => {
-    goToMetricsPageFromHome()
-
-    metricsPage.checkCycleTime()
-
-    metricsPage.clickRealDone()
-
-    metricsPage.clickClassification()
-
-    metricsPage.checkDeploymentFrequencySettings()
-
-    checkFieldsExist(metricsTextList)
-
-    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
-
-    metricsPage.goReportStep()
-
-    reportPage.pageIndicator.should('exist')
-
+    // checkpoint back to metrics step
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
     checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
-  })
 
-  it('Should have data in config page when back from metrics page', () => {
-    goToMetricsPageFromHome()
-
+    // checkpoint back to config step
     metricsPage.BackToConfigStep()
 
     checkFieldsExist(configTextList)
-
     checkTextInputValuesExist(textInputValues)
-
     checkTokenInputValuesExist(tokenInputValues)
-  })
-
-  it('Should have notification button in report page', () => {
-    goToMetricsPageFromHome()
-
-    metricsPage.checkCycleTime()
-
-    metricsPage.clickRealDone()
-
-    metricsPage.clickClassification()
-
-    metricsPage.checkDeploymentFrequencySettings()
-
-    metricsPage.goReportStep()
-
-    reportPage.pageIndicator.should('exist')
-
-    reportPage.checkNotification()
   })
 })

@@ -1,4 +1,4 @@
-class Metrics {
+export class Metrics {
   static CYCLE_TIME_LABEL = {
     analysisLabel: 'In Analysis',
     todoLabel: 'Ready For Dev',
@@ -189,19 +189,6 @@ class Metrics {
 
   BackToConfigStep() {
     this.backButton.click()
-  }
-
-  checkRequiredFields() {
-    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.noneValue)
-    this.nextButton.should('be.disabled')
-    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.doneValue)
-    this.clickRealDone()
-    this.nextButton.should('be.enabled')
-
-    this.classificationClear.click({ force: true })
-    this.nextButton.should('be.disabled')
-    this.clickClassification()
-    this.nextButton.should('be.enabled')
   }
 }
 

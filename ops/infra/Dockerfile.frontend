@@ -1,4 +1,4 @@
-FROM node:19-alpine as builder
+FROM node:alpine as builder
 COPY ./frontend /app
 WORKDIR /app
 RUN npm install -g pnpm

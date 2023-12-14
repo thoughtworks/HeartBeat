@@ -14,10 +14,10 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EncryptRequest {
+public class DecryptRequest {
 
-	@NotBlank(message = "ConfigData cannot be blank.")
-	private String configData;
+	@NotBlank(message = "EncryptedData cannot be blank.")
+	private String encryptedData;
 
 	@NotNull(message = "Password cannot be null.")
 	@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,50}$",

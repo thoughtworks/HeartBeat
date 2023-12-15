@@ -349,6 +349,9 @@ In case that not only your team but also other team was contributing on the same
 Currently the calculated metrics for change failure rate might not be precise in some scenarios.
 And MTTR is still under development.
 
+## 4.4 Change status name in Jira board setting when there are cards in this status
+As an administrator of the jira board, if you modify the workflow to change the status name, it will affect the calculation of duration for cards in that status. Considering the potential loss of duration, changing the status name can lead to loss of precision in cycle time calculation for related cards.
+
 
 # 5 Instructions
 

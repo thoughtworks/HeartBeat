@@ -16,10 +16,13 @@ import {
 } from '@src/layouts/style'
 import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { useEffect, useState } from 'react'
+import { headerClient } from '@src/clients/header/HeaderClient'
 
 const Header = (props: useNotificationLayoutEffectInterface) => {
   const location = useLocation()
   const navigate = useNavigate()
+  const [version, setVersion] = useState('')
 
   const goHome = () => {
     navigate('/')
@@ -33,6 +36,12 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
     return ['/metrics'].includes(location.pathname)
   }
 
+  useEffect(() => {
+    headerClient.getVersion().then((res) => {
+      setVersion(res)
+    })
+  }, [])
+
   return (
     <LogoWarp data-test-id={'Header'}>
       <StyledHeaderInfo>
@@ -40,7 +49,7 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
           <LogoImage src={Logo} alt='logo' />
           <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
         </LogoContainer>
-        <StyledVersion>Version 1.11</StyledVersion>
+        {version && <StyledVersion>v{version}</StyledVersion>}
       </StyledHeaderInfo>
       <IconContainer>
         {shouldShowNotificationIcon() && (

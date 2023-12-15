@@ -32,7 +32,7 @@ const main = async (args: string[]) => {
     }
   }
 
-  const startFE = () => $({ cwd: DIR.FE, stderr: 'inherit', shell: true })`npm run start`
+  const startFE = () => $({ cwd: DIR.FE, stderr: 'inherit', shell: true })`pnpm run start`
 
   const startBE = () =>
     $({

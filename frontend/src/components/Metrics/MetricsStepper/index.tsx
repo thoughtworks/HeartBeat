@@ -2,7 +2,6 @@ import React, { lazy, Suspense, useEffect, useState } from 'react'
 import {
   BackButton,
   ButtonContainer,
-  ButtonGroup,
   MetricsStepperContent,
   NextButton,
   SaveButton,
@@ -22,7 +21,7 @@ import {
   SOURCE_CONTROL_TYPES,
   TIPS,
 } from '@src/constants/resources'
-import { METRICS_STEPS, STEPS } from '@src/constants/commons'
+import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons'
 import { ConfirmDialog } from '@src/components/Metrics/MetricsStepper/ConfirmDialog'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -286,17 +285,17 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
           <>
             <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
               <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
-                Save
+                {COMMON_BUTTONS.SAVE}
               </SaveButton>
             </Tooltip>
-            <ButtonGroup>
+            <div>
               <BackButton variant='outlined' onClick={handleBack}>
-                Previous
+                {COMMON_BUTTONS.BACK}
               </BackButton>
               <NextButton onClick={handleNext} disabled={isDisableNextButton}>
-                Next
+                {COMMON_BUTTONS.NEXT}
               </NextButton>
-            </ButtonGroup>
+            </div>
           </>
         )}
       </ButtonContainer>

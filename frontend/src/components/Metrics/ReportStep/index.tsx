@@ -4,7 +4,11 @@ import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
 import { CALENDAR, PIPELINE_STEP, NAME, REQUIRED_DATA, MESSAGE, TIPS } from '@src/constants/resources'
-import { INIT_REPORT_DATA_WITH_THREE_COLUMNS, INIT_REPORT_DATA_WITH_TWO_COLUMNS } from '@src/constants/commons'
+import {
+  COMMON_BUTTONS,
+  INIT_REPORT_DATA_WITH_THREE_COLUMNS,
+  INIT_REPORT_DATA_WITH_TWO_COLUMNS,
+} from '@src/constants/commons'
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
@@ -14,12 +18,7 @@ import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/s
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import {
-  ButtonGroup,
-  ButtonGroupStyle,
-  ErrorNotificationContainer,
-  ExportButton,
-} from '@src/components/Metrics/ReportStep/style'
+import { ButtonGroupStyle, ErrorNotificationContainer, ExportButton } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
@@ -321,27 +320,27 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
           <ButtonGroupStyle>
             <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
               <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
-                Save
+                {COMMON_BUTTONS.SAVE}
               </SaveButton>
             </Tooltip>
-            <ButtonGroup>
+            <div>
               <BackButton onClick={handleBack} variant='outlined'>
-                Previous
+                {COMMON_BUTTONS.BACK}
               </BackButton>
               <ExportButton onClick={() => handleDownload('metric', startDate, endDate)}>
-                Export metric data
+                {COMMON_BUTTONS.EXPORT_METRIC_DATA}
               </ExportButton>
               {isShowExportBoardButton && (
                 <ExportButton onClick={() => handleDownload('board', startDate, endDate)}>
-                  Export board data
+                  {COMMON_BUTTONS.EXPORT_BOARD_DATA}
                 </ExportButton>
               )}
               {isShowExportPipelineButton && (
                 <ExportButton onClick={() => handleDownload('pipeline', startDate, endDate)}>
-                  Export pipeline data
+                  {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
                 </ExportButton>
               )}
-            </ButtonGroup>
+            </div>
           </ButtonGroupStyle>
           {<ExpiredDialog isExpired={isExpired} handleOk={handleBack} />}
         </>

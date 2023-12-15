@@ -33,8 +33,6 @@ export const ButtonGroupStyle = styled('div')({
   width: '100%',
 })
 
-export const ButtonGroup = styled('div')({})
-
 export const ErrorNotificationContainer = styled('div')({
   position: 'fixed',
   top: '50%',

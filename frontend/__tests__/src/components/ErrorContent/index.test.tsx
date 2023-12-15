@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import { navigateMock } from '../../../setupTests'
 import { ErrorContent } from '@src/components/ErrorContent'
+import { headerClient } from '@src/clients/header/HeaderClient'
 
 describe('error content', () => {
   it('should show error message when render error page', () => {
@@ -20,6 +21,7 @@ describe('error content', () => {
   })
 
   it('should go to home page when click button', async () => {
+    headerClient.getVersion = jest.fn().mockResolvedValue('')
     const { getByText } = render(
       <BrowserRouter>
         <ErrorPage />

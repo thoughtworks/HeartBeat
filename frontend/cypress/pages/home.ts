@@ -11,6 +11,10 @@ class Home {
     this.createANewProjectButton().click()
   }
 
+  checkVersion = () => {
+    cy.get('span[title="Heartbeat"]').parent().next().should('exist')
+  }
+
   importProjectFromFile(configFixtureName) {
     this.importProjectFromFileButton().click()
     cy.fixture(configFixtureName).then((fileContent) => {

@@ -228,15 +228,11 @@ const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) 
   })
 }
 
-const checkVersion = () => {
-  cy.get('span[title="Heartbeat"]').parent().next().should('exist')
-}
-
 describe('Create a new project', () => {
   it('Should create a new project manually', () => {
     homePage.navigate()
 
-    checkVersion()
+    homePage.checkVersion()
 
     homePage.createANewProject()
     cy.url().should('include', '/metrics')

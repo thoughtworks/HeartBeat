@@ -7,7 +7,7 @@ import { headerClient } from '@src/clients/header/HeaderClient'
 
 describe('Header', () => {
   beforeEach(() => {
-    headerClient.getVersion = jest.fn().mockResolvedValue('1.11')
+    headerClient.getVersion = jest.fn().mockResolvedValue('')
   })
 
   afterEach(() => {

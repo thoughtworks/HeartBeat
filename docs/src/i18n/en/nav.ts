@@ -94,6 +94,11 @@ export default [
 		slug: 'spikes/tech-spikes-encrypt-decrypt-configuration',
 		key: 'spikes/tech-spikes-encrypt-decrypt-configuration',
 	},
+	{
+		text: 'Split verify of board',
+		slug: 'spikes/tech-spikes-split-verify-of-board',
+		key: 'spikes/tech-spikes-split-verify-of-board',
+	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },

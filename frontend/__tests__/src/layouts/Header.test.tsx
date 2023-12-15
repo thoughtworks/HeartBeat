@@ -1,10 +1,19 @@
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import Header from '@src/layouts/Header'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import { navigateMock } from '../../setupTests'
 import { PROJECT_NAME } from '../fixtures'
+import { headerClient } from '@src/clients/header/HeaderClient'
 
 describe('Header', () => {
+  beforeEach(() => {
+    headerClient.getVersion = jest.fn().mockResolvedValue('1.11')
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should show project name', () => {
     const { getByText } = render(
       <BrowserRouter>
@@ -13,6 +22,34 @@ describe('Header', () => {
     )
 
     expect(getByText(PROJECT_NAME)).toBeInTheDocument()
+  })
+
+  it('should show version info when request succeed', async () => {
+    headerClient.getVersion = jest.fn().mockResolvedValueOnce('1.11')
+    let component: any
+    await act(async () => {
+      component = render(
+        <BrowserRouter>
+          <Header />
+        </BrowserRouter>
+      )
+    })
+    const element = component.getByText(/v1.11/)
+    expect(element).toBeInTheDocument()
+  })
+
+  it('should show version info when request failed', async () => {
+    headerClient.getVersion = jest.fn().mockResolvedValueOnce('')
+    let component: any
+    await act(async () => {
+      component = render(
+        <BrowserRouter>
+          <Header />
+        </BrowserRouter>
+      )
+    })
+
+    expect(component.queryByText(/v/)).not.toBeInTheDocument()
   })
 
   it('should show project logo', () => {

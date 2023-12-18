@@ -100,3 +100,43 @@ method: get
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
 - C3
+```plantuml
+@startuml
+skin rose
+title C3 - Heartbeat - Verify token can read target repo
+
+participant FrontEnd
+participant GithubController
+participant GitHubService
+participant GitHubFeignClient
+participant RestResponseEntityExceptionHandler
+
+' group Verify token can read target repo
+    FrontEnd -> GithubController: request: token, type, piplineRepositorys
+    activate GithubController
+    GithubController -> GitHubService: token, piplineRepositorys
+    activate GitHubService
+    GitHubService -> GitHubFeignClient: token, repository
+    activate GitHubFeignClient
+alt Verification success
+    GitHubFeignClient --> GitHubService: 200
+    deactivate GitHubFeignClient
+    GitHubService --> GithubController: true
+    deactivate GitHubService
+    GithubController --> FrontEnd: response:{ status: "verity Success"}
+    deactivate GithubController
+else Verification failed
+    GitHubFeignClient --> GitHubService: throw 404 Not Found
+    deactivate GitHubFeignClient
+    activate GitHubService
+    GitHubService -> RestResponseEntityExceptionHandler: throw 400 Bad Request
+    deactivate GitHubService
+    deactivate GitHubFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: response 400 Bad Request: "Unable to read target repo"
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate GitHubService
+    ' deactivate GithubController
+end
+@enduml
+```

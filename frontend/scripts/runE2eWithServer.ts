@@ -77,7 +77,7 @@ const main = async (args: string[]) => {
       }
     })
 
-    await Promise.all(availablePorts.map((port) => waitForPort(port)))
+    await Promise.all(availablePorts.map(waitForPort))
 
     return processes
   }

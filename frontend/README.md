@@ -63,10 +63,12 @@ export const StyledTypography = styled(Typography)({
 })
 ```
 
-2. css units should use rem:
+2. Css units should use rem:
 
 ```
 export const StyledTypography = styled('div')({
   width: '10rem',
 })
 ```
+
+3. Write e2e tests using POM design pattern

@@ -16,13 +16,18 @@ import {
 } from '@src/layouts/style'
 import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { headerClient } from '@src/clients/header/HeaderClient'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import { getVersion, saveVersion } from '@src/context/header/headerSlice'
+import { useAppSelector } from '@src/hooks'
+import { isEmpty } from 'lodash'
 
 const Header = (props: useNotificationLayoutEffectInterface) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const [version, setVersion] = useState('')
+  const dispatch = useAppDispatch()
+  const version = useAppSelector(getVersion)
 
   const goHome = () => {
     navigate('/')
@@ -37,9 +42,11 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
   }
 
   useEffect(() => {
-    headerClient.getVersion().then((res) => {
-      setVersion(res)
-    })
+    if (isEmpty(version)) {
+      headerClient.getVersion().then((res) => {
+        dispatch(saveVersion(res))
+      })
+    }
   }, [])
 
   return (

@@ -4,10 +4,14 @@ import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import { navigateMock } from '../../setupTests'
 import { PROJECT_NAME } from '../fixtures'
 import { headerClient } from '@src/clients/header/HeaderClient'
+import { Provider } from 'react-redux'
+import { setupStore } from '../utils/setupStoreUtil'
 
 describe('Header', () => {
+  let store = setupStore()
   beforeEach(() => {
     headerClient.getVersion = jest.fn().mockResolvedValue('')
+    store = setupStore()
   })
 
   afterEach(() => {
@@ -16,9 +20,11 @@ describe('Header', () => {
 
   const setup = () =>
     render(
-      <BrowserRouter>
-        <Header />
-      </BrowserRouter>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Header />
+        </BrowserRouter>
+      </Provider>
     )
 
   it('should show project name', () => {
@@ -59,18 +65,13 @@ describe('Header', () => {
 
   describe('HomeIcon', () => {
     const homeBtnText = 'Home'
-    const notHomePageRender = () =>
+    const setup = (pathname: string) =>
       render(
-        <MemoryRouter initialEntries={[{ pathname: '/not/home/page' }]}>
-          <Header />
-        </MemoryRouter>
-      )
-
-    const indexHomePageRender = () =>
-      render(
-        <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
-          <Header />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={[{ pathname }]}>
+            <Header />
+          </MemoryRouter>
+        </Provider>
       )
 
     afterEach(() => {
@@ -78,19 +79,19 @@ describe('Header', () => {
     })
 
     it('should show home icon', () => {
-      const { getByTitle } = notHomePageRender()
+      const { getByTitle } = setup('/not/home/page')
 
       expect(getByTitle(homeBtnText)).toBeVisible()
     })
 
     it('should not show home icon when pathname is index.html', () => {
-      const { queryByTitle } = indexHomePageRender()
+      const { queryByTitle } = setup('/index.html')
 
       expect(queryByTitle(homeBtnText)).not.toBeInTheDocument()
     })
 
     it('should navigate to home page', () => {
-      const { getByTitle } = notHomePageRender()
+      const { getByTitle } = setup('/not/home/page')
 
       fireEvent.click(getByTitle(homeBtnText))
 
@@ -99,7 +100,7 @@ describe('Header', () => {
     })
 
     it('should go to home page when click logo given a not home page path', () => {
-      const { getByText } = notHomePageRender()
+      const { getByText } = setup('/not/home/page')
 
       fireEvent.click(getByText(PROJECT_NAME))
 
@@ -107,11 +108,7 @@ describe('Header', () => {
     })
 
     it('should go to home page when click logo given a not home page path', () => {
-      const { getByText } = render(
-        <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
-          <Header />
-        </MemoryRouter>
-      )
+      const { getByText } = setup('/index.html')
 
       fireEvent.click(getByText(PROJECT_NAME))
 
@@ -119,11 +116,7 @@ describe('Header', () => {
     })
 
     it('should render notification button when location equals to "/metrics".', () => {
-      const { getByTestId } = render(
-        <MemoryRouter initialEntries={[{ pathname: '/metrics' }]}>
-          <Header />
-        </MemoryRouter>
-      )
+      const { getByTestId } = setup('/metrics')
       expect(getByTestId('NotificationButton')).toBeInTheDocument()
     })
   })

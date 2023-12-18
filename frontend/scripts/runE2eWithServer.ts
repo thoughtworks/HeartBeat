@@ -89,14 +89,18 @@ const main = async (args: string[]) => {
   const e2eProcess = $({ cwd: DIR.FRONT_END, stdout: 'inherit', stderr: 'inherit', shell: true })`${e2eCommand}`
 
   e2eProcess.on('close', (code: number, signal: string) => {
-    console.log(`Successfully finish E2E testing. Code: ${code}; signal: ${signal}.`)
+    if (code === 0) {
+      console.log(`Successfully finish E2E testing. Code: ${code}; signal: ${signal}.`)
+    } else {
+      console.log(`Failed to run E2E testing. Code: ${code}; signal: ${signal}.`)
+    }
 
     newlyStartProcesses.forEach((pro) => {
       console.log(`Start to clean up process ${pro?.pid}`)
       pro?.kill()
     })
 
-    process.exit()
+    process.exit(code)
   })
 }
 

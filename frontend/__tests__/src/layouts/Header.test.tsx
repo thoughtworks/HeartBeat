@@ -15,44 +15,34 @@ describe('Header', () => {
   })
 
   const setup = () =>
-    act(async () =>
-      render(
-        <BrowserRouter>
-          <Header />
-        </BrowserRouter>
-      )
-    )
-
-  it('should show project name', () => {
-    const { getByText } = render(
+    render(
       <BrowserRouter>
         <Header />
       </BrowserRouter>
     )
+
+  it('should show project name', () => {
+    const { getByText } = setup()
 
     expect(getByText(PROJECT_NAME)).toBeInTheDocument()
   })
 
   it('should show version info when request succeed', async () => {
     headerClient.getVersion = jest.fn().mockResolvedValueOnce('1.11')
-    const { getByText } = await setup()
+    const { getByText } = await act(async () => setup())
 
     expect(getByText(/v1.11/)).toBeInTheDocument()
   })
 
   it('should show version info when request failed', async () => {
     headerClient.getVersion = jest.fn().mockResolvedValueOnce('')
-    const { queryByText } = await setup()
+    const { queryByText } = await act(async () => setup())
 
     expect(queryByText(/v/)).not.toBeInTheDocument()
   })
 
   it('should show project logo', () => {
-    const { getByRole } = render(
-      <BrowserRouter>
-        <Header />
-      </BrowserRouter>
-    )
+    const { getByRole } = setup()
 
     const logoInstance = getByRole('img')
     expect(logoInstance).toBeInTheDocument()
@@ -60,11 +50,7 @@ describe('Header', () => {
   })
 
   it('should go to home page when click logo', () => {
-    const { getByText } = render(
-      <BrowserRouter>
-        <Header />
-      </BrowserRouter>
-    )
+    const { getByText } = setup()
 
     fireEvent.click(getByText(PROJECT_NAME))
 

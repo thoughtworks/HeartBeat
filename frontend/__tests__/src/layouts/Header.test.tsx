@@ -15,12 +15,10 @@ describe('Header', () => {
   })
 
   const setup = () =>
-    act(async () =>
-      render(
-        <BrowserRouter>
-          <Header />
-        </BrowserRouter>
-      )
+    render(
+      <BrowserRouter>
+        <Header />
+      </BrowserRouter>
     )
 
   it('should show project name', () => {
@@ -35,14 +33,14 @@ describe('Header', () => {
 
   it('should show version info when request succeed', async () => {
     headerClient.getVersion = jest.fn().mockResolvedValueOnce('1.11')
-    const { getByText } = await setup()
+    const { getByText } = await act(async () => await setup())
 
     expect(getByText(/v1.11/)).toBeInTheDocument()
   })
 
   it('should show version info when request failed', async () => {
     headerClient.getVersion = jest.fn().mockResolvedValueOnce('')
-    const { queryByText } = await setup()
+    const { queryByText } = await act(async () => await setup())
 
     expect(queryByText(/v/)).not.toBeInTheDocument()
   })

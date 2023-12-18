@@ -16,6 +16,99 @@ Verify the board setting on config page, there is some data redundancy. Besides,
 
 ## Solutions
 
-### 1. Split
+### 1. Split the origin board verify API
 
-The solution is like below:
+#### 1.1 Response body
+
+- When token is incorrect:
+```json
+{
+    "status": 401,
+    "message": "Failed to get Jira info_status: 401 UNAUTHORIZED, reason: [401 Unauthorized] during [GET] to [https://dorametrics.atlassian.net/rest/agile/1.0/board/2/configuration] [JiraFeignClient#getJiraBoardConfiguration(URI,String,String)]: [<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><status><status-code>401</status-code><message>Client must be authenticated to access this resource.</message></status>]",
+    "hintInfo": "Token is incorrect"
+}
+```
+
+- When token is correct, returns a response with status code `200`.
+
+#### 1.2 Description
+We split the origin board verify API in the config page.If the status code of the result returned by the api is 200, the verify is passed.
+
+#### 1.3 Sequence Diagram (board verify API)
+
+```plantuml
+@startuml report
+skin rose
+title Heartbeat - Board verify API
+participant Frontend
+participant Backend
+participant Jira
+
+Frontend -> Backend: verify the  token validity
+activate Backend
+Backend --> Frontend: response 200
+deactivate Backend
+
+@enduml
+```
+
+### 2. Add 'get board info' API
+
+#### 2.1 Response body
+
+```json
+{
+    "users": [
+        "XXX",
+        "XXXX"
+    ],
+    "targetFields": [
+        {
+            "key": "XX",
+            "name": "XXX",
+            "flag": false
+        }
+    ],
+    "ignoredTargetFields": [
+        {
+            "key": "XX",
+            "name": "XXX",
+            "flag": false
+        }
+    ],
+    "jiraColumns": [
+        {
+            "key": "XX",
+            "value": {
+                "name": "XXX",
+                "statuses": [
+                    "XXX"
+                ]
+            }
+        }
+    ]
+}
+```
+
+#### 2.2 Description
+We add `get board info` API contents.Keep data from previous board API.
+The timing of the API call occurs when loading the corresponding data on the Metrics page.
+If the data is not yet fully loaded, the front end will display a loading state.
+
+#### 2.3 Sequence Diagram (get board info API)
+
+```plantuml
+@startuml report
+skin rose
+title Heartbeat - Get board info API
+participant Frontend
+participant Backend
+participant Jira
+
+Frontend -> Backend: generate the board info
+activate Backend
+Backend --> Frontend: response 200
+deactivate Backend
+
+@enduml
+```

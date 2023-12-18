@@ -14,6 +14,15 @@ describe('Header', () => {
     jest.clearAllMocks()
   })
 
+  const setup = () =>
+    act(async () =>
+      render(
+        <BrowserRouter>
+          <Header />
+        </BrowserRouter>
+      )
+    )
+
   it('should show project name', () => {
     const { getByText } = render(
       <BrowserRouter>
@@ -26,30 +35,16 @@ describe('Header', () => {
 
   it('should show version info when request succeed', async () => {
     headerClient.getVersion = jest.fn().mockResolvedValueOnce('1.11')
-    let component: any
-    await act(async () => {
-      component = render(
-        <BrowserRouter>
-          <Header />
-        </BrowserRouter>
-      )
-    })
-    const element = component.getByText(/v1.11/)
-    expect(element).toBeInTheDocument()
+    const { getByText } = await setup()
+
+    expect(getByText(/v1.11/)).toBeInTheDocument()
   })
 
   it('should show version info when request failed', async () => {
     headerClient.getVersion = jest.fn().mockResolvedValueOnce('')
-    let component: any
-    await act(async () => {
-      component = render(
-        <BrowserRouter>
-          <Header />
-        </BrowserRouter>
-      )
-    })
+    const { queryByText } = await setup()
 
-    expect(component.queryByText(/v/)).not.toBeInTheDocument()
+    expect(queryByText(/v/)).not.toBeInTheDocument()
   })
 
   it('should show project logo', () => {

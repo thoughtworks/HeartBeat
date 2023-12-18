@@ -65,19 +65,10 @@ describe('Header', () => {
 
   describe('HomeIcon', () => {
     const homeBtnText = 'Home'
-    const notHomePageRender = () =>
+    const setup = (pathname: string) =>
       render(
         <Provider store={store}>
-          <MemoryRouter initialEntries={[{ pathname: '/not/home/page' }]}>
-            <Header />
-          </MemoryRouter>
-        </Provider>
-      )
-
-    const indexHomePageRender = () =>
-      render(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
+          <MemoryRouter initialEntries={[{ pathname }]}>
             <Header />
           </MemoryRouter>
         </Provider>
@@ -88,19 +79,19 @@ describe('Header', () => {
     })
 
     it('should show home icon', () => {
-      const { getByTitle } = notHomePageRender()
+      const { getByTitle } = setup('/not/home/page')
 
       expect(getByTitle(homeBtnText)).toBeVisible()
     })
 
     it('should not show home icon when pathname is index.html', () => {
-      const { queryByTitle } = indexHomePageRender()
+      const { queryByTitle } = setup('/index.html')
 
       expect(queryByTitle(homeBtnText)).not.toBeInTheDocument()
     })
 
     it('should navigate to home page', () => {
-      const { getByTitle } = notHomePageRender()
+      const { getByTitle } = setup('/not/home/page')
 
       fireEvent.click(getByTitle(homeBtnText))
 
@@ -109,7 +100,7 @@ describe('Header', () => {
     })
 
     it('should go to home page when click logo given a not home page path', () => {
-      const { getByText } = notHomePageRender()
+      const { getByText } = setup('/not/home/page')
 
       fireEvent.click(getByText(PROJECT_NAME))
 
@@ -117,7 +108,7 @@ describe('Header', () => {
     })
 
     it('should go to home page when click logo given a not home page path', () => {
-      const { getByText } = indexHomePageRender()
+      const { getByText } = setup('/index.html')
 
       fireEvent.click(getByText(PROJECT_NAME))
 
@@ -125,13 +116,7 @@ describe('Header', () => {
     })
 
     it('should render notification button when location equals to "/metrics".', () => {
-      const { getByTestId } = render(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={[{ pathname: '/metrics' }]}>
-            <Header />
-          </MemoryRouter>
-        </Provider>
-      )
+      const { getByTestId } = setup('/metrics')
       expect(getByTestId('NotificationButton')).toBeInTheDocument()
     })
   })

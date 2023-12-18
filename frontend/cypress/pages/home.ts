@@ -3,16 +3,16 @@ class Home {
 
   private readonly importProjectFromFileButton = () => cy.contains('Import project from file')
 
+  get headerVersion() {
+    return cy.get('span[title="Heartbeat"]').parent().next()
+  }
+
   navigate() {
     cy.visit('/index.html')
   }
 
   createANewProject() {
     this.createANewProjectButton().click()
-  }
-
-  checkVersion = () => {
-    cy.get('span[title="Heartbeat"]').parent().next().should('exist')
   }
 
   importProjectFromFile(configFixtureName) {

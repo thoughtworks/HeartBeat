@@ -232,6 +232,8 @@ describe('Create a new project', () => {
   it('Should create a new project manually', () => {
     homePage.navigate()
 
+    homePage.headerVersion.should('exist')
+
     homePage.createANewProject()
     cy.url().should('include', '/metrics')
 

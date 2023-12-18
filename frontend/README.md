@@ -72,3 +72,16 @@ export const StyledTypography = styled('div')({
 ```
 
 3. Write e2e tests using POM design pattern
+
+```
+page.cy.ts:
+  get headerVersion() {
+    return cy.get('span[title="Heartbeat"]').parent().next()
+  }
+
+
+test.cy.ts:
+  homePage.headerVersion.should('exist')
+
+
+```

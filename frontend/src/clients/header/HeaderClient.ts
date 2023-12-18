@@ -7,14 +7,15 @@ export class HeaderClient extends HttpClient {
   }
 
   getVersion = async () => {
-    await this.axiosInstance
-      .get(`/version`)
-      .then((res) => {
-        this.response = res.data
-      })
-      .catch((e) => {
-        throw e
-      })
+    try {
+      const res = await this.axiosInstance.get(`/version`)
+      this.response = res.data
+    } catch (e) {
+      this.response = {
+        version: '',
+      }
+      throw e
+    }
     return this.response.version
   }
 }

@@ -4,10 +4,14 @@ import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import { navigateMock } from '../../setupTests'
 import { PROJECT_NAME } from '../fixtures'
 import { headerClient } from '@src/clients/header/HeaderClient'
+import { Provider } from 'react-redux'
+import { setupStore } from '../utils/setupStoreUtil'
 
+let store = setupStore()
 describe('Header', () => {
   beforeEach(() => {
     headerClient.getVersion = jest.fn().mockResolvedValue('')
+    store = setupStore()
   })
 
   afterEach(() => {
@@ -16,9 +20,11 @@ describe('Header', () => {
 
   const setup = () =>
     render(
-      <BrowserRouter>
-        <Header />
-      </BrowserRouter>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Header />
+        </BrowserRouter>
+      </Provider>
     )
 
   it('should show project name', () => {
@@ -61,16 +67,20 @@ describe('Header', () => {
     const homeBtnText = 'Home'
     const notHomePageRender = () =>
       render(
-        <MemoryRouter initialEntries={[{ pathname: '/not/home/page' }]}>
-          <Header />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={[{ pathname: '/not/home/page' }]}>
+            <Header />
+          </MemoryRouter>
+        </Provider>
       )
 
     const indexHomePageRender = () =>
       render(
-        <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
-          <Header />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
+            <Header />
+          </MemoryRouter>
+        </Provider>
       )
 
     afterEach(() => {
@@ -107,11 +117,7 @@ describe('Header', () => {
     })
 
     it('should go to home page when click logo given a not home page path', () => {
-      const { getByText } = render(
-        <MemoryRouter initialEntries={[{ pathname: '/index.html' }]}>
-          <Header />
-        </MemoryRouter>
-      )
+      const { getByText } = indexHomePageRender()
 
       fireEvent.click(getByText(PROJECT_NAME))
 
@@ -120,9 +126,11 @@ describe('Header', () => {
 
     it('should render notification button when location equals to "/metrics".', () => {
       const { getByTestId } = render(
-        <MemoryRouter initialEntries={[{ pathname: '/metrics' }]}>
-          <Header />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={[{ pathname: '/metrics' }]}>
+            <Header />
+          </MemoryRouter>
+        </Provider>
       )
       expect(getByTestId('NotificationButton')).toBeInTheDocument()
     })

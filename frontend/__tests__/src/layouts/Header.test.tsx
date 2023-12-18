@@ -7,8 +7,8 @@ import { headerClient } from '@src/clients/header/HeaderClient'
 import { Provider } from 'react-redux'
 import { setupStore } from '../utils/setupStoreUtil'
 
-let store = setupStore()
 describe('Header', () => {
+  let store = setupStore()
   beforeEach(() => {
     headerClient.getVersion = jest.fn().mockResolvedValue('')
     store = setupStore()

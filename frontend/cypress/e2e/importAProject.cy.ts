@@ -121,7 +121,7 @@ const checkRequiredFields = () => {
 const checkProjectConfig = () => {
   cy.wait(2000)
   cy.fixture('config.json').then((localFileContent) => {
-    cy.readFile(`cypress/downloads/config.json`).then((fileContent) => {
+    cy.readFile('cypress/downloads/config.json').then((fileContent) => {
       expect(fileContent.sourceControl.token).to.eq(GITHUB_TOKEN)
       for (const key in localFileContent) {
         expect(fileContent[key]).to.deep.eq(localFileContent[key])

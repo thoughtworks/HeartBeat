@@ -1,6 +1,4 @@
-import { TIPS } from '../../../src/constants/resources'
-
-class Metrics {
+export class Metrics {
   static CYCLE_TIME_LABEL = {
     analysisLabel: 'In Analysis',
     todoLabel: 'Ready For Dev',
@@ -23,195 +21,174 @@ class Metrics {
     noneValue: '----',
   }
 
-  private readonly cycleTimeSettingAnalysis = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.analysisLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.analysisValue).click()
+  get realDoneSelect() {
+    return cy.contains('label', 'Consider as Done').parent()
   }
 
-  private readonly cycleTimeSettingTodo = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.todoLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.todoValue).click()
+  get RealDoneSelectAllOption() {
+    return cy.contains('All')
   }
 
-  private readonly cycleTimeSettingInDev = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.inDevLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.inDevValue).click()
-  }
-
-  private readonly cycleTimeSettingBlock = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.blockLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.blockValue).click()
-  }
-
-  private readonly cycleTimeSettingWaitTest = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.waitingLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.waitingValue).click()
-  }
-
-  private readonly cycleTimeSettingTesting = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.testingLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.testingValue).click()
-  }
-
-  private readonly cycleTimeSettingReview = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.reviewLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.reviewValue).click()
-  }
-
-  readonly cycleTimeSettingDone = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.doneValue).click()
-  }
-
-  readonly cycleTimeSettingDoneColumnToNone = () => {
-    cy.contains(Metrics.CYCLE_TIME_LABEL.doneLabel).siblings().eq(0).click()
-    cy.get('li[role="option"]').contains(Metrics.CYCLE_TIME_VALUE.noneValue).click()
-  }
-
-  private readonly realDoneSelect = () => cy.contains('Consider as Done').siblings().eq(0)
-
-  private readonly RealDoneSelectAllOption = () => cy.contains('All')
-
-  private readonly closeModelElement = () =>
-    cy.get(
+  get closeModelElement() {
+    return cy.get(
       '.Mui-expanded > .MuiFormControl-root > .MuiInputBase-root > .MuiAutocomplete-endAdornment > .MuiAutocomplete-popupIndicator > [data-testid="ArrowDropDownIcon"] > path'
     )
-
-  private readonly classificationSelect = () => cy.contains('Distinguished By').siblings()
-
-  private readonly classificationSelectAllOption = () => cy.contains('All')
-
-  private readonly deploymentFrequencySettingTitle = () => cy.contains('Pipeline settings')
-
-  private readonly organizationSelect = () => cy.get('[data-test-id="single-selection-organization"]')
-
-  private readonly pipelineOfOrgXXXX = () => cy.get('li[role="option"]').contains('XXXX')
-
-  private readonly pipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
-
-  private readonly pipelineSelectOneOption = () => cy.get('li[role="option"]').contains('fs-platform-payment-selector')
-
-  private readonly stepOfSomePipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-step"]').eq(i)
-
-  private readonly stepSelectSomeOption = () => cy.get('li[role="option"]').contains('RECORD RELEASE TO PROD')
-
-  private readonly addOnePipelineButton = () => cy.get('[data-testid="AddIcon"]:first')
-
-  readonly classificationClear = () => this.classificationSelect().find('[aria-label="Clear"]')
-
-  private readonly organizationSecondSelect = (i: number) =>
-    cy.get('[data-test-id="single-selection-organization"]').eq(i)
-
-  private readonly pipelineSelectOnboardingOption = () =>
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")')
-
-  private readonly pipelineSelectUIOption = () => cy.get('li[role="option"]').contains('payment-selector-ui')
-
-  private readonly buildKiteStepNotFoundTips = () => cy.contains('BuildKite get steps failed: 404 Not Found')
-
-  private readonly pipelineRemoveButton = () => cy.get('[data-test-id="remove-button"]').eq(1)
-
-  private readonly checkDuplicatedMessage = () =>
-    cy.contains('This pipeline is the same as another one!').should('exist')
-
-  private readonly branchSelect = () => cy.contains('Branches').eq(0).siblings()
-
-  private readonly branchSelectSomeOption = () => cy.contains('All')
-
-  private readonly pipelineStepSelectXXOption = () =>
-    cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO UAT"):last')
-
-  private readonly pipelineStepXXOption = () =>
-    cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
-
-  private readonly leadTimeForChangeAddOneButton = () => cy.get('[data-testid="AddIcon"]:last')
-  private readonly headerBar = () => cy.get('[data-test-id="Header"]')
-
-  readonly nextButton = () => cy.contains('Next')
-  private readonly backButton = () => cy.contains('Previous')
-
-  private readonly cycleTimeTitleTooltip = () => cy.get('[data-test-id="tooltip')
-
-  private readonly progressBar = () => cy.get('[data-testid="loading-page"]', { timeout: 10000 })
-
-  checkCycleTimeTooltip() {
-    this.cycleTimeTitleTooltip().trigger('mouseover')
-    cy.contains(TIPS.CYCLE_TIME).should('be.visible')
   }
+
+  get classificationSelect() {
+    return cy.contains('label', 'Distinguished By').parent()
+  }
+
+  get classificationSelectAllOption() {
+    return cy.contains('All')
+  }
+
+  get pipelineSettingTitle() {
+    return cy.contains('Pipeline settings')
+  }
+
+  get pipelineOfOrgXXXX() {
+    return cy.get('li[role="option"]').contains('XXXX')
+  }
+
+  get pipelineSelectOneOption() {
+    return cy.get('li[role="option"]').contains('fs-platform-payment-selector')
+  }
+
+  get stepSelectSomeOption() {
+    return cy.get('li[role="option"]').contains('RECORD RELEASE TO PROD')
+  }
+
+  get addOnePipelineButton() {
+    return cy.get('[data-testid="AddIcon"]:first')
+  }
+
+  get classificationClear() {
+    return this.classificationSelect.find('[aria-label="Clear"]')
+  }
+
+  get pipelineSelectOnboardingOption() {
+    return cy.get('[data-test-id="single-selection-pipeline-name"]:contains("fs-platform-onboarding")')
+  }
+
+  get pipelineSelectUIOption() {
+    return cy.get('li[role="option"]').contains('payment-selector-ui')
+  }
+
+  get buildKiteStepNotFoundTips() {
+    return cy.contains('BuildKite get steps failed: 404 Not Found')
+  }
+
+  get pipelineRemoveButton() {
+    return cy.get('[data-test-id="remove-button"]').eq(1)
+  }
+
+  get branchSelect() {
+    return cy.contains('Branches').eq(0).siblings()
+  }
+
+  get branchSelectSomeOption() {
+    return cy.contains('All')
+  }
+
+  get pipelineStepSelectXXOption() {
+    return cy.get('[data-test-id="single-selection-step"]:contains("RECORD RELEASE TO UAT"):last')
+  }
+
+  get pipelineStepXXOption() {
+    return cy.get('[data-test-id="single-selection-pipeline-name"]:contains("payment-selector-ui")')
+  }
+
+  get leadTimeForChangeAddOneButton() {
+    return cy.get('[data-testid="AddIcon"]:last')
+  }
+
+  get headerBar() {
+    return cy.get('[data-test-id="Header"]')
+  }
+
+  get nextButton() {
+    return cy.contains('Next')
+  }
+
+  get backButton() {
+    return cy.contains('Previous')
+  }
+
+  get cycleTimeTitleTooltip() {
+    return cy.get('[data-test-id="tooltip')
+  }
+
+  chooseDropdownOption = (label: string, value: string) => {
+    cy.contains('label', label).parent().click()
+    cy.get('li[role="option"]').contains(value).click()
+  }
+
+  getStepOfSomePipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-step"]').eq(i)
+
+  getOrganizationSelect = (i: number) => cy.get('[data-test-id="single-selection-organization"]').eq(i)
+
+  getPipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
 
   checkCycleTime() {
-    this.cycleTimeSettingAnalysis()
-    this.cycleTimeSettingTodo()
-    this.cycleTimeSettingInDev()
-    this.cycleTimeSettingBlock()
-    this.cycleTimeSettingWaitTest()
-    this.cycleTimeSettingTesting()
-    this.cycleTimeSettingReview()
-    this.cycleTimeSettingDone()
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.analysisLabel, Metrics.CYCLE_TIME_VALUE.analysisValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.todoLabel, Metrics.CYCLE_TIME_VALUE.todoValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.inDevLabel, Metrics.CYCLE_TIME_VALUE.inDevValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.blockLabel, Metrics.CYCLE_TIME_VALUE.blockValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.waitingLabel, Metrics.CYCLE_TIME_VALUE.waitingValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.testingLabel, Metrics.CYCLE_TIME_VALUE.testingValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.reviewLabel, Metrics.CYCLE_TIME_VALUE.reviewValue)
+    this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.doneValue)
   }
 
-  checkRealDone() {
-    this.realDoneSelect().click()
+  clickRealDone() {
+    this.realDoneSelect.click()
 
-    this.RealDoneSelectAllOption().click()
-    this.closeModelElement().click({ force: true })
+    this.RealDoneSelectAllOption.click()
+    this.closeModelElement.click({ force: true })
   }
 
-  checkClassification() {
-    this.classificationSelect().click()
+  clickClassification() {
+    this.classificationSelect.click()
 
-    this.classificationSelectAllOption().click()
-    this.closeModelElement().click({ force: true })
+    this.classificationSelectAllOption.click()
+    this.closeModelElement.click({ force: true })
   }
 
-  checkDeploymentFrequencySettings() {
-    this.deploymentFrequencySettingTitle().should('be.exist')
-    this.organizationSelect().click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(0).click()
-    this.pipelineSelectOneOption().click()
-    this.waitingForProgressBar()
-    this.stepOfSomePipelineSelect(0).click()
-    this.stepSelectSomeOption().click()
-    this.branchSelect().click()
-    this.branchSelectSomeOption().click()
+  addOneCorrectPipelineConfig(position = 0) {
+    this.getOrganizationSelect(position).click()
+    this.pipelineOfOrgXXXX.click()
+    this.getPipelineSelect(position).click()
+    cy.waitForNetworkIdle('@api', 2000)
+    this.pipelineSelectOneOption.click()
+    this.getStepOfSomePipelineSelect(position).click()
+    this.stepSelectSomeOption.click()
+  }
+
+  selectBranchOption() {
+    this.branchSelect.click()
+    this.branchSelectSomeOption.click()
     this.closeOptions()
+  }
 
-    this.addOnePipelineButton().click()
-    this.organizationSecondSelect(1).click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(1).click()
-    this.pipelineSelectUIOption().click()
-    this.buildKiteStepNotFoundTips().should('exist')
-    this.pipelineRemoveButton().click()
-
-    this.addOnePipelineButton().click()
-    this.organizationSecondSelect(1).click()
-    this.pipelineOfOrgXXXX().click()
-    this.pipelineSelect(1).click()
-    this.pipelineSelectOneOption().click()
-    this.waitingForProgressBar()
-    this.stepOfSomePipelineSelect(1).click()
-    this.stepSelectSomeOption().click()
-    this.checkDuplicatedMessage()
-    this.pipelineRemoveButton().click()
+  addOneErrorPipelineConfig(position = 0) {
+    this.getOrganizationSelect(position).click()
+    this.pipelineOfOrgXXXX.click()
+    this.getPipelineSelect(position).click()
+    cy.waitForNetworkIdle('@api', 2000)
+    this.pipelineSelectUIOption.click()
   }
 
   closeOptions() {
-    this.headerBar().click()
+    this.headerBar.click()
   }
 
   goReportStep() {
-    this.nextButton().click()
+    this.nextButton.click()
   }
 
   BackToConfigStep() {
-    this.backButton().click()
-  }
-
-  waitingForProgressBar() {
-    this.progressBar().should('be.visible')
-    this.progressBar().should('not.exist')
+    this.backButton.click()
   }
 }
 

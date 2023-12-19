@@ -82,8 +82,6 @@ export const NextButton = styled(Button)({
   },
 })
 
-export const ButtonGroup = styled('div')({})
-
 export const ButtonContainer = styled('div')({
   display: 'flex',
   alignItems: 'center',

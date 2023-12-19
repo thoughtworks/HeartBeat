@@ -9,6 +9,10 @@ class Home {
     return cy.contains('Import project from file')
   }
 
+  get headerVersion() {
+    return cy.get('span[title="Heartbeat"]').parent().next()
+  }
+
   navigate() {
     cy.visit('/index.html')
   }

@@ -186,6 +186,7 @@ Exception Table
 </table>
 ## C2 - Generate report - TO-BE
 ### Sequence Diagram
+
 ```plantuml
 @startuml report
 skin rose
@@ -249,7 +250,7 @@ group async process pipeline and sourcecontrol related metrics
 end
 
 
-loop until response code is not 200
+loop until (response code is 201 and body.allMetricsReady==true) or (response code is 5xx) 
     Frontend -> Backend: Polling the report
     activate Backend
     alt report is not ready
@@ -265,3 +266,223 @@ end
 ```
 
 ### API Design
+
++ Async generate board report 
+```
+POST /board-reports
+
+Request payload:
+{
+    "considerHoliday": true,
+    "startTime": "string",
+    "endTime": "string",
+    "metrics": [
+      "string"
+    ],
+    "jiraBoardSetting": {
+      "type": "string",
+      "token": "string",
+      "site": "string",
+      "projectKey": "string",
+      "boardId": "string",
+      "doneColumn": [
+        "string"
+      ],
+      "boardColumns": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ],
+      "treatFlagCardAsBlock": true,
+      "users": [
+        "string"
+      ],
+      "assigneeFilter": "string",
+      "targetFields": [
+        {
+          "key": "string",
+          "name": "string",
+          "flag": true
+        }
+      ]
+    }
+    "csvTimeStamp": "string"
+}
+
+Response:
+202 Accepted
+{
+    "callbackUrl": "string",
+    "interval": 0
+}
+```
++ Async generate dora report 
+```
+POST /dora-reports
+
+Request payload:
+{
+    "considerHoliday": true,
+    "startTime": "string",
+    "endTime": "string",
+    "metrics": [
+      "string"
+    ],
+    "buildKiteSetting": {
+      "type": "string",
+      "token": "string",
+      "deploymentEnvList": [
+        {
+          "orgId": "string",
+          "orgName": "string",
+          "id": "string",
+          "name": "string",
+          "step": "string",
+          "repository": "string",
+          "branches": [
+            "string"
+          ]
+        }
+      ],
+      "pipelineCrews": [
+        "string"
+      ]
+    },
+    "codebaseSetting": {
+      "type": "string",
+      "token": "string",
+      "leadTime": [
+        {
+          "orgId": "string",
+          "orgName": "string",
+          "id": "string",
+          "name": "string",
+          "step": "string",
+          "repository": "string",
+          "branches": [
+            "string"
+          ]
+        }
+      ]
+    },
+    "csvTimeStamp": "string"
+}
+
+Response:
+202 Accepted
+{
+    "callbackUrl": "string",
+    "interval": 0
+}
+```
+
++ Callback to retrieve reports
+```
+GET /reports/{reportId}
+Response:
+204 No Content
+
+201 Created
+{
+    "velocity": {
+      "velocityForSP": 0,
+      "velocityForCards": 0
+    } <could be null if not required>,
+    "classificationList": [
+      {
+        "fieldName": "string",
+        "pairList": [
+          {
+            "name": "string",
+            "value": 0
+          }
+        ]
+      }
+    ] <could be null if not required>,
+    "cycleTime": {
+      "totalTimeForCards": 0,
+      "averageCycleTimePerCard": 0,
+      "averageCycleTimePerSP": 0,
+      "swimlaneList": [
+        {
+          "optionalItemName": "string",
+          "averageTimeForSP": 0,
+          "averageTimeForCards": 0,
+          "totalTime": 0
+        }
+      ]
+    } <could be null if not required>,
+    "deploymentFrequency": {
+      "avgDeploymentFrequency": {
+        "name": "string",
+        "deploymentFrequency": 0
+      },
+      "deploymentFrequencyOfPipelines": [
+        {
+          "name": "string",
+          "step": "string",
+          "deploymentFrequency": 0,
+          "dailyDeploymentCounts": [
+            {
+              "date": "string",
+              "count": 0
+            }
+          ]
+        }
+      ]
+    } <could be null if not required>,
+    "changeFailureRate": {
+      "avgChangeFailureRate": {
+        "name": "string",
+        "totalTimes": 0,
+        "totalFailedTimes": 0,
+        "failureRate": 0
+      } <could be null if not required>,
+      "changeFailureRateOfPipelines": [
+        {
+          "name": "string",
+          "step": "string",
+          "failedTimesOfPipeline": 0,
+          "totalTimesOfPipeline": 0,
+          "failureRate": 0
+        }
+      ]
+    } <could be null if not required>,
+    "meanTimeToRecovery": {
+      "avgMeanTimeToRecovery": {
+        "name": "string",
+        "timeToRecovery": 0
+      },
+      "meanTimeRecoveryPipelines": [
+        {
+          "timeToRecovery": 0,
+          "name": "string",
+          "step": "string"
+        }
+      ]
+    } <could be null if not required>,
+    "leadTimeForChanges": {
+      "leadTimeForChangesOfPipelines": [
+        {
+          "name": "string",
+          "step": "string",
+          "prLeadTime": 0,
+          "pipelineLeadTime": 0,
+          "totalDelayTime": 0
+        }
+      ],
+      "avgLeadTimeForChanges": {
+        "name": "string",
+        "prLeadTime": 0,
+        "pipelineLeadTime": 0,
+        "totalDelayTime": 0
+      }
+    } <could be null if not required>,
+    "boardMetricsReady": true <default is false>, 
+    "pipelineMetricsReady": true <default is false>, 
+    "sourceControlMetricsReady": true <default is false>,
+    "allMetricsReady": true <default is false>,
+    "exportValidityTime": 0
+}
+```

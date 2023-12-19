@@ -3,6 +3,7 @@ package heartbeat.controller.report;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
+import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.RequestFailedException;
@@ -172,6 +173,64 @@ class GenerateReporterControllerTest {
 
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
+
+		Thread.sleep(2000L);
+		verify(asyncExceptionHandler).put(currentTimeStamp, requestFailedException);
+	}
+
+	@Test
+	void shouldReturnAcceptedStatusAndCallbackUrlAndIntervalWhenCallBoardReports() throws Exception {
+		ReportResponse expectedResponse = ReportResponse.builder()
+			.velocity(Velocity.builder().velocityForSP(10).build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
+			.build();
+
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateBoardReportRequest request = mapper.readValue(
+				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		when(generateReporterService.generateReporter(request.convertToReportRequest())).thenReturn(expectedResponse);
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/board-reports").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
+	}
+
+	@Test
+	void shouldGetExceptionAndPutInExceptionMapWhenCallBoardReport() throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateBoardReportRequest request = mapper.readValue(
+				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		RequestFailedException requestFailedException = new RequestFailedException(402, "Client Error");
+		when(generateReporterService.generateReporter(request.convertToReportRequest()))
+			.thenThrow(requestFailedException);
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/board-reports").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andReturn()

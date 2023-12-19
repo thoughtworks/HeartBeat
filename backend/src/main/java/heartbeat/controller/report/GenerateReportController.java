@@ -1,12 +1,14 @@
 package heartbeat.controller.report;
 
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
+import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.BaseException;
 import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.service.report.GenerateReporterService;
+import heartbeat.util.ReportIdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reports")
+@RequestMapping()
 @Validated
 @Log4j2
 public class GenerateReportController {
@@ -37,7 +39,7 @@ public class GenerateReportController {
 	@Value("${callback.interval}")
 	private Integer interval;
 
-	@PostMapping()
+	@PostMapping("/reports")
 	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
 		log.info(
 				"Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
@@ -56,7 +58,7 @@ public class GenerateReportController {
 			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());
 	}
 
-	@GetMapping("/{dataType}/{filename}")
+	@GetMapping("/reports/{dataType}/{filename}")
 	public InputStreamResource exportCSV(@PathVariable String dataType, @PathVariable String filename) {
 		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, filename);
 		ExportCSVRequest request = new ExportCSVRequest(dataType, filename);
@@ -65,7 +67,7 @@ public class GenerateReportController {
 		return result;
 	}
 
-	@GetMapping("/{reportId}")
+	@GetMapping("/reports/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(reportId);
 		if (generateReportIsOver) {
@@ -74,6 +76,25 @@ public class GenerateReportController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PostMapping("/board-reports")
+	public ResponseEntity<CallbackResponse> generateBoardReport(@RequestBody GenerateBoardReportRequest request) {
+		log.info(
+				"Start to generate board report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
+				ReportIdUtil.getBoardReportId(request.getCsvTimeStamp()));
+		CompletableFuture.runAsync(() -> {
+			try {
+				generateReporterService.generateReporter(request.convertToReportRequest());
+			}
+			catch (BaseException e) {
+				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
+			}
+		});
+		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
+		return ResponseEntity.status(HttpStatus.ACCEPTED)
+			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());
 	}
 
 }

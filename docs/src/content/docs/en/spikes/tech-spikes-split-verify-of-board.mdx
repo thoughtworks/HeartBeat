@@ -18,18 +18,78 @@ Verify the board setting on config page, there is some data redundancy. Besides,
 
 ### 1. Split the origin board verify API
 
-#### 1.1 Response body
+#### 1.1 API Design
 
-- When token is incorrect:
+- before
 ```json
-{
-    "status": 401,
-    "message": "Failed to get Jira info_status: 401 UNAUTHORIZED, reason: [401 Unauthorized] during [GET] to [https://dorametrics.atlassian.net/rest/agile/1.0/board/2/configuration] [JiraFeignClient#getJiraBoardConfiguration(URI,String,String)]: [<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><status><status-code>401</status-code><message>Client must be authenticated to access this resource.</message></status>]",
-    "hintInfo": "Token is incorrect"
+paths: api/v1/boards
+method: post
+request: {
+  "type": "...",
+  "boardId": "...",
+  "projectKey": "...",
+  "site": "...",
+  "token": "...",
+  "startTime": "...",
+  "endTime": "..."
+}
+responses:
+  '200': {
+    "users": [
+        "..."
+    ],
+    "targetFields": [
+        {
+            "key": "...",
+            "name": "...",
+            "flag": false
+        }
+    ],
+    "ignoredTargetFields": [
+        {
+            "key": "...",
+            "name": "...",
+            "flag": false
+        }
+    ],
+    "jiraColumns": [
+        {
+            "key": "...",
+            "value": {
+                "name": "...",
+                "statuses": [
+                    "..."
+                ]
+            }
+        }
+    ]
 }
 ```
 
-- When token is correct, returns a response with status code `200`.
+- after
+```json
+paths: api/v1/boards
+method: post
+request: {
+  "type": "...",
+  "boardId": "...",
+  "projectKey": "...",
+  "site": "...",
+  "token": "..."
+}
+responses:
+  '200': {
+    status: "verity Success"
+}
+```
+
+- Jira API
+
+```
+paths: https://%s.atlassian.net/rest/agile/1.0/board/{boardId}/configuration
+method: get
+header: "Authorization: Bearer <YOUR-TOKEN>"
+```
 
 #### 1.2 Description
 We split the origin board verify API in the config page.If the status code of the result returned by the api is 200, the verify is passed.
@@ -37,18 +97,39 @@ We split the origin board verify API in the config page.If the status code of th
 #### 1.3 Sequence Diagram (board verify API)
 
 ```plantuml
-@startuml report
+@startuml
 skin rose
-title Heartbeat - Board verify API
-participant Frontend
-participant Backend
-participant Jira
+title Heartbeat - Verify the validity of board token
 
-Frontend -> Backend: verify the  token validity
-activate Backend
-Backend --> Frontend: response 200
-deactivate Backend
+participant FrontEnd
+participant JiraController
+participant JiraService
+participant JiraFeignClient
+participant RestResponseEntityExceptionHandler
 
+' group Verify the validity of the token
+    FrontEnd -> JiraController: request: token, type, projectKey, site, boardId
+    activate JiraController
+    JiraController -> JiraService: token, baseUrl, boardId
+    activate JiraService
+    JiraService -> JiraFeignClient: authorization(token), baseUrl, boardId
+    activate JiraFeignClient
+alt Verification success
+    JiraFeignClient --> JiraService: 200
+    deactivate JiraFeignClient
+    JiraService --> JiraController: true
+    deactivate JiraService
+    JiraController --> FrontEnd: response:{ status: "verity Success"}
+    deactivate JiraController
+else Verification failed
+    JiraFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    deactivate JiraFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: response 401 Unauthorized: "Token is incorrect"
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate JiraService
+    ' deactivate JiraController
+end
 @enduml
 ```
 

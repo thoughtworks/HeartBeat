@@ -2,6 +2,7 @@ package heartbeat.controller.report;
 
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
+import heartbeat.controller.report.dto.request.GenerateDoraReportRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
@@ -48,6 +49,25 @@ public class GenerateReportController {
 		CompletableFuture.runAsync(() -> {
 			try {
 				generateReporterService.generateReporter(request);
+			}
+			catch (BaseException e) {
+				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
+			}
+		});
+		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
+		return ResponseEntity.status(HttpStatus.ACCEPTED)
+			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());
+	}
+
+	@PostMapping("/dora-reports")
+	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request){
+		log.info(
+			"Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
+			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
+			request.getCsvTimeStamp());
+		CompletableFuture.runAsync(() -> {
+			try {
+				generateReporterService.generateReporter(request.convertToReportRequest());
 			}
 			catch (BaseException e) {
 				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);

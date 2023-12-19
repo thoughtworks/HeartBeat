@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GenerateBoardReportRequest {
+public class GenerateDoraReportRequest {
 
 	private Boolean considerHoliday;
 
@@ -26,20 +26,23 @@ public class GenerateBoardReportRequest {
 
 	private List<String> metrics;
 
-	private JiraBoardSetting jiraBoardSetting;
+	private BuildKiteSetting buildKiteSetting;
+
+	private CodebaseSetting codebaseSetting;
 
 	@NotBlank
 	private String csvTimeStamp;
 
 	public GenerateReportRequest convertToReportRequest() {
-		return GenerateReportRequest.builder()
-			.considerHoliday(this.considerHoliday)
-			.startTime(this.startTime)
-			.endTime(this.endTime)
-			.metrics(this.metrics)
-			.jiraBoardSetting(this.jiraBoardSetting)
-			.csvTimeStamp(this.csvTimeStamp)
-			.build();
+		GenerateReportRequest reportRequest = new GenerateReportRequest();
+		reportRequest.setConsiderHoliday(this.considerHoliday);
+		reportRequest.setStartTime(this.startTime);
+		reportRequest.setEndTime(this.endTime);
+		reportRequest.setMetrics(this.metrics);
+		reportRequest.setBuildKiteSetting(this.buildKiteSetting);
+		reportRequest.setCodebaseSetting(this.codebaseSetting);
+		reportRequest.setCsvTimeStamp(this.csvTimeStamp);
+		return reportRequest;
 	}
 
 }

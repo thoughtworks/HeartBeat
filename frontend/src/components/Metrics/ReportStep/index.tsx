@@ -6,6 +6,7 @@ import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/con
 import { CALENDAR, PIPELINE_STEP, NAME, REQUIRED_DATA, MESSAGE, TIPS } from '@src/constants/resources'
 import {
   COMMON_BUTTONS,
+  DOWNLOAD_TYPES,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
 } from '@src/constants/commons'
@@ -165,7 +166,11 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
     csvTimeStamp: csvTimeStamp,
   })
 
-  const getExportCSV = (dataType: string, startDate: string | null, endDate: string | null): CSVReportRequestDTO => ({
+  const getExportCSV = (
+    dataType: DOWNLOAD_TYPES,
+    startDate: string | null,
+    endDate: string | null
+  ): CSVReportRequestDTO => ({
     dataType: dataType,
     csvTimeStamp: csvTimeStamp,
     startDate: startDate ?? '',
@@ -248,7 +253,7 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
     res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
   }
 
-  const handleDownload = (dataType: string, startDate: string | null, endDate: string | null) => {
+  const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))
   }
 
@@ -327,16 +332,16 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
               <BackButton onClick={handleBack} variant='outlined'>
                 {COMMON_BUTTONS.BACK}
               </BackButton>
-              <ExportButton onClick={() => handleDownload('metric', startDate, endDate)}>
+              <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}>
                 {COMMON_BUTTONS.EXPORT_METRIC_DATA}
               </ExportButton>
               {isShowExportBoardButton && (
-                <ExportButton onClick={() => handleDownload('board', startDate, endDate)}>
+                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_BOARD_DATA}
                 </ExportButton>
               )}
               {isShowExportPipelineButton && (
-                <ExportButton onClick={() => handleDownload('pipeline', startDate, endDate)}>
+                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
                 </ExportButton>
               )}

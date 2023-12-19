@@ -55,6 +55,12 @@ export const Z_INDEX = {
   FIXED: 1070,
 }
 
+export enum DOWNLOAD_TYPES {
+  METRICS = 'metric',
+  BOARD = 'board',
+  PIPELINE = 'pipeline',
+}
+
 export const METRICS_STEPS = {
   CONFIG: 0,
   METRICS: 1,

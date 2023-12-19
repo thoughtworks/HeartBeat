@@ -1,0 +1,146 @@
+---
+title: Split current token for BuildKite
+description: Split current token for BuildKite
+---
+
+# Spike -- Split current token for BuildKite
+
+## Background
+The BuildKite setting in config page, the original api obtains verify and get info two parts, now it should be split.
+
+## Solutions
+### 1. Verify the BuildKite token
+- Api Design
+```
+paths: api/v1/BuildKite
+method: post
+request: {
+  token: "your_token",
+  type: "BuildKite"
+}
+responses:
+  '200': {
+    status: "verity Success"
+}
+```
+- Exception Handler
+
+  - 401: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx
+
+- Sequence Diagram
+```plantuml
+@startuml
+skin rose
+title - Heartbeat - Verify the BuildKite token
+
+participant FrontEnd
+participant BuildKiteController
+participant BuildKiteService
+participant BuildKiteFeignClient
+participant RestResponseEntityExceptionHandler
+
+' group Verify the validity of the token
+    FrontEnd -> BuildKiteController: request: token, type
+    activate BuildKiteController
+    BuildKiteController -> BuildKiteService: token
+    activate BuildKiteService
+    BuildKiteService -> BuildKiteFeignClient: token
+    activate BuildKiteFeignClient
+alt Verification success
+    BuildKiteFeignClient --> BuildKiteService: 200
+    deactivate BuildKiteFeignClient
+    BuildKiteService --> BuildKiteController: true
+    deactivate BuildKiteService
+    BuildKiteController --> FrontEnd: response:{ status: "verity Success"}
+    deactivate BuildKiteController
+else Verification failed
+    BuildKiteFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    deactivate BuildKiteFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason:xxx
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate BuildKiteService
+    ' deactivate BuildKiteController
+end
+@enduml
+```
+
+### 2. getBuildKiteInfo 
+
+- Api Design
+```
+paths: api/v1/BuildKite/info
+method: post
+request: {
+  PipelineParam:{
+  token:"your_token",
+  startTime: "xxx",
+  endTime:"xxx",
+  } 
+  type: "BuildKite"
+}
+responses:{
+  "pipelineList": 
+  [{
+    "id": "xxx",
+    "name": "xxx",
+    "orgId": "xxx",
+    "orgName": "xxx",
+    "repository": "xxx",
+    "steps": [
+     "xxx",
+      ]
+    }]
+}
+```
+- Exception Handler
+
+  - 401: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx
+  
+- Sequence Diagram
+```plantuml
+@startuml
+skin rose
+title - Heartbeat - Get BuildKite Info
+
+participant FrontEnd
+participant BuildKiteController
+participant BuildKiteService
+participant BuildKiteFeignClient
+participant RestResponseEntityExceptionHandler
+
+' group Get BuildKite Info
+    FrontEnd -> BuildKiteController: request: PipelineParam{token,startTime,endTime}, type
+    activate BuildKiteController
+    BuildKiteController -> BuildKiteService: PipelineParam{token,startTime,endTime}
+    activate BuildKiteService
+    BuildKiteService -> BuildKiteFeignClient: token,startTime,endTime
+    activate BuildKiteFeignClient
+alt Verification success
+    BuildKiteFeignClient --> BuildKiteService: BuildKiteInfoList
+    deactivate BuildKiteFeignClient
+    BuildKiteService --> BuildKiteController: BuildKiteResponseDTO{pipelineList}
+    deactivate BuildKiteService
+    BuildKiteController --> FrontEnd: response: BuildKiteResponseDTO{pipelineList}
+    deactivate BuildKiteController
+else Verification failed
+    BuildKiteFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    deactivate BuildKiteFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason:xxx
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate BuildKiteService
+    ' deactivate BuildKiteController
+end
+@enduml
+```
+
+### Solution detail
+
+1.The first new api needs to be called when the Verify button is clicked. If true is returned, the token verification is successful.Otherwise an exception will be thrown.The logic of exception handling remains the same as before.
+
+2.The second api should be called when entering the Metrics page. Don’t forget that the previous getPipelineSteps api still needs to be called. Only after these two parts of data(The second api and previous getPipelineSteps api) are obtained can the loading disappear.
+
+
+
+

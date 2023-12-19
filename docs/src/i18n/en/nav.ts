@@ -104,6 +104,12 @@ export default [
 		slug: 'spikes/tech-spikes-split-verify-of-github',
 		key: 'spikes/tech-spikes-split-verify-of-github',
 	},
+	{
+		text: 'Spilt verify of BuildKite',
+		slug: 'spikes/tech-spikes-split-verify-of-buildkite',
+		key: 'spikes/tech-spikes-split-verify-of-buildkite',
+	},
+	
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },

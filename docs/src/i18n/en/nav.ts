@@ -96,8 +96,8 @@ export default [
 	},
 	{
 		text: 'Impact of status and column name change',
-		slug: 'tech-spikes-impact-of-status-and-column-name-change',
-		key: 'tech-spikes-impact-of-status-and-column-name-change',
+		slug: 'spikes/tech-spikes-impact-of-status-and-column-name-change',
+		key: 'spikes/tech-spikes-impact-of-status-and-column-name-change',
 	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },

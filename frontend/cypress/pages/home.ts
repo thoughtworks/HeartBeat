@@ -1,7 +1,13 @@
-class Home {
-  private readonly createANewProjectButton = () => cy.contains('Create a new project')
+import { GITHUB_TOKEN } from '../fixtures/fixtures'
 
-  private readonly importProjectFromFileButton = () => cy.contains('Import project from file')
+class Home {
+  get createANewProjectButton() {
+    return cy.contains('Create a new project')
+  }
+
+  get importProjectFromFileButton() {
+    return cy.contains('Import project from file')
+  }
 
   get headerVersion() {
     return cy.get('span[title="Heartbeat"]').parent().next()
@@ -12,12 +18,15 @@ class Home {
   }
 
   createANewProject() {
-    this.createANewProjectButton().click()
+    this.createANewProjectButton.click()
   }
 
   importProjectFromFile(configFixtureName) {
-    this.importProjectFromFileButton().click()
+    this.importProjectFromFileButton.click()
     cy.fixture(configFixtureName).then((fileContent) => {
+      // Add Randomly generated token
+      fileContent.sourceControl.token = GITHUB_TOKEN
+
       cy.get<HTMLInputElement>('#importJson').then((e) => {
         const testFile = new File([JSON.stringify(fileContent)], configFixtureName, {
           type: 'application/json',

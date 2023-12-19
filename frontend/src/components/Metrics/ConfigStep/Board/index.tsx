@@ -196,7 +196,7 @@ export const Board = () => {
   }
 
   return (
-    <ConfigSectionContainer>
+    <ConfigSectionContainer aria-label='Board Config'>
       <NoCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}

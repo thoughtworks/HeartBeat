@@ -124,7 +124,7 @@ export const SourceControl = () => {
   }
 
   return (
-    <ConfigSectionContainer>
+    <ConfigSectionContainer aria-label='Source Control Config'>
       {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.SOURCE_CONTROL}</ConfigSelectionTitle>
@@ -162,11 +162,7 @@ export const SourceControl = () => {
               <ResetButton type='reset'>Reset</ResetButton>
             </>
           ) : (
-            <VerifyButton
-              data-test-id='sourceControlVerifyButton'
-              type='submit'
-              disabled={isDisableVerifyButton || isLoading}
-            >
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
               Verify
             </VerifyButton>
           )}

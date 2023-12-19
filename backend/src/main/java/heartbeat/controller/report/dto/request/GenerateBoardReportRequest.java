@@ -33,14 +33,14 @@ public class GenerateBoardReportRequest {
 	private String csvTimeStamp;
 
 	public GenerateReportRequest convertToReportRequest() {
-		GenerateReportRequest reportRequest = new GenerateReportRequest();
-		reportRequest.setConsiderHoliday(this.considerHoliday);
-		reportRequest.setStartTime(this.startTime);
-		reportRequest.setEndTime(this.endTime);
-		reportRequest.setMetrics(this.metrics);
-		reportRequest.setJiraBoardSetting(this.jiraBoardSetting);
-		reportRequest.setCsvTimeStamp(this.csvTimeStamp);
-		return reportRequest;
+		return GenerateReportRequest.builder()
+			.considerHoliday(this.considerHoliday)
+			.startTime(this.startTime)
+			.endTime(this.endTime)
+			.metrics(this.metrics)
+			.jiraBoardSetting(this.jiraBoardSetting)
+			.csvTimeStamp(this.csvTimeStamp)
+			.build();
 	}
 
 }

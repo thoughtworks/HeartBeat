@@ -2,9 +2,6 @@
 title: Split current token for BuildKite
 description: Split current token for BuildKite
 ---
-
-# Spike -- Split current token for BuildKite
-
 ## Background
 The BuildKite setting in config page, the original api obtains verify and get info two parts, now it should be split.
 
@@ -12,16 +9,14 @@ The BuildKite setting in config page, the original api obtains verify and get in
 ### 1. Verify the BuildKite token
 - Api Design
 ```
-paths: api/v1/BuildKite
+paths: api/v1/BuildKite/verify
 method: post
 request: {
   token: "your_token",
   type: "BuildKite"
 }
 responses:
-  '200': {
-    status: "verity Success"
-}
+  Status Code: 200
 ```
 - Exception Handler
 
@@ -51,7 +46,7 @@ alt Verification success
     deactivate BuildKiteFeignClient
     BuildKiteService --> BuildKiteController: true
     deactivate BuildKiteService
-    BuildKiteController --> FrontEnd: response:{ status: "verity Success"}
+    BuildKiteController --> FrontEnd: response: 200
     deactivate BuildKiteController
 else Verification failed
     BuildKiteFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException

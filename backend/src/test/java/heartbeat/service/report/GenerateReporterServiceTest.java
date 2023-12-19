@@ -16,6 +16,7 @@ import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
@@ -31,6 +32,7 @@ import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
@@ -1040,6 +1042,54 @@ class GenerateReporterServiceTest {
 		assertEquals(
 				"Request failed with status statusCode 405, error: Request failed with status statusCode 405, error: RequestFailedException",
 				exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowBadRequestExceptionGivenMetricsContainKanbanWhenJiraSettingIsNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of(RequireDataEnum.CYCLE_TIME.getValue()))
+			.jiraBoardSetting(null)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		BadRequestException badRequestException = assertThrows(BadRequestException.class,
+				() -> generateReporterService.generateReporter(request));
+		assertEquals(badRequestException.getMessage(), "Jira board setting is null.");
+	}
+
+	@Test
+	void shouldThrowBadRequestExceptionGivenMetricsContainCodeBaseWhenCodeBaseSettingIsNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES.getValue()))
+			.codebaseSetting(null)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		BadRequestException badRequestException = assertThrows(BadRequestException.class,
+				() -> generateReporterService.generateReporter(request));
+		assertEquals(badRequestException.getMessage(), "Code base setting is null.");
+	}
+
+	@Test
+	void shouldThrowBadRequestExceptionGivenMetricsContainBuildKiteWhenBuildKiteSettingIsNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of(RequireDataEnum.CHANGE_FAILURE_RATE.getValue()))
+			.buildKiteSetting(null)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		BadRequestException badRequestException = assertThrows(BadRequestException.class,
+				() -> generateReporterService.generateReporter(request));
+		assertEquals(badRequestException.getMessage(), "BuildKite setting is null.");
 	}
 
 }

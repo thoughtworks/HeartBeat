@@ -34,6 +34,7 @@ import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
@@ -255,16 +256,22 @@ public class GenerateReporterService {
 		FetchedData fetchedData = new FetchedData();
 
 		if (lowMetrics.stream().anyMatch(this.kanbanMetrics::contains)) {
+			if (request.getJiraBoardSetting() == null)
+				throw new BadRequestException("Jira board setting is null.");
 			CardCollectionInfo cardCollectionInfo = fetchDataFromKanban(request);
 			fetchedData.setCardCollectionInfo(cardCollectionInfo);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
+			if (request.getCodebaseSetting() == null)
+				throw new BadRequestException("Code base setting is null.");
 			BuildKiteData buildKiteData = fetchGithubData(request);
 			fetchedData.setBuildKiteData(buildKiteData);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
+			if (request.getBuildKiteSetting() == null)
+				throw new BadRequestException("BuildKite setting is null.");
 			FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
 			val cachedBuildKiteData = fetchedData.getBuildKiteData();
 			if (cachedBuildKiteData != null) {

@@ -22,7 +22,7 @@ Verify the board setting on config page, there is some data redundancy. Besides,
 
 - before
 ```json
-paths: api/v1/boards
+paths: api/v1/boards/verify
 method: post
 request: {
   "type": "...",
@@ -91,10 +91,7 @@ method: get
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
 
-#### 1.2 Description
-We split the origin board verify API in the config page.If the status code of the result returned by the api is 200, the verify is passed.
-
-#### 1.3 Sequence Diagram (board verify API)
+#### 1.2 Sequence Diagram (board verify API)
 
 ```plantuml
 @startuml
@@ -135,41 +132,8 @@ end
 
 ### 2. Add 'get board info' API
 
-#### 2.1 Response body
+#### 2.1 API Design
 
-```json
-{
-    "users": [
-        "XXX",
-        "XXXX"
-    ],
-    "targetFields": [
-        {
-            "key": "XX",
-            "name": "XXX",
-            "flag": false
-        }
-    ],
-    "ignoredTargetFields": [
-        {
-            "key": "XX",
-            "name": "XXX",
-            "flag": false
-        }
-    ],
-    "jiraColumns": [
-        {
-            "key": "XX",
-            "value": {
-                "name": "XXX",
-                "statuses": [
-                    "XXX"
-                ]
-            }
-        }
-    ]
-}
-```
 
 #### 2.2 Description
 We add `get board info` API contents.Keep data from previous board API.

@@ -118,6 +118,18 @@ const checkRequiredFields = () => {
   metricsPage.nextButton.should('be.enabled')
 }
 
+const checkProjectConfig = () => {
+  cy.wait(2000)
+  cy.fixture('config.json').then((localFileContent) => {
+    cy.readFile('cypress/downloads/config.json').then((fileContent) => {
+      expect(fileContent.sourceControl.token).to.eq(GITHUB_TOKEN)
+      for (const key in localFileContent) {
+        expect(fileContent[key]).to.deep.eq(localFileContent[key])
+      }
+    })
+  })
+}
+
 describe('Import project from file', () => {
   beforeEach(() => {
     cy.waitForNetworkIdlePrepare({
@@ -151,6 +163,10 @@ describe('Import project from file', () => {
     reportPage.pageIndicator.should('exist')
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+
+    reportPage.exportProjectConfig()
+
+    checkProjectConfig()
 
     reportPage.backToMetricsStep()
 

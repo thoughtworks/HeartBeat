@@ -22,6 +22,10 @@ class Report {
     return cy.contains('Previous')
   }
 
+  get saveButton() {
+    return cy.contains('Save')
+  }
+
   get exportMetricDataButton() {
     return cy.contains('Export metric data')
   }
@@ -43,7 +47,7 @@ class Report {
   }
 
   backToMetricsStep() {
-    this.backButton.click()
+    this.backButton.click({ force: true })
   }
 
   exportMetricData() {
@@ -56,6 +60,10 @@ class Report {
 
   exportBoardData() {
     this.exportBoardDataButton.click()
+  }
+
+  exportProjectConfig() {
+    this.saveButton.click({ force: true })
   }
 }
 

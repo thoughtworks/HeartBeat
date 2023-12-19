@@ -22,8 +22,8 @@ Verify the board setting on config page, there is some data redundancy. Besides,
 
 - before
 ```json
-paths: api/v1/boards/verify
-method: post
+paths: api/v1/boards/{boardType}
+method: POST
 request: {
   "type": "...",
   "boardId": "...",
@@ -68,9 +68,9 @@ responses:
 
 - after
 ```json
-paths: api/v1/boards
-method: post
-request: {
+paths: api/v1/boards/{boardType}/verify
+method: GET
+parameters: {
   "type": "...",
   "boardId": "...",
   "projectKey": "...",
@@ -81,17 +81,20 @@ responses:
   '200': {
     status: "verity Success"
 }
+401 Unauthorized: "Token is incorrect"
 ```
 
 - Jira API
 
+[Jira docs](https://docs.atlassian.com/jira-software/REST/7.0.4/#agile/1.0/board-getConfiguration)
+
 ```
 paths: https://%s.atlassian.net/rest/agile/1.0/board/{boardId}/configuration
-method: get
+method: GET
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
 
-#### 1.2 Sequence Diagram (board verify API)
+#### 1.2 Sequence Diagram
 
 ```plantuml
 @startuml
@@ -130,30 +133,81 @@ end
 @enduml
 ```
 
-### 2. Add 'get board info' API
+### 2. New api to get info of board
 
-#### 2.1 API Design
+Returns datas from a board, for a given board Id. Board configuration will use those datas, like Crew settings, Cycle time settings, Classification setting.
+
+#### 2.1 Request
+
+##### URL
+POST api/v1/boards
+
+##### Request body
 
 
-#### 2.2 Description
-We add `get board info` API contents.Keep data from previous board API.
-The timing of the API call occurs when loading the corresponding data on the Metrics page.
-If the data is not yet fully loaded, the front end will display a loading state.
+| Body                      | Type                                                                                                          | Description                                                                       | Note |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------- | :--- |
+| type                      | string                                                                                                        | Board type.                                                                       |      |
+| boardId                   | string                                                                                                        | Board ID.                                                                         |      |
+| projectKey                | string                                                                                                        | Specify the key of the project.                                                   |      |
+| site                      | string                                                                                                        | Host url of the board.                                                            |      |
+| token                     | string                                                                                                        | Authentication for board.                                                         |      |
+| startTime                 | string                                                                                                        | Fillter results by startTime, it will use in [JQL](https://docs.atlassian.com/jira-software/REST/7.0.4/#agile/1.0/board-getConfiguration:~:text=Get%20issues%20for%20board) to get data.                                |      |
+| endTime                   | string                                                                                                        | Fillter results by endTime, it will use in [JQL](https://docs.atlassian.com/jira-software/REST/7.0.4/#agile/1.0/board-getConfiguration:~:text=Get%20issues%20for%20board) to get data.                                 |      |
 
-#### 2.3 Sequence Diagram (get board info API)
+Example
+```json
+{
+  "type": "Jira",
+  "boardId": "2",
+  "projectKey": "ADM",
+  "site": "dorametrics",
+  "token": "token",
+  "startTime": 1700409600000,
+  "endTime": 1701619199999
+}
+```
 
-```plantuml
-@startuml report
-skin rose
-title Heartbeat - Get board info API
-participant Frontend
-participant Backend
-participant Jira
-
-Frontend -> Backend: generate the board info
-activate Backend
-Backend --> Frontend: response 200
-deactivate Backend
-
-@enduml
+#### 2.2 Response
+```json
+{
+    "users": [
+        "heartbeat user0",
+        "heartbeat user1"
+    ],
+    "targetFields": [
+        {
+            "key": "issuetype",
+            "name": "Issue Type",
+            "flag": false
+        }
+    ],
+    "ignoredTargetFields": [
+        {
+            "key": "summary",
+            "name": "Summary",
+            "flag": false
+        }
+    ],
+    "jiraColumns": [
+        {
+            "key": "To Do",
+            "value": {
+                "name": "TODO",
+                "statuses": [
+                    "TODO"
+                ]
+            }
+        },
+        {
+            "key": "In Progress",
+            "value": {
+                "name": "Doing",
+                "statuses": [
+                    "DOING"
+                ]
+            }
+        }
+    ]
+}
 ```

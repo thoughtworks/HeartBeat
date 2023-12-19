@@ -20,7 +20,9 @@ Through two-stage verification of GitHub tokens, the first stage verifies the va
 ### 1. Verify the validity of the token
 
 - Request timing
+
 Triggered after clicking GitHub's verify on the config page
+
 - Api Design
 ```
 paths: api/v1/source-control
@@ -40,6 +42,10 @@ paths: "https://api.github.com/octocat"
 method: get
 header: "Authorization: Bearer YOUR-TOKEN"
 ```
+- Exception Handler
+
+  - 401: Failed to get GitHub info_status: 401, reason: Bad credentials: Token is incorrect
+
 - C3
 ```plantuml
 @startuml
@@ -70,7 +76,7 @@ else Verification failed
     GitHubFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
     deactivate GitHubFeignClient
     activate RestResponseEntityExceptionHandler
-    RestResponseEntityExceptionHandler -> FrontEnd: response 401 Unauthorized:"Token is incorrect"
+    RestResponseEntityExceptionHandler -> FrontEnd: response 401 Unauthorized: "Token is incorrect"
     deactivate RestResponseEntityExceptionHandler
     ' deactivate GitHubService
     ' deactivate GitHubController
@@ -103,6 +109,10 @@ paths: https://api.github.com/repos/OWNER/REPO
 method: get
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
+- Exception Handler
+
+  - 400: Unable to read target repo: Unable to read target repo, please recheck the token!
+
 - C3
 ```plantuml
 @startuml

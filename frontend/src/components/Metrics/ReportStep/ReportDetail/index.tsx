@@ -1,12 +1,11 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
-import { CALENDAR, PIPELINE_STEP, NAME, REQUIRED_DATA, MESSAGE, TIPS } from '@src/constants/resources'
+import { CALENDAR, MESSAGE, NAME, PIPELINE_STEP, REQUIRED_DATA, TIPS } from '@src/constants/resources'
 import {
   COMMON_BUTTONS,
-  DOWNLOAD_TYPES,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
 } from '@src/constants/commons'
@@ -19,7 +18,6 @@ import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/s
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { ErrorNotificationContainer } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
@@ -28,15 +26,18 @@ import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/uti
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 import { ReportResponse } from '@src/clients/report/dto/response'
 import { ROUTE } from '@src/constants/router'
+import {
+  ButtonGroupStyle,
+  ErrorNotificationContainer,
+  ExportButton,
+} from '@src/components/Metrics/ReportStep/ReportDetail/style'
 import { Tooltip } from '@mui/material'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
-import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportStep/ReportDetail/style'
 
-interface ReportStepInterface extends useNotificationLayoutEffectInterface {
+interface ReportDetailInterface extends useNotificationLayoutEffectInterface {
   handleSave: () => void
 }
-
-const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
+const ReportDetail = ({ updateProps, handleSave }: ReportDetailInterface) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const {
@@ -167,11 +168,7 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
     csvTimeStamp: csvTimeStamp,
   })
 
-  const getExportCSV = (
-    dataType: DOWNLOAD_TYPES,
-    startDate: string | null,
-    endDate: string | null
-  ): CSVReportRequestDTO => ({
+  const getExportCSV = (dataType: string, startDate: string | null, endDate: string | null): CSVReportRequestDTO => ({
     dataType: dataType,
     csvTimeStamp: csvTimeStamp,
     startDate: startDate ?? '',
@@ -254,7 +251,7 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
     res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
   }
 
-  const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
+  const handleDownload = (dataType: string, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))
   }
 
@@ -333,16 +330,16 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
               <BackButton onClick={handleBack} variant='outlined'>
                 {COMMON_BUTTONS.BACK}
               </BackButton>
-              <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}>
+              <ExportButton onClick={() => handleDownload('metric', startDate, endDate)}>
                 {COMMON_BUTTONS.EXPORT_METRIC_DATA}
               </ExportButton>
               {isShowExportBoardButton && (
-                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}>
+                <ExportButton onClick={() => handleDownload('board', startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_BOARD_DATA}
                 </ExportButton>
               )}
               {isShowExportPipelineButton && (
-                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}>
+                <ExportButton onClick={() => handleDownload('pipeline', startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
                 </ExportButton>
               )}
@@ -355,4 +352,4 @@ const ReportStep = ({ updateProps, handleSave }: ReportStepInterface) => {
   )
 }
 
-export default ReportStep
+export default ReportDetail

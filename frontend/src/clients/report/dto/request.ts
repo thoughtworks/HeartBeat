@@ -48,6 +48,27 @@ export interface ReportRequestDTO {
   csvTimeStamp?: number
 }
 
+export interface BoardReportRequestDTO {
+  considerHoliday: boolean
+  startTime: string | null
+  endTime: string | null
+  metrics: string[]
+  jiraBoardSetting?: {
+    token: string
+    type: string
+    site: string
+    projectKey: string
+    boardId: string
+    boardColumns: { name: string; value: string }[]
+    treatFlagCardAsBlock: boolean
+    users: string[]
+    assigneeFilter: string
+    targetFields: { key: string; name: string; flag: boolean }[]
+    doneColumn: string[]
+  }
+  csvTimeStamp?: number
+}
+
 export interface CSVReportRequestDTO {
   dataType: string
   csvTimeStamp: number

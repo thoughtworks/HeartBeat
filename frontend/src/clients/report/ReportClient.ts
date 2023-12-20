@@ -1,10 +1,14 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { ReportRequestDTO } from '@src/clients/report/dto/request'
+import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { ReportCallbackResponse } from '@src/clients/report/dto/response'
 
 export class ReportClient extends HttpClient {
   status = 0
   reportCallbackResponse: ReportCallbackResponse = {
+    callbackUrl: '',
+    interval: 0,
+  }
+  boardReportCallbackResponse: ReportCallbackResponse = {
     callbackUrl: '',
     interval: 0,
   }
@@ -70,6 +74,20 @@ export class ReportClient extends HttpClient {
       })
     return {
       response: this.reportCallbackResponse,
+    }
+  }
+
+  getBorderReport = async (params: BoardReportRequestDTO) => {
+    await this.axiosInstance
+      .post(`/board-reports`, params, {})
+      .then((res) => {
+        this.boardReportCallbackResponse = res.data
+      })
+      .catch((e) => {
+        throw e
+      })
+    return {
+      response: this.boardReportCallbackResponse,
     }
   }
 

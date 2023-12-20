@@ -38,10 +38,6 @@ public class AsyncReportRequestHandler {
 		return metricsDataReadyMap.get(timeStamp);
 	}
 
-	public boolean isReportExists(String reportId) {
-		return reportMap.containsKey(reportId);
-	}
-
 	public boolean isReportReady(String timeStamp) {
 		MetricsDataReady metricsDataReady = metricsDataReadyMap.get(timeStamp);
 		if (Objects.isNull(metricsDataReady))

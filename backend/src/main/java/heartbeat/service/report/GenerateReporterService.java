@@ -226,7 +226,6 @@ public class GenerateReporterService {
 
 		ReportResponse reportResponse = new ReportResponse(EXPORT_CSV_VALIDITY_TIME);
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
-		String csvTimeStamp = request.getCsvTimeStamp();
 
 		request.getMetrics().forEach(metrics -> {
 			switch (metrics.toLowerCase()) {
@@ -252,8 +251,6 @@ public class GenerateReporterService {
 				}
 			}
 		});
-
-		generateCSVForMetric(reportResponse, IdUtil.getDoraReportId(csvTimeStamp));
 
 		return reportResponse;
 	}
@@ -575,7 +572,7 @@ public class GenerateReporterService {
 		csvFileGenerator.convertPipelineDataToCSV(pipelineData, request.getCsvTimeStamp());
 	}
 
-	private void generateCSVForMetric(ReportResponse reportResponse, String csvTimeStamp) {
+	public void generateCSVForMetric(ReportResponse reportResponse, String csvTimeStamp) {
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
 	}
 
@@ -745,13 +742,13 @@ public class GenerateReporterService {
 	public ReportResponse getComposedReportResponse(String reportId) {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
-		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
+		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		boolean allMetricsReady = asyncReportRequestHandler.isReportReady(reportId);
 		return ReportResponse.builder()
-			.velocity(response.getVelocity())
-			.classificationList(response.getClassificationList())
-			.cycleTime(response.getCycleTime())
+			.velocity(boardReportResponse.getVelocity())
+			.classificationList(boardReportResponse.getClassificationList())
+			.cycleTime(boardReportResponse.getCycleTime())
 			.exportValidityTime(response.getExportValidityTime())
 			.deploymentFrequency(doraReportResponse.getDeploymentFrequency())
 			.changeFailureRate(doraReportResponse.getChangeFailureRate())

@@ -70,7 +70,7 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
   return useDefaultValue ? (
     <></>
   ) : (
-    <>
+    <div aria-label='Real done setting section'>
       <MetricsSettingTitle title={title} />
       {realDoneWarningMessage && <WarningNotification message={realDoneWarningMessage} />}
       <MultiAutoComplete
@@ -90,6 +90,6 @@ export const RealDone = ({ columns, title, label }: realDoneProps) => {
           DEFAULT_HELPER_TEXT
         )}
       </FormHelperText>
-    </>
+    </div>
   )
 }

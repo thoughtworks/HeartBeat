@@ -63,7 +63,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
   )
 
   return (
-    <>
+    <div aria-label='Cycle time settings section'>
       <TitleAndTooltipContainer>
         <MetricsSettingTitle title={title} />
         <TooltipContainer data-test-id={'tooltip'}>
@@ -79,6 +79,6 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
         <FormSelectPart selectedOptions={cycleTimeSettings} saveCycleTimeOptions={saveCycleTimeOptions} />
         <FlagCard />
       </CycleTimeContainer>
-    </>
+    </div>
   )
 }

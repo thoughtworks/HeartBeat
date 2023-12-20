@@ -9,7 +9,7 @@ export const LogoWarp = styled.div({
   padding: '0 1rem',
   alignItems: 'center',
   backgroundColor: theme.main.backgroundColor,
-  fontFamily: theme.typography.fontFamily,
+  fontFamily: 'Times',
   zIndex: Z_INDEX.STICKY,
   position: 'sticky',
   top: 0,

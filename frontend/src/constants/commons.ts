@@ -75,3 +75,13 @@ export const COMMON_BUTTONS = {
   EXPORT_BOARD_DATA: 'Export board data',
   EXPORT_METRIC_DATA: 'Export metric data',
 }
+
+export const GRID_XS = {
+  HALF: 6,
+  FULL: 12,
+}
+
+export const REPORT_ITEM_INDEX = {
+  HALF: 2,
+  FULL: 4,
+}

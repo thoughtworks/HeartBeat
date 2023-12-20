@@ -6,6 +6,6 @@ export const StyledReportCard = styled.div({
   justifyContent: 'center',
   alignItems: 'center',
   flexGrow: 1,
-  padding: '2px',
+  padding: '0.125rem',
   textAlign: 'center',
 })

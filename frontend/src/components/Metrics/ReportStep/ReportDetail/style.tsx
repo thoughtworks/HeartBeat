@@ -31,6 +31,7 @@ export const ButtonGroupStyle = styled('div')({
   margin: '0 auto',
   justifyContent: 'space-between',
   width: '100%',
+  paddingTop: '2rem',
 })
 
 export const ErrorNotificationContainer = styled('div')({

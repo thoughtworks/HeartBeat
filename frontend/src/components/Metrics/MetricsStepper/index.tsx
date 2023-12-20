@@ -277,7 +277,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
         <Suspense>
           {activeStep === METRICS_STEPS.CONFIG && <ConfigStep {...props} />}
           {activeStep === METRICS_STEPS.METRICS && <MetricsStep {...props} />}
-          {activeStep === METRICS_STEPS.REPORT && <ReportStep {...props} handleSave={handleSave} />}
+          {activeStep === METRICS_STEPS.REPORT && <ReportStep notification={props} handleSave={handleSave} />}
         </Suspense>
       </MetricsStepperContent>
       <ButtonContainer>

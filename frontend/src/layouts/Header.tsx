@@ -14,7 +14,7 @@ import {
   StyledHeaderInfo,
   StyledVersion,
 } from '@src/layouts/style'
-import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
+import { NotificationButton } from '@src/components/Common/NotificationButton'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 import { useEffect } from 'react'
 import { headerClient } from '@src/clients/header/HeaderClient'

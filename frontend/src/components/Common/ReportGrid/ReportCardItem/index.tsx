@@ -10,17 +10,13 @@ import React from 'react'
 export interface ReportCardItemProps {
   value: string
   subtitle: string
-  showDividingLine?: boolean
 }
 
-export const ReportCardItem = ({ value, subtitle, showDividingLine = false }: ReportCardItemProps) => {
+export const ReportCardItem = ({ value, subtitle }: ReportCardItemProps) => {
   return (
     <StyledItem>
-      {showDividingLine && <StyledDividingLine src={DividingLine} alt='dividingLine' />}
-      <div>
-        <StyledValue>{value}</StyledValue>
-        <StyledSubtitle>{subtitle}</StyledSubtitle>
-      </div>
+      <StyledValue>{value}</StyledValue>
+      <StyledSubtitle display='inline'>{subtitle}</StyledSubtitle>
     </StyledItem>
   )
 }

@@ -1,11 +1,12 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { Loading } from '@src/components/Loading'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
-import { CALENDAR, MESSAGE, NAME, PIPELINE_STEP, REQUIRED_DATA, TIPS } from '@src/constants/resources'
+import { CALENDAR, PIPELINE_STEP, NAME, REQUIRED_DATA, MESSAGE, TIPS } from '@src/constants/resources'
 import {
   COMMON_BUTTONS,
+  DOWNLOAD_TYPES,
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
 } from '@src/constants/commons'
@@ -26,17 +27,18 @@ import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/uti
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 import { ReportResponse } from '@src/clients/report/dto/response'
 import { ROUTE } from '@src/constants/router'
+import { Tooltip } from '@mui/material'
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import {
   ButtonGroupStyle,
   ErrorNotificationContainer,
   ExportButton,
 } from '@src/components/Metrics/ReportStep/ReportDetail/style'
-import { Tooltip } from '@mui/material'
-import SaveAltIcon from '@mui/icons-material/SaveAlt'
 
 interface ReportDetailInterface extends useNotificationLayoutEffectInterface {
   handleSave: () => void
 }
+
 const ReportDetail = ({ updateProps, handleSave }: ReportDetailInterface) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -168,7 +170,11 @@ const ReportDetail = ({ updateProps, handleSave }: ReportDetailInterface) => {
     csvTimeStamp: csvTimeStamp,
   })
 
-  const getExportCSV = (dataType: string, startDate: string | null, endDate: string | null): CSVReportRequestDTO => ({
+  const getExportCSV = (
+    dataType: DOWNLOAD_TYPES,
+    startDate: string | null,
+    endDate: string | null
+  ): CSVReportRequestDTO => ({
     dataType: dataType,
     csvTimeStamp: csvTimeStamp,
     startDate: startDate ?? '',
@@ -251,7 +257,7 @@ const ReportDetail = ({ updateProps, handleSave }: ReportDetailInterface) => {
     res?.exportValidityTimeMin && setExportValidityTimeMin(res.exportValidityTimeMin)
   }
 
-  const handleDownload = (dataType: string, startDate: string | null, endDate: string | null) => {
+  const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))
   }
 
@@ -330,16 +336,16 @@ const ReportDetail = ({ updateProps, handleSave }: ReportDetailInterface) => {
               <BackButton onClick={handleBack} variant='outlined'>
                 {COMMON_BUTTONS.BACK}
               </BackButton>
-              <ExportButton onClick={() => handleDownload('metric', startDate, endDate)}>
+              <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}>
                 {COMMON_BUTTONS.EXPORT_METRIC_DATA}
               </ExportButton>
               {isShowExportBoardButton && (
-                <ExportButton onClick={() => handleDownload('board', startDate, endDate)}>
+                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_BOARD_DATA}
                 </ExportButton>
               )}
               {isShowExportPipelineButton && (
-                <ExportButton onClick={() => handleDownload('pipeline', startDate, endDate)}>
+                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
                 </ExportButton>
               )}

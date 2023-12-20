@@ -8,7 +8,7 @@ import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.BaseException;
 import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.service.report.GenerateReporterService;
-import heartbeat.util.ReportIdUtil;
+import heartbeat.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,12 +70,12 @@ public class GenerateReportController {
 	@GetMapping("/reports/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(reportId);
+		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId);
 		if (generateReportIsOver) {
-			ReportResponse reportResponse = generateReporterService.getReportFromHandler(reportId);
 			log.info("Successfully generate Report, report id: {}, reports: {}", reportId, reportResponse);
 			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);
 		}
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.status(HttpStatus.OK).body(reportResponse);
 	}
 
 	@PostMapping("/board-reports")
@@ -83,15 +83,23 @@ public class GenerateReportController {
 		log.info(
 				"Start to generate board report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
 				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
-				ReportIdUtil.getBoardReportId(request.getCsvTimeStamp()));
+				IdUtil.getBoardReportId(request.getCsvTimeStamp()));
+		generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(), true);
 		CompletableFuture.runAsync(() -> {
 			try {
-				generateReporterService.generateReporter(request.convertToReportRequest());
+				ReportResponse reportResponse = generateReporterService
+					.generateReporter(request.convertToReportRequest());
+				generateReporterService.saveReporterInHandler(reportResponse,
+						IdUtil.getBoardReportId(request.getCsvTimeStamp()));
+				generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(),
+						false);
+
 			}
 			catch (BaseException e) {
 				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
 			}
 		});
+
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
 			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());

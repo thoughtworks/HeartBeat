@@ -24,6 +24,7 @@ import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
+import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
@@ -32,6 +33,7 @@ import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
+import heartbeat.controller.report.dto.response.MetricsDataReady;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.BadRequestException;
@@ -72,6 +74,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import heartbeat.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -222,16 +225,19 @@ public class GenerateReporterService {
 		}
 
 		ReportResponse reportResponse = new ReportResponse(EXPORT_CSV_VALIDITY_TIME);
+		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
+		String csvTimeStamp = request.getCsvTimeStamp();
+
 		request.getMetrics().forEach(metrics -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(velocityCalculator
 					.calculateVelocity(fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
 				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(
 						fetchedData.getCardCollectionInfo().getRealDoneCardCollection(),
-						request.getJiraBoardSetting().getBoardColumns()));
-				case "classification" -> reportResponse.setClassificationList(
-						classificationCalculator.calculate(request.getJiraBoardSetting().getTargetFields(),
-								fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
+						jiraBoardSetting.getBoardColumns()));
+				case "classification" -> reportResponse
+					.setClassificationList(classificationCalculator.calculate(jiraBoardSetting.getTargetFields(),
+							fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
 				case "deployment frequency" -> reportResponse.setDeploymentFrequency(
 						deploymentFrequency.calculate(fetchedData.getBuildKiteData().getDeployTimesList(),
 								Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
@@ -246,9 +252,9 @@ public class GenerateReporterService {
 				}
 			}
 		});
-		generateCSVForMetric(reportResponse, request.getCsvTimeStamp());
 
-		saveReporterInHandler(reportResponse, request.getCsvTimeStamp());
+		generateCSVForMetric(reportResponse, IdUtil.getDoraReportId(csvTimeStamp));
+
 		return reportResponse;
 	}
 
@@ -573,8 +579,25 @@ public class GenerateReporterService {
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
 	}
 
-	private void saveReporterInHandler(ReportResponse reportResponse, String csvTimeStamp) {
-		asyncReportRequestHandler.put(csvTimeStamp, reportResponse);
+	public void saveReporterInHandler(ReportResponse reportResponse, String reportId) {
+		asyncReportRequestHandler.putReport(reportId, reportResponse);
+	}
+
+	public void saveMetricsDataReadyInHandler(String timeStamp, List<String> metrics, boolean isInitialize) {
+		List<String> lowerCaseMetrics = metrics.stream().map(String::toLowerCase).toList();
+		Boolean flag = isInitialize ? Boolean.FALSE : Boolean.TRUE;
+		boolean boardMetricsExist = lowerCaseMetrics.stream().anyMatch(this.kanbanMetrics::contains);
+		boolean codebaseMetricsExist = lowerCaseMetrics.stream().anyMatch(this.codebaseMetrics::contains);
+		boolean buildKiteMetricsExist = lowerCaseMetrics.stream().anyMatch(this.buildKiteMetrics::contains);
+		Boolean boardMetricsReady = boardMetricsExist ? flag : null;
+		Boolean codebaseMetricsReady = codebaseMetricsExist ? flag : null;
+		Boolean buildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
+		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
+			.boardMetricsReady(boardMetricsReady)
+			.pipelineMetricsReady(codebaseMetricsReady)
+			.sourceControlMetricsReady(buildKiteMetricsReady)
+			.build();
+		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -674,7 +697,7 @@ public class GenerateReporterService {
 				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
 			}
 		}
-		return asyncReportRequestHandler.isReportIsExists(reportTimeStamp);
+		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
 	}
 
 	private void validateExpire(long csvTimeStamp) {
@@ -716,7 +739,29 @@ public class GenerateReporterService {
 	}
 
 	public ReportResponse getReportFromHandler(String reportId) {
-		return asyncReportRequestHandler.get(reportId);
+		return asyncReportRequestHandler.getReport(reportId);
+	}
+
+	public ReportResponse getComposedReportResponse(String reportId) {
+		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
+		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
+		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
+		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
+		boolean allMetricsReady = asyncReportRequestHandler.isReportReady(reportId);
+		return ReportResponse.builder()
+			.velocity(response.getVelocity())
+			.classificationList(response.getClassificationList())
+			.cycleTime(response.getCycleTime())
+			.exportValidityTime(response.getExportValidityTime())
+			.deploymentFrequency(doraReportResponse.getDeploymentFrequency())
+			.changeFailureRate(doraReportResponse.getChangeFailureRate())
+			.meanTimeToRecovery(doraReportResponse.getMeanTimeToRecovery())
+			.leadTimeForChanges(doraReportResponse.getLeadTimeForChanges())
+			.boardMetricsReady(metricsDataReady.getBoardMetricsReady())
+			.pipelineMetricsReady(metricsDataReady.getPipelineMetricsReady())
+			.sourceControlMetricsReady(metricsDataReady.getSourceControlMetricsReady())
+			.allMetricsReady(allMetricsReady)
+			.build();
 	}
 
 }

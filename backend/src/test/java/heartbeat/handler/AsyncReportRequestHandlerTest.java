@@ -19,34 +19,34 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
-		asyncReportRequestHandler.put(currentTime, ReportResponse.builder().build());
-		asyncReportRequestHandler.put(expireTime, ReportResponse.builder().build());
+		asyncReportRequestHandler.putReport(currentTime, ReportResponse.builder().build());
+		asyncReportRequestHandler.putReport(expireTime, ReportResponse.builder().build());
 
 		asyncReportRequestHandler.deleteExpireReport(currentTimeMillis);
 
-		assertNull(asyncReportRequestHandler.get(expireTime));
-		assertNotNull(asyncReportRequestHandler.get(currentTime));
+		assertNull(asyncReportRequestHandler.getReport(expireTime));
+		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
 	}
 
 	@Test
 	void shouldPutAndGetAsyncReport() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		asyncReportRequestHandler.put(currentTime, ReportResponse.builder().build());
+		asyncReportRequestHandler.putReport(currentTime, ReportResponse.builder().build());
 
-		assertNotNull(asyncReportRequestHandler.get(currentTime));
-		assertNull(asyncReportRequestHandler.get(currentTime));
+		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
+		assertNull(asyncReportRequestHandler.getReport(currentTime));
 	}
 
 	@Test
 	void shouldReturnTrueOrFalseWhenExistAsyncReportOrNot() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		asyncReportRequestHandler.put(currentTime, ReportResponse.builder().build());
+		asyncReportRequestHandler.putReport(currentTime, ReportResponse.builder().build());
 
-		assertTrue(asyncReportRequestHandler.isReportIsExists(currentTime));
-		assertNotNull(asyncReportRequestHandler.get(currentTime));
-		assertFalse(asyncReportRequestHandler.isReportIsExists(currentTime));
+		assertTrue(asyncReportRequestHandler.isReportExists(currentTime));
+		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
+		assertFalse(asyncReportRequestHandler.isReportExists(currentTime));
 	}
 
 }

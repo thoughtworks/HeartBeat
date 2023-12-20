@@ -912,7 +912,7 @@ class GenerateReporterServiceTest {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		// when
-		when(asyncReportRequestHandler.isReportIsExists(fileTimeStamp)).thenReturn(true);
+		when(asyncReportRequestHandler.isReportExists(fileTimeStamp)).thenReturn(true);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertTrue(generateReportIsOver);
@@ -922,7 +922,7 @@ class GenerateReporterServiceTest {
 	void shouldReturnFalseWhenReportIsNotReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
-		asyncReportRequestHandler.put("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
+		asyncReportRequestHandler.putReport("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
@@ -945,7 +945,7 @@ class GenerateReporterServiceTest {
 	void shouldReturnReportResponse() {
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(asyncReportRequestHandler.get(reportId))
+		when(asyncReportRequestHandler.getReport(reportId))
 			.thenReturn(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		ReportResponse reportResponse = generateReporterService.getReportFromHandler(reportId);
 		// then

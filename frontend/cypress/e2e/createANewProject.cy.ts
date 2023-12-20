@@ -3,6 +3,7 @@ import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'
 import reportPage from '../pages/metrics/report'
+import { TIPS } from '../../src/constants/resources'
 
 const cycleTimeData = [
   { label: 'Name', value: 'Value' },
@@ -146,18 +147,23 @@ const checkPipelineCalculation = (testId: string) => {
 }
 
 const checkDeploymentFrequency = (testId: string) => {
-  reportPage.deploymentFrequencyTitle().should('exist')
+  reportPage.deploymentFrequencyTitle.should('exist')
   checkPipelineCalculation(testId)
 }
 
 const checkVelocity = (testId: string, velocityData: BoardDataItem[]) => {
-  reportPage.velocityTitle().should('exist')
+  reportPage.velocityTitle.should('exist')
   checkBoardCalculation(testId, velocityData)
 }
 
 const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
-  reportPage.cycleTimeTitle().should('exist')
+  reportPage.cycleTimeTitle.should('exist')
   checkBoardCalculation(testId, cycleTimeData)
+}
+
+const checkCycleTimeTooltip = () => {
+  metricsPage.cycleTimeTitleTooltip.trigger('mouseover')
+  cy.contains(TIPS.CYCLE_TIME).should('be.visible')
 }
 
 const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
@@ -165,7 +171,7 @@ const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
 }
 
 const checkMeanTimeToRecovery = (testId: string) => {
-  reportPage.meanTimeToRecoveryTitle().should('exist')
+  reportPage.meanTimeToRecoveryTitle.should('exist')
   checkTimeToRecoveryPipelineCalculation(testId)
 }
 
@@ -229,8 +235,18 @@ const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) 
 }
 
 describe('Create a new project', () => {
+  beforeEach(() => {
+    cy.waitForNetworkIdlePrepare({
+      method: '*',
+      pattern: '/api/**',
+      alias: 'api',
+    })
+  })
+
   it('Should create a new project manually', () => {
     homePage.navigate()
+
+    homePage.headerVersion.should('exist')
 
     homePage.createANewProject()
     cy.url().should('include', '/metrics')
@@ -238,6 +254,7 @@ describe('Create a new project', () => {
     configPage.typeProjectName('E2E Project')
 
     configPage.goHomePage()
+    cy.url().should('include', '/home')
 
     homePage.createANewProject()
     cy.contains('Project name *').should('have.value', '')
@@ -246,48 +263,58 @@ describe('Create a new project', () => {
 
     configPage.selectDateRange()
 
-    const nextButton = () => cy.get('button:contains("Next")')
-    nextButton().should('be.disabled')
+    configPage.nextStepButton.should('be.disabled')
 
     configPage.selectMetricsData()
 
     configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-
-    cy.contains('Verified').should('exist')
-    cy.contains('Reset').should('exist')
+    configPage.getVerifiedButton(configPage.boardConfigSection).should('be.disabled')
+    configPage.getResetButton(configPage.boardConfigSection).should('be.enabled')
 
     configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
 
     configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
 
-    nextButton().should('be.enabled')
+    configPage.nextStepButton.should('be.enabled')
 
     configPage.CancelBackToHomePage()
 
     configPage.goMetricsStep()
 
-    nextButton().should('be.disabled')
+    configPage.nextStepButton.should('be.disabled')
 
-    cy.contains('Crew settings').should('exist')
+    checkCycleTimeTooltip()
 
-    cy.contains('Cycle time settings').should('exist')
-
-    metricsPage.checkCycleTimeTooltip()
     metricsPage.checkCycleTime()
 
     cy.contains('Real done').should('exist')
 
-    metricsPage.checkRealDone()
+    metricsPage.clickRealDone()
 
-    metricsPage.checkClassification()
+    metricsPage.clickClassification()
 
-    metricsPage.checkDeploymentFrequencySettings()
+    metricsPage.pipelineSettingTitle.should('be.exist')
 
-    nextButton().should('be.enabled')
+    metricsPage.addOneCorrectPipelineConfig(0)
+    metricsPage.selectBranchOption()
+
+    metricsPage.addOnePipelineButton.click()
+    metricsPage.addOneErrorPipelineConfig(1)
+    metricsPage.buildKiteStepNotFoundTips.should('exist')
+    metricsPage.pipelineRemoveButton.click()
+
+    metricsPage.addOnePipelineButton.click()
+    metricsPage.addOneCorrectPipelineConfig(1)
+    cy.contains('This pipeline is the same as another one!').should('exist')
+    metricsPage.pipelineRemoveButton.click()
+
+    configPage.nextStepButton.should('be.enabled')
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
+
+    reportPage.firstNotification.should('exist')
 
     checkVelocity('[data-test-id="Velocity"]', velocityData)
 
@@ -299,105 +326,37 @@ describe('Create a new project', () => {
 
     clearDownloadFile()
 
-    reportPage.firstNotification().should('exist')
-
-    reportPage.exportMetricDataButton().should('be.enabled')
+    reportPage.exportMetricDataButton.should('be.enabled')
 
     reportPage.exportMetricData()
 
     checkMetricCSV()
 
-    reportPage.exportPipelineDataButton().should('be.enabled')
+    reportPage.exportPipelineDataButton.should('be.enabled')
 
     reportPage.exportPipelineData()
 
     checkPipelineCSV()
 
-    reportPage.exportBoardDataButton().should('be.enabled')
+    reportPage.exportBoardDataButton.should('be.enabled')
 
     reportPage.exportBoardData()
 
     checkBoardCSV()
-  })
 
-  function goToMetricsPageFromHome() {
-    homePage.navigate()
+    reportPage.firstNotification.should('not.exist')
 
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.goHomePage()
-
-    homePage.createANewProject()
-
-    configPage.typeProjectName('E2E Project')
-
-    configPage.selectDateRange()
-
-    configPage.selectMetricsData()
-
-    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-
-    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
-
-    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
-
-    configPage.goMetricsStep()
-  }
-
-  it('Should have data in metrics page when back from report page', () => {
-    goToMetricsPageFromHome()
-
-    metricsPage.checkCycleTime()
-
-    metricsPage.checkRealDone()
-
-    metricsPage.checkClassification()
-
-    metricsPage.checkDeploymentFrequencySettings()
-
-    checkFieldsExist(metricsTextList)
-
-    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
-
-    metricsPage.goReportStep()
-
-    reportPage.waitingForProgressBar()
-
+    // checkpoint back to metrics step
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
     checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
-  })
 
-  it('Should have data in config page when back from metrics page', () => {
-    goToMetricsPageFromHome()
-
+    // checkpoint back to config step
     metricsPage.BackToConfigStep()
 
     checkFieldsExist(configTextList)
-
     checkTextInputValuesExist(textInputValues)
-
     checkTokenInputValuesExist(tokenInputValues)
-  })
-
-  it('Should have notification button in report page', () => {
-    goToMetricsPageFromHome()
-
-    metricsPage.checkCycleTime()
-
-    metricsPage.checkRealDone()
-
-    metricsPage.checkClassification()
-
-    metricsPage.checkDeploymentFrequencySettings()
-
-    metricsPage.goReportStep()
-
-    reportPage.waitingForProgressBar()
-
-    reportPage.checkNotification()
   })
 })

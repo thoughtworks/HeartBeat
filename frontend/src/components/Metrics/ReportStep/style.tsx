@@ -29,7 +29,7 @@ export const ButtonGroupStyle = styled('div')({
   display: 'flex',
   textAlign: 'center',
   margin: '0 auto',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-between',
   width: '100%',
 })
 

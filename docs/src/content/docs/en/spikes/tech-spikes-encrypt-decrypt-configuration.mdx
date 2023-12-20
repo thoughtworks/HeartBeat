@@ -21,11 +21,11 @@ The solution is like below:
 
 #### Encrypt process
 
-![encrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/encrypt-process.png)
+![encrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/encrypt-decrypt-image/encrypt-process.png)
 
 #### Decrypt process
 
-![decrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/decrypt-process.png)
+![decrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/encrypt-decrypt-image/decrypt-process.png)
 
 To prevent unauthorized users from attempting password cracking by continuously invoking the API, and due to the current absence of stored user information in our backend to identify whether it is the same user or to track error counts, it is necessary to implement rate limiting at the gateway.
 
@@ -44,7 +44,7 @@ Notes:
 
 ### 2. C3
 
-![encrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/filter-committers-image/encrypt-decrypt-system-c3.png)
+![encrypt.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/encrypt-decrypt-image/encrypt-decrypt-system-c3.png)
 The front-end will call the corresponding interface in the CryptoController during the encryption process, and the interface will call the corresponding method in the EncryptDecryptService. In the method, follow the process to call the methods in the EncryptDecryptUtil tool class.
 
 - Encryption process

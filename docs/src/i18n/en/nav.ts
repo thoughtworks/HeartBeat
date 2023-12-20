@@ -99,6 +99,16 @@ export default [
 		slug: 'spikes/tech-spikes-impact-of-status-and-column-name-change',
 		key: 'spikes/tech-spikes-impact-of-status-and-column-name-change',
 	},
+	{
+		text: 'Split verify of github',
+		slug: 'spikes/tech-spikes-split-verify-of-github',
+		key: 'spikes/tech-spikes-split-verify-of-github',
+	},
+	{
+		text: 'Split verify of BuildKite',
+		slug: 'spikes/tech-spikes-split-verify-of-buildkite',
+		key: 'spikes/tech-spikes-split-verify-of-buildkite',
+	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },

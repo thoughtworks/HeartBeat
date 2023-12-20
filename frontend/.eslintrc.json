@@ -33,7 +33,10 @@
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
+    },
+    "react": {
+      "version": "detect"
     }
   },
-  "ignorePatterns": ["dist/*", "coverage/*", "dev-dist/*"]
+  "ignorePatterns": ["dist/*", "coverage/*", "dev-dist/*", "cypress/reports/**"]
 }

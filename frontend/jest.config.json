@@ -25,5 +25,6 @@
       "lines": 100,
       "statements": 100
     }
-  }
+  },
+  "testTimeout": 10000
 }

@@ -2,18 +2,11 @@ import { ROUTE } from '@src/constants/router'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useNavigate } from 'react-router-dom'
 import { ErrorNotification } from '@src/components/ErrorNotification'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
-import { MESSAGE, REQUIRED_DATA, TIPS } from '@src/constants/resources'
+import { CALENDAR, MESSAGE, REQUIRED_DATA, TIPS } from '@src/constants/resources'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
-import {
-  StyledErrorNotification,
-  StyledMetricsSection,
-  StyledMetricsSign,
-  StyledMetricsTitle,
-  StyledMetricsTitleSection,
-  StyledSpacing,
-} from '@src/components/Metrics/ReportStep/style'
+import { StyledErrorNotification, StyledMetricsSection, StyledSpacing } from '@src/components/Metrics/ReportStep/style'
 import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportStep/ReportDetail/style'
 import { Tooltip } from '@mui/material'
 import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/style'
@@ -22,14 +15,17 @@ import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons'
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
+import { BoardReportRequestDTO, CSVReportRequestDTO } from '@src/clients/report/dto/request'
 import { useAppSelector } from '@src/hooks'
-import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
+import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle/ReportTitle'
+import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
+import dayjs from 'dayjs'
 
-const board = [
+const board1 = [
   {
     title: 'Velocity',
     items: [
@@ -114,17 +110,11 @@ export interface ReportStepProps {
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const { isServerError, errorMessage: reportErrorMsg, startPollingBoardReport } = useGenerateReportEffect()
   const [exportValidityTimeMin] = useState<number | undefined>(undefined)
   const configData = useAppSelector(selectConfig)
-  const requiredData = useAppSelector(selectMetrics)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
-
-  const { dateRange } = configData.basic
-  const { fetchExportData, errorMessage: csvErrorMsg, isExpired } = useExportCsvEffect()
-  const { updateProps } = notification
-  const { startDate, endDate } = dateRange
-
+  const requiredData = useAppSelector(selectMetrics)
   const isShowExportBoardButton =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
@@ -134,6 +124,23 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
     requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
     requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
+
+  const { metrics, calendarType, dateRange } = configData.basic
+  const { fetchExportData, errorMessage: csvErrorMsg, isExpired } = useExportCsvEffect()
+  const { updateProps } = notification
+  const { startDate, endDate } = dateRange
+
+  const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
+    useAppSelector(selectMetricsContent)
+  const jiraColumns = useAppSelector(selectJiraColumns)
+
+  const { board } = configData
+  const { token, type, site, projectKey, boardId, email } = board.config
+
+  const jiraToken = getJiraBoardToken(token, email)
+  const jiraColumnsWithValue = jiraColumns?.map(
+    (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
+  )
 
   const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))
@@ -188,6 +195,31 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     }
   }, [exportValidityTimeMin])
 
+  const getBoardReportRequestBody = (): BoardReportRequestDTO => ({
+    metrics: metrics,
+    startTime: dayjs(startDate).valueOf().toString(),
+    endTime: dayjs(endDate).valueOf().toString(),
+    considerHoliday: calendarType === CALENDAR.CHINA,
+    jiraBoardSetting: {
+      token: jiraToken,
+      type: type.toLowerCase().replace(' ', '-'),
+      site,
+      projectKey,
+      boardId,
+      boardColumns: filterAndMapCycleTimeSettings(cycleTimeSettings, jiraColumnsWithValue),
+      treatFlagCardAsBlock,
+      users,
+      assigneeFilter,
+      targetFields,
+      doneColumn,
+    },
+    csvTimeStamp: csvTimeStamp,
+  })
+
+  useEffect(() => {
+    startPollingBoardReport(getBoardReportRequestBody())
+  }, [])
+
   return (
     <>
       {isServerError ? (
@@ -208,7 +240,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           <div>
             <StyledMetricsSection>
               <ReportTitle title='Board Metrics' />
-              <ReportGrid reportDetails={board} />
+              <ReportGrid reportDetails={board1} />
             </StyledMetricsSection>
 
             <StyledMetricsSection>

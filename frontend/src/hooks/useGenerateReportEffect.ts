@@ -10,6 +10,7 @@ import { DURATION } from '@src/constants/commons'
 
 export interface useGenerateReportEffectInterface {
   startPollingReports: (params: ReportRequestDTO) => void
+  startPollingBoardReport: (params: BoardReportRequestDTO) => void
   stopPollingReports: () => void
   isLoading: boolean
   isBoardLoading: boolean
@@ -126,6 +127,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
 
   return {
     startPollingReports,
+    startPollingBoardReport,
     stopPollingReports,
     reports,
     isLoading,

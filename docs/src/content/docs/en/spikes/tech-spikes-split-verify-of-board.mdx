@@ -1,9 +1,9 @@
 ---
-title: Split verify of board on config page
+title: Split verify of board
 description: Split verify of board on config page
 ---
 
-# Spike -- Split verify of board on config page
+#
 
 ## Background
 
@@ -78,9 +78,7 @@ parameters: {
   "token": "..."
 }
 responses:
-  '200': {
-    status: "verity Success"
-}
+  Status Code: 200
 401 Unauthorized: "Token is incorrect"
 ```
 
@@ -119,7 +117,7 @@ alt Verification success
     deactivate JiraFeignClient
     JiraService --> JiraController: true
     deactivate JiraService
-    JiraController --> FrontEnd: response:{ status: "verity Success"}
+    JiraController --> FrontEnd: response: 200
     deactivate JiraController
 else Verification failed
     JiraFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
@@ -140,7 +138,9 @@ Returns datas from a board, for a given board Id. Board configuration will use t
 #### 2.1 Request
 
 ##### URL
-POST api/v1/boards
+```json
+POST api/v1/boards/{boardType}
+```
 
 ##### Request body
 

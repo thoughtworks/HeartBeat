@@ -29,5 +29,4 @@ export const StyledReportCardProgress = styled.div({
   justifyContent: 'center',
   alignItems: 'center',
   height: '100%',
-  background: 'red',
 })

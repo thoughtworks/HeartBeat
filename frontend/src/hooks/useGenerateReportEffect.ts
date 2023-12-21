@@ -4,7 +4,7 @@ import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { HttpStatusCode } from 'axios'
-import { boardReportMapper, pipelineReportMapper, sourceControlReportMapper } from '@src/hooks/reportMapper/report'
+import { pipelineReportMapper, sourceControlReportMapper } from '@src/hooks/reportMapper/report'
 import { ReportResponse, ReportResponseDTO } from '@src/clients/report/dto/response'
 import { DURATION } from '@src/constants/commons'
 
@@ -12,6 +12,7 @@ export interface useGenerateReportEffectInterface {
   startPollingReports: (params: ReportRequestDTO) => void
   startPollingBoardReport: (params: BoardReportRequestDTO) => void
   stopPollingReports: () => void
+  stopPollingBoardReports: () => void
   isLoading: boolean
   isBoardLoading: boolean
   isServerError: boolean
@@ -74,7 +75,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
             setErrorMessage('')
           }, DURATION.ERROR_MESSAGE_TIME)
         }
-        stopPollingReports()
+        stopPollingBoardReports()
       })
   }
 
@@ -83,9 +84,8 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       .pollingReport(url)
       .then((res) => {
         if (res.status === HttpStatusCode.Created) {
-          setIsBoardLoading(false)
-          clearInterval(boardTimerRef.current)
-          setBoardReport(boardReportMapper(res.response))
+          stopPollingBoardReports()
+          setBoardReport(res.response)
         } else {
           boardTimerRef.current = setTimeout(() => pollingReport(url, interval), interval * 1000)
         }
@@ -100,8 +100,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
             setErrorMessage('')
           }, DURATION.ERROR_MESSAGE_TIME)
         }
-        setIsBoardLoading(false)
-        clearInterval(boardTimerRef.current)
+        stopPollingBoardReports()
       })
   }
 
@@ -143,10 +142,16 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
     window.clearTimeout(timerIdRef.current)
   }
 
+  const stopPollingBoardReports = () => {
+    setIsBoardLoading(false)
+    clearInterval(boardTimerRef.current)
+  }
+
   return {
     startPollingReports,
     startPollingBoardReport,
     stopPollingReports,
+    stopPollingBoardReports,
     sourceControlReport,
     pipelineReport,
     isLoading,

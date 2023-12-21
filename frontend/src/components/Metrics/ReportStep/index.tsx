@@ -30,35 +30,6 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
 
-const board1 = [
-  {
-    title: 'Velocity',
-    items: [
-      {
-        value: '0.12',
-        subtitle: 'Average Cycle Time(Days/SP)',
-      },
-      {
-        value: '1.73',
-        subtitle: 'Total Lead Time',
-      },
-      {
-        value: '0.93',
-        subtitle: 'Pipeline Lead Time',
-      },
-    ],
-  },
-  {
-    title: 'Cycle Time',
-    items: [
-      {
-        value: '0.12',
-        subtitle: 'Average Cycle Time(Days/SP)',
-      },
-    ],
-  },
-]
-
 const dora1 = [
   {
     title: 'Lead Time For Change',
@@ -115,7 +86,31 @@ export interface ReportStepProps {
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { startPollingBoardReport, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const {
+    isServerError,
+    errorMessage: reportErrorMsg,
+    startPollingBoardReport,
+    boardReport = {
+      velocity: {
+        velocityForSP: 1,
+        velocityForCards: 1,
+      },
+      cycleTime: {
+        totalTimeForCards: 1,
+        averageCycleTimePerCard: 1,
+        averageCycleTimePerSP: 1,
+        swimlaneList: [
+          {
+            optionalItemName: '1',
+            averageTimeForSP: 1,
+            averageTimeForCards: 1,
+            totalTime: 1,
+          },
+        ],
+      },
+    },
+    stopPollingBoardReports,
+  } = useGenerateReportEffect()
   const { fetchExportData, errorMessage: csvErrorMsg, isExpired } = useExportCsvEffect()
   const [exportValidityTimeMin] = useState<number | undefined>(undefined)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
@@ -239,6 +234,44 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     setErrorMessage([reportErrorMsg, csvErrorMsg])
   }, [reportErrorMsg, csvErrorMsg])
 
+  useEffect(() => {
+    return () => {
+      stopPollingBoardReports()
+    }
+  })
+
+  const getBoardItems = () => {
+    const { velocity = {}, cycleTime = {} } = boardReport
+    return [
+      {
+        title: 'Velocity',
+        items: [
+          {
+            value: velocity?.velocityForSP,
+            subtitle: 'Average Cycle Time(Days/SP)',
+          },
+          {
+            value: velocity?.velocityForCards,
+            subtitle: 'Throughput(Cards Count)',
+          },
+        ],
+      },
+      {
+        title: 'Cycle Time',
+        items: [
+          {
+            value: cycleTime?.averageCycleTimePerSP,
+            subtitle: 'Average Cycle Time(Days/SP)',
+          },
+          {
+            value: cycleTime?.averageCycleTimePerCard,
+            subtitle: 'Average Cycle Time(Days/Card)',
+          },
+        ],
+      },
+    ]
+  }
+
   return (
     <>
       {isServerError ? (
@@ -248,10 +281,12 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
           {handleErrorNotification()}
           <>
-            <StyledMetricsSection>
-              <ReportTitle title='Board Metrics' />
-              <ReportGrid reportDetails={board1} />
-            </StyledMetricsSection>
+            {boardReport && (
+              <StyledMetricsSection>
+                <ReportTitle title='Board Metrics' />
+                <ReportGrid reportDetails={getBoardItems()} />
+              </StyledMetricsSection>
+            )}
 
             <StyledMetricsSection>
               <ReportTitle title='DORA Metrics' />

@@ -9,6 +9,7 @@ import {
   EXPORT_PIPELINE_DATA,
   MOCK_JIRA_VERIFY_RESPONSE,
   REQUIRED_DATA_LIST,
+  SAVE,
 } from '../../../fixtures'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
@@ -79,6 +80,7 @@ describe('Report Step', () => {
     reportHook.current.errorMessage = ''
     reportHook.current.reports = EXPECTED_REPORT_VALUES
   }
+  const handleSaveMock = jest.fn()
   const setup = (params: [string]) => {
     store = setupStore()
     store.dispatch(
@@ -112,7 +114,7 @@ describe('Report Step', () => {
     )
     return render(
       <Provider store={store}>
-        <ReportStep {...notificationHook.current} />
+        <ReportStep {...notificationHook.current} handleSave={handleSaveMock} />
       </Provider>
     )
   }
@@ -151,6 +153,15 @@ describe('Report Step', () => {
     await userEvent.click(back)
 
     expect(backStep).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call handleSaveMock method when click save button', async () => {
+    const { getByText } = setup([''])
+
+    const save = getByText(SAVE)
+    await userEvent.click(save)
+
+    expect(handleSaveMock).toHaveBeenCalledTimes(1)
   })
 
   it('should not show export pipeline button when not select deployment frequency', () => {

@@ -3,6 +3,7 @@ import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'
 import reportPage from '../pages/metrics/report'
 import { GITHUB_TOKEN } from '../fixtures/fixtures'
+import { Metrics } from '../pages/metrics/metrics'
 
 const metricsTextList = [
   'Board configuration',
@@ -88,7 +89,7 @@ const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
 }
 
 const checkMeanTimeToRecovery = (testId: string) => {
-  reportPage.meanTimeToRecoveryTitle().should('exist')
+  reportPage.meanTimeToRecoveryTitle.should('exist')
   checkTimeToRecoveryPipelineCalculation(testId)
 }
 
@@ -105,19 +106,39 @@ const checkInputValue = (selector, expectedValue) => {
 }
 
 const checkRequiredFields = () => {
-  metricsPage.cycleTimeSettingDoneColumnToNone()
-  metricsPage.nextButton().should('be.disabled')
-  metricsPage.cycleTimeSettingDone()
-  metricsPage.checkRealDone()
-  metricsPage.nextButton().should('be.enabled')
+  metricsPage.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.noneValue)
+  metricsPage.nextButton.should('be.disabled')
+  metricsPage.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.doneLabel, Metrics.CYCLE_TIME_VALUE.doneValue)
+  metricsPage.clickRealDone()
+  metricsPage.nextButton.should('be.enabled')
 
-  metricsPage.classificationClear().click({ force: true })
-  metricsPage.nextButton().should('be.disabled')
-  metricsPage.checkClassification()
-  metricsPage.nextButton().should('be.enabled')
+  metricsPage.classificationClear.click({ force: true })
+  metricsPage.nextButton.should('be.disabled')
+  metricsPage.clickClassification()
+  metricsPage.nextButton.should('be.enabled')
+}
+
+const checkProjectConfig = () => {
+  cy.wait(2000)
+  cy.fixture('config.json').then((localFileContent) => {
+    cy.readFile('cypress/downloads/config.json').then((fileContent) => {
+      expect(fileContent.sourceControl.token).to.eq(GITHUB_TOKEN)
+      for (const key in localFileContent) {
+        expect(fileContent[key]).to.deep.eq(localFileContent[key])
+      }
+    })
+  })
 }
 
 describe('Import project from file', () => {
+  beforeEach(() => {
+    cy.waitForNetworkIdlePrepare({
+      method: '*',
+      pattern: '/api/**',
+      alias: 'api',
+    })
+  })
+
   it('Should import a new config project manually', () => {
     homePage.navigate()
 
@@ -126,9 +147,8 @@ describe('Import project from file', () => {
     checkPipelineToolExist()
     checkInputValue('.MuiInput-input', 'ConfigFileForImporting')
 
+    cy.waitForNetworkIdle('@api', 2000)
     configPage.verifyAndClickNextToMetrics()
-
-    configPage.waitingForProgressBar()
 
     configPage.goMetricsStep()
 
@@ -140,14 +160,17 @@ describe('Import project from file', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+
+    reportPage.exportProjectConfig()
+
+    checkProjectConfig()
 
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
-    metricsPage.checkCycleTimeTooltip()
     checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
     metricsPage.BackToConfigStep()
@@ -167,19 +190,17 @@ describe('Import project from file', () => {
     checkPipelineToolExist()
     checkInputValue('.MuiInput-input', 'ConfigFileForImporting')
 
+    cy.waitForNetworkIdle('@api', 2000)
     configPage.verifyAndClickNextToMetrics()
-
-    configPage.waitingForProgressBar()
 
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
-    metricsPage.checkCycleTimeTooltip()
     checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
 
     metricsPage.goReportStep()
 
-    reportPage.waitingForProgressBar()
+    reportPage.pageIndicator.should('exist')
 
     checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
 

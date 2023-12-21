@@ -55,8 +55,23 @@ export const Z_INDEX = {
   FIXED: 1070,
 }
 
+export enum DOWNLOAD_TYPES {
+  METRICS = 'metric',
+  BOARD = 'board',
+  PIPELINE = 'pipeline',
+}
+
 export const METRICS_STEPS = {
   CONFIG: 0,
   METRICS: 1,
   REPORT: 2,
+}
+
+export const COMMON_BUTTONS = {
+  SAVE: 'Save',
+  BACK: 'Previous',
+  NEXT: 'Next',
+  EXPORT_PIPELINE_DATA: 'Export pipeline data',
+  EXPORT_BOARD_DATA: 'Export board data',
+  EXPORT_METRIC_DATA: 'Export metric data',
 }

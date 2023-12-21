@@ -30,7 +30,7 @@ const BasicInfo = () => {
   return (
     <>
       {warningMessage && <WarningNotification message={warningMessage} />}
-      <ConfigSectionContainer>
+      <ConfigSectionContainer aria-label='Basic information'>
         <ConfigSelectionTitle>Basic information</ConfigSelectionTitle>
         <ProjectNameInput
           required

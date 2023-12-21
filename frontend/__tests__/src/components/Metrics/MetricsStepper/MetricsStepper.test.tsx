@@ -90,6 +90,16 @@ jest.mock('@src/utils/util', () => ({
   filterAndMapCycleTimeSettings: jest.fn(),
 }))
 
+jest.mock('@src/hooks/useGenerateReportEffect', () => ({
+  useGenerateReportEffect: jest.fn().mockReturnValue({
+    startPollingReports: jest.fn(),
+    stopPollingReports: jest.fn(),
+    isLoading: false,
+    isServerError: false,
+    errorMessage: '',
+  }),
+}))
+
 const server = setupServer(rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
 
 const mockLocation = { reload: jest.fn() }
@@ -336,6 +346,38 @@ describe('MetricsStepper', () => {
     const { getByText } = setup()
 
     await fillConfigPageData()
+    await userEvent.click(getByText(NEXT))
+    await userEvent.click(getByText(SAVE))
+
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
+  }, 50000)
+
+  it('should export json file when click save button in report page given all content is empty', async () => {
+    const expectedFileName = 'config'
+    const expectedJson = {
+      assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
+      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
+      calendarType: 'Regular Calendar(Weekend Considered)',
+      dateRange: {
+        endDate: dayjs().endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      },
+      metrics: ['Velocity'],
+      pipelineTool: undefined,
+      projectName: 'test project Name',
+      sourceControl: undefined,
+      classification: undefined,
+      crews: undefined,
+      cycleTime: undefined,
+      deployment: undefined,
+      doneStatus: undefined,
+      leadTime: undefined,
+    }
+
+    const { getByText } = setup()
+    await fillConfigPageData()
+    await userEvent.click(getByText(NEXT))
+    await fillMetricsPageDate()
     await userEvent.click(getByText(NEXT))
     await userEvent.click(getByText(SAVE))
 

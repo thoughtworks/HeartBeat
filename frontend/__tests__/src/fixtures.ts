@@ -90,7 +90,12 @@ export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
 export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`
 export const MOCK_REPORT_URL = `${BASE_URL}/reports`
+export const MOCK_VERSION_URL = `${BASE_URL}/version`
 export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:fileName`
+
+export const VERSION_RESPONSE = {
+  version: '1.11',
+}
 
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
@@ -689,3 +694,6 @@ export const AUTOCOMPLETE_SELECT_ACTION = 'selectOption'
 
 export const TIME_DISPLAY_TITTLE_START = 'START'
 export const TIME_DISPLAY_TITTLE_END = 'END'
+export const CYCLE_TIME_SETTINGS_SECTION = 'Cycle time settings section'
+export const REAL_DONE_SETTING_SECTION = 'Real done setting section'
+export const SELECT_CONSIDER_AS_DONE_MESSAGE = 'Must select which you want to consider as Done'

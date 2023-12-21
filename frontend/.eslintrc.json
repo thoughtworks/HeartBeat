@@ -25,7 +25,6 @@
     "semi": 0,
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export": "off",
-    "react-hooks/exhaustive-deps": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }]
   },
   "settings": {
@@ -33,7 +32,10 @@
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
+    },
+    "react": {
+      "version": "detect"
     }
   },
-  "ignorePatterns": ["dist/*", "coverage/*", "dev-dist/*"]
+  "ignorePatterns": ["dist/*", "coverage/*", "dev-dist/*", "cypress/reports/**"]
 }

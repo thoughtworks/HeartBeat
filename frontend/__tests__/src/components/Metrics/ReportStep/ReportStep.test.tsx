@@ -78,7 +78,8 @@ describe('Report Step', () => {
     reportHook.current.isLoading = false
     reportHook.current.isServerError = false
     reportHook.current.errorMessage = ''
-    reportHook.current.reports = EXPECTED_REPORT_VALUES
+    reportHook.current.sourceControlReport = EXPECTED_REPORT_VALUES
+    reportHook.current.pipelineReport = EXPECTED_REPORT_VALUES
   }
   const handleSaveMock = jest.fn()
   const setup = (params: [string]) => {
@@ -114,7 +115,7 @@ describe('Report Step', () => {
     )
     return render(
       <Provider store={store}>
-        <ReportStep {...notificationHook.current} handleSave={handleSaveMock} />
+        <ReportStep notification={notificationHook.current} handleSave={handleSaveMock} />
       </Provider>
     )
   }

@@ -4,7 +4,7 @@ import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { HttpStatusCode } from 'axios'
-import { boardReportMapper, reportMapper } from '@src/hooks/reportMapper/report'
+import { boardReportMapper, pipelineReportMapper, sourceControlReportMapper } from '@src/hooks/reportMapper/report'
 import { ReportResponse, ReportResponseDTO } from '@src/clients/report/dto/response'
 import { DURATION } from '@src/constants/commons'
 
@@ -112,11 +112,11 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
         const { sourceControlMetricsReady, pipelineMetricsReady } = res.response
         if (sourceControlMetricsReady) {
           setIsSourceControlLoading(false)
-          setSourceControlReport(reportMapper(res.response))
+          setSourceControlReport(sourceControlReportMapper(res.response))
         }
         if (pipelineMetricsReady) {
           setIsPipelineLoading(false)
-          setPipelineReport(reportMapper(res.response))
+          setPipelineReport(pipelineReportMapper(res.response))
         }
         if (res.status === HttpStatusCode.Created) {
           stopPollingReports()

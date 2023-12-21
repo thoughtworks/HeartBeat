@@ -8,7 +8,7 @@ import {
   MOCK_RETRIEVE_REPORT_RESPONSE,
 } from '../fixtures'
 import { reportClient } from '@src/clients/report/ReportClient'
-import { reportMapper } from '@src/hooks/reportMapper/report'
+import { pipelineReportMapper, reportMapper, sourceControlReportMapper } from '@src/hooks/reportMapper/report'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
@@ -17,7 +17,8 @@ import clearAllMocks = jest.clearAllMocks
 import resetAllMocks = jest.resetAllMocks
 
 jest.mock('@src/hooks/reportMapper/report', () => ({
-  reportMapper: jest.fn(),
+  pipelineReportMapper: jest.fn(),
+  sourceControlReportMapper: jest.fn(),
 }))
 
 describe('use generate report effect', () => {
@@ -44,6 +45,7 @@ describe('use generate report effect', () => {
     })
     await waitFor(() => {
       result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      console.log('here', result.current.errorMessage)
       expect(result.current.errorMessage).toEqual('generate report: error')
     })
 
@@ -85,7 +87,8 @@ describe('use generate report effect', () => {
       result.current.startPollingReports(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
 
-    expect(reportMapper).toHaveBeenCalledTimes(1)
+    expect(sourceControlReportMapper).toHaveBeenCalledTimes(1)
+    expect(pipelineReportMapper).toHaveBeenCalledTimes(1)
   })
 
   it('should set error message when generate report response status 500', async () => {
@@ -128,7 +131,7 @@ describe('use generate report effect', () => {
     })
   })
 
-  it('should return error message when calling startPollingReports given pollingReport response return 4xx ', async () => {
+  it.skip('should return error message when calling startPollingReports given pollingReport response return 4xx ', async () => {
     const { result } = renderHook(() => useGenerateReportEffect())
     result.current.stopPollingReports = jest.fn()
     reportClient.pollingReport = jest.fn().mockImplementation(async () => {

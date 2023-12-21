@@ -464,6 +464,10 @@ export const MOCK_REPORT_RESPONSE = {
     },
   ],
   exportValidityTime: 1800000,
+  boardMetricsReady: true,
+  pipelineMetricsReady: true,
+  sourceControlMetricsReady: true,
+  allMetricsReady: true,
 }
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {

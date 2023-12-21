@@ -71,7 +71,7 @@ public class GenerateReportController {
 	@GetMapping("/reports/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(reportId);
-		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId);
+		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId,generateReportIsOver);
 		if (generateReportIsOver) {
 			log.info("Successfully generate Report, report id: {}, reports: {}", reportId, reportResponse);
 			// todo: calculate the time to generate csv file
@@ -111,7 +111,7 @@ public class GenerateReportController {
 	@PostMapping("/dora-reports")
 	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request){
 		log.info(
-			"Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
+			"Start to generate Dora Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
 			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
 			IdUtil.getDoraReportId(request.getCsvTimeStamp()));
 		generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(), true);
@@ -124,6 +124,7 @@ public class GenerateReportController {
 				generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(),
 					false);
 			}
+			//todo replace by Idutil
 			catch (BaseException e) {
 				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
 			}

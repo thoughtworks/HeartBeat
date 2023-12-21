@@ -45,7 +45,7 @@ class AsyncReportRequestHandlerTest {
 		asyncReportRequestHandler.putReport(currentTime, ReportResponse.builder().build());
 
 		assertTrue(asyncReportRequestHandler.isReportReady(currentTime));
-		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
+		assertNotNull(asyncReportRequestHandler.getAndRemoveReport(currentTime));
 		assertFalse(asyncReportRequestHandler.isReportReady(currentTime));
 	}
 

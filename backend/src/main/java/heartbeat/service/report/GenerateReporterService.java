@@ -740,12 +740,11 @@ public class GenerateReporterService {
 		return asyncReportRequestHandler.getAndRemoveReport(reportId);
 	}
 
-	public ReportResponse getComposedReportResponse(String reportId) {
+	public ReportResponse getComposedReportResponse(String reportId,boolean isReportReady) {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
-		boolean allMetricsReady = asyncReportRequestHandler.isReportReady(reportId);
 		return ReportResponse.builder()
 			.velocity(getNullableValue(boardReportResponse::getVelocity))
 			.classificationList(getNullableValue(boardReportResponse::getClassificationList))
@@ -758,7 +757,7 @@ public class GenerateReporterService {
 			.boardMetricsReady(getNullableValue(metricsDataReady::getBoardMetricsReady))
 			.pipelineMetricsReady(getNullableValue(metricsDataReady::getPipelineMetricsReady))
 			.sourceControlMetricsReady(getNullableValue(metricsDataReady::getSourceControlMetricsReady))
-			.allMetricsReady(allMetricsReady)
+			.allMetricsReady(Boolean.valueOf(isReportReady))
 			.build();
 	}
 

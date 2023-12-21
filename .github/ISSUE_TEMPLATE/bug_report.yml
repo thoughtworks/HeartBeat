@@ -33,9 +33,8 @@ body:
     label: Version
     description: |
       What version of our software are you running? There is two methods to get the current version:
-        1. you can see the version info at the top of the heartbeat pages
-        2. Add "api/v1/version" after the host address you visit the heartbeat
-      If you still could not get the version, you can input "1.1.0" as well
+        1. you can see the version info at the left top of the heartbeat pages
+        2. If you could not get the version, you can input "1.0.0" as well
   validations:
     required: true
 

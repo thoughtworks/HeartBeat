@@ -103,7 +103,7 @@ responses:
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="2">500</td>
+    <td rowspan="2">400</td>
     <td>Token cannot be empty.</td>
     <td rowspan="2"></td>
   </tr>
@@ -115,6 +115,10 @@ responses:
     <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
     <td>Token is incorrect</td>
   </tr>
+    <td>500</td>
+      <td></td>
+      <td>Internal Server Error</td>
+    </tr>
 </table>
 
 - Sequence Diagram
@@ -193,7 +197,7 @@ responses:{
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="4">500</td>
+    <td rowspan="4">400</td>
     <td>Token cannot be empty.</td>
     <td rowspan="4"></td>
   </tr>
@@ -211,6 +215,10 @@ responses:{
     <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
     <td>Token is incorrect</td>
   </tr>
+    <td>500</td>
+      <td></td>
+      <td>Internal Server Error</td>
+    </tr>
 </table>
 
 - Sequence Diagram

@@ -765,7 +765,8 @@ public class GenerateReporterService {
 	private <T> T getNullableValue(Supplier<T> supplier) {
 		try {
 			return Optional.ofNullable(supplier.get()).orElse(null);
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e) {
 			return null;
 		}
 	}

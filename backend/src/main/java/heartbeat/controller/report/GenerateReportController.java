@@ -60,11 +60,11 @@ public class GenerateReportController {
 	}
 
 	@PostMapping("/dora-reports")
-	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request){
+	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request) {
 		log.info(
-			"Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
-			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
-			request.getCsvTimeStamp());
+				"Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
+				request.getCsvTimeStamp());
 		CompletableFuture.runAsync(() -> {
 			try {
 				generateReporterService.generateReporter(request.convertToReportRequest());

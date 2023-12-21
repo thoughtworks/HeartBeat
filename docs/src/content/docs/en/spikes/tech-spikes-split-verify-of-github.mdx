@@ -38,9 +38,32 @@ method: get
 header: "Authorization: Bearer YOUR-TOKEN"
 ```
 - Exception Handler
-  - 400: Token cannot be empty.
-  - 400: Token's pattern is incorrect.
-  - 401: Failed to get GitHub info_status: 401, reason: Bad credentials: Token is incorrect
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="4">400</td>
+    <td>Token cannot be empty.</td>
+    <td rowspan="4"></td>
+  </tr>
+  <tr>
+    <td>Token's pattern is incorrect.</td>
+  </tr>
+  <tr>
+    <td>Source type cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>Source type is incorrect.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get GitHub info_status: 401, reason: Bad credentials</td>
+    <td>Token is incorrect</td>
+  </tr>
+</table>
 
 - C3
 ```plantuml
@@ -107,11 +130,43 @@ method: get
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
 - Exception Handler
-  - 400: Token cannot be empty.
-  - 400: Token's pattern is incorrect.
-  - 400: repository cannot be empty.
-  - 400: repository's pattern is incorrect.
-  - 403: Unable to read target repo: Unable to read target repo, please recheck the token!
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="6">400</td>
+    <td>Token cannot be empty.</td>
+    <td rowspan="6"></td>
+  </tr>
+  <tr>
+    <td>Token's pattern is incorrect.</td>
+  </tr>
+  <tr>
+    <td>Repository cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>Repository's pattern is incorrect.</td>
+  </tr>
+  <tr>
+    <td>Source type cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>Source type is incorrect.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get GitHub info_status: 401, reason: Bad credentials</td>
+    <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Unable to read target repo</td>
+    <td>Unable to read target repo, please recheck the token!</td>
+  </tr>
+</table>
 
 - C3
 ```plantuml

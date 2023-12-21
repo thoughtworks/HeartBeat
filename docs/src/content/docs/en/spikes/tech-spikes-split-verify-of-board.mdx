@@ -69,9 +69,8 @@ responses:
 - after
 ```json
 paths: api/v1/boards/{boardType}/verify
-method: GET
+method: POST
 parameters: {
-  "type": "...",
   "boardId": "...",
   "projectKey": "...",
   "site": "...",
@@ -80,14 +79,16 @@ parameters: {
 responses:
   Status Code: 200
 401 Unauthorized: "Token is incorrect"
+403 Returned: "User does not a have valid license"
+404 Returned: "The board does not exist or the user does not have permission to view it"
 ```
 
 - Jira API
 
-[Jira docs](https://docs.atlassian.com/jira-software/REST/7.0.4/#agile/1.0/board-getConfiguration)
+[Get board](https://docs.atlassian.com/jira-software/REST/7.0.4/#agile/1.0/board)
 
 ```
-paths: https://%s.atlassian.net/rest/agile/1.0/board/{boardId}/configuration
+paths: https://%s.atlassian.net/rest/agile/1.0/board/{boardId}
 method: GET
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
@@ -103,30 +104,33 @@ participant FrontEnd
 participant JiraController
 participant JiraService
 participant JiraFeignClient
-participant RestResponseEntityExceptionHandler
+participant JiraAPI
 
 ' group Verify the validity of the token
-    FrontEnd -> JiraController: request: token, type, projectKey, site, boardId
+    FrontEnd -> JiraController: api/v1/boards/{boardType}/verify \ntoken, projectKey, site, boardId
     activate JiraController
-    JiraController -> JiraService: token, baseUrl, boardId
+    JiraController -> JiraService: verify \ntoken, baseUrl, boardId
     activate JiraService
-    JiraService -> JiraFeignClient: authorization(token), baseUrl, boardId
+    JiraService -> JiraFeignClient: verify \ntoken, baseUrl, boardId
     activate JiraFeignClient
+    JiraFeignClient -> JiraAPI: Get board \ntoken, baseUrl, boardId
+    activate JiraAPI
 alt Verification success
+    JiraAPI --> JiraFeignClient: 200
+    deactivate JiraAPI
     JiraFeignClient --> JiraService: 200
     deactivate JiraFeignClient
-    JiraService --> JiraController: true
+    JiraService --> JiraController: 200
     deactivate JiraService
     JiraController --> FrontEnd: response: 200
     deactivate JiraController
 else Verification failed
-    JiraFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    activate JiraFeignClient
+    JiraAPI --> JiraFeignClient: response 401, 403, 404
     deactivate JiraFeignClient
-    activate RestResponseEntityExceptionHandler
-    RestResponseEntityExceptionHandler -> FrontEnd: response 401 Unauthorized: "Token is incorrect"
-    deactivate RestResponseEntityExceptionHandler
-    ' deactivate JiraService
-    ' deactivate JiraController
+    activate JiraAPI
+    JiraFeignClient --> FrontEnd: throw 401, 403, 404
+    deactivate JiraAPI
 end
 @enduml
 ```
@@ -134,12 +138,13 @@ end
 ### 2. New api to get info of board
 
 Returns datas from a board, for a given board Id. Board configuration will use those datas, like Crew settings, Cycle time settings, Classification setting.
+The new api to get info of board will load when metrics page load board contents.
 
 #### 2.1 Request
 
 ##### URL
 ```json
-POST api/v1/boards/{boardType}
+POST api/v1/boards/{boardType}/info
 ```
 
 ##### Request body
@@ -147,7 +152,6 @@ POST api/v1/boards/{boardType}
 
 | Body                      | Type                                                                                                          | Description                                                                       | Note |
 | :------------------------ | :------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------- | :--- |
-| type                      | string                                                                                                        | Board type.                                                                       |      |
 | boardId                   | string                                                                                                        | Board ID.                                                                         |      |
 | projectKey                | string                                                                                                        | Specify the key of the project.                                                   |      |
 | site                      | string                                                                                                        | Host url of the board.                                                            |      |
@@ -158,7 +162,6 @@ POST api/v1/boards/{boardType}
 Example
 ```json
 {
-  "type": "Jira",
   "boardId": "2",
   "projectKey": "ADM",
   "site": "dorametrics",
@@ -210,4 +213,56 @@ Example
         }
     ]
 }
+```
+
+#### 2.3 Sequence Diagram
+
+```plantuml
+@startuml
+skin rose
+title Heartbeat - New api to get info of board
+
+participant FrontEnd
+participant JiraController
+participant JiraService
+participant JiraFeignClient
+participant JiraAPI
+
+' group Verify the validity of the token
+    FrontEnd -> JiraController: api/v1/boards/info \ntoken, type, projectKey, site, boardId
+    activate JiraController
+    JiraController -> JiraService: getBoard \ntoken, baseUrl, boardId
+    activate JiraService
+    JiraService -> JiraFeignClient: getJiraConfiguration \ntoken, baseUrl, boardId
+    activate JiraFeignClient
+    JiraFeignClient -> JiraAPI: /rest/agile/1.0/board/{boardId}/configuration \ntoken, baseUrl, boardId
+    activate JiraAPI
+    JiraAPI -> JiraFeignClient: JiraBoardConfigDTO
+    JiraFeignClient -> JiraAPI: /rest/api/2/status/{statusNum} \ntoken, baseUrl, statusNum
+    JiraAPI -> JiraFeignClient: StatusSelfDTO
+    JiraFeignClient -> JiraAPI: /rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields \ntoken, baseUrl, projectKey
+    JiraAPI -> JiraFeignClient: FieldResponseDTO
+    JiraFeignClient -> JiraAPI: /rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql} \ntoken, baseUrl, boardId, queryCount, startAt, jql
+    JiraAPI -> JiraFeignClient: String
+    JiraFeignClient -> JiraAPI: /rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields \ntoken, baseUrl, projectKey
+    JiraAPI -> JiraFeignClient: FieldResponseDTO
+    JiraFeignClient -> JiraAPI: /rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql} \ntoken, baseUrl, boardId, queryCount, startAt, jql
+    JiraAPI -> JiraFeignClient: String
+alt Verification success
+    deactivate JiraAPI
+    JiraFeignClient --> JiraService: BoardConfigDTO
+    deactivate JiraFeignClient
+    JiraService --> JiraController: BoardConfigDTO
+    deactivate JiraService
+    JiraController --> FrontEnd: response: 200
+    deactivate JiraController
+else Verification failed
+    activate JiraFeignClient
+    JiraAPI --> JiraFeignClient: response 401, 403, 404
+    deactivate JiraFeignClient
+    activate JiraAPI
+    JiraFeignClient --> FrontEnd: throw 401, 403, 404
+    deactivate JiraAPI
+end
+@enduml
 ```

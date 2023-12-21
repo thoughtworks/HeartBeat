@@ -4,6 +4,7 @@ import { Typography } from '@mui/material'
 import '@fontsource/roboto'
 
 export const StyledReportCard = styled.div({
+  position: 'relative',
   padding: '1.5rem',
   height: '11.75rem',
   borderRadius: '1rem',
@@ -22,11 +23,4 @@ export const StyledReportCardTitle = styled(Typography)({
   fontFamily: 'Roboto',
   fontWeight: 500,
   fontSize: '1.2rem',
-})
-
-export const StyledReportCardProgress = styled.div({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '100%',
 })

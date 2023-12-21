@@ -77,6 +77,6 @@ export const COMMON_BUTTONS = {
 }
 
 export const GRID_CONFIG = {
-  HALF: { XS: 6, INDEX: 2, WIDTH: '50%' },
-  FULL: { XS: 12, INDEX: 4, WIDTH: '25%' },
+  HALF: { XS: 6, MAX_INDEX: 2, FLEX: 1 },
+  FULL: { XS: 12, MAX_INDEX: 4, FLEX: 0.25 },
 }

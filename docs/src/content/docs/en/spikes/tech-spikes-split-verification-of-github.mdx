@@ -13,13 +13,13 @@ Reduce the granularity of the step of verification and enables a new API for tar
 
 ## Solutions
 
-Through two-stage verification of GitHub tokens, the first stage verifies the validity of the token, and the second stage verifies that the token can read the target repo
+Through two-stage verification of GitHub tokens, the first stage verifies the validity of the token, and the second stage verifies that the token can read the target branch.
 
 ### 1. Verify the validity of the token
 
 - Request timing
 
-Triggered after clicking GitHub's verify on the config page
+Triggered after clicking GitHub's verify on the config page.
 
 - Api Design
 ```
@@ -112,10 +112,10 @@ end
 @enduml
 ```
 
-### 2. Verify token can read target repo
+### 2. Verify token can read target branch
 - Request timing
 
-Triggered when the user selects a branch in the Pipeline settings module of the Metrics page
+Triggered when the user selects a branch in the Pipeline settings module of the Metrics page.
 
 - Api Design
 ```

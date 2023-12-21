@@ -8,11 +8,14 @@ import {
   CLASSIFICATION_SETTING,
   CREWS_SETTING,
   CYCLE_TIME_SETTINGS,
+  CYCLE_TIME_SETTINGS_SECTION,
   DEPLOYMENT_FREQUENCY_SETTINGS,
   LIST_OPEN,
   MOCK_JIRA_VERIFY_RESPONSE,
   REAL_DONE,
+  REAL_DONE_SETTING_SECTION,
   REQUIRED_DATA_LIST,
+  SELECT_CONSIDER_AS_DONE_MESSAGE,
 } from '../../../fixtures'
 import { saveCycleTimeSettings, saveDoneColumn } from '@src/context/Metrics/metricsSlice'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
@@ -93,9 +96,9 @@ describe('MetricsStep', () => {
     expect(result.current.resetProps).toBeCalled()
   })
 
-  describe('with pre-filled data', () => {
+  describe('with pre-filled cycle time data', () => {
     beforeEach(() => {
-      const cycleTimeSettings = [
+      const cycleTimeSettingsWithTwoDoneValue = [
         {
           name: 'To Do',
           value: 'To Do',
@@ -127,7 +130,7 @@ describe('MetricsStep', () => {
       ]
 
       store.dispatch(updateMetrics(REQUIRED_DATA_LIST))
-      store.dispatch(saveCycleTimeSettings(cycleTimeSettings))
+      store.dispatch(saveCycleTimeSettings(cycleTimeSettingsWithTwoDoneValue))
       store.dispatch(saveDoneColumn(doneColumn))
       store.dispatch(
         updateJiraVerifyResponse({
@@ -139,44 +142,40 @@ describe('MetricsStep', () => {
 
     it('should reset real done when change Cycle time settings DONE to other status', async () => {
       const { getByLabelText, getByRole } = setup()
-      const cycleTimeSettingsSection = getByLabelText('Cycle time settings section')
-      const realDoneSettingSection = getByLabelText('Real done setting section')
+      const cycleTimeSettingsSection = getByLabelText(CYCLE_TIME_SETTINGS_SECTION)
+      const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION)
 
-      expect(realDoneSettingSection).not.toHaveTextContent('Must select which you want to consider as Done')
+      expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
 
       await userEvent.click(columnsArray[1])
       const options = within(getByRole('listbox')).getAllByRole('option')
       await userEvent.click(options[1])
 
-      await waitFor(() =>
-        expect(realDoneSettingSection).toHaveTextContent('Must select which you want to consider as Done')
-      )
+      await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE))
     })
 
     it('should reset real done when change Cycle time settings other status to DONE', async () => {
       const { getByLabelText, getByRole } = setup()
-      const cycleTimeSettingsSection = getByLabelText('Cycle time settings section')
-      const realDoneSettingSection = getByLabelText('Real done setting section')
+      const cycleTimeSettingsSection = getByLabelText(CYCLE_TIME_SETTINGS_SECTION)
+      const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION)
 
-      expect(realDoneSettingSection).not.toHaveTextContent('Must select which you want to consider as Done')
+      expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
 
       await userEvent.click(columnsArray[2])
       const options = within(getByRole('listbox')).getAllByRole('option')
       await userEvent.click(options[options.length - 1])
 
-      await waitFor(() =>
-        expect(realDoneSettingSection).toHaveTextContent('Must select which you want to consider as Done')
-      )
+      await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE))
     })
 
     it('should hide real done when change all Cycle time settings to other status', async () => {
       const { getByLabelText, getByRole } = setup()
-      const cycleTimeSettingsSection = getByLabelText('Cycle time settings section')
-      const realDoneSettingSection = getByLabelText('Real done setting section')
+      const cycleTimeSettingsSection = getByLabelText(CYCLE_TIME_SETTINGS_SECTION)
+      const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION)
 
-      expect(realDoneSettingSection).not.toHaveTextContent('Must select which you want to consider as Done')
+      expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
 
       await userEvent.click(columnsArray[1])

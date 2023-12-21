@@ -694,3 +694,6 @@ export const AUTOCOMPLETE_SELECT_ACTION = 'selectOption'
 
 export const TIME_DISPLAY_TITTLE_START = 'START'
 export const TIME_DISPLAY_TITTLE_END = 'END'
+export const CYCLE_TIME_SETTINGS_SECTION = 'Cycle time settings section'
+export const REAL_DONE_SETTING_SECTION = 'Real done setting section'
+export const SELECT_CONSIDER_AS_DONE_MESSAGE = 'Must select which you want to consider as Done'

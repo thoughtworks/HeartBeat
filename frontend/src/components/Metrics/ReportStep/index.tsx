@@ -142,6 +142,8 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
   )
 
+  const [errorMessage, setErrorMessage] = useState([reportErrorMsg, csvErrorMsg])
+
   const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))
   }
@@ -160,6 +162,10 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const handleBack = () => {
     dispatch(backStep())
   }
+
+  useEffect(() => {
+    setErrorMessage([reportErrorMsg, csvErrorMsg])
+  }, [reportErrorMsg, csvErrorMsg])
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
@@ -220,6 +226,19 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     startPollingBoardReport(getBoardReportRequestBody())
   }, [])
 
+  const handleErrorNotification = () => {
+    {
+      return errorMessage.map((message: string) => {
+        if (message === '') return
+        return (
+          <StyledErrorNotification key={message}>
+            <ErrorNotification message={message} />
+          </StyledErrorNotification>
+        )
+      })
+    }
+  }
+
   return (
     <>
       {isServerError ? (
@@ -227,16 +246,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       ) : (
         <>
           {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
-          {reportErrorMsg && (
-            <StyledErrorNotification>
-              <ErrorNotification message={reportErrorMsg} />
-            </StyledErrorNotification>
-          )}
-          {csvErrorMsg && (
-            <StyledErrorNotification>
-              <ErrorNotification message={csvErrorMsg} />
-            </StyledErrorNotification>
-          )}
+          {handleErrorNotification()}
           <div>
             <StyledMetricsSection>
               <ReportTitle title='Board Metrics' />

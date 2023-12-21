@@ -4,13 +4,9 @@ import { Typography } from '@mui/material'
 import { theme } from '@src/theme'
 
 export const StyledErrorNotification = styled('div')({
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
   zIndex: Z_INDEX.MODAL_BACKDROP,
-  width: '80%',
 })
+
 export const StyledMetricsSection = styled('div')({
   marginTop: '3rem',
 })

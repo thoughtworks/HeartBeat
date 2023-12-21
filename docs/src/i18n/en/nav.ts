@@ -105,7 +105,7 @@ export default [
 		key: 'spikes/tech-spikes-split-verify-of-github',
 	},
 	{
-		text: 'Split verify of BuildKite',
+		text: 'Split verification of buildKite',
 		slug: 'spikes/tech-spikes-split-verify-of-buildkite',
 		key: 'spikes/tech-spikes-split-verify-of-buildkite',
 	},

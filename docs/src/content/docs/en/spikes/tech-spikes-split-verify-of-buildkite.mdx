@@ -1,11 +1,11 @@
 ---
-title: Split current token for BuildKite
-description: Split current token for BuildKite
+title: Split verification of buildKite
+description: Split verification of buildKite
 ---
 ## Background
 The BuildKite setting in config page, the original api obtains verify and get info two parts, now it should be split.
 
-## Old Api
+## AS-IS Design
 - Api Design
 ```
 paths: api/v1/pipelines/{pipelineType}
@@ -96,8 +96,26 @@ responses:
   Status Code: 200
 ```
 - Exception Handler
-
-  - 401: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="2">500</td>
+    <td>Token cannot be empty.</td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td>Token's pattern is incorrect.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
+    <td>Token is incorrect</td>
+  </tr>
+</table>
 
 - Sequence Diagram
 ```plantuml
@@ -168,9 +186,33 @@ responses:{
 }
 ```
 - Exception Handler
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="4">500</td>
+    <td>Token cannot be empty.</td>
+    <td rowspan="4"></td>
+  </tr>
+  <tr>
+    <td>Token's pattern is incorrect.</td>
+  </tr>
+  <tr>
+    <td>StartTime cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>EndTime cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
+    <td>Token is incorrect</td>
+  </tr>
+</table>
 
-  - 401: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx
-  
 - Sequence Diagram
 ```plantuml
 @startuml

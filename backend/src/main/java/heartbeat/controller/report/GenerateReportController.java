@@ -93,6 +93,7 @@ public class GenerateReportController {
 		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId);
 		if (generateReportIsOver) {
 			log.info("Successfully generate Report, report id: {}, reports: {}", reportId, reportResponse);
+			// todo: calculate the time to generate csv file
 			generateReporterService.generateCSVForMetric(reportResponse, reportId);
 			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);
 		}

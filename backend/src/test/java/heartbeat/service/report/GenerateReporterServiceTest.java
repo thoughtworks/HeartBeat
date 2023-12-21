@@ -945,7 +945,7 @@ class GenerateReporterServiceTest {
 	void shouldReturnReportResponse() {
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(asyncReportRequestHandler.getReport(reportId))
+		when(asyncReportRequestHandler.getAndRemoveReport(reportId))
 			.thenReturn(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		ReportResponse reportResponse = generateReporterService.getReportFromHandler(reportId);
 		// then

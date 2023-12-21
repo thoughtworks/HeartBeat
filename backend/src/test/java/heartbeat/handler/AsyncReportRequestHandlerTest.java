@@ -24,8 +24,8 @@ class AsyncReportRequestHandlerTest {
 
 		asyncReportRequestHandler.deleteExpireReport(currentTimeMillis);
 
-		assertNull(asyncReportRequestHandler.getReport(expireTime));
-		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
+		assertNull(asyncReportRequestHandler.getAndRemoveReport(expireTime));
+		assertNotNull(asyncReportRequestHandler.getAndRemoveReport(currentTime));
 	}
 
 	@Test
@@ -34,8 +34,8 @@ class AsyncReportRequestHandlerTest {
 		String currentTime = Long.toString(currentTimeMillis);
 		asyncReportRequestHandler.putReport(currentTime, ReportResponse.builder().build());
 
-		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
-		assertNull(asyncReportRequestHandler.getReport(currentTime));
+		assertNotNull(asyncReportRequestHandler.getAndRemoveReport(currentTime));
+		assertNull(asyncReportRequestHandler.getAndRemoveReport(currentTime));
 	}
 
 	@Test
@@ -45,7 +45,7 @@ class AsyncReportRequestHandlerTest {
 		asyncReportRequestHandler.putReport(currentTime, ReportResponse.builder().build());
 
 		assertTrue(asyncReportRequestHandler.isReportExists(currentTime));
-		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
+		assertNotNull(asyncReportRequestHandler.getAndRemoveReport(currentTime));
 		assertFalse(asyncReportRequestHandler.isReportExists(currentTime));
 	}
 

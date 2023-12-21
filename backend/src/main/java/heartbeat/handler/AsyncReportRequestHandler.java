@@ -2,6 +2,7 @@ package heartbeat.handler;
 
 import heartbeat.controller.report.dto.response.MetricsDataReady;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.GenerateReportException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class AsyncReportRequestHandler {
 		reportMap.put(reportId, e);
 	}
 
-	public ReportResponse getReport(String reportId) {
+	public ReportResponse getAndRemoveReport(String reportId) {
 		return reportMap.remove(reportId);
 	}
 
@@ -41,7 +42,7 @@ public class AsyncReportRequestHandler {
 	public boolean isReportReady(String timeStamp) {
 		MetricsDataReady metricsDataReady = metricsDataReadyMap.get(timeStamp);
 		if (Objects.isNull(metricsDataReady))
-			return false;
+			throw new GenerateReportException("Unable to locate the report using this report ID.");
 		Boolean boardMetricsReady = metricsDataReady.getBoardMetricsReady();
 		Boolean pipelineMetricsReady = metricsDataReady.getPipelineMetricsReady();
 		Boolean sourceControlMetricsReady = metricsDataReady.getSourceControlMetricsReady();

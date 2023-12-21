@@ -15,6 +15,7 @@ export const StyledReportCard = styled.div({
 export const StyledItemSection = styled.div({
   display: 'flex',
   alignItems: 'center',
+  minWidth: '25%',
 })
 
 export const StyledReportCardTitle = styled(Typography)({
@@ -27,4 +28,6 @@ export const StyledReportCardProgress = styled.div({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  height: '100%',
+  background: 'red',
 })

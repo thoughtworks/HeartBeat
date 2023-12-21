@@ -1,25 +1,25 @@
 import React from 'react'
 import { Grid } from '@mui/material'
 import { ReportCard } from '@src/components/Common/ReportGrid/ReportCard'
-import { GRID_XS } from '@src/constants/commons'
+import { GRID_CONFIG } from '@src/constants/commons'
 import { ReportCardItemProps } from '@src/components/Common/ReportGrid/ReportCardItem'
 
 export interface ReportGridProps {
   lastGrid?: boolean
   reportDetails: {
     title: string
-    items: ReportCardItemProps[]
+    items?: ReportCardItemProps[]
   }[]
 }
 
 export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {
   const getXS = (index: number) => {
     if (lastGrid && reportDetails.length - 1 == index) {
-      return GRID_XS.FULL
+      return GRID_CONFIG.FULL.XS
     } else if (reportDetails.length > 1) {
-      return GRID_XS.HALF
+      return GRID_CONFIG.HALF.XS
     } else {
-      return GRID_XS.FULL
+      return GRID_CONFIG.FULL.XS
     }
   }
 

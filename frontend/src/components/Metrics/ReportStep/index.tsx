@@ -27,6 +27,7 @@ import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectMetrics } from '@src/context/config/configSlice'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import CollectionDuration from '@src/components/Common/CollectionDuration'
+import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle/ReportTitle'
 
 const board = [
   {
@@ -80,12 +81,7 @@ const dora1 = [
 const dora2 = [
   {
     title: 'Deployment Frequency',
-    items: [
-      {
-        value: '4.10',
-        subtitle: 'Deployment Frequency(Deployments/Day)',
-      },
-    ],
+    items: undefined,
   },
   {
     title: 'Change Failure Rate',
@@ -211,18 +207,12 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           )}
           <div>
             <StyledMetricsSection>
-              <StyledMetricsTitleSection>
-                <StyledMetricsSign />
-                <StyledMetricsTitle>Board Metrics</StyledMetricsTitle>
-              </StyledMetricsTitleSection>
+              <ReportTitle title='Board Metrics' />
               <ReportGrid reportDetails={board} />
             </StyledMetricsSection>
 
             <StyledMetricsSection>
-              <StyledMetricsTitleSection>
-                <StyledMetricsSign />
-                <StyledMetricsTitle>DORA Metrics</StyledMetricsTitle>
-              </StyledMetricsTitleSection>
+              <ReportTitle title='DORA Metrics' />
               <ReportGrid reportDetails={dora1} />
               <StyledSpacing />
               <ReportGrid reportDetails={dora2} lastGrid={true} />

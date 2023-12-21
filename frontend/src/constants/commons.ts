@@ -76,12 +76,7 @@ export const COMMON_BUTTONS = {
   EXPORT_METRIC_DATA: 'Export metric data',
 }
 
-export const GRID_XS = {
-  HALF: 6,
-  FULL: 12,
-}
-
-export const REPORT_ITEM_INDEX = {
-  HALF: 2,
-  FULL: 4,
+export const GRID_CONFIG = {
+  HALF: { XS: 6, INDEX: 2, WIDTH: '50%' },
+  FULL: { XS: 12, INDEX: 4, WIDTH: '25%' },
 }

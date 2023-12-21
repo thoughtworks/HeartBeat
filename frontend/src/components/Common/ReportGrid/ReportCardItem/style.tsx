@@ -4,6 +4,8 @@ import '@fontsource/roboto'
 
 export const StyledItem = styled.div({
   marginTop: '1.5rem',
+  display: 'flex',
+  alignItems: 'center',
 })
 
 export const StyledValue = styled(Typography)({
@@ -24,5 +26,4 @@ export const StyledSubtitle = styled(Typography)({
 
 export const StyledDividingLine = styled.img({
   marginRight: '2.25rem',
-  height: '100%',
 })

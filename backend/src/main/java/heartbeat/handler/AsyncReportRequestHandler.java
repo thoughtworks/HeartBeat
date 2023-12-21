@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
 
@@ -41,13 +42,19 @@ public class AsyncReportRequestHandler {
 
 	public boolean isReportReady(String timeStamp) {
 		MetricsDataReady metricsDataReady = metricsDataReadyMap.get(timeStamp);
-		if (Objects.isNull(metricsDataReady))
+		if (metricsDataReady == null) {
 			throw new GenerateReportException("Unable to locate the report using this report ID.");
-		Boolean boardMetricsReady = metricsDataReady.getBoardMetricsReady();
-		Boolean pipelineMetricsReady = metricsDataReady.getPipelineMetricsReady();
-		Boolean sourceControlMetricsReady = metricsDataReady.getSourceControlMetricsReady();
-		List<Boolean> metricsReady = List.of(boardMetricsReady, pipelineMetricsReady, sourceControlMetricsReady);
-		return metricsReady.stream().filter(Objects::nonNull).allMatch(Boolean::valueOf);
+		}
+
+		List<Boolean> metricsReady = Stream.of(
+				metricsDataReady.getBoardMetricsReady(),
+				metricsDataReady.getPipelineMetricsReady(),
+				metricsDataReady.getSourceControlMetricsReady()
+			)
+			.filter(Objects::nonNull)
+			.collect(Collectors.toList());
+
+		return metricsReady.stream().allMatch(Boolean::valueOf);
 	}
 
 	public void deleteExpireReport(long currentTimeStamp) {

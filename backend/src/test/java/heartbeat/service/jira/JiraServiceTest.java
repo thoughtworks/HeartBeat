@@ -20,6 +20,7 @@ import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.util.BoardUtil;
 import heartbeat.util.SystemUtil;
@@ -83,7 +84,6 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQU
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
@@ -462,8 +462,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token)).thenReturn(null);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(NoContentException.class)
-			.hasMessageContaining("There is no target field.");
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
 	}
 
 	@Test
@@ -484,8 +484,8 @@ class JiraServiceTest {
 			.thenReturn(emptyProjectFieldResponse);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(NoContentException.class)
-			.hasMessageContaining("There is no target field.");
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
 	}
 
 	@Test
@@ -498,8 +498,8 @@ class JiraServiceTest {
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(Exception.class)
-			.hasMessageContaining("There is no target field.");
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
 	}
 
 	@Test

@@ -43,8 +43,8 @@ import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.util.BoardUtil;
-import heartbeat.util.DecimalUtil;
 import heartbeat.util.SystemUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +69,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static heartbeat.controller.board.dto.request.CardStepsEnum.TODO;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -244,7 +243,7 @@ public class JiraService {
 				.supplyAsync(() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
 						customTaskExecutor)
 				.exceptionally(e -> {
-					log.error("Filed to get Jira column status category, with status number: {} reason: {}:",
+					log.error("Failed to get Jira column status category, with status number: {} reason: {}:",
 							jiraColumnStatus.getId(), e.getMessage());
 					return null;
 				}))
@@ -440,7 +439,7 @@ public class JiraService {
 				boardRequestParam.getToken());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
-			throw new NoContentException("There is no target field.");
+			throw new PermissionDenyException("There is no enough permission.");
 		}
 
 		List<Issuetype> issueTypes = fieldResponse.getProjects().get(0).getIssuetypes();

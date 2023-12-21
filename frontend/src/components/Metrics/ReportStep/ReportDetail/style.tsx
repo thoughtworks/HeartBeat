@@ -24,16 +24,6 @@ export const ExportButton = styled(Button)({
   },
 })
 
-export const ButtonGroupStyle = styled('div')({
-  boxSizing: 'border-box',
-  display: 'flex',
-  textAlign: 'center',
-  margin: '0 auto',
-  justifyContent: 'space-between',
-  width: '100%',
-  paddingTop: '2rem',
-})
-
 export const ErrorNotificationContainer = styled('div')({
   position: 'fixed',
   top: '50%',

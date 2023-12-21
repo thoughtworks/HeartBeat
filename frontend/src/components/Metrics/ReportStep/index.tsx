@@ -1,29 +1,34 @@
-import { ROUTE } from '@src/constants/router'
-import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
-import { useNavigate } from 'react-router-dom'
-import { ErrorNotification } from '@src/components/ErrorNotification'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
-import { CALENDAR, MESSAGE, REQUIRED_DATA, TIPS } from '@src/constants/resources'
-import { ReportGrid } from '@src/components/Common/ReportGrid'
-import { StyledErrorNotification, StyledMetricsSection, StyledSpacing } from '@src/components/Metrics/ReportStep/style'
-import { ButtonGroupStyle, ExportButton } from '@src/components/Metrics/ReportStep/ReportDetail/style'
-import { Tooltip } from '@mui/material'
-import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/style'
-import SaveAltIcon from '@mui/icons-material/SaveAlt'
-import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons'
-import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
-import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
-import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { BoardReportRequestDTO, CSVReportRequestDTO } from '@src/clients/report/dto/request'
+import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
-import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
-import CollectionDuration from '@src/components/Common/CollectionDuration'
-import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle/ReportTitle'
+import { CALENDAR, MESSAGE, REQUIRED_DATA, TIPS } from '@src/constants/resources'
+import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons'
+import { BoardReportRequestDTO, CSVReportRequestDTO } from '@src/clients/report/dto/request'
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
-import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
 import dayjs from 'dayjs'
+import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/style'
+import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
+import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import {
+  StyledButtonGroup,
+  StyledErrorNotification,
+  StyledExportButton,
+  StyledMetricsSection,
+  StyledSpacing,
+} from '@src/components/Metrics/ReportStep/style'
+import { ErrorNotification } from '@src/components/ErrorNotification'
+import { useNavigate } from 'react-router-dom'
+import CollectionDuration from '@src/components/Common/CollectionDuration'
+import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
+import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { ROUTE } from '@src/constants/router'
+import { Tooltip } from '@mui/material'
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
+import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle/ReportTitle'
+import { ReportGrid } from '@src/components/Common/ReportGrid'
 
 const board1 = [
   {
@@ -110,10 +115,17 @@ export interface ReportStepProps {
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { isServerError, errorMessage: reportErrorMsg, startPollingBoardReport } = useGenerateReportEffect()
+  const { startPollingBoardReport, isServerError, errorMessage: reportErrorMsg } = useGenerateReportEffect()
+  const { fetchExportData, errorMessage: csvErrorMsg, isExpired } = useExportCsvEffect()
   const [exportValidityTimeMin] = useState<number | undefined>(undefined)
-  const configData = useAppSelector(selectConfig)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
+  const configData = useAppSelector(selectConfig)
+  const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
+    useAppSelector(selectMetricsContent)
+  const { metrics, calendarType, dateRange } = configData.basic
+  const { board } = configData
+  const { token, type, site, projectKey, boardId, email } = board.config
+  const { startDate, endDate } = dateRange
   const requiredData = useAppSelector(selectMetrics)
   const isShowExportBoardButton =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
@@ -124,25 +136,13 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
     requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
     requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
-
-  const { metrics, calendarType, dateRange } = configData.basic
-  const { fetchExportData, errorMessage: csvErrorMsg, isExpired } = useExportCsvEffect()
   const { updateProps } = notification
-  const { startDate, endDate } = dateRange
-
-  const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
-    useAppSelector(selectMetricsContent)
-  const jiraColumns = useAppSelector(selectJiraColumns)
-
-  const { board } = configData
-  const { token, type, site, projectKey, boardId, email } = board.config
-
+  const [errorMessage, setErrorMessage] = useState([reportErrorMsg, csvErrorMsg])
   const jiraToken = getJiraBoardToken(token, email)
+  const jiraColumns = useAppSelector(selectJiraColumns)
   const jiraColumnsWithValue = jiraColumns?.map(
     (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
   )
-
-  const [errorMessage, setErrorMessage] = useState([reportErrorMsg, csvErrorMsg])
 
   const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
     fetchExportData(getExportCSV(dataType, startDate, endDate))
@@ -159,13 +159,43 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     endDate: endDate ?? '',
   })
 
+  const getBoardReportRequestBody = (): BoardReportRequestDTO => ({
+    metrics: metrics,
+    startTime: dayjs(startDate).valueOf().toString(),
+    endTime: dayjs(endDate).valueOf().toString(),
+    considerHoliday: calendarType === CALENDAR.CHINA,
+    jiraBoardSetting: {
+      token: jiraToken,
+      type: type.toLowerCase().replace(' ', '-'),
+      site,
+      projectKey,
+      boardId,
+      boardColumns: filterAndMapCycleTimeSettings(cycleTimeSettings, jiraColumnsWithValue),
+      treatFlagCardAsBlock,
+      users,
+      assigneeFilter,
+      targetFields,
+      doneColumn,
+    },
+    csvTimeStamp: csvTimeStamp,
+  })
+
   const handleBack = () => {
     dispatch(backStep())
   }
 
-  useEffect(() => {
-    setErrorMessage([reportErrorMsg, csvErrorMsg])
-  }, [reportErrorMsg, csvErrorMsg])
+  const handleErrorNotification = () => {
+    {
+      return errorMessage.map((message: string) => {
+        if (message === '') return
+        return (
+          <StyledErrorNotification key={message}>
+            <ErrorNotification message={message} />
+          </StyledErrorNotification>
+        )
+      })
+    }
+  }
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
@@ -201,43 +231,13 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     }
   }, [exportValidityTimeMin])
 
-  const getBoardReportRequestBody = (): BoardReportRequestDTO => ({
-    metrics: metrics,
-    startTime: dayjs(startDate).valueOf().toString(),
-    endTime: dayjs(endDate).valueOf().toString(),
-    considerHoliday: calendarType === CALENDAR.CHINA,
-    jiraBoardSetting: {
-      token: jiraToken,
-      type: type.toLowerCase().replace(' ', '-'),
-      site,
-      projectKey,
-      boardId,
-      boardColumns: filterAndMapCycleTimeSettings(cycleTimeSettings, jiraColumnsWithValue),
-      treatFlagCardAsBlock,
-      users,
-      assigneeFilter,
-      targetFields,
-      doneColumn,
-    },
-    csvTimeStamp: csvTimeStamp,
-  })
-
   useEffect(() => {
     startPollingBoardReport(getBoardReportRequestBody())
   }, [])
 
-  const handleErrorNotification = () => {
-    {
-      return errorMessage.map((message: string) => {
-        if (message === '') return
-        return (
-          <StyledErrorNotification key={message}>
-            <ErrorNotification message={message} />
-          </StyledErrorNotification>
-        )
-      })
-    }
-  }
+  useEffect(() => {
+    setErrorMessage([reportErrorMsg, csvErrorMsg])
+  }, [reportErrorMsg, csvErrorMsg])
 
   return (
     <>
@@ -247,7 +247,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         <>
           {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
           {handleErrorNotification()}
-          <div>
+          <>
             <StyledMetricsSection>
               <ReportTitle title='Board Metrics' />
               <ReportGrid reportDetails={board1} />
@@ -259,9 +259,9 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               <StyledSpacing />
               <ReportGrid reportDetails={dora2} lastGrid={true} />
             </StyledMetricsSection>
-          </div>
+          </>
 
-          <ButtonGroupStyle>
+          <StyledButtonGroup>
             <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
               <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
                 {COMMON_BUTTONS.SAVE}
@@ -271,21 +271,21 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               <BackButton onClick={handleBack} variant='outlined'>
                 {COMMON_BUTTONS.BACK}
               </BackButton>
-              <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}>
+              <StyledExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}>
                 {COMMON_BUTTONS.EXPORT_METRIC_DATA}
-              </ExportButton>
+              </StyledExportButton>
               {isShowExportBoardButton && (
-                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}>
+                <StyledExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_BOARD_DATA}
-                </ExportButton>
+                </StyledExportButton>
               )}
               {isShowExportPipelineButton && (
-                <ExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}>
+                <StyledExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}>
                   {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
-                </ExportButton>
+                </StyledExportButton>
               )}
             </div>
-          </ButtonGroupStyle>
+          </StyledButtonGroup>
           {<ExpiredDialog isExpired={isExpired} handleOk={handleBack} />}
         </>
       )}

@@ -1,9 +1,9 @@
+import React from 'react'
 import {
   StyledMetricsSign,
   StyledMetricsTitle,
   StyledMetricsTitleSection,
-} from '@src/components/Metrics/ReportStep/style'
-import React from 'react'
+} from '@src/components/Common/ReportGrid/ReportTitle/style'
 
 interface ReportTitleProps {
   title: string

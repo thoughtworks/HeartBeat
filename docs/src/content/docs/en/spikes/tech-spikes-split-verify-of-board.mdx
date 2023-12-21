@@ -78,7 +78,7 @@ parameters: {
 }
 responses:
   Status Code: 200
-401 Unauthorized: "Token is incorrect"
+401 Unauthorized: "Returned if the user is not logged in"
 403 Returned: "User does not a have valid license"
 404 Returned: "The board does not exist or the user does not have permission to view it"
 ```
@@ -229,7 +229,7 @@ participant JiraFeignClient
 participant JiraAPI
 
 ' group Verify the validity of the token
-    FrontEnd -> JiraController: api/v1/boards/info \ntoken, type, projectKey, site, boardId
+    FrontEnd -> JiraController: api/v1/boards/{boardType}/info \ntoken, projectKey, site, boardId
     activate JiraController
     JiraController -> JiraService: getBoard \ntoken, baseUrl, boardId
     activate JiraService
@@ -243,14 +243,16 @@ participant JiraAPI
     JiraFeignClient -> JiraAPI: /rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields \ntoken, baseUrl, projectKey
     JiraAPI -> JiraFeignClient: FieldResponseDTO
     JiraFeignClient -> JiraAPI: /rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql} \ntoken, baseUrl, boardId, queryCount, startAt, jql
-    JiraAPI -> JiraFeignClient: String
+    JiraAPI -> JiraFeignClient: allCardResponse
     JiraFeignClient -> JiraAPI: /rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields \ntoken, baseUrl, projectKey
     JiraAPI -> JiraFeignClient: FieldResponseDTO
     JiraFeignClient -> JiraAPI: /rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql} \ntoken, baseUrl, boardId, queryCount, startAt, jql
-    JiraAPI -> JiraFeignClient: String
+    JiraAPI -> JiraFeignClient: allCardResponse
+    JiraFeignClient -> JiraAPI: /rest/internal/2/issue/{jiraCardKey}/activityfeed \ntoken, baseUrl, jiraCardKey
+    Jira -> JiraFeignClient: CardHistoryResponseDTO
 alt Verification success
     deactivate JiraAPI
-    JiraFeignClient --> JiraService: BoardConfigDTO
+    JiraFeignClient --> JiraService: responseDTO
     deactivate JiraFeignClient
     JiraService --> JiraController: BoardConfigDTO
     deactivate JiraService

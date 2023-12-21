@@ -29,8 +29,8 @@ public class AsyncReportRequestHandler {
 		reportMap.put(reportId, e);
 	}
 
-	public ReportResponse getAndRemoveReport(String reportId) {
-		return reportMap.remove(reportId);
+	public ReportResponse getReport(String reportId) {
+		return reportMap.get(reportId);
 	}
 
 	public void putMetricsDataReady(String timeStamp, MetricsDataReady metricsDataReady) {

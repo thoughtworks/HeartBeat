@@ -71,7 +71,8 @@ public class GenerateReportController {
 	@GetMapping("/reports/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(reportId);
-		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId,generateReportIsOver);
+		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId,
+				generateReportIsOver);
 		if (generateReportIsOver) {
 			log.info("Successfully generate Report, report id: {}, reports: {}", reportId, reportResponse);
 			// todo: calculate the time to generate csv file
@@ -109,22 +110,22 @@ public class GenerateReportController {
 	}
 
 	@PostMapping("/dora-reports")
-	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request){
+	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request) {
 		log.info(
-			"Start to generate Dora Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
-			request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
-			IdUtil.getDoraReportId(request.getCsvTimeStamp()));
+				"Start to generate Dora Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
+				IdUtil.getDoraReportId(request.getCsvTimeStamp()));
 		generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(), true);
 		CompletableFuture.runAsync(() -> {
 			try {
 				ReportResponse reportResponse = generateReporterService
 					.generateReporter(request.convertToReportRequest());
 				generateReporterService.saveReporterInHandler(reportResponse,
-					IdUtil.getDoraReportId(request.getCsvTimeStamp()));
+						IdUtil.getDoraReportId(request.getCsvTimeStamp()));
 				generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(),
-					false);
+						false);
 			}
-			//todo replace by Idutil
+			// todo replace by Idutil
 			catch (BaseException e) {
 				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
 			}

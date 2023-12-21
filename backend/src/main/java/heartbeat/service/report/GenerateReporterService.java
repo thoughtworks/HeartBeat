@@ -71,7 +71,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import heartbeat.util.IdUtil;
@@ -737,37 +736,30 @@ public class GenerateReporterService {
 
 	// todo: need change this to private after the "/reports" endpoint is deprecated
 	public ReportResponse getReportFromHandler(String reportId) {
-		return asyncReportRequestHandler.getAndRemoveReport(reportId);
+		return asyncReportRequestHandler.getReport(reportId);
 	}
 
-	public ReportResponse getComposedReportResponse(String reportId,boolean isReportReady) {
+	public ReportResponse getComposedReportResponse(String reportId, boolean isReportReady) {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
-		return ReportResponse.builder()
-			.velocity(getNullableValue(boardReportResponse::getVelocity))
-			.classificationList(getNullableValue(boardReportResponse::getClassificationList))
-			.cycleTime(getNullableValue(boardReportResponse::getCycleTime))
-			.exportValidityTime(getNullableValue(response::getExportValidityTime))
-			.deploymentFrequency(getNullableValue(doraReportResponse::getDeploymentFrequency))
-			.changeFailureRate(getNullableValue(doraReportResponse::getChangeFailureRate))
-			.meanTimeToRecovery(getNullableValue(doraReportResponse::getMeanTimeToRecovery))
-			.leadTimeForChanges(getNullableValue(doraReportResponse::getLeadTimeForChanges))
-			.boardMetricsReady(getNullableValue(metricsDataReady::getBoardMetricsReady))
-			.pipelineMetricsReady(getNullableValue(metricsDataReady::getPipelineMetricsReady))
-			.sourceControlMetricsReady(getNullableValue(metricsDataReady::getSourceControlMetricsReady))
-			.allMetricsReady(Boolean.valueOf(isReportReady))
-			.build();
-	}
 
-	private <T> T getNullableValue(Supplier<T> supplier) {
-		try {
-			return Optional.ofNullable(supplier.get()).orElse(null);
-		}
-		catch (NullPointerException e) {
-			return null;
-		}
+		return ReportResponse.builder()
+			.velocity(boardReportResponse != null ? boardReportResponse.getVelocity() : null)
+			.classificationList(boardReportResponse != null ? boardReportResponse.getClassificationList() : null)
+			.cycleTime(boardReportResponse != null ? boardReportResponse.getCycleTime() : null)
+			.exportValidityTime(response != null ? response.getExportValidityTime() : null)
+			.deploymentFrequency(doraReportResponse != null ? doraReportResponse.getDeploymentFrequency() : null)
+			.changeFailureRate(doraReportResponse != null ? doraReportResponse.getChangeFailureRate() : null)
+			.meanTimeToRecovery(doraReportResponse != null ? doraReportResponse.getMeanTimeToRecovery() : null)
+			.leadTimeForChanges(doraReportResponse != null ? doraReportResponse.getLeadTimeForChanges() : null)
+			.boardMetricsReady(metricsDataReady != null ? metricsDataReady.getBoardMetricsReady() : null)
+			.pipelineMetricsReady(metricsDataReady != null ? metricsDataReady.getPipelineMetricsReady() : null)
+			.sourceControlMetricsReady(
+					metricsDataReady != null ? metricsDataReady.getSourceControlMetricsReady() : null)
+			.allMetricsReady(isReportReady)
+			.build();
 	}
 
 }

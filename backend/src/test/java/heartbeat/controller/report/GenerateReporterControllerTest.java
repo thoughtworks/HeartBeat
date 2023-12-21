@@ -256,7 +256,7 @@ class GenerateReporterControllerTest {
 
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateBoardReportRequest request = mapper.readValue(
-			new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
+				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 

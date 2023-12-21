@@ -1,6 +1,6 @@
 import { HttpClient } from '@src/clients/Httpclient'
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
-import { ReportCallbackResponse } from '@src/clients/report/dto/response'
+import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/dto/response'
 
 export class ReportClient extends HttpClient {
   status = 0
@@ -12,7 +12,7 @@ export class ReportClient extends HttpClient {
     callbackUrl: '',
     interval: 0,
   }
-  reportResponse = {
+  reportResponse: ReportResponseDTO = {
     velocity: {
       velocityForSP: 0,
       velocityForCards: 0,
@@ -63,9 +63,9 @@ export class ReportClient extends HttpClient {
     },
   }
 
-  retrieveReport = async (params: ReportRequestDTO) => {
+  retrieveReportByUrl = async (params: ReportRequestDTO, url: string) => {
     await this.axiosInstance
-      .post(`/reports`, params, {})
+      .post(url, params, {})
       .then((res) => {
         this.reportCallbackResponse = res.data
       })

@@ -9,6 +9,10 @@ export interface ReportResponseDTO {
   changeFailureRate?: ChangeFailureRateResponse
   classificationList?: Array<ClassificationResponse>
   exportValidityTime?: number
+  boardMetricsReady?: boolean | null
+  pipelineMetricsReady?: boolean | null
+  sourceControlMetricsReady?: boolean | null
+  allMetricsReady?: boolean
 }
 
 export interface VelocityResponse {

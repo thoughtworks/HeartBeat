@@ -56,3 +56,27 @@ export const boardReportMapper = ({ velocity, cycleTime }: ReportResponseDTO): R
     cycleTimeList,
   }
 }
+
+export const sourceControlReportMapper = ({ leadTimeForChanges }: ReportResponseDTO): ReportResponse => {
+  const leadTimeForChangesList = leadTimeForChanges && leadTimeForChangesMapper(leadTimeForChanges)
+
+  return {
+    leadTimeForChangesList,
+  }
+}
+
+export const pipelineReportMapper = ({
+  deploymentFrequency,
+  meanTimeToRecovery,
+  changeFailureRate,
+}: ReportResponseDTO): ReportResponse => {
+  const deploymentFrequencyList = deploymentFrequency && deploymentFrequencyMapper(deploymentFrequency)
+  const meanTimeToRecoveryList = meanTimeToRecovery && meanTimeToRecoveryMapper(meanTimeToRecovery)
+  const changeFailureRateList = changeFailureRate && changeFailureRateMapper(changeFailureRate)
+
+  return {
+    deploymentFrequencyList,
+    meanTimeToRecoveryList,
+    changeFailureRateList,
+  }
+}

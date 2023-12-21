@@ -30,7 +30,7 @@ describe('report client', () => {
       )
     )
 
-    await expect(reportClient.retrieveReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)).resolves.toStrictEqual(excepted)
+    await expect(reportClient.retrieveReportByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS)).resolves.toStrictEqual(excepted)
   })
 
   it('should throw error when generate report response status 500', async () => {
@@ -46,7 +46,7 @@ describe('report client', () => {
     )
 
     await expect(async () => {
-      await reportClient.retrieveReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      await reportClient.retrieveReportByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR)
   })
 
@@ -63,7 +63,7 @@ describe('report client', () => {
     )
 
     await expect(async () => {
-      await reportClient.retrieveReport(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
+      await reportClient.retrieveReportByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.BAD_REQUEST)
   })
 

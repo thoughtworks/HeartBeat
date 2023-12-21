@@ -39,7 +39,7 @@ describe('use generate report effect', () => {
 
   it('should set error message when generate report throw error', async () => {
     const { result } = renderHook(() => useGenerateReportEffect())
-    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
+    reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
       throw new Error('error')
     })
     await waitFor(() => {
@@ -56,7 +56,7 @@ describe('use generate report effect', () => {
 
   it('should set error message when generate report response status 404', async () => {
     const { result } = renderHook(() => useGenerateReportEffect())
-    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
+    reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
       throw new NotFoundException('error message')
     })
     await waitFor(() => {
@@ -73,7 +73,7 @@ describe('use generate report effect', () => {
 
   it('should call reportMapper method when generate report response status 200', async () => {
     const { result } = renderHook(() => useGenerateReportEffect())
-    reportClient.retrieveReport = jest
+    reportClient.retrieveReportByUrl = jest
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
     reportClient.pollingReport = jest.fn().mockImplementation(async () => ({
@@ -90,7 +90,7 @@ describe('use generate report effect', () => {
 
   it('should set error message when generate report response status 500', async () => {
     const { result } = renderHook(() => useGenerateReportEffect())
-    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
+    reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
       throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
     })
     await waitFor(() => {
@@ -101,7 +101,7 @@ describe('use generate report effect', () => {
 
   it('should set isServerError is true when throw unknownException', async () => {
     const { result } = renderHook(() => useGenerateReportEffect())
-    reportClient.retrieveReport = jest.fn().mockImplementation(async () => {
+    reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
       throw new UnknownException()
     })
 
@@ -117,7 +117,7 @@ describe('use generate report effect', () => {
       throw new InternalServerException('error')
     })
 
-    reportClient.retrieveReport = jest
+    reportClient.retrieveReportByUrl = jest
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
 
@@ -134,7 +134,7 @@ describe('use generate report effect', () => {
     reportClient.pollingReport = jest.fn().mockImplementation(async () => {
       throw new NotFoundException('file not found')
     })
-    reportClient.retrieveReport = jest
+    reportClient.retrieveReportByUrl = jest
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
 
@@ -156,7 +156,7 @@ describe('use generate report effect', () => {
       .fn()
       .mockImplementation(async () => ({ status: HttpStatusCode.NoContent, response: MOCK_REPORT_RESPONSE }))
 
-    reportClient.retrieveReport = jest
+    reportClient.retrieveReportByUrl = jest
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }))
 

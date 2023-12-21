@@ -1,6 +1,6 @@
 ---
-title: Split verification of GitHub on config page
-description: Split verification of GitHub on config page
+title: Split verification of GitHub
+description: Split verification of GitHub
 ---
 
 ## Background
@@ -29,7 +29,7 @@ request: {
   token: "..."
 }
 responses:
-  Status Code: 200
+  Status Code: 204
 ```
 - GitHub Api for verification
 ```
@@ -63,6 +63,11 @@ header: "Authorization: Bearer YOUR-TOKEN"
     <td>Failed to get GitHub info_status: 401, reason: Bad credentials</td>
     <td>Token is incorrect</td>
   </tr>
+  <tr>
+    <td>500</td>
+    <td></td>
+    <td>Internal Server Error</td>
+  </tr>
 </table>
 
 - C3
@@ -92,7 +97,7 @@ alt Verification success
     deactivate GitHubFeignClient
     GitHubService --> GitHubController: true
     deactivate GitHubService
-    GitHubController --> FrontEnd: response: 200
+    GitHubController --> FrontEnd: response: 204
     deactivate GitHubController
 else Verification failed
     GitHub --> GitHubFeignClient: 401
@@ -110,22 +115,22 @@ end
 ### 2. Verify token can read target repo
 - Request timing
 
-Triggered when the Metrics page Pipeline setting module obtains Step
+Triggered when the user selects a branch in the Pipeline settings module of the Metrics page
 
 - Api Design
 ```
-paths: /api/v1/source-control/{sourceType}/repos/verify
+paths: /api/v1/source-control/{sourceType}/repos/branches/{branch}/verify
 method: post
 request: {
   repository: "git@github.com:XXXX/XXXX.git",
   token: "..."
 }
 responses:
-  Status Code: 200
+  Status Code: 204
 ```
 - GitHub Api for verification
 ```
-paths: https://api.github.com/repos/OWNER/REPO
+paths: https://api.github.com/repos/{owner}/{repo}/branches/{branch}
 method: get
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
@@ -137,9 +142,9 @@ header: "Authorization: Bearer <YOUR-TOKEN>"
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="6">400</td>
+    <td rowspan="7">400</td>
     <td>Token cannot be empty.</td>
-    <td rowspan="6"></td>
+    <td rowspan="7"></td>
   </tr>
   <tr>
     <td>Token's pattern is incorrect.</td>
@@ -157,6 +162,9 @@ header: "Authorization: Bearer <YOUR-TOKEN>"
     <td>Source type is incorrect.</td>
   </tr>
   <tr>
+    <td>Branch cannot be empty.</td>
+  </tr>
+  <tr>
     <td>401</td>
     <td>Failed to get GitHub info_status: 401, reason: Bad credentials</td>
     <td>Token is incorrect</td>
@@ -166,13 +174,18 @@ header: "Authorization: Bearer <YOUR-TOKEN>"
     <td>Unable to read target repo</td>
     <td>Unable to read target repo, please recheck the token!</td>
   </tr>
+  <tr>
+    <td>500</td>
+    <td></td>
+    <td>Internal Server Error</td>
+  </tr>
 </table>
 
 - C3
 ```plantuml
 @startuml
 skin rose
-title Heartbeat - Verify token can read target repo
+title Heartbeat - Verify token can read target branch
 
 participant FrontEnd
 participant GitHubController
@@ -181,21 +194,22 @@ participant GitHubFeignClient
 participant RestResponseEntityExceptionHandler
 participant GitHub
 
-' group Verify token can read target repo
-    FrontEnd -> GitHubController: request: token, type, repository
+' group Verify token can read target branch
+    -> FrontEnd: User select branch
+    FrontEnd -> GitHubController: request: token, type, repository, branch
     activate GitHubController
-    GitHubController -> GitHubService: token, repository
+    GitHubController -> GitHubService: token, repository, branch
     activate GitHubService
-    GitHubService -> GitHubFeignClient: token, repository
+    GitHubService -> GitHubFeignClient: token, repository, branch
     activate GitHubFeignClient
-    GitHubFeignClient -> GitHub: get: /repos/OWNER/REPO
+    GitHubFeignClient -> GitHub: get: /repos/{owner}/{repo}/branches/{branch}
 alt Verification success
     GitHub --> GitHubFeignClient: 200
     GitHubFeignClient --> GitHubService: 200
     deactivate GitHubFeignClient
     GitHubService --> GitHubController: true
     deactivate GitHubService
-    GitHubController --> FrontEnd: response 200
+    GitHubController --> FrontEnd: response 204
     deactivate GitHubController
 else Verification failed
     GitHub --> GitHubFeignClient: 404

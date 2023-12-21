@@ -100,9 +100,9 @@ export default [
 		key: 'spikes/tech-spikes-impact-of-status-and-column-name-change',
 	},
 	{
-		text: 'Split verify of github',
-		slug: 'spikes/tech-spikes-split-verify-of-github',
-		key: 'spikes/tech-spikes-split-verify-of-github',
+		text: 'Split verification of GitHub',
+		slug: 'spikes/tech-spikes-split-verification-of-github',
+		key: 'spikes/tech-spikes-split-verification-of-github',
 	},
 	{
 		text: 'Split verification of buildKite',

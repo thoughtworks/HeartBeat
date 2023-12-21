@@ -24,7 +24,6 @@ import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
-import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
@@ -72,6 +71,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import heartbeat.util.IdUtil;
@@ -735,8 +735,9 @@ public class GenerateReporterService {
 		}
 	}
 
+	// todo: need change this to private after the "/reports" endpoint is deprecated
 	public ReportResponse getReportFromHandler(String reportId) {
-		return asyncReportRequestHandler.getReport(reportId);
+		return asyncReportRequestHandler.getAndRemoveReport(reportId);
 	}
 
 	public ReportResponse getComposedReportResponse(String reportId) {
@@ -746,19 +747,27 @@ public class GenerateReporterService {
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		boolean allMetricsReady = asyncReportRequestHandler.isReportReady(reportId);
 		return ReportResponse.builder()
-			.velocity(boardReportResponse.getVelocity())
-			.classificationList(boardReportResponse.getClassificationList())
-			.cycleTime(boardReportResponse.getCycleTime())
-			.exportValidityTime(response.getExportValidityTime())
-			.deploymentFrequency(doraReportResponse.getDeploymentFrequency())
-			.changeFailureRate(doraReportResponse.getChangeFailureRate())
-			.meanTimeToRecovery(doraReportResponse.getMeanTimeToRecovery())
-			.leadTimeForChanges(doraReportResponse.getLeadTimeForChanges())
-			.boardMetricsReady(metricsDataReady.getBoardMetricsReady())
-			.pipelineMetricsReady(metricsDataReady.getPipelineMetricsReady())
-			.sourceControlMetricsReady(metricsDataReady.getSourceControlMetricsReady())
+			.velocity(getNullableValue(boardReportResponse::getVelocity))
+			.classificationList(getNullableValue(boardReportResponse::getClassificationList))
+			.cycleTime(getNullableValue(boardReportResponse::getCycleTime))
+			.exportValidityTime(getNullableValue(response::getExportValidityTime))
+			.deploymentFrequency(getNullableValue(doraReportResponse::getDeploymentFrequency))
+			.changeFailureRate(getNullableValue(doraReportResponse::getChangeFailureRate))
+			.meanTimeToRecovery(getNullableValue(doraReportResponse::getMeanTimeToRecovery))
+			.leadTimeForChanges(getNullableValue(doraReportResponse::getLeadTimeForChanges))
+			.boardMetricsReady(getNullableValue(metricsDataReady::getBoardMetricsReady))
+			.pipelineMetricsReady(getNullableValue(metricsDataReady::getPipelineMetricsReady))
+			.sourceControlMetricsReady(getNullableValue(metricsDataReady::getSourceControlMetricsReady))
 			.allMetricsReady(allMetricsReady)
 			.build();
+	}
+
+	private <T> T getNullableValue(Supplier<T> supplier) {
+		try {
+			return Optional.ofNullable(supplier.get()).orElse(null);
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 }

@@ -19,6 +19,8 @@ import heartbeat.exception.BadRequestException;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
+import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.util.BoardUtil;
 import heartbeat.util.SystemUtil;
@@ -81,6 +83,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
@@ -281,6 +284,33 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldCallJiraFeignClientAndThrowNotFoundExceptionWhenGetJiraBoardConfig() throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("storyPoints", "customfield_10016");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token))
+			.thenThrow(new NotFoundException("message"));
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		assertThatCode(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
+			.doesNotThrowAnyException();
+	}
+
+	@Test
 	void shouldCallJiraFeignClientAndThrowNonContentCodeWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -432,8 +462,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token)).thenReturn(null);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(NoContentException.class)
-			.hasMessageContaining("There is no target field.");
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
 	}
 
 	@Test
@@ -454,8 +484,8 @@ class JiraServiceTest {
 			.thenReturn(emptyProjectFieldResponse);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(NoContentException.class)
-			.hasMessageContaining("There is no target field.");
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
 	}
 
 	@Test
@@ -468,8 +498,8 @@ class JiraServiceTest {
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
-			.isInstanceOf(Exception.class)
-			.hasMessageContaining("There is no target field.");
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
 	}
 
 	@Test

@@ -8,7 +8,7 @@ import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 import { resetStep } from '@src/context/stepper/StepperSlice'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig'
-import { GuideButton, HomeGuideContainer } from '@src/components/HomeGuide/style'
+import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/HomeGuide/style'
 import { MESSAGE } from '@src/constants/resources'
 import { ROUTE } from '@src/constants/router'
 
@@ -70,11 +70,11 @@ export const HomeGuide = () => {
   return (
     <HomeGuideContainer>
       {!validConfig && <WarningNotification message={MESSAGE.HOME_VERIFY_IMPORT_WARNING} />}
-      <Stack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
+      <StyledStack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
         <GuideButton onClick={openFileImportBox}>Import project from file</GuideButton>
         <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange} />
         <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
-      </Stack>
+      </StyledStack>
     </HomeGuideContainer>
   )
 }

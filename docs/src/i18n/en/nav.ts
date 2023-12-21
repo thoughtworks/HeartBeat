@@ -96,13 +96,23 @@ export default [
 	},
 	{
 		text: 'Impact of status and column name change',
-		slug: 'tech-spikes-impact-of-status-and-column-name-change',
-		key: 'tech-spikes-impact-of-status-and-column-name-change',
+		slug: 'spikes/tech-spikes-impact-of-status-and-column-name-change',
+		key: 'spikes/tech-spikes-impact-of-status-and-column-name-change',
 	},
 	{
-		text: 'Split verify of github',
-		slug: 'spikes/tech-spikes-split-verify-of-github',
-		key: 'spikes/tech-spikes-split-verify-of-github',
+		text: 'Split verification of GitHub',
+		slug: 'spikes/tech-spikes-split-verification-of-github',
+		key: 'spikes/tech-spikes-split-verification-of-github',
+	},
+	{
+		text: 'Split verification of buildKite',
+		slug: 'spikes/tech-spikes-split-verify-of-buildkite',
+		key: 'spikes/tech-spikes-split-verify-of-buildkite',
+	},
+	{
+		text: 'Split verification of board',
+		slug: 'spikes/tech-spikes-split-verification-of-board',
+		key: 'spikes/tech-spikes-split-verification-of-board',
 	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },

@@ -1,19 +1,25 @@
-import { act, render, renderHook, waitFor } from '@testing-library/react'
+import { act, render, renderHook, waitFor, within } from '@testing-library/react'
 import MetricsStep from '@src/components/Metrics/MetricsStep'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 
-import { updateMetrics } from '@src/context/config/configSlice'
+import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice'
 import {
   CLASSIFICATION_SETTING,
   CREWS_SETTING,
   CYCLE_TIME_SETTINGS,
+  CYCLE_TIME_SETTINGS_SECTION,
   DEPLOYMENT_FREQUENCY_SETTINGS,
+  LIST_OPEN,
+  MOCK_JIRA_VERIFY_RESPONSE,
   REAL_DONE,
+  REAL_DONE_SETTING_SECTION,
   REQUIRED_DATA_LIST,
+  SELECT_CONSIDER_AS_DONE_MESSAGE,
 } from '../../../fixtures'
-import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice'
+import { saveCycleTimeSettings, saveDoneColumn } from '@src/context/Metrics/metricsSlice'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
+import userEvent from '@testing-library/user-event'
 
 let store = setupStore()
 
@@ -88,5 +94,99 @@ describe('MetricsStep', () => {
     )
 
     expect(result.current.resetProps).toBeCalled()
+  })
+
+  describe('with pre-filled cycle time data', () => {
+    beforeEach(() => {
+      const cycleTimeSettingsWithTwoDoneValue = [
+        {
+          name: 'To Do',
+          value: 'To Do',
+        },
+        {
+          name: 'In Progress',
+          value: 'Done',
+        },
+        {
+          name: 'Block',
+          value: 'Block',
+        },
+        {
+          name: 'Test',
+          value: 'To do',
+        },
+        {
+          name: 'Done',
+          value: 'Done',
+        },
+      ]
+      const doneColumn = ['IN PROGRESS', 'IN DEV', 'PRE-DONE', 'DONE', 'CANCLE']
+      const jiraColumns = [
+        { key: 'indeterminate', value: { name: 'To Do', statuses: ['BACKLOG', 'TO DO', 'GOING TO DO'] } },
+        { key: 'indeterminate', value: { name: 'In Progress', statuses: ['IN PROGRESS', 'IN DEV'] } },
+        { key: 'indeterminate', value: { name: 'Block', statuses: ['BLOCK'] } },
+        { key: 'indeterminate', value: { name: 'Test', statuses: ['TESTING', 'TO BE TESTED'] } },
+        { key: 'done', value: { name: 'Done', statuses: ['PRE-DONE,', 'DONE', 'CANCLE'] } },
+      ]
+
+      store.dispatch(updateMetrics(REQUIRED_DATA_LIST))
+      store.dispatch(saveCycleTimeSettings(cycleTimeSettingsWithTwoDoneValue))
+      store.dispatch(saveDoneColumn(doneColumn))
+      store.dispatch(
+        updateJiraVerifyResponse({
+          jiraColumns,
+          users: MOCK_JIRA_VERIFY_RESPONSE.users,
+        })
+      )
+    })
+
+    it('should reset real done when change Cycle time settings DONE to other status', async () => {
+      const { getByLabelText, getByRole } = setup()
+      const cycleTimeSettingsSection = getByLabelText(CYCLE_TIME_SETTINGS_SECTION)
+      const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION)
+
+      expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
+      const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
+
+      await userEvent.click(columnsArray[1])
+      const options = within(getByRole('listbox')).getAllByRole('option')
+      await userEvent.click(options[1])
+
+      await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE))
+    })
+
+    it('should reset real done when change Cycle time settings other status to DONE', async () => {
+      const { getByLabelText, getByRole } = setup()
+      const cycleTimeSettingsSection = getByLabelText(CYCLE_TIME_SETTINGS_SECTION)
+      const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION)
+
+      expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
+      const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
+
+      await userEvent.click(columnsArray[2])
+      const options = within(getByRole('listbox')).getAllByRole('option')
+      await userEvent.click(options[options.length - 1])
+
+      await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE))
+    })
+
+    it('should hide real done when change all Cycle time settings to other status', async () => {
+      const { getByLabelText, getByRole } = setup()
+      const cycleTimeSettingsSection = getByLabelText(CYCLE_TIME_SETTINGS_SECTION)
+      const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION)
+
+      expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
+      const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
+
+      await userEvent.click(columnsArray[1])
+      const options1 = within(getByRole('listbox')).getAllByRole('option')
+      await userEvent.click(options1[1])
+
+      await userEvent.click(columnsArray[4])
+      const options2 = within(getByRole('listbox')).getAllByRole('option')
+      await userEvent.click(options2[1])
+
+      await waitFor(() => expect(realDoneSettingSection).not.toBeInTheDocument())
+    })
   })
 })

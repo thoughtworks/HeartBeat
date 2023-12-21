@@ -46,13 +46,14 @@ header: "Authorization: Bearer YOUR-TOKEN"
 ```plantuml
 @startuml
 skin rose
-title C3 - Heartbeat - Verify the validity of the token
+title Heartbeat - Verify the validity of the token
 
 participant FrontEnd
 participant GitHubController
 participant GitHubService
 participant GitHubFeignClient
 participant RestResponseEntityExceptionHandler
+participant GitHub
 
 ' group Verify the validity of the token
     FrontEnd -> GitHubController: request: token, type
@@ -61,7 +62,9 @@ participant RestResponseEntityExceptionHandler
     activate GitHubService
     GitHubService -> GitHubFeignClient: token
     activate GitHubFeignClient
+    GitHubFeignClient -> GitHub: get: /octocat
 alt Verification success
+    GitHub --> GitHubFeignClient: 200
     GitHubFeignClient --> GitHubService: 200
     deactivate GitHubFeignClient
     GitHubService --> GitHubController: true
@@ -69,10 +72,11 @@ alt Verification success
     GitHubController --> FrontEnd: response: 200
     deactivate GitHubController
 else Verification failed
-    GitHubFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    GitHub --> GitHubFeignClient: 401
+    GitHubFeignClient -> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
     deactivate GitHubFeignClient
     activate RestResponseEntityExceptionHandler
-    RestResponseEntityExceptionHandler -> FrontEnd: response 401 Unauthorized: "Token is incorrect"
+    RestResponseEntityExceptionHandler --> FrontEnd: response 401 Unauthorized: "Token is incorrect"
     deactivate RestResponseEntityExceptionHandler
     ' deactivate GitHubService
     ' deactivate GitHubController
@@ -113,13 +117,14 @@ header: "Authorization: Bearer <YOUR-TOKEN>"
 ```plantuml
 @startuml
 skin rose
-title C3 - Heartbeat - Verify token can read target repo
+title Heartbeat - Verify token can read target repo
 
 participant FrontEnd
 participant GitHubController
 participant GitHubService
 participant GitHubFeignClient
 participant RestResponseEntityExceptionHandler
+participant GitHub
 
 ' group Verify token can read target repo
     FrontEnd -> GitHubController: request: token, type, repository
@@ -128,7 +133,9 @@ participant RestResponseEntityExceptionHandler
     activate GitHubService
     GitHubService -> GitHubFeignClient: token, repository
     activate GitHubFeignClient
+    GitHubFeignClient -> GitHub: get: /repos/OWNER/REPO
 alt Verification success
+    GitHub --> GitHubFeignClient: 200
     GitHubFeignClient --> GitHubService: 200
     deactivate GitHubFeignClient
     GitHubService --> GitHubController: true
@@ -136,6 +143,7 @@ alt Verification success
     GitHubController --> FrontEnd: response 200
     deactivate GitHubController
 else Verification failed
+    GitHub --> GitHubFeignClient: 404
     GitHubFeignClient --> GitHubService: throw 404 Not Found
     deactivate GitHubFeignClient
     activate GitHubService

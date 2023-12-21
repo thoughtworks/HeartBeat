@@ -15,10 +15,10 @@ request: {
   token:"your_token",
   startTime: "xxx",
   endTime:"xxx",
-  } 
+  }
 }
 responses:{
-  "pipelineList": 
+  "pipelineList":
   [{
     "id": "xxx",
     "name": "xxx",
@@ -55,7 +55,7 @@ participant BuildKite
     BuildKite -> BuildKiteFeignClient: [1] 200 scopes[xxx,xxx,...]
     BuildKiteFeignClient -> BuildKiteService: [1] 200 scopes[xxx,xxx,...]
     BuildKiteService -> BuildKiteFeignClient: [2] token
-   
+
     BuildKiteFeignClient -> BuildKite: [2] v2/organizations
     BuildKite -> BuildKiteFeignClient: [2] BuildKiteOrganizationsInfoList{name,slug}
     BuildKiteFeignClient -> BuildKiteService: [2] BuildKiteOrganizationsInfoList{name,slug}
@@ -163,7 +163,7 @@ end
 @enduml
 ```
 
-### 2. getBuildKiteInfo 
+### 2. getBuildKiteInfo
 The api should be called when entering the Metrics page. Only after two parts of data(The api and previous getPipelineSteps api) are obtained can the loading disappear.
 - Api Design
 ```
@@ -174,10 +174,10 @@ request: {
   token:"your_token",
   startTime: "xxx",
   endTime:"xxx",
-  } 
+  }
 }
 responses:{
-  "pipelineList": 
+  "pipelineList":
   [{
     "id": "xxx",
     "name": "xxx",

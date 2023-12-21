@@ -23,11 +23,10 @@ Triggered after clicking GitHub's verify on the config page
 
 - Api Design
 ```
-paths: /api/v1/source-control/verify
+paths: /api/v1/source-control/{sourcetype}/verify
 method: post
 request: {
-  token: "...",
-  type: "GitHub"
+  token: "..."
 }
 responses:
   Status Code: 200
@@ -39,7 +38,8 @@ method: get
 header: "Authorization: Bearer YOUR-TOKEN"
 ```
 - Exception Handler
-
+  - 400: Token cannot be empty.
+  - 400: Token's pattern is incorrect.
   - 401: Failed to get GitHub info_status: 401, reason: Bad credentials: Token is incorrect
 
 - C3
@@ -87,12 +87,11 @@ Triggered when the Metrics page Pipeline setting module obtains Step
 
 - Api Design
 ```
-paths: /api/v1/source-control/repos/verify
+paths: /api/v1/source-control/{sourceType}/repos/verify
 method: post
 request: {
-  repository: "git@github.com:XXXX/XXXX.git"
-  token: "...",
-  type: "GitHub"
+  repository: "git@github.com:XXXX/XXXX.git",
+  token: "..."
 }
 responses:
   Status Code: 200
@@ -104,8 +103,11 @@ method: get
 header: "Authorization: Bearer <YOUR-TOKEN>"
 ```
 - Exception Handler
-
-  - 400: Unable to read target repo: Unable to read target repo, please recheck the token!
+  - 400: Token cannot be empty.
+  - 400: Token's pattern is incorrect.
+  - 400: repository cannot be empty.
+  - 400: repository's pattern is incorrect.
+  - 403: Unable to read target repo: Unable to read target repo, please recheck the token!
 
 - C3
 ```plantuml
@@ -137,11 +139,11 @@ else Verification failed
     GitHubFeignClient --> GitHubService: throw 404 Not Found
     deactivate GitHubFeignClient
     activate GitHubService
-    GitHubService -> RestResponseEntityExceptionHandler: throw 400 Bad Request
+    GitHubService -> RestResponseEntityExceptionHandler: throw 403 Permission Deny
     deactivate GitHubService
     deactivate GitHubFeignClient
     activate RestResponseEntityExceptionHandler
-    RestResponseEntityExceptionHandler -> FrontEnd: response 400 Bad Request: "Unable to read target repo"
+    RestResponseEntityExceptionHandler -> FrontEnd: response 403 Permission Deny: "Unable to read target repo"
     deactivate RestResponseEntityExceptionHandler
     ' deactivate GitHubService
     ' deactivate GitHubController

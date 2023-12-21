@@ -1,5 +1,5 @@
 import { cleanup, render, renderHook, waitFor } from '@testing-library/react'
-import { NotificationButton } from '@src/components/Common/NotificationButton/NotificationButton'
+import { NotificationButton } from '@src/components/Common/NotificationButton'
 import React from 'react'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
 import { act } from 'react-dom/test-utils'

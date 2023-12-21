@@ -912,7 +912,7 @@ class GenerateReporterServiceTest {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		// when
-		when(asyncReportRequestHandler.isReportExists(fileTimeStamp)).thenReturn(true);
+		when(asyncReportRequestHandler.isReportReady(fileTimeStamp)).thenReturn(true);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertTrue(generateReportIsOver);

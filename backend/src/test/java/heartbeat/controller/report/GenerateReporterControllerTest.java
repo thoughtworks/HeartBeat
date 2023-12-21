@@ -5,13 +5,10 @@ import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
+import heartbeat.controller.report.dto.response.*;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.report.GenerateReporterService;
-import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
-import heartbeat.controller.report.dto.response.DeploymentFrequency;
-import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.handler.AsyncExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -243,6 +240,39 @@ class GenerateReporterControllerTest {
 
 		Thread.sleep(2000L);
 		verify(asyncExceptionHandler).put(currentTimeStamp, requestFailedException);
+	}
+
+	@Test
+	void shouldReturnAcceptedStatusAndCallbackUrlAndIntervalWhenCallDoraReports() throws Exception {
+		ReportResponse expectedResponse = ReportResponse.builder()
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
+			.velocity(Velocity.builder().velocityForSP(10).build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
+			.build();
+
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateBoardReportRequest request = mapper.readValue(
+			new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		when(generateReporterService.generateReporter(request.convertToReportRequest())).thenReturn(expectedResponse);
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/dora-reports").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
 	}
 
 }

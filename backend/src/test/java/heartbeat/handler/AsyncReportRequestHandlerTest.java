@@ -44,9 +44,9 @@ class AsyncReportRequestHandlerTest {
 		String currentTime = Long.toString(currentTimeMillis);
 		asyncReportRequestHandler.putReport(currentTime, ReportResponse.builder().build());
 
-		assertTrue(asyncReportRequestHandler.isReportExists(currentTime));
-		assertNotNull(asyncReportRequestHandler.getAndRemoveReport(currentTime));
-		assertFalse(asyncReportRequestHandler.isReportExists(currentTime));
+		assertTrue(asyncReportRequestHandler.isReportReady(currentTime));
+		assertNotNull(asyncReportRequestHandler.getReport(currentTime));
+		assertFalse(asyncReportRequestHandler.isReportReady(currentTime));
 	}
 
 }

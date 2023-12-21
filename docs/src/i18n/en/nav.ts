@@ -110,9 +110,9 @@ export default [
 		key: 'spikes/tech-spikes-split-verify-of-buildkite',
 	},
 	{
-		text: 'Split verify of board',
-		slug: 'spikes/tech-spikes-split-verify-of-board',
-		key: 'spikes/tech-spikes-split-verify-of-board',
+		text: 'Split verification of board',
+		slug: 'spikes/tech-spikes-split-verification-of-board',
+		key: 'spikes/tech-spikes-split-verification-of-board',
 	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },

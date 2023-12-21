@@ -240,13 +240,18 @@ public class JiraService {
 		log.info("Start to get columns status self list, column name: {}", jiraColumn.getName());
 		List<CompletableFuture<StatusSelfDTO>> futures = jiraColumn.getStatuses()
 			.stream()
-			.map(jiraColumnStatus -> CompletableFuture.supplyAsync(
-					() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
-					customTaskExecutor))
+			.map(jiraColumnStatus -> CompletableFuture
+				.supplyAsync(() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
+						customTaskExecutor)
+				.exceptionally(e -> {
+					log.error("Filed to get Jira column status category, with status number: {} reason: {}:",
+							jiraColumnStatus.getId(), e.getMessage());
+					return null;
+				}))
 			.toList();
 		log.info("Successfully get columns status self list, column name: {}", jiraColumn.getName());
 
-		return futures.stream().map(CompletableFuture::join).toList();
+		return futures.stream().map(CompletableFuture::join).filter(Objects::nonNull).toList();
 	}
 
 	private String handleColumKey(List<String> doneColumn, List<StatusSelfDTO> statusSelfList) {

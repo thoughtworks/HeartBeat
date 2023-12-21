@@ -1,6 +1,7 @@
 import { theme } from '@src/theme'
 import Button, { ButtonProps } from '@mui/material/Button'
 import styled from '@emotion/styled'
+import Stack from '@mui/material/Stack'
 
 export const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -27,7 +28,14 @@ export const GuideButton = styled(Button)<ButtonProps>({
   },
 })
 
+export const StyledStack = styled(Stack)<ButtonProps>({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%,-50%)',
+})
+
 export const HomeGuideContainer = styled.div({
   height: '44rem',
-  display: 'flex',
+  position: 'relative',
 })

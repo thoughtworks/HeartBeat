@@ -19,7 +19,7 @@ const main = async (args: string[]) => {
 
   const checkPorts = async () => {
     const ports = Object.values(PORT)
-    const checkPorts = ports.map((port) => tcpPortUsed.check(port))
+    const checkPorts = ports.map((port) => tcpPortUsed.check(port, 'localhost'))
     const checkingResult = await Promise.all(checkPorts)
     const usingPorts = ports.filter((_, idx) => checkingResult[idx])
     const availablePorts = ports.filter((port) => !usingPorts.includes(port))
@@ -50,7 +50,7 @@ const main = async (args: string[]) => {
 
   const waitForPort = async (port: number) => {
     try {
-      await tcpPortUsed.waitUntilUsed(port, 1000, 30000)
+      await tcpPortUsed.waitUntilUsedOnHost(port, 'localhost', 1000, 30000)
       console.log(`Successfully run service on port ${port}`)
     } catch (err) {
       console.error(`Failed to run service on port ${port} for reason ${err}`)

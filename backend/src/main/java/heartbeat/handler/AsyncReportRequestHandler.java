@@ -3,6 +3,7 @@ package heartbeat.handler;
 import heartbeat.controller.report.dto.response.MetricsDataReady;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.GenerateReportException;
+import heartbeat.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -59,7 +60,7 @@ public class AsyncReportRequestHandler {
 		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
 		Set<String> keys = reportMap.keySet()
 			.stream()
-			.filter(reportId -> Long.parseLong(reportId) < exportTime)
+			.filter(reportId -> Long.parseLong(IdUtil.getTimeStampFromReportId(reportId)) < exportTime)
 			.collect(Collectors.toSet());
 		reportMap.keySet().removeAll(keys);
 	}

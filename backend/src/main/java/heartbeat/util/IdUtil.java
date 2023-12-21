@@ -14,4 +14,9 @@ public interface IdUtil {
 		return DORA_REPORT_PREFIX + timeStamp;
 	}
 
+	static String getTimeStampFromReportId(String reportId) {
+		String[] splitResult = reportId.split("\\s*\\-|\\.\\s*");
+		return splitResult[1];
+	}
+
 }

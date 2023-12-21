@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback } from 'react'
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
 import FlagCard from '@src/components/Metrics/MetricsStep/CycleTime/FlagCard'
 import { FormSelectPart } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelectPart'
@@ -29,12 +29,25 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
   const dispatch = useAppDispatch()
   const { cycleTimeSettings } = useAppSelector(selectMetricsContent)
   const warningMessage = useAppSelector(selectCycleTimeWarningMessage)
-  const [cycleTimeOptions, setCycleTimeOptions] = useState(cycleTimeSettings)
-  const [saveDone, setSaveDone] = useState<string[]>([])
 
-  const saveCycleTimeOptions = (name: string, value: string) => {
-    setCycleTimeOptions(
-      cycleTimeOptions.map((item) =>
+  const resetRealDoneColumn = useCallback(
+    (name: string, value: string) => {
+      const optionNamesWithDone = cycleTimeSettings.filter((item) => item.value === DONE).map((item) => item.name)
+
+      if (value === DONE) {
+        dispatch(saveDoneColumn([]))
+      }
+
+      if (optionNamesWithDone.includes(name)) {
+        dispatch(saveDoneColumn([]))
+      }
+    },
+    [cycleTimeSettings, dispatch]
+  )
+
+  const saveCycleTimeOptions = useCallback(
+    (name: string, value: string) => {
+      const newCycleTimeSettings = cycleTimeSettings.map((item) =>
         item.name === name
           ? {
               ...item,
@@ -42,28 +55,15 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
             }
           : item
       )
-    )
 
-    if (value === DONE) {
-      setSaveDone([...saveDone, name])
-      dispatch(saveDoneColumn([]))
-    } else if (saveDone.includes(name)) {
-      setSaveDone(saveDone.filter((e) => e !== name))
-      dispatch(saveDoneColumn([]))
-    }
-  }
-
-  useEffect(() => {
-    dispatch(saveCycleTimeSettings(cycleTimeOptions))
-    cycleTimeOptions.forEach((item) => {
-      if (item.value === DONE) {
-        setSaveDone([...saveDone, item.name])
-      }
-    })
-  }, [cycleTimeOptions, dispatch])
+      resetRealDoneColumn(name, value)
+      dispatch(saveCycleTimeSettings(newCycleTimeSettings))
+    },
+    [cycleTimeSettings, dispatch, resetRealDoneColumn]
+  )
 
   return (
-    <>
+    <div aria-label='Cycle time settings section'>
       <TitleAndTooltipContainer>
         <MetricsSettingTitle title={title} />
         <TooltipContainer data-test-id={'tooltip'}>
@@ -76,9 +76,9 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
       </TitleAndTooltipContainer>
       <CycleTimeContainer>
         {warningMessage && <WarningNotification message={warningMessage} />}
-        <FormSelectPart selectedOptions={cycleTimeOptions} saveCycleTimeOptions={saveCycleTimeOptions} />
+        <FormSelectPart selectedOptions={cycleTimeSettings} saveCycleTimeOptions={saveCycleTimeOptions} />
         <FlagCard />
       </CycleTimeContainer>
-    </>
+    </div>
   )
 }

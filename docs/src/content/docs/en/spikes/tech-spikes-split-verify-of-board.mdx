@@ -249,7 +249,7 @@ participant JiraAPI
     JiraFeignClient -> JiraAPI: /rest/agile/1.0/board/{boardId}/issue?maxResults={queryCount}&startAt={startAt}&jql={jql} \ntoken, baseUrl, boardId, queryCount, startAt, jql
     JiraAPI -> JiraFeignClient: allCardResponse
     JiraFeignClient -> JiraAPI: /rest/internal/2/issue/{jiraCardKey}/activityfeed \ntoken, baseUrl, jiraCardKey
-    Jira -> JiraFeignClient: CardHistoryResponseDTO
+    JiraAPI -> JiraFeignClient: CardHistoryResponseDTO
 alt Verification success
     deactivate JiraAPI
     JiraFeignClient --> JiraService: responseDTO

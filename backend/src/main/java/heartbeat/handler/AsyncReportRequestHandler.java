@@ -46,11 +46,9 @@ public class AsyncReportRequestHandler {
 			throw new GenerateReportException("Unable to locate the report using this report ID.");
 		}
 
-		List<Boolean> metricsReady = Stream.of(
-				metricsDataReady.getBoardMetricsReady(),
-				metricsDataReady.getPipelineMetricsReady(),
-				metricsDataReady.getSourceControlMetricsReady()
-			)
+		List<Boolean> metricsReady = Stream
+			.of(metricsDataReady.getBoardMetricsReady(), metricsDataReady.getPipelineMetricsReady(),
+					metricsDataReady.getSourceControlMetricsReady())
 			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
 

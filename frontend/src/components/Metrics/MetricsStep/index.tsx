@@ -7,8 +7,12 @@ import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '
 import { REQUIRED_DATA, DONE } from '@src/constants/resources'
 import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
-import CollectionDuration from '@src/components/Common/CollectionDuration'
-import { MetricSelectionWrapper, MetricsSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
+import DateRangeViewer from '@src/components/Common/DateRangeViewer'
+import {
+  MetricSelectionWrapper,
+  MetricsSelectionTitle,
+  MetricSelectionHeader,
+} from '@src/components/Metrics/MetricsStep/style'
 import { useLayoutEffect } from 'react'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
 
@@ -31,7 +35,11 @@ const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
 
   return (
     <>
-      {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
+      {startDate && endDate && (
+        <MetricSelectionHeader>
+          <DateRangeViewer startDate={startDate} endDate={endDate} />
+        </MetricSelectionHeader>
+      )}
       <MetricSelectionWrapper>
         <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
 

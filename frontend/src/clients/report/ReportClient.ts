@@ -77,20 +77,6 @@ export class ReportClient extends HttpClient {
     }
   }
 
-  getBorderReport = async (params: BoardReportRequestDTO) => {
-    await this.axiosInstance
-      .post(`/board-reports`, params, {})
-      .then((res) => {
-        this.boardReportCallbackResponse = res.data
-      })
-      .catch((e) => {
-        throw e
-      })
-    return {
-      response: this.boardReportCallbackResponse,
-    }
-  }
-
   pollingReport = async (url: string) => {
     await this.axiosInstance
       .get(url)

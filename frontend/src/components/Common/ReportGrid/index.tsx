@@ -6,10 +6,12 @@ import { ReportCardItemProps } from '@src/components/Common/ReportGrid/ReportCar
 
 export interface ReportGridProps {
   lastGrid?: boolean
-  reportDetails: {
-    title: string
-    items?: ReportCardItemProps[]
-  }[]
+  reportDetails: ReportDetailProps[]
+}
+
+export interface ReportDetailProps {
+  title: string
+  items?: ReportCardItemProps[]
 }
 
 export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {

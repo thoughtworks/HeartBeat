@@ -46,17 +46,6 @@ export const reportMapper = ({
   }
 }
 
-export const boardReportMapper = ({ velocity, cycleTime }: ReportResponseDTO): ReportResponse => {
-  const velocityList = velocity && velocityMapper(velocity)
-
-  const cycleTimeList = cycleTime && cycleTimeMapper(cycleTime)
-
-  return {
-    velocityList,
-    cycleTimeList,
-  }
-}
-
 export const sourceControlReportMapper = ({ leadTimeForChanges }: ReportResponseDTO): ReportResponse => {
   const leadTimeForChangesList = leadTimeForChanges && leadTimeForChangesMapper(leadTimeForChanges)
 

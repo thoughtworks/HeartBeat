@@ -236,12 +236,12 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         title: 'Velocity',
         items: [
           {
-            value: velocity?.velocityForSP,
+            value: velocity.velocityForSP,
             subtitle: 'Average Cycle Time',
             unit: '(Days/SP)',
           },
           {
-            value: velocity?.velocityForCards,
+            value: velocity.velocityForCards,
             subtitle: 'Throughput',
             unit: '(Cards Count)',
           },
@@ -251,12 +251,12 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         title: 'Cycle Time',
         items: [
           {
-            value: cycleTime?.averageCycleTimePerSP,
+            value: cycleTime.averageCycleTimePerSP,
             subtitle: 'Average Cycle Time',
             unit: '(Days/SP)',
           },
           {
-            value: cycleTime?.averageCycleTimePerCard,
+            value: cycleTime.averageCycleTimePerCard,
             subtitle: 'Average Cycle Time',
             unit: '(Days/Card)',
           },

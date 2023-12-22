@@ -10,8 +10,8 @@ export interface useGenerateReportEffectInterface {
   startToRequestBoardData: (boardParams: BoardReportRequestDTO) => void
   startToRequestDoraData: (doraParams: ReportRequestDTO) => void
   stopPollingReports: () => void
-  errorMessage: string
   isServerError: boolean
+  errorMessage: string
   reportData: ReportResponseDTO | undefined
 }
 

@@ -16,6 +16,7 @@ import { ROUTE } from '@src/constants/router'
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup'
+import BoardMetrics from '@src/components/Metrics/ReportStep/BoradMetrics'
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface
@@ -229,42 +230,6 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     }
   })
 
-  const getBoardItems = () => {
-    const { velocity, cycleTime } = reportData
-    return [
-      {
-        title: 'Velocity',
-        items: [
-          {
-            value: velocity.velocityForSP,
-            subtitle: 'Average Cycle Time',
-            unit: '(Days/SP)',
-          },
-          {
-            value: velocity.velocityForCards,
-            subtitle: 'Throughput',
-            unit: '(Cards Count)',
-          },
-        ],
-      },
-      {
-        title: 'Cycle Time',
-        items: [
-          {
-            value: cycleTime.averageCycleTimePerSP,
-            subtitle: 'Average Cycle Time',
-            unit: '(Days/SP)',
-          },
-          {
-            value: cycleTime.averageCycleTimePerCard,
-            subtitle: 'Average Cycle Time',
-            unit: '(Days/Card)',
-          },
-        ],
-      },
-    ]
-  }
-
   const getSourceControlItems = () => {
     const { leadTimeForChanges } = reportData
     return [
@@ -353,12 +318,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
             </StyledErrorNotification>
           )}
           <>
-            {reportData && (
-              <StyledMetricsSection>
-                <ReportTitle title='Board Metrics' />
-                <ReportGrid reportDetails={getBoardItems()} />
-              </StyledMetricsSection>
-            )}
+            <BoardMetrics />
 
             {shouldShowDoraMetrics && (
               <StyledMetricsSection>

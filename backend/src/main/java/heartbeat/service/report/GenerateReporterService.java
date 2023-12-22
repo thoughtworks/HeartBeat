@@ -588,10 +588,28 @@ public class GenerateReporterService {
 		Boolean boardMetricsReady = boardMetricsExist ? flag : null;
 		Boolean codebaseMetricsReady = codebaseMetricsExist ? flag : null;
 		Boolean buildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
+		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
+		if (isInitialize && previousMetricsReady != null) {
+			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
+				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null ? Boolean.FALSE : previousMetricsReady.getBoardMetricsReady())
+				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null ? Boolean.FALSE : previousMetricsReady.getPipelineMetricsReady())
+				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null ? Boolean.FALSE : previousMetricsReady.getSourceControlMetricsReady())
+				.build();
+			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+		}
+
+		if(previousMetricsReady != null) {
+			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
+				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null ? Boolean.TRUE : previousMetricsReady.getBoardMetricsReady())
+				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null ? Boolean.TRUE : previousMetricsReady.getPipelineMetricsReady())
+				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null ? Boolean.TRUE : previousMetricsReady.getSourceControlMetricsReady())
+				.build();
+			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+		}
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
 			.boardMetricsReady(boardMetricsReady)
-			.pipelineMetricsReady(codebaseMetricsReady)
-			.sourceControlMetricsReady(buildKiteMetricsReady)
+			.pipelineMetricsReady(buildKiteMetricsReady)
+			.sourceControlMetricsReady(codebaseMetricsReady)
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 	}

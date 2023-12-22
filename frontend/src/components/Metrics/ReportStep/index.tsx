@@ -89,7 +89,8 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const {
     isServerError,
     errorMessage: reportErrorMsg,
-    startPollingBoardReport,
+    startPollingReports,
+    stopPollingReports,
     boardReport = {
       velocity: {
         velocityForSP: 1,
@@ -109,7 +110,6 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         ],
       },
     },
-    stopPollingBoardReports,
   } = useGenerateReportEffect()
   const { fetchExportData, errorMessage: csvErrorMsg, isExpired } = useExportCsvEffect()
   const [exportValidityTimeMin] = useState<number | undefined>(undefined)
@@ -227,7 +227,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   }, [exportValidityTimeMin])
 
   useEffect(() => {
-    startPollingBoardReport(getBoardReportRequestBody())
+    startPollingReports(getBoardReportRequestBody())
   }, [])
 
   useEffect(() => {
@@ -236,7 +236,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   useEffect(() => {
     return () => {
-      stopPollingBoardReports()
+      stopPollingReports()
     }
   })
 

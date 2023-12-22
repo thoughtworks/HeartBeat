@@ -26,11 +26,11 @@ export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {
   }
 
   return (
-    <Grid container justifyContent='center' spacing={3}>
+    <Grid container justifyContent='center' spacing={2}>
       {reportDetails.map((detail, index) => {
         const xs = getXS(index)
         return (
-          <Grid item xs={xs} key={detail.title}>
+          <Grid item xs={xs} key={index}>
             <ReportCard title={detail.title} items={detail.items} xs={xs} />
           </Grid>
         )

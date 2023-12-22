@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react'
 import { reportClient } from '@src/clients/report/ReportClient'
-import { ReportRequestDTO } from '@src/clients/report/dto/request'
+import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
-import { HttpStatusCode } from 'axios'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { DURATION } from '@src/constants/commons'
 
 export interface useGenerateReportEffectInterface {
-  startPollingReports: (boardParams: ReportRequestDTO, doraParams: ReportRequestDTO) => void
+  startToRequestBoardData: (boardParams: BoardReportRequestDTO) => void
+  startToRequestDoraData: (doraParams: ReportRequestDTO) => void
   stopPollingReports: () => void
   errorMessage: string
   isServerError: boolean
@@ -20,13 +20,38 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [errorMessage, setErrorMessage] = useState('')
   const [reportData, setReportData] = useState<ReportResponseDTO>()
   const timerIdRef = useRef<number>()
+  let hasPollingStarted = false
 
-  const startPollingReports = (boardParams: ReportRequestDTO, doraParams: ReportRequestDTO) => {
-    Promise.race([
-      reportClient.retrieveReportByUrl(doraParams, '/dora-reports'),
-      reportClient.retrieveReportByUrl(boardParams, '/board-reports'),
-    ])
-      .then((res) => pollingReport(res.response.callbackUrl, res.response.interval))
+  const startToRequestBoardData = async (boardParams: ReportRequestDTO) => {
+    reportClient
+      .retrieveReportByUrl(boardParams, '/board-reports')
+      .then((res) => {
+        if (hasPollingStarted) return
+        hasPollingStarted = true
+        pollingReport(res.response.callbackUrl, res.response.interval)
+      })
+      .catch((e) => {
+        const err = e as Error
+        if (err instanceof InternalServerException || err instanceof UnknownException) {
+          setIsServerError(true)
+        } else {
+          setErrorMessage(`generate report: ${err.message}`)
+          setTimeout(() => {
+            setErrorMessage('')
+          }, DURATION.ERROR_MESSAGE_TIME)
+        }
+        stopPollingReports()
+      })
+  }
+
+  const startToRequestDoraData = async (doraParams: ReportRequestDTO) => {
+    reportClient
+      .retrieveReportByUrl(doraParams, '/dora-reports')
+      .then((res) => {
+        if (hasPollingStarted) return
+        hasPollingStarted = true
+        pollingReport(res.response.callbackUrl, res.response.interval)
+      })
       .catch((e) => {
         const err = e as Error
         if (err instanceof InternalServerException || err instanceof UnknownException) {
@@ -45,8 +70,9 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
     reportClient
       .pollingReport(url)
       .then((res: { status: number; response: ReportResponseDTO }) => {
-        setReportData(res.response)
-        if (res.status === HttpStatusCode.Created) {
+        const response = res.response
+        setReportData(response)
+        if (response.allMetricsReady) {
           stopPollingReports()
         } else {
           timerIdRef.current = window.setTimeout(() => pollingReport(url, interval), interval * 1000)
@@ -68,10 +94,12 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
 
   const stopPollingReports = () => {
     window.clearTimeout(timerIdRef.current)
+    hasPollingStarted = false
   }
 
   return {
-    startPollingReports,
+    startToRequestBoardData,
+    startToRequestDoraData,
     stopPollingReports,
     reportData,
     isServerError,

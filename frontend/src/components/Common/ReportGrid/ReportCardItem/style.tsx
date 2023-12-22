@@ -8,20 +8,28 @@ export const StyledItem = styled.div({
   alignItems: 'center',
 })
 
-export const StyledValueWrapper = styled('div')({
+export const StyledContent = styled('div')({
   width: '100%',
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'end',
   justifyContent: 'space-between',
 })
 
-export const StyledUnit = styled('div')({
+export const StyledUnit = styled(TextField)({
   fontFamily: 'Roboto',
-  fontSize: '1.1rem',
+  fontSize: '0.6rem',
   fontStyle: 'normal',
-  opacity: '0.65',
-  marginTop: '2rem',
   wordWrap: 'break-word',
+  '& .MuiInputBase-input': {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    fontFamily: 'Roboto',
+    fontSize: '0.6rem',
+    fontStyle: 'normal',
+  },
+  '& .MuiInputBase-input.Mui-disabled': {
+    WebkitTextFillColor: theme.main.secondColor,
+  },
 })
 
 export const StyledValue = styled(Typography)({

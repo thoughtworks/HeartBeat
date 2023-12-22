@@ -150,3 +150,12 @@ export const MESSAGE = {
   EXPIRE_IN_FIVE_MINUTES: 'The file will expire in 5 minutes, please download it in time.',
   REPORT_LOADING: 'The report is being generated, please do not refresh the page or all the data will be disappeared.',
 }
+
+export const REPORT_PAGE = {
+  BOARD: {
+    TITLE: 'Board Metrics',
+  },
+  DORA: {
+    TITLE: 'DORA Metrics',
+  },
+}

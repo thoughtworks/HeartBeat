@@ -45,7 +45,7 @@ export const ReportCard = ({ title, items, xs }: ReportCardProps) => {
         {items?.map((item, index) =>
           index < style.MAX_INDEX ? (
             <ReportCardItem
-              key={item.subtitle}
+              key={index}
               value={item.value}
               unit={item.unit}
               subtitle={item.subtitle}

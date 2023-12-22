@@ -591,12 +591,12 @@ public class GenerateReporterService {
 		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
 		if (isInitialize && previousMetricsReady != null) {
 			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null
-						? previousMetricsReady.getBoardMetricsReady() : Boolean.FALSE)
-				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null
-						? previousMetricsReady.getPipelineMetricsReady() : Boolean.FALSE)
-				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null
-						? previousMetricsReady.getSourceControlMetricsReady() : Boolean.FALSE)
+				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() == null && boardMetricsReady != null
+					? Boolean.FALSE : previousMetricsReady.getBoardMetricsReady())
+				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() == null && buildKiteMetricsReady != null
+					? Boolean.FALSE : previousMetricsReady.getPipelineMetricsReady())
+				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() == null && codebaseMetricsReady != null
+					? Boolean.FALSE : previousMetricsReady.getSourceControlMetricsReady())
 				.build();
 			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 		}

@@ -591,27 +591,35 @@ public class GenerateReporterService {
 		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
 		if (isInitialize && previousMetricsReady != null) {
 			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null ? Boolean.FALSE : previousMetricsReady.getBoardMetricsReady())
-				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null ? Boolean.FALSE : previousMetricsReady.getPipelineMetricsReady())
-				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null ? Boolean.FALSE : previousMetricsReady.getSourceControlMetricsReady())
+				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null
+						? previousMetricsReady.getBoardMetricsReady() : Boolean.FALSE)
+				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null
+						? previousMetricsReady.getPipelineMetricsReady() : Boolean.FALSE)
+				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null
+						? previousMetricsReady.getSourceControlMetricsReady() : Boolean.FALSE)
 				.build();
 			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 		}
 
-		if(previousMetricsReady != null) {
+		if (!isInitialize && previousMetricsReady != null) {
 			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null ? Boolean.TRUE : previousMetricsReady.getBoardMetricsReady())
-				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null ? Boolean.TRUE : previousMetricsReady.getPipelineMetricsReady())
-				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null ? Boolean.TRUE : previousMetricsReady.getSourceControlMetricsReady())
+				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null ? Boolean.TRUE
+						: previousMetricsReady.getBoardMetricsReady())
+				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null ? Boolean.TRUE
+						: previousMetricsReady.getPipelineMetricsReady())
+				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null ? Boolean.TRUE
+						: previousMetricsReady.getSourceControlMetricsReady())
 				.build();
 			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 		}
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.boardMetricsReady(boardMetricsReady)
-			.pipelineMetricsReady(buildKiteMetricsReady)
-			.sourceControlMetricsReady(codebaseMetricsReady)
-			.build();
-		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+		if (previousMetricsReady == null) {
+			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
+				.boardMetricsReady(boardMetricsReady)
+				.pipelineMetricsReady(buildKiteMetricsReady)
+				.sourceControlMetricsReady(codebaseMetricsReady)
+				.build();
+			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+		}
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,

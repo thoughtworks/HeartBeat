@@ -9,7 +9,7 @@ export const StyledErrorNotification = styled('div')({
 })
 
 export const StyledMetricsSection = styled('div')({
-  marginTop: '3rem',
+  marginTop: '1.5rem',
 })
 
 export const StyledSpacing = styled('div')({

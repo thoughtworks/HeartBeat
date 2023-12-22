@@ -2,9 +2,9 @@ import {
   StyledDividingLine,
   StyledItem,
   StyledSubtitle,
+  StyledUnit,
   StyledValue,
   StyledValueWrapper,
-  StyledUnit,
 } from '@src/components/Common/ReportGrid/ReportCardItem/style'
 import DividingLine from '@src/assets/DividingLine.svg'
 import React, { HTMLAttributes } from 'react'
@@ -26,7 +26,14 @@ export const ReportCardItem = ({ style, value, unit, subtitle, showDividingLine 
           <StyledValue>{value}</StyledValue>
           <StyledUnit>{unit}</StyledUnit>
         </StyledValueWrapper>
-        <StyledSubtitle>{subtitle}</StyledSubtitle>
+        <StyledSubtitle
+          disabled
+          variant='standard'
+          InputProps={{
+            disableUnderline: true,
+          }}
+          value={subtitle}
+        />
       </div>
     </StyledItem>
   )

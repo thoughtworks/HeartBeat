@@ -1,9 +1,9 @@
 import styled from '@emotion/styled'
-import { Typography } from '@mui/material'
+import { TextField, Typography } from '@mui/material'
 import '@fontsource/roboto'
+import { theme } from '@src/theme'
 
 export const StyledItem = styled.div({
-  marginTop: '1.5rem',
   display: 'flex',
   alignItems: 'center',
 })
@@ -25,19 +25,27 @@ export const StyledUnit = styled('div')({
 })
 
 export const StyledValue = styled(Typography)({
+  width: '100%',
   fontFamily: 'Roboto',
-  fontSize: '4rem',
+  fontSize: '2.5rem',
   fontStyle: 'normal',
   fontWeight: 500,
   wordWrap: 'break-word',
 })
 
-export const StyledSubtitle = styled(Typography)({
-  fontFamily: 'Roboto',
-  fontSize: '1.1rem',
-  fontStyle: 'normal',
-  opacity: '0.65',
-  wordWrap: 'break-word',
+export const StyledSubtitle = styled(TextField)({
+  width: '100%',
+  '& .MuiInputBase-input': {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    fontFamily: 'Roboto',
+    fontSize: '0.8rem',
+    fontStyle: 'normal',
+  },
+  '& .MuiInputBase-input.Mui-disabled': {
+    WebkitTextFillColor: theme.main.secondColor,
+    opacity: 0.65,
+  },
 })
 
 export const StyledDividingLine = styled.img({

@@ -5,8 +5,8 @@ import '@fontsource/roboto'
 
 export const StyledReportCard = styled.div({
   position: 'relative',
-  padding: '1.5rem',
-  height: '11.75rem',
+  padding: '0.8rem 1.5rem 0.8rem 1.5rem',
+  height: '6.7rem',
   borderRadius: '1rem',
   border: theme.main.cardBorder,
   background: theme.main.color,
@@ -22,5 +22,5 @@ export const StyledItemSection = styled.div({
 export const StyledReportCardTitle = styled(Typography)({
   fontFamily: 'Roboto',
   fontWeight: 500,
-  fontSize: '1.2rem',
+  fontSize: '1rem',
 })

@@ -14,7 +14,9 @@ export const StyledMetricsSign = styled('canvas')({
 
 export const StyledMetricsTitle = styled(Typography)({
   fontFamily: 'Roboto',
-  fontWeight: 500,
-  fontSize: '1.2rem',
+  fontWeight: 600,
+  fontSize: '1rem',
   marginBottom: '1rem',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 })

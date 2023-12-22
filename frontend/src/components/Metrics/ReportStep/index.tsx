@@ -20,7 +20,6 @@ import {
 } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
-import CollectionDuration from '@src/components/Common/CollectionDuration'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
@@ -29,55 +28,6 @@ import { Tooltip } from '@mui/material'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
-
-const dora1 = [
-  {
-    title: 'Lead Time For Change',
-    items: [
-      {
-        value: '7.34',
-        subtitle: 'PR Lead Time',
-      },
-      {
-        value: '0,03',
-        subtitle: 'Pipeline Lead Time',
-      },
-      {
-        value: '7.22',
-        subtitle: 'Total Lead Time',
-      },
-    ],
-  },
-]
-
-const dora2 = [
-  {
-    title: 'Deployment Frequency',
-    items: undefined,
-  },
-  {
-    title: 'Change Failure Rate',
-    items: [
-      {
-        value: '102.33',
-        subtitle: 'Deployment',
-      },
-      {
-        value: '7.34',
-        subtitle: 'PR Lead Time',
-      },
-    ],
-  },
-  {
-    title: 'Mean Time To Recovery',
-    items: [
-      {
-        value: '99.33',
-        subtitle: 'Average Cycle Time(Days/SP)',
-      },
-    ],
-  },
-]
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface
@@ -450,7 +400,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         navigate(ROUTE.ERROR_PAGE)
       ) : (
         <>
-          {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
+          {/*{startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}*/}
           {handleErrorNotification()}
           <>
             {reportData && (

@@ -62,7 +62,7 @@ export const ReportCard = ({ title, items, xs }: ReportCardProps) => {
 
   return (
     <StyledReportCard>
-      {!items && <Loading size='2rem' backgroundColor='transparent' />}
+      {!items && <Loading size='1.5rem' backgroundColor='transparent' />}
       <StyledReportCardTitle>{title}</StyledReportCardTitle>
       {items && getReportItems()}
     </StyledReportCard>

@@ -6,7 +6,7 @@ import '@fontsource/roboto'
 export const StyledReportCard = styled.div({
   position: 'relative',
   padding: '0.8rem 1.5rem 0.8rem 1.5rem',
-  height: '6.7rem',
+  height: '7rem',
   borderRadius: '1rem',
   border: theme.main.cardBorder,
   background: theme.main.color,

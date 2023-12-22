@@ -47,6 +47,7 @@ export const ReportCard = ({ title, items, xs }: ReportCardProps) => {
             <ReportCardItem
               key={item.subtitle}
               value={item.value}
+              unit={item.unit}
               subtitle={item.subtitle}
               showDividingLine={items.length > 1 && index > 0}
               style={{ flex: getFlex(items.length) }}

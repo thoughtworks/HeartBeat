@@ -8,6 +8,22 @@ export const StyledItem = styled.div({
   alignItems: 'center',
 })
 
+export const StyledValueWrapper = styled('div')({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+})
+
+export const StyledUnit = styled('div')({
+  fontFamily: 'Roboto',
+  fontSize: '1.1rem',
+  fontStyle: 'normal',
+  opacity: '0.65',
+  marginTop: '2rem',
+  wordWrap: 'break-word',
+})
+
 export const StyledValue = styled(Typography)({
   fontFamily: 'Roboto',
   fontSize: '4rem',

@@ -91,23 +91,52 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     errorMessage: reportErrorMsg,
     startPollingReports,
     stopPollingReports,
-    boardReport = {
+    reportData = {
       velocity: {
-        velocityForSP: 1,
-        velocityForCards: 1,
+        velocityForSP: 0,
+        velocityForCards: 0,
       },
       cycleTime: {
-        totalTimeForCards: 1,
-        averageCycleTimePerCard: 1,
-        averageCycleTimePerSP: 1,
+        averageCycleTimePerCard: 0,
+        averageCycleTimePerSP: 0,
+        totalTimeForCards: 0,
         swimlaneList: [
           {
-            optionalItemName: '1',
-            averageTimeForSP: 1,
-            averageTimeForCards: 1,
-            totalTime: 1,
+            optionalItemName: '',
+            averageTimeForSP: 0,
+            averageTimeForCards: 0,
+            totalTime: 0,
           },
         ],
+      },
+      classificationList: [
+        {
+          fieldName: '',
+          pairList: [],
+        },
+      ],
+      deploymentFrequency: undefined,
+      leadTimeForChanges: {
+        leadTimeForChangesOfPipelines: [],
+        avgLeadTimeForChanges: {
+          name: '',
+          prLeadTime: 1,
+          pipelineLeadTime: 1,
+          totalDelayTime: 1,
+        },
+      },
+      changeFailureRate: {
+        avgChangeFailureRate: {
+          name: '',
+          totalTimes: 0,
+          totalFailedTimes: 0,
+          failureRate: 0.0,
+        },
+        changeFailureRateOfPipelines: [],
+      },
+      meanTimeToRecovery: {
+        avgMeanTimeToRecovery: { name: 'Average', timeToRecovery: 0 },
+        meanTimeRecoveryPipelines: [{ timeToRecovery: 0, name: 'Heartbeat', step: ':lock: Check Security' }],
       },
     },
   } = useGenerateReportEffect()
@@ -305,7 +334,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   })
 
   const getBoardItems = () => {
-    const { velocity = {}, cycleTime = {} } = boardReport
+    const { velocity, cycleTime } = reportData
     return [
       {
         title: 'Velocity',
@@ -340,6 +369,81 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     ]
   }
 
+  const getSourceControlItems = () => {
+    const { leadTimeForChanges } = reportData
+    return [
+      {
+        title: 'Lead Time For Change',
+        items: leadTimeForChanges && [
+          {
+            value: leadTimeForChanges.avgLeadTimeForChanges.prLeadTime,
+            subtitle: 'PR Lead Time',
+          },
+          {
+            value: leadTimeForChanges.avgLeadTimeForChanges.pipelineLeadTime,
+            subtitle: 'Pipeline Lead Time',
+          },
+          {
+            value: leadTimeForChanges.avgLeadTimeForChanges.totalDelayTime,
+            subtitle: 'Total Lead Time',
+          },
+        ],
+      },
+    ]
+  }
+
+  const getPipelineItems = () => {
+    const { deploymentFrequency, meanTimeToRecovery, changeFailureRate } = reportData
+
+    const deploymentFrequencyList = metrics.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
+      ? [
+          {
+            title: 'Deployment Frequency',
+            items: deploymentFrequency && [
+              {
+                value: deploymentFrequency?.avgDeploymentFrequency.deploymentFrequency,
+                subtitle: 'Deployment Frequency(Deployments/Day)',
+              },
+            ],
+          },
+        ]
+      : []
+
+    const meanTimeToRecoveryList = metrics.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
+      ? [
+          {
+            title: 'Mean Time To Recovery',
+            items: meanTimeToRecovery && [
+              {
+                value: meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery,
+                subtitle: 'Deployment Frequency(Deployments/Day)',
+              },
+            ],
+          },
+        ]
+      : []
+
+    const changeFailureRateList = metrics.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE)
+      ? [
+          {
+            title: 'Change Failure Rate',
+            items: changeFailureRate && [
+              {
+                value: changeFailureRate.avgChangeFailureRate.failureRate,
+                extraValue: `${changeFailureRate.avgChangeFailureRate.totalFailedTimes}/${changeFailureRate.avgChangeFailureRate.totalTimes}`,
+                subtitle: 'Fallurerate',
+              },
+            ],
+          },
+        ]
+      : []
+
+    return [...deploymentFrequencyList, ...changeFailureRateList, ...meanTimeToRecoveryList]
+  }
+
+  const shouldShowDoraMetrics = metrics.some((metric) => DORA_METRICS.includes(metric))
+  const shouldShowSourceControl = metrics.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)
+
   return (
     <>
       {isServerError ? (
@@ -349,19 +453,21 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           {startDate && endDate && <CollectionDuration startDate={startDate} endDate={endDate} />}
           {handleErrorNotification()}
           <>
-            {boardReport && (
+            {reportData && (
               <StyledMetricsSection>
                 <ReportTitle title='Board Metrics' />
                 <ReportGrid reportDetails={getBoardItems()} />
               </StyledMetricsSection>
             )}
 
-            <StyledMetricsSection>
-              <ReportTitle title='DORA Metrics' />
-              <ReportGrid reportDetails={dora1} />
-              <StyledSpacing />
-              <ReportGrid reportDetails={dora2} lastGrid={true} />
-            </StyledMetricsSection>
+            {shouldShowDoraMetrics && (
+              <StyledMetricsSection>
+                <ReportTitle title='DORA Metrics' />
+                {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
+                <StyledSpacing />
+                <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} />
+              </StyledMetricsSection>
+            )}
           </>
 
           <StyledButtonGroup>

@@ -16,9 +16,7 @@ export interface useGenerateReportEffectInterface {
   isPipelineLoading: boolean
   isSourceControlLoading: boolean
   errorMessage: string
-  sourceControlReport: ReportResponse | undefined
-  boardReport: ReportResponseDTO | undefined
-  pipelineReport: ReportResponse | undefined
+  reportData: ReportResponseDTO | undefined
 }
 
 export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
@@ -27,9 +25,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [isSourceControlLoading, setIsSourceControlLoading] = useState(false)
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [pipelineReport, setPipelineReport] = useState<ReportResponse>()
-  const [sourceControlReport, setSourceControlReport] = useState<ReportResponse>()
-  const [boardReport, setBoardReport] = useState<ReportResponseDTO>()
+  const [reportData, setReportData] = useState<ReportResponseDTO>()
   const timerIdRef = useRef<number>()
 
   const startPollingReports = (boardParams: ReportRequestDTO, doraParams: ReportRequestDTO) => {
@@ -60,17 +56,15 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       .pollingReport(url)
       .then((res: { status: number; response: ReportResponseDTO }) => {
         const { sourceControlMetricsReady, pipelineMetricsReady, boardMetricsReady } = res.response
+        setReportData(res.response)
         if (sourceControlMetricsReady) {
           setIsSourceControlLoading(false)
-          setSourceControlReport(sourceControlReportMapper(res.response))
         }
         if (pipelineMetricsReady) {
           setIsPipelineLoading(false)
-          setPipelineReport(pipelineReportMapper(res.response))
         }
         if (boardMetricsReady) {
           setIsBoardLoading(false)
-          setBoardReport(res.response)
         }
         if (res.status === HttpStatusCode.Created) {
           stopPollingReports()
@@ -99,12 +93,10 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   return {
     startPollingReports,
     stopPollingReports,
-    sourceControlReport,
-    pipelineReport,
     isPipelineLoading,
     isSourceControlLoading,
     isBoardLoading,
-    boardReport,
+    reportData,
     isServerError,
     errorMessage,
   }

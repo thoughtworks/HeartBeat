@@ -10,7 +10,8 @@ import DividingLine from '@src/assets/DividingLine.svg'
 import React, { HTMLAttributes } from 'react'
 
 export interface ReportCardItemProps extends HTMLAttributes<HTMLDivElement> {
-  value: string
+  value: string | number | undefined
+  extraValue?: string
   subtitle: string
   showDividingLine?: boolean
   unit?: string

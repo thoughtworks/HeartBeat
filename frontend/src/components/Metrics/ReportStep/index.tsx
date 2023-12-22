@@ -2,10 +2,10 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns, selectMetrics } from '@src/context/config/configSlice'
-import { CALENDAR, MESSAGE, REQUIRED_DATA, TIPS } from '@src/constants/resources'
+import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE, REQUIRED_DATA, TIPS } from '@src/constants/resources'
 import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons'
-import { BoardReportRequestDTO, CSVReportRequestDTO } from '@src/clients/report/dto/request'
-import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
+import { BoardReportRequestDTO, CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
+import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
 import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/style'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
@@ -115,10 +115,19 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const [exportValidityTimeMin] = useState<number | undefined>(undefined)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
   const configData = useAppSelector(selectConfig)
-  const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
-    useAppSelector(selectMetricsContent)
+  const {
+    cycleTimeSettings,
+    treatFlagCardAsBlock,
+    users,
+    pipelineCrews,
+    targetFields,
+    doneColumn,
+    deploymentFrequencySettings,
+    leadTimeForChanges,
+    assigneeFilter,
+  } = useAppSelector(selectMetricsContent)
   const { metrics, calendarType, dateRange } = configData.basic
-  const { board } = configData
+  const { board, pipelineTool, sourceControl } = configData
   const { token, type, site, projectKey, boardId, email } = board.config
   const { startDate, endDate } = dateRange
   const requiredData = useAppSelector(selectMetrics)
@@ -154,26 +163,81 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     endDate: endDate ?? '',
   })
 
-  const getBoardReportRequestBody = (): BoardReportRequestDTO => ({
-    metrics: metrics,
-    startTime: dayjs(startDate).valueOf().toString(),
-    endTime: dayjs(endDate).valueOf().toString(),
-    considerHoliday: calendarType === CALENDAR.CHINA,
-    jiraBoardSetting: {
-      token: jiraToken,
-      type: type.toLowerCase().replace(' ', '-'),
-      site,
-      projectKey,
-      boardId,
-      boardColumns: filterAndMapCycleTimeSettings(cycleTimeSettings, jiraColumnsWithValue),
-      treatFlagCardAsBlock,
-      users,
-      assigneeFilter,
-      targetFields,
-      doneColumn,
-    },
-    csvTimeStamp: csvTimeStamp,
-  })
+  const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) => {
+    if (!pipelineConfigs[0].organization && pipelineConfigs.length === 1) {
+      return []
+    }
+    return pipelineConfigs.map(({ organization, pipelineName, step, branches }) => {
+      const pipelineConfigFromPipelineList = configData.pipelineTool.verifiedResponse.pipelineList.find(
+        (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization
+      )
+      if (pipelineConfigFromPipelineList != undefined) {
+        const { orgName, orgId, name, id, repository } = pipelineConfigFromPipelineList
+        return {
+          orgId,
+          orgName,
+          id,
+          name,
+          step,
+          repository,
+          branches,
+        }
+      }
+    }) as {
+      id: string
+      name: string
+      orgId: string
+      orgName: string
+      repository: string
+      step: string
+      branches: string[]
+    }[]
+  }
+
+  const getDoraReportRequestBody = (): ReportRequestDTO => {
+    const doraMetrics = metrics.filter((metric) => DORA_METRICS.includes(metric))
+    return {
+      metrics: doraMetrics,
+      startTime: dayjs(startDate).valueOf().toString(),
+      endTime: dayjs(endDate).valueOf().toString(),
+      considerHoliday: calendarType === CALENDAR.CHINA,
+      buildKiteSetting: {
+        pipelineCrews,
+        ...pipelineTool.config,
+        deploymentEnvList: getPipelineConfig(deploymentFrequencySettings),
+      },
+      codebaseSetting: {
+        type: sourceControl.config.type,
+        token: sourceControl.config.token,
+        leadTime: getPipelineConfig(leadTimeForChanges),
+      },
+      csvTimeStamp: csvTimeStamp,
+    }
+  }
+
+  const getBoardReportRequestBody = (): BoardReportRequestDTO => {
+    const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric))
+    return {
+      metrics: boardMetrics,
+      startTime: dayjs(startDate).valueOf().toString(),
+      endTime: dayjs(endDate).valueOf().toString(),
+      considerHoliday: calendarType === CALENDAR.CHINA,
+      jiraBoardSetting: {
+        token: jiraToken,
+        type: type.toLowerCase().replace(' ', '-'),
+        site,
+        projectKey,
+        boardId,
+        boardColumns: filterAndMapCycleTimeSettings(cycleTimeSettings, jiraColumnsWithValue),
+        treatFlagCardAsBlock,
+        users,
+        assigneeFilter,
+        targetFields,
+        doneColumn,
+      },
+      csvTimeStamp: csvTimeStamp,
+    }
+  }
 
   const handleBack = () => {
     dispatch(backStep())
@@ -227,7 +291,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   }, [exportValidityTimeMin])
 
   useEffect(() => {
-    startPollingReports(getBoardReportRequestBody())
+    startPollingReports(getBoardReportRequestBody(), getDoraReportRequestBody())
   }, [])
 
   useEffect(() => {

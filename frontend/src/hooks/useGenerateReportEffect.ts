@@ -9,7 +9,7 @@ import { ReportResponse, ReportResponseDTO } from '@src/clients/report/dto/respo
 import { DURATION } from '@src/constants/commons'
 
 export interface useGenerateReportEffectInterface {
-  startPollingReports: (params: ReportRequestDTO) => void
+  startPollingReports: (boardParams: ReportRequestDTO, doraParams: ReportRequestDTO) => void
   stopPollingReports: () => void
   isBoardLoading: boolean
   isServerError: boolean
@@ -32,13 +32,13 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [boardReport, setBoardReport] = useState<ReportResponseDTO>()
   const timerIdRef = useRef<number>()
 
-  const startPollingReports = (params: ReportRequestDTO) => {
+  const startPollingReports = (boardParams: ReportRequestDTO, doraParams: ReportRequestDTO) => {
     setIsBoardLoading(true)
     setIsPipelineLoading(true)
     setIsSourceControlLoading(true)
     Promise.race([
-      reportClient.retrieveReportByUrl(params, '/dora-reports'),
-      reportClient.retrieveReportByUrl(params, '/board-reports'),
+      reportClient.retrieveReportByUrl(doraParams, '/dora-reports'),
+      reportClient.retrieveReportByUrl(boardParams, '/board-reports'),
     ])
       .then((res) => pollingReport(res.response.callbackUrl, res.response.interval))
       .catch((e) => {

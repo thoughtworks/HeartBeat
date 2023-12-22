@@ -239,21 +239,15 @@ public class JiraService {
 		log.info("Start to get columns status self list, column name: {}", jiraColumn.getName());
 		List<CompletableFuture<StatusSelfDTO>> futures = jiraColumn.getStatuses()
 			.stream()
-			.map(jiraColumnStatus -> CompletableFuture.supplyAsync(() -> {
-				log.info("[Jira verify Status] Start to get column status category with column name: {}, status: {}",
-						jiraColumn.getName(), jiraColumn.getStatuses());
-				StatusSelfDTO columnStatusCategory = jiraFeignClient.getColumnStatusCategory(baseUrl,
-						jiraColumnStatus.getId(), token);
-				log.info(
-						"[Jira verify Status] Successfully get column status category with column name: {}, status: {}",
-						jiraColumn.getName(), jiraColumn.getStatuses());
-				return columnStatusCategory;
-			}, customTaskExecutor).exceptionally(e -> {
-				log.error(
-						"[Jira verify Status] Failed to get Jira column status category, with  column name: {}, status: {} reason: {}:",
-						jiraColumn.getName(), jiraColumn.getStatuses(), e.getMessage());
-				return null;
-			}))
+			.map(jiraColumnStatus -> CompletableFuture
+				.supplyAsync(() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
+						customTaskExecutor)
+				.exceptionally(e -> {
+					log.error(
+							"Failed to get Jira column status category, with  column name: {}, status: {} reason: {}:",
+							jiraColumn.getName(), jiraColumn.getStatuses(), e.getMessage());
+					return null;
+				}))
 			.toList();
 		log.info("Successfully get columns status self list, column name: {}", jiraColumn.getName());
 
@@ -281,13 +275,9 @@ public class JiraService {
 	}
 
 	private List<String> getUsers(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam) {
-		log.info("[Jira verify Cards] Start to get all cards in getUsers, boardType: {}", boardType);
 		List<JiraCard> allCards = getAllCards(boardType, baseUrl, boardRequestParam).getJiraCards();
-		log.info("[Jira verify Cards] Successfully to get all cards in getUsers, boardType: {}, size: {}", boardType,
-				allCards.size());
 
 		if (allCards.isEmpty()) {
-			log.error("[Jira verify Cards] Failed to get cards in getUsers is empty, boardType: {}", boardType);
 			throw new NoContentException("There is no cards.");
 		}
 
@@ -417,11 +407,10 @@ public class JiraService {
 
 	private List<String> getAssigneeSet(URI baseUrl, JiraCard jiraCard, String jiraToken) {
 		log.info("Start to get jira card history, card key: {}", jiraCard.getKey());
-		log.info("[Jira verify History] Start to get jira card history, card key: {}", jiraCard.getKey());
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(),
 				jiraToken);
-		log.info("[Jira verify History] Successfully get jira card history, card key: {}, card history items size: {}",
-				jiraCard.getKey(), cardHistoryResponseDTO.getItems().size());
+		log.info("Successfully get jira card history, card key: {}, card history items size: {}", jiraCard.getKey(),
+				cardHistoryResponseDTO.getItems().size());
 
 		List<String> assigneeSet = cardHistoryResponseDTO.getItems()
 			.stream()
@@ -447,16 +436,10 @@ public class JiraService {
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
 		log.info("Start to get target field, project key: {}, board id: {},", boardRequestParam.getProjectKey(),
 				boardRequestParam.getBoardId());
-		log.info("[Jira verify Field] Start to get target field for project key: {}, board id: {}",
-				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId());
 		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(),
 				boardRequestParam.getToken());
-		log.info("[Jira verify Field] Successfully to get target field for project key: {}, board id: {}",
-				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
-			log.error("[Jira verify Field] Failed to get target field for project key: {}, board id: {}",
-					boardRequestParam.getProjectKey(), boardRequestParam.getBoardId());
 			throw new PermissionDenyException("There is no enough permission.");
 		}
 
@@ -787,14 +770,9 @@ public class JiraService {
 	private JiraCardWithFields getCardList(URI baseUrl, BoardRequestParam boardRequestParam, String jql,
 			String cardType) {
 		log.info("Start to get first-page xxx card information form kanban, param {}", cardType);
-		log.info("[Jira verify Cards] Start to get jira cards with boardId: {}, cardType: {}",
-				boardRequestParam.getBoardId(), cardType);
 		String allCardResponse = jiraFeignClient.getJiraCards(baseUrl, boardRequestParam.getBoardId(), QUERY_COUNT, 0,
 				jql, boardRequestParam.getToken());
-		log.info("[Jira verify Cards] Successfully get jira cards with boardId: {}, cardType: {}",
-				boardRequestParam.getBoardId(), cardType);
 		if (allCardResponse.isEmpty()) {
-			log.info("[Jira verify Cards] Successfully get jira cards is empty");
 			return JiraCardWithFields.builder().jiraCards(Collections.emptyList()).build();
 		}
 		log.info("Successfully get first-page xxx card information form kanban, param {}", cardType);
@@ -831,11 +809,7 @@ public class JiraService {
 
 	public JiraBoardConfigDTO getJiraBoardConfig(URI baseUrl, String boardId, String token) {
 		log.info("Start to get configuration for board, board id: {}", boardId);
-		log.info("[Jira verify Board] Start to get Jira Board Configuration with boardId: {}", boardId);
 		JiraBoardConfigDTO jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId, token);
-		log.info(
-				"[Jira verify Board] Successfully get Jira Board Configuration with boardId: {}, name: {}, column size: {}",
-				boardId, jiraBoardConfigDTO.getName(), jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		log.info("Successfully get configuration for board, name: {}, column size: {}", jiraBoardConfigDTO.getName(),
 				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		return jiraBoardConfigDTO;

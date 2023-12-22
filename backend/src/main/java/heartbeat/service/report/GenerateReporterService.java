@@ -603,11 +603,11 @@ public class GenerateReporterService {
 
 		if (!isInitialize && previousMetricsReady != null) {
 			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() != null ? Boolean.TRUE
+				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() !=null && boardMetricsReady !=null ? Boolean.TRUE
 						: previousMetricsReady.getBoardMetricsReady())
-				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() != null ? Boolean.TRUE
+				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() !=null && buildKiteMetricsReady !=null ? Boolean.TRUE
 						: previousMetricsReady.getPipelineMetricsReady())
-				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() != null ? Boolean.TRUE
+				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() !=null && codebaseMetricsReady !=null ? Boolean.TRUE
 						: previousMetricsReady.getSourceControlMetricsReady())
 				.build();
 			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);

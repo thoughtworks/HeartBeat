@@ -29,7 +29,7 @@ request: {
   "boardId": "...",
   "projectKey": "...",
   "site": "...",
-  "token": "...",
+  "token(email+token)": "...",
   "startTime": "...",
   "endTime": "..."
 }
@@ -74,7 +74,7 @@ parameters: {
   "boardId": "...",
   "projectKey": "...",
   "site": "...",
-  "token": "..."
+  "token(email+token)": "..."
 }
 responses:
   Status Code: 200
@@ -154,7 +154,7 @@ POST api/v1/boards/{boardType}/info
 | boardId                   | string                                                                                                        | Board ID.                                                                         |      |
 | projectKey                | string                                                                                                        | Specify the key of the project.                                                   |      |
 | site                      | string                                                                                                        | Host url of the board.                                                            |      |
-| token                     | string                                                                                                        | Authentication for board.                                                         |      |
+| token                     | string                                                                                                        | Authentication for board, it is included email and token input                    |      |
 | startTime                 | string                                                                                                        | Fillter results by startTime, it will use in [JQL](https://docs.atlassian.com/jira-software/REST/7.0.4/#agile/1.0/board-getConfiguration:~:text=Get%20issues%20for%20board) to get data.                                |      |
 | endTime                   | string                                                                                                        | Fillter results by endTime, it will use in [JQL](https://docs.atlassian.com/jira-software/REST/7.0.4/#agile/1.0/board-getConfiguration:~:text=Get%20issues%20for%20board) to get data.                                 |      |
 

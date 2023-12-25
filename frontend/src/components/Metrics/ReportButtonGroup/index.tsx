@@ -20,6 +20,7 @@ interface ReportButtonGroupProps {
   startDate: string | null
   endDate: string | null
   setErrorMessage: (message: string) => void
+  shouldShowBoardExportButton: boolean
   reportData: ReportResponseDTO | undefined
 }
 
@@ -30,14 +31,11 @@ export const ReportButtonGroup = ({
   endDate,
   setErrorMessage,
   reportData,
+  shouldShowBoardExportButton,
 }: ReportButtonGroupProps) => {
   const dispatch = useAppDispatch()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const requiredData = useAppSelector(selectMetrics)
-  const isShowExportBoardButton =
-    requiredData.includes(REQUIRED_DATA.VELOCITY) ||
-    requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
-    requiredData.includes(REQUIRED_DATA.CLASSIFICATION)
   const isShowExportPipelineButton =
     requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
     requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
@@ -85,7 +83,7 @@ export const ReportButtonGroup = ({
           >
             {COMMON_BUTTONS.EXPORT_METRIC_DATA}
           </StyledExportButton>
-          {isShowExportBoardButton && (
+          {shouldShowBoardExportButton && (
             <StyledExportButton
               disabled={!reportData?.boardMetricsReady}
               onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}

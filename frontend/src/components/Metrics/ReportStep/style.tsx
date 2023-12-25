@@ -6,5 +6,5 @@ export const StyledErrorNotification = styled('div')({
 })
 
 export const StyledSpacing = styled('div')({
-  height: '1rem',
+  height: '2rem',
 })

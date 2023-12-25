@@ -5,6 +5,7 @@ import { GRID_CONFIG } from '@src/constants/commons'
 import { ReportCardItemProps } from '@src/components/Common/ReportGrid/ReportCardItem'
 
 export interface ReportGridProps {
+  lastGrid?: boolean
   reportDetails: ReportDetailProps[]
 }
 
@@ -13,19 +14,27 @@ export interface ReportDetailProps {
   items?: ReportCardItemProps[]
 }
 
-export const ReportGrid = ({ reportDetails }: ReportGridProps) => {
-  const getXS = () => {
-    if (reportDetails.length > 1) {
+export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {
+  const getXS = (index: number) => {
+    if (needTakeUpAWholeLine(index)) {
+      return GRID_CONFIG.FULL.XS
+    } else if (reportDetails.length > 1) {
       return GRID_CONFIG.HALF.XS
     } else {
       return GRID_CONFIG.FULL.XS
     }
   }
 
+  const needTakeUpAWholeLine = (index: number) => {
+    const size = reportDetails.length
+    const isOddSize = size % 2 === 1
+    return isOddSize && lastGrid && size - 1 == index
+  }
+
   return (
-    <Grid container justifyContent='center' spacing={2}>
+    <Grid container justifyContent='start' spacing={2}>
       {reportDetails.map((detail, index) => {
-        const xs = getXS()
+        const xs = getXS(index)
         return (
           <Grid item xs={xs} key={index}>
             <ReportCard title={detail.title} items={detail.items} xs={xs} />

@@ -71,6 +71,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import heartbeat.util.IdUtil;
@@ -579,47 +580,68 @@ public class GenerateReporterService {
 		asyncReportRequestHandler.putReport(reportId, reportResponse);
 	}
 
-	public void saveMetricsDataReadyInHandler(String timeStamp, List<String> metrics, boolean isInitialize) {
-		List<String> lowerCaseMetrics = metrics.stream().map(String::toLowerCase).toList();
-		Boolean flag = isInitialize ? Boolean.FALSE : Boolean.TRUE;
-		boolean boardMetricsExist = lowerCaseMetrics.stream().anyMatch(this.kanbanMetrics::contains);
-		boolean codebaseMetricsExist = lowerCaseMetrics.stream().anyMatch(this.codebaseMetrics::contains);
-		boolean buildKiteMetricsExist = lowerCaseMetrics.stream().anyMatch(this.buildKiteMetrics::contains);
-		Boolean boardMetricsReady = boardMetricsExist ? flag : null;
-		Boolean codebaseMetricsReady = codebaseMetricsExist ? flag : null;
-		Boolean buildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
+	public void initializeMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
+		Boolean boardMetricsReady = calculateMetricsReady(metrics, kanbanMetrics, Boolean.FALSE);
+		Boolean sourceControlMetricsReady = calculateMetricsReady(metrics, codebaseMetrics, Boolean.FALSE);
+		Boolean pipelineMetricsReady = calculateMetricsReady(metrics, buildKiteMetrics, Boolean.FALSE);
 		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
-		if (isInitialize && previousMetricsReady != null) {
-			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() == null && boardMetricsReady != null
-					? Boolean.FALSE : previousMetricsReady.getBoardMetricsReady())
-				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() == null && buildKiteMetricsReady != null
-					? Boolean.FALSE : previousMetricsReady.getPipelineMetricsReady())
-				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() == null && codebaseMetricsReady != null
-					? Boolean.FALSE : previousMetricsReady.getSourceControlMetricsReady())
+		MetricsDataReady metricsDataReady = createMetricsDataReady(boardMetricsReady, sourceControlMetricsReady,
+				pipelineMetricsReady, previousMetricsReady);
+		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+	}
+
+	private Boolean calculateMetricsReady(List<String> metrics, List<String> metricList, Boolean value) {
+		boolean anyMetricExists = metrics.stream().map(String::toLowerCase).anyMatch(metricList::contains);
+		return anyMetricExists ? value : null;
+	}
+
+	private MetricsDataReady createMetricsDataReady(Boolean boardMetricsReady, Boolean sourceControlMetricsReady,
+			Boolean pipelineMetricsReady, MetricsDataReady previousMetricsReady) {
+		if (previousMetricsReady == null) {
+			return MetricsDataReady.builder()
+				.boardMetricsReady(boardMetricsReady)
+				.pipelineMetricsReady(pipelineMetricsReady)
+				.sourceControlMetricsReady(sourceControlMetricsReady)
 				.build();
-			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 		}
 
-		if (!isInitialize && previousMetricsReady != null) {
-			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-				.boardMetricsReady(previousMetricsReady.getBoardMetricsReady() !=null && boardMetricsReady !=null ? Boolean.TRUE
-						: previousMetricsReady.getBoardMetricsReady())
-				.pipelineMetricsReady(previousMetricsReady.getPipelineMetricsReady() !=null && buildKiteMetricsReady !=null ? Boolean.TRUE
-						: previousMetricsReady.getPipelineMetricsReady())
-				.sourceControlMetricsReady(previousMetricsReady.getSourceControlMetricsReady() !=null && codebaseMetricsReady !=null ? Boolean.TRUE
-						: previousMetricsReady.getSourceControlMetricsReady())
-				.build();
-			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
-		}
+		return MetricsDataReady.builder()
+			.boardMetricsReady(getCombinedReadyValue(previousMetricsReady.getBoardMetricsReady(), boardMetricsReady))
+			.pipelineMetricsReady(
+					getCombinedReadyValue(previousMetricsReady.getPipelineMetricsReady(), pipelineMetricsReady))
+			.sourceControlMetricsReady(getCombinedReadyValue(previousMetricsReady.getSourceControlMetricsReady(),
+					sourceControlMetricsReady))
+			.build();
+
+	}
+
+	private Boolean getCombinedReadyValue(Boolean previousReadyValue, Boolean newReadyValue) {
+		return previousReadyValue != null || newReadyValue == null ? previousReadyValue : newReadyValue;
+	}
+
+	public void updateMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
+		Boolean boardMetricsExist = calculateMetricsReady(metrics, kanbanMetrics, Boolean.TRUE);
+		Boolean codebaseMetricsExist = calculateMetricsReady(metrics, codebaseMetrics, Boolean.TRUE);
+		Boolean buildKiteMetricsExist = calculateMetricsReady(metrics, buildKiteMetrics, Boolean.TRUE);
+		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
 		if (previousMetricsReady == null) {
-			MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-				.boardMetricsReady(boardMetricsReady)
-				.pipelineMetricsReady(buildKiteMetricsReady)
-				.sourceControlMetricsReady(codebaseMetricsReady)
-				.build();
-			asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+			log.error("Unable update metrics data ready through this timestamp.");
+			throw new GenerateReportException("Unable update metrics data ready through this timestamp.");
 		}
+		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
+			.boardMetricsReady(getTureOrPreviousValue(boardMetricsExist, previousMetricsReady.getBoardMetricsReady()))
+			.pipelineMetricsReady(
+					getTureOrPreviousValue(buildKiteMetricsExist, previousMetricsReady.getPipelineMetricsReady()))
+			.sourceControlMetricsReady(
+					getTureOrPreviousValue(codebaseMetricsExist, previousMetricsReady.getSourceControlMetricsReady()))
+			.build();
+		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+	}
+
+	private Boolean getTureOrPreviousValue(Boolean exist, Boolean previousValue) {
+		if (exist == Boolean.TRUE)
+			return Boolean.TRUE;
+		return previousValue;
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -768,24 +790,27 @@ public class GenerateReporterService {
 	public ReportResponse getComposedReportResponse(String reportId, boolean isReportReady) {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
-		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
+		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 
 		return ReportResponse.builder()
-			.velocity(boardReportResponse != null ? boardReportResponse.getVelocity() : null)
-			.classificationList(boardReportResponse != null ? boardReportResponse.getClassificationList() : null)
-			.cycleTime(boardReportResponse != null ? boardReportResponse.getCycleTime() : null)
-			.exportValidityTime(response != null ? response.getExportValidityTime() : null)
-			.deploymentFrequency(doraReportResponse != null ? doraReportResponse.getDeploymentFrequency() : null)
-			.changeFailureRate(doraReportResponse != null ? doraReportResponse.getChangeFailureRate() : null)
-			.meanTimeToRecovery(doraReportResponse != null ? doraReportResponse.getMeanTimeToRecovery() : null)
-			.leadTimeForChanges(doraReportResponse != null ? doraReportResponse.getLeadTimeForChanges() : null)
-			.boardMetricsReady(metricsDataReady != null ? metricsDataReady.getBoardMetricsReady() : null)
-			.pipelineMetricsReady(metricsDataReady != null ? metricsDataReady.getPipelineMetricsReady() : null)
-			.sourceControlMetricsReady(
-					metricsDataReady != null ? metricsDataReady.getSourceControlMetricsReady() : null)
+			.velocity(getValueOrNull(boardReportResponse, ReportResponse::getVelocity))
+			.classificationList(getValueOrNull(boardReportResponse, ReportResponse::getClassificationList))
+			.cycleTime(getValueOrNull(boardReportResponse, ReportResponse::getCycleTime))
+			.exportValidityTime(getValueOrNull(response, ReportResponse::getExportValidityTime))
+			.deploymentFrequency(getValueOrNull(doraReportResponse, ReportResponse::getDeploymentFrequency))
+			.changeFailureRate(getValueOrNull(doraReportResponse, ReportResponse::getChangeFailureRate))
+			.meanTimeToRecovery(getValueOrNull(doraReportResponse, ReportResponse::getMeanTimeToRecovery))
+			.leadTimeForChanges(getValueOrNull(doraReportResponse, ReportResponse::getLeadTimeForChanges))
+			.boardMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::getBoardMetricsReady))
+			.pipelineMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::getPipelineMetricsReady))
+			.sourceControlMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::getSourceControlMetricsReady))
 			.allMetricsReady(isReportReady)
 			.build();
+	}
+
+	private <T, R> R getValueOrNull(T object, Function<T, R> getter) {
+		return object != null ? getter.apply(object) : null;
 	}
 
 }

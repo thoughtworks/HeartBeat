@@ -85,22 +85,26 @@ public class GenerateReportController {
 	@PostMapping("/board-reports")
 	public ResponseEntity<CallbackResponse> generateBoardReport(@RequestBody GenerateBoardReportRequest request) {
 		log.info(
-				"Start to generate board report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
+				"Start to generate Board Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, board-report id: {}",
 				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
 				IdUtil.getBoardReportId(request.getCsvTimeStamp()));
-		generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(), true);
+		generateReporterService.initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		CompletableFuture.runAsync(() -> {
 			try {
 				ReportResponse reportResponse = generateReporterService
 					.generateReporter(request.convertToReportRequest());
 				generateReporterService.saveReporterInHandler(reportResponse,
 						IdUtil.getBoardReportId(request.getCsvTimeStamp()));
-				generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(),
-						false);
+				generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+						request.getMetrics());
+				log.info(
+						"Generate Board Report successfully, metrics: {}, consider holiday: {}, start time: {}, end time: {}, board-report id: {}",
+						request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(),
+						request.getEndTime(), IdUtil.getBoardReportId(request.getCsvTimeStamp()));
 
 			}
 			catch (BaseException e) {
-				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
+				asyncExceptionHandler.put(IdUtil.getBoardReportId(request.getCsvTimeStamp()), e);
 			}
 		});
 
@@ -115,19 +119,22 @@ public class GenerateReportController {
 				"Start to generate Dora Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
 				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
 				IdUtil.getDoraReportId(request.getCsvTimeStamp()));
-		generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(), true);
+		generateReporterService.initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		CompletableFuture.runAsync(() -> {
 			try {
 				ReportResponse reportResponse = generateReporterService
 					.generateReporter(request.convertToReportRequest());
 				generateReporterService.saveReporterInHandler(reportResponse,
 						IdUtil.getDoraReportId(request.getCsvTimeStamp()));
-				generateReporterService.saveMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics(),
-						false);
+				generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+						request.getMetrics());
+				log.info(
+						"Generate Dora Report successfully, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
+						request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(),
+						request.getEndTime(), IdUtil.getDoraReportId(request.getCsvTimeStamp()));
 			}
-			// todo replace by Idutil
 			catch (BaseException e) {
-				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
+				asyncExceptionHandler.put(IdUtil.getDoraReportId(request.getCsvTimeStamp()), e);
 			}
 		});
 

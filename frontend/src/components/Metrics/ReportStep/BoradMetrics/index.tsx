@@ -1,7 +1,14 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice'
-import { BOARD_METRICS, CALENDAR, REPORT_PAGE } from '@src/constants/resources'
+import {
+  BOARD_METRICS,
+  CALENDAR,
+  METRICS_SUBTITLE,
+  METRICS_UNIT,
+  REPORT_PAGE,
+  REQUIRED_DATA,
+} from '@src/constants/resources'
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
@@ -67,35 +74,35 @@ const BoardMetrics = ({
     const cycleTime = boardReport?.cycleTime
     return [
       {
-        title: 'Velocity',
+        title: REQUIRED_DATA.VELOCITY,
         items: velocity
           ? [
               {
                 value: velocity.velocityForSP,
-                subtitle: 'Average Cycle Time',
-                unit: 'Days/SP',
+                subtitle: METRICS_SUBTITLE.VELOCITY,
+                unit: METRICS_UNIT.VELOCITY_FOR_SP,
               },
               {
                 value: velocity.velocityForCards,
-                subtitle: 'Throughput',
-                unit: 'Cards Count',
+                subtitle: METRICS_SUBTITLE.THROUGHPUT,
+                unit: METRICS_UNIT.VELOCITY_FOR_CARDS,
               },
             ]
           : null,
       },
       {
-        title: 'Cycle Time',
+        title: REQUIRED_DATA.CYCLE_TIME,
         items: cycleTime
           ? [
               {
                 value: cycleTime.averageCycleTimePerSP,
-                subtitle: 'Average Cycle Time',
-                unit: 'Days/SP',
+                subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME,
+                unit: METRICS_UNIT.AVERAGE_CYCLETIME_PER_SP,
               },
               {
                 value: cycleTime.averageCycleTimePerCard,
-                subtitle: 'Average Cycle Time',
-                unit: 'Days/Card',
+                subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME,
+                unit: METRICS_UNIT.AVERAGE_CYCLETIME_PER_CARD,
               },
             ]
           : null,

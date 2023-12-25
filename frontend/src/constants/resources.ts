@@ -22,6 +22,7 @@ export enum METRICS_SUBTITLE {
   FAILURE_RATE = 'Failure Rate',
   AVERAGE_CYCLE_TIME = 'Average Cycle Time',
   THROUGHPUT = 'Throughput',
+  VELOCITY = 'Velocity',
 }
 
 export enum METRICS_UNIT {

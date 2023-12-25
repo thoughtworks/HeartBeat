@@ -14,7 +14,7 @@ export const StyledMetricsSign = styled('canvas')`
 `
 
 export const StyledMetricsTitle = styled(Typography)`
-  font-weight: bold;
+  font-weight: 500;
   font-size: 1rem;
   text-align: start;
   margin-bottom: 1rem;

@@ -14,6 +14,24 @@ export enum REQUIRED_DATA {
   MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
 }
 
+export enum METRICS_SUBTITLE {
+  PR_LEAD_TIME = 'PR Lead Time',
+  PIPELINE_LEAD_TIME = 'Pipeline Lead Time',
+  TOTAL_DELAY_TIME = 'Total Lead Time',
+  DEPLOYMENT_FREQUENCY = 'Deployment Frequency',
+  FAILURE_RATE = 'Failure Rate',
+  AVERAGE_CYCLE_TIME = 'Average Cycle Time',
+  THROUGHPUT = 'Throughput',
+}
+
+export enum METRICS_UNIT {
+  VELOCITY_FOR_SP = 'Story Point',
+  VELOCITY_FOR_CARDS = 'Cards Count',
+  AVERAGE_CYCLETIME_PER_SP = 'Days/SP',
+  AVERAGE_CYCLETIME_PER_CARD = 'Days/Card',
+  DEPLOYMENT_FREQUENCY = 'Deployments/Day',
+}
+
 export const DORA_METRICS: string[] = [
   REQUIRED_DATA.LEAD_TIME_FOR_CHANGES,
   REQUIRED_DATA.DEPLOYMENT_FREQUENCY,

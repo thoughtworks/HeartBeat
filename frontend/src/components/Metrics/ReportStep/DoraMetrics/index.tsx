@@ -24,7 +24,6 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
   const { pipelineTool, sourceControl } = configData
   const { metrics, calendarType } = configData.basic
   const { pipelineCrews, deploymentFrequencySettings, leadTimeForChanges } = useAppSelector(selectMetricsContent)
-  const shouldShowDoraMetrics = metrics.some((metric) => DORA_METRICS.includes(metric))
   const shouldShowSourceControl = metrics.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES)
 
   const getDoraReportRequestBody = (): ReportRequestDTO => {
@@ -160,14 +159,12 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
 
   return (
     <>
-      {shouldShowDoraMetrics && (
-        <StyledMetricsSection>
-          <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
-          <StyledSpacing />
-          <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} />
-        </StyledMetricsSection>
-      )}
+      <StyledMetricsSection>
+        <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
+        {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
+        <StyledSpacing />
+        <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} />
+      </StyledMetricsSection>
     </>
   )
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
-import { MESSAGE } from '@src/constants/resources'
+import { DORA_METRICS, MESSAGE } from '@src/constants/resources'
 import { StyledErrorNotification } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
@@ -36,6 +36,9 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const { startDate, endDate } = configData.basic.dateRange
   const { updateProps } = notification
   const [errorMessage, setErrorMessage] = useState<string>()
+
+  const { metrics } = configData.basic
+  const shouldShowDoraMetrics = metrics.some((metric) => DORA_METRICS.includes(metric))
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
@@ -100,13 +103,15 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               boardReport={reportData}
               csvTimeStamp={csvTimeStamp}
             />
-            <DoraMetrics
-              startDate={startDate}
-              endDate={endDate}
-              startToRequestDoraData={startToRequestDoraData}
-              doraReport={reportData}
-              csvTimeStamp={csvTimeStamp}
-            />
+            {shouldShowDoraMetrics && (
+              <DoraMetrics
+                startDate={startDate}
+                endDate={endDate}
+                startToRequestDoraData={startToRequestDoraData}
+                doraReport={reportData}
+                csvTimeStamp={csvTimeStamp}
+              />
+            )}
           </>
           <ReportButtonGroup
             handleSave={() => handleSave()}

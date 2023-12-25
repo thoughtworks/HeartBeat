@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
-import { DORA_METRICS, MESSAGE } from '@src/constants/resources'
+import { DORA_METRICS, MESSAGE, REQUIRED_DATA } from '@src/constants/resources'
 import { StyledErrorNotification } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
@@ -38,6 +38,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const [errorMessage, setErrorMessage] = useState<string>()
 
   const { metrics } = configData.basic
+  const shouldShowBoardMetrics = metrics.includes(REQUIRED_DATA.VELOCITY) || metrics.includes(REQUIRED_DATA.CYCLE_TIME)
   const shouldShowDoraMetrics = metrics.some((metric) => DORA_METRICS.includes(metric))
 
   useLayoutEffect(() => {
@@ -96,13 +97,15 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
             </StyledErrorNotification>
           )}
           <>
-            <BoardMetrics
-              startDate={startDate}
-              endDate={endDate}
-              startToRequestBoardData={startToRequestBoardData}
-              boardReport={reportData}
-              csvTimeStamp={csvTimeStamp}
-            />
+            {shouldShowBoardMetrics && (
+              <BoardMetrics
+                startDate={startDate}
+                endDate={endDate}
+                startToRequestBoardData={startToRequestBoardData}
+                boardReport={reportData}
+                csvTimeStamp={csvTimeStamp}
+              />
+            )}
             {shouldShowDoraMetrics && (
               <DoraMetrics
                 startDate={startDate}
@@ -115,6 +118,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           </>
           <ReportButtonGroup
             handleSave={() => handleSave()}
+            reportData={reportData}
             startDate={startDate}
             endDate={endDate}
             csvTimeStamp={csvTimeStamp}

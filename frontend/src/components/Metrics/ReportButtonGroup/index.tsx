@@ -12,6 +12,7 @@ import { useAppSelector } from '@src/hooks'
 import { selectMetrics } from '@src/context/config/configSlice'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { StyledExportButton, StyledButtonGroup } from '@src/components/Metrics/ReportButtonGroup/style'
+import { ReportResponseDTO } from '@src/clients/report/dto/response'
 
 interface ReportButtonGroupProps {
   handleSave: () => void
@@ -19,6 +20,7 @@ interface ReportButtonGroupProps {
   startDate: string | null
   endDate: string | null
   setErrorMessage: (message: string) => void
+  reportData: ReportResponseDTO
 }
 
 export const ReportButtonGroup = ({
@@ -27,6 +29,7 @@ export const ReportButtonGroup = ({
   startDate,
   endDate,
   setErrorMessage,
+  reportData,
 }: ReportButtonGroupProps) => {
   const dispatch = useAppDispatch()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
@@ -80,7 +83,10 @@ export const ReportButtonGroup = ({
             {COMMON_BUTTONS.EXPORT_METRIC_DATA}
           </StyledExportButton>
           {isShowExportBoardButton && (
-            <StyledExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}>
+            <StyledExportButton
+              disabled={!reportData?.boardMetricsReady}
+              onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}
+            >
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
             </StyledExportButton>
           )}

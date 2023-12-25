@@ -23,4 +23,8 @@ export const StyledExportButton = styled(Button)({
     backgroundColor: theme.main.backgroundColor,
     color: theme.main.color,
   },
+  '&:disabled': {
+    backgroundColor: 'rgba(0, 0, 0, 0.12)',
+    color: 'rgba(0,0,0,0.35)',
+  },
 })

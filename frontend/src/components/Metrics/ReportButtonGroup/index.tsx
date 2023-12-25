@@ -11,7 +11,7 @@ import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { useAppSelector } from '@src/hooks'
 import { selectMetrics } from '@src/context/config/configSlice'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
-import { StyledExportButton, StyledButtonGroup } from '@src/components/Metrics/ReportButtonGroup/style'
+import { StyledButtonGroup, StyledExportButton } from '@src/components/Metrics/ReportButtonGroup/style'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 
 interface ReportButtonGroupProps {
@@ -20,7 +20,7 @@ interface ReportButtonGroupProps {
   startDate: string | null
   endDate: string | null
   setErrorMessage: (message: string) => void
-  reportData: ReportResponseDTO
+  reportData: ReportResponseDTO | undefined
 }
 
 export const ReportButtonGroup = ({
@@ -79,7 +79,10 @@ export const ReportButtonGroup = ({
           <BackButton onClick={handleBack} variant='outlined'>
             {COMMON_BUTTONS.BACK}
           </BackButton>
-          <StyledExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}>
+          <StyledExportButton
+            disabled={!reportData?.allMetricsReady}
+            onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
+          >
             {COMMON_BUTTONS.EXPORT_METRIC_DATA}
           </StyledExportButton>
           {isShowExportBoardButton && (
@@ -91,7 +94,10 @@ export const ReportButtonGroup = ({
             </StyledExportButton>
           )}
           {isShowExportPipelineButton && (
-            <StyledExportButton onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}>
+            <StyledExportButton
+              disabled={reportData?.pipelineMetricsReady === false || reportData?.sourceControlMetricsReady === false}
+              onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}
+            >
               {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
             </StyledExportButton>
           )}

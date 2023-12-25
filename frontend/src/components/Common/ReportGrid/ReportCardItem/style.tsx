@@ -20,6 +20,8 @@ export const StyledUnit = styled(TextField)({
   fontSize: '0.6rem',
   fontStyle: 'normal',
   wordWrap: 'break-word',
+  position: 'relative',
+  bottom: '0.56rem',
   '& .MuiInputBase-input': {
     overflow: 'hidden',
     textOverflow: 'ellipsis',

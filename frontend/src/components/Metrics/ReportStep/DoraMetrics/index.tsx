@@ -172,7 +172,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
         <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
         {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
         <StyledSpacing />
-        <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} />
+        <ReportGrid reportDetails={getPipelineItems()} />
       </StyledMetricsSection>
     </>
   )

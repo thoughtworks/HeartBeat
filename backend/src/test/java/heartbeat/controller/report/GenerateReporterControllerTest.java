@@ -10,6 +10,7 @@ import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.util.IdUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -200,7 +204,9 @@ class GenerateReporterControllerTest {
 		request.setCsvTimeStamp(currentTimeStamp);
 
 		when(generateReporterService.generateReporter(request.convertToReportRequest())).thenReturn(expectedResponse);
-
+		doNothing().when(generateReporterService).initializeMetricsDataReadyInHandler(any(), any());
+		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
+		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/board-reports").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
@@ -225,6 +231,9 @@ class GenerateReporterControllerTest {
 		RequestFailedException requestFailedException = new RequestFailedException(402, "Client Error");
 		when(generateReporterService.generateReporter(request.convertToReportRequest()))
 			.thenThrow(requestFailedException);
+		doNothing().when(generateReporterService).initializeMetricsDataReadyInHandler(any(), any());
+		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
+		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
 
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/board-reports").contentType(MediaType.APPLICATION_JSON)
@@ -239,7 +248,10 @@ class GenerateReporterControllerTest {
 		assertEquals("10", interval);
 
 		Thread.sleep(2000L);
-		verify(asyncExceptionHandler).put(currentTimeStamp, requestFailedException);
+		verify(generateReporterService).initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		verify(generateReporterService, times(0)).saveReporterInHandler(any(),any());
+		verify(generateReporterService, times(0)).updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		verify(asyncExceptionHandler).put(IdUtil.getBoardReportId(currentTimeStamp), requestFailedException);
 	}
 
 	@Test

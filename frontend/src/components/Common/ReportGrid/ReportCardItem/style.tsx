@@ -59,3 +59,20 @@ export const StyledSubtitle = styled(TextField)({
 export const StyledDividingLine = styled.img({
   marginRight: '2.25rem',
 })
+
+export const StyledValueSection = styled('div')({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+})
+
+export const StyledExtraValue = styled('div')({
+  width: '100%',
+  fontFamily: 'Roboto',
+  fontSize: '1rem',
+  fontWeight: 400,
+  paddingTop: '1rem',
+  whiteSpace: 'nowrap',
+})

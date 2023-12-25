@@ -1,7 +1,14 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
-import { CALENDAR, DORA_METRICS, REPORT_PAGE, REQUIRED_DATA } from '@src/constants/resources'
+import {
+  CALENDAR,
+  DORA_METRICS,
+  METRICS_SUBTITLE,
+  METRICS_UNIT,
+  REPORT_PAGE,
+  REQUIRED_DATA,
+} from '@src/constants/resources'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
@@ -83,19 +90,19 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const leadTimeForChanges = doraReport?.leadTimeForChanges
     return [
       {
-        title: 'Lead Time For Change',
+        title: REQUIRED_DATA.LEAD_TIME_FOR_CHANGES,
         items: leadTimeForChanges && [
           {
             value: leadTimeForChanges.avgLeadTimeForChanges.prLeadTime,
-            subtitle: 'PR Lead Time',
+            subtitle: METRICS_SUBTITLE.PR_LEAD_TIME,
           },
           {
             value: leadTimeForChanges.avgLeadTimeForChanges.pipelineLeadTime,
-            subtitle: 'Pipeline Lead Time',
+            subtitle: METRICS_SUBTITLE.PIPELINE_LEAD_TIME,
           },
           {
             value: leadTimeForChanges.avgLeadTimeForChanges.totalDelayTime,
-            subtitle: 'Total Lead Time',
+            subtitle: METRICS_SUBTITLE.TOTAL_DELAY_TIME,
           },
         ],
       },
@@ -110,11 +117,12 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const deploymentFrequencyList = metrics.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
       ? [
           {
-            title: 'Deployment Frequency',
+            title: REQUIRED_DATA.DEPLOYMENT_FREQUENCY,
             items: deploymentFrequency && [
               {
                 value: deploymentFrequency?.avgDeploymentFrequency.deploymentFrequency,
-                subtitle: 'Deployment Frequency(Deployments/Day)',
+                subtitle: METRICS_SUBTITLE.DEPLOYMENT_FREQUENCY,
+                unit: METRICS_UNIT.DEPLOYMENT_FREQUENCY,
               },
             ],
           },
@@ -124,11 +132,12 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const meanTimeToRecoveryList = metrics.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
       ? [
           {
-            title: 'Mean Time To Recovery',
+            title: REQUIRED_DATA.MEAN_TIME_TO_RECOVERY,
             items: meanTimeToRecovery && [
               {
                 value: meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery,
-                subtitle: 'Deployment Frequency(Deployments/Day)',
+                subtitle: METRICS_SUBTITLE.DEPLOYMENT_FREQUENCY,
+                unit: METRICS_UNIT.DEPLOYMENT_FREQUENCY,
               },
             ],
           },
@@ -138,12 +147,12 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const changeFailureRateList = metrics.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE)
       ? [
           {
-            title: 'Change Failure Rate',
+            title: REQUIRED_DATA.CHANGE_FAILURE_RATE,
             items: changeFailureRate && [
               {
                 value: changeFailureRate.avgChangeFailureRate.failureRate,
                 extraValue: `${changeFailureRate.avgChangeFailureRate.totalFailedTimes}/${changeFailureRate.avgChangeFailureRate.totalTimes}`,
-                subtitle: 'Failure Rate',
+                subtitle: METRICS_SUBTITLE.FAILURE_RATE,
               },
             ],
           },

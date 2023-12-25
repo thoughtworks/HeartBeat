@@ -8,11 +8,13 @@ type Props = {
 }
 
 const DateRangeViewer = ({ startDate, endDate }: Props) => {
+  const formattedStartDate = dayjs(startDate).format(DATE_FORMATE_TEMPLATE)
+  const formattedEndDate = dayjs(endDate).format(DATE_FORMATE_TEMPLATE)
   return (
     <DateRangeContainer>
-      {dayjs(startDate).format(DATE_FORMATE_TEMPLATE)}
+      {formattedStartDate}
       <StyledArrowForward />
-      {dayjs(endDate).format(DATE_FORMATE_TEMPLATE)}
+      {formattedEndDate}
       <StyledCalendarToday />
     </DateRangeContainer>
   )

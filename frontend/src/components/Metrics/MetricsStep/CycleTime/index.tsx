@@ -20,6 +20,7 @@ import {
 } from '@src/components/Metrics/MetricsStep/CycleTime/style'
 import { IconButton } from '@mui/material'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import CycleTimeTable from '@src/components/Metrics/MetricsStep/CycleTime/Table'
 
 interface cycleTimeProps {
   title: string
@@ -64,7 +65,7 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
 
   return (
     <div aria-label='Cycle time settings section'>
-      <TitleAndTooltipContainer>
+      {/* <TitleAndTooltipContainer>
         <MetricsSettingTitle title={title} />
         <TooltipContainer data-test-id={'tooltip'}>
           <StyledTooltip title={TIPS.CYCLE_TIME}>
@@ -73,12 +74,13 @@ export const CycleTime = ({ title }: cycleTimeProps) => {
             </IconButton>
           </StyledTooltip>
         </TooltipContainer>
-      </TitleAndTooltipContainer>
-      <CycleTimeContainer>
-        {warningMessage && <WarningNotification message={warningMessage} />}
-        <FormSelectPart selectedOptions={cycleTimeSettings} saveCycleTimeOptions={saveCycleTimeOptions} />
-        <FlagCard />
-      </CycleTimeContainer>
+      </TitleAndTooltipContainer> */}
+      {/* <CycleTimeContainer> */}
+      {warningMessage && <WarningNotification message={warningMessage} />}
+      <CycleTimeTable />
+      {/* <FormSelectPart selectedOptions={cycleTimeSettings} saveCycleTimeOptions={saveCycleTimeOptions} /> */}
+      <FlagCard />
+      {/* </CycleTimeContainer> */}
     </div>
   )
 }

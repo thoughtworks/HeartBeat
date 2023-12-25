@@ -12,7 +12,8 @@ import DividingLine from '@src/assets/DividingLine.svg'
 import React, { HTMLAttributes } from 'react'
 
 export interface ReportCardItemProps extends HTMLAttributes<HTMLDivElement> {
-  value: string | number | undefined
+  value: number
+  isToFixed?: boolean
   extraValue?: string
   subtitle: string
   showDividingLine?: boolean
@@ -23,6 +24,7 @@ export const ReportCardItem = ({
   style,
   value,
   unit,
+  isToFixed = true,
   extraValue,
   subtitle,
   showDividingLine = false,
@@ -33,7 +35,7 @@ export const ReportCardItem = ({
       <div>
         <StyledContent>
           <StyledValueSection>
-            <StyledValue>{value}</StyledValue>
+            <StyledValue>{isToFixed ? value.toFixed(2) : value}</StyledValue>
             {extraValue && <StyledExtraValue>% ({extraValue})</StyledExtraValue>}
           </StyledValueSection>
           <StyledUnit disabled variant='standard' InputProps={{ disableUnderline: true }} value={unit} />

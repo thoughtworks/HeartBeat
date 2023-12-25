@@ -84,11 +84,13 @@ const BoardMetrics = ({
                   value: velocity.velocityForSP,
                   subtitle: METRICS_SUBTITLE.VELOCITY,
                   unit: METRICS_UNIT.VELOCITY_FOR_SP,
+                  isToFixed: false,
                 },
                 {
                   value: velocity.velocityForCards,
                   subtitle: METRICS_SUBTITLE.THROUGHPUT,
                   unit: METRICS_UNIT.VELOCITY_FOR_CARDS,
+                  isToFixed: false,
                 },
               ]
             : null,

@@ -10,7 +10,7 @@ import { Loading } from '@src/components/Loading'
 
 interface ReportCardProps extends HTMLAttributes<HTMLDivElement> {
   title: string
-  items?: ReportCardItemProps[]
+  items?: ReportCardItemProps[] | null
   xs: number
 }
 

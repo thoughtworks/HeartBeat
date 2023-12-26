@@ -12,7 +12,7 @@ export interface ReportGridProps {
 
 export interface ReportDetailProps {
   title: string
-  items?: ReportCardItemProps[]
+  items?: ReportCardItemProps[] | null
 }
 
 export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {

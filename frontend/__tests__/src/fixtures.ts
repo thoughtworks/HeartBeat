@@ -1,4 +1,5 @@
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
+import { ReportResponseDTO } from '@src/clients/report/dto/response'
 
 export const PROJECT_NAME = 'Heartbeat'
 export const PROJECT_DESCRIPTION =
@@ -475,7 +476,7 @@ export const MOCK_RETRIEVE_REPORT_RESPONSE = {
   interval: 10,
 }
 
-export const EXPECTED_REPORT_VALUES = {
+export const EXPECTED_MAPPED_REPORT_VALUES = {
   velocityList: [
     { id: 0, name: 'Velocity(Story Point)', valueList: [{ value: 20 }] },
     { id: 1, name: 'Throughput(Cards Count)', valueList: [{ value: 14 }] },
@@ -617,6 +618,113 @@ export const EXPECTED_REPORT_VALUES = {
     },
   ],
   exportValidityTimeMin: 30,
+}
+
+export const EXPECTED_REPORT_VALUES: ReportResponseDTO = {
+  velocity: {
+    velocityForSP: 20,
+    velocityForCards: 14,
+  },
+  classificationList: [],
+  cycleTime: {
+    totalTimeForCards: 40.26,
+    averageCycleTimePerCard: 3.1,
+    averageCycleTimePerSP: 2.3,
+    swimlaneList: [
+      {
+        optionalItemName: 'Waiting for testing',
+        averageTimeForSP: 0.16,
+        averageTimeForCards: 0.21,
+        totalTime: 2.74,
+      },
+    ],
+  },
+  deploymentFrequency: {
+    avgDeploymentFrequency: {
+      name: 'Average',
+      deploymentFrequency: 2.36,
+    },
+    deploymentFrequencyOfPipelines: [
+      {
+        name: 'Heartbeat',
+        step: ':lock: Check Security',
+        deploymentFrequency: 2.36,
+        dailyDeploymentCounts: [
+          {
+            date: '11/14/2023',
+            count: 1,
+          },
+        ],
+      },
+    ],
+  },
+  changeFailureRate: {
+    avgChangeFailureRate: {
+      name: 'Average',
+      totalTimes: 26,
+      totalFailedTimes: 0,
+      failureRate: 0,
+    },
+    changeFailureRateOfPipelines: [
+      {
+        name: 'Heartbeat',
+        step: ':lock: Check Security',
+        failedTimesOfPipeline: 0,
+        totalTimesOfPipeline: 26,
+        failureRate: 0,
+      },
+    ],
+  },
+  meanTimeToRecovery: {
+    avgMeanTimeToRecovery: {
+      name: 'Average',
+      timeToRecovery: 0,
+    },
+    meanTimeRecoveryPipelines: [
+      {
+        timeToRecovery: 0,
+        name: 'Heartbeat',
+        step: ':lock: Check Security',
+      },
+    ],
+  },
+  leadTimeForChanges: {
+    leadTimeForChangesOfPipelines: [
+      {
+        name: 'Heartbeat',
+        step: ':lock: Check Security',
+        prLeadTime: 1016.69,
+        pipelineLeadTime: 3.81,
+        totalDelayTime: 1020.5,
+      },
+    ],
+    avgLeadTimeForChanges: {
+      name: 'Average',
+      prLeadTime: 1016.69,
+      pipelineLeadTime: 3.81,
+      totalDelayTime: 1020.5,
+    },
+  },
+  exportValidityTime: 1800000,
+  boardMetricsReady: true,
+  pipelineMetricsReady: true,
+  sourceControlMetricsReady: true,
+  allMetricsReady: true,
+}
+
+export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
+  velocity: null,
+  classificationList: null,
+  cycleTime: null,
+  deploymentFrequency: null,
+  changeFailureRate: null,
+  meanTimeToRecovery: null,
+  leadTimeForChanges: null,
+  exportValidityTime: null,
+  boardMetricsReady: false,
+  pipelineMetricsReady: false,
+  sourceControlMetricsReady: false,
+  allMetricsReady: false,
 }
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

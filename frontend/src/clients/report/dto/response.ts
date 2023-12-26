@@ -1,18 +1,18 @@
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 
 export interface ReportResponseDTO {
-  velocity?: VelocityResponse
-  cycleTime?: CycleTimeResponse
-  deploymentFrequency?: DeploymentFrequencyResponse
-  meanTimeToRecovery?: MeanTimeToRecoveryResponse
-  leadTimeForChanges?: LeadTimeForChangesResponse
-  changeFailureRate?: ChangeFailureRateResponse
-  classificationList?: Array<ClassificationResponse>
-  exportValidityTime?: number
+  velocity: VelocityResponse | null
+  cycleTime: CycleTimeResponse | null
+  deploymentFrequency: DeploymentFrequencyResponse | null
+  meanTimeToRecovery: MeanTimeToRecoveryResponse | null
+  leadTimeForChanges: LeadTimeForChangesResponse | null
+  changeFailureRate: ChangeFailureRateResponse | null
+  classificationList: Array<ClassificationResponse> | null
+  exportValidityTime: number | null
   boardMetricsReady: boolean | null
   pipelineMetricsReady: boolean | null
   sourceControlMetricsReady: boolean | null
-  allMetricsReady?: boolean
+  allMetricsReady: boolean
 }
 
 export interface VelocityResponse {
@@ -69,7 +69,7 @@ export interface DeploymentFrequencyOfPipeline {
   name: string
   step: string
   deploymentFrequency: number
-  items: DeploymentDateCount[]
+  dailyDeploymentCounts: DeploymentDateCount[]
 }
 
 export interface LeadTimeOfPipeline {

@@ -6,7 +6,7 @@ import {
   BACK,
   BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
-  HOME_PAGE_ROUTE,
+  BASE_PAGE_ROUTE,
   MOCK_REPORT_URL,
   NEXT,
   PIPELINE_TOOL_TYPES,
@@ -206,7 +206,7 @@ describe('MetricsStepper', () => {
     await userEvent.click(getByText(YES))
 
     expect(navigateMock).toHaveBeenCalledTimes(1)
-    expect(navigateMock).toHaveBeenCalledWith(HOME_PAGE_ROUTE)
+    expect(navigateMock).toHaveBeenCalledWith(BASE_PAGE_ROUTE)
   })
 
   it('should disable next when required data is empty ', async () => {

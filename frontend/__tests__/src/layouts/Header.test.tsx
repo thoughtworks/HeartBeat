@@ -78,10 +78,10 @@ describe('Header', () => {
       jest.clearAllMocks()
     })
 
-    it('should show home icon', () => {
-      const { getByTitle } = setup('/not/home/page')
+    it('should not show home icon when pathname is others', () => {
+      const { queryByTitle } = setup('/not/home/page')
 
-      expect(getByTitle(homeBtnText)).toBeVisible()
+      expect(queryByTitle(homeBtnText)).not.toBeInTheDocument()
     })
 
     it('should not show home icon when pathname is index.html', () => {
@@ -91,7 +91,16 @@ describe('Header', () => {
     })
 
     it('should navigate to home page', () => {
-      const { getByTitle } = setup('/not/home/page')
+      const { getByTitle } = setup('/error-page')
+
+      fireEvent.click(getByTitle(homeBtnText))
+
+      expect(navigateMock).toBeCalledTimes(1)
+      expect(navigateMock).toBeCalledWith('/')
+    })
+
+    it('should navigate to home page', () => {
+      const { getByTitle } = setup('/metrics')
 
       fireEvent.click(getByTitle(homeBtnText))
 

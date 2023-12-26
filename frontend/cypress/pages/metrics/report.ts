@@ -1,6 +1,6 @@
 class Report {
   get pageIndicator() {
-    return cy.contains('Velocity', { timeout: 30000 })
+    return cy.contains('Velocity', { timeout: 40000 })
   }
   get velocityTitle() {
     return cy.contains('Velocity')

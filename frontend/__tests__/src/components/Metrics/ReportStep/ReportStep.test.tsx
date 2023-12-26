@@ -129,13 +129,13 @@ describe('Report Step', () => {
       const { getByText } = setup(REQUIRED_DATA_LIST)
 
       expect(getByText('Board Metrics')).toBeInTheDocument()
-      expect(getByText(REQUIRED_DATA_LIST[1])).toBeInTheDocument()
-      expect(getByText(REQUIRED_DATA_LIST[2])).toBeInTheDocument()
+      expect(getByText('Velocity')).toBeInTheDocument()
+      expect(getByText('Cycle Time')).toBeInTheDocument()
       expect(getByText('DORA Metrics')).toBeInTheDocument()
-      expect(getByText(REQUIRED_DATA_LIST[4])).toBeInTheDocument()
-      expect(getByText(REQUIRED_DATA_LIST[5])).toBeInTheDocument()
-      expect(getByText(REQUIRED_DATA_LIST[6])).toBeInTheDocument()
-      expect(getByText(REQUIRED_DATA_LIST[7])).toBeInTheDocument()
+      expect(getByText('Lead Time For Changes')).toBeInTheDocument()
+      expect(getByText('Deployment Frequency')).toBeInTheDocument()
+      expect(getByText('Change Failure Rate')).toBeInTheDocument()
+      expect(getByText('Mean Time To Recovery')).toBeInTheDocument()
     })
 
     it('should render loading page when report data is empty', () => {

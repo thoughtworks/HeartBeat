@@ -20,7 +20,6 @@ export const StyledWrapper = styled('div')({
 
 export const StyledValue = styled(Typography)({
   width: '100%',
-  fontFamily: 'Roboto',
   fontSize: '2.5rem',
   fontStyle: 'normal',
   fontWeight: 500,
@@ -32,7 +31,6 @@ export const StyledSubtitle = styled(TextField)({
   '& .MuiInputBase-input': {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    fontFamily: 'Roboto',
     fontSize: '0.8rem',
     fontStyle: 'normal',
   },
@@ -44,6 +42,9 @@ export const StyledSubtitle = styled(TextField)({
 
 export const StyledDividingLine = styled.img({
   marginRight: '2.25rem',
+  [theme.breakpoints.down('lg')]: {
+    marginRight: '1.5rem',
+  },
 })
 
 export const StyledValueSection = styled.div({
@@ -56,7 +57,6 @@ export const StyledValueSection = styled.div({
 
 export const StyledExtraValue = styled.div({
   width: '100%',
-  fontFamily: 'Roboto',
   fontSize: '1rem',
   fontWeight: 400,
   paddingTop: '1rem',

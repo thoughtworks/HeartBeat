@@ -11,7 +11,11 @@ import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { useAppSelector } from '@src/hooks'
 import { selectMetrics } from '@src/context/config/configSlice'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
-import { StyledButtonGroup, StyledExportButton } from '@src/components/Metrics/ReportButtonGroup/style'
+import {
+  StyledButtonGroup,
+  StyledExportButton,
+  StyledRightButtonGroup,
+} from '@src/components/Metrics/ReportButtonGroup/style'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 
 interface ReportButtonGroupProps {
@@ -73,7 +77,7 @@ export const ReportButtonGroup = ({
             {COMMON_BUTTONS.SAVE}
           </SaveButton>
         </Tooltip>
-        <div>
+        <StyledRightButtonGroup>
           <BackButton onClick={handleBack} variant='outlined'>
             {COMMON_BUTTONS.BACK}
           </BackButton>
@@ -103,7 +107,7 @@ export const ReportButtonGroup = ({
               {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
             </StyledExportButton>
           )}
-        </div>
+        </StyledRightButtonGroup>
       </StyledButtonGroup>
       {<ExpiredDialog isExpired={isExpired} handleOk={handleBack} />}
     </>

@@ -3,7 +3,6 @@ import { Grid } from '@mui/material'
 import { ReportCard } from '@src/components/Common/ReportGrid/ReportCard'
 import { GRID_CONFIG } from '@src/constants/commons'
 import { ReportCardItemProps } from '@src/components/Common/ReportGrid/ReportCardItem'
-import { StyledGrid } from '@src/components/Common/ReportGrid/style'
 
 export interface ReportGridProps {
   lastGrid?: boolean
@@ -33,7 +32,7 @@ export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {
   }
 
   return (
-    <StyledGrid container justifyContent='start' spacing='1.5rem'>
+    <Grid container justifyContent='start' spacing='1.5rem'>
       {reportDetails.map((detail, index) => {
         const xs = getXS(index)
         return (
@@ -42,6 +41,6 @@ export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {
           </Grid>
         )
       })}
-    </StyledGrid>
+    </Grid>
   )
 }

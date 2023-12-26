@@ -59,12 +59,18 @@ export const SaveButton = styled(Button)({
   ...basicButtonStyle,
   width: '5.4rem',
   color: theme.main.backgroundColor,
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '0.8rem',
+  },
 })
 
 export const BackButton = styled(Button)({
   ...basicButtonStyle,
   width: '5.6rem',
   color: theme.main.backgroundColor,
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '0.8rem',
+  },
 })
 
 export const NextButton = styled(Button)({

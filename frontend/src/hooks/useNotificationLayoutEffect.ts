@@ -39,9 +39,8 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
     const durationTimeout = notificationProps.durationTimeout
       ? notificationProps.durationTimeout
       : DURATION.NOTIFICATION_TIME
-    const timerId: NodeJS.Timer = setTimeout(() => {
+    window.setTimeout(() => {
       resetProps()
-      return clearTimeout(timerId)
     }, durationTimeout)
   }
 

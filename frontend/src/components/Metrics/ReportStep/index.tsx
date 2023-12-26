@@ -81,9 +81,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   }, [reportErrorMsg])
 
   useEffect(() => {
-    const exportValidityTime =
-      reportData?.exportValidityTime && exportValidityTimeMapper(reportData?.exportValidityTime)
-    setExportValidityTimeMin(exportValidityTime)
+    setExportValidityTimeMin(reportData?.exportValidityTime)
   }, [reportData])
 
   useLayoutEffect(() => {

@@ -7,22 +7,23 @@ export const DateRangeContainer = styled.div({
   justifyContent: 'flex-start',
   alignItems: 'center',
   backgroundColor: theme.palette.secondary.dark,
-  borderRadius: '0.4rem',
+  borderRadius: '0.5rem',
   border: '0.07rem solid',
   borderColor: theme.palette.grey[400],
   width: 'fit-content',
-  padding: '.6rem',
+  padding: '.75rem',
   color: theme.palette.text.disabled,
+  fontSize: '.875rem',
 })
 
 export const StyledArrowForward = styled(ArrowForward)({
   color: theme.palette.text.disabled,
-  margin: '0 .25rem',
-  fontSize: '1rem',
+  margin: '0 .5rem',
+  fontSize: '.875rem',
 })
 
 export const StyledCalendarToday = styled(CalendarToday)({
   color: theme.palette.text.disabled,
-  marginLeft: '.25rem',
-  fontSize: '1rem',
+  marginLeft: '1rem',
+  fontSize: '.875rem',
 })

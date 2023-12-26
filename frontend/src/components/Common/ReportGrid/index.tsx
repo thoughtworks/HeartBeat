@@ -33,7 +33,7 @@ export const ReportGrid = ({ lastGrid, reportDetails }: ReportGridProps) => {
   }
 
   return (
-    <StyledGrid container justifyContent='start' spacing='2rem'>
+    <StyledGrid container justifyContent='start' spacing='1.5rem'>
       {reportDetails.map((detail, index) => {
         const xs = getXS(index)
         return (

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { TextField, Typography } from '@mui/material'
 import { theme } from '@src/theme'
+import '@fontsource/roboto'
 
 export const StyledItem = styled.div({
   display: 'flex',
@@ -20,8 +21,11 @@ export const StyledWrapper = styled('div')({
 
 export const StyledValue = styled(Typography)({
   width: '100%',
-  fontSize: '2.8rem',
+  fontFamily: 'Roboto',
+  fontSize: '2.5rem',
+  fontStyle: 'normal',
   fontWeight: 500,
+  wordWrap: 'break-word',
 })
 
 export const StyledSubtitle = styled(TextField)({
@@ -29,6 +33,7 @@ export const StyledSubtitle = styled(TextField)({
   '& .MuiInputBase-input': {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    fontFamily: 'Roboto',
     fontSize: '0.8rem',
     fontStyle: 'normal',
   },
@@ -52,6 +57,7 @@ export const StyledValueSection = styled.div({
 
 export const StyledExtraValue = styled.div({
   width: '100%',
+  fontFamily: 'Roboto',
   fontSize: '1rem',
   fontWeight: 400,
   paddingTop: '1rem',

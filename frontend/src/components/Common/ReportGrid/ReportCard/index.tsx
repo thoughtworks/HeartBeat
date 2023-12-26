@@ -47,7 +47,6 @@ export const ReportCard = ({ title, items, xs }: ReportCardProps) => {
             <ReportCardItem
               key={index}
               value={item.value}
-              unit={item.unit}
               isToFixed={item.isToFixed}
               extraValue={item.extraValue}
               subtitle={item.subtitle}

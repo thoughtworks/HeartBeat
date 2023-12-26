@@ -2,15 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
 import { theme } from '@src/theme'
 import { Z_INDEX } from '@src/constants/commons'
-
-export const basicButtonStyle = {
-  height: '2.5rem',
-  padding: '0 1rem',
-  marginLeft: '0.5rem',
-  fontSize: '1rem',
-  fontWeight: '500',
-  textTransform: theme.typography.button.textTransform,
-}
+import { basicButtonStyle } from '@src/components/Metrics/ReportStep/style'
 
 export const ExportButton = styled(Button)({
   ...basicButtonStyle,

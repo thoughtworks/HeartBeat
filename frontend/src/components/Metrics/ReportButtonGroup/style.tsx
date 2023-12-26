@@ -1,7 +1,8 @@
 import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
 import { theme } from '@src/theme'
-import { basicButtonStyle } from '@src/components/Metrics/ReportStep/ReportDetail/style'
+import '@fontsource/roboto'
+import { basicButtonStyle } from '@src/components/Metrics/ReportStep/style'
 
 export const StyledButtonGroup = styled('div')({
   boxSizing: 'border-box',
@@ -18,6 +19,7 @@ export const StyledExportButton = styled(Button)({
   width: '12rem',
   backgroundColor: theme.main.backgroundColor,
   color: theme.main.color,
+  fontFamily: 'Roboto',
   '&:hover': {
     ...basicButtonStyle,
     backgroundColor: theme.main.backgroundColor,

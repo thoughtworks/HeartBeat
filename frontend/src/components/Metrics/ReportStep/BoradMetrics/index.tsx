@@ -62,53 +62,48 @@ const BoardMetrics = ({
     }
   }
 
-  const getBoardItems = (): any => {
+  const getBoardItems = () => {
     const velocity = boardReport?.velocity
     const cycleTime = boardReport?.cycleTime
-    let boardItems = []
-    if (boardMetrics.includes(REQUIRED_DATA.VELOCITY)) {
-      boardItems = [
-        ...boardItems,
-        {
-          title: REQUIRED_DATA.VELOCITY,
-          items: velocity
-            ? [
-                {
-                  value: velocity.velocityForSP,
-                  subtitle: METRICS_SUBTITLE.VELOCITY,
-                  isToFixed: false,
-                },
-                {
-                  value: velocity.velocityForCards,
-                  subtitle: METRICS_SUBTITLE.THROUGHPUT,
-                  isToFixed: false,
-                },
-              ]
-            : null,
-        },
-      ]
-    }
-    if (boardMetrics.includes(REQUIRED_DATA.CYCLE_TIME)) {
-      boardItems = [
-        ...boardItems,
-        {
-          title: REQUIRED_DATA.CYCLE_TIME,
-          items: cycleTime
-            ? [
-                {
-                  value: cycleTime.averageCycleTimePerSP,
-                  subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME_PRE_SP,
-                },
-                {
-                  value: cycleTime.averageCycleTimePerCard,
-                  subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME_PRE_CARD,
-                },
-              ]
-            : null,
-        },
-      ]
-    }
-    return boardItems
+    const velocityItems = boardMetrics.includes(REQUIRED_DATA.VELOCITY)
+      ? [
+          {
+            title: REQUIRED_DATA.VELOCITY,
+            items: velocity && [
+              {
+                value: velocity.velocityForSP,
+                subtitle: METRICS_SUBTITLE.VELOCITY,
+                isToFixed: false,
+              },
+              {
+                value: velocity.velocityForCards,
+                subtitle: METRICS_SUBTITLE.THROUGHPUT,
+                isToFixed: false,
+              },
+            ],
+          },
+        ]
+      : []
+
+    const cycleTimeItems = boardMetrics.includes(REQUIRED_DATA.CYCLE_TIME)
+      ? [
+          {
+            title: REQUIRED_DATA.CYCLE_TIME,
+            items: cycleTime && [
+              {
+                value: cycleTime.averageCycleTimePerSP,
+                subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME_PRE_SP,
+              },
+              {
+                value: cycleTime.averageCycleTimePerCard,
+                subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME_PRE_CARD,
+              },
+            ],
+          },
+        ]
+      : []
+
+    return [...velocityItems, ...cycleTimeItems]
   }
 
   useEffect(() => {

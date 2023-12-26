@@ -51,7 +51,7 @@ public class AsyncReportRequestHandler {
 			.of(metricsDataReady.getBoardMetricsReady(), metricsDataReady.getPipelineMetricsReady(),
 					metricsDataReady.getSourceControlMetricsReady())
 			.filter(Objects::nonNull)
-			.collect(Collectors.toList());
+			.toList();
 
 		return metricsReady.stream().allMatch(Boolean::valueOf);
 	}
@@ -63,6 +63,15 @@ public class AsyncReportRequestHandler {
 			.filter(reportId -> Long.parseLong(IdUtil.getTimeStampFromReportId(reportId)) < exportTime)
 			.collect(Collectors.toSet());
 		reportMap.keySet().removeAll(keys);
+	}
+
+	public void deleteExpireMetricsDataReady(long currentTimeStamp) {
+		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
+		Set<String> keys = metricsDataReadyMap.keySet()
+			.stream()
+			.filter(timeStamp -> Long.parseLong(timeStamp) < exportTime)
+			.collect(Collectors.toSet());
+		metricsDataReadyMap.keySet().removeAll(keys);
 	}
 
 }

@@ -41,7 +41,7 @@ export const ReportCard = ({ title, items, xs }: ReportCardProps) => {
     }
 
     return (
-      <StyledItemSection>
+      <StyledItemSection data-test-id={'report-section'}>
         {items?.map((item, index) =>
           index < style.MAX_INDEX ? (
             <ReportCardItem
@@ -62,7 +62,7 @@ export const ReportCard = ({ title, items, xs }: ReportCardProps) => {
   }
 
   return (
-    <StyledReportCard>
+    <StyledReportCard data-test-id={title}>
       {!items && <Loading size='1.5rem' backgroundColor='transparent' />}
       <StyledReportCardTitle>{title}</StyledReportCardTitle>
       {items && getReportItems()}

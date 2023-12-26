@@ -84,13 +84,8 @@ const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) 
   })
 }
 
-const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
-  cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
-}
-
-const checkMeanTimeToRecovery = (testId: string) => {
+const checkMeanTimeToRecovery = () => {
   reportPage.meanTimeToRecoveryTitle.should('exist')
-  checkTimeToRecoveryPipelineCalculation(testId)
 }
 
 const checkPipelineToolExist = () => {
@@ -162,7 +157,7 @@ describe('Import project from file', () => {
 
     reportPage.pageIndicator.should('exist')
 
-    checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+    checkMeanTimeToRecovery()
 
     reportPage.exportProjectConfig()
 
@@ -202,7 +197,7 @@ describe('Import project from file', () => {
 
     reportPage.pageIndicator.should('exist')
 
-    checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+    checkMeanTimeToRecovery()
 
     reportPage.backToMetricsStep()
 

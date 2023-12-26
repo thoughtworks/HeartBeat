@@ -6,31 +6,26 @@ import reportPage from '../pages/metrics/report'
 import { TIPS } from '../../src/constants/resources'
 
 const cycleTimeData = [
-  { label: 'Name', value: 'Value' },
-  { label: 'Average cycle time', value: '6.75(days/SP)' },
-  { label: '9.85(days/card)' },
-  { label: 'Total development time / Total cycle time', value: '70.12%' },
-  { label: 'Total waiting for testing time / Total cycle time', value: '2.72%' },
-  { label: 'Total block time / Total cycle time', value: '21.18%' },
-  { label: 'Total review time / Total cycle time', value: '4.32%' },
-  { label: 'Total testing time / Total cycle time', value: '1.67%' },
-  { label: 'Average development time', value: '4.73(days/SP)' },
-  { label: '6.91(days/card)' },
-  { label: 'Average waiting for testing time', value: '0.18(days/SP)' },
-  { label: '0.27(days/card)' },
-  { label: 'Average block time', value: '1.43(days/SP)' },
-  { label: '2.09(days/card)' },
-  { label: 'Average review time', value: '0.29(days/SP)' },
-  { label: '0.43(days/card)' },
-  { label: 'Average testing time', value: '0.11(days/SP)' },
-  { label: '0.16(days/card)' },
+  { label: 'Average Cycle Time(Days/SP)', value: '6.75' },
+  { label: 'Average Cycle Time(Days/Card)', value: '9.85' },
 ]
 
 const velocityData = [
-  { label: 'Name', value: 'Value' },
   { label: 'Velocity(Story Point)', value: '17.5' },
   { label: 'Throughput(Cards Count)', value: '12' },
 ]
+
+const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '2.36' }]
+
+const meanTimeToRecoveryData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '15959798.00' }]
+
+const leadTimeForChangeData = [
+  { label: 'PR Lead Time', value: '0.00' },
+  { label: 'Pipeline Lead Time', value: '-292.25' },
+  { label: 'Total Lead Time', value: '-292.25' },
+]
+
+const changeFailureRateData = [{ label: 'Failure Rate', value: '0.49' }]
 
 const metricsTextList = [
   'Board configuration',
@@ -124,55 +119,35 @@ const tokenInputValues = [
   { index: 2, value: `${GITHUB_TOKEN}` },
 ]
 
-interface BoardDataItem {
+interface MetricsDataItem {
   label: string
   value?: string
 }
 
-const checkBoardCalculation = (testId: string, boardData: BoardDataItem[]) => {
+const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) => {
+  cy.get(testId).should('exist')
   cy.get(testId)
-    .find('tr')
-    .each((row, index) => {
-      cy.wrap(row).within(() => {
-        cy.contains(boardData[index].label).should('exist')
-        if (boardData[index].value) {
-          cy.contains(boardData[index].value).should('exist')
-        }
+    .children('[data-test-id="report-section"]')
+    .children()
+    .each((section, index) => {
+      cy.wrap(section).within(() => {
+        cy.get(`input[value="${boardData[index].label}"]`).should('exist')
+        cy.contains(boardData[index].value).should('exist')
       })
     })
 }
 
-const checkPipelineCalculation = (testId: string) => {
-  cy.get(testId).find('tr').contains('Deployment frequency(deployments/day)').should('exist')
-}
+// const checkPipelineCalculation = (testId: string) => {
+//   cy.get(testId).find('tr').contains('Deployment frequency(deployments/day)').should('exist')
+// }
 
-const checkDeploymentFrequency = (testId: string) => {
-  reportPage.deploymentFrequencyTitle.should('exist')
-  checkPipelineCalculation(testId)
-}
-
-const checkVelocity = (testId: string, velocityData: BoardDataItem[]) => {
-  reportPage.velocityTitle.should('exist')
-  checkBoardCalculation(testId, velocityData)
-}
-
-const checkCycleTime = (testId: string, cycleTimeData: BoardDataItem[]) => {
-  reportPage.cycleTimeTitle.should('exist')
-  checkBoardCalculation(testId, cycleTimeData)
-}
+// const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
+//   cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
+// }
 
 const checkCycleTimeTooltip = () => {
   metricsPage.cycleTimeTitleTooltip.trigger('mouseover')
   cy.contains(TIPS.CYCLE_TIME).should('be.visible')
-}
-
-const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
-  cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
-}
-
-const checkMeanTimeToRecovery = (testId: string) => {
-  reportPage.meanTimeToRecoveryTitle.should('exist')
-  checkTimeToRecoveryPipelineCalculation(testId)
 }
 
 const clearDownloadFile = () => {
@@ -316,13 +291,17 @@ describe('Create a new project', () => {
 
     reportPage.firstNotification.should('exist')
 
-    checkVelocity('[data-test-id="Velocity"]', velocityData)
+    checkMetricsCalculation('[data-test-id="Velocity"]', velocityData)
 
-    checkCycleTime('[data-test-id="Cycle time"]', cycleTimeData)
+    checkMetricsCalculation('[data-test-id="Cycle Time"]', cycleTimeData)
 
-    checkDeploymentFrequency('[data-test-id="Deployment frequency"]')
+    checkMetricsCalculation('[data-test-id="Deployment Frequency"]', deploymentFrequencyData)
 
-    checkMeanTimeToRecovery('[data-test-id="Mean Time To Recovery"]')
+    checkMetricsCalculation('[data-test-id="Mean Time To Recovery"]', meanTimeToRecoveryData)
+
+    checkMetricsCalculation('[data-test-id="Lead Time For Changes"]', leadTimeForChangeData)
+
+    checkMetricsCalculation('[data-test-id="Change Failure Rate"]', changeFailureRateData)
 
     clearDownloadFile()
 

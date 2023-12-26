@@ -7,11 +7,11 @@ class Report {
   }
 
   get cycleTimeTitle() {
-    return cy.contains('Cycle time')
+    return cy.contains('Cycle Time')
   }
 
   get deploymentFrequencyTitle() {
-    return cy.contains('Deployment frequency')
+    return cy.contains('Deployment Frequency')
   }
 
   get meanTimeToRecoveryTitle() {

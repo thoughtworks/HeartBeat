@@ -11,6 +11,7 @@ import { selectJiraColumns } from '@src/context/config/configSlice'
 import { DONE, METRICS_CYCLE_SETTING_TABLE_HEADER } from '@src/constants/resources'
 import CellAutoComplete from '@src/components/Metrics/MetricsStep/CycleTime/Table/CellAutoComplete'
 import { StyledTableHeaderCell, StyledTableRowCell } from '@src/components/Metrics/MetricsStep/CycleTime/Table/style'
+import { TABLE_ROW_HEIGHT } from '@src/constants/commons'
 
 const CycleTimeTable = () => {
   const dispatch = useAppDispatch()
@@ -56,21 +57,28 @@ const CycleTimeTable = () => {
   )
 
   return (
-    <TableContainer sx={{ my: '1.25rem' }}>
+    <TableContainer sx={{ my: '1.25rem', maxHeight: `${6 * (TABLE_ROW_HEIGHT + 1) - 1}px` }}>
       <Table stickyHeader aria-label='sticky table'>
         <TableHead>
           <TableRow>
             {METRICS_CYCLE_SETTING_TABLE_HEADER.map((column, index) => (
-              <StyledTableHeaderCell key={index}>{column}</StyledTableHeaderCell>
+              <StyledTableHeaderCell
+                sx={{ width: `${(100 / METRICS_CYCLE_SETTING_TABLE_HEADER.length).toFixed(2)}%` }}
+                key={index}
+              >
+                {column}
+              </StyledTableHeaderCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => {
+            const row1Content = row.name
+            const row2Content = row.statuses?.join(',')
             return (
               <TableRow hover key={index}>
-                <StyledTableRowCell>{row.name}</StyledTableRowCell>
-                <StyledTableRowCell>{row.statuses?.join(',')}</StyledTableRowCell>
+                <StyledTableRowCell title={row1Content}>{row1Content}</StyledTableRowCell>
+                <StyledTableRowCell title={row2Content}>{row2Content}</StyledTableRowCell>
                 <StyledTableRowCell>
                   <CellAutoComplete name={`${row?.name}`} defaultSelected={row.value} onSelect={saveCycleTimeOptions} />
                 </StyledTableRowCell>

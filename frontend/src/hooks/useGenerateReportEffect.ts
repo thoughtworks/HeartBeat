@@ -5,6 +5,7 @@ import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { DURATION } from '@src/constants/commons'
+import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
 
 export interface useGenerateReportEffectInterface {
   startToRequestBoardData: (boardParams: BoardReportRequestDTO) => void
@@ -71,7 +72,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       .pollingReport(url)
       .then((res: { status: number; response: ReportResponseDTO }) => {
         const response = res.response
-        setReportData(response)
+        handleAndUpdateData(response)
         if (response.allMetricsReady) {
           stopPollingReports()
         } else {
@@ -95,6 +96,11 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const stopPollingReports = () => {
     window.clearTimeout(timerIdRef.current)
     hasPollingStarted = false
+  }
+
+  const handleAndUpdateData = (response: ReportResponseDTO) => {
+    const exportValidityTime = exportValidityTimeMapper(response.exportValidityTime)
+    setReportData({ ...response, exportValidityTime: exportValidityTime })
   }
 
   return {

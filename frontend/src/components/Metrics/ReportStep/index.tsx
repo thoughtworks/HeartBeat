@@ -12,6 +12,7 @@ import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup'
 import BoardMetrics from '@src/components/Metrics/ReportStep/BoradMetrics'
 import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics'
 import { selectTimeStamp } from '@src/context/stepper/StepperSlice'
+import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface
@@ -29,7 +30,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     stopPollingReports,
   } = useGenerateReportEffect()
 
-  const [exportValidityTimeMin] = useState<number | undefined>(undefined)
+  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined)
   const configData = useAppSelector(selectConfig)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
 
@@ -78,6 +79,12 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   useEffect(() => {
     setErrorMessage(reportErrorMsg)
   }, [reportErrorMsg])
+
+  useEffect(() => {
+    const exportValidityTime =
+      reportData?.exportValidityTime && exportValidityTimeMapper(reportData?.exportValidityTime)
+    setExportValidityTimeMin(exportValidityTime)
+  }, [reportData])
 
   useLayoutEffect(() => {
     return () => {

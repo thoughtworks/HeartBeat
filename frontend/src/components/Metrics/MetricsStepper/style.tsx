@@ -85,6 +85,12 @@ export const NextButton = styled(Button)({
   },
   '&:hover': {
     backgroundColor: theme.main.backgroundColor,
+    [theme.breakpoints.down('lg')]: {
+      fontSize: '0.8rem',
+    },
+  },
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '0.8rem',
   },
 })
 

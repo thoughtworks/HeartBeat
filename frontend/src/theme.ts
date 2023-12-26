@@ -77,7 +77,7 @@ export const theme = createTheme({
     cardBorder: '0.063rem solid rgba(0, 0, 0, 0.10);',
     font: {
       primary: 'Roboto',
-      secondary: 'sans-serif',
+      secondary: 'sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Arial',
     },
   },
   typography: {

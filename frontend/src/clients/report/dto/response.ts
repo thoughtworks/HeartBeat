@@ -131,12 +131,12 @@ export interface ReportCallbackResponse {
 }
 
 export interface ReportResponse {
-  velocityList?: ReportDataWithTwoColumns[]
-  cycleTimeList?: ReportDataWithTwoColumns[]
-  classification?: ReportDataWithThreeColumns[]
-  deploymentFrequencyList?: ReportDataWithThreeColumns[]
-  meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
-  leadTimeForChangesList?: ReportDataWithThreeColumns[]
-  changeFailureRateList?: ReportDataWithThreeColumns[]
+  velocityList?: ReportDataWithTwoColumns[] | null
+  cycleTimeList?: ReportDataWithTwoColumns[] | null
+  classification?: ReportDataWithThreeColumns[] | null
+  deploymentFrequencyList?: ReportDataWithThreeColumns[] | null
+  meanTimeToRecoveryList?: ReportDataWithThreeColumns[] | null
+  leadTimeForChangesList?: ReportDataWithThreeColumns[] | null
+  changeFailureRateList?: ReportDataWithThreeColumns[] | null
   exportValidityTimeMin?: number
 }

@@ -4,11 +4,11 @@ import {
   BACK,
   EMPTY_REPORT_VALUES,
   ERROR_PAGE_ROUTE,
-  EXPECTED_REPORT_VALUES,
   EXPORT_BOARD_DATA,
   EXPORT_METRIC_DATA,
   EXPORT_PIPELINE_DATA,
   MOCK_JIRA_VERIFY_RESPONSE,
+  MOCK_REPORT_RESPONSE,
   REQUIRED_DATA_LIST,
   SAVE,
 } from '../../../fixtures'
@@ -79,7 +79,7 @@ describe('Report Step', () => {
     reportHook.current.stopPollingReports = jest.fn()
     reportHook.current.isServerError = false
     reportHook.current.errorMessage = ''
-    reportHook.current.reportData = EXPECTED_REPORT_VALUES
+    reportHook.current.reportData = MOCK_REPORT_RESPONSE
   }
   const handleSaveMock = jest.fn()
   const setup = (params: string[]) => {
@@ -156,35 +156,35 @@ describe('Report Step', () => {
     it('should renders the CycleTime component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[2]])
 
-      expect(getByText('3.10')).toBeInTheDocument()
-      expect(getByText('2.30')).toBeInTheDocument()
+      expect(getByText('30.26')).toBeInTheDocument()
+      expect(getByText('21.18')).toBeInTheDocument()
     })
 
     it('should renders the Lead Time For Change component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[4]])
 
-      expect(getByText('1016.69')).toBeInTheDocument()
-      expect(getByText('3.81')).toBeInTheDocument()
-      expect(getByText('1020.50')).toBeInTheDocument()
+      expect(getByText('3647.51')).toBeInTheDocument()
+      expect(getByText('2341.72')).toBeInTheDocument()
+      expect(getByText('5989.22')).toBeInTheDocument()
     })
 
     it('should renders the Deployment frequency component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[5]])
 
-      expect(getByText('2.36')).toBeInTheDocument()
+      expect(getByText('0.40')).toBeInTheDocument()
     })
 
     it('should renders the Change failure rate component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[6]])
 
       expect(getByText('0.00')).toBeInTheDocument()
-      expect(getByText('% (0/26)')).toBeInTheDocument()
+      expect(getByText('% (0/6)')).toBeInTheDocument()
     })
 
     it('should renders the Mean time to recovery component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[7]])
 
-      expect(getByText('0.00')).toBeInTheDocument()
+      expect(getByText('14396108.78')).toBeInTheDocument()
     })
 
     it('should show errorMessage when generateReport has error message', () => {

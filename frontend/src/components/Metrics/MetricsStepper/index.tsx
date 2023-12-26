@@ -226,7 +226,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   }
 
   const backToHomePage = () => {
-    navigate(ROUTE.HOME_PAGE)
+    navigate(ROUTE.BASE_PAGE)
     setIsDialogShowing(false)
     window.location.reload()
   }

@@ -20,7 +20,8 @@ export const StyledWrapper = styled('div')({
 
 export const StyledValue = styled(Typography)({
   width: '100%',
-  fontSize: '2.5rem',
+  fontSize: '2rem',
+  lineHeight: '2.5rem',
   fontStyle: 'normal',
   fontWeight: 500,
   wordWrap: 'break-word',
@@ -45,6 +46,9 @@ export const StyledDividingLine = styled.img({
   [theme.breakpoints.down('lg')]: {
     marginRight: '1.5rem',
   },
+  width: 'max-content',
+  height: '4rem',
+  paddingLeft: '0.5rem',
 })
 
 export const StyledValueSection = styled.div({
@@ -59,6 +63,6 @@ export const StyledExtraValue = styled.div({
   width: '100%',
   fontSize: '1rem',
   fontWeight: 400,
-  paddingTop: '1rem',
+  paddingTop: '0.4rem',
   whiteSpace: 'nowrap',
 })

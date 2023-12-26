@@ -14,6 +14,16 @@ export enum REQUIRED_DATA {
   MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
 }
 
+export enum METRICS_TITLE {
+  VELOCITY = 'Velocity',
+  CYCLE_TIME = 'Cycle Time',
+  CLASSIFICATION = 'Classification',
+  LEAD_TIME_FOR_CHANGES = 'Lead Time For Changes',
+  DEPLOYMENT_FREQUENCY = 'Deployment Frequency',
+  CHANGE_FAILURE_RATE = 'Change Failure Rate',
+  MEAN_TIME_TO_RECOVERY = 'Mean Time To Recovery',
+}
+
 export enum METRICS_SUBTITLE {
   PR_LEAD_TIME = 'PR Lead Time',
   PIPELINE_LEAD_TIME = 'Pipeline Lead Time',

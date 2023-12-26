@@ -1,7 +1,14 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice'
-import { BOARD_METRICS, CALENDAR, METRICS_SUBTITLE, REPORT_PAGE, REQUIRED_DATA } from '@src/constants/resources'
+import {
+  BOARD_METRICS,
+  CALENDAR,
+  METRICS_SUBTITLE,
+  REPORT_PAGE,
+  METRICS_TITLE,
+  REQUIRED_DATA,
+} from '@src/constants/resources'
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
@@ -68,7 +75,7 @@ const BoardMetrics = ({
     const velocityItems = boardMetrics.includes(REQUIRED_DATA.VELOCITY)
       ? [
           {
-            title: REQUIRED_DATA.VELOCITY,
+            title: METRICS_TITLE.VELOCITY,
             items: velocity && [
               {
                 value: velocity.velocityForSP,
@@ -88,7 +95,7 @@ const BoardMetrics = ({
     const cycleTimeItems = boardMetrics.includes(REQUIRED_DATA.CYCLE_TIME)
       ? [
           {
-            title: REQUIRED_DATA.CYCLE_TIME,
+            title: METRICS_TITLE.CYCLE_TIME,
             items: cycleTime && [
               {
                 value: cycleTime.averageCycleTimePerSP,

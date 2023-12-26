@@ -1,7 +1,14 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
-import { CALENDAR, DORA_METRICS, METRICS_SUBTITLE, REPORT_PAGE, REQUIRED_DATA } from '@src/constants/resources'
+import {
+  CALENDAR,
+  DORA_METRICS,
+  METRICS_SUBTITLE,
+  REPORT_PAGE,
+  METRICS_TITLE,
+  REQUIRED_DATA,
+} from '@src/constants/resources'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
@@ -83,7 +90,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const leadTimeForChanges = doraReport?.leadTimeForChanges
     return [
       {
-        title: REQUIRED_DATA.LEAD_TIME_FOR_CHANGES,
+        title: METRICS_TITLE.LEAD_TIME_FOR_CHANGES,
         items: leadTimeForChanges && [
           {
             value: leadTimeForChanges.avgLeadTimeForChanges.prLeadTime,
@@ -110,7 +117,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const deploymentFrequencyList = metrics.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
       ? [
           {
-            title: REQUIRED_DATA.DEPLOYMENT_FREQUENCY,
+            title: METRICS_TITLE.DEPLOYMENT_FREQUENCY,
             items: deploymentFrequency && [
               {
                 value: deploymentFrequency?.avgDeploymentFrequency.deploymentFrequency,
@@ -124,7 +131,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const meanTimeToRecoveryList = metrics.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
       ? [
           {
-            title: REQUIRED_DATA.MEAN_TIME_TO_RECOVERY,
+            title: METRICS_TITLE.MEAN_TIME_TO_RECOVERY,
             items: meanTimeToRecovery && [
               {
                 value: meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery,
@@ -138,7 +145,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
     const changeFailureRateList = metrics.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE)
       ? [
           {
-            title: REQUIRED_DATA.CHANGE_FAILURE_RATE,
+            title: METRICS_TITLE.CHANGE_FAILURE_RATE,
             items: changeFailureRate && [
               {
                 value: changeFailureRate.avgChangeFailureRate.failureRate,

@@ -1,14 +1,7 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice'
-import {
-  BOARD_METRICS,
-  CALENDAR,
-  METRICS_SUBTITLE,
-  METRICS_UNIT,
-  REPORT_PAGE,
-  REQUIRED_DATA,
-} from '@src/constants/resources'
+import { BOARD_METRICS, CALENDAR, METRICS_SUBTITLE, REPORT_PAGE, REQUIRED_DATA } from '@src/constants/resources'
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
@@ -83,13 +76,11 @@ const BoardMetrics = ({
                 {
                   value: velocity.velocityForSP,
                   subtitle: METRICS_SUBTITLE.VELOCITY,
-                  unit: METRICS_UNIT.VELOCITY_FOR_SP,
                   isToFixed: false,
                 },
                 {
                   value: velocity.velocityForCards,
                   subtitle: METRICS_SUBTITLE.THROUGHPUT,
-                  unit: METRICS_UNIT.VELOCITY_FOR_CARDS,
                   isToFixed: false,
                 },
               ]
@@ -106,13 +97,11 @@ const BoardMetrics = ({
             ? [
                 {
                   value: cycleTime.averageCycleTimePerSP,
-                  subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME,
-                  unit: METRICS_UNIT.AVERAGE_CYCLETIME_PER_SP,
+                  subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME_PRE_SP,
                 },
                 {
                   value: cycleTime.averageCycleTimePerCard,
-                  subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME,
-                  unit: METRICS_UNIT.AVERAGE_CYCLETIME_PER_CARD,
+                  subtitle: METRICS_SUBTITLE.AVERAGE_CYCLE_TIME_PRE_CARD,
                 },
               ]
             : null,

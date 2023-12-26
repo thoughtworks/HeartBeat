@@ -1,14 +1,7 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
-import {
-  CALENDAR,
-  DORA_METRICS,
-  METRICS_SUBTITLE,
-  METRICS_UNIT,
-  REPORT_PAGE,
-  REQUIRED_DATA,
-} from '@src/constants/resources'
+import { CALENDAR, DORA_METRICS, METRICS_SUBTITLE, REPORT_PAGE, REQUIRED_DATA } from '@src/constants/resources'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
@@ -122,7 +115,6 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
               {
                 value: deploymentFrequency?.avgDeploymentFrequency.deploymentFrequency,
                 subtitle: METRICS_SUBTITLE.DEPLOYMENT_FREQUENCY,
-                unit: METRICS_UNIT.DEPLOYMENT_FREQUENCY,
               },
             ],
           },
@@ -137,7 +129,6 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
               {
                 value: meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery,
                 subtitle: METRICS_SUBTITLE.DEPLOYMENT_FREQUENCY,
-                unit: METRICS_UNIT.DEPLOYMENT_FREQUENCY,
               },
             ],
           },

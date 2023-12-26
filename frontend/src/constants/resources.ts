@@ -18,19 +18,12 @@ export enum METRICS_SUBTITLE {
   PR_LEAD_TIME = 'PR Lead Time',
   PIPELINE_LEAD_TIME = 'Pipeline Lead Time',
   TOTAL_DELAY_TIME = 'Total Lead Time',
-  DEPLOYMENT_FREQUENCY = 'Deployment Frequency',
+  DEPLOYMENT_FREQUENCY = 'Deployment Frequency(Deployments/Day)',
   FAILURE_RATE = 'Failure Rate',
-  AVERAGE_CYCLE_TIME = 'Average Cycle Time',
-  THROUGHPUT = 'Throughput',
-  VELOCITY = 'Velocity',
-}
-
-export enum METRICS_UNIT {
-  VELOCITY_FOR_SP = 'Story Point',
-  VELOCITY_FOR_CARDS = 'Cards Count',
-  AVERAGE_CYCLETIME_PER_SP = 'Days/SP',
-  AVERAGE_CYCLETIME_PER_CARD = 'Days/Card',
-  DEPLOYMENT_FREQUENCY = 'Deployments/Day',
+  AVERAGE_CYCLE_TIME_PRE_SP = 'Average Cycle Time(Days/SP)',
+  AVERAGE_CYCLE_TIME_PRE_CARD = 'Average Cycle Time(Days/Card)',
+  THROUGHPUT = 'Throughput(Cards Count)',
+  VELOCITY = 'Velocity(Story Point)',
 }
 
 export const DORA_METRICS: string[] = [

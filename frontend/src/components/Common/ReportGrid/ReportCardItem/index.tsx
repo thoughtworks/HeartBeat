@@ -2,11 +2,11 @@ import {
   StyledDividingLine,
   StyledItem,
   StyledSubtitle,
-  StyledUnit,
   StyledValue,
   StyledContent,
   StyledValueSection,
   StyledExtraValue,
+  StyledWrapper,
 } from '@src/components/Common/ReportGrid/ReportCardItem/style'
 import DividingLine from '@src/assets/DividingLine.svg'
 import React, { HTMLAttributes } from 'react'
@@ -17,13 +17,11 @@ export interface ReportCardItemProps extends HTMLAttributes<HTMLDivElement> {
   extraValue?: string
   subtitle: string
   showDividingLine?: boolean
-  unit?: string
 }
 
 export const ReportCardItem = ({
   style,
   value,
-  unit,
   isToFixed = true,
   extraValue,
   subtitle,
@@ -32,16 +30,15 @@ export const ReportCardItem = ({
   return (
     <StyledItem style={style}>
       {showDividingLine && <StyledDividingLine src={DividingLine} alt='dividingLine' />}
-      <div>
+      <StyledWrapper>
         <StyledContent>
           <StyledValueSection>
             <StyledValue>{isToFixed ? value.toFixed(2) : value}</StyledValue>
             {extraValue && <StyledExtraValue>{extraValue}</StyledExtraValue>}
           </StyledValueSection>
-          <StyledUnit disabled variant='standard' InputProps={{ disableUnderline: true }} value={unit} />
         </StyledContent>
         <StyledSubtitle disabled variant='standard' InputProps={{ disableUnderline: true }} value={subtitle} />
-      </div>
+      </StyledWrapper>
     </StyledItem>
   )
 }

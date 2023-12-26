@@ -14,18 +14,8 @@ export const StyledContent = styled('div')({
   justifyContent: 'space-between',
 })
 
-export const StyledUnit = styled(TextField)({
-  position: 'relative',
-  bottom: '0.56rem',
-  '& .MuiInputBase-input': {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontSize: '0.6rem',
-    fontWeight: 500,
-  },
-  '& .MuiInputBase-input.Mui-disabled': {
-    WebkitTextFillColor: theme.main.secondColor,
-  },
+export const StyledWrapper = styled('div')({
+  width: '100%',
 })
 
 export const StyledValue = styled(Typography)({

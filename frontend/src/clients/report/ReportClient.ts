@@ -61,6 +61,10 @@ export class ReportClient extends HttpClient {
       },
       changeFailureRateOfPipelines: [],
     },
+    boardMetricsReady: true,
+    pipelineMetricsReady: true,
+    sourceControlMetricsReady: true,
+    allMetricsReady: true,
   }
 
   retrieveReportByUrl = async (params: ReportRequestDTO, url: string) => {

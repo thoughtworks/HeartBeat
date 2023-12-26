@@ -151,7 +151,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
             items: changeFailureRate && [
               {
                 value: changeFailureRate.avgChangeFailureRate.failureRate,
-                extraValue: `${changeFailureRate.avgChangeFailureRate.totalFailedTimes}/${changeFailureRate.avgChangeFailureRate.totalTimes}`,
+                extraValue: `% (${changeFailureRate.avgChangeFailureRate.totalFailedTimes}/${changeFailureRate.avgChangeFailureRate.totalTimes})`,
                 subtitle: METRICS_SUBTITLE.FAILURE_RATE,
               },
             ],

@@ -36,7 +36,7 @@ export const ReportCardItem = ({
         <StyledContent>
           <StyledValueSection>
             <StyledValue>{isToFixed ? value.toFixed(2) : value}</StyledValue>
-            {extraValue && <StyledExtraValue>% ({extraValue})</StyledExtraValue>}
+            {extraValue && <StyledExtraValue>{extraValue}</StyledExtraValue>}
           </StyledValueSection>
           <StyledUnit disabled variant='standard' InputProps={{ disableUnderline: true }} value={unit} />
         </StyledContent>

@@ -138,5 +138,5 @@ export interface ReportResponse {
   meanTimeToRecoveryList?: ReportDataWithThreeColumns[] | null
   leadTimeForChangesList?: ReportDataWithThreeColumns[] | null
   changeFailureRateList?: ReportDataWithThreeColumns[] | null
-  exportValidityTimeMin?: number
+  exportValidityTimeMin?: number | null
 }

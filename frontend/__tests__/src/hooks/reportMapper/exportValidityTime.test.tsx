@@ -10,6 +10,6 @@ describe('export validity time mapper', () => {
   it('should return undefined when call exportValidityTimeMapper given the param to undefined', () => {
     const result = exportValidityTimeMapper(null)
 
-    expect(result).toEqual(undefined)
+    expect(result).toEqual(null)
   })
 })

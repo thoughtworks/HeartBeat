@@ -1,11 +1,11 @@
 import {
+  StyledContent,
   StyledDividingLine,
+  StyledExtraValue,
   StyledItem,
   StyledSubtitle,
   StyledValue,
-  StyledContent,
   StyledValueSection,
-  StyledExtraValue,
   StyledWrapper,
 } from '@src/components/Common/ReportGrid/ReportCardItem/style'
 import DividingLine from '@src/assets/DividingLine.svg'
@@ -25,7 +25,7 @@ export const ReportCardItem = ({
   isToFixed = true,
   extraValue,
   subtitle,
-  showDividingLine = false,
+  showDividingLine,
 }: ReportCardItemProps) => {
   return (
     <StyledItem style={style}>

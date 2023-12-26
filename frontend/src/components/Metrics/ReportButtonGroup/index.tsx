@@ -93,7 +93,7 @@ export const ReportButtonGroup = ({
           )}
           {isShowExportPipelineButton && (
             <StyledExportButton
-              disabled={reportData?.pipelineMetricsReady === false || reportData?.sourceControlMetricsReady === false}
+              disabled={!reportData?.pipelineMetricsReady || !reportData?.sourceControlMetricsReady}
               onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}

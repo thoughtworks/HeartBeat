@@ -1,7 +1,6 @@
 import { theme } from '@src/theme'
 import styled from '@emotion/styled'
 import { Typography } from '@mui/material'
-import '@fontsource/roboto'
 
 export const StyledReportCard = styled.div({
   position: 'relative',

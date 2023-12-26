@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { TextField, Typography } from '@mui/material'
 import { theme } from '@src/theme'
-import '@fontsource/roboto'
 
 export const StyledItem = styled.div({
   display: 'flex',

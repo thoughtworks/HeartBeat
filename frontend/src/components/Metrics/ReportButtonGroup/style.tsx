@@ -1,7 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
 import { theme } from '@src/theme'
-import '@fontsource/roboto'
 import { basicButtonStyle } from '@src/components/Metrics/ReportStep/style'
 
 export const StyledButtonGroup = styled('div')({

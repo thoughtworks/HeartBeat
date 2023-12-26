@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material/styles'
 import { indigo } from '@mui/material/colors'
 import { FIVE_HUNDRED } from '@src/constants/commons'
+import '@fontsource/roboto'
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -12,6 +13,10 @@ declare module '@mui/material/styles' {
       boxShadow: string
       cardShadow: string
       cardBorder: string
+      font: {
+        primary: string
+        secondary: string
+      }
     }
   }
 
@@ -25,6 +30,10 @@ declare module '@mui/material/styles' {
       boxShadow: string
       cardShadow: string
       cardBorder: string
+      font: {
+        primary: string
+        secondary: string
+      }
     }
   }
 
@@ -66,6 +75,10 @@ export const theme = createTheme({
       '0 0.2rem 0.1rem -0.1rem rgb(0 0 0 / 20%), 0 0.1rem 0.1rem 0 rgb(0 0 0 / 14%), 0 0.1rem 0.3rem 0 rgb(0 0 0 / 12%)',
     cardShadow: '0 0.013rem 1rem 0 rgba(0, 0, 0, 0.08);',
     cardBorder: '0.063rem solid rgba(0, 0, 0, 0.10);',
+    font: {
+      primary: 'Roboto',
+      secondary: 'sans-serif',
+    },
   },
   typography: {
     button: {

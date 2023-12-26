@@ -25,6 +25,7 @@ export const MetricsSelectionTitle = styled(Divider)({
   fontSize: '1.2rem',
   lineHeight: '1.25rem',
   fontWeight: '600',
+  fontFamily: 'sans-serif',
 })
 
 export const ReportSelectionTitle = styled(MetricsSelectionTitle)({

@@ -23,6 +23,7 @@ export const RemoveButton = styled(Button)({
   width: '5rem',
   fontSize: '0.8rem',
   fontWeight: '550',
+  fontFamily: theme.main.font.secondary,
 })
 
 export const WarningMessage = styled('p')({

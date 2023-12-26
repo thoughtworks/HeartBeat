@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
-import Button from '@mui/material/Button'
 import { theme } from '@src/theme'
+import { BasicButton } from '@src/components/Common/Buttons'
 
 export const PipelineMetricSelectionWrapper = styled('div')`
   position: relative;
@@ -19,11 +19,9 @@ export const ButtonWrapper = styled('div')({
   justifyContent: 'flex-end',
 })
 
-export const RemoveButton = styled(Button)({
-  width: '5rem',
-  fontSize: '0.8rem',
-  fontWeight: '550',
+export const RemoveButton = styled(BasicButton)({
   fontFamily: theme.main.font.secondary,
+  marginRight: '2rem',
 })
 
 export const WarningMessage = styled('p')({

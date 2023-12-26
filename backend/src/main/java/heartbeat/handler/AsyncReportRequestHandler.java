@@ -42,7 +42,7 @@ public class AsyncReportRequestHandler {
 	}
 
 	public boolean isReportReady(String timeStamp) {
-		MetricsDataReady metricsDataReady = metricsDataReadyMap.get(timeStamp);
+		MetricsDataReady metricsDataReady = getMetricsDataReady(timeStamp);
 		if (metricsDataReady == null) {
 			throw new GenerateReportException("Unable to locate the report using this report ID.");
 		}

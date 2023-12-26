@@ -731,6 +731,11 @@ public class GenerateReporterService {
 			throw new GenerateReportException("Report time expires");
 		}
 		BaseException exception = asyncExceptionHandler.get(reportTimeStamp);
+		handleAsyncException(exception);
+		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
+	}
+
+	private static void handleAsyncException(BaseException exception) {
 		if (Objects.nonNull(exception)) {
 			switch (exception.getStatus()) {
 				case 401 -> throw new UnauthorizedException(exception.getMessage());
@@ -741,7 +746,6 @@ public class GenerateReporterService {
 				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
 			}
 		}
-		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
 	}
 
 	private void validateExpire(long csvTimeStamp) {

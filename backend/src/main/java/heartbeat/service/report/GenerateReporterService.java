@@ -730,8 +730,10 @@ public class GenerateReporterService {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Report time expires");
 		}
-		BaseException exception = asyncExceptionHandler.get(reportTimeStamp);
-		handleAsyncException(exception);
+		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportTimeStamp));
+		BaseException doraException = asyncExceptionHandler.get(IdUtil.getDoraReportId(reportTimeStamp));
+		handleAsyncException(boardException);
+		handleAsyncException(doraException);
 		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
 	}
 

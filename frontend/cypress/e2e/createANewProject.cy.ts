@@ -254,7 +254,7 @@ describe('Create a new project', () => {
     configPage.typeProjectName('E2E Project')
 
     configPage.goHomePage()
-    cy.url().should('include', '/home')
+    cy.url().should('include', '/')
 
     homePage.createANewProject()
     cy.contains('Project name *').should('have.value', '')

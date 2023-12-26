@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import ErrorPage from '@src/pages/ErrorPage'
-import { ERROR_PAGE_MESSAGE, HOME_PAGE_ROUTE, RETRY_BUTTON } from '../../fixtures'
+import { ERROR_PAGE_MESSAGE, BASE_PAGE_ROUTE, RETRY_BUTTON } from '../../fixtures'
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -34,6 +34,6 @@ describe('error content', () => {
 
     await userEvent.click(getByText(RETRY_BUTTON))
 
-    expect(navigateMock).toHaveBeenCalledWith(HOME_PAGE_ROUTE)
+    expect(navigateMock).toHaveBeenCalledWith(BASE_PAGE_ROUTE)
   })
 })

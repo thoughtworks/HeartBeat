@@ -25,6 +25,9 @@ export const StyledValue = styled(Typography)({
   fontStyle: 'normal',
   fontWeight: 500,
   wordWrap: 'break-word',
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '1.8rem',
+  },
 })
 
 export const StyledSubtitle = styled(TextField)({
@@ -34,6 +37,7 @@ export const StyledSubtitle = styled(TextField)({
     textOverflow: 'ellipsis',
     fontSize: '0.8rem',
     fontStyle: 'normal',
+    paddingRight: '0.5rem',
   },
   '& .MuiInputBase-input.Mui-disabled': {
     WebkitTextFillColor: theme.main.secondColor,
@@ -42,13 +46,12 @@ export const StyledSubtitle = styled(TextField)({
 })
 
 export const StyledDividingLine = styled.img({
-  marginRight: '2.25rem',
+  marginRight: '2rem',
+  width: 'max-content',
+  height: '4rem',
   [theme.breakpoints.down('lg')]: {
     marginRight: '1.5rem',
   },
-  width: 'max-content',
-  height: '4rem',
-  paddingLeft: '0.5rem',
 })
 
 export const StyledValueSection = styled.div({

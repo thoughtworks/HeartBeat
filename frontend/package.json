@@ -19,7 +19,8 @@
     "e2e:local": "APP_ENV=local  TZ='PRC' cypress run --spec cypress/",
     "e2e:with-server": "ts-node --project tsconfig.scripts.json ./scripts/runE2eWithServer.ts 'npm run e2e:local'",
     "prepare": "cd .. && husky install frontend/.husky",
-    "license-compliance": "license-compliance -r detailed"
+    "license-compliance": "license-compliance -r detailed",
+    "type-check": "tsc --noEmit"
   },
   "lint-staged": {
     "**/*": [

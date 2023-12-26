@@ -22,7 +22,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [reports, setReports] = useState<ReportResponse>()
-  const timerIdRef = useRef<NodeJS.Timer>()
+  const timerIdRef = useRef<number>()
 
   const startPollingReports = (params: ReportRequestDTO) => {
     setIsLoading(true)
@@ -51,7 +51,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
           stopPollingReports()
           setReports(reportMapper(res.response))
         } else {
-          timerIdRef.current = setTimeout(() => pollingReport(url, interval), interval * 1000)
+          timerIdRef.current = window.setTimeout(() => pollingReport(url, interval), interval * 1000)
         }
       })
       .catch((e) => {
@@ -70,7 +70,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
 
   const stopPollingReports = () => {
     setIsLoading(false)
-    clearInterval(timerIdRef.current)
+    window.clearTimeout(timerIdRef.current)
   }
 
   return {

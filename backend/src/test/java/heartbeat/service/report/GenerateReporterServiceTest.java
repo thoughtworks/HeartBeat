@@ -1153,7 +1153,7 @@ class GenerateReporterServiceTest {
 
 
 	@Test
-	public void shouldThrowExceptionWhenUpdatingMetricsReadyAndPreviousMetricsDataReadyNull(){
+	public void shouldNotUpdateMetricsAndThrowExceptionWhenPreviousMetricsDataReadyNull(){
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
 			.metrics(List.of("velocity","cycle time","classification","deployment frequency","change failure rate","mean time to recovery","lead time for changes"))
@@ -1172,13 +1172,11 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldOnlyMetricsWhenMetricsIsNonNullInPreviousMetricsReady(){
+	public void shouldOnlUpdateMetricsWhenMetricsIsNonNullInPreviousMetricsReady(){
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
 			.metrics(List.of("velocity","cycle time","classification"))
 			.jiraBoardSetting(buildJiraBoardSetting())
-			.buildKiteSetting(buildPipelineSetting())
-			.codebaseSetting(buildCodeBaseSetting())
 			.startTime("123")
 			.endTime("123")
 			.csvTimeStamp("1683734399999")

@@ -1,5 +1,5 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
+import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/dto/response'
 
 export class ReportClient extends HttpClient {
@@ -61,6 +61,8 @@ export class ReportClient extends HttpClient {
       },
       changeFailureRateOfPipelines: [],
     },
+    meanTimeToRecovery: null,
+    exportValidityTime: null,
     boardMetricsReady: true,
     pipelineMetricsReady: true,
     sourceControlMetricsReady: true,

@@ -92,9 +92,9 @@ jest.mock('@src/utils/util', () => ({
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
-    startPollingReports: jest.fn(),
+    startToRequestBoardData: jest.fn(),
+    startToRequestDoraData: jest.fn(),
     stopPollingReports: jest.fn(),
-    isLoading: false,
     isServerError: false,
     errorMessage: '',
   }),

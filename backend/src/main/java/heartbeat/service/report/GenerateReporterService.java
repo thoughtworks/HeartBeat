@@ -581,18 +581,11 @@ public class GenerateReporterService {
 	}
 
 	public void initializeMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
-		Boolean boardMetricsReady = calculateMetricsReady(metrics, kanbanMetrics, Boolean.FALSE);
-		Boolean sourceControlMetricsReady = calculateMetricsReady(metrics, codebaseMetrics, Boolean.FALSE);
-		Boolean pipelineMetricsReady = calculateMetricsReady(metrics, buildKiteMetrics, Boolean.FALSE);
+		MetricsStatus metricsStatus = getMetricsStatus(metrics,Boolean.FALSE);
 		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
-		MetricsDataReady metricsDataReady = createMetricsDataReady(boardMetricsReady, sourceControlMetricsReady,
-				pipelineMetricsReady, previousMetricsReady);
+		MetricsDataReady metricsDataReady = createMetricsDataReady(metricsStatus.boardMetricsReady, metricsStatus.codebaseMetricsReady,
+			metricsStatus.buildKiteMetricsReady, previousMetricsReady);
 		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
-	}
-
-	private Boolean calculateMetricsReady(List<String> metrics, List<String> metricList, Boolean value) {
-		boolean anyMetricExists = metrics.stream().map(String::toLowerCase).anyMatch(metricList::contains);
-		return anyMetricExists ? value : null;
 	}
 
 	private MetricsDataReady createMetricsDataReady(Boolean boardMetricsReady, Boolean sourceControlMetricsReady,
@@ -620,20 +613,18 @@ public class GenerateReporterService {
 	}
 
 	public void updateMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
-		Boolean boardMetricsExist = calculateMetricsReady(metrics, kanbanMetrics, Boolean.TRUE);
-		Boolean codebaseMetricsExist = calculateMetricsReady(metrics, codebaseMetrics, Boolean.TRUE);
-		Boolean buildKiteMetricsExist = calculateMetricsReady(metrics, buildKiteMetrics, Boolean.TRUE);
+		MetricsStatus metricsStatus = getMetricsStatus(metrics,Boolean.TRUE);
 		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
 		if (previousMetricsReady == null) {
 			log.error("Unable update metrics data ready through this timestamp.");
 			throw new GenerateReportException("Unable update metrics data ready through this timestamp.");
 		}
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.boardMetricsReady(getTureOrPreviousValue(boardMetricsExist, previousMetricsReady.getBoardMetricsReady()))
+			.boardMetricsReady(getTureOrPreviousValue(metricsStatus.boardMetricsReady, previousMetricsReady.getBoardMetricsReady()))
 			.pipelineMetricsReady(
-					getTureOrPreviousValue(buildKiteMetricsExist, previousMetricsReady.getPipelineMetricsReady()))
+					getTureOrPreviousValue(metricsStatus.buildKiteMetricsReady, previousMetricsReady.getPipelineMetricsReady()))
 			.sourceControlMetricsReady(
-					getTureOrPreviousValue(codebaseMetricsExist, previousMetricsReady.getSourceControlMetricsReady()))
+					getTureOrPreviousValue(metricsStatus.codebaseMetricsReady, previousMetricsReady.getSourceControlMetricsReady()))
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 	}
@@ -642,6 +633,20 @@ public class GenerateReporterService {
 		if (exist == Boolean.TRUE)
 			return Boolean.TRUE;
 		return previousValue;
+	}
+
+	private MetricsStatus getMetricsStatus(List<String> lowerCaseMetrics, Boolean flag) {
+		boolean boardMetricsExist = lowerCaseMetrics.stream().anyMatch(this.kanbanMetrics::contains);
+		boolean codebaseMetricsExist = lowerCaseMetrics.stream().anyMatch(this.codebaseMetrics::contains);
+		boolean buildKiteMetricsExist = lowerCaseMetrics.stream().anyMatch(this.buildKiteMetrics::contains);
+		Boolean boardMetricsReady = boardMetricsExist ? flag : null;
+		Boolean codebaseMetricsReady = codebaseMetricsExist ? flag : null;
+		Boolean buildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
+		MetricsStatus status = new MetricsStatus(boardMetricsReady, codebaseMetricsReady, buildKiteMetricsReady);
+		return status;
+	}
+
+	private record MetricsStatus(Boolean boardMetricsReady, Boolean codebaseMetricsReady, Boolean buildKiteMetricsReady) {
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -726,7 +731,7 @@ public class GenerateReporterService {
 		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
 	}
 
-	public boolean checkGenerateReportIsDone(String reportTimeStamp) {
+	public boolean  checkGenerateReportIsDone(String reportTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Report time expires");
 		}

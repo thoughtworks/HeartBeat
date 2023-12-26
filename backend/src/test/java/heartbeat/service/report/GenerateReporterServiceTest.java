@@ -59,12 +59,11 @@ import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.handler.AsyncExceptionHandler;
 import lombok.val;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -82,6 +81,9 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
@@ -99,6 +101,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -159,6 +162,13 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	private AsyncExceptionHandler asyncExceptionHandler;
+
+	@Captor
+	private ArgumentCaptor<MetricsDataReady> metricsCaptor;
+
+	@Captor
+	private ArgumentCaptor<String> keyCaptor;
+
 
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
@@ -1110,4 +1120,110 @@ class GenerateReporterServiceTest {
 		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
 	}
 
+	@Test
+	void shouldUpdateAndSetMetricsReadyTrueWhenThreeMetricsExistsAndPreviousMetricsReadyNotNull(){
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of("velocity","cycle time","classification","deployment frequency","change failure rate","mean time to recovery","lead time for changes"))
+			.jiraBoardSetting(buildJiraBoardSetting())
+			.buildKiteSetting(buildPipelineSetting())
+			.codebaseSetting(buildCodeBaseSetting())
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		MetricsDataReady previousReady= MetricsDataReady.builder()
+			.boardMetricsReady(false)
+			.pipelineMetricsReady(false)
+			.sourceControlMetricsReady(false).build();
+		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
+			.pipelineMetricsReady(true)
+			.boardMetricsReady(true)
+			.sourceControlMetricsReady(true)
+			.build();
+
+		//when
+		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(previousReady);
+
+		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),request.getMetrics());
+		//then
+		verify(asyncReportRequestHandler,times(1)).putMetricsDataReady(request.getCsvTimeStamp(),allMetricsReady);
+	}
+
+
+	@Test
+	public void shouldThrowExceptionWhenUpdatingMetricsReadyAndPreviousMetricsDataReadyNull(){
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of("velocity","cycle time","classification","deployment frequency","change failure rate","mean time to recovery","lead time for changes"))
+			.jiraBoardSetting(buildJiraBoardSetting())
+			.buildKiteSetting(buildPipelineSetting())
+			.codebaseSetting(buildCodeBaseSetting())
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(null);
+
+		assertThrows(GenerateReportException.class,()-> generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),request.getMetrics()));
+
+	}
+
+	@Test
+	public void shouldOnlyMetricsWhenMetricsIsNonNullInPreviousMetricsReady(){
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of("velocity","cycle time","classification"))
+			.jiraBoardSetting(buildJiraBoardSetting())
+			.buildKiteSetting(buildPipelineSetting())
+			.codebaseSetting(buildCodeBaseSetting())
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+		MetricsDataReady previousReady= MetricsDataReady.builder()
+			.boardMetricsReady(false)
+			.pipelineMetricsReady(null)
+			.sourceControlMetricsReady(null)
+			.build();
+		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
+			.boardMetricsReady(true)
+			.pipelineMetricsReady(null)
+			.sourceControlMetricsReady(null)
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(previousReady);
+
+		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),request.getMetrics());
+		//then
+		verify(asyncReportRequestHandler,times(1)).putMetricsDataReady(request.getCsvTimeStamp(),allMetricsReady);
+	}
+	private JiraBoardSetting buildJiraBoardSetting(){
+		return JiraBoardSetting.builder()
+			.treatFlagCardAsBlock(true)
+			.targetFields(BoardCsvFixture.MOCK_TARGET_FIELD_LIST())
+			.build();
+	}
+
+	private BuildKiteSetting buildPipelineSetting(){
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		return BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token("buildKite_fake_token")
+			.deploymentEnvList(List.of(mockDeployment))
+			.build();
+	}
+
+	private CodebaseSetting buildCodeBaseSetting(){
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		return CodebaseSetting.builder()
+			.type("Github")
+			.token("github_fake_token")
+			.leadTime(List.of(mockDeployment))
+			.build();
+	}
 }

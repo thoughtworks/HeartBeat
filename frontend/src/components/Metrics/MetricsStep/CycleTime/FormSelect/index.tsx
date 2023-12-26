@@ -1,5 +1,4 @@
 import { Autocomplete, TextField, Tooltip } from '@mui/material'
-import { SxProps } from '@mui/material'
 import React, { useState } from 'react'
 import { FormControlSelection } from '@src/components/Metrics/MetricsStep/CycleTime/FormSelect/style'
 import { Z_INDEX } from '@src/constants/commons'
@@ -10,18 +9,9 @@ interface formSelectProps {
   name: string
   defaultSelected: string
   saveCycleTimeOptions: (name: string, value: string) => void
-  sx?: SxProps
-  containerSx?: SxProps
 }
 
-export const FormSelect = ({
-  label,
-  name,
-  defaultSelected,
-  saveCycleTimeOptions,
-  sx,
-  containerSx,
-}: formSelectProps) => {
+export const FormSelect = ({ label, name, defaultSelected, saveCycleTimeOptions }: formSelectProps) => {
   const [selectedCycleTime, setSelectedCycleTime] = useState(defaultSelected)
   const [inputValue, setInputValue] = useState<string>('')
 
@@ -41,9 +31,8 @@ export const FormSelect = ({
   }
 
   return (
-    <FormControlSelection sx={containerSx} variant='standard' required>
+    <FormControlSelection variant='standard' required>
       <Autocomplete
-        sx={sx}
         id='cycletime-data-combo-box'
         data-test-id={label}
         disableClearable

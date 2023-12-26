@@ -248,9 +248,11 @@ class GenerateReporterControllerTest {
 		assertEquals("10", interval);
 
 		Thread.sleep(2000L);
-		verify(generateReporterService).initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-		verify(generateReporterService, times(0)).saveReporterInHandler(any(),any());
-		verify(generateReporterService, times(0)).updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		verify(generateReporterService).initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
+		verify(generateReporterService, times(0)).saveReporterInHandler(any(), any());
+		verify(generateReporterService, times(0)).updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
 		verify(asyncExceptionHandler).put(IdUtil.getBoardReportId(currentTimeStamp), requestFailedException);
 	}
 

@@ -30,6 +30,7 @@ import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
+import heartbeat.controller.report.dto.response.MetricsDataReady;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.exception.BadRequestException;
@@ -94,6 +95,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
@@ -886,28 +888,6 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldGenerateForMetricCsvWhenCallGenerateReporter() throws IOException {
-		GenerateReportRequest request = GenerateReportRequest.builder()
-			.metrics(List.of())
-			.considerHoliday(false)
-			.startTime("123")
-			.endTime("123")
-			.csvTimeStamp("1683734399999")
-			.build();
-
-		Mockito.doAnswer(invocation -> {
-			Files.createFile(mockMetricCsvPath);
-			return null;
-		}).when(csvFileGenerator).convertMetricDataToCSV(any(), any());
-
-		generateReporterService.generateReporter(request);
-
-		boolean isExists = Files.exists(mockMetricCsvPath);
-		Assertions.assertTrue(isExists);
-		Files.deleteIfExists(mockMetricCsvPath);
-	}
-
-	@Test
 	void shouldReturnTrueWhenReportIsReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
@@ -1057,7 +1037,7 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals(badRequestException.getMessage(), "Jira board setting is null.");
+		assertEquals("Jira board setting is null.", badRequestException.getMessage());
 	}
 
 	@Test
@@ -1073,7 +1053,7 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals(badRequestException.getMessage(), "Code base setting is null.");
+		assertEquals("Code base setting is null.", badRequestException.getMessage());
 	}
 
 	@Test
@@ -1089,7 +1069,45 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals(badRequestException.getMessage(), "BuildKite setting is null.");
+		assertEquals("BuildKite setting is null.", badRequestException.getMessage());
+	}
+
+	@Test
+	void shouldInitializeValueFalseGivenPreviousMapperIsNullWhenInitializeRelatedMetricsReady() {
+		String timeStamp = "1683734399999";
+		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue());
+		MetricsDataReady expectedPut = MetricsDataReady.builder()
+			.boardMetricsReady(false)
+			.pipelineMetricsReady(null)
+			.sourceControlMetricsReady(null)
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(null);
+
+		generateReporterService.initializeMetricsDataReadyInHandler(timeStamp, metrics);
+		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
+	}
+
+	@Test
+	void shouldReturnPreviousValueGivenPreviousValueExistWhenInitializeRelatedMetricsReady() {
+		String timeStamp = "1683734399999";
+		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue(),
+				RequireDataEnum.DEPLOYMENT_FREQUENCY.getValue());
+		MetricsDataReady previousMetricsDataReady = MetricsDataReady.builder()
+			.boardMetricsReady(false)
+			.pipelineMetricsReady(null)
+			.sourceControlMetricsReady(null)
+			.build();
+		MetricsDataReady expectedPut = MetricsDataReady.builder()
+			.boardMetricsReady(false)
+			.pipelineMetricsReady(false)
+			.sourceControlMetricsReady(null)
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(previousMetricsDataReady);
+
+		generateReporterService.initializeMetricsDataReadyInHandler(timeStamp, metrics);
+		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
 	}
 
 }

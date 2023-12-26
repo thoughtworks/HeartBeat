@@ -1,17 +1,6 @@
 class Report {
   get pageIndicator() {
-    return cy.contains('Velocity', { timeout: 40000 })
-  }
-  get velocityTitle() {
-    return cy.contains('Velocity')
-  }
-
-  get cycleTimeTitle() {
-    return cy.contains('Cycle Time')
-  }
-
-  get deploymentFrequencyTitle() {
-    return cy.contains('Deployment Frequency')
+    return cy.get('[data-test-id="report-section"]', { timeout: 30000 })
   }
 
   get meanTimeToRecoveryTitle() {
@@ -40,10 +29,6 @@ class Report {
 
   get firstNotification() {
     return cy.contains('The file needs to be exported within 30 minutes, otherwise it will expire.')
-  }
-
-  get headerBar() {
-    return cy.get('[data-test-id="Header"]')
   }
 
   backToMetricsStep() {

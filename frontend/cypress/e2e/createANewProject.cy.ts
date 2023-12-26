@@ -287,7 +287,7 @@ describe('Create a new project', () => {
 
     metricsPage.goReportStep()
 
-    reportPage.pageIndicator.should('exist')
+    reportPage.pageIndicator.should('be.visible')
 
     reportPage.firstNotification.should('exist')
 

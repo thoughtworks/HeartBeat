@@ -85,10 +85,13 @@ class GenerateReporterControllerTest {
 	void shouldReturnCreatedStatusWhenCheckGenerateReportIsTrue() throws Exception {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
+		ObjectMapper mapper = new ObjectMapper();
+		ReportResponse expectedReportResponse = mapper
+			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
+
 		// when
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(true);
-		when(generateReporterService.getReportFromHandler(reportId))
-			.thenReturn(ReportResponse.builder().exportValidityTime(180000L).build());
+		when(generateReporterService.getComposedReportResponse(reportId, true)).thenReturn(expectedReportResponse);
 		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
@@ -97,26 +100,32 @@ class GenerateReporterControllerTest {
 			.getResponse();
 
 		final var content = response.getContentAsString();
-		final var exportValidityTime = JsonPath.parse(content).read("$.exportValidityTime");
+		ReportResponse actualReportResponse = mapper.readValue(content, ReportResponse.class);
 
-		assertEquals(180000, exportValidityTime);
-
+		assertEquals(expectedReportResponse, actualReportResponse);
 	}
 
 	@Test
-	void shouldReturnNoContentStatusWhenCheckGenerateReportIsFalse() throws Exception {
+	void shouldReturnOkStatusWhenCheckGenerateReportIsFalse() throws Exception {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
+		ReportResponse reportResponse = ReportResponse.builder()
+			.boardMetricsReady(false)
+			.allMetricsReady(false)
+			.build();
 		// when
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
+		when(generateReporterService.getComposedReportResponse(reportId, false)).thenReturn(reportResponse);
 		// then
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isNoContent())
+			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();
+		final var content = response.getContentAsString();
+		final var allMetricsReady = JsonPath.parse(content).read("$.allMetricsReady");
 
-		assertEquals(204, response.getStatus());
+		assertEquals(false, allMetricsReady);
 	}
 
 	@Test
@@ -138,7 +147,6 @@ class GenerateReporterControllerTest {
 
 		assertEquals("Report time expires", errorMessage);
 		assertEquals("Generate report failed", hintInfo);
-
 	}
 
 	@Test

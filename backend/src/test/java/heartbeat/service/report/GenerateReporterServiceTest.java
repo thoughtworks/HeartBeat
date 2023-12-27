@@ -58,6 +58,7 @@ import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.util.IdUtil;
 import lombok.val;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
@@ -949,12 +950,13 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowUnauthorizedExceptionWhenCheckGenerateReportIsDone() {
 		// given
-		String reportId = Long.toString(System.currentTimeMillis());
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
 		// when
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
 		BaseException exception = assertThrows(UnauthorizedException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
 		// then
 		assertEquals(401, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", exception.getMessage());
@@ -963,14 +965,15 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowPermissionDenyExceptionWhenCheckGenerateReportIsDone() {
 		// given
-		String reportId = Long.toString(System.currentTimeMillis());
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
 		asyncExceptionHandler.put(reportId,
 				new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 		// when
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 		BaseException exception = assertThrows(PermissionDenyException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
 		// then
 		assertEquals(403, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", exception.getMessage());
@@ -979,12 +982,13 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowNotFoundExceptionWhenCheckGenerateReportIsDone() {
 		// given
-		String reportId = Long.toString(System.currentTimeMillis());
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
 		// when
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
 		BaseException exception = assertThrows(NotFoundException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
 		// then
 		assertEquals(404, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", exception.getMessage());
@@ -993,12 +997,13 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowGenerateReportExceptionWhenCheckGenerateReportIsDone() {
 		// given
-		String reportId = Long.toString(System.currentTimeMillis());
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
 		// when
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
 		BaseException exception = assertThrows(GenerateReportException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
 		// then
 		assertEquals(500, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 500, reason: GenerateReport", exception.getMessage());
@@ -1007,12 +1012,13 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowServiceUnavailableExceptionWhenCheckGenerateReportIsDone() {
 		// given
-		String reportId = Long.toString(System.currentTimeMillis());
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
 		// when
 		when(asyncExceptionHandler.get(reportId)).thenReturn(
 				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
 		BaseException exception = assertThrows(ServiceUnavailableException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
 		// then
 		assertEquals(503, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 503, reason: ServiceUnavailable", exception.getMessage());
@@ -1021,11 +1027,12 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowRequestFailedExceptionWhenCheckGenerateReportIsDone() {
 		// given
-		String reportId = Long.toString(System.currentTimeMillis());
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
 		// when
 		when(asyncExceptionHandler.get(reportId)).thenReturn(new RequestFailedException(405, "RequestFailedException"));
 		BaseException exception = assertThrows(RequestFailedException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
 		// then
 		assertEquals(405, exception.getStatus());
 		assertEquals(

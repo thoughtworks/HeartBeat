@@ -61,11 +61,13 @@ import heartbeat.service.source.github.GitHubService;
 import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.util.IdUtil;
 import lombok.val;
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -83,9 +85,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
@@ -98,12 +97,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
-import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -565,7 +567,7 @@ class GenerateReporterServiceTest {
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any()))
 			.thenReturn(List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA()));
 
-		Mockito.doAnswer(invocation -> {
+		doAnswer(invocation -> {
 			Files.createFile(csvFilePath);
 			return null;
 		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
@@ -615,7 +617,7 @@ class GenerateReporterServiceTest {
 			.thenReturn(List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA()));
 		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
-		Mockito.doAnswer(invocation -> {
+		doAnswer(invocation -> {
 			Files.createFile(mockPipelineCsvPath);
 			return null;
 		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
@@ -828,7 +830,7 @@ class GenerateReporterServiceTest {
 			.jiraColumns(Collections.emptyList())
 			.build());
 		when(urlGenerator.getUri(any())).thenReturn(mockUrl);
-		Mockito.doAnswer(invocation -> {
+		doAnswer(invocation -> {
 			Files.createFile(mockBoardCsvPath);
 			return null;
 		}).when(csvFileGenerator).convertBoardDataToCSV(any(), any(), any(), any());

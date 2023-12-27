@@ -19,7 +19,6 @@ export const StyledWrapper = styled('div')({
 })
 
 export const StyledValue = styled(Typography)({
-  width: '100%',
   fontSize: '2rem',
   lineHeight: '2.5rem',
   fontStyle: 'normal',
@@ -67,5 +66,6 @@ export const StyledExtraValue = styled.div({
   fontSize: '1rem',
   fontWeight: 400,
   paddingTop: '0.4rem',
+  marginLeft: '0.8rem',
   whiteSpace: 'nowrap',
 })

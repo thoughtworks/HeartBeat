@@ -65,6 +65,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -89,6 +90,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
@@ -1132,12 +1134,13 @@ class GenerateReporterServiceTest {
 		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
 	}
 
-	@Test
-	void shouldUpdateAndSetMetricsReadyNonnullTrueWhenThreeMetricsExistsAndPreviousMetricsReadyNotNull() {
+	@ParameterizedTest
+	@MethodSource({ "provideDataForTest" })
+	void shouldUpdateAndSetMetricsReadyNonnullTrueWhenMetricsExistAndPreviousMetricsReadyNotNull(List<String> metrics,
+			MetricsDataReady previousReady, MetricsDataReady expectedReady) {
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
-			.metrics(List.of("velocity", "cycle time", "classification", "deployment frequency", "change failure rate",
-					"mean time to recovery", "lead time for changes"))
+			.metrics(metrics)
 			.jiraBoardSetting(buildJiraBoardSetting())
 			.buildKiteSetting(buildPipelineSetting())
 			.codebaseSetting(buildCodeBaseSetting())
@@ -1146,60 +1149,16 @@ class GenerateReporterServiceTest {
 			.csvTimeStamp("1683734399999")
 			.build();
 
-		MetricsDataReady previousReady = MetricsDataReady.builder()
-			.boardMetricsReady(false)
-			.pipelineMetricsReady(false)
-			.sourceControlMetricsReady(null)
-			.build();
-		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
-			.pipelineMetricsReady(true)
-			.boardMetricsReady(true)
-			.sourceControlMetricsReady(null)
-			.build();
-
 		// when
 		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
 
 		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		// then
-		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
+		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), expectedReady);
 	}
 
 	@Test
-	void shouldUpdateAndSetMetricsReadyTrueWhenThreeMetricsExistsAndPreviousMetricsReadyNotNull() {
-		GenerateReportRequest request = GenerateReportRequest.builder()
-			.considerHoliday(false)
-			.metrics(List.of("velocity", "cycle time", "classification", "deployment frequency", "change failure rate",
-					"mean time to recovery", "lead time for changes"))
-			.jiraBoardSetting(buildJiraBoardSetting())
-			.buildKiteSetting(buildPipelineSetting())
-			.codebaseSetting(buildCodeBaseSetting())
-			.startTime("123")
-			.endTime("123")
-			.csvTimeStamp("1683734399999")
-			.build();
-
-		MetricsDataReady previousReady = MetricsDataReady.builder()
-			.boardMetricsReady(false)
-			.pipelineMetricsReady(false)
-			.sourceControlMetricsReady(false)
-			.build();
-		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
-			.pipelineMetricsReady(true)
-			.boardMetricsReady(true)
-			.sourceControlMetricsReady(true)
-			.build();
-
-		// when
-		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
-
-		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-		// then
-		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
-	}
-
-	@Test
-	public void shouldNotUpdateMetricsAndThrowExceptionWhenPreviousMetricsDataReadyNull() {
+	void shouldNotUpdateMetricsAndThrowExceptionWhenPreviousMetricsDataReadyNull() {
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
 			.metrics(List.of("velocity", "cycle time", "classification", "deployment frequency", "change failure rate",
@@ -1220,35 +1179,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldOnlyUpdateBoardMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
-		GenerateReportRequest request = GenerateReportRequest.builder()
-			.considerHoliday(false)
-			.metrics(List.of("velocity", "cycle time", "classification"))
-			.jiraBoardSetting(buildJiraBoardSetting())
-			.startTime("123")
-			.endTime("123")
-			.csvTimeStamp("1683734399999")
-			.build();
-		MetricsDataReady previousReady = MetricsDataReady.builder()
-			.boardMetricsReady(false)
-			.pipelineMetricsReady(null)
-			.sourceControlMetricsReady(null)
-			.build();
-		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
-			.boardMetricsReady(true)
-			.pipelineMetricsReady(null)
-			.sourceControlMetricsReady(null)
-			.build();
-
-		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(previousReady);
-
-		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-		// then
-		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
-	}
-
-	@Test
-	public void shouldOnlyUpdatePipelineMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
+	void shouldOnlyUpdatePipelineMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
 			.metrics(List.of("deployment frequency", "change failure rate", "mean time to recovery"))
@@ -1275,8 +1206,10 @@ class GenerateReporterServiceTest {
 		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
 	}
 
+	// todo: add
+
 	@Test
-	public void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
+	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
 		// Given
 		ReportResponse boardResponse = ReportResponse.builder()
 			.boardMetricsReady(true)
@@ -1319,7 +1252,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
+	void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
 		// Given
 		ReportResponse boardResponse = ReportResponse.builder()
 			.boardMetricsReady(true)
@@ -1397,6 +1330,43 @@ class GenerateReporterServiceTest {
 			.token("github_fake_token")
 			.leadTime(List.of(mockDeployment))
 			.build();
+	}
+
+	private static Stream<Arguments> provideDataForTest() {
+		return Stream.of(
+				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
+						MetricsDataReady.builder()
+							.boardMetricsReady(false)
+							.pipelineMetricsReady(false)
+							.sourceControlMetricsReady(null)
+							.build(),
+						MetricsDataReady.builder()
+							.boardMetricsReady(true)
+							.pipelineMetricsReady(true)
+							.sourceControlMetricsReady(null)
+							.build()),
+				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
+						MetricsDataReady.builder()
+							.boardMetricsReady(false)
+							.pipelineMetricsReady(false)
+							.sourceControlMetricsReady(false)
+							.build(),
+						MetricsDataReady.builder()
+							.boardMetricsReady(true)
+							.pipelineMetricsReady(true)
+							.sourceControlMetricsReady(true)
+							.build()),
+				Arguments.of(List.of("velocity"),
+						MetricsDataReady.builder()
+							.boardMetricsReady(false)
+							.pipelineMetricsReady(null)
+							.sourceControlMetricsReady(null)
+							.build(),
+						MetricsDataReady.builder()
+							.boardMetricsReady(true)
+							.pipelineMetricsReady(null)
+							.sourceControlMetricsReady(null)
+							.build()));
 	}
 
 }

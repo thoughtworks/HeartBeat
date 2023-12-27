@@ -2,13 +2,14 @@ import path from 'path'
 import process from 'process'
 import fetch from 'node-fetch'
 
+const LOCALHOST = 'http://127.0.0.1'
 const WAIT_TIMEOUT = 30000
 const WAIT_INTERVAL = 3000
 
 const HEALTH_ENDPOINT = {
-  FRONT_END: 'http://127.0.0.1:4321/',
-  BACK_END: 'http://127.0.0.1:4322/api/v1/health',
-  STUB: 'http://127.0.0.1:4323/health',
+  FRONT_END: `${LOCALHOST}:4321/`,
+  BACK_END: `${LOCALHOST}:4322/api/v1/health`,
+  STUB: `${LOCALHOST}:4323/health`,
 }
 
 const DIR = {
@@ -54,7 +55,7 @@ const main = async (args: string[]) => {
       cwd: DIR.BACK_END,
       stderr: 'inherit',
       shell: true,
-    })`./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://127.0.0.1:4323'`
+    })`./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=${LOCALHOST}:4323'`
 
   const startSTUB = () =>
     $({

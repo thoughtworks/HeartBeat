@@ -1,5 +1,5 @@
 export enum ROUTE {
-  HOME_PAGE = '/home',
+  BASE_PAGE = '/',
   ERROR_PAGE = '/error-page',
   METRICS_PAGE = '/metrics',
 }

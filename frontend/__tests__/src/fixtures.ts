@@ -670,7 +670,7 @@ export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
 
 export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error'
 
-export const HOME_PAGE_ROUTE = '/home'
+export const BASE_PAGE_ROUTE = '/'
 
 export const ERROR_PAGE_ROUTE = '/error-page'
 

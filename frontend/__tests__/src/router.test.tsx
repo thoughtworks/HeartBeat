@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import Router from '@src/router'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
-import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, HOME_PAGE_ROUTE, METRICS_PAGE_ROUTE } from './fixtures'
+import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, BASE_PAGE_ROUTE, METRICS_PAGE_ROUTE } from './fixtures'
 
 jest.mock('@src/pages/Metrics', () => ({
   __esModule: true,
@@ -30,8 +30,8 @@ describe('router', () => {
     })
   })
 
-  it('should show home page when go home page', async () => {
-    setup(HOME_PAGE_ROUTE)
+  it('should show home page when go through base route', async () => {
+    setup(BASE_PAGE_ROUTE)
 
     await waitFor(() => {
       expect(window.location.pathname).toEqual('/')

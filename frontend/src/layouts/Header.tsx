@@ -34,7 +34,7 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
   }
 
   const shouldShowHomeIcon = () => {
-    return !['/', '/index.html'].includes(location.pathname)
+    return ['/metrics', '/error-page'].includes(location.pathname)
   }
 
   const shouldShowNotificationIcon = () => {

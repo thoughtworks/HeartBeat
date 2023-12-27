@@ -1,11 +1,15 @@
-import tcpPortUsed from 'tcp-port-used'
 import path from 'path'
 import process from 'process'
+import fetch from 'node-fetch'
 
-const PORT = {
-  FRONT_END: 4321,
-  BACK_END: 4322,
-  STUB: 4323,
+const LOCALHOST = 'http://127.0.0.1'
+const WAIT_TIMEOUT = 30000
+const WAIT_INTERVAL = 3000
+
+const HEALTH_ENDPOINT = {
+  FRONT_END: `${LOCALHOST}:4321/`,
+  BACK_END: `${LOCALHOST}:4322/api/v1/health`,
+  STUB: `${LOCALHOST}:4323/health`,
 }
 
 const DIR = {
@@ -17,18 +21,30 @@ const DIR = {
 const main = async (args: string[]) => {
   const { $ } = await import('execa')
 
-  const checkPorts = async () => {
-    const ports = Object.values(PORT)
-    const checkPorts = ports.map((port) => tcpPortUsed.check(port, 'localhost'))
-    const checkingResult = await Promise.all(checkPorts)
-    const usingPorts = ports.filter((_, idx) => checkingResult[idx])
-    const availablePorts = ports.filter((port) => !usingPorts.includes(port))
+  const healthCheck = (url: string) =>
+    new Promise((resolve) =>
+      fetch(url)
+        .then((response) => {
+          if (response.ok) {
+            console.log(`Successfully detected service health at ${url}`)
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        })
+        .catch(() => resolve(false))
+    )
 
-    console.log(`Successfully detect available ports: ${availablePorts.join(',')}`)
+  const checkEndpoints = async () => {
+    const endpoints = Object.values(HEALTH_ENDPOINT)
+    const checkEndpoints = endpoints.map((url) => healthCheck(url))
+    const checkingResult = await Promise.all(checkEndpoints)
+    const healthyEndpoints = endpoints.filter((_, idx) => checkingResult[idx])
+    const unhealthyEndpoints = endpoints.filter((name) => !healthyEndpoints.includes(name))
 
     return {
-      availablePorts,
-      usingPorts,
+      unhealthyEndpoints,
+      healthyEndpoints,
     }
   }
 
@@ -39,7 +55,7 @@ const main = async (args: string[]) => {
       cwd: DIR.BACK_END,
       stderr: 'inherit',
       shell: true,
-    })`./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://localhost:4323'`
+    })`./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=${LOCALHOST}:4323'`
 
   const startSTUB = () =>
     $({
@@ -48,51 +64,69 @@ const main = async (args: string[]) => {
       shell: true,
     })`docker-compose up`
 
-  const waitForPort = async (port: number) => {
-    try {
-      await tcpPortUsed.waitUntilUsedOnHost(port, 'localhost', 1000, 30000)
-      console.log(`Successfully run service on port ${port}`)
-    } catch (err) {
-      console.error(`Failed to run service on port ${port} for reason ${err}`)
-      process.exit(1)
-    }
-  }
+  const waitForUrl = (url: string) =>
+    new Promise((resolve) => {
+      const startTime = Date.now()
+      const check = () => {
+        healthCheck(url).then((result) => {
+          if (result) {
+            resolve(true)
+            return
+          }
 
-  const startServices = async (availablePorts: number[]) => {
-    if (availablePorts.length <= 0) {
+          const elapsedTime = Date.now() - startTime
+          if (elapsedTime < WAIT_TIMEOUT) {
+            setTimeout(check, WAIT_INTERVAL)
+          } else {
+            console.error(`Failed to detect service health at ${url}`)
+            process.exit(1)
+          }
+        })
+      }
+
+      check()
+    })
+
+  const startServices = async (unhealthyEndpoints: string[]) => {
+    if (unhealthyEndpoints.length <= 0) {
       return []
     }
 
-    const processes = availablePorts.map((port) => {
-      switch (port) {
-        case PORT.BACK_END:
+    const processes = unhealthyEndpoints.map((name) => {
+      switch (name) {
+        case HEALTH_ENDPOINT.BACK_END:
           console.log(`Start to run back-end service`)
           return startBE()
-        case PORT.FRONT_END:
+        case HEALTH_ENDPOINT.FRONT_END:
           console.log(`Start to run front-end service`)
           return startFE()
-        case PORT.STUB:
+        case HEALTH_ENDPOINT.STUB:
           console.log(`Start to run stub service`)
           return startSTUB()
+        default:
+          console.error(`Failed to run service: ${name}`)
       }
     })
 
-    await Promise.all(availablePorts.map(waitForPort))
+    await Promise.all(unhealthyEndpoints.map((url) => waitForUrl(url)))
 
     return processes
   }
 
   const e2eCommand = args[0]
 
-  const { availablePorts } = await checkPorts()
-  const newlyStartProcesses = await startServices(availablePorts)
+  console.log('Start to check E2E rely on services')
+  const { unhealthyEndpoints } = await checkEndpoints()
+  const newlyStartProcesses = await startServices(unhealthyEndpoints)
+
+  console.log('Start to run E2E')
   const e2eProcess = $({ cwd: DIR.FRONT_END, stdout: 'inherit', stderr: 'inherit', shell: true })`${e2eCommand}`
 
   e2eProcess.on('close', (code: number, signal: string) => {
     if (code === 0) {
       console.log(`Successfully finish E2E testing. Code: ${code}; signal: ${signal}.`)
     } else {
-      console.log(`Failed to run E2E testing. Code: ${code}; signal: ${signal}.`)
+      console.error(`Failed to run E2E testing. Code: ${code}; signal: ${signal}.`)
     }
 
     newlyStartProcesses.forEach((pro) => {

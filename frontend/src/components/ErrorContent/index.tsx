@@ -20,7 +20,7 @@ export const ErrorContent = () => {
   const navigate = useNavigate()
 
   const backToHomePage = () => {
-    navigate(ROUTE.HOME_PAGE)
+    navigate(ROUTE.BASE_PAGE)
   }
 
   return (

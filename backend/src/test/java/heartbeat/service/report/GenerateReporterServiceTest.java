@@ -1179,36 +1179,6 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldOnlyUpdatePipelineMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
-		GenerateReportRequest request = GenerateReportRequest.builder()
-			.considerHoliday(false)
-			.metrics(List.of("deployment frequency", "change failure rate", "mean time to recovery"))
-			.jiraBoardSetting(buildJiraBoardSetting())
-			.startTime("123")
-			.endTime("123")
-			.csvTimeStamp("1683734399999")
-			.build();
-		MetricsDataReady previousReady = MetricsDataReady.builder()
-			.boardMetricsReady(null)
-			.pipelineMetricsReady(false)
-			.sourceControlMetricsReady(null)
-			.build();
-		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
-			.boardMetricsReady(null)
-			.pipelineMetricsReady(true)
-			.sourceControlMetricsReady(null)
-			.build();
-
-		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(previousReady);
-
-		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-		// then
-		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
-	}
-
-	// todo: add
-
-	@Test
 	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
 		// Given
 		ReportResponse boardResponse = ReportResponse.builder()
@@ -1365,6 +1335,17 @@ class GenerateReporterServiceTest {
 						MetricsDataReady.builder()
 							.boardMetricsReady(true)
 							.pipelineMetricsReady(null)
+							.sourceControlMetricsReady(null)
+							.build()),
+				Arguments.of(List.of("deployment frequency", "change failure rate", "mean time to recovery"),
+						MetricsDataReady.builder()
+							.boardMetricsReady(null)
+							.pipelineMetricsReady(false)
+							.sourceControlMetricsReady(null)
+							.build(),
+						MetricsDataReady.builder()
+							.boardMetricsReady(null)
+							.pipelineMetricsReady(true)
 							.sourceControlMetricsReady(null)
 							.build()));
 	}

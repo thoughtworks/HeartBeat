@@ -632,7 +632,7 @@ public class GenerateReporterService {
 	}
 
 	private Boolean getTrueOrPreviousValue(Boolean exist, Boolean previousValue) {
-		if (exist == Boolean.TRUE && Objects.nonNull(previousValue))
+		if (Boolean.TRUE.equals(exist) && Objects.nonNull(previousValue))
 			return Boolean.TRUE;
 		return previousValue;
 	}

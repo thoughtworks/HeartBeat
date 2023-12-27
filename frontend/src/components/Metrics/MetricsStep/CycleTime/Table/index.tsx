@@ -4,14 +4,17 @@ import TableBody from '@mui/material/TableBody'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import Tooltip from '@mui/material/Tooltip'
 import { useAppSelector } from '@src/hooks'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveCycleTimeSettings, saveDoneColumn, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { selectJiraColumns } from '@src/context/config/configSlice'
 import { DONE, METRICS_CYCLE_SETTING_TABLE_HEADER } from '@src/constants/resources'
 import { theme } from '@src/theme'
+import { ellipsisProps } from '@src/layouts/style'
 import CellAutoComplete from '@src/components/Metrics/MetricsStep/CycleTime/Table/CellAutoComplete'
 import { StyledTableHeaderCell, StyledTableRowCell } from '@src/components/Metrics/MetricsStep/CycleTime/Table/style'
+import EllipsisText from '@src/components/Common/EllipsisText'
 
 export const columns = METRICS_CYCLE_SETTING_TABLE_HEADER.map(
   (config) =>
@@ -89,7 +92,11 @@ const CycleTimeTable = () => {
             return (
               <TableRow hover key={index}>
                 <StyledTableRowCell title={row1Content}>{row1Content}</StyledTableRowCell>
-                <StyledTableRowCell title={row2Content}>{row2Content}</StyledTableRowCell>
+                <StyledTableRowCell>
+                  <Tooltip title={row2Content} arrow>
+                    <EllipsisText fitContent>{row2Content}</EllipsisText>
+                  </Tooltip>
+                </StyledTableRowCell>
                 <StyledTableRowCell>
                   <CellAutoComplete name={`${row?.name}`} defaultSelected={row.value} onSelect={saveCycleTimeOptions} />
                 </StyledTableRowCell>

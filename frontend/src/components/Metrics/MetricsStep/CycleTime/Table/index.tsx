@@ -9,9 +9,23 @@ import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { saveCycleTimeSettings, saveDoneColumn, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import { selectJiraColumns } from '@src/context/config/configSlice'
 import { DONE, METRICS_CYCLE_SETTING_TABLE_HEADER } from '@src/constants/resources'
+import { theme } from '@src/theme'
 import CellAutoComplete from '@src/components/Metrics/MetricsStep/CycleTime/Table/CellAutoComplete'
 import { StyledTableHeaderCell, StyledTableRowCell } from '@src/components/Metrics/MetricsStep/CycleTime/Table/style'
-import { TABLE_ROW_HEIGHT } from '@src/constants/commons'
+
+export const columns = METRICS_CYCLE_SETTING_TABLE_HEADER.map(
+  (config) =>
+    function CellRenderFunc() {
+      return config.emphasis ? (
+        <>
+          <span>{config.text}</span>
+          <span style={{ color: theme.components?.errorMessage.color }}> *</span>
+        </>
+      ) : (
+        config.text
+      )
+    }
+)
 
 const CycleTimeTable = () => {
   const dispatch = useAppDispatch()
@@ -57,16 +71,13 @@ const CycleTimeTable = () => {
   )
 
   return (
-    <TableContainer sx={{ my: '1.25rem' }}>
+    <TableContainer sx={{ mb: '2rem' }}>
       <Table aria-label='sticky table'>
         <TableHead>
           <TableRow>
-            {METRICS_CYCLE_SETTING_TABLE_HEADER.map((column, index) => (
-              <StyledTableHeaderCell
-                sx={{ width: `${(100 / METRICS_CYCLE_SETTING_TABLE_HEADER.length).toFixed(2)}%` }}
-                key={index}
-              >
-                {column}
+            {columns.map((columnRenderFunc, index) => (
+              <StyledTableHeaderCell sx={{ width: `${(100 / columns.length).toFixed(2)}%` }} key={index}>
+                {columnRenderFunc()}
               </StyledTableHeaderCell>
             ))}
           </TableRow>

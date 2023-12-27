@@ -20,7 +20,7 @@ const CellAutoComplete = ({ name, defaultSelected, onSelect, customRenderInput }
     setSelectedCycleTime(value)
   }
 
-  const renderInput = customRenderInput || ((params: any) => <StyledTextField required {...params} label={''} />)
+  const renderInput = customRenderInput || ((params) => <StyledTextField required {...params} label={''} />)
 
   return (
     <Autocomplete

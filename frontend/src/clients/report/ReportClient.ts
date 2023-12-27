@@ -8,10 +8,6 @@ export class ReportClient extends HttpClient {
     callbackUrl: '',
     interval: 0,
   }
-  boardReportCallbackResponse: ReportCallbackResponse = {
-    callbackUrl: '',
-    interval: 0,
-  }
   reportResponse: ReportResponseDTO = {
     velocity: {
       velocityForSP: 0,
@@ -63,10 +59,10 @@ export class ReportClient extends HttpClient {
     },
     meanTimeToRecovery: null,
     exportValidityTime: null,
-    boardMetricsReady: true,
-    pipelineMetricsReady: true,
-    sourceControlMetricsReady: true,
-    allMetricsReady: true,
+    boardMetricsReady: false,
+    pipelineMetricsReady: false,
+    sourceControlMetricsReady: false,
+    allMetricsReady: false,
   }
 
   retrieveReportByUrl = async (params: ReportRequestDTO, url: string) => {

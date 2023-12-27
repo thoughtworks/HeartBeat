@@ -2,7 +2,7 @@ import path from 'path'
 import process from 'process'
 import fetch from 'node-fetch'
 
-const LOCALHOST = 'http://localhost'
+const LOCALHOST = 'http://127.0.0.1'
 const WAIT_TIMEOUT = 30000
 const WAIT_INTERVAL = 3000
 

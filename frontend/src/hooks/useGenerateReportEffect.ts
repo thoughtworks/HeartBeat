@@ -45,6 +45,17 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       })
   }
 
+  const handleError = (error: Error) => {
+    if (error instanceof InternalServerException || error instanceof UnknownException) {
+      setIsServerError(true)
+    } else {
+      setErrorMessage(`generate report: ${error.message}`)
+      setTimeout(() => {
+        setErrorMessage('')
+      }, DURATION.ERROR_MESSAGE_TIME)
+    }
+  }
+
   const startToRequestDoraData = async (doraParams: ReportRequestDTO) => {
     reportClient
       .retrieveReportByUrl(doraParams, '/dora-reports')
@@ -54,15 +65,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
         pollingReport(res.response.callbackUrl, res.response.interval)
       })
       .catch((e) => {
-        const err = e as Error
-        if (err instanceof InternalServerException || err instanceof UnknownException) {
-          setIsServerError(true)
-        } else {
-          setErrorMessage(`generate report: ${err.message}`)
-          setTimeout(() => {
-            setErrorMessage('')
-          }, DURATION.ERROR_MESSAGE_TIME)
-        }
+        handleError(e)
         stopPollingReports()
       })
   }
@@ -80,15 +83,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
         }
       })
       .catch((e) => {
-        const err = e as Error
-        if (err instanceof InternalServerException || err instanceof UnknownException) {
-          setIsServerError(true)
-        } else {
-          setErrorMessage(`generate report: ${err.message}`)
-          setTimeout(() => {
-            setErrorMessage('')
-          }, DURATION.ERROR_MESSAGE_TIME)
-        }
+        handleError(e)
         stopPollingReports()
       })
   }

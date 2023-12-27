@@ -79,6 +79,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1210,6 +1211,51 @@ class GenerateReporterServiceTest {
 		// then
 		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
 	}
+
+	@Test
+	public void shouldReturnComposedReportResponse() {
+		// Given
+		ReportResponse boardResponse = ReportResponse.builder()
+			.boardMetricsReady(true)
+			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
+			.velocity(Velocity.builder().velocityForCards(10).build())
+			.classificationList(List.of())
+			.build();
+		ReportResponse pipelineResponse = ReportResponse.builder()
+			.pipelineMetricsReady(true)
+			.changeFailureRate(ChangeFailureRate.builder()
+				.avgChangeFailureRate(AvgChangeFailureRate.builder().name("name").failureRate(0.1f).build())
+				.build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(
+						AvgDeploymentFrequency.builder().name("deploymentFrequency").deploymentFrequency(0.8f).build())
+				.build())
+			.meanTimeToRecovery(MeanTimeToRecovery.builder()
+				.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().timeToRecovery(new BigDecimal(10)).build())
+				.build())
+			.build();
+
+		String timeStamp = "1683734399999";
+		String boardTimeStamp = "board-1683734399999";
+		String doraTimestamp = "dora-1683734399999";
+
+		// When
+		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
+		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(pipelineResponse);
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
+			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
+		// Then
+		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
+		// Assert
+		assertTrue(composedResponse.getAllMetricsReady());
+		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
+		assertEquals("deploymentFrequency",
+				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getName());
+		assertEquals(0.8f,
+				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getDeploymentFrequency());
+	}
+
+	;
 
 	private JiraBoardSetting buildJiraBoardSetting() {
 		return JiraBoardSetting.builder()

@@ -637,15 +637,22 @@ public class GenerateReporterService {
 		return previousValue;
 	}
 
-	private MetricsDataReady getMetricsStatus(List<String> lowerCaseMetrics, Boolean flag) {
-		boolean boardMetricsExist = lowerCaseMetrics.stream().anyMatch(this.kanbanMetrics::contains);
-		boolean codebaseMetricsExist = lowerCaseMetrics.stream().anyMatch(this.codebaseMetrics::contains);
-		boolean buildKiteMetricsExist = lowerCaseMetrics.stream().anyMatch(this.buildKiteMetrics::contains);
+	private MetricsDataReady getMetricsStatus(List<String> metrics, Boolean flag) {
+		boolean boardMetricsExist = metrics.stream().map(String::toLowerCase).anyMatch(this.kanbanMetrics::contains);
+		boolean codebaseMetricsExist = metrics.stream()
+			.map(String::toLowerCase)
+			.anyMatch(this.codebaseMetrics::contains);
+		boolean buildKiteMetricsExist = metrics.stream()
+			.map(String::toLowerCase)
+			.anyMatch(this.buildKiteMetrics::contains);
 		Boolean boardMetricsReady = boardMetricsExist ? flag : null;
 		Boolean codebaseMetricsReady = codebaseMetricsExist ? flag : null;
 		Boolean buildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
-		MetricsDataReady status = new MetricsDataReady(boardMetricsReady, buildKiteMetricsReady, codebaseMetricsReady);
-		return status;
+		return MetricsDataReady.builder()
+			.boardMetricsReady(boardMetricsReady)
+			.pipelineMetricsReady(buildKiteMetricsReady)
+			.sourceControlMetricsReady(codebaseMetricsReady)
+			.build();
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,

@@ -19,7 +19,6 @@ export const StyledTableHeaderCell = styled(TableCell)({
     paddingLeft: '1.5rem',
   },
   borderBottom: 0,
-  ...ellipsisProps,
 })
 
 export const StyledTableRowCell = styled(TableCell)({
@@ -32,7 +31,6 @@ export const StyledTableRowCell = styled(TableCell)({
   paddingLeft: '1rem',
   paddingRight: '1rem',
   borderBottom: `1px solid ${theme.palette.secondary.dark}`,
-  ...ellipsisProps,
 })
 
 export const StyledTextField = styled(TextField)({

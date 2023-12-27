@@ -57,8 +57,8 @@ const CycleTimeTable = () => {
   )
 
   return (
-    <TableContainer sx={{ my: '1.25rem', maxHeight: `${6 * (TABLE_ROW_HEIGHT + 1) - 1}px` }}>
-      <Table stickyHeader aria-label='sticky table'>
+    <TableContainer sx={{ my: '1.25rem' }}>
+      <Table aria-label='sticky table'>
         <TableHead>
           <TableRow>
             {METRICS_CYCLE_SETTING_TABLE_HEADER.map((column, index) => (

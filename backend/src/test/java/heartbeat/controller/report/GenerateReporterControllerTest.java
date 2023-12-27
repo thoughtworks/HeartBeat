@@ -4,8 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
+import heartbeat.controller.report.dto.request.GenerateDoraReportRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
-import heartbeat.controller.report.dto.response.*;
+import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
+import heartbeat.controller.report.dto.response.DeploymentFrequency;
+import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.report.GenerateReporterService;
@@ -262,6 +266,42 @@ class GenerateReporterControllerTest {
 		verify(generateReporterService, times(0)).updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
 				request.getMetrics());
 		verify(asyncExceptionHandler).put(IdUtil.getBoardReportId(currentTimeStamp), requestFailedException);
+	}
+
+	@Test
+	void shouldGetExceptionAndPutInExceptionMapWhenCallDoraReport() throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateDoraReportRequest request = mapper.readValue(
+				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateDoraReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		RequestFailedException requestFailedException = new RequestFailedException(402, "Client Error");
+		when(generateReporterService.generateReporter(request.convertToReportRequest()))
+			.thenThrow(requestFailedException);
+		doNothing().when(generateReporterService).initializeMetricsDataReadyInHandler(any(), any());
+		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
+		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/dora-reports").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
+
+		Thread.sleep(2000L);
+		verify(generateReporterService).initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
+		verify(generateReporterService, times(0)).saveReporterInHandler(any(), any());
+		verify(generateReporterService, times(0)).updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
+		verify(asyncExceptionHandler).put(IdUtil.getDoraReportId(currentTimeStamp), requestFailedException);
 	}
 
 	@Test

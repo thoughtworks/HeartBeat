@@ -1185,7 +1185,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldOnlUpdateMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
+	public void shouldOnlyUpdateBoardMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
 			.metrics(List.of("velocity", "cycle time", "classification"))
@@ -1213,7 +1213,35 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	public void shouldReturnComposedReportResponse() {
+	public void shouldOnlyUpdatePipelineMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of("deployment frequency", "change failure rate", "mean time to recovery"))
+			.jiraBoardSetting(buildJiraBoardSetting())
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+		MetricsDataReady previousReady = MetricsDataReady.builder()
+			.boardMetricsReady(null)
+			.pipelineMetricsReady(false)
+			.sourceControlMetricsReady(null)
+			.build();
+		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
+			.boardMetricsReady(null)
+			.pipelineMetricsReady(true)
+			.sourceControlMetricsReady(null)
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(previousReady);
+
+		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		// then
+		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
+	}
+
+	@Test
+	public void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
 		// Given
 		ReportResponse boardResponse = ReportResponse.builder()
 			.boardMetricsReady(true)
@@ -1231,7 +1259,7 @@ class GenerateReporterServiceTest {
 						AvgDeploymentFrequency.builder().name("deploymentFrequency").deploymentFrequency(0.8f).build())
 				.build())
 			.meanTimeToRecovery(MeanTimeToRecovery.builder()
-				.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().timeToRecovery(new BigDecimal(10)).build())
+				.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.TEN).build())
 				.build())
 			.build();
 
@@ -1255,33 +1283,31 @@ class GenerateReporterServiceTest {
 				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getDeploymentFrequency());
 	}
 
-	;
-
-	private JiraBoardSetting buildJiraBoardSetting() {
-		return JiraBoardSetting.builder()
-			.treatFlagCardAsBlock(true)
-			.targetFields(BoardCsvFixture.MOCK_TARGET_FIELD_LIST())
+	@Test
+	public void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
+		// Given
+		ReportResponse boardResponse = ReportResponse.builder()
+			.boardMetricsReady(true)
+			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
+			.velocity(Velocity.builder().velocityForCards(10).build())
+			.classificationList(List.of())
 			.build();
-	}
 
-	private BuildKiteSetting buildPipelineSetting() {
-		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
-		return BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
-			.deploymentEnvList(List.of(mockDeployment))
-			.build();
-	}
+		String timeStamp = "1683734399999";
+		String boardTimeStamp = "board-1683734399999";
+		String doraTimestamp = "dora-1683734399999";
 
-	private CodebaseSetting buildCodeBaseSetting() {
-		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
-		return CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
-			.leadTime(List.of(mockDeployment))
-			.build();
+		// When
+		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
+		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(null);
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
+			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
+		// Then
+		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
+		// Assert
+		assertTrue(composedResponse.getAllMetricsReady());
+		assertTrue(composedResponse.getBoardMetricsReady());
+		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 	}
 
 	@Test
@@ -1309,6 +1335,33 @@ class GenerateReporterServiceTest {
 		generateReporterService.saveReporterInHandler(reportResponse, reportId);
 
 		verify(asyncReportRequestHandler, times(1)).putReport(reportId, reportResponse);
+	}
+
+	private JiraBoardSetting buildJiraBoardSetting() {
+		return JiraBoardSetting.builder()
+			.treatFlagCardAsBlock(true)
+			.targetFields(BoardCsvFixture.MOCK_TARGET_FIELD_LIST())
+			.build();
+	}
+
+	private BuildKiteSetting buildPipelineSetting() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		return BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token("buildKite_fake_token")
+			.deploymentEnvList(List.of(mockDeployment))
+			.build();
+	}
+
+	private CodebaseSetting buildCodeBaseSetting() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		return CodebaseSetting.builder()
+			.type("Github")
+			.token("github_fake_token")
+			.leadTime(List.of(mockDeployment))
+			.build();
 	}
 
 }

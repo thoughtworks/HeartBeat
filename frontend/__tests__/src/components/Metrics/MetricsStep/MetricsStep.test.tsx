@@ -30,7 +30,7 @@ const setup = () =>
     </Provider>
   )
 
-describe.skip('MetricsStep', () => {
+describe('MetricsStep', () => {
   beforeEach(() => {
     store = setupStore()
   })

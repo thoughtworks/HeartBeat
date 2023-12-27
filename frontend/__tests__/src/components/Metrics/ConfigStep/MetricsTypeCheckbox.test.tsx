@@ -20,7 +20,7 @@ import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons'
 import BasicInfo from '@src/components/Metrics/ConfigStep/BasicInfo'
 let store = null
 
-describe.skip('MetricsTypeCheckbox', () => {
+describe('MetricsTypeCheckbox', () => {
   const setup = () => {
     store = setupStore()
     return render(

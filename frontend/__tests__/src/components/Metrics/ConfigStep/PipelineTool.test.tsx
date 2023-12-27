@@ -48,7 +48,7 @@ const server = setupServer(
   )
 )
 
-describe.skip('PipelineTool', () => {
+describe('PipelineTool', () => {
   beforeAll(() => server.listen())
   afterAll(() => server.close())
   store = setupStore()

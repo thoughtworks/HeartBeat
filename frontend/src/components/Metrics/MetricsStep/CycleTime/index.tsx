@@ -5,7 +5,6 @@ import { useAppSelector } from '@src/hooks'
 import { WarningNotification } from '@src/components/Common/WarningNotification'
 import { TIPS } from '@src/constants/resources'
 import {
-  CycleTimeContainer,
   StyledTooltip,
   TitleAndTooltipContainer,
   TooltipContainer,

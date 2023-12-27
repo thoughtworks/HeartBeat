@@ -64,6 +64,8 @@ import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -1131,6 +1133,39 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
+	void shouldUpdateAndSetMetricsReadyNonnullTrueWhenThreeMetricsExistsAndPreviousMetricsReadyNotNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of("velocity", "cycle time", "classification", "deployment frequency", "change failure rate",
+					"mean time to recovery", "lead time for changes"))
+			.jiraBoardSetting(buildJiraBoardSetting())
+			.buildKiteSetting(buildPipelineSetting())
+			.codebaseSetting(buildCodeBaseSetting())
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		MetricsDataReady previousReady = MetricsDataReady.builder()
+			.boardMetricsReady(false)
+			.pipelineMetricsReady(false)
+			.sourceControlMetricsReady(null)
+			.build();
+		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
+			.pipelineMetricsReady(true)
+			.boardMetricsReady(true)
+			.sourceControlMetricsReady(null)
+			.build();
+
+		// when
+		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
+
+		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		// then
+		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
+	}
+
+	@Test
 	void shouldUpdateAndSetMetricsReadyTrueWhenThreeMetricsExistsAndPreviousMetricsReadyNotNull() {
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
@@ -1156,7 +1191,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		// when
-		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(previousReady);
+		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
 
 		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		// then

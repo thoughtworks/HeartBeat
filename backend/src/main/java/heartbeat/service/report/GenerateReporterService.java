@@ -621,18 +621,18 @@ public class GenerateReporterService {
 			throw new GenerateReportException("Unable update metrics data ready through this timestamp.");
 		}
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.boardMetricsReady(getTureOrPreviousValue(metricsStatus.getBoardMetricsReady(),
+			.boardMetricsReady(getTrueOrPreviousValue(metricsStatus.getBoardMetricsReady(),
 					previousMetricsReady.getBoardMetricsReady()))
-			.pipelineMetricsReady(getTureOrPreviousValue(metricsStatus.getPipelineMetricsReady(),
+			.pipelineMetricsReady(getTrueOrPreviousValue(metricsStatus.getPipelineMetricsReady(),
 					previousMetricsReady.getPipelineMetricsReady()))
-			.sourceControlMetricsReady(getTureOrPreviousValue(metricsStatus.getSourceControlMetricsReady(),
+			.sourceControlMetricsReady(getTrueOrPreviousValue(metricsStatus.getSourceControlMetricsReady(),
 					previousMetricsReady.getSourceControlMetricsReady()))
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 	}
 
-	private Boolean getTureOrPreviousValue(Boolean exist, Boolean previousValue) {
-		if (exist == Boolean.TRUE)
+	private Boolean getTrueOrPreviousValue(Boolean exist, Boolean previousValue) {
+		if (exist == Boolean.TRUE && Objects.nonNull(previousValue))
 			return Boolean.TRUE;
 		return previousValue;
 	}

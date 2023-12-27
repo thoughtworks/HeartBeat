@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.JiraCard;
@@ -1233,6 +1234,33 @@ class GenerateReporterServiceTest {
 			.token("github_fake_token")
 			.leadTime(List.of(mockDeployment))
 			.build();
+	}
+
+	@Test
+	void shouldDoConvertMetricDataToCSVWhenCallGenerateCSVForMetrics() throws IOException {
+		String timeStamp = "1683734399999";
+		ObjectMapper mapper = new ObjectMapper();
+		ReportResponse reportResponse = mapper
+			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
+		doNothing().when(csvFileGenerator).convertMetricDataToCSV(any(), any());
+
+		generateReporterService.generateCSVForMetric(reportResponse, timeStamp);
+
+		verify(csvFileGenerator, times(1)).convertMetricDataToCSV(reportResponse, timeStamp);
+	}
+
+	@Test
+	void shouldPutReportInHandlerWhenCallSaveReporterInHandler() throws IOException {
+		String timeStamp = "1683734399999";
+		String reportId = IdUtil.getDoraReportId(timeStamp);
+		ObjectMapper mapper = new ObjectMapper();
+		ReportResponse reportResponse = mapper
+			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
+		doNothing().when(asyncReportRequestHandler).putReport(any(), any());
+
+		generateReporterService.saveReporterInHandler(reportResponse, reportId);
+
+		verify(asyncReportRequestHandler, times(1)).putReport(reportId, reportResponse);
 	}
 
 }

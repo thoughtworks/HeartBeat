@@ -11,7 +11,6 @@ import { saveCycleTimeSettings, saveDoneColumn, selectMetricsContent } from '@sr
 import { selectJiraColumns } from '@src/context/config/configSlice'
 import { DONE, METRICS_CYCLE_SETTING_TABLE_HEADER } from '@src/constants/resources'
 import { theme } from '@src/theme'
-import { ellipsisProps } from '@src/layouts/style'
 import CellAutoComplete from '@src/components/Metrics/MetricsStep/CycleTime/Table/CellAutoComplete'
 import { StyledTableHeaderCell, StyledTableRowCell } from '@src/components/Metrics/MetricsStep/CycleTime/Table/style'
 import EllipsisText from '@src/components/Common/EllipsisText'
@@ -88,7 +87,7 @@ const CycleTimeTable = () => {
         <TableBody>
           {rows.map((row, index) => {
             const row1Content = row.name
-            const row2Content = row.statuses?.join(',')
+            const row2Content = row.statuses?.join(', ')
             return (
               <TableRow hover key={index}>
                 <StyledTableRowCell title={row1Content}>{row1Content}</StyledTableRowCell>

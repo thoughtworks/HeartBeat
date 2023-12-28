@@ -26,7 +26,7 @@ export const StyledTableRowCell = styled(TableCell)({
   maxWidth: 0,
   paddingLeft: '1rem',
   paddingRight: '1rem',
-  borderBottom: `1px solid ${theme.palette.secondary.dark}`,
+  borderBottom: `0.1rem solid ${theme.palette.secondary.dark}`,
 })
 
 export const StyledTextField = styled(TextField)({

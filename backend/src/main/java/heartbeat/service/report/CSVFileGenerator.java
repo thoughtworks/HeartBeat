@@ -85,8 +85,8 @@ public class CSVFileGenerator {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-		File file = new File(fileName);
 		if (!fileName.contains("..") && fileName.startsWith("./csv")) {
+			File file = new File(fileName);
 			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
 				String[] headers = { "Pipeline Name", "Pipeline Step", "Build Number", "Committer",
 						"First Code Committed Time In PR", "Code Committed Time", "PR Created Time", "PR Merged Time",

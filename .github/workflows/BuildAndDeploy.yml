@@ -135,9 +135,7 @@ jobs:
         shell: bash {0}
         run: |
           result=$(grep -rin --exclude='*.svg' --exclude='*.png'  --exclude='*.yaml'  --exclude-dir='node_modules' "[0-9]\+px" ./)
-          echo "${result}"
           file_count="$(echo "$result" | wc -l)"
-          echo "${file_count}"
           if [ $file_count -le 1 ]; then
             echo "No matching files found."
           else

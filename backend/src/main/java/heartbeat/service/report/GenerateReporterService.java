@@ -799,7 +799,6 @@ public class GenerateReporterService {
 		}
 	}
 
-	// todo: need change this to private after the "/reports" endpoint is deprecated
 	public ReportResponse getReportFromHandler(String reportId) {
 		return asyncReportRequestHandler.getReport(reportId);
 	}

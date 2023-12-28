@@ -56,36 +56,6 @@ class GenerateReporterControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	void shouldReturnAcceptedStatusAndCallbackUrlAndInterval() throws Exception {
-		ReportResponse expectedResponse = ReportResponse.builder()
-			.velocity(Velocity.builder().velocityForSP(10).build())
-			.deploymentFrequency(DeploymentFrequency.builder()
-				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
-				.build())
-			.build();
-
-		ObjectMapper mapper = new ObjectMapper();
-		GenerateReportRequest request = mapper
-			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
-		String currentTimeStamp = "1685010080107";
-		request.setCsvTimeStamp(currentTimeStamp);
-
-		when(generateReporterService.generateReporter(request)).thenReturn(expectedResponse);
-
-		MockHttpServletResponse response = mockMvc
-			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(request)))
-			.andExpect(status().isAccepted())
-			.andReturn()
-			.getResponse();
-
-		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
-		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
-		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
-		assertEquals("10", interval);
-	}
-
-	@Test
 	void shouldReturnCreatedStatusWhenCheckGenerateReportIsTrue() throws Exception {
 		// given
 		String reportId = Long.toString(System.currentTimeMillis());
@@ -171,33 +141,6 @@ class GenerateReporterControllerTest {
 
 		assertThat(response.getContentAsString()).isEqualTo(expectedResponse);
 
-	}
-
-	@Test
-	void shouldGetExceptionAndPutInExceptionMap() throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-		GenerateReportRequest request = mapper
-			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
-		String currentTimeStamp = "1685010080107";
-		request.setCsvTimeStamp(currentTimeStamp);
-
-		RequestFailedException requestFailedException = new RequestFailedException(402, "Client Error");
-		when(generateReporterService.generateReporter(request)).thenThrow(requestFailedException);
-
-		MockHttpServletResponse response = mockMvc
-			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(request)))
-			.andExpect(status().isAccepted())
-			.andReturn()
-			.getResponse();
-
-		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
-		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
-		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
-		assertEquals("10", interval);
-
-		Thread.sleep(2000L);
-		verify(asyncExceptionHandler).put(currentTimeStamp, requestFailedException);
 	}
 
 	@Test

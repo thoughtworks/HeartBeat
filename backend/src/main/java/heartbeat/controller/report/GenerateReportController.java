@@ -40,25 +40,6 @@ public class GenerateReportController {
 	@Value("${callback.interval}")
 	private Integer interval;
 
-	@PostMapping("/reports")
-	public ResponseEntity<CallbackResponse> generateReport(@RequestBody GenerateReportRequest request) {
-		log.info(
-				"Start to generate Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, report id: {}",
-				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
-				request.getCsvTimeStamp());
-		CompletableFuture.runAsync(() -> {
-			try {
-				generateReporterService.generateReporter(request);
-			}
-			catch (BaseException e) {
-				asyncExceptionHandler.put(request.getCsvTimeStamp(), e);
-			}
-		});
-		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
-		return ResponseEntity.status(HttpStatus.ACCEPTED)
-			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());
-	}
-
 	@GetMapping("/reports/{dataType}/{filename}")
 	public InputStreamResource exportCSV(@PathVariable String dataType, @PathVariable String filename) {
 		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, filename);

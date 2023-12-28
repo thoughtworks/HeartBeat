@@ -778,7 +778,7 @@ class GenerateReporterServiceTest {
 
 		assertThatThrownBy(() -> generateReporterService.fetchCSVData(mockExportCSVRequest))
 			.isInstanceOf(NotFoundException.class)
-			.hasMessageContaining("csv not found");
+			.hasMessageContaining("Failed to fetch CSV data due to CSV not found");
 	}
 
 	@Test
@@ -936,7 +936,7 @@ class GenerateReporterServiceTest {
 		GenerateReportException generateReportException = assertThrows(GenerateReportException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
 		assertEquals(500, generateReportException.getStatus());
-		assertEquals("Report time expires", generateReportException.getMessage());
+		assertEquals("Failed to get report due to report time expires", generateReportException.getMessage());
 	}
 
 	@Test
@@ -1061,7 +1061,7 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals("Jira board setting is null.", badRequestException.getMessage());
+		assertEquals("Failed to fetch Jira info due to Jira board setting is null.", badRequestException.getMessage());
 	}
 
 	@Test
@@ -1077,7 +1077,7 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals("Code base setting is null.", badRequestException.getMessage());
+		assertEquals("Failed to fetch Github info due to code base setting is null.", badRequestException.getMessage());
 	}
 
 	@Test
@@ -1093,7 +1093,8 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals("BuildKite setting is null.", badRequestException.getMessage());
+		assertEquals("Failed to fetch BuildKite info due toBuildKite setting is null.",
+				badRequestException.getMessage());
 	}
 
 	@Test

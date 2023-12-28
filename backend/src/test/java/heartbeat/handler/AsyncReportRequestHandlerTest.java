@@ -79,11 +79,10 @@ class AsyncReportRequestHandlerTest {
 	void shouldThrowGenerateReportExceptionWhenPreviousMetricsDataReadyIsNull() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		when(asyncReportRequestHandler.getMetricsDataReady(currentTime)).thenReturn(null);
 
 		Exception exception = assertThrows(GenerateReportException.class,
 				() -> asyncReportRequestHandler.isReportReady(currentTime));
-		assertEquals("Unable to locate the report using this report ID.", exception.getMessage());
+		assertEquals("Failed to locate the report using this report ID.", exception.getMessage());
 	}
 
 	@Test

@@ -83,10 +83,10 @@ public class CSVFileGenerator {
 	public void convertPipelineDataToCSV(List<PipelineCSVInfo> leadTimeData, String csvTimeStamp) {
 		log.info("Start to create csv directory");
 		createCsvDirToConvertData();
-		if (Objects.nonNull(csvTimeStamp) && !csvTimeStamp.contains("..")) {
-			String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-			File file = new File(fileName);
 
+		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
+		File file = new File(fileName);
+		if (!fileName.contains("..") && fileName.startsWith("./csv")) {
 			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
 				String[] headers = { "Pipeline Name", "Pipeline Step", "Build Number", "Committer",
 						"First Code Committed Time In PR", "Code Committed Time", "PR Created Time", "PR Merged Time",

@@ -133,13 +133,12 @@ jobs:
           result=$(grep -rin --exclude='*.svg' --exclude='*.png'  --exclude='*.yaml'  --exclude-dir='node_modules' "[0-9]\+px" ./frontend)
 
           file_count=$(echo "$result" | wc -l)
-
-          if [ $file_count -gt 0 ]; then
+          if [ $file_count -le 0 ]; then
+                echo "No matching files found."
+          else
             echo "Error: Found files with [0-9]+px pattern:"
             echo "$result"
             exit 1
-          else
-            echo "No matching files found."
           fi
   frontend-check:
     runs-on: ubuntu-latest

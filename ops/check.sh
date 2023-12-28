@@ -65,7 +65,7 @@ frontend_check(){
 
 px_check() {
   cd frontend
-  result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' "[0-9]\+px" ./)
+  local result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' "[0-9]\+px" ./)
   if [ -n "$result" ]; then
     echo "Error: Found files with [0-9]+px pattern:"
     echo "$result"

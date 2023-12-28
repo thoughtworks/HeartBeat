@@ -61,6 +61,11 @@ export enum DOWNLOAD_TYPES {
   PIPELINE = 'pipeline',
 }
 
+export enum RETRIEVE_REPORT_TYPES {
+  BOARD = 'board',
+  DORA = 'dora',
+}
+
 export const METRICS_STEPS = {
   CONFIG: 0,
   METRICS: 1,

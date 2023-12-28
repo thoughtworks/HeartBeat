@@ -4,7 +4,7 @@ import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
-import { DURATION } from '@src/constants/commons'
+import { DURATION, RETRIEVE_REPORT_TYPES } from '@src/constants/commons'
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
 
 export interface useGenerateReportEffectInterface {
@@ -17,6 +17,7 @@ export interface useGenerateReportEffectInterface {
 }
 
 export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
+  const reportPath = '/reports'
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [reportData, setReportData] = useState<ReportResponseDTO>()
@@ -25,7 +26,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
 
   const startToRequestBoardData = async (boardParams: ReportRequestDTO) => {
     reportClient
-      .retrieveReportByUrl(boardParams, '/board-reports')
+      .retrieveReportByUrl(boardParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.BOARD}`)
       .then((res) => {
         if (hasPollingStarted) return
         hasPollingStarted = true
@@ -58,7 +59,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
 
   const startToRequestDoraData = async (doraParams: ReportRequestDTO) => {
     reportClient
-      .retrieveReportByUrl(doraParams, '/dora-reports')
+      .retrieveReportByUrl(doraParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.DORA}`)
       .then((res) => {
         if (hasPollingStarted) return
         hasPollingStarted = true

@@ -163,7 +163,7 @@ class GenerateReporterControllerTest {
 		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
 		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
 		MockHttpServletResponse response = mockMvc
-			.perform(post("/board-reports").contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/reports/board").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andReturn()
@@ -191,7 +191,7 @@ class GenerateReporterControllerTest {
 		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
 
 		MockHttpServletResponse response = mockMvc
-			.perform(post("/board-reports").contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/reports/board").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andReturn()
@@ -227,7 +227,7 @@ class GenerateReporterControllerTest {
 		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
 
 		MockHttpServletResponse response = mockMvc
-			.perform(post("/dora-reports").contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/reports/dora").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andReturn()
@@ -268,7 +268,7 @@ class GenerateReporterControllerTest {
 		when(generateReporterService.generateReporter(request.convertToReportRequest())).thenReturn(expectedResponse);
 
 		MockHttpServletResponse response = mockMvc
-			.perform(post("/dora-reports").contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/reports/dora").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andReturn()

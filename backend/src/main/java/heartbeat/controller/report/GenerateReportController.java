@@ -1,9 +1,9 @@
 package heartbeat.controller.report;
 
+import heartbeat.controller.report.dto.request.DataType;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
 import heartbeat.controller.report.dto.request.GenerateDoraReportRequest;
-import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.BaseException;
@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping("/reports")
 @Validated
 @Log4j2
 public class GenerateReportController {
@@ -40,16 +40,16 @@ public class GenerateReportController {
 	@Value("${callback.interval}")
 	private Integer interval;
 
-	@GetMapping("/reports/{dataType}/{filename}")
-	public InputStreamResource exportCSV(@PathVariable String dataType, @PathVariable String filename) {
+	@GetMapping("/{dataType}/{filename}")
+	public InputStreamResource exportCSV(@PathVariable DataType dataType, @PathVariable String filename) {
 		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, filename);
-		ExportCSVRequest request = new ExportCSVRequest(dataType, filename);
+		ExportCSVRequest request = new ExportCSVRequest(dataType.name(), filename);
 		InputStreamResource result = generateReporterService.fetchCSVData(request);
 		log.info("Successfully get CSV file, dataType: {}, time stamp: {}, result: {}", dataType, filename, result);
 		return result;
 	}
 
-	@GetMapping("/reports/{reportId}")
+	@GetMapping("/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(reportId);
 		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId,
@@ -62,7 +62,7 @@ public class GenerateReportController {
 		return ResponseEntity.status(HttpStatus.OK).body(reportResponse);
 	}
 
-	@PostMapping("/board-reports")
+	@PostMapping("/board")
 	public ResponseEntity<CallbackResponse> generateBoardReport(@RequestBody GenerateBoardReportRequest request) {
 		log.info(
 				"Start to generate Board Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, board-report id: {}",
@@ -93,7 +93,7 @@ public class GenerateReportController {
 			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());
 	}
 
-	@PostMapping("/dora-reports")
+	@PostMapping("/dora")
 	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request) {
 		log.info(
 				"Start to generate Dora Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",

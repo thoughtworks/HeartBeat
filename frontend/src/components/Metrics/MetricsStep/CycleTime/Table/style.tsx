@@ -42,7 +42,7 @@ export const StyledTextField = styled(TextField)({
     height: '2rem',
     borderColor: 'transparent',
     textIndent: '0.5rem',
-    fontSize: '14px',
+    fontSize: '0.875rem',
   },
   '& .MuiInput-root .MuiInput-input': {
     padding: 0,

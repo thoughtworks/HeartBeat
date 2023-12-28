@@ -144,11 +144,11 @@ export const MESSAGE = {
 
 export const METRICS_CYCLE_SETTING_TABLE_HEADER = [
   {
-    text: 'Jira Column',
+    text: 'Board Column',
     emphasis: false,
   },
   {
-    text: 'Jira Status',
+    text: 'Status',
     emphasis: false,
   },
   {

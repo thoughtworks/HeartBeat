@@ -132,6 +132,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: CSS unit `px` check
+        shell: bash {0}
         run: |
           result=$(grep -rin --exclude='*.svg' --exclude='*.png'  --exclude='*.yaml'  --exclude-dir='node_modules' "[0-9]\+px" ./)
           echo "${result}"

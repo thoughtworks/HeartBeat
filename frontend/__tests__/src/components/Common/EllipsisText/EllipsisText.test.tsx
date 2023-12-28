@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import EllipsisText from '@src/components/Common/EllipsisText'
 
 describe('EllipsisText', () => {
-  const WIDTH = '500px'
+  const WIDTH = '500rem'
 
   it('should forward ref properly', () => {
     const ref = React.createRef<HTMLParagraphElement>()

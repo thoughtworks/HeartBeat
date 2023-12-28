@@ -23,7 +23,12 @@ const metricsTextList = [
   'Pipeline settings',
 ]
 
-const metricsAutoCompleteTextList = [
+const pipelineSettingsAutoCompleteTextList = [
+  { name: 'Organization', value: 'XXXX' },
+  { name: 'Step', value: 'publish gradle-cache image to cloudsmith' },
+]
+
+const cycleTimeSettingsAutoCompleteTextList = [
   { name: 'In Analysis', value: 'Analysis' },
   { name: 'Ready For Dev', value: 'To do' },
   { name: 'In Dev', value: 'In Dev' },
@@ -32,8 +37,6 @@ const metricsAutoCompleteTextList = [
   { name: 'In Test', value: 'Testing' },
   { name: 'Ready to Deploy', value: 'Review' },
   { name: 'Done', value: 'Done' },
-  { name: 'Organization', value: 'XXXX' },
-  { name: 'Step', value: 'publish gradle-cache image to cloudsmith' },
 ]
 
 const configTextList = [
@@ -66,9 +69,15 @@ const checkFieldsExist = (fields: string[]) => {
   })
 }
 
-const checkAutoCompleteFieldsExist = (fields: { name: string; value: string }[]) => {
+const checkPipelineSettingsAutoCompleteFields = (fields: { name: string; value: string }[]) => {
   fields.forEach((item) => {
-    cy.contains(item?.name).siblings().eq(0).find('input').should('have.value', item?.value)
+    metricsPage.getPipelineSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value)
+  })
+}
+
+const checkCycleTimeSettingsAutoCompleteFields = (fields: { name: string; value: string }[]) => {
+  fields.forEach((item) => {
+    metricsPage.getCycleTimeSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value)
   })
 }
 
@@ -153,8 +162,8 @@ describe('Import project from file', () => {
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
-
-    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
+    checkPipelineSettingsAutoCompleteFields(pipelineSettingsAutoCompleteTextList)
+    checkCycleTimeSettingsAutoCompleteFields(cycleTimeSettingsAutoCompleteTextList)
 
     checkRequiredFields()
 
@@ -171,7 +180,8 @@ describe('Import project from file', () => {
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
-    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
+    checkPipelineSettingsAutoCompleteFields(pipelineSettingsAutoCompleteTextList)
+    checkCycleTimeSettingsAutoCompleteFields(cycleTimeSettingsAutoCompleteTextList)
 
     metricsPage.BackToConfigStep()
 
@@ -196,7 +206,8 @@ describe('Import project from file', () => {
     configPage.goMetricsStep()
 
     checkFieldsExist(metricsTextList)
-    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
+    checkPipelineSettingsAutoCompleteFields(pipelineSettingsAutoCompleteTextList)
+    checkCycleTimeSettingsAutoCompleteFields(cycleTimeSettingsAutoCompleteTextList)
 
     metricsPage.goReportStep()
 
@@ -207,7 +218,8 @@ describe('Import project from file', () => {
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
-    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
+    checkPipelineSettingsAutoCompleteFields(pipelineSettingsAutoCompleteTextList)
+    checkCycleTimeSettingsAutoCompleteFields(cycleTimeSettingsAutoCompleteTextList)
 
     metricsPage.BackToConfigStep()
 

@@ -62,3 +62,9 @@ export const HomeIconElement = styled(HomeIcon)`
 export const NotificationIconContainer = styled.span({
   left: 0,
 })
+
+export const ellipsisProps: { [key: string]: string | number } = {
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+}

@@ -4,7 +4,7 @@ import { theme } from '@src/theme'
 const DescriptionContainer = styled.p({
   padding: '1rem',
   marginTop: '0',
-  boxShadow: `0px 9px 8px -5px ${theme.palette.grey[500]}`,
+  boxShadow: `0 0.8rem 0.7rem -0.5rem ${theme.palette.grey[500]}`,
 })
 
 export const ProjectDescription = () => {

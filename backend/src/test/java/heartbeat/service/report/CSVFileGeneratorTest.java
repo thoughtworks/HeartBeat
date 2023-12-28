@@ -15,12 +15,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.core.io.InputStreamResource;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -410,6 +405,13 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		Files.deleteIfExists(Path.of(fileName));
+	}
+
+	@Test
+	void shouleThrowGenerateReportExceptionWhenCsvTimeStampInvalid() {
+		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
+		assertThrows(GenerateReportException.class,
+				() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "../"));
 	}
 
 }

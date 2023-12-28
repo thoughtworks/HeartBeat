@@ -1,9 +1,7 @@
 package heartbeat.service.report;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.stream.JsonReader;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -40,20 +38,13 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
 import io.micrometer.core.instrument.util.TimeUtils;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static heartbeat.service.report.calculator.ClassificationCalculator.pickDisplayNameFromObj;
@@ -92,50 +83,55 @@ public class CSVFileGenerator {
 	public void convertPipelineDataToCSV(List<PipelineCSVInfo> leadTimeData, String csvTimeStamp) {
 		log.info("Start to create csv directory");
 		createCsvDirToConvertData();
+		if (Objects.nonNull(csvTimeStamp) && !csvTimeStamp.contains("..")) {
+			String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
+			File file = new File(fileName);
 
-		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-		File file = new File(fileName);
+			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
+				String[] headers = { "Pipeline Name", "Pipeline Step", "Build Number", "Committer",
+						"First Code Committed Time In PR", "Code Committed Time", "PR Created Time", "PR Merged Time",
+						"Deployment Completed Time", "Total Lead Time (HH:mm:ss)", "PR Lead Time (HH:mm:ss)",
+						"Pipeline Lead Time (HH:mm:ss)", "Status", "Branch" };
 
-		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
-			String[] headers = { "Pipeline Name", "Pipeline Step", "Build Number", "Committer",
-					"First Code Committed Time In PR", "Code Committed Time", "PR Created Time", "PR Merged Time",
-					"Deployment Completed Time", "Total Lead Time (HH:mm:ss)", "PR Lead Time (HH:mm:ss)",
-					"Pipeline Lead Time (HH:mm:ss)", "Status", "Branch" };
+				csvWriter.writeNext(headers);
 
-			csvWriter.writeNext(headers);
+				for (PipelineCSVInfo csvInfo : leadTimeData) {
+					String committerName = null;
+					String commitDate = null;
+					String pipelineName = csvInfo.getPipeLineName();
+					String stepName = csvInfo.getStepName();
+					String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
+					String state = csvInfo.getDeployInfo().getState();
+					String branch = csvInfo.getBuildInfo().getBranch();
+					if (csvInfo.getCommitInfo() != null) {
+						committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();
+						commitDate = csvInfo.getCommitInfo().getCommit().getAuthor().getDate();
+					}
 
-			for (PipelineCSVInfo csvInfo : leadTimeData) {
-				String committerName = null;
-				String commitDate = null;
-				String pipelineName = csvInfo.getPipeLineName();
-				String stepName = csvInfo.getStepName();
-				String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
-				String state = csvInfo.getDeployInfo().getState();
-				String branch = csvInfo.getBuildInfo().getBranch();
-				if (csvInfo.getCommitInfo() != null) {
-					committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();
-					commitDate = csvInfo.getCommitInfo().getCommit().getAuthor().getDate();
+					LeadTimeInfo leadTimeInfo = csvInfo.getLeadTimeInfo();
+					String firstCommitTimeInPr = leadTimeInfo.getFirstCommitTimeInPr();
+					String prCreatedTime = leadTimeInfo.getPrCreatedTime();
+					String prMergedTime = leadTimeInfo.getPrMergedTime();
+					String jobFinishTime = csvInfo.getDeployInfo().getJobFinishTime();
+					String totalTime = leadTimeInfo.getTotalTime();
+					String prLeadTime = leadTimeInfo.getPrLeadTime();
+					String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();
+
+					String[] rowData = { pipelineName, stepName, buildNumber, committerName, firstCommitTimeInPr,
+							commitDate, prCreatedTime, prMergedTime, jobFinishTime, totalTime, prLeadTime,
+							pipelineLeadTime, state, branch };
+
+					csvWriter.writeNext(rowData);
 				}
-
-				LeadTimeInfo leadTimeInfo = csvInfo.getLeadTimeInfo();
-				String firstCommitTimeInPr = leadTimeInfo.getFirstCommitTimeInPr();
-				String prCreatedTime = leadTimeInfo.getPrCreatedTime();
-				String prMergedTime = leadTimeInfo.getPrMergedTime();
-				String jobFinishTime = csvInfo.getDeployInfo().getJobFinishTime();
-				String totalTime = leadTimeInfo.getTotalTime();
-				String prLeadTime = leadTimeInfo.getPrLeadTime();
-				String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();
-
-				String[] rowData = { pipelineName, stepName, buildNumber, committerName, firstCommitTimeInPr,
-						commitDate, prCreatedTime, prMergedTime, jobFinishTime, totalTime, prLeadTime, pipelineLeadTime,
-						state, branch };
-
-				csvWriter.writeNext(rowData);
+			}
+			catch (IOException e) {
+				log.error("Failed to write file", e);
+				throw new FileIOException(e);
 			}
 		}
-		catch (IOException e) {
-			log.error("Failed to write file", e);
-			throw new FileIOException(e);
+		else {
+			log.error("Failed to generate csv file,invalid csvTimestamp");
+			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
 		}
 	}
 

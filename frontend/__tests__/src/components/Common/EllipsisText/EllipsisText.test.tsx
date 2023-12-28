@@ -3,6 +3,8 @@ import { render } from '@testing-library/react'
 import EllipsisText from '@src/components/Common/EllipsisText'
 
 describe('EllipsisText', () => {
+  const WIDTH = '500rem'
+
   it('should forward ref properly', () => {
     const ref = React.createRef<HTMLParagraphElement>()
     const { getByLabelText } = render(
@@ -19,7 +21,7 @@ describe('EllipsisText', () => {
 
   it('should apply fit-content as its width when `fitContent` specified', async () => {
     const { getByLabelText } = render(
-      <div style={{ width: '500px' }}>
+      <div style={{ width: WIDTH }}>
         <EllipsisText aria-label='test-ellipsis-text' fitContent>
           <div>test</div>
         </EllipsisText>
@@ -32,7 +34,7 @@ describe('EllipsisText', () => {
 
   it('should apply fit-content as its width when `fitContent` explicitly set to false', async () => {
     const { getByLabelText } = render(
-      <div style={{ width: '500px' }}>
+      <div style={{ width: WIDTH }}>
         <EllipsisText aria-label='test-ellipsis-text' fitContent={false}>
           <div>test</div>
         </EllipsisText>

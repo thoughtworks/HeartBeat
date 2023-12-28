@@ -75,5 +75,3 @@ export const COMMON_BUTTONS = {
   EXPORT_BOARD_DATA: 'Export board data',
   EXPORT_METRIC_DATA: 'Export metric data',
 }
-
-export const TABLE_ROW_HEIGHT = 48

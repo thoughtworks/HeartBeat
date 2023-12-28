@@ -1,4 +1,4 @@
-import React, { useState, SyntheticEvent } from 'react'
+import React, { useState, useCallback, SyntheticEvent } from 'react'
 import { Autocomplete } from '@mui/material'
 import { StyledTextField } from '@src/components/Metrics/MetricsStep/CycleTime/Table/style'
 import { CYCLE_TIME_LIST } from '@src/constants/resources'
@@ -15,10 +15,19 @@ const CellAutoComplete = ({ name, defaultSelected, onSelect, customRenderInput }
   const [selectedCycleTime, setSelectedCycleTime] = useState(defaultSelected)
   const [inputValue, setInputValue] = useState<string>('')
 
-  const handleSelectOnChange = (event: SyntheticEvent, value: string) => {
-    onSelect(name, value)
-    setSelectedCycleTime(value)
-  }
+  const handleInputOnChange = useCallback(
+    (event: SyntheticEvent, newInputValue: string) => {
+      setInputValue(newInputValue)
+    },
+    [setInputValue]
+  )
+  const handleSelectOnChange = useCallback(
+    (event: SyntheticEvent, value: string) => {
+      onSelect(name, value)
+      setSelectedCycleTime(value)
+    },
+    [name, onSelect, setSelectedCycleTime]
+  )
 
   const renderInput = customRenderInput || ((params) => <StyledTextField required {...params} label={''} />)
 
@@ -29,9 +38,7 @@ const CellAutoComplete = ({ name, defaultSelected, onSelect, customRenderInput }
       value={selectedCycleTime}
       onChange={handleSelectOnChange}
       inputValue={inputValue}
-      onInputChange={(event, newInputValue) => {
-        setInputValue(newInputValue)
-      }}
+      onInputChange={handleInputOnChange}
       renderInput={renderInput}
       slotProps={{
         popper: {

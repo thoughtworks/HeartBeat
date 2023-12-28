@@ -2,12 +2,10 @@ import { styled } from '@mui/material/styles'
 import TableCell from '@mui/material/TableCell'
 import TextField from '@mui/material/TextField'
 import { theme } from '@src/theme'
-import { TABLE_ROW_HEIGHT } from '@src/constants/commons'
-import { ellipsisProps } from '@src/layouts/style'
 
 export const StyledTableHeaderCell = styled(TableCell)({
   padding: 0,
-  height: `${TABLE_ROW_HEIGHT}px`,
+  height: `3rem`,
   color: `${theme.palette.text.primary}`,
   fontSize: '14px',
   fontWeight: 500,
@@ -23,7 +21,7 @@ export const StyledTableHeaderCell = styled(TableCell)({
 
 export const StyledTableRowCell = styled(TableCell)({
   padding: 0,
-  height: `${TABLE_ROW_HEIGHT}px`,
+  height: `3rem`,
   color: `${theme.palette.text.secondary}`,
   fontSize: '14px',
   fontWeight: 400,

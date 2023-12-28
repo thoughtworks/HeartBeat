@@ -617,7 +617,7 @@ public class GenerateReporterService {
 		MetricsDataReady metricsStatus = getMetricsStatus(metrics, Boolean.TRUE);
 		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
 		if (previousMetricsReady == null) {
-			log.error("Unable update metrics data ready through this timestamp.");
+			log.error("Failed to update metrics data ready through this timestamp.");
 			throw new GenerateReportException("Failed to update metrics data ready through this timestamp.");
 		}
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()

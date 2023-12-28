@@ -33,6 +33,7 @@ const CellAutoComplete = ({ name, defaultSelected, onSelect, customRenderInput }
 
   return (
     <Autocomplete
+      aria-label={`Cycle time select for ${name}`}
       disableClearable
       options={CYCLE_TIME_LIST}
       value={selectedCycleTime}

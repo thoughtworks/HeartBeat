@@ -87,7 +87,12 @@ const metricsTextList = [
   'Pipeline settings',
 ]
 
-const metricsAutoCompleteTextList = [
+const pipelineSettingsAutoCompleteTextList = [
+  { name: 'Organization', value: 'XXXX' },
+  { name: 'Step', value: 'RECORD RELEASE TO PROD' },
+]
+
+const cycleTimeSettingsAutoCompleteTextList = [
   { name: 'In Analysis', value: 'Analysis' },
   { name: 'Ready For Dev', value: 'To do' },
   { name: 'In Dev', value: 'In Dev' },
@@ -96,8 +101,6 @@ const metricsAutoCompleteTextList = [
   { name: 'In Test', value: 'Testing' },
   { name: 'Ready to Deploy', value: 'Review' },
   { name: 'Done', value: 'Done' },
-  { name: 'Organization', value: 'XXXX' },
-  { name: 'Step', value: 'RECORD RELEASE TO PROD' },
 ]
 
 const configTextList = [
@@ -216,9 +219,15 @@ const checkFieldsExist = (fields: string[]) => {
   })
 }
 
-const checkAutoCompleteFieldsExist = (fields: { name: string; value: string }[]) => {
+const checkPipelineSettingsAutoCompleteFields = (fields: { name: string; value: string }[]) => {
   fields.forEach((item) => {
-    cy.contains(item?.name).siblings().eq(0).find('input').should('have.value', item?.value)
+    metricsPage.getPipelineSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value)
+  })
+}
+
+const checkCycleTimeSettingsAutoCompleteFields = (fields: { name: string; value: string }[]) => {
+  fields.forEach((item) => {
+    metricsPage.getCycleTimeSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value)
   })
 }
 
@@ -350,7 +359,8 @@ describe('Create a new project', () => {
     reportPage.backToMetricsStep()
 
     checkFieldsExist(metricsTextList)
-    checkAutoCompleteFieldsExist(metricsAutoCompleteTextList)
+    checkPipelineSettingsAutoCompleteFields(pipelineSettingsAutoCompleteTextList)
+    checkCycleTimeSettingsAutoCompleteFields(cycleTimeSettingsAutoCompleteTextList)
 
     // checkpoint back to config step
     metricsPage.BackToConfigStep()

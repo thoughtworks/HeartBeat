@@ -130,8 +130,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: CSS unit `px` check
         run: |
-          result=$(grep -rin --exclude='*.svg' --exclude='*.png'  --exclude='*.yaml'  --exclude-dir='node_modules' "[0-9]\+px" ./frontend)
-          file_count=$(echo "$result" | wc -l)
+          result=$(grep -rin --exclude='*.svg' --exclude='*.png'  --exclude='*.yaml'  --exclude-dir='node_modules' "[0-9]\+px" ./)
+          echo "${result}"
+          file_count="$(echo "$result" | wc -l)"
+          echo "${file_count}"
           if [ $file_count -le 1 ]; then
             echo "No matching files found."
           else
@@ -139,6 +141,7 @@ jobs:
             echo "$result"
             exit 1
           fi
+
   frontend-check:
     runs-on: ubuntu-latest
     defaults:

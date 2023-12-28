@@ -160,26 +160,32 @@ public class CSVFileGenerator {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-		try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
-			List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
-			fixedFields.removeAll(extraFields);
+		if (!fileName.contains("..") && fileName.startsWith("./csv")) {
+			try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
+				List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
+				fixedFields.removeAll(extraFields);
 
-			String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
-			String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
+				String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
+				String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
 
-			String[] fixedFieldsRow = fixedFieldsData[0];
-			String targetElement = "Cycle Time";
-			List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
-			int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
+				String[] fixedFieldsRow = fixedFieldsData[0];
+				String targetElement = "Cycle Time";
+				List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
+				int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
 
-			String[][] mergedArrays = mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
+				String[][] mergedArrays = mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
 
-			writer.writeAll(Arrays.asList(mergedArrays));
+				writer.writeAll(Arrays.asList(mergedArrays));
 
+			}
+			catch (IOException e) {
+				log.error("Failed to write file", e);
+				throw new FileIOException(e);
+			}
 		}
-		catch (IOException e) {
-			log.error("Failed to write file", e);
-			throw new FileIOException(e);
+		else {
+			log.error("Failed to generate csv file,invalid csvTimestamp");
+			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
 		}
 	}
 

@@ -408,10 +408,20 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	void shouleThrowGenerateReportExceptionWhenCsvTimeStampInvalid() {
+	void shouleThrowGenerateReportExceptionWhenGeneratePipelineCsvAndCsvTimeStampInvalid() {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		assertThrows(GenerateReportException.class,
 				() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "../"));
+	}
+
+	@Test
+	void shouleThrowGenerateReportExceptionWhenGenerateBoardCsvAndCsvTimeStampInvalid() {
+		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO();
+		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
+		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
+
+		assertThrows(GenerateReportException.class,
+				() -> csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, "../"));
 	}
 
 }

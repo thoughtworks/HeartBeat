@@ -1,5 +1,7 @@
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
 import { ICycleTimeSetting, IJiraColumnsWithValue } from '@src/context/Metrics/metricsSlice'
+import dayjs from 'dayjs'
+import { DATE_FORMATE_TEMPLATE } from '@src/constants/template'
 
 export const exportToJsonFile = (filename: string, json: object) => {
   const dataStr = JSON.stringify(json, null, 4)
@@ -58,4 +60,8 @@ export const filterAndMapCycleTimeSettings = (
 export const findCaseInsensitiveType = (option: string[], value: string): string => {
   const newValue = option.find((item) => value.toLowerCase() === item.toLowerCase())
   return newValue ? newValue : value
+}
+
+export const formateDate = (date: Date | string) => {
+  return dayjs(date).format(DATE_FORMATE_TEMPLATE)
 }

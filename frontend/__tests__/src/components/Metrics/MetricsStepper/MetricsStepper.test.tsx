@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -88,6 +88,7 @@ jest.mock('@src/utils/util', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn(),
   findCaseInsensitiveType: jest.fn(),
   filterAndMapCycleTimeSettings: jest.fn(),
+  formateDate: jest.fn(),
 }))
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
@@ -273,6 +274,9 @@ describe('MetricsStepper', () => {
     await fillConfigPageData()
     await userEvent.click(getByText(NEXT))
     await fillMetricsPageDate()
+    waitFor(() => {
+      expect(getByText(NEXT)).toBeInTheDocument()
+    })
     await userEvent.click(getByText(NEXT))
 
     expect(getByText(REPORT)).toHaveStyle(`color:${stepperColor}`)
@@ -378,6 +382,9 @@ describe('MetricsStepper', () => {
     await fillConfigPageData()
     await userEvent.click(getByText(NEXT))
     await fillMetricsPageDate()
+    waitFor(() => {
+      expect(getByText(NEXT)).toBeInTheDocument()
+    })
     await userEvent.click(getByText(NEXT))
     await userEvent.click(getByText(SAVE))
 

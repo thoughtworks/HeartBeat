@@ -778,7 +778,7 @@ class GenerateReporterServiceTest {
 
 		assertThatThrownBy(() -> generateReporterService.fetchCSVData(mockExportCSVRequest))
 			.isInstanceOf(NotFoundException.class)
-			.hasMessageContaining("csv not found");
+			.hasMessageContaining("Failed to fetch CSV data due to CSV not found");
 	}
 
 	@Test
@@ -936,7 +936,7 @@ class GenerateReporterServiceTest {
 		GenerateReportException generateReportException = assertThrows(GenerateReportException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
 		assertEquals(500, generateReportException.getStatus());
-		assertEquals("Report time expires", generateReportException.getMessage());
+		assertEquals("Failed to get report due to report time expires", generateReportException.getMessage());
 	}
 
 	@Test
@@ -1061,7 +1061,7 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals("Jira board setting is null.", badRequestException.getMessage());
+		assertEquals("Failed to fetch Jira info due to Jira board setting is null.", badRequestException.getMessage());
 	}
 
 	@Test
@@ -1077,7 +1077,7 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals("Code base setting is null.", badRequestException.getMessage());
+		assertEquals("Failed to fetch Github info due to code base setting is null.", badRequestException.getMessage());
 	}
 
 	@Test
@@ -1093,7 +1093,8 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals("BuildKite setting is null.", badRequestException.getMessage());
+		assertEquals("Failed to fetch BuildKite info due toBuildKite setting is null.",
+				badRequestException.getMessage());
 	}
 
 	@Test
@@ -1177,36 +1178,6 @@ class GenerateReporterServiceTest {
 			.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics()));
 
 	}
-
-	@Test
-	void shouldOnlyUpdatePipelineMetricsWhenMetricsIsNonNullInPreviousMetricsReady() {
-		GenerateReportRequest request = GenerateReportRequest.builder()
-			.considerHoliday(false)
-			.metrics(List.of("deployment frequency", "change failure rate", "mean time to recovery"))
-			.jiraBoardSetting(buildJiraBoardSetting())
-			.startTime("123")
-			.endTime("123")
-			.csvTimeStamp("1683734399999")
-			.build();
-		MetricsDataReady previousReady = MetricsDataReady.builder()
-			.boardMetricsReady(null)
-			.pipelineMetricsReady(false)
-			.sourceControlMetricsReady(null)
-			.build();
-		MetricsDataReady allMetricsReady = MetricsDataReady.builder()
-			.boardMetricsReady(null)
-			.pipelineMetricsReady(true)
-			.sourceControlMetricsReady(null)
-			.build();
-
-		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(previousReady);
-
-		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-		// then
-		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), allMetricsReady);
-	}
-
-	// todo: add
 
 	@Test
 	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
@@ -1365,6 +1336,17 @@ class GenerateReporterServiceTest {
 						MetricsDataReady.builder()
 							.boardMetricsReady(true)
 							.pipelineMetricsReady(null)
+							.sourceControlMetricsReady(null)
+							.build()),
+				Arguments.of(List.of("deployment frequency", "change failure rate", "mean time to recovery"),
+						MetricsDataReady.builder()
+							.boardMetricsReady(null)
+							.pipelineMetricsReady(false)
+							.sourceControlMetricsReady(null)
+							.build(),
+						MetricsDataReady.builder()
+							.boardMetricsReady(null)
+							.pipelineMetricsReady(true)
 							.sourceControlMetricsReady(null)
 							.build()));
 	}

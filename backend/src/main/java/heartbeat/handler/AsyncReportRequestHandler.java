@@ -44,7 +44,7 @@ public class AsyncReportRequestHandler {
 	public boolean isReportReady(String timeStamp) {
 		MetricsDataReady metricsDataReady = getMetricsDataReady(timeStamp);
 		if (metricsDataReady == null) {
-			throw new GenerateReportException("Unable to locate the report using this report ID.");
+			throw new GenerateReportException("Failed to locate the report using this report ID.");
 		}
 
 		List<Boolean> metricsReady = Stream

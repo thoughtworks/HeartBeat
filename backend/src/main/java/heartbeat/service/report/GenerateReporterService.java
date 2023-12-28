@@ -260,21 +260,21 @@ public class GenerateReporterService {
 
 		if (lowMetrics.stream().anyMatch(this.kanbanMetrics::contains)) {
 			if (request.getJiraBoardSetting() == null)
-				throw new BadRequestException("Jira board setting is null.");
+				throw new BadRequestException("Failed to fetch Jira info due to Jira board setting is null.");
 			CardCollectionInfo cardCollectionInfo = fetchDataFromKanban(request);
 			fetchedData.setCardCollectionInfo(cardCollectionInfo);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
 			if (request.getCodebaseSetting() == null)
-				throw new BadRequestException("Code base setting is null.");
+				throw new BadRequestException("Failed to fetch Github info due to code base setting is null.");
 			BuildKiteData buildKiteData = fetchGithubData(request);
 			fetchedData.setBuildKiteData(buildKiteData);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
 			if (request.getBuildKiteSetting() == null)
-				throw new BadRequestException("BuildKite setting is null.");
+				throw new BadRequestException("Failed to fetch BuildKite info due toBuildKite setting is null.");
 			FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
 			val cachedBuildKiteData = fetchedData.getBuildKiteData();
 			if (cachedBuildKiteData != null) {
@@ -618,7 +618,7 @@ public class GenerateReporterService {
 		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
 		if (previousMetricsReady == null) {
 			log.error("Unable update metrics data ready through this timestamp.");
-			throw new GenerateReportException("Unable update metrics data ready through this timestamp.");
+			throw new GenerateReportException("Failed to update metrics data ready through this timestamp.");
 		}
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
 			.boardMetricsReady(getTrueOrPreviousValue(metricsStatus.getBoardMetricsReady(),
@@ -739,7 +739,7 @@ public class GenerateReporterService {
 
 	public boolean checkGenerateReportIsDone(String reportTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
-			throw new GenerateReportException("Report time expires");
+			throw new GenerateReportException("Failed to get report due to report time expires");
 		}
 		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportTimeStamp));
 		BaseException doraException = asyncExceptionHandler.get(IdUtil.getDoraReportId(reportTimeStamp));
@@ -763,7 +763,7 @@ public class GenerateReporterService {
 
 	private void validateExpire(long csvTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
-			throw new NotFoundException("csv not found");
+			throw new NotFoundException("Failed to fetch CSV data due to CSV not found");
 		}
 	}
 

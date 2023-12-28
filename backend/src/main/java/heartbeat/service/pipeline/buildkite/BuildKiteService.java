@@ -273,7 +273,7 @@ public class BuildKiteService {
 	public DeployTimes countDeployTimes(DeploymentEnvironment deploymentEnvironment,
 			List<BuildKiteBuildInfo> buildInfos, String startTime, String endTime) {
 		if (deploymentEnvironment.getOrgId() == null) {
-			throw new NotFoundException("miss orgId argument");
+			throw new NotFoundException("Failed to count deployment times due to miss orgId argument");
 		}
 		List<DeployInfo> passedBuilds = getBuildsByState(buildInfos, deploymentEnvironment, "passed", startTime,
 				endTime);

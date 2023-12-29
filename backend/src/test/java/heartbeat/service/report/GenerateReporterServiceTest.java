@@ -1097,9 +1097,9 @@ class GenerateReporterServiceTest {
 		String timeStamp = "1683734399999";
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue());
 		MetricsDataReady expectedPut = MetricsDataReady.builder()
-			.boardMetricsReady(false)
-			.pipelineMetricsReady(null)
-			.sourceControlMetricsReady(null)
+			.isBoardMetricsReady(false)
+			.isPipelineMetricsReady(null)
+			.isSourceControlMetricsReady(null)
 			.build();
 
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(null);
@@ -1114,14 +1114,14 @@ class GenerateReporterServiceTest {
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue(),
 				RequireDataEnum.DEPLOYMENT_FREQUENCY.getValue());
 		MetricsDataReady previousMetricsDataReady = MetricsDataReady.builder()
-			.boardMetricsReady(false)
-			.pipelineMetricsReady(null)
-			.sourceControlMetricsReady(null)
+			.isBoardMetricsReady(false)
+			.isPipelineMetricsReady(null)
+			.isSourceControlMetricsReady(null)
 			.build();
 		MetricsDataReady expectedPut = MetricsDataReady.builder()
-			.boardMetricsReady(false)
-			.pipelineMetricsReady(false)
-			.sourceControlMetricsReady(null)
+			.isBoardMetricsReady(false)
+			.isPipelineMetricsReady(false)
+			.isSourceControlMetricsReady(null)
 			.build();
 
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(previousMetricsDataReady);
@@ -1176,13 +1176,13 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
 		ReportResponse boardResponse = ReportResponse.builder()
-			.boardMetricsReady(true)
+			.isBoardMetricsReady(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
 			.velocity(Velocity.builder().velocityForCards(10).build())
 			.classificationList(List.of())
 			.build();
 		ReportResponse pipelineResponse = ReportResponse.builder()
-			.pipelineMetricsReady(true)
+			.isPipelineMetricsReady(true)
 			.changeFailureRate(ChangeFailureRate.builder()
 				.avgChangeFailureRate(AvgChangeFailureRate.builder().name("name").failureRate(0.1f).build())
 				.build())
@@ -1206,7 +1206,7 @@ class GenerateReporterServiceTest {
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getAllMetricsReady());
+		assertTrue(composedResponse.getIsAllMetricsReady());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 		assertEquals("deploymentFrequency",
 				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getName());
@@ -1217,7 +1217,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
 		ReportResponse boardResponse = ReportResponse.builder()
-			.boardMetricsReady(true)
+			.isBoardMetricsReady(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
 			.velocity(Velocity.builder().velocityForCards(10).build())
 			.classificationList(List.of())
@@ -1234,8 +1234,8 @@ class GenerateReporterServiceTest {
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getAllMetricsReady());
-		assertTrue(composedResponse.getBoardMetricsReady());
+		assertTrue(composedResponse.getIsAllMetricsReady());
+		assertTrue(composedResponse.getIsBoardMetricsReady());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 	}
 
@@ -1297,47 +1297,47 @@ class GenerateReporterServiceTest {
 		return Stream.of(
 				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
 						MetricsDataReady.builder()
-							.boardMetricsReady(false)
-							.pipelineMetricsReady(false)
-							.sourceControlMetricsReady(null)
+							.isBoardMetricsReady(false)
+							.isPipelineMetricsReady(false)
+							.isSourceControlMetricsReady(null)
 							.build(),
 						MetricsDataReady.builder()
-							.boardMetricsReady(true)
-							.pipelineMetricsReady(true)
-							.sourceControlMetricsReady(null)
+							.isBoardMetricsReady(true)
+							.isPipelineMetricsReady(true)
+							.isSourceControlMetricsReady(null)
 							.build()),
 				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
 						MetricsDataReady.builder()
-							.boardMetricsReady(false)
-							.pipelineMetricsReady(false)
-							.sourceControlMetricsReady(false)
+							.isBoardMetricsReady(false)
+							.isPipelineMetricsReady(false)
+							.isSourceControlMetricsReady(false)
 							.build(),
 						MetricsDataReady.builder()
-							.boardMetricsReady(true)
-							.pipelineMetricsReady(true)
-							.sourceControlMetricsReady(true)
+							.isBoardMetricsReady(true)
+							.isPipelineMetricsReady(true)
+							.isSourceControlMetricsReady(true)
 							.build()),
 				Arguments.of(List.of("velocity"),
 						MetricsDataReady.builder()
-							.boardMetricsReady(false)
-							.pipelineMetricsReady(null)
-							.sourceControlMetricsReady(null)
+							.isBoardMetricsReady(false)
+							.isPipelineMetricsReady(null)
+							.isSourceControlMetricsReady(null)
 							.build(),
 						MetricsDataReady.builder()
-							.boardMetricsReady(true)
-							.pipelineMetricsReady(null)
-							.sourceControlMetricsReady(null)
+							.isBoardMetricsReady(true)
+							.isPipelineMetricsReady(null)
+							.isSourceControlMetricsReady(null)
 							.build()),
 				Arguments.of(List.of("deployment frequency", "change failure rate", "mean time to recovery"),
 						MetricsDataReady.builder()
-							.boardMetricsReady(null)
-							.pipelineMetricsReady(false)
-							.sourceControlMetricsReady(null)
+							.isBoardMetricsReady(null)
+							.isPipelineMetricsReady(false)
+							.isSourceControlMetricsReady(null)
 							.build(),
 						MetricsDataReady.builder()
-							.boardMetricsReady(null)
-							.pipelineMetricsReady(true)
-							.sourceControlMetricsReady(null)
+							.isBoardMetricsReady(null)
+							.isPipelineMetricsReady(true)
+							.isSourceControlMetricsReady(null)
 							.build()));
 	}
 

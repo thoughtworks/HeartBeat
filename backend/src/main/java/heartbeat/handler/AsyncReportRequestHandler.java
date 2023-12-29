@@ -48,8 +48,8 @@ public class AsyncReportRequestHandler {
 		}
 
 		List<Boolean> metricsReady = Stream
-			.of(metricsDataReady.getBoardMetricsReady(), metricsDataReady.getPipelineMetricsReady(),
-					metricsDataReady.getSourceControlMetricsReady())
+			.of(metricsDataReady.isBoardMetricsReady(), metricsDataReady.isPipelineMetricsReady(),
+					metricsDataReady.isSourceControlMetricsReady())
 			.filter(Objects::nonNull)
 			.toList();
 

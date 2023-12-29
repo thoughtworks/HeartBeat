@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -16,7 +15,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AsyncReportRequestHandlerTest {
@@ -55,7 +53,7 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder().boardMetricsReady(false).build();
+		MetricsDataReady metricsDataReady = MetricsDataReady.builder().isBoardMetricsReady(false).build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
 		asyncReportRequestHandler.putMetricsDataReady(expireTime, metricsDataReady);
 
@@ -69,7 +67,7 @@ class AsyncReportRequestHandlerTest {
 	void shouldGetAsyncMetricsDataReadyWhenPuttingMetricsReadyIntoAsyncReportRequestHandler() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder().boardMetricsReady(false).build();
+		MetricsDataReady metricsDataReady = MetricsDataReady.builder().isBoardMetricsReady(false).build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
 
 		assertNotNull(asyncReportRequestHandler.getMetricsDataReady(currentTime));
@@ -90,9 +88,9 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.boardMetricsReady(false)
-			.sourceControlMetricsReady(false)
-			.pipelineMetricsReady(null)
+			.isBoardMetricsReady(false)
+			.isSourceControlMetricsReady(false)
+			.isPipelineMetricsReady(null)
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
 
@@ -106,9 +104,9 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.boardMetricsReady(true)
-			.sourceControlMetricsReady(null)
-			.pipelineMetricsReady(true)
+			.isBoardMetricsReady(true)
+			.isSourceControlMetricsReady(null)
+			.isPipelineMetricsReady(true)
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
 

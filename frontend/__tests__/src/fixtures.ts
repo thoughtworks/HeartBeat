@@ -465,10 +465,10 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
     },
   ],
   exportValidityTime: 1800000,
-  boardMetricsReady: true,
-  pipelineMetricsReady: true,
-  sourceControlMetricsReady: true,
-  allMetricsReady: true,
+  isBoardMetricsReady: true,
+  isPipelineMetricsReady: true,
+  isSourceControlMetricsReady: true,
+  isAllMetricsReady: true,
 }
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
@@ -629,10 +629,10 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   meanTimeToRecovery: null,
   leadTimeForChanges: null,
   exportValidityTime: null,
-  boardMetricsReady: false,
-  pipelineMetricsReady: false,
-  sourceControlMetricsReady: false,
-  allMetricsReady: false,
+  isBoardMetricsReady: false,
+  isPipelineMetricsReady: false,
+  isSourceControlMetricsReady: false,
+  isAllMetricsReady: false,
 }
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

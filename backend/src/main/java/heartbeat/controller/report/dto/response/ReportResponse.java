@@ -29,13 +29,13 @@ public class ReportResponse {
 
 	private Long exportValidityTime;
 
-	private Boolean boardMetricsReady;
+	private Boolean isBoardMetricsReady;
 
-	private Boolean pipelineMetricsReady;
+	private Boolean isPipelineMetricsReady;
 
-	private Boolean sourceControlMetricsReady;
+	private Boolean isSourceControlMetricsReady;
 
-	private Boolean allMetricsReady;
+	private Boolean isAllMetricsReady;
 
 	public ReportResponse(Long exportValidityTime) {
 		this.exportValidityTime = exportValidityTime;

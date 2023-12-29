@@ -26,6 +26,7 @@ export const StyledButtonGroup = styled('div')({
 export const StyledExportButton = styled(Button)({
   ...basicButtonStyle,
   width: '12rem',
+  whiteSpace: 'nowrap',
   backgroundColor: theme.main.backgroundColor,
   color: theme.main.color,
   fontFamily: 'Roboto',

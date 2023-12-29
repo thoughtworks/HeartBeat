@@ -7,7 +7,7 @@ export const StyledTableHeaderCell = styled(TableCell)({
   padding: 0,
   height: `3rem`,
   color: `${theme.palette.text.primary}`,
-  fontWeight: 500,
+  fontWeight: 600,
   backgroundColor: `${theme.palette.secondary.dark}`,
   maxWidth: 0,
   paddingLeft: '1rem',

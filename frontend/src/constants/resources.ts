@@ -184,7 +184,7 @@ export const METRICS_CYCLE_SETTING_TABLE_HEADER = [
     emphasis: false,
   },
   {
-    text: 'Corresponding Heartbeat status',
+    text: 'Heartbeat State',
     emphasis: true,
   },
 ]

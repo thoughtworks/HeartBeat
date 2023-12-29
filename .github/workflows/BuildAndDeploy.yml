@@ -124,6 +124,25 @@ jobs:
           name: backend-license-report
           path: backend/build/reports/dependency-license/
           retention-days: ${{ vars.RETENTION_DAYS }}
+  dot-star-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Java .*; check
+        shell: bash {0}
+        run: |
+          local result
+          result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '\.\*;' ./ || true)
+          if [ -n "$result" ]; then
+            echo "Error: Found files with [0-9]+px pattern:"
+            echo "$result"
+            exit 1
+          else
+            echo "No matching files found."
+          fi
   px-check:
     runs-on: ubuntu-latest
     defaults:
@@ -211,6 +230,7 @@ jobs:
       - frontend-check
       - px-check
       - backend-check
+      - dot-star-check
       - security-check
       - shellcheck
       - credential-check

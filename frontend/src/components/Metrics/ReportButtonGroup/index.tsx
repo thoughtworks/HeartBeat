@@ -50,7 +50,7 @@ export const ReportButtonGroup = ({
     setErrorMessage(errorMessage)
   }, [errorMessage])
 
-  const getExportCSV = (
+  const exportCSV = (
     dataType: DOWNLOAD_TYPES,
     startDate: string | null,
     endDate: string | null
@@ -62,7 +62,7 @@ export const ReportButtonGroup = ({
   })
 
   const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
-    fetchExportData(getExportCSV(dataType, startDate, endDate))
+    fetchExportData(exportCSV(dataType, startDate, endDate))
   }
 
   const handleBack = () => {

@@ -17,6 +17,7 @@ import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { StyledSpacing } from '@src/components/Metrics/ReportStep/style'
+import { formatMinToHours } from '@src/utils/util'
 
 interface DoraMetricsProps {
   startToRequestDoraData: (request: ReportRequestDTO) => void
@@ -93,15 +94,15 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
         title: METRICS_TITLE.LEAD_TIME_FOR_CHANGES,
         items: leadTimeForChanges && [
           {
-            value: leadTimeForChanges.avgLeadTimeForChanges.prLeadTime,
+            value: formatMinToHours(leadTimeForChanges.avgLeadTimeForChanges.prLeadTime),
             subtitle: METRICS_SUBTITLE.PR_LEAD_TIME,
           },
           {
-            value: leadTimeForChanges.avgLeadTimeForChanges.pipelineLeadTime,
+            value: formatMinToHours(leadTimeForChanges.avgLeadTimeForChanges.pipelineLeadTime),
             subtitle: METRICS_SUBTITLE.PIPELINE_LEAD_TIME,
           },
           {
-            value: leadTimeForChanges.avgLeadTimeForChanges.totalDelayTime,
+            value: formatMinToHours(leadTimeForChanges.avgLeadTimeForChanges.totalDelayTime),
             subtitle: METRICS_SUBTITLE.TOTAL_DELAY_TIME,
           },
         ],

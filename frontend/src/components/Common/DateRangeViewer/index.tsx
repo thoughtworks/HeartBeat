@@ -1,5 +1,5 @@
 import { DateRangeContainer, StyledArrowForward, StyledCalendarToday } from './style'
-import { formateDate } from '@src/utils/util'
+import { formatDate } from '@src/utils/util'
 
 type Props = {
   startDate: string
@@ -9,9 +9,9 @@ type Props = {
 const DateRangeViewer = ({ startDate, endDate }: Props) => {
   return (
     <DateRangeContainer>
-      {formateDate(startDate)}
+      {formatDate(startDate)}
       <StyledArrowForward />
-      {formateDate(endDate)}
+      {formatDate(endDate)}
       <StyledCalendarToday />
     </DateRangeContainer>
   )

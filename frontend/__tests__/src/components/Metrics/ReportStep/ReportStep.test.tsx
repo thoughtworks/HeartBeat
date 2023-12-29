@@ -61,6 +61,7 @@ jest.mock('@src/utils/util', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn(),
   getJiraBoardToken: jest.fn(),
   filterAndMapCycleTimeSettings: jest.fn(),
+  formatMinToHours: jest.fn().mockImplementation((time) => time / 60),
 }))
 
 let store = null
@@ -163,9 +164,9 @@ describe('Report Step', () => {
     it('should render the Lead Time For Change component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[4]])
 
-      expect(getByText('3647.51')).toBeInTheDocument()
-      expect(getByText('2341.72')).toBeInTheDocument()
-      expect(getByText('5989.22')).toBeInTheDocument()
+      expect(getByText('60.79')).toBeInTheDocument()
+      expect(getByText('39.03')).toBeInTheDocument()
+      expect(getByText('99.82')).toBeInTheDocument()
     })
 
     it('should render the Deployment frequency component with correct props', () => {

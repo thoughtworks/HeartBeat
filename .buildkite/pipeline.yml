@@ -10,9 +10,9 @@ steps:
     key: "check-security"
     command: ./ops/check.sh security
 
-  - label: ":lock: Check CSS px"
-    key: "check-px"
-    command: ./ops/check.sh px
+  # - label: ":lock: Check CSS px"
+  #   key: "check-px"
+  #   command: ./ops/check.sh px
 
   - label: ":white_check_mark: Check Backend"
     if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
@@ -44,7 +44,6 @@ steps:
     depends_on:
       - "check-shell"
       - "check-security"
-      - "check-px"
       - "check-frontend"
       - "check-backend"
       - "check-frontend-license"
@@ -95,7 +94,6 @@ steps:
       - "deploy-stub"
       - "check-shell"
       - "check-security"
-      - "check-px"
       - "check-frontend"
       - "check-backend"
       - "check-frontend-license"

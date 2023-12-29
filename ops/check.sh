@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -xeuo pipefail
 
 display_help() {
   echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e}" >&2
@@ -65,7 +65,8 @@ frontend_check(){
 
 px_check() {
   cd frontend
-  local result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' "[0-9]\+px" ./)
+  local result=''
+  result="$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '[0-9]\+px' ./)"
   if [ -n "$result" ]; then
     echo "Error: Found files with [0-9]+px pattern:"
     echo "$result"

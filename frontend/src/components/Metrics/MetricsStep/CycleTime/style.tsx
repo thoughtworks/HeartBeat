@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles'
 import { Checkbox, Tooltip } from '@mui/material'
-import { PipelineMetricSelectionWrapper } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection/style'
 
 export const FlagCardItem = styled('div')({
   display: 'flex',
@@ -17,18 +16,6 @@ export const ItemText = styled('div')({
 export const ItemCheckbox = styled(Checkbox)({
   padding: 0,
   marginRight: '0.5rem',
-})
-
-export const FormSelectPartContainer = styled('div')({
-  width: '100%',
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2,1fr)',
-  gap: '1rem',
-})
-
-export const CycleTimeContainer = styled(PipelineMetricSelectionWrapper)({
-  padding: '1rem',
-  boxSizing: 'border-box',
 })
 
 export const TitleAndTooltipContainer = styled('div')({

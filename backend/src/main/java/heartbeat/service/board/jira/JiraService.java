@@ -208,7 +208,7 @@ public class JiraService {
 			.jiraColumns(jiraColumns)
 			.build();
 		log.info(
-				"Successfully to get jira columns, project key: {}, board id: {}, column result size: {}, done columns: {}",
+				"Successfully get jira columns, project key: {}, board id: {}, column result size: {}, done columns: {}",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
 				jiraColumnResult.getJiraColumnResponse().size(), jiraColumns);
 		return jiraColumnResult;

@@ -84,7 +84,7 @@ public class GenerateReportController {
 	@PostMapping("/board-reports")
 	public ResponseEntity<CallbackResponse> generateBoardReport(@RequestBody GenerateBoardReportRequest request) {
 		log.info(
-				"Start to generate Board Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, board-report id: {}",
+				"Start to generate board report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, board-report id: {}",
 				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
 				IdUtil.getBoardReportId(request.getCsvTimeStamp()));
 		generateReporterService.initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
@@ -97,7 +97,7 @@ public class GenerateReportController {
 				generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
 						request.getMetrics());
 				log.info(
-						"Generate Board Report successfully, metrics: {}, consider holiday: {}, start time: {}, end time: {}, board-report id: {}",
+						"Successfully generate board report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, board-report id: {}",
 						request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(),
 						request.getEndTime(), IdUtil.getBoardReportId(request.getCsvTimeStamp()));
 
@@ -115,7 +115,7 @@ public class GenerateReportController {
 	@PostMapping("/dora-reports")
 	public ResponseEntity<CallbackResponse> generateDoraReport(@RequestBody GenerateDoraReportRequest request) {
 		log.info(
-				"Start to generate Dora Report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
+				"Start to generate dora report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
 				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
 				IdUtil.getDoraReportId(request.getCsvTimeStamp()));
 		generateReporterService.initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
@@ -128,7 +128,7 @@ public class GenerateReportController {
 				generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
 						request.getMetrics());
 				log.info(
-						"Generate Dora Report successfully, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
+						"Successfully generate dora report, metrics: {}, consider holiday: {}, start time: {}, end time: {}, dora-report id: {}",
 						request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(),
 						request.getEndTime(), IdUtil.getDoraReportId(request.getCsvTimeStamp()));
 			}

@@ -406,20 +406,28 @@ class CSVFileGeneratorTest {
 	}
 
 	@Test
-	void shouleThrowGenerateReportExceptionWhenGeneratePipelineCsvAndCsvTimeStampInvalid() {
+	void shouldThrowGenerateReportExceptionWhenGeneratePipelineCsvAndCsvTimeStampInvalid() {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		assertThrows(GenerateReportException.class,
 				() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "../"));
 	}
 
 	@Test
-	void shouleThrowGenerateReportExceptionWhenGenerateBoardCsvAndCsvTimeStampInvalid() {
+	void shouldThrowGenerateReportExceptionWhenGenerateBoardCsvAndCsvTimeStampInvalid() {
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO();
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
 
 		assertThrows(GenerateReportException.class,
 				() -> csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, "../"));
+	}
+
+	@Test
+	void shouldThrowGenerateReportExceptionWhenGenerateMetricsCsvAndCsvTimeStampInvalid() {
+		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
+
+		assertThrows(GenerateReportException.class,
+				() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "../"));
 	}
 
 }

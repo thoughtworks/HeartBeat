@@ -1,7 +1,14 @@
 import { styled } from '@mui/material/styles'
-import { Button } from '@mui/material'
-import { theme } from '@src/theme'
 import { Z_INDEX } from '@src/constants/commons'
+import { theme } from '@src/theme'
+
+export const StyledErrorNotification = styled('div')({
+  zIndex: Z_INDEX.MODAL_BACKDROP,
+})
+
+export const StyledSpacing = styled('div')({
+  height: '1.5rem',
+})
 
 export const basicButtonStyle = {
   height: '2.5rem',
@@ -11,33 +18,3 @@ export const basicButtonStyle = {
   fontWeight: '500',
   textTransform: theme.typography.button.textTransform,
 }
-
-export const ExportButton = styled(Button)({
-  ...basicButtonStyle,
-  width: '12rem',
-  backgroundColor: theme.main.backgroundColor,
-  color: theme.main.color,
-  '&:hover': {
-    ...basicButtonStyle,
-    backgroundColor: theme.main.backgroundColor,
-    color: theme.main.color,
-  },
-})
-
-export const ButtonGroupStyle = styled('div')({
-  boxSizing: 'border-box',
-  display: 'flex',
-  textAlign: 'center',
-  margin: '0 auto',
-  justifyContent: 'space-between',
-  width: '100%',
-})
-
-export const ErrorNotificationContainer = styled('div')({
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  zIndex: Z_INDEX.MODAL_BACKDROP,
-  width: '80%',
-})

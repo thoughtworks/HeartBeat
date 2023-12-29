@@ -1,14 +1,18 @@
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 
 export interface ReportResponseDTO {
-  velocity?: VelocityResponse
-  cycleTime?: CycleTimeResponse
-  deploymentFrequency?: DeploymentFrequencyResponse
-  meanTimeToRecovery?: MeanTimeToRecoveryResponse
-  leadTimeForChanges?: LeadTimeForChangesResponse
-  changeFailureRate?: ChangeFailureRateResponse
-  classificationList?: Array<ClassificationResponse>
-  exportValidityTime?: number
+  velocity: VelocityResponse | null
+  cycleTime: CycleTimeResponse | null
+  deploymentFrequency: DeploymentFrequencyResponse | null
+  meanTimeToRecovery: MeanTimeToRecoveryResponse | null
+  leadTimeForChanges: LeadTimeForChangesResponse | null
+  changeFailureRate: ChangeFailureRateResponse | null
+  classificationList: Array<ClassificationResponse> | null
+  exportValidityTime: number | null
+  isBoardMetricsReady: boolean | null
+  isPipelineMetricsReady: boolean | null
+  isSourceControlMetricsReady: boolean | null
+  isAllMetricsReady: boolean
 }
 
 export interface VelocityResponse {
@@ -65,7 +69,7 @@ export interface DeploymentFrequencyOfPipeline {
   name: string
   step: string
   deploymentFrequency: number
-  items: DeploymentDateCount[]
+  dailyDeploymentCounts: DeploymentDateCount[]
 }
 
 export interface LeadTimeOfPipeline {
@@ -127,12 +131,12 @@ export interface ReportCallbackResponse {
 }
 
 export interface ReportResponse {
-  velocityList?: ReportDataWithTwoColumns[]
-  cycleTimeList?: ReportDataWithTwoColumns[]
-  classification?: ReportDataWithThreeColumns[]
-  deploymentFrequencyList?: ReportDataWithThreeColumns[]
-  meanTimeToRecoveryList?: ReportDataWithThreeColumns[]
-  leadTimeForChangesList?: ReportDataWithThreeColumns[]
-  changeFailureRateList?: ReportDataWithThreeColumns[]
-  exportValidityTimeMin?: number
+  velocityList?: ReportDataWithTwoColumns[] | null
+  cycleTimeList?: ReportDataWithTwoColumns[] | null
+  classification?: ReportDataWithThreeColumns[] | null
+  deploymentFrequencyList?: ReportDataWithThreeColumns[] | null
+  meanTimeToRecoveryList?: ReportDataWithThreeColumns[] | null
+  leadTimeForChangesList?: ReportDataWithThreeColumns[] | null
+  changeFailureRateList?: ReportDataWithThreeColumns[] | null
+  exportValidityTimeMin?: number | null
 }

@@ -32,8 +32,10 @@ import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
+import heartbeat.controller.report.dto.response.MetricsDataReady;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
@@ -69,8 +71,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import heartbeat.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -221,16 +225,18 @@ public class GenerateReporterService {
 		}
 
 		ReportResponse reportResponse = new ReportResponse(EXPORT_CSV_VALIDITY_TIME);
+		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
+
 		request.getMetrics().forEach(metrics -> {
 			switch (metrics.toLowerCase()) {
 				case "velocity" -> reportResponse.setVelocity(velocityCalculator
 					.calculateVelocity(fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
 				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(
 						fetchedData.getCardCollectionInfo().getRealDoneCardCollection(),
-						request.getJiraBoardSetting().getBoardColumns()));
-				case "classification" -> reportResponse.setClassificationList(
-						classificationCalculator.calculate(request.getJiraBoardSetting().getTargetFields(),
-								fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
+						jiraBoardSetting.getBoardColumns()));
+				case "classification" -> reportResponse
+					.setClassificationList(classificationCalculator.calculate(jiraBoardSetting.getTargetFields(),
+							fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
 				case "deployment frequency" -> reportResponse.setDeploymentFrequency(
 						deploymentFrequency.calculate(fetchedData.getBuildKiteData().getDeployTimesList(),
 								Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
@@ -245,9 +251,7 @@ public class GenerateReporterService {
 				}
 			}
 		});
-		generateCSVForMetric(reportResponse, request.getCsvTimeStamp());
 
-		saveReporterInHandler(reportResponse, request.getCsvTimeStamp());
 		return reportResponse;
 	}
 
@@ -255,16 +259,22 @@ public class GenerateReporterService {
 		FetchedData fetchedData = new FetchedData();
 
 		if (lowMetrics.stream().anyMatch(this.kanbanMetrics::contains)) {
+			if (request.getJiraBoardSetting() == null)
+				throw new BadRequestException("Failed to fetch Jira info due to Jira board setting is null.");
 			CardCollectionInfo cardCollectionInfo = fetchDataFromKanban(request);
 			fetchedData.setCardCollectionInfo(cardCollectionInfo);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
+			if (request.getCodebaseSetting() == null)
+				throw new BadRequestException("Failed to fetch Github info due to code base setting is null.");
 			BuildKiteData buildKiteData = fetchGithubData(request);
 			fetchedData.setBuildKiteData(buildKiteData);
 		}
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
+			if (request.getBuildKiteSetting() == null)
+				throw new BadRequestException("Failed to fetch BuildKite info due to BuildKite setting is null.");
 			FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
 			val cachedBuildKiteData = fetchedData.getBuildKiteData();
 			if (cachedBuildKiteData != null) {
@@ -562,12 +572,87 @@ public class GenerateReporterService {
 		csvFileGenerator.convertPipelineDataToCSV(pipelineData, request.getCsvTimeStamp());
 	}
 
-	private void generateCSVForMetric(ReportResponse reportResponse, String csvTimeStamp) {
-		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
+	public void generateCSVForMetric(ReportResponse reportContent, String csvTimeStamp) {
+		csvFileGenerator.convertMetricDataToCSV(reportContent, csvTimeStamp);
 	}
 
-	private void saveReporterInHandler(ReportResponse reportResponse, String csvTimeStamp) {
-		asyncReportRequestHandler.put(csvTimeStamp, reportResponse);
+	public void saveReporterInHandler(ReportResponse reportContent, String reportId) {
+		asyncReportRequestHandler.putReport(reportId, reportContent);
+	}
+
+	public void initializeMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
+		MetricsDataReady metricsStatus = getMetricsStatus(metrics, Boolean.FALSE);
+		MetricsDataReady isPreviousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
+		MetricsDataReady isMetricsDataReady = createMetricsDataReady(metricsStatus.isBoardMetricsReady(),
+				metricsStatus.isSourceControlMetricsReady(), metricsStatus.isPipelineMetricsReady(),
+				isPreviousMetricsReady);
+		asyncReportRequestHandler.putMetricsDataReady(timeStamp, isMetricsDataReady);
+	}
+
+	private MetricsDataReady createMetricsDataReady(Boolean isBoardMetricsReady, Boolean isSourceControlMetricsReady,
+			Boolean isPipelineMetricsReady, MetricsDataReady previousMetricsReady) {
+		if (previousMetricsReady == null) {
+			return MetricsDataReady.builder()
+				.isBoardMetricsReady(isBoardMetricsReady)
+				.isPipelineMetricsReady(isPipelineMetricsReady)
+				.isSourceControlMetricsReady(isSourceControlMetricsReady)
+				.build();
+		}
+
+		return MetricsDataReady.builder()
+			.isBoardMetricsReady(getCombinedReadyValue(previousMetricsReady.isBoardMetricsReady(), isBoardMetricsReady))
+			.isPipelineMetricsReady(
+					getCombinedReadyValue(previousMetricsReady.isPipelineMetricsReady(), isPipelineMetricsReady))
+			.isSourceControlMetricsReady(getCombinedReadyValue(previousMetricsReady.isSourceControlMetricsReady(),
+					isSourceControlMetricsReady))
+			.build();
+
+	}
+
+	private Boolean getCombinedReadyValue(Boolean isPreviousReadyValue, Boolean isNewReadyValue) {
+		return (isPreviousReadyValue != null || isNewReadyValue == null) ? isPreviousReadyValue : isNewReadyValue;
+	}
+
+	public void updateMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
+		MetricsDataReady metricsStatus = getMetricsStatus(metrics, Boolean.TRUE);
+		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
+		if (previousMetricsReady == null) {
+			log.error("Failed to update metrics data ready through this timestamp.");
+			throw new GenerateReportException("Failed to update metrics data ready through this timestamp.");
+		}
+		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
+			.isBoardMetricsReady(checkCurrentMetricsReadyState(metricsStatus.isBoardMetricsReady(),
+					previousMetricsReady.isBoardMetricsReady()))
+			.isPipelineMetricsReady(checkCurrentMetricsReadyState(metricsStatus.isPipelineMetricsReady(),
+					previousMetricsReady.isPipelineMetricsReady()))
+			.isSourceControlMetricsReady(checkCurrentMetricsReadyState(metricsStatus.isSourceControlMetricsReady(),
+					previousMetricsReady.isSourceControlMetricsReady()))
+			.build();
+		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+	}
+
+	private Boolean checkCurrentMetricsReadyState(Boolean exist, Boolean previousValue) {
+		if (Boolean.TRUE.equals(exist) && Objects.nonNull(previousValue))
+			return Boolean.TRUE;
+		return previousValue;
+	}
+
+	private MetricsDataReady getMetricsStatus(List<String> metrics, Boolean flag) {
+		boolean boardMetricsExist = metrics.stream().map(String::toLowerCase).anyMatch(this.kanbanMetrics::contains);
+		boolean codebaseMetricsExist = metrics.stream()
+			.map(String::toLowerCase)
+			.anyMatch(this.codebaseMetrics::contains);
+		boolean buildKiteMetricsExist = metrics.stream()
+			.map(String::toLowerCase)
+			.anyMatch(this.buildKiteMetrics::contains);
+		Boolean isBoardMetricsReady = boardMetricsExist ? flag : null;
+		Boolean isCodebaseMetricsReady = codebaseMetricsExist ? flag : null;
+		Boolean isBuildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
+		return MetricsDataReady.builder()
+			.isBoardMetricsReady(isBoardMetricsReady)
+			.isPipelineMetricsReady(isBuildKiteMetricsReady)
+			.isSourceControlMetricsReady(isCodebaseMetricsReady)
+			.build();
 	}
 
 	private boolean isBuildInfoValid(BuildKiteBuildInfo buildInfo, DeploymentEnvironment deploymentEnvironment,
@@ -654,9 +739,16 @@ public class GenerateReporterService {
 
 	public boolean checkGenerateReportIsDone(String reportTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
-			throw new GenerateReportException("Report time expires");
+			throw new GenerateReportException("Failed to get report due to report time expires");
 		}
-		BaseException exception = asyncExceptionHandler.get(reportTimeStamp);
+		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportTimeStamp));
+		BaseException doraException = asyncExceptionHandler.get(IdUtil.getDoraReportId(reportTimeStamp));
+		handleAsyncException(boardException);
+		handleAsyncException(doraException);
+		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
+	}
+
+	private static void handleAsyncException(BaseException exception) {
 		if (Objects.nonNull(exception)) {
 			switch (exception.getStatus()) {
 				case 401 -> throw new UnauthorizedException(exception.getMessage());
@@ -667,12 +759,11 @@ public class GenerateReporterService {
 				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
 			}
 		}
-		return asyncReportRequestHandler.isReportIsExists(reportTimeStamp);
 	}
 
 	private void validateExpire(long csvTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
-			throw new NotFoundException("csv not found");
+			throw new NotFoundException("Failed to fetch CSV data due to CSV not found");
 		}
 	}
 
@@ -709,7 +800,34 @@ public class GenerateReporterService {
 	}
 
 	public ReportResponse getReportFromHandler(String reportId) {
-		return asyncReportRequestHandler.get(reportId);
+		return asyncReportRequestHandler.getReport(reportId);
+	}
+
+	public ReportResponse getComposedReportResponse(String reportId, boolean isReportReady) {
+		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
+		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
+		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
+		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
+
+		return ReportResponse.builder()
+			.velocity(getValueOrNull(boardReportResponse, ReportResponse::getVelocity))
+			.classificationList(getValueOrNull(boardReportResponse, ReportResponse::getClassificationList))
+			.cycleTime(getValueOrNull(boardReportResponse, ReportResponse::getCycleTime))
+			.exportValidityTime(getValueOrNull(response, ReportResponse::getExportValidityTime))
+			.deploymentFrequency(getValueOrNull(doraReportResponse, ReportResponse::getDeploymentFrequency))
+			.changeFailureRate(getValueOrNull(doraReportResponse, ReportResponse::getChangeFailureRate))
+			.meanTimeToRecovery(getValueOrNull(doraReportResponse, ReportResponse::getMeanTimeToRecovery))
+			.leadTimeForChanges(getValueOrNull(doraReportResponse, ReportResponse::getLeadTimeForChanges))
+			.isBoardMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::isBoardMetricsReady))
+			.isPipelineMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::isPipelineMetricsReady))
+			.isSourceControlMetricsReady(
+					getValueOrNull(metricsDataReady, MetricsDataReady::isSourceControlMetricsReady))
+			.isAllMetricsReady(isReportReady)
+			.build();
+	}
+
+	private <T, R> R getValueOrNull(T object, Function<T, R> getter) {
+		return object != null ? getter.apply(object) : null;
 	}
 
 }

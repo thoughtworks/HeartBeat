@@ -1,7 +1,9 @@
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji'
 import { ICycleTimeSetting, IJiraColumnsWithValue } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
-import { DATE_FORMATE_TEMPLATE } from '@src/constants/template'
+import { DATE_FORMAT_TEMPLATE } from '@src/constants/template'
+import duration from 'dayjs/plugin/duration'
+dayjs.extend(duration)
 
 export const exportToJsonFile = (filename: string, json: object) => {
   const dataStr = JSON.stringify(json, null, 4)
@@ -62,6 +64,14 @@ export const findCaseInsensitiveType = (option: string[], value: string): string
   return newValue ? newValue : value
 }
 
-export const formateDate = (date: Date | string) => {
-  return dayjs(date).format(DATE_FORMATE_TEMPLATE)
+export const formatDate = (date: Date | string) => {
+  return dayjs(date).format(DATE_FORMAT_TEMPLATE)
+}
+
+export const formatMinToHours = (duration: number) => {
+  return dayjs.duration(duration, 'minutes').asHours()
+}
+
+export const formatMillisecondsToHours = (duration: number) => {
+  return dayjs.duration(duration, 'milliseconds').asHours()
 }

@@ -14,6 +14,38 @@ export enum REQUIRED_DATA {
   MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
 }
 
+export enum METRICS_TITLE {
+  VELOCITY = 'Velocity',
+  CYCLE_TIME = 'Cycle Time',
+  CLASSIFICATION = 'Classification',
+  LEAD_TIME_FOR_CHANGES = 'Lead Time For Changes',
+  DEPLOYMENT_FREQUENCY = 'Deployment Frequency',
+  CHANGE_FAILURE_RATE = 'Change Failure Rate',
+  MEAN_TIME_TO_RECOVERY = 'Mean Time To Recovery',
+}
+
+export enum METRICS_SUBTITLE {
+  PR_LEAD_TIME = 'PR Lead Time(Hours)',
+  PIPELINE_LEAD_TIME = 'Pipeline Lead Time(Hours)',
+  TOTAL_DELAY_TIME = 'Total Lead Time(Hours)',
+  DEPLOYMENT_FREQUENCY = 'Deployment Frequency(Deployments/Day)',
+  MEAN_TIME_TO_RECOVERY_HOURS = 'Mean Time To Recovery(Hours)',
+  FAILURE_RATE = 'Failure Rate',
+  AVERAGE_CYCLE_TIME_PRE_SP = 'Average Cycle Time(Days/SP)',
+  AVERAGE_CYCLE_TIME_PRE_CARD = 'Average Cycle Time(Days/Card)',
+  THROUGHPUT = 'Throughput(Cards Count)',
+  VELOCITY = 'Velocity(Story Point)',
+}
+
+export const DORA_METRICS: string[] = [
+  REQUIRED_DATA.LEAD_TIME_FOR_CHANGES,
+  REQUIRED_DATA.DEPLOYMENT_FREQUENCY,
+  REQUIRED_DATA.CHANGE_FAILURE_RATE,
+  REQUIRED_DATA.MEAN_TIME_TO_RECOVERY,
+]
+
+export const BOARD_METRICS: string[] = [REQUIRED_DATA.VELOCITY, REQUIRED_DATA.CYCLE_TIME, REQUIRED_DATA.CLASSIFICATION]
+
 export enum CONFIG_TITLE {
   BOARD = 'Board',
   PIPELINE_TOOL = 'Pipeline Tool',
@@ -156,3 +188,12 @@ export const METRICS_CYCLE_SETTING_TABLE_HEADER = [
     emphasis: true,
   },
 ]
+
+export const REPORT_PAGE = {
+  BOARD: {
+    TITLE: 'Board Metrics',
+  },
+  DORA: {
+    TITLE: 'DORA Metrics',
+  },
+}

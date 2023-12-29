@@ -1,4 +1,5 @@
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
+import { ReportResponseDTO } from '@src/clients/report/dto/response'
 
 export const PROJECT_NAME = 'Heartbeat'
 export const PROJECT_DESCRIPTION =
@@ -352,7 +353,7 @@ export const PR_LEAD_TIME = 'PR Lead Time'
 export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time'
 export const TOTAL_DELAY_TIME = 'Total Lead Time'
 
-export const MOCK_REPORT_RESPONSE = {
+export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   velocity: {
     velocityForSP: 20,
     velocityForCards: 14,
@@ -386,7 +387,7 @@ export const MOCK_REPORT_RESPONSE = {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
         deploymentFrequency: 0.3,
-        items: [
+        dailyDeploymentCounts: [
           {
             date: '9/9/2022',
             count: 1,
@@ -464,6 +465,10 @@ export const MOCK_REPORT_RESPONSE = {
     },
   ],
   exportValidityTime: 1800000,
+  isBoardMetricsReady: true,
+  isPipelineMetricsReady: true,
+  isSourceControlMetricsReady: true,
+  isAllMetricsReady: true,
 }
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
@@ -613,6 +618,21 @@ export const EXPECTED_REPORT_VALUES = {
     },
   ],
   exportValidityTimeMin: 30,
+}
+
+export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
+  velocity: null,
+  classificationList: null,
+  cycleTime: null,
+  deploymentFrequency: null,
+  changeFailureRate: null,
+  meanTimeToRecovery: null,
+  leadTimeForChanges: null,
+  exportValidityTime: null,
+  isBoardMetricsReady: false,
+  isPipelineMetricsReady: false,
+  isSourceControlMetricsReady: false,
+  isAllMetricsReady: false,
 }
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

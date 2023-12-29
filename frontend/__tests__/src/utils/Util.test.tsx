@@ -2,6 +2,8 @@ import {
   exportToJsonFile,
   filterAndMapCycleTimeSettings,
   findCaseInsensitiveType,
+  formatMillisecondsToHours,
+  formatMinToHours,
   getJiraBoardToken,
   transformToCleanedBuildKiteEmoji,
 } from '@src/utils/util'
@@ -126,5 +128,17 @@ describe('filterAndMapCycleTimeSettings function', () => {
     ]
     const value = filterAndMapCycleTimeSettings(MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING)
     expect(value).toStrictEqual(filterCycleTimeSettings)
+  })
+
+  it('Should return 2 hours when passing a min', () => {
+    const expected = 2
+    const result = formatMinToHours(120)
+    expect(result).toEqual(expected)
+  })
+
+  it('Should return 2 hours when passing a Milliseconds', () => {
+    const expected = 2
+    const result = formatMillisecondsToHours(7200000)
+    expect(result).toEqual(expected)
   })
 })

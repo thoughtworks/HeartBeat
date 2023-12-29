@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.JiraCard;
@@ -16,6 +17,7 @@ import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
@@ -29,8 +31,10 @@ import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
+import heartbeat.controller.report.dto.response.MetricsDataReady;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
@@ -55,13 +59,18 @@ import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.source.github.GitHubService;
 import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.util.IdUtil;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -73,6 +82,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,6 +90,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
 import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
@@ -91,10 +102,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -155,6 +171,12 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	private AsyncExceptionHandler asyncExceptionHandler;
+
+	@Captor
+	private ArgumentCaptor<MetricsDataReady> metricsCaptor;
+
+	@Captor
+	private ArgumentCaptor<String> keyCaptor;
 
 	@Test
 	void shouldReturnGenerateReportResponseWhenCallGenerateReporter() {
@@ -550,7 +572,7 @@ class GenerateReporterServiceTest {
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any()))
 			.thenReturn(List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA()));
 
-		Mockito.doAnswer(invocation -> {
+		doAnswer(invocation -> {
 			Files.createFile(csvFilePath);
 			return null;
 		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
@@ -600,7 +622,7 @@ class GenerateReporterServiceTest {
 			.thenReturn(List.of(PipelineCsvFixture.MOCK_PIPELINE_LEAD_TIME_DATA()));
 		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
-		Mockito.doAnswer(invocation -> {
+		doAnswer(invocation -> {
 			Files.createFile(mockPipelineCsvPath);
 			return null;
 		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
@@ -756,7 +778,7 @@ class GenerateReporterServiceTest {
 
 		assertThatThrownBy(() -> generateReporterService.fetchCSVData(mockExportCSVRequest))
 			.isInstanceOf(NotFoundException.class)
-			.hasMessageContaining("csv not found");
+			.hasMessageContaining("Failed to fetch CSV data due to CSV not found");
 	}
 
 	@Test
@@ -813,7 +835,7 @@ class GenerateReporterServiceTest {
 			.jiraColumns(Collections.emptyList())
 			.build());
 		when(urlGenerator.getUri(any())).thenReturn(mockUrl);
-		Mockito.doAnswer(invocation -> {
+		doAnswer(invocation -> {
 			Files.createFile(mockBoardCsvPath);
 			return null;
 		}).when(csvFileGenerator).convertBoardDataToCSV(any(), any(), any(), any());
@@ -884,33 +906,11 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldGenerateForMetricCsvWhenCallGenerateReporter() throws IOException {
-		GenerateReportRequest request = GenerateReportRequest.builder()
-			.metrics(List.of())
-			.considerHoliday(false)
-			.startTime("123")
-			.endTime("123")
-			.csvTimeStamp("1683734399999")
-			.build();
-
-		Mockito.doAnswer(invocation -> {
-			Files.createFile(mockMetricCsvPath);
-			return null;
-		}).when(csvFileGenerator).convertMetricDataToCSV(any(), any());
-
-		generateReporterService.generateReporter(request);
-
-		boolean isExists = Files.exists(mockMetricCsvPath);
-		Assertions.assertTrue(isExists);
-		Files.deleteIfExists(mockMetricCsvPath);
-	}
-
-	@Test
 	void shouldReturnTrueWhenReportIsReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
 		// when
-		when(asyncReportRequestHandler.isReportIsExists(fileTimeStamp)).thenReturn(true);
+		when(asyncReportRequestHandler.isReportReady(fileTimeStamp)).thenReturn(true);
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
 		assertTrue(generateReportIsOver);
@@ -920,7 +920,7 @@ class GenerateReporterServiceTest {
 	void shouldReturnFalseWhenReportIsNotReady() {
 		// given
 		String fileTimeStamp = Long.toString(System.currentTimeMillis());
-		asyncReportRequestHandler.put("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
+		asyncReportRequestHandler.putReport("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		// when
 		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
 		// then
@@ -936,14 +936,14 @@ class GenerateReporterServiceTest {
 		GenerateReportException generateReportException = assertThrows(GenerateReportException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
 		assertEquals(500, generateReportException.getStatus());
-		assertEquals("Report time expires", generateReportException.getMessage());
+		assertEquals("Failed to get report due to report time expires", generateReportException.getMessage());
 	}
 
 	@Test
 	void shouldReturnReportResponse() {
 		String reportId = Long.toString(System.currentTimeMillis());
 		// when
-		when(asyncReportRequestHandler.get(reportId))
+		when(asyncReportRequestHandler.getReport(reportId))
 			.thenReturn(MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
 		ReportResponse reportResponse = generateReporterService.getReportFromHandler(reportId);
 		// then
@@ -957,89 +957,388 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldThrowUnauthorizedExceptionWhenCheckGenerateReportIsDone() {
-		// given
-		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
+
 		BaseException exception = assertThrows(UnauthorizedException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
-		// then
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+
 		assertEquals(401, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowPermissionDenyExceptionWhenCheckGenerateReportIsDone() {
-		// given
-		String reportId = Long.toString(System.currentTimeMillis());
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
 		asyncExceptionHandler.put(reportId,
 				new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
-		// when
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 		BaseException exception = assertThrows(PermissionDenyException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
-		// then
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+
 		assertEquals(403, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowNotFoundExceptionWhenCheckGenerateReportIsDone() {
-		// given
-		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
 		BaseException exception = assertThrows(NotFoundException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
-		// then
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+
 		assertEquals(404, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowGenerateReportExceptionWhenCheckGenerateReportIsDone() {
-		// given
-		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
 		BaseException exception = assertThrows(GenerateReportException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
-		// then
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+
 		assertEquals(500, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 500, reason: GenerateReport", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowServiceUnavailableExceptionWhenCheckGenerateReportIsDone() {
-		// given
-		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
+
 		when(asyncExceptionHandler.get(reportId)).thenReturn(
 				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
 		BaseException exception = assertThrows(ServiceUnavailableException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
-		// then
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+
 		assertEquals(503, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 503, reason: ServiceUnavailable", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowRequestFailedExceptionWhenCheckGenerateReportIsDone() {
-		// given
-		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+		String timeStamp = Long.toString(System.currentTimeMillis());
+		String reportId = IdUtil.getDoraReportId(timeStamp);
+
 		when(asyncExceptionHandler.get(reportId)).thenReturn(new RequestFailedException(405, "RequestFailedException"));
 		BaseException exception = assertThrows(RequestFailedException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(reportId));
-		// then
+				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+
 		assertEquals(405, exception.getStatus());
 		assertEquals(
 				"Request failed with status statusCode 405, error: Request failed with status statusCode 405, error: RequestFailedException",
 				exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowBadRequestExceptionGivenMetricsContainKanbanWhenJiraSettingIsNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of(RequireDataEnum.CYCLE_TIME.getValue()))
+			.jiraBoardSetting(null)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		BadRequestException badRequestException = assertThrows(BadRequestException.class,
+				() -> generateReporterService.generateReporter(request));
+		assertEquals("Failed to fetch Jira info due to Jira board setting is null.", badRequestException.getMessage());
+	}
+
+	@Test
+	void shouldThrowBadRequestExceptionGivenMetricsContainCodeBaseWhenCodeBaseSettingIsNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES.getValue()))
+			.codebaseSetting(null)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		BadRequestException badRequestException = assertThrows(BadRequestException.class,
+				() -> generateReporterService.generateReporter(request));
+		assertEquals("Failed to fetch Github info due to code base setting is null.", badRequestException.getMessage());
+	}
+
+	@Test
+	void shouldThrowBadRequestExceptionGivenMetricsContainBuildKiteWhenBuildKiteSettingIsNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of(RequireDataEnum.CHANGE_FAILURE_RATE.getValue()))
+			.buildKiteSetting(null)
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		BadRequestException badRequestException = assertThrows(BadRequestException.class,
+				() -> generateReporterService.generateReporter(request));
+		assertEquals("Failed to fetch BuildKite info due to BuildKite setting is null.",
+				badRequestException.getMessage());
+	}
+
+	@Test
+	void shouldInitializeValueFalseGivenPreviousMapperIsNullWhenInitializeRelatedMetricsReady() {
+		String timeStamp = "1683734399999";
+		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue());
+		MetricsDataReady expectedPut = MetricsDataReady.builder()
+			.isBoardMetricsReady(false)
+			.isPipelineMetricsReady(null)
+			.isSourceControlMetricsReady(null)
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(null);
+
+		generateReporterService.initializeMetricsDataReadyInHandler(timeStamp, metrics);
+		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
+	}
+
+	@Test
+	void shouldReturnPreviousValueGivenPreviousValueExistWhenInitializeRelatedMetricsReady() {
+		String timeStamp = "1683734399999";
+		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue(),
+				RequireDataEnum.DEPLOYMENT_FREQUENCY.getValue());
+		MetricsDataReady previousMetricsDataReady = MetricsDataReady.builder()
+			.isBoardMetricsReady(false)
+			.isPipelineMetricsReady(null)
+			.isSourceControlMetricsReady(null)
+			.build();
+		MetricsDataReady expectedPut = MetricsDataReady.builder()
+			.isBoardMetricsReady(false)
+			.isPipelineMetricsReady(false)
+			.isSourceControlMetricsReady(null)
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(previousMetricsDataReady);
+
+		generateReporterService.initializeMetricsDataReadyInHandler(timeStamp, metrics);
+		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
+	}
+
+	@ParameterizedTest
+	@MethodSource({ "provideDataForTest" })
+	void shouldUpdateAndSetMetricsReadyNonnullTrueWhenMetricsExistAndPreviousMetricsReadyNotNull(List<String> metrics,
+			MetricsDataReady previousReady, MetricsDataReady expectedReady) {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(metrics)
+			.jiraBoardSetting(buildJiraBoardSetting())
+			.buildKiteSetting(buildPipelineSetting())
+			.codebaseSetting(buildCodeBaseSetting())
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
+
+		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+
+		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), expectedReady);
+	}
+
+	@Test
+	void shouldNotUpdateMetricsAndThrowExceptionWhenPreviousMetricsDataReadyNull() {
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.considerHoliday(false)
+			.metrics(List.of("velocity", "cycle time", "classification", "deployment frequency", "change failure rate",
+					"mean time to recovery", "lead time for changes"))
+			.jiraBoardSetting(buildJiraBoardSetting())
+			.buildKiteSetting(buildPipelineSetting())
+			.codebaseSetting(buildCodeBaseSetting())
+			.startTime("123")
+			.endTime("123")
+			.csvTimeStamp("1683734399999")
+			.build();
+
+		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(null);
+
+		assertThrows(GenerateReportException.class, () -> generateReporterService
+			.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics()));
+
+	}
+
+	@Test
+	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
+		ReportResponse boardResponse = ReportResponse.builder()
+			.isBoardMetricsReady(true)
+			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
+			.velocity(Velocity.builder().velocityForCards(10).build())
+			.classificationList(List.of())
+			.build();
+		ReportResponse pipelineResponse = ReportResponse.builder()
+			.isPipelineMetricsReady(true)
+			.changeFailureRate(ChangeFailureRate.builder()
+				.avgChangeFailureRate(AvgChangeFailureRate.builder().name("name").failureRate(0.1f).build())
+				.build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(
+						AvgDeploymentFrequency.builder().name("deploymentFrequency").deploymentFrequency(0.8f).build())
+				.build())
+			.meanTimeToRecovery(MeanTimeToRecovery.builder()
+				.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.TEN).build())
+				.build())
+			.build();
+
+		String timeStamp = "1683734399999";
+		String boardTimeStamp = "board-1683734399999";
+		String doraTimestamp = "dora-1683734399999";
+
+		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
+		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(pipelineResponse);
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
+			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
+
+		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
+
+		assertTrue(composedResponse.getIsAllMetricsReady());
+		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
+		assertEquals("deploymentFrequency",
+				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getName());
+		assertEquals(0.8f,
+				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getDeploymentFrequency());
+	}
+
+	@Test
+	void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
+		ReportResponse boardResponse = ReportResponse.builder()
+			.isBoardMetricsReady(true)
+			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
+			.velocity(Velocity.builder().velocityForCards(10).build())
+			.classificationList(List.of())
+			.build();
+
+		String timeStamp = "1683734399999";
+		String boardTimeStamp = "board-1683734399999";
+		String doraTimestamp = "dora-1683734399999";
+
+		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
+		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(null);
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
+			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
+
+		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
+
+		assertTrue(composedResponse.getIsAllMetricsReady());
+		assertTrue(composedResponse.getIsBoardMetricsReady());
+		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
+	}
+
+	@Test
+	void shouldDoConvertMetricDataToCSVWhenCallGenerateCSVForMetrics() throws IOException {
+		String timeStamp = "1683734399999";
+		ObjectMapper mapper = new ObjectMapper();
+		ReportResponse reportResponse = mapper
+			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
+		doNothing().when(csvFileGenerator).convertMetricDataToCSV(any(), any());
+
+		generateReporterService.generateCSVForMetric(reportResponse, timeStamp);
+
+		verify(csvFileGenerator, times(1)).convertMetricDataToCSV(reportResponse, timeStamp);
+	}
+
+	@Test
+	void shouldPutReportInHandlerWhenCallSaveReporterInHandler() throws IOException {
+		String timeStamp = "1683734399999";
+		String reportId = IdUtil.getDoraReportId(timeStamp);
+		ObjectMapper mapper = new ObjectMapper();
+		ReportResponse reportResponse = mapper
+			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
+		doNothing().when(asyncReportRequestHandler).putReport(any(), any());
+
+		generateReporterService.saveReporterInHandler(reportResponse, reportId);
+
+		verify(asyncReportRequestHandler, times(1)).putReport(reportId, reportResponse);
+	}
+
+	private JiraBoardSetting buildJiraBoardSetting() {
+		return JiraBoardSetting.builder()
+			.treatFlagCardAsBlock(true)
+			.targetFields(BoardCsvFixture.MOCK_TARGET_FIELD_LIST())
+			.build();
+	}
+
+	private BuildKiteSetting buildPipelineSetting() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		return BuildKiteSetting.builder()
+			.type("BuildKite")
+			.token("buildKite_fake_token")
+			.deploymentEnvList(List.of(mockDeployment))
+			.build();
+	}
+
+	private CodebaseSetting buildCodeBaseSetting() {
+		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
+		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		return CodebaseSetting.builder()
+			.type("Github")
+			.token("github_fake_token")
+			.leadTime(List.of(mockDeployment))
+			.build();
+	}
+
+	private static Stream<Arguments> provideDataForTest() {
+		return Stream.of(
+				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(false)
+							.isPipelineMetricsReady(false)
+							.isSourceControlMetricsReady(null)
+							.build(),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(true)
+							.isPipelineMetricsReady(true)
+							.isSourceControlMetricsReady(null)
+							.build()),
+				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(false)
+							.isPipelineMetricsReady(false)
+							.isSourceControlMetricsReady(false)
+							.build(),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(true)
+							.isPipelineMetricsReady(true)
+							.isSourceControlMetricsReady(true)
+							.build()),
+				Arguments.of(List.of("velocity"),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(false)
+							.isPipelineMetricsReady(null)
+							.isSourceControlMetricsReady(null)
+							.build(),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(true)
+							.isPipelineMetricsReady(null)
+							.isSourceControlMetricsReady(null)
+							.build()),
+				Arguments.of(List.of("deployment frequency", "change failure rate", "mean time to recovery"),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(null)
+							.isPipelineMetricsReady(false)
+							.isSourceControlMetricsReady(null)
+							.build(),
+						MetricsDataReady.builder()
+							.isBoardMetricsReady(null)
+							.isPipelineMetricsReady(true)
+							.isSourceControlMetricsReady(null)
+							.build()));
 	}
 
 }

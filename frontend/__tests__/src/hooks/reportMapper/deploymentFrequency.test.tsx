@@ -11,7 +11,7 @@ describe('deployment frequency data mapper', () => {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
         deploymentFrequency: 0.3,
-        items: [
+        dailyDeploymentCounts: [
           {
             date: '9/9/2022',
             count: 1,

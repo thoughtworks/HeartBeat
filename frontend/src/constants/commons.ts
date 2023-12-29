@@ -61,6 +61,11 @@ export enum DOWNLOAD_TYPES {
   PIPELINE = 'pipeline',
 }
 
+export enum RETRIEVE_REPORT_TYPES {
+  BOARD = 'board',
+  DORA = 'dora',
+}
+
 export const METRICS_STEPS = {
   CONFIG: 0,
   METRICS: 1,
@@ -74,4 +79,9 @@ export const COMMON_BUTTONS = {
   EXPORT_PIPELINE_DATA: 'Export pipeline data',
   EXPORT_BOARD_DATA: 'Export board data',
   EXPORT_METRIC_DATA: 'Export metric data',
+}
+
+export const GRID_CONFIG = {
+  HALF: { XS: 6, MAX_INDEX: 2, FLEX: 1 },
+  FULL: { XS: 12, MAX_INDEX: 4, FLEX: 0.25 },
 }

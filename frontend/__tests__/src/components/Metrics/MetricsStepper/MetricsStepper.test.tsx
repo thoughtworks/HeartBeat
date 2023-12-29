@@ -88,14 +88,14 @@ jest.mock('@src/utils/util', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn(),
   findCaseInsensitiveType: jest.fn(),
   filterAndMapCycleTimeSettings: jest.fn(),
-  formateDate: jest.fn(),
+  formatDate: jest.fn(),
 }))
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
-    startPollingReports: jest.fn(),
+    startToRequestBoardData: jest.fn(),
+    startToRequestDoraData: jest.fn(),
     stopPollingReports: jest.fn(),
-    isLoading: false,
     isServerError: false,
     errorMessage: '',
   }),

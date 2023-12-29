@@ -1,6 +1,7 @@
 package heartbeat.handler;
 
 import heartbeat.exception.BaseException;
+import heartbeat.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ public class AsyncExceptionHandler {
 		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
 		Set<String> keys = exceptionMap.keySet()
 			.stream()
-			.filter(reportId -> Long.parseLong(reportId) < exportTime)
+			.filter(reportId -> Long.parseLong(IdUtil.getTimeStampFromReportId(reportId)) < exportTime)
 			.collect(Collectors.toSet());
 		exceptionMap.keySet().removeAll(keys);
 	}

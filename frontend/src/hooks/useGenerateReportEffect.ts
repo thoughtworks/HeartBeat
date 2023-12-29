@@ -1,44 +1,64 @@
 import { useRef, useState } from 'react'
 import { reportClient } from '@src/clients/report/ReportClient'
-import { ReportRequestDTO } from '@src/clients/report/dto/request'
+import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { UnknownException } from '@src/exceptions/UnkonwException'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
-import { HttpStatusCode } from 'axios'
-import { reportMapper } from '@src/hooks/reportMapper/report'
-import { ReportResponse } from '@src/clients/report/dto/response'
-import { DURATION } from '@src/constants/commons'
+import { ReportResponseDTO } from '@src/clients/report/dto/response'
+import { DURATION, RETRIEVE_REPORT_TYPES } from '@src/constants/commons'
+import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
 
 export interface useGenerateReportEffectInterface {
-  startPollingReports: (params: ReportRequestDTO) => void
+  startToRequestBoardData: (boardParams: BoardReportRequestDTO) => void
+  startToRequestDoraData: (doraParams: ReportRequestDTO) => void
   stopPollingReports: () => void
-  isLoading: boolean
   isServerError: boolean
   errorMessage: string
-  reports: ReportResponse | undefined
+  reportData: ReportResponseDTO | undefined
 }
 
 export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
-  const [isLoading, setIsLoading] = useState(false)
+  const reportPath = '/reports'
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [reports, setReports] = useState<ReportResponse>()
+  const [reportData, setReportData] = useState<ReportResponseDTO>()
   const timerIdRef = useRef<number>()
+  let hasPollingStarted = false
 
-  const startPollingReports = (params: ReportRequestDTO) => {
-    setIsLoading(true)
+  const startToRequestBoardData = (boardParams: ReportRequestDTO) => {
     reportClient
-      .retrieveReport(params)
-      .then((res) => pollingReport(res.response.callbackUrl, res.response.interval))
+      .retrieveReportByUrl(boardParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.BOARD}`)
+      .then((res) => {
+        if (hasPollingStarted) return
+        hasPollingStarted = true
+        pollingReport(res.response.callbackUrl, res.response.interval)
+      })
       .catch((e) => {
-        const err = e as Error
-        if (err instanceof InternalServerException || err instanceof UnknownException) {
-          setIsServerError(true)
-        } else {
-          setErrorMessage(`generate report: ${err.message}`)
-          setTimeout(() => {
-            setErrorMessage('')
-          }, DURATION.ERROR_MESSAGE_TIME)
-        }
+        handleError(e)
+        stopPollingReports()
+      })
+  }
+
+  const handleError = (error: Error) => {
+    if (error instanceof InternalServerException || error instanceof UnknownException) {
+      setIsServerError(true)
+    } else {
+      setErrorMessage(`generate report: ${error.message}`)
+      setTimeout(() => {
+        setErrorMessage('')
+      }, DURATION.ERROR_MESSAGE_TIME)
+    }
+  }
+
+  const startToRequestDoraData = (doraParams: ReportRequestDTO) => {
+    reportClient
+      .retrieveReportByUrl(doraParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.DORA}`)
+      .then((res) => {
+        if (hasPollingStarted) return
+        hasPollingStarted = true
+        pollingReport(res.response.callbackUrl, res.response.interval)
+      })
+      .catch((e) => {
+        handleError(e)
         stopPollingReports()
       })
   }
@@ -46,38 +66,36 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const pollingReport = (url: string, interval: number) => {
     reportClient
       .pollingReport(url)
-      .then((res) => {
-        if (res.status === HttpStatusCode.Created) {
+      .then((res: { status: number; response: ReportResponseDTO }) => {
+        const response = res.response
+        handleAndUpdateData(response)
+        if (response.isAllMetricsReady) {
           stopPollingReports()
-          setReports(reportMapper(res.response))
         } else {
           timerIdRef.current = window.setTimeout(() => pollingReport(url, interval), interval * 1000)
         }
       })
       .catch((e) => {
-        const err = e as Error
-        if (err instanceof InternalServerException || err instanceof UnknownException) {
-          setIsServerError(true)
-        } else {
-          setErrorMessage(`generate report: ${err.message}`)
-          setTimeout(() => {
-            setErrorMessage('')
-          }, DURATION.ERROR_MESSAGE_TIME)
-        }
+        handleError(e)
         stopPollingReports()
       })
   }
 
   const stopPollingReports = () => {
-    setIsLoading(false)
     window.clearTimeout(timerIdRef.current)
+    hasPollingStarted = false
+  }
+
+  const handleAndUpdateData = (response: ReportResponseDTO) => {
+    const exportValidityTime = exportValidityTimeMapper(response.exportValidityTime)
+    setReportData({ ...response, exportValidityTime: exportValidityTime })
   }
 
   return {
-    startPollingReports,
+    startToRequestBoardData,
+    startToRequestDoraData,
     stopPollingReports,
-    reports,
-    isLoading,
+    reportData,
     isServerError,
     errorMessage,
   }

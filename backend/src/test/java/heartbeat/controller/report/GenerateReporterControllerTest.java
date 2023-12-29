@@ -3,15 +3,17 @@ package heartbeat.controller.report;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
-import heartbeat.controller.report.dto.request.GenerateReportRequest;
-import heartbeat.exception.GenerateReportException;
-import heartbeat.exception.RequestFailedException;
-import heartbeat.service.report.GenerateReporterService;
+import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
+import heartbeat.controller.report.dto.request.GenerateDoraReportRequest;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.exception.GenerateReportException;
+import heartbeat.exception.RequestFailedException;
+import heartbeat.service.report.GenerateReporterService;
 import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.util.IdUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,6 +45,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureJsonTesters
 class GenerateReporterControllerTest {
 
+	private static final String REQUEST_FILE_PATH = "src/test/java/heartbeat/controller/report/request.json";
+
+	private static final String RESPONSE_FILE_PATH = "src/test/java/heartbeat/controller/report/reportResponse.json";
+
 	@MockBean
 	private GenerateReporterService generateReporterService;
 
@@ -50,81 +59,54 @@ class GenerateReporterControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	void shouldReturnAcceptedStatusAndCallbackUrlAndInterval() throws Exception {
-		ReportResponse expectedResponse = ReportResponse.builder()
-			.velocity(Velocity.builder().velocityForSP(10).build())
-			.deploymentFrequency(DeploymentFrequency.builder()
-				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
-				.build())
-			.build();
-
-		ObjectMapper mapper = new ObjectMapper();
-		GenerateReportRequest request = mapper
-			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
-		String currentTimeStamp = "1685010080107";
-		request.setCsvTimeStamp(currentTimeStamp);
-
-		when(generateReporterService.generateReporter(request)).thenReturn(expectedResponse);
-
-		MockHttpServletResponse response = mockMvc
-			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(request)))
-			.andExpect(status().isAccepted())
-			.andReturn()
-			.getResponse();
-
-		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
-		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
-		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
-		assertEquals("10", interval);
-	}
-
-	@Test
 	void shouldReturnCreatedStatusWhenCheckGenerateReportIsTrue() throws Exception {
-		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+		ObjectMapper mapper = new ObjectMapper();
+		ReportResponse expectedReportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
+
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(true);
-		when(generateReporterService.getReportFromHandler(reportId))
-			.thenReturn(ReportResponse.builder().exportValidityTime(180000L).build());
-		// then
+		when(generateReporterService.getComposedReportResponse(reportId, true)).thenReturn(expectedReportResponse);
+
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isCreated())
 			.andReturn()
 			.getResponse();
-
 		final var content = response.getContentAsString();
-		final var exportValidityTime = JsonPath.parse(content).read("$.exportValidityTime");
+		ReportResponse actualReportResponse = mapper.readValue(content, ReportResponse.class);
 
-		assertEquals(180000, exportValidityTime);
-
+		assertEquals(expectedReportResponse, actualReportResponse);
 	}
 
 	@Test
-	void shouldReturnNoContentStatusWhenCheckGenerateReportIsFalse() throws Exception {
-		// given
+	void shouldReturnOkStatusWhenCheckGenerateReportIsFalse() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+		ReportResponse reportResponse = ReportResponse.builder()
+			.isBoardMetricsReady(false)
+			.isAllMetricsReady(false)
+			.build();
+
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
-		// then
+		when(generateReporterService.getComposedReportResponse(reportId, false)).thenReturn(reportResponse);
+
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isNoContent())
+			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();
+		final var content = response.getContentAsString();
+		final var isAllMetricsReady = JsonPath.parse(content).read("$.isAllMetricsReady");
 
-		assertEquals(204, response.getStatus());
+		assertEquals(false, isAllMetricsReady);
 	}
 
 	@Test
 	void shouldReturnInternalServerErrorStatusWhenCheckGenerateReportThrowException() throws Exception {
-		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+
 		when(generateReporterService.checkGenerateReportIsDone(reportId))
 			.thenThrow(new GenerateReportException("Report time expires"));
-		// then
+
 		var response = mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isInternalServerError())
 			.andReturn()
@@ -136,7 +118,6 @@ class GenerateReporterControllerTest {
 
 		assertEquals("Report time expires", errorMessage);
 		assertEquals("Generate report failed", hintInfo);
-
 	}
 
 	@Test
@@ -160,18 +141,55 @@ class GenerateReporterControllerTest {
 	}
 
 	@Test
-	void shouldGetExceptionAndPutInExceptionMap() throws Exception {
+	void shouldReturnAcceptedStatusAndCallbackUrlAndIntervalWhenCallBoardReports() throws Exception {
+		ReportResponse expectedResponse = ReportResponse.builder()
+			.velocity(Velocity.builder().velocityForSP(10).build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
+			.build();
+
 		ObjectMapper mapper = new ObjectMapper();
-		GenerateReportRequest request = mapper
-			.readValue(new File("src/test/java/heartbeat/controller/report/request.json"), GenerateReportRequest.class);
+		GenerateBoardReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateBoardReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		when(generateReporterService.generateReporter(request.convertToReportRequest())).thenReturn(expectedResponse);
+		doNothing().when(generateReporterService).initializeMetricsDataReadyInHandler(any(), any());
+		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
+		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/reports/board").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
+	}
+
+	@Test
+	void shouldGetExceptionAndPutInExceptionMapWhenCallBoardReport() throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateBoardReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
 		RequestFailedException requestFailedException = new RequestFailedException(402, "Client Error");
-		when(generateReporterService.generateReporter(request)).thenThrow(requestFailedException);
+		when(generateReporterService.generateReporter(request.convertToReportRequest()))
+			.thenThrow(requestFailedException);
+		doNothing().when(generateReporterService).initializeMetricsDataReadyInHandler(any(), any());
+		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
+		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
 
 		MockHttpServletResponse response = mockMvc
-			.perform(post("/reports").contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/reports/board").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andReturn()
@@ -183,7 +201,81 @@ class GenerateReporterControllerTest {
 		assertEquals("10", interval);
 
 		Thread.sleep(2000L);
-		verify(asyncExceptionHandler).put(currentTimeStamp, requestFailedException);
+		verify(generateReporterService).initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
+		verify(generateReporterService, times(0)).saveReporterInHandler(any(), any());
+		verify(generateReporterService, times(0)).updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
+		verify(asyncExceptionHandler).put(IdUtil.getBoardReportId(currentTimeStamp), requestFailedException);
+	}
+
+	@Test
+	void shouldGetExceptionAndPutInExceptionMapWhenCallDoraReport() throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateDoraReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateDoraReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		RequestFailedException requestFailedException = new RequestFailedException(402, "Client Error");
+		when(generateReporterService.generateReporter(request.convertToReportRequest()))
+			.thenThrow(requestFailedException);
+		doNothing().when(generateReporterService).initializeMetricsDataReadyInHandler(any(), any());
+		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
+		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/reports/dora").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
+
+		Thread.sleep(2000L);
+		verify(generateReporterService).initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
+		verify(generateReporterService, times(0)).saveReporterInHandler(any(), any());
+		verify(generateReporterService, times(0)).updateMetricsDataReadyInHandler(request.getCsvTimeStamp(),
+				request.getMetrics());
+		verify(asyncExceptionHandler).put(IdUtil.getDoraReportId(currentTimeStamp), requestFailedException);
+	}
+
+	@Test
+	void shouldReturnAcceptedStatusAndCallbackUrlAndIntervalWhenCallDoraReports() throws Exception {
+		ReportResponse expectedResponse = ReportResponse.builder()
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
+			.velocity(Velocity.builder().velocityForSP(10).build())
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(new AvgDeploymentFrequency("Average", 0.10F))
+				.build())
+			.build();
+
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateBoardReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateBoardReportRequest.class);
+		String currentTimeStamp = "1685010080107";
+		request.setCsvTimeStamp(currentTimeStamp);
+
+		when(generateReporterService.generateReporter(request.convertToReportRequest())).thenReturn(expectedResponse);
+
+		MockHttpServletResponse response = mockMvc
+			.perform(post("/reports/dora").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isAccepted())
+			.andReturn()
+			.getResponse();
+
+		final var callbackUrl = JsonPath.parse(response.getContentAsString()).read("$.callbackUrl").toString();
+		final var interval = JsonPath.parse(response.getContentAsString()).read("$.interval").toString();
+		assertEquals("/reports/" + currentTimeStamp, callbackUrl);
+		assertEquals("10", interval);
 	}
 
 }

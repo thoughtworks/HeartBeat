@@ -189,7 +189,7 @@ public class JiraService {
 
 	public JiraColumnResult getJiraColumns(BoardRequestParam boardRequestParam, URI baseUrl,
 			JiraBoardConfigDTO jiraBoardConfigDTO) {
-		log.info("Start to get jira columns, project key: {}, board id: {}, column size: {}",
+		log.info("Start to get jira columns, _projectKey: {}, _boardId: {}, _columnSize: {}",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
 				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		List<String> jiraColumns = new CopyOnWriteArrayList<>();
@@ -208,7 +208,7 @@ public class JiraService {
 			.jiraColumns(jiraColumns)
 			.build();
 		log.info(
-				"Successfully to get jira columns, project key: {}, board id: {}, column result size: {}, done columns: {}",
+				"Successfully get jira columns, _projectKey: {}, _boardId: {}, _columnResultSize: {}, _doneColumns: {}",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(),
 				jiraColumnResult.getJiraColumnResponse().size(), jiraColumns);
 		return jiraColumnResult;
@@ -216,7 +216,7 @@ public class JiraService {
 
 	private JiraColumnDTO getColumnNameAndStatus(JiraColumn jiraColumn, URI baseUrl, List<String> doneColumns,
 			String token) {
-		log.info("Start to get column and status, the column name: {} column status: {}", jiraColumn.getName(),
+		log.info("Start to get column and status, _columnName: {}, _columnStatus: {}", jiraColumn.getName(),
 				jiraColumn.getStatuses());
 		List<StatusSelfDTO> statusSelfList = getStatusSelfList(baseUrl, jiraColumn, token);
 		String key = handleColumKey(doneColumns, statusSelfList);
@@ -230,13 +230,13 @@ public class JiraService {
 					.toList())
 				.build())
 			.build();
-		log.info("Successfully get column and status, the column key: {}, status: {}", jiraColumnDTO.getKey(),
+		log.info("Successfully get column and status, _columnKey: {}, _status: {}", jiraColumnDTO.getKey(),
 				jiraColumnDTO.getValue().getStatuses());
 		return jiraColumnDTO;
 	}
 
 	private List<StatusSelfDTO> getStatusSelfList(URI baseUrl, JiraColumn jiraColumn, String token) {
-		log.info("Start to get columns status self list, column name: {}", jiraColumn.getName());
+		log.info("Start to get columns status self list, _columnName: {}", jiraColumn.getName());
 		List<CompletableFuture<StatusSelfDTO>> futures = jiraColumn.getStatuses()
 			.stream()
 			.map(jiraColumnStatus -> CompletableFuture
@@ -249,7 +249,7 @@ public class JiraService {
 					return null;
 				}))
 			.toList();
-		log.info("Successfully get columns status self list, column name: {}", jiraColumn.getName());
+		log.info("Successfully get columns status self list, _columnName: {}", jiraColumn.getName());
 
 		return futures.stream().map(CompletableFuture::join).filter(Objects::nonNull).toList();
 	}
@@ -406,10 +406,10 @@ public class JiraService {
 	}
 
 	private List<String> getAssigneeSet(URI baseUrl, JiraCard jiraCard, String jiraToken) {
-		log.info("Start to get jira card history, card key: {}", jiraCard.getKey());
+		log.info("Start to get jira card history, _cardKey: {}", jiraCard.getKey());
 		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(),
 				jiraToken);
-		log.info("Successfully get jira card history, card key: {}, card history items size: {}", jiraCard.getKey(),
+		log.info("Successfully get jira card history, _cardKey: {}, _cardHistoryItemsSize: {}", jiraCard.getKey(),
 				cardHistoryResponseDTO.getItems().size());
 
 		List<String> assigneeSet = cardHistoryResponseDTO.getItems()
@@ -425,7 +425,7 @@ public class JiraService {
 				&& nonNull(jiraCard.getFields().getAssignee().getDisplayName())) {
 			return List.of(jiraCard.getFields().getAssignee().getDisplayName());
 		}
-		log.info("Successfully get assigneeSet:{}", assigneeSet);
+		log.info("Successfully get _assigneeSet:{}", assigneeSet);
 		return assigneeSet;
 	}
 
@@ -434,7 +434,7 @@ public class JiraService {
 	}
 
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
-		log.info("Start to get target field, project key: {}, board id: {},", boardRequestParam.getProjectKey(),
+		log.info("Start to get target field, _projectKey: {}, _boardId: {},", boardRequestParam.getProjectKey(),
 				boardRequestParam.getBoardId());
 		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(),
 				boardRequestParam.getToken());
@@ -448,7 +448,7 @@ public class JiraService {
 			.flatMap(issuetype -> getTargetIssueField(issuetype.getFields()).stream())
 			.distinct()
 			.toList();
-		log.info("Successfully get target field, project key: {}, board id: {}, target fields size: {},",
+		log.info("Successfully get _targetField, _projectKey: {}, _boardId: {}, _targetFieldsSize: {},",
 				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId(), targetFields.size());
 		return targetFields;
 	}
@@ -769,13 +769,13 @@ public class JiraService {
 
 	private JiraCardWithFields getCardList(URI baseUrl, BoardRequestParam boardRequestParam, String jql,
 			String cardType) {
-		log.info("Start to get first-page xxx card information form kanban, param {}", cardType);
+		log.info("Start to get first-page xxx card information form kanban, _param {}", cardType);
 		String allCardResponse = jiraFeignClient.getJiraCards(baseUrl, boardRequestParam.getBoardId(), QUERY_COUNT, 0,
 				jql, boardRequestParam.getToken());
 		if (allCardResponse.isEmpty()) {
 			return JiraCardWithFields.builder().jiraCards(Collections.emptyList()).build();
 		}
-		log.info("Successfully get first-page xxx card information form kanban, param {}", cardType);
+		log.info("Successfully get first-page xxx card information form kanban, _param {}", cardType);
 
 		List<TargetField> targetField = getTargetField(baseUrl, boardRequestParam);
 		AllDoneCardsResponseDTO allCardsResponseDTO = formatAllDoneCards(allCardResponse, targetField);
@@ -786,7 +786,7 @@ public class JiraService {
 			return JiraCardWithFields.builder().jiraCards(cards).targetFields(targetField).build();
 		}
 
-		log.info("Start to get more xxx card information form kanban, param {}", cardType);
+		log.info("Start to get more xxx card information form kanban, _param {}", cardType);
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
 		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
 			.map(startFrom -> CompletableFuture.supplyAsync(
@@ -794,7 +794,7 @@ public class JiraService {
 							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()), targetField)),
 					customTaskExecutor))
 			.toList();
-		log.info("Successfully get more xxx card information form kanban, param {}", cardType);
+		log.info("Successfully get more xxx card information form kanban, _param {}", cardType);
 
 		List<AllDoneCardsResponseDTO> nonDoneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
 		List<JiraCard> moreNonDoneCards = nonDoneCardsResponses.stream()
@@ -808,9 +808,9 @@ public class JiraService {
 	}
 
 	public JiraBoardConfigDTO getJiraBoardConfig(URI baseUrl, String boardId, String token) {
-		log.info("Start to get configuration for board, board id: {}", boardId);
+		log.info("Start to get configuration for board, _boardId: {}", boardId);
 		JiraBoardConfigDTO jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId, token);
-		log.info("Successfully get configuration for board, name: {}, column size: {}", jiraBoardConfigDTO.getName(),
+		log.info("Successfully get configuration for board, _name: {}, _columnSize: {}", jiraBoardConfigDTO.getName(),
 				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		return jiraBoardConfigDTO;
 	}

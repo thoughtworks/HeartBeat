@@ -12,7 +12,6 @@ import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup'
 import BoardMetrics from '@src/components/Metrics/ReportStep/BoradMetrics'
 import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics'
 import { selectTimeStamp } from '@src/context/stepper/StepperSlice'
-import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface

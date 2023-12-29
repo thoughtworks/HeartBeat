@@ -156,6 +156,7 @@ export const configSlice = createSlice({
       const { githubRepos } = action.payload
       state.sourceControl.verifiedResponse.repoList = githubRepos
     },
+    resetImportedData: () => initialBasicConfigState,
   },
 })
 export const {
@@ -175,6 +176,7 @@ export const {
   updateSourceControlVerifyState,
   updateSourceControlVerifiedResponse,
   updatePipelineToolVerifyResponseSteps,
+  resetImportedData,
 } = configSlice.actions
 
 export const selectProjectName = (state: RootState) => state.config.basic.projectName

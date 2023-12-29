@@ -120,7 +120,7 @@ export class Metrics {
   }
 
   chooseDropdownOption = (label: string, value: string) => {
-    cy.contains('label', label).parent().click()
+    this.getCycleTimeSettingsAutoCompleteField(label).click()
     cy.get('li[role="option"]').contains(value).click()
   }
 
@@ -129,6 +129,8 @@ export class Metrics {
   getOrganizationSelect = (i: number) => cy.get('[data-test-id="single-selection-organization"]').eq(i)
 
   getPipelineSelect = (i: number) => cy.get('[data-test-id="single-selection-pipeline-name"]').eq(i)
+  getCycleTimeSettingsAutoCompleteField = (name: string) => cy.get(`[aria-label="Cycle time select for ${name}"]`)
+  getPipelineSettingsAutoCompleteField = (name: string) => cy.contains(name).siblings().eq(0)
 
   checkCycleTime() {
     this.chooseDropdownOption(Metrics.CYCLE_TIME_LABEL.analysisLabel, Metrics.CYCLE_TIME_VALUE.analysisValue)

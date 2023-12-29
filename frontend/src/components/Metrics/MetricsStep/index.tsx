@@ -45,7 +45,7 @@ const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
 
         {isShowCrewsAndRealDone && <Crews options={users} title={'Crew settings'} label={'Included Crews'} />}
 
-        {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime title={'Cycle time settings'} />}
+        {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime />}
 
         {isShowCrewsAndRealDone && isShowRealDone && (
           <RealDone columns={jiraColumns} title={'Real done setting'} label={'Consider as Done'} />

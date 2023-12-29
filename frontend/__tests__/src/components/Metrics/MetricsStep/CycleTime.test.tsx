@@ -47,7 +47,7 @@ jest.mock('@src/hooks/useAppDispatch', () => ({
 const setup = () =>
   render(
     <Provider store={store}>
-      <CycleTime title={CYCLE_TIME_SETTINGS} />
+      <CycleTime />
     </Provider>
   )
 
@@ -75,26 +75,17 @@ describe('CycleTime', () => {
     it('should show selectors title when render Crews component', () => {
       const { getByText } = setup()
 
-      expect(getByText('Doing (Analysis, In Dev, doing)')).toBeInTheDocument()
-      expect(getByText('Testing (Test)')).toBeInTheDocument()
-      expect(getByText('TODO (To do)')).toBeInTheDocument()
+      expect(getByText('Analysis, In Dev, doing')).toBeInTheDocument()
+      expect(getByText('Test')).toBeInTheDocument()
+      expect(getByText('To do')).toBeInTheDocument()
     })
 
-    it('should show selectors title tooltip when title too long', async () => {
+    it('should always show board status column tooltip', async () => {
       const { getByText, getByRole } = setup()
-      userEvent.hover(getByText('Doing (Analysis, In Dev, doing)'))
+      userEvent.hover(getByText('Analysis, In Dev, doing'))
 
       await waitFor(() => {
-        expect(getByRole('tooltip', { name: 'Doing (Analysis, In Dev, doing)', hidden: true })).toBeVisible()
-      })
-    })
-
-    it('should show selectors title tooltip when title is less 25', async () => {
-      const { getByText, queryByRole } = setup()
-      userEvent.hover(getByText('TODO (To do)'))
-
-      await waitFor(() => {
-        expect(queryByRole('tooltip', { name: 'TODO (To do)', hidden: true })).toBeNull()
+        expect(getByRole('tooltip', { name: 'Analysis, In Dev, doing' })).toBeVisible()
       })
     })
 

@@ -2,7 +2,7 @@ import Stack from '@mui/material/Stack'
 
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice'
+import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice'
 import React, { useState } from 'react'
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
 import { resetStep } from '@src/context/stepper/StepperSlice'
@@ -57,6 +57,7 @@ export const HomeGuide = () => {
 
   const openFileImportBox = () => {
     setValidConfig(true)
+    dispatch(resetImportedData())
     dispatch(resetStep())
     const fileInput = getImportFileElement()
     fileInput.click()
@@ -64,6 +65,7 @@ export const HomeGuide = () => {
 
   const createNewProject = () => {
     dispatch(resetStep())
+    dispatch(resetImportedData())
     navigate(ROUTE.METRICS_PAGE)
   }
 

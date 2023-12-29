@@ -1,4 +1,5 @@
 import configReducer, {
+  resetImportedData,
   updateCalendarType,
   updateDateRange,
   updateMetrics,
@@ -70,6 +71,14 @@ describe('config reducer', () => {
     const config = configReducer(initialState, action)
 
     expect(config.warningMessage).toBeNull()
+  })
+
+  it('should reset ImportedData when input new config', () => {
+    const initialState = initialConfigState
+
+    const config = configReducer(initialState, resetImportedData())
+
+    expect(config).toEqual(initialConfigState)
   })
 
   it.each([

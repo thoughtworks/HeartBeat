@@ -25,9 +25,9 @@ export enum METRICS_TITLE {
 }
 
 export enum METRICS_SUBTITLE {
-  PR_LEAD_TIME = 'PR Lead Time',
-  PIPELINE_LEAD_TIME = 'Pipeline Lead Time',
-  TOTAL_DELAY_TIME = 'Total Lead Time',
+  PR_LEAD_TIME = 'PR Lead Time(Hours)',
+  PIPELINE_LEAD_TIME = 'Pipeline Lead Time(Hours)',
+  TOTAL_DELAY_TIME = 'Total Lead Time(Hours)',
   DEPLOYMENT_FREQUENCY = 'Deployment Frequency(Deployments/Day)',
   FAILURE_RATE = 'Failure Rate',
   AVERAGE_CYCLE_TIME_PRE_SP = 'Average Cycle Time(Days/SP)',
@@ -172,6 +172,21 @@ export const MESSAGE = {
   EXPIRE_IN_FIVE_MINUTES: 'The file will expire in 5 minutes, please download it in time.',
   REPORT_LOADING: 'The report is being generated, please do not refresh the page or all the data will be disappeared.',
 }
+
+export const METRICS_CYCLE_SETTING_TABLE_HEADER = [
+  {
+    text: 'Board Column',
+    emphasis: false,
+  },
+  {
+    text: 'Status',
+    emphasis: false,
+  },
+  {
+    text: 'Corresponding Heartbeat status',
+    emphasis: true,
+  },
+]
 
 export const REPORT_PAGE = {
   BOARD: {

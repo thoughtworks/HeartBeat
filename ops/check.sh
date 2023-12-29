@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -xeuo pipefail
 
 display_help() {
   echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e}" >&2
@@ -7,6 +7,7 @@ display_help() {
   echo "   shell              run shell check for the whole project"
   echo "   security           run security check for the whole project"
   echo "   frontend           run check for the frontend"
+  echo "   px                 run css px check for the frontend"
   echo "   backend            run check for the backend"
   echo "   backend-license    check license for the backend"
   echo "   frontend-license   check license for the frontend"
@@ -62,6 +63,19 @@ frontend_check(){
   pnpm build
 }
 
+px_check() {
+  cd frontend
+  local result=''
+  result="$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '[0-9]\+px' ./)"
+  if [ -n "$result" ]; then
+    echo "Error: Found files with [0-9]+px pattern:"
+    echo "$result"
+    exit 1
+  else
+    echo "No matching files found."
+  fi
+}
+
 e2e_check(){
   cd frontend
   pnpm install --no-frozen-lockfile
@@ -78,6 +92,7 @@ while [[ "$#" -gt 0 ]]; do
     shell) check_shell ;;
     security) security_check ;;
     frontend) frontend_check ;;
+    px) px_check ;;
     backend) backend_check ;;
     e2e) e2e_check ;;
     "backend-license") backend_license_check ;;

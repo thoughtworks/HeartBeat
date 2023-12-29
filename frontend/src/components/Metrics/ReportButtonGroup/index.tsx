@@ -21,8 +21,8 @@ import { ReportResponseDTO } from '@src/clients/report/dto/response'
 interface ReportButtonGroupProps {
   handleSave: () => void
   csvTimeStamp: number
-  startDate: string | null
-  endDate: string | null
+  startDate: string
+  endDate: string
   setErrorMessage: (message: string) => void
   shouldShowBoardExportButton: boolean
   reportData: ReportResponseDTO | undefined
@@ -50,18 +50,14 @@ export const ReportButtonGroup = ({
     setErrorMessage(errorMessage)
   }, [errorMessage])
 
-  const exportCSV = (
-    dataType: DOWNLOAD_TYPES,
-    startDate: string | null,
-    endDate: string | null
-  ): CSVReportRequestDTO => ({
+  const exportCSV = (dataType: DOWNLOAD_TYPES, startDate: string, endDate: string): CSVReportRequestDTO => ({
     dataType: dataType,
     csvTimeStamp: csvTimeStamp,
-    startDate: startDate ?? '',
-    endDate: endDate ?? '',
+    startDate: startDate,
+    endDate: endDate,
   })
 
-  const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string | null, endDate: string | null) => {
+  const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string, endDate: string) => {
     fetchExportData(exportCSV(dataType, startDate, endDate))
   }
 

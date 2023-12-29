@@ -33,7 +33,9 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const configData = useAppSelector(selectConfig)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
 
-  const { startDate, endDate } = configData.basic.dateRange
+  const startDate = configData.basic.dateRange.startDate ?? ''
+  const endDate = configData.basic.dateRange.endDate ?? ''
+
   const { updateProps } = notification
   const [errorMessage, setErrorMessage] = useState<string>()
 

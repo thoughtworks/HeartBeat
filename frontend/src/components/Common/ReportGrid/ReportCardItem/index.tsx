@@ -29,7 +29,7 @@ export const ReportCardItem = ({
 }: ReportCardItemProps) => {
   return (
     <StyledItem style={style}>
-      {showDividingLine && <StyledDividingLine src={DividingLine} alt='dividingLine' />}
+      {showDividingLine && <StyledDividingLine src={DividingLine} alt='Dividing Line' />}
       <StyledWrapper>
         <StyledContent>
           <StyledValueSection>

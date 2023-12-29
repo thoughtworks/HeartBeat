@@ -25,9 +25,9 @@ export enum METRICS_TITLE {
 }
 
 export enum METRICS_SUBTITLE {
-  PR_LEAD_TIME = 'PR Lead Time',
-  PIPELINE_LEAD_TIME = 'Pipeline Lead Time',
-  TOTAL_DELAY_TIME = 'Total Lead Time',
+  PR_LEAD_TIME = 'PR Lead Time(Hours)',
+  PIPELINE_LEAD_TIME = 'Pipeline Lead Time(Hours)',
+  TOTAL_DELAY_TIME = 'Total Lead Time(Hours)',
   DEPLOYMENT_FREQUENCY = 'Deployment Frequency(Deployments/Day)',
   FAILURE_RATE = 'Failure Rate',
   AVERAGE_CYCLE_TIME_PRE_SP = 'Average Cycle Time(Days/SP)',

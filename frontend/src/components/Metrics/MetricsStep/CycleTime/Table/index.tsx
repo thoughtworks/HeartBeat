@@ -90,7 +90,7 @@ const CycleTimeTable = () => {
             const row2Content = row.statuses?.join(', ')
             return (
               <TableRow hover key={index}>
-                <StyledTableRowCell title={row1Content}>{row1Content}</StyledTableRowCell>
+                <StyledTableRowCell>{row1Content}</StyledTableRowCell>
                 <StyledTableRowCell>
                   <Tooltip title={row2Content} arrow>
                     <EllipsisText fitContent>{row2Content}</EllipsisText>

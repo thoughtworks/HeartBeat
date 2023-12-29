@@ -274,7 +274,7 @@ public class GenerateReporterService {
 
 		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
 			if (request.getBuildKiteSetting() == null)
-				throw new BadRequestException("Failed to fetch BuildKite info due toBuildKite setting is null.");
+				throw new BadRequestException("Failed to fetch BuildKite info due to BuildKite setting is null.");
 			FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
 			val cachedBuildKiteData = fetchedData.getBuildKiteData();
 			if (cachedBuildKiteData != null) {
@@ -572,12 +572,12 @@ public class GenerateReporterService {
 		csvFileGenerator.convertPipelineDataToCSV(pipelineData, request.getCsvTimeStamp());
 	}
 
-	public void generateCSVForMetric(ReportResponse reportResponse, String csvTimeStamp) {
-		csvFileGenerator.convertMetricDataToCSV(reportResponse, csvTimeStamp);
+	public void generateCSVForMetric(ReportResponse reportContent, String csvTimeStamp) {
+		csvFileGenerator.convertMetricDataToCSV(reportContent, csvTimeStamp);
 	}
 
-	public void saveReporterInHandler(ReportResponse reportResponse, String reportId) {
-		asyncReportRequestHandler.putReport(reportId, reportResponse);
+	public void saveReporterInHandler(ReportResponse reportContent, String reportId) {
+		asyncReportRequestHandler.putReport(reportId, reportContent);
 	}
 
 	public void initializeMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {

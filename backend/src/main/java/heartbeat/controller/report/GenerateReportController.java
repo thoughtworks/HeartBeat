@@ -43,7 +43,7 @@ public class GenerateReportController {
 	@GetMapping("/{dataType}/{filename}")
 	public InputStreamResource exportCSV(@PathVariable DataType dataType, @PathVariable String filename) {
 		log.info("Start to export CSV file, dataType: {}, time stamp: {}", dataType, filename);
-		ExportCSVRequest request = new ExportCSVRequest(dataType.name(), filename);
+		ExportCSVRequest request = new ExportCSVRequest(dataType.name().toLowerCase(), filename);
 		InputStreamResource result = generateReporterService.fetchCSVData(request);
 		log.info("Successfully get CSV file, dataType: {}, time stamp: {}, result: {}", dataType, filename, result);
 		return result;

@@ -356,18 +356,23 @@ public class CSVFileGenerator {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-		File file = new File(fileName);
+		if (!fileName.contains("..") && fileName.startsWith("./csv")) {
+			File file = new File(fileName);
 
-		try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
-			String[] headers = { "Group", "Metrics", "Value" };
+			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
+				String[] headers = { "Group", "Metrics", "Value" };
 
-			csvWriter.writeNext(headers);
+				csvWriter.writeNext(headers);
 
-			csvWriter.writeAll(convertReportResponseToCSVRows(reportResponse));
+				csvWriter.writeAll(convertReportResponseToCSVRows(reportResponse));
+			}
+			catch (IOException e) {
+				log.error("Failed to write file", e);
+				throw new FileIOException(e);
+			}
 		}
-		catch (IOException e) {
-			log.error("Failed to write file", e);
-			throw new FileIOException(e);
+		else {
+			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
 		}
 	}
 

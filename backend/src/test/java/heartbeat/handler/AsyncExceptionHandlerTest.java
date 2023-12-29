@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
-
 @ExtendWith(MockitoExtension.class)
 class AsyncExceptionHandlerTest {
 

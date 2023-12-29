@@ -10,6 +10,10 @@ steps:
     key: "check-security"
     command: ./ops/check.sh security
 
+  # - label: ":lock: Check CSS px"
+  #   key: "check-px"
+  #   command: ./ops/check.sh px
+
   - label: ":white_check_mark: Check Backend"
     if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
     key: "check-backend"

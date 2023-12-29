@@ -7,7 +7,6 @@ type Props = {
 }
 
 const DateRangeViewer = ({ startDate, endDate }: Props) => {
-  console.log(formateDate)
   return (
     <DateRangeContainer>
       {formateDate(startDate)}

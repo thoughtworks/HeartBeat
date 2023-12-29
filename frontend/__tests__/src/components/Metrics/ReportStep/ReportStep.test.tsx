@@ -146,21 +146,21 @@ describe('Report Step', () => {
       expect(getAllByTestId('loading-page')).toHaveLength(6)
     })
 
-    it('should renders the velocity component with correct props', async () => {
+    it('should render the velocity component with correct props', async () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[1]])
 
       expect(getByText('20')).toBeInTheDocument()
       expect(getByText('14')).toBeInTheDocument()
     })
 
-    it('should renders the CycleTime component with correct props', () => {
+    it('should render the CycleTime component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[2]])
 
       expect(getByText('30.26')).toBeInTheDocument()
       expect(getByText('21.18')).toBeInTheDocument()
     })
 
-    it('should renders the Lead Time For Change component with correct props', () => {
+    it('should render the Lead Time For Change component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[4]])
 
       expect(getByText('3647.51')).toBeInTheDocument()
@@ -168,26 +168,26 @@ describe('Report Step', () => {
       expect(getByText('5989.22')).toBeInTheDocument()
     })
 
-    it('should renders the Deployment frequency component with correct props', () => {
+    it('should render the Deployment frequency component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[5]])
 
       expect(getByText('0.40')).toBeInTheDocument()
     })
 
-    it('should renders the Change failure rate component with correct props', () => {
+    it('should render the Change failure rate component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[6]])
 
       expect(getByText('0.00')).toBeInTheDocument()
       expect(getByText('% (0/6)')).toBeInTheDocument()
     })
 
-    it('should renders the Mean time to recovery component with correct props', () => {
+    it('should render the Mean time to recovery component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[7]])
 
       expect(getByText('14396108.78')).toBeInTheDocument()
     })
 
-    it('should show errorMessage when generateReport has error message', () => {
+    it('should show errorMessage when generating report has error message', () => {
       reportHook.current.errorMessage = 'error message'
 
       const { getByText } = setup([''])
@@ -197,7 +197,7 @@ describe('Report Step', () => {
   })
 
   describe('behavior', () => {
-    it('should call handleBack method when click back button given back button enabled', async () => {
+    it('should call handleBack method when clicking back button given back button enabled', async () => {
       const { getByText } = setup([''])
 
       const back = getByText(BACK)
@@ -206,7 +206,7 @@ describe('Report Step', () => {
       expect(backStep).toHaveBeenCalledTimes(1)
     })
 
-    it('should call handleSaveMock method when click save button', async () => {
+    it('should call handleSaveMock method when clicking save button', async () => {
       const { getByText } = setup([''])
 
       const save = getByText(SAVE)
@@ -267,7 +267,7 @@ describe('Report Step', () => {
   })
 
   describe('export pipeline data', () => {
-    it('should not show export pipeline button when not select deployment frequency', () => {
+    it('should not show export pipeline button when not selecting deployment frequency', () => {
       const { queryByText } = setup([REQUIRED_DATA_LIST[1]])
 
       const exportPipelineButton = queryByText(EXPORT_PIPELINE_DATA)
@@ -276,7 +276,7 @@ describe('Report Step', () => {
     })
 
     it.each([[REQUIRED_DATA_LIST[4]], [REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]]])(
-      'should show export pipeline button when select %s',
+      'should show export pipeline button when selecting %s',
       (requiredData) => {
         const { getByText } = setup([requiredData])
 
@@ -299,7 +299,7 @@ describe('Report Step', () => {
   })
 
   describe('export board data', () => {
-    it('should not show export board button when not select board metrics', () => {
+    it('should not show export board button when not selecting board metrics', () => {
       const { queryByText } = setup([REQUIRED_DATA_LIST[4]])
 
       const exportPipelineButton = queryByText(EXPORT_BOARD_DATA)
@@ -308,7 +308,7 @@ describe('Report Step', () => {
     })
 
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[2]]])(
-      'should show export board button when select %s',
+      'should show export board button when selecting %s',
       (requiredData) => {
         const { getByText } = setup([requiredData])
 
@@ -331,7 +331,7 @@ describe('Report Step', () => {
   })
 
   describe('export metric data', () => {
-    it('should show errorMessage when click export metric button given csv not exist', () => {
+    it('should show errorMessage when clicking export metric button given csv not exist', () => {
       const { getByText } = setup([''])
 
       userEvent.click(getByText(EXPORT_METRIC_DATA))

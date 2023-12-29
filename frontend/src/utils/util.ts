@@ -71,3 +71,7 @@ export const formatDate = (date: Date | string) => {
 export const formatMinToHours = (duration: number) => {
   return dayjs.duration(duration, 'minutes').asHours()
 }
+
+export const formatMillisecondsToHours = (duration: number) => {
+  return dayjs.duration(duration, 'milliseconds').asHours()
+}

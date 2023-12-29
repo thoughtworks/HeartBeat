@@ -29,6 +29,7 @@ export enum METRICS_SUBTITLE {
   PIPELINE_LEAD_TIME = 'Pipeline Lead Time(Hours)',
   TOTAL_DELAY_TIME = 'Total Lead Time(Hours)',
   DEPLOYMENT_FREQUENCY = 'Deployment Frequency(Deployments/Day)',
+  MEAN_TIME_TO_RECOVERY_HOURS = 'Mean Time To Recovery(Hours)',
   FAILURE_RATE = 'Failure Rate',
   AVERAGE_CYCLE_TIME_PRE_SP = 'Average Cycle Time(Days/SP)',
   AVERAGE_CYCLE_TIME_PRE_CARD = 'Average Cycle Time(Days/Card)',

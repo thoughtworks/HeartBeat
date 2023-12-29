@@ -1088,7 +1088,7 @@ class GenerateReporterServiceTest {
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
 				() -> generateReporterService.generateReporter(request));
-		assertEquals("Failed to fetch BuildKite info due toBuildKite setting is null.",
+		assertEquals("Failed to fetch BuildKite info due to BuildKite setting is null.",
 				badRequestException.getMessage());
 	}
 

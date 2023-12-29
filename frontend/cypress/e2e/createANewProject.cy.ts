@@ -17,12 +17,12 @@ const velocityData = [
 
 const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '2.36' }]
 
-const meanTimeToRecoveryData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '15959798.00' }]
+const meanTimeToRecoveryData = [{ label: 'Mean Time To Recovery(Hours)', value: '4.43' }]
 
 const leadTimeForChangeData = [
-  { label: 'PR Lead Time', value: '0.00' },
-  { label: 'Pipeline Lead Time', value: '-292.25' },
-  { label: 'Total Lead Time', value: '-292.25' },
+  { label: 'PR Lead Time(Hours)', value: '0.00' },
+  { label: 'Pipeline Lead Time(Hours)', value: '-4.87' },
+  { label: 'Total Lead Time(Hours)', value: '-4.87' },
 ]
 
 const changeFailureRateData = [{ label: 'Failure Rate', value: '0.49' }]

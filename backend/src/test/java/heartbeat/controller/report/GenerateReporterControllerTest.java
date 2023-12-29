@@ -47,6 +47,8 @@ class GenerateReporterControllerTest {
 
 	private static final String REQUEST_FILE_PATH = "src/test/java/heartbeat/controller/report/request.json";
 
+	private static final String RESPONSE_FILE_PATH = "src/test/java/heartbeat/controller/report/reportResponse.json";
+
 	@MockBean
 	private GenerateReporterService generateReporterService;
 
@@ -60,8 +62,7 @@ class GenerateReporterControllerTest {
 	void shouldReturnCreatedStatusWhenCheckGenerateReportIsTrue() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis());
 		ObjectMapper mapper = new ObjectMapper();
-		ReportResponse expectedReportResponse = mapper
-			.readValue(new File(REQUEST_FILE_PATH), ReportResponse.class);
+		ReportResponse expectedReportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(true);
 		when(generateReporterService.getComposedReportResponse(reportId, true)).thenReturn(expectedReportResponse);
@@ -149,8 +150,8 @@ class GenerateReporterControllerTest {
 			.build();
 
 		ObjectMapper mapper = new ObjectMapper();
-		GenerateBoardReportRequest request = mapper.readValue(
-				new File(REQUEST_FILE_PATH), GenerateBoardReportRequest.class);
+		GenerateBoardReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
@@ -175,8 +176,8 @@ class GenerateReporterControllerTest {
 	@Test
 	void shouldGetExceptionAndPutInExceptionMapWhenCallBoardReport() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
-		GenerateBoardReportRequest request = mapper.readValue(
-				new File(REQUEST_FILE_PATH), GenerateBoardReportRequest.class);
+		GenerateBoardReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
@@ -211,8 +212,8 @@ class GenerateReporterControllerTest {
 	@Test
 	void shouldGetExceptionAndPutInExceptionMapWhenCallDoraReport() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
-		GenerateDoraReportRequest request = mapper.readValue(
-				new File(REQUEST_FILE_PATH), GenerateDoraReportRequest.class);
+		GenerateDoraReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateDoraReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
@@ -257,8 +258,8 @@ class GenerateReporterControllerTest {
 			.build();
 
 		ObjectMapper mapper = new ObjectMapper();
-		GenerateBoardReportRequest request = mapper.readValue(
-				new File(REQUEST_FILE_PATH), GenerateBoardReportRequest.class);
+		GenerateBoardReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 

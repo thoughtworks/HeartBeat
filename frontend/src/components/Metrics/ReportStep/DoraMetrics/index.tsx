@@ -17,7 +17,7 @@ import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { StyledSpacing } from '@src/components/Metrics/ReportStep/style'
-import { formatMinToHours } from '@src/utils/util'
+import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util'
 
 interface DoraMetricsProps {
   startToRequestDoraData: (request: ReportRequestDTO) => void
@@ -135,8 +135,8 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
             title: METRICS_TITLE.MEAN_TIME_TO_RECOVERY,
             items: meanTimeToRecovery && [
               {
-                value: meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery,
-                subtitle: METRICS_SUBTITLE.DEPLOYMENT_FREQUENCY,
+                value: formatMillisecondsToHours(meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery),
+                subtitle: METRICS_SUBTITLE.MEAN_TIME_TO_RECOVERY_HOURS,
               },
             ],
           },

@@ -28,6 +28,7 @@ import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEff
 import React from 'react'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { MESSAGE } from '@src/constants/resources'
+import { formatMillisecondsToHours } from '@src/utils/util'
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({
   ...jest.requireActual('@src/context/stepper/StepperSlice'),
@@ -62,6 +63,7 @@ jest.mock('@src/utils/util', () => ({
   getJiraBoardToken: jest.fn(),
   filterAndMapCycleTimeSettings: jest.fn(),
   formatMinToHours: jest.fn().mockImplementation((time) => time / 60),
+  formatMillisecondsToHours: jest.fn().mockImplementation((time) => time / 60 / 60 / 1000),
 }))
 
 let store = null
@@ -185,7 +187,7 @@ describe('Report Step', () => {
     it('should render the Mean time to recovery component with correct props', () => {
       const { getByText } = setup([REQUIRED_DATA_LIST[7]])
 
-      expect(getByText('14396108.78')).toBeInTheDocument()
+      expect(getByText('4.00')).toBeInTheDocument()
     })
 
     it('should show errorMessage when generating report has error message', () => {

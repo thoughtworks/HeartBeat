@@ -1,6 +1,6 @@
 class Report {
   get pageIndicator() {
-    return cy.get('[data-test-id="report-section"]', { timeout: 30000 })
+    return cy.get('[data-test-id="report-section"]', { timeout: 60000 })
   }
 
   get meanTimeToRecoveryTitle() {

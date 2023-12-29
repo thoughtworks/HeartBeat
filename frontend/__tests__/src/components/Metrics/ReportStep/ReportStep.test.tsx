@@ -237,6 +237,7 @@ describe('Report Step', () => {
       notificationHook.current.resetProps = resetProps
       notificationHook.current.updateProps = updateProps
       jest.useFakeTimers()
+
       setup([''])
 
       expect(resetProps).not.toBeCalled()
@@ -294,7 +295,12 @@ describe('Report Step', () => {
       expect(exportButton).toBeInTheDocument()
       await userEvent.click(exportButton)
 
-      expect(result.current.fetchExportData).toBeCalledTimes(1)
+      expect(result.current.fetchExportData).toBeCalledWith({
+        csvTimeStamp: 0,
+        dataType: 'pipeline',
+        endDate: '',
+        startDate: '',
+      })
     })
   })
 
@@ -326,7 +332,12 @@ describe('Report Step', () => {
       expect(exportButton).toBeInTheDocument()
       await userEvent.click(exportButton)
 
-      expect(result.current.fetchExportData).toBeCalledTimes(1)
+      expect(result.current.fetchExportData).toBeCalledWith({
+        csvTimeStamp: 0,
+        dataType: 'board',
+        endDate: '',
+        startDate: '',
+      })
     })
   })
 
@@ -355,7 +366,12 @@ describe('Report Step', () => {
       expect(exportButton).toBeInTheDocument()
       await userEvent.click(exportButton)
 
-      expect(result.current.fetchExportData).toBeCalledTimes(1)
+      expect(result.current.fetchExportData).toBeCalledWith({
+        csvTimeStamp: 0,
+        dataType: 'metric',
+        endDate: '',
+        startDate: '',
+      })
     })
   })
 })

@@ -38,8 +38,8 @@ export const StyledExportButton = styled(Button)({
     },
   },
   '&:disabled': {
-    backgroundColor: 'rgba(0, 0, 0, 0.12)',
-    color: 'rgba(0,0,0,0.35)',
+    backgroundColor: theme.main.button.disabled.backgroundColor,
+    color: theme.main.button.disabled.color,
   },
   [theme.breakpoints.down('lg')]: {
     fontSize: '0.8rem',

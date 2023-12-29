@@ -17,6 +17,12 @@ declare module '@mui/material/styles' {
         primary: string
         secondary: string
       }
+      button: {
+        disabled: {
+          backgroundColor: string
+          color: string
+        }
+      }
     }
   }
 
@@ -33,6 +39,12 @@ declare module '@mui/material/styles' {
       font: {
         primary: string
         secondary: string
+      }
+      button: {
+        disabled: {
+          backgroundColor: string
+          color: string
+        }
       }
     }
   }
@@ -78,6 +90,12 @@ export const theme = createTheme({
     font: {
       primary: 'Roboto',
       secondary: 'sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Arial',
+    },
+    button: {
+      disabled: {
+        backgroundColor: '#E0E0E0',
+        color: '#929292',
+      },
     },
   },
   typography: {

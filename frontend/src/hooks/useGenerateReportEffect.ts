@@ -24,7 +24,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const timerIdRef = useRef<number>()
   let hasPollingStarted = false
 
-  const startToRequestBoardData = async (boardParams: ReportRequestDTO) => {
+  const startToRequestBoardData = (boardParams: ReportRequestDTO) => {
     reportClient
       .retrieveReportByUrl(boardParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.BOARD}`)
       .then((res) => {
@@ -33,15 +33,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
         pollingReport(res.response.callbackUrl, res.response.interval)
       })
       .catch((e) => {
-        const err = e as Error
-        if (err instanceof InternalServerException || err instanceof UnknownException) {
-          setIsServerError(true)
-        } else {
-          setErrorMessage(`generate report: ${err.message}`)
-          setTimeout(() => {
-            setErrorMessage('')
-          }, DURATION.ERROR_MESSAGE_TIME)
-        }
+        handleError(e)
         stopPollingReports()
       })
   }
@@ -57,7 +49,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
     }
   }
 
-  const startToRequestDoraData = async (doraParams: ReportRequestDTO) => {
+  const startToRequestDoraData = (doraParams: ReportRequestDTO) => {
     reportClient
       .retrieveReportByUrl(doraParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.DORA}`)
       .then((res) => {

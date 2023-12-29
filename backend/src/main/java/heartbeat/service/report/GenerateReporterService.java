@@ -610,7 +610,7 @@ public class GenerateReporterService {
 	}
 
 	private Boolean getCombinedReadyValue(Boolean previousReadyValue, Boolean newReadyValue) {
-		return previousReadyValue != null || newReadyValue == null ? previousReadyValue : newReadyValue;
+		return (previousReadyValue != null || newReadyValue == null) ? previousReadyValue : newReadyValue;
 	}
 
 	public void updateMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
@@ -621,17 +621,17 @@ public class GenerateReporterService {
 			throw new GenerateReportException("Failed to update metrics data ready through this timestamp.");
 		}
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.boardMetricsReady(getTrueOrPreviousValue(metricsStatus.getBoardMetricsReady(),
+			.boardMetricsReady(checkCurrentMetricsReadyState(metricsStatus.getBoardMetricsReady(),
 					previousMetricsReady.getBoardMetricsReady()))
-			.pipelineMetricsReady(getTrueOrPreviousValue(metricsStatus.getPipelineMetricsReady(),
+			.pipelineMetricsReady(checkCurrentMetricsReadyState(metricsStatus.getPipelineMetricsReady(),
 					previousMetricsReady.getPipelineMetricsReady()))
-			.sourceControlMetricsReady(getTrueOrPreviousValue(metricsStatus.getSourceControlMetricsReady(),
+			.sourceControlMetricsReady(checkCurrentMetricsReadyState(metricsStatus.getSourceControlMetricsReady(),
 					previousMetricsReady.getSourceControlMetricsReady()))
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
 	}
 
-	private Boolean getTrueOrPreviousValue(Boolean exist, Boolean previousValue) {
+	private Boolean checkCurrentMetricsReadyState(Boolean exist, Boolean previousValue) {
 		if (Boolean.TRUE.equals(exist) && Objects.nonNull(previousValue))
 			return Boolean.TRUE;
 		return previousValue;

@@ -10,6 +10,7 @@ import {
 } from '@src/components/Common/ReportGrid/ReportCardItem/style'
 import DividingLine from '@src/assets/DividingLine.svg'
 import React, { HTMLAttributes } from 'react'
+import { Tooltip } from '@mui/material'
 
 export interface ReportCardItemProps extends HTMLAttributes<HTMLDivElement> {
   value: number
@@ -37,7 +38,20 @@ export const ReportCardItem = ({
             {extraValue && <StyledExtraValue>{extraValue}</StyledExtraValue>}
           </StyledValueSection>
         </StyledContent>
-        <StyledSubtitle disabled variant='standard' InputProps={{ disableUnderline: true }} value={subtitle} />
+        <Tooltip
+          arrow
+          title={subtitle}
+          placement={'bottom-start'}
+          slotProps={{
+            arrow: {
+              sx: {
+                width: '100%',
+              },
+            },
+          }}
+        >
+          <StyledSubtitle disabled variant='standard' InputProps={{ disableUnderline: true }} value={subtitle} />
+        </Tooltip>
       </StyledWrapper>
     </StyledItem>
   )

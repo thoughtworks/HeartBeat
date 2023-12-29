@@ -7,8 +7,8 @@ const initialConfigState: BasicConfigState = {
     projectName: '',
     calendarType: REGULAR_CALENDAR,
     dateRange: {
-      startDate: '',
-      endDate: '',
+      startDate: null,
+      endDate: null,
     },
     metrics: [],
   },
@@ -52,7 +52,7 @@ const initialConfigState: BasicConfigState = {
       repoList: [],
     },
   },
-  warningMessage: '',
+  warningMessage: null,
 }
 
 export default initialConfigState

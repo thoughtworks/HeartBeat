@@ -22,6 +22,7 @@ import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { getVersion, saveVersion } from '@src/context/header/headerSlice'
 import { useAppSelector } from '@src/hooks'
 import { isEmpty } from 'lodash'
+import { resetImportedData } from '@src/context/config/configSlice'
 
 const Header = (props: useNotificationLayoutEffectInterface) => {
   const location = useLocation()
@@ -30,6 +31,7 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
   const version = useAppSelector(getVersion)
 
   const goHome = () => {
+    dispatch(resetImportedData())
     navigate('/')
   }
 

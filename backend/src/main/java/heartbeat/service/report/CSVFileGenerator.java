@@ -44,7 +44,10 @@ import java.io.InputStream;
 
 import io.micrometer.core.instrument.util.TimeUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static heartbeat.service.report.calculator.ClassificationCalculator.pickDisplayNameFromObj;
@@ -130,7 +133,6 @@ public class CSVFileGenerator {
 			}
 		}
 		else {
-			log.error("Failed to generate csv file,invalid csvTimestamp");
 			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
 		}
 	}
@@ -184,7 +186,6 @@ public class CSVFileGenerator {
 			}
 		}
 		else {
-			log.error("Failed to generate csv file,invalid csvTimestamp");
 			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
 		}
 	}

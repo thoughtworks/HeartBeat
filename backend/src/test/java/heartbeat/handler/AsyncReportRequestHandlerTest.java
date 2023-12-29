@@ -25,7 +25,7 @@ class AsyncReportRequestHandlerTest {
 	AsyncReportRequestHandler asyncReportRequestHandler;
 
 	@Test
-	void shouldDeleteExpireReport() {
+	void shouldDeleteReportWhenReportIsExpire() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
@@ -41,7 +41,7 @@ class AsyncReportRequestHandlerTest {
 	}
 
 	@Test
-	void shouldPutAndGetAsyncReport() {
+	void shouldGetAsyncReportWhenPuttingReportIntoAsyncReportRequestHandler() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String boardReportId = IdUtil.getBoardReportId(currentTime);
@@ -51,7 +51,7 @@ class AsyncReportRequestHandlerTest {
 	}
 
 	@Test
-	void shouldDeleteExpireMetricsDataReady() {
+	void shouldDeleteMetricsDataReadyWhenExpireIsExpire() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
@@ -66,7 +66,7 @@ class AsyncReportRequestHandlerTest {
 	}
 
 	@Test
-	void shouldPutAndGetAsyncMetricsDataReady() {
+	void shouldGetAsyncMetricsDataReadyWhenPuttingMetricsReadyIntoAsyncReportRequestHandler() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		MetricsDataReady metricsDataReady = MetricsDataReady.builder().boardMetricsReady(false).build();

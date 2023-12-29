@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +41,7 @@ class AsyncExceptionHandlerTest {
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
 		BaseException baseException = asyncExceptionHandler.get(boardReportId);
-		assertEquals(401, baseException.getStatus());
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), baseException.getStatus());
 		assertEquals("test", baseException.getMessage());
 
 		assertNull(asyncExceptionHandler.get(currentTime));

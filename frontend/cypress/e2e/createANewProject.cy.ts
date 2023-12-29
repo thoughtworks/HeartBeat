@@ -1,4 +1,4 @@
-import { GITHUB_TOKEN } from '../fixtures/fixtures'
+import { GITHUB_TOKEN, METRICS_TITLE } from '../fixtures/fixtures'
 import homePage from '../pages/home'
 import configPage from '../pages/metrics/config'
 import metricsPage from '../pages/metrics/metrics'
@@ -300,17 +300,17 @@ describe('Create a new project', () => {
 
     reportPage.firstNotification.should('exist')
 
-    checkMetricsCalculation('[data-test-id="Velocity"]', velocityData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`, velocityData)
 
-    checkMetricsCalculation('[data-test-id="Cycle Time"]', cycleTimeData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`, cycleTimeData)
 
-    checkMetricsCalculation('[data-test-id="Deployment Frequency"]', deploymentFrequencyData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`, deploymentFrequencyData)
 
-    checkMetricsCalculation('[data-test-id="Mean Time To Recovery"]', meanTimeToRecoveryData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.MEAN_TIME_TO_RECOVERY}"]`, meanTimeToRecoveryData)
 
-    checkMetricsCalculation('[data-test-id="Lead Time For Changes"]', leadTimeForChangeData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`, leadTimeForChangeData)
 
-    checkMetricsCalculation('[data-test-id="Change Failure Rate"]', changeFailureRateData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.CHANGE_FAILURE_RATE}"]`, changeFailureRateData)
 
     clearDownloadFile()
 

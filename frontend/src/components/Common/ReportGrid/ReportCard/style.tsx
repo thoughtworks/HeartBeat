@@ -15,7 +15,7 @@ export const StyledReportCard = styled.div({
 export const StyledItemSection = styled.div({
   display: 'flex',
   alignItems: 'center',
-  minWidth: '25 %',
+  minWidth: '25%',
   padding: '0.75rem 0',
 })
 

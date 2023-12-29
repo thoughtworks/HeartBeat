@@ -957,91 +957,86 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldThrowUnauthorizedExceptionWhenCheckGenerateReportIsDone() {
-		// given
 		String timeStamp = Long.toString(System.currentTimeMillis());
 		String reportId = IdUtil.getDoraReportId(timeStamp);
-		// when
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
+
 		BaseException exception = assertThrows(UnauthorizedException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
-		// then
+
 		assertEquals(401, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowPermissionDenyExceptionWhenCheckGenerateReportIsDone() {
-		// given
 		String timeStamp = Long.toString(System.currentTimeMillis());
 		String reportId = IdUtil.getDoraReportId(timeStamp);
 		asyncExceptionHandler.put(reportId,
 				new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
-		// when
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 		BaseException exception = assertThrows(PermissionDenyException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
-		// then
+
 		assertEquals(403, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowNotFoundExceptionWhenCheckGenerateReportIsDone() {
-		// given
 		String timeStamp = Long.toString(System.currentTimeMillis());
 		String reportId = IdUtil.getDoraReportId(timeStamp);
-		// when
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
 		BaseException exception = assertThrows(NotFoundException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
-		// then
+
 		assertEquals(404, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowGenerateReportExceptionWhenCheckGenerateReportIsDone() {
-		// given
 		String timeStamp = Long.toString(System.currentTimeMillis());
 		String reportId = IdUtil.getDoraReportId(timeStamp);
-		// when
+
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
 		BaseException exception = assertThrows(GenerateReportException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
-		// then
+
 		assertEquals(500, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 500, reason: GenerateReport", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowServiceUnavailableExceptionWhenCheckGenerateReportIsDone() {
-		// given
 		String timeStamp = Long.toString(System.currentTimeMillis());
 		String reportId = IdUtil.getDoraReportId(timeStamp);
-		// when
+
 		when(asyncExceptionHandler.get(reportId)).thenReturn(
 				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
 		BaseException exception = assertThrows(ServiceUnavailableException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
-		// then
+
 		assertEquals(503, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 503, reason: ServiceUnavailable", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowRequestFailedExceptionWhenCheckGenerateReportIsDone() {
-		// given
 		String timeStamp = Long.toString(System.currentTimeMillis());
 		String reportId = IdUtil.getDoraReportId(timeStamp);
-		// when
+
 		when(asyncExceptionHandler.get(reportId)).thenReturn(new RequestFailedException(405, "RequestFailedException"));
 		BaseException exception = assertThrows(RequestFailedException.class,
 				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
-		// then
+
 		assertEquals(405, exception.getStatus());
 		assertEquals(
 				"Request failed with status statusCode 405, error: Request failed with status statusCode 405, error: RequestFailedException",
@@ -1150,11 +1145,10 @@ class GenerateReporterServiceTest {
 			.csvTimeStamp("1683734399999")
 			.build();
 
-		// when
 		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
 
 		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-		// then
+
 		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), expectedReady);
 	}
 
@@ -1181,7 +1175,6 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
-		// Given
 		ReportResponse boardResponse = ReportResponse.builder()
 			.boardMetricsReady(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
@@ -1206,14 +1199,13 @@ class GenerateReporterServiceTest {
 		String boardTimeStamp = "board-1683734399999";
 		String doraTimestamp = "dora-1683734399999";
 
-		// When
 		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
 		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(pipelineResponse);
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
 			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
-		// Then
+
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
-		// Assert
+
 		assertTrue(composedResponse.getAllMetricsReady());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 		assertEquals("deploymentFrequency",
@@ -1224,7 +1216,6 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
-		// Given
 		ReportResponse boardResponse = ReportResponse.builder()
 			.boardMetricsReady(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
@@ -1236,14 +1227,13 @@ class GenerateReporterServiceTest {
 		String boardTimeStamp = "board-1683734399999";
 		String doraTimestamp = "dora-1683734399999";
 
-		// When
 		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
 		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(null);
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
 			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
-		// Then
+
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
-		// Assert
+
 		assertTrue(composedResponse.getAllMetricsReady());
 		assertTrue(composedResponse.getBoardMetricsReady());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());

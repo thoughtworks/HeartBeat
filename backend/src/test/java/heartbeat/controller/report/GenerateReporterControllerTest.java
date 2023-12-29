@@ -5,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateBoardReportRequest;
 import heartbeat.controller.report.dto.request.GenerateDoraReportRequest;
-import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.ReportResponse;
@@ -46,6 +45,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureJsonTesters
 class GenerateReporterControllerTest {
 
+	private static final String REQUEST_FILE_PATH = "src/test/java/heartbeat/controller/report/request.json";
+
 	@MockBean
 	private GenerateReporterService generateReporterService;
 
@@ -57,22 +58,19 @@ class GenerateReporterControllerTest {
 
 	@Test
 	void shouldReturnCreatedStatusWhenCheckGenerateReportIsTrue() throws Exception {
-		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		ObjectMapper mapper = new ObjectMapper();
 		ReportResponse expectedReportResponse = mapper
-			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
+			.readValue(new File(REQUEST_FILE_PATH), ReportResponse.class);
 
-		// when
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(true);
 		when(generateReporterService.getComposedReportResponse(reportId, true)).thenReturn(expectedReportResponse);
-		// then
+
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isCreated())
 			.andReturn()
 			.getResponse();
-
 		final var content = response.getContentAsString();
 		ReportResponse actualReportResponse = mapper.readValue(content, ReportResponse.class);
 
@@ -81,16 +79,15 @@ class GenerateReporterControllerTest {
 
 	@Test
 	void shouldReturnOkStatusWhenCheckGenerateReportIsFalse() throws Exception {
-		// given
 		String reportId = Long.toString(System.currentTimeMillis());
 		ReportResponse reportResponse = ReportResponse.builder()
 			.boardMetricsReady(false)
 			.allMetricsReady(false)
 			.build();
-		// when
+
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
 		when(generateReporterService.getComposedReportResponse(reportId, false)).thenReturn(reportResponse);
-		// then
+
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
@@ -104,12 +101,11 @@ class GenerateReporterControllerTest {
 
 	@Test
 	void shouldReturnInternalServerErrorStatusWhenCheckGenerateReportThrowException() throws Exception {
-		// given
 		String reportId = Long.toString(System.currentTimeMillis());
-		// when
+
 		when(generateReporterService.checkGenerateReportIsDone(reportId))
 			.thenThrow(new GenerateReportException("Report time expires"));
-		// then
+
 		var response = mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isInternalServerError())
 			.andReturn()
@@ -154,7 +150,7 @@ class GenerateReporterControllerTest {
 
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateBoardReportRequest request = mapper.readValue(
-				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
+				new File(REQUEST_FILE_PATH), GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
@@ -162,6 +158,7 @@ class GenerateReporterControllerTest {
 		doNothing().when(generateReporterService).initializeMetricsDataReadyInHandler(any(), any());
 		doNothing().when(generateReporterService).saveReporterInHandler(any(), any());
 		doNothing().when(generateReporterService).updateMetricsDataReadyInHandler(any(), any());
+
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/reports/board").contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
@@ -179,7 +176,7 @@ class GenerateReporterControllerTest {
 	void shouldGetExceptionAndPutInExceptionMapWhenCallBoardReport() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateBoardReportRequest request = mapper.readValue(
-				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
+				new File(REQUEST_FILE_PATH), GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
@@ -215,7 +212,7 @@ class GenerateReporterControllerTest {
 	void shouldGetExceptionAndPutInExceptionMapWhenCallDoraReport() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateDoraReportRequest request = mapper.readValue(
-				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateDoraReportRequest.class);
+				new File(REQUEST_FILE_PATH), GenerateDoraReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 
@@ -261,7 +258,7 @@ class GenerateReporterControllerTest {
 
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateBoardReportRequest request = mapper.readValue(
-				new File("src/test/java/heartbeat/controller/report/request.json"), GenerateBoardReportRequest.class);
+				new File(REQUEST_FILE_PATH), GenerateBoardReportRequest.class);
 		String currentTimeStamp = "1685010080107";
 		request.setCsvTimeStamp(currentTimeStamp);
 

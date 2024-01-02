@@ -72,16 +72,53 @@ paths: api/v1/boards/{boardType}/verify
 method: POST
 parameters: {
   "boardId": "...",
-  "projectKey": "...",
   "site": "...",
   "token(email+token)": "..."
 }
 responses:
   Status Code: 200
-401 Unauthorized: "Returned if the user is not logged in"
-403 Returned: "User does not a have valid license"
-404 Returned: "The board does not exist or the user does not have permission to view it"
 ```
+
+- Exception Handler
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+      <td rowspan="3">400</td>
+      <td>Token cannot be empty.</td>
+      <td rowspan="2"></td>
+    </tr>
+    <tr>
+      <td>Token's pattern is incorrect.</td>
+    </tr>
+  <tr>
+    <td>boardType param is not correct</td>
+    <td>Please reconfirm the input</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get Jira info_status: 401 UNAUTHORIZED, reason: xxx</td>
+    <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Failed to get Jira info_status: 403 FORBIDDEN, reason: xxx</td>
+    <td>403 Forbidden</td>
+  </tr>
+  <tr>
+    <td>404</td>
+    <td>Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx</td>
+    <td>404 Not Found</td>
+  </tr>
+  <tr>
+    <td>500</td>
+      <td></td>
+      <td>Internal Server Error</td>
+  </tr>
+</table>
 
 - Jira API
 
@@ -213,6 +250,47 @@ Example
     ]
 }
 ```
+
+- Exception Handler
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+      <td rowspan="3">400</td>
+      <td>Token cannot be empty.</td>
+      <td rowspan="2"></td>
+    </tr>
+    <tr>
+      <td>Token's pattern is incorrect.</td>
+    </tr>
+  <tr>
+    <td>boardType param is not correct</td>
+    <td>Please reconfirm the input</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get Jira info_status: 401 UNAUTHORIZED, reason: xxx</td>
+    <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>There is no enough permission.</td>
+    <td>Permission deny</td>
+  </tr>
+  <tr>
+    <td>404</td>
+    <td>Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx</td>
+    <td>404 Not Found</td>
+  </tr>
+  <tr>
+    <td>500</td>
+      <td></td>
+      <td>Internal Server Error</td>
+  </tr>
+</table>
 
 #### 2.3 Sequence Diagram
 

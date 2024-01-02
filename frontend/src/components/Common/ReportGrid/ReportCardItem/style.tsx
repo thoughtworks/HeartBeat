@@ -1,10 +1,12 @@
 import styled from '@emotion/styled'
-import { TextField, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { theme } from '@src/theme'
 
 export const StyledItem = styled.div({
   display: 'flex',
   alignItems: 'center',
+  width: '100%',
+  overflow: 'hidden',
 })
 
 export const StyledContent = styled('div')({
@@ -29,19 +31,18 @@ export const StyledValue = styled(Typography)({
   },
 })
 
-export const StyledSubtitle = styled(TextField)({
-  width: '100%',
-  '& .MuiInputBase-input': {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontSize: '0.8rem',
-    fontStyle: 'normal',
-    paddingRight: '0.5rem',
-  },
-  '& .MuiInputBase-input.Mui-disabled': {
-    WebkitTextFillColor: theme.main.secondColor,
-    opacity: 0.65,
-  },
+export const StyledSubtitle = styled('div')({
+  width: '90%',
+  maxWidth: 'max-content',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  paddingRight: '0.5rem',
+  marginTop: '0.5rem',
+  fontSize: '0.8rem',
+  fontStyle: 'normal',
+  color: theme.main.secondColor,
+  opacity: 0.65,
 })
 
 export const StyledDividingLine = styled.img({

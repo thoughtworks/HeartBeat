@@ -1,0 +1,205 @@
+---
+title: Split multiple instances support
+description: Split multiple instances support
+---
+
+## Background
+
+Currently, heartbeat backend does not support multiple instance which make it hard to scale up the instance when load increasing.
+
+## Expect
+
+Deployment can be achieved through two methods: Docker Compose and k8s.
+
+## Solutions
+
+By introducing volume in Docker Compose and PVC in k8s to achieve data sharing.
+
+### 1. Docker Compose deployment
+
+- docker-compose.yaml
+
+```yaml
+   version: "3.4"
+
+services:
+  backend:
+    image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+    expose:
+      - "4322"
+    restart: always
+    deploy:
+      replicas: 3
+    volumes:
+      - file_volume:/files
+  frontend:
+    image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+    container_name: frontend
+    ports:
+      - "4321:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  file_volume:
+```
+
+Three backend containers are started here and the files are mounted to /files
+
+### 2. Kubernetes deployment
+
+#### 2.1 First step
+
+implement init.sh
+
+```shell
+#!/bin/bash
+kubectl delete namespaces heartbeat
+kubectl delete pv pv
+kubectl create namespace heartbeat
+```
+
+#### 2.2 Second step
+
+implement k8s yaml
+
+- k8s-persistent-volume.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv
+  namespace: heartbeat
+spec:
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: heartbeat
+  hostPath:
+    path: /data
+```
+
+The `spec.capacity.storage` can be adjusted to the appropriate size.
+
+- k8s-persistent-volume-claim.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc
+  namespace: heartbeat
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi
+  storageClassName: heartbeat
+```
+
+The `spec.resources.requests.storage` can be adjusted to the appropriate size, but not larger than `spec.capacity.storage` in the k8s-persistent-volume.yaml.
+
+- k8s-backend-deployment.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: heartbeat
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+          volumeMounts:
+            - name: volumes
+              mountPath: /files
+      volumes:
+        - name: volumes
+          persistentVolumeClaim:
+            claimName: pvc
+```
+
+Three backend pods are started here and the files are mounted to /files
+
+- k8s-backend-service.yaml
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: heartbeat
+  name: backend
+  labels:
+    app: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 4322
+      targetPort: 4322
+```
+
+- k8s-frontend-deployment.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: heartbeat
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+```
+
+- k8s-frontend-service.yaml
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: heartbeat
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 4321
+      targetPort: 80
+  type: LoadBalancer
+```
+
+### 3. Code modification under multiple instances
+

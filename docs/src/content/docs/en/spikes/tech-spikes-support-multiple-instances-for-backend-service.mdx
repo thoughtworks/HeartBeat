@@ -203,3 +203,40 @@ spec:
 
 ### 3. Code modification under multiple instances
 
+#### 3.1 In generating report files
+
+When generating files, use `./files/csv` instead of `./csv`
+
+- Mainly exists in classes
+
+```
+CSVFileGenerator.java
+CSVFileNameEnum.java
+```
+
+- Check point
+
+Check that in the case of a single instance, the three report files provided for download can be correctly generated under the target file.
+
+#### 3.2 Refactor async handler
+
+- AsyncExceptionHandler.java
+
+  - Need to initialize a folder `./files/error`.
+  - Modify the put method to generate an intermediate file, the content of the file is the corresponding outlier, and then atomize the file name.
+  - The get method reads the target file and returns null if the file does not exist, otherwise it returns an exception object.
+  - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
+
+- AsyncReportRequestHandler.java
+
+  - Need to initialize two folder `./files/report` and `./files/metricsDataReady`.
+  - Modify the put method as AsyncExceptionHandler.
+  - Modify the get method reads the target file and returns null if the file does not exist, otherwise it returns target object.
+  - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
+
+#### 3.3 Delete expire csv file
+
+- DeleteExpireCSVScheduler.java
+
+  - Change file from `./csv/` to `./files/csv`
+  - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.

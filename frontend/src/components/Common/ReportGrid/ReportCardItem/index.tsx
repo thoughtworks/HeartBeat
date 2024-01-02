@@ -38,19 +38,8 @@ export const ReportCardItem = ({
             {extraValue && <StyledExtraValue>{extraValue}</StyledExtraValue>}
           </StyledValueSection>
         </StyledContent>
-        <Tooltip
-          arrow
-          title={subtitle}
-          placement={'bottom-start'}
-          slotProps={{
-            arrow: {
-              sx: {
-                width: '100%',
-              },
-            },
-          }}
-        >
-          <StyledSubtitle disabled variant='standard' InputProps={{ disableUnderline: true }} value={subtitle} />
+        <Tooltip arrow title={subtitle} placement={'bottom'}>
+          <StyledSubtitle>{subtitle}</StyledSubtitle>
         </Tooltip>
       </StyledWrapper>
     </StyledItem>

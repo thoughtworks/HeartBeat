@@ -1,0 +1,56 @@
+---
+title: Timezone problem in Jira、github and buildkite
+description: Timezone problem in Jira、github and buildkite with our web app
+---
+
+#
+
+## Background
+```
+When I want to see the change failure rate and choose the date range in 9.20 - 9.21, but the data which has exported includes the date of 9.19.
+```
+The above content is [card](https://dorametrics.atlassian.net/jira/software/projects/ADM/boards/2?label=Stream1&selectedIssue=ADM-579)
+
+## Analyse
+
+### Reproduce
+For what Card described, I tried to reproduce:
+
+In backend code, class named `ChangeFailureRateCalculator`,it has a method named `calculate`,
+it is the method responsible for calculating failure rate.
+```java
+public ChangeFailureRate calculate(List<DeployTimes> deployTimesList)
+```
+
+This way can discovered that there is indeed some data on 9.19.Here's same case between 7.18-7.19.
+ 
+### Trace
+
+This code is that get github's related info, included api `buildKiteFeignClient.getPipelineSteps`, `stepsParam.getStartTime()` and `stepsParam.getEndTime()`
+are the standard UTC.  
+
+```java
+ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(realToken,
+				orgId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime(), branches);
+```
+
+We can get that when a user initiates a browser request from any region, the front-end code will be based on the user's special time zone.
+
+In frontend code, class named `DateRangePicker`, we can debug this code, and tracking frontend transfers data to the backend.
+```javascript
+export const DateRangePicker = () => {
+  const dispatch = useAppDispatch()
+  const { startDate, endDate } = useAppSelector(selectDateRange)
+  ······
+}
+```
+ 
+### Result
+According to the analysis of the code, the logic of the system is that,
+the time selected by the date picker is passed to the backend according to the user's time zone,
+and the backend converts it to the standard UTC time and then passes it to the third feign api.
+
+When I use `San Francisco` timezone pick 9.20 - 9.21 in config page, the problem described by that card does not exist.
+
+Through the above analysis, the problem described in that card is distorted.
+The system has normal and correct logic, and the user's needs can also be met.We don't need to make code changes.

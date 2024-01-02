@@ -134,7 +134,7 @@ const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) =
     .children()
     .each((section, index) => {
       cy.wrap(section).within(() => {
-        cy.get(`input[value="${boardData[index].label}"]`).should('exist')
+        cy.contains(boardData[index].label).should('exist')
         cy.contains(boardData[index].value).should('exist')
       })
     })

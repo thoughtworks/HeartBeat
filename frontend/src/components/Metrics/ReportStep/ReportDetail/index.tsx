@@ -16,7 +16,7 @@ import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup'
 import Header from '@src/layouts/Header'
 
 const ReportDetail = () => {
-  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [classificationState, setClassificationState] = useState({
@@ -48,7 +48,7 @@ const ReportDetail = () => {
 
   useEffect(() => {
     updateReportData(reportMapper(reportData))
-  })
+  }, [reportData])
 
   const updateReportData = (res: ReportResponse | undefined) => {
     res?.velocityList && setVelocityState({ ...velocityState, value: res.velocityList, isShow: true })

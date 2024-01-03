@@ -27,9 +27,7 @@ import { fillBoardFieldsInformation } from './Board.test';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 
 const server = setupServer(
-  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
-    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_VERIFY_RESPONSE)))
-  ),
+  rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(204))),
   rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
     res(ctx.status(200), ctx.body(JSON.stringify(MOCK_JIRA_VERIFY_RESPONSE)))
   )

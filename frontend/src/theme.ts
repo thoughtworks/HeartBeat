@@ -77,6 +77,7 @@ export const theme = createTheme({
       main: '#3498db',
       light: '#b9c4cc',
     },
+    link: '#4350AF',
   },
   main: {
     backgroundColor: indigo[FIVE_HUNDRED],

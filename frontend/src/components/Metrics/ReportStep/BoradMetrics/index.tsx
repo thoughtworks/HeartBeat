@@ -21,6 +21,8 @@ import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/uti
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
+import { useNavigate } from 'react-router-dom'
+import { ROUTE } from '@src/constants/router'
 
 interface BoardMetricsProps {
   startToRequestBoardData: (request: ReportRequestDTO) => void
@@ -38,13 +40,15 @@ const BoardMetrics = ({
   endDate,
 }: BoardMetricsProps) => {
   const configData = useAppSelector(selectConfig)
+  const navigate = useNavigate()
   const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
     useAppSelector(selectMetricsContent)
+  const jiraColumns = useAppSelector(selectJiraColumns)
+
   const { metrics, calendarType } = configData.basic
   const { board } = configData
   const { token, type, site, projectKey, boardId, email } = board.config
   const jiraToken = getJiraBoardToken(token, email)
-  const jiraColumns = useAppSelector(selectJiraColumns)
   const jiraColumnsWithValue = jiraColumns?.map(
     (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
   )
@@ -121,12 +125,16 @@ const BoardMetrics = ({
     startToRequestBoardData(getBoardReportRequestBody())
   }, [])
 
+  const handleShowMore = () => {
+    navigate(ROUTE.METRICS_DETAIL_PAGE)
+  }
+
   return (
     <>
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {boardReport && <StyledShowMore>{'show more >'}</StyledShowMore>}
+          {boardReport && <StyledShowMore onClick={handleShowMore}>{'show more >'}</StyledShowMore>}
         </StyledTitleWrapper>
         <ReportGrid reportDetails={getBoardItems()} />
       </StyledMetricsSection>

@@ -1,8 +1,8 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useAppSelector } from '@src/hooks'
-import { selectConfig } from '@src/context/config/configSlice'
-import { BOARD_METRICS, DORA_METRICS, MESSAGE } from '@src/constants/resources'
+import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice'
+import { MESSAGE } from '@src/constants/resources'
 import { StyledErrorNotification } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
@@ -39,9 +39,8 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const { updateProps } = notification
   const [errorMessage, setErrorMessage] = useState<string>()
 
-  const { metrics } = configData.basic
-  const shouldShowBoardMetrics = metrics.some((metric) => BOARD_METRICS.includes(metric))
-  const shouldShowDoraMetrics = metrics.some((metric) => DORA_METRICS.includes(metric))
+  const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics)
+  const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics)
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
@@ -125,7 +124,6 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           <ReportButtonGroup
             handleSave={() => handleSave()}
             reportData={reportData}
-            shouldShowBoardExportButton={shouldShowBoardMetrics}
             startDate={startDate}
             endDate={endDate}
             csvTimeStamp={csvTimeStamp}

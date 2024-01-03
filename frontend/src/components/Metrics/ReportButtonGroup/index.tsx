@@ -1,5 +1,5 @@
 import { Tooltip } from '@mui/material'
-import { REQUIRED_DATA, TIPS } from '@src/constants/resources'
+import { TIPS } from '@src/constants/resources'
 import { BackButton, SaveButton } from '@src/components/Metrics/MetricsStepper/style'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons'
@@ -9,7 +9,7 @@ import { backStep } from '@src/context/stepper/StepperSlice'
 import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { useAppSelector } from '@src/hooks'
-import { selectMetrics } from '@src/context/config/configSlice'
+import { isSelectBoardMetrics, isSelectDoraMetrics } from '@src/context/config/configSlice'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import {
   StyledButtonGroup,
@@ -19,13 +19,13 @@ import {
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 
 interface ReportButtonGroupProps {
-  handleSave: () => void
+  handleSave?: () => void
   csvTimeStamp: number
   startDate: string
   endDate: string
   setErrorMessage: (message: string) => void
-  shouldShowBoardExportButton: boolean
   reportData: ReportResponseDTO | undefined
+  isShowSaveButton?: boolean
 }
 
 export const ReportButtonGroup = ({
@@ -35,16 +35,12 @@ export const ReportButtonGroup = ({
   endDate,
   setErrorMessage,
   reportData,
-  shouldShowBoardExportButton,
+  isShowSaveButton = true,
 }: ReportButtonGroupProps) => {
   const dispatch = useAppDispatch()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
-  const requiredData = useAppSelector(selectMetrics)
-  const isShowExportPipelineButton =
-    requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
-    requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
-    requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
-    requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
+  const isShowExportBoardButton = useAppSelector(isSelectBoardMetrics)
+  const isShowExportPipelineButton = useAppSelector(isSelectDoraMetrics)
 
   useEffect(() => {
     setErrorMessage(errorMessage)
@@ -68,11 +64,13 @@ export const ReportButtonGroup = ({
   return (
     <>
       <StyledButtonGroup>
-        <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
-          <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
-            {COMMON_BUTTONS.SAVE}
-          </SaveButton>
-        </Tooltip>
+        {isShowSaveButton && (
+          <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
+            <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
+              {COMMON_BUTTONS.SAVE}
+            </SaveButton>
+          </Tooltip>
+        )}
         <StyledRightButtonGroup>
           <BackButton onClick={handleBack} variant='outlined'>
             {COMMON_BUTTONS.BACK}
@@ -83,7 +81,7 @@ export const ReportButtonGroup = ({
           >
             {COMMON_BUTTONS.EXPORT_METRIC_DATA}
           </StyledExportButton>
-          {shouldShowBoardExportButton && (
+          {isShowExportBoardButton && (
             <StyledExportButton
               disabled={!reportData?.isBoardMetricsReady}
               onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}

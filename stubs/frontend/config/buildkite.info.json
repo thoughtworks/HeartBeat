@@ -1,0 +1,12 @@
+{
+  "pipelineList": [
+    {
+      "id": "payment-selector-ui",
+      "name": "payment-selector-ui",
+      "orgId": "xxx",
+      "orgName": "xxx",
+      "repository": "https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git",
+      "steps": []
+    }
+  ]
+}

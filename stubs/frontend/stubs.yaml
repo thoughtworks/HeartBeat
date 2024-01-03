@@ -11,6 +11,17 @@
 
 - request:
     method: GET
+    url: /api/v1/pipelines/buildkite/info
+
+  response:
+    headers:
+      content-type: application/json
+      Access-Control-Allow-Origin: "*"
+    status: 200
+    file: ./frontend/config/buildkite.info.json
+
+- request:
+    method: GET
     url: /api/v1/pipelines/.*
 
   response:
@@ -50,5 +61,3 @@
       content-type: application/json
       Access-Control-Allow-Origin: "*"
     status: 200
-    headers:
-      content-type: application/json

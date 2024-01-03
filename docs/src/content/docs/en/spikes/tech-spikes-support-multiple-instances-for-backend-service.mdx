@@ -9,11 +9,11 @@ Currently, heartbeat backend does not support multiple instance which make it ha
 
 ## Expect
 
-Multi-instance deployment is achieved through two methods: Docker Compose and k8s, and files can be shared.
+Multi-instance deployment is achieved through two methods: Docker Compose and k8s, and files can be shared between different instances.
 
 ## Solutions
 
-By introducing volume in Docker Compose and PVC in k8s to achieve data sharing.
+File sharing between containers is achieved by introducing Volume in Docker Compose and PVC in k8s.
 
 ### 1. Docker Compose deployment
 
@@ -132,7 +132,7 @@ spec:
             claimName: pvc
 ```
 
-Three backend pods are started here and the files are mounted to /files
+Three backend pods are started here and the files are mounted to volumes
 
 - k8s-backend-service.yaml
 
@@ -237,3 +237,7 @@ In the case of a single instance, check whether the three report files provided 
 
   - Change file from `./csv/` to `./app/output/csv`
   - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
+
+#### 3.4 Change README
+
+Put docker-compose.yaml in `7.1.1 Customize story point field in Jira` in README

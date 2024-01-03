@@ -114,6 +114,16 @@ export default [
 		slug: 'spikes/tech-spikes-split-verification-of-board',
 		key: 'spikes/tech-spikes-split-verification-of-board',
 	},
+	{
+		text: 'Timezone problem in system',
+		slug: 'spikes/tech-timezone-problem',
+		key: 'spikes/tech-timezone-problem',
+	},
+	{
+		text: 'Split multiple instances support',
+		slug: 'spikes/tech-spikes-support-multiple-instances-for-backend-service',
+		key: 'spikes/tech-spikes-support-multiple-instances-for-backend-service',
+	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },

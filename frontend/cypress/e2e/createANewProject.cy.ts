@@ -25,7 +25,7 @@ const leadTimeForChangeData = [
   { label: 'Total Lead Time(Hours)', value: '-4.87' },
 ]
 
-const changeFailureRateData = [{ label: 'Failure Rate', value: '0.49' }]
+const changeFailureRateData = [{ label: 'Failure Rate', value: '49' }]
 
 const metricsTextList = [
   'Board configuration',
@@ -134,7 +134,7 @@ const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) =
     .children()
     .each((section, index) => {
       cy.wrap(section).within(() => {
-        cy.get(`input[value="${boardData[index].label}"]`).should('exist')
+        cy.contains(boardData[index].label).should('exist')
         cy.contains(boardData[index].value).should('exist')
       })
     })

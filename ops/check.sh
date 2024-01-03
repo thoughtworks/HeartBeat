@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xeuo pipefail
+set -euo pipefail
 
 display_help() {
   echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e}" >&2
@@ -9,6 +9,7 @@ display_help() {
   echo "   frontend           run check for the frontend"
   echo "   px                 run css px check for the frontend"
   echo "   backend            run check for the backend"
+  echo "   dot-star           run .* check for the backend"
   echo "   backend-license    check license for the backend"
   echo "   frontend-license   check license for the frontend"
   echo "   e2e                run e2e for the frontend"
@@ -65,8 +66,21 @@ frontend_check(){
 
 px_check() {
   cd frontend
-  local result=''
-  result="$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '[0-9]\+px' ./)"
+  local result
+  result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '[0-9]\+px' ./ || true)
+  if [ -n "$result" ]; then
+    echo "Error: Found files with [0-9]+px pattern:"
+    echo "$result"
+    exit 1
+  else
+    echo "No matching files found."
+  fi
+}
+
+dot_star_check() {
+  cd backend
+  local result
+  result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '\.\*;' ./ || true)
   if [ -n "$result" ]; then
     echo "Error: Found files with [0-9]+px pattern:"
     echo "$result"
@@ -94,6 +108,7 @@ while [[ "$#" -gt 0 ]]; do
     frontend) frontend_check ;;
     px) px_check ;;
     backend) backend_check ;;
+    "dot-star") dot_star_check ;;
     e2e) e2e_check ;;
     "backend-license") backend_license_check ;;
     "frontend-license") frontend_license_check ;;

@@ -15,7 +15,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.core.io.InputStreamResource;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -23,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,16 +65,16 @@ class CSVFileGeneratorTest {
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
 
-		Assertions.assertTrue(file.exists());
+		assertTrue(file.exists());
 
 		FileInputStream fileInputStream = new FileInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
 		String headers = reader.readLine();
-		Assertions.assertEquals(
+		assertEquals(
 				"\"Pipeline Name\",\"Pipeline Step\",\"Build Number\",\"Committer\",\"First Code Committed Time In PR\",\"Code Committed Time\",\"PR Created Time\",\"PR Merged Time\",\"Deployment Completed Time\",\"Total Lead Time (HH:mm:ss)\",\"PR Lead Time (HH:mm:ss)\",\"Pipeline Lead Time (HH:mm:ss)\",\"Status\",\"Branch\"",
 				headers);
 		String firstLine = reader.readLine();
-		Assertions.assertEquals(
+		assertEquals(
 				"\"Heartbeat\",\":rocket: Deploy prod\",\"880\",\"XXXX\",\"2023-05-08T07:18:18Z\",\"2023-05-10T06:43:02.653Z\",\"168369327000\",\"1683793037000\",\"1684793037000\",\"8379303\",\"16837\",\"653037000\",\"passed\",\"branch\"",
 				firstLine);
 		reader.close();
@@ -144,7 +150,7 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File csvFile = new File(fileName);
-		Assertions.assertTrue(csvFile.exists());
+		assertTrue(csvFile.exists());
 		csvFile.delete();
 	}
 
@@ -158,7 +164,7 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File csvFile = new File(fileName);
-		Assertions.assertTrue(csvFile.exists());
+		assertTrue(csvFile.exists());
 		csvFile.delete();
 	}
 
@@ -195,7 +201,7 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File csvFile = new File(fileName);
-		Assertions.assertTrue(csvFile.exists());
+		assertTrue(csvFile.exists());
 		csvFile.delete();
 	}
 
@@ -209,7 +215,7 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File csvFile = new File(fileName);
-		Assertions.assertTrue(csvFile.exists());
+		assertTrue(csvFile.exists());
 		csvFile.delete();
 	}
 
@@ -223,7 +229,7 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";
 		File csvFile = new File(fileName);
-		Assertions.assertTrue(csvFile.exists());
+		assertTrue(csvFile.exists());
 		csvFile.delete();
 	}
 
@@ -267,7 +273,7 @@ class CSVFileGeneratorTest {
 
 		String fileName = CSVFileNameEnum.METRIC.getValue() + "-" + mockTimeStamp + ".csv";
 		File file = new File(fileName);
-		Assertions.assertTrue(file.exists());
+		assertTrue(file.exists());
 
 		FileInputStream fileInputStream = new FileInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));

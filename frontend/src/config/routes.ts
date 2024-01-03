@@ -13,6 +13,11 @@ export const routes = [
     name: 'Metrics',
   },
   {
+    path: 'detail',
+    component: lazy(() => import('../components/Metrics/ReportStep/ReportDetail')),
+    name: 'Detail',
+  },
+  {
     path: '/error-page',
     component: lazy(() => import('../pages/ErrorPage')),
     name: 'ErrorPage',

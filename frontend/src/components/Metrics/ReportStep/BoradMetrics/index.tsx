@@ -12,7 +12,11 @@ import {
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
 import dayjs from 'dayjs'
-import { StyledMetricsSection } from '@src/components/Metrics/ReportStep/BoradMetrics/style'
+import {
+  StyledMetricsSection,
+  StyledShowMore,
+  StyledTitleWrapper,
+} from '@src/components/Metrics/ReportStep/BoradMetrics/style'
 import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util'
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
@@ -120,7 +124,10 @@ const BoardMetrics = ({
   return (
     <>
       <StyledMetricsSection>
-        <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
+        <StyledTitleWrapper>
+          <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
+          {boardReport && <StyledShowMore>{'show more >'}</StyledShowMore>}
+        </StyledTitleWrapper>
         <ReportGrid reportDetails={getBoardItems()} />
       </StyledMetricsSection>
     </>

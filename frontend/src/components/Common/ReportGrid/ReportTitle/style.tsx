@@ -4,6 +4,7 @@ import { Typography } from '@mui/material'
 
 export const StyledMetricsTitleSection = styled('div')({
   display: 'flex',
+  alignItems: 'center',
 })
 
 export const StyledMetricsSign = styled('canvas')({
@@ -18,7 +19,6 @@ export const StyledMetricsTitle = styled(Typography)({
   fontSize: '1rem',
   fontFamily: theme.main.font.secondary,
   textAlign: 'start',
-  marginBottom: '1rem',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 })

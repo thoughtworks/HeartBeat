@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@src/store'
-import { CALENDAR, MESSAGE } from '@src/constants/resources'
+import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE } from '@src/constants/resources'
 import { REQUIRED_DATA } from '@src/constants/resources'
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice'
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice'
@@ -183,6 +183,10 @@ export const selectProjectName = (state: RootState) => state.config.basic.projec
 export const selectCalendarType = (state: RootState) => state.config.basic.calendarType
 export const selectDateRange = (state: RootState) => state.config.basic.dateRange
 export const selectMetrics = (state: RootState) => state.config.basic.metrics
+export const isSelectBoardMetrics = (state: RootState) =>
+  state.config.basic.metrics.some((metric) => BOARD_METRICS.includes(metric))
+export const isSelectDoraMetrics = (state: RootState) =>
+  state.config.basic.metrics.some((metric) => DORA_METRICS.includes(metric))
 export const selectBoard = (state: RootState) => state.config.board.config
 export const isPipelineToolVerified = (state: RootState) => state.config.pipelineTool.isVerified
 export const selectPipelineTool = (state: RootState) => state.config.pipelineTool.config

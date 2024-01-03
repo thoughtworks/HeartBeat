@@ -13,12 +13,27 @@ import {
   TEST_PROJECT_NAME,
   VELOCITY,
   VERIFY,
+  MOCK_PIPELINE_URL,
+  MOCK_BOARD_URL_FOR_JIRA,
+  MOCK_BUILD_KITE_VERIFY_RESPONSE,
+  MOCK_JIRA_VERIFY_RESPONSE,
 } from '../../fixtures';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../utils/setupStoreUtil';
 import dayjs from 'dayjs';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 import { fillBoardFieldsInformation } from './Board.test';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+
+const server = setupServer(
+  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
+    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_VERIFY_RESPONSE)))
+  ),
+  rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
+    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_JIRA_VERIFY_RESPONSE)))
+  )
+);
 
 let store = null;
 jest.mock('@src/context/config/configSlice', () => ({
@@ -36,6 +51,8 @@ describe('ConfigStep', () => {
     );
   };
 
+  beforeAll(() => server.listen());
+
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -45,6 +62,8 @@ describe('ConfigStep', () => {
     jest.clearAllMocks();
     jest.useRealTimers();
   });
+
+  afterAll(() => server.close());
 
   it('should show project name when render configStep', () => {
     setup();

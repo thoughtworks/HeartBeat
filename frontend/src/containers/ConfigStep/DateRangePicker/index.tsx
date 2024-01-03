@@ -19,7 +19,6 @@ export const DateRangePicker = () => {
   const { startDate, endDate } = useAppSelector(selectDateRange);
   const updateVerifyStates = () => {
     dispatch(updateBoardVerifyState(false));
-    dispatch(updatePipelineToolVerifyState(false));
     dispatch(updateSourceControlVerifyState(false));
   };
   const changeStartDate = (value: Nullable<Dayjs>) => {

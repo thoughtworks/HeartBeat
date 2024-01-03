@@ -11,7 +11,6 @@ import {
   selectWarningMessage,
   updateBoardVerifyState,
   updateCalendarType,
-  updatePipelineToolVerifyState,
   updateProjectName,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
@@ -52,7 +51,6 @@ const BasicInfo = () => {
           value={calendarType}
           onChange={(e) => {
             dispatch(updateBoardVerifyState(false));
-            dispatch(updatePipelineToolVerifyState(false));
             dispatch(updateSourceControlVerifyState(false));
             dispatch(updateCalendarType(e.target.value));
           }}

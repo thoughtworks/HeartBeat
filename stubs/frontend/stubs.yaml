@@ -5,7 +5,7 @@
   response:
     headers:
       content-type: application/json
-      Access-Control-Allow-Origin: '*'
+      Access-Control-Allow-Origin: "*"
     status: 200
     file: ./frontend/exportPage/jsons/exportData.json
 
@@ -16,7 +16,7 @@
   response:
     headers:
       content-type: application/json
-      Access-Control-Allow-Origin: '*'
+      Access-Control-Allow-Origin: "*"
     status: 200
     file: ./frontend/config/pipeline.json
 
@@ -27,7 +27,7 @@
   response:
     headers:
       content-type: application/json
-      Access-Control-Allow-Origin: '*'
+      Access-Control-Allow-Origin: "*"
     status: 200
     file: ./frontend/config/board.json
 
@@ -38,6 +38,17 @@
   response:
     headers:
       content-type: application/json
-      Access-Control-Allow-Origin: '*'
+      Access-Control-Allow-Origin: "*"
     status: 200
     file: ./frontend/config/sourceControl.json
+
+- request:
+    method: POST
+    url: /api/v1/pipelines/(.*)/verify
+  response:
+    headers:
+      content-type: application/json
+      Access-Control-Allow-Origin: "*"
+    status: 200
+    headers:
+      content-type: application/json

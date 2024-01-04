@@ -9,11 +9,11 @@ Currently, heartbeat backend does not support multiple instance which make it ha
 
 ## Expect
 
-Deployment can be achieved through two methods: Docker Compose and k8s.
+Multi-instance deployment is achieved through two methods: Docker Compose and k8s, and files can be shared between different instances.
 
 ## Solutions
 
-By introducing volume in Docker Compose and PVC in k8s to achieve data sharing.
+File sharing between containers is achieved by introducing Volume in Docker Compose and PVC in k8s.
 
 ### 1. Docker Compose deployment
 
@@ -31,7 +31,7 @@ services:
     deploy:
       replicas: 3
     volumes:
-      - file_volume:/files
+      - file_volume:/app/output
   frontend:
     image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
     container_name: frontend
@@ -45,18 +45,15 @@ volumes:
   file_volume:
 ```
 
-Three backend containers are started here and the files are mounted to /files
+Three backend containers are started here and the files are mounted to file_volume
 
 ### 2. Kubernetes deployment
 
 #### 2.1 First step
 
-implement init.sh
+Create a namespace if the user does not have one.
 
 ```shell
-#!/bin/bash
-kubectl delete namespaces heartbeat
-kubectl delete pv pv
 kubectl create namespace heartbeat
 ```
 
@@ -128,14 +125,14 @@ spec:
           image: ghcr.io/au-heartbeat/heartbeat_backend:latest
           volumeMounts:
             - name: volumes
-              mountPath: /files
+              mountPath: /app/output
       volumes:
         - name: volumes
           persistentVolumeClaim:
             claimName: pvc
 ```
 
-Three backend pods are started here and the files are mounted to /files
+Three backend pods are started here and the files are mounted to volumes
 
 - k8s-backend-service.yaml
 
@@ -205,7 +202,7 @@ spec:
 
 #### 3.1 In generating report files
 
-When generating files, use `./files/csv` instead of `./csv`
+When generating files, use `./app/output/csv` instead of `./csv`
 
 - Mainly exists in classes
 
@@ -222,14 +219,14 @@ In the case of a single instance, check whether the three report files provided 
 
 - AsyncExceptionHandler.java
 
-  - Need to initialize a folder `./files/error`.
+  - Need to initialize a folder `./app/output/error`.
   - Modify the put method to generate an intermediate file, the content of the file is the corresponding outlier, and then atomize the file name.
   - The get method reads the target file and returns null if the file does not exist, otherwise it returns an exception object.
   - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
 
 - AsyncReportRequestHandler.java
 
-  - Need to initialize two folder `./files/report` and `./files/metricsDataReady`.
+  - Need to initialize two folder `./app/output/report` and `./app/output/metricsDataReady`.
   - Modify the put method as AsyncExceptionHandler.
   - Modify the get method reads the target file and returns null if the file does not exist, otherwise it returns target object.
   - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
@@ -238,5 +235,9 @@ In the case of a single instance, check whether the three report files provided 
 
 - DeleteExpireCSVScheduler.java
 
-  - Change file from `./csv/` to `./files/csv`
+  - Change file from `./csv/` to `./app/output/csv`
   - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
+
+#### 3.4 Change README
+
+Put docker-compose.yaml in `7.1.1 Customize story point field in Jira` in README

@@ -70,7 +70,7 @@ responses:
 ```json
 paths: api/v1/boards/{boardType}/verify
 method: POST
-parameters: {
+request: {
   "boardId": "...",
   "site": "...",
   "token(email+token)": "..."
@@ -80,45 +80,16 @@ responses:
 ```
 
 - Exception Handler
-<table>
-  <tr>
-    <td>status</td>
-    <td>message</td>
-    <td>hintInfo</td>
-  </tr>
-  <tr>
-      <td rowspan="3">400</td>
-      <td>Token cannot be empty.</td>
-      <td rowspan="2"></td>
-    </tr>
-    <tr>
-      <td>Token's pattern is incorrect.</td>
-    </tr>
-  <tr>
-    <td>boardType param is not correct</td>
-    <td>Please reconfirm the input</td>
-  </tr>
-  <tr>
-    <td>401</td>
-    <td>Failed to get Jira info_status: 401 UNAUTHORIZED, reason: xxx</td>
-    <td>Token is incorrect</td>
-  </tr>
-  <tr>
-    <td>403</td>
-    <td>Failed to get Jira info_status: 403 FORBIDDEN, reason: xxx</td>
-    <td>403 Forbidden</td>
-  </tr>
-  <tr>
-    <td>404</td>
-    <td>Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx</td>
-    <td>404 Not Found</td>
-  </tr>
-  <tr>
-    <td>500</td>
-      <td></td>
-      <td>Internal Server Error</td>
-  </tr>
-</table>
+
+| status | message                                           | hintInfo               |
+|--------|---------------------------------------------------|------------------------|
+| 400    | Token cannot be empty.                            | Please reconfirm the input |
+| 400    | Token's pattern is incorrect.                     | Please reconfirm the input |
+| 400    | boardType param is not correct                    | Please reconfirm the input |
+| 401    | Failed to get Jira info_status: 401 UNAUTHORIZED, reason: xxx | Token is incorrect |
+| 403    | Failed to get Jira info_status: 403 FORBIDDEN, reason: xxx   | 403 Forbidden       |
+| 404    | Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx   | 404 Not Found       |
+| 500    |                                                   | Internal Server Error  |
 
 - Jira API
 
@@ -252,45 +223,16 @@ Example
 ```
 
 - Exception Handler
-<table>
-  <tr>
-    <td>status</td>
-    <td>message</td>
-    <td>hintInfo</td>
-  </tr>
-  <tr>
-      <td rowspan="3">400</td>
-      <td>Token cannot be empty.</td>
-      <td rowspan="2"></td>
-    </tr>
-    <tr>
-      <td>Token's pattern is incorrect.</td>
-    </tr>
-  <tr>
-    <td>boardType param is not correct</td>
-    <td>Please reconfirm the input</td>
-  </tr>
-  <tr>
-    <td>401</td>
-    <td>Failed to get Jira info_status: 401 UNAUTHORIZED, reason: xxx</td>
-    <td>Token is incorrect</td>
-  </tr>
-  <tr>
-    <td>403</td>
-    <td>There is no enough permission.</td>
-    <td>Permission deny</td>
-  </tr>
-  <tr>
-    <td>404</td>
-    <td>Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx</td>
-    <td>404 Not Found</td>
-  </tr>
-  <tr>
-    <td>500</td>
-      <td></td>
-      <td>Internal Server Error</td>
-  </tr>
-</table>
+
+| status | message                                           | hintInfo               |
+|--------|---------------------------------------------------|------------------------|
+| 400    | Token cannot be empty.                            | Please reconfirm the input |
+| 400    | Token's pattern is incorrect.                     | Please reconfirm the input |
+| 400    | boardType param is not correct                    | Please reconfirm the input |
+| 401    | Failed to get Jira info_status: 401 UNAUTHORIZED, reason: xxx | Token is incorrect |
+| 403    | There is no enough permission.                    | Permission deny        |
+| 404    | Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx   | 404 Not Found       |
+| 500    |                                                   | Internal Server Error  |
 
 #### 2.3 Sequence Diagram
 

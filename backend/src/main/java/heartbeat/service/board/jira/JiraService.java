@@ -107,29 +107,22 @@ public class JiraService {
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
 		try {
-			JiraBoardConfigDTO jiraBoardConfigDTO = getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(),
-					boardRequestParam.getToken());
-			CompletableFuture<JiraColumnResult> jiraColumnsFuture = getJiraColumnsAsync(boardRequestParam, baseUrl,
-					jiraBoardConfigDTO);
-			CompletableFuture<List<TargetField>> targetFieldFuture = getTargetFieldAsync(baseUrl, boardRequestParam);
-			List<TargetField> ignoredTargetFields = targetFieldFuture.join()
-				.stream()
-				.filter(this::isIgnoredTargetField)
-				.toList();
-			List<TargetField> neededTargetFields = targetFieldFuture.join()
-				.stream()
-				.filter(targetField -> !isIgnoredTargetField(targetField))
-				.toList();
 
-			return jiraColumnsFuture.thenCombine(targetFieldFuture,
-					(jiraColumnResult, targetFields) -> getUserAsync(boardType, baseUrl, boardRequestParam)
-						.thenApply(users -> BoardConfigDTO.builder()
+			Map<Boolean, List<TargetField>> partitions = getTargetFieldAsync(baseUrl, boardRequestParam).join()
+				.stream()
+				.collect(Collectors.partitioningBy(this::isIgnoredTargetField));
+			List<TargetField> ignoredTargetFields = partitions.get(true);
+			List<TargetField> neededTargetFields = partitions.get(false);
+
+			return getJiraColumnsAsync(boardRequestParam, baseUrl,
+					getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(), boardRequestParam.getToken()))
+				.thenCombine(getUserAsync(boardType, baseUrl, boardRequestParam),
+						(jiraColumnResult, users) -> BoardConfigDTO.builder()
 							.targetFields(neededTargetFields)
 							.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
 							.ignoredTargetFields(ignoredTargetFields)
 							.users(users)
 							.build())
-						.join())
 				.join();
 		}
 		catch (RuntimeException e) {
@@ -183,8 +176,7 @@ public class JiraService {
 
 	private CompletableFuture<JiraColumnResult> getJiraColumnsAsync(BoardRequestParam boardRequestParam, URI baseUrl,
 			JiraBoardConfigDTO jiraBoardConfigDTO) {
-		return CompletableFuture.supplyAsync(() -> getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO),
-				customTaskExecutor);
+		return CompletableFuture.supplyAsync(() -> getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO));
 	}
 
 	public JiraColumnResult getJiraColumns(BoardRequestParam boardRequestParam, URI baseUrl,
@@ -197,8 +189,7 @@ public class JiraService {
 			.getColumns()
 			.stream()
 			.map(jiraColumn -> CompletableFuture.supplyAsync(
-					() -> getColumnNameAndStatus(jiraColumn, baseUrl, jiraColumns, boardRequestParam.getToken()),
-					customTaskExecutor))
+					() -> getColumnNameAndStatus(jiraColumn, baseUrl, jiraColumns, boardRequestParam.getToken())))
 			.toList();
 
 		List<JiraColumnDTO> columnResponse = futures.stream().map(CompletableFuture::join).toList();
@@ -271,7 +262,7 @@ public class JiraService {
 
 	private CompletableFuture<List<String>> getUserAsync(BoardType boardType, URI baseUrl,
 			BoardRequestParam boardRequestParam) {
-		return CompletableFuture.supplyAsync(() -> getUsers(boardType, baseUrl, boardRequestParam), customTaskExecutor);
+		return CompletableFuture.supplyAsync(() -> getUsers(boardType, baseUrl, boardRequestParam));
 	}
 
 	private List<String> getUsers(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam) {
@@ -280,7 +271,6 @@ public class JiraService {
 		if (allCards.isEmpty()) {
 			throw new NoContentException("There is no cards.");
 		}
-
 		List<CompletableFuture<List<String>>> futures = allCards.stream()
 			.map(jiraCard -> CompletableFuture
 				.supplyAsync(() -> getAssigneeSet(baseUrl, jiraCard, boardRequestParam.getToken()), customTaskExecutor))
@@ -467,16 +457,16 @@ public class JiraService {
 		CardCustomFieldKey cardCustomFieldKey = covertCustomFieldKey(targetFields);
 		String keyFlagged = cardCustomFieldKey.getFlagged();
 		List<JiraCardDTO> realDoneCards = new ArrayList<>();
-		List<JiraCard> futures = new ArrayList<>();
+		List<JiraCard> jiraCards = new ArrayList<>();
 
 		for (JiraCard allDoneCard : allDoneCards) {
 			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, allDoneCard.getKey(),
 					request.getToken());
 			if (isRealDoneCardByHistory(jiraCardHistory, request)) {
-				futures.add(allDoneCard);
+				jiraCards.add(allDoneCard);
 			}
 		}
-		futures.forEach(doneCard -> {
+		jiraCards.forEach(doneCard -> {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
 					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
 			List<String> assigneeSet = getAssigneeSet(request, baseUrl, filterMethod, doneCard);

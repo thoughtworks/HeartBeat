@@ -391,11 +391,13 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowExceptionWhenGetJiraConfigurationThrowsUnExpectedException() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
 			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", "token"))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("UnExpected Exception");
@@ -431,15 +433,11 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowExceptionWhenGetTargetFieldFailed() {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token))
 			.thenThrow(new CustomFeignClientException(500, "exception"));
 
@@ -450,15 +448,11 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowExceptionWhenGetTargetFieldReturnNull() {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token)).thenReturn(null);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
@@ -468,9 +462,6 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowExceptionWhenGetTargetFieldReturnEmpty() {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -479,7 +470,6 @@ class JiraServiceTest {
 			.build();
 
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		when(jiraFeignClient.getJiraBoardConfiguration(baseUrl, BOARD_ID, token)).thenReturn(jiraBoardConfigDTO);
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token))
 			.thenReturn(emptyProjectFieldResponse);
 
@@ -490,12 +480,7 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-		String token = "token";
-
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(PermissionDenyException.class)
@@ -504,10 +489,12 @@ class JiraServiceTest {
 
 	@Test
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
-
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(new CustomFeignClientException(400, "exception"));
-
+		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))
+			.thenThrow(new CustomFeignClientException(400, "exception"));
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", "token"))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BoardRequestParam.builder().build()))
 			.isInstanceOf(Exception.class)
 			.hasMessageContaining("exception");

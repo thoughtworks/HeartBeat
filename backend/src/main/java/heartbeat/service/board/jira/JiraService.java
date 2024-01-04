@@ -111,11 +111,22 @@ public class JiraService {
 
 	public ResponseEntity<Map<String, String>> verify(BoardVerifyRequestParam boardVerifyRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardVerifyRequestParam.getSite());
-		JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl, boardVerifyRequestParam.getBoardId(),
-			boardVerifyRequestParam.getToken());
-		String projectKey = jiraBoardVerifyDTO.getLocation().getProjectKey();
-		Map<String, String> response = Collections.singletonMap(PROJECT_KEY, projectKey);
-		return ResponseEntity.ok(response);
+		try {
+			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl, boardVerifyRequestParam.getBoardId(),
+				boardVerifyRequestParam.getToken());
+			String projectKey = jiraBoardVerifyDTO.getLocation().getProjectKey();
+			Map<String, String> response = Collections.singletonMap(PROJECT_KEY, projectKey);
+			return ResponseEntity.ok(response);
+		} catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed when call Jira to verify board, board id: {}, e: {}",
+				boardVerifyRequestParam.getBoardId(), cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+				String.format("Failed when call Jira to verify board, cause is %s", cause.getMessage()));
+		}
 	}
 
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {

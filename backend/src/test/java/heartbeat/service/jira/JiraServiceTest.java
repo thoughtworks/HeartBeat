@@ -491,7 +491,8 @@ class JiraServiceTest {
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any())).thenThrow(new CustomFeignClientException(400, "exception"));
+		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))
+			.thenThrow(new CustomFeignClientException(400, "exception"));
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", "token"))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BoardRequestParam.builder().build()))

@@ -116,14 +116,13 @@ public class JiraService {
 
 			return getJiraColumnsAsync(boardRequestParam, baseUrl,
 					getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(), boardRequestParam.getToken()))
-				.thenCombine(
-					getUserAsync(boardType, baseUrl, boardRequestParam),
-					(jiraColumnResult, users) -> BoardConfigDTO.builder()
-						.targetFields(neededTargetFields)
-						.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
-						.ignoredTargetFields(ignoredTargetFields)
-						.users(users)
-						.build())
+				.thenCombine(getUserAsync(boardType, baseUrl, boardRequestParam),
+						(jiraColumnResult, users) -> BoardConfigDTO.builder()
+							.targetFields(neededTargetFields)
+							.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
+							.ignoredTargetFields(ignoredTargetFields)
+							.users(users)
+							.build())
 				.join();
 		}
 		catch (RuntimeException e) {

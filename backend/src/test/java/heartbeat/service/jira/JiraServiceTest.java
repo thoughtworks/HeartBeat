@@ -7,9 +7,11 @@ import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
+import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.IOException;
@@ -38,9 +41,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletionException;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
+import static heartbeat.controller.board.dto.request.BoardVerifyRequestFixture.BOARD_VERIFY_REQUEST_BUILDER;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
@@ -82,6 +87,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
+import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_VERIFY_RESPONSE_BUILDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -181,6 +187,22 @@ class JiraServiceTest {
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getKey()).isEqualTo("done");
 		assertThat(boardConfigDTO.getUsers()).hasSize(1);
 		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
+	}
+
+	@Test
+	void shouldCallJiraFeignClientAndReturnBoardVerifyResponseWhenVerifyJiraBoard() {
+		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_VERIFY_RESPONSE_BUILDER().build();
+
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+		URI baseUrl = URI.create(boardVerifyRequestParam.getSite());
+
+		doReturn(jiraBoardVerifyDTO).when(jiraFeignClient).getBoard(baseUrl, boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(boardVerifyRequestParam.getSite()));
+
+		ResponseEntity<Map<String, String>> response = jiraService.verify(boardVerifyRequestParam);
+		jiraService.shutdownExecutor();
+
+		assertThat(Objects.requireNonNull(response.getBody()).get("projectKey")).isEqualTo("ADM");
 	}
 
 	@Test

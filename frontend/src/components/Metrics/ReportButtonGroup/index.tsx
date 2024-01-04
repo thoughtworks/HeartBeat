@@ -63,7 +63,7 @@ export const ReportButtonGroup = ({
 
   return (
     <>
-      <StyledButtonGroup>
+      <StyledButtonGroup isShowSaveButton={isShowSaveButton}>
         {isShowSaveButton && (
           <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
             <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>

@@ -8,7 +8,7 @@ type Props = {
 
 const DateRangeViewer = ({ startDate, endDate }: Props) => {
   return (
-    <DateRangeContainer>
+    <DateRangeContainer data-test-id={'date-range'}>
       {formatDate(startDate)}
       <StyledArrowForward />
       {formatDate(endDate)}

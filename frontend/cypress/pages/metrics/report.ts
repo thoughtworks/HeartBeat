@@ -3,6 +3,10 @@ class Report {
     return cy.get('[data-test-id="report-section"]', { timeout: 60000 });
   }
 
+  get dateRange() {
+    return cy.get('[data-test-id="date-range"]');
+  }
+
   get meanTimeToRecoveryTitle() {
     return cy.contains('Mean Time To Recovery');
   }
@@ -78,6 +82,11 @@ class Report {
   exportProjectConfig() {
     this.saveButton.click({ force: true });
   }
+
+  checkDateRange = () => {
+    this.dateRange.contains('2022/09/01');
+    this.dateRange.contains('2022/09/14');
+  };
 }
 
 const reportPage = new Report();

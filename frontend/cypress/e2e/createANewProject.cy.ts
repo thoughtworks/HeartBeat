@@ -285,6 +285,8 @@ describe('Create a new project', () => {
 
     configPage.goMetricsStep();
 
+    metricsPage.checkDateRange();
+
     configPage.nextStepButton.should('be.disabled');
 
     checkCycleTimeTooltip();
@@ -319,6 +321,8 @@ describe('Create a new project', () => {
     reportPage.pageIndicator.should('be.visible');
 
     reportPage.firstNotification.should('exist');
+
+    reportPage.checkDateRange();
 
     checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`, velocityData);
 

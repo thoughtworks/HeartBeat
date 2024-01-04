@@ -119,6 +119,10 @@ export class Metrics {
     return cy.get('[data-test-id="tooltip');
   }
 
+  get dateRange() {
+    return cy.get('[data-test-id="date-range"]');
+  }
+
   chooseDropdownOption = (label: string, value: string) => {
     this.getCycleTimeSettingsAutoCompleteField(label).click();
     cy.get('li[role="option"]').contains(value).click();
@@ -192,6 +196,11 @@ export class Metrics {
   BackToConfigStep() {
     this.backButton.click();
   }
+
+  checkDateRange = () => {
+    this.dateRange.contains('2022/09/01');
+    this.dateRange.contains('2022/09/14');
+  };
 }
 
 const metricsPage = new Metrics();

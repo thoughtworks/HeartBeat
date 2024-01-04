@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
@@ -29,7 +31,7 @@ public class JiraController {
 	}
 
 	@PostMapping("/verify")
-	public ResponseEntity<Object> verify(@Valid @RequestBody BoardVerifyRequestParam boardRequestParam) {
+	public ResponseEntity<Map<String, String>> verify(@Valid @RequestBody BoardVerifyRequestParam boardRequestParam) {
 		return jiraService.verify(boardRequestParam);
 	}
 

@@ -3,6 +3,7 @@ package heartbeat.config;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import java.time.Duration;
 import javax.cache.CacheManager;
@@ -31,6 +32,7 @@ public class CacheConfig {
 		cacheManager.createCache("jiraStatusCategory", getCacheConfiguration(StatusSelfDTO.class));
 		cacheManager.createCache("jiraActivityFeed", getCacheConfiguration(CardHistoryResponseDTO.class));
 		cacheManager.createCache("targetField", getCacheConfiguration(FieldResponseDTO.class));
+		cacheManager.createCache("boardVerification", getCacheConfiguration(JiraBoardVerifyDTO.class));
 		return cacheManager;
 	}
 

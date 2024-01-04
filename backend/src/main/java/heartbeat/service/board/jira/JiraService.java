@@ -16,6 +16,7 @@ import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
 import heartbeat.client.dto.board.jira.Issuetype;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraColumn;
@@ -101,13 +102,20 @@ public class JiraService {
 
 	private static final String STORY_POINT_KEY = "STORY_POINT_KEY";
 
+	private static final String PROJECT_KEY = "projectKey";
+
 	@PreDestroy
 	public void shutdownExecutor() {
 		customTaskExecutor.shutdown();
 	}
 
-	public ResponseEntity<Object> verify(BoardVerifyRequestParam boardVerifyRequestParam) {
-		return ResponseEntity.ok().build();
+	public ResponseEntity<Map<String, String>> verify(BoardVerifyRequestParam boardVerifyRequestParam) {
+		URI baseUrl = urlGenerator.getUri(boardVerifyRequestParam.getSite());
+		JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl, boardVerifyRequestParam.getBoardId(),
+			boardVerifyRequestParam.getToken());
+		String projectKey = jiraBoardVerifyDTO.getLocation().getProjectKey();
+		Map<String, String> response = Collections.singletonMap(PROJECT_KEY, projectKey);
+		return ResponseEntity.ok(response);
 	}
 
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {

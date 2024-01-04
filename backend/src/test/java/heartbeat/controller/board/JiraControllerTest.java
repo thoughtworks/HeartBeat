@@ -2,6 +2,8 @@ package heartbeat.controller.board;
 
 import static heartbeat.controller.board.BoardConfigResponseFixture.BOARD_CONFIG_RESPONSE_BUILDER;
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
+import static heartbeat.controller.board.dto.request.BoardVerifyRequestFixture.BOARD_VERIFY_REQUEST_BUILDER;
+import static heartbeat.controller.board.dto.request.BoardVerifyRequestFixture.PROJECT_KEY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
+import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
@@ -21,8 +24,12 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Collections;
+import java.util.Map;
 
 @WebMvcTest(JiraController.class)
 @ExtendWith(SpringExtension.class)
@@ -52,6 +59,20 @@ public class JiraControllerTest {
 	}
 
 	@Test
+	void shouldReturnCorrectBoardVerificationResponseWhenGivenTheCorrectBoardRequest() throws Exception {
+		ResponseEntity<Map<String, String>> response = ResponseEntity.ok(Collections.singletonMap("projectKey", PROJECT_KEY));
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
+		when(jiraService.verify(any())).thenReturn(response);
+
+		mockMvc.perform(post("/boards/verify")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.projectKey").value(PROJECT_KEY));
+	}
+
+	@Test
 	void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";
@@ -69,12 +90,39 @@ public class JiraControllerTest {
 	}
 
 	@Test
+	void shouldHandleVerifyServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
+		RequestFailedException mockException = mock(RequestFailedException.class);
+		String message = "message";
+		when(jiraService.verify(any())).thenThrow(mockException);
+		when(mockException.getMessage()).thenReturn(message);
+		when(mockException.getStatus()).thenReturn(400);
+
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
+		mockMvc
+			.perform(post("/boards/verify").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value(message));
+	}
+
+	@Test
 	void shouldVerifyRequestTokenNotBlank() throws Exception {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token(null).build();
 
 		mockMvc
 			.perform(post("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void shouldBoardVerifyRequestTokenNotBlank() throws Exception {
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().token(null).build();
+
+		mockMvc
+			.perform(post("/boards/verify").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isBadRequest());
 	}
 

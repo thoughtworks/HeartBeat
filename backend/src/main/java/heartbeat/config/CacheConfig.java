@@ -35,6 +35,7 @@ public class CacheConfig {
 		cacheManager.createCache("targetField", getCacheConfiguration(FieldResponseDTO.class));
 		cacheManager.createCache("boardVerification", getCacheConfiguration(JiraBoardVerifyDTO.class));
 		cacheManager.createCache("boardProject", getCacheConfiguration(JiraBoardProject.class));
+		cacheManager.createCache("jiraCards", getCacheConfiguration(String.class));
 		return cacheManager;
 	}
 

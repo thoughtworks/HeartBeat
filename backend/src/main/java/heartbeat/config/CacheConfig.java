@@ -10,6 +10,8 @@ import java.time.Duration;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
+
+import heartbeat.client.dto.board.jira.HolidaysResponseDTO;
 import lombok.val;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
@@ -36,6 +38,7 @@ public class CacheConfig {
 		cacheManager.createCache("boardVerification", getCacheConfiguration(JiraBoardVerifyDTO.class));
 		cacheManager.createCache("boardProject", getCacheConfiguration(JiraBoardProject.class));
 		cacheManager.createCache("jiraCards", getCacheConfiguration(String.class));
+		cacheManager.createCache("holidayResult", getCacheConfiguration(HolidaysResponseDTO.class));
 		return cacheManager;
 	}
 

@@ -8,7 +8,6 @@ export interface useVerifyPipeLineToolStateInterface {
   verifyPipelineTool: (params: PipelineRequestDTO) => Promise<
     | {
         isPipelineToolVerified: boolean;
-        response: object;
       }
     | undefined
   >;

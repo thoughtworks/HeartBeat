@@ -1,10 +1,11 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import axios, { HttpStatusCode, isAxiosError } from 'axios'
+import { HttpStatusCode, isAxiosError } from 'axios'
 import { PipelineRequestDTO } from '@src/clients/pipeline/dto/request'
+import { IPipelineInfoResponseDTO } from '@src/clients/pipeline/dto/response'
 
-interface IGetPipelineToolInfoResult {
+export interface IGetPipelineToolInfoResult {
   code: number | undefined | null
-  data: any
+  data?: IPipelineInfoResponseDTO
   errorTitle: string
   errorMessage: string
 }
@@ -39,7 +40,7 @@ export class PipelineToolClient extends HttpClient {
   getPipelineToolInfo = async (params: PipelineRequestDTO) => {
     const result: IGetPipelineToolInfoResult = {
       code: null,
-      data: {},
+      data: undefined,
       errorTitle: '',
       errorMessage: '',
     }
@@ -47,7 +48,7 @@ export class PipelineToolClient extends HttpClient {
     try {
       const response = await this.axiosInstance.post(`/pipelines/${params.type}/info`, params)
       if (response.status === HttpStatusCode.Ok) {
-        result.data = response.data
+        result.data = response.data as IPipelineInfoResponseDTO
       } else if (response.status === HttpStatusCode.NoContent) {
         result.errorTitle = errorCaseTextMapping[response.status]
         result.errorMessage =

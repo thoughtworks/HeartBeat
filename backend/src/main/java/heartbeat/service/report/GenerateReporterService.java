@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.codebase.github.CommitInfo;
@@ -213,7 +214,11 @@ public class GenerateReporterService {
 		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());
 		// fetch data for calculate
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
+		log.info("[Generate Board Report] Start to generate report for Board with board id: {}",
+				request.getJiraBoardSetting().getBoardId());
 		FetchedData fetchedData = fetchOriginalData(request, lowMetrics);
+		log.info("[Generate Board Report] Successfully generate report for Board with board id: {}",
+				request.getJiraBoardSetting().getBoardId());
 
 		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)
 				|| lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
@@ -303,8 +308,28 @@ public class GenerateReporterService {
 			.startTime(request.getStartTime())
 			.endTime(request.getEndTime())
 			.build();
+
+		log.info("[Generate Board Card] start to get nonDoneCard");
 		CardCollection nonDoneCardCollection = fetchNonDoneCardCollection(request);
+		log.info("[Generate Board Card] Successfully get nonDoneCard num: {}, nonDoneCard: {}",
+				nonDoneCardCollection.getCardsNumber(),
+				nonDoneCardCollection.getJiraCardDTOList()
+					.stream()
+					.map(JiraCardDTO::getBaseInfo)
+					.filter(Objects::nonNull)
+					.map(JiraCard::getKey)
+					.toList());
+
+		log.info("[Generate Board Card] start to get realDoneCard");
 		CardCollection realDoneCardCollection = fetchRealDoneCardCollection(request);
+		log.info("[Generate Board Card] Successfully get realDoneCard num: {}, realDoneCard: {}",
+				realDoneCardCollection.getCardsNumber(),
+				realDoneCardCollection.getJiraCardDTOList()
+					.stream()
+					.map(JiraCardDTO::getBaseInfo)
+					.filter(Objects::nonNull)
+					.map(JiraCard::getKey)
+					.toList());
 
 		CardCollectionInfo collectionInfo = CardCollectionInfo.builder()
 			.realDoneCardCollection(realDoneCardCollection)
@@ -371,6 +396,11 @@ public class GenerateReporterService {
 			card.setCycleTimeFlat(buildCycleTimeFlatObject(card));
 			card.setTotalCycleTimeDivideStoryPoints(calculateTotalCycleTimeDivideStoryPoints(card));
 		});
+		log.info("[Generate Board CSV] Start to generator board csv with card, num:{}, card:{}", cardDTOList.size(),
+				cardDTOList.stream()
+					.filter(it -> it.getBaseInfo() != null)
+					.map(it -> it.getBaseInfo().getKey())
+					.toList());
 		csvFileGenerator.convertBoardDataToCSV(cardDTOList, allBoardFields, newExtraFields, csvTimeStamp);
 	}
 

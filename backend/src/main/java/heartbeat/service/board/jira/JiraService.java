@@ -161,15 +161,22 @@ public class JiraService {
 			.endTime(request.getEndTime())
 			.build();
 
+		log.info("[Jira Service Card] Start to get allDoneCards from Jira");
 		JiraCardWithFields jiraCardWithFields = getAllDoneCards(boardType, baseUrl, request.getStatus(),
 				boardRequestParam);
 		List<JiraCard> allDoneCards = jiraCardWithFields.getJiraCards();
+		log.info("[Jira Service Card] Successfully get allDoneCards from Jira num: {}, card: {}", allDoneCards.size(),
+				allDoneCards.stream().map(JiraCard::getKey).toList());
 
 		for (RequestJiraBoardColumnSetting boardColumn : boardColumns) {
 			CardStepsEnum.fromValue(boardColumn.getValue());
 		}
+		log.info("[Jira Service Card] Start to get realDoneCards from Jira");
 		List<JiraCardDTO> realDoneCards = getRealDoneCards(request, boardColumns, users, baseUrl, allDoneCards,
 				jiraCardWithFields.getTargetFields(), assigneeFilter);
+		log.info("[Jira Service Card] Successfully get realDoneCards num: {}, card: {}", realDoneCards.size(),
+				realDoneCards.stream().map(it -> it.getBaseInfo().getKey()).toList());
+
 		double storyPointSum = realDoneCards.stream()
 			.mapToDouble(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
@@ -239,21 +246,15 @@ public class JiraService {
 		log.info("Start to get columns status self list, column name: {}", jiraColumn.getName());
 		List<CompletableFuture<StatusSelfDTO>> futures = jiraColumn.getStatuses()
 			.stream()
-			.map(jiraColumnStatus -> CompletableFuture.supplyAsync(() -> {
-				log.info("[Jira verify Status] Start to get column status category with column name: {}, status: {}",
-						jiraColumn.getName(), jiraColumn.getStatuses());
-				StatusSelfDTO columnStatusCategory = jiraFeignClient.getColumnStatusCategory(baseUrl,
-						jiraColumnStatus.getId(), token);
-				log.info(
-						"[Jira verify Status] Successfully get column status category with column name: {}, status: {}",
-						jiraColumn.getName(), jiraColumn.getStatuses());
-				return columnStatusCategory;
-			}, customTaskExecutor).exceptionally(e -> {
-				log.error(
-						"[Jira verify Status] Failed to get Jira column status category, with  column name: {}, status: {} reason: {}:",
-						jiraColumn.getName(), jiraColumn.getStatuses(), e.getMessage());
-				return null;
-			}))
+			.map(jiraColumnStatus -> CompletableFuture
+				.supplyAsync(() -> jiraFeignClient.getColumnStatusCategory(baseUrl, jiraColumnStatus.getId(), token),
+						customTaskExecutor)
+				.exceptionally(e -> {
+					log.error(
+							"[Jira verify Status] Failed to get Jira column status category, with  column name: {}, status: {} reason: {}:",
+							jiraColumn.getName(), jiraColumn.getStatuses(), e.getMessage());
+					return null;
+				}))
 			.toList();
 		log.info("Successfully get columns status self list, column name: {}", jiraColumn.getName());
 
@@ -281,13 +282,9 @@ public class JiraService {
 	}
 
 	private List<String> getUsers(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam) {
-		log.info("[Jira verify Cards] Start to get all cards in getUsers, boardType: {}", boardType);
 		List<JiraCard> allCards = getAllCards(boardType, baseUrl, boardRequestParam).getJiraCards();
-		log.info("[Jira verify Cards] Successfully to get all cards in getUsers, boardType: {}, size: {}", boardType,
-				allCards.size());
 
 		if (allCards.isEmpty()) {
-			log.error("[Jira verify Cards] Failed to get cards in getUsers is empty, boardType: {}", boardType);
 			throw new NoContentException("There is no cards.");
 		}
 
@@ -447,16 +444,10 @@ public class JiraService {
 	private List<TargetField> getTargetField(URI baseUrl, BoardRequestParam boardRequestParam) {
 		log.info("Start to get target field, project key: {}, board id: {},", boardRequestParam.getProjectKey(),
 				boardRequestParam.getBoardId());
-		log.info("[Jira verify Field] Start to get target field for project key: {}, board id: {}",
-				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId());
 		FieldResponseDTO fieldResponse = jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(),
 				boardRequestParam.getToken());
-		log.info("[Jira verify Field] Successfully to get target field for project key: {}, board id: {}",
-				boardRequestParam.getProjectKey(), boardRequestParam.getBoardId());
 
 		if (isNull(fieldResponse) || fieldResponse.getProjects().isEmpty()) {
-			log.error("[Jira verify Field] Failed to get target field for project key: {}, board id: {}",
-					boardRequestParam.getProjectKey(), boardRequestParam.getBoardId());
 			throw new PermissionDenyException("There is no enough permission.");
 		}
 
@@ -487,10 +478,18 @@ public class JiraService {
 		List<JiraCard> futures = new ArrayList<>();
 
 		for (JiraCard allDoneCard : allDoneCards) {
+			log.info("[Jira Service History] Start to get jira card history，card key: {}", allDoneCard.getKey());
 			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, allDoneCard.getKey(),
 					request.getToken());
+			log.info(
+					"[Jira Service History] Successfully get jira card history, card key: {}, card history items size:{}",
+					allDoneCard.getKey(), jiraCardHistory.getItems().size());
 			if (isRealDoneCardByHistory(jiraCardHistory, request)) {
 				futures.add(allDoneCard);
+			}
+			else {
+				log.error("[Jira Service Card RealDoneCards] Failed to save not real done card by history: {}",
+						allDoneCard.getKey());
 			}
 		}
 		futures.forEach(doneCard -> {
@@ -506,6 +505,9 @@ public class JiraService {
 							boardColumns))
 					.build();
 				realDoneCards.add(jiraCardDTO);
+			}
+			else {
+				log.error("[Jira Service Card RealDoneCards] Failed to not match real card: {}", doneCard.getKey());
 			}
 		});
 		return realDoneCards;
@@ -694,15 +696,27 @@ public class JiraService {
 			.endTime(request.getEndTime())
 			.build();
 
+		log.info("[Jira Service Card] Start to get NonDoneCards from active sprint ");
 		JiraCardWithFields jiraCardWithFields = getAllNonDoneCardsForActiveSprint(baseUrl, request.getStatus(),
 				boardRequestParam);
+		log.info("[Jira Service Card] Successfully get NonDoneCards from active sprint num: {}, card: {}",
+				jiraCardWithFields.getJiraCards().size(),
+				jiraCardWithFields.getJiraCards().stream().map(JiraCard::getKey).toList());
 
 		if (jiraCardWithFields.getJiraCards().isEmpty()) {
+			log.info("[Jira Service Card] Start to get NonDoneCards from KanBan");
 			jiraCardWithFields = getAllNonDoneCardsForKanBan(baseUrl, request.getStatus(), boardRequestParam);
+			log.info("[Jira Service Card] Successfully get NonDoneCards from KanBan num: {}, card: {}",
+					jiraCardWithFields.getJiraCards().size(),
+					jiraCardWithFields.getJiraCards().stream().map(JiraCard::getKey).toList());
 		}
 
+		log.info("[Jira Service Card] Start to get matchedNonCards");
 		List<JiraCardDTO> matchedNonCards = getMatchedNonDoneCards(request, boardColumns, users, baseUrl,
 				jiraCardWithFields.getJiraCards(), jiraCardWithFields.getTargetFields());
+		log.info("[Jira Service Card] Successfully get matchedNonCards num: {}, card: {}", matchedNonCards.size(),
+				matchedNonCards.stream().map(it -> it.getBaseInfo().getKey()).toList());
+
 		double storyPointSum = matchedNonCards.stream()
 			.mapToDouble(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
@@ -735,6 +749,9 @@ public class JiraService {
 
 				JiraCardDTO jiraCardDTO = buildJiraCardDTO(card, cycleTimeInfoDTO, cardCycleTime);
 				matchedCards.add(jiraCardDTO);
+			}
+			else {
+				log.error("[Jira Service Card Match] Failed to save not match card:{}", card.getKey());
 			}
 		});
 
@@ -801,6 +818,9 @@ public class JiraService {
 
 		List<TargetField> targetField = getTargetField(baseUrl, boardRequestParam);
 		AllDoneCardsResponseDTO allCardsResponseDTO = formatAllDoneCards(allCardResponse, targetField);
+		log.info("[Jira verify Cards] Successfully get card from jira num: {}, type: {}, card: {}",
+				allCardsResponseDTO.getTotal(), cardType,
+				allCardsResponseDTO.getIssues().stream().map(JiraCard::getKey).toList());
 
 		List<JiraCard> cards = new ArrayList<>(new HashSet<>(allCardsResponseDTO.getIssues()));
 		int pages = (int) Math.ceil(Double.parseDouble(allCardsResponseDTO.getTotal()) / QUERY_COUNT);
@@ -822,6 +842,8 @@ public class JiraService {
 		List<JiraCard> moreNonDoneCards = nonDoneCardsResponses.stream()
 			.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
 			.toList();
+		log.info("[Jira verify Cards] Successfully get more card from jira num: {}, type: {}, card: {}",
+				moreNonDoneCards.size(), cardType, moreNonDoneCards.stream().map(JiraCard::getKey).toList());
 
 		return JiraCardWithFields.builder()
 			.jiraCards(Stream.concat(cards.stream(), moreNonDoneCards.stream()).toList())
@@ -831,11 +853,7 @@ public class JiraService {
 
 	public JiraBoardConfigDTO getJiraBoardConfig(URI baseUrl, String boardId, String token) {
 		log.info("Start to get configuration for board, board id: {}", boardId);
-		log.info("[Jira verify Board] Start to get Jira Board Configuration with boardId: {}", boardId);
 		JiraBoardConfigDTO jiraBoardConfigDTO = jiraFeignClient.getJiraBoardConfiguration(baseUrl, boardId, token);
-		log.info(
-				"[Jira verify Board] Successfully get Jira Board Configuration with boardId: {}, name: {}, column size: {}",
-				boardId, jiraBoardConfigDTO.getName(), jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		log.info("Successfully get configuration for board, name: {}, column size: {}", jiraBoardConfigDTO.getName(),
 				jiraBoardConfigDTO.getColumnConfig().getColumns().size());
 		return jiraBoardConfigDTO;

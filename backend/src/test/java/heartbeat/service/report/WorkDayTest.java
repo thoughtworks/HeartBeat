@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -28,7 +29,7 @@ class WorkDayTest {
 
 	@Test
 	void shouldReturnDayIsHoliday() {
-		String year = "2023";
+		String year = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 		List<HolidayDTO> holidayDTOList = List.of(
 				HolidayDTO.builder().date("2023-01-01").name("元旦").isOffDay(true).build(),
 				HolidayDTO.builder().date("2023-01-28").name("春节").isOffDay(false).build());

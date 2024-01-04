@@ -281,6 +281,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(false)
 			.metrics(List.of("deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
@@ -324,6 +325,7 @@ class GenerateReporterServiceTest {
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(false)
 			.metrics(List.of("change failure rate"))
 			.buildKiteSetting(buildKiteSetting)
@@ -365,6 +367,7 @@ class GenerateReporterServiceTest {
 			.deploymentEnvList(Collections.emptyList())
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(false)
 			.metrics(List.of("change failure rate"))
 			.buildKiteSetting(buildKiteSetting)
@@ -405,6 +408,7 @@ class GenerateReporterServiceTest {
 			.targetFields(Collections.emptyList())
 			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(false)
 			.metrics(List.of("cycle time"))
 			.jiraBoardSetting(jiraBoardSetting)
@@ -454,6 +458,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(true)
 			.metrics(List.of("lead time for changes", "mean time to recovery"))
 			.buildKiteSetting(buildKiteSetting)
@@ -531,6 +536,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(true)
 			.metrics(List.of("lead time for changes", "deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
@@ -580,6 +586,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(true)
 			.metrics(List.of("lead time for changes", "deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
@@ -631,6 +638,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(true)
 			.metrics(List.of("lead time for changes", "deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
@@ -677,6 +685,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(true)
 			.metrics(List.of("lead time for changes", "deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
@@ -721,6 +730,7 @@ class GenerateReporterServiceTest {
 			.build();
 
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.considerHoliday(true)
 			.metrics(List.of("lead time for changes", "deployment frequency"))
 			.buildKiteSetting(buildKiteSetting)
@@ -886,6 +896,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldGenerateForMetricCsvWhenCallGenerateReporter() throws IOException {
 		GenerateReportRequest request = GenerateReportRequest.builder()
+			.jiraBoardSetting(JiraBoardSetting.builder().boardId("2").build())
 			.metrics(List.of())
 			.considerHoliday(false)
 			.startTime("123")

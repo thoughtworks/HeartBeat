@@ -38,7 +38,7 @@ cd HearBeat/backend
 ## 4. Run the e2e environment
 ```shell script
 cd HearBeat/backend
-./gradlew bootRun --args='--spring.profiles.active=e2e'
+./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://localhost:4323'
 ```
 
 ## 5. How to run the local environment

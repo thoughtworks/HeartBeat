@@ -196,8 +196,8 @@ class JiraServiceTest {
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 
-		doReturn(jiraBoardVerifyDTO).when(jiraFeignClient).getBoard(baseUrl,
-			boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
+		doReturn(jiraBoardVerifyDTO).when(jiraFeignClient)
+			.getBoard(baseUrl, boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
 		JiraVerifyDTO jiraVerifyDTO = jiraService.verify(BoardType.JIRA, boardVerifyRequestParam);

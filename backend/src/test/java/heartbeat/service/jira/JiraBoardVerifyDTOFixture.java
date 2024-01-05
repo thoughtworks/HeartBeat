@@ -6,8 +6,11 @@ import heartbeat.client.dto.board.jira.Location;
 public class JiraBoardVerifyDTOFixture {
 
 	public static final String BOARD_ID = "1";
+
 	public static final String BOARD_NAME_JIRA = "jira";
+
 	public static final String TYPE = "adm board";
+
 	public static final String PROJECT_KEY = "ADM";
 
 	public static JiraBoardVerifyDTO.JiraBoardVerifyDTOBuilder JIRA_BOARD_VERIFY_RESPONSE_BUILDER() {

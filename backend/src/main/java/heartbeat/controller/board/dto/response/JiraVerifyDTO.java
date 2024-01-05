@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class JiraVerifyDTO {
 
 	private String projectKey;
+
 }

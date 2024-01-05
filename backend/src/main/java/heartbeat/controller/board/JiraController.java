@@ -31,7 +31,7 @@ public class JiraController {
 
 	@PostMapping("/{boardType}/verify")
 	public ResponseEntity<JiraVerifyDTO> verify(@PathVariable @NotBlank BoardType boardType,
-												@Valid @RequestBody BoardVerifyRequestParam boardRequestParam) {
+			@Valid @RequestBody BoardVerifyRequestParam boardRequestParam) {
 		JiraVerifyDTO jiraVerifyDTO = jiraService.verify(boardType, boardRequestParam);
 		return ResponseEntity.ok(jiraVerifyDTO);
 	}

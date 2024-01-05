@@ -115,19 +115,20 @@ public class JiraService {
 			if (!BoardType.JIRA.equals(boardType)) {
 				throw new BadRequestException("boardType param is not correct");
 			}
-			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl, boardVerifyRequestParam.getBoardId(),
-				boardVerifyRequestParam.getToken());
+			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl,
+					boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
 			String projectKey = jiraBoardVerifyDTO.getLocation().getProjectKey();
 			return JiraVerifyDTO.builder().projectKey(projectKey).build();
-		} catch (RuntimeException e) {
+		}
+		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
 			log.error("Failed when call Jira to verify board, board id: {}, e: {}",
-				boardVerifyRequestParam.getBoardId(), cause.getMessage());
+					boardVerifyRequestParam.getBoardId(), cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
 			throw new InternalServerErrorException(
-				String.format("Failed when call Jira to verify board, cause is %s", cause.getMessage()));
+					String.format("Failed when call Jira to verify board, cause is %s", cause.getMessage()));
 		}
 	}
 

@@ -29,7 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-
 @WebMvcTest(JiraController.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
@@ -64,8 +63,8 @@ public class JiraControllerTest {
 
 		when(jiraService.verify(any(), any())).thenReturn(jiraVerifyDTO);
 
-		mockMvc.perform(post("/boards/{boardType}/verify", BoardType.JIRA)
-				.contentType(MediaType.APPLICATION_JSON)
+		mockMvc
+			.perform(post("/boards/{boardType}/verify", BoardType.JIRA).contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.projectKey").value(PROJECT_KEY));
@@ -98,8 +97,8 @@ public class JiraControllerTest {
 
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 
-		mockMvc.perform(post("/boards/{boardType}/verify", BoardType.JIRA)
-				.contentType(MediaType.APPLICATION_JSON)
+		mockMvc
+			.perform(post("/boards/{boardType}/verify", BoardType.JIRA).contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value(message));
@@ -120,8 +119,7 @@ public class JiraControllerTest {
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().token(null).build();
 
 		mockMvc
-			.perform(post("/boards/{boardType}/verify", "jira")
-				.contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/boards/{boardType}/verify", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isBadRequest());
 	}

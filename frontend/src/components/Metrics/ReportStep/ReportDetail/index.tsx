@@ -12,15 +12,22 @@ import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { ReportResponse } from '@src/clients/report/dto/response'
-import { ErrorNotificationContainer, StyledTableWrapper } from '@src/components/Metrics/ReportStep/ReportDetail/style'
+import {
+  ErrorNotificationContainer,
+  StyledContainer,
+  StyledNavigator,
+  StyledTableWrapper,
+} from '@src/components/Metrics/ReportStep/ReportDetail/style'
 import { selectReportData } from '@src/context/report/reportSlice'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup'
 import Header from '@src/layouts/Header'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Breadcrumbs, Link, Typography } from '@mui/material'
 
 const ReportDetail = () => {
   const { state } = useLocation()
+  const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [velocityState, setVelocityState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
   const [cycleTimeState, setCycleTimeState] = useState({ value: INIT_REPORT_DATA_WITH_TWO_COLUMNS, isShow: false })
@@ -85,76 +92,91 @@ const ReportDetail = () => {
       })
   }
 
+  const handleBack = (event) => {
+    event.preventDefault()
+    navigate(-1)
+  }
+
   return (
     <>
       <Header />
-      {errorMessage && (
-        <ErrorNotificationContainer>
-          <ErrorNotification message={errorMessage} />
-        </ErrorNotificationContainer>
-      )}
-      <StyledTableWrapper>
-        {state.reportType === RETRIEVE_REPORT_TYPES.BOARD && (
-          <>
-            {velocityState.isShow && <ReportForTwoColumns title={'Velocity'} data={velocityState.value} />}
-            {cycleTimeState.isShow && <ReportForTwoColumns title={'Cycle time'} data={cycleTimeState.value} />}
-            {classificationState.isShow && (
-              <ReportForThreeColumns
-                title={'Classifications'}
-                fieldName='Field Name'
-                listName='Subtitle'
-                data={classificationState.value}
-              />
-            )}
-          </>
+      <StyledContainer>
+        {errorMessage && (
+          <ErrorNotificationContainer>
+            <ErrorNotification message={errorMessage} />
+          </ErrorNotificationContainer>
         )}
-        {state.reportType === RETRIEVE_REPORT_TYPES.DORA && (
-          <>
-            {deploymentFrequencyState.isShow && (
-              <ReportForThreeColumns
-                title={'Deployment frequency'}
-                fieldName={PIPELINE_STEP}
-                listName={NAME}
-                data={deploymentFrequencyState.value}
-              />
-            )}
-            {leadTimeForChangesState.isShow && (
-              <ReportForThreeColumns
-                title={'Lead time for changes'}
-                fieldName={PIPELINE_STEP}
-                listName={NAME}
-                data={leadTimeForChangesState.value}
-              />
-            )}
-            {changeFailureRateState.isShow && (
-              <ReportForThreeColumns
-                title={'Change failure rate'}
-                fieldName={PIPELINE_STEP}
-                listName={NAME}
-                data={changeFailureRateState.value}
-              />
-            )}
-            {meanTimeToRecoveryState.isShow && (
-              <ReportForThreeColumns
-                title={'Mean Time To Recovery'}
-                fieldName={PIPELINE_STEP}
-                listName={NAME}
-                data={meanTimeToRecoveryState.value}
-              />
-            )}
-          </>
-        )}
-        <ReportButtonGroup
-          isFromDetailPage={true}
-          reportData={reportData}
-          startDate={startDate}
-          endDate={endDate}
-          setErrorMessage={(message) => {
-            setErrorMessage(message)
-          }}
-          csvTimeStamp={csvTimeStamp}
-        />
-      </StyledTableWrapper>
+        <StyledNavigator>
+          <Breadcrumbs aria-label='breadcrumb'>
+            <Link color='inherit' href='../index.tsx' onClick={handleBack}>
+              Report
+            </Link>
+            <Typography color='textPrimary'>board</Typography>
+          </Breadcrumbs>
+        </StyledNavigator>
+        <StyledTableWrapper>
+          {state.reportType === RETRIEVE_REPORT_TYPES.BOARD && (
+            <>
+              {velocityState.isShow && <ReportForTwoColumns title={'Velocity'} data={velocityState.value} />}
+              {cycleTimeState.isShow && <ReportForTwoColumns title={'Cycle time'} data={cycleTimeState.value} />}
+              {classificationState.isShow && (
+                <ReportForThreeColumns
+                  title={'Classifications'}
+                  fieldName='Field Name'
+                  listName='Subtitle'
+                  data={classificationState.value}
+                />
+              )}
+            </>
+          )}
+          {state.reportType === RETRIEVE_REPORT_TYPES.DORA && (
+            <>
+              {deploymentFrequencyState.isShow && (
+                <ReportForThreeColumns
+                  title={'Deployment frequency'}
+                  fieldName={PIPELINE_STEP}
+                  listName={NAME}
+                  data={deploymentFrequencyState.value}
+                />
+              )}
+              {leadTimeForChangesState.isShow && (
+                <ReportForThreeColumns
+                  title={'Lead time for changes'}
+                  fieldName={PIPELINE_STEP}
+                  listName={NAME}
+                  data={leadTimeForChangesState.value}
+                />
+              )}
+              {changeFailureRateState.isShow && (
+                <ReportForThreeColumns
+                  title={'Change failure rate'}
+                  fieldName={PIPELINE_STEP}
+                  listName={NAME}
+                  data={changeFailureRateState.value}
+                />
+              )}
+              {meanTimeToRecoveryState.isShow && (
+                <ReportForThreeColumns
+                  title={'Mean Time To Recovery'}
+                  fieldName={PIPELINE_STEP}
+                  listName={NAME}
+                  data={meanTimeToRecoveryState.value}
+                />
+              )}
+            </>
+          )}
+          <ReportButtonGroup
+            isFromDetailPage={true}
+            reportData={reportData}
+            startDate={startDate}
+            endDate={endDate}
+            setErrorMessage={(message) => {
+              setErrorMessage(message)
+            }}
+            csvTimeStamp={csvTimeStamp}
+          />
+        </StyledTableWrapper>
+      </StyledContainer>
     </>
   )
 }

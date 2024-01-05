@@ -11,6 +11,15 @@ export const ErrorNotificationContainer = styled('div')({
 })
 
 export const StyledTableWrapper = styled('div')({
+  width: '100%',
+  margin: '2rem 0',
+})
+
+export const StyledNavigator = styled('div')({
+  margin: '1rem 0',
+})
+
+export const StyledContainer = styled('div')({
   width: '80%',
-  margin: '2rem auto',
+  margin: '0 auto',
 })

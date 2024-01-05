@@ -8,7 +8,7 @@ export interface NotificationTipProps {
   open: boolean;
   closeAutomatically: boolean;
   durationTimeout?: number;
-  severity?: AlertColor;
+  type?: AlertColor;
 }
 
 export interface useNotificationLayoutEffectInterface {

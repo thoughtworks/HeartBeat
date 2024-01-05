@@ -2,8 +2,8 @@ import { AlertIconImage, AlertTitleWrapper, AlertWrapper } from '@src/components
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import Info from '@src/assets/Info.svg';
 
-export const NotificationButton = ({ notificationProps, updateProps }: useNotificationLayoutEffectInterface) => {
-  const handleTooltipClose = () => {
+export const Notification = ({ notificationProps, updateProps }: useNotificationLayoutEffectInterface) => {
+  const handleNotificationClose = () => {
     if (notificationProps === undefined) return;
     updateProps?.({
       title: notificationProps.title,
@@ -16,7 +16,7 @@ export const NotificationButton = ({ notificationProps, updateProps }: useNotifi
   return (
     <>
       {notificationProps?.open && (
-        <AlertWrapper onClose={handleTooltipClose} icon={<AlertIconImage src={Info} />}>
+        <AlertWrapper onClose={handleNotificationClose} icon={<AlertIconImage src={Info} />}>
           <AlertTitleWrapper>{notificationProps?.title}</AlertTitleWrapper>
           {notificationProps?.message}
         </AlertWrapper>

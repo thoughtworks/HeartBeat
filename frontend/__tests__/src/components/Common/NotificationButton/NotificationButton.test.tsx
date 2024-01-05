@@ -1,5 +1,5 @@
 import { render, renderHook, waitFor, screen } from '@testing-library/react';
-import { NotificationButton } from '@src/components/Common/NotificationButton';
+import { Notification } from '@src/components/Common/NotificationButton';
 import React from 'react';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { act } from 'react-dom/test-utils';
@@ -7,12 +7,22 @@ import userEvent from '@testing-library/user-event';
 
 const notificationIcon = 'NotificationIcon';
 describe('NotificationButton', () => {
-  const closeNotificationProps = { open: false, title: 'NotificationPopper', closeAutomatically: false };
-  const openNotificationProps = { open: true, title: 'NotificationPopper', closeAutomatically: false };
+  const closeNotificationProps = {
+    open: false,
+    title: 'NotificationPopper',
+    message: 'Notification Message',
+    closeAutomatically: false,
+  };
+  const openNotificationProps = {
+    open: true,
+    title: 'NotificationPopper',
+    message: 'Notification Message',
+    closeAutomatically: false,
+  };
   const { result } = renderHook(() => useNotificationLayoutEffect());
 
   it('should show NotificationIcon when render NotificationButton component', () => {
-    const { getByTestId } = render(<NotificationButton {...result.current} />);
+    const { getByTestId } = render(<Notification {...result.current} />);
 
     expect(getByTestId(notificationIcon)).toBeInTheDocument();
   });
@@ -21,7 +31,7 @@ describe('NotificationButton', () => {
     act(() => {
       result.current.notificationProps = openNotificationProps;
     });
-    const { getByText } = render(<NotificationButton {...result.current} />);
+    const { getByText } = render(<Notification {...result.current} />);
     await userEvent.click(screen.getByTestId(notificationIcon));
     expect(getByText('NotificationPopper')).toBeInTheDocument();
   });
@@ -30,7 +40,7 @@ describe('NotificationButton', () => {
     act(() => {
       result.current.notificationProps = closeNotificationProps;
     });
-    const { getByTestId, queryByText } = render(<NotificationButton {...result.current} />);
+    const { getByTestId, queryByText } = render(<Notification {...result.current} />);
     await userEvent.click(getByTestId(notificationIcon));
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument();
@@ -46,7 +56,7 @@ describe('NotificationButton', () => {
     const { getByRole, getByText } = render(
       <div>
         <title> OutSideSection </title>
-        <NotificationButton {...result.current} />
+        <Notification {...result.current} />
       </div>
     );
 
@@ -63,7 +73,7 @@ describe('NotificationButton', () => {
     act(() => {
       result.current.notificationProps = undefined;
     });
-    const { queryByText } = render(<NotificationButton {...result.current} />);
+    const { queryByText } = render(<Notification {...result.current} />);
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument();
   });
@@ -72,7 +82,7 @@ describe('NotificationButton', () => {
     act(() => {
       result.current.updateProps = undefined;
     });
-    const { queryByText } = render(<NotificationButton {...result.current} />);
+    const { queryByText } = render(<Notification {...result.current} />);
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument();
   });
@@ -82,7 +92,7 @@ describe('NotificationButton', () => {
       result.current.notificationProps = undefined;
       result.current.updateProps = undefined;
     });
-    const { queryByText } = render(<NotificationButton {...result.current} />);
+    const { queryByText } = render(<Notification {...result.current} />);
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument();
   });
@@ -96,7 +106,7 @@ describe('NotificationButton', () => {
     const { getByText, getByTestId } = render(
       <div>
         <title> OutSideSection </title>
-        <NotificationButton {...result.current} />
+        <Notification {...result.current} />
       </div>
     );
 

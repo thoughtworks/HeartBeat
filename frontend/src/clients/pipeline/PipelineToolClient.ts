@@ -1,21 +1,14 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import { HttpStatusCode, isAxiosError } from 'axios'
+import axios, { HttpStatusCode, isAxiosError } from 'axios'
 import { PipelineRequestDTO } from '@src/clients/pipeline/dto/request'
 import { IPipelineInfoResponseDTO } from '@src/clients/pipeline/dto/response'
+import { ERROR_CASE_TEXT_MAPPING, PIPELINE_TOOL_ERROR_MESSAGE, UNKNOWN_ERROR_TITLE } from '@src/constants/resources'
 
 export interface IGetPipelineToolInfoResult {
   code: number | undefined | null
   data?: IPipelineInfoResponseDTO
   errorTitle: string
   errorMessage: string
-}
-
-const errorCaseTextMapping: { [key: string]: string } = {
-  '204': 'No pipeline!',
-  '400': 'Invalid input!',
-  '401': 'Unauthorized request!',
-  '403': 'Forbidden request!',
-  '404': 'Not found!',
 }
 
 export class PipelineToolClient extends HttpClient {
@@ -25,11 +18,10 @@ export class PipelineToolClient extends HttpClient {
   verifyPipelineTool = async (params: PipelineRequestDTO) => {
     try {
       const result = await this.axiosInstance.post(`/pipelines/${params.type}/verify`, params)
-      if (result.status === HttpStatusCode.Ok) {
-        this.isPipelineToolVerified = true
-      }
+      this.isPipelineToolVerified = true
     } catch (e) {
       this.isPipelineToolVerified = false
+      console.error(`Failed to verify ${params.type} token`, e)
       throw e
     }
     return {
@@ -50,20 +42,19 @@ export class PipelineToolClient extends HttpClient {
       if (response.status === HttpStatusCode.Ok) {
         result.data = response.data as IPipelineInfoResponseDTO
       } else if (response.status === HttpStatusCode.NoContent) {
-        result.errorTitle = errorCaseTextMapping[response.status]
-        result.errorMessage =
-          'Please go back to the previous page and change your pipeline token with correct access permission.'
+        result.errorTitle = ERROR_CASE_TEXT_MAPPING[response.status]
+        result.errorMessage = PIPELINE_TOOL_ERROR_MESSAGE
       }
       result.code = response.status
     } catch (e) {
+      console.error(`Failed to get pipeline tool info for ${params.type}`, e)
       if (isAxiosError(e)) {
         result.code = e.response?.status
-        result.errorTitle = errorCaseTextMapping[`${e.response?.status}`] || 'Unknown error'
+        result.errorTitle = ERROR_CASE_TEXT_MAPPING[`${e.response?.status}`] || UNKNOWN_ERROR_TITLE
       } else {
-        result.errorTitle = 'Unknown error'
+        result.errorTitle = UNKNOWN_ERROR_TITLE
       }
-      result.errorMessage =
-        'Please go back to the previous page and change your pipeline token with correct access permission.'
+      result.errorMessage = PIPELINE_TOOL_ERROR_MESSAGE
     }
 
     return result

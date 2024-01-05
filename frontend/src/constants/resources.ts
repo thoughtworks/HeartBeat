@@ -208,3 +208,16 @@ export const REPORT_PAGE = {
     TITLE: 'DORA Metrics',
   },
 };
+
+export const ERROR_CASE_TEXT_MAPPING: { [key: string]: string } = {
+  '204': 'No pipeline!',
+  '400': 'Invalid input!',
+  '401': 'Unauthorized request!',
+  '403': 'Forbidden request!',
+  '404': 'Not found!',
+};
+
+export const UNKNOWN_ERROR_TITLE = 'Unknown error';
+
+export const PIPELINE_TOOL_ERROR_MESSAGE =
+  'Please go back to the previous page and change your pipeline token with correct access permission.';

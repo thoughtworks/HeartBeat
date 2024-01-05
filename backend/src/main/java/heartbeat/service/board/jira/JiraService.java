@@ -564,10 +564,12 @@ public class JiraService {
 			}
 		}
 
-		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
-				request.getToken());
-		List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
-		assigneeSet.addAll(historicalAssignees);
+		if (!useLastAssignee(assigneeFilter)) {
+			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
+					request.getToken());
+			List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
+			assigneeSet.addAll(historicalAssignees);
+		}
 
 		return assigneeSet;
 	}
@@ -576,7 +578,7 @@ public class JiraService {
 		return jiraCardHistory.getItems()
 			.stream()
 			.filter(item -> AssigneeFilterMethod.ASSIGNEE_FIELD_ID.getDescription().equalsIgnoreCase(item.getFieldId()))
-			.sorted(Comparator.comparing(HistoryDetail::getTimestamp))
+			.sorted(Comparator.comparing(HistoryDetail::getTimestamp).reversed())
 			.map(item -> item.getTo().getDisplayValue())
 			.filter(Objects::nonNull)
 			.findFirst()

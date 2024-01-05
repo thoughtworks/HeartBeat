@@ -20,6 +20,7 @@ import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.enums.AssigneeFilterMethod;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
@@ -50,16 +51,17 @@ import java.util.concurrent.CompletionException;
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.controller.board.dto.request.BoardVerifyRequestFixture.BOARD_VERIFY_REQUEST_BUILDER;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_FIELD_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_MULTIPLE_STATUSES;
-import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_MULTIPLE_STATUSES;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_MULTI_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER;
@@ -1178,12 +1180,12 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldGetRealDoneCardWhenCallGetStoryPointsAndCycleTimeWhenUseHistoricalAssigneeFilterMethod()
+	void shouldGetRealDoneCardGivenCallGetStoryPointsAndCycleTimeWhenUseHistoricalAssigneeFilter()
 			throws JsonProcessingException {
 		// given
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
-		String assigneeFilter = "historicalAssignee";
+		String assigneeFilter = AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription();
 
 		// request param
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
@@ -1191,7 +1193,7 @@ class JiraServiceTest {
 
 		// return value
 		String allDoneCards = objectMapper
-			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
@@ -1201,24 +1203,29 @@ class JiraServiceTest {
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
-			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
+			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
-			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
+			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", token))
+			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
 		// then
-		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+		CardCollection cardCollection1 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(2);
+		CardCollection cardCollection2 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+				jiraBoardSetting.getBoardColumns(), List.of("song"), assigneeFilter);
+		assertThat(cardCollection1.getCardsNumber()).isEqualTo(0);
+		assertThat(cardCollection2.getCardsNumber()).isEqualTo(1);
 	}
 
 	@Test
-	void shouldGetRealDoneCardWhenCallGetStoryPointsAndCycleTimeWhenUseLastAssigneeFilterMethod()
+	void shouldGetRealDoneCardGivenCallGetStoryPointsAndCycleTimeWhenUseLastAssigneeFilter()
 			throws JsonProcessingException {
 		// given
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
-		String assigneeFilter = "lastAssignee";
+		String assigneeFilter = AssigneeFilterMethod.LAST_ASSIGNEE.getDescription();
 
 		// request param
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
@@ -1226,7 +1233,7 @@ class JiraServiceTest {
 
 		// return value
 		String allDoneCards = objectMapper
-			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
@@ -1236,15 +1243,20 @@ class JiraServiceTest {
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
-			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
+			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
-			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
+			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", token))
+			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
 		// then
-		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
-				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
+		CardCollection cardCollection1 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+				jiraBoardSetting.getBoardColumns(), List.of("yun"), assigneeFilter);
+		CardCollection cardCollection2 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
+				jiraBoardSetting.getBoardColumns(), List.of("yun", "da pei"), assigneeFilter);
+		assertThat(cardCollection1.getCardsNumber()).isEqualTo(1);
+		assertThat(cardCollection2.getCardsNumber()).isEqualTo(2);
 	}
 
 	@Test
@@ -1339,7 +1351,7 @@ class JiraServiceTest {
 
 		// return value
 		String allDoneCards = objectMapper
-			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
@@ -1376,7 +1388,7 @@ class JiraServiceTest {
 
 		// return value
 		String allDoneCards = objectMapper
-			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST().build())
+			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")

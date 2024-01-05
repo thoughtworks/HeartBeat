@@ -553,22 +553,21 @@ public class JiraService {
 		List<String> assigneeSet = new ArrayList<>();
 		Assignee assignee = doneCard.getFields().getAssignee();
 
-		if (assignee != null && useLastAssignee(assigneeFilter)) {
-			assigneeSet.add(assignee.getDisplayName());
+		if (useLastAssignee(assigneeFilter)) {
+			if (assignee != null) {
+				assigneeSet.add(assignee.getDisplayName());
+			}
+			else {
+				CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
+						request.getToken());
+				assigneeSet.add(getLastHistoricalAssignee(jiraCardHistory));
+			}
 		}
 
-		if (assignee == null && useLastAssignee(assigneeFilter)) {
-			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
-					request.getToken());
-			assigneeSet.add(getLastHistoricalAssignee(jiraCardHistory));
-		}
-
-		if (assigneeFilter.equals(AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription())) {
-			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
-					request.getToken());
-			List<String> historyDisplayName = getHistoricalAssignees(jiraCardHistory);
-			assigneeSet.addAll(historyDisplayName);
-		}
+		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
+				request.getToken());
+		List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
+		assigneeSet.addAll(historicalAssignees);
 
 		return assigneeSet;
 	}
@@ -605,9 +604,9 @@ public class JiraService {
 		return jiraCardHistory;
 	}
 
-	private boolean useLastAssignee(String filterMethod) {
-		return filterMethod.equals(AssigneeFilterMethod.LAST_ASSIGNEE.getDescription())
-				|| StringUtils.isEmpty(filterMethod);
+	private boolean useLastAssignee(String assigneeFilter) {
+		return assigneeFilter.equals(AssigneeFilterMethod.LAST_ASSIGNEE.getDescription())
+				|| StringUtils.isEmpty(assigneeFilter);
 	}
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,

@@ -35,4 +35,10 @@ public class JiraController {
 		return JiraVerifyResponse.builder().projectKey(projectKey).build();
 	}
 
+	@PostMapping("/{boardType}/info")
+	public BoardConfigDTO getInfo(@PathVariable @NotBlank BoardType boardType,
+			@Valid @RequestBody BoardRequestParam boardRequestParam) {
+		return jiraService.getInfo(boardType, boardRequestParam);
+	}
+
 }

@@ -101,8 +101,6 @@ public class JiraService {
 
 	private static final String STORY_POINT_KEY = "STORY_POINT_KEY";
 
-	private static final String PROJECT_KEY = "projectKey";
-
 	@PreDestroy
 	public void shutdownExecutor() {
 		customTaskExecutor.shutdown();
@@ -127,6 +125,46 @@ public class JiraService {
 			}
 			throw new InternalServerErrorException(
 					String.format("Failed when call Jira to verify board, cause is %s", cause.getMessage()));
+		}
+	}
+
+	public BoardConfigDTO getInfo(BoardType boardType, BoardRequestParam boardRequestParam) {
+		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
+		try {
+			if (!BoardType.JIRA.equals(boardType)) {
+				throw new BadRequestException("boardType param is not correct");
+			}
+			String jiraBoardStyle = jiraFeignClient
+				.getProject(baseUrl, boardRequestParam.getProjectKey(), boardRequestParam.getToken())
+				.getStyle();
+			BoardType jiraBoardType = "classic".equals(jiraBoardStyle) ? BoardType.CLASSIC_JIRA : BoardType.JIRA;
+
+			Map<Boolean, List<TargetField>> partitions = getTargetFieldAsync(baseUrl, boardRequestParam).join()
+				.stream()
+				.collect(Collectors.partitioningBy(this::isIgnoredTargetField));
+			List<TargetField> ignoredTargetFields = partitions.get(true);
+			List<TargetField> neededTargetFields = partitions.get(false);
+
+			return getJiraColumnsAsync(boardRequestParam, baseUrl,
+					getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(), boardRequestParam.getToken()))
+				.thenCombine(getUserAsync(jiraBoardType, baseUrl, boardRequestParam),
+						(jiraColumnResult, users) -> BoardConfigDTO.builder()
+							.targetFields(neededTargetFields)
+							.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
+							.ignoredTargetFields(ignoredTargetFields)
+							.users(users)
+							.build())
+				.join();
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed when call Jira to get board config, project key: {}, board id: {}, e: {}",
+					boardRequestParam.getBoardId(), boardRequestParam.getProjectKey(), cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed when call Jira to get board config, cause is %s", cause.getMessage()));
 		}
 	}
 

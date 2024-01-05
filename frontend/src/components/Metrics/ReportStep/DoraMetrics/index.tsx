@@ -18,6 +18,9 @@ import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { StyledSpacing } from '@src/components/Metrics/ReportStep/style'
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util'
+import { StyledShowMore, StyledTitleWrapper } from '@src/components/Metrics/ReportStep/DoraMetrics/style'
+import { ROUTE } from '@src/constants/router'
+import { RETRIEVE_REPORT_TYPES } from '@src/constants/commons'
 
 interface DoraMetricsProps {
   startToRequestDoraData: (request: ReportRequestDTO) => void
@@ -168,7 +171,12 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
   return (
     <>
       <StyledMetricsSection>
-        <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
+        <StyledTitleWrapper>
+          <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
+          <StyledShowMore to={ROUTE.METRICS_DETAIL_PAGE} state={{ reportType: RETRIEVE_REPORT_TYPES.DORA }}>
+            {'show more >'}
+          </StyledShowMore>
+        </StyledTitleWrapper>
         {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
         <StyledSpacing />
         <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} />

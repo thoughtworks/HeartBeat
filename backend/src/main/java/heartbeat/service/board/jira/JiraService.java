@@ -16,6 +16,7 @@ import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
 import heartbeat.client.dto.board.jira.Issuetype;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraColumn;
@@ -23,6 +24,7 @@ import heartbeat.client.dto.board.jira.Sprint;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
+import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
@@ -35,6 +37,7 @@ import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
+import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -99,9 +102,34 @@ public class JiraService {
 
 	private static final String STORY_POINT_KEY = "STORY_POINT_KEY";
 
+	private static final String PROJECT_KEY = "projectKey";
+
 	@PreDestroy
 	public void shutdownExecutor() {
 		customTaskExecutor.shutdown();
+	}
+
+	public JiraVerifyDTO verify(BoardType boardType, BoardVerifyRequestParam boardVerifyRequestParam) {
+		URI baseUrl = urlGenerator.getUri(boardVerifyRequestParam.getSite());
+		try {
+			if (!BoardType.JIRA.equals(boardType)) {
+				throw new BadRequestException("boardType param is not correct");
+			}
+			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl,
+					boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
+			String projectKey = jiraBoardVerifyDTO.getLocation().getProjectKey();
+			return JiraVerifyDTO.builder().projectKey(projectKey).build();
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed when call Jira to verify board, board id: {}, e: {}",
+					boardVerifyRequestParam.getBoardId(), cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed when call Jira to verify board, cause is %s", cause.getMessage()));
+		}
 	}
 
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {

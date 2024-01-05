@@ -253,6 +253,14 @@ participant Jira
     activate JiraController
     JiraController -> JiraService: get board
     activate JiraService
+    JiraService -> JiraFeignClient: get board project for style
+    activate JiraFeignClient
+    JiraFeignClient -> Jira: rest/api/2/project/{projectIdOrKey}
+    activate Jira
+    Jira --> JiraFeignClient
+    deactivate Jira
+    JiraFeignClient --> JiraService
+    deactivate JiraFeignClient
     JiraService -> JiraFeignClient: get board config info
     activate JiraFeignClient
     JiraFeignClient -> Jira: /rest/agile/1.0/board/{boardId}/configuration

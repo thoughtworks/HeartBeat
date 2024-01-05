@@ -27,10 +27,14 @@ interface ReportButtonGroupProps {
   setErrorMessage: (message: string) => void
   reportData: ReportResponseDTO | undefined
   isFromDetailPage?: boolean
+  isShowDoraMetrics?: boolean
+  isShowBoardMetrics?: boolean
 }
 
 export const ReportButtonGroup = ({
   handleSave,
+  isShowDoraMetrics,
+  isShowBoardMetrics,
   csvTimeStamp,
   startDate,
   endDate,
@@ -77,13 +81,15 @@ export const ReportButtonGroup = ({
           <BackButton onClick={handleBack} variant='outlined'>
             {COMMON_BUTTONS.BACK}
           </BackButton>
-          <StyledExportButton
-            disabled={!reportData?.isAllMetricsReady}
-            onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
-          >
-            {COMMON_BUTTONS.EXPORT_METRIC_DATA}
-          </StyledExportButton>
-          {isShowExportBoardButton && (
+          {!isFromDetailPage && (
+            <StyledExportButton
+              disabled={!reportData?.isAllMetricsReady}
+              onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
+            >
+              {COMMON_BUTTONS.EXPORT_METRIC_DATA}
+            </StyledExportButton>
+          )}
+          {(isFromDetailPage ? isShowBoardMetrics : isShowExportBoardButton) && (
             <StyledExportButton
               disabled={!reportData?.isBoardMetricsReady}
               onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}
@@ -91,7 +97,7 @@ export const ReportButtonGroup = ({
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
             </StyledExportButton>
           )}
-          {isShowExportPipelineButton && (
+          {(isFromDetailPage ? isShowDoraMetrics : isShowExportPipelineButton) && (
             <StyledExportButton
               disabled={
                 !reportData ||

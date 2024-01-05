@@ -97,6 +97,10 @@ const ReportDetail = () => {
     navigate(-1)
   }
 
+  const isShowBoardMetrics = () => state.reportType === RETRIEVE_REPORT_TYPES.BOARD
+
+  const isShowDoraMetrics = () => state.reportType === RETRIEVE_REPORT_TYPES.DORA
+
   return (
     <>
       <Header />
@@ -115,7 +119,7 @@ const ReportDetail = () => {
           </Breadcrumbs>
         </StyledNavigator>
         <StyledTableWrapper>
-          {state.reportType === RETRIEVE_REPORT_TYPES.BOARD && (
+          {isShowBoardMetrics() && (
             <>
               {velocityState.isShow && (
                 <ReportForTwoColumns title={REQUIRED_DATA.VELOCITY} data={velocityState.value} />
@@ -133,7 +137,7 @@ const ReportDetail = () => {
               )}
             </>
           )}
-          {state.reportType === RETRIEVE_REPORT_TYPES.DORA && (
+          {isShowDoraMetrics() && (
             <>
               {deploymentFrequencyState.isShow && (
                 <ReportForThreeColumns
@@ -170,6 +174,8 @@ const ReportDetail = () => {
             </>
           )}
           <ReportButtonGroup
+            isShowBoardMetrics={isShowBoardMetrics()}
+            isShowDoraMetrics={isShowDoraMetrics()}
             isFromDetailPage={true}
             reportData={reportData}
             startDate={startDate}

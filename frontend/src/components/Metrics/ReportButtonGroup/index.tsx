@@ -17,6 +17,7 @@ import {
   StyledRightButtonGroup,
 } from '@src/components/Metrics/ReportButtonGroup/style'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
+import { useNavigate } from 'react-router-dom'
 
 interface ReportButtonGroupProps {
   handleSave?: () => void
@@ -25,7 +26,7 @@ interface ReportButtonGroupProps {
   endDate: string
   setErrorMessage: (message: string) => void
   reportData: ReportResponseDTO | undefined
-  isShowSaveButton?: boolean
+  isFromDetailPage?: boolean
 }
 
 export const ReportButtonGroup = ({
@@ -35,9 +36,10 @@ export const ReportButtonGroup = ({
   endDate,
   setErrorMessage,
   reportData,
-  isShowSaveButton = true,
+  isFromDetailPage = false,
 }: ReportButtonGroupProps) => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const isShowExportBoardButton = useAppSelector(isSelectBoardMetrics)
   const isShowExportPipelineButton = useAppSelector(isSelectDoraMetrics)
@@ -58,13 +60,13 @@ export const ReportButtonGroup = ({
   }
 
   const handleBack = () => {
-    dispatch(backStep())
+    isFromDetailPage ? navigate(-1) : dispatch(backStep())
   }
 
   return (
     <>
-      <StyledButtonGroup isShowSaveButton={isShowSaveButton}>
-        {isShowSaveButton && (
+      <StyledButtonGroup isFromDetailPage={isFromDetailPage}>
+        {!isFromDetailPage && (
           <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
             <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
               {COMMON_BUTTONS.SAVE}

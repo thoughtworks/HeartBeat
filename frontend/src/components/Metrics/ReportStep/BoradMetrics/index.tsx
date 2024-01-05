@@ -23,6 +23,7 @@ import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { useNavigate } from 'react-router-dom'
 import { ROUTE } from '@src/constants/router'
+import { RETRIEVE_REPORT_TYPES } from '@src/constants/commons'
 
 interface BoardMetricsProps {
   startToRequestBoardData: (request: ReportRequestDTO) => void
@@ -125,16 +126,14 @@ const BoardMetrics = ({
     startToRequestBoardData(getBoardReportRequestBody())
   }, [])
 
-  const handleShowMore = () => {
-    navigate(ROUTE.METRICS_DETAIL_PAGE)
-  }
-
   return (
     <>
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {boardReport && <StyledShowMore onClick={handleShowMore}>{'show more >'}</StyledShowMore>}
+          <StyledShowMore to={ROUTE.METRICS_DETAIL_PAGE} state={{ reportType: RETRIEVE_REPORT_TYPES.BOARD }}>
+            {'show more >'}
+          </StyledShowMore>
         </StyledTitleWrapper>
         <ReportGrid reportDetails={getBoardItems()} />
       </StyledMetricsSection>

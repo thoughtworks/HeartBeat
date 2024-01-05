@@ -15,7 +15,6 @@ import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
-import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.BadRequestException;
@@ -201,10 +200,10 @@ class JiraServiceTest {
 			.getBoard(baseUrl, boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
-		JiraVerifyDTO jiraVerifyDTO = jiraService.verify(BoardType.JIRA, boardVerifyRequestParam);
+		String projectKey = jiraService.verify(BoardType.JIRA, boardVerifyRequestParam);
 		jiraService.shutdownExecutor();
 
-		assertThat(Objects.requireNonNull(jiraVerifyDTO.getProjectKey())).isEqualTo("ADM");
+		assertThat(Objects.requireNonNull(projectKey)).isEqualTo("ADM");
 	}
 
 	@Test

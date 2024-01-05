@@ -37,7 +37,6 @@ import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
-import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
@@ -109,7 +108,7 @@ public class JiraService {
 		customTaskExecutor.shutdown();
 	}
 
-	public JiraVerifyDTO verify(BoardType boardType, BoardVerifyRequestParam boardVerifyRequestParam) {
+	public String verify(BoardType boardType, BoardVerifyRequestParam boardVerifyRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardVerifyRequestParam.getSite());
 		try {
 			if (!BoardType.JIRA.equals(boardType)) {
@@ -117,8 +116,7 @@ public class JiraService {
 			}
 			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl,
 					boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
-			String projectKey = jiraBoardVerifyDTO.getLocation().getProjectKey();
-			return JiraVerifyDTO.builder().projectKey(projectKey).build();
+			return jiraBoardVerifyDTO.getLocation().getProjectKey();
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);

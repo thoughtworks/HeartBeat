@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JiraVerifyDTO {
+public class JiraVerifyResponse {
 
 	private String projectKey;
 

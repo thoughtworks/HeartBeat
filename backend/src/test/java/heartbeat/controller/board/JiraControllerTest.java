@@ -16,7 +16,6 @@ import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
-import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.Test;
@@ -58,10 +57,9 @@ public class JiraControllerTest {
 
 	@Test
 	void shouldReturnCorrectBoardVerificationResponseWhenGivenTheCorrectBoardRequest() throws Exception {
-		JiraVerifyDTO jiraVerifyDTO = JiraVerifyDTO.builder().projectKey(PROJECT_KEY).build();
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 
-		when(jiraService.verify(any(), any())).thenReturn(jiraVerifyDTO);
+		when(jiraService.verify(any(), any())).thenReturn(PROJECT_KEY);
 
 		mockMvc
 			.perform(post("/boards/{boardType}/verify", BoardType.JIRA).contentType(MediaType.APPLICATION_JSON)

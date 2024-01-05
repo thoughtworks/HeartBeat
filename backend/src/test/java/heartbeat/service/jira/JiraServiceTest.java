@@ -87,6 +87,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
+import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_FIELD_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_VERIFY_RESPONSE_BUILDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -313,6 +314,21 @@ class JiraServiceTest {
 		assertThatThrownBy(() -> jiraService.verify(BoardType.CLASSIC_JIRA, boardVerifyRequestParam))
 			.isInstanceOf(BadRequestException.class)
 			.hasMessageContaining("boardType param is not correct");
+	}
+
+	@Test
+	void shouldCallJiraFeignClientAndThrowNonColumnWhenVerifyJiraBoard() {
+		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_FIELD_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		doReturn(jiraBoardVerifyDTO).when(jiraFeignClient).getBoard(baseUrl, BOARD_ID, token);
+
+		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
+		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("Failed when call Jira to verify board, cause is");
 	}
 
 	@Test

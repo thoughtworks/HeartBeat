@@ -15,6 +15,7 @@ import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
+import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.BadRequestException;
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.IOException;
@@ -194,15 +194,16 @@ class JiraServiceTest {
 		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_VERIFY_RESPONSE_BUILDER().build();
 
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
-		URI baseUrl = URI.create(boardVerifyRequestParam.getSite());
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 
-		doReturn(jiraBoardVerifyDTO).when(jiraFeignClient).getBoard(baseUrl, boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
-		when(urlGenerator.getUri(any())).thenReturn(URI.create(boardVerifyRequestParam.getSite()));
+		doReturn(jiraBoardVerifyDTO).when(jiraFeignClient).getBoard(baseUrl,
+			boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
-		ResponseEntity<Map<String, String>> response = jiraService.verify(boardVerifyRequestParam);
+		JiraVerifyDTO jiraVerifyDTO = jiraService.verify(BoardType.JIRA, boardVerifyRequestParam);
 		jiraService.shutdownExecutor();
 
-		assertThat(Objects.requireNonNull(response.getBody()).get("projectKey")).isEqualTo("ADM");
+		assertThat(Objects.requireNonNull(jiraVerifyDTO.getProjectKey())).isEqualTo("ADM");
 	}
 
 	@Test
@@ -301,6 +302,15 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(null, boardRequestParam))
+			.isInstanceOf(BadRequestException.class)
+			.hasMessageContaining("boardType param is not correct");
+	}
+
+	@Test
+	void shouldThrowExceptionWhenVerifyJiraBoardTypeNotCorrect() {
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
+		assertThatThrownBy(() -> jiraService.verify(BoardType.CLASSIC_JIRA, boardVerifyRequestParam))
 			.isInstanceOf(BadRequestException.class)
 			.hasMessageContaining("boardType param is not correct");
 	}

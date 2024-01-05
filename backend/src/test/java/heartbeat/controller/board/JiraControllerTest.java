@@ -13,8 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
+import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
+import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.board.jira.JiraService;
 import org.junit.jupiter.api.Test;
@@ -24,12 +26,9 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
-import java.util.Map;
 
 @WebMvcTest(JiraController.class)
 @ExtendWith(SpringExtension.class)
@@ -60,12 +59,12 @@ public class JiraControllerTest {
 
 	@Test
 	void shouldReturnCorrectBoardVerificationResponseWhenGivenTheCorrectBoardRequest() throws Exception {
-		ResponseEntity<Map<String, String>> response = ResponseEntity.ok(Collections.singletonMap("projectKey", PROJECT_KEY));
+		JiraVerifyDTO jiraVerifyDTO = JiraVerifyDTO.builder().projectKey(PROJECT_KEY).build();
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 
-		when(jiraService.verify(any())).thenReturn(response);
+		when(jiraService.verify(any(), any())).thenReturn(jiraVerifyDTO);
 
-		mockMvc.perform(post("/boards/verify")
+		mockMvc.perform(post("/boards/{boardType}/verify", BoardType.JIRA)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isOk())
@@ -93,14 +92,14 @@ public class JiraControllerTest {
 	void shouldHandleVerifyServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";
-		when(jiraService.verify(any())).thenThrow(mockException);
+		when(jiraService.verify(any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn(message);
 		when(mockException.getStatus()).thenReturn(400);
 
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 
-		mockMvc
-			.perform(post("/boards/verify").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(post("/boards/{boardType}/verify", BoardType.JIRA)
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value(message));
@@ -121,7 +120,8 @@ public class JiraControllerTest {
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().token(null).build();
 
 		mockMvc
-			.perform(post("/boards/verify").contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/boards/{boardType}/verify", "jira")
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isBadRequest());
 	}

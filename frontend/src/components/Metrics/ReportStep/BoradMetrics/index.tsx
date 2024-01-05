@@ -8,6 +8,7 @@ import {
   REPORT_PAGE,
   METRICS_TITLE,
   REQUIRED_DATA,
+  SHOW_MORE,
 } from '@src/constants/resources'
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice'
@@ -132,7 +133,7 @@ const BoardMetrics = ({
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
           <StyledShowMore to={ROUTE.METRICS_DETAIL_PAGE} state={{ reportType: RETRIEVE_REPORT_TYPES.BOARD }}>
-            {'show more >'}
+            {SHOW_MORE}
           </StyledShowMore>
         </StyledTitleWrapper>
         <ReportGrid reportDetails={getBoardItems()} />

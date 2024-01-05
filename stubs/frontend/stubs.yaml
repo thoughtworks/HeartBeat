@@ -22,8 +22,8 @@
     file: ./frontend/exportPage/jsons/exportData.json
 
 - request:
-    method: GET
-    url: /api/v1/pipelines/buildkite/info
+    method: POST
+    url: /api/v1/pipelines/BuildKite/info
 
   response:
     headers:

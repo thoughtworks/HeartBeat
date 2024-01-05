@@ -1,12 +1,12 @@
 {
   "pipelineList": [
     {
-      "id": "payment-selector-ui",
-      "name": "payment-selector-ui",
-      "orgId": "xxx",
-      "orgName": "xxx",
-      "repository": "https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git",
-      "steps": []
+      "id": "heartbeat",
+      "name": "Heartbeat",
+      "orgId": "thoughtworks-Heartbeat",
+      "orgName": "Thoughtworks-Heartbeat",
+      "repository": "git@github.com:au-heartbeat/Heartbeat.git",
+      "steps": [":pipeline: Upload pipeline.yml"]
     }
   ]
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAppSelector } from '@src/hooks'
 import { selectConfig } from '@src/context/config/configSlice'
-import { NAME, PIPELINE_STEP } from '@src/constants/resources'
+import { NAME, PIPELINE_STEP, REPORT_METRICS, REQUIRED_DATA } from '@src/constants/resources'
 import {
   INIT_REPORT_DATA_WITH_THREE_COLUMNS,
   INIT_REPORT_DATA_WITH_TWO_COLUMNS,
@@ -109,19 +109,23 @@ const ReportDetail = () => {
         <StyledNavigator>
           <Breadcrumbs aria-label='breadcrumb'>
             <Link color='inherit' href='../index.tsx' onClick={handleBack}>
-              Report
+              {REPORT_METRICS.REPORT}
             </Link>
-            <Typography color='textPrimary'>board</Typography>
+            <Typography color='textPrimary'>{REPORT_METRICS.BOARD}</Typography>
           </Breadcrumbs>
         </StyledNavigator>
         <StyledTableWrapper>
           {state.reportType === RETRIEVE_REPORT_TYPES.BOARD && (
             <>
-              {velocityState.isShow && <ReportForTwoColumns title={'Velocity'} data={velocityState.value} />}
-              {cycleTimeState.isShow && <ReportForTwoColumns title={'Cycle time'} data={cycleTimeState.value} />}
+              {velocityState.isShow && (
+                <ReportForTwoColumns title={REQUIRED_DATA.VELOCITY} data={velocityState.value} />
+              )}
+              {cycleTimeState.isShow && (
+                <ReportForTwoColumns title={REQUIRED_DATA.CYCLE_TIME} data={cycleTimeState.value} />
+              )}
               {classificationState.isShow && (
                 <ReportForThreeColumns
-                  title={'Classifications'}
+                  title={REQUIRED_DATA.CLASSIFICATION}
                   fieldName='Field Name'
                   listName='Subtitle'
                   data={classificationState.value}
@@ -133,7 +137,7 @@ const ReportDetail = () => {
             <>
               {deploymentFrequencyState.isShow && (
                 <ReportForThreeColumns
-                  title={'Deployment frequency'}
+                  title={REQUIRED_DATA.DEPLOYMENT_FREQUENCY}
                   fieldName={PIPELINE_STEP}
                   listName={NAME}
                   data={deploymentFrequencyState.value}
@@ -141,7 +145,7 @@ const ReportDetail = () => {
               )}
               {leadTimeForChangesState.isShow && (
                 <ReportForThreeColumns
-                  title={'Lead time for changes'}
+                  title={REQUIRED_DATA.LEAD_TIME_FOR_CHANGES}
                   fieldName={PIPELINE_STEP}
                   listName={NAME}
                   data={leadTimeForChangesState.value}
@@ -149,7 +153,7 @@ const ReportDetail = () => {
               )}
               {changeFailureRateState.isShow && (
                 <ReportForThreeColumns
-                  title={'Change failure rate'}
+                  title={REQUIRED_DATA.CHANGE_FAILURE_RATE}
                   fieldName={PIPELINE_STEP}
                   listName={NAME}
                   data={changeFailureRateState.value}
@@ -157,7 +161,7 @@ const ReportDetail = () => {
               )}
               {meanTimeToRecoveryState.isShow && (
                 <ReportForThreeColumns
-                  title={'Mean Time To Recovery'}
+                  title={REQUIRED_DATA.MEAN_TIME_TO_RECOVERY}
                   fieldName={PIPELINE_STEP}
                   listName={NAME}
                   data={meanTimeToRecoveryState.value}

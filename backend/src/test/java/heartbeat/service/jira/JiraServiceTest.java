@@ -87,7 +87,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
-import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_FIELD_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_VERIFY_FAILED_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_VERIFY_RESPONSE_BUILDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -318,7 +318,7 @@ class JiraServiceTest {
 
 	@Test
 	void shouldCallJiraFeignClientAndThrowNonColumnWhenVerifyJiraBoard() {
-		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_FIELD_RESPONSE_BUILDER().build();
+		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_VERIFY_FAILED_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();

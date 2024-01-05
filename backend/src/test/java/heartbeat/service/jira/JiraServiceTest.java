@@ -52,6 +52,7 @@ import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILD
 import static heartbeat.controller.board.dto.request.BoardVerifyRequestFixture.BOARD_VERIFY_REQUEST_BUILDER;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_FIELD_RESPONSE_BUILDER;
@@ -1350,8 +1351,7 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest request = STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES().build();
 
 		// return value
-		String allDoneCards = objectMapper
-			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST().build())
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
@@ -1387,8 +1387,7 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest request = STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES().build();
 
 		// return value
-		String allDoneCards = objectMapper
-			.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST().build())
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")

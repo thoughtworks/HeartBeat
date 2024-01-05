@@ -499,7 +499,7 @@ public class JiraBoardConfigDTOFixture {
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST() {
 		return AllDoneCardsResponseDTO.builder()
-			.total("2")
+			.total("3")
 			.issues(List.of(
 					new JiraCard("ADM-475",
 							JiraCardField.builder()
@@ -555,6 +555,22 @@ public class JiraBoardConfigDTOFixture {
 							new HistoryDetail.Actor("da pei")),
 					new HistoryDetail(1673556350001L, "assignee", new Status(null), new Status("yun"),
 							new HistoryDetail.Actor("da pei"))));
+	}
+
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS() {
+		return AllDoneCardsResponseDTO.builder()
+			.total("2")
+			.issues(List.of(
+					new JiraCard("ADM-475",
+							JiraCardField.builder()
+								.assignee(new Assignee("da pei"))
+								.status(new Status(CardStepsEnum.DONE.getValue()))
+								.build()),
+					new JiraCard("ADM-524",
+							JiraCardField.builder()
+								.assignee(new Assignee("xiao pei"))
+								.status(new Status(CardStepsEnum.DONE.getValue()))
+								.build())));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_MULTIPLE_STATUSES() {

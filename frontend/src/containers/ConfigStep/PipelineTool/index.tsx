@@ -62,12 +62,12 @@ export const PipelineTool = () => {
   };
 
   useEffect(() => {
-    const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
+    const isFieldValid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
       field.isRequired && field.isValid && !!field.value;
 
     const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) =>
-      fields.some((field) => !isFieldInvalid(field));
-    setIsDisableVerifyButton(isAllFieldsValid(fields));
+      fields.every((field) => isFieldValid(field));
+    setIsDisableVerifyButton(!isAllFieldsValid(fields));
   }, [fields]);
 
   const onFormUpdate = (index: number, value: string) => {
@@ -154,6 +154,7 @@ export const PipelineTool = () => {
           <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
           <Select
             labelId='pipelineTool-type-checkbox-label'
+            aria-label='pipelineTool-type-select'
             value={fields[0].value}
             onChange={(e) => onFormUpdate(ZERO, e.target.value)}
           >

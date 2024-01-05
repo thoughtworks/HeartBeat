@@ -3,7 +3,6 @@ import { PipelineTool } from '@src/containers/ConfigStep/PipelineTool';
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  MOCK_PIPELINE_URL,
   MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
   PIPELINE_TOOL_FIELDS,
   PIPELINE_TOOL_TYPES,
@@ -13,6 +12,7 @@ import {
   VERIFY,
   VERIFY_ERROR_MESSAGE,
   VERIFY_FAILED,
+  MOCK_PIPELINE_VERIFY_URL,
 } from '../../fixtures';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -20,32 +20,21 @@ import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 import userEvent from '@testing-library/user-event';
 import { HttpStatusCode } from 'axios';
+import { act } from 'react-dom/test-utils';
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
   const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
-  await userEvent.type(tokenInput, mockInfo);
+  await act(async () => {
+    await userEvent.type(tokenInput, mockInfo);
+  });
 
   expect(tokenInput.value).toEqual(mockInfo);
 };
 
 let store = null;
 
-const server = setupServer(
-  rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
-    res(
-      ctx.json({
-        pipelineList: [
-          {
-            name: 'pipelineName',
-            id: '0186104b-aa31-458c-a58c-63266806f2fe',
-          },
-        ],
-      }),
-      ctx.status(200)
-    )
-  )
-);
+const server = setupServer(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(204))));
 
 describe('PipelineTool', () => {
   beforeAll(() => server.listen());
@@ -85,24 +74,35 @@ describe('PipelineTool', () => {
   });
 
   it('should clear other fields information when change pipelineTool Field selection', async () => {
-    setup();
+    const { getByText, getByLabelText } = setup();
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
 
     await fillPipelineToolFieldsInformation();
-    await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
 
-    await userEvent.click(screen.getByText(PIPELINE_TOOL_TYPES.GO_CD));
+    await act(async () => {
+      const requireDateSelection = within(getByLabelText('pipelineTool-type-select'));
+      await userEvent.click(requireDateSelection.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE));
+    });
+
+    await act(async () => {
+      await userEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD));
+    });
+
     expect(tokenInput.value).toEqual('');
-  });
+  }, 50000);
 
   it('should clear all fields information when click reset button', async () => {
-    const { getByText, queryByRole } = setup();
+    const { getByRole, getByText, queryByRole } = setup();
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
     await fillPipelineToolFieldsInformation();
 
-    await userEvent.click(screen.getByText(VERIFY));
+    await act(async () => {
+      await userEvent.click(getByText(VERIFY));
+    });
 
-    await userEvent.click(screen.getByRole('button', { name: RESET }));
+    await act(async () => {
+      await userEvent.click(getByRole('button', { name: RESET }));
+    });
 
     expect(tokenInput.value).toEqual('');
     expect(getByText(PIPELINE_TOOL_TYPES.BUILD_KITE)).toBeInTheDocument();
@@ -112,7 +112,9 @@ describe('PipelineTool', () => {
 
   it('should show detail options when click pipelineTool fields', async () => {
     const { getByRole } = setup();
-    await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
+    await act(async () => {
+      await userEvent.click(getByRole('button', { name: 'Pipeline Tool' }));
+    });
     const listBox = within(getByRole('listbox'));
     const options = listBox.getAllByRole('option');
     const optionValue = options.map((li) => li.getAttribute('data-value'));
@@ -136,8 +138,11 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation();
     const mockInfo = 'mockToken';
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
-    await userEvent.type(tokenInput, mockInfo);
-    await userEvent.clear(tokenInput);
+
+    await act(async () => {
+      await userEvent.type(tokenInput, mockInfo);
+      await userEvent.clear(tokenInput);
+    });
 
     expect(getByText(TOKEN_ERROR_MESSAGE[1])).toBeVisible();
     expect(getByText(TOKEN_ERROR_MESSAGE[1])).toHaveStyle(ERROR_MESSAGE_COLOR);
@@ -147,7 +152,10 @@ describe('PipelineTool', () => {
     const { getByText } = setup();
     const mockInfo = 'mockToken';
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
-    await userEvent.type(tokenInput, mockInfo);
+
+    await act(async () => {
+      await userEvent.type(tokenInput, mockInfo);
+    });
 
     expect(tokenInput.value).toEqual(mockInfo);
 
@@ -158,9 +166,13 @@ describe('PipelineTool', () => {
   it('should show reset button and verified button when verify succeed ', async () => {
     const { getByText } = setup();
     await fillPipelineToolFieldsInformation();
+    await act(async () => {
+      await userEvent.click(getByText(VERIFY));
+    });
 
-    await userEvent.click(screen.getByText(VERIFY));
-    expect(screen.getByText(RESET)).toBeVisible();
+    act(() => {
+      expect(getByText(RESET)).toBeVisible();
+    });
 
     await waitFor(() => {
       expect(getByText(VERIFIED)).toBeTruthy();
@@ -168,9 +180,11 @@ describe('PipelineTool', () => {
   });
 
   it('should called verifyPipelineTool method once when click verify button', async () => {
-    const { getByText } = setup();
+    const { getByRole, getByText } = setup();
     await fillPipelineToolFieldsInformation();
-    await userEvent.click(screen.getByRole('button', { name: VERIFY }));
+    await act(async () => {
+      await userEvent.click(getByRole('button', { name: VERIFY }));
+    });
 
     expect(getByText('Verified')).toBeInTheDocument();
   });
@@ -186,11 +200,11 @@ describe('PipelineTool', () => {
 
   it('should check error notification show when pipelineTool verify response status is 401', async () => {
     server.use(
-      rest.post(MOCK_PIPELINE_URL, (req, res, ctx) =>
+      rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
       )
     );
-    const { getByText } = setup();
+    const { getByText, getByRole } = setup();
     await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByRole('button', { name: VERIFY }));

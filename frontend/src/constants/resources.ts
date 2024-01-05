@@ -9,6 +9,8 @@ export const REPORT_METRICS = {
   DORA: 'Dora Metrics',
 }
 
+export const SHOW_MORE = 'show more >'
+
 export enum REQUIRED_DATA {
   All = 'All',
   VELOCITY = 'Velocity',

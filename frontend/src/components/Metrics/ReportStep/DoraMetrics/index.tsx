@@ -8,6 +8,7 @@ import {
   REPORT_PAGE,
   METRICS_TITLE,
   REQUIRED_DATA,
+  SHOW_MORE,
 } from '@src/constants/resources'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
@@ -174,7 +175,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
           <StyledShowMore to={ROUTE.METRICS_DETAIL_PAGE} state={{ reportType: RETRIEVE_REPORT_TYPES.DORA }}>
-            {'show more >'}
+            {SHOW_MORE}
           </StyledShowMore>
         </StyledTitleWrapper>
         {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}

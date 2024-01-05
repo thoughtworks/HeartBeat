@@ -29,7 +29,6 @@ export const StyledExportButton = styled(Button)({
   whiteSpace: 'nowrap',
   backgroundColor: theme.main.backgroundColor,
   color: theme.main.color,
-  fontFamily: 'Roboto',
   '&:hover': {
     ...basicButtonStyle,
     backgroundColor: theme.main.backgroundColor,

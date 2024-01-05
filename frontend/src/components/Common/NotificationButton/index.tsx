@@ -1,12 +1,13 @@
-import { NotificationIconWrapper, sx } from '@src/components/Common/NotificationButton/style';
-import { ClickAwayListener, Tooltip } from '@mui/material';
+import { AlertIconImage, AlertTitleWrapper, AlertWrapper } from '@src/components/Common/NotificationButton/style';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
+import Info from '@src/assets/Info.svg';
 
 export const NotificationButton = ({ notificationProps, updateProps }: useNotificationLayoutEffectInterface) => {
   const handleTooltipClose = () => {
     if (notificationProps === undefined) return;
     updateProps?.({
       title: notificationProps.title,
+      message: notificationProps.message,
       open: false,
       closeAutomatically: false,
     });
@@ -14,29 +15,12 @@ export const NotificationButton = ({ notificationProps, updateProps }: useNotifi
 
   return (
     <>
-      <ClickAwayListener onClickAway={handleTooltipClose}>
-        <Tooltip
-          arrow
-          onClose={handleTooltipClose}
-          open={notificationProps?.open}
-          title={notificationProps?.title}
-          placement={'bottom-start'}
-          PopperProps={{
-            disablePortal: true,
-          }}
-          disableFocusListener
-          disableHoverListener
-          disableTouchListener
-          disableInteractive
-          slotProps={{
-            tooltip: {
-              sx: { ...sx },
-            },
-          }}
-        >
-          <NotificationIconWrapper data-testid='NotificationIcon' />
-        </Tooltip>
-      </ClickAwayListener>
+      {notificationProps?.open && (
+        <AlertWrapper onClose={handleTooltipClose} icon={<AlertIconImage src={Info} />}>
+          <AlertTitleWrapper>{notificationProps?.title}</AlertTitleWrapper>
+          {notificationProps?.message}
+        </AlertWrapper>
+      )}
     </>
   );
 };

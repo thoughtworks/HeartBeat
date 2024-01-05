@@ -13,10 +13,10 @@ import {
   TEST_PROJECT_NAME,
   VELOCITY,
   VERIFY,
-  MOCK_PIPELINE_URL,
   MOCK_BOARD_URL_FOR_JIRA,
-  MOCK_BUILD_KITE_VERIFY_RESPONSE,
   MOCK_JIRA_VERIFY_RESPONSE,
+  DEPLOYMENT_FREQUENCY,
+  MOCK_PIPELINE_VERIFY_URL,
 } from '../../fixtures';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../utils/setupStoreUtil';

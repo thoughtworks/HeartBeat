@@ -4,6 +4,7 @@ import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
+import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.service.board.jira.JiraService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,9 +29,11 @@ public class JiraController {
 		return jiraService.getJiraConfiguration(boardType, boardRequestParam);
 	}
 
-	@PostMapping("/verify")
-	public ResponseEntity<Map<String, String>> verify(@Valid @RequestBody BoardVerifyRequestParam boardRequestParam) {
-		return jiraService.verify(boardRequestParam);
+	@PostMapping("/{boardType}/verify")
+	public ResponseEntity<JiraVerifyDTO> verify(@PathVariable @NotBlank BoardType boardType,
+												@Valid @RequestBody BoardVerifyRequestParam boardRequestParam) {
+		JiraVerifyDTO jiraVerifyDTO = jiraService.verify(boardType, boardRequestParam);
+		return ResponseEntity.ok(jiraVerifyDTO);
 	}
 
 }

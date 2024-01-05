@@ -3,6 +3,12 @@ export const CALENDAR = {
   CHINA: 'Calendar with Chinese Holiday',
 }
 
+export const REPORT_METRICS = {
+  REPORT: 'Report',
+  BOARD: 'Board Metrics',
+  DORA: 'Dora Metrics',
+}
+
 export enum REQUIRED_DATA {
   All = 'All',
   VELOCITY = 'Velocity',

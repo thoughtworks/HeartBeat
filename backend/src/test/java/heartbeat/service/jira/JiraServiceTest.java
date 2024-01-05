@@ -52,6 +52,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_MULTIPLE_STATUSES;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_MULTIPLE_STATUSES;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_MULTI_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER;
@@ -877,12 +878,14 @@ class JiraServiceTest {
 			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", 0, 100, token))
+			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
 		// then
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(2);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(3);
 	}
 
 	@Test
@@ -912,12 +915,14 @@ class JiraServiceTest {
 			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", 0, 100, token))
+			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
 		// then
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(2);
 	}
 
 	@Test
@@ -986,6 +991,8 @@ class JiraServiceTest {
 			.thenReturn(CARD1_HISTORY_FOR_MULTIPLE_STATUSES().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", 0, 100, token))
+			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
 		// then
@@ -1022,6 +1029,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-475", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
 		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", 0, 100, token))
+			.thenReturn(CARD_HISTORY_WITH_NO_STATUS_FIELD().build());
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", 0, 100, token))
 			.thenReturn(CARD_HISTORY_WITH_NO_STATUS_FIELD().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 

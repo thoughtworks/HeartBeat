@@ -499,11 +499,16 @@ public class JiraBoardConfigDTOFixture {
 
 	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST() {
 		return AllDoneCardsResponseDTO.builder()
-			.total("2")
+			.total("3")
 			.issues(List.of(
 					new JiraCard("ADM-475",
 							JiraCardField.builder()
 								.assignee(new Assignee("da pei"))
+								.status(new Status(CardStepsEnum.DONE.getValue()))
+								.build()),
+					new JiraCard("ADM-520",
+							JiraCardField.builder()
+								.assignee(null)
 								.status(new Status(CardStepsEnum.DONE.getValue()))
 								.build()),
 					new JiraCard("ADM-524",
@@ -516,6 +521,8 @@ public class JiraBoardConfigDTOFixture {
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(
+					new HistoryDetail(1673556350000L, "assignee", new Status("da pei"), new Status(null),
+							new HistoryDetail.Actor("da pei")),
 					new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(REVIEW),
 							new HistoryDetail.Actor("da pei")),
 					new HistoryDetail(1674556350000L, "status", new Status(DONE), new Status(TESTING),
@@ -525,6 +532,19 @@ public class JiraBoardConfigDTOFixture {
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(
+					new HistoryDetail(1673556350000L, "assignee", new Status("da pei"), new Status(null),
+							new HistoryDetail.Actor("da pei")),
+					new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(REVIEW),
+							new HistoryDetail.Actor("da pei")),
+					new HistoryDetail(1674556350000L, "status", new Status(DONE), new Status(TESTING),
+							new HistoryDetail.Actor("xiao pei"))));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(
+					new HistoryDetail(1673556350000L, "assignee", new Status("da pei"), new Status(null),
+							new HistoryDetail.Actor("da pei")),
 					new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(REVIEW),
 							new HistoryDetail.Actor("da pei")),
 					new HistoryDetail(1674556350000L, "status", new Status(DONE), new Status(TESTING),

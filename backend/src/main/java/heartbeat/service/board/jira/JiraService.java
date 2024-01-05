@@ -59,6 +59,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -547,26 +548,49 @@ public class JiraService {
 		return realDoneCards;
 	}
 
-	private List<String> getAssigneeSet(StoryPointsAndCycleTimeRequest request, URI baseUrl, String filterMethod,
+	private List<String> getAssigneeSet(StoryPointsAndCycleTimeRequest request, URI baseUrl, String assigneeFilter,
 			JiraCard doneCard) {
 		List<String> assigneeSet = new ArrayList<>();
 		Assignee assignee = doneCard.getFields().getAssignee();
 
-		if (assignee != null && useLastAssignee(filterMethod)) {
+		if (assignee != null && useLastAssignee(assigneeFilter)) {
 			assigneeSet.add(assignee.getDisplayName());
 		}
 
-		if (assignee != null && filterMethod.equals(AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription())) {
-			List<String> historyDisplayName = getHistoricalAssignees(baseUrl, doneCard.getKey(), request.getToken());
+		if (assignee == null && useLastAssignee(assigneeFilter)) {
+			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
+					request.getToken());
+			assigneeSet.add(getLastHistoricalAssignee(jiraCardHistory));
+		}
+
+		if (assigneeFilter.equals(AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription())) {
+			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
+					request.getToken());
+			List<String> historyDisplayName = getHistoricalAssignees(jiraCardHistory);
 			assigneeSet.addAll(historyDisplayName);
 		}
 
 		return assigneeSet;
 	}
 
-	private List<String> getHistoricalAssignees(URI baseUrl, String cardKey, String token) {
-		CardHistoryResponseDTO jiraCardHistory = getJiraCardHistory(baseUrl, cardKey, 0, token);
-		return jiraCardHistory.getItems().stream().map(item -> item.getActor().getDisplayName()).distinct().toList();
+	private String getLastHistoricalAssignee(CardHistoryResponseDTO jiraCardHistory) {
+		return jiraCardHistory.getItems()
+			.stream()
+			.filter(item -> AssigneeFilterMethod.ASSIGNEE_FIELD_ID.getDescription().equalsIgnoreCase(item.getFieldId()))
+			.sorted(Comparator.comparing(HistoryDetail::getTimestamp))
+			.map(item -> item.getTo().getDisplayValue())
+			.filter(Objects::nonNull)
+			.findFirst()
+			.orElse(null);
+	}
+
+	private List<String> getHistoricalAssignees(CardHistoryResponseDTO jiraCardHistory) {
+		return jiraCardHistory.getItems()
+			.stream()
+			.filter(item -> AssigneeFilterMethod.ASSIGNEE_FIELD_ID.getDescription().equalsIgnoreCase(item.getFieldId()))
+			.map(item -> item.getTo().getDisplayValue())
+			.distinct()
+			.toList();
 	}
 
 	private CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, String cardKey, int startAt, String token) {

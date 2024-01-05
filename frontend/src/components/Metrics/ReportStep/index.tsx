@@ -1,27 +1,27 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
-import { useAppSelector } from '@src/hooks';
-import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice';
-import { MESSAGE } from '@src/constants/resources';
-import { StyledErrorNotification } from '@src/components/Metrics/ReportStep/style';
-import { ErrorNotification } from '@src/components/ErrorNotification';
-import { useNavigate } from 'react-router-dom';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
-import { ROUTE } from '@src/constants/router';
-import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup';
-import BoardMetrics from '@src/components/Metrics/ReportStep/BoradMetrics';
-import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics';
-import { selectTimeStamp } from '@src/context/stepper/StepperSlice';
-import DateRangeViewer from '@src/components/Common/DateRangeViewer';
-import { MetricSelectionHeader } from '../MetricsStep/style';
-import ReportDetail from './ReportDetail';
+import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
+import { useAppSelector } from '@src/hooks'
+import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice'
+import { MESSAGE } from '@src/constants/resources'
+import { StyledErrorNotification } from '@src/components/Metrics/ReportStep/style'
+import { ErrorNotification } from '@src/components/ErrorNotification'
+import { useNavigate } from 'react-router-dom'
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { ROUTE } from '@src/constants/router'
+import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup'
+import BoardMetrics from '@src/components/Metrics/ReportStep/BoradMetrics'
+import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics'
+import { selectTimeStamp } from '@src/context/stepper/StepperSlice'
+import DateRangeViewer from '@src/components/Common/DateRangeViewer'
+import { MetricSelectionHeader } from '../MetricsStep/style'
+import ReportDetail from './ReportDetail'
 
 export interface ReportStepProps {
-  notification: useNotificationLayoutEffectInterface;
-  handleSave: () => void;
+  notification: useNotificationLayoutEffectInterface
+  handleSave: () => void
 }
 
-type PageType = 'Summary' | 'BoardReport' | 'DoraReport';
+type PageType = 'Summary' | 'BoardReport' | 'DoraReport'
 
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const navigate = useNavigate()
@@ -32,21 +32,21 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     startToRequestDoraData,
     reportData,
     stopPollingReports,
-  } = useGenerateReportEffect();
+  } = useGenerateReportEffect()
 
-  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
-  const [pageType, setPageType] = useState<PageType>('Summary');
-  const configData = useAppSelector(selectConfig);
-  const csvTimeStamp = useAppSelector(selectTimeStamp);
+  const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined)
+  const [pageType, setPageType] = useState<PageType>('Summary')
+  const configData = useAppSelector(selectConfig)
+  const csvTimeStamp = useAppSelector(selectTimeStamp)
 
-  const startDate = configData.basic.dateRange.startDate ?? '';
-  const endDate = configData.basic.dateRange.endDate ?? '';
+  const startDate = configData.basic.dateRange.startDate ?? ''
+  const endDate = configData.basic.dateRange.endDate ?? ''
 
-  const { updateProps } = notification;
-  const [errorMessage, setErrorMessage] = useState<string>();
+  const { updateProps } = notification
+  const [errorMessage, setErrorMessage] = useState<string>()
 
-  const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
-  const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
+  const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics)
+  const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics)
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
@@ -55,7 +55,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         title: MESSAGE.NOTIFICATION_FIRST_REPORT.replace('%s', exportValidityTimeMin.toString()),
         closeAutomatically: true,
       })
-  }, [exportValidityTimeMin]);
+  }, [exportValidityTimeMin])
 
   useLayoutEffect(() => {
     if (exportValidityTimeMin) {
@@ -80,45 +80,47 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         clearInterval(timer)
       }
     }
-  }, [exportValidityTimeMin]);
+  }, [exportValidityTimeMin])
 
   useEffect(() => {
     setErrorMessage(reportErrorMsg)
-  }, [reportErrorMsg]);
+  }, [reportErrorMsg])
 
   useEffect(() => {
     setExportValidityTimeMin(reportData?.exportValidityTime)
-  }, [reportData]);
+  }, [reportData])
 
   useLayoutEffect(() => {
     return () => {
       stopPollingReports()
     }
-  }, []);
+  }, [])
 
-  const showSummary = () => <>
-    {shouldShowBoardMetrics && (
-      <BoardMetrics
-        startDate={startDate}
-        endDate={endDate}
-        startToRequestBoardData={startToRequestBoardData}
-        onShowDetail={() => setPageType('BoardReport')}
-        boardReport={reportData}
-        csvTimeStamp={csvTimeStamp}
-      />
-    )}
-    {shouldShowDoraMetrics && (
-      <DoraMetrics
-        startDate={startDate}
-        endDate={endDate}
-        startToRequestDoraData={startToRequestDoraData}
-        doraReport={reportData}
-        csvTimeStamp={csvTimeStamp}
-      />
-    )}
-  </>;
+  const showSummary = () => (
+    <>
+      {shouldShowBoardMetrics && (
+        <BoardMetrics
+          startDate={startDate}
+          endDate={endDate}
+          startToRequestBoardData={startToRequestBoardData}
+          onShowDetail={() => setPageType('BoardReport')}
+          boardReport={reportData}
+          csvTimeStamp={csvTimeStamp}
+        />
+      )}
+      {shouldShowDoraMetrics && (
+        <DoraMetrics
+          startDate={startDate}
+          endDate={endDate}
+          startToRequestDoraData={startToRequestDoraData}
+          doraReport={reportData}
+          csvTimeStamp={csvTimeStamp}
+        />
+      )}
+    </>
+  )
   const showBoardDetail = () => <ReportDetail onBack={() => setPageType('Summary')} />
-
+  const showDoraDetail = () => <ReportDetail onBack={() => setPageType('Summary')} />
 
   return (
     <>
@@ -136,11 +138,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               <ErrorNotification message={errorMessage} />
             </StyledErrorNotification>
           )}
-          {
-            pageType === 'Summary' ? showSummary() :
-              pageType === "BoardReport" ? showBoardDetail() :
-                showBoardDetail()
-          }
+          {pageType === 'Summary' ? showSummary() : pageType === 'BoardReport' ? showBoardDetail() : showDoraDetail()}
           <ReportButtonGroup
             handleSave={() => handleSave()}
             reportData={reportData}
@@ -157,4 +155,4 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   )
 }
 
-export default ReportStep;
+export default ReportStep

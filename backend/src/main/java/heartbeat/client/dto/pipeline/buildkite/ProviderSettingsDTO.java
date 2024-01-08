@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProviderSettingsDTO {
+public class ProviderSettingsDTO implements Serializable {
 
 	@JsonProperty("trigger_mode")
 	private String triggerMode;

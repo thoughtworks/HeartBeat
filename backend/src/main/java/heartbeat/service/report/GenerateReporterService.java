@@ -71,16 +71,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import heartbeat.util.IdUtil;
+import heartbeat.util.MetricsUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -126,21 +129,6 @@ public class GenerateReporterService {
 	private final AsyncReportRequestHandler asyncReportRequestHandler;
 
 	private final AsyncExceptionHandler asyncExceptionHandler;
-
-	private final List<String> kanbanMetrics = Stream
-		.of(RequireDataEnum.VELOCITY, RequireDataEnum.CYCLE_TIME, RequireDataEnum.CLASSIFICATION)
-		.map(RequireDataEnum::getValue)
-		.toList();
-
-	private final List<String> buildKiteMetrics = Stream
-		.of(RequireDataEnum.CHANGE_FAILURE_RATE, RequireDataEnum.DEPLOYMENT_FREQUENCY,
-				RequireDataEnum.MEAN_TIME_TO_RECOVERY)
-		.map(RequireDataEnum::getValue)
-		.toList();
-
-	private final List<String> codebaseMetrics = Stream.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES)
-		.map(RequireDataEnum::getValue)
-		.toList();
 
 	private static StoryPointsAndCycleTimeRequest buildStoryPointsAndCycleTimeRequest(JiraBoardSetting jiraBoardSetting,
 			String startTime, String endTime) {
@@ -213,16 +201,80 @@ public class GenerateReporterService {
 		return result;
 	}
 
+	public void generateBoardReport(GenerateReportRequest request) {
+		initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+
+		CompletableFuture.runAsync(() -> {
+			try {
+				saveReporterInHandler(generateReporter(request), IdUtil.getBoardReportId(request.getCsvTimeStamp()));
+				updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+				log.info(
+						"Successfully generate board report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _boardReportId: {}",
+						request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(),
+						request.getEndTime(), IdUtil.getBoardReportId(request.getCsvTimeStamp()));
+			}
+			catch (BaseException e) {
+				asyncExceptionHandler.put(IdUtil.getBoardReportId(request.getCsvTimeStamp()), e);
+			}
+		});
+	}
+
+	public void generateDoraReport(GenerateReportRequest request) {
+		MetricsDataReady metricsDataStatus = getMetricsStatus(request.getMetrics(), Boolean.TRUE);
+		initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		if (Objects.nonNull(metricsDataStatus.isSourceControlMetricsReady())
+				&& metricsDataStatus.isSourceControlMetricsReady()) {
+			generateCodeBaseReport(request);
+		}
+		if (Objects.nonNull(metricsDataStatus.isPipelineMetricsReady()) && metricsDataStatus.isPipelineMetricsReady()) {
+			generatePipelineReport(request);
+		}
+		generateCsvForDora(request);
+	}
+
+	private void generatePipelineReport(GenerateReportRequest request) {
+		CompletableFuture.runAsync(() -> {
+			try {
+				GenerateReportRequest pipelineRequest = request.convertToPipelineRequest(request);
+				saveReporterInHandler(generateReporter(pipelineRequest),
+						IdUtil.getDoraReportId(pipelineRequest.getCsvTimeStamp()));
+				updateMetricsDataReadyInHandler(pipelineRequest.getCsvTimeStamp(), pipelineRequest.getMetrics());
+				log.info(
+						"Successfully generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _pipelineReportId: {}",
+						pipelineRequest.getMetrics(), pipelineRequest.getConsiderHoliday(),
+						pipelineRequest.getStartTime(), pipelineRequest.getEndTime(),
+						IdUtil.getDoraReportId(request.getCsvTimeStamp()));
+			}
+			catch (BaseException e) {
+				asyncExceptionHandler.put(IdUtil.getDoraReportId(request.getCsvTimeStamp()), e);
+			}
+		});
+	}
+
+	private void generateCodeBaseReport(GenerateReportRequest request) {
+		CompletableFuture.runAsync(() -> {
+			try {
+				GenerateReportRequest codebaseRequest = request.convertToCodeBaseRequest(request);
+				saveReporterInHandler(generateReporter(codebaseRequest),
+						IdUtil.getCodeBaseReportId(codebaseRequest.getCsvTimeStamp()));
+				updateMetricsDataReadyInHandler(codebaseRequest.getCsvTimeStamp(), codebaseRequest.getMetrics());
+				log.info(
+						"Successfully generate codebase report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _codeBaseReportId: {}",
+						codebaseRequest.getMetrics(), codebaseRequest.getConsiderHoliday(),
+						codebaseRequest.getStartTime(), codebaseRequest.getEndTime(),
+						IdUtil.getCodeBaseReportId(request.getCsvTimeStamp()));
+			}
+			catch (BaseException e) {
+				asyncExceptionHandler.put(IdUtil.getCodeBaseReportId(request.getCsvTimeStamp()), e);
+			}
+		});
+	}
+
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
 		workDay.changeConsiderHolidayMode(request.getConsiderHoliday());
 		// fetch data for calculate
 		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
 		FetchedData fetchedData = fetchOriginalData(request, lowMetrics);
-
-		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)
-				|| lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
-			generateCSVForPipeline(request, fetchedData.getBuildKiteData());
-		}
 
 		ReportResponse reportResponse = new ReportResponse(EXPORT_CSV_VALIDITY_TIME);
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
@@ -258,21 +310,21 @@ public class GenerateReporterService {
 	private FetchedData fetchOriginalData(GenerateReportRequest request, List<String> lowMetrics) {
 		FetchedData fetchedData = new FetchedData();
 
-		if (lowMetrics.stream().anyMatch(this.kanbanMetrics::contains)) {
+		if (CollectionUtils.isNotEmpty(MetricsUtil.getBoardMetrics(lowMetrics))) {
 			if (request.getJiraBoardSetting() == null)
 				throw new BadRequestException("Failed to fetch Jira info due to Jira board setting is null.");
 			CardCollectionInfo cardCollectionInfo = fetchDataFromKanban(request);
 			fetchedData.setCardCollectionInfo(cardCollectionInfo);
 		}
 
-		if (lowMetrics.stream().anyMatch(this.codebaseMetrics::contains)) {
+		if (CollectionUtils.isNotEmpty(MetricsUtil.getCodeBaseMetrics(lowMetrics))) {
 			if (request.getCodebaseSetting() == null)
 				throw new BadRequestException("Failed to fetch Github info due to code base setting is null.");
 			BuildKiteData buildKiteData = fetchGithubData(request);
 			fetchedData.setBuildKiteData(buildKiteData);
 		}
 
-		if (lowMetrics.stream().anyMatch(this.buildKiteMetrics::contains)) {
+		if (CollectionUtils.isNotEmpty(MetricsUtil.getPipelineMetrics(lowMetrics))) {
 			if (request.getBuildKiteSetting() == null)
 				throw new BadRequestException("Failed to fetch BuildKite info due to BuildKite setting is null.");
 			FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
@@ -285,6 +337,14 @@ public class GenerateReporterService {
 		}
 
 		return fetchedData;
+	}
+
+	public void generateCsvForDora(GenerateReportRequest request) {
+		List<String> lowMetrics = request.getMetrics().stream().map(String::toLowerCase).toList();
+		FetchedData fetchedData = fetchOriginalData(request, lowMetrics);
+
+		generateCSVForPipeline(request, fetchedData.getBuildKiteData());
+
 	}
 
 	private CardCollection fetchRealDoneCardCollection(GenerateReportRequest request) {
@@ -638,13 +698,10 @@ public class GenerateReporterService {
 	}
 
 	private MetricsDataReady getMetricsStatus(List<String> metrics, Boolean flag) {
-		boolean boardMetricsExist = metrics.stream().map(String::toLowerCase).anyMatch(this.kanbanMetrics::contains);
-		boolean codebaseMetricsExist = metrics.stream()
-			.map(String::toLowerCase)
-			.anyMatch(this.codebaseMetrics::contains);
-		boolean buildKiteMetricsExist = metrics.stream()
-			.map(String::toLowerCase)
-			.anyMatch(this.buildKiteMetrics::contains);
+		List<String> lowerMetrics = metrics.stream().map(String::toLowerCase).collect(Collectors.toList());
+		boolean boardMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getBoardMetrics(lowerMetrics));
+		boolean codebaseMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getCodeBaseMetrics(lowerMetrics));
+		boolean buildKiteMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getPipelineMetrics(lowerMetrics));
 		Boolean isBoardMetricsReady = boardMetricsExist ? flag : null;
 		Boolean isCodebaseMetricsReady = codebaseMetricsExist ? flag : null;
 		Boolean isBuildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
@@ -690,10 +747,6 @@ public class GenerateReporterService {
 	private List<PipelineCSVInfo> generateCSVForPipelineWithCodebase(CodebaseSetting codebaseSetting, String startTime,
 			String endTime, BuildKiteData buildKiteData, List<DeploymentEnvironment> deploymentEnvironments) {
 		List<PipelineCSVInfo> pipelineCSVInfos = new ArrayList<>();
-
-		if (codebaseSetting == null && CollectionUtils.isEmpty(deploymentEnvironments)) {
-			return pipelineCSVInfos;
-		}
 
 		Map<String, String> repoIdMap = getRepoMap(deploymentEnvironments);
 		for (DeploymentEnvironment deploymentEnvironment : deploymentEnvironments) {
@@ -806,6 +859,7 @@ public class GenerateReporterService {
 	public ReportResponse getComposedReportResponse(String reportId, boolean isReportReady) {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
+		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getCodeBaseReportId(reportId));
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 
@@ -817,7 +871,7 @@ public class GenerateReporterService {
 			.deploymentFrequency(getValueOrNull(doraReportResponse, ReportResponse::getDeploymentFrequency))
 			.changeFailureRate(getValueOrNull(doraReportResponse, ReportResponse::getChangeFailureRate))
 			.meanTimeToRecovery(getValueOrNull(doraReportResponse, ReportResponse::getMeanTimeToRecovery))
-			.leadTimeForChanges(getValueOrNull(doraReportResponse, ReportResponse::getLeadTimeForChanges))
+			.leadTimeForChanges(getValueOrNull(codebaseReportResponse, ReportResponse::getLeadTimeForChanges))
 			.isBoardMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::isBoardMetricsReady))
 			.isPipelineMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::isPipelineMetricsReady))
 			.isSourceControlMetricsReady(

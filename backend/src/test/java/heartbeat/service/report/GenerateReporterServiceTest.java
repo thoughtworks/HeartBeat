@@ -103,13 +103,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+
+import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -118,11 +121,18 @@ class GenerateReporterServiceTest {
 
 	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
 
+	private static final String REQUEST_FILE_PATH = "src/test/java/heartbeat/controller/report/request.json";
+
+	private static final String RESPONSE_FILE_PATH = "src/test/java/heartbeat/controller/report/reportResponse.json";
+
 	@InjectMocks
 	GenerateReporterService generateReporterService;
 
 	@Mock
 	JiraService jiraService;
+
+	@Mock
+	IdUtil idUtil;
 
 	@Mock
 	WorkDay workDay;
@@ -577,7 +587,7 @@ class GenerateReporterServiceTest {
 			return null;
 		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
 
-		generateReporterService.generateReporter(request);
+		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(csvFilePath);
 		Assertions.assertTrue(isExists);
@@ -627,7 +637,7 @@ class GenerateReporterServiceTest {
 			return null;
 		}).when(csvFileGenerator).convertPipelineDataToCSV(any(), any());
 
-		generateReporterService.generateReporter(request);
+		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
 		Assertions.assertTrue(isExists);
@@ -673,7 +683,7 @@ class GenerateReporterServiceTest {
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(null);
 		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
-		generateReporterService.generateReporter(request);
+		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
 		Assertions.assertFalse(isExists);
@@ -718,7 +728,7 @@ class GenerateReporterServiceTest {
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(null);
 		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
-		generateReporterService.generateReporter(request);
+		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
 		Assertions.assertFalse(isExists);
@@ -762,7 +772,7 @@ class GenerateReporterServiceTest {
 		when(gitHubService.fetchPipelinesLeadTime(any(), any(), any())).thenReturn(null);
 		when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("xx"));
 
-		generateReporterService.generateReporter(request);
+		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
 		Assertions.assertFalse(isExists);
@@ -1264,6 +1274,126 @@ class GenerateReporterServiceTest {
 		generateReporterService.saveReporterInHandler(reportResponse, reportId);
 
 		verify(asyncReportRequestHandler, times(1)).putReport(reportId, reportResponse);
+	}
+
+	@Test
+	void shouldPutBoardReportIntoHandlerWhenCallGenerateBoardReport() throws IOException, InterruptedException {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateReportRequest.class);
+		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
+		reportRequest.setCsvTimeStamp("1683734399999");
+		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
+			.isBoardMetricsReady(true)
+			.isPipelineMetricsReady(false)
+			.isSourceControlMetricsReady(false)
+			.build();
+		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
+
+		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
+		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+			.thenReturn(previousMetricsReady);
+
+		spyGenerateReporterService.generateBoardReport(reportRequest);
+
+		Thread.sleep(2000);
+		verify(spyGenerateReporterService, times(1)).generateReporter(reportRequest);
+		verify(spyGenerateReporterService, times(1))
+			.initializeMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
+		verify(spyGenerateReporterService, times(1)).saveReporterInHandler(
+				spyGenerateReporterService.generateReporter(reportRequest), reportRequest.getCsvTimeStamp());
+		verify(spyGenerateReporterService, times(1)).updateMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(),
+				reportRequest.getMetrics());
+	}
+
+	@Test
+	void shouldPutExceptionInHandlerWhenCallGenerateBoardReportThrowException()
+			throws IOException, InterruptedException {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateReportRequest.class);
+		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
+		reportRequest.setCsvTimeStamp("1683734399999");
+		String boardTimeStamp = "board-1683734399999";
+		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
+		GenerateReportException e = new GenerateReportException(
+				"Failed to update metrics data ready through this timestamp.");
+
+		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
+		doThrow(e).when(spyGenerateReporterService).updateMetricsDataReadyInHandler(any(), any());
+		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp())).thenReturn(null);
+
+		spyGenerateReporterService.generateBoardReport(reportRequest);
+
+		Thread.sleep(2000L);
+		verify(spyGenerateReporterService, times(1))
+			.initializeMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
+		verify(spyGenerateReporterService, times(1))
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(reportRequest), boardTimeStamp);
+		verify(asyncExceptionHandler, times(1)).put(boardTimeStamp, e);
+	}
+
+	@Test
+	void shouldGeneratePipelineReportAndUpdatePipelineMetricsReadyWhenCallGeneratePipelineReport()
+			throws IOException, InterruptedException {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateReportRequest.class);
+		reportRequest.setMetrics(List.of("Deployment frequency"));
+		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
+		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
+		reportRequest.setCsvTimeStamp("1683734399999");
+		String doraTimeStamp = "dora-1683734399999";
+		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
+			.isBoardMetricsReady(null)
+			.isPipelineMetricsReady(false)
+			.isSourceControlMetricsReady(false)
+			.build();
+
+		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
+		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+			.thenReturn(previousMetricsReady);
+
+		spyGenerateReporterService.generateDoraReport(reportRequest);
+
+		Thread.sleep(2000);
+		verify(spyGenerateReporterService, times(1)).generateReporter(any());
+		verify(spyGenerateReporterService, times(1)).initializeMetricsDataReadyInHandler(any(), any());
+		verify(spyGenerateReporterService, times(1))
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), doraTimeStamp);
+		verify(spyGenerateReporterService, times(1)).updateMetricsDataReadyInHandler(any(), any());
+	}
+
+	@Test
+	void shouldGenerateCodebaseReportAndUpdateCodebaseMetricsReadyWhenCallGeneratePipelineReport()
+			throws IOException, InterruptedException {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateReportRequest.class);
+		reportRequest.setMetrics(List.of("Lead time for changes"));
+		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
+		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
+		reportRequest.setCsvTimeStamp("1683734399999");
+		String codebaseTimeStamp = "github-1683734399999";
+		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
+			.isBoardMetricsReady(null)
+			.isPipelineMetricsReady(false)
+			.isSourceControlMetricsReady(false)
+			.build();
+
+		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
+		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+			.thenReturn(previousMetricsReady);
+
+		spyGenerateReporterService.generateDoraReport(reportRequest);
+
+		Thread.sleep(2000);
+		verify(spyGenerateReporterService, times(1)).generateReporter(any());
+		verify(spyGenerateReporterService, times(1)).initializeMetricsDataReadyInHandler(any(), any());
+		verify(spyGenerateReporterService, times(1))
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), codebaseTimeStamp);
+		verify(spyGenerateReporterService, times(1)).updateMetricsDataReadyInHandler(any(), any());
+
 	}
 
 	private JiraBoardSetting buildJiraBoardSetting() {

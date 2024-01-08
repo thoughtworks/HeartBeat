@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 import { Alert, AlertTitle } from '@mui/material';
+import { Z_INDEX } from '@src/constants/commons';
 
 export const AlertWrapper = styled(Alert)((props: { backgroundcolor: string; iconcolor: string }) => ({
   backgroundColor: props.backgroundcolor,
-  position: 'absolute',
+  position: 'fixed',
+  zIndex: Z_INDEX.FIXED,
   top: '4.75rem',
   right: '0.75rem',
   padding: '0.75rem 1.5rem',

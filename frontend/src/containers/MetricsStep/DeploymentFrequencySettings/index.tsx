@@ -1,7 +1,7 @@
-import React from 'react'
-import { PipelineMetricSelection } from './PipelineMetricSelection'
-import { useAppDispatch, useAppSelector } from '@src/hooks'
-import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
+import React from 'react';
+import { PipelineMetricSelection } from './PipelineMetricSelection';
+import { useAppDispatch, useAppSelector } from '@src/hooks';
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
@@ -9,16 +9,19 @@ import {
   updateDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
-import { useGetPipelineToolInfoEffect } from '@src/hooks/useGetPipelineToolInfoEffect'
+import { useGetPipelineToolInfoEffect } from '@src/hooks/useGetPipelineToolInfoEffect';
 import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton';
 import { PIPELINE_SETTING_TYPES } from '@src/constants/resources';
 import { selectPipelineCrews } from '@src/context/config/configSlice';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import _ from 'lodash';
+import PresentationForErrorCases from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases';
+import { Loading } from '@src/components/Loading';
+import { HttpStatusCode } from 'axios';
 
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useGetPipelineToolInfoEffect()
+  const { isLoading, result: pipelineInfoResult } = useGetPipelineToolInfoEffect();
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings);
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext();
   const pipelineCrews = useAppSelector(selectPipelineCrews);
@@ -37,21 +40,35 @@ export const DeploymentFrequencySettings = () => {
 
   return (
     <>
-      <MetricsSettingTitle title={'Pipeline settings'} />
-      {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
-        <PipelineMetricSelection
-          key={deploymentFrequencySetting.id}
-          type={PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE}
-          pipelineSetting={deploymentFrequencySetting}
-          isShowRemoveButton={deploymentFrequencySettings.length > 1}
-          onRemovePipeline={(id) => handleRemovePipeline(id)}
-          onUpdatePipeline={(id, label, value) => handleUpdatePipeline(id, label, value)}
-          isDuplicated={getDuplicatedPipeLineIds(deploymentFrequencySettings).includes(deploymentFrequencySetting.id)}
-        />
-      ))}
-      <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />
-      {!_.isEmpty(pipelineCrews) && (
-        <Crews options={pipelineCrews} title={'Crew setting (optional)'} label={'Included Crews'} type={'pipeline'} />
+      {isLoading && <Loading />}
+      {pipelineInfoResult?.code !== HttpStatusCode.Ok ? (
+        <PresentationForErrorCases {...pipelineInfoResult} />
+      ) : (
+        <>
+          <MetricsSettingTitle title={'Pipeline settings'} />
+          {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
+            <PipelineMetricSelection
+              key={deploymentFrequencySetting.id}
+              type={PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE}
+              pipelineSetting={deploymentFrequencySetting}
+              isShowRemoveButton={deploymentFrequencySettings.length > 1}
+              onRemovePipeline={(id) => handleRemovePipeline(id)}
+              onUpdatePipeline={(id, label, value) => handleUpdatePipeline(id, label, value)}
+              isDuplicated={getDuplicatedPipeLineIds(deploymentFrequencySettings).includes(
+                deploymentFrequencySetting.id
+              )}
+            />
+          ))}
+          <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />
+          {!_.isEmpty(pipelineCrews) && (
+            <Crews
+              options={pipelineCrews}
+              title={'Crew setting (optional)'}
+              label={'Included Crews'}
+              type={'pipeline'}
+            />
+          )}
+        </>
       )}
     </>
   );

@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BuildKiteBuildInfo {
+public class BuildKiteBuildInfo implements Serializable {
 
 	private List<BuildKiteJob> jobs;
 

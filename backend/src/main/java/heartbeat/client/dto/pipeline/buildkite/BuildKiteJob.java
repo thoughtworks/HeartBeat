@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BuildKiteJob {
+public class BuildKiteJob implements Serializable {
 
 	private String name;
 

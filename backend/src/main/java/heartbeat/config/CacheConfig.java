@@ -7,11 +7,13 @@ import heartbeat.client.dto.board.jira.JiraBoardProject;
 import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import java.time.Duration;
+import java.util.List;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
 
 import heartbeat.client.dto.board.jira.HolidaysResponseDTO;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import lombok.val;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
@@ -39,6 +41,10 @@ public class CacheConfig {
 		cacheManager.createCache("boardProject", getCacheConfiguration(JiraBoardProject.class));
 		cacheManager.createCache("jiraCards", getCacheConfiguration(String.class));
 		cacheManager.createCache("holidayResult", getCacheConfiguration(HolidaysResponseDTO.class));
+		cacheManager.createCache("tokenInfo", getCacheConfiguration(BuildKiteTokenInfo.class));
+		cacheManager.createCache("buildKiteOrganizationInfo", getCacheConfiguration(List.class));
+		cacheManager.createCache("pipelineInfo", getCacheConfiguration(List.class));
+		cacheManager.createCache("pipelineStepsInfo", getCacheConfiguration(List.class));
 		return cacheManager;
 	}
 

@@ -436,11 +436,6 @@ class JiraServiceTest {
 
 	@Test
 	void shouldCallJiraFeignClientAndThrowParamExceptionWhenGetJiraBoardInfo() {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
-		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 
 		assertThatThrownBy(() -> jiraService.getInfo(null, boardRequestParam)).isInstanceOf(BadRequestException.class)

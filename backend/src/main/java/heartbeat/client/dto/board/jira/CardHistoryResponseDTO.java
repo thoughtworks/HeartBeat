@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CardHistoryResponseDTO implements Serializable {
 
+	private Boolean isLast;
+
 	private List<HistoryDetail> items;
 
 }

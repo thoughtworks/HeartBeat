@@ -5,8 +5,6 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons'
 import React, { useEffect } from 'react'
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
-import { backStep } from '@src/context/stepper/StepperSlice'
-import { useAppDispatch } from '@src/hooks/useAppDispatch'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { useAppSelector } from '@src/hooks'
 import { isSelectBoardMetrics, isSelectDoraMetrics } from '@src/context/config/configSlice'
@@ -17,10 +15,10 @@ import {
   StyledRightButtonGroup,
 } from '@src/components/Metrics/ReportButtonGroup/style'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
-import { useNavigate } from 'react-router-dom'
 
 interface ReportButtonGroupProps {
   handleSave?: () => void
+  handleBack: () => void
   csvTimeStamp: number
   startDate: string
   endDate: string
@@ -33,6 +31,7 @@ interface ReportButtonGroupProps {
 
 export const ReportButtonGroup = ({
   handleSave,
+  handleBack,
   isShowDoraMetrics,
   isShowBoardMetrics,
   csvTimeStamp,
@@ -42,8 +41,6 @@ export const ReportButtonGroup = ({
   reportData,
   isFromDetailPage = false,
 }: ReportButtonGroupProps) => {
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const isShowExportBoardButton = useAppSelector(isSelectBoardMetrics)
   const isShowExportPipelineButton = useAppSelector(isSelectDoraMetrics)
@@ -61,10 +58,6 @@ export const ReportButtonGroup = ({
 
   const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string, endDate: string) => {
     fetchExportData(exportCSV(dataType, startDate, endDate))
-  }
-
-  const handleBack = () => {
-    isFromDetailPage ? navigate(-1) : dispatch(backStep())
   }
 
   return (

@@ -11,11 +11,12 @@ import { ROUTE } from '@src/constants/router'
 import { ReportButtonGroup } from '@src/components/Metrics/ReportButtonGroup'
 import BoardMetrics from '@src/components/Metrics/ReportStep/BoradMetrics'
 import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics'
-import { selectTimeStamp } from '@src/context/stepper/StepperSlice'
+import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import DateRangeViewer from '@src/components/Common/DateRangeViewer'
 import { MetricSelectionHeader } from '../MetricsStep/style'
 import { BoardDetail, DoraDetail } from './ReportDetail'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface
@@ -26,6 +27,7 @@ type PageType = 'Summary' | 'BoardReport' | 'DoraReport'
 
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const {
     isServerError,
     errorMessage: reportErrorMsg,
@@ -124,6 +126,10 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const showBoardDetail = (data: ReportResponseDTO) => <BoardDetail onBack={() => setPageType('Summary')} data={data} />
   const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => setPageType('Summary')} data={data} />
 
+  const handleBack = () => {
+    pageType === 'Summary' ? dispatch(backStep()) : setPageType('Summary')
+  }
+
   return (
     <>
       {isServerError ? (
@@ -144,6 +150,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
             ? showSummary()
             : !!reportData && (pageType === 'BoardReport' ? showBoardDetail(reportData) : showDoraDetail(reportData))}
           <ReportButtonGroup
+            handleBack={() => handleBack()}
             handleSave={() => handleSave()}
             reportData={reportData}
             startDate={startDate}

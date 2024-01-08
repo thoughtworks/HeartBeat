@@ -531,9 +531,11 @@ public class JiraService {
 			}
 		}
 		jiraCards.forEach(doneCard -> {
-			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
-			List<String> assigneeSet = getAssigneeSet(request, baseUrl, filterMethod, doneCard);
+			CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl,
+					doneCard.getKey(), request.getToken());
+			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
+					keyFlagged, request.getStatus());
+			List<String> assigneeSet = getAssigneeSet(cardHistoryResponseDTO, filterMethod, doneCard);
 			if (users.stream().anyMatch(assigneeSet::contains)) {
 				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
@@ -548,7 +550,7 @@ public class JiraService {
 		return realDoneCards;
 	}
 
-	private List<String> getAssigneeSet(StoryPointsAndCycleTimeRequest request, URI baseUrl, String assigneeFilter,
+	private List<String> getAssigneeSet(CardHistoryResponseDTO jiraCardHistory, String assigneeFilter,
 			JiraCard doneCard) {
 		List<String> assigneeSet = new ArrayList<>();
 		Assignee assignee = doneCard.getFields().getAssignee();
@@ -558,16 +560,12 @@ public class JiraService {
 				assigneeSet.add(assignee.getDisplayName());
 			}
 			else {
-				CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
-						request.getToken());
 				List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
 				assigneeSet.add(getLastHistoricalAssignee(historicalAssignees));
 			}
 		}
 
 		if (!useLastAssignee(assigneeFilter)) {
-			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
-					request.getToken());
 			List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
 			assigneeSet.addAll(historicalAssignees);
 		}
@@ -623,9 +621,8 @@ public class JiraService {
 			.isPresent();
 	}
 
-	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,
+	private CycleTimeInfoDTO getCycleTime(CardHistoryResponseDTO cardHistoryResponseDTO, Boolean treatFlagCardAsBlock,
 			String keyFlagged, List<String> realDoneStatus) {
-		CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, doneCardKey, 0, token);
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				keyFlagged);
 		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCycleTimeInfos(statusChangedArray, realDoneStatus,
@@ -791,8 +788,10 @@ public class JiraService {
 		String keyFlagged = cardCustomFieldKey.getFlagged();
 
 		allNonDoneCards.forEach(card -> {
-			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, card.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
+			CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, card.getKey(),
+					request.getToken());
+			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
+					keyFlagged, request.getStatus());
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
 			if (users.stream().anyMatch(assigneeSet::contains)) {

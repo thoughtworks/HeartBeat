@@ -4,14 +4,14 @@ import { RealDone } from '@src/components/Metrics/MetricsStep/RealDone';
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime';
 import { Classification } from '@src/components/Metrics/MetricsStep/Classification';
 import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice';
-import { REQUIRED_DATA, DONE } from '@src/constants/resources';
+import { DONE, REQUIRED_DATA } from '@src/constants/resources';
 import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import {
+  MetricSelectionHeader,
   MetricSelectionWrapper,
   MetricsSelectionTitle,
-  MetricSelectionHeader,
 } from '@src/components/Metrics/MetricsStep/style';
 import { useLayoutEffect } from 'react';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
@@ -30,7 +30,7 @@ const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
   const isShowRealDone = cycleTimeSettings.some((e) => e.value === DONE);
 
   useLayoutEffect(() => {
-    resetProps?.();
+    resetProps();
   }, []);
 
   return (

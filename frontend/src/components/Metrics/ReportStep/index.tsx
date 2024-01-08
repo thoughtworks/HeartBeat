@@ -53,7 +53,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   useLayoutEffect(() => {
     exportValidityTimeMin &&
       isAllMetricsReady &&
-      updateProps?.({
+      updateProps({
         open: true,
         title: 'Help Information',
         message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
@@ -71,7 +71,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         const remainingExpireTime = 5 * 60 * 1000;
         const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime;
         if (remainingTime <= remainingExpireTime) {
-          updateProps?.({
+          updateProps({
             open: true,
             title: 'Help Information',
             message: MESSAGE.EXPIRE_INFORMATION(5),

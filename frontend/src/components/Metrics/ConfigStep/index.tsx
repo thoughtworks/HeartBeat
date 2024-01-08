@@ -6,7 +6,7 @@ import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotification
 
 const ConfigStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
   useLayoutEffect(() => {
-    resetProps?.();
+    resetProps();
   }, []);
 
   return (

@@ -12,9 +12,9 @@ export interface NotificationTipProps {
 }
 
 export interface useNotificationLayoutEffectInterface {
-  notificationProps?: NotificationTipProps;
-  resetProps?: () => void;
-  updateProps?: (notificationProps: NotificationTipProps) => void;
+  notificationProps: NotificationTipProps;
+  resetProps: () => void;
+  updateProps: (notificationProps: NotificationTipProps) => void;
 }
 
 export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterface => {
@@ -50,7 +50,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
   };
 
   useEffect(() => {
-    notificationProps?.closeAutomatically && closeAutomatically();
+    notificationProps.closeAutomatically && closeAutomatically();
   }, [notificationProps]);
 
   return { notificationProps, resetProps, updateProps };

@@ -37,8 +37,7 @@ const getStyles = (type: AlertColor | undefined) => {
 
 export const Notification = ({ notificationProps, updateProps }: useNotificationLayoutEffectInterface) => {
   const handleNotificationClose = () => {
-    if (notificationProps === undefined) return;
-    updateProps?.({
+    updateProps({
       title: notificationProps.title,
       message: notificationProps.message,
       open: false,
@@ -46,19 +45,19 @@ export const Notification = ({ notificationProps, updateProps }: useNotification
     });
   };
 
-  const styles = getStyles(notificationProps?.type);
+  const styles = getStyles(notificationProps.type);
 
   return (
     <>
-      {notificationProps?.open && (
+      {notificationProps.open && (
         <AlertWrapper
           onClose={handleNotificationClose}
           icon={<SvgIcon component={styles.icon} inheritViewBox />}
           backgroundcolor={styles.backgroundColor}
           iconcolor={styles.iconColor}
         >
-          <AlertTitleWrapper>{notificationProps?.title}</AlertTitleWrapper>
-          {notificationProps?.message}
+          <AlertTitleWrapper>{notificationProps.title}</AlertTitleWrapper>
+          {notificationProps.message}
         </AlertWrapper>
       )}
     </>

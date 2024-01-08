@@ -8,7 +8,7 @@ export const StyledMetricsTitleSection = styled('div')({
 })
 
 export const StyledMetricsSign = styled('canvas')({
-  margin: '0.2rem 0.5rem 0 0.5rem',
+  margin: '0.2rem 0.5rem',
   height: '1rem',
   width: '0.3rem',
   background: theme.main.backgroundColor,

@@ -140,7 +140,9 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               <ErrorNotification message={errorMessage} />
             </StyledErrorNotification>
           )}
-          {pageType === 'Summary' ? showSummary() : !!reportData && (pageType === 'BoardReport' ? showBoardDetail(reportData) : showDoraDetail(reportData))}
+          {pageType === 'Summary'
+            ? showSummary()
+            : !!reportData && (pageType === 'BoardReport' ? showBoardDetail(reportData) : showDoraDetail(reportData))}
           <ReportButtonGroup
             handleSave={() => handleSave()}
             reportData={reportData}

@@ -1,3 +1,4 @@
+import React from 'react'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
 import { NAME, PIPELINE_STEP } from '@src/constants/resources'
@@ -10,11 +11,10 @@ interface Property {
   data: ReportResponseDTO
   onBack: () => void
 }
-const showSection = (title: string, value: Optional<ReportDataWithThreeColumns[]>) => value &&
-  <ReportForThreeColumns title={title} fieldName={PIPELINE_STEP} listName={NAME} data={value} />
+const showSection = (title: string, value: Optional<ReportDataWithThreeColumns[]>) =>
+  value && <ReportForThreeColumns title={title} fieldName={PIPELINE_STEP} listName={NAME} data={value} />
 
 export const DoraDetail = withGoBack(({ data }: Property) => {
-
   const mappedData = reportMapper(data)
 
   return (

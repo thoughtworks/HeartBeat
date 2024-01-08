@@ -38,7 +38,7 @@ export const ReportForTwoColumns = ({ title, data }: ReportForTwoColumnsProps) =
     <>
       <Container>
         <ReportSelectionTitle>{title}</ReportSelectionTitle>
-        <Table data-test-id={title}>
+        <Table data-test-id={title} data-testid={title}>
           <TableHead>
             <TableRow id={title}>
               <StyledTableCell>Name</StyledTableCell>

@@ -58,7 +58,7 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
     <>
       <Container>
         <ReportSelectionTitle>{title}</ReportSelectionTitle>
-        <Table data-test-id={title}>
+        <Table data-test-id={title} data-testid={title}>
           <TableHead>
             <TableRow>
               <StyledTableCell>{fieldName}</StyledTableCell>

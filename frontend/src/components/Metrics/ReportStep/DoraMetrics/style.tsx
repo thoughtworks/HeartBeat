@@ -16,5 +16,5 @@ export const StyledShowMore = styled(Link)({
   marginLeft: '0.5rem',
   fontSize: '0.8rem',
   textDecoration: 'none',
-  color: theme.palette.link,
+  color: '#4350AF',
 })

@@ -20,18 +20,25 @@ import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { StyledSpacing } from '@src/components/Metrics/ReportStep/style'
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util'
 import { StyledShowMore, StyledTitleWrapper } from '@src/components/Metrics/ReportStep/DoraMetrics/style'
-import { ROUTE } from '@src/constants/router'
-import { RETRIEVE_REPORT_TYPES } from '@src/constants/commons'
+import { NullAble as Nullable } from '@src/utils/types'
 
 interface DoraMetricsProps {
   startToRequestDoraData: (request: ReportRequestDTO) => void
+  onShowDetail: () => void
   doraReport?: ReportResponseDTO
   csvTimeStamp: number
-  startDate: string | null
-  endDate: string | null
+  startDate: Nullable<string>
+  endDate: Nullable<string>
 }
 
-const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDate, endDate }: DoraMetricsProps) => {
+const DoraMetrics = ({
+  startToRequestDoraData,
+  onShowDetail,
+  doraReport,
+  csvTimeStamp,
+  startDate,
+  endDate,
+}: DoraMetricsProps) => {
   const configData = useAppSelector(selectConfig)
   const { pipelineTool, sourceControl } = configData
   const { metrics, calendarType } = configData.basic
@@ -174,9 +181,7 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          <StyledShowMore to={ROUTE.METRICS_DETAIL_PAGE} state={{ reportType: RETRIEVE_REPORT_TYPES.DORA }}>
-            {SHOW_MORE}
-          </StyledShowMore>
+          <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
         </StyledTitleWrapper>
         {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
         <StyledSpacing />

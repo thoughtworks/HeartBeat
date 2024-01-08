@@ -14,7 +14,7 @@ import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics'
 import { selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import DateRangeViewer from '@src/components/Common/DateRangeViewer'
 import { MetricSelectionHeader } from '../MetricsStep/style'
-import ReportDetail from './ReportDetail'
+import { DoraDetail } from './ReportDetail'
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface
@@ -113,6 +113,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           startDate={startDate}
           endDate={endDate}
           startToRequestDoraData={startToRequestDoraData}
+          onShowDetail={() => setPageType('DoraReport')}
           doraReport={reportData}
           csvTimeStamp={csvTimeStamp}
         />
@@ -120,7 +121,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     </>
   )
   const showBoardDetail = () => <ReportDetail onBack={() => setPageType('Summary')} />
-  const showDoraDetail = () => <ReportDetail onBack={() => setPageType('Summary')} />
+  const showDoraDetail = () => <DoraDetail onBack={() => setPageType('Summary')} />
 
   return (
     <>

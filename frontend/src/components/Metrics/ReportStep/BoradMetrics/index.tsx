@@ -22,7 +22,7 @@ import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/uti
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle'
 import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
-import { NullAble as Nullable } from '@src/utils/types'
+import { Nullable } from '@src/utils/types'
 
 interface BoardMetricsProps {
   startToRequestBoardData: (request: ReportRequestDTO) => void

@@ -14,7 +14,8 @@ import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics'
 import { selectTimeStamp } from '@src/context/stepper/StepperSlice'
 import DateRangeViewer from '@src/components/Common/DateRangeViewer'
 import { MetricSelectionHeader } from '../MetricsStep/style'
-import { DoraDetail } from './ReportDetail'
+import { BoardDetail, DoraDetail } from './ReportDetail'
+import { ReportResponseDTO } from '@src/clients/report/dto/response'
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface
@@ -120,8 +121,8 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       )}
     </>
   )
-  const showBoardDetail = () => <ReportDetail onBack={() => setPageType('Summary')} />
-  const showDoraDetail = () => <DoraDetail onBack={() => setPageType('Summary')} />
+  const showBoardDetail = (data: ReportResponseDTO) => <BoardDetail onBack={() => setPageType('Summary')} data={data} />
+  const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => setPageType('Summary')} data={data} />
 
   return (
     <>
@@ -139,7 +140,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               <ErrorNotification message={errorMessage} />
             </StyledErrorNotification>
           )}
-          {pageType === 'Summary' ? showSummary() : pageType === 'BoardReport' ? showBoardDetail() : showDoraDetail()}
+          {pageType === 'Summary' ? showSummary() : !!reportData && (pageType === 'BoardReport' ? showBoardDetail(reportData) : showDoraDetail(reportData))}
           <ReportButtonGroup
             handleSave={() => handleSave()}
             reportData={reportData}

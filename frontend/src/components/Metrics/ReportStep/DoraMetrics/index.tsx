@@ -20,7 +20,7 @@ import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { StyledSpacing } from '@src/components/Metrics/ReportStep/style'
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util'
 import { StyledShowMore, StyledTitleWrapper } from '@src/components/Metrics/ReportStep/DoraMetrics/style'
-import { NullAble as Nullable } from '@src/utils/types'
+import { Nullable } from '@src/utils/types'
 
 interface DoraMetricsProps {
   startToRequestDoraData: (request: ReportRequestDTO) => void

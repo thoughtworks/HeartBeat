@@ -560,7 +560,8 @@ public class JiraService {
 			else {
 				CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, doneCard.getKey(),
 						request.getToken());
-				assigneeSet.add(getLastHistoricalAssignee(jiraCardHistory));
+				List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
+				assigneeSet.add(getLastHistoricalAssignee(historicalAssignees));
 			}
 		}
 
@@ -574,21 +575,15 @@ public class JiraService {
 		return assigneeSet;
 	}
 
-	private String getLastHistoricalAssignee(CardHistoryResponseDTO jiraCardHistory) {
-		return jiraCardHistory.getItems()
-			.stream()
-			.filter(item -> AssigneeFilterMethod.ASSIGNEE_FIELD_ID.getDescription().equalsIgnoreCase(item.getFieldId()))
-			.sorted(Comparator.comparing(HistoryDetail::getTimestamp).reversed())
-			.map(item -> item.getTo().getDisplayValue())
-			.filter(Objects::nonNull)
-			.findFirst()
-			.orElse(null);
+	private String getLastHistoricalAssignee(List<String> historicalAssignees) {
+		return historicalAssignees.stream().filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
 	private List<String> getHistoricalAssignees(CardHistoryResponseDTO jiraCardHistory) {
 		return jiraCardHistory.getItems()
 			.stream()
 			.filter(item -> AssigneeFilterMethod.ASSIGNEE_FIELD_ID.getDescription().equalsIgnoreCase(item.getFieldId()))
+			.sorted(Comparator.comparing(HistoryDetail::getTimestamp).reversed())
 			.map(item -> item.getTo().getDisplayValue())
 			.distinct()
 			.toList();

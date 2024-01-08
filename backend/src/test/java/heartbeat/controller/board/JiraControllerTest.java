@@ -56,6 +56,22 @@ public class JiraControllerTest {
 	}
 
 	@Test
+	void shouldReturnCorrectBoardInfoResponseWhenGivenTheCorrectBoardRequest() throws Exception {
+		BoardConfigDTO boardConfigDTO = BOARD_CONFIG_RESPONSE_BUILDER().build();
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
+		when(jiraService.getInfo(any(), any())).thenReturn(boardConfigDTO);
+
+		mockMvc
+			.perform(post("/boards/{boardType}/info", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.jiraColumns[0].value.name").value("TODO"))
+			.andExpect(jsonPath("$.users[0]").value("Zhang San"))
+			.andExpect(jsonPath("$.targetFields[0].name").value("Priority"));
+	}
+
+	@Test
 	void shouldReturnCorrectBoardVerificationResponseWhenGivenTheCorrectBoardRequest() throws Exception {
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 
@@ -80,6 +96,23 @@ public class JiraControllerTest {
 
 		mockMvc
 			.perform(post("/boards/{boardType}", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value(message));
+	}
+
+	@Test
+	void shouldHandleServiceExceptionAndReturnWithStatusAndMessageWhenGetBoardInfo() throws Exception {
+		RequestFailedException mockException = mock(RequestFailedException.class);
+		String message = "message";
+		when(jiraService.getInfo(any(), any())).thenThrow(mockException);
+		when(mockException.getMessage()).thenReturn(message);
+		when(mockException.getStatus()).thenReturn(400);
+
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
+		mockMvc
+			.perform(post("/boards/{boardType}/info", "jira").contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value(message));
@@ -113,6 +146,16 @@ public class JiraControllerTest {
 	}
 
 	@Test
+	void shouldRequestTokenNotBlankWhenGetBoardInfo() throws Exception {
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token(null).build();
+
+		mockMvc
+			.perform(post("/boards/{boardType}/info", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void shouldBoardVerifyRequestTokenNotBlank() throws Exception {
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().token(null).build();
 
@@ -128,6 +171,17 @@ public class JiraControllerTest {
 
 		mockMvc
 			.perform(post("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").isNotEmpty());
+	}
+
+	@Test
+	void shouldThrowExceptionWhenGetBoardInfoAndBoardTypeNotSupported() throws Exception {
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().token("").build();
+
+		mockMvc
+			.perform(post("/boards/{boardType}/info", "invalid").contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").isNotEmpty());

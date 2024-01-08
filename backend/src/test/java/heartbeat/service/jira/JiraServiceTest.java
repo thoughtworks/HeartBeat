@@ -6,9 +6,11 @@ import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
+import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraBoardProject;
 import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
+import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
@@ -37,6 +39,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +98,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -174,7 +180,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -217,7 +223,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -272,7 +278,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 100, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -313,7 +319,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 100, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -354,7 +360,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -397,7 +403,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
@@ -484,8 +490,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token))
 			.thenThrow(new NotFoundException("message"));
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
-			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
+			.thenReturn(new CardHistoryResponseDTO(true, Collections.emptyList()));
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
@@ -494,30 +500,32 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldCallJiraFeignClientAndThrowNotFoundExceptionWhenGetJiraBoardInfo() throws JsonProcessingException {
-		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
-		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+	void shouldCallJiraFeignClientTwiceGivenTwoPageHistoryDataWhenGetJiraBoardConfig() throws JsonProcessingException {
+		// given
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
-		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
-		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
-			.replaceAll("storyPoints", "customfield_10016");
 
-		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
-		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		when(jiraFeignClient.getProject(baseUrl, "project key", token))
-			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
-		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token))
-			.thenThrow(new NotFoundException("message"));
-		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
-			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
-		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
-			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+		JiraBoardSetting jiraBoardSetting = CLASSIC_JIRA_BOARD_SETTING_BUILD().build();
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = CLASSIC_JIRA_STORY_POINTS_FORM_ALL_DONE_CARD()
+			.build();
+		String allDoneCards = objectMapper.writeValueAsString(NEED_FILTERED_ALL_DONE_CARDS_BUILDER().build());
 
-		assertThatCode(() -> jiraService.getInfo(boardTypeJira, boardRequestParam)).doesNotThrowAnyException();
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
+			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
+			.thenReturn(new CardHistoryResponseDTO(false, new ArrayList<>(
+					List.of(new HistoryDetail(1, "status", new Status("To do"), new Status("Block"), null)))));
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 100, 100, token))
+			.thenReturn(new CardHistoryResponseDTO(true, new ArrayList<>(
+					List.of(new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null)))));
+		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
+		// when
+		jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
+		// then
+		verify(jiraFeignClient, times(2)).getJiraCardHistoryByCount(any(), eq("2"), anyInt(), anyInt(), any());
 	}
 
 	@Test
@@ -633,9 +641,9 @@ class JiraServiceTest {
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
 			.thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 		when(systemUtil.getEnvMap()).thenReturn(envMap);
@@ -697,8 +705,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
-			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
+			.thenReturn(new CardHistoryResponseDTO(true, Collections.emptyList()));
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
@@ -727,8 +735,8 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
-			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
+			.thenReturn(new CardHistoryResponseDTO(true, Collections.emptyList()));
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
@@ -905,9 +913,9 @@ class JiraServiceTest {
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
 			.thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
@@ -938,9 +946,9 @@ class JiraServiceTest {
 		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 		// then
@@ -965,9 +973,9 @@ class JiraServiceTest {
 		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "2", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
 			.thenReturn(CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 		// then
@@ -1002,7 +1010,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(
 				"{\"total\":1,\"issues\":[{\"expand\":\"expand\",\"id\":\"1\",\"self\":\"https:xxxx/issue/1\",\"key\":\"ADM-455\",\"fields\":{\"customfield_10020\":[{\"id\":16,\"name\":\"Tool Sprint 11\",\"state\":\"closed\",\"boardId\":2,\"goal\":\"goals\",\"startDate\":\"2023-05-15T03:09:23.000Z\",\"endDate\":\"2023-05-28T16:00:00.000Z\",\"completeDate\":\"2023-05-29T03:51:24.898Z\"}],\"customfield_10021\":[{\"self\":\"https:xxxx/10019\",\"value\":\"Impediment\",\"id\":\"10019\"}],\"customfield_10016\":1,\"assignee\":{\"displayName\":\"Zhang San\"}}}]}");
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(FIELD_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 		when(boardUtil.getCycleTimeInfos(any(), any(), any())).thenReturn(CYCLE_TIME_INFO_LIST());
 		when(boardUtil.getOriginCycleTimeInfos(any())).thenReturn(CYCLE_TIME_INFO_LIST());
@@ -1023,7 +1031,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(
 				"{\"total\":1,\"issues\":[{\"expand\":\"expand\",\"id\":\"1\",\"self\":\"https:xxxx/issue/1\",\"key\":\"ADM-455\",\"fields\":{\"customfield_10020\":[{\"id\":16,\"name\":\"Tool Sprint 11\",\"state\":\"closed\",\"boardId\":2,\"goal\":\"goals\",\"startDate\":\"2023-05-15T03:09:23.000Z\",\"endDate\":\"2023-05-28T16:00:00.000Z\",\"completeDate\":\"2023-05-29T03:51:24.898Z\"}],\"customfield_10021\":[{\"self\":\"https:xxxx/10019\",\"value\":\"Impediment\",\"id\":\"10019\"}],\"customfield_10016\":1,\"assignee\":{\"displayName\":\"Zhang San\"}}}]}");
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(FIELD_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER_TO_DONE().build());
 
 		CardCollection doneCards = jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
@@ -1066,7 +1074,7 @@ class JiraServiceTest {
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any()))
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
@@ -1088,7 +1096,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any()))
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 
 		CardCollection nonDoneCards = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(
@@ -1118,7 +1126,7 @@ class JiraServiceTest {
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
 
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 
 		CardCollection nonDoneCards = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(
@@ -1147,7 +1155,7 @@ class JiraServiceTest {
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
 
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 
 		CardCollection nonDoneCards = jiraService.getStoryPointsAndCycleTimeForNonDoneCards(
@@ -1192,9 +1200,9 @@ class JiraServiceTest {
 		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-475", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
 			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
@@ -1227,9 +1235,9 @@ class JiraServiceTest {
 		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-475", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
 			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
@@ -1261,7 +1269,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER().build());
@@ -1301,7 +1309,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
 		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
 		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER().build());
@@ -1341,9 +1349,9 @@ class JiraServiceTest {
 
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-475", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
 			.thenReturn(CARD1_HISTORY_FOR_MULTIPLE_STATUSES().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
@@ -1378,9 +1386,9 @@ class JiraServiceTest {
 
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-475", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-524", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD_HISTORY_WITH_NO_STATUS_FIELD().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 

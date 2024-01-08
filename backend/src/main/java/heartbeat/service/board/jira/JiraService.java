@@ -461,8 +461,7 @@ public class JiraService {
 
 	private List<String> getAssigneeSet(URI baseUrl, JiraCard jiraCard, String jiraToken) {
 		log.info("Start to get jira card history, _cardKey: {}", jiraCard.getKey());
-		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(),
-				jiraToken);
+		CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, jiraCard.getKey(), 0, jiraToken);
 		log.info("Successfully get jira card history, _cardKey: {}, _cardHistoryItemsSize: {}", jiraCard.getKey(),
 				cardHistoryResponseDTO.getItems().size());
 
@@ -524,7 +523,7 @@ public class JiraService {
 		List<JiraCard> jiraCards = new ArrayList<>();
 
 		for (JiraCard allDoneCard : allDoneCards) {
-			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, allDoneCard.getKey(),
+			CardHistoryResponseDTO jiraCardHistory = getJiraCardHistory(baseUrl, allDoneCard.getKey(), 0,
 					request.getToken());
 			if (isRealDoneCardByHistory(jiraCardHistory, request)) {
 				jiraCards.add(allDoneCard);
@@ -566,8 +565,20 @@ public class JiraService {
 	}
 
 	private List<String> getHistoricalAssignees(URI baseUrl, String cardKey, String token) {
-		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, cardKey, token);
+		CardHistoryResponseDTO jiraCardHistory = getJiraCardHistory(baseUrl, cardKey, 0, token);
 		return jiraCardHistory.getItems().stream().map(item -> item.getActor().getDisplayName()).distinct().toList();
+	}
+
+	private CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, String cardKey, int startAt, String token) {
+		int queryCount = 100;
+		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistoryByCount(baseUrl, cardKey, startAt,
+				queryCount, token);
+		if (Boolean.FALSE.equals(jiraCardHistory.getIsLast())) {
+			CardHistoryResponseDTO cardAllHistory = getJiraCardHistory(baseUrl, cardKey, startAt + queryCount, token);
+			jiraCardHistory.getItems().addAll(cardAllHistory.getItems());
+			jiraCardHistory.setIsLast(jiraCardHistory.getIsLast());
+		}
+		return jiraCardHistory;
 	}
 
 	private boolean useLastAssignee(String filterMethod) {
@@ -594,7 +605,7 @@ public class JiraService {
 
 	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,
 			String keyFlagged, List<String> realDoneStatus) {
-		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
+		CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, doneCardKey, 0, token);
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				keyFlagged);
 		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCycleTimeInfos(statusChangedArray, realDoneStatus,

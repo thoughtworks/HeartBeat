@@ -173,6 +173,7 @@ public class JiraBoardConfigDTOFixture {
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
+			.isLast(true)
 			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do"), null),
 					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null),
 					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null),
@@ -182,6 +183,7 @@ public class JiraBoardConfigDTOFixture {
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER_TO_DONE() {
 		return CardHistoryResponseDTO.builder()
+			.isLast(true)
 			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do"), null),
 					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null),
 					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null),
@@ -190,6 +192,7 @@ public class JiraBoardConfigDTOFixture {
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_MULTI_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
+			.isLast(true)
 			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status(BLOCK), null),
 					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null),
 					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null),

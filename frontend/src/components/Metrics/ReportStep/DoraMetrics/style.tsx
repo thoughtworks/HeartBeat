@@ -1,6 +1,4 @@
 import { styled } from '@mui/material/styles'
-import { Link } from 'react-router-dom'
-import { theme } from '@src/theme'
 
 export const StyledMetricsSection = styled('div')({
   marginTop: '2rem',
@@ -12,7 +10,7 @@ export const StyledTitleWrapper = styled('div')({
   marginBottom: '1rem',
 })
 
-export const StyledShowMore = styled(Link)({
+export const StyledShowMore = styled('div')({
   marginLeft: '0.5rem',
   fontSize: '0.8rem',
   textDecoration: 'none',

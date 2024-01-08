@@ -24,22 +24,16 @@ interface ReportButtonGroupProps {
   endDate: string
   setErrorMessage: (message: string) => void
   reportData: ReportResponseDTO | undefined
-  isFromDetailPage?: boolean
-  isShowDoraMetrics?: boolean
-  isShowBoardMetrics?: boolean
 }
 
 export const ReportButtonGroup = ({
   handleSave,
   handleBack,
-  isShowDoraMetrics,
-  isShowBoardMetrics,
   csvTimeStamp,
   startDate,
   endDate,
   setErrorMessage,
   reportData,
-  isFromDetailPage = false,
 }: ReportButtonGroupProps) => {
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
   const isShowExportBoardButton = useAppSelector(isSelectBoardMetrics)
@@ -62,27 +56,27 @@ export const ReportButtonGroup = ({
 
   return (
     <>
-      <StyledButtonGroup isFromDetailPage={isFromDetailPage}>
-        {!isFromDetailPage && (
+      <StyledButtonGroup>
+        {
           <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
             <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
               {COMMON_BUTTONS.SAVE}
             </SaveButton>
           </Tooltip>
-        )}
+        }
         <StyledRightButtonGroup>
           <BackButton onClick={handleBack} variant='outlined'>
             {COMMON_BUTTONS.BACK}
           </BackButton>
-          {!isFromDetailPage && (
+          {
             <StyledExportButton
               disabled={!reportData?.isAllMetricsReady}
               onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}
             </StyledExportButton>
-          )}
-          {(isFromDetailPage ? isShowBoardMetrics : isShowExportBoardButton) && (
+          }
+          {isShowExportBoardButton && (
             <StyledExportButton
               disabled={!reportData?.isBoardMetricsReady}
               onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}
@@ -90,7 +84,7 @@ export const ReportButtonGroup = ({
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
             </StyledExportButton>
           )}
-          {(isFromDetailPage ? isShowDoraMetrics : isShowExportPipelineButton) && (
+          {isShowExportPipelineButton && (
             <StyledExportButton
               disabled={
                 !reportData ||

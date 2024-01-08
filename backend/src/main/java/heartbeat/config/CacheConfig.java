@@ -13,6 +13,7 @@ import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
 
 import heartbeat.client.dto.board.jira.HolidaysResponseDTO;
+import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import lombok.val;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -45,6 +46,12 @@ public class CacheConfig {
 		cacheManager.createCache("buildKiteOrganizationInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("pipelineInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("pipelineStepsInfo", getCacheConfiguration(List.class));
+		cacheManager.createCache("githubOrganizationInfo", getCacheConfiguration(List.class));
+		cacheManager.createCache("githubAllRepos", getCacheConfiguration(List.class));
+		cacheManager.createCache("githubRepos", getCacheConfiguration(List.class));
+		cacheManager.createCache("commitInfo", getCacheConfiguration(CommitInfo.class));
+		cacheManager.createCache("pullRequestCommitInfo", getCacheConfiguration(List.class));
+		cacheManager.createCache("pullRequestListInfo", getCacheConfiguration(List.class));
 		return cacheManager;
 	}
 

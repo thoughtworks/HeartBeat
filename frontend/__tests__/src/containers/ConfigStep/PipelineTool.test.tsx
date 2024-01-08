@@ -80,7 +80,7 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation();
 
     await act(async () => {
-      const requireDateSelection = within(getByLabelText('pipelineTool-type-select'));
+      const requireDateSelection = within(getByLabelText('PipelineTool type select'));
       await userEvent.click(requireDateSelection.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE));
     });
 

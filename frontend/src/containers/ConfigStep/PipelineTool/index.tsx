@@ -16,14 +16,13 @@ import {
   selectIsProjectCreated,
   selectPipelineTool,
   updatePipelineTool,
-  updatePipelineToolVerifyResponse,
   updatePipelineToolVerifyState,
 } from '@src/context/config/configSlice';
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { Loading } from '@src/components/Loading';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
-import { initDeploymentFrequencySettings, updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
+import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
 import { findCaseInsensitiveType } from '@src/utils/util';
 import { REGEX } from '@src/constants/regex';
@@ -127,9 +126,7 @@ export const PipelineTool = () => {
     await verifyPipelineTool(params).then((res) => {
       if (res) {
         dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified));
-        dispatch(updatePipelineToolVerifyResponse(res.response));
         dispatch(initDeploymentFrequencySettings());
-        res.isPipelineToolVerified && dispatch(updatePipelineSettings({ ...res.response, isProjectCreated }));
       }
     });
   };
@@ -154,7 +151,7 @@ export const PipelineTool = () => {
           <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
           <Select
             labelId='pipelineTool-type-checkbox-label'
-            aria-label='pipelineTool-type-select'
+            aria-label='PipelineTool type select'
             value={fields[0].value}
             onChange={(e) => onFormUpdate(ZERO, e.target.value)}
           >

@@ -240,7 +240,7 @@ describe('Report Step', () => {
       expect(resetProps).not.toBeCalled();
       expect(updateProps).not.toBeCalledWith({
         open: true,
-        title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+        title: MESSAGE.EXPIRE_INFORMATION(5),
         closeAutomatically: true,
       });
 
@@ -248,7 +248,7 @@ describe('Report Step', () => {
 
       expect(updateProps).not.toBeCalledWith({
         open: true,
-        title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+        title: MESSAGE.EXPIRE_INFORMATION(5),
         closeAutomatically: true,
       });
 
@@ -256,7 +256,7 @@ describe('Report Step', () => {
 
       expect(updateProps).toBeCalledWith({
         open: true,
-        title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
+        title: MESSAGE.EXPIRE_INFORMATION(5),
         closeAutomatically: true,
       });
 

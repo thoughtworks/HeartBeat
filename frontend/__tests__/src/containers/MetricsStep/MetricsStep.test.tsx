@@ -1,4 +1,6 @@
 import { act, render, renderHook, waitFor, within } from '@testing-library/react';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 import MetricsStep from '@src/containers/MetricsStep';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -16,12 +18,22 @@ import {
   REAL_DONE_SETTING_SECTION,
   REQUIRED_DATA_LIST,
   SELECT_CONSIDER_AS_DONE_MESSAGE,
+  MOCK_PIPELINE_GET_INFO_URL,
+  MOCK_BUILD_KITE_VERIFY_RESPONSE,
 } from '../../fixtures';
 import { saveCycleTimeSettings, saveDoneColumn } from '@src/context/Metrics/metricsSlice';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import userEvent from '@testing-library/user-event';
 
 let store = setupStore();
+const server = setupServer(
+  rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) =>
+    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_VERIFY_RESPONSE)))
+  )
+);
+
+beforeAll(() => server.listen());
+afterAll(() => server.close());
 
 const { result } = renderHook(() => useNotificationLayoutEffect());
 const setup = () =>
@@ -143,18 +155,21 @@ describe('MetricsStep', () => {
 
     it('should reset real done when change Cycle time settings DONE to other status', async () => {
       const { getByLabelText, getByRole } = setup();
-      const cycleTimeSettingsSection = getByLabelText(CYCLE_TIME_SETTINGS_SECTION);
       const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION);
 
       expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE);
-      const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN });
+      const doneSelectTrigger = getByLabelText('Cycle time select for Done').querySelector('input');
 
-      await userEvent.click(columnsArray[1]);
+      await act(async () => {
+        await userEvent.click(doneSelectTrigger as HTMLInputElement);
+      });
 
-      const options = within(getByRole('listbox')).getAllByRole('option');
-      await userEvent.click(options[1]);
+      await act(async () => {
+        const noneOption = within(getByRole('presentation')).getByText('----');
+        await userEvent.click(noneOption);
+      });
 
-      await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE));
+      expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE);
     });
 
     it('should reset real done when change Cycle time settings other status to DONE', async () => {
@@ -164,10 +179,14 @@ describe('MetricsStep', () => {
 
       expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE);
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN });
-      await userEvent.click(columnsArray[2]);
 
-      const options = within(getByRole('listbox')).getAllByRole('option');
-      await userEvent.click(options[options.length - 1]);
+      await act(async () => {
+        await userEvent.click(columnsArray[2]);
+      });
+      await act(async () => {
+        const options = within(getByRole('listbox')).getAllByRole('option');
+        await userEvent.click(options[options.length - 1]);
+      });
 
       await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE));
     });

@@ -58,12 +58,7 @@ describe('useNotificationLayoutEffect', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.notificationProps).toEqual({
-        open: false,
-        title: '',
-        closeAutomatically: false,
-        durationTimeout: DURATION.NOTIFICATION_TIME,
-      });
+      expect(result.current.notificationProps).toEqual(defaultProps);
     });
 
     jest.useRealTimers();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, fireEvent, Matcher, render, waitFor, within, screen } from '@testing-library/react';
+import { act, fireEvent, Matcher, render, renderHook, waitFor, within, screen } from '@testing-library/react';
 import ConfigStep from '@src/components/Metrics/ConfigStep';
 import {
   CHINA_CALENDAR,
@@ -18,6 +18,7 @@ import { Provider } from 'react-redux';
 import { setupStore } from '../../../utils/setupStoreUtil';
 import dayjs from 'dayjs';
 import { fillBoardFieldsInformation } from './Board.test';
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 
 let store = null;
 jest.mock('@src/context/config/configSlice', () => ({
@@ -25,11 +26,12 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
 }));
 describe('ConfigStep', () => {
+  const { result } = renderHook(() => useNotificationLayoutEffect());
   const setup = () => {
     store = setupStore();
     return render(
       <Provider store={store}>
-        <ConfigStep />
+        <ConfigStep {...result.current} />
       </Provider>
     );
   };

@@ -1,8 +1,9 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import MetricsStepper from '@src/components/Metrics/MetricsStepper';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../../utils/setupStoreUtil';
 import {
+  BACK,
   BASE_PAGE_ROUTE,
   BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
@@ -42,6 +43,7 @@ import {
 } from '@src/context/Metrics/metricsSlice';
 import { exportToJsonFile } from '@src/utils/util';
 import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 
 const START_DATE_LABEL = 'From *';
 const TODAY = dayjs();
@@ -155,10 +157,12 @@ describe('MetricsStepper', () => {
   afterEach(() => {
     navigateMock.mockClear();
   });
+
+  const { result } = renderHook(() => useNotificationLayoutEffect());
   const setup = () =>
     render(
       <Provider store={store}>
-        <MetricsStepper />
+        <MetricsStepper {...result.current} />
       </Provider>
     );
   it('should show metrics stepper', () => {

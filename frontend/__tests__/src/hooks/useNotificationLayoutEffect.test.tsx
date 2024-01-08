@@ -32,7 +32,7 @@ describe('useNotificationLayoutEffect', () => {
     expect(result.current.notificationProps).toEqual(defaultProps);
   });
 
-  it('should update the notificationProps when call resetProps given mock props', async () => {
+  it('should update the notificationProps when call updateProps given mock props', async () => {
     const mockProps = { title: 'Test', message: 'Notification Message', open: true, closeAutomatically: false };
     const { result } = renderHook(() => useNotificationLayoutEffect());
 
@@ -80,12 +80,6 @@ describe('useNotificationLayoutEffect', () => {
       closeAutomatically: true,
       durationTimeout: expectedTime,
     };
-    const expectedProps = {
-      open: false,
-      title: '',
-      closeAutomatically: false,
-      durationTimeout: DURATION.NOTIFICATION_TIME,
-    };
 
     act(() => {
       result.current.notificationProps = defaultProps;
@@ -95,14 +89,14 @@ describe('useNotificationLayoutEffect', () => {
     jest.advanceTimersByTime(1000);
 
     await waitFor(() => {
-      expect(result.current.notificationProps).not.toEqual(expectedProps);
+      expect(result.current.notificationProps).not.toEqual(defaultProps);
     });
     act(() => {
       jest.advanceTimersByTime(expectedTime);
     });
 
     await waitFor(() => {
-      expect(result.current.notificationProps).toEqual(expectedProps);
+      expect(result.current.notificationProps).toEqual(defaultProps);
     });
 
     jest.useRealTimers();

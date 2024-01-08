@@ -256,7 +256,8 @@ describe('Report Step', () => {
 
       expect(updateProps).toBeCalledWith({
         open: true,
-        title: MESSAGE.EXPIRE_INFORMATION(5),
+        title: 'Help Information',
+        message: MESSAGE.EXPIRE_INFORMATION(5),
         closeAutomatically: true,
       });
 

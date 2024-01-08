@@ -23,10 +23,11 @@ import userEvent from '@testing-library/user-event';
 
 let store = setupStore();
 
+const { result } = renderHook(() => useNotificationLayoutEffect());
 const setup = () =>
   render(
     <Provider store={store}>
-      <MetricsStep />
+      <MetricsStep {...result.current} />
     </Provider>
   );
 

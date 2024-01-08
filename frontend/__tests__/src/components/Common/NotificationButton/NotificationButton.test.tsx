@@ -1,12 +1,11 @@
-import { render, renderHook, waitFor, screen } from '@testing-library/react';
+import { render, renderHook, waitFor } from '@testing-library/react';
 import { Notification } from '@src/components/Common/NotificationButton';
 import React from 'react';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
 
-const notificationIcon = 'NotificationIcon';
-describe('NotificationButton', () => {
+describe('Notification', () => {
   const closeNotificationProps = {
     open: false,
     title: 'NotificationPopper',
@@ -21,51 +20,42 @@ describe('NotificationButton', () => {
   };
   const { result } = renderHook(() => useNotificationLayoutEffect());
 
-  it('should show NotificationIcon when render NotificationButton component', () => {
-    const { getByTestId } = render(<Notification {...result.current} />);
-
-    expect(getByTestId(notificationIcon)).toBeInTheDocument();
-  });
-
-  it('should show NotificationPopper when clicking the component given the "open" value is true', async () => {
+  it('should show title and message given the "open" value is true', () => {
     act(() => {
       result.current.notificationProps = openNotificationProps;
     });
     const { getByText } = render(<Notification {...result.current} />);
-    await userEvent.click(screen.getByTestId(notificationIcon));
+
     expect(getByText('NotificationPopper')).toBeInTheDocument();
+    expect(getByText('Notification Message')).toBeInTheDocument();
   });
 
-  it('should hide NotificationPopper when clicking the component  given the "open" value is false', async () => {
+  it('should not show title and message given the "open" value is false', () => {
     act(() => {
       result.current.notificationProps = closeNotificationProps;
     });
-    const { getByTestId, queryByText } = render(<Notification {...result.current} />);
-    await userEvent.click(getByTestId(notificationIcon));
+    const { queryByText } = render(<Notification {...result.current} />);
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument();
+    expect(queryByText('Notification Message')).not.toBeInTheDocument();
   });
 
-  it('should  call updateProps when clicking outside the component given the "open" value.', async () => {
-    let checkProps = openNotificationProps;
+  it('should call updateProps when clicking close button given the "open" value is true', async () => {
     act(() => {
       result.current.notificationProps = openNotificationProps;
-      result.current.updateProps = jest.fn().mockImplementation(() => (checkProps = closeNotificationProps));
+      result.current.updateProps = jest.fn();
     });
 
-    const { getByRole, getByText } = render(
-      <div>
-        <title> OutSideSection </title>
-        <Notification {...result.current} />
-      </div>
-    );
+    const { getByRole } = render(<Notification {...result.current} />);
 
-    expect(getByRole('tooltip')).toBeInTheDocument();
+    const closeButton = getByRole('button', { name: 'Close' });
 
-    const content = await waitFor(() => getByText('OutSideSection'));
-    await userEvent.click(content);
+    act(() => {
+      userEvent.click(closeButton);
+    });
 
-    expect(result.current.updateProps).toBeCalledTimes(1);
-    expect(checkProps).toEqual(closeNotificationProps);
+    await waitFor(() => {
+      expect(result.current.updateProps).toBeCalledWith(closeNotificationProps);
+    });
   });
 });

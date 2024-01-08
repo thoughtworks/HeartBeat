@@ -181,7 +181,9 @@ const DoraMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
+          {(doraReport?.isPipelineMetricsReady || doraReport?.isSourceControlMetricsReady) && (
+            <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
+          )}
         </StyledTitleWrapper>
         {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
         <StyledSpacing />

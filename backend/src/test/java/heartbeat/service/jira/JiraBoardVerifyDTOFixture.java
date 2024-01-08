@@ -22,7 +22,7 @@ public class JiraBoardVerifyDTOFixture {
 			.location(Location.builder().projectKey(PROJECT_KEY).build());
 	}
 
-	public static JiraBoardVerifyDTO.JiraBoardVerifyDTOBuilder JIRA_BOARD_FIELD_RESPONSE_BUILDER() {
+	public static JiraBoardVerifyDTO.JiraBoardVerifyDTOBuilder JIRA_BOARD_VERIFY_FAILED_RESPONSE_BUILDER() {
 		return JiraBoardVerifyDTO.builder();
 	}
 

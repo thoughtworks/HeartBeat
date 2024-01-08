@@ -3,6 +3,7 @@ package heartbeat.client;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardProject;
 import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.decoder.JiraFeignClientDecoder;
@@ -43,5 +44,9 @@ public interface JiraFeignClient {
 	@Cacheable(cacheNames = "boardVerification", key = "#boardId")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}")
 	JiraBoardVerifyDTO getBoard(URI baseUrl, @PathVariable String boardId, @RequestHeader String authorization);
+
+	@Cacheable(cacheNames = "boardProject", key = "#projectIdOrKey")
+	@GetMapping(path = "rest/api/2/project/{projectIdOrKey}")
+	JiraBoardProject getProject(URI baseUrl, @PathVariable String projectIdOrKey, @RequestHeader String authorization);
 
 }

@@ -7,6 +7,7 @@ import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardProject;
 import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
@@ -15,7 +16,6 @@ import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
-import heartbeat.controller.board.dto.response.JiraVerifyDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.exception.BadRequestException;
@@ -87,7 +87,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
-import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_FIELD_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_VERIFY_FAILED_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardVerifyDTOFixture.JIRA_BOARD_VERIFY_RESPONSE_BUILDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -191,6 +191,49 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldCallJiraFeignClientAndReturnBoardInfoResponseWhenGetJiraBoardInfo() throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		List<TargetField> expectTargetField = List.of(
+				new TargetField("customfield_10016", "Story point estimate", false),
+				new TargetField("customfield_10020", "Sprint", false),
+				new TargetField("customfield_10021", "Flagged", false));
+
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("sprint", "customfield_10020")
+			.replaceAll("partner", "customfield_10037")
+			.replaceAll("flagged", "customfield_10021")
+			.replaceAll("development", "customfield_10000");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
+		jiraService.shutdownExecutor();
+
+		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
+	}
+
+	@Test
 	void shouldCallJiraFeignClientAndReturnBoardVerifyResponseWhenVerifyJiraBoard() {
 		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_VERIFY_RESPONSE_BUILDER().build();
 
@@ -201,10 +244,10 @@ class JiraServiceTest {
 			.getBoard(baseUrl, boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
-		JiraVerifyDTO jiraVerifyDTO = jiraService.verify(BoardType.JIRA, boardVerifyRequestParam);
+		String projectKey = jiraService.verify(BoardType.JIRA, boardVerifyRequestParam);
 		jiraService.shutdownExecutor();
 
-		assertThat(Objects.requireNonNull(jiraVerifyDTO.getProjectKey())).isEqualTo("ADM");
+		assertThat(Objects.requireNonNull(projectKey)).isEqualTo("ADM");
 	}
 
 	@Test
@@ -235,6 +278,47 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+
+		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
+	}
+
+	@Test
+	void shouldCallJiraFeignClientAndReturnBoardInfoResponseWhenGetJiraBoardInfoHasTwoPage() throws IOException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		List<TargetField> expectTargetField = List.of(
+				new TargetField("customfield_10016", "Story point estimate", false),
+				new TargetField("customfield_10020", "Sprint", false),
+				new TargetField("customfield_10021", "Flagged", false));
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER().build())
+			.replaceAll("storyPoints", "customfield_10016");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 100, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(baseUrl, "1", token))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
 
 		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
@@ -288,6 +372,49 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldCallJiraFeignClientAndReturnBoardInfoResponseWhenGetClassicJiraBoardInfo()
+			throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO completeStatusSelf = COMPLETE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		List<TargetField> expectTargetField = List.of(
+				new TargetField("customfield_10016", "Story point estimate", false),
+				new TargetField("customfield_10020", "Sprint", false),
+				new TargetField("customfield_10021", "Flagged", false));
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("storyPoints", "customfield_10016");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("classic").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
+
+		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(1)).isEqualTo("DOING");
+		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getKey()).isEqualTo("done");
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
+	}
+
+	@Test
 	void shouldCallJiraFeignClientAndThrowParamExceptionWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -308,6 +435,14 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldCallJiraFeignClientAndThrowParamExceptionWhenGetJiraBoardInfo() {
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
+		assertThatThrownBy(() -> jiraService.getInfo(null, boardRequestParam)).isInstanceOf(BadRequestException.class)
+			.hasMessageContaining("boardType param is not correct");
+	}
+
+	@Test
 	void shouldThrowExceptionWhenVerifyJiraBoardTypeNotCorrect() {
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 
@@ -318,7 +453,7 @@ class JiraServiceTest {
 
 	@Test
 	void shouldCallJiraFeignClientAndThrowNonColumnWhenVerifyJiraBoard() {
-		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_FIELD_RESPONSE_BUILDER().build();
+		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_VERIFY_FAILED_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
@@ -359,6 +494,33 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldCallJiraFeignClientAndThrowNotFoundExceptionWhenGetJiraBoardInfo() throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("storyPoints", "customfield_10016");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token))
+			.thenThrow(new NotFoundException("message"));
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		assertThatCode(() -> jiraService.getInfo(boardTypeJira, boardRequestParam)).doesNotThrowAnyException();
+	}
+
+	@Test
 	void shouldCallJiraFeignClientAndThrowNonContentCodeWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -383,6 +545,32 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldCallJiraFeignClientAndThrowNonContentCodeWhenGetJiraBoardInfo() throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token))
+			.thenReturn(objectMapper.writeValueAsString(ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER().build()));
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, boardRequestParam))
+			.isInstanceOf(NoContentException.class)
+			.hasMessageContaining("There is no cards.");
+	}
+
+	@Test
 	void shouldCallJiraFeignClientAndThrowNonColumnWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO noneStatusSelf = NONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -399,6 +587,30 @@ class JiraServiceTest {
 
 		Throwable thrown = catchThrowable(() -> {
 			jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
+		});
+		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("Failed when call Jira to get board config, cause is");
+	}
+
+	@Test
+	void shouldCallJiraFeignClientAndThrowNonColumnWhenGetJiraBoardInfo() {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO noneStatusSelf = NONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(noneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		Throwable thrown = catchThrowable(() -> {
+			jiraService.getInfo(boardTypeJira, boardRequestParam);
 		});
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed when call Jira to get board config, cause is");
@@ -452,6 +664,23 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldThrowExceptionWhenGetJiraInfoThrowsUnExpectedException() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
+			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", "token"))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, boardRequestParam))
+			.isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("UnExpected Exception");
+	}
+
+	@Test
 	void shouldReturnAssigneeNameFromDoneCardWhenGetAssigneeSet() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -480,6 +709,36 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldReturnAssigneeNameFromDoneCardWhenGetBoardInfoAndGetAssigneeSet() throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("storyPoints", "customfield_10016");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(new CardHistoryResponseDTO(Collections.emptyList()));
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
+
+		assertThat(boardConfigDTO.getUsers()).hasSize(1);
+		assertThat(boardConfigDTO.getUsers().get(0)).isEqualTo("Zhang San");
+	}
+
+	@Test
 	void shouldThrowExceptionWhenGetTargetFieldFailed() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -495,6 +754,23 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldThrowExceptionWhenGetBoardInfoAndGetTargetFieldFailed() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token))
+			.thenThrow(new CustomFeignClientException(500, "exception"));
+
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("exception");
+	}
+
+	@Test
 	void shouldThrowExceptionWhenGetTargetFieldReturnNull() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -504,6 +780,22 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token)).thenReturn(null);
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
+	}
+
+	@Test
+	void shouldThrowExceptionWhenGetBoardInfoAndGetTargetFieldReturnNull() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token)).thenReturn(null);
+
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(PermissionDenyException.class)
 			.hasMessageContaining("There is no enough permission.");
 	}
@@ -527,10 +819,43 @@ class JiraServiceTest {
 	}
 
 	@Test
+	void shouldThrowExceptionWhenGetBoardInfoAndGetTargetFieldReturnEmpty() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		FieldResponseDTO emptyProjectFieldResponse = FieldResponseDTO.builder()
+			.projects(Collections.emptyList())
+			.build();
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getTargetField(baseUrl, boardRequestParam.getProjectKey(), token))
+			.thenReturn(emptyProjectFieldResponse);
+
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
+	}
+
+	@Test
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("There is no enough permission.");
+	}
+
+	@Test
+	void shouldThrowCustomExceptionWhenGetJiraBoardInfo() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, BOARD_REQUEST_BUILDER().build()))
 			.isInstanceOf(PermissionDenyException.class)
 			.hasMessageContaining("There is no enough permission.");
 	}
@@ -544,6 +869,23 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", "token"))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 		assertThatThrownBy(() -> jiraService.getJiraConfiguration(boardTypeJira, BoardRequestParam.builder().build()))
+			.isInstanceOf(Exception.class)
+			.hasMessageContaining("exception");
+	}
+
+	@Test
+	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardInfoFailed() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
+		when(jiraFeignClient.getJiraBoardConfiguration(any(), any(), any()))
+			.thenThrow(new CustomFeignClientException(400, "exception"));
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", "token"))
+			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, BoardRequestParam.builder().build()))
 			.isInstanceOf(Exception.class)
 			.hasMessageContaining("exception");
 	}
@@ -925,6 +1267,46 @@ class JiraServiceTest {
 			.thenReturn(INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeClassicJira, boardRequestParam);
+
+		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
+		assertThat(
+				boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10000", "Development", false)))
+			.isFalse();
+		assertThat(boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10019", "Rank", false)))
+			.isFalse();
+		assertThat(boardConfigDTO.getTargetFields()).isEqualTo(expectTargetField);
+	}
+
+	@Test
+	void shouldFilterOutUnreasonableTargetFieldWhenGetBoardInfo() throws JsonProcessingException {
+		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
+		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO completeStatusSelf = COMPLETE_STATUS_SELF_RESPONSE_BUILDER().build();
+		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format(ALL_CARDS_JQL, boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+		List<TargetField> expectTargetField = List.of(new TargetField("customfield_10021", "Flagged", false),
+				new TargetField("priority", "Priority", false),
+				new TargetField("timetracking", "Time tracking", false));
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("storyPoints", "customfield_10016");
+
+		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		when(jiraFeignClient.getProject(baseUrl, "project key", token))
+			.thenReturn(JiraBoardProject.builder().style("classic").build());
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_1, token)).thenReturn(doneStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_3, token)).thenReturn(completeStatusSelf);
+		when(jiraFeignClient.getColumnStatusCategory(baseUrl, COLUM_SELF_ID_2, token)).thenReturn(doingStatusSelf);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, token)).thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistory(any(), any(), any()))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
+			.thenReturn(INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER().build());
+
+		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
 
 		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
 		assertThat(

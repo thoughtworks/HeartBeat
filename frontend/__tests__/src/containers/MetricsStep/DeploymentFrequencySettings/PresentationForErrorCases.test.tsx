@@ -17,9 +17,9 @@ describe('<PresentationForErrorCases />', () => {
   const errors = [
     { code: 204, title: 'No pipeline!' },
     { code: 400, title: 'Invalid input!' },
-    { code: 204, title: 'Unauthorized request!' },
-    { code: 204, title: 'Forbidden request!' },
-    { code: 204, title: 'Not found!' },
+    { code: 401, title: 'Unauthorized request!' },
+    { code: 403, title: 'Forbidden request!' },
+    { code: 404, title: 'Not found!' },
     { code: undefined, title: 'Unknown error' },
   ]
   const errorMessage =

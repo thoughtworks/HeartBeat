@@ -8,7 +8,8 @@ const StyledDiv = styled('div')`
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
-  color: rgba(0, 0, 0, 0.65);
+  color: #595959;
+  cursor: pointer;
   font-size: 1rem;
 `
 

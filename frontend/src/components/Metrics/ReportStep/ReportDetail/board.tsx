@@ -21,7 +21,8 @@ export const BoardDetail = withGoBack(({ data }: Property) => {
     <>
       {showSectionWith2Columns('Velocity', mappedData.velocityList)}
       {showSectionWith2Columns('Cycle time', mappedData.cycleTimeList)}
-      {mappedData.classification && <ReportForThreeColumns title={'Classifications'} fieldName={'Field Name'} listName={'Subtitle'} data={mappedData.classification} />}
+      {mappedData.classification && <ReportForThreeColumns title={'Classifications'}
+        fieldName={'Field Name'} listName={'Subtitle'} data={mappedData.classification} />}
     </>
   )
 })

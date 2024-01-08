@@ -17,16 +17,22 @@ import java.util.List;
 @FeignClient(name = "githubFeignClient", url = "${github.url}", configuration = GitHubFeignClientDecoder.class)
 public interface GitHubFeignClient {
 
+	@GetMapping(path = "/octocat")
+	void verifyToken(@RequestHeader("Authorization") String token);
+
 	@GetMapping(path = "/user/orgs")
 	@ResponseStatus(HttpStatus.OK)
+	@Deprecated
 	List<GitHubOrganizationsInfo> getGithubOrganizationsInfo(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "/user/repos")
 	@ResponseStatus(HttpStatus.OK)
+	@Deprecated
 	List<GitHubRepo> getAllRepos(@RequestHeader("Authorization") String token);
 
 	@GetMapping(path = "/orgs/{organizationName}/repos")
 	@ResponseStatus(HttpStatus.OK)
+	@Deprecated
 	List<GitHubRepo> getReposByOrganizationName(@PathVariable String organizationName,
 			@RequestHeader("Authorization") String token);
 

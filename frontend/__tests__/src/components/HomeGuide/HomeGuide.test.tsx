@@ -30,7 +30,7 @@ const setup = () => {
   )
 }
 
-const setupInputFile = (configJson: object) => {
+const setupInputFile = async (configJson: object) => {
   const { queryByText, getByTestId } = setup()
   const file = new File([`${JSON.stringify(configJson)}`], 'test.json', {
     type: 'file',
@@ -42,7 +42,7 @@ const setupInputFile = (configJson: object) => {
     value: [file],
   })
 
-  fireEvent.change(input)
+  await fireEvent.change(input)
   return queryByText
 }
 
@@ -102,7 +102,7 @@ describe('HomeGuide', () => {
   describe('isValidImportedConfig', () => {
     it('should show warning message when no projectName dateRange metrics all exist', async () => {
       const emptyConfig = {}
-      const queryByText = setupInputFile(emptyConfig)
+      const queryByText = await setupInputFile(emptyConfig)
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
@@ -111,7 +111,7 @@ describe('HomeGuide', () => {
     })
 
     it('should no display warning message when  projectName dateRange metrics all exist', async () => {
-      const queryByText = setupInputFile(IMPORTED_NEW_CONFIG_FIXTURE)
+      const queryByText = await setupInputFile(IMPORTED_NEW_CONFIG_FIXTURE)
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
@@ -125,7 +125,7 @@ describe('HomeGuide', () => {
       ['endDate', { projectName: '', metrics: [], dateRange: { startDate: '', endDate: '2023-02-01' } }],
       ['metrics', { projectName: '', metrics: ['Metric 1', 'Metric 2'], dateRange: {} }],
     ])('should not display warning message when only %s exists', async (_, validConfig) => {
-      const queryByText = setupInputFile(validConfig)
+      const queryByText = await setupInputFile(validConfig)
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)

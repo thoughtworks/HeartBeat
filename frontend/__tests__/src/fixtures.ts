@@ -306,6 +306,19 @@ export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
   ],
 };
 
+export const MOCK_BUILD_KITE_GET_INFO_RESPONSE = {
+  pipelineList: [
+    {
+      id: 'mock id',
+      name: 'mock name',
+      orgId: 'mock id',
+      orgName: 'mock orgName',
+      repository: 'mock repository url',
+      steps: [],
+    },
+  ],
+}
+
 export const FILTER_CYCLE_TIME_SETTINGS = [
   { name: 'TODO', value: 'TODO' },
   { name: 'BACKLOG', value: 'TODO' },

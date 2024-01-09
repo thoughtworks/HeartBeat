@@ -19,7 +19,7 @@ import {
   REQUIRED_DATA_LIST,
   SELECT_CONSIDER_AS_DONE_MESSAGE,
   MOCK_PIPELINE_GET_INFO_URL,
-  MOCK_BUILD_KITE_VERIFY_RESPONSE,
+  MOCK_BUILD_KITE_GET_INFO_RESPONSE,
 } from '../../fixtures';
 import { saveCycleTimeSettings, saveDoneColumn } from '@src/context/Metrics/metricsSlice';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
@@ -28,7 +28,7 @@ import userEvent from '@testing-library/user-event';
 let store = setupStore();
 const server = setupServer(
   rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) =>
-    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_VERIFY_RESPONSE)))
+    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_GET_INFO_RESPONSE)))
   )
 );
 

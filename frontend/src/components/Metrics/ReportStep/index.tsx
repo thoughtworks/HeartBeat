@@ -158,6 +158,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               (pageType === REPORT_PAGE_TYPE.BOARD ? showBoardDetail(reportData) : showDoraDetail(reportData))}
           <ReportButtonGroup
             isShowSave={pageType === REPORT_PAGE_TYPE.SUMMARY}
+            isShowExportMetrics={pageType === REPORT_PAGE_TYPE.SUMMARY}
             isShowExportBoardButton={
               pageType === REPORT_PAGE_TYPE.SUMMARY ? shouldShowBoardMetrics : pageType === REPORT_PAGE_TYPE.BOARD
             }

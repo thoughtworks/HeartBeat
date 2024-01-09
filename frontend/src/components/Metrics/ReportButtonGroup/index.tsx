@@ -25,6 +25,7 @@ interface ReportButtonGroupProps {
   isShowSave: boolean
   isShowExportBoardButton: boolean
   isShowExportPipelineButton: boolean
+  isShowExportMetrics: boolean
 }
 
 export const ReportButtonGroup = ({
@@ -36,6 +37,7 @@ export const ReportButtonGroup = ({
   setErrorMessage,
   reportData,
   isShowSave,
+  isShowExportMetrics,
   isShowExportBoardButton,
   isShowExportPipelineButton,
 }: ReportButtonGroupProps) => {
@@ -70,14 +72,14 @@ export const ReportButtonGroup = ({
           <BackButton onClick={handleBack} variant='outlined'>
             {COMMON_BUTTONS.BACK}
           </BackButton>
-          {
+          {isShowExportMetrics && (
             <StyledExportButton
               disabled={!reportData?.isAllMetricsReady}
               onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}
             </StyledExportButton>
-          }
+          )}
           {isShowExportBoardButton && (
             <StyledExportButton
               disabled={!reportData?.isBoardMetricsReady}

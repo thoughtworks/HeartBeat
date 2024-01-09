@@ -162,7 +162,6 @@ describe('MetricsStep', () => {
 
       expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
-
       await userEvent.click(columnsArray[2])
       const options = within(getByRole('listbox')).getAllByRole('option')
       await userEvent.click(options[options.length - 1])

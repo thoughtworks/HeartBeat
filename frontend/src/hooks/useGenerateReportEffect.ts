@@ -6,6 +6,8 @@ import { InternalServerException } from '@src/exceptions/InternalServerException
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { DURATION, RETRIEVE_REPORT_TYPES } from '@src/constants/commons'
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime'
+import { useAppDispatch } from '@src/hooks/useAppDispatch'
+import { updateReportData } from '@src/context/report/reportSlice'
 
 export interface useGenerateReportEffectInterface {
   startToRequestBoardData: (boardParams: BoardReportRequestDTO) => void
@@ -18,6 +20,7 @@ export interface useGenerateReportEffectInterface {
 
 export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const reportPath = '/reports'
+  const dispatch = useAppDispatch()
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [reportData, setReportData] = useState<ReportResponseDTO | undefined>()
@@ -88,7 +91,9 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
 
   const handleAndUpdateData = (response: ReportResponseDTO) => {
     const exportValidityTime = exportValidityTimeMapper(response.exportValidityTime)
-    setReportData({ ...response, exportValidityTime: exportValidityTime })
+    const report = { ...response, exportValidityTime: exportValidityTime }
+    setReportData(report)
+    dispatch(updateReportData(report))
   }
 
   return {

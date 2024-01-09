@@ -1,23 +1,24 @@
 import {
+  ALL,
+  CHANGE_FAILURE_RATE,
+  CLASSIFICATION,
   CONFIG_TITLE,
+  CYCLE_TIME,
+  DEPLOYMENT_FREQUENCY,
+  LEAD_TIME_FOR_CHANGES,
+  MEAN_TIME_TO_RECOVERY,
   REQUIRED_DATA,
   REQUIRED_DATA_LIST,
   VELOCITY,
-  LEAD_TIME_FOR_CHANGES,
-  CYCLE_TIME,
-  ALL,
-  MEAN_TIME_TO_RECOVERY,
-  CLASSIFICATION,
-  DEPLOYMENT_FREQUENCY,
-  CHANGE_FAILURE_RATE,
 } from '../../../fixtures'
-import { act, render, within } from '@testing-library/react'
+import { act, fireEvent, render, waitFor, within, screen } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import userEvent from '@testing-library/user-event'
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons'
 import BasicInfo from '@src/components/Metrics/ConfigStep/BasicInfo'
+
 let store = null
 
 describe('MetricsTypeCheckbox', () => {
@@ -45,9 +46,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show detail options when click require data button', async () => {
     const { getByRole } = setup()
-    await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-    })
+    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionValue = options.map((li) => li.getAttribute('data-value'))
@@ -57,9 +56,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show multiple selections when multiple options are selected', async () => {
     const { getByRole, getByText } = setup()
-    await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-    })
+    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
     await act(async () => {
       await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))
@@ -108,7 +105,9 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should be checked of All selected option when click any other options', async () => {
     const { getByRole } = setup()
-    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
+    await act(async () => {
+      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
+    })
 
     const listBox = within(getByRole('listbox'))
     const optionsToClick = [
@@ -120,10 +119,12 @@ describe('MetricsTypeCheckbox', () => {
       listBox.getByRole('option', { name: CHANGE_FAILURE_RATE }),
       listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }),
     ]
-    await Promise.all(optionsToClick.map((opt) => userEvent.click(opt)))
+    await Promise.all(optionsToClick.map((opt) => fireEvent.click(opt)))
 
-    expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true')
-  }, 50000)
+    await waitFor(() => {
+      expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true')
+    })
+  })
 
   it('should show some selections when click all option and then click velocity selection', async () => {
     const { getByRole, getByText } = setup()
@@ -144,7 +145,7 @@ describe('MetricsTypeCheckbox', () => {
     expect(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY })).toHaveAttribute('aria-selected', 'false')
     expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'false')
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument()
-  }, 50000)
+  })
 
   it('should show none selection when double click all option', async () => {
     const { getByRole, getByText } = setup()
@@ -154,7 +155,7 @@ describe('MetricsTypeCheckbox', () => {
     await userEvent.click(getByRole('listbox', { name: REQUIRED_DATA }))
 
     const errorMessage = getByText('Metrics is required')
-    expect(errorMessage).toBeInTheDocument()
+    await waitFor(() => expect(errorMessage).toBeInTheDocument())
   })
 
   it('should show error message when require data is null', async () => {

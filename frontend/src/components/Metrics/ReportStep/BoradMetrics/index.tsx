@@ -31,9 +31,11 @@ interface BoardMetricsProps {
   csvTimeStamp: number
   startDate: Nullable<string>
   endDate: Nullable<string>
+  isBackFromDetail: boolean
 }
 
 const BoardMetrics = ({
+  isBackFromDetail,
   startToRequestBoardData,
   onShowDetail,
   boardReport,
@@ -121,7 +123,7 @@ const BoardMetrics = ({
   }
 
   useEffect(() => {
-    startToRequestBoardData(getBoardReportRequestBody())
+    !isBackFromDetail && startToRequestBoardData(getBoardReportRequestBody())
   }, [])
 
   return (

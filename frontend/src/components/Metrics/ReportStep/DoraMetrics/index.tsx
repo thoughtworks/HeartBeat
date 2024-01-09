@@ -29,9 +29,11 @@ interface DoraMetricsProps {
   csvTimeStamp: number
   startDate: Nullable<string>
   endDate: Nullable<string>
+  isBackFromDetail: boolean
 }
 
 const DoraMetrics = ({
+  isBackFromDetail,
   startToRequestDoraData,
   onShowDetail,
   doraReport,
@@ -173,7 +175,7 @@ const DoraMetrics = ({
   }
 
   useEffect(() => {
-    startToRequestDoraData(getDoraReportRequestBody())
+    !isBackFromDetail && startToRequestDoraData(getDoraReportRequestBody())
   }, [])
 
   return (

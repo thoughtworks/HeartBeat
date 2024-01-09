@@ -39,6 +39,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined)
   const [pageType, setPageType] = useState<PageType>('Summary')
+  const [isBackFromDetail, setIsBackFromDetail] = useState<boolean>(false)
   const configData = useAppSelector(selectConfig)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
 
@@ -103,6 +104,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     <>
       {shouldShowBoardMetrics && (
         <BoardMetrics
+          isBackFromDetail={isBackFromDetail}
           startDate={startDate}
           endDate={endDate}
           startToRequestBoardData={startToRequestBoardData}
@@ -113,6 +115,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       )}
       {shouldShowDoraMetrics && (
         <DoraMetrics
+          isBackFromDetail={isBackFromDetail}
           startDate={startDate}
           endDate={endDate}
           startToRequestDoraData={startToRequestDoraData}
@@ -123,11 +126,16 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       )}
     </>
   )
-  const showBoardDetail = (data: ReportResponseDTO) => <BoardDetail onBack={() => setPageType('Summary')} data={data} />
-  const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => setPageType('Summary')} data={data} />
+  const showBoardDetail = (data: ReportResponseDTO) => <BoardDetail onBack={() => backToSummaryPage()} data={data} />
+  const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => backToSummaryPage()} data={data} />
 
   const handleBack = () => {
-    pageType === 'Summary' ? dispatch(backStep()) : setPageType('Summary')
+    pageType === 'Summary' ? dispatch(backStep()) : backToSummaryPage()
+  }
+
+  const backToSummaryPage = () => {
+    setPageType('Summary')
+    setIsBackFromDetail(true)
   }
 
   return (

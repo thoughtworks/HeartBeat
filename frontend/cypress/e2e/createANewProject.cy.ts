@@ -140,13 +140,33 @@ const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) =
     })
 }
 
-// const checkPipelineCalculation = (testId: string) => {
-//   cy.get(testId).find('tr').contains('Deployment frequency(deployments/day)').should('exist')
-// }
+const checkBoardShowMore = () => {
+  reportPage.showMoreBoardButton.should('exist')
+  reportPage.goToBoardDetailPage()
+  cy.get('[data-test-id="Velocity"]').find('tbody > tr').should('have.length', 2)
+  cy.get('[data-test-id="Cycle time"]').find('tbody > tr').should('have.length', 17)
+  cy.get('[data-test-id="Classifications"]').find('tbody > tr').should('have.length', 103)
 
-// const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
-//   cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
-// }
+  reportPage.exportBoardData()
+  checkBoardCSV()
+
+  reportPage.boardGoToReportPage()
+}
+
+const checkDoraShowMore = () => {
+  reportPage.showMoreDoraButton.should('exist')
+  reportPage.goToDoraDetailPage()
+
+  cy.get('[data-test-id="Deployment frequency"]').find('tbody > tr').should('have.length', 2)
+  cy.get('[data-test-id="Lead time for changes"]').find('tbody > tr').should('have.length', 4)
+  cy.get('[data-test-id="Change failure rate"]').find('tbody > tr').should('have.length', 2)
+  cy.get('[data-test-id="Mean Time To Recovery"]').find('tbody > tr').should('have.length', 2)
+
+  reportPage.exportPipelineData()
+  checkPipelineCSV()
+
+  reportPage.doraGoToReportPage()
+}
 
 const checkCycleTimeTooltip = () => {
   metricsPage.cycleTimeTitleTooltip.trigger('mouseover')
@@ -333,6 +353,9 @@ describe('Create a new project', () => {
     checkBoardCSV()
 
     reportPage.firstNotification.should('not.exist')
+
+    checkBoardShowMore()
+    checkDoraShowMore()
 
     // checkpoint back to metrics step
     reportPage.backToMetricsStep()

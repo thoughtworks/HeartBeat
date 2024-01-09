@@ -82,7 +82,7 @@ describe('board', () => {
 
     it('should not show classifications when classifications data is not existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
-        velocityList: null,
+        classification: null,
       })
       const { queryAllByText } = render(<BoardDetail data={data} onBack={jest.fn()} />)
       expect(queryAllByText('Classifications').length).toEqual(0)

@@ -1,5 +1,5 @@
 import { HomeGuide } from '@src/components/HomeGuide'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import { setupStore } from '../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import {
@@ -67,8 +67,9 @@ describe('HomeGuide', () => {
     const fileInput = getByTestId('testInput')
 
     const clickSpy = jest.spyOn(fileInput, 'click')
-    await userEvent.click(getByText(IMPORT_PROJECT_FROM_FILE))
-
+    await act(async () => {
+      await userEvent.click(getByText(IMPORT_PROJECT_FROM_FILE))
+    })
     expect(clickSpy).toHaveBeenCalled()
   })
 
@@ -95,9 +96,9 @@ describe('HomeGuide', () => {
 
   it('should go to Metrics page when click create a new project button', async () => {
     const { getByText } = setup()
-
-    await userEvent.click(getByText(CREATE_NEW_PROJECT))
-
+    await act(async () => {
+      await userEvent.click(getByText(CREATE_NEW_PROJECT))
+    })
     expect(navigateMock).toHaveBeenCalledTimes(1)
     expect(navigateMock).toHaveBeenCalledWith(METRICS_PAGE_ROUTE)
   })

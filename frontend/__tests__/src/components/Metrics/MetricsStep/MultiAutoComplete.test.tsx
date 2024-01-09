@@ -42,7 +42,9 @@ describe('MultiAutoComplete', () => {
     const { getByRole } = setup()
 
     const inputField = getByRole('combobox')
-    await userEvent.click(inputField)
+    await act(async () => {
+      await userEvent.click(inputField)
+    })
     const allOption = getByRole('option', { name: 'All' })
     await act(async () => {
       await userEvent.click(allOption)

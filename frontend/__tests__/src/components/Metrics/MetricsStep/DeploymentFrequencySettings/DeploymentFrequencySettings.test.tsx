@@ -1,4 +1,4 @@
-import { render, within } from '@testing-library/react'
+import { act, render, within } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { store } from '@src/store'
 import userEvent from '@testing-library/user-event'
@@ -48,14 +48,13 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
 }))
 
-const setup = () =>
-  render(
-    <Provider store={store}>
-      <DeploymentFrequencySettings />
-    </Provider>
-  )
-
 describe('DeploymentFrequencySettings', () => {
+  const setup = () =>
+    render(
+      <Provider store={store}>
+        <DeploymentFrequencySettings />
+      </Provider>
+    )
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -69,16 +68,18 @@ describe('DeploymentFrequencySettings', () => {
 
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
     const { getByTestId } = await setup()
-
-    await userEvent.click(getByTestId('AddIcon'))
+    await act(async () => {
+      await userEvent.click(getByTestId('AddIcon'))
+    })
 
     expect(addADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
   })
 
   it('should call deleteADeploymentFrequencySetting function when click remove pipeline button', async () => {
     const { getAllByRole } = await setup()
-
-    await userEvent.click(getAllByRole('button', { name: REMOVE_BUTTON })[0])
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: REMOVE_BUTTON })[0])
+    })
 
     expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
   })
@@ -86,9 +87,13 @@ describe('DeploymentFrequencySettings', () => {
   it('should call updateDeploymentFrequencySetting function and clearErrorMessages function when select organization', async () => {
     const { getAllByRole, getByRole } = setup()
 
-    await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[0])
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[0])
+    })
     const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockOrgName'))
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockOrgName'))
+    })
 
     expect(updateDeploymentFrequencySettings).toHaveBeenCalledTimes(1)
   })

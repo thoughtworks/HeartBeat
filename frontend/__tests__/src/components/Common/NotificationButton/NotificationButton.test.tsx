@@ -18,13 +18,14 @@ describe('NotificationButton', () => {
     expect(getByTestId(notificationIcon)).toBeInTheDocument()
   })
 
-  it('should show NotificationPopper when clicking the component given the "open" value is true', () => {
+  it('should show NotificationPopper when clicking the component given the "open" value is true', async () => {
     act(() => {
       result.current.notificationProps = openNotificationProps
     })
     const { getByTestId, getByText } = render(<NotificationButton {...result.current} />)
-
-    userEvent.click(getByTestId(notificationIcon))
+    await act(async () => {
+      await userEvent.click(getByTestId(notificationIcon))
+    })
     expect(getByText('NotificationPopper')).toBeInTheDocument()
   })
 
@@ -33,8 +34,9 @@ describe('NotificationButton', () => {
       result.current.notificationProps = closeNotificationProps
     })
     const { getByTestId, queryByText } = render(<NotificationButton {...result.current} />)
-
-    await userEvent.click(getByTestId(notificationIcon))
+    await act(async () => {
+      await userEvent.click(getByTestId(notificationIcon))
+    })
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
   })
@@ -56,8 +58,9 @@ describe('NotificationButton', () => {
     expect(getByRole('tooltip')).toBeInTheDocument()
 
     const content = await waitFor(() => getByText('OutSideSection'))
-
-    await userEvent.click(content)
+    await act(async () => {
+      await userEvent.click(content)
+    })
 
     expect(result.current.updateProps).toBeCalledTimes(1)
     expect(checkProps).toEqual(closeNotificationProps)
@@ -107,8 +110,9 @@ describe('NotificationButton', () => {
     expect(getByTestId(notificationIcon)).toBeInTheDocument()
 
     const content = await waitFor(() => getByText('OutSideSection'))
-
-    await userEvent.click(content)
+    await act(async () => {
+      await userEvent.click(content)
+    })
 
     expect(result.current.updateProps).not.toBeCalled()
   })

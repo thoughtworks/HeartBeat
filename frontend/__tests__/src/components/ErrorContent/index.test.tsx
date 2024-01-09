@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import ErrorPage from '@src/pages/ErrorPage'
 import { ERROR_PAGE_MESSAGE, BASE_PAGE_ROUTE, RETRY_BUTTON } from '../../fixtures'
 import React from 'react'
@@ -31,8 +31,9 @@ describe('error content', () => {
         </BrowserRouter>
       </Provider>
     )
-
-    await userEvent.click(getByText(RETRY_BUTTON))
+    await act(async () => {
+      await userEvent.click(getByText(RETRY_BUTTON))
+    })
 
     expect(navigateMock).toHaveBeenCalledWith(BASE_PAGE_ROUTE)
   })

@@ -4,6 +4,7 @@ import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { Provider } from 'react-redux'
 import userEvent from '@testing-library/user-event'
 import { EXPORT_EXPIRED_CSV_MESSAGE } from '../../../fixtures'
+import { act } from 'react-dom/test-utils'
 
 describe('ExpiredDialog', () => {
   it('should show expired dialog when csv file expired and close expired dialog when click No button', async () => {
@@ -17,8 +18,9 @@ describe('ExpiredDialog', () => {
 
     expect(getByText(EXPORT_EXPIRED_CSV_MESSAGE)).toBeInTheDocument()
 
-    await userEvent.click(getByText('No'))
-
+    await act(async () => {
+      await userEvent.click(getByText('No'))
+    })
     await waitFor(() => {
       expect(queryByText(EXPORT_EXPIRED_CSV_MESSAGE)).not.toBeInTheDocument()
     })
@@ -47,7 +49,9 @@ describe('ExpiredDialog', () => {
 
     expect(getByText(EXPORT_EXPIRED_CSV_MESSAGE)).toBeInTheDocument()
 
-    await userEvent.click(getByText('Yes'))
+    await act(async () => {
+      await userEvent.click(getByText('Yes'))
+    })
     expect(handleOkFn).toBeCalledTimes(1)
   })
 })

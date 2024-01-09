@@ -151,7 +151,7 @@ describe('MetricsStep', () => {
       await userEvent.click(columnsArray[1])
 
       const options = within(getByRole('listbox')).getAllByRole('option')
-      userEvent.click(options[1])
+      await userEvent.click(options[1])
 
       await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE))
     })

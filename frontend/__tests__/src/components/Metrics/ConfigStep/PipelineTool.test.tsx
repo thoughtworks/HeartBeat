@@ -20,7 +20,6 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import userEvent from '@testing-library/user-event'
 import { HttpStatusCode } from 'axios'
-import { act } from 'react-dom/test-utils'
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
@@ -169,7 +168,7 @@ describe('PipelineTool', () => {
   })
 
   it('should called verifyPipelineTool method once when click verify button', async () => {
-    const { getByRole, getByText } = setup()
+    const { getByText } = setup()
     await fillPipelineToolFieldsInformation()
     await userEvent.click(screen.getByRole('button', { name: VERIFY }))
 
@@ -191,7 +190,7 @@ describe('PipelineTool', () => {
         res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
       )
     )
-    const { getByText, getByRole } = setup()
+    const { getByText } = setup()
     await fillPipelineToolFieldsInformation()
 
     await userEvent.click(screen.getByRole('button', { name: VERIFY }))

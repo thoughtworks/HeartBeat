@@ -1,5 +1,5 @@
 import { HomeGuide } from '@src/components/HomeGuide'
-import { act, fireEvent, render, waitFor, screen } from '@testing-library/react'
+import { fireEvent, render, waitFor, screen } from '@testing-library/react'
 import { setupStore } from '../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import {

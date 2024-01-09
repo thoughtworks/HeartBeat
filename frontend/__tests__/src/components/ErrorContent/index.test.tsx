@@ -1,6 +1,6 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import ErrorPage from '@src/pages/ErrorPage'
-import { ERROR_PAGE_MESSAGE, BASE_PAGE_ROUTE, RETRY_BUTTON } from '../../fixtures'
+import { BASE_PAGE_ROUTE, ERROR_PAGE_MESSAGE, RETRY_BUTTON } from '../../fixtures'
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'

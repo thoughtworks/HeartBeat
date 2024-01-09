@@ -6,8 +6,6 @@ import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons'
 import React, { useEffect } from 'react'
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
-import { useAppSelector } from '@src/hooks'
-import { isSelectBoardMetrics, isSelectDoraMetrics } from '@src/context/config/configSlice'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import {
   StyledButtonGroup,
@@ -24,6 +22,9 @@ interface ReportButtonGroupProps {
   endDate: string
   setErrorMessage: (message: string) => void
   reportData: ReportResponseDTO | undefined
+  isShowSave: boolean
+  isShowExportBoardButton: boolean
+  isShowExportPipelineButton: boolean
 }
 
 export const ReportButtonGroup = ({
@@ -34,10 +35,11 @@ export const ReportButtonGroup = ({
   endDate,
   setErrorMessage,
   reportData,
+  isShowSave,
+  isShowExportBoardButton,
+  isShowExportPipelineButton,
 }: ReportButtonGroupProps) => {
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
-  const isShowExportBoardButton = useAppSelector(isSelectBoardMetrics)
-  const isShowExportPipelineButton = useAppSelector(isSelectDoraMetrics)
 
   useEffect(() => {
     setErrorMessage(errorMessage)
@@ -56,14 +58,14 @@ export const ReportButtonGroup = ({
 
   return (
     <>
-      <StyledButtonGroup>
-        {
+      <StyledButtonGroup isShowSave={isShowSave}>
+        {isShowSave && (
           <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
             <SaveButton variant='text' onClick={handleSave} startIcon={<SaveAltIcon />}>
               {COMMON_BUTTONS.SAVE}
             </SaveButton>
           </Tooltip>
-        }
+        )}
         <StyledRightButtonGroup>
           <BackButton onClick={handleBack} variant='outlined'>
             {COMMON_BUTTONS.BACK}

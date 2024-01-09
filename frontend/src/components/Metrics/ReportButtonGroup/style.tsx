@@ -18,7 +18,7 @@ export const StyledButtonGroup = styled('div')`
   align-items: center;
   text-align: center;
   margin: 0 auto;
-  justify-content: space-between;
+  justify-content: ${(props) => (props.isShowSave ? 'space-between' : 'flex-end')};
   width: 100%;
   padding-top: 2rem;
 `

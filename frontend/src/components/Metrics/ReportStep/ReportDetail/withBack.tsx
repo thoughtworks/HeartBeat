@@ -8,6 +8,8 @@ interface Property {
 const StyledDiv = styled('div')`
   display: flex;
   align-items: center;
+  width: max-content;
+  z-index: 2;
   margin-bottom: 2.5rem;
   color: #595959;
   cursor: pointer;

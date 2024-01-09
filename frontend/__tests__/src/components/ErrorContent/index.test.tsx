@@ -31,9 +31,7 @@ describe('error content', () => {
         </BrowserRouter>
       </Provider>
     )
-    await act(async () => {
-      await userEvent.click(getByText(RETRY_BUTTON))
-    })
+    await userEvent.click(getByText(RETRY_BUTTON))
 
     expect(navigateMock).toHaveBeenCalledWith(BASE_PAGE_ROUTE)
   })

@@ -148,13 +148,9 @@ describe('MetricsStep', () => {
       expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
 
-      await act(async () => {
-        await userEvent.click(columnsArray[1])
-      })
+      await userEvent.click(columnsArray[1])
       const options = within(getByRole('listbox')).getAllByRole('option')
-      await act(async () => {
-        await userEvent.click(options[1])
-      })
+      await userEvent.click(options[1])
 
       await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE))
     })
@@ -166,13 +162,9 @@ describe('MetricsStep', () => {
 
       expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
-      await act(async () => {
-        await userEvent.click(columnsArray[2])
-      })
+      await userEvent.click(columnsArray[2])
       const options = within(getByRole('listbox')).getAllByRole('option')
-      await act(async () => {
-        await userEvent.click(options[options.length - 1])
-      })
+      await userEvent.click(options[options.length - 1])
 
       await waitFor(() => expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE))
     })

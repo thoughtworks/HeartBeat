@@ -11,7 +11,7 @@ import {
   REQUIRED_DATA_LIST,
   VELOCITY,
 } from '../../../fixtures'
-import { act, fireEvent, render, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, waitFor, within, screen } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
@@ -46,9 +46,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show detail options when click require data button', async () => {
     const { getByRole } = setup()
-    await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-    })
+    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
     const options = listBox.getAllByRole('option')
     const optionValue = options.map((li) => li.getAttribute('data-value'))
@@ -58,9 +56,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show multiple selections when multiple options are selected', async () => {
     const { getByRole, getByText } = setup()
-    await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }))
-    })
+    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }))
     const listBox = within(getByRole('listbox'))
     await act(async () => {
       await userEvent.click(listBox.getByRole('option', { name: VELOCITY }))

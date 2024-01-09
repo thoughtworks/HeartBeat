@@ -1,4 +1,4 @@
-import { render, renderHook } from '@testing-library/react'
+import { render, renderHook, screen } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -204,9 +204,7 @@ describe('Report Step', () => {
       const { getByText } = setup([''])
 
       const back = getByText(BACK)
-      await act(async () => {
-        await userEvent.click(back)
-      })
+      await userEvent.click(back)
       expect(backStep).toHaveBeenCalledTimes(1)
     })
 
@@ -214,9 +212,7 @@ describe('Report Step', () => {
       const { getByText } = setup([''])
 
       const save = getByText(SAVE)
-      await act(async () => {
-        await userEvent.click(save)
-      })
+      await userEvent.click(save)
       expect(handleSaveMock).toHaveBeenCalledTimes(1)
     })
 
@@ -299,9 +295,7 @@ describe('Report Step', () => {
 
       const exportButton = getByText(EXPORT_PIPELINE_DATA)
       expect(exportButton).toBeInTheDocument()
-      await act(async () => {
-        await userEvent.click(exportButton)
-      })
+      await userEvent.click(exportButton)
       expect(result.current.fetchExportData).toBeCalledWith({
         csvTimeStamp: 0,
         dataType: 'pipeline',
@@ -337,9 +331,7 @@ describe('Report Step', () => {
 
       const exportButton = getByText(EXPORT_BOARD_DATA)
       expect(exportButton).toBeInTheDocument()
-      await act(async () => {
-        await userEvent.click(exportButton)
-      })
+      await userEvent.click(exportButton)
 
       expect(result.current.fetchExportData).toBeCalledWith({
         csvTimeStamp: 0,
@@ -361,13 +353,11 @@ describe('Report Step', () => {
 
     it('should call fetchExportData when clicking "Export metric data"', async () => {
       const { result } = renderHook(() => useExportCsvEffect())
-      const { getByText } = setup([''])
+      setup([''])
 
-      const exportButton = getByText(EXPORT_METRIC_DATA)
+      const exportButton = screen.getByText(EXPORT_METRIC_DATA)
       expect(exportButton).toBeInTheDocument()
-      await act(async () => {
-        await userEvent.click(exportButton)
-      })
+      await userEvent.click(exportButton)
 
       expect(result.current.fetchExportData).toBeCalledWith({
         csvTimeStamp: 0,
@@ -378,11 +368,9 @@ describe('Report Step', () => {
     })
 
     it('should show errorMessage when clicking export metric button given csv not exist', async () => {
-      const { getByText } = setup([''])
-      await act(async () => {
-        await userEvent.click(getByText(EXPORT_METRIC_DATA))
-      })
-      expect(getByText('Export metric data')).toBeInTheDocument()
+      setup([''])
+      await userEvent.click(screen.getByText(EXPORT_METRIC_DATA))
+      expect(screen.getByText('Export metric data')).toBeInTheDocument()
     })
   })
 })

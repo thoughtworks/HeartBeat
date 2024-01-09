@@ -23,8 +23,6 @@ export interface ReportStepProps {
   handleSave: () => void
 }
 
-export type PageType = 'Summary' | 'BoardReport' | 'DoraReport'
-
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -38,7 +36,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   } = useGenerateReportEffect()
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined)
-  const [pageType, setPageType] = useState<PageType>(REPORT_PAGE_TYPE.SUMMARY)
+  const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY)
   const [isBackFromDetail, setIsBackFromDetail] = useState<boolean>(false)
   const configData = useAppSelector(selectConfig)
   const csvTimeStamp = useAppSelector(selectTimeStamp)

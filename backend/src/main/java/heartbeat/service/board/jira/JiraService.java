@@ -168,6 +168,7 @@ public class JiraService {
 		}
 	}
 
+	@Deprecated
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
 		try {

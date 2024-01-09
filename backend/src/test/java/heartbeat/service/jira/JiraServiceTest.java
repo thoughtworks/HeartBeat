@@ -150,6 +150,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -251,6 +252,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfigHasTwoPage() throws IOException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -331,6 +333,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetClassicJiraBoardConfig()
 			throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
@@ -415,6 +418,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowParamExceptionWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -467,6 +471,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowNotFoundExceptionWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -521,6 +526,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowNonContentCodeWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -571,6 +577,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowNonColumnWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO noneStatusSelf = NONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -650,6 +657,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetJiraConfigurationThrowsUnExpectedException() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -681,6 +689,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldReturnAssigneeNameFromDoneCardWhenGetAssigneeSet() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -739,6 +748,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetTargetFieldFailed() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -771,6 +781,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetTargetFieldReturnNull() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -801,6 +812,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetTargetFieldReturnEmpty() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -839,6 +851,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
@@ -861,6 +874,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -1240,6 +1254,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldFilterOutUnreasonableTargetField() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();

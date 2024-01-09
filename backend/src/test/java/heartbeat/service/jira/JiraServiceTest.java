@@ -103,9 +103,9 @@ class JiraServiceTest {
 
 	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
 
-	private final BoardType boardTypeJira = BoardType.fromValue("jira");
+	private final BoardType boardTypeJira = BoardType.fromStyle("next-gen");
 
-	private final BoardType boardTypeClassicJira = BoardType.fromValue("classic-jira");
+	private final BoardType boardTypeClassicJira = BoardType.fromStyle("classic");
 
 	private static final String ALL_CARDS_JQL = "status changed during (%s, %s)";
 
@@ -467,7 +467,7 @@ class JiraServiceTest {
 
 		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed when call Jira to verify board, cause is");
+			.hasMessageContaining("Failed to call Jira to verify board, cause is");
 	}
 
 	@Test
@@ -596,7 +596,7 @@ class JiraServiceTest {
 			jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 		});
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed when call Jira to get board config, cause is");
+			.hasMessageContaining("Failed to call Jira to get board config, cause is");
 	}
 
 	@Test
@@ -620,7 +620,7 @@ class JiraServiceTest {
 			jiraService.getInfo(boardTypeJira, boardRequestParam);
 		});
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed when call Jira to get board config, cause is");
+			.hasMessageContaining("Failed to call Jira to get board config, cause is");
 	}
 
 	@Test
@@ -1003,6 +1003,19 @@ class JiraServiceTest {
 		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), null))
 			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("Board type does not find!");
+	}
+
+	@Test
+	void shouldReturnBadRequestExceptionWhenBoardStyleIsNotCorrect() {
+		// given
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		// when
+		when(jiraFeignClient.getProject(any(), any(), any()))
+			.thenReturn(JiraBoardProject.builder().style("unknown").build());
+		// then
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, boardRequestParam))
+			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Board type does not find!");
 	}
 

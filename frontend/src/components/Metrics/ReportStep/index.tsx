@@ -23,7 +23,7 @@ export interface ReportStepProps {
   handleSave: () => void
 }
 
-type PageType = 'Summary' | 'BoardReport' | 'DoraReport'
+export type PageType = 'Summary' | 'BoardReport' | 'DoraReport'
 
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const navigate = useNavigate()

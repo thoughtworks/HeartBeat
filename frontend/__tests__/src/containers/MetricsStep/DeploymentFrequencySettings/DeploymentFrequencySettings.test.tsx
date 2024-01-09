@@ -51,7 +51,7 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
 jest.mock('@src/hooks/useGetPipelineToolInfoEffect', () => ({
   useGetPipelineToolInfoEffect: () => ({
     isLoading: false,
-    deploymentFrequencySettings: {
+    result: {
       code: 200,
       data: {
         pipelineList: [

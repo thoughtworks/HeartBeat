@@ -3,15 +3,12 @@ import { PipelineTool } from '@src/containers/ConfigStep/PipelineTool';
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
   PIPELINE_TOOL_FIELDS,
   PIPELINE_TOOL_TYPES,
   RESET,
   TOKEN_ERROR_MESSAGE,
   VERIFIED,
   VERIFY,
-  VERIFY_ERROR_MESSAGE,
-  VERIFY_FAILED,
   MOCK_PIPELINE_VERIFY_URL,
 } from '../../fixtures';
 import { Provider } from 'react-redux';
@@ -199,17 +196,11 @@ describe('PipelineTool', () => {
   });
 
   it('should check error notification show when pipelineTool verify response status is 401', async () => {
-    server.use(
-      rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
-      )
-    );
-    const { getByText, getByRole } = setup();
+    server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))));
+    const { getByRole, getByLabelText } = setup();
     await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByRole('button', { name: VERIFY }));
-    expect(
-      getByText(`${MOCK_PIPELINE_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
-    ).toBeInTheDocument();
+    expect(getByLabelText('Error notification bar')).toBeInTheDocument();
   });
 });

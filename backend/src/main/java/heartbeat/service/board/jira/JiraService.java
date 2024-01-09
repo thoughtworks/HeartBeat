@@ -118,13 +118,13 @@ public class JiraService {
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed when call Jira to verify board, board id: {}, e: {}",
-					boardVerifyRequestParam.getBoardId(), cause.getMessage());
+			log.error("Failed to call Jira to verify board, board id: {}, e: {}", boardVerifyRequestParam.getBoardId(),
+					cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
 			throw new InternalServerErrorException(
-					String.format("Failed when call Jira to verify board, cause is %s", cause.getMessage()));
+					String.format("Failed to call Jira to verify board, cause is %s", cause.getMessage()));
 		}
 	}
 
@@ -158,13 +158,13 @@ public class JiraService {
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed when call Jira to get board config, project key: {}, board id: {}, e: {}",
+			log.error("Failed to call Jira to get board config, project key: {}, board id: {}, e: {}",
 					boardRequestParam.getBoardId(), boardRequestParam.getProjectKey(), cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
 			throw new InternalServerErrorException(
-					String.format("Failed when call Jira to get board config, cause is %s", cause.getMessage()));
+					String.format("Failed to call Jira to get board config, cause is %s", cause.getMessage()));
 		}
 	}
 
@@ -191,13 +191,13 @@ public class JiraService {
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed when call Jira to get board config, project key: {}, board id: {}, e: {}",
+			log.error("Failed to call Jira to get board config, project key: {}, board id: {}, e: {}",
 					boardRequestParam.getBoardId(), boardRequestParam.getProjectKey(), cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
 			throw new InternalServerErrorException(
-					String.format("Failed when call Jira to get board config, cause is %s", cause.getMessage()));
+					String.format("Failed to call Jira to get board config, cause is %s", cause.getMessage()));
 		}
 	}
 

@@ -14,6 +14,7 @@ import heartbeat.exception.BaseException;
 import heartbeat.exception.GithubRepoEmptyException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import jakarta.annotation.PreDestroy;
@@ -49,6 +50,7 @@ public class GitHubService {
 		customTaskExecutor.shutdown();
 	}
 
+	@Deprecated
 	public GitHubResponse verifyToken(String githubToken) {
 		try {
 			String token = "token " + githubToken;
@@ -87,6 +89,46 @@ public class GitHubService {
 		}
 	}
 
+	public void verifyTokenV2(String githubToken) {
+		try {
+			String token = "token " + githubToken;
+			log.info("Start to request github with token");
+			gitHubFeignClient.verifyToken(token);
+			log.info("Successfully verify token from github");
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to call GitHub with token_error: {} ", cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed to call GitHub with token_error: %s", cause.getMessage()));
+		}
+	}
+
+	public void verifyCanReadTargetBranch(String repository, String branch, String githubToken) {
+		try {
+			String token = "token " + githubToken;
+			log.info("Start to request github with token");
+			gitHubFeignClient.verifyCanReadTargetBranch(GithubUtil.getGithubUrlFullName(repository), branch, token);
+			log.info("Successfully verify token from github");
+		}
+		catch (NotFoundException e) {
+			throw new PermissionDenyException("Unable to read target branch");
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to call GitHub with token_error: {} ", cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed to call GitHub with token_error: %s", cause.getMessage()));
+		}
+	}
+
+	@Deprecated
 	private CompletableFuture<Set<String>> getAllGitHubReposAsync(String token,
 			List<GitHubOrganizationsInfo> gitHubOrganizations) {
 		List<CompletableFuture<List<String>>> repoFutures = gitHubOrganizations.stream()
@@ -144,7 +186,7 @@ public class GitHubService {
 				})
 				.toList();
 
-			return pipelineLeadTimeFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+			return pipelineLeadTimeFutures.stream().map(CompletableFuture::join).toList();
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);

@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import {
   ERROR_MESSAGE_TIME_DURATION,
@@ -43,8 +43,9 @@ describe('use generate report effect', () => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
       expect(result.current.errorMessage).toEqual('generate report: error')
     })
-
-    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
 
     await waitFor(() => {
       expect(result.current.errorMessage).toEqual('')
@@ -62,9 +63,9 @@ describe('use generate report effect', () => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
       expect(result.current.errorMessage).toEqual('generate report: error message')
     })
-
-    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
-
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
     await waitFor(() => {
       expect(result.current.errorMessage).toEqual('')
     })
@@ -128,8 +129,9 @@ describe('use generate report effect', () => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
       expect(result.current.errorMessage).toEqual('generate report: file not found')
     })
-
-    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
 
     await waitFor(() => {
       expect(result.current.errorMessage).toEqual('')
@@ -171,8 +173,9 @@ describe('use generate report effect', () => {
     await waitFor(() => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
     })
-
-    jest.advanceTimersByTime(10000)
+    act(() => {
+      jest.advanceTimersByTime(10000)
+    })
 
     await waitFor(() => {
       expect(reportClient.pollingReport).toHaveBeenCalledTimes(2)
@@ -212,8 +215,9 @@ describe('use generate report effect', () => {
       result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
       expect(result.current.errorMessage).toEqual('generate report: error')
     })
-
-    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
 
     await waitFor(() => {
       expect(result.current.errorMessage).toEqual('')
@@ -231,8 +235,9 @@ describe('use generate report effect', () => {
       result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS)
       expect(result.current.errorMessage).toEqual('generate report: error message')
     })
-
-    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
 
     await waitFor(() => {
       expect(result.current.errorMessage).toEqual('')
@@ -299,7 +304,9 @@ describe('use generate report effect', () => {
       expect(result.current.errorMessage).toEqual('generate report: file not found')
     })
 
-    jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    act(() => {
+      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION)
+    })
 
     await waitFor(() => {
       expect(result.current.errorMessage).toEqual('')

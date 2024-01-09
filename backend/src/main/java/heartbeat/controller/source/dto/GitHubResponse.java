@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 
 @Data
 @Builder
+@Deprecated
 public class GitHubResponse {
 
 	private LinkedHashSet<String> githubRepos;

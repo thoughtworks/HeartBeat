@@ -9,9 +9,5 @@ export class HttpClient {
       baseURL: '/api/v1',
       timeout: this.httpTimeout,
     })
-    this.axiosInstance.interceptors.response.use(
-      (res) => res,
-      (error) => error
-    )
   }
 }

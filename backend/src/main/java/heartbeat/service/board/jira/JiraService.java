@@ -531,8 +531,8 @@ public class JiraService {
 			}
 		}
 		jiraCards.forEach(doneCard -> {
-			CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl,
-					doneCard.getKey(), request.getToken());
+			CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, doneCard.getKey(), 0,
+					request.getToken());
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
 					keyFlagged, request.getStatus());
 			List<String> assigneeSet = getAssigneeSet(cardHistoryResponseDTO, filterMethod, doneCard);
@@ -787,7 +787,7 @@ public class JiraService {
 		String keyFlagged = cardCustomFieldKey.getFlagged();
 
 		allNonDoneCards.forEach(card -> {
-			CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, card.getKey(),
+			CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, card.getKey(), 0,
 					request.getToken());
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
 					keyFlagged, request.getStatus());

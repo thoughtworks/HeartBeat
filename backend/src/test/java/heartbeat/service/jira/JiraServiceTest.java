@@ -1200,7 +1200,7 @@ class JiraServiceTest {
 			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-520", 0, 100, token))
 			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
@@ -1239,7 +1239,7 @@ class JiraServiceTest {
 			.thenReturn(CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-524", 0, 100, token))
 			.thenReturn(CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
-		when(jiraFeignClient.getJiraCardHistory(baseUrl, "ADM-520", token))
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-520", 0, 100, token))
 			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 

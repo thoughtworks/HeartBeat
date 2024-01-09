@@ -75,6 +75,9 @@ describe('PipelineTool', () => {
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
 
     await fillPipelineToolFieldsInformation();
+    await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
+    });
 
     await act(async () => {
       const requireDateSelection = within(getByLabelText('PipelineTool type select'));
@@ -135,7 +138,6 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation();
     const mockInfo = 'mockToken';
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
-
     await act(async () => {
       await userEvent.type(tokenInput, mockInfo);
       await userEvent.clear(tokenInput);
@@ -149,7 +151,6 @@ describe('PipelineTool', () => {
     const { getByText } = setup();
     const mockInfo = 'mockToken';
     const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
-
     await act(async () => {
       await userEvent.type(tokenInput, mockInfo);
     });

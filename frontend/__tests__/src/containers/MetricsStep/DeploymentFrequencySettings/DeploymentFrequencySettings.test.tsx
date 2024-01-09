@@ -79,6 +79,12 @@ const setup = () =>
   );
 
 describe('DeploymentFrequencySettings', () => {
+  const setup = () =>
+    render(
+      <Provider store={store}>
+        <DeploymentFrequencySettings />
+      </Provider>
+    )
   afterEach(() => {
     jest.clearAllMocks();
   });

@@ -137,7 +137,7 @@ public class JiraService {
 			String jiraBoardStyle = jiraFeignClient
 				.getProject(baseUrl, boardRequestParam.getProjectKey(), boardRequestParam.getToken())
 				.getStyle();
-			BoardType jiraBoardType = "classic".equals(jiraBoardStyle) ? BoardType.CLASSIC_JIRA : BoardType.JIRA;
+			BoardType jiraBoardType = BoardType.fromStyle(jiraBoardStyle);
 
 			Map<Boolean, List<TargetField>> partitions = getTargetFieldAsync(baseUrl, boardRequestParam).join()
 				.stream()

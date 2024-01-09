@@ -160,7 +160,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           <ReportButtonGroup
             isShowSave={pageType === 'Summary'}
             isShowExportBoardButton={pageType === 'Summary' ? shouldShowBoardMetrics : pageType === 'BoardReport'}
-            isShowExportPipelineButton={pageType === 'Summary' ? shouldShowBoardMetrics : pageType === 'DoraReport'}
+            isShowExportPipelineButton={pageType === 'Summary' ? shouldShowDoraMetrics : pageType === 'DoraReport'}
             handleBack={() => handleBack()}
             handleSave={() => handleSave()}
             reportData={reportData}

@@ -1,4 +1,4 @@
-import { act, render, within, screen } from '@testing-library/react';
+import { render, within, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { store } from '@src/store';
 import userEvent from '@testing-library/user-event';
@@ -71,20 +71,13 @@ jest.mock('@src/hooks/useGetPipelineToolInfoEffect', () => ({
   }),
 }));
 
-const setup = () =>
-  render(
-    <Provider store={store}>
-      <DeploymentFrequencySettings />
-    </Provider>
-  );
-
 describe('DeploymentFrequencySettings', () => {
   const setup = () =>
     render(
       <Provider store={store}>
         <DeploymentFrequencySettings />
       </Provider>
-    )
+    );
   afterEach(() => {
     jest.clearAllMocks();
   });

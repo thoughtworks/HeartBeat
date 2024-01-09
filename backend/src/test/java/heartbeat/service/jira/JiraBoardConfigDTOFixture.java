@@ -64,6 +64,20 @@ public class JiraBoardConfigDTOFixture {
 
 	public static final String ASSIGNEE_NAME = "Zhang San";
 
+	public static final String DISPLAY_NAME_ONE = "Da Pei";
+
+	public static final String DISPLAY_NAME_TWO = "Xiao Pei";
+
+	public static final String START_TIME = "1672556350000";
+
+	public static final String END_TIME = "1676908799000";
+
+	public static final long TIMESTAMP_1 = 1673556350000L;
+
+	public static final long TIMESTAMP_2 = 1674556350000L;
+
+	public static final long TIMESTAMP_3 = 1673556350001L;
+
 	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
 
 		return JiraBoardConfigDTO.builder()
@@ -380,8 +394,8 @@ public class JiraBoardConfigDTOFixture {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(jiraBoardSetting.getDoneColumn())
-			.startTime("1672556350000")
-			.endTime("1676908799000")
+			.startTime(START_TIME)
+			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
@@ -395,8 +409,8 @@ public class JiraBoardConfigDTOFixture {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(List.of("Done", "Testing"))
-			.startTime("1672556350000")
-			.endTime("1676908799000")
+			.startTime(START_TIME)
+			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
@@ -410,8 +424,8 @@ public class JiraBoardConfigDTOFixture {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(jiraBoardSetting.getDoneColumn())
-			.startTime("1672556350000")
-			.endTime("1676908799000")
+			.startTime(START_TIME)
+			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
@@ -425,8 +439,8 @@ public class JiraBoardConfigDTOFixture {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(Collections.emptyList())
-			.startTime("1672556350000")
-			.endTime("1676908799000")
+			.startTime(START_TIME)
+			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
@@ -461,7 +475,7 @@ public class JiraBoardConfigDTOFixture {
 			.type("jira")
 			.projectKey("PLL")
 			.assigneeFilter("historicalAssignee")
-			.users(List.of("da pei"))
+			.users(List.of(DISPLAY_NAME_ONE))
 			.targetFields(List.of(TargetField.builder().key("testKey1").name("Story Points").flag(true).build(),
 					TargetField.builder().key("testKey2").name("Sprint").flag(true).build(),
 					TargetField.builder().key("testKey3").name("Flagged").flag(true).build()));
@@ -476,8 +490,8 @@ public class JiraBoardConfigDTOFixture {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(jiraBoardSetting.getDoneColumn())
-			.startTime("1672556350000")
-			.endTime("1676908799000")
+			.startTime(START_TIME)
+			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
@@ -491,64 +505,106 @@ public class JiraBoardConfigDTOFixture {
 			.project(jiraBoardSetting.getProjectKey())
 			.boardId(jiraBoardSetting.getBoardId())
 			.status(List.of(DONE, IN_DEV))
-			.startTime("1672556350000")
-			.endTime("1676908799000")
+			.startTime(START_TIME)
+			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_METHOD_TEST() {
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST() {
+		return AllDoneCardsResponseDTO.builder()
+			.total("3")
+			.issues(List.of(
+					new JiraCard("ADM-475",
+							JiraCardField.builder()
+								.assignee(new Assignee(DISPLAY_NAME_ONE))
+								.status(new Status(CardStepsEnum.DONE.getValue()))
+								.build()),
+					new JiraCard("ADM-520",
+							JiraCardField.builder()
+								.assignee(null)
+								.status(new Status(CardStepsEnum.DONE.getValue()))
+								.build()),
+					new JiraCard("ADM-524",
+							JiraCardField.builder()
+								.assignee(new Assignee(DISPLAY_NAME_TWO))
+								.status(new Status(CardStepsEnum.DONE.getValue()))
+								.build())));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(
+					new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(REVIEW),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_2, "status", new Status(DONE), new Status(TESTING),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_1, "assignee", new Status("yun"), new Status(null),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_3, "assignee", new Status("song"), new Status("yun"),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(
+					new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(REVIEW),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_2, "status", new Status(DONE), new Status(TESTING),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_1, "assignee", new Status("yun"), new Status(null),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_3, "assignee", new Status("kun"), new Status("yun"),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(
+					new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(REVIEW),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_2, "status", new Status(DONE), new Status(TESTING),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_1, "assignee", new Status("yun"), new Status(null),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+					new HistoryDetail(TIMESTAMP_3, "assignee", new Status(null), new Status("yun"),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+	}
+
+	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS() {
 		return AllDoneCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(
 					new JiraCard("ADM-475",
 							JiraCardField.builder()
-								.assignee(new Assignee("da pei"))
+								.assignee(new Assignee(DISPLAY_NAME_ONE))
 								.status(new Status(CardStepsEnum.DONE.getValue()))
 								.build()),
 					new JiraCard("ADM-524",
 							JiraCardField.builder()
-								.assignee(new Assignee("xiao pei"))
+								.assignee(new Assignee(DISPLAY_NAME_TWO))
 								.status(new Status(CardStepsEnum.DONE.getValue()))
 								.build())));
 	}
 
-	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD() {
-		return CardHistoryResponseDTO.builder()
-			.items(List.of(
-					new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(REVIEW),
-							new HistoryDetail.Actor("da pei")),
-					new HistoryDetail(1674556350000L, "status", new Status(DONE), new Status(TESTING),
-							new HistoryDetail.Actor("da pei"))));
-	}
-
-	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD() {
-		return CardHistoryResponseDTO.builder()
-			.items(List.of(
-					new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(REVIEW),
-							new HistoryDetail.Actor("da pei")),
-					new HistoryDetail(1674556350000L, "status", new Status(DONE), new Status(TESTING),
-							new HistoryDetail.Actor("xiao pei"))));
-	}
-
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_MULTIPLE_STATUSES() {
 		return CardHistoryResponseDTO.builder()
-			.items(List.of(new HistoryDetail(1673556350000L, "status", new Status(IN_DEV), new Status(ANALYSE),
-					new HistoryDetail.Actor("da pei"))));
+			.items(List.of(new HistoryDetail(TIMESTAMP_1, "status", new Status(IN_DEV), new Status(ANALYSE),
+					new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD2_HISTORY_FOR_MULTIPLE_STATUSES() {
 		return CardHistoryResponseDTO.builder()
-			.items(List.of(new HistoryDetail(1673556350000L, "status", new Status(TESTING), new Status(ANALYSE),
-					new HistoryDetail.Actor("da pei"))));
+			.items(List.of(new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(ANALYSE),
+					new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_WITH_NO_STATUS_FIELD() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null),
-					new HistoryDetail(1682642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG),
+					new HistoryDetail(TIMESTAMP_1, "customfield_10021", new Status("Impediment"), new Status(FLAG),
 							null),
-					new HistoryDetail(1682642750002L, "flagged", new Status("Impediment"), new Status("removeFlag"),
+					new HistoryDetail(TIMESTAMP_2, "flagged", new Status("Impediment"), new Status("removeFlag"),
 							null)));
 	}
 

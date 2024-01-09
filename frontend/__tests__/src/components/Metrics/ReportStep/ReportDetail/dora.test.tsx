@@ -16,14 +16,14 @@ describe('DoraDetail', () => {
     expect(getByText('Back')).toBeInTheDocument()
   })
 
-  describe('Deployment frequency', () => {
+  describe('Deployment Frequency', () => {
     it('should show deploymentFrequencyList when deploymentFrequencyList data is existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
         deploymentFrequencyList: [{ id: 0, name: 'name1', valuesList: [{ name: 'test1', value: 1 }] }],
       })
       const { getByText, getByTestId, container } = render(<DoraDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Deployment frequency')).toBeInTheDocument()
-      expect(getByTestId('Deployment frequency')).toBeInTheDocument()
+      expect(getByText('Deployment Frequency')).toBeInTheDocument()
+      expect(getByTestId('Deployment Frequency')).toBeInTheDocument()
       expect(container.querySelectorAll('tbody > tr').length).toBe(2)
     })
 
@@ -32,18 +32,18 @@ describe('DoraDetail', () => {
         deploymentFrequencyList: null,
       })
       const { queryAllByText } = render(<DoraDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Deployment frequency').length).toEqual(0)
+      expect(queryAllByText('Deployment Frequency').length).toEqual(0)
     })
   })
 
-  describe('Lead time for changes', () => {
+  describe('Lead Time For Changes', () => {
     it('should show leadTimeForChangesList when leadTimeForChangesList data is existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
         leadTimeForChangesList: [{ id: 0, name: 'name1', valuesList: [{ name: 'test1', value: 1 }] }],
       })
       const { getByText, getByTestId, container } = render(<DoraDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Lead time for changes')).toBeInTheDocument()
-      expect(getByTestId('Lead time for changes')).toBeInTheDocument()
+      expect(getByText('Lead Time For Changes')).toBeInTheDocument()
+      expect(getByTestId('Lead Time For Changes')).toBeInTheDocument()
       expect(container.querySelectorAll('tbody > tr').length).toBe(2)
     })
 
@@ -52,18 +52,18 @@ describe('DoraDetail', () => {
         leadTimeForChangesList: null,
       })
       const { queryAllByText } = render(<DoraDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Lead time for changes').length).toEqual(0)
+      expect(queryAllByText('Lead Time For Changes').length).toEqual(0)
     })
   })
 
-  describe('Change failure rate', () => {
+  describe('Change Failure Rate', () => {
     it('should show changeFailureRateList when changeFailureRateList data is existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
         changeFailureRateList: [{ id: 0, name: 'name1', valuesList: [{ name: 'test1', value: 1 }] }],
       })
       const { getByText, getByTestId, container } = render(<DoraDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Change failure rate')).toBeInTheDocument()
-      expect(getByTestId('Change failure rate')).toBeInTheDocument()
+      expect(getByText('Change Failure Rate')).toBeInTheDocument()
+      expect(getByTestId('Change Failure Rate')).toBeInTheDocument()
       expect(container.querySelectorAll('tbody > tr').length).toBe(2)
     })
 
@@ -72,7 +72,7 @@ describe('DoraDetail', () => {
         changeFailureRateList: null,
       })
       const { queryAllByText } = render(<DoraDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Change failure rate').length).toEqual(0)
+      expect(queryAllByText('Change Failure Rate').length).toEqual(0)
     })
   })
 

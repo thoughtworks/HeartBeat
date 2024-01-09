@@ -1,7 +1,7 @@
 import React from 'react'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns'
-import { NAME, PIPELINE_STEP, REQUIRED_DATA } from '@src/constants/resources'
+import { METRICS_TITLE, NAME, PIPELINE_STEP } from '@src/constants/resources'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { Optional } from '@src/utils/types'
@@ -19,10 +19,10 @@ export const DoraDetail = withGoBack(({ data }: Property) => {
 
   return (
     <>
-      {showSection(REQUIRED_DATA.DEPLOYMENT_FREQUENCY, mappedData.deploymentFrequencyList)}
-      {showSection(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES, mappedData.leadTimeForChangesList)}
-      {showSection(REQUIRED_DATA.CHANGE_FAILURE_RATE, mappedData.changeFailureRateList)}
-      {showSection(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY, mappedData.meanTimeToRecoveryList)}
+      {showSection(METRICS_TITLE.DEPLOYMENT_FREQUENCY, mappedData.deploymentFrequencyList)}
+      {showSection(METRICS_TITLE.LEAD_TIME_FOR_CHANGES, mappedData.leadTimeForChangesList)}
+      {showSection(METRICS_TITLE.CHANGE_FAILURE_RATE, mappedData.changeFailureRateList)}
+      {showSection(METRICS_TITLE.MEAN_TIME_TO_RECOVERY, mappedData.meanTimeToRecoveryList)}
     </>
   )
 })

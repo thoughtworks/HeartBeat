@@ -40,7 +40,7 @@ describe('board', () => {
     })
   })
 
-  describe('Cycle time', () => {
+  describe('Cycle Time', () => {
     it('should show cycle time when cycle time data is existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
         cycleTimeList: [
@@ -50,8 +50,8 @@ describe('board', () => {
         ],
       })
       const { getByText, getByTestId, container } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Cycle time')).toBeInTheDocument()
-      expect(getByTestId('Cycle time')).toBeInTheDocument()
+      expect(getByText('Cycle Time')).toBeInTheDocument()
+      expect(getByTestId('Cycle Time')).toBeInTheDocument()
       expect(container.querySelectorAll('tbody > tr').length).toBe(3)
     })
 
@@ -60,7 +60,7 @@ describe('board', () => {
         cycleTimeList: null,
       })
       const { queryAllByText } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Cycle time').length).toEqual(0)
+      expect(queryAllByText('Cycle Time').length).toEqual(0)
     })
   })
 
@@ -75,8 +75,8 @@ describe('board', () => {
         ],
       })
       const { getByText, getByTestId, container } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Classifications')).toBeInTheDocument()
-      expect(getByTestId('Classifications')).toBeInTheDocument()
+      expect(getByText('Classification')).toBeInTheDocument()
+      expect(getByTestId('Classification')).toBeInTheDocument()
       expect(container.querySelectorAll('tbody > tr').length).toBe(8)
     })
 
@@ -85,7 +85,7 @@ describe('board', () => {
         classification: null,
       })
       const { queryAllByText } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Classifications').length).toEqual(0)
+      expect(queryAllByText('Classification').length).toEqual(0)
     })
   })
 
@@ -105,13 +105,13 @@ describe('board', () => {
     const { getByText, getByTestId, container } = render(<BoardDetail data={data} onBack={jest.fn()} />)
     expect(getByText('Velocity')).toBeInTheDocument()
     expect(getByTestId('Velocity')).toBeInTheDocument()
-    expect(getByText('Cycle time')).toBeInTheDocument()
-    expect(getByTestId('Cycle time')).toBeInTheDocument()
-    expect(getByText('Classifications')).toBeInTheDocument()
-    expect(getByTestId('Classifications')).toBeInTheDocument()
+    expect(getByText('Cycle Time')).toBeInTheDocument()
+    expect(getByTestId('Cycle Time')).toBeInTheDocument()
+    expect(getByText('Classification')).toBeInTheDocument()
+    expect(getByTestId('Classification')).toBeInTheDocument()
 
     expect(container.querySelectorAll('table[data-test-id="Velocity"] > tbody > tr').length).toBe(1)
-    expect(container.querySelectorAll('table[data-test-id="Cycle time"] > tbody > tr').length).toBe(2)
-    expect(container.querySelectorAll('table[data-test-id="Classifications"] > tbody > tr').length).toBe(6)
+    expect(container.querySelectorAll('table[data-test-id="Cycle Time"] > tbody > tr').length).toBe(2)
+    expect(container.querySelectorAll('table[data-test-id="Classification"] > tbody > tr').length).toBe(6)
   })
 })

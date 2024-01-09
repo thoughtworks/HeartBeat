@@ -143,9 +143,9 @@ const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) =
 const checkBoardShowMore = () => {
   reportPage.showMoreBoardButton.should('exist')
   reportPage.goToBoardDetailPage()
-  cy.get('[data-test-id="Velocity"]').find('tbody > tr').should('have.length', 2)
-  cy.get('[data-test-id="Cycle time"]').find('tbody > tr').should('have.length', 17)
-  cy.get('[data-test-id="Classifications"]').find('tbody > tr').should('have.length', 103)
+  cy.get(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`).find('tbody > tr').should('have.length', 2)
+  cy.get(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`).find('tbody > tr').should('have.length', 17)
+  cy.get(`[data-test-id="${METRICS_TITLE.CLASSIFICATION}"]`).find('tbody > tr').should('have.length', 103)
 
   reportPage.exportBoardData()
   checkBoardCSV()
@@ -157,10 +157,10 @@ const checkDoraShowMore = () => {
   reportPage.showMoreDoraButton.should('exist')
   reportPage.goToDoraDetailPage()
 
-  cy.get('[data-test-id="Deployment frequency"]').find('tbody > tr').should('have.length', 2)
-  cy.get('[data-test-id="Lead time for changes"]').find('tbody > tr').should('have.length', 4)
-  cy.get('[data-test-id="Change failure rate"]').find('tbody > tr').should('have.length', 2)
-  cy.get('[data-test-id="Mean Time To Recovery"]').find('tbody > tr').should('have.length', 2)
+  cy.get(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`).find('tbody > tr').should('have.length', 2)
+  cy.get(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`).find('tbody > tr').should('have.length', 4)
+  cy.get(`[data-test-id="${METRICS_TITLE.CHANGE_FAILURE_RATE}"]`).find('tbody > tr').should('have.length', 2)
+  cy.get(`[data-test-id="${METRICS_TITLE.MEAN_TIME_TO_RECOVERY}"]`).find('tbody > tr').should('have.length', 2)
 
   reportPage.exportPipelineData()
   checkPipelineCSV()

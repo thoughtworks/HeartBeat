@@ -1,4 +1,4 @@
-import { render, renderHook } from '@testing-library/react'
+import { act, render, renderHook, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -9,8 +9,10 @@ import {
   EXPORT_PIPELINE_DATA,
   MOCK_JIRA_VERIFY_RESPONSE,
   MOCK_REPORT_RESPONSE,
+  PREVIOUS,
   REQUIRED_DATA_LIST,
   SAVE,
+  SHOW_MORE,
 } from '../../../fixtures'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
@@ -202,7 +204,7 @@ describe('Report Step', () => {
     it('should call handleBack method when clicking back button given back button enabled', async () => {
       const { getByText } = setup([''])
 
-      const back = getByText(BACK)
+      const back = getByText(PREVIOUS)
       await userEvent.click(back)
 
       expect(backStep).toHaveBeenCalledTimes(1)
@@ -260,6 +262,69 @@ describe('Report Step', () => {
 
       jest.useRealTimers()
     })
+
+    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+      'should render detail page when clicking show more button given metric %s',
+      async (requiredData) => {
+        const { getByText } = setup([requiredData])
+
+        const showMore = getByText(SHOW_MORE)
+
+        act(() => {
+          userEvent.click(showMore)
+        })
+
+        await waitForElementToBeRemoved(showMore)
+        expect(getByText(BACK)).toBeInTheDocument()
+      }
+    )
+
+    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+      'should return report page when clicking back button in Breadcrumb in detail page given metric %s',
+      async (requiredData) => {
+        const { getByText } = setup([requiredData])
+
+        const showMore = getByText(SHOW_MORE)
+
+        act(() => {
+          userEvent.click(showMore)
+        })
+
+        await waitForElementToBeRemoved(showMore)
+        const back = getByText(BACK)
+
+        act(() => {
+          userEvent.click(back)
+        })
+
+        await waitForElementToBeRemoved(back)
+        expect(getByText(SHOW_MORE)).toBeInTheDocument()
+      }
+    )
+
+    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+      'should return report page when clicking previous button in detail page given metric %s',
+      async (requiredData) => {
+        const { getByText } = setup([requiredData])
+
+        const showMore = getByText(SHOW_MORE)
+
+        act(() => {
+          userEvent.click(showMore)
+        })
+
+        await waitForElementToBeRemoved(showMore)
+        const previous = getByText(PREVIOUS)
+
+        act(() => {
+          userEvent.click(previous)
+        })
+
+        await waitFor(() => {
+          expect(getByText(SHOW_MORE)).toBeInTheDocument()
+        })
+      }
+    )
   })
 
   describe('export pipeline data', () => {

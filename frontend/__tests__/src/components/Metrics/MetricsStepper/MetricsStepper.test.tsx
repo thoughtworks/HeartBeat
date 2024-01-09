@@ -3,13 +3,13 @@ import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import {
-  BACK,
+  BASE_PAGE_ROUTE,
   BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
-  BASE_PAGE_ROUTE,
   MOCK_REPORT_URL,
   NEXT,
   PIPELINE_TOOL_TYPES,
+  PREVIOUS,
   PROJECT_NAME_LABEL,
   SAVE,
   SOURCE_CONTROL_TYPES,
@@ -169,13 +169,13 @@ describe('MetricsStepper', () => {
     })
 
     expect(getByText(NEXT)).toBeInTheDocument()
-    expect(getByText(BACK)).toBeInTheDocument()
+    expect(getByText(PREVIOUS)).toBeInTheDocument()
   })
 
   it('should show metrics config step when click back button given config step ', async () => {
     const { getByText } = setup()
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(getByText(PREVIOUS))
 
     expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
   })
@@ -183,7 +183,7 @@ describe('MetricsStepper', () => {
   it('should show confirm dialog when click back button in config page', async () => {
     const { getByText } = setup()
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(getByText(PREVIOUS))
 
     expect(getByText(CONFIRM_DIALOG_DESCRIPTION)).toBeInTheDocument()
   })
@@ -191,7 +191,7 @@ describe('MetricsStepper', () => {
   it('should close confirm dialog when click cancel button', async () => {
     const { getByText, queryByText } = setup()
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(getByText(PREVIOUS))
     await userEvent.click(getByText(CANCEL))
 
     expect(queryByText(CONFIRM_DIALOG_DESCRIPTION)).not.toBeInTheDocument()
@@ -200,7 +200,7 @@ describe('MetricsStepper', () => {
   it('should go to home page when click Yes button', async () => {
     const { getByText } = setup()
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(getByText(PREVIOUS))
 
     expect(getByText(YES)).toBeVisible()
 

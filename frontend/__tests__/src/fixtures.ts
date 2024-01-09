@@ -13,9 +13,13 @@ export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
 
 export const NEXT = 'Next'
 
-export const BACK = 'Previous'
+export const PREVIOUS = 'Previous'
 
 export const SAVE = 'Save'
+
+export const SHOW_MORE = 'show more >'
+
+export const BACK = 'Back'
 
 export const VERIFY = 'Verify'
 

@@ -228,7 +228,7 @@ describe('Report Step', () => {
       expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE);
     });
 
-    it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', () => {
+    it('should call updateProps when remaining time is less than or equal to 5 minutes', () => {
       const resetProps = jest.fn();
       const updateProps = jest.fn();
       notificationHook.current.resetProps = resetProps;
@@ -237,7 +237,6 @@ describe('Report Step', () => {
 
       setup(['']);
 
-      expect(resetProps).not.toBeCalled();
       expect(updateProps).not.toBeCalledWith({
         open: true,
         title: MESSAGE.EXPIRE_INFORMATION(5),

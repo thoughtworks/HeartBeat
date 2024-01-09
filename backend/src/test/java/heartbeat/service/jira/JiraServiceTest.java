@@ -1213,7 +1213,7 @@ class JiraServiceTest {
 
 		// then
 		CardCollection cardCollection1 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
-				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
+				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
 		CardCollection cardCollection2 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("song"), assigneeFilter);
 		assertThat(cardCollection1.getCardsNumber()).isEqualTo(0);
@@ -1257,7 +1257,7 @@ class JiraServiceTest {
 		CardCollection cardCollection1 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("yun"), assigneeFilter);
 		CardCollection cardCollection2 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
-				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
+				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
 		assertThat(cardCollection1.getCardsNumber()).isEqualTo(1);
 		assertThat(cardCollection1.getJiraCardDTOList().get(0).getBaseInfo().getKey()).isEqualTo("ADM-520");
 		assertThat(cardCollection2.getCardsNumber()).isEqualTo(1);
@@ -1373,7 +1373,7 @@ class JiraServiceTest {
 
 		// then
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
-				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
+				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getBaseInfo().getKey()).isEqualTo("ADM-475");
 	}
@@ -1409,7 +1409,7 @@ class JiraServiceTest {
 
 		// then
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
-				jiraBoardSetting.getBoardColumns(), List.of("da pei"), assigneeFilter);
+				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
 		assertThat(cardCollection.getCardsNumber()).isZero();
 	}
 

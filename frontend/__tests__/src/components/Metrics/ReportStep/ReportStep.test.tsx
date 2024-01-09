@@ -1,4 +1,4 @@
-import { render, renderHook } from '@testing-library/react'
+import { render, renderHook, screen } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -28,7 +28,7 @@ import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEff
 import React from 'react'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { MESSAGE } from '@src/constants/resources'
-import { formatMillisecondsToHours } from '@src/utils/util'
+import { act } from 'react-dom/test-utils'
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({
   ...jest.requireActual('@src/context/stepper/StepperSlice'),
@@ -205,7 +205,6 @@ describe('Report Step', () => {
 
       const back = getByText(BACK)
       await userEvent.click(back)
-
       expect(backStep).toHaveBeenCalledTimes(1)
     })
 
@@ -214,7 +213,6 @@ describe('Report Step', () => {
 
       const save = getByText(SAVE)
       await userEvent.click(save)
-
       expect(handleSaveMock).toHaveBeenCalledTimes(1)
     })
 
@@ -227,7 +225,7 @@ describe('Report Step', () => {
       expect(navigateMock).toHaveBeenCalledWith(ERROR_PAGE_ROUTE)
     })
 
-    it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', () => {
+    it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', async () => {
       const initExportValidityTimeMin = 30
       React.useState = jest.fn().mockReturnValue([
         initExportValidityTimeMin,
@@ -249,16 +247,17 @@ describe('Report Step', () => {
         title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
         closeAutomatically: true,
       })
-
-      jest.advanceTimersByTime(500000)
-
+      await act(async () => {
+        return jest.advanceTimersByTime(500000)
+      })
       expect(updateProps).not.toBeCalledWith({
         open: true,
         title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
         closeAutomatically: true,
       })
-
-      jest.advanceTimersByTime(1000000)
+      await act(async () => {
+        return jest.advanceTimersByTime(1000000)
+      })
 
       expect(updateProps).toBeCalledWith({
         open: true,
@@ -297,7 +296,6 @@ describe('Report Step', () => {
       const exportButton = getByText(EXPORT_PIPELINE_DATA)
       expect(exportButton).toBeInTheDocument()
       await userEvent.click(exportButton)
-
       expect(result.current.fetchExportData).toBeCalledWith({
         csvTimeStamp: 0,
         dataType: 'pipeline',
@@ -345,14 +343,6 @@ describe('Report Step', () => {
   })
 
   describe('export metric data', () => {
-    it('should show errorMessage when clicking export metric button given csv not exist', () => {
-      const { getByText } = setup([''])
-
-      userEvent.click(getByText(EXPORT_METRIC_DATA))
-
-      expect(getByText('Export metric data')).toBeInTheDocument()
-    })
-
     it('should show export metric button when visiting this page', () => {
       const { getByText } = setup([''])
 
@@ -363,9 +353,9 @@ describe('Report Step', () => {
 
     it('should call fetchExportData when clicking "Export metric data"', async () => {
       const { result } = renderHook(() => useExportCsvEffect())
-      const { getByText } = setup([''])
+      setup([''])
 
-      const exportButton = getByText(EXPORT_METRIC_DATA)
+      const exportButton = screen.getByText(EXPORT_METRIC_DATA)
       expect(exportButton).toBeInTheDocument()
       await userEvent.click(exportButton)
 
@@ -375,6 +365,12 @@ describe('Report Step', () => {
         endDate: '',
         startDate: '',
       })
+    })
+
+    it('should show errorMessage when clicking export metric button given csv not exist', async () => {
+      setup([''])
+      await userEvent.click(screen.getByText(EXPORT_METRIC_DATA))
+      expect(screen.getByText('Export metric data')).toBeInTheDocument()
     })
   })
 })

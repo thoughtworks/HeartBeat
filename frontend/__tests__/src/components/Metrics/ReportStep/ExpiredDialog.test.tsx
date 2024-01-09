@@ -1,4 +1,4 @@
-import { getByText, queryByText, render, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import { ExpiredDialog } from '@src/components/Metrics/ReportStep/ExpiredDialog'
 import { Provider } from 'react-redux'
@@ -17,8 +17,7 @@ describe('ExpiredDialog', () => {
 
     expect(getByText(EXPORT_EXPIRED_CSV_MESSAGE)).toBeInTheDocument()
 
-    await userEvent.click(getByText('No'))
-
+    await userEvent.click(screen.getByText('No'))
     await waitFor(() => {
       expect(queryByText(EXPORT_EXPIRED_CSV_MESSAGE)).not.toBeInTheDocument()
     })
@@ -47,7 +46,7 @@ describe('ExpiredDialog', () => {
 
     expect(getByText(EXPORT_EXPIRED_CSV_MESSAGE)).toBeInTheDocument()
 
-    await userEvent.click(getByText('Yes'))
+    await userEvent.click(screen.getByText('Yes'))
     expect(handleOkFn).toBeCalledTimes(1)
   })
 })

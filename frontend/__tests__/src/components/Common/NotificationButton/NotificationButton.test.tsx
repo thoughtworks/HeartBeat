@@ -1,4 +1,4 @@
-import { cleanup, render, renderHook, waitFor } from '@testing-library/react'
+import { render, renderHook, waitFor, screen } from '@testing-library/react'
 import { NotificationButton } from '@src/components/Common/NotificationButton'
 import React from 'react'
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event'
 
 const notificationIcon = 'NotificationIcon'
 describe('NotificationButton', () => {
-  afterEach(cleanup)
   const closeNotificationProps = { open: false, title: 'NotificationPopper', closeAutomatically: false }
   const openNotificationProps = { open: true, title: 'NotificationPopper', closeAutomatically: false }
   const { result } = renderHook(() => useNotificationLayoutEffect())
@@ -18,13 +17,12 @@ describe('NotificationButton', () => {
     expect(getByTestId(notificationIcon)).toBeInTheDocument()
   })
 
-  it('should show NotificationPopper when clicking the component given the "open" value is true', () => {
+  it('should show NotificationPopper when clicking the component given the "open" value is true', async () => {
     act(() => {
       result.current.notificationProps = openNotificationProps
     })
-    const { getByTestId, getByText } = render(<NotificationButton {...result.current} />)
-
-    userEvent.click(getByTestId(notificationIcon))
+    const { getByText } = render(<NotificationButton {...result.current} />)
+    await userEvent.click(screen.getByTestId(notificationIcon))
     expect(getByText('NotificationPopper')).toBeInTheDocument()
   })
 
@@ -33,7 +31,6 @@ describe('NotificationButton', () => {
       result.current.notificationProps = closeNotificationProps
     })
     const { getByTestId, queryByText } = render(<NotificationButton {...result.current} />)
-
     await userEvent.click(getByTestId(notificationIcon))
 
     expect(queryByText('NotificationPopper')).not.toBeInTheDocument()
@@ -56,7 +53,6 @@ describe('NotificationButton', () => {
     expect(getByRole('tooltip')).toBeInTheDocument()
 
     const content = await waitFor(() => getByText('OutSideSection'))
-
     await userEvent.click(content)
 
     expect(result.current.updateProps).toBeCalledTimes(1)
@@ -107,7 +103,6 @@ describe('NotificationButton', () => {
     expect(getByTestId(notificationIcon)).toBeInTheDocument()
 
     const content = await waitFor(() => getByText('OutSideSection'))
-
     await userEvent.click(content)
 
     expect(result.current.updateProps).not.toBeCalled()

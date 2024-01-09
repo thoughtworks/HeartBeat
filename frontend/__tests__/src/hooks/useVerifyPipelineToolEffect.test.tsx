@@ -3,6 +3,7 @@ import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEff
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient'
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
+import { HttpStatusCode } from 'axios'
 
 describe('use verify pipelineTool state', () => {
   it('should initial data state when render hook', async () => {
@@ -29,7 +30,7 @@ describe('use verify pipelineTool state', () => {
 
   it('should set error message when get verify pipeline response status 500', async () => {
     pipelineToolClient.verifyPipelineTool = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message')
+      throw new InternalServerException('error message', HttpStatusCode.InternalServerError)
     })
     const { result } = renderHook(() => useVerifyPipelineToolEffect())
 

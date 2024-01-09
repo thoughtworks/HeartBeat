@@ -53,7 +53,7 @@ describe('use generate report effect', () => {
 
   it('should set error message when generate report response status 404', async () => {
     reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
-      throw new NotFoundException('error message')
+      throw new NotFoundException('error message', HttpStatusCode.NotFound)
     })
 
     const { result } = renderHook(() => useGenerateReportEffect())
@@ -72,7 +72,7 @@ describe('use generate report effect', () => {
 
   it('should set error message when generate report response status 500', async () => {
     reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
+      throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE, HttpStatusCode.InternalServerError)
     })
 
     const { result } = renderHook(() => useGenerateReportEffect())
@@ -98,7 +98,7 @@ describe('use generate report effect', () => {
 
   it('should return error message when calling startToRequestBoardData given pollingReport response return 5xx ', async () => {
     reportClient.pollingReport = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException('error')
+      throw new InternalServerException('error', HttpStatusCode.InternalServerError)
     })
     reportClient.retrieveReportByUrl = jest
       .fn()
@@ -115,7 +115,7 @@ describe('use generate report effect', () => {
 
   it('should return error message when calling startToRequestBoardData given pollingReport response return 4xx ', async () => {
     reportClient.pollingReport = jest.fn().mockImplementation(async () => {
-      throw new NotFoundException('file not found')
+      throw new NotFoundException('file not found', HttpStatusCode.NotFound)
     })
     reportClient.retrieveReportByUrl = jest
       .fn()
@@ -222,7 +222,7 @@ describe('use generate report effect', () => {
 
   it('should set error message when generate report response status 404', async () => {
     reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
-      throw new NotFoundException('error message')
+      throw new NotFoundException('error message', HttpStatusCode.NotFound)
     })
 
     const { result } = renderHook(() => useGenerateReportEffect())
@@ -241,7 +241,7 @@ describe('use generate report effect', () => {
 
   it('should set error message when generate report response status 500', async () => {
     reportClient.retrieveReportByUrl = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE)
+      throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE, HttpStatusCode.NotFound)
     })
 
     const { result } = renderHook(() => useGenerateReportEffect())
@@ -267,7 +267,7 @@ describe('use generate report effect', () => {
 
   it('should return error message when calling startToRequestDoraData given pollingReport response return 5xx ', async () => {
     reportClient.pollingReport = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException('error')
+      throw new InternalServerException('error', HttpStatusCode.InternalServerError)
     })
 
     reportClient.retrieveReportByUrl = jest
@@ -285,7 +285,7 @@ describe('use generate report effect', () => {
 
   it('should return error message when calling startToRequestDoraData given pollingReport response return 4xx ', async () => {
     reportClient.pollingReport = jest.fn().mockImplementation(async () => {
-      throw new NotFoundException('file not found')
+      throw new NotFoundException('file not found', HttpStatusCode.NotFound)
     })
     reportClient.retrieveReportByUrl = jest
       .fn()

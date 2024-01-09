@@ -91,6 +91,10 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     resetProps();
   }, [pageType, resetProps]);
 
+  useLayoutEffect(() => {
+    resetProps();
+  }, [pageType]);
+
   useEffect(() => {
     setErrorMessage(reportErrorMsg);
   }, [reportErrorMsg]);

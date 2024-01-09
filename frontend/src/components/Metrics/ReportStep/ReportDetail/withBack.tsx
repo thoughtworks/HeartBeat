@@ -1,6 +1,7 @@
 import React from 'react'
 import { styled } from '@mui/material/styles'
 import { ArrowBack } from '@mui/icons-material'
+import { BACK } from '@src/constants/resources'
 interface Property {
   onBack: () => void
 }
@@ -28,7 +29,7 @@ export const withGoBack =
       <>
         <StyledDiv onClick={prop.onBack}>
           <StyledArrowBack />
-          {'Back'}
+          {BACK}
         </StyledDiv>
         <Child {...prop} />
       </>

@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect'
 import { useAppSelector } from '@src/hooks'
 import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice'
-import { MESSAGE } from '@src/constants/resources'
+import { MESSAGE, REPORT_PAGE_TYPE } from '@src/constants/resources'
 import { StyledErrorNotification } from '@src/components/Metrics/ReportStep/style'
 import { ErrorNotification } from '@src/components/ErrorNotification'
 import { useNavigate } from 'react-router-dom'
@@ -38,7 +38,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   } = useGenerateReportEffect()
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined)
-  const [pageType, setPageType] = useState<PageType>('Summary')
+  const [pageType, setPageType] = useState<PageType>(REPORT_PAGE_TYPE.SUMMARY)
   const [isBackFromDetail, setIsBackFromDetail] = useState<boolean>(false)
   const configData = useAppSelector(selectConfig)
   const csvTimeStamp = useAppSelector(selectTimeStamp)
@@ -108,7 +108,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           startDate={startDate}
           endDate={endDate}
           startToRequestBoardData={startToRequestBoardData}
-          onShowDetail={() => setPageType('BoardReport')}
+          onShowDetail={() => setPageType(REPORT_PAGE_TYPE.BOARD)}
           boardReport={reportData}
           csvTimeStamp={csvTimeStamp}
         />
@@ -119,7 +119,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           startDate={startDate}
           endDate={endDate}
           startToRequestDoraData={startToRequestDoraData}
-          onShowDetail={() => setPageType('DoraReport')}
+          onShowDetail={() => setPageType(REPORT_PAGE_TYPE.DORA)}
           doraReport={reportData}
           csvTimeStamp={csvTimeStamp}
         />
@@ -130,11 +130,11 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => backToSummaryPage()} data={data} />
 
   const handleBack = () => {
-    pageType === 'Summary' ? dispatch(backStep()) : backToSummaryPage()
+    pageType === REPORT_PAGE_TYPE.SUMMARY ? dispatch(backStep()) : backToSummaryPage()
   }
 
   const backToSummaryPage = () => {
-    setPageType('Summary')
+    setPageType(REPORT_PAGE_TYPE.SUMMARY)
     setIsBackFromDetail(true)
   }
 
@@ -154,13 +154,18 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
               <ErrorNotification message={errorMessage} />
             </StyledErrorNotification>
           )}
-          {pageType === 'Summary'
+          {pageType === REPORT_PAGE_TYPE.SUMMARY
             ? showSummary()
-            : !!reportData && (pageType === 'BoardReport' ? showBoardDetail(reportData) : showDoraDetail(reportData))}
+            : !!reportData &&
+              (pageType === REPORT_PAGE_TYPE.BOARD ? showBoardDetail(reportData) : showDoraDetail(reportData))}
           <ReportButtonGroup
-            isShowSave={pageType === 'Summary'}
-            isShowExportBoardButton={pageType === 'Summary' ? shouldShowBoardMetrics : pageType === 'BoardReport'}
-            isShowExportPipelineButton={pageType === 'Summary' ? shouldShowDoraMetrics : pageType === 'DoraReport'}
+            isShowSave={pageType === REPORT_PAGE_TYPE.SUMMARY}
+            isShowExportBoardButton={
+              pageType === REPORT_PAGE_TYPE.SUMMARY ? shouldShowBoardMetrics : pageType === REPORT_PAGE_TYPE.BOARD
+            }
+            isShowExportPipelineButton={
+              pageType === REPORT_PAGE_TYPE.SUMMARY ? shouldShowDoraMetrics : pageType === REPORT_PAGE_TYPE.DORA
+            }
             handleBack={() => handleBack()}
             handleSave={() => handleSave()}
             reportData={reportData}

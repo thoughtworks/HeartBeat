@@ -6,6 +6,7 @@ import { reportMapper } from '@src/hooks/reportMapper/report'
 import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { Optional } from '@src/utils/types'
 import { withGoBack } from './withBack'
+import { REQUIRED_DATA } from '@src/constants/resources'
 
 interface Property {
   data: ReportResponseDTO
@@ -20,11 +21,11 @@ export const BoardDetail = withGoBack(({ data }: Property) => {
 
   return (
     <>
-      {showSectionWith2Columns('Velocity', mappedData.velocityList)}
-      {showSectionWith2Columns('Cycle time', mappedData.cycleTimeList)}
+      {showSectionWith2Columns(REQUIRED_DATA.VELOCITY, mappedData.velocityList)}
+      {showSectionWith2Columns(REQUIRED_DATA.CYCLE_TIME, mappedData.cycleTimeList)}
       {mappedData.classification && (
         <ReportForThreeColumns
-          title={'Classifications'}
+          title={REQUIRED_DATA.CLASSIFICATION}
           fieldName={'Field Name'}
           listName={'Subtitle'}
           data={mappedData.classification}

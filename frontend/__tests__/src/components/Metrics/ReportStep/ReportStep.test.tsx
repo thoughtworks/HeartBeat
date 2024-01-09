@@ -1,4 +1,4 @@
-import { act, render, renderHook, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import { act, render, renderHook, waitFor, waitForElementToBeRemoved, screen } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -243,17 +243,16 @@ describe('Report Step', () => {
         title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
         closeAutomatically: true,
       })
-      await act(async () => {
-        return jest.advanceTimersByTime(500000)
-      })
+
+      jest.advanceTimersByTime(500000)
+
       expect(updateProps).not.toBeCalledWith({
         open: true,
         title: MESSAGE.EXPIRE_IN_FIVE_MINUTES,
         closeAutomatically: true,
       })
-      await act(async () => {
-        return jest.advanceTimersByTime(1000000)
-      })
+
+      jest.advanceTimersByTime(1000000)
 
       expect(updateProps).toBeCalledWith({
         open: true,

@@ -2,8 +2,11 @@ package heartbeat.controller.source;
 
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.controller.source.dto.SourceControlDTO;
+import heartbeat.controller.source.dto.VerifyBranchRequest;
+import heartbeat.exception.BadRequestException;
 import heartbeat.service.source.github.GitHubService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -40,8 +43,11 @@ public class GithubController {
 	}
 
 	@PostMapping("/{sourceType}/verify")
-	public ResponseEntity<Void> verifyToken(@PathVariable String sourceType,
+	public ResponseEntity<Void> verifyToken(@PathVariable @NotBlank String sourceType,
 			@RequestBody @Valid SourceControlDTO sourceControlDTO) {
+		if (!SourceTypeEnum.isValidType(sourceType)) {
+			throw new BadRequestException("Source type is incorrect.");
+		}
 		log.info("Start to verify token");
 		gitHubService.verifyTokenV2(sourceControlDTO.getToken());
 		log.info("Successfully to verify token");

@@ -1008,12 +1008,9 @@ class JiraServiceTest {
 
 	@Test
 	void shouldReturnBadRequestExceptionWhenBoardStyleIsNotCorrect() {
-		// given
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		// when
 		when(jiraFeignClient.getProject(any(), any(), any()))
 			.thenReturn(JiraBoardProject.builder().style("unknown").build());
-		// then
 		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, boardRequestParam))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Board type does not find!");

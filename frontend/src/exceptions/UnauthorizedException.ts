@@ -1,5 +1,7 @@
 export class UnauthorizedException extends Error {
-  constructor(message: string) {
+  code: number
+  constructor(message: string, status: number) {
     super(message)
+    this.code = status
   }
 }

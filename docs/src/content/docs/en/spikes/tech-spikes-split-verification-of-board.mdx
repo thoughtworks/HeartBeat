@@ -251,7 +251,7 @@ participant Jira
 ' group Verify the validity of the token
     FrontEnd -> JiraController: api/v1/boards/{boardType}/info
     activate JiraController
-    JiraController -> JiraService: get board
+    JiraController -> JiraService: get board info
     activate JiraService
     JiraService -> JiraFeignClient: get board project for style
     activate JiraFeignClient

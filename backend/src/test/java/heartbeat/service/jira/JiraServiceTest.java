@@ -946,7 +946,6 @@ class JiraServiceTest {
 			.replaceAll("flagged", "customfield_10021")
 			.replaceAll("development", "customfield_10000");
 
-		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
@@ -954,10 +953,11 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
-		// then
 
+		// when
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
 				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
+		// then
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 	}
 
@@ -972,8 +972,6 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = CLASSIC_JIRA_STORY_POINTS_FORM_ALL_DONE_CARD()
 			.build();
 		String allDoneCards = objectMapper.writeValueAsString(NEED_FILTERED_ALL_DONE_CARDS_BUILDER().build());
-
-		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
@@ -981,10 +979,10 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
 			.thenReturn(CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
-		// then
-
+		// when
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
 				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
+		// then
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 	}
 
@@ -1199,8 +1197,6 @@ class JiraServiceTest {
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
 			.replaceAll("development", "customfield_10000");
-
-		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
@@ -1211,11 +1207,13 @@ class JiraServiceTest {
 			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		// then
+		// when
 		CardCollection cardCollection1 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
 		CardCollection cardCollection2 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("song"), assigneeFilter);
+
+		// then
 		assertThat(cardCollection1.getCardsNumber()).isEqualTo(0);
 		assertThat(cardCollection2.getCardsNumber()).isEqualTo(1);
 		assertThat(cardCollection2.getJiraCardDTOList().get(0).getBaseInfo().getKey()).isEqualTo("ADM-475");
@@ -1229,7 +1227,6 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		String assigneeFilter = AssigneeFilterMethod.LAST_ASSIGNEE.getDescription();
-
 		// request param
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD().build();
 		StoryPointsAndCycleTimeRequest request = STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD().build();
@@ -1241,8 +1238,6 @@ class JiraServiceTest {
 			.replaceAll("partner", "customfield_10037")
 			.replaceAll("flagged", "customfield_10021")
 			.replaceAll("development", "customfield_10000");
-
-		// when
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
@@ -1253,11 +1248,13 @@ class JiraServiceTest {
 			.thenReturn(CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		// then
+		// when
 		CardCollection cardCollection1 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("yun"), assigneeFilter);
 		CardCollection cardCollection2 = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
+
+		// then
 		assertThat(cardCollection1.getCardsNumber()).isEqualTo(1);
 		assertThat(cardCollection1.getJiraCardDTOList().get(0).getBaseInfo().getKey()).isEqualTo("ADM-520");
 		assertThat(cardCollection2.getCardsNumber()).isEqualTo(1);
@@ -1361,8 +1358,6 @@ class JiraServiceTest {
 			.replaceAll("flagged", "customfield_10021")
 			.replaceAll("development", "customfield_10000");
 
-		// when
-
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
@@ -1371,9 +1366,11 @@ class JiraServiceTest {
 			.thenReturn(CARD2_HISTORY_FOR_MULTIPLE_STATUSES().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		// then
+		// when
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
+
+		// then
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getBaseInfo().getKey()).isEqualTo("ADM-475");
 	}
@@ -1397,8 +1394,6 @@ class JiraServiceTest {
 			.replaceAll("flagged", "customfield_10021")
 			.replaceAll("development", "customfield_10000");
 
-		// when
-
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
 		when(jiraFeignClient.getJiraCards(any(), any(), anyInt(), anyInt(), any(), any())).thenReturn(allDoneCards);
 		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "ADM-475", 0, 100, token))
@@ -1407,9 +1402,11 @@ class JiraServiceTest {
 			.thenReturn(CARD_HISTORY_WITH_NO_STATUS_FIELD().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 
-		// then
+		// when
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(request,
 				jiraBoardSetting.getBoardColumns(), List.of("Da Pei"), assigneeFilter);
+
+		// then
 		assertThat(cardCollection.getCardsNumber()).isZero();
 	}
 

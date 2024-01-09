@@ -54,4 +54,16 @@ public class GithubController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
+	@PostMapping("/{sourceType}/repos/branches/{branch}/verify")
+	public ResponseEntity<Void> verifyBranch(@PathVariable @NotBlank String sourceType,
+			@PathVariable @NotBlank String branch, @RequestBody @Valid VerifyBranchRequest request) {
+		if (!SourceTypeEnum.isValidType(sourceType)) {
+			throw new BadRequestException("Source type is incorrect.");
+		}
+		log.info("Start to verify target branch.");
+		gitHubService.verifyCanReadTargetBranch(request.getRepository(), branch, request.getToken());
+		log.info("Successfully to verify target branch.");
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
 }

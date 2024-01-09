@@ -20,6 +20,10 @@ public interface GitHubFeignClient {
 	@GetMapping(path = "/octocat")
 	void verifyToken(@RequestHeader("Authorization") String token);
 
+	@GetMapping(path = "/repos/{repository}/branches/{branchName}")
+	void verifyCanReadTargetBranch(@PathVariable String repository, @PathVariable String branchName,
+			@RequestHeader("Authorization") String token);
+
 	@GetMapping(path = "/user/orgs")
 	@ResponseStatus(HttpStatus.OK)
 	@Deprecated

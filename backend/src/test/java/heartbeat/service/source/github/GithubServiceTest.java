@@ -29,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,8 +38,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -185,13 +189,24 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldReturnGithubTokenIsVerifyWhenCallGithubFeignClientApi() {
+	void shouldReturnGithubTokenIsVerifyWhenVerifyToken() {
 		String githubToken = "123456";
 		String token = "token " + githubToken;
 
 		doNothing().when(gitHubFeignClient).verifyToken(token);
 
 		assertDoesNotThrow(() -> githubService.verifyTokenV2(githubToken));
+	}
+
+	@Test
+	void shouldReturnGithubBranchIsVerifyWhenVerifyBranch() {
+		String githubToken = "123456";
+		String token = "token " + githubToken;
+
+		doNothing().when(gitHubFeignClient).verifyCanReadTargetBranch(any(), any(), any());
+
+		assertDoesNotThrow(() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubToken));
+		verify(gitHubFeignClient, times(1)).verifyCanReadTargetBranch("fake/repo", "main", token);
 	}
 
 	@Test
@@ -244,12 +259,45 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionWhenGithubReturnUnauthorizedException() {
+	void shouldThrowExceptionGivenGithubReturnUnExpectedExceptionWhenVerifyBranch() {
+		String githubEmptyToken = "123456";
+		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
+			.when(gitHubFeignClient)
+			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
+
+		var exception = assertThrows(UnauthorizedException.class,
+				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
+		assertEquals("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ...", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowExceptionGivenGithubReturnPermissionDenyExceptionWhenVerifyBranch() {
+		String githubEmptyToken = "123456";
+		doThrow(new NotFoundException("Failed to get GitHub info_status: 404, reason: ...")).when(gitHubFeignClient)
+			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
+
+		var exception = assertThrows(PermissionDenyException.class,
+				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
+		assertEquals("Unable to read target branch", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowExceptionGivenGithubReturnCompletionExceptionExceptionWhenVerifyToken() {
 		String githubEmptyToken = "123456";
 		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
 			.verifyToken("token " + githubEmptyToken);
 
 		assertThrows(InternalServerErrorException.class, () -> githubService.verifyTokenV2(githubEmptyToken));
+	}
+
+	@Test
+	void shouldThrowExceptionGivenGithubReturnUnauthorizedExceptionWhenVerifyBranch() {
+		String githubEmptyToken = "123456";
+		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
+			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
+
+		assertThrows(InternalServerErrorException.class,
+				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
 	}
 
 	@Test

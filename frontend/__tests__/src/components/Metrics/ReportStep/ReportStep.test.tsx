@@ -28,7 +28,6 @@ import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEff
 import React from 'react'
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { MESSAGE } from '@src/constants/resources'
-import { formatMillisecondsToHours } from '@src/utils/util'
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({
   ...jest.requireActual('@src/context/stepper/StepperSlice'),
@@ -82,7 +81,7 @@ describe('Report Step', () => {
     reportHook.current.stopPollingReports = jest.fn()
     reportHook.current.isServerError = false
     reportHook.current.errorMessage = ''
-    reportHook.current.reportData = MOCK_REPORT_RESPONSE
+    reportHook.current.reportData = { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 }
   }
   const handleSaveMock = jest.fn()
   const setup = (params: string[]) => {
@@ -228,13 +227,6 @@ describe('Report Step', () => {
     })
 
     it('should call resetProps and updateProps when remaining time is less than or equal to 5 minutes', () => {
-      const initExportValidityTimeMin = 30
-      React.useState = jest.fn().mockReturnValue([
-        initExportValidityTimeMin,
-        () => {
-          jest.fn()
-        },
-      ])
       const resetProps = jest.fn()
       const updateProps = jest.fn()
       notificationHook.current.resetProps = resetProps

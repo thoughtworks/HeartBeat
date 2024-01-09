@@ -564,8 +564,7 @@ public class JiraService {
 				assigneeSet.add(getLastHistoricalAssignee(historicalAssignees));
 			}
 		}
-
-		if (!useLastAssignee(assigneeFilter)) {
+		else {
 			List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
 			assigneeSet.addAll(historicalAssignees);
 		}

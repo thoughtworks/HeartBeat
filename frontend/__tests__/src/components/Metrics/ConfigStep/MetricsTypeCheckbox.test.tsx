@@ -9,7 +9,7 @@ import {
   MEAN_TIME_TO_RECOVERY,
   REQUIRED_DATA,
   REQUIRED_DATA_LIST,
-  VELOCITY
+  VELOCITY,
 } from '../../../fixtures'
 import { act, fireEvent, render, waitFor, within } from '@testing-library/react'
 import { MetricsTypeCheckbox } from '@src/components/Metrics/ConfigStep/MetricsTypeCheckbox'

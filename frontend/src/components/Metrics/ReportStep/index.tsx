@@ -44,7 +44,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const startDate = configData.basic.dateRange.startDate ?? '';
   const endDate = configData.basic.dateRange.endDate ?? '';
 
-  const { updateProps } = notification;
+  const { updateProps, resetProps } = notification;
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
@@ -86,6 +86,10 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       };
     }
   }, [exportValidityTimeMin, isAllMetricsReady]);
+
+  useLayoutEffect(() => {
+    resetProps();
+  }, [pageType]);
 
   useEffect(() => {
     setErrorMessage(reportErrorMsg);

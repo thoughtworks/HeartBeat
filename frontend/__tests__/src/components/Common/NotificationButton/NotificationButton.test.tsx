@@ -58,4 +58,29 @@ describe('Notification', () => {
       expect(result.current.updateProps).toBeCalledWith(closeNotificationProps);
     });
   });
+
+  it.each`
+    type         | backgroundColor | icon                 | iconColor
+    ${'error'}   | ${'#FFE7EA'}    | ${'CancelIcon'}      | ${'#D74257'}
+    ${'success'} | ${'#EFFFF1'}    | ${'CheckCircleIcon'} | ${'#5E9E66'}
+    ${'warning'} | ${'#FFF4E3'}    | ${'InfoIcon'}        | ${'#D78D20'}
+    ${'info'}    | ${'#E9ECFF'}    | ${'InfoIcon'}        | ${'#4050B5'}
+  `(
+    `should render background color $backgroundColor and $icon in $iconColor given the "type" value is $type`,
+    async ({ type, backgroundColor, icon, iconColor }) => {
+      act(() => {
+        result.current.notificationProps = { ...openNotificationProps, type };
+      });
+
+      const { getByRole, getByTestId } = render(<Notification {...result.current} />);
+
+      const alertElement = getByRole('alert');
+      expect(alertElement).toHaveStyle({ 'background-color': backgroundColor });
+
+      const iconElement = alertElement.querySelector('.MuiAlert-icon');
+      expect(iconElement).toBeInTheDocument();
+      expect(iconElement).toHaveStyle({ color: iconColor });
+      expect(getByTestId(icon)).toBeInTheDocument();
+    }
+  );
 });

@@ -442,19 +442,19 @@ export const selectCycleTimeWarningMessage = (state: RootState) => state.metrics
 export const selectClassificationWarningMessage = (state: RootState) => state.metrics.classificationWarningMessage;
 export const selectRealDoneWarningMessage = (state: RootState) => state.metrics.realDoneWarningMessage;
 
-export const selectOrganizationWarningMessage = (state: RootState, id: number, type: string) => {
+export const selectOrganizationWarningMessage = (state: RootState, id: number) => {
   const { deploymentWarningMessage } = state.metrics;
   const warningMessage = deploymentWarningMessage;
   return warningMessage.find((item) => item.id === id)?.organization;
 };
 
-export const selectPipelineNameWarningMessage = (state: RootState, id: number, type: string) => {
+export const selectPipelineNameWarningMessage = (state: RootState, id: number) => {
   const { deploymentWarningMessage } = state.metrics;
   const warningMessage = deploymentWarningMessage;
   return warningMessage.find((item) => item.id === id)?.pipelineName;
 };
 
-export const selectStepWarningMessage = (state: RootState, id: number, type: string) => {
+export const selectStepWarningMessage = (state: RootState, id: number) => {
   const { deploymentWarningMessage } = state.metrics;
   const warningMessage = deploymentWarningMessage;
   return warningMessage.find((item) => item.id === id)?.step;

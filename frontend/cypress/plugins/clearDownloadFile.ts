@@ -1,7 +1,7 @@
 // <reference types="cypress" />
 import fs = require('fs');
 
-module.exports = (on, config) => {
+module.exports = (on) => {
   on('task', {
     clearDownloads: () => {
       const downloadsFolder = 'cypress/downloads';

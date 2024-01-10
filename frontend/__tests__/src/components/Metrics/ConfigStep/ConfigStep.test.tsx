@@ -175,14 +175,14 @@ describe('ConfigStep', () => {
   });
 
   it('should show disable warning message When selectWarningMessage has a value after two seconds', async () => {
-    const { queryByText } = setup();
+    setup();
 
     act(() => {
       jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION);
     });
 
     await waitFor(() => {
-      expect(queryByText('Test warning Message')).not.toBeInTheDocument();
+      expect(screen.queryByText('Test warning Message')).not.toBeInTheDocument();
     });
   });
 });

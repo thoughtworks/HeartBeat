@@ -138,6 +138,6 @@ const main = async (args: string[]) => {
   });
 };
 
-const [_, __, ...args] = process.argv;
+const args = process.argv.slice(2);
 
 main(args);

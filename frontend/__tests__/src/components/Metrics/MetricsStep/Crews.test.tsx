@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews';
 import userEvent from '@testing-library/user-event';
 import { setupStore } from '../../../utils/setupStoreUtil';

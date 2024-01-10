@@ -1,4 +1,5 @@
-import { act, fireEvent, Matcher, render, waitFor, within } from '@testing-library/react';
+import React from 'react';
+import { act, fireEvent, Matcher, render, waitFor, within, screen } from '@testing-library/react';
 import ConfigStep from '@src/components/Metrics/ConfigStep';
 import {
   CHINA_CALENDAR,
@@ -44,17 +45,17 @@ describe('ConfigStep', () => {
   });
 
   it('should show project name when render configStep', () => {
-    const { getByText } = setup();
+    setup();
 
-    expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument();
+    expect(screen.getByText(PROJECT_NAME_LABEL)).toBeInTheDocument();
   });
 
   it('should show project name when input some letters', () => {
-    const { getByRole, getByDisplayValue } = setup();
+    setup();
     const hasInputValue = (e: HTMLElement, inputValue: Matcher) => {
-      return getByDisplayValue(inputValue) === e;
+      return screen.getByDisplayValue(inputValue) === e;
     };
-    const input = getByRole('textbox', { name: PROJECT_NAME_LABEL });
+    const input = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL });
 
     expect(input).toBeInTheDocument();
 
@@ -64,37 +65,37 @@ describe('ConfigStep', () => {
   });
 
   it('should show error message when project name is Empty', () => {
-    const { getByRole, getByText } = setup();
-    const input = getByRole('textbox', { name: PROJECT_NAME_LABEL });
+    setup();
+    const input = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL });
 
     fireEvent.change(input, { target: { value: TEST_PROJECT_NAME } });
     fireEvent.change(input, { target: { value: '' } });
 
-    expect(getByText('Project name is required')).toBeInTheDocument();
+    expect(screen.getByText('Project name is required')).toBeInTheDocument();
   });
 
   it('should show error message when click project name input with no letter', () => {
-    const { getByRole, getByText } = setup();
-    const input = getByRole('textbox', { name: PROJECT_NAME_LABEL });
+    setup();
+    const input = screen.getByRole('textbox', { name: PROJECT_NAME_LABEL });
 
     fireEvent.focus(input);
 
-    expect(getByText('Project name is required')).toBeInTheDocument();
+    expect(screen.getByText('Project name is required')).toBeInTheDocument();
   });
 
   it('should select Regular calendar by default when rendering the radioGroup', () => {
-    const { getByRole } = setup();
-    const defaultValue = getByRole('radio', { name: REGULAR_CALENDAR });
-    const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR });
+    setup();
+    const defaultValue = screen.getByRole('radio', { name: REGULAR_CALENDAR });
+    const chinaCalendar = screen.getByRole('radio', { name: CHINA_CALENDAR });
 
     expect(defaultValue).toBeChecked();
     expect(chinaCalendar).not.toBeChecked();
   });
 
   it('should switch the radio when any radioLabel is selected', () => {
-    const { getByRole } = setup();
-    const chinaCalendar = getByRole('radio', { name: CHINA_CALENDAR });
-    const regularCalendar = getByRole('radio', { name: REGULAR_CALENDAR });
+    setup();
+    const chinaCalendar = screen.getByRole('radio', { name: CHINA_CALENDAR });
+    const regularCalendar = screen.getByRole('radio', { name: REGULAR_CALENDAR });
     fireEvent.click(chinaCalendar);
 
     expect(chinaCalendar).toBeChecked();
@@ -107,47 +108,47 @@ describe('ConfigStep', () => {
   });
 
   it('should not show board component when init ConfigStep component ', async () => {
-    const { queryByText } = setup();
+    setup();
 
     await waitFor(() => {
-      expect(queryByText(CONFIG_TITLE.BOARD)).toBeNull();
+      expect(screen.queryByText(CONFIG_TITLE.BOARD)).toBeNull();
     });
   });
 
   it('should show board component when MetricsTypeCheckbox select Velocity,Cycle time', () => {
-    const { getByRole, getAllByText } = setup();
+    setup();
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }));
-    const requireDateSelection = within(getByRole('listbox'));
+    fireEvent.mouseDown(screen.getByRole('button', { name: REQUIRED_DATA }));
+    const requireDateSelection = within(screen.getByRole('listbox'));
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
     fireEvent.click(requireDateSelection.getByRole('option', { name: CYCLE_TIME }));
 
-    expect(getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument();
   });
 
   it('should show board component when MetricsTypeCheckbox select  Classification, ', () => {
-    const { getByRole, getAllByText } = setup();
+    setup();
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }));
-    const requireDateSelection = within(getByRole('listbox'));
+    fireEvent.mouseDown(screen.getByRole('button', { name: REQUIRED_DATA }));
+    const requireDateSelection = within(screen.getByRole('listbox'));
     fireEvent.click(requireDateSelection.getByRole('option', { name: 'Classification' }));
 
-    expect(getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument();
   });
 
   it('should verify again when calendar type is changed given board fields are filled and verified', () => {
-    const { getByRole, getByText, queryByText } = setup();
+    setup();
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }));
-    const requireDateSelection = within(getByRole('listbox'));
+    fireEvent.mouseDown(screen.getByRole('button', { name: REQUIRED_DATA }));
+    const requireDateSelection = within(screen.getByRole('listbox'));
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
     fillBoardFieldsInformation();
-    fireEvent.click(getByText(VERIFY));
-    fireEvent.click(getByText(CHINA_CALENDAR));
+    fireEvent.click(screen.getByText(VERIFY));
+    fireEvent.click(screen.getByText(CHINA_CALENDAR));
 
-    expect(queryByText(VERIFY)).toBeVisible();
-    expect(queryByText('Verified')).toBeNull();
-    expect(queryByText(RESET)).toBeNull();
+    expect(screen.queryByText(VERIFY)).toBeVisible();
+    expect(screen.queryByText('Verified')).toBeNull();
+    expect(screen.queryByText(RESET)).toBeNull();
   });
 
   it('should verify again when date picker is changed given board fields are filled and verified', () => {
@@ -155,11 +156,11 @@ describe('ConfigStep', () => {
     const today = dayjs().format('MM/DD/YYYY');
     const startDateInput = getByLabelText('From *');
 
-    fireEvent.mouseDown(getByRole('button', { name: REQUIRED_DATA }));
-    const requireDateSelection = within(getByRole('listbox'));
+    fireEvent.mouseDown(screen.getByRole('button', { name: REQUIRED_DATA }));
+    const requireDateSelection = within(screen.getByRole('listbox'));
     fireEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
     fillBoardFieldsInformation();
-    fireEvent.click(getByText(VERIFY));
+    fireEvent.click(screen.getByText(VERIFY));
     fireEvent.change(startDateInput, { target: { value: today } });
 
     expect(queryByText(VERIFY)).toBeVisible();
@@ -168,9 +169,9 @@ describe('ConfigStep', () => {
   });
 
   it('should show warning message when selectWarningMessage has a value', async () => {
-    const { getByText } = setup();
+    setup();
 
-    expect(getByText('Test warning Message')).toBeVisible();
+    expect(screen.getByText('Test warning Message')).toBeVisible();
   });
 
   it('should show disable warning message When selectWarningMessage has a value after two seconds', async () => {

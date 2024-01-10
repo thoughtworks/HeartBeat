@@ -1,4 +1,4 @@
-import { act, render, waitFor, within } from '@testing-library/react';
+import { act, render, waitFor, within, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../../../utils/setupStoreUtil';
@@ -86,10 +86,10 @@ describe('PipelineMetricSelection', () => {
   });
 
   it('should render PipelineMetricSelection when isShowRemoveButton is true', async () => {
-    const { getByText } = await setup(deploymentFrequencySetting, true, false);
+    await setup(deploymentFrequencySetting, true, false);
 
-    expect(getByText(REMOVE_BUTTON)).toBeInTheDocument();
-    expect(getByText(ORGANIZATION)).toBeInTheDocument();
+    expect(screen.getByText(REMOVE_BUTTON)).toBeInTheDocument();
+    expect(screen.getByText(ORGANIZATION)).toBeInTheDocument();
   });
 
   it('should render PipelineMetricSelection when isShowRemoveButton is false', async () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { act } from 'react-dom/test-utils';
@@ -27,23 +27,23 @@ describe('MultiAutoComplete', () => {
     );
 
   it('renders the component', () => {
-    const { getByTestId } = setup();
+    setup();
 
-    expect(getByTestId(testId)).toBeInTheDocument();
+    expect(screen.getByTestId(testId)).toBeInTheDocument();
   });
 
   it('When passed selectedoption changed, the correct option would be displayed', async () => {
-    const { getByRole } = setup();
+    setup();
 
-    expect(getByRole('button', { name: 'Option 1' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Option 1' })).toBeVisible();
   });
 
   it('When user select All option, all options in drop box would be selected', async () => {
-    const { getByRole } = setup();
+    setup();
 
-    const inputField = getByRole('combobox');
+    const inputField = screen.getByRole('combobox');
     await userEvent.click(inputField);
-    const allOption = getByRole('option', { name: 'All' });
+    const allOption = screen.getByRole('option', { name: 'All' });
     await act(async () => {
       await userEvent.click(allOption);
     });

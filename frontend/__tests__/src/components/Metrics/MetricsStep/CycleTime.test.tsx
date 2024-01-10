@@ -1,4 +1,5 @@
-import { act, render, waitFor, within } from '@testing-library/react';
+import React from 'react';
+import { act, render, waitFor, within, screen } from '@testing-library/react';
 import { CycleTime } from '@src/components/Metrics/MetricsStep/CycleTime';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -62,36 +63,36 @@ describe('CycleTime', () => {
 
   describe('CycleTime Title', () => {
     it('should show Cycle Time title when render Crews component', () => {
-      const { getByText } = setup();
-      expect(getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
+      setup();
+      expect(screen.getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
     });
     it('should show Cycle Time tooltip when render Crews component', () => {
-      const { getByTestId } = setup();
-      expect(getByTestId('InfoOutlinedIcon')).toBeInTheDocument();
+      setup();
+      expect(screen.getByTestId('InfoOutlinedIcon')).toBeInTheDocument();
     });
   });
 
   describe('CycleTime Selector List', () => {
     it('should show selectors title when render Crews component', () => {
-      const { getByText } = setup();
+      setup();
 
-      expect(getByText('Analysis, In Dev, doing')).toBeInTheDocument();
-      expect(getByText('Test')).toBeInTheDocument();
-      expect(getByText('To do')).toBeInTheDocument();
+      expect(screen.getByText('Analysis, In Dev, doing')).toBeInTheDocument();
+      expect(screen.getByText('Test')).toBeInTheDocument();
+      expect(screen.getByText('To do')).toBeInTheDocument();
     });
 
     it('should always show board status column tooltip', async () => {
-      const { getByText, getByRole } = setup();
-      userEvent.hover(getByText('Analysis, In Dev, doing'));
+      setup();
+      userEvent.hover(screen.getByText('Analysis, In Dev, doing'));
 
       await waitFor(() => {
-        expect(getByRole('tooltip', { name: 'Analysis, In Dev, doing' })).toBeVisible();
+        expect(screen.getByRole('tooltip', { name: 'Analysis, In Dev, doing' })).toBeVisible();
       });
     });
 
     it('should show right input value when initializing', async () => {
-      const { getAllByRole } = setup();
-      const inputElements = getAllByRole('combobox');
+      setup();
+      const inputElements = screen.getAllByRole('combobox');
       const selectedInputValues = inputElements.map((input) => input.getAttribute('value'));
 
       const expectedInputValues = ['Analysis', 'Review', NO_RESULT_DASH];
@@ -100,12 +101,12 @@ describe('CycleTime', () => {
     });
 
     it('should show detail options when click included button', async () => {
-      const { getAllByRole, getByRole } = setup();
-      const columnsArray = getAllByRole('button', { name: LIST_OPEN });
+      setup();
+      const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await act(async () => {
         await userEvent.click(columnsArray[0]);
       });
-      const listBox = within(getByRole('listbox'));
+      const listBox = within(screen.getByRole('listbox'));
       const options = listBox.getAllByRole('option');
       const optionText = options.map((option) => option.textContent);
 
@@ -127,12 +128,12 @@ describe('CycleTime', () => {
     });
 
     it('should show the right options when input the keyword to search', async () => {
-      const { getAllByRole, getByRole } = setup();
-      const columnsArray = getAllByRole('button', { name: LIST_OPEN });
+      setup();
+      const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await act(async () => {
         await userEvent.type(columnsArray[0], 'Done');
       });
-      const listBox = within(getByRole('listbox'));
+      const listBox = within(screen.getByRole('listbox'));
       const options = listBox.getAllByRole('option');
       const optionTexts = options.map((option) => option.textContent);
 
@@ -142,23 +143,23 @@ describe('CycleTime', () => {
     });
 
     it('should show no options when enter the wrong keyword', async () => {
-      const { getAllByRole, getByText } = setup();
-      const columnsArray = getAllByRole('button', { name: LIST_OPEN });
+      setup();
+      const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await act(async () => {
         await userEvent.type(columnsArray[0], 'wrong keyword');
       });
 
-      expect(getByText('No options')).toBeInTheDocument();
+      expect(screen.getByText('No options')).toBeInTheDocument();
     });
 
     it('should show selected option when click the dropDown button ', async () => {
-      const { getAllByRole, getByRole } = setup();
-      const columnsArray = getAllByRole('button', { name: LIST_OPEN });
+      setup();
+      const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await act(async () => {
         await userEvent.click(columnsArray[2]);
       });
 
-      const listBox = within(getByRole('listbox'));
+      const listBox = within(screen.getByRole('listbox'));
       const options = listBox.getAllByRole('option');
       const selectedOption = options.find((option) => option.getAttribute('aria-selected') === 'true');
 
@@ -168,19 +169,19 @@ describe('CycleTime', () => {
     });
 
     it('should show other selections when change option and will not affect Real done', async () => {
-      const { getAllByRole, getByRole } = setup();
-      const columnsArray = getAllByRole('button', { name: LIST_OPEN });
+      setup();
+      const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await act(async () => {
         await userEvent.click(columnsArray[2]);
       });
 
-      const listBox = within(getByRole('listbox'));
+      const listBox = within(screen.getByRole('listbox'));
       const mockOptions = listBox.getAllByRole('option');
       await act(async () => {
         await userEvent.click(mockOptions[1]);
       });
 
-      const inputElements = getAllByRole('combobox');
+      const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[2];
 
       expect(selectedInputValue).toBe('To do');
@@ -188,18 +189,18 @@ describe('CycleTime', () => {
     });
 
     it('should reset Real done when marked as done from other options', async () => {
-      const { getAllByRole, getByRole } = setup();
-      const columnsArray = getAllByRole('button', { name: LIST_OPEN });
+      setup();
+      const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await act(async () => {
         await userEvent.click(columnsArray[0]);
       });
 
-      const listBox = within(getByRole('listbox'));
+      const listBox = within(screen.getByRole('listbox'));
       await act(async () => {
         await userEvent.click(listBox.getAllByRole('option')[8]);
       });
 
-      const inputElements = getAllByRole('combobox');
+      const inputElements = screen.getAllByRole('combobox');
 
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
 
@@ -208,13 +209,13 @@ describe('CycleTime', () => {
     });
 
     it('should show the right selected value when cancel the done', async () => {
-      const { getAllByRole, getByRole } = setup();
-      const columnsArray = getAllByRole('button', { name: LIST_OPEN });
+      setup();
+      const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await act(async () => {
         await userEvent.click(columnsArray[0]);
       });
 
-      const listBox = within(getByRole('listbox'));
+      const listBox = within(screen.getByRole('listbox'));
       await act(async () => {
         await userEvent.click(listBox.getAllByRole('option')[8]);
       });
@@ -223,12 +224,12 @@ describe('CycleTime', () => {
         await userEvent.click(columnsArray[0]);
       });
 
-      const newListBox = within(getByRole('listbox'));
+      const newListBox = within(screen.getByRole('listbox'));
       await act(async () => {
         await userEvent.click(newListBox.getAllByRole('option')[7]);
       });
 
-      const inputElements = getAllByRole('combobox');
+      const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
 
       expect(selectedInputValue).toBe('Review');
@@ -238,19 +239,19 @@ describe('CycleTime', () => {
 
   describe('CycleTime Flag as Block', () => {
     it('should show FlagAsBlock when render Crews component', () => {
-      const { getByText } = setup();
-      expect(getByText(FlagAsBlock)).toBeInTheDocument();
+      setup();
+      expect(screen.getByText(FlagAsBlock)).toBeInTheDocument();
     });
 
     it('should be checked by default when initializing', () => {
-      const { getByRole } = setup();
-      expect(getByRole('checkbox')).toHaveProperty('checked', true);
+      setup();
+      expect(screen.getByRole('checkbox')).toHaveProperty('checked', true);
     });
 
     it('should change checked when click', async () => {
-      const { getByRole } = setup();
+      setup();
       await act(async () => {
-        await userEvent.click(getByRole('checkbox'));
+        await userEvent.click(screen.getByRole('checkbox'));
       });
 
       await waitFor(() => {
@@ -260,21 +261,21 @@ describe('CycleTime', () => {
   });
 
   it('should show warning message when selectWarningMessage has a value in cycleTime component', () => {
-    const { getByText } = setup();
+    setup();
 
-    expect(getByText('Test warning Message')).toBeVisible();
+    expect(screen.getByText('Test warning Message')).toBeVisible();
   });
 
   it('should show disable warning message when selectWarningMessage has a value after two seconds in cycleTime component', async () => {
     jest.useFakeTimers();
-    const { queryByText } = setup();
+    setup();
 
     act(() => {
       jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION);
     });
 
     await waitFor(() => {
-      expect(queryByText('Test warning Message')).not.toBeInTheDocument();
+      expect(screen.queryByText('Test warning Message')).not.toBeInTheDocument();
     });
   });
 });

@@ -1,4 +1,5 @@
-import { act, render } from '@testing-library/react';
+import React from 'react';
+import { act, render, screen } from '@testing-library/react';
 import { BranchSelection } from '@src/components/Metrics/ConfigStep/BranchSelection';
 import { ALL, BRANCH, MOCK_AUTOCOMPLETE_LIST } from '../../../fixtures';
 import { setupStore } from '../../../utils/setupStoreUtil';
@@ -32,26 +33,26 @@ describe('BranchSelection', () => {
   });
 
   it('should has Option 2 when render BranchSelection component', async () => {
-    const { getByRole } = setup();
+    setup();
 
-    expect(getByRole('button', { name: 'Option 2' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Option 2' })).toBeVisible();
   });
 
   it('should show branches selection when getSteps succeed ', async () => {
-    const { getByRole, getByText } = setup();
+    setup();
 
-    expect(getByText(BRANCH)).toBeInTheDocument();
+    expect(screen.getByText(BRANCH)).toBeInTheDocument();
 
     await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: 'Branches' }));
+      await userEvent.click(screen.getByRole('combobox', { name: 'Branches' }));
     });
 
-    const allOption = getByRole('option', { name: ALL });
+    const allOption = screen.getByRole('option', { name: ALL });
     await act(async () => {
       await userEvent.click(allOption);
     });
 
-    const optionOne = getByRole('button', { name: 'Option 1' });
+    const optionOne = screen.getByRole('button', { name: 'Option 1' });
 
     expect(optionOne).toBeVisible();
 

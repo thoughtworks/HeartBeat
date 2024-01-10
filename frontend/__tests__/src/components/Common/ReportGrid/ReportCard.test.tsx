@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import { ReportCard } from '@src/components/Common/ReportGrid/ReportCard';
 
 describe('Report Card', () => {
@@ -18,10 +19,10 @@ describe('Report Card', () => {
       },
     ];
 
-    const { getByText, queryByText } = render(<ReportCard title={'card'} items={items} xs={6} />);
+    render(<ReportCard title={'card'} items={items} xs={6} />);
 
-    expect(getByText('1.00')).toBeInTheDocument();
-    expect(getByText('2.00')).toBeInTheDocument();
-    expect(queryByText('3.00')).not.toBeInTheDocument();
+    expect(screen.getByText('1.00')).toBeInTheDocument();
+    expect(screen.getByText('2.00')).toBeInTheDocument();
+    expect(screen.queryByText('3.00')).not.toBeInTheDocument();
   });
 });

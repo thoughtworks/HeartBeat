@@ -1,4 +1,5 @@
-import { fireEvent, render } from '@testing-library/react';
+import React from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { DateRangePicker } from '@src/components/Metrics/ConfigStep/DateRangePicker';
 import { ERROR_DATE } from '../../../fixtures';
 import dayjs from 'dayjs';
@@ -28,23 +29,23 @@ describe('DateRangePicker', () => {
   };
 
   it('should render DateRangePicker', () => {
-    const { queryAllByText } = setup();
+    setup();
 
-    expect(queryAllByText(START_DATE_LABEL)).toHaveLength(1);
-    expect(queryAllByText(END_DATE_LABEL)).toHaveLength(1);
+    expect(screen.queryAllByText(START_DATE_LABEL)).toHaveLength(1);
+    expect(screen.queryAllByText(END_DATE_LABEL)).toHaveLength(1);
   });
 
   it('should show right start date when input a valid date given init start date is null ', () => {
-    const { getByRole } = setup();
-    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
+    setup();
+    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
     fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } });
 
     expectDate(startDateInput);
   });
 
   it('should show right end date when input a valid date given init end date is null ', () => {
-    const { getByRole } = setup();
-    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
+    setup();
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
 
     fireEvent.change(endDateInput, { target: { value: INPUT_DATE_VALUE } });
 
@@ -52,10 +53,10 @@ describe('DateRangePicker', () => {
   });
 
   it('should Auto-fill endDate which is after startDate 13 days when fill right startDate ', () => {
-    const { getByRole } = setup();
+    setup();
     const endDate = TODAY.add(13, 'day');
-    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
-    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
+    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
 
     fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } });
 
@@ -65,9 +66,9 @@ describe('DateRangePicker', () => {
   });
 
   it('should not Auto-fill endDate which is after startDate 14 days when fill wrong format startDate ', () => {
-    const { getByRole } = setup();
-    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
-    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
+    setup();
+    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
 
     fireEvent.change(startDateInput, { target: { value: ERROR_DATE } });
 

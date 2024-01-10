@@ -1,4 +1,5 @@
-import { act, render, waitFor, within } from '@testing-library/react';
+import React from 'react';
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { Crews } from '@src/components/Metrics/MetricsStep/Crews';
 import userEvent from '@testing-library/user-event';
 import { setupStore } from '../../../utils/setupStoreUtil';
@@ -41,25 +42,25 @@ describe('Crew', () => {
   });
 
   it('should show Crews when render Crews component', () => {
-    const { getByText } = setup();
+    setup();
 
-    expect(getByText(mockTitle)).toBeInTheDocument();
+    expect(screen.getByText(mockTitle)).toBeInTheDocument();
   });
 
   it('should selected all options by default when initializing', () => {
-    const { getByRole } = setup();
+    setup();
 
-    expect(getByRole('button', { name: 'crew A' })).toBeInTheDocument();
-    expect(getByRole('button', { name: 'crew B' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'crew A' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'crew B' })).toBeInTheDocument();
   });
 
   it('should show detail options when click Included crews button', async () => {
-    const { getByRole } = setup();
+    setup();
 
     await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: mockLabel }));
+      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
     });
-    const listBox = within(getByRole('listbox'));
+    const listBox = within(screen.getByRole('listbox'));
 
     expect(listBox.getByRole('option', { name: 'All' })).toBeVisible();
     expect(listBox.getByRole('option', { name: 'crew A' })).toBeVisible();
@@ -67,70 +68,70 @@ describe('Crew', () => {
   });
 
   it('should show error message when crews is null', async () => {
-    const { getByRole, getByText } = setup();
+    setup();
     await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: mockLabel }));
+      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
     });
     await act(async () => {
-      await userEvent.click(getByText('All'));
+      await userEvent.click(screen.getByText('All'));
     });
 
-    const requiredText = getByText('required');
+    const requiredText = screen.getByText('required');
     expect(requiredText.tagName).toBe('STRONG');
   });
 
   it('should show other selections when cancel one option given default all selections in crews', async () => {
-    const { getByRole, queryByRole } = setup();
+    setup();
 
     await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: mockLabel }));
+      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
     });
 
-    const listBox = within(getByRole('listbox'));
+    const listBox = within(screen.getByRole('listbox'));
     await act(async () => {
       await userEvent.click(listBox.getByRole('option', { name: mockOptions[0] }));
     });
 
-    expect(queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument();
-    expect(queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument();
   });
 
   it('should clear crews data when check all option', async () => {
-    const { getByRole, queryByRole } = setup();
+    setup();
 
     await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: mockLabel }));
+      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
     });
 
-    const listBox = within(getByRole('listbox'));
+    const listBox = within(screen.getByRole('listbox'));
     const allOption = listBox.getByRole('option', { name: 'All' });
     await act(async () => {
       await userEvent.click(allOption);
     });
 
-    expect(queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument();
-    expect(queryByRole('button', { name: mockOptions[1] })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: mockOptions[0] })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: mockOptions[1] })).not.toBeInTheDocument();
 
     await act(async () => {
       await userEvent.click(allOption);
     });
 
-    expect(queryByRole('button', { name: mockOptions[0] })).toBeInTheDocument();
-    expect(queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument();
-  }, 50000);
+    expect(screen.queryByRole('button', { name: mockOptions[0] })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: mockOptions[1] })).toBeInTheDocument();
+  });
 
   it('should show radio group when render Crews component', async () => {
-    const { getByRole, getByText } = setup();
+    setup();
 
-    expect(getByText(assigneeFilterLabels[0])).toBeInTheDocument();
-    expect(getByText(assigneeFilterLabels[1])).toBeInTheDocument();
-    expect(getByRole('radiogroup', { name: 'assigneeFilter' })).toBeVisible();
+    expect(screen.getByText(assigneeFilterLabels[0])).toBeInTheDocument();
+    expect(screen.getByText(assigneeFilterLabels[1])).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: 'assigneeFilter' })).toBeVisible();
   });
 
   it('should show radio group with init value when render Crews component', async () => {
-    const { getAllByRole } = setup();
+    setup();
 
-    const radioGroups = getAllByRole('radio');
+    const radioGroups = screen.getAllByRole('radio');
     const optionValues = radioGroups.map((option) => option.getAttribute('value'));
     const checkedValues = radioGroups.map((option) => option.getAttribute('checked'));
 
@@ -140,10 +141,10 @@ describe('Crew', () => {
   });
 
   it('should call update function when change radio option', async () => {
-    const { getByRole } = setup();
+    setup();
 
     await act(async () => {
-      await userEvent.click(getByRole('radio', { name: assigneeFilterLabels[1] }));
+      await userEvent.click(screen.getByRole('radio', { name: assigneeFilterLabels[1] }));
     });
 
     await waitFor(() => {

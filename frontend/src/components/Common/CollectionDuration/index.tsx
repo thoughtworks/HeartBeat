@@ -6,41 +6,41 @@ import {
   MonthYearText,
   DateTitle,
   ColoredTopArea,
-} from '@src/components/Common/CollectionDuration/style'
-import dayjs from 'dayjs'
+} from '@src/components/Common/CollectionDuration/style';
+import dayjs from 'dayjs';
 
 type Props = {
-  startDate: string
-  endDate: string
-}
+  startDate: string;
+  endDate: string;
+};
 
 type DisplayedDateInfo = {
-  year: string
-  month: string
-  day: string
-}
+  year: string;
+  month: string;
+  day: string;
+};
 
 type DateInformation = {
-  formattedDate: DisplayedDateInfo
-  dateTittle: string
-}
+  formattedDate: DisplayedDateInfo;
+  dateTittle: string;
+};
 
 const CollectionDuration = ({ startDate, endDate }: Props) => {
-  const toBeFormattedStartDate = dayjs(startDate)
-  const toBeFormattedEndDate = dayjs(endDate)
+  const toBeFormattedStartDate = dayjs(startDate);
+  const toBeFormattedEndDate = dayjs(endDate);
   const startDateInfo: DisplayedDateInfo = {
     year: toBeFormattedStartDate.format('YY'),
     month: toBeFormattedStartDate.format('MMM'),
     day: toBeFormattedStartDate.format('DD'),
-  }
+  };
   const endDateInfo: DisplayedDateInfo = {
     year: toBeFormattedEndDate.format('YY'),
     month: toBeFormattedEndDate.format('MMM'),
     day: toBeFormattedEndDate.format('DD'),
-  }
+  };
 
   const DateDisplay = (props: DateInformation) => {
-    const { dateTittle, formattedDate } = props
+    const { dateTittle, formattedDate } = props;
     return (
       <div>
         <DateTitle isStart={dateTittle === 'START'}>{dateTittle}</DateTitle>
@@ -52,8 +52,8 @@ const CollectionDuration = ({ startDate, endDate }: Props) => {
           </MonthYearText>
         </TextBox>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <CollectionDateContainer>
@@ -61,7 +61,7 @@ const CollectionDuration = ({ startDate, endDate }: Props) => {
       <GreyTransitionBox />
       <DateDisplay dateTittle='END' formattedDate={endDateInfo} />
     </CollectionDateContainer>
-  )
-}
+  );
+};
 
-export default CollectionDuration
+export default CollectionDuration;

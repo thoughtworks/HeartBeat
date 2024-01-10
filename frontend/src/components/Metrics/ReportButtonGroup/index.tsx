@@ -44,19 +44,19 @@ export const ReportButtonGroup = ({
   const { fetchExportData, errorMessage, isExpired } = useExportCsvEffect()
 
   useEffect(() => {
-    setErrorMessage(errorMessage)
-  }, [errorMessage])
+    setErrorMessage(errorMessage);
+  }, [errorMessage]);
 
   const exportCSV = (dataType: DOWNLOAD_TYPES, startDate: string, endDate: string): CSVReportRequestDTO => ({
     dataType: dataType,
     csvTimeStamp: csvTimeStamp,
     startDate: startDate,
     endDate: endDate,
-  })
+  });
 
   const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string, endDate: string) => {
-    fetchExportData(exportCSV(dataType, startDate, endDate))
-  }
+    fetchExportData(exportCSV(dataType, startDate, endDate));
+  };
 
   return (
     <>
@@ -104,5 +104,5 @@ export const ReportButtonGroup = ({
       </StyledButtonGroup>
       {<ExpiredDialog isExpired={isExpired} handleOk={handleBack} />}
     </>
-  )
-}
+  );
+};

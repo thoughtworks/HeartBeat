@@ -1,77 +1,77 @@
 export interface ReportRequestDTO {
-  metrics: string[]
-  startTime: string | null
-  endTime: string | null
-  considerHoliday: boolean
+  metrics: string[];
+  startTime: string | null;
+  endTime: string | null;
+  considerHoliday: boolean;
   buildKiteSetting?: {
-    type: string
-    token: string
-    pipelineCrews: string[]
+    type: string;
+    token: string;
+    pipelineCrews: string[];
     deploymentEnvList:
       | {
-          id: string
-          name: string
-          orgId: string
-          orgName: string
-          repository: string
-          step: string
-          branches: string[]
+          id: string;
+          name: string;
+          orgId: string;
+          orgName: string;
+          repository: string;
+          step: string;
+          branches: string[];
         }[]
-      | []
-  }
+      | [];
+  };
   codebaseSetting?: {
-    type: string
-    token: string
+    type: string;
+    token: string;
     leadTime: {
-      id: string
-      name: string
-      orgId: string
-      orgName: string
-      repository: string
-      step: string
-      branches: string[]
-    }[]
-  }
+      id: string;
+      name: string;
+      orgId: string;
+      orgName: string;
+      repository: string;
+      step: string;
+      branches: string[];
+    }[];
+  };
   jiraBoardSetting?: {
-    token: string
-    type: string
-    site: string
-    projectKey: string
-    boardId: string
-    boardColumns: { name: string; value: string }[]
-    treatFlagCardAsBlock: boolean
-    users: string[]
-    assigneeFilter: string
-    targetFields: { key: string; name: string; flag: boolean }[]
-    doneColumn: string[]
-  }
-  csvTimeStamp?: number
+    token: string;
+    type: string;
+    site: string;
+    projectKey: string;
+    boardId: string;
+    boardColumns: { name: string; value: string }[];
+    treatFlagCardAsBlock: boolean;
+    users: string[];
+    assigneeFilter: string;
+    targetFields: { key: string; name: string; flag: boolean }[];
+    doneColumn: string[];
+  };
+  csvTimeStamp?: number;
 }
 
 export interface BoardReportRequestDTO {
-  considerHoliday: boolean
-  startTime: string | null
-  endTime: string | null
-  metrics: string[]
+  considerHoliday: boolean;
+  startTime: string | null;
+  endTime: string | null;
+  metrics: string[];
   jiraBoardSetting?: {
-    token: string
-    type: string
-    site: string
-    projectKey: string
-    boardId: string
-    boardColumns: { name: string; value: string }[]
-    treatFlagCardAsBlock: boolean
-    users: string[]
-    assigneeFilter: string
-    targetFields: { key: string; name: string; flag: boolean }[]
-    doneColumn: string[]
-  }
-  csvTimeStamp?: number
+    token: string;
+    type: string;
+    site: string;
+    projectKey: string;
+    boardId: string;
+    boardColumns: { name: string; value: string }[];
+    treatFlagCardAsBlock: boolean;
+    users: string[];
+    assigneeFilter: string;
+    targetFields: { key: string; name: string; flag: boolean }[];
+    doneColumn: string[];
+  };
+  csvTimeStamp?: number;
 }
 
 export interface CSVReportRequestDTO {
-  dataType: string
-  csvTimeStamp: number
-  startDate: string
-  endDate: string
+  dataType: string;
+  csvTimeStamp: number;
+  startDate: string;
+  endDate: string;
 }

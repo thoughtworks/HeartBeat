@@ -1,13 +1,13 @@
-import { DialogContent } from '@mui/material'
-import { OkButton, StyledDialog } from '@src/components/Metrics/ConfigStep/NoDoneCardPop/style'
+import { DialogContent } from '@mui/material';
+import { OkButton, StyledDialog } from '@src/components/Metrics/ConfigStep/NoDoneCardPop/style';
 
 interface NoDoneCardPopProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export const NoCardPop = (props: NoDoneCardPopProps) => {
-  const { isOpen, onClose } = props
+  const { isOpen, onClose } = props;
   return (
     <StyledDialog open={isOpen}>
       <DialogContent>
@@ -15,5 +15,5 @@ export const NoCardPop = (props: NoDoneCardPopProps) => {
       </DialogContent>
       <OkButton onClick={onClose}>Ok</OkButton>
     </StyledDialog>
-  )
-}
+  );
+};

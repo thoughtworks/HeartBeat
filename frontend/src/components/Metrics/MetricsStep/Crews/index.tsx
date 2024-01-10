@@ -1,43 +1,43 @@
-import { FormHelperText } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
-import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveUsers, selectMetricsContent, savePipelineCrews } from '@src/context/Metrics/metricsSlice'
-import { useAppSelector } from '@src/hooks'
-import { AssigneeFilter } from '@src/components/Metrics/MetricsStep/Crews/AssigneeFilter'
-import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
-import { WarningMessage } from '@src/components/Metrics/MetricsStep/Crews/style'
+import { FormHelperText } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { saveUsers, selectMetricsContent, savePipelineCrews } from '@src/context/Metrics/metricsSlice';
+import { useAppSelector } from '@src/hooks';
+import { AssigneeFilter } from '@src/components/Metrics/MetricsStep/Crews/AssigneeFilter';
+import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
+import { WarningMessage } from '@src/components/Metrics/MetricsStep/Crews/style';
 
 interface crewsProps {
-  options: string[]
-  title: string
-  label: string
-  type?: string
+  options: string[];
+  title: string;
+  label: string;
+  type?: string;
 }
 
 export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => {
-  const isBoardCrews = type === 'board'
-  const dispatch = useAppDispatch()
-  const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false)
-  const { users, pipelineCrews } = useAppSelector(selectMetricsContent)
-  const [selectedCrews, setSelectedCrews] = useState(isBoardCrews ? users : pipelineCrews)
-  const isAllSelected = options.length > 0 && selectedCrews.length === options.length
+  const isBoardCrews = type === 'board';
+  const dispatch = useAppDispatch();
+  const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false);
+  const { users, pipelineCrews } = useAppSelector(selectMetricsContent);
+  const [selectedCrews, setSelectedCrews] = useState(isBoardCrews ? users : pipelineCrews);
+  const isAllSelected = options.length > 0 && selectedCrews.length === options.length;
 
   useEffect(() => {
-    setIsEmptyCrewData(selectedCrews.length === 0)
-  }, [selectedCrews])
+    setIsEmptyCrewData(selectedCrews.length === 0);
+  }, [selectedCrews]);
 
   const handleCrewChange = (event: React.SyntheticEvent, value: string[]) => {
     if (value[value.length - 1] === 'All') {
-      setSelectedCrews(selectedCrews.length === options.length ? [] : options)
-      return
+      setSelectedCrews(selectedCrews.length === options.length ? [] : options);
+      return;
     }
-    setSelectedCrews([...value])
-  }
+    setSelectedCrews([...value]);
+  };
 
   useEffect(() => {
-    dispatch(isBoardCrews ? saveUsers(selectedCrews) : savePipelineCrews(selectedCrews))
-  }, [selectedCrews, dispatch])
+    dispatch(isBoardCrews ? saveUsers(selectedCrews) : savePipelineCrews(selectedCrews));
+  }, [selectedCrews, dispatch]);
 
   return (
     <>
@@ -60,5 +60,5 @@ export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => 
         )}
       </FormHelperText>
     </>
-  )
-}
+  );
+};

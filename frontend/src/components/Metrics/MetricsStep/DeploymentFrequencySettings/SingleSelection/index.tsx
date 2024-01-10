@@ -1,45 +1,45 @@
-import { Autocomplete, Box, ListItemText, TextField } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { FormControlWrapper } from './style'
-import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
-import { EmojiWrap, StyledAvatar } from '@src/emojis/style'
-import { Z_INDEX } from '@src/constants/commons'
+import { Autocomplete, Box, ListItemText, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { FormControlWrapper } from './style';
+import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
+import { EmojiWrap, StyledAvatar } from '@src/emojis/style';
+import { Z_INDEX } from '@src/constants/commons';
 
 interface Props {
-  options: string[]
-  label: string
-  value: string
-  id: number
-  onGetSteps?: (pipelineName: string) => void
-  step?: string
-  onUpDatePipeline: (id: number, label: string, value: string) => void
+  options: string[];
+  label: string;
+  value: string;
+  id: number;
+  onGetSteps?: (pipelineName: string) => void;
+  step?: string;
+  onUpDatePipeline: (id: number, label: string, value: string) => void;
 }
 
 /* istanbul ignore next */
 export const SingleSelection = ({ options, label, value, id, onGetSteps, step, onUpDatePipeline }: Props) => {
-  const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`
-  const [selectedOptions, setSelectedOptions] = useState(value)
-  const [inputValue, setInputValue] = useState<string>(value)
+  const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`;
+  const [selectedOptions, setSelectedOptions] = useState(value);
+  const [inputValue, setInputValue] = useState<string>(value);
 
   const handleSelectedOptionsChange = (value: string) => {
-    setSelectedOptions(value)
+    setSelectedOptions(value);
     if (onGetSteps) {
-      onUpDatePipeline(id, 'Step', '')
-      onGetSteps(value)
+      onUpDatePipeline(id, 'Step', '');
+      onGetSteps(value);
     }
-    onUpDatePipeline(id, label, value)
-  }
+    onUpDatePipeline(id, label, value);
+  };
 
   useEffect(() => {
     if (onGetSteps && !!selectedOptions && !step) {
-      onGetSteps(selectedOptions)
+      onGetSteps(selectedOptions);
     }
-  }, [])
+  }, []);
 
   const emojiView = (pipelineStepName: string) => {
-    const emojiUrls: string[] = getEmojiUrls(pipelineStepName)
-    return emojiUrls.map((url) => <StyledAvatar key={url} src={url} />)
-  }
+    const emojiUrls: string[] = getEmojiUrls(pipelineStepName);
+    return emojiUrls.map((url) => <StyledAvatar key={url} src={url} />);
+  };
 
   return (
     <>
@@ -59,11 +59,11 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
           )}
           value={value}
           onChange={(event, newValue: string) => {
-            handleSelectedOptionsChange(newValue)
+            handleSelectedOptionsChange(newValue);
           }}
           inputValue={inputValue}
           onInputChange={(event, newInputValue) => {
-            setInputValue(newInputValue)
+            setInputValue(newInputValue);
           }}
           renderInput={(params) => <TextField required {...params} label={label} variant='standard' />}
           slotProps={{
@@ -76,5 +76,5 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
         />
       </FormControlWrapper>
     </>
-  )
-}
+  );
+};

@@ -1,65 +1,65 @@
-import { createTheme } from '@mui/material/styles'
-import { indigo } from '@mui/material/colors'
-import { FIVE_HUNDRED } from '@src/constants/commons'
-import '@fontsource/roboto'
+import { createTheme } from '@mui/material/styles';
+import { indigo } from '@mui/material/colors';
+import { FIVE_HUNDRED } from '@src/constants/commons';
+import '@fontsource/roboto';
 
 declare module '@mui/material/styles' {
   interface Theme {
     main: {
-      backgroundColor: string
-      color: string
-      secondColor: string
-      fontSize: string
-      boxShadow: string
-      cardShadow: string
-      cardBorder: string
+      backgroundColor: string;
+      color: string;
+      secondColor: string;
+      fontSize: string;
+      boxShadow: string;
+      cardShadow: string;
+      cardBorder: string;
       font: {
-        primary: string
-        secondary: string
-      }
+        primary: string;
+        secondary: string;
+      };
       button: {
         disabled: {
-          backgroundColor: string
-          color: string
-        }
-      }
-    }
+          backgroundColor: string;
+          color: string;
+        };
+      };
+    };
   }
 
   // allow configuration using `createTheme`
   interface ThemeOptions {
     main: {
-      backgroundColor: string
-      color: string
-      secondColor: string
-      fontSize: string
-      boxShadow: string
-      cardShadow: string
-      cardBorder: string
+      backgroundColor: string;
+      color: string;
+      secondColor: string;
+      fontSize: string;
+      boxShadow: string;
+      cardShadow: string;
+      cardBorder: string;
       font: {
-        primary: string
-        secondary: string
-      }
+        primary: string;
+        secondary: string;
+      };
       button: {
         disabled: {
-          backgroundColor: string
-          color: string
-        }
-      }
-    }
+          backgroundColor: string;
+          color: string;
+        };
+      };
+    };
   }
 
   interface Components {
     errorMessage: {
-      color: string
-      paddingBottom: string
-    }
+      color: string;
+      paddingBottom: string;
+    };
     waringMessage: {
-      color: string
-    }
+      color: string;
+    };
     tip: {
-      color: string
-    }
+      color: string;
+    };
   }
 }
 
@@ -125,4 +125,4 @@ export const theme = createTheme({
       color: '#ED6D03CC',
     },
   },
-})
+});

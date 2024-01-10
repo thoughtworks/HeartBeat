@@ -1,6 +1,6 @@
-import React from 'react'
-import Header from '@src/layouts/Header'
-import { ErrorContent } from '@src/components/ErrorContent'
+import React from 'react';
+import Header from '@src/layouts/Header';
+import { ErrorContent } from '@src/components/ErrorContent';
 
 const ErrorPage = () => {
   return (
@@ -8,6 +8,6 @@ const ErrorPage = () => {
       <Header />
       <ErrorContent />
     </>
-  )
-}
-export default ErrorPage
+  );
+};
+export default ErrorPage;

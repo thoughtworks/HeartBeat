@@ -1,4 +1,4 @@
-import { changeFailureRateMapper } from '@src/hooks/reportMapper/changeFailureRate'
+import { changeFailureRateMapper } from '@src/hooks/reportMapper/changeFailureRate';
 
 describe('change failure rate data mapper', () => {
   const mockChangeFailureRateRes = {
@@ -17,7 +17,7 @@ describe('change failure rate data mapper', () => {
         failureRate: 0.0,
       },
     ],
-  }
+  };
   it('maps response change failure rate values to ui display value', () => {
     const expectedChangeFailureRateValues = [
       {
@@ -40,9 +40,9 @@ describe('change failure rate data mapper', () => {
           },
         ],
       },
-    ]
-    const mappedChangeFailureRate = changeFailureRateMapper(mockChangeFailureRateRes)
+    ];
+    const mappedChangeFailureRate = changeFailureRateMapper(mockChangeFailureRateRes);
 
-    expect(mappedChangeFailureRate).toEqual(expectedChangeFailureRateValues)
-  })
-})
+    expect(mappedChangeFailureRate).toEqual(expectedChangeFailureRateValues);
+  });
+});

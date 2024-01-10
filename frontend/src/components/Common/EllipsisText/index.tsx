@@ -1,10 +1,10 @@
-import React from 'react'
-import { StyledText } from '@src/components/Common/EllipsisText/style'
+import React from 'react';
+import { StyledText } from '@src/components/Common/EllipsisText/style';
 
 interface IEllipsisTextProps {
-  children: React.ReactNode
-  fitContent: boolean
-  ref: React.ForwardedRef<HTMLParagraphElement>
+  children: React.ReactNode;
+  fitContent: boolean;
+  ref: React.ForwardedRef<HTMLParagraphElement>;
 }
 
 export default React.forwardRef<HTMLParagraphElement, IEllipsisTextProps>(function RefWrapper(
@@ -15,5 +15,5 @@ export default React.forwardRef<HTMLParagraphElement, IEllipsisTextProps>(functi
     <StyledText {...props} ref={ref}>
       {props.children}
     </StyledText>
-  )
-})
+  );
+});

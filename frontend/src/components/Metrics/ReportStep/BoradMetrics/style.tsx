@@ -1,8 +1,8 @@
-import { styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles';
 
 export const StyledMetricsSection = styled('div')({
   marginTop: '2rem',
-})
+});
 
 export const StyledTitleWrapper = styled('div')({
   display: 'flex',

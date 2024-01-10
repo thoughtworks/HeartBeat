@@ -1,17 +1,17 @@
-import { theme } from '@src/theme'
-import { styled } from '@mui/material/styles'
-import Button from '@mui/material/Button'
-import { DialogContent } from '@mui/material'
+import { theme } from '@src/theme';
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { DialogContent } from '@mui/material';
 
 export const ConformationDialog = styled(DialogContent)({
   margin: '1rem 0 0 0',
-})
+});
 
 export const DialogButtonGroup = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   margin: '1rem 0',
-})
+});
 
 export const YesButton = styled(Button)({
   boxShadow: theme.main.boxShadow,
@@ -22,8 +22,8 @@ export const YesButton = styled(Button)({
   '&:hover': {
     backgroundColor: theme.main.backgroundColor,
   },
-})
+});
 
 export const CancelButton = styled(Button)({
   color: theme.main.secondColor,
-})
+});

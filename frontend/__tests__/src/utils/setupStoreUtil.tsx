@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { stepperSlice } from '@src/context/stepper/StepperSlice'
-import { configSlice } from '@src/context/config/configSlice'
-import { metricsSlice } from '@src/context/Metrics/metricsSlice'
-import { headerSlice } from '@src/context/header/headerSlice'
+import { configureStore } from '@reduxjs/toolkit';
+import { stepperSlice } from '@src/context/stepper/StepperSlice';
+import { configSlice } from '@src/context/config/configSlice';
+import { metricsSlice } from '@src/context/Metrics/metricsSlice';
+import { headerSlice } from '@src/context/header/headerSlice';
 
 export const setupStore = () => {
   return configureStore({
@@ -13,5 +13,5 @@ export const setupStore = () => {
       [headerSlice.name]: headerSlice.reducer,
     },
     middleware: [],
-  })
-}
+  });
+};

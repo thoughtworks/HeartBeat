@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
-import { useAppSelector } from '@src/hooks'
-import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice'
+import React, { useEffect } from 'react';
+import { useAppSelector } from '@src/hooks';
+import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice';
 import {
   BOARD_METRICS,
   CALENDAR,
@@ -43,7 +43,7 @@ const BoardMetrics = ({
   startDate,
   endDate,
 }: BoardMetricsProps) => {
-  const configData = useAppSelector(selectConfig)
+  const configData = useAppSelector(selectConfig);
   const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
     useAppSelector(selectMetricsContent)
   const jiraColumns = useAppSelector(selectJiraColumns)
@@ -54,8 +54,8 @@ const BoardMetrics = ({
   const jiraToken = getJiraBoardToken(token, email)
   const jiraColumnsWithValue = jiraColumns?.map(
     (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
-  )
-  const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric))
+  );
+  const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric));
 
   const getBoardReportRequestBody = (): BoardReportRequestDTO => ({
     metrics: boardMetrics,
@@ -79,8 +79,8 @@ const BoardMetrics = ({
   })
 
   const getBoardItems = () => {
-    const velocity = boardReport?.velocity
-    const cycleTime = boardReport?.cycleTime
+    const velocity = boardReport?.velocity;
+    const cycleTime = boardReport?.cycleTime;
     const velocityItems = boardMetrics.includes(REQUIRED_DATA.VELOCITY)
       ? [
           {
@@ -99,7 +99,7 @@ const BoardMetrics = ({
             ],
           },
         ]
-      : []
+      : [];
 
     const cycleTimeItems = boardMetrics.includes(REQUIRED_DATA.CYCLE_TIME)
       ? [
@@ -117,10 +117,10 @@ const BoardMetrics = ({
             ],
           },
         ]
-      : []
+      : [];
 
-    return [...velocityItems, ...cycleTimeItems]
-  }
+    return [...velocityItems, ...cycleTimeItems];
+  };
 
   useEffect(() => {
     !isBackFromDetail && startToRequestBoardData(getBoardReportRequestBody())
@@ -136,7 +136,7 @@ const BoardMetrics = ({
         <ReportGrid reportDetails={getBoardItems()} />
       </StyledMetricsSection>
     </>
-  )
-}
+  );
+};
 
-export default BoardMetrics
+export default BoardMetrics;

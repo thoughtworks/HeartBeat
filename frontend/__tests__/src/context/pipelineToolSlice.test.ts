@@ -8,11 +8,11 @@ import {
   updatePipelineToolVerifyResponse,
   updatePipelineToolVerifyResponseSteps,
   updatePipelineToolVerifyState,
-} from '@src/context/config/configSlice'
-import configReducer from '@src/context/config/configSlice'
-import initialConfigState from '../initialConfigState'
-import { MOCK_BUILD_KITE_VERIFY_RESPONSE, PIPELINE_TOOL_TYPES } from '../fixtures'
-import { setupStore } from '../utils/setupStoreUtil'
+} from '@src/context/config/configSlice';
+import configReducer from '@src/context/config/configSlice';
+import initialConfigState from '../initialConfigState';
+import { MOCK_BUILD_KITE_VERIFY_RESPONSE, PIPELINE_TOOL_TYPES } from '../fixtures';
+import { setupStore } from '../utils/setupStoreUtil';
 
 describe('pipelineTool reducer', () => {
   const MOCK_PIPElINE_TOOL_VERIFY_RESPONSE = {
@@ -26,7 +26,7 @@ describe('pipelineTool reducer', () => {
         steps: ['step1', 'step2'],
       },
     ],
-  }
+  };
 
   const MOCK_PIPElINE_TOOL_VERIFY_RESPONSE_SORT = {
     pipelineList: [
@@ -47,30 +47,30 @@ describe('pipelineTool reducer', () => {
         steps: ['step3', 'step4'],
       },
     ],
-  }
+  };
 
   const MOCK_DATE_RANGE = {
     startDate: '2023-04-04T00:00:00+08:00',
     endDate: '2023-04-18T00:00:00+08:00',
-  }
+  };
 
   it('should set isPipelineToolVerified false when handle initial state', () => {
-    const result = configReducer(undefined, { type: 'unknown' })
+    const result = configReducer(undefined, { type: 'unknown' });
 
-    expect(result.pipelineTool.isVerified).toEqual(false)
-  })
+    expect(result.pipelineTool.isVerified).toEqual(false);
+  });
 
   it('should set isPipelineToolVerified true when handle updatePipelineToolVerifyState given isPipelineToolVerified is true', () => {
-    const result = configReducer(initialConfigState, updatePipelineToolVerifyState(true))
+    const result = configReducer(initialConfigState, updatePipelineToolVerifyState(true));
 
-    expect(result.pipelineTool.isVerified).toEqual(true)
-  })
+    expect(result.pipelineTool.isVerified).toEqual(true);
+  });
 
   it('should update pipelineTool fields when change pipelineTool fields input', () => {
-    const config = configReducer(initialConfigState, updatePipelineTool({ token: 'abcd' }))
+    const config = configReducer(initialConfigState, updatePipelineTool({ token: 'abcd' }));
 
-    expect(config.pipelineTool.config.token).toEqual('abcd')
-  })
+    expect(config.pipelineTool.config.token).toEqual('abcd');
+  });
 
   it('should update pipelineList when get pipelineTool steps given pipelineList and right params', () => {
     const mockConfigStateHasPipelineList = {
@@ -97,16 +97,16 @@ describe('pipelineTool reducer', () => {
           pipelineCrews: [],
         },
       },
-    }
+    };
     const mockParams = {
       organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].orgName,
       pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].name,
       steps: ['mock steps'],
-    }
+    };
     const pipelineVerifiedResponse = configReducer(
       mockConfigStateHasPipelineList,
       updatePipelineToolVerifyResponseSteps(mockParams)
-    )
+    );
 
     expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
       {
@@ -117,8 +117,8 @@ describe('pipelineTool reducer', () => {
         repository: 'mock repository url',
         steps: ['mock steps'],
       },
-    ])
-  })
+    ]);
+  });
 
   it('should not update pipelineList when get pipelineTool steps given pipelineList and wrong params', () => {
     const mockConfigStateHasPipelineList = {
@@ -145,16 +145,16 @@ describe('pipelineTool reducer', () => {
           pipelineCrews: [],
         },
       },
-    }
+    };
     const mockParams = {
       organization: '',
       pipelineName: '',
       steps: ['mock steps'],
-    }
+    };
     const pipelineVerifiedResponse = configReducer(
       mockConfigStateHasPipelineList,
       updatePipelineToolVerifyResponseSteps(mockParams)
-    )
+    );
 
     expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
       {
@@ -166,35 +166,35 @@ describe('pipelineTool reducer', () => {
         steps: [],
         branches: [],
       },
-    ])
-  })
+    ]);
+  });
 
   it('should return empty pipelineList when get pipelineTool steps given pipelineList is empty', () => {
     const mockParams = {
       organization: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].orgName,
       pipelineName: MOCK_BUILD_KITE_VERIFY_RESPONSE.pipelineList[0].name,
       steps: ['mock steps'],
-    }
+    };
     const pipelineVerifiedResponse = configReducer(
       initialConfigState,
       updatePipelineToolVerifyResponseSteps(mockParams)
-    )
+    );
 
-    expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([])
-  })
+    expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([]);
+  });
 
   describe('pipelineToolVerifyResponse reducer', () => {
     it('should show empty array when handle initial state', () => {
-      const pipelineVerifiedResponse = configReducer(undefined, { type: 'unknown' })
+      const pipelineVerifiedResponse = configReducer(undefined, { type: 'unknown' });
 
-      expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([])
-    })
+      expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([]);
+    });
 
     it('should store pipelineTool data when get network pipelineTool verify response', () => {
       const pipelineVerifiedResponse = configReducer(
         initialConfigState,
         updatePipelineToolVerifyResponse(MOCK_BUILD_KITE_VERIFY_RESPONSE)
-      )
+      );
 
       expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
         {
@@ -205,31 +205,31 @@ describe('pipelineTool reducer', () => {
           repository: 'mock repository url',
           steps: [],
         },
-      ])
-    })
-  })
+      ]);
+    });
+  });
 
   describe('selectPipelineNames', () => {
     it('should return PipelineNames when call selectPipelineNames function', async () => {
-      const store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
-      expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName'])
-    })
+      const store = setupStore();
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE));
+      expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName']);
+    });
 
     it('should sort PipelineNames when call selectPipelineNames function', async () => {
-      const store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE_SORT))
-      expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName', 'MockName'])
-    })
-  })
+      const store = setupStore();
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE_SORT));
+      expect(selectPipelineNames(store.getState(), 'mockOrgName')).toEqual(['mockName', 'MockName']);
+    });
+  });
 
   describe('selectStepsParams', () => {
-    let store = setupStore()
+    let store = setupStore();
     beforeEach(async () => {
-      store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
-      await store.dispatch(updateDateRange(MOCK_DATE_RANGE))
-    })
+      store = setupStore();
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE));
+      await store.dispatch(updateDateRange(MOCK_DATE_RANGE));
+    });
 
     it('should return true StepsParams when call selectStepsParams function given right organization name and pipeline name', async () => {
       expect(selectStepsParams(store.getState(), 'mockOrgName', 'mockName')).toEqual({
@@ -244,8 +244,8 @@ describe('pipelineTool reducer', () => {
         },
         pipelineType: 'BuildKite',
         token: '',
-      })
-    })
+      });
+    });
 
     it('should return StepsParams when call selectStepsParams function given empty organization name and empty pipeline name', async () => {
       expect(selectStepsParams(store.getState(), '', '')).toEqual({
@@ -260,23 +260,23 @@ describe('pipelineTool reducer', () => {
         },
         pipelineType: 'BuildKite',
         token: '',
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('selectSteps', () => {
     it('should return steps when call selectSteps function', async () => {
-      const store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
-      expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual([])
-    })
-  })
+      const store = setupStore();
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE));
+      expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual([]);
+    });
+  });
 
   describe('selectPipelineOrganizations', () => {
     it('should return organizations when call selectPipelineOrganizations function', async () => {
-      const store = setupStore()
-      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE))
-      expect(selectPipelineOrganizations(store.getState())).toEqual(['mockOrgName'])
-    })
-  })
-})
+      const store = setupStore();
+      await store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE));
+      expect(selectPipelineOrganizations(store.getState())).toEqual(['mockOrgName']);
+    });
+  });
+});

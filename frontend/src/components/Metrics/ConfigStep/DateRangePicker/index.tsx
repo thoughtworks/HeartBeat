@@ -1,26 +1,26 @@
-import dayjs from 'dayjs'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch'
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import {
   selectDateRange,
   updateBoardVerifyState,
   updateDateRange,
   updatePipelineToolVerifyState,
   updateSourceControlVerifyState,
-} from '@src/context/config/configSlice'
-import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style'
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import { Z_INDEX } from '@src/constants/commons'
+} from '@src/context/config/configSlice';
+import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { Z_INDEX } from '@src/constants/commons';
 
 export const DateRangePicker = () => {
-  const dispatch = useAppDispatch()
-  const { startDate, endDate } = useAppSelector(selectDateRange)
+  const dispatch = useAppDispatch();
+  const { startDate, endDate } = useAppSelector(selectDateRange);
   const updateVerifyStates = () => {
-    dispatch(updateBoardVerifyState(false))
-    dispatch(updatePipelineToolVerifyState(false))
-    dispatch(updateSourceControlVerifyState(false))
-  }
+    dispatch(updateBoardVerifyState(false));
+    dispatch(updatePipelineToolVerifyState(false));
+    dispatch(updateSourceControlVerifyState(false));
+  };
   const changeStartDate = (value: any) => {
     if (value === null) {
       dispatch(
@@ -28,17 +28,17 @@ export const DateRangePicker = () => {
           startDate: null,
           endDate: null,
         })
-      )
+      );
     } else {
       dispatch(
         updateDateRange({
           startDate: value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
           endDate: value.endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
         })
-      )
+      );
     }
-    updateVerifyStates()
-  }
+    updateVerifyStates();
+  };
 
   const changeEndDate = (value: any) => {
     if (value === null) {
@@ -47,14 +47,14 @@ export const DateRangePicker = () => {
           startDate: startDate,
           endDate: null,
         })
-      )
+      );
     } else {
       dispatch(
         updateDateRange({ startDate: startDate, endDate: value.endOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ') })
-      )
+      );
     }
-    updateVerifyStates()
-  }
+    updateVerifyStates();
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -94,5 +94,5 @@ export const DateRangePicker = () => {
         />
       </StyledDateRangePickerContainer>
     </LocalizationProvider>
-  )
-}
+  );
+};

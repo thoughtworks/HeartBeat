@@ -1,5 +1,5 @@
-export {}
+export {};
 
 module.exports = async () => {
-  process.env.TZ = 'PRC'
-}
+  process.env.TZ = 'PRC';
+};

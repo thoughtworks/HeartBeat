@@ -1,10 +1,10 @@
-import { DateRangeContainer, StyledArrowForward, StyledCalendarToday } from './style'
-import { formatDate } from '@src/utils/util'
+import { DateRangeContainer, StyledArrowForward, StyledCalendarToday } from './style';
+import { formatDate } from '@src/utils/util';
 
 type Props = {
-  startDate: string
-  endDate: string
-}
+  startDate: string;
+  endDate: string;
+};
 
 const DateRangeViewer = ({ startDate, endDate }: Props) => {
   return (
@@ -14,7 +14,7 @@ const DateRangeViewer = ({ startDate, endDate }: Props) => {
       {formatDate(endDate)}
       <StyledCalendarToday />
     </DateRangeContainer>
-  )
-}
+  );
+};
 
-export default DateRangeViewer
+export default DateRangeViewer;

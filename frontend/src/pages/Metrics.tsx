@@ -1,10 +1,10 @@
-import Header from '@src/layouts/Header'
-import MetricsStepper from '@src/components/Metrics/MetricsStepper'
-import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext'
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect'
+import Header from '@src/layouts/Header';
+import MetricsStepper from '@src/components/Metrics/MetricsStepper';
+import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext';
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 
 const Metrics = () => {
-  const props = useNotificationLayoutEffect()
+  const props = useNotificationLayoutEffect();
 
   return (
     <>
@@ -13,7 +13,7 @@ const Metrics = () => {
         <MetricsStepper {...props} />
       </ContextProvider>
     </>
-  )
-}
+  );
+};
 
-export default Metrics
+export default Metrics;

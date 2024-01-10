@@ -32,31 +32,31 @@ class Report {
   }
 
   get showMoreBoardButton() {
-    return cy.contains('Board Metrics').parent().siblings().eq(0)
+    return cy.contains('Board Metrics').parent().siblings().eq(0);
   }
 
   get showMoreDoraButton() {
-    return cy.contains('DORA Metrics').parent().siblings().eq(0)
+    return cy.contains('DORA Metrics').parent().siblings().eq(0);
   }
 
   get topBackButton() {
-    return cy.contains('Back')
+    return cy.contains('Back');
   }
 
   boardGoToReportPage() {
-    this.topBackButton.click()
+    this.topBackButton.click();
   }
 
   doraGoToReportPage() {
-    this.backButton.click()
+    this.backButton.click();
   }
 
   goToBoardDetailPage() {
-    this.showMoreBoardButton.click()
+    this.showMoreBoardButton.click();
   }
 
   goToDoraDetailPage() {
-    this.showMoreDoraButton.click()
+    this.showMoreDoraButton.click();
   }
 
   backToMetricsStep() {

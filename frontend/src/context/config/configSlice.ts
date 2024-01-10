@@ -181,20 +181,20 @@ export const {
   resetImportedData,
 } = configSlice.actions;
 
-export const selectProjectName = (state: RootState) => state.config.basic.projectName
-export const selectCalendarType = (state: RootState) => state.config.basic.calendarType
-export const selectDateRange = (state: RootState) => state.config.basic.dateRange
-export const selectMetrics = (state: RootState) => state.config.basic.metrics
+export const selectProjectName = (state: RootState) => state.config.basic.projectName;
+export const selectCalendarType = (state: RootState) => state.config.basic.calendarType;
+export const selectDateRange = (state: RootState) => state.config.basic.dateRange;
+export const selectMetrics = (state: RootState) => state.config.basic.metrics;
 export const isSelectBoardMetrics = (state: RootState) =>
-  state.config.basic.metrics.some((metric) => BOARD_METRICS.includes(metric))
+  state.config.basic.metrics.some((metric) => BOARD_METRICS.includes(metric));
 export const isSelectDoraMetrics = (state: RootState) =>
-  state.config.basic.metrics.some((metric) => DORA_METRICS.includes(metric))
-export const selectBoard = (state: RootState) => state.config.board.config
-export const isPipelineToolVerified = (state: RootState) => state.config.pipelineTool.isVerified
-export const selectPipelineTool = (state: RootState) => state.config.pipelineTool.config
-export const isSourceControlVerified = (state: RootState) => state.config.sourceControl.isVerified
-export const selectSourceControl = (state: RootState) => state.config.sourceControl.config
-export const selectWarningMessage = (state: RootState) => state.config.warningMessage
+  state.config.basic.metrics.some((metric) => DORA_METRICS.includes(metric));
+export const selectBoard = (state: RootState) => state.config.board.config;
+export const isPipelineToolVerified = (state: RootState) => state.config.pipelineTool.isVerified;
+export const selectPipelineTool = (state: RootState) => state.config.pipelineTool.config;
+export const isSourceControlVerified = (state: RootState) => state.config.sourceControl.isVerified;
+export const selectSourceControl = (state: RootState) => state.config.sourceControl.config;
+export const selectWarningMessage = (state: RootState) => state.config.warningMessage;
 
 export const selectConfig = (state: RootState) => state.config;
 

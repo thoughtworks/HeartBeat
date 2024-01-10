@@ -20,4 +20,4 @@ export default defineConfig({
   modifyObstructiveCode: false,
   //Increase timeout
   defaultCommandTimeout: 10000,
-})
+});

@@ -7,10 +7,10 @@ export const REPORT_PAGE_TYPE = {
   SUMMARY: 'Summary',
   BOARD: 'BoardReport',
   DORA: 'DoraReport',
-}
+};
 
-export const SHOW_MORE = 'show more >'
-export const BACK = 'Back'
+export const SHOW_MORE = 'show more >';
+export const BACK = 'Back';
 
 export enum REQUIRED_DATA {
   All = 'All',

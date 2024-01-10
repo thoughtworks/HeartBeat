@@ -6,7 +6,7 @@ public interface IdUtil {
 
 	String PIPELINE_REPORT_PREFIX = "pipeline-";
 
-	String CODE_BASE_PREFIX = "github-";
+	String SOURCE_CONTROL_PREFIX = "sourceControl-";
 
 	static String getBoardReportId(String timeStamp) {
 		return BOARD_REPORT_PREFIX + timeStamp;
@@ -16,8 +16,8 @@ public interface IdUtil {
 		return PIPELINE_REPORT_PREFIX + timeStamp;
 	}
 
-	static String getCodeBaseReportId(String timeStamp) {
-		return CODE_BASE_PREFIX + timeStamp;
+	static String getSourceControlReportId(String timeStamp) {
+		return SOURCE_CONTROL_PREFIX + timeStamp;
 	}
 
 	static String getTimeStampFromReportId(String reportId) {

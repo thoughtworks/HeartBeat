@@ -203,9 +203,9 @@ public class GenerateReporterService {
 	public void generateBoardReport(GenerateReportRequest request) {
 		initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		log.info(
-				"Start to generate board report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _doraReportId: {}",
+				"Start to generate board report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _boardReportId: {}",
 				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
-				IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
+				IdUtil.getBoardReportId(request.getCsvTimeStamp()));
 		CompletableFuture.runAsync(() -> {
 			try {
 				saveReporterInHandler(generateReporter(request), IdUtil.getBoardReportId(request.getCsvTimeStamp()));
@@ -226,7 +226,7 @@ public class GenerateReporterService {
 		initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		if (Objects.nonNull(metricsDataStatus.isSourceControlMetricsReady())
 				&& metricsDataStatus.isSourceControlMetricsReady()) {
-			generateCodeBaseReport(request);
+			generateSourceControlReport(request);
 		}
 		if (Objects.nonNull(metricsDataStatus.isPipelineMetricsReady()) && metricsDataStatus.isPipelineMetricsReady()) {
 			generatePipelineReport(request);
@@ -237,7 +237,7 @@ public class GenerateReporterService {
 	private void generatePipelineReport(GenerateReportRequest request) {
 		GenerateReportRequest pipelineRequest = request.convertToPipelineRequest(request);
 		log.info(
-				"Start to generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _doraReportId: {}",
+				"Start to generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _pipelineReportId: {}",
 				pipelineRequest.getMetrics(), pipelineRequest.getConsiderHoliday(), pipelineRequest.getStartTime(),
 				pipelineRequest.getEndTime(), IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
 		CompletableFuture.runAsync(() -> {
@@ -257,25 +257,25 @@ public class GenerateReporterService {
 		});
 	}
 
-	private void generateCodeBaseReport(GenerateReportRequest request) {
+	private void generateSourceControlReport(GenerateReportRequest request) {
 		GenerateReportRequest codebaseRequest = request.convertToCodeBaseRequest(request);
 		log.info(
-				"Start to generate codebase report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _doraReportId: {}",
+				"Start to generate source control report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
 				codebaseRequest.getMetrics(), codebaseRequest.getConsiderHoliday(), codebaseRequest.getStartTime(),
-				codebaseRequest.getEndTime(), IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
+				codebaseRequest.getEndTime(), IdUtil.getSourceControlReportId(request.getCsvTimeStamp()));
 		CompletableFuture.runAsync(() -> {
 			try {
 				saveReporterInHandler(generateReporter(codebaseRequest),
-						IdUtil.getCodeBaseReportId(codebaseRequest.getCsvTimeStamp()));
+						IdUtil.getSourceControlReportId(codebaseRequest.getCsvTimeStamp()));
 				updateMetricsDataReadyInHandler(codebaseRequest.getCsvTimeStamp(), codebaseRequest.getMetrics());
 				log.info(
-						"Successfully generate codebase report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _codeBaseReportId: {}",
+						"Successfully generate codebase report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
 						codebaseRequest.getMetrics(), codebaseRequest.getConsiderHoliday(),
 						codebaseRequest.getStartTime(), codebaseRequest.getEndTime(),
-						IdUtil.getCodeBaseReportId(request.getCsvTimeStamp()));
+						IdUtil.getSourceControlReportId(request.getCsvTimeStamp()));
 			}
 			catch (BaseException e) {
-				asyncExceptionHandler.put(IdUtil.getCodeBaseReportId(request.getCsvTimeStamp()), e);
+				asyncExceptionHandler.put(IdUtil.getSourceControlReportId(request.getCsvTimeStamp()), e);
 			}
 		});
 	}
@@ -708,17 +708,17 @@ public class GenerateReporterService {
 	}
 
 	private MetricsDataReady getMetricsStatus(List<String> metrics, Boolean flag) {
-		List<String> lowerMetrics = metrics.stream().map(String::toLowerCase).collect(Collectors.toList());
+		List<String> lowerMetrics = metrics.stream().map(String::toLowerCase).toList();
 		boolean boardMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getBoardMetrics(lowerMetrics));
 		boolean codebaseMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getCodeBaseMetrics(lowerMetrics));
 		boolean buildKiteMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getPipelineMetrics(lowerMetrics));
 		Boolean isBoardMetricsReady = boardMetricsExist ? flag : null;
-		Boolean isCodebaseMetricsReady = codebaseMetricsExist ? flag : null;
-		Boolean isBuildKiteMetricsReady = buildKiteMetricsExist ? flag : null;
+		Boolean isPipelineMetricsReady = buildKiteMetricsExist ? flag : null;
+		Boolean isSourceControlMetricsReady = codebaseMetricsExist ? flag : null;
 		return MetricsDataReady.builder()
 			.isBoardMetricsReady(isBoardMetricsReady)
-			.isPipelineMetricsReady(isBuildKiteMetricsReady)
-			.isSourceControlMetricsReady(isCodebaseMetricsReady)
+			.isPipelineMetricsReady(isPipelineMetricsReady)
+			.isSourceControlMetricsReady(isSourceControlMetricsReady)
 			.build();
 	}
 
@@ -869,7 +869,7 @@ public class GenerateReporterService {
 	public ReportResponse getComposedReportResponse(String reportId, boolean isReportReady) {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getPipelineReportId(reportId));
-		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getCodeBaseReportId(reportId));
+		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getSourceControlReportId(reportId));
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 

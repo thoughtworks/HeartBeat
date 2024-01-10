@@ -152,9 +152,9 @@ describe('ConfigStep', () => {
   });
 
   it('should verify again when date picker is changed given board fields are filled and verified', () => {
-    const { getByRole, getByText, queryByText, getByLabelText } = setup();
+    setup();
     const today = dayjs().format('MM/DD/YYYY');
-    const startDateInput = getByLabelText('From *');
+    const startDateInput = screen.getByLabelText('From *');
 
     fireEvent.mouseDown(screen.getByRole('button', { name: REQUIRED_DATA }));
     const requireDateSelection = within(screen.getByRole('listbox'));
@@ -163,9 +163,9 @@ describe('ConfigStep', () => {
     fireEvent.click(screen.getByText(VERIFY));
     fireEvent.change(startDateInput, { target: { value: today } });
 
-    expect(queryByText(VERIFY)).toBeVisible();
-    expect(queryByText('Verified')).toBeNull();
-    expect(queryByText(RESET)).toBeNull();
+    expect(screen.queryByText(VERIFY)).toBeVisible();
+    expect(screen.queryByText('Verified')).toBeNull();
+    expect(screen.queryByText(RESET)).toBeNull();
   });
 
   it('should show warning message when selectWarningMessage has a value', async () => {

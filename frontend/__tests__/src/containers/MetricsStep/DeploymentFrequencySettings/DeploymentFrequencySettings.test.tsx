@@ -1,4 +1,4 @@
-import { render, within, act, screen } from '@testing-library/react';
+import { render, within, act, screen, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { store } from '@src/store';
 import userEvent from '@testing-library/user-event';

@@ -1,5 +1,5 @@
 import { HttpClient } from '@src/clients/Httpclient'
-import axios, { HttpStatusCode } from 'axios'
+import { HttpStatusCode } from 'axios'
 import { isHeartBeatException } from '@src/exceptions'
 import { IHeartBeatException } from '@src/exceptions/ExceptionType'
 import { PipelineRequestDTO } from '@src/clients/pipeline/dto/request'
@@ -15,20 +15,18 @@ export interface IGetPipelineToolInfoResult {
 
 export class PipelineToolClient extends HttpClient {
   isPipelineToolVerified = false
-  response = {}
 
   verifyPipelineTool = async (params: PipelineRequestDTO) => {
+    let isPipelineToolVerified = false
     try {
-      const result = await this.axiosInstance.post(`/pipelines/${params.type}/verify`, params)
-      this.isPipelineToolVerified = true
+      await this.axiosInstance.post(`/pipelines/${params.type}/verify`, params)
+      isPipelineToolVerified = true
     } catch (e) {
-      this.isPipelineToolVerified = false
+      isPipelineToolVerified = false
       console.error(`Failed to verify ${params.type} token`, e)
       throw e
     }
-    return {
-      isPipelineToolVerified: this.isPipelineToolVerified,
-    }
+    return { isPipelineToolVerified }
   }
 
   getPipelineToolInfo = async (params: PipelineRequestDTO) => {
@@ -54,9 +52,8 @@ export class PipelineToolClient extends HttpClient {
         const exception = e as IHeartBeatException
         result.code = exception.code
         result.errorTitle = ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE
-      } else {
-        result.errorTitle = UNKNOWN_ERROR_TITLE
       }
+
       result.errorMessage = PIPELINE_TOOL_ERROR_MESSAGE
     }
 

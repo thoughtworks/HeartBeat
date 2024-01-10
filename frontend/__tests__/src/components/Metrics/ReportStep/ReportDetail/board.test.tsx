@@ -1,5 +1,5 @@
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
-import { render } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { BoardDetail } from '@src/components/Metrics/ReportStep/ReportDetail'
 import { reportMapper } from '@src/hooks/reportMapper/report'
 import React from 'react'
@@ -13,9 +13,9 @@ describe('board', () => {
 
   it('should render a back link', () => {
     ;(reportMapper as jest.Mock).mockReturnValue({})
-    const { getByText, getByTestId } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-    expect(getByTestId('ArrowBackIcon')).toBeInTheDocument()
-    expect(getByText('Back')).toBeInTheDocument()
+    render(<BoardDetail data={data} onBack={jest.fn()} />)
+    expect(screen.getByTestId('ArrowBackIcon')).toBeInTheDocument()
+    expect(screen.getByText('Back')).toBeInTheDocument()
   })
 
   describe('Velocity', () => {
@@ -26,18 +26,19 @@ describe('board', () => {
           { id: 1, name: 'name2', valueList: [{ value: 2 }] },
         ],
       })
-      const { getByText, getByTestId, container } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Velocity')).toBeInTheDocument()
-      expect(getByTestId('Velocity')).toBeInTheDocument()
-      expect(container.querySelectorAll('tbody > tr').length).toBe(2)
+      render(<BoardDetail data={data} onBack={jest.fn()} />)
+      const velocityTable = screen.getByTestId('Velocity')
+      expect(screen.getByText('Velocity')).toBeInTheDocument()
+      expect(velocityTable).toBeInTheDocument()
+      expect(within(velocityTable).queryAllByTestId('tr').length).toBe(2)
     })
 
     it('should not show velocity when velocity data is not existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
         velocityList: null,
       })
-      const { queryAllByText } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Velocity').length).toEqual(0)
+      render(<BoardDetail data={data} onBack={jest.fn()} />)
+      expect(screen.queryAllByText('Velocity').length).toEqual(0)
     })
   })
 
@@ -50,18 +51,19 @@ describe('board', () => {
           { id: 2, name: 'name3', valueList: [{ value: 3 }] },
         ],
       })
-      const { getByText, getByTestId, container } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Cycle Time')).toBeInTheDocument()
-      expect(getByTestId('Cycle Time')).toBeInTheDocument()
-      expect(container.querySelectorAll('tbody > tr').length).toBe(3)
+      render(<BoardDetail data={data} onBack={jest.fn()} />)
+      const cycleTimeTable = screen.getByTestId('Cycle Time')
+      expect(screen.getByText('Cycle Time')).toBeInTheDocument()
+      expect(cycleTimeTable).toBeInTheDocument()
+      expect(within(cycleTimeTable).queryAllByTestId('tr').length).toBe(3)
     })
 
     it('should not show cycle time when cycle time data is not existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
         cycleTimeList: null,
       })
-      const { queryAllByText } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Cycle Time').length).toEqual(0)
+      render(<BoardDetail data={data} onBack={jest.fn()} />)
+      expect(screen.queryAllByText('Cycle Time').length).toEqual(0)
     })
   })
 
@@ -75,18 +77,20 @@ describe('board', () => {
           { id: 3, name: 'name4', valuesList: [{ name: 'test4', value: 4 }] },
         ],
       })
-      const { getByText, getByTestId, container } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(getByText('Classification')).toBeInTheDocument()
-      expect(getByTestId('Classification')).toBeInTheDocument()
-      expect(container.querySelectorAll('tbody > tr').length).toBe(8)
+
+      render(<BoardDetail data={data} onBack={jest.fn()} />)
+      const classificationTable = screen.getByTestId('Classification')
+      expect(screen.getByText('Classification')).toBeInTheDocument()
+      expect(classificationTable).toBeInTheDocument()
+      expect(within(classificationTable).queryAllByTestId('tr').length).toBe(8)
     })
 
     it('should not show classifications when classifications data is not existing', () => {
       ;(reportMapper as jest.Mock).mockReturnValue({
         classification: null,
       })
-      const { queryAllByText } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-      expect(queryAllByText('Classification').length).toEqual(0)
+      render(<BoardDetail data={data} onBack={jest.fn()} />)
+      expect(screen.queryAllByText('Classification').length).toEqual(0)
     })
   })
 
@@ -103,16 +107,19 @@ describe('board', () => {
         { id: 2, name: 'name3', valuesList: [{ name: 'test3', value: 3 }] },
       ],
     })
-    const { getByText, getByTestId, container } = render(<BoardDetail data={data} onBack={jest.fn()} />)
-    expect(getByText('Velocity')).toBeInTheDocument()
-    expect(getByTestId('Velocity')).toBeInTheDocument()
-    expect(getByText('Cycle Time')).toBeInTheDocument()
-    expect(getByTestId('Cycle Time')).toBeInTheDocument()
-    expect(getByText('Classification')).toBeInTheDocument()
-    expect(getByTestId('Classification')).toBeInTheDocument()
+    render(<BoardDetail data={data} onBack={jest.fn()} />)
+    const velocityTable = screen.getByTestId('Velocity')
+    const cycleTimeTable = screen.getByTestId('Cycle Time')
+    const classificationTable = screen.getByTestId('Classification')
+    expect(screen.getByText('Velocity')).toBeInTheDocument()
+    expect(velocityTable).toBeInTheDocument()
+    expect(screen.getByText('Cycle Time')).toBeInTheDocument()
+    expect(cycleTimeTable).toBeInTheDocument()
+    expect(screen.getByText('Classification')).toBeInTheDocument()
+    expect(classificationTable).toBeInTheDocument()
 
-    expect(container.querySelectorAll('table[data-test-id="Velocity"] > tbody > tr').length).toBe(1)
-    expect(container.querySelectorAll('table[data-test-id="Cycle Time"] > tbody > tr').length).toBe(2)
-    expect(container.querySelectorAll('table[data-test-id="Classification"] > tbody > tr').length).toBe(6)
+    expect(within(velocityTable).queryAllByTestId('tr').length).toBe(1)
+    expect(within(cycleTimeTable).queryAllByTestId('tr').length).toBe(2)
+    expect(within(classificationTable).queryAllByTestId('tr').length).toBe(6)
   })
 })

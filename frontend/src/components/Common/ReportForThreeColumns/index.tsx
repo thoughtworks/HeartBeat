@@ -42,11 +42,11 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
   const renderRows = () =>
     data.slice(0, data.length === 2 && data[1].name === AVERAGE_FIELD ? 1 : data.length).map((row) => (
       <Fragment key={row.id}>
-        <TableRow>
+        <TableRow data-testid={'tr'}>
           <ColumnTableCell rowSpan={row.valuesList.length + 1}>{emojiRow(row)}</ColumnTableCell>
         </TableRow>
         {row.valuesList.map((valuesList) => (
-          <Row key={valuesList.name}>
+          <Row data-testid={'tr'} key={valuesList.name}>
             <BorderTableCell>{valuesList.name}</BorderTableCell>
             <BorderTableCell>{valuesList.value}</BorderTableCell>
           </Row>

@@ -19,14 +19,14 @@ export const ReportForTwoColumns = ({ title, data }: ReportForTwoColumnsProps) =
   const renderRows = () => {
     return data.map((row) => (
       <Fragment key={row.id}>
-        <Row>
+        <Row data-testid={'tr'}>
           <ColumnTableCell rowSpan={row.valueList.length}>{row.name}</ColumnTableCell>
           <BorderTableCell>
             {row.valueList[0]?.unit ? `${row.valueList[0].value}${row.valueList[0].unit}` : row.valueList[0].value}
           </BorderTableCell>
         </Row>
         {row.valueList.slice(1).map((data) => (
-          <Row key={row.id}>
+          <Row data-testid={'tr'} key={row.id}>
             <BorderTableCell>{`${data.value}${data.unit}`}</BorderTableCell>
           </Row>
         ))}

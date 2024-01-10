@@ -20,7 +20,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const reportPath = '/reports'
   const [isServerError, setIsServerError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [reportData, setReportData] = useState<ReportResponseDTO>()
+  const [reportData, setReportData] = useState<ReportResponseDTO | undefined>()
   const timerIdRef = useRef<number>()
   let hasPollingStarted = false
 

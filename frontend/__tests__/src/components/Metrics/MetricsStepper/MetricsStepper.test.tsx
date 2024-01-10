@@ -3,13 +3,13 @@ import MetricsStepper from '@src/components/Metrics/MetricsStepper'
 import { Provider } from 'react-redux'
 import { setupStore } from '../../../utils/setupStoreUtil'
 import {
-  BACK,
+  BASE_PAGE_ROUTE,
   BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
-  BASE_PAGE_ROUTE,
   MOCK_REPORT_URL,
   NEXT,
   PIPELINE_TOOL_TYPES,
+  PREVIOUS,
   PROJECT_NAME_LABEL,
   SAVE,
   SOURCE_CONTROL_TYPES,
@@ -162,124 +162,124 @@ describe('MetricsStepper', () => {
       </Provider>
     )
   it('should show metrics stepper', () => {
-    const { getByText } = setup()
+    setup()
 
     STEPPER.map((label) => {
-      expect(getByText(label)).toBeInTheDocument()
+      expect(screen.getByText(label)).toBeInTheDocument()
     })
 
-    expect(getByText(NEXT)).toBeInTheDocument()
-    expect(getByText(BACK)).toBeInTheDocument()
+    expect(screen.getByText(NEXT)).toBeInTheDocument()
+    expect(screen.getByText(PREVIOUS)).toBeInTheDocument()
   })
 
   it('should show metrics config step when click back button given config step ', async () => {
-    const { getByText } = setup()
+    setup()
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(screen.getByText(PREVIOUS))
 
-    expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
+    expect(screen.getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
   })
 
   it('should show confirm dialog when click back button in config page', async () => {
-    const { getByText } = setup()
+    setup()
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(screen.getByText(PREVIOUS))
 
-    expect(getByText(CONFIRM_DIALOG_DESCRIPTION)).toBeInTheDocument()
+    expect(screen.getByText(CONFIRM_DIALOG_DESCRIPTION)).toBeInTheDocument()
   })
 
   it('should close confirm dialog when click cancel button', async () => {
-    const { getByText, queryByText } = setup()
+    setup()
 
-    await userEvent.click(getByText(BACK))
-    await userEvent.click(getByText(CANCEL))
+    await userEvent.click(screen.getByText(PREVIOUS))
+    await userEvent.click(screen.getByText(CANCEL))
 
-    expect(queryByText(CONFIRM_DIALOG_DESCRIPTION)).not.toBeInTheDocument()
+    expect(screen.queryByText(CONFIRM_DIALOG_DESCRIPTION)).not.toBeInTheDocument()
   })
 
   it('should go to home page when click Yes button', async () => {
-    const { getByText } = setup()
+    setup()
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(screen.getByText(PREVIOUS))
 
-    expect(getByText(YES)).toBeVisible()
+    expect(screen.getByText(YES)).toBeVisible()
 
-    await userEvent.click(getByText(YES))
+    await userEvent.click(screen.getByText(YES))
 
     expect(navigateMock).toHaveBeenCalledTimes(1)
     expect(navigateMock).toHaveBeenCalledWith(BASE_PAGE_ROUTE)
   })
 
   it('should disable next when required data is empty ', async () => {
-    const { getByText } = setup()
+    setup()
     act(() => {
       store.dispatch(updateMetrics([]))
     })
 
-    expect(getByText(NEXT)).toBeDisabled()
+    expect(screen.getByText(NEXT)).toBeDisabled()
   })
 
   it('should disable next when dataRange is empty ', async () => {
-    const { getByText, getByRole } = setup()
+    setup()
     await fillConfigPageData()
 
-    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
-    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
+    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
 
     await userEvent.clear(startDateInput)
     await userEvent.clear(endDateInput)
 
-    expect(getByText(NEXT)).toBeDisabled()
+    expect(screen.getByText(NEXT)).toBeDisabled()
   }, 50000)
 
   it('should disable next when endDate is empty ', async () => {
-    const { getByText, getByRole } = setup()
+    setup()
     await fillConfigPageData()
 
-    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
 
     await userEvent.clear(endDateInput)
 
-    expect(getByText(NEXT)).toBeDisabled()
+    expect(screen.getByText(NEXT)).toBeDisabled()
   })
 
   it('should enable next when every selected component is show and verified', async () => {
-    const { getByText } = setup()
+    setup()
     await fillConfigPageData()
 
-    expect(getByText(NEXT)).toBeEnabled()
+    expect(screen.getByText(NEXT)).toBeEnabled()
   })
 
   it('should disable next when board component is exist but not verified successfully', async () => {
-    const { getByText } = setup()
+    setup()
     act(() => {
       store.dispatch(updateMetrics([VELOCITY]))
       store.dispatch(updateBoardVerifyState(false))
     })
 
-    expect(getByText(NEXT)).toBeDisabled()
+    expect(screen.getByText(NEXT)).toBeDisabled()
   })
 
   it('should go metrics page when click next button given next button enabled', async () => {
-    const { getByText } = setup()
+    setup()
 
     await fillConfigPageData()
-    fireEvent.click(getByText(NEXT))
+    fireEvent.click(screen.getByText(NEXT))
 
-    expect(getByText(METRICS)).toHaveStyle(`color:${stepperColor}`)
+    expect(screen.getByText(METRICS)).toHaveStyle(`color:${stepperColor}`)
   })
 
   it('should show metrics export step when click next button given export step', async () => {
-    const { getByText } = setup()
+    setup()
     await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
+    await userEvent.click(screen.getByText(NEXT))
     await fillMetricsPageDate()
     waitFor(() => {
-      expect(getByText(NEXT)).toBeInTheDocument()
+      expect(screen.getByText(NEXT)).toBeInTheDocument()
     })
-    await userEvent.click(getByText(NEXT))
+    await userEvent.click(screen.getByText(NEXT))
 
-    expect(getByText(REPORT)).toHaveStyle(`color:${stepperColor}`)
+    expect(screen.getByText(REPORT)).toHaveStyle(`color:${stepperColor}`)
   })
 
   it('should export json when click save button', async () => {
@@ -296,9 +296,9 @@ describe('MetricsStepper', () => {
       projectName: '',
       sourceControl: undefined,
     }
-    const { getByText } = setup()
+    setup()
 
-    await userEvent.click(getByText(SAVE))
+    await userEvent.click(screen.getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
   })
@@ -318,10 +318,10 @@ describe('MetricsStepper', () => {
       sourceControl: undefined,
     }
 
-    const { getByText } = setup()
+    setup()
     await fillMetricsData()
 
-    await userEvent.click(getByText(SAVE))
+    await userEvent.click(screen.getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
   })
@@ -347,11 +347,11 @@ describe('MetricsStepper', () => {
       doneStatus: undefined,
       leadTime: undefined,
     }
-    const { getByText } = setup()
+    setup()
 
     await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
-    await userEvent.click(getByText(SAVE))
+    await userEvent.click(screen.getByText(NEXT))
+    await userEvent.click(screen.getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
   }, 50000)
@@ -378,24 +378,24 @@ describe('MetricsStepper', () => {
       leadTime: undefined,
     }
 
-    const { getByText } = setup()
+    setup()
     await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
+    await userEvent.click(screen.getByText(NEXT))
     await fillMetricsPageDate()
     waitFor(() => {
-      expect(getByText(NEXT)).toBeInTheDocument()
+      expect(screen.getByText(NEXT)).toBeInTheDocument()
     })
-    await userEvent.click(getByText(NEXT))
-    await userEvent.click(getByText(SAVE))
+    await userEvent.click(screen.getByText(NEXT))
+    await userEvent.click(screen.getByText(SAVE))
 
     expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
   }, 50000)
 
   it('should clean the config information that is hidden when click next button', async () => {
-    const { getByText } = setup()
+    setup()
 
     await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
+    await userEvent.click(screen.getByText(NEXT))
 
     expect(updateBoard).not.toHaveBeenCalledWith({
       type: BOARD_TYPES.JIRA,

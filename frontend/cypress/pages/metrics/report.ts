@@ -31,6 +31,34 @@ class Report {
     return cy.contains('The file needs to be exported within 30 minutes, otherwise it will expire.')
   }
 
+  get showMoreBoardButton() {
+    return cy.contains('Board Metrics').parent().siblings().eq(0)
+  }
+
+  get showMoreDoraButton() {
+    return cy.contains('DORA Metrics').parent().siblings().eq(0)
+  }
+
+  get topBackButton() {
+    return cy.contains('Back')
+  }
+
+  boardGoToReportPage() {
+    this.topBackButton.click()
+  }
+
+  doraGoToReportPage() {
+    this.backButton.click()
+  }
+
+  goToBoardDetailPage() {
+    this.showMoreBoardButton.click()
+  }
+
+  goToDoraDetailPage() {
+    this.showMoreDoraButton.click()
+  }
+
   backToMetricsStep() {
     this.backButton.click({ force: true })
   }

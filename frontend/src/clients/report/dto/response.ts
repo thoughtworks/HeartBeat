@@ -1,17 +1,18 @@
 import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
+import { Nullable } from '@src/utils/types'
 
 export interface ReportResponseDTO {
-  velocity: VelocityResponse | null
-  cycleTime: CycleTimeResponse | null
-  deploymentFrequency: DeploymentFrequencyResponse | null
-  meanTimeToRecovery: MeanTimeToRecoveryResponse | null
-  leadTimeForChanges: LeadTimeForChangesResponse | null
-  changeFailureRate: ChangeFailureRateResponse | null
-  classificationList: Array<ClassificationResponse> | null
-  exportValidityTime: number | null
-  isBoardMetricsReady: boolean | null
-  isPipelineMetricsReady: boolean | null
-  isSourceControlMetricsReady: boolean | null
+  velocity: Nullable<VelocityResponse>
+  cycleTime: Nullable<CycleTimeResponse>
+  classificationList: Nullable<ClassificationResponse[]>
+  deploymentFrequency: Nullable<DeploymentFrequencyResponse>
+  meanTimeToRecovery: Nullable<MeanTimeToRecoveryResponse>
+  leadTimeForChanges: Nullable<LeadTimeForChangesResponse>
+  changeFailureRate: Nullable<ChangeFailureRateResponse>
+  exportValidityTime: Nullable<number>
+  isBoardMetricsReady: Nullable<boolean>
+  isPipelineMetricsReady: Nullable<boolean>
+  isSourceControlMetricsReady: Nullable<boolean>
   isAllMetricsReady: boolean
 }
 

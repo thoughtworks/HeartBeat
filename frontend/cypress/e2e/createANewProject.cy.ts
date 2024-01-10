@@ -140,13 +140,33 @@ const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) =
     })
 }
 
-// const checkPipelineCalculation = (testId: string) => {
-//   cy.get(testId).find('tr').contains('Deployment frequency(deployments/day)').should('exist')
-// }
+const checkBoardShowMore = () => {
+  reportPage.showMoreBoardButton.should('exist')
+  reportPage.goToBoardDetailPage()
+  cy.get(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`).find('tbody > tr').should('have.length', 2)
+  cy.get(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`).find('tbody > tr').should('have.length', 17)
+  cy.get(`[data-test-id="${METRICS_TITLE.CLASSIFICATION}"]`).find('tbody > tr').should('have.length', 103)
 
-// const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
-//   cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
-// }
+  reportPage.exportBoardData()
+  checkBoardCSV()
+
+  reportPage.boardGoToReportPage()
+}
+
+const checkDoraShowMore = () => {
+  reportPage.showMoreDoraButton.should('exist')
+  reportPage.goToDoraDetailPage()
+
+  cy.get(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`).find('tbody > tr').should('have.length', 2)
+  cy.get(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`).find('tbody > tr').should('have.length', 4)
+  cy.get(`[data-test-id="${METRICS_TITLE.CHANGE_FAILURE_RATE}"]`).find('tbody > tr').should('have.length', 2)
+  cy.get(`[data-test-id="${METRICS_TITLE.MEAN_TIME_TO_RECOVERY}"]`).find('tbody > tr').should('have.length', 2)
+
+  reportPage.exportPipelineData()
+  checkPipelineCSV()
+
+  reportPage.doraGoToReportPage()
+}
 
 const checkCycleTimeTooltip = () => {
   metricsPage.cycleTimeTitleTooltip.trigger('mouseover')
@@ -333,6 +353,9 @@ describe('Create a new project', () => {
     checkBoardCSV()
 
     reportPage.firstNotification.should('not.exist')
+
+    checkBoardShowMore()
+    checkDoraShowMore()
 
     // checkpoint back to metrics step
     reportPage.backToMetricsStep()

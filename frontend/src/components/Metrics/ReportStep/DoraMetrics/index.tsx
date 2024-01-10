@@ -8,6 +8,7 @@ import {
   REPORT_PAGE,
   METRICS_TITLE,
   REQUIRED_DATA,
+  SHOW_MORE,
 } from '@src/constants/resources'
 import { ReportRequestDTO } from '@src/clients/report/dto/request'
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice'
@@ -18,16 +19,28 @@ import { ReportGrid } from '@src/components/Common/ReportGrid'
 import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { StyledSpacing } from '@src/components/Metrics/ReportStep/style'
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util'
+import { StyledShowMore, StyledTitleWrapper } from '@src/components/Metrics/ReportStep/DoraMetrics/style'
+import { Nullable } from '@src/utils/types'
 
 interface DoraMetricsProps {
   startToRequestDoraData: (request: ReportRequestDTO) => void
+  onShowDetail: () => void
   doraReport?: ReportResponseDTO
   csvTimeStamp: number
-  startDate: string | null
-  endDate: string | null
+  startDate: Nullable<string>
+  endDate: Nullable<string>
+  isBackFromDetail: boolean
 }
 
-const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDate, endDate }: DoraMetricsProps) => {
+const DoraMetrics = ({
+  isBackFromDetail,
+  startToRequestDoraData,
+  onShowDetail,
+  doraReport,
+  csvTimeStamp,
+  startDate,
+  endDate,
+}: DoraMetricsProps) => {
   const configData = useAppSelector(selectConfig)
   const { pipelineTool, sourceControl } = configData
   const { metrics, calendarType } = configData.basic
@@ -162,13 +175,18 @@ const DoraMetrics = ({ startToRequestDoraData, doraReport, csvTimeStamp, startDa
   }
 
   useEffect(() => {
-    startToRequestDoraData(getDoraReportRequestBody())
+    !isBackFromDetail && startToRequestDoraData(getDoraReportRequestBody())
   }, [])
 
   return (
     <>
       <StyledMetricsSection>
-        <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
+        <StyledTitleWrapper>
+          <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
+          {(doraReport?.isPipelineMetricsReady || doraReport?.isSourceControlMetricsReady) && (
+            <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
+          )}
+        </StyledTitleWrapper>
         {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
         <StyledSpacing />
         <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} />

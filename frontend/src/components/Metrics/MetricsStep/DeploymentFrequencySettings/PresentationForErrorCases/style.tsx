@@ -31,7 +31,7 @@ export const StyledTitle = styled(Box)({
 })
 
 export const StyledMessage = styled(Box)({
-  fontSize: '15px',
+  fontSize: '0.9375rem',
   fontWeight: 400,
   paddingBottom: '2rem',
   textAlign: 'center',

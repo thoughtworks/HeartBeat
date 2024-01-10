@@ -268,12 +268,10 @@ describe('Report Step', () => {
       async (requiredData) => {
         setup([requiredData])
 
-        const showMore = screen.getByText(SHOW_MORE)
-
-        await userEvent.click(showMore)
+        await userEvent.click(screen.getByText(SHOW_MORE))
 
         await waitFor(() => {
-          waitForElementToBeRemoved(showMore)
+          expect(screen.queryByText(SHOW_MORE)).not.toBeInTheDocument()
         })
         expect(screen.getByText(BACK)).toBeInTheDocument()
       }

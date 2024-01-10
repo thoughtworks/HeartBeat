@@ -6,7 +6,6 @@ import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.service.report.GenerateReporterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,8 +31,6 @@ import java.util.concurrent.CompletableFuture;
 public class GenerateReportController {
 
 	private final GenerateReporterService generateReporterService;
-
-	private final AsyncExceptionHandler asyncExceptionHandler;
 
 	@Value("${callback.interval}")
 	private Integer interval;

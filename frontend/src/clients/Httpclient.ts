@@ -25,17 +25,17 @@ export class HttpClient {
           const errorMessage = data?.hintInfo ?? statusText
           switch (status) {
             case HttpStatusCode.BadRequest:
-              throw new BadRequestException(errorMessage)
+              throw new BadRequestException(errorMessage, status)
             case HttpStatusCode.Unauthorized:
-              throw new UnauthorizedException(errorMessage)
+              throw new UnauthorizedException(errorMessage, status)
             case HttpStatusCode.NotFound:
-              throw new NotFoundException(errorMessage)
+              throw new NotFoundException(errorMessage, status)
             case HttpStatusCode.Forbidden:
-              throw new ForbiddenException(errorMessage)
+              throw new ForbiddenException(errorMessage, status)
             case HttpStatusCode.InternalServerError:
-              throw new InternalServerException(errorMessage)
+              throw new InternalServerException(errorMessage, status)
             case HttpStatusCode.ServiceUnavailable:
-              throw new TimeoutException(errorMessage)
+              throw new TimeoutException(errorMessage, status)
             default:
               throw new UnknownException()
           }

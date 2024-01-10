@@ -4,6 +4,7 @@ import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect'
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_EXPORT_CSV_REQUEST_PARAMS } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
 import { NotFoundException } from '@src/exceptions/NotFoundException'
+import { HttpStatusCode } from 'axios'
 
 describe('use export csv effect', () => {
   afterEach(() => {
@@ -27,7 +28,7 @@ describe('use export csv effect', () => {
 
   it('should set error message when export csv response status 500', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message')
+      throw new InternalServerException('error message', HttpStatusCode.InternalServerError)
     })
     const { result } = renderHook(() => useExportCsvEffect())
 
@@ -40,7 +41,7 @@ describe('use export csv effect', () => {
 
   it('should set error message when export csv response status 404', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw new NotFoundException('error message')
+      throw new NotFoundException('error message', HttpStatusCode.NotFound)
     })
     const { result } = renderHook(() => useExportCsvEffect())
 

@@ -3,6 +3,7 @@ import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect'
 import { boardClient } from '@src/clients/board/BoardClient'
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_BOARD_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
+import { HttpStatusCode } from 'axios'
 
 describe('use verify board state', () => {
   it('should initial data state when render hook', async () => {
@@ -28,7 +29,7 @@ describe('use verify board state', () => {
   })
   it('should set error message when get verify board response status 500', async () => {
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message')
+      throw new InternalServerException('error message', HttpStatusCode.InternalServerError)
     })
     const { result } = renderHook(() => useVerifyBoardEffect())
 

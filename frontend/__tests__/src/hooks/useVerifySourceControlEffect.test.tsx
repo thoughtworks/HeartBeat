@@ -3,6 +3,7 @@ import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlE
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient'
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures'
 import { InternalServerException } from '@src/exceptions/InternalServerException'
+import { HttpStatusCode } from 'axios'
 
 describe('use verify sourceControl state', () => {
   it('should initial data state when render hook', async () => {
@@ -30,7 +31,7 @@ describe('use verify sourceControl state', () => {
 
   it('should set error message when get verify sourceControl response status 500', async () => {
     sourceControlClient.getVerifySourceControl = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message')
+      throw new InternalServerException('error message', HttpStatusCode.InternalServerError)
     })
     const { result } = renderHook(() => useVerifySourceControlEffect())
 

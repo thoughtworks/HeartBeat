@@ -112,9 +112,9 @@ class JiraServiceTest {
 
 	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
 
-	private final BoardType boardTypeJira = BoardType.fromValue("jira");
+	private final BoardType boardTypeJira = BoardType.fromStyle("next-gen");
 
-	private final BoardType boardTypeClassicJira = BoardType.fromValue("classic-jira");
+	private final BoardType boardTypeClassicJira = BoardType.fromStyle("classic");
 
 	private static final String ALL_CARDS_JQL = "status changed during (%s, %s)";
 
@@ -159,6 +159,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -260,6 +261,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetJiraBoardConfigHasTwoPage() throws IOException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -340,6 +342,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndReturnBoardConfigResponseWhenGetClassicJiraBoardConfig()
 			throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
@@ -424,6 +427,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowParamExceptionWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -472,10 +476,11 @@ class JiraServiceTest {
 
 		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed when call Jira to verify board, cause is");
+			.hasMessageContaining("Failed to call Jira to verify board, cause is");
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowNotFoundExceptionWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -532,6 +537,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowNonContentCodeWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -582,6 +588,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldCallJiraFeignClientAndThrowNonColumnWhenGetJiraBoardConfig() {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO noneStatusSelf = NONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -600,7 +607,7 @@ class JiraServiceTest {
 			jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
 		});
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed when call Jira to get board config, cause is");
+			.hasMessageContaining("Failed to call Jira to get board config, cause is");
 	}
 
 	@Test
@@ -624,7 +631,7 @@ class JiraServiceTest {
 			jiraService.getInfo(boardTypeJira, boardRequestParam);
 		});
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed when call Jira to get board config, cause is");
+			.hasMessageContaining("Failed to call Jira to get board config, cause is");
 	}
 
 	@Test
@@ -661,6 +668,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetJiraConfigurationThrowsUnExpectedException() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -692,6 +700,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldReturnAssigneeNameFromDoneCardWhenGetAssigneeSet() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
@@ -750,6 +759,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetTargetFieldFailed() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -782,6 +792,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetTargetFieldReturnNull() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -812,6 +823,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowExceptionWhenGetTargetFieldReturnEmpty() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
@@ -850,6 +862,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowCustomExceptionWhenGetJiraBoardConfig() {
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 
@@ -872,6 +885,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardConfigFailed() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -995,6 +1009,16 @@ class JiraServiceTest {
 		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), null))
 			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("Board type does not find!");
+	}
+
+	@Test
+	void shouldReturnBadRequestExceptionWhenBoardStyleIsNotCorrect() {
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		when(jiraFeignClient.getProject(any(), any(), any()))
+			.thenReturn(JiraBoardProject.builder().style("unknown").build());
+		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, boardRequestParam))
+			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Board type does not find!");
 	}
 
@@ -1255,6 +1279,7 @@ class JiraServiceTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldFilterOutUnreasonableTargetField() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = CLASSIC_JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();

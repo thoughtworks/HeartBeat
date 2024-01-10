@@ -22,6 +22,7 @@ public class JiraController {
 
 	private final JiraService jiraService;
 
+	@Deprecated
 	@PostMapping("/{boardType}")
 	public BoardConfigDTO getBoard(@PathVariable @NotBlank BoardType boardType,
 			@Valid @RequestBody BoardRequestParam boardRequestParam) {

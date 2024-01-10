@@ -47,7 +47,7 @@ public class GenerateReportRequest {
 		return result;
 	}
 
-	public GenerateReportRequest convertToCodeBaseRequest(GenerateReportRequest request) {
+	public GenerateReportRequest convertToSourceControlRequest(GenerateReportRequest request) {
 		List<String> codebaseMetrics = MetricsUtil
 			.getCodeBaseMetrics(request.getMetrics().stream().map(String::toLowerCase).toList());
 		Gson gson = new Gson();

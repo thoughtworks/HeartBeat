@@ -72,7 +72,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import heartbeat.util.IdUtil;
@@ -258,20 +257,22 @@ public class GenerateReporterService {
 	}
 
 	private void generateSourceControlReport(GenerateReportRequest request) {
-		GenerateReportRequest codebaseRequest = request.convertToCodeBaseRequest(request);
+		GenerateReportRequest sourceControlRequest = request.convertToSourceControlRequest(request);
 		log.info(
 				"Start to generate source control report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
-				codebaseRequest.getMetrics(), codebaseRequest.getConsiderHoliday(), codebaseRequest.getStartTime(),
-				codebaseRequest.getEndTime(), IdUtil.getSourceControlReportId(request.getCsvTimeStamp()));
+				sourceControlRequest.getMetrics(), sourceControlRequest.getConsiderHoliday(),
+				sourceControlRequest.getStartTime(), sourceControlRequest.getEndTime(),
+				IdUtil.getSourceControlReportId(request.getCsvTimeStamp()));
 		CompletableFuture.runAsync(() -> {
 			try {
-				saveReporterInHandler(generateReporter(codebaseRequest),
-						IdUtil.getSourceControlReportId(codebaseRequest.getCsvTimeStamp()));
-				updateMetricsDataReadyInHandler(codebaseRequest.getCsvTimeStamp(), codebaseRequest.getMetrics());
+				saveReporterInHandler(generateReporter(sourceControlRequest),
+						IdUtil.getSourceControlReportId(sourceControlRequest.getCsvTimeStamp()));
+				updateMetricsDataReadyInHandler(sourceControlRequest.getCsvTimeStamp(),
+						sourceControlRequest.getMetrics());
 				log.info(
 						"Successfully generate codebase report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
-						codebaseRequest.getMetrics(), codebaseRequest.getConsiderHoliday(),
-						codebaseRequest.getStartTime(), codebaseRequest.getEndTime(),
+						sourceControlRequest.getMetrics(), sourceControlRequest.getConsiderHoliday(),
+						sourceControlRequest.getStartTime(), sourceControlRequest.getEndTime(),
 						IdUtil.getSourceControlReportId(request.getCsvTimeStamp()));
 			}
 			catch (BaseException e) {

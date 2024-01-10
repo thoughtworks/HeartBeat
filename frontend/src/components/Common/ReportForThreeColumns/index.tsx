@@ -1,31 +1,31 @@
-import { Table, TableBody, TableHead, TableRow } from '@mui/material'
+import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import {
   BorderTableCell,
   ColumnTableCell,
   Container,
   Row,
   StyledTableCell,
-} from '@src/components/Common/ReportForTwoColumns/style'
-import React, { Fragment } from 'react'
-import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
-import { AVERAGE_FIELD, REPORT_SUFFIX_UNITS } from '@src/constants/resources'
-import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji'
-import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style'
-import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
+} from '@src/components/Common/ReportForTwoColumns/style';
+import React, { Fragment } from 'react';
+import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
+import { AVERAGE_FIELD, REPORT_SUFFIX_UNITS } from '@src/constants/resources';
+import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
+import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style';
+import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style';
 
 interface ReportForThreeColumnsProps {
-  title: string
-  fieldName: string
-  listName: string
-  data: ReportDataWithThreeColumns[]
+  title: string;
+  fieldName: string;
+  listName: string;
+  data: ReportDataWithThreeColumns[];
 }
 
 export const ReportForThreeColumns = ({ title, fieldName, listName, data }: ReportForThreeColumnsProps) => {
   const emojiRow = (row: ReportDataWithThreeColumns) => {
-    const { name } = row
-    const emojiUrls: string[] = getEmojiUrls(name)
+    const { name } = row;
+    const emojiUrls: string[] = getEmojiUrls(name);
     if (name.includes(':') && emojiUrls.length > 0) {
-      const [prefix, suffix] = row.name.split('/')
+      const [prefix, suffix] = row.name.split('/');
       return (
         <EmojiWrap>
           <StyledTypography>{prefix}/</StyledTypography>
@@ -34,10 +34,10 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
           ))}
           <StyledTypography>{removeExtraEmojiName(suffix)}</StyledTypography>
         </EmojiWrap>
-      )
+      );
     }
-    return <StyledTypography>{name}</StyledTypography>
-  }
+    return <StyledTypography>{name}</StyledTypography>;
+  };
 
   const renderRows = () =>
     data.slice(0, data.length === 2 && data[1].name === AVERAGE_FIELD ? 1 : data.length).map((row) => (
@@ -52,7 +52,7 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
           </Row>
         ))}
       </Fragment>
-    ))
+    ));
 
   return (
     <>
@@ -75,7 +75,7 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
         </Table>
       </Container>
     </>
-  )
-}
+  );
+};
 
-export default ReportForThreeColumns
+export default ReportForThreeColumns;

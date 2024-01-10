@@ -1,4 +1,4 @@
-import { classificationMapper } from '@src/hooks/reportMapper/classification'
+import { classificationMapper } from '@src/hooks/reportMapper/classification';
 
 describe('classification data mapper', () => {
   const mockClassificationRes = [
@@ -19,7 +19,7 @@ describe('classification data mapper', () => {
         },
       ],
     },
-  ]
+  ];
   it('maps response Classification values to ui display value', () => {
     const expectedClassificationValues = [
       {
@@ -31,9 +31,9 @@ describe('classification data mapper', () => {
           { name: 'Feature Work - Unplanned', value: '7.14%' },
         ],
       },
-    ]
-    const mappedClassifications = classificationMapper(mockClassificationRes)
+    ];
+    const mappedClassifications = classificationMapper(mockClassificationRes);
 
-    expect(mappedClassifications).toEqual(expectedClassificationValues)
-  })
-})
+    expect(mappedClassifications).toEqual(expectedClassificationValues);
+  });
+});

@@ -1,7 +1,7 @@
 export interface ISourceControlVerifyResponse {
-  repoList: string[]
+  repoList: string[];
 }
 
 export const initSourceControlVerifyResponseState: ISourceControlVerifyResponse = {
   repoList: [],
-}
+};

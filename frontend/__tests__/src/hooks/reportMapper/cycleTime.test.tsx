@@ -1,4 +1,4 @@
-import { cycleTimeMapper } from '@src/hooks/reportMapper/cycleTime'
+import { cycleTimeMapper } from '@src/hooks/reportMapper/cycleTime';
 
 describe('cycleTime data mapper', () => {
   const mockCycleTimeRes = {
@@ -19,7 +19,7 @@ describe('cycleTime data mapper', () => {
         totalTime: 3.21,
       },
     ],
-  }
+  };
   it('maps response cycleTime values to ui display value', () => {
     const expectedCycleValues = [
       {
@@ -48,9 +48,9 @@ describe('cycleTime data mapper', () => {
           { value: '0.23', unit: '(days/card)' },
         ],
       },
-    ]
-    const mappedCycleValues = cycleTimeMapper(mockCycleTimeRes)
+    ];
+    const mappedCycleValues = cycleTimeMapper(mockCycleTimeRes);
 
-    expect(mappedCycleValues).toEqual(expectedCycleValues)
-  })
-})
+    expect(mappedCycleValues).toEqual(expectedCycleValues);
+  });
+});

@@ -1,19 +1,19 @@
-import { Checkbox, createFilterOptions, TextField } from '@mui/material'
-import React from 'react'
-import { StyledAutocompleted } from './styles'
-import { Z_INDEX } from '@src/constants/commons'
+import { Checkbox, createFilterOptions, TextField } from '@mui/material';
+import React from 'react';
+import { StyledAutocompleted } from './styles';
+import { Z_INDEX } from '@src/constants/commons';
 
 type Props = {
-  optionList: string[]
-  selectedOption: string[]
+  optionList: string[];
+  selectedOption: string[];
   // There is an any because m-ui strictly define its type, but the parameters are not that strict. Maybe because of version diff
-  onChangeHandler: any
-  isSelectAll: boolean
-  textFieldLabel: string
-  isError: boolean
-  testId?: string
-  isBoardCrews?: boolean
-}
+  onChangeHandler: any;
+  isSelectAll: boolean;
+  textFieldLabel: string;
+  isError: boolean;
+  testId?: string;
+  isBoardCrews?: boolean;
+};
 const MultiAutoComplete = ({
   optionList,
   selectedOption,
@@ -24,7 +24,7 @@ const MultiAutoComplete = ({
   testId,
   isBoardCrews = true,
 }: Props) => {
-  const filter = createFilterOptions()
+  const filter = createFilterOptions();
 
   return (
     <StyledAutocompleted
@@ -34,19 +34,19 @@ const MultiAutoComplete = ({
       disableCloseOnSelect
       value={selectedOption}
       filterOptions={(options, params) => {
-        const filtered = filter(options, params)
-        return ['All', ...filtered]
+        const filtered = filter(options, params);
+        return ['All', ...filtered];
       }}
       getOptionLabel={(option) => option as string}
       onChange={onChangeHandler}
       renderOption={(props, option, { selected }) => {
-        const selectAllProps = option === 'All' ? { checked: isSelectAll } : {}
+        const selectAllProps = option === 'All' ? { checked: isSelectAll } : {};
         return (
           <li {...props}>
             <Checkbox style={{ marginRight: 8 }} checked={selected} {...selectAllProps} />
             {option as string}
           </li>
-        )
+        );
       }}
       renderInput={(params) => (
         <TextField
@@ -65,7 +65,7 @@ const MultiAutoComplete = ({
         },
       }}
     />
-  )
-}
+  );
+};
 
-export default MultiAutoComplete
+export default MultiAutoComplete;

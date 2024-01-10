@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react'
-import { DURATION } from '@src/constants/commons'
+import { useEffect, useState } from 'react';
+import { DURATION } from '@src/constants/commons';
 
 export interface NotificationTipProps {
-  title: string
-  open: boolean
-  closeAutomatically: boolean
-  durationTimeout?: number
+  title: string;
+  open: boolean;
+  closeAutomatically: boolean;
+  durationTimeout?: number;
 }
 
 export interface useNotificationLayoutEffectInterface {
-  notificationProps?: NotificationTipProps
-  resetProps?: () => void
-  updateProps?: (notificationProps: NotificationTipProps) => void
+  notificationProps?: NotificationTipProps;
+  resetProps?: () => void;
+  updateProps?: (notificationProps: NotificationTipProps) => void;
 }
 
 export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterface => {
@@ -20,7 +20,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
     title: '',
     closeAutomatically: false,
     durationTimeout: DURATION.NOTIFICATION_TIME,
-  })
+  });
 
   const resetProps = () => {
     setNotificationProps(() => ({
@@ -28,25 +28,25 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
       title: '',
       closeAutomatically: false,
       durationTimeout: DURATION.NOTIFICATION_TIME,
-    }))
-  }
+    }));
+  };
 
   const updateProps = (notificationProps: NotificationTipProps) => {
-    setNotificationProps(notificationProps)
-  }
+    setNotificationProps(notificationProps);
+  };
 
   const closeAutomatically = () => {
     const durationTimeout = notificationProps.durationTimeout
       ? notificationProps.durationTimeout
-      : DURATION.NOTIFICATION_TIME
+      : DURATION.NOTIFICATION_TIME;
     window.setTimeout(() => {
-      resetProps()
-    }, durationTimeout)
-  }
+      resetProps();
+    }, durationTimeout);
+  };
 
   useEffect(() => {
-    notificationProps?.closeAutomatically && closeAutomatically()
-  }, [notificationProps])
+    notificationProps?.closeAutomatically && closeAutomatically();
+  }, [notificationProps]);
 
-  return { notificationProps, resetProps, updateProps }
-}
+  return { notificationProps, resetProps, updateProps };
+};

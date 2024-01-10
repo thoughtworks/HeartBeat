@@ -1,5 +1,5 @@
 // <reference types="cypress" />
-import fs = require('fs')
+import fs = require('fs');
 
 module.exports = (on) => {
   on('task', {
@@ -7,12 +7,12 @@ module.exports = (on) => {
       return new Promise((resolve, reject) => {
         fs.readdir(path, (err, files) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(files)
+            resolve(files);
           }
-        })
-      })
+        });
+      });
     },
-  })
-}
+  });
+};

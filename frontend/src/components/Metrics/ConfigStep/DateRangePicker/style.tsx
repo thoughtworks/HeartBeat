@@ -1,6 +1,6 @@
-import { styled } from '@mui/material/styles'
-import { theme } from '@src/theme'
-import { DatePicker } from '@mui/x-date-pickers'
+import { styled } from '@mui/material/styles';
+import { theme } from '@src/theme';
+import { DatePicker } from '@mui/x-date-pickers';
 export const StyledDateRangePickerContainer = styled('div')({
   display: 'flex',
   width: '100%',
@@ -10,7 +10,7 @@ export const StyledDateRangePickerContainer = styled('div')({
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column',
   },
-})
+});
 
 export const StyledDateRangePicker = styled(DatePicker)({
   width: '50%',
@@ -20,4 +20,4 @@ export const StyledDateRangePicker = styled(DatePicker)({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
   },
-})
+});

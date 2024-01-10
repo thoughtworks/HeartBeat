@@ -1,6 +1,6 @@
-import styled from '@emotion/styled'
-import { ArrowForward, CalendarToday } from '@mui/icons-material'
-import { theme } from '@src/theme'
+import styled from '@emotion/styled';
+import { ArrowForward, CalendarToday } from '@mui/icons-material';
+import { theme } from '@src/theme';
 
 export const DateRangeContainer = styled.div({
   display: 'flex',
@@ -14,16 +14,16 @@ export const DateRangeContainer = styled.div({
   padding: '.75rem',
   color: theme.palette.text.disabled,
   fontSize: '.875rem',
-})
+});
 
 export const StyledArrowForward = styled(ArrowForward)({
   color: theme.palette.text.disabled,
   margin: '0 .5rem',
   fontSize: '.875rem',
-})
+});
 
 export const StyledCalendarToday = styled(CalendarToday)({
   color: theme.palette.text.disabled,
   marginLeft: '1rem',
   fontSize: '.875rem',
-})
+});

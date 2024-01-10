@@ -4,7 +4,7 @@ import {
   CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE,
   PIPELINE_TOOL_TYPES,
   SOURCE_CONTROL_TYPES,
-} from './fixtures'
+} from './fixtures';
 
 const updatedConfigState = {
   isProjectCreated: true,
@@ -57,6 +57,6 @@ const updatedConfigState = {
     },
   },
   warningMessage: CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE,
-}
+};
 
-export default updatedConfigState
+export default updatedConfigState;

@@ -1,5 +1,6 @@
 import { withGoBack } from '@src/components/Metrics/ReportStep/ReportDetail/withBack'
 import { render, fireEvent, screen } from '@testing-library/react'
+import React from 'react'
 
 describe('withGoBack', () => {
   const onBack = jest.fn()

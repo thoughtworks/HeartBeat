@@ -131,7 +131,7 @@ const BoardMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {boardReport?.isBoardMetricsReady && <StyledShowMore onClick={onShowDetail}>{'show more >'}</StyledShowMore>}
+          {boardReport?.isBoardMetricsReady && <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>}
         </StyledTitleWrapper>
         <ReportGrid reportDetails={getBoardItems()} />
       </StyledMetricsSection>

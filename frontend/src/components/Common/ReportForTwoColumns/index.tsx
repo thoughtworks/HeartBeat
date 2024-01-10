@@ -9,6 +9,7 @@ import {
 import { Fragment } from 'react'
 import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure'
 import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style'
+import React from 'react'
 
 interface ReportForTwoColumnsProps {
   title: string

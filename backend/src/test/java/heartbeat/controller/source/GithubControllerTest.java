@@ -67,7 +67,7 @@ class GithubControllerTest {
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
 
 		mockMvc
-			.perform(post("/source-control/GitHub/verify")
+			.perform(post("/source-control/github/verify")
 				.content(new ObjectMapper().writeValueAsString(sourceControlDTO))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent());
@@ -82,7 +82,7 @@ class GithubControllerTest {
 		doNothing().when(gitHubVerifyService).verifyCanReadTargetBranch("fake/repo", "main", GITHUB_TOKEN);
 
 		mockMvc
-			.perform(post("/source-control/GitHub/repos/branches/main/verify")
+			.perform(post("/source-control/github/repos/branches/main/verify")
 				.content(new ObjectMapper().writeValueAsString(verifyBranchRequest))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent());
@@ -161,7 +161,7 @@ class GithubControllerTest {
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
 
 		final var response = mockMvc
-			.perform(post("/source-control/github/verify")
+			.perform(post("/source-control/GitHub/verify")
 				.content(new ObjectMapper().writeValueAsString(sourceControlDTO))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
@@ -181,7 +181,7 @@ class GithubControllerTest {
 			.build();
 
 		final var response = mockMvc
-			.perform(post("/source-control/github/repos/branches/main/verify")
+			.perform(post("/source-control/GitHub/repos/branches/main/verify")
 				.content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())

@@ -41,6 +41,10 @@ import java.util.stream.Collectors;
 @Log4j2
 public class GitHubService {
 
+	public static final String TOKEN_TITLE = "token ";
+
+	public static final String BEARER_TITLE = "Bearer ";
+
 	private final ThreadPoolTaskExecutor customTaskExecutor;
 
 	private final GitHubFeignClient gitHubFeignClient;
@@ -53,7 +57,7 @@ public class GitHubService {
 	@Deprecated
 	public GitHubResponse verifyToken(String githubToken) {
 		try {
-			String token = "token " + githubToken;
+			String token = TOKEN_TITLE + githubToken;
 			log.info("Start to query repository url by token");
 			CompletableFuture<List<GitHubRepo>> githubReposByUserFuture = CompletableFuture
 				.supplyAsync(() -> gitHubFeignClient.getAllRepos(token), customTaskExecutor);
@@ -91,7 +95,7 @@ public class GitHubService {
 
 	public void verifyTokenV2(String githubToken) {
 		try {
-			String token = "token " + githubToken;
+			String token = TOKEN_TITLE + githubToken;
 			log.info("Start to request github with token");
 			gitHubFeignClient.verifyToken(token);
 			log.info("Successfully verify token from github");
@@ -109,22 +113,23 @@ public class GitHubService {
 
 	public void verifyCanReadTargetBranch(String repository, String branch, String githubToken) {
 		try {
-			String token = "token " + githubToken;
-			log.info("Start to request github with token");
+			String token = TOKEN_TITLE + githubToken;
+			log.info("Start to request github branch: {}", branch);
 			gitHubFeignClient.verifyCanReadTargetBranch(GithubUtil.getGithubUrlFullName(repository), branch, token);
-			log.info("Successfully verify token from github");
+			log.info("Successfully verify target branch for github, branch: {}", branch);
 		}
 		catch (NotFoundException e) {
-			throw new PermissionDenyException("Unable to read target branch");
+			log.error("Failed to call GitHub with branch: {}, error: {} ", branch, e.getMessage());
+			throw new PermissionDenyException(String.format("Unable to read target branch: %s", branch));
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed to call GitHub with token_error: {} ", cause.getMessage());
+			log.error("Failed to call GitHub branch:{} with error: {} ", branch, cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
 			throw new InternalServerErrorException(
-					String.format("Failed to call GitHub with token_error: %s", cause.getMessage()));
+					String.format("Failed to call GitHub branch: %s with error: %s", branch, cause.getMessage()));
 		}
 	}
 
@@ -159,7 +164,7 @@ public class GitHubService {
 	public List<PipelineLeadTime> fetchPipelinesLeadTime(List<DeployTimes> deployTimes,
 			Map<String, String> repositories, String token) {
 		try {
-			String realToken = "Bearer " + token;
+			String realToken = BEARER_TITLE + token;
 			List<PipelineInfoOfRepository> pipelineInfoOfRepositories = getInfoOfRepositories(deployTimes,
 					repositories);
 
@@ -329,7 +334,7 @@ public class GitHubService {
 
 	public CommitInfo fetchCommitInfo(String commitId, String repositoryId, String token) {
 		try {
-			String realToken = "Bearer " + token;
+			String realToken = BEARER_TITLE + token;
 			log.info("Start to get commit info, repoId: {},commitId: {}", repositoryId, commitId);
 			CommitInfo commitInfo = gitHubFeignClient.getCommitInfo(repositoryId, commitId, realToken);
 			log.info("Successfully get commit info, repoId: {},commitId: {}, author: {}", repositoryId, commitId,

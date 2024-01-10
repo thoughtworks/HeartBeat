@@ -13,13 +13,11 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import {
   isPipelineToolVerified,
   selectDateRange,
-  selectIsProjectCreated,
   selectPipelineTool,
   updatePipelineTool,
   updatePipelineToolVerifyState,
 } from '@src/context/config/configSlice';
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
-import { ErrorNotification } from '@src/components/ErrorNotification';
 import { Loading } from '@src/components/Loading';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
 import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
@@ -32,8 +30,7 @@ export const PipelineTool = () => {
   const pipelineToolFields = useAppSelector(selectPipelineTool);
   const DateRange = useAppSelector(selectDateRange);
   const isVerified = useAppSelector(isPipelineToolVerified);
-  const isProjectCreated = useAppSelector(selectIsProjectCreated);
-  const { verifyPipelineTool, isLoading, errorMessage } = useVerifyPipelineToolEffect();
+  const { verifyPipelineTool, isLoading, errorMessage, clearErrorMessage } = useVerifyPipelineToolEffect();
   const type = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), pipelineToolFields.type);
   const [fields, setFields] = useState([
     {
@@ -69,7 +66,21 @@ export const PipelineTool = () => {
     setIsDisableVerifyButton(!isAllFieldsValid(fields));
   }, [fields]);
 
+  useEffect(() => {
+    if (errorMessage) {
+      const newFields = fields.map((field, index) => {
+        if (!index) {
+          return { ...field };
+        } else {
+          return { ...field, isValid: false };
+        }
+      });
+      setFields(newFields);
+    }
+  }, [errorMessage, fields]);
+
   const onFormUpdate = (index: number, value: string) => {
+    clearErrorMessage();
     const newFieldsValue = fields.map((field, fieldIndex) => {
       if (!index) {
         field.value = !fieldIndex ? value : EMPTY_STRING;
@@ -93,13 +104,17 @@ export const PipelineTool = () => {
     );
   };
 
-  const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
-    const { isRequired, isValid } = field;
+  const updateFieldHelpText = () => {
+    errorMessage;
+    const { isRequired, isValid } = fields[1];
     if (!isRequired) {
       return TOKEN_HELPER_TEXT.RequiredTokenText;
     }
     if (!isValid) {
-      return TOKEN_HELPER_TEXT.InvalidTokenText;
+      if (!errorMessage) {
+        return TOKEN_HELPER_TEXT.InvalidTokenText;
+      }
+      return errorMessage;
     }
     return DEFAULT_HELPER_TEXT;
   };
@@ -139,7 +154,6 @@ export const PipelineTool = () => {
 
   return (
     <ConfigSectionContainer aria-label='Pipeline Tool Config'>
-      {errorMessage && <ErrorNotification message={errorMessage} />}
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.PIPELINE_TOOL}</ConfigSelectionTitle>
       <StyledForm
@@ -172,7 +186,7 @@ export const PipelineTool = () => {
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid || !fields[1].isRequired}
-          helperText={updateFieldHelpText(fields[1])}
+          helperText={updateFieldHelpText()}
         />
         <StyledButtonGroup>
           {isVerified && !isLoading ? (

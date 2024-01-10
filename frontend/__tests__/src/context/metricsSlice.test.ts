@@ -902,30 +902,18 @@ describe('saveMetricsSetting reducer', () => {
       jest.clearAllMocks();
     });
     it('should return organization warning message given its id and type', () => {
-      expect(
-        selectOrganizationWarningMessage(store.getState(), 0)
-      ).toEqual(ORGANIZATION_WARNING_MESSAGE);
-      expect(
-        selectOrganizationWarningMessage(store.getState(), 1)
-      ).toBeNull();
+      expect(selectOrganizationWarningMessage(store.getState(), 0)).toEqual(ORGANIZATION_WARNING_MESSAGE);
+      expect(selectOrganizationWarningMessage(store.getState(), 1)).toBeNull();
     });
 
     it('should return pipelineName warning message given its id and type', () => {
-      expect(
-        selectPipelineNameWarningMessage(store.getState(), 0)
-      ).toBeNull();
-      expect(
-        selectPipelineNameWarningMessage(store.getState(), 1)
-      ).toEqual(PIPELINE_NAME_WARNING_MESSAGE);
+      expect(selectPipelineNameWarningMessage(store.getState(), 0)).toBeNull();
+      expect(selectPipelineNameWarningMessage(store.getState(), 1)).toEqual(PIPELINE_NAME_WARNING_MESSAGE);
     });
 
     it('should return step warning message given its id and type', () => {
-      expect(
-        selectStepWarningMessage(store.getState(), 0)
-      ).toBeNull();
-      expect(
-        selectStepWarningMessage(store.getState(), 1)
-      ).toEqual(STEP_WARNING_MESSAGE);
+      expect(selectStepWarningMessage(store.getState(), 0)).toBeNull();
+      expect(selectStepWarningMessage(store.getState(), 1)).toEqual(STEP_WARNING_MESSAGE);
     });
   });
 });

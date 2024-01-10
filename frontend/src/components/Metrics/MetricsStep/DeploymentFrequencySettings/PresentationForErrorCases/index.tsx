@@ -10,7 +10,7 @@ import {
 
 const PresentationForErrorCases = (props: IGetPipelineToolInfoResult) => {
   return (
-    <StyledContainer display={'flex'} flexDirection='column'>
+    <StyledContainer aria-label='Error UI for pipeline settings'>
       <StyledImageContainer>
         <StyledImage src={`/pipeline-info-error.png`} alt={'pipeline info error'} loading='lazy' />
       </StyledImageContainer>

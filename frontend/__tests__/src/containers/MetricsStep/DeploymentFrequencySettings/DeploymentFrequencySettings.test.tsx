@@ -1,4 +1,4 @@
-import { render, within, act } from '@testing-library/react';
+import { render, within, act, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { store } from '@src/store';
 import userEvent from '@testing-library/user-event';
@@ -8,6 +8,7 @@ import {
   deleteADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice';
+import { IUseVerifyPipeLineToolStateInterface } from '@src/hooks/useGetPipelineToolInfoEffect';
 import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, ORGANIZATION, REMOVE_BUTTON } from '../../../fixtures';
 
 jest.mock('@src/hooks', () => ({
@@ -48,27 +49,31 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
 }));
 
-jest.mock('@src/hooks/useGetPipelineToolInfoEffect', () => ({
-  useGetPipelineToolInfoEffect: () => ({
-    isLoading: false,
-    result: {
-      code: 200,
-      data: {
-        pipelineList: [
-          {
-            id: 'heartbeat',
-            name: 'Heartbeat',
-            orgId: 'thoughtworks-Heartbeat',
-            orgName: 'Thoughtworks-Heartbeat',
-            repository: 'git@github.com:au-heartbeat/Heartbeat.git',
-            steps: [':pipeline: Upload pipeline.yml'],
-          },
-        ],
-      },
-      errorTitle: '',
-      errorMessage: '',
+const mockGetPipelineToolInfoOkResponse = {
+  isLoading: false,
+  result: {
+    code: 200,
+    data: {
+      pipelineList: [
+        {
+          id: 'heartbeat',
+          name: 'Heartbeat',
+          orgId: 'thoughtworks-Heartbeat',
+          orgName: 'Thoughtworks-Heartbeat',
+          repository: 'git@github.com:au-heartbeat/Heartbeat.git',
+          steps: [':pipeline: Upload pipeline.yml'],
+          branches: [],
+        },
+      ],
     },
-  }),
+    errorTitle: '',
+    errorMessage: '',
+  },
+};
+let mockGetPipelineToolInfoSpy: IUseVerifyPipeLineToolStateInterface = mockGetPipelineToolInfoOkResponse;
+
+jest.mock('@src/hooks/useGetPipelineToolInfoEffect', () => ({
+  useGetPipelineToolInfoEffect: () => mockGetPipelineToolInfoSpy,
 }));
 
 describe('DeploymentFrequencySettings', () => {
@@ -119,5 +124,20 @@ describe('DeploymentFrequencySettings', () => {
     });
 
     expect(updateDeploymentFrequencySettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('should display error UI when get pipeline info client returns non-200 code', () => {
+    const mockGetPipelineToolInfoErrorResponse = {
+      isLoading: false,
+      result: {
+        code: 403,
+        errorTitle: 'Forbidden request!',
+        errorMessage: 'Forbidden request!',
+      },
+    };
+    mockGetPipelineToolInfoSpy = mockGetPipelineToolInfoErrorResponse;
+    setup();
+
+    expect(screen.getByLabelText('Error UI for pipeline settings')).toBeInTheDocument();
   });
 });

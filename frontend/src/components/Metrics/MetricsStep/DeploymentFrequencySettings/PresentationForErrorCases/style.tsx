@@ -1,7 +1,5 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
-import { Image } from '@mui/icons-material'
-import { theme } from '@src/theme'
 
 export const StyledContainer = styled(Box)({
   display: 'flex',

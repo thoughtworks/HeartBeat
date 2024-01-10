@@ -28,11 +28,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Log4j2
 public class GithubController {
 
+	public static final String TOKEN_PATTER = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$";
+
 	private final GitHubService gitHubService;
 
 	@PostMapping
 	@CrossOrigin
-	@Deprecated
+	@Deprecated(since = "frontend completed")
 	@ResponseStatus(HttpStatus.OK)
 	public GitHubResponse getRepos(@RequestBody @Valid SourceControlDTO sourceControlDTO) {
 		log.info("Start to get repos by token");
@@ -45,24 +47,34 @@ public class GithubController {
 	@PostMapping("/{sourceType}/verify")
 	public ResponseEntity<Void> verifyToken(@PathVariable @NotBlank String sourceType,
 			@RequestBody @Valid SourceControlDTO sourceControlDTO) {
-		if (!SourceTypeEnum.isValidType(sourceType)) {
-			throw new BadRequestException("Source type is incorrect.");
+		log.info("Start to verify source type: {} token.", sourceType);
+		switch (SourceType.matchSourceType(sourceType)) {
+			case GITHUB -> {
+				gitHubService.verifyTokenV2(sourceControlDTO.getToken());
+				log.info("Successfully verify source type: {} token.", sourceType);
+			}
+			default -> {
+				log.error("Failed to verify source type: {} token.", sourceType);
+				throw new BadRequestException("Source type is incorrect.");
+			}
 		}
-		log.info("Start to verify token");
-		gitHubService.verifyTokenV2(sourceControlDTO.getToken());
-		log.info("Successfully to verify token");
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@PostMapping("/{sourceType}/repos/branches/{branch}/verify")
 	public ResponseEntity<Void> verifyBranch(@PathVariable @NotBlank String sourceType,
 			@PathVariable @NotBlank String branch, @RequestBody @Valid VerifyBranchRequest request) {
-		if (!SourceTypeEnum.isValidType(sourceType)) {
-			throw new BadRequestException("Source type is incorrect.");
+		log.info("Start to verify source type: {} branch: {}.", sourceType, branch);
+		switch (SourceType.matchSourceType(sourceType)) {
+			case GITHUB -> {
+				gitHubService.verifyCanReadTargetBranch(request.getRepository(), branch, request.getToken());
+				log.info("Successfully verify source type: {} branch: {}.", sourceType, branch);
+			}
+			default -> {
+				log.error("Failed to verify source type: {} branch: {}.", sourceType, branch);
+				throw new BadRequestException("Source type is incorrect.");
+			}
 		}
-		log.info("Start to verify target branch.");
-		gitHubService.verifyCanReadTargetBranch(request.getRepository(), branch, request.getToken());
-		log.info("Successfully to verify target branch.");
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 

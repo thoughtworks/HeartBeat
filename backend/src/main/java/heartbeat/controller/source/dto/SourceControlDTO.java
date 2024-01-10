@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static heartbeat.controller.source.GithubController.TOKEN_PATTER;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +18,7 @@ import lombok.Setter;
 public class SourceControlDTO {
 
 	@NotNull(message = "Token cannot be empty.")
-	@Pattern(regexp = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$", message = "token's pattern is incorrect")
+	@Pattern(regexp = TOKEN_PATTER, message = "token's pattern is incorrect")
 	private String token;
 
 }

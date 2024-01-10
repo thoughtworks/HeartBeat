@@ -30,6 +30,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
+import static heartbeat.TestFixtures.GITHUB_TOKEN;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -38,7 +39,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -168,21 +168,20 @@ class GithubServiceTest {
 	@Test
 	@Deprecated
 	void shouldReturnNonRedundantGithubReposWhenCallGithubFeignClientApi() {
-		String githubToken = "123456";
+		String githubToken = GITHUB_TOKEN;
 		String token = "token " + githubToken;
 		when(gitHubFeignClient.getAllRepos(token)).thenReturn(List.of(GitHubRepo.builder().htmlUrl("11111").build(),
 				GitHubRepo.builder().htmlUrl("22222").build(), GitHubRepo.builder().htmlUrl("33333").build()));
-
 		when(gitHubFeignClient.getGithubOrganizationsInfo(token))
 			.thenReturn(List.of(GitHubOrganizationsInfo.builder().login("org1").build(),
 					GitHubOrganizationsInfo.builder().login("org2").build()));
-
 		when(gitHubFeignClient.getReposByOrganizationName("org1", token))
 			.thenReturn(List.of(GitHubRepo.builder().htmlUrl("22222").build(),
 					GitHubRepo.builder().htmlUrl("33333").build(), GitHubRepo.builder().htmlUrl("44444").build()));
 
 		final var response = githubService.verifyToken(githubToken);
 		githubService.shutdownExecutor();
+
 		assertThat(response.getGithubRepos()).hasSize(4);
 		assertThat(response.getGithubRepos())
 			.isEqualTo(new LinkedHashSet<>(List.of("11111", "22222", "33333", "44444")));
@@ -190,7 +189,7 @@ class GithubServiceTest {
 
 	@Test
 	void shouldReturnGithubTokenIsVerifyWhenVerifyToken() {
-		String githubToken = "123456";
+		String githubToken = GITHUB_TOKEN;
 		String token = "token " + githubToken;
 
 		doNothing().when(gitHubFeignClient).verifyToken(token);
@@ -200,19 +199,19 @@ class GithubServiceTest {
 
 	@Test
 	void shouldReturnGithubBranchIsVerifyWhenVerifyBranch() {
-		String githubToken = "123456";
+		String githubToken = GITHUB_TOKEN;
 		String token = "token " + githubToken;
-
 		doNothing().when(gitHubFeignClient).verifyCanReadTargetBranch(any(), any(), any());
 
-		assertDoesNotThrow(() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubToken));
+		githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubToken);
+
 		verify(gitHubFeignClient, times(1)).verifyCanReadTargetBranch("fake/repo", "main", token);
 	}
 
 	@Test
 	@Deprecated
 	void shouldReturnUnauthorizedStatusWhenCallGithubFeignClientApiWithWrongToken() {
-		String wrongGithubToken = "123456";
+		String wrongGithubToken = GITHUB_TOKEN;
 		String token = "token " + wrongGithubToken;
 
 		when(gitHubFeignClient.getAllRepos(token))
@@ -239,7 +238,7 @@ class GithubServiceTest {
 	@Test
 	@Deprecated
 	void shouldGithubReturnEmptyWhenVerifyGithubThrowGithubRepoEmptyException() {
-		String githubEmptyToken = "123456";
+		String githubEmptyToken = GITHUB_TOKEN;
 		when(gitHubFeignClient.getReposByOrganizationName("org1", githubEmptyToken)).thenReturn(new ArrayList<>());
 
 		assertThatThrownBy(() -> githubService.verifyToken(githubEmptyToken))
@@ -249,7 +248,7 @@ class GithubServiceTest {
 
 	@Test
 	void shouldThrowExceptionWhenGithubReturnUnExpectedException() {
-		String githubEmptyToken = "123456";
+		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
 			.when(gitHubFeignClient)
 			.verifyToken("token " + githubEmptyToken);
@@ -260,7 +259,7 @@ class GithubServiceTest {
 
 	@Test
 	void shouldThrowExceptionGivenGithubReturnUnExpectedExceptionWhenVerifyBranch() {
-		String githubEmptyToken = "123456";
+		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
 			.when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
@@ -272,32 +271,35 @@ class GithubServiceTest {
 
 	@Test
 	void shouldThrowExceptionGivenGithubReturnPermissionDenyExceptionWhenVerifyBranch() {
-		String githubEmptyToken = "123456";
+		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new NotFoundException("Failed to get GitHub info_status: 404, reason: ...")).when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
 
 		var exception = assertThrows(PermissionDenyException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
-		assertEquals("Unable to read target branch", exception.getMessage());
+		assertEquals("Unable to read target branch: main", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowExceptionGivenGithubReturnCompletionExceptionExceptionWhenVerifyToken() {
-		String githubEmptyToken = "123456";
+		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
 			.verifyToken("token " + githubEmptyToken);
 
-		assertThrows(InternalServerErrorException.class, () -> githubService.verifyTokenV2(githubEmptyToken));
+		var exception = assertThrows(InternalServerErrorException.class,
+				() -> githubService.verifyTokenV2(githubEmptyToken));
+		assertEquals("Failed to call GitHub with token_error: UnExpected Exception", exception.getMessage());
 	}
 
 	@Test
 	void shouldThrowExceptionGivenGithubReturnUnauthorizedExceptionWhenVerifyBranch() {
-		String githubEmptyToken = "123456";
+		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
 
-		assertThrows(InternalServerErrorException.class,
+		var exception = assertThrows(InternalServerErrorException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
+		assertEquals("Failed to call GitHub branch: main with error: UnExpected Exception", exception.getMessage());
 	}
 
 	@Test
@@ -305,6 +307,7 @@ class GithubServiceTest {
 		PullRequestInfo pullRequestInfo = PullRequestInfo.builder().build();
 		DeployInfo deployInfo = DeployInfo.builder().build();
 		CommitInfo commitInfo = CommitInfo.builder().build();
+
 		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
 
 		assertNull(result);
@@ -312,7 +315,6 @@ class GithubServiceTest {
 
 	@Test
 	void shouldReturnLeadTimeWhenMergedTimeIsNotNull() {
-		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
 		LeadTime expect = LeadTime.builder()
 			.commitId("111")
 			.prCreatedTime(1658548980000L)
@@ -326,13 +328,14 @@ class GithubServiceTest {
 			.totalTime(180000)
 			.build();
 
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+
 		assertEquals(expect, result);
 	}
 
 	@Test
 	void CommitTimeInPrShouldBeZeroWhenCommitInfoIsNull() {
 		commitInfo = CommitInfo.builder().build();
-		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
 		LeadTime expect = LeadTime.builder()
 			.commitId("111")
 			.prCreatedTime(1658548980000L)
@@ -346,13 +349,14 @@ class GithubServiceTest {
 			.totalTime(180000)
 			.build();
 
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+
 		assertEquals(expect, result);
 	}
 
 	@Test
 	void shouldReturnFirstCommitTimeInPrZeroWhenCommitInfoIsNull() {
 		commitInfo = CommitInfo.builder().build();
-		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
 		LeadTime expect = LeadTime.builder()
 			.commitId("111")
 			.prCreatedTime(1658548980000L)
@@ -366,17 +370,18 @@ class GithubServiceTest {
 			.totalTime(180000L)
 			.build();
 
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+
 		assertEquals(expect, result);
 	}
 
 	@Test
 	void shouldReturnPipeLineLeadTimeWhenDeployITimesIsNotEmpty() {
 		String mockToken = "mockToken";
-
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
-
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
 		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(commitInfo);
+
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(pipelineLeadTimes, result);
@@ -385,14 +390,13 @@ class GithubServiceTest {
 	@Test
 	void shouldReturnEmptyLeadTimeWhenDeployTimesIsEmpty() {
 		String mockToken = "mockToken";
-
+		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder().build());
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
-
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
 		List<DeployTimes> emptyDeployTimes = List.of(DeployTimes.builder().build());
+
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(emptyDeployTimes, repositoryMap,
 				mockToken);
-		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder().build());
 
 		assertEquals(expect, result);
 	}
@@ -400,14 +404,6 @@ class GithubServiceTest {
 	@Test
 	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoIsEmpty() {
 		String mockToken = "mockToken";
-
-		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of());
-
-		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
-		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
-
-		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
-
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
 			.pipelineStep("Step")
 			.pipelineName("Name")
@@ -420,6 +416,11 @@ class GithubServiceTest {
 				.totalTime(120000)
 				.build()))
 			.build());
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of());
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
+
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(expect, result);
 	}
@@ -427,14 +428,6 @@ class GithubServiceTest {
 	@Test
 	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoGot404Error() {
 		String mockToken = "mockToken";
-
-		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenThrow(new NotFoundException(""));
-
-		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
-		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
-
-		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
-
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
 			.pipelineStep("Step")
 			.pipelineName("Name")
@@ -447,6 +440,11 @@ class GithubServiceTest {
 				.totalTime(120000)
 				.build()))
 			.build());
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenThrow(new NotFoundException(""));
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
+
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(expect, result);
 	}
@@ -455,12 +453,6 @@ class GithubServiceTest {
 	void shouldReturnEmptyMergeLeadTimeWhenMergeTimeIsEmpty() {
 		String mockToken = "mockToken";
 		pullRequestInfo.setMergedAt(null);
-		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
-
-		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
-		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
-		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
-
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
 			.pipelineStep("Step")
 			.pipelineName("Name")
@@ -473,6 +465,11 @@ class GithubServiceTest {
 				.totalTime(120000)
 				.build()))
 			.build());
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of());
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(new CommitInfo());
+
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(expect, result);
 	}
@@ -504,7 +501,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	public void shouldFetchCommitInfo() {
+	void shouldFetchCommitInfo() {
 		CommitInfo commitInfo = CommitInfo.builder()
 			.commit(Commit.builder()
 				.author(Author.builder().name("XXXX").email("XXX@test.com").date("2023-05-10T06:43:02.653Z").build())
@@ -520,7 +517,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-    public void shouldThrowPermissionDenyExceptionWhenFetchCommitInfo403Forbidden() {
+    void shouldThrowPermissionDenyExceptionWhenFetchCommitInfo403Forbidden() {
         when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString()))
                 .thenThrow(new PermissionDenyException("request forbidden"));
 
@@ -530,7 +527,7 @@ class GithubServiceTest {
     }
 
 	@Test
-	public void shouldThrowInternalServerErrorExceptionWhenFetchCommitInfo500Exception() {
+	void shouldThrowInternalServerErrorExceptionWhenFetchCommitInfo500Exception() {
 		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString())).thenReturn(null);
 
 		assertThatThrownBy(() -> githubService.fetchCommitInfo("12344", "", ""))
@@ -539,7 +536,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	public void shouldReturnNullWhenFetchCommitInfo404Exception() {
+	void shouldReturnNullWhenFetchCommitInfo404Exception() {
 		when(gitHubFeignClient.getCommitInfo(anyString(), anyString(), anyString())).thenThrow(new NotFoundException(""));
 
 		assertNull(githubService.fetchCommitInfo("12344", "", ""));
@@ -548,12 +545,11 @@ class GithubServiceTest {
 	@Test
 	void shouldReturnPipeLineLeadTimeWhenDeployITimesIsNotEmptyAndCommitInfoError() {
 		String mockToken = "mockToken";
-
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
-
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
 		when(gitHubFeignClient.getCommitInfo(any(), any(), any()))
 			.thenThrow(new NotFoundException("Failed to get commit"));
+
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(pipelineLeadTimes, result);
@@ -562,14 +558,12 @@ class GithubServiceTest {
 	@Test
 	void shouldReturnPipeLineLeadTimeWhenDeployCommitShaIsDifferent() {
 		String mockToken = "mockToken";
-
 		pullRequestInfo = PullRequestInfo.builder()
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
 			.mergeCommitSha("222")
 			.number(1)
 			.build();
-
 		pipelineLeadTimes = List.of(PipelineLeadTime.builder()
 			.pipelineName("Name")
 			.pipelineStep("Step")
@@ -583,12 +577,11 @@ class GithubServiceTest {
 				.totalTime(120000)
 				.build()))
 			.build());
-
 		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any())).thenReturn(List.of(pullRequestInfo));
-
 		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
 		when(gitHubFeignClient.getCommitInfo(any(), any(), any()))
 			.thenThrow(new NotFoundException("Failed to get commit"));
+
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(pipelineLeadTimes, result);

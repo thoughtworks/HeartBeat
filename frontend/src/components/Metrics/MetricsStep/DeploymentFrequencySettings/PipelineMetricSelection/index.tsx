@@ -52,9 +52,9 @@ export const PipelineMetricSelection = ({
   const organizationNameOptions = selectPipelineOrganizations(store.getState());
   const pipelineNameOptions = selectPipelineNames(store.getState(), organization);
   const stepsOptions = selectSteps(store.getState(), organization, pipelineName);
-  const organizationWarningMessage = selectOrganizationWarningMessage(store.getState(), id, type);
-  const pipelineNameWarningMessage = selectPipelineNameWarningMessage(store.getState(), id, type);
-  const stepWarningMessage = selectStepWarningMessage(store.getState(), id, type);
+  const organizationWarningMessage = selectOrganizationWarningMessage(store.getState(), id);
+  const pipelineNameWarningMessage = selectPipelineNameWarningMessage(store.getState(), id);
+  const stepWarningMessage = selectStepWarningMessage(store.getState(), id);
   const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false);
 
   const handleRemoveClick = () => {

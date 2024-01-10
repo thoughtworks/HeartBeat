@@ -432,7 +432,6 @@ export const {
 } = metricsSlice.actions;
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings;
-export const selectLeadTimeForChanges = (state: RootState) => state.metrics.leadTimeForChanges;
 
 export const selectCycleTimeSettings = (state: RootState) => state.metrics.cycleTimeSettings;
 export const selectMetricsContent = (state: RootState) => state.metrics;

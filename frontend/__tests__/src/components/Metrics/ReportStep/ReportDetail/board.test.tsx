@@ -2,6 +2,7 @@ import { ReportResponseDTO } from '@src/clients/report/dto/response'
 import { render } from '@testing-library/react'
 import { BoardDetail } from '@src/components/Metrics/ReportStep/ReportDetail'
 import { reportMapper } from '@src/hooks/reportMapper/report'
+import React from 'react'
 
 jest.mock('@src/hooks/reportMapper/report')
 

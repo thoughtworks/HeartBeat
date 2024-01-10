@@ -147,11 +147,8 @@ describe('PipelineTool', () => {
   });
 
   it('should show reset button and verified button when verify succeed ', async () => {
-    const { getByText } = setup();
-    await fillPipelineToolFieldsInformation();
-    await act(async () => {
-      await userEvent.click(getByText(VERIFY));
-    });
+    const { getByText } = setup()
+    await fillPipelineToolFieldsInformation()
 
     await userEvent.click(screen.getByText(VERIFY));
     expect(screen.getByText(RESET)).toBeVisible();
@@ -178,12 +175,12 @@ describe('PipelineTool', () => {
     });
   });
 
-  it('should check error notification show when pipelineTool verify response status is 401', async () => {
+  it('should check error text appear when pipelineTool verify response status is 401', async () => {
     server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))));
-    const { getByRole, getByLabelText } = setup();
+    const { getByRole, getByText } = setup();
     await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByRole('button', { name: VERIFY }));
-    expect(getByLabelText('Error notification bar')).toBeInTheDocument();
+    expect(getByText('BuildKite verify failed: Unauthorized')).toBeInTheDocument();
   });
 });

@@ -77,7 +77,7 @@ export const PipelineTool = () => {
       });
       setFields(newFields);
     }
-  }, [errorMessage, fields]);
+  }, [errorMessage]);
 
   const onFormUpdate = (index: number, value: string) => {
     clearErrorMessage();

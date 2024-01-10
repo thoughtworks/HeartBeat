@@ -6,6 +6,8 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
 
 public class BoardRequestFixture {
 
+	public static final String BOARD_ID = "unknown";
+
 	public static BoardRequestParam.BoardRequestParamBuilder BOARD_REQUEST_BUILDER() {
 		return BoardRequestParam.builder()
 			.boardId(BOARD_ID)

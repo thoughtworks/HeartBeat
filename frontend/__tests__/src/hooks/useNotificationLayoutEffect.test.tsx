@@ -52,8 +52,9 @@ describe('useNotificationLayoutEffect', () => {
       result.current.notificationProps = defaultProps
       result.current.updateProps?.(mockProps)
     })
-
-    jest.advanceTimersByTime(DURATION.NOTIFICATION_TIME)
+    act(() => {
+      jest.advanceTimersByTime(DURATION.NOTIFICATION_TIME)
+    })
 
     await waitFor(() => {
       expect(result.current.notificationProps).toEqual({
@@ -89,8 +90,9 @@ describe('useNotificationLayoutEffect', () => {
     await waitFor(() => {
       expect(result.current.notificationProps).not.toEqual(expectedProps)
     })
-
-    jest.advanceTimersByTime(expectedTime)
+    act(() => {
+      jest.advanceTimersByTime(expectedTime)
+    })
 
     await waitFor(() => {
       expect(result.current.notificationProps).toEqual(expectedProps)

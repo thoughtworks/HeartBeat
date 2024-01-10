@@ -3,6 +3,8 @@ package heartbeat.client;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardProject;
+import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.decoder.JiraFeignClientDecoder;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,13 +32,20 @@ public interface JiraFeignClient {
 	String getJiraCards(URI baseUrl, @PathVariable String boardId, @PathVariable int queryCount,
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "jiraActivityFeed", key = "#jiraCardKey")
-	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed")
-	CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, @PathVariable String jiraCardKey,
-			@RequestHeader String authorization);
+	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed?startAt={startAt}&maxResults={queryCount}")
+	CardHistoryResponseDTO getJiraCardHistoryByCount(URI baseUrl, @PathVariable String jiraCardKey,
+			@PathVariable int startAt, @PathVariable int queryCount, @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "targetField", key = "#projectKey")
 	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields")
 	FieldResponseDTO getTargetField(URI baseUrl, @PathVariable String projectKey, @RequestHeader String authorization);
+
+	@Cacheable(cacheNames = "boardVerification", key = "#boardId")
+	@GetMapping(path = "/rest/agile/1.0/board/{boardId}")
+	JiraBoardVerifyDTO getBoard(URI baseUrl, @PathVariable String boardId, @RequestHeader String authorization);
+
+	@Cacheable(cacheNames = "boardProject", key = "#projectIdOrKey")
+	@GetMapping(path = "rest/api/2/project/{projectIdOrKey}")
+	JiraBoardProject getProject(URI baseUrl, @PathVariable String projectIdOrKey, @RequestHeader String authorization);
 
 }

@@ -1,5 +1,6 @@
 package heartbeat.controller.source.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -15,10 +16,13 @@ import static heartbeat.controller.source.GithubController.TOKEN_PATTER;
 @AllArgsConstructor
 @Getter
 @Setter
-public class SourceControlDTO {
+public class VerifyBranchRequest {
 
 	@NotNull(message = "Token cannot be empty.")
 	@Pattern(regexp = TOKEN_PATTER, message = "token's pattern is incorrect")
 	private String token;
+
+	@NotBlank(message = "Repository is required.")
+	private String repository;
 
 }

@@ -1,5 +1,5 @@
 import { HomeGuide } from '@src/components/HomeGuide'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor, screen } from '@testing-library/react'
 import { setupStore } from '../../utils/setupStoreUtil'
 import { Provider } from 'react-redux'
 import {
@@ -30,7 +30,7 @@ const setup = () => {
   )
 }
 
-const setupInputFile = (configJson: object) => {
+const setupInputFile = async (configJson: object) => {
   const { queryByText, getByTestId } = setup()
   const file = new File([`${JSON.stringify(configJson)}`], 'test.json', {
     type: 'file',
@@ -42,7 +42,7 @@ const setupInputFile = (configJson: object) => {
     value: [file],
   })
 
-  fireEvent.change(input)
+  await fireEvent.change(input)
   return queryByText
 }
 
@@ -63,12 +63,11 @@ describe('HomeGuide', () => {
   })
 
   it('should render input when click guide button', async () => {
-    const { getByText, getByTestId } = setup()
+    const { getByTestId } = setup()
     const fileInput = getByTestId('testInput')
 
     const clickSpy = jest.spyOn(fileInput, 'click')
-    await userEvent.click(getByText(IMPORT_PROJECT_FROM_FILE))
-
+    await userEvent.click(screen.getByText(IMPORT_PROJECT_FROM_FILE))
     expect(clickSpy).toHaveBeenCalled()
   })
 
@@ -94,10 +93,8 @@ describe('HomeGuide', () => {
   })
 
   it('should go to Metrics page when click create a new project button', async () => {
-    const { getByText } = setup()
-
-    await userEvent.click(getByText(CREATE_NEW_PROJECT))
-
+    setup()
+    await userEvent.click(screen.getByText(CREATE_NEW_PROJECT))
     expect(navigateMock).toHaveBeenCalledTimes(1)
     expect(navigateMock).toHaveBeenCalledWith(METRICS_PAGE_ROUTE)
   })
@@ -105,7 +102,7 @@ describe('HomeGuide', () => {
   describe('isValidImportedConfig', () => {
     it('should show warning message when no projectName dateRange metrics all exist', async () => {
       const emptyConfig = {}
-      const queryByText = setupInputFile(emptyConfig)
+      const queryByText = await setupInputFile(emptyConfig)
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
@@ -114,7 +111,7 @@ describe('HomeGuide', () => {
     })
 
     it('should no display warning message when  projectName dateRange metrics all exist', async () => {
-      const queryByText = setupInputFile(IMPORTED_NEW_CONFIG_FIXTURE)
+      const queryByText = await setupInputFile(IMPORTED_NEW_CONFIG_FIXTURE)
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)
@@ -128,7 +125,7 @@ describe('HomeGuide', () => {
       ['endDate', { projectName: '', metrics: [], dateRange: { startDate: '', endDate: '2023-02-01' } }],
       ['metrics', { projectName: '', metrics: ['Metric 1', 'Metric 2'], dateRange: {} }],
     ])('should not display warning message when only %s exists', async (_, validConfig) => {
-      const queryByText = setupInputFile(validConfig)
+      const queryByText = await setupInputFile(validConfig)
 
       await waitFor(() => {
         expect(mockedUseAppDispatch).toHaveBeenCalledTimes(0)

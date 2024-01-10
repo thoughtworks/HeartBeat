@@ -16,6 +16,7 @@ import heartbeat.client.dto.board.jira.HistoryDetail;
 import heartbeat.client.dto.board.jira.IssueField;
 import heartbeat.client.dto.board.jira.Issuetype;
 import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
+import heartbeat.client.dto.board.jira.JiraBoardVerifyDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraColumn;
@@ -23,6 +24,7 @@ import heartbeat.client.dto.board.jira.Sprint;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
+import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
@@ -57,6 +59,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -102,6 +105,68 @@ public class JiraService {
 	@PreDestroy
 	public void shutdownExecutor() {
 		customTaskExecutor.shutdown();
+	}
+
+	public String verify(BoardType boardType, BoardVerifyRequestParam boardVerifyRequestParam) {
+		URI baseUrl = urlGenerator.getUri(boardVerifyRequestParam.getSite());
+		try {
+			if (!BoardType.JIRA.equals(boardType)) {
+				throw new BadRequestException("boardType param is not correct");
+			}
+			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl,
+					boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
+			return jiraBoardVerifyDTO.getLocation().getProjectKey();
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed when call Jira to verify board, board id: {}, e: {}",
+					boardVerifyRequestParam.getBoardId(), cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed when call Jira to verify board, cause is %s", cause.getMessage()));
+		}
+	}
+
+	public BoardConfigDTO getInfo(BoardType boardType, BoardRequestParam boardRequestParam) {
+		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
+		try {
+			if (!BoardType.JIRA.equals(boardType)) {
+				throw new BadRequestException("boardType param is not correct");
+			}
+			String jiraBoardStyle = jiraFeignClient
+				.getProject(baseUrl, boardRequestParam.getProjectKey(), boardRequestParam.getToken())
+				.getStyle();
+			BoardType jiraBoardType = "classic".equals(jiraBoardStyle) ? BoardType.CLASSIC_JIRA : BoardType.JIRA;
+
+			Map<Boolean, List<TargetField>> partitions = getTargetFieldAsync(baseUrl, boardRequestParam).join()
+				.stream()
+				.collect(Collectors.partitioningBy(this::isIgnoredTargetField));
+			List<TargetField> ignoredTargetFields = partitions.get(true);
+			List<TargetField> neededTargetFields = partitions.get(false);
+
+			return getJiraColumnsAsync(boardRequestParam, baseUrl,
+					getJiraBoardConfig(baseUrl, boardRequestParam.getBoardId(), boardRequestParam.getToken()))
+				.thenCombine(getUserAsync(jiraBoardType, baseUrl, boardRequestParam),
+						(jiraColumnResult, users) -> BoardConfigDTO.builder()
+							.targetFields(neededTargetFields)
+							.jiraColumnResponse(jiraColumnResult.getJiraColumnResponse())
+							.ignoredTargetFields(ignoredTargetFields)
+							.users(users)
+							.build())
+				.join();
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed when call Jira to get board config, project key: {}, board id: {}, e: {}",
+					boardRequestParam.getBoardId(), boardRequestParam.getProjectKey(), cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed when call Jira to get board config, cause is %s", cause.getMessage()));
+		}
 	}
 
 	public BoardConfigDTO getJiraConfiguration(BoardType boardType, BoardRequestParam boardRequestParam) {
@@ -397,8 +462,7 @@ public class JiraService {
 
 	private List<String> getAssigneeSet(URI baseUrl, JiraCard jiraCard, String jiraToken) {
 		log.info("Start to get jira card history, _cardKey: {}", jiraCard.getKey());
-		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, jiraCard.getKey(),
-				jiraToken);
+		CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, jiraCard.getKey(), 0, jiraToken);
 		log.info("Successfully get jira card history, _cardKey: {}, _cardHistoryItemsSize: {}", jiraCard.getKey(),
 				cardHistoryResponseDTO.getItems().size());
 
@@ -460,16 +524,18 @@ public class JiraService {
 		List<JiraCard> jiraCards = new ArrayList<>();
 
 		for (JiraCard allDoneCard : allDoneCards) {
-			CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, allDoneCard.getKey(),
+			CardHistoryResponseDTO jiraCardHistory = getJiraCardHistory(baseUrl, allDoneCard.getKey(), 0,
 					request.getToken());
 			if (isRealDoneCardByHistory(jiraCardHistory, request)) {
 				jiraCards.add(allDoneCard);
 			}
 		}
 		jiraCards.forEach(doneCard -> {
-			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, doneCard.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
-			List<String> assigneeSet = getAssigneeSet(request, baseUrl, filterMethod, doneCard);
+			CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, doneCard.getKey(), 0,
+					request.getToken());
+			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
+					keyFlagged, request.getStatus());
+			List<String> assigneeSet = getAssigneeSet(cardHistoryResponseDTO, filterMethod, doneCard);
 			if (users.stream().anyMatch(assigneeSet::contains)) {
 				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
 					.baseInfo(doneCard)
@@ -484,31 +550,57 @@ public class JiraService {
 		return realDoneCards;
 	}
 
-	private List<String> getAssigneeSet(StoryPointsAndCycleTimeRequest request, URI baseUrl, String filterMethod,
+	private List<String> getAssigneeSet(CardHistoryResponseDTO jiraCardHistory, String assigneeFilter,
 			JiraCard doneCard) {
 		List<String> assigneeSet = new ArrayList<>();
 		Assignee assignee = doneCard.getFields().getAssignee();
 
-		if (assignee != null && useLastAssignee(filterMethod)) {
-			assigneeSet.add(assignee.getDisplayName());
+		if (useLastAssignee(assigneeFilter)) {
+			if (assignee != null) {
+				assigneeSet.add(assignee.getDisplayName());
+			}
+			else {
+				List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
+				assigneeSet.add(getLastHistoricalAssignee(historicalAssignees));
+			}
 		}
-
-		if (assignee != null && filterMethod.equals(AssigneeFilterMethod.HISTORICAL_ASSIGNEE.getDescription())) {
-			List<String> historyDisplayName = getHistoricalAssignees(baseUrl, doneCard.getKey(), request.getToken());
-			assigneeSet.addAll(historyDisplayName);
+		else {
+			List<String> historicalAssignees = getHistoricalAssignees(jiraCardHistory);
+			assigneeSet.addAll(historicalAssignees);
 		}
 
 		return assigneeSet;
 	}
 
-	private List<String> getHistoricalAssignees(URI baseUrl, String cardKey, String token) {
-		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistory(baseUrl, cardKey, token);
-		return jiraCardHistory.getItems().stream().map(item -> item.getActor().getDisplayName()).distinct().toList();
+	private String getLastHistoricalAssignee(List<String> historicalAssignees) {
+		return historicalAssignees.stream().filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
-	private boolean useLastAssignee(String filterMethod) {
-		return filterMethod.equals(AssigneeFilterMethod.LAST_ASSIGNEE.getDescription())
-				|| StringUtils.isEmpty(filterMethod);
+	private List<String> getHistoricalAssignees(CardHistoryResponseDTO jiraCardHistory) {
+		return jiraCardHistory.getItems()
+			.stream()
+			.filter(item -> AssigneeFilterMethod.ASSIGNEE_FIELD_ID.getDescription().equalsIgnoreCase(item.getFieldId()))
+			.sorted(Comparator.comparing(HistoryDetail::getTimestamp).reversed())
+			.map(item -> item.getTo().getDisplayValue())
+			.distinct()
+			.toList();
+	}
+
+	private CardHistoryResponseDTO getJiraCardHistory(URI baseUrl, String cardKey, int startAt, String token) {
+		int queryCount = 100;
+		CardHistoryResponseDTO jiraCardHistory = jiraFeignClient.getJiraCardHistoryByCount(baseUrl, cardKey, startAt,
+				queryCount, token);
+		if (Boolean.FALSE.equals(jiraCardHistory.getIsLast())) {
+			CardHistoryResponseDTO cardAllHistory = getJiraCardHistory(baseUrl, cardKey, startAt + queryCount, token);
+			jiraCardHistory.getItems().addAll(cardAllHistory.getItems());
+			jiraCardHistory.setIsLast(jiraCardHistory.getIsLast());
+		}
+		return jiraCardHistory;
+	}
+
+	private boolean useLastAssignee(String assigneeFilter) {
+		return assigneeFilter.equals(AssigneeFilterMethod.LAST_ASSIGNEE.getDescription())
+				|| StringUtils.isEmpty(assigneeFilter);
 	}
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
@@ -528,9 +620,8 @@ public class JiraService {
 			.isPresent();
 	}
 
-	private CycleTimeInfoDTO getCycleTime(URI baseUrl, String doneCardKey, String token, Boolean treatFlagCardAsBlock,
+	private CycleTimeInfoDTO getCycleTime(CardHistoryResponseDTO cardHistoryResponseDTO, Boolean treatFlagCardAsBlock,
 			String keyFlagged, List<String> realDoneStatus) {
-		CardHistoryResponseDTO cardHistoryResponseDTO = jiraFeignClient.getJiraCardHistory(baseUrl, doneCardKey, token);
 		List<StatusChangedItem> statusChangedArray = putStatusChangeEventsIntoAnArray(cardHistoryResponseDTO,
 				keyFlagged);
 		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCycleTimeInfos(statusChangedArray, realDoneStatus,
@@ -696,8 +787,10 @@ public class JiraService {
 		String keyFlagged = cardCustomFieldKey.getFlagged();
 
 		allNonDoneCards.forEach(card -> {
-			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(baseUrl, card.getKey(), request.getToken(),
-					request.isTreatFlagCardAsBlock(), keyFlagged, request.getStatus());
+			CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, card.getKey(), 0,
+					request.getToken());
+			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
+					keyFlagged, request.getStatus());
 
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
 			if (users.stream().anyMatch(assigneeSet::contains)) {

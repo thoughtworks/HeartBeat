@@ -2,13 +2,18 @@ package heartbeat.controller.source;
 
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.controller.source.dto.SourceControlDTO;
+import heartbeat.controller.source.dto.VerifyBranchRequest;
+import heartbeat.exception.BadRequestException;
 import heartbeat.service.source.github.GitHubService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +28,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Log4j2
 public class GithubController {
 
+	public static final String TOKEN_PATTER = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$";
+
 	private final GitHubService gitHubService;
 
 	@PostMapping
 	@CrossOrigin
+	@Deprecated(since = "frontend completed")
 	@ResponseStatus(HttpStatus.OK)
 	public GitHubResponse getRepos(@RequestBody @Valid SourceControlDTO sourceControlDTO) {
 		log.info("Start to get repos by token");
@@ -34,6 +42,40 @@ public class GithubController {
 		log.info("Successfully get the repos by token, repos size: {}", gitHubRepos.getGithubRepos().size());
 		return gitHubRepos;
 
+	}
+
+	@PostMapping("/{sourceType}/verify")
+	public ResponseEntity<Void> verifyToken(@PathVariable @NotBlank String sourceType,
+			@RequestBody @Valid SourceControlDTO sourceControlDTO) {
+		log.info("Start to verify source type: {} token.", sourceType);
+		switch (SourceType.matchSourceType(sourceType)) {
+			case GITHUB -> {
+				gitHubService.verifyTokenV2(sourceControlDTO.getToken());
+				log.info("Successfully verify source type: {} token.", sourceType);
+			}
+			default -> {
+				log.error("Failed to verify source type: {} token.", sourceType);
+				throw new BadRequestException("Source type is incorrect.");
+			}
+		}
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PostMapping("/{sourceType}/repos/branches/{branch}/verify")
+	public ResponseEntity<Void> verifyBranch(@PathVariable @NotBlank String sourceType,
+			@PathVariable @NotBlank String branch, @RequestBody @Valid VerifyBranchRequest request) {
+		log.info("Start to verify source type: {} branch: {}.", sourceType, branch);
+		switch (SourceType.matchSourceType(sourceType)) {
+			case GITHUB -> {
+				gitHubService.verifyCanReadTargetBranch(request.getRepository(), branch, request.getToken());
+				log.info("Successfully verify source type: {} branch: {}.", sourceType, branch);
+			}
+			default -> {
+				log.error("Failed to verify source type: {} branch: {}.", sourceType, branch);
+				throw new BadRequestException("Source type is incorrect.");
+			}
+		}
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 }

@@ -149,6 +149,7 @@ describe('MetricsStep', () => {
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
 
       await userEvent.click(columnsArray[1])
+
       const options = within(getByRole('listbox')).getAllByRole('option')
       await userEvent.click(options[1])
 
@@ -162,8 +163,8 @@ describe('MetricsStep', () => {
 
       expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE)
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
-
       await userEvent.click(columnsArray[2])
+
       const options = within(getByRole('listbox')).getAllByRole('option')
       await userEvent.click(options[options.length - 1])
 
@@ -179,10 +180,12 @@ describe('MetricsStep', () => {
       const columnsArray = within(cycleTimeSettingsSection).getAllByRole('button', { name: LIST_OPEN })
 
       await userEvent.click(columnsArray[1])
+
       const options1 = within(getByRole('listbox')).getAllByRole('option')
       await userEvent.click(options1[1])
 
       await userEvent.click(columnsArray[4])
+
       const options2 = within(getByRole('listbox')).getAllByRole('option')
       await userEvent.click(options2[1])
 

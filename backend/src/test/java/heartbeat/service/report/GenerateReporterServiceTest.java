@@ -968,7 +968,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowUnauthorizedExceptionWhenCheckGenerateReportIsDone() {
 		String timeStamp = Long.toString(System.currentTimeMillis());
-		String reportId = IdUtil.getDoraReportId(timeStamp);
+		String reportId = IdUtil.getPipelineReportId(timeStamp);
 
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
@@ -983,7 +983,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowPermissionDenyExceptionWhenCheckGenerateReportIsDone() {
 		String timeStamp = Long.toString(System.currentTimeMillis());
-		String reportId = IdUtil.getDoraReportId(timeStamp);
+		String reportId = IdUtil.getPipelineReportId(timeStamp);
 		asyncExceptionHandler.put(reportId,
 				new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 
@@ -999,7 +999,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowNotFoundExceptionWhenCheckGenerateReportIsDone() {
 		String timeStamp = Long.toString(System.currentTimeMillis());
-		String reportId = IdUtil.getDoraReportId(timeStamp);
+		String reportId = IdUtil.getPipelineReportId(timeStamp);
 
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
@@ -1013,7 +1013,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowGenerateReportExceptionWhenCheckGenerateReportIsDone() {
 		String timeStamp = Long.toString(System.currentTimeMillis());
-		String reportId = IdUtil.getDoraReportId(timeStamp);
+		String reportId = IdUtil.getPipelineReportId(timeStamp);
 
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
@@ -1027,7 +1027,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowServiceUnavailableExceptionWhenCheckGenerateReportIsDone() {
 		String timeStamp = Long.toString(System.currentTimeMillis());
-		String reportId = IdUtil.getDoraReportId(timeStamp);
+		String reportId = IdUtil.getPipelineReportId(timeStamp);
 
 		when(asyncExceptionHandler.get(reportId)).thenReturn(
 				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
@@ -1041,7 +1041,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldThrowRequestFailedExceptionWhenCheckGenerateReportIsDone() {
 		String timeStamp = Long.toString(System.currentTimeMillis());
-		String reportId = IdUtil.getDoraReportId(timeStamp);
+		String reportId = IdUtil.getPipelineReportId(timeStamp);
 
 		when(asyncExceptionHandler.get(reportId)).thenReturn(new RequestFailedException(405, "RequestFailedException"));
 		BaseException exception = assertThrows(RequestFailedException.class,
@@ -1207,10 +1207,10 @@ class GenerateReporterServiceTest {
 
 		String timeStamp = "1683734399999";
 		String boardTimeStamp = "board-1683734399999";
-		String doraTimestamp = "dora-1683734399999";
+		String pipelineTimestamp = "pipeline-1683734399999";
 
 		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
-		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(pipelineResponse);
+		when(generateReporterService.getReportFromHandler(pipelineTimestamp)).thenReturn(pipelineResponse);
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
 			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
 
@@ -1264,8 +1264,8 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldPutReportInHandlerWhenCallSaveReporterInHandler() throws IOException {
-		String timeStamp = "1683734399999";
-		String reportId = IdUtil.getDoraReportId(timeStamp);
+		String timeStamp = "20240109232359";
+		String reportId = IdUtil.getPipelineReportId(timeStamp);
 		ObjectMapper mapper = new ObjectMapper();
 		ReportResponse reportResponse = mapper
 			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
@@ -1282,7 +1282,7 @@ class GenerateReporterServiceTest {
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
-		reportRequest.setCsvTimeStamp("1683734399999");
+		reportRequest.setCsvTimeStamp("20240109232359");
 		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
 			.isBoardMetricsReady(true)
 			.isPipelineMetricsReady(false)
@@ -1313,8 +1313,8 @@ class GenerateReporterServiceTest {
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
-		reportRequest.setCsvTimeStamp("1683734399999");
-		String boardTimeStamp = "board-1683734399999";
+		reportRequest.setCsvTimeStamp("20240109232359");
+		String boardTimeStamp = "board-20240109232359";
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 		GenerateReportException e = new GenerateReportException(
 				"Failed to update metrics data ready through this timestamp.");
@@ -1342,8 +1342,8 @@ class GenerateReporterServiceTest {
 		reportRequest.setMetrics(List.of("Deployment frequency"));
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
-		reportRequest.setCsvTimeStamp("1683734399999");
-		String doraTimeStamp = "dora-1683734399999";
+		reportRequest.setCsvTimeStamp("20240109232359");
+		String doraTimeStamp = "dora-20240109232359";
 		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
 			.isBoardMetricsReady(null)
 			.isPipelineMetricsReady(false)
@@ -1373,8 +1373,8 @@ class GenerateReporterServiceTest {
 		reportRequest.setMetrics(List.of("Lead time for changes"));
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
-		reportRequest.setCsvTimeStamp("1683734399999");
-		String codebaseTimeStamp = "github-1683734399999";
+		reportRequest.setCsvTimeStamp("20240109232359");
+		String codebaseTimeStamp = "github-20240109232359";
 		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
 			.isBoardMetricsReady(null)
 			.isPipelineMetricsReady(false)

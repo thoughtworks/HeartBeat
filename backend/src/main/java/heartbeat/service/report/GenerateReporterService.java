@@ -28,7 +28,6 @@ import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
-import heartbeat.controller.report.dto.request.RequireDataEnum;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
@@ -203,7 +202,10 @@ public class GenerateReporterService {
 
 	public void generateBoardReport(GenerateReportRequest request) {
 		initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-
+		log.info(
+				"Start to generate board report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _doraReportId: {}",
+				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
+				IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
 		CompletableFuture.runAsync(() -> {
 			try {
 				saveReporterInHandler(generateReporter(request), IdUtil.getBoardReportId(request.getCsvTimeStamp()));
@@ -233,28 +235,36 @@ public class GenerateReporterService {
 	}
 
 	private void generatePipelineReport(GenerateReportRequest request) {
+		GenerateReportRequest pipelineRequest = request.convertToPipelineRequest(request);
+		log.info(
+				"Start to generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _doraReportId: {}",
+				pipelineRequest.getMetrics(), pipelineRequest.getConsiderHoliday(), pipelineRequest.getStartTime(),
+				pipelineRequest.getEndTime(), IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
 		CompletableFuture.runAsync(() -> {
 			try {
-				GenerateReportRequest pipelineRequest = request.convertToPipelineRequest(request);
 				saveReporterInHandler(generateReporter(pipelineRequest),
-						IdUtil.getDoraReportId(pipelineRequest.getCsvTimeStamp()));
+						IdUtil.getPipelineReportId(pipelineRequest.getCsvTimeStamp()));
 				updateMetricsDataReadyInHandler(pipelineRequest.getCsvTimeStamp(), pipelineRequest.getMetrics());
 				log.info(
 						"Successfully generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _pipelineReportId: {}",
 						pipelineRequest.getMetrics(), pipelineRequest.getConsiderHoliday(),
 						pipelineRequest.getStartTime(), pipelineRequest.getEndTime(),
-						IdUtil.getDoraReportId(request.getCsvTimeStamp()));
+						IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
 			}
 			catch (BaseException e) {
-				asyncExceptionHandler.put(IdUtil.getDoraReportId(request.getCsvTimeStamp()), e);
+				asyncExceptionHandler.put(IdUtil.getPipelineReportId(request.getCsvTimeStamp()), e);
 			}
 		});
 	}
 
 	private void generateCodeBaseReport(GenerateReportRequest request) {
+		GenerateReportRequest codebaseRequest = request.convertToCodeBaseRequest(request);
+		log.info(
+				"Start to generate codebase report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _doraReportId: {}",
+				codebaseRequest.getMetrics(), codebaseRequest.getConsiderHoliday(), codebaseRequest.getStartTime(),
+				codebaseRequest.getEndTime(), IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
 		CompletableFuture.runAsync(() -> {
 			try {
-				GenerateReportRequest codebaseRequest = request.convertToCodeBaseRequest(request);
 				saveReporterInHandler(generateReporter(codebaseRequest),
 						IdUtil.getCodeBaseReportId(codebaseRequest.getCsvTimeStamp()));
 				updateMetricsDataReadyInHandler(codebaseRequest.getCsvTimeStamp(), codebaseRequest.getMetrics());
@@ -795,7 +805,7 @@ public class GenerateReporterService {
 			throw new GenerateReportException("Failed to get report due to report time expires");
 		}
 		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportTimeStamp));
-		BaseException doraException = asyncExceptionHandler.get(IdUtil.getDoraReportId(reportTimeStamp));
+		BaseException doraException = asyncExceptionHandler.get(IdUtil.getPipelineReportId(reportTimeStamp));
 		handleAsyncException(boardException);
 		handleAsyncException(doraException);
 		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
@@ -858,7 +868,7 @@ public class GenerateReporterService {
 
 	public ReportResponse getComposedReportResponse(String reportId, boolean isReportReady) {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
-		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getDoraReportId(reportId));
+		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getPipelineReportId(reportId));
 		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getCodeBaseReportId(reportId));
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);

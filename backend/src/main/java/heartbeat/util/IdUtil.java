@@ -4,7 +4,7 @@ public interface IdUtil {
 
 	String BOARD_REPORT_PREFIX = "board-";
 
-	String DORA_REPORT_PREFIX = "dora-";
+	String PIPELINE_REPORT_PREFIX = "pipeline-";
 
 	String CODE_BASE_PREFIX = "github-";
 
@@ -12,8 +12,8 @@ public interface IdUtil {
 		return BOARD_REPORT_PREFIX + timeStamp;
 	}
 
-	static String getDoraReportId(String timeStamp) {
-		return DORA_REPORT_PREFIX + timeStamp;
+	static String getPipelineReportId(String timeStamp) {
+		return PIPELINE_REPORT_PREFIX + timeStamp;
 	}
 
 	static String getCodeBaseReportId(String timeStamp) {

@@ -39,7 +39,7 @@ public class BuildKiteBuildInfo implements Serializable {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Builder
-	public static class Author {
+	public static class Author implements Serializable {
 
 		private String userName;
 

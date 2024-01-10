@@ -1,12 +1,12 @@
-import { Add } from '@mui/icons-material'
-import React from 'react'
+import { Add } from '@mui/icons-material';
+import React from 'react';
 import {
   MetricsSettingAddButtonContainer,
   MetricsSettingAddButtonItem,
-} from '@src/components/Common/MetricsSettingButton/style'
+} from '@src/components/Common/MetricsSettingButton/style';
 
 interface metricsSettingAddButtonProps {
-  onAddPipeline: () => void
+  onAddPipeline: () => void;
 }
 
 export const MetricsSettingAddButton = ({ onAddPipeline }: metricsSettingAddButtonProps) => {
@@ -16,5 +16,5 @@ export const MetricsSettingAddButton = ({ onAddPipeline }: metricsSettingAddButt
         New Pipeline
       </MetricsSettingAddButtonItem>
     </MetricsSettingAddButtonContainer>
-  )
-}
+  );
+};

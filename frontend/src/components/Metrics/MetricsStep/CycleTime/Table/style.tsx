@@ -1,7 +1,7 @@
-import { styled } from '@mui/material/styles'
-import TableCell from '@mui/material/TableCell'
-import TextField from '@mui/material/TextField'
-import { theme } from '@src/theme'
+import { styled } from '@mui/material/styles';
+import TableCell from '@mui/material/TableCell';
+import TextField from '@mui/material/TextField';
+import { theme } from '@src/theme';
 
 export const StyledTableHeaderCell = styled(TableCell)({
   padding: 0,
@@ -16,7 +16,7 @@ export const StyledTableHeaderCell = styled(TableCell)({
     paddingLeft: '1.5rem',
   },
   borderBottom: 0,
-})
+});
 
 export const StyledTableRowCell = styled(TableCell)({
   padding: 0,
@@ -27,7 +27,7 @@ export const StyledTableRowCell = styled(TableCell)({
   paddingLeft: '1rem',
   paddingRight: '1rem',
   borderBottom: `0.1rem solid ${theme.palette.secondary.dark}`,
-})
+});
 
 export const StyledTextField = styled(TextField)({
   borderBottom: 0,
@@ -58,4 +58,4 @@ export const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: 'transparent',
   },
-})
+});

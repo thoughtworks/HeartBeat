@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom'
-import ErrorIcon from '@src/assets/ErrorIcon.svg'
-import React from 'react'
+import { useNavigate } from 'react-router-dom';
+import ErrorIcon from '@src/assets/ErrorIcon.svg';
+import React from 'react';
 import {
   Container,
   ErrorImg,
@@ -12,16 +12,16 @@ import {
   Okay,
   ErrorInfo,
   RetryButton,
-} from '@src/components/ErrorContent/style'
-import { ROUTE } from '@src/constants/router'
-import { MESSAGE } from '@src/constants/resources'
+} from '@src/components/ErrorContent/style';
+import { ROUTE } from '@src/constants/router';
+import { MESSAGE } from '@src/constants/resources';
 
 export const ErrorContent = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const backToHomePage = () => {
-    navigate(ROUTE.BASE_PAGE)
-  }
+    navigate(ROUTE.BASE_PAGE);
+  };
 
   return (
     <Container>
@@ -39,5 +39,5 @@ export const ErrorContent = () => {
       </ErrorInfo>
       <RetryButton onClick={backToHomePage}>Go to homepage</RetryButton>
     </Container>
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
-import { theme } from '@src/theme'
-import Button, { ButtonProps } from '@mui/material/Button'
-import styled from '@emotion/styled'
-import Stack from '@mui/material/Stack'
+import { theme } from '@src/theme';
+import Button, { ButtonProps } from '@mui/material/Button';
+import styled from '@emotion/styled';
+import Stack from '@mui/material/Stack';
 
 export const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -14,7 +14,7 @@ export const basicStyle = {
     width: '80%',
     maxWidth: '15rem',
   },
-}
+};
 export const GuideButton = styled(Button)<ButtonProps>({
   ...basicStyle,
   '&:hover': {
@@ -26,16 +26,16 @@ export const GuideButton = styled(Button)<ButtonProps>({
   '&:focus': {
     ...basicStyle,
   },
-})
+});
 
 export const StyledStack = styled(Stack)<ButtonProps>({
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%,-50%)',
-})
+});
 
 export const HomeGuideContainer = styled.div({
   height: '44rem',
   position: 'relative',
-})
+});

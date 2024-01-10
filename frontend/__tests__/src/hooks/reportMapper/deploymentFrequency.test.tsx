@@ -1,4 +1,4 @@
-import { deploymentFrequencyMapper } from '@src/hooks/reportMapper/deploymentFrequency'
+import { deploymentFrequencyMapper } from '@src/hooks/reportMapper/deploymentFrequency';
 
 describe('deployment frequency data mapper', () => {
   const mockDeploymentFrequencyRes = {
@@ -27,7 +27,7 @@ describe('deployment frequency data mapper', () => {
         ],
       },
     ],
-  }
+  };
   it('maps response deployment frequency values to ui display value', () => {
     const expectedDeploymentFrequencyValues = [
       {
@@ -50,9 +50,9 @@ describe('deployment frequency data mapper', () => {
           },
         ],
       },
-    ]
-    const mappedDeploymentFrequency = deploymentFrequencyMapper(mockDeploymentFrequencyRes)
+    ];
+    const mappedDeploymentFrequency = deploymentFrequencyMapper(mockDeploymentFrequencyRes);
 
-    expect(mappedDeploymentFrequency).toEqual(expectedDeploymentFrequencyValues)
-  })
-})
+    expect(mappedDeploymentFrequency).toEqual(expectedDeploymentFrequencyValues);
+  });
+});

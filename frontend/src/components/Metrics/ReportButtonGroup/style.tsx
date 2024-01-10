@@ -1,7 +1,7 @@
-import { styled } from '@mui/material/styles'
-import { Button } from '@mui/material'
-import { theme } from '@src/theme'
-import { basicButtonStyle } from '@src/components/Metrics/ReportStep/style'
+import { styled } from '@mui/material/styles';
+import { Button } from '@mui/material';
+import { theme } from '@src/theme';
+import { basicButtonStyle } from '@src/components/Metrics/ReportStep/style';
 
 export const StyledRightButtonGroup = styled('div')({
   [theme.breakpoints.down('lg')]: {
@@ -10,7 +10,7 @@ export const StyledRightButtonGroup = styled('div')({
     justifyContent: 'end',
     alignItems: 'center',
   },
-})
+});
 
 export const StyledButtonGroup = styled('div')`
   box-sizing: border-box;
@@ -21,7 +21,7 @@ export const StyledButtonGroup = styled('div')`
   justify-content: ${(props: { isShowSave: boolean }) => (props.isShowSave ? 'space-between' : 'flex-end')};
   width: 100%;
   padding-top: 2rem;
-`
+`;
 
 export const StyledExportButton = styled(Button)({
   ...basicButtonStyle,
@@ -44,4 +44,4 @@ export const StyledExportButton = styled(Button)({
   [theme.breakpoints.down('lg')]: {
     fontSize: '0.8rem',
   },
-})
+});

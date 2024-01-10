@@ -1,25 +1,25 @@
-import React, { useState } from 'react'
-import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { saveTargetFields, selectClassificationWarningMessage } from '@src/context/Metrics/metricsSlice'
-import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle'
-import { useAppSelector } from '@src/hooks'
-import { WarningNotification } from '@src/components/Common/WarningNotification'
-import MultiAutoComplete from '@src/components/Common/MultiAutoComplete'
+import React, { useState } from 'react';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { saveTargetFields, selectClassificationWarningMessage } from '@src/context/Metrics/metricsSlice';
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
+import { useAppSelector } from '@src/hooks';
+import { WarningNotification } from '@src/components/Common/WarningNotification';
+import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 
 interface classificationProps {
-  title: string
-  label: string
-  targetFields: { name: string; key: string; flag: boolean }[]
+  title: string;
+  label: string;
+  targetFields: { name: string; key: string; flag: boolean }[];
 }
 
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
-  const dispatch = useAppDispatch()
-  const classificationWarningMessage = useAppSelector(selectClassificationWarningMessage)
+  const dispatch = useAppDispatch();
+  const classificationWarningMessage = useAppSelector(selectClassificationWarningMessage);
   const classificationSettings = targetFields
     .filter((targetField) => targetField.flag)
-    .map((targetField) => targetField.name)
-  const [selectedClassification, setSelectedClassification] = useState<string[]>(classificationSettings)
-  const isAllSelected = selectedClassification.length > 0 && selectedClassification.length === targetFields.length
+    .map((targetField) => targetField.name);
+  const [selectedClassification, setSelectedClassification] = useState<string[]>(classificationSettings);
+  const isAllSelected = selectedClassification.length > 0 && selectedClassification.length === targetFields.length;
 
   const handleChange = (event: React.SyntheticEvent, value: string[]) => {
     const newClassificationSettings =
@@ -27,14 +27,14 @@ export const Classification = ({ targetFields, title, label }: classificationPro
         ? isAllSelected
           ? []
           : targetFields.map((targetField) => targetField.name)
-        : [...value]
+        : [...value];
     const updatedTargetFields = targetFields.map((targetField) => ({
       ...targetField,
       flag: newClassificationSettings.includes(targetField.name),
-    }))
-    setSelectedClassification(newClassificationSettings)
-    dispatch(saveTargetFields(updatedTargetFields))
-  }
+    }));
+    setSelectedClassification(newClassificationSettings);
+    dispatch(saveTargetFields(updatedTargetFields));
+  };
 
   return (
     <>
@@ -49,5 +49,5 @@ export const Classification = ({ targetFields, title, label }: classificationPro
         isSelectAll={isAllSelected}
       />
     </>
-  )
-}
+  );
+};

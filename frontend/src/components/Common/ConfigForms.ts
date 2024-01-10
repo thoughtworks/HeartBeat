@@ -1,9 +1,9 @@
-import { styled } from '@mui/material/styles'
-import { FormControl, TextField } from '@mui/material'
-import { theme } from '@src/theme'
-import { MetricSelectionWrapper } from '@src/components/Metrics/MetricsStep/style'
+import { styled } from '@mui/material/styles';
+import { FormControl, TextField } from '@mui/material';
+import { theme } from '@src/theme';
+import { MetricSelectionWrapper } from '@src/components/Metrics/MetricsStep/style';
 
-export const ConfigSectionContainer = styled(MetricSelectionWrapper)({})
+export const ConfigSectionContainer = styled(MetricSelectionWrapper)({});
 
 export const StyledForm = styled('form')({
   display: 'grid',
@@ -14,9 +14,9 @@ export const StyledForm = styled('form')({
   [theme.breakpoints.down('md')]: {
     gridTemplateColumns: '1fr',
   },
-})
+});
 
-export const StyledTypeSelections = styled(FormControl)({})
+export const StyledTypeSelections = styled(FormControl)({});
 
 export const StyledTextField = styled(TextField)`
   input {
@@ -28,9 +28,9 @@ export const StyledTextField = styled(TextField)`
   input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
   }
-`
+`;
 
 export const StyledButtonGroup = styled('div')({
   justifySelf: 'end',
   gridColumn: '2 / 3',
-})
+});

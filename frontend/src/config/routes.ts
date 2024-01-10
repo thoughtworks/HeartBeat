@@ -1,4 +1,4 @@
-import { lazy } from 'react'
+import { lazy } from 'react';
 
 export const routes = [
   {
@@ -22,4 +22,4 @@ export const routes = [
     component: lazy(() => import('../pages/Home')),
     name: 'Home',
   },
-]
+];

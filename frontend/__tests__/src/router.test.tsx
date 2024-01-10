@@ -1,15 +1,15 @@
-import { render, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import Router from '@src/router'
-import { Provider } from 'react-redux'
-import { store } from '@src/store'
-import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, BASE_PAGE_ROUTE, METRICS_PAGE_ROUTE } from './fixtures'
+import { render, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import Router from '@src/router';
+import { Provider } from 'react-redux';
+import { store } from '@src/store';
+import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, BASE_PAGE_ROUTE, METRICS_PAGE_ROUTE } from './fixtures';
 
 jest.mock('@src/pages/Metrics', () => ({
   __esModule: true,
   default: () => <div>Mocked Metrics Page</div>,
-}))
-jest.useFakeTimers()
+}));
+jest.useFakeTimers();
 describe('router', () => {
   const setup = (routeUrl: string) =>
     render(
@@ -18,39 +18,39 @@ describe('router', () => {
           <Router />
         </MemoryRouter>
       </Provider>
-    )
+    );
 
   it('should show home page when loading on a bad page', async () => {
-    const badRoute = '/some/bad/route'
+    const badRoute = '/some/bad/route';
 
-    setup(badRoute)
+    setup(badRoute);
 
     await waitFor(() => {
-      expect(window.location.pathname).toEqual('/')
-    })
-  })
+      expect(window.location.pathname).toEqual('/');
+    });
+  });
 
   it('should show home page when go through base route', async () => {
-    setup(BASE_PAGE_ROUTE)
+    setup(BASE_PAGE_ROUTE);
 
     await waitFor(() => {
-      expect(window.location.pathname).toEqual('/')
-    })
-  })
+      expect(window.location.pathname).toEqual('/');
+    });
+  });
 
   it('should show Metrics page when go Metrics page', async () => {
-    const { getByText } = setup(METRICS_PAGE_ROUTE)
+    const { getByText } = setup(METRICS_PAGE_ROUTE);
 
     await waitFor(() => {
-      expect(getByText('Mocked Metrics Page')).toBeInTheDocument()
-    })
-  })
+      expect(getByText('Mocked Metrics Page')).toBeInTheDocument();
+    });
+  });
 
   it('should show error page when go error page', async () => {
-    const { getByText } = setup(ERROR_PAGE_ROUTE)
+    const { getByText } = setup(ERROR_PAGE_ROUTE);
 
     await waitFor(() => {
-      expect(getByText(ERROR_PAGE_MESSAGE)).toBeInTheDocument()
-    })
-  })
-})
+      expect(getByText(ERROR_PAGE_MESSAGE)).toBeInTheDocument();
+    });
+  });
+});

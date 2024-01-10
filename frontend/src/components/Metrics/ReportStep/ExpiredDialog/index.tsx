@@ -1,27 +1,27 @@
-import * as React from 'react'
-import { Fragment, useEffect } from 'react'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred'
-import { StyleDialogActions, StyleDialogTitle } from '@src/components/Metrics/ReportStep/ExpiredDialog/style'
+import * as React from 'react';
+import { Fragment, useEffect } from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
+import { StyleDialogActions, StyleDialogTitle } from '@src/components/Metrics/ReportStep/ExpiredDialog/style';
 
 export interface ExpiredDialogInterface {
-  isExpired: boolean
-  handleOk: () => void
+  isExpired: boolean;
+  handleOk: () => void;
 }
 
 export const ExpiredDialog = ({ isExpired, handleOk }: ExpiredDialogInterface) => {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
   const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   useEffect(() => {
-    setOpen(isExpired)
-  }, [isExpired])
+    setOpen(isExpired);
+  }, [isExpired]);
 
   return (
     <Fragment>
@@ -46,5 +46,5 @@ export const ExpiredDialog = ({ isExpired, handleOk }: ExpiredDialogInterface) =
         </StyleDialogActions>
       </Dialog>
     </Fragment>
-  )
-}
+  );
+};

@@ -1,6 +1,6 @@
-import { styled } from '@mui/material/styles'
-import { Button, Step, StepLabel, Stepper } from '@mui/material'
-import { theme } from '@src/theme'
+import { styled } from '@mui/material/styles';
+import { Button, Step, StepLabel, Stepper } from '@mui/material';
+import { theme } from '@src/theme';
 
 export const StyledStepper = styled(Stepper)({
   display: 'flex',
@@ -12,7 +12,7 @@ export const StyledStepper = styled(Stepper)({
     flexDirection: 'column',
     fontSize: '0.5rem',
   },
-})
+});
 
 export const StyledStep = styled(Step)({
   svg: {
@@ -22,7 +22,7 @@ export const StyledStep = styled(Step)({
   [theme.breakpoints.down('md')]: {
     padding: '0.25rem 0',
   },
-})
+});
 
 export const StyledStepLabel = styled(StepLabel)({
   width: '5rem',
@@ -34,7 +34,7 @@ export const StyledStepLabel = styled(StepLabel)({
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.5rem',
   },
-})
+});
 
 export const MetricsStepperContent = styled('div')({
   display: 'flex',
@@ -45,7 +45,7 @@ export const MetricsStepperContent = styled('div')({
   [theme.breakpoints.down('md')]: {
     width: '80%',
   },
-})
+});
 
 export const basicButtonStyle = {
   height: '2.5rem',
@@ -53,7 +53,7 @@ export const basicButtonStyle = {
   fontSize: '1rem',
   fontWeight: '500',
   textTransform: theme.typography.button.textTransform,
-}
+};
 
 export const SaveButton = styled(Button)({
   ...basicButtonStyle,
@@ -62,7 +62,7 @@ export const SaveButton = styled(Button)({
   [theme.breakpoints.down('lg')]: {
     fontSize: '0.8rem',
   },
-})
+});
 
 export const BackButton = styled(Button)({
   ...basicButtonStyle,
@@ -71,7 +71,7 @@ export const BackButton = styled(Button)({
   [theme.breakpoints.down('lg')]: {
     fontSize: '0.8rem',
   },
-})
+});
 
 export const NextButton = styled(Button)({
   ...basicButtonStyle,
@@ -92,7 +92,7 @@ export const NextButton = styled(Button)({
   [theme.breakpoints.down('lg')]: {
     fontSize: '0.8rem',
   },
-})
+});
 
 export const ButtonContainer = styled('div')({
   display: 'flex',
@@ -101,4 +101,4 @@ export const ButtonContainer = styled('div')({
   margin: '0 auto',
   padding: '0 0 2rem 0',
   width: '70%',
-})
+});

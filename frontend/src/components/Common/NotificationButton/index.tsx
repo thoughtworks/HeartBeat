@@ -1,16 +1,16 @@
-import { NotificationIconWrapper, sx } from '@src/components/Common/NotificationButton/style'
-import { ClickAwayListener, Tooltip } from '@mui/material'
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
+import { NotificationIconWrapper, sx } from '@src/components/Common/NotificationButton/style';
+import { ClickAwayListener, Tooltip } from '@mui/material';
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 
 export const NotificationButton = ({ notificationProps, updateProps }: useNotificationLayoutEffectInterface) => {
   const handleTooltipClose = () => {
-    if (notificationProps === undefined) return
+    if (notificationProps === undefined) return;
     updateProps?.({
       title: notificationProps.title,
       open: false,
       closeAutomatically: false,
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -38,5 +38,5 @@ export const NotificationButton = ({ notificationProps, updateProps }: useNotifi
         </Tooltip>
       </ClickAwayListener>
     </>
-  )
-}
+  );
+};

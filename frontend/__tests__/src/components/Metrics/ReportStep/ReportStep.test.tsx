@@ -1,4 +1,4 @@
-import { act, render, renderHook, waitFor, waitForElementToBeRemoved, screen } from '@testing-library/react'
+import { render, renderHook, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -130,90 +130,90 @@ describe('Report Step', () => {
 
   describe('render correctly', () => {
     it('should render report page', () => {
-      const { getByText } = setup(REQUIRED_DATA_LIST)
+      setup(REQUIRED_DATA_LIST)
 
-      expect(getByText('Board Metrics')).toBeInTheDocument()
-      expect(getByText('Velocity')).toBeInTheDocument()
-      expect(getByText('Cycle Time')).toBeInTheDocument()
-      expect(getByText('DORA Metrics')).toBeInTheDocument()
-      expect(getByText('Lead Time For Changes')).toBeInTheDocument()
-      expect(getByText('Deployment Frequency')).toBeInTheDocument()
-      expect(getByText('Change Failure Rate')).toBeInTheDocument()
-      expect(getByText('Mean Time To Recovery')).toBeInTheDocument()
+      expect(screen.getByText('Board Metrics')).toBeInTheDocument()
+      expect(screen.getByText('Velocity')).toBeInTheDocument()
+      expect(screen.getByText('Cycle Time')).toBeInTheDocument()
+      expect(screen.getByText('DORA Metrics')).toBeInTheDocument()
+      expect(screen.getByText('Lead Time For Changes')).toBeInTheDocument()
+      expect(screen.getByText('Deployment Frequency')).toBeInTheDocument()
+      expect(screen.getByText('Change Failure Rate')).toBeInTheDocument()
+      expect(screen.getByText('Mean Time To Recovery')).toBeInTheDocument()
     })
 
     it('should render loading page when report data is empty', () => {
       reportHook.current.reportData = EMPTY_REPORT_VALUES
 
-      const { getAllByTestId } = setup(REQUIRED_DATA_LIST)
+      setup(REQUIRED_DATA_LIST)
 
-      expect(getAllByTestId('loading-page')).toHaveLength(6)
+      expect(screen.getAllByTestId('loading-page')).toHaveLength(6)
     })
 
     it('should render the velocity component with correct props', async () => {
-      const { getByText } = setup([REQUIRED_DATA_LIST[1]])
+      setup([REQUIRED_DATA_LIST[1]])
 
-      expect(getByText('20')).toBeInTheDocument()
-      expect(getByText('14')).toBeInTheDocument()
+      expect(screen.getByText('20')).toBeInTheDocument()
+      expect(screen.getByText('14')).toBeInTheDocument()
     })
 
     it('should render the CycleTime component with correct props', () => {
-      const { getByText } = setup([REQUIRED_DATA_LIST[2]])
+      setup([REQUIRED_DATA_LIST[2]])
 
-      expect(getByText('30.26')).toBeInTheDocument()
-      expect(getByText('21.18')).toBeInTheDocument()
+      expect(screen.getByText('30.26')).toBeInTheDocument()
+      expect(screen.getByText('21.18')).toBeInTheDocument()
     })
 
     it('should render the Lead Time For Change component with correct props', () => {
-      const { getByText } = setup([REQUIRED_DATA_LIST[4]])
+      setup([REQUIRED_DATA_LIST[4]])
 
-      expect(getByText('60.79')).toBeInTheDocument()
-      expect(getByText('39.03')).toBeInTheDocument()
-      expect(getByText('99.82')).toBeInTheDocument()
+      expect(screen.getByText('60.79')).toBeInTheDocument()
+      expect(screen.getByText('39.03')).toBeInTheDocument()
+      expect(screen.getByText('99.82')).toBeInTheDocument()
     })
 
     it('should render the Deployment frequency component with correct props', () => {
-      const { getByText } = setup([REQUIRED_DATA_LIST[5]])
+      setup([REQUIRED_DATA_LIST[5]])
 
-      expect(getByText('0.40')).toBeInTheDocument()
+      expect(screen.getByText('0.40')).toBeInTheDocument()
     })
 
     it('should render the Change failure rate component with correct props', () => {
-      const { getByText } = setup([REQUIRED_DATA_LIST[6]])
+      setup([REQUIRED_DATA_LIST[6]])
 
-      expect(getByText('0.00')).toBeInTheDocument()
-      expect(getByText('% (0/6)')).toBeInTheDocument()
+      expect(screen.getByText('0.00')).toBeInTheDocument()
+      expect(screen.getByText('% (0/6)')).toBeInTheDocument()
     })
 
     it('should render the Mean time to recovery component with correct props', () => {
-      const { getByText } = setup([REQUIRED_DATA_LIST[7]])
+      setup([REQUIRED_DATA_LIST[7]])
 
-      expect(getByText('4.00')).toBeInTheDocument()
+      expect(screen.getByText('4.00')).toBeInTheDocument()
     })
 
     it('should show errorMessage when generating report has error message', () => {
       reportHook.current.errorMessage = 'error message'
 
-      const { getByText } = setup([''])
+      setup([''])
 
-      expect(getByText('error message')).toBeInTheDocument()
+      expect(screen.getByText('error message')).toBeInTheDocument()
     })
   })
 
   describe('behavior', () => {
     it('should call handleBack method when clicking back button given back button enabled', async () => {
-      const { getByText } = setup([''])
+      setup([''])
 
-      const back = getByText(PREVIOUS)
+      const back = screen.getByText(PREVIOUS)
       await userEvent.click(back)
 
       expect(backStep).toHaveBeenCalledTimes(1)
     })
 
     it('should call handleSaveMock method when clicking save button', async () => {
-      const { getByText } = setup([''])
+      setup([''])
 
-      const save = getByText(SAVE)
+      const save = screen.getByText(SAVE)
       await userEvent.click(save)
 
       expect(handleSaveMock).toHaveBeenCalledTimes(1)
@@ -266,62 +266,57 @@ describe('Report Step', () => {
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
       'should render detail page when clicking show more button given metric %s',
       async (requiredData) => {
-        const { getByText } = setup([requiredData])
+        setup([requiredData])
 
-        const showMore = getByText(SHOW_MORE)
+        const showMore = screen.getByText(SHOW_MORE)
 
-        act(() => {
-          userEvent.click(showMore)
+        await userEvent.click(showMore)
+
+        await waitFor(() => {
+          waitForElementToBeRemoved(showMore)
         })
-
-        await waitForElementToBeRemoved(showMore)
-        expect(getByText(BACK)).toBeInTheDocument()
+        expect(screen.getByText(BACK)).toBeInTheDocument()
       }
     )
 
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
       'should return report page when clicking back button in Breadcrumb in detail page given metric %s',
       async (requiredData) => {
-        const { getByText } = setup([requiredData])
+        setup([requiredData])
 
-        const showMore = getByText(SHOW_MORE)
+        await userEvent.click(screen.getByText(SHOW_MORE))
 
-        act(() => {
-          userEvent.click(showMore)
+        await waitFor(() => {
+          expect(screen.queryByText(SHOW_MORE)).not.toBeInTheDocument()
         })
 
-        await waitForElementToBeRemoved(showMore)
-        const back = getByText(BACK)
+        await userEvent.click(screen.getByText(BACK))
 
-        act(() => {
-          userEvent.click(back)
+        await waitFor(() => {
+          expect(screen.queryByText(BACK)).not.toBeInTheDocument()
         })
-
-        await waitForElementToBeRemoved(back)
-        expect(getByText(SHOW_MORE)).toBeInTheDocument()
+        expect(screen.getByText(SHOW_MORE)).toBeInTheDocument()
       }
     )
 
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
       'should return report page when clicking previous button in detail page given metric %s',
       async (requiredData) => {
-        const { getByText } = setup([requiredData])
+        setup([requiredData])
 
-        const showMore = getByText(SHOW_MORE)
+        const showMore = screen.getByText(SHOW_MORE)
 
-        act(() => {
-          userEvent.click(showMore)
-        })
-
-        await waitForElementToBeRemoved(showMore)
-        const previous = getByText(PREVIOUS)
-
-        act(() => {
-          userEvent.click(previous)
-        })
+        await userEvent.click(showMore)
 
         await waitFor(() => {
-          expect(getByText(SHOW_MORE)).toBeInTheDocument()
+          waitForElementToBeRemoved(showMore)
+        })
+        const previous = screen.getByText(PREVIOUS)
+
+        await userEvent.click(previous)
+
+        await waitFor(() => {
+          expect(screen.getByText(SHOW_MORE)).toBeInTheDocument()
         })
       }
     )
@@ -339,9 +334,9 @@ describe('Report Step', () => {
     it.each([[REQUIRED_DATA_LIST[4]], [REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]]])(
       'should show export pipeline button when selecting %s',
       (requiredData) => {
-        const { getByText } = setup([requiredData])
+        setup([requiredData])
 
-        const exportPipelineButton = getByText(EXPORT_PIPELINE_DATA)
+        const exportPipelineButton = screen.getByText(EXPORT_PIPELINE_DATA)
 
         expect(exportPipelineButton).toBeInTheDocument()
       }
@@ -349,9 +344,9 @@ describe('Report Step', () => {
 
     it('should call fetchExportData when clicking "Export pipeline data"', async () => {
       const { result } = renderHook(() => useExportCsvEffect())
-      const { getByText } = setup([REQUIRED_DATA_LIST[6]])
+      setup([REQUIRED_DATA_LIST[6]])
 
-      const exportButton = getByText(EXPORT_PIPELINE_DATA)
+      const exportButton = screen.getByText(EXPORT_PIPELINE_DATA)
       expect(exportButton).toBeInTheDocument()
       await userEvent.click(exportButton)
 
@@ -376,9 +371,9 @@ describe('Report Step', () => {
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[2]]])(
       'should show export board button when selecting %s',
       (requiredData) => {
-        const { getByText } = setup([requiredData])
+        setup([requiredData])
 
-        const exportPipelineButton = getByText(EXPORT_BOARD_DATA)
+        const exportPipelineButton = screen.getByText(EXPORT_BOARD_DATA)
 
         expect(exportPipelineButton).toBeInTheDocument()
       }
@@ -386,9 +381,9 @@ describe('Report Step', () => {
 
     it('should call fetchExportData when clicking "Export board data"', async () => {
       const { result } = renderHook(() => useExportCsvEffect())
-      const { getByText } = setup([REQUIRED_DATA_LIST[2]])
+      setup([REQUIRED_DATA_LIST[2]])
 
-      const exportButton = getByText(EXPORT_BOARD_DATA)
+      const exportButton = screen.getByText(EXPORT_BOARD_DATA)
       expect(exportButton).toBeInTheDocument()
       await userEvent.click(exportButton)
 
@@ -403,9 +398,9 @@ describe('Report Step', () => {
 
   describe('export metric data', () => {
     it('should show export metric button when visiting this page', () => {
-      const { getByText } = setup([''])
+      setup([''])
 
-      const exportMetricButton = getByText(EXPORT_METRIC_DATA)
+      const exportMetricButton = screen.getByText(EXPORT_METRIC_DATA)
 
       expect(exportMetricButton).toBeInTheDocument()
     })

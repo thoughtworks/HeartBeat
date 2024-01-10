@@ -133,7 +133,7 @@ class GenerateReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnCallBackUrlWithAcceptedStatusAndInvokeGenerateBoardReportWhenReportTypeIsBoard() throws Exception {
+	void shouldReturnCallBackUrlWithAcceptedStatusAndInvokeGenerateDoraReportWhenReportTypeIsDora() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH), GenerateReportRequest.class);
 		String currentTimeStamp = "1685010080107";
@@ -157,7 +157,7 @@ class GenerateReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnCallBackUrlWithAcceptedStatusAndInvokeGenerateDoraReportWhenReportTypeIsBoard() throws Exception {
+	void shouldReturnCallBackUrlWithAcceptedStatusAndInvokeGenerateBoardReportWhenReportTypeIsBoard() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH), GenerateReportRequest.class);
 		String currentTimeStamp = "1685010080107";
@@ -170,6 +170,7 @@ class GenerateReporterControllerTest {
 			.andReturn()
 			.getResponse();
 
+		Thread.sleep(2000);
 		verify(generateReporterService, times(0)).generateDoraReport(request);
 		verify(generateReporterService, times(1)).generateBoardReport(request);
 

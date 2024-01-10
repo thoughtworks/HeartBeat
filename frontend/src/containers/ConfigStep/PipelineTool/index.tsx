@@ -105,7 +105,6 @@ export const PipelineTool = () => {
   };
 
   const updateFieldHelpText = () => {
-    errorMessage;
     const { isRequired, isValid } = fields[1];
     if (!isRequired) {
       return TOKEN_HELPER_TEXT.RequiredTokenText;

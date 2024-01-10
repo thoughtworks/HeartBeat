@@ -102,5 +102,10 @@
   "bugs": {
     "url": "https://github.com/thoughtworks/HeartBeat/issues",
     "email": "heartbeat@thoughtworks.com"
+  },
+  "pnpm": {
+    "overrides": {
+      "follow-redirects@<1.15.4": ">=1.15.4"
+    }
   }
 }

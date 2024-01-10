@@ -1,4 +1,4 @@
-import { render, renderHook, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import { render, renderHook, screen, waitFor } from '@testing-library/react'
 import ReportStep from '@src/components/Metrics/ReportStep'
 import {
   BACK,
@@ -307,7 +307,7 @@ describe('Report Step', () => {
         await userEvent.click(showMore)
 
         await waitFor(() => {
-          waitForElementToBeRemoved(showMore)
+          expect(screen.queryByText(SHOW_MORE)).not.toBeInTheDocument()
         })
         const previous = screen.getByText(PREVIOUS)
 

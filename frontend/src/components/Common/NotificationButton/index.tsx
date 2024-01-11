@@ -4,6 +4,7 @@ import { AlertColor, SvgIcon } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import React from 'react';
 
 const getStyles = (type: AlertColor | undefined) => {
   switch (type) {

@@ -153,7 +153,7 @@ Exception Table
   <tr>
     <td rowspan="3">404</td>
     <td>Failed to get BuildKite info_status: 404...</td>
-    <td rowspan="3">404 Not Found</td>
+    <td rowspan="3">Not found</td>
   </tr>
   <tr>
     <td>Failed to get GitHub info_status: 404...</td>
@@ -164,7 +164,7 @@ Exception Table
   <tr>
     <td rowspan="3">500</td>
     <td>Report time expires</td>
-    <td rowspan="3">Generate report failed</td>
+    <td rowspan="3">Failed to generate report</td>
   </tr>
   <tr>
     <td>Failed to write report file</td>
@@ -175,7 +175,7 @@ Exception Table
   <tr>
     <td rowspan="3">503</td>
     <td>Failed to get BuildKite info_status: 503...</td>
-    <td rowspan="3">Service Unavailable</td>
+    <td rowspan="3">Service unavailable</td>
   </tr>
   <tr>
     <td>Failed to get GitHub info_status: 503...</td>
@@ -208,7 +208,7 @@ group async process board related metrics
     activate Jira
     Jira --> Backend: Jira raw 
     deactivate Jira
-    Backend -> Backend: calculate metrics for velocity, cicle time and classification
+    Backend -> Backend: calculate metrics for velocity, cycle time and classification
     Backend -> Backend: generate board report csv
     deactivate Backend
     note left
@@ -478,6 +478,20 @@ Response:
         "pipelineLeadTime": 0,
         "totalDelayTime": 0
       }
+    } <could be null if not required>,
+    "reportError": {
+      "boardError": {
+        "status": 400,
+        "errorMessage": "string"
+      },
+      "pipelineError": {
+        "status": 400,
+        "errorMessage": "string"
+      },
+      "sourceControlError": {
+        "status": 400,
+        "errorMessage": "string"
+      },
     } <could be null if not required>,
     "isBoardMetricsReady": Boolean <default is null>, 
     "isPipelineMetricsReady": Boolean <default is null>, 

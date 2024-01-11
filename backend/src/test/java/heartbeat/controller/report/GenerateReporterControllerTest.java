@@ -109,7 +109,7 @@ class GenerateReporterControllerTest {
 		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
 
 		assertEquals("Report time expires", errorMessage);
-		assertEquals("Generate report failed", hintInfo);
+		assertEquals("Failed to generate report", hintInfo);
 	}
 
 	@Test

@@ -27,6 +27,7 @@ import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
+import heartbeat.controller.report.dto.response.ErrorInfo;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
@@ -973,11 +974,11 @@ class GenerateReporterServiceTest {
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
 
-		BaseException exception = assertThrows(UnauthorizedException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+		ErrorInfo pipelineError = generateReporterService.getReportErrorAndHandleAsyncException(timeStamp)
+			.getPipelineError();
 
-		assertEquals(401, exception.getStatus());
-		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", exception.getMessage());
+		assertEquals(401, pipelineError.getStatus());
+		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", pipelineError.getErrorMessage());
 	}
 
 	@Test
@@ -989,11 +990,11 @@ class GenerateReporterServiceTest {
 
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
-		BaseException exception = assertThrows(PermissionDenyException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+		ErrorInfo pipelineError = generateReporterService.getReportErrorAndHandleAsyncException(timeStamp)
+			.getPipelineError();
 
-		assertEquals(403, exception.getStatus());
-		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", exception.getMessage());
+		assertEquals(403, pipelineError.getStatus());
+		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", pipelineError.getErrorMessage());
 	}
 
 	@Test
@@ -1003,11 +1004,11 @@ class GenerateReporterServiceTest {
 
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
-		BaseException exception = assertThrows(NotFoundException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+		ErrorInfo pipelineError = generateReporterService.getReportErrorAndHandleAsyncException(timeStamp)
+			.getPipelineError();
 
-		assertEquals(404, exception.getStatus());
-		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", exception.getMessage());
+		assertEquals(404, pipelineError.getStatus());
+		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", pipelineError.getErrorMessage());
 	}
 
 	@Test
@@ -1018,7 +1019,7 @@ class GenerateReporterServiceTest {
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new GenerateReportException("Failed to get GitHub info_status: 500, reason: GenerateReport"));
 		BaseException exception = assertThrows(GenerateReportException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+				() -> generateReporterService.getReportErrorAndHandleAsyncException(timeStamp));
 
 		assertEquals(500, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 500, reason: GenerateReport", exception.getMessage());
@@ -1032,7 +1033,7 @@ class GenerateReporterServiceTest {
 		when(asyncExceptionHandler.get(reportId)).thenReturn(
 				new ServiceUnavailableException("Failed to get GitHub info_status: 503, reason: ServiceUnavailable"));
 		BaseException exception = assertThrows(ServiceUnavailableException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+				() -> generateReporterService.getReportErrorAndHandleAsyncException(timeStamp));
 
 		assertEquals(503, exception.getStatus());
 		assertEquals("Failed to get GitHub info_status: 503, reason: ServiceUnavailable", exception.getMessage());
@@ -1045,7 +1046,7 @@ class GenerateReporterServiceTest {
 
 		when(asyncExceptionHandler.get(reportId)).thenReturn(new RequestFailedException(405, "RequestFailedException"));
 		BaseException exception = assertThrows(RequestFailedException.class,
-				() -> generateReporterService.checkGenerateReportIsDone(timeStamp));
+				() -> generateReporterService.getReportErrorAndHandleAsyncException(timeStamp));
 
 		assertEquals(405, exception.getStatus());
 		assertEquals(

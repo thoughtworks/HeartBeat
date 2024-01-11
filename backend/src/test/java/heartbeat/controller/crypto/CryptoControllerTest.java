@@ -137,7 +137,7 @@ class CryptoControllerTest {
 		final var message = JsonPath.parse(content).read("$.message").toString();
 		final var hintInfo = JsonPath.parse(content).read("$.hintInfo").toString();
 		assertThat(message).isEqualTo(FAKE_EXCEPTION_MESSAGE);
-		assertThat(hintInfo).isEqualTo("Encrypt or decrypt process failed");
+		assertThat(hintInfo).isEqualTo("Failed to encrypt or decrypt process");
 	}
 
 	@Test
@@ -224,7 +224,7 @@ class CryptoControllerTest {
 		final var internalServerMessage = JsonPath.parse(internalServerContent).read("$.message").toString();
 		final var internalServerHintInfo = JsonPath.parse(internalServerContent).read("$.hintInfo").toString();
 		assertThat(internalServerMessage).isEqualTo(FAKE_EXCEPTION_MESSAGE);
-		assertThat(internalServerHintInfo).isEqualTo("Encrypt or decrypt process failed");
+		assertThat(internalServerHintInfo).isEqualTo("Failed to encrypt or decrypt process");
 
 		var badRequestResponse = mockMvc
 			.perform(post("/decrypt").content(new ObjectMapper().writeValueAsString(request))

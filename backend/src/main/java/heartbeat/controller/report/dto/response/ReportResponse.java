@@ -27,6 +27,8 @@ public class ReportResponse {
 
 	private LeadTimeForChanges leadTimeForChanges;
 
+	private ReportError reportError;
+
 	private Long exportValidityTime;
 
 	private Boolean isBoardMetricsReady;

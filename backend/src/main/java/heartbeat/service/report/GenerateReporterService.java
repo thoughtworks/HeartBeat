@@ -30,18 +30,18 @@ import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
+import heartbeat.controller.report.dto.response.ErrorInfo;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.MetricsDataReady;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
+import heartbeat.controller.report.dto.response.ReportError;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.NotFoundException;
-import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.ServiceUnavailableException;
-import heartbeat.exception.UnauthorizedException;
 import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
@@ -805,24 +805,23 @@ public class GenerateReporterService {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Failed to get report due to report time expires");
 		}
-		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportTimeStamp));
-		BaseException doraException = asyncExceptionHandler.get(IdUtil.getPipelineReportId(reportTimeStamp));
-		handleAsyncException(boardException);
-		handleAsyncException(doraException);
 		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
 	}
 
-	private static void handleAsyncException(BaseException exception) {
+	private ErrorInfo handleAsyncExceptionAndGetErrorInfo(BaseException exception) {
 		if (Objects.nonNull(exception)) {
-			switch (exception.getStatus()) {
-				case 401 -> throw new UnauthorizedException(exception.getMessage());
-				case 403 -> throw new PermissionDenyException(exception.getMessage());
-				case 404 -> throw new NotFoundException(exception.getMessage());
-				case 500 -> throw new GenerateReportException(exception.getMessage());
-				case 503 -> throw new ServiceUnavailableException(exception.getMessage());
-				default -> throw new RequestFailedException(exception.getStatus(), exception.getMessage());
+			int status = exception.getStatus();
+			final String errorMessage = exception.getMessage();
+			switch (status) {
+				case 401, 403, 404 -> {
+					return ErrorInfo.builder().status(status).errorMessage(errorMessage).build();
+				}
+				case 500 -> throw new GenerateReportException(errorMessage);
+				case 503 -> throw new ServiceUnavailableException(errorMessage);
+				default -> throw new RequestFailedException(status, errorMessage);
 			}
 		}
+		return null;
 	}
 
 	private void validateExpire(long csvTimeStamp) {
@@ -873,6 +872,7 @@ public class GenerateReporterService {
 		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getSourceControlReportId(reportId));
 		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
+		ReportError reportError = getReportErrorAndHandleAsyncException(reportId);
 
 		return ReportResponse.builder()
 			.velocity(getValueOrNull(boardReportResponse, ReportResponse::getVelocity))
@@ -888,6 +888,21 @@ public class GenerateReporterService {
 			.isSourceControlMetricsReady(
 					getValueOrNull(metricsDataReady, MetricsDataReady::isSourceControlMetricsReady))
 			.isAllMetricsReady(isReportReady)
+			.reportError(reportError)
+			.build();
+	}
+
+	public ReportError getReportErrorAndHandleAsyncException(String reportId) {
+		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportId));
+		BaseException pipelineException = asyncExceptionHandler.get(IdUtil.getPipelineReportId(reportId));
+		BaseException sourceControlException = asyncExceptionHandler.get(IdUtil.getSourceControlReportId(reportId));
+		ErrorInfo boardError = handleAsyncExceptionAndGetErrorInfo(boardException);
+		ErrorInfo pipelineError = handleAsyncExceptionAndGetErrorInfo(pipelineException);
+		ErrorInfo sourceControlError = handleAsyncExceptionAndGetErrorInfo(sourceControlException);
+		return ReportError.builder()
+			.boardError(boardError)
+			.pipelineError(pipelineError)
+			.sourceControlError(sourceControlError)
 			.build();
 	}
 

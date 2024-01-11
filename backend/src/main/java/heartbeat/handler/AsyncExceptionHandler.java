@@ -23,7 +23,7 @@ public class AsyncExceptionHandler {
 	}
 
 	public BaseException get(String reportId) {
-		return exceptionMap.remove(reportId);
+		return exceptionMap.get(reportId);
 	}
 
 	public void deleteExpireException(long currentTimeStamp) {

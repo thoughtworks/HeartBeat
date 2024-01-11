@@ -105,8 +105,8 @@ export const VERSION_RESPONSE = {
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
   UNAUTHORIZED = 'Token is incorrect',
-  INTERNAL_SERVER_ERROR = 'Internal Server Error',
-  NOT_FOUND = '404 Not Found',
+  INTERNAL_SERVER_ERROR = 'Internal server error',
+  NOT_FOUND = 'Not found',
   PERMISSION_DENIED = 'Permission denied',
   REQUEST_TIMEOUT = 'Request Timeout',
   UNKNOWN = 'Unknown',
@@ -692,7 +692,7 @@ export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import da
 export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
   'The content of the imported JSON file is empty. Please confirm carefully';
 
-export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error';
+export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal server error';
 
 export const BASE_PAGE_ROUTE = '/';
 

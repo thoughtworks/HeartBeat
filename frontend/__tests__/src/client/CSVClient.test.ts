@@ -30,7 +30,11 @@ describe('verify export csv', () => {
   });
 
   it('should throw error when export csv request status 500', async () => {
-    server.use(rest.get(MOCK_EXPORT_CSV_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.InternalServerError))));
+    server.use(
+      rest.get(MOCK_EXPORT_CSV_URL, (req, res, ctx) =>
+        res(ctx.status(HttpStatusCode.InternalServerError, VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR))
+      )
+    );
 
     await expect(async () => {
       await csvClient.exportCSVData(MOCK_EXPORT_CSV_REQUEST_PARAMS);

@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GitHubRepo {
+public class GitHubRepo implements Serializable {
 
 	@JsonProperty("html_url")
 	private String htmlUrl;

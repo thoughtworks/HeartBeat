@@ -5,6 +5,7 @@ import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
 import heartbeat.client.dto.codebase.github.GitHubRepo;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.decoder.GitHubFeignClientDecoder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,32 +25,38 @@ public interface GitHubFeignClient {
 	void verifyCanReadTargetBranch(@PathVariable String repository, @PathVariable String branchName,
 			@RequestHeader("Authorization") String token);
 
+	@Cacheable(cacheNames = "githubOrganizationInfo", key = "#token")
 	@GetMapping(path = "/user/orgs")
 	@ResponseStatus(HttpStatus.OK)
 	@Deprecated
 	List<GitHubOrganizationsInfo> getGithubOrganizationsInfo(@RequestHeader("Authorization") String token);
 
+	@Cacheable(cacheNames = "githubAllRepos", key = "#token")
 	@GetMapping(path = "/user/repos")
 	@ResponseStatus(HttpStatus.OK)
 	@Deprecated
 	List<GitHubRepo> getAllRepos(@RequestHeader("Authorization") String token);
 
+	@Cacheable(cacheNames = "githubRepos", key = "#organizationName")
 	@GetMapping(path = "/orgs/{organizationName}/repos")
 	@ResponseStatus(HttpStatus.OK)
 	@Deprecated
 	List<GitHubRepo> getReposByOrganizationName(@PathVariable String organizationName,
 			@RequestHeader("Authorization") String token);
 
+	@Cacheable(cacheNames = "commitInfo", key = "#repository+'-'+#commitId")
 	@GetMapping(path = "/repos/{repository}/commits/{commitId}")
 	@ResponseStatus(HttpStatus.OK)
 	CommitInfo getCommitInfo(@PathVariable String repository, @PathVariable String commitId,
 			@RequestHeader("Authorization") String token);
 
+	@Cacheable(cacheNames = "pullRequestCommitInfo", key = "#repository+'-'+#mergedPullNumber")
 	@GetMapping(path = "/repos/{repository}/pulls/{mergedPullNumber}/commits")
 	@ResponseStatus(HttpStatus.OK)
 	List<CommitInfo> getPullRequestCommitInfo(@PathVariable String repository, @PathVariable String mergedPullNumber,
 			@RequestHeader("Authorization") String token);
 
+	@Cacheable(cacheNames = "pullRequestListInfo", key = "#repository+'-'+#deployId")
 	@GetMapping(path = "/repos/{repository}/commits/{deployId}/pulls")
 	@ResponseStatus(HttpStatus.OK)
 	List<PullRequestInfo> getPullRequestListInfo(@PathVariable String repository, @PathVariable String deployId,

@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GitHubOrganizationsInfo {
+public class GitHubOrganizationsInfo implements Serializable {
 
 	private String login;
 

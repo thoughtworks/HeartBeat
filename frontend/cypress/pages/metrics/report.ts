@@ -7,7 +7,7 @@ class Report {
     return cy.contains('Mean Time To Recovery');
   }
 
-  get backButton() {
+  get previousButton() {
     return cy.contains('Previous');
   }
 
@@ -39,12 +39,12 @@ class Report {
     return cy.contains('DORA Metrics').parent().siblings().eq(0);
   }
 
-  get topBackButton() {
+  get backButton() {
     return cy.contains('Back');
   }
 
   boardGoToReportPage() {
-    this.topBackButton.click();
+    this.previousButton.click();
   }
 
   doraGoToReportPage() {
@@ -60,7 +60,7 @@ class Report {
   }
 
   backToMetricsStep() {
-    this.backButton.click({ force: true });
+    this.previousButton.click({ force: true });
   }
 
   exportMetricData() {

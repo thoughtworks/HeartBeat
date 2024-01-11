@@ -35,7 +35,7 @@ describe('deployment frequency data mapper', () => {
         name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
         valuesList: [
           {
-            name: 'Deployment frequency(deployments/day)',
+            name: 'Deployment frequency',
             value: '0.30',
           },
         ],
@@ -45,7 +45,7 @@ describe('deployment frequency data mapper', () => {
         name: 'Average',
         valuesList: [
           {
-            name: 'Deployment frequency(deployments/day)',
+            name: 'Deployment frequency',
             value: '0.40',
           },
         ],

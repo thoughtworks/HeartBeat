@@ -470,13 +470,13 @@ public class CSVFileGenerator {
 			.getDeploymentFrequencyOfPipelines();
 		deploymentFrequencyOfPipelines.forEach(pipeline -> rows.add(new String[] { "Deployment frequency",
 				pipeline.getName() + " / " + pipeline.getStep().replaceAll(":\\w+: ", "")
-						+ " / Deployment frequency(deployments/day)",
+						+ " / Deployment frequency(Deployments/Day)",
 				DecimalUtil.formatDecimalTwo(pipeline.getDeploymentFrequency()) }));
 
 		AvgDeploymentFrequency avgDeploymentFrequency = deploymentFrequency.getAvgDeploymentFrequency();
 		if (deploymentFrequencyOfPipelines.size() > 1)
 			rows.add(new String[] { "Deployment frequency",
-					avgDeploymentFrequency.getName() + " / Deployment frequency(deployments/day)",
+					avgDeploymentFrequency.getName() + " / Deployment frequency(Deployments/Day)",
 					DecimalUtil.formatDecimalTwo(avgDeploymentFrequency.getDeploymentFrequency()) });
 
 		return rows;

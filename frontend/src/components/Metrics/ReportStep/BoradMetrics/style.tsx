@@ -15,4 +15,5 @@ export const StyledShowMore = styled('div')({
   fontSize: '0.8rem',
   textDecoration: 'none',
   color: '#4350AF',
+  cursor: 'pointer',
 });

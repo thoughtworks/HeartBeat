@@ -9,7 +9,7 @@ export const REPORT_PAGE_TYPE = {
   DORA: 'DoraReport',
 };
 
-export const SHOW_MORE = 'show more >';
+export const SHOW_MORE = 'Show more >';
 export const BACK = 'Back';
 
 export enum REQUIRED_DATA {
@@ -146,7 +146,7 @@ export enum CYCLE_TIME_METRICS_NAME {
   AVERAGE_TESTING_TIME = 'Average testing time',
 }
 
-export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency(deployments/day)';
+export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency';
 
 export const FAILURE_RATE_NAME = 'Failure rate';
 
@@ -159,9 +159,10 @@ export const NAME = 'Name';
 export const AVERAGE_FIELD = 'Average';
 
 export enum REPORT_SUFFIX_UNITS {
-  PER_SP = '(days/SP)',
-  PER_CARD = '(days/card)',
-  HOURS = '(hours)',
+  PER_SP = '(Days/SP)',
+  PER_CARD = '(Days/Card)',
+  HOURS = '(Hours)',
+  DEPLOYMENTS_DAY = '(Deployments/Day)',
 }
 
 export const MESSAGE = {

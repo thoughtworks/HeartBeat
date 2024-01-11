@@ -147,8 +147,8 @@ describe('PipelineTool', () => {
   });
 
   it('should show reset button and verified button when verify succeed ', async () => {
-    const { getByText } = setup()
-    await fillPipelineToolFieldsInformation()
+    const { getByText } = setup();
+    await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByText(VERIFY));
     expect(screen.getByText(RESET)).toBeVisible();

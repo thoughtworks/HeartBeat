@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react'
-import { Box } from '@mui/material'
-import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient'
+import React, { useCallback } from 'react';
+import { Box } from '@mui/material';
+import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import {
   StyledContainer,
   StyledImageContainer,
@@ -9,16 +9,17 @@ import {
   StyledCommonMessage,
   StyledRetryMessage,
   StyledRetryButton,
-} from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases/style'
-import { HttpStatusCode } from 'axios'
+} from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases/style';
+import { HttpStatusCode } from 'axios';
+import { PIPELINE_TOOL_RETRY_MESSAGE, PIPELINE_TOOL_RETRY_TRIGGER_MESSAGE } from '@src/constants/resources';
 
 export interface IPresentationForErrorCasesProps extends IGetPipelineToolInfoResult {
-  retry: () => void
-  isLoading: boolean
+  retry: () => void;
+  isLoading: boolean;
 }
 
 const PresentationForErrorCases = (props: IPresentationForErrorCasesProps) => {
-  const handleRetry = useCallback(() => !props.isLoading && props.retry(), [props])
+  const handleRetry = useCallback(() => !props.isLoading && props.retry(), [props]);
   return (
     <StyledContainer aria-label='Error UI for pipeline settings'>
       <StyledImageContainer>
@@ -26,10 +27,9 @@ const PresentationForErrorCases = (props: IPresentationForErrorCasesProps) => {
       </StyledImageContainer>
       {props.code === HttpStatusCode.ServiceUnavailable ? (
         <StyledRetryMessage>
-          <span>Data loading failed, please</span>
+          <span>{PIPELINE_TOOL_RETRY_MESSAGE}</span>
           <StyledRetryButton onClick={handleRetry} isLoading={props.isLoading}>
-            {' '}
-            try again
+            {PIPELINE_TOOL_RETRY_TRIGGER_MESSAGE}
           </StyledRetryButton>
         </StyledRetryMessage>
       ) : (
@@ -39,7 +39,7 @@ const PresentationForErrorCases = (props: IPresentationForErrorCasesProps) => {
         </Box>
       )}
     </StyledContainer>
-  )
-}
+  );
+};
 
-export default PresentationForErrorCases
+export default PresentationForErrorCases;

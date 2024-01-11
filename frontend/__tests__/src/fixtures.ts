@@ -317,7 +317,7 @@ export const MOCK_BUILD_KITE_GET_INFO_RESPONSE = {
       steps: [],
     },
   ],
-}
+};
 
 export const FILTER_CYCLE_TIME_SETTINGS = [
   { name: 'TODO', value: 'TODO' },

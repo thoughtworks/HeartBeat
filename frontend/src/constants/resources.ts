@@ -221,3 +221,6 @@ export const UNKNOWN_ERROR_TITLE = 'Unknown error';
 
 export const PIPELINE_TOOL_ERROR_MESSAGE =
   'Please go back to the previous page and change your pipeline token with correct access permission.';
+
+export const PIPELINE_TOOL_RETRY_MESSAGE = 'Data loading failed, please';
+export const PIPELINE_TOOL_RETRY_TRIGGER_MESSAGE = 'try again';

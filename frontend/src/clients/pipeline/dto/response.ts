@@ -1,5 +1,5 @@
-import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice'
+import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 
 export interface IPipelineInfoResponseDTO {
-  pipelineList: pipeline[]
+  pipelineList: pipeline[];
 }

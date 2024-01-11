@@ -206,31 +206,31 @@ describe('ConfigStep', () => {
   });
 
   it('should not verify again when collection-date or date-picker is changed given pipeline token is filled and verified', async () => {
-    const wrapper = setup()
-    const mockToken = 'bkua_mockTokenMockTokenMockTokenMockToken1234'
-    const today = dayjs().format('MM/DD/YYYY')
-    const startDateInput = wrapper.getByLabelText('From *')
+    const wrapper = setup();
+    const mockToken = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
+    const today = dayjs().format('MM/DD/YYYY');
+    const startDateInput = wrapper.getByLabelText('From *');
 
-    const requiredMetricsField = wrapper.getByRole('button', { name: REQUIRED_DATA })
-    fireEvent.mouseDown(requiredMetricsField)
-    const requireDateSelection = within(wrapper.getByRole('listbox'))
-    fireEvent.click(requireDateSelection.getByRole('option', { name: DEPLOYMENT_FREQUENCY }))
+    const requiredMetricsField = wrapper.getByRole('button', { name: REQUIRED_DATA });
+    fireEvent.mouseDown(requiredMetricsField);
+    const requireDateSelection = within(wrapper.getByRole('listbox'));
+    fireEvent.click(requireDateSelection.getByRole('option', { name: DEPLOYMENT_FREQUENCY }));
 
-    const tokenNode = wrapper.getByTestId('pipelineToolTextField')
+    const tokenNode = wrapper.getByTestId('pipelineToolTextField');
 
     act(() => {
-      fireEvent.change(tokenNode.querySelector('input') as HTMLInputElement, { target: { value: mockToken } })
-    })
+      fireEvent.change(tokenNode.querySelector('input') as HTMLInputElement, { target: { value: mockToken } });
+    });
 
-    const submitButton = wrapper.getByText(VERIFY)
+    const submitButton = wrapper.getByText(VERIFY);
     await act(async () => {
-      fireEvent.click(submitButton)
-    })
+      fireEvent.click(submitButton);
+    });
 
-    fireEvent.change(startDateInput, { target: { value: today } })
+    fireEvent.change(startDateInput, { target: { value: today } });
 
-    expect(wrapper.queryByText(VERIFY)).toBeNull()
-    expect(wrapper.queryByText('Verified')).toBeVisible()
-    expect(wrapper.queryByText(RESET)).toBeVisible()
-  })
+    expect(wrapper.queryByText(VERIFY)).toBeNull();
+    expect(wrapper.queryByText('Verified')).toBeVisible();
+    expect(wrapper.queryByText(RESET)).toBeVisible();
+  });
 });

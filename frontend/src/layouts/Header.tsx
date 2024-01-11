@@ -10,12 +10,9 @@ import {
   LogoImage,
   LogoTitle,
   LogoWarp,
-  NotificationIconContainer,
   StyledHeaderInfo,
   StyledVersion,
 } from '@src/layouts/style';
-import { NotificationButton } from '@src/components/Common/NotificationButton';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { useEffect } from 'react';
 import { headerClient } from '@src/clients/header/HeaderClient';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
@@ -24,7 +21,7 @@ import { useAppSelector } from '@src/hooks';
 import { isEmpty } from 'lodash';
 import { resetImportedData } from '@src/context/config/configSlice';
 
-const Header = (props: useNotificationLayoutEffectInterface) => {
+const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -37,10 +34,6 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
 
   const shouldShowHomeIcon = () => {
     return ['/metrics', '/error-page'].includes(location.pathname);
-  };
-
-  const shouldShowNotificationIcon = () => {
-    return ['/metrics'].includes(location.pathname);
   };
 
   useEffect(() => {
@@ -61,11 +54,6 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
         {version && <StyledVersion>v{version}</StyledVersion>}
       </StyledHeaderInfo>
       <IconContainer>
-        {shouldShowNotificationIcon() && (
-          <NotificationIconContainer title='Notification' data-testid='NotificationButton'>
-            <NotificationButton {...props} />
-          </NotificationIconContainer>
-        )}
         {shouldShowHomeIcon() && (
           <HomeIconContainer title='Home' onClick={goHome}>
             <HomeIconElement />

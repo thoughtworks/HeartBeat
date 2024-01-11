@@ -1,22 +1,26 @@
-import { styled } from '@mui/material/styles';
-import { theme } from '@src/theme';
-import { Z_INDEX } from '@src/constants/commons';
-import { NotificationsRounded } from '@mui/icons-material';
+import styled from '@emotion/styled';
+import { Alert, AlertTitle } from '@mui/material';
 
-export const NotificationIconWrapper = styled(NotificationsRounded)({
-  color: theme.main.color,
-  marginRight: '0.5rem',
+export const AlertIconImage = styled.img({
+  height: '1.5rem',
+  width: '1.5rem',
 });
 
-export const sx = {
-  width: '12rem',
-  padding: '1rem',
-  fontSize: '1rem',
-  fontWeight: '250',
-  fontFamily: theme.typography.fontFamily,
-  backgroundColor: theme.components!.tip.color,
-  '& .MuiTooltip-arrow': {
-    color: theme.components!.tip.color,
+export const AlertWrapper = styled(Alert)({
+  backgroundColor: '#E9ECFF',
+  position: 'absolute',
+  top: '4.75rem',
+  right: '0.75rem',
+  padding: '0.75rem 1.5rem',
+  '& .MuiAlert-action': {
+    padding: '0',
   },
-  zIndex: Z_INDEX.TOOLTIP,
-};
+  '& .MuiAlert-message': {
+    width: '16.25rem',
+  },
+});
+
+export const AlertTitleWrapper = styled(AlertTitle)({
+  color: '#000000D9',
+  marginBottom: '0.5rem',
+});

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { DURATION } from '@src/constants/commons';
+import { AlertColor } from '@mui/material';
 
 export interface NotificationTipProps {
   title: string;
+  message: string;
   open: boolean;
   closeAutomatically: boolean;
   durationTimeout?: number;
+  severity?: AlertColor;
 }
 
 export interface useNotificationLayoutEffectInterface {
@@ -18,6 +21,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
   const [notificationProps, setNotificationProps] = useState<NotificationTipProps>({
     open: false,
     title: '',
+    message: '',
     closeAutomatically: false,
     durationTimeout: DURATION.NOTIFICATION_TIME,
   });
@@ -26,6 +30,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
     setNotificationProps(() => ({
       open: false,
       title: '',
+      message: '',
       closeAutomatically: false,
       durationTimeout: DURATION.NOTIFICATION_TIME,
     }));

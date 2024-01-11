@@ -1,24 +1,15 @@
 package heartbeat.controller.source;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import heartbeat.exception.BadRequestException;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public enum SourceType {
 
-	GITHUB("github"),
+	GITHUB;
 
-	ANOTHERSOURCETYPE("anotherSourceType");
-
-	private String value;
-
-	public static SourceType matchSourceType(String value) {
-		return switch (value) {
+	public static SourceType fromValue(String sourceType) {
+		return switch (sourceType) {
 			case "github" -> GITHUB;
-			default -> ANOTHERSOURCETYPE;
+			default -> throw new BadRequestException("Source type is incorrect.");
 		};
 	}
 

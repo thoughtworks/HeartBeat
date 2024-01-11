@@ -48,14 +48,12 @@ public class GithubController {
 	public ResponseEntity<Void> verifyToken(@PathVariable @NotBlank String sourceType,
 			@RequestBody @Valid SourceControlDTO sourceControlDTO) {
 		log.info("Start to verify source type: {} token.", sourceType);
-		switch (SourceType.matchSourceType(sourceType)) {
+		switch (SourceType.fromValue(sourceType)) {
 			case GITHUB -> {
 				gitHubService.verifyTokenV2(sourceControlDTO.getToken());
 				log.info("Successfully verify source type: {} token.", sourceType);
 			}
 			default -> {
-				log.error("Failed to verify source type: {} token.", sourceType);
-				throw new BadRequestException("Source type is incorrect.");
 			}
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -65,14 +63,12 @@ public class GithubController {
 	public ResponseEntity<Void> verifyBranch(@PathVariable @NotBlank String sourceType,
 			@PathVariable @NotBlank String branch, @RequestBody @Valid VerifyBranchRequest request) {
 		log.info("Start to verify source type: {} branch: {}.", sourceType, branch);
-		switch (SourceType.matchSourceType(sourceType)) {
+		switch (SourceType.fromValue(sourceType)) {
 			case GITHUB -> {
 				gitHubService.verifyCanReadTargetBranch(request.getRepository(), branch, request.getToken());
 				log.info("Successfully verify source type: {} branch: {}.", sourceType, branch);
 			}
 			default -> {
-				log.error("Failed to verify source type: {} branch: {}.", sourceType, branch);
-				throw new BadRequestException("Source type is incorrect.");
 			}
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

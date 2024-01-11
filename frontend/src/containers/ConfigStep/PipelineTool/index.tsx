@@ -164,7 +164,7 @@ export const PipelineTool = () => {
           <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
           <Select
             labelId='pipelineTool-type-checkbox-label'
-            aria-label='PipelineTool type select'
+            aria-label='Pipeline Tool type select'
             value={fields[0].value}
             onChange={(e) => onFormUpdate(ZERO, e.target.value)}
           >

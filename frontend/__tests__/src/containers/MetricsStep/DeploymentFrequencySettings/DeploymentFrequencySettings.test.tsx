@@ -51,6 +51,7 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
 
 const mockGetPipelineToolInfoOkResponse = {
   isLoading: false,
+  apiCallFunc: jest.fn(),
   result: {
     code: 200,
     data: {
@@ -75,7 +76,6 @@ let mockGetPipelineToolInfoSpy: IUseVerifyPipeLineToolStateInterface = mockGetPi
 jest.mock('@src/hooks/useGetPipelineToolInfoEffect', () => ({
   useGetPipelineToolInfoEffect: () => mockGetPipelineToolInfoSpy,
 }));
-
 describe('DeploymentFrequencySettings', () => {
   const setup = () =>
     render(
@@ -129,6 +129,7 @@ describe('DeploymentFrequencySettings', () => {
   it('should display error UI when get pipeline info client returns non-200 code', () => {
     const mockGetPipelineToolInfoErrorResponse = {
       isLoading: false,
+      apiCallFunc: jest.fn(),
       result: {
         code: 403,
         errorTitle: 'Forbidden request!',

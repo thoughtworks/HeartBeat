@@ -111,6 +111,7 @@ describe('PipelineToolClient', () => {
         `should return result with code:$code and title:$errorTitle and unify errorMessage when verify endpoint returns code:$code`,
         async ({ code, errorTitle, errorMessage }) => {
           server.use(rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => res(ctx.status(code))));
+
           const result = await pipelineToolClient.getPipelineToolInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
           expect(result.code).toEqual(code);
@@ -122,6 +123,7 @@ describe('PipelineToolClient', () => {
 
       it('should return "Unknown error" as a last resort when error code didn\'t match the predeifned erorr cases', async () => {
         server.use(rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => res(ctx.status(503))));
+
         const result = await pipelineToolClient.getPipelineToolInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
         expect(result.errorTitle).toEqual('Unknown error');

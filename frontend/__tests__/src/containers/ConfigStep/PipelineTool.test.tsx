@@ -75,7 +75,7 @@ describe('PipelineTool', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
 
     await act(async () => {
-      const requireDateSelection = within(getByLabelText('PipelineTool type select'));
+      const requireDateSelection = within(getByLabelText('Pipeline Tool type select'));
       await userEvent.click(requireDateSelection.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE));
     });
 

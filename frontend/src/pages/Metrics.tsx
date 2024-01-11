@@ -3,6 +3,7 @@ import MetricsStepper from '@src/components/Metrics/MetricsStepper';
 import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { Notification } from '@src/components/Common/NotificationButton';
+import React from 'react';
 
 const Metrics = () => {
   const props = useNotificationLayoutEffect();

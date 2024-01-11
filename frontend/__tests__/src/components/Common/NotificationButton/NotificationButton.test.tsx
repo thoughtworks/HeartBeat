@@ -1,4 +1,4 @@
-import { render, renderHook, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { Notification } from '@src/components/Common/NotificationButton';
 import React from 'react';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
@@ -24,20 +24,20 @@ describe('Notification', () => {
     act(() => {
       result.current.notificationProps = openNotificationProps;
     });
-    const { getByText } = render(<Notification {...result.current} />);
+    render(<Notification {...result.current} />);
 
-    expect(getByText('NotificationPopper')).toBeInTheDocument();
-    expect(getByText('Notification Message')).toBeInTheDocument();
+    expect(screen.getByText('NotificationPopper')).toBeInTheDocument();
+    expect(screen.getByText('Notification Message')).toBeInTheDocument();
   });
 
   it('should not show title and message given the "open" value is false', () => {
     act(() => {
       result.current.notificationProps = closeNotificationProps;
     });
-    const { queryByText } = render(<Notification {...result.current} />);
+    render(<Notification {...result.current} />);
 
-    expect(queryByText('NotificationPopper')).not.toBeInTheDocument();
-    expect(queryByText('Notification Message')).not.toBeInTheDocument();
+    expect(screen.queryByText('NotificationPopper')).not.toBeInTheDocument();
+    expect(screen.queryByText('Notification Message')).not.toBeInTheDocument();
   });
 
   it('should call updateProps when clicking close button given the "open" value is true', async () => {
@@ -46,13 +46,11 @@ describe('Notification', () => {
       result.current.updateProps = jest.fn();
     });
 
-    const { getByRole } = render(<Notification {...result.current} />);
+    render(<Notification {...result.current} />);
 
-    const closeButton = getByRole('button', { name: 'Close' });
+    const closeButton = screen.getByRole('button', { name: 'Close' });
 
-    act(() => {
-      userEvent.click(closeButton);
-    });
+    await userEvent.click(closeButton);
 
     await waitFor(() => {
       expect(result.current.updateProps).toBeCalledWith(closeNotificationProps);
@@ -72,15 +70,15 @@ describe('Notification', () => {
         result.current.notificationProps = { ...openNotificationProps, type };
       });
 
-      const { getByRole, getByTestId } = render(<Notification {...result.current} />);
+      render(<Notification {...result.current} />);
 
-      const alertElement = getByRole('alert');
+      const alertElement = screen.getByRole('alert');
       expect(alertElement).toHaveStyle({ 'background-color': backgroundColor });
 
-      const iconElement = alertElement.querySelector('.MuiAlert-icon');
+      const iconElement = screen.getByTestId(icon).parentElement;
       expect(iconElement).toBeInTheDocument();
       expect(iconElement).toHaveStyle({ color: iconColor });
-      expect(getByTestId(icon)).toBeInTheDocument();
+      expect(screen.getByTestId(icon)).toBeInTheDocument();
     }
   );
 });

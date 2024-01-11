@@ -3,7 +3,6 @@ import MetricsStepper from '@src/components/Metrics/MetricsStepper';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../../utils/setupStoreUtil';
 import {
-  BACK,
   BASE_PAGE_ROUTE,
   BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
@@ -44,6 +43,7 @@ import {
 import { exportToJsonFile } from '@src/utils/util';
 import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import React from 'react';
 
 const START_DATE_LABEL = 'From *';
 const TODAY = dayjs();

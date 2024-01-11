@@ -159,13 +159,13 @@ public class JiraService {
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed to call Jira to get board config, project key: {}, board id: {}, e: {}",
+			log.error("Failed to call Jira to get board info, project key: {}, board id: {}, e: {}",
 					boardRequestParam.getBoardId(), boardRequestParam.getProjectKey(), cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
 			throw new InternalServerErrorException(
-					String.format("Failed to call Jira to get board config, cause is %s", cause.getMessage()));
+					String.format("Failed to call Jira to get board info, cause is %s", cause.getMessage()));
 		}
 	}
 

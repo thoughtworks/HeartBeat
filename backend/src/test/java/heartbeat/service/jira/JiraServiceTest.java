@@ -631,7 +631,7 @@ class JiraServiceTest {
 			jiraService.getInfo(boardTypeJira, boardRequestParam);
 		});
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
-			.hasMessageContaining("Failed to call Jira to get board config, cause is");
+			.hasMessageContaining("Failed to call Jira to get board info, cause is");
 	}
 
 	@Test

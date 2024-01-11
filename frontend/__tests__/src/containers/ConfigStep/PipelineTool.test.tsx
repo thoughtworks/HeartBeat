@@ -74,14 +74,10 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation();
     await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
 
-    await act(async () => {
-      const requireDateSelection = within(getByLabelText('Pipeline Tool type select'));
-      await userEvent.click(requireDateSelection.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE));
-    });
+    const requireDateSelection = within(getByLabelText('Pipeline Tool type select'));
+    await userEvent.click(requireDateSelection.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE));
 
-    await act(async () => {
-      await userEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD));
-    });
+    await userEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD));
 
     expect(tokenInput.value).toEqual('');
   });

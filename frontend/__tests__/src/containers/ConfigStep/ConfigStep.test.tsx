@@ -218,19 +218,17 @@ describe('ConfigStep', () => {
 
     const tokenNode = wrapper.getByTestId('pipelineToolTextField');
 
-    act(() => {
-      fireEvent.change(tokenNode.querySelector('input') as HTMLInputElement, { target: { value: mockToken } });
-    });
+    fireEvent.change(tokenNode.querySelector('input') as HTMLInputElement, { target: { value: mockToken } });
 
     const submitButton = wrapper.getByText(VERIFY);
-    await act(async () => {
-      fireEvent.click(submitButton);
-    });
+    fireEvent.click(submitButton);
 
     fireEvent.change(startDateInput, { target: { value: today } });
 
-    expect(wrapper.queryByText(VERIFY)).toBeNull();
-    expect(wrapper.queryByText('Verified')).toBeVisible();
-    expect(wrapper.queryByText(RESET)).toBeVisible();
+    await waitFor(() => {
+      expect(wrapper.queryByText(VERIFY)).toBeNull();
+      expect(wrapper.queryByText('Verified')).toBeVisible();
+      expect(wrapper.queryByText(RESET)).toBeVisible();
+    });
   });
 });

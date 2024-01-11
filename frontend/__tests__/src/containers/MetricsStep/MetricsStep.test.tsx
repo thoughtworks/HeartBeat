@@ -158,16 +158,12 @@ describe('MetricsStep', () => {
       const realDoneSettingSection = getByLabelText(REAL_DONE_SETTING_SECTION);
 
       expect(realDoneSettingSection).not.toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE);
-      const doneSelectTrigger = getByLabelText('Cycle time select for Done').querySelector('input');
+      const doneSelectTrigger = within(getByLabelText('Cycle time select for Done')).getByRole('combobox');
 
-      await act(async () => {
-        await userEvent.click(doneSelectTrigger as HTMLInputElement);
-      });
+      await userEvent.click(doneSelectTrigger as HTMLInputElement);
 
-      await act(async () => {
-        const noneOption = within(getByRole('presentation')).getByText('----');
-        await userEvent.click(noneOption);
-      });
+      const noneOption = within(getByRole('presentation')).getByText('----');
+      await userEvent.click(noneOption);
 
       expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE);
     });

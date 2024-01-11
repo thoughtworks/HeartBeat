@@ -97,9 +97,8 @@ describe('DeploymentFrequencySettings', () => {
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
     const { getByTestId } = await setup();
 
-    await act(async () => {
-      await userEvent.click(getByTestId('AddIcon'));
-    });
+    await userEvent.click(getByTestId('AddIcon'));
+
     expect(addADeploymentFrequencySetting).toHaveBeenCalledTimes(1);
   });
 

@@ -9,7 +9,7 @@ export const REPORT_PAGE_TYPE = {
   DORA: 'DoraReport',
 };
 
-export const SHOW_MORE = 'show more >';
+export const SHOW_MORE = 'Show more >';
 export const BACK = 'Back';
 
 export enum REQUIRED_DATA {

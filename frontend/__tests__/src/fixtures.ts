@@ -17,7 +17,7 @@ export const PREVIOUS = 'Previous';
 
 export const SAVE = 'Save';
 
-export const SHOW_MORE = 'show more >';
+export const SHOW_MORE = 'Show more >';
 
 export const BACK = 'Back';
 

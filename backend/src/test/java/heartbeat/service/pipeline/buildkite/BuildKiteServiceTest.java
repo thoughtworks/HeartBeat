@@ -4,6 +4,7 @@ import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.UnauthorizedException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -78,13 +80,27 @@ class BuildKiteServiceTest {
 			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next"
 			""";
 
+	public static final String MOCK_TOKEN = "mock_token";
+
+	public static final String TEST_ORG_ID = "test_org_id";
+
+	public static final String TEST_ORG_NAME = "test_org_name";
+
+	public static final String TEST_PIPELINE_ID = "test_pipeline_id";
+
 	private static final String PASSED_STATE = "passed";
 
 	private static final String FAILED_STATE = "failed";
 
-	private static final String mockStartTime = "1661702400000";
+	private static final String MOCK_START_TIME = "1661702400000";
 
-	private static final String mockEndTime = "1662739199000";
+	private static final String MOCK_END_TIME = "1662739199000";
+
+	public static final List<String> PERMISSION_SCOPES = List.of("read_builds", "read_organizations", "read_pipelines");
+
+	public static final String TEST_JOB_NAME = "testJob";
+
+	public static final String UNAUTHORIZED_MSG = "unauthorized";
 
 	@Mock
 	BuildKiteFeignClient buildKiteFeignClient;
@@ -121,17 +137,16 @@ class BuildKiteServiceTest {
 				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
 				new TypeReference<>() {
 				});
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
-			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
-			.build();
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(PERMISSION_SCOPES).build();
 		PipelineParam pipelineParam = PipelineParam.builder()
-			.token("test_token")
-			.startTime("startTime")
-			.endTime("endTime")
+			.token(MOCK_TOKEN)
+			.startTime(MOCK_START_TIME)
+			.endTime(MOCK_END_TIME)
 			.build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
-			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name("XXXX").slug("XXXX").build()));
-		when(buildKiteFeignClient.getPipelineInfo("Bearer test_token", "XXXX", "1", "100", "startTime", "endTime"))
+			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100", MOCK_START_TIME,
+				MOCK_END_TIME))
 			.thenReturn(pipelineDTOS);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
@@ -141,8 +156,8 @@ class BuildKiteServiceTest {
 		Pipeline pipeline = buildKiteResponseDTO.getPipelineList().get(0);
 		assertThat(pipeline.getId()).isEqualTo("payment-selector-ui");
 		assertThat(pipeline.getName()).isEqualTo("payment-selector-ui");
-		assertThat(pipeline.getOrgId()).isEqualTo("XXXX");
-		assertThat(pipeline.getOrgName()).isEqualTo("XXXX");
+		assertThat(pipeline.getOrgId()).isEqualTo(TEST_ORG_ID);
+		assertThat(pipeline.getOrgName()).isEqualTo(TEST_ORG_NAME);
 		assertThat(pipeline.getRepository())
 			.isEqualTo("https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git");
 		assertThat(pipeline.getSteps().size()).isEqualTo(1);
@@ -150,15 +165,13 @@ class BuildKiteServiceTest {
 
 	@Test
 	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder()
-			.scopes(List.of("read_builds", "read_organizations", "read_pipelines"))
-			.build();
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(PERMISSION_SCOPES).build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
 			.thenThrow(new CustomFeignClientException(401, "Bad credentials"));
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
 		assertThatThrownBy(() -> buildKiteService.fetchPipelineInfo(
-				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()))
+				PipelineParam.builder().token(MOCK_TOKEN).startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()))
 			.isInstanceOf(Exception.class)
 			.hasMessageContaining("Bad credentials");
 
@@ -171,18 +184,15 @@ class BuildKiteServiceTest {
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
 		assertThrows(PermissionDenyException.class, () -> buildKiteService.fetchPipelineInfo(
-				PipelineParam.builder().token("test_token").startTime("startTime").endTime("endTime").build()));
+				PipelineParam.builder().token(MOCK_TOKEN).startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()));
 	}
 
 	@Test
 	public void shouldReturnResponseWhenFetchPipelineStepsSuccess() {
-		String token = "test_token";
-		String organizationId = "test_org_id";
-		String pipelineId = "test_pipeline_id";
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime(mockStartTime);
-		stepsParam.setEndTime(mockEndTime);
-		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		stepsParam.setStartTime(MOCK_START_TIME);
+		stepsParam.setEndTime(MOCK_END_TIME);
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder()
 			.jobs(List.of(testJob))
@@ -194,11 +204,11 @@ class BuildKiteServiceTest {
 				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
-		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId,
-				stepsParam);
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID,
+				TEST_PIPELINE_ID, stepsParam);
 
 		assertNotNull(pipelineStepsDTO);
-		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo("testJob");
+		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo(TEST_JOB_NAME);
 	}
 
 	@Test
@@ -211,22 +221,22 @@ class BuildKiteServiceTest {
 			.thenThrow(mockException);
 
 		assertThrows(RequestFailedException.class,
-				() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
-						PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()),
+				() -> buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID, TEST_PIPELINE_ID,
+						PipelineStepsParam.builder().startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()),
 				"Request failed with status code 500, error: exception");
 	}
 
 	@Test
 	public void shouldReturnMoreThanOnePageStepsWhenPageFetchPipelineSteps() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime(mockStartTime);
-		stepsParam.setEndTime(mockEndTime);
+		stepsParam.setStartTime(MOCK_START_TIME);
+		stepsParam.setEndTime(MOCK_END_TIME);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		BuildKiteJob testJob2 = BuildKiteJob.builder().name("testJob2").build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob, testJob2)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
@@ -242,12 +252,12 @@ class BuildKiteServiceTest {
 				anyString(), anyString(), any()))
 			.thenReturn(buildKiteBuildInfoList2);
 
-		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-				"test_pipeline_id", stepsParam);
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID,
+				TEST_PIPELINE_ID, stepsParam);
 
 		assertNotNull(pipelineStepsDTO);
 		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(3);
-		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo("testJob");
+		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo(TEST_JOB_NAME);
 		assertThat(pipelineStepsDTO.getSteps().get(1)).isEqualTo("testJob2");
 		assertThat(pipelineStepsDTO.getSteps().get(2)).isEqualTo("testJob3");
 	}
@@ -259,7 +269,7 @@ class BuildKiteServiceTest {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
@@ -270,8 +280,8 @@ class BuildKiteServiceTest {
 				any(), any(), any()))
 			.thenThrow(new CompletionException(new NotFoundException("Client Error")));
 
-		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
-				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID, TEST_PIPELINE_ID,
+				PipelineStepsParam.builder().startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessageContaining("Client Error");
 	}
@@ -283,7 +293,7 @@ class BuildKiteServiceTest {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
@@ -294,8 +304,8 @@ class BuildKiteServiceTest {
 				any(), any(), any()))
 			.thenThrow(new CompletionException(new ServiceUnavailableException("Service Unavailable")));
 
-		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
-				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID, TEST_PIPELINE_ID,
+				PipelineStepsParam.builder().startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()))
 			.isInstanceOf(ServiceUnavailableException.class)
 			.hasMessageContaining("Service Unavailable");
 	}
@@ -307,7 +317,7 @@ class BuildKiteServiceTest {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
@@ -318,8 +328,8 @@ class BuildKiteServiceTest {
 				any(), any(), any()))
 			.thenThrow(new RequestFailedException(504, "Server Error"));
 
-		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
-				PipelineStepsParam.builder().startTime(mockStartTime).endTime(mockEndTime).build()))
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID, TEST_PIPELINE_ID,
+				PipelineStepsParam.builder().startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()))
 			.isInstanceOf(RequestFailedException.class)
 			.hasMessageContaining("Server Error");
 	}
@@ -331,11 +341,10 @@ class BuildKiteServiceTest {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
-
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
@@ -343,7 +352,7 @@ class BuildKiteServiceTest {
 				any(), any(), any()))
 			.thenReturn(buildKiteBuildInfoList);
 
-		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps("test_token", "test_org_id", "test_pipeline_id",
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID, TEST_PIPELINE_ID,
 				PipelineStepsParam.builder().build()))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to get pipeline steps");
@@ -353,14 +362,14 @@ class BuildKiteServiceTest {
 	@Test
 	public void shouldReturnOnePageStepsWhenPageFetchPipelineStepsAndHeaderParseOnePage() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime(mockStartTime);
-		stepsParam.setEndTime(mockEndTime);
+		stepsParam.setStartTime(MOCK_START_TIME);
+		stepsParam.setEndTime(MOCK_END_TIME);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
-		BuildKiteJob testJob = BuildKiteJob.builder().name("testJob").build();
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				httpHeaders, HttpStatus.OK);
@@ -368,19 +377,19 @@ class BuildKiteServiceTest {
 				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
-		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-				"test_pipeline_id", stepsParam);
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID,
+				TEST_PIPELINE_ID, stepsParam);
 
 		assertNotNull(pipelineStepsDTO);
 		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(1);
-		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo("testJob");
+		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo(TEST_JOB_NAME);
 	}
 
 	@Test
 	public void shouldReturnOnePageStepsWhenPageFetchPipelineStep() {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
-		stepsParam.setStartTime(mockStartTime);
-		stepsParam.setEndTime(mockEndTime);
+		stepsParam.setStartTime(MOCK_START_TIME);
+		stepsParam.setEndTime(MOCK_END_TIME);
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -391,8 +400,8 @@ class BuildKiteServiceTest {
 				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
-		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps("test_token", "test_org_id",
-				"test_pipeline_id", stepsParam);
+		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID,
+				TEST_PIPELINE_ID, stepsParam);
 
 		assertNotNull(pipelineStepsDTO);
 		assertThat(pipelineStepsDTO.getSteps().size()).isEqualTo(0);
@@ -400,7 +409,6 @@ class BuildKiteServiceTest {
 
 	@Test
 	public void shouldReturnBuildKiteBuildInfoWhenFetchPipelineBuilds() {
-		String mockToken = "xxxxxxxxxx";
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
@@ -408,12 +416,12 @@ class BuildKiteServiceTest {
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
 				HttpStatus.OK);
-
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
-		List<BuildKiteBuildInfo> pipelineBuilds = buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment,
-				mockStartTime, mockEndTime);
+
+		List<BuildKiteBuildInfo> pipelineBuilds = buildKiteService.fetchPipelineBuilds(MOCK_TOKEN, mockDeployment,
+				MOCK_START_TIME, MOCK_END_TIME);
 
 		assertNotNull(pipelineBuilds);
 		assertThat(pipelineBuilds.size()).isEqualTo(0);
@@ -421,23 +429,19 @@ class BuildKiteServiceTest {
 
 	@Test
 	public void shouldThrowUnauthorizedExceptionWhenFetchPipelineBuilds401Exception() {
-		String mockToken = "xxxxxxxxxx";
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenThrow(new UnauthorizedException("unauthorized"));
+			.thenThrow(new UnauthorizedException(UNAUTHORIZED_MSG));
 
-		Assertions
-			.assertThatThrownBy(
-					() -> buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment, mockStartTime, mockEndTime))
+		assertThatThrownBy(
+				() -> buildKiteService.fetchPipelineBuilds(MOCK_TOKEN, mockDeployment, MOCK_START_TIME, MOCK_END_TIME))
 			.isInstanceOf(UnauthorizedException.class)
-			.hasMessageContaining("unauthorized");
+			.hasMessageContaining(UNAUTHORIZED_MSG);
 	}
 
 	@Test
 	public void shouldThrowInternalServerErrorExceptionWhenFetchPipelineBuilds500Exception() {
-		String mockToken = "xxxxxxxxxx";
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
@@ -445,12 +449,11 @@ class BuildKiteServiceTest {
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
 				HttpStatus.OK);
-
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);
 
-		assertThatThrownBy(() -> buildKiteService.fetchPipelineBuilds(mockToken, mockDeployment, null, mockEndTime))
+		assertThatThrownBy(() -> buildKiteService.fetchPipelineBuilds(MOCK_TOKEN, mockDeployment, null, MOCK_END_TIME))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to get pipeline builds_param");
 	}
@@ -468,7 +471,7 @@ class BuildKiteServiceTest {
 		DeployTimes expectedDeployTimes = DeployTimesBuilder.withDefault().build();
 
 		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
-				mockStartTime, mockEndTime);
+				MOCK_START_TIME, MOCK_END_TIME);
 
 		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
 	}
@@ -479,7 +482,7 @@ class BuildKiteServiceTest {
 		List<BuildKiteBuildInfo> mockBuildKiteBuildInfos = List.of(BuildKiteBuildInfoBuilder.withDefault().build());
 
 		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
-				mockStartTime, mockEndTime);
+				MOCK_START_TIME, MOCK_END_TIME);
 
 		assertThat(0).isEqualTo(deployTimes.getPassed().size());
 		assertThat(1).isEqualTo(deployTimes.getFailed().size());
@@ -492,7 +495,7 @@ class BuildKiteServiceTest {
 
 		Assertions
 			.assertThatThrownBy(() -> buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
-					mockStartTime, mockEndTime))
+					MOCK_START_TIME, MOCK_END_TIME))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessageContaining("miss orgId argument");
 	}
@@ -533,22 +536,114 @@ class BuildKiteServiceTest {
 			.build();
 
 		DeployTimes deployTimes = buildKiteService.countDeployTimes(mockDeployment, mockBuildKiteBuildInfos,
-				mockStartTime, mockEndTime);
+				MOCK_START_TIME, MOCK_END_TIME);
 
 		assertThat(expectedDeployTimes).isEqualTo(deployTimes);
 	}
 
 	@Test
 	void shouldReturnStepBeforeEndStepsGivenStepsArray() {
-		String targetStep = "Deploy qa";
-		List<String> stepArray = Arrays.asList("Test", "Build", targetStep, "Deploy prod");
+		List<String> stepArray = Arrays.asList("Test", "Build", "Deploy qa", "Deploy prod");
 
-		List<String> result = buildKiteService.getStepsBeforeEndStep(targetStep, stepArray);
+		List<String> result = buildKiteService.getStepsBeforeEndStep("Deploy qa", stepArray);
 
 		assertEquals(3, result.size());
 		assertEquals("Test", result.get(0));
 		assertEquals("Build", result.get(1));
-		assertEquals(targetStep, result.get(2));
+		assertEquals("Deploy qa", result.get(2));
+	}
+
+	@Test
+	void shouldReturnTrueWhenTokenIsCorrect() {
+		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(PERMISSION_SCOPES).build();
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
+
+		buildKiteService.verifyToken(MOCK_TOKEN);
+
+		verify(buildKiteFeignClient, times(1)).getTokenInfo(anyString());
+	}
+
+	@Test
+	void shouldThrowUnauthorizedExceptionWhenTokenIsIncorrect() {
+		when(buildKiteFeignClient.getTokenInfo(any()))
+			.thenThrow(new UnauthorizedException(UNAUTHORIZED_MSG));
+
+		assertThatThrownBy(
+			() -> buildKiteService.verifyToken(MOCK_TOKEN))
+			.isInstanceOf(UnauthorizedException.class)
+			.hasMessageContaining(UNAUTHORIZED_MSG);
+	}
+
+	@Test
+	void shouldThrowInternalServerErrorExceptionWhenGetBuildKiteVerify500Exception() {
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(null);
+
+		assertThatThrownBy(() -> buildKiteService.verifyToken(MOCK_TOKEN))
+			.isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("Failed to call BuildKite, cause is");
+	}
+
+	@Test
+	void shouldReturnBuildKiteResponseWhenGetBuildKiteInfo() throws IOException {
+		PipelineParam pipelineParam = PipelineParam.builder()
+			.token(MOCK_TOKEN)
+			.startTime(MOCK_START_TIME)
+			.endTime(MOCK_END_TIME)
+			.build();
+		ObjectMapper mapper = new ObjectMapper();
+		List<BuildKitePipelineDTO> pipelineDTOS = mapper.readValue(
+				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
+				new TypeReference<>() {
+				});
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
+			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100", MOCK_START_TIME,
+				MOCK_END_TIME))
+			.thenReturn(pipelineDTOS);
+
+		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.getBuildKiteInfo(pipelineParam);
+
+		assertThat(buildKiteResponseDTO.getPipelineList().size()).isEqualTo(1);
+		Pipeline pipeline = buildKiteResponseDTO.getPipelineList().get(0);
+		assertThat(pipeline.getId()).isEqualTo("payment-selector-ui");
+		assertThat(pipeline.getName()).isEqualTo("payment-selector-ui");
+		assertThat(pipeline.getOrgId()).isEqualTo(TEST_ORG_ID);
+		assertThat(pipeline.getOrgName()).isEqualTo(TEST_ORG_NAME);
+		assertThat(pipeline.getRepository())
+			.isEqualTo("https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git");
+		assertThat(pipeline.getSteps().size()).isEqualTo(1);
+	}
+
+	@Test
+	void shouldThrowInternalServerErrorExceptionWhenGetBuildKiteInfo500Exception() {
+		PipelineParam pipelineParam = PipelineParam.builder()
+			.token(MOCK_TOKEN)
+			.startTime(MOCK_START_TIME)
+			.endTime(MOCK_END_TIME)
+			.build();
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any())).thenReturn(null);
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100", MOCK_START_TIME,
+				MOCK_END_TIME))
+			.thenReturn(null);
+
+		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(pipelineParam))
+			.isInstanceOf(InternalServerErrorException.class)
+			.hasMessageContaining("Failed to call BuildKite, cause is");
+	}
+
+	@Test
+	void shouldThrowUnauthorizedExceptionWhenGetBuildKiteInfoAndTokenIsIncorrect() {
+		PipelineParam pipelineParam = PipelineParam.builder()
+			.token(MOCK_TOKEN)
+			.startTime(MOCK_START_TIME)
+			.endTime(MOCK_END_TIME)
+			.build();
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
+			.thenThrow(new UnauthorizedException(UNAUTHORIZED_MSG));
+
+		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(pipelineParam))
+			.isInstanceOf(UnauthorizedException.class)
+			.hasMessageContaining(UNAUTHORIZED_MSG);
 	}
 
 }

@@ -38,7 +38,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.net.URLEncoder;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +57,7 @@ public class BuildKiteService {
 		customTaskExecutor.shutdown();
 	}
 
+	@Deprecated
 	public BuildKiteResponseDTO fetchPipelineInfo(PipelineParam pipelineParam) {
 		try {
 			String buildKiteToken = "Bearer " + pipelineParam.getToken();
@@ -65,13 +65,13 @@ public class BuildKiteService {
 			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
 			log.info("Successfully query token permissions by token, token info scopes: {}",
 					buildKiteTokenInfo.getScopes());
-			verifyToken(buildKiteTokenInfo);
+			verifyTokenScopes(buildKiteTokenInfo);
 			log.info("Start to query BuildKite organizations by token");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
 				.getBuildKiteOrganizationsInfo(buildKiteToken);
 			log.info("Successfully query BuildKite organizations by token, slug: {}", buildKiteOrganizationsInfo);
 
-			log.info("Start to query buildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
+			log.info("Start to query BuildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
 				.flatMap(org -> buildKiteFeignClient
 					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
@@ -80,7 +80,7 @@ public class BuildKiteService {
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))
 				.collect(Collectors.toList());
-			log.info("Successfully get buildKite pipelineInfo, slug:{}, pipelineInfoList size:{}",
+			log.info("Successfully get BuildKite pipelineInfo, slug:{}, pipelineInfoList size:{}",
 					buildKiteOrganizationsInfo, buildKiteInfoList.size());
 
 			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
@@ -98,7 +98,7 @@ public class BuildKiteService {
 		}
 	}
 
-	private void verifyToken(BuildKiteTokenInfo buildKiteTokenInfo) {
+	private void verifyTokenScopes(BuildKiteTokenInfo buildKiteTokenInfo) {
 		for (String permission : permissions) {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
 				log.error("Failed to call BuildKite, because of insufficient permission, current permissions: {}",
@@ -298,6 +298,61 @@ public class BuildKiteService {
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
 			.filter(job -> !job.getJobStartTime().isEmpty())
 			.toList();
+	}
+
+	public void verifyToken(String token) {
+		try {
+			String buildKiteToken = "Bearer " + token;
+			log.info("Start to query token permissions by token");
+			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
+			log.info("Successfully query token permissions by token, token info scopes: {}",
+					buildKiteTokenInfo.getScopes());
+			verifyTokenScopes(buildKiteTokenInfo);
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to call BuildKite, e: {}", cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed to call BuildKite, cause is %s", cause.getMessage()));
+		}
+	}
+
+	public BuildKiteResponseDTO getBuildKiteInfo(PipelineParam pipelineParam) {
+		try {
+			String buildKiteToken = "Bearer " + pipelineParam.getToken();
+			log.info("Start to query BuildKite organizations by token");
+			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
+				.getBuildKiteOrganizationsInfo(buildKiteToken);
+			log.info("Successfully query BuildKite organizations by token, slug: {}", buildKiteOrganizationsInfo);
+
+			log.info("Start to query BuildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
+			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
+				.flatMap(org -> buildKiteFeignClient
+					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
+							pipelineParam.getEndTime())
+					.stream()
+					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
+							org.getName())))
+				.collect(Collectors.toList());
+			log.info("Successfully get BuildKite pipelineInfo, slug:{}, pipelineInfoList size:{}",
+					buildKiteOrganizationsInfo, buildKiteInfoList.size());
+
+			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
+		}
+		catch (RuntimeException e) {
+			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			log.error("Failed to call BuildKite, start time: {}, e: {}", pipelineParam.getStartTime(),
+					cause.getMessage());
+			if (cause instanceof BaseException baseException) {
+				throw baseException;
+			}
+			throw new InternalServerErrorException(
+					String.format("Failed to call BuildKite, cause is %s", cause.getMessage()));
+
+		}
 	}
 
 }

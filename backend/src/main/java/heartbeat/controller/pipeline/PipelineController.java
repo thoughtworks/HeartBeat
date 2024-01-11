@@ -1,5 +1,7 @@
 package heartbeat.controller.pipeline;
 
+import heartbeat.controller.pipeline.dto.request.PipelineType;
+import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
@@ -29,10 +31,32 @@ public class PipelineController {
 
 	private final BuildKiteService buildKiteService;
 
+	@Deprecated
 	@PostMapping("/{pipelineType}")
 	public BuildKiteResponseDTO getBuildKiteInfo(@PathVariable String pipelineType,
 			@Valid @RequestBody PipelineParam pipelineParam) {
 		return buildKiteService.fetchPipelineInfo(pipelineParam);
+	}
+
+	@PostMapping("/{pipelineType}/verify")
+	public ResponseEntity<Void> verifyBuildKiteToken(@PathVariable @NotBlank String pipelineType,
+			@Valid @RequestBody TokenParam tokenParam) {
+		PipelineType.fromValue(pipelineType);
+		buildKiteService.verifyToken(tokenParam.getToken());
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{pipelineType}/info")
+	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(@PathVariable @NotBlank String pipelineType,
+			@Valid @RequestBody PipelineParam pipelineParam) {
+		PipelineType.fromValue(pipelineType);
+		BuildKiteResponseDTO buildKiteResponse = buildKiteService.getBuildKiteInfo(pipelineParam);
+		if (buildKiteResponse.getPipelineList().isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		else {
+			return ResponseEntity.ok(buildKiteResponse);
+		}
 	}
 
 	@GetMapping("/{pipelineType}/{organizationId}/pipelines/{buildId}/steps")

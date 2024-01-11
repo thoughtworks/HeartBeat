@@ -93,7 +93,7 @@ request: {
   token: "your_token"
 }
 responses:
-  Status Code: 200
+  Status Code: 204
 ```
 - Exception Handler
 <table>
@@ -103,17 +103,18 @@ responses:
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="2">400</td>
+    <td>400</td>
     <td>Token cannot be empty.</td>
-    <td rowspan="2"></td>
-  </tr>
-  <tr>
-    <td>Token's pattern is incorrect.</td>
   </tr>
   <tr>
     <td>401</td>
     <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
     <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Failed to call BuildKite, because of insufficient permission!</td>
+    <td>Permission deny</td>
   </tr>
   <tr>
     <td>500</td>
@@ -189,6 +190,7 @@ responses:{
       ]
     }]
 }
+When pipelineList is empty， responses 204
 ```
 - Exception Handler
 <table>
@@ -198,12 +200,9 @@ responses:{
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="4">400</td>
+    <td rowspan="3">400</td>
     <td>Token cannot be empty.</td>
-    <td rowspan="4"></td>
-  </tr>
-  <tr>
-    <td>Token's pattern is incorrect.</td>
+    <td rowspan="3"></td>
   </tr>
   <tr>
     <td>StartTime cannot be empty.</td>
@@ -215,6 +214,11 @@ responses:{
     <td>401</td>
     <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
     <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Failed to call BuildKite, because of insufficient permission!</td>
+    <td>Permission deny</td>
   </tr>
   <tr>
     <td>500</td>

@@ -1,5 +1,11 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
+import { theme } from '@src/theme'
+
+interface IStyledRetryButtonProps {
+  isLoading: boolean
+  onClick: () => void
+}
 
 export const StyledContainer = styled(Box)({
   display: 'flex',
@@ -22,7 +28,7 @@ export const StyledImage = styled('img')({
   maxHeight: '100%',
 })
 
-export const StyledTitle = styled(Box)({
+export const StyledCommonTitle = styled(Box)({
   fontSize: '1.25rem',
   fontWeight: 700,
   marginTop: '0.5rem',
@@ -30,9 +36,31 @@ export const StyledTitle = styled(Box)({
   textAlign: 'center',
 })
 
-export const StyledMessage = styled(Box)({
+export const StyledCommonMessage = styled(Box)({
   fontSize: '0.9375rem',
   fontWeight: 400,
   paddingBottom: '2rem',
   textAlign: 'center',
 })
+
+export const StyledRetryMessage = styled('span')({
+  fontSize: '1.25rem',
+  fontWeight: 400,
+  paddingTop: '3rem',
+  paddingBottom: '1rem',
+  textAlign: 'center',
+  color: theme.palette.secondary.contrastText,
+})
+
+export const StyledRetryButton1 = styled('span')({
+  fontWeight: 700,
+  color: theme.palette.primary.main,
+})
+
+export const StyledRetryButton = styled('span')`
+  cursor: ${(props: IStyledRetryButtonProps) => (props.isLoading ? 'not-allowed' : 'pointer')};
+  font-weight: 700;
+  color: ${theme.palette.primary.main};
+  color: ${(props: IStyledRetryButtonProps) =>
+    props.isLoading ? theme.palette.secondary.contrastText : theme.palette.primary.main};
+`

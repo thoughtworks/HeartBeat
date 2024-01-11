@@ -1,12 +1,14 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import each from 'jest-each'
 import { store } from '@src/store'
-import PresentationForErrorCases from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases'
-import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient'
+import PresentationForErrorCases, {
+  IPresentationForErrorCasesProps,
+} from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases'
+import userEvent from '@testing-library/user-event'
 
-const setup = (props: IGetPipelineToolInfoResult) =>
+const setup = (props: IPresentationForErrorCasesProps) =>
   render(
     <Provider store={store}>
       <PresentationForErrorCases {...props} />
@@ -27,13 +29,55 @@ describe('<PresentationForErrorCases />', () => {
   each(errors).it(
     'should properly render error UI with title:$title and corresponding message',
     ({ code, title: errorTitle }) => {
-      const { getByText } = setup({ code, errorTitle, errorMessage })
+      const props = { code, errorTitle, errorMessage, isLoading: false, retry: () => '' }
+      setup(props)
 
-      const titleNode = getByText(errorTitle)
-      const messageNode = getByText(errorMessage)
+      const titleNode = screen.getByText(errorTitle)
+      const messageNode = screen.getByText(errorMessage)
 
       expect(titleNode).toBeVisible()
       expect(messageNode).toBeVisible()
     }
   )
+
+  it('should display "try again" when error code is 503', async () => {
+    const retrySpy = jest.fn()
+    const mockTimeoutError = {
+      code: 503,
+      errorTitle: 'Service Unavailable!',
+      errorMessage: 'Data loading failed, please try again',
+      isLoading: false,
+      retry: retrySpy,
+    }
+    setup(mockTimeoutError)
+
+    const titleNode = screen.queryByText(mockTimeoutError.errorTitle)
+    const tryAgainNode = screen.getByText('try again')
+
+    expect(titleNode).not.toBeInTheDocument()
+    expect(tryAgainNode).toBeInTheDocument()
+
+    await userEvent.click(tryAgainNode)
+
+    expect(retrySpy).toHaveBeenCalled()
+  })
+
+  it('should not fire duplicated retry behavior when retry func is loading', async () => {
+    const retrySpy = jest.fn()
+    const mockTimeoutErrorProps = {
+      code: 503,
+      errorTitle: 'Service Unavailable!',
+      errorMessage: 'Data loading failed, please try again',
+      isLoading: true,
+      retry: retrySpy,
+    }
+    setup(mockTimeoutErrorProps)
+    const tryAgainNode = screen.getByText('try again')
+
+    await userEvent.click(tryAgainNode)
+    await userEvent.click(tryAgainNode)
+    await userEvent.click(tryAgainNode)
+
+    expect(retrySpy).not.toHaveBeenCalled()
+  })
 })

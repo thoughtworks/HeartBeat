@@ -21,7 +21,7 @@ import { HttpStatusCode } from 'axios';
 
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, result: pipelineInfoResult } = useGetPipelineToolInfoEffect();
+  const { isLoading, result: pipelineInfoResult, apiCallFunc } = useGetPipelineToolInfoEffect();
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings);
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext();
   const pipelineCrews = useAppSelector(selectPipelineCrews);
@@ -42,7 +42,7 @@ export const DeploymentFrequencySettings = () => {
     <>
       {isLoading && <Loading />}
       {pipelineInfoResult?.code !== HttpStatusCode.Ok ? (
-        <PresentationForErrorCases {...pipelineInfoResult} />
+        <PresentationForErrorCases {...pipelineInfoResult} isLoading={isLoading} retry={apiCallFunc} />
       ) : (
         <>
           <MetricsSettingTitle title={'Pipeline settings'} />

@@ -1,38 +1,38 @@
-import { act, render, within } from '@testing-library/react'
-import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection'
-import userEvent from '@testing-library/user-event'
-import { Provider } from 'react-redux'
-import { setupStore } from '../../../../utils/setupStoreUtil'
-import { LIST_OPEN } from '../../../../fixtures'
+import { act, render, within } from '@testing-library/react';
+import { SingleSelection } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/SingleSelection';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { setupStore } from '../../../../utils/setupStoreUtil';
+import { LIST_OPEN } from '../../../../fixtures';
 
 const mockValidationCheckContext = {
   checkDuplicatedPipeLine: jest.fn(),
   checkPipelineValidation: jest.fn(),
-}
+};
 
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
-}))
+}));
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useEffect: jest.fn(),
-}))
-let store = setupStore()
+}));
+let store = setupStore();
 
 describe('SingleSelection', () => {
-  const mockOptions = ['mockOptions 1', 'mockOptions 2', 'mockOptions 3']
-  const mockLabel = 'mockLabel'
-  const mockValue = 'mockOptions 1'
-  const mockOnGetSteps = jest.fn()
-  const mockUpdatePipeline = jest.fn()
+  const mockOptions = ['mockOptions 1', 'mockOptions 2', 'mockOptions 3'];
+  const mockLabel = 'mockLabel';
+  const mockValue = 'mockOptions 1';
+  const mockOnGetSteps = jest.fn();
+  const mockUpdatePipeline = jest.fn();
 
   beforeEach(() => {
-    store = setupStore()
-  })
+    store = setupStore();
+  });
 
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   const setup = () =>
     render(
@@ -46,71 +46,71 @@ describe('SingleSelection', () => {
           onUpDatePipeline={mockUpdatePipeline}
         />
       </Provider>
-    )
+    );
 
   it('should show selected label and value when render a SingleSelection', () => {
-    const { getByText, getAllByRole } = setup()
-    const inputElements = getAllByRole('combobox')
+    const { getByText, getAllByRole } = setup();
+    const inputElements = getAllByRole('combobox');
 
-    const selectedInputValues = inputElements.map((input) => input.getAttribute('value'))
+    const selectedInputValues = inputElements.map((input) => input.getAttribute('value'));
 
-    expect(getByText(mockLabel)).toBeInTheDocument()
-    expect(selectedInputValues).toEqual([mockValue])
-  })
+    expect(getByText(mockLabel)).toBeInTheDocument();
+    expect(selectedInputValues).toEqual([mockValue]);
+  });
 
   it('should show detail options when click the dropdown button', async () => {
-    const { getAllByRole, getByRole } = setup()
-    const buttonElements = getAllByRole('button', { name: LIST_OPEN })
+    const { getAllByRole, getByRole } = setup();
+    const buttonElements = getAllByRole('button', { name: LIST_OPEN });
 
     await act(async () => {
-      await userEvent.click(buttonElements[0])
-    })
-    const listBox = within(getByRole('listbox'))
-    const options = listBox.getAllByRole('option')
-    const optionText = options.map((option) => option.textContent)
+      await userEvent.click(buttonElements[0]);
+    });
+    const listBox = within(getByRole('listbox'));
+    const options = listBox.getAllByRole('option');
+    const optionText = options.map((option) => option.textContent);
 
-    expect(optionText).toEqual(mockOptions)
-  })
+    expect(optionText).toEqual(mockOptions);
+  });
 
   it('should show the right options when search the keyword', async () => {
-    const { getAllByRole, getByRole } = setup()
-    const buttonElements = getAllByRole('button', { name: LIST_OPEN })
+    const { getAllByRole, getByRole } = setup();
+    const buttonElements = getAllByRole('button', { name: LIST_OPEN });
 
     await act(async () => {
-      await userEvent.type(buttonElements[0], '1')
-    })
+      await userEvent.type(buttonElements[0], '1');
+    });
 
-    const listBox = within(getByRole('listbox'))
-    const options = listBox.getAllByRole('option')
-    const optionTexts = options.map((option) => option.textContent)
+    const listBox = within(getByRole('listbox'));
+    const options = listBox.getAllByRole('option');
+    const optionTexts = options.map((option) => option.textContent);
 
-    const expectedOptions = ['mockOptions 1']
+    const expectedOptions = ['mockOptions 1'];
 
-    expect(optionTexts).toEqual(expectedOptions)
-  })
+    expect(optionTexts).toEqual(expectedOptions);
+  });
 
   it('should show no options when search the wrong keyword', async () => {
-    const { getAllByRole, getByText } = setup()
-    const buttonElements = getAllByRole('button', { name: LIST_OPEN })
+    const { getAllByRole, getByText } = setup();
+    const buttonElements = getAllByRole('button', { name: LIST_OPEN });
 
     await act(async () => {
-      await userEvent.type(buttonElements[0], 'wrong keyword')
-    })
+      await userEvent.type(buttonElements[0], 'wrong keyword');
+    });
 
-    expect(getByText('No options')).toBeInTheDocument()
-  })
+    expect(getByText('No options')).toBeInTheDocument();
+  });
 
   it('should call update option function and OnGetSteps function when change option given mockValue as default', async () => {
-    const { getByText, getByRole } = setup()
+    const { getByText, getByRole } = setup();
 
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: LIST_OPEN }))
-    })
+      await userEvent.click(getByRole('button', { name: LIST_OPEN }));
+    });
     await act(async () => {
-      await userEvent.click(getByText(mockOptions[1]))
-    })
+      await userEvent.click(getByText(mockOptions[1]));
+    });
 
-    expect(mockOnGetSteps).toHaveBeenCalledTimes(1)
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2)
-  })
-})
+    expect(mockOnGetSteps).toHaveBeenCalledTimes(1);
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2);
+  });
+});

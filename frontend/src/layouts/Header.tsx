@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import Logo from '@src/assets/Logo.svg'
+import { useLocation, useNavigate } from 'react-router-dom';
+import Logo from '@src/assets/Logo.svg';
 
-import { PROJECT_NAME } from '@src/constants/commons'
+import { PROJECT_NAME } from '@src/constants/commons';
 import {
   HomeIconContainer,
   HomeIconElement,
@@ -13,43 +13,43 @@ import {
   NotificationIconContainer,
   StyledHeaderInfo,
   StyledVersion,
-} from '@src/layouts/style'
-import { NotificationButton } from '@src/components/Common/NotificationButton'
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect'
-import { useEffect } from 'react'
-import { headerClient } from '@src/clients/header/HeaderClient'
-import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { getVersion, saveVersion } from '@src/context/header/headerSlice'
-import { useAppSelector } from '@src/hooks'
-import { isEmpty } from 'lodash'
-import { resetImportedData } from '@src/context/config/configSlice'
+} from '@src/layouts/style';
+import { NotificationButton } from '@src/components/Common/NotificationButton';
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
+import { useEffect } from 'react';
+import { headerClient } from '@src/clients/header/HeaderClient';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { getVersion, saveVersion } from '@src/context/header/headerSlice';
+import { useAppSelector } from '@src/hooks';
+import { isEmpty } from 'lodash';
+import { resetImportedData } from '@src/context/config/configSlice';
 
 const Header = (props: useNotificationLayoutEffectInterface) => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const version = useAppSelector(getVersion)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const version = useAppSelector(getVersion);
 
   const goHome = () => {
-    dispatch(resetImportedData())
-    navigate('/')
-  }
+    dispatch(resetImportedData());
+    navigate('/');
+  };
 
   const shouldShowHomeIcon = () => {
-    return ['/metrics', '/error-page'].includes(location.pathname)
-  }
+    return ['/metrics', '/error-page'].includes(location.pathname);
+  };
 
   const shouldShowNotificationIcon = () => {
-    return ['/metrics'].includes(location.pathname)
-  }
+    return ['/metrics'].includes(location.pathname);
+  };
 
   useEffect(() => {
     if (isEmpty(version)) {
       headerClient.getVersion().then((res) => {
-        dispatch(saveVersion(res))
-      })
+        dispatch(saveVersion(res));
+      });
     }
-  }, [])
+  }, []);
 
   return (
     <LogoWarp data-test-id={'Header'}>
@@ -73,6 +73,6 @@ const Header = (props: useNotificationLayoutEffectInterface) => {
         )}
       </IconContainer>
     </LogoWarp>
-  )
-}
-export default Header
+  );
+};
+export default Header;

@@ -1,5 +1,5 @@
-import { BOARD_TYPES, PIPELINE_TOOL_TYPES, REGULAR_CALENDAR, SOURCE_CONTROL_TYPES } from './fixtures'
-import { BasicConfigState } from '@src/context/config/configSlice'
+import { BOARD_TYPES, PIPELINE_TOOL_TYPES, REGULAR_CALENDAR, SOURCE_CONTROL_TYPES } from './fixtures';
+import { BasicConfigState } from '@src/context/config/configSlice';
 
 const initialConfigState: BasicConfigState = {
   isProjectCreated: true,
@@ -53,6 +53,6 @@ const initialConfigState: BasicConfigState = {
     },
   },
   warningMessage: null,
-}
+};
 
-export default initialConfigState
+export default initialConfigState;

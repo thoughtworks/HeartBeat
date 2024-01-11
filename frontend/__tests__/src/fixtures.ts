@@ -1,39 +1,43 @@
-import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request'
-import { ReportResponseDTO } from '@src/clients/report/dto/response'
+import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
 
-export const PROJECT_NAME = 'Heartbeat'
+export const PROJECT_NAME = 'Heartbeat';
 export const PROJECT_DESCRIPTION =
-  'Heartbeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.'
+  'Heartbeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.';
 
-export const ZERO = 0
+export const ZERO = 0;
 
-export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)'
+export const REGULAR_CALENDAR = 'Regular Calendar(Weekend Considered)';
 
-export const CHINA_CALENDAR = 'Calendar with Chinese Holiday'
+export const CHINA_CALENDAR = 'Calendar with Chinese Holiday';
 
-export const NEXT = 'Next'
+export const NEXT = 'Next';
 
-export const BACK = 'Previous'
+export const PREVIOUS = 'Previous';
 
-export const SAVE = 'Save'
+export const SAVE = 'Save';
 
-export const VERIFY = 'Verify'
+export const SHOW_MORE = 'show more >';
 
-export const RESET = 'Reset'
+export const BACK = 'Back';
 
-export const EXPORT_PIPELINE_DATA = 'Export pipeline data'
+export const VERIFY = 'Verify';
 
-export const EXPORT_BOARD_DATA = 'Export board data'
+export const RESET = 'Reset';
 
-export const EXPORT_METRIC_DATA = 'Export metric data'
+export const EXPORT_PIPELINE_DATA = 'Export pipeline data';
 
-export const VERIFIED = 'Verified'
+export const EXPORT_BOARD_DATA = 'Export board data';
 
-export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required']
+export const EXPORT_METRIC_DATA = 'Export metric data';
 
-export const PROJECT_NAME_LABEL = 'Project name'
+export const VERIFIED = 'Verified';
 
-export const STEPPER = ['Config', 'Metrics', 'Report']
+export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required'];
+
+export const PROJECT_NAME_LABEL = 'Project name';
+
+export const STEPPER = ['Config', 'Metrics', 'Report'];
 
 export const REQUIRED_DATA_LIST = [
   'All',
@@ -44,36 +48,36 @@ export const REQUIRED_DATA_LIST = [
   'Deployment frequency',
   'Change failure rate',
   'Mean time to recovery',
-]
-export const ALL = 'All'
-export const VELOCITY = 'Velocity'
-export const CYCLE_TIME = 'Cycle time'
-export const CLASSIFICATION = 'Classification'
-export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes'
-export const DEPLOYMENT_FREQUENCY = 'Deployment frequency'
-export const CHANGE_FAILURE_RATE = 'Change failure rate'
-export const MEAN_TIME_TO_RECOVERY = 'Mean time to recovery'
-export const REQUIRED_DATA = 'Required metrics'
-export const TEST_PROJECT_NAME = 'test project Name'
-export const ERROR_MESSAGE_COLOR = 'color: #d32f2f'
-export const ERROR_DATE = '02/03/'
-export const CREATE_NEW_PROJECT = 'Create a new project'
-export const IMPORT_PROJECT_FROM_FILE = 'Import project from file'
-export const EXPORT_EXPIRED_CSV_MESSAGE = 'The report has been expired, please generate it again'
+];
+export const ALL = 'All';
+export const VELOCITY = 'Velocity';
+export const CYCLE_TIME = 'Cycle time';
+export const CLASSIFICATION = 'Classification';
+export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes';
+export const DEPLOYMENT_FREQUENCY = 'Deployment frequency';
+export const CHANGE_FAILURE_RATE = 'Change failure rate';
+export const MEAN_TIME_TO_RECOVERY = 'Mean time to recovery';
+export const REQUIRED_DATA = 'Required metrics';
+export const TEST_PROJECT_NAME = 'test project Name';
+export const ERROR_MESSAGE_COLOR = 'color: #d32f2f';
+export const ERROR_DATE = '02/03/';
+export const CREATE_NEW_PROJECT = 'Create a new project';
+export const IMPORT_PROJECT_FROM_FILE = 'Import project from file';
+export const EXPORT_EXPIRED_CSV_MESSAGE = 'The report has been expired, please generate it again';
 
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',
   JIRA: 'Jira',
-}
+};
 
 export const PIPELINE_TOOL_TYPES = {
   BUILD_KITE: 'BuildKite',
   GO_CD: 'GoCD',
-}
+};
 
 export const SOURCE_CONTROL_TYPES = {
   GITHUB: 'GitHub',
-}
+};
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
@@ -81,22 +85,22 @@ export enum CONFIG_TITLE {
   SOURCE_CONTROL = 'Source Control',
 }
 
-export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site', 'Token']
-export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token']
-export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token']
+export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site', 'Token'];
+export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token'];
+export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token'];
 
-export const BASE_URL = 'api/v1'
-export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`
-export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`
-export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`
-export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`
-export const MOCK_REPORT_URL = `${BASE_URL}/reports`
-export const MOCK_VERSION_URL = `${BASE_URL}/version`
-export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:fileName`
+export const BASE_URL = 'api/v1';
+export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`;
+export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`;
+export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`;
+export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`;
+export const MOCK_REPORT_URL = `${BASE_URL}/reports`;
+export const MOCK_VERSION_URL = `${BASE_URL}/version`;
+export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:fileName`;
 
 export const VERSION_RESPONSE = {
   version: '1.11',
-}
+};
 
 export enum VERIFY_ERROR_MESSAGE {
   BAD_REQUEST = 'Please reconfirm the input',
@@ -108,7 +112,7 @@ export enum VERIFY_ERROR_MESSAGE {
   UNKNOWN = 'Unknown',
 }
 
-export const VERIFY_FAILED = 'verify failed'
+export const VERIFY_FAILED = 'verify failed';
 
 export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
@@ -118,7 +122,7 @@ export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
   startTime: 1613664000000,
   endTime: 1614873600000,
   boardId: '1',
-}
+};
 
 export const MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
@@ -128,21 +132,21 @@ export const MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS = {
   startTime: 1613664000000,
   endTime: 1614873600000,
   boardId: '2',
-}
+};
 
 export const MOCK_PIPELINE_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: PIPELINE_TOOL_TYPES.BUILD_KITE,
   startTime: 1613664000000,
   endTime: 1614873600000,
-}
+};
 
 export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: SOURCE_CONTROL_TYPES.GITHUB,
   startTime: 1613664000000,
   endTime: 1614873600000,
-}
+};
 
 export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
   metrics: [],
@@ -193,7 +197,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
     doneColumn: ['Done'],
   },
-}
+};
 
 export const IMPORTED_NEW_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
@@ -231,14 +235,14 @@ export const IMPORTED_NEW_CONFIG_FIXTURE = {
       'Ready For Dev': 'Analysis',
     },
   ],
-}
+};
 
 export const MOCK_EXPORT_CSV_REQUEST_PARAMS: CSVReportRequestDTO = {
   csvTimeStamp: 1613664000000,
   dataType: 'pipeline',
   startDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.startDate,
   endDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.endDate,
-}
+};
 
 export const MOCK_IMPORT_FILE = {
   projectName: 'Mock Project Name',
@@ -248,7 +252,7 @@ export const MOCK_IMPORT_FILE = {
     endDate: '2023-03-29T16:00:00.000Z',
   },
   metrics: [],
-}
+};
 
 export const MOCK_JIRA_VERIFY_RESPONSE = {
   jiraColumns: [
@@ -279,7 +283,7 @@ export const MOCK_JIRA_VERIFY_RESPONSE = {
     { key: 'customfield_10017', name: 'Issue color', flag: false },
     { key: 'customfield_10027', name: 'Feature/Operation', flag: false },
   ],
-}
+};
 
 export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
   pipelineList: [
@@ -292,7 +296,7 @@ export const MOCK_BUILD_KITE_VERIFY_RESPONSE = {
       steps: [],
     },
   ],
-}
+};
 
 export const FILTER_CYCLE_TIME_SETTINGS = [
   { name: 'TODO', value: 'TODO' },
@@ -300,34 +304,34 @@ export const FILTER_CYCLE_TIME_SETTINGS = [
   { name: 'IN DEV', value: 'IN DEV' },
   { name: 'DOING', value: 'IN DEV' },
   { name: 'DONE', value: 'DONE' },
-]
+];
 
 export const MOCK_CYCLE_TIME_SETTING = [
   { name: 'TODO', value: 'TODO' },
   { name: 'IN DEV', value: 'IN DEV' },
   { name: 'DONE', value: 'DONE' },
-]
+];
 export const MOCK_JIRA_WITH_STATUES_SETTING = [
   { name: 'TODO', statuses: ['TODO', 'BACKLOG'] },
   { name: 'IN DEV', statuses: ['IN DEV', 'DOING'] },
   { name: 'DONE', statuses: ['DONE'] },
-]
+];
 
 export const MOCK_GITHUB_VERIFY_RESPONSE = {
   githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
-}
+};
 
-export const CREWS_SETTING = 'Crew settings'
-export const CYCLE_TIME_SETTINGS = 'Cycle time settings'
-export const CLASSIFICATION_SETTING = 'Classification setting'
-export const REAL_DONE = 'Real done setting'
-export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Pipeline settings'
+export const CREWS_SETTING = 'Crew settings';
+export const CYCLE_TIME_SETTINGS = 'Cycle time settings';
+export const CLASSIFICATION_SETTING = 'Classification setting';
+export const REAL_DONE = 'Real done setting';
+export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Pipeline settings';
 
 export enum PIPELINE_SETTING_TYPES {
   DEPLOYMENT_FREQUENCY_SETTINGS_TYPE = 'DeploymentFrequencySettings',
 }
 
-export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?'
+export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?';
 
 export const MOCK_GET_STEPS_PARAMS = {
   params: {
@@ -341,17 +345,17 @@ export const MOCK_GET_STEPS_PARAMS = {
   organizationId: 'mockOrganizationId',
   pipelineType: 'BuildKite',
   token: 'mockToken',
-}
+};
 
-export const REMOVE_BUTTON = 'Remove'
-export const ORGANIZATION = 'Organization'
-export const PIPELINE_NAME = 'Pipeline Name'
-export const STEP = 'Step'
-export const BRANCH = 'Branches'
+export const REMOVE_BUTTON = 'Remove';
+export const ORGANIZATION = 'Organization';
+export const PIPELINE_NAME = 'Pipeline Name';
+export const STEP = 'Step';
+export const BRANCH = 'Branches';
 
-export const PR_LEAD_TIME = 'PR Lead Time'
-export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time'
-export const TOTAL_DELAY_TIME = 'Total Lead Time'
+export const PR_LEAD_TIME = 'PR Lead Time';
+export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time';
+export const TOTAL_DELAY_TIME = 'Total Lead Time';
 
 export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   velocity: {
@@ -469,12 +473,12 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   isPipelineMetricsReady: true,
   isSourceControlMetricsReady: true,
   isAllMetricsReady: true,
-}
+};
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
   callbackUrl: 'reports/123',
   interval: 10,
-}
+};
 
 export const EXPECTED_REPORT_VALUES = {
   velocityList: [
@@ -618,7 +622,7 @@ export const EXPECTED_REPORT_VALUES = {
     },
   ],
   exportValidityTimeMin: 30,
-}
+};
 
 export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   velocity: null,
@@ -633,10 +637,10 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   isPipelineMetricsReady: false,
   isSourceControlMetricsReady: false,
   isAllMetricsReady: false,
-}
+};
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
-  'Imported data is not perfectly matched. Please review carefully before going next!'
+  'Imported data is not perfectly matched. Please review carefully before going next!';
 
 export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
@@ -680,40 +684,40 @@ export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
       orgId: 'Thoughtworks-Heartbeat',
     },
   ],
-}
+};
 
-export const ERROR_MESSAGE_TIME_DURATION = 4000
-export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed.`
+export const ERROR_MESSAGE_TIME_DURATION = 4000;
+export const CLASSIFICATION_WARNING_MESSAGE = `Some classifications in import data might be removed.`;
 
 export const HOME_VERIFY_IMPORT_WARNING_MESSAGE =
-  'The content of the imported JSON file is empty. Please confirm carefully'
+  'The content of the imported JSON file is empty. Please confirm carefully';
 
-export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error'
+export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error';
 
-export const BASE_PAGE_ROUTE = '/'
+export const BASE_PAGE_ROUTE = '/';
 
-export const ERROR_PAGE_ROUTE = '/error-page'
+export const ERROR_PAGE_ROUTE = '/error-page';
 
-export const METRICS_PAGE_ROUTE = '/metrics'
+export const METRICS_PAGE_ROUTE = '/metrics';
 
 export const ERROR_PAGE_MESSAGE =
-  'Something on internet is not quite right. Perhaps head back to our homepage and try again.'
+  'Something on internet is not quite right. Perhaps head back to our homepage and try again.';
 
-export const RETRY_BUTTON = 'Go to homepage'
+export const RETRY_BUTTON = 'Go to homepage';
 
 export const NO_CARD_ERROR_MESSAGE =
-  'Sorry there is no card within selected date range, please change your collection date!'
+  'Sorry there is no card within selected date range, please change your collection date!';
 
-export const LIST_OPEN = 'Open'
+export const LIST_OPEN = 'Open';
 
-export const NO_RESULT_DASH = '----'
+export const NO_RESULT_DASH = '----';
 
-export const MOCK_AUTOCOMPLETE_LIST = ['Option 1', 'Option 2', 'Option 3']
+export const MOCK_AUTOCOMPLETE_LIST = ['Option 1', 'Option 2', 'Option 3'];
 
-export const AUTOCOMPLETE_SELECT_ACTION = 'selectOption'
+export const AUTOCOMPLETE_SELECT_ACTION = 'selectOption';
 
-export const TIME_DISPLAY_TITTLE_START = 'START'
-export const TIME_DISPLAY_TITTLE_END = 'END'
-export const CYCLE_TIME_SETTINGS_SECTION = 'Cycle time settings section'
-export const REAL_DONE_SETTING_SECTION = 'Real done setting section'
-export const SELECT_CONSIDER_AS_DONE_MESSAGE = 'Must select which you want to consider as Done'
+export const TIME_DISPLAY_TITTLE_START = 'START';
+export const TIME_DISPLAY_TITTLE_END = 'END';
+export const CYCLE_TIME_SETTINGS_SECTION = 'Cycle time settings section';
+export const REAL_DONE_SETTING_SECTION = 'Real done setting section';
+export const SELECT_CONSIDER_AS_DONE_MESSAGE = 'Must select which you want to consider as Done';

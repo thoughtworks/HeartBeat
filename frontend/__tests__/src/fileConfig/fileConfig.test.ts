@@ -1,10 +1,10 @@
-import { convertToNewFileConfig } from '@src/fileConfig/fileConfig'
+import { convertToNewFileConfig } from '@src/fileConfig/fileConfig';
 import {
   IMPORTED_NEW_CONFIG_FIXTURE,
   BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
   REGULAR_CALENDAR,
   CHINA_CALENDAR,
-} from '../fixtures'
+} from '../fixtures';
 
 describe('#fileConfig', () => {
   const BASIC_NEW_CONFIG = {
@@ -43,35 +43,35 @@ describe('#fileConfig', () => {
         organization: 'Thoughtworks-Heartbeat',
       },
     ],
-  }
+  };
 
   it('should return original config when it is not old config', () => {
-    expect(convertToNewFileConfig(IMPORTED_NEW_CONFIG_FIXTURE)).toEqual(IMPORTED_NEW_CONFIG_FIXTURE)
-  })
+    expect(convertToNewFileConfig(IMPORTED_NEW_CONFIG_FIXTURE)).toEqual(IMPORTED_NEW_CONFIG_FIXTURE);
+  });
 
   it('should convert to new config when it is old config and considerHoliday is false', () => {
     const expected = {
       ...BASIC_NEW_CONFIG,
       calendarType: REGULAR_CALENDAR,
-    }
+    };
     expect(
       convertToNewFileConfig({
         ...BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
         considerHoliday: false,
       })
-    ).toEqual(expected)
-  })
+    ).toEqual(expected);
+  });
 
   it('should convert to new config when it is old config and considerHoliday is true', () => {
     const expected = {
       ...BASIC_NEW_CONFIG,
       calendarType: CHINA_CALENDAR,
-    }
+    };
     expect(
       convertToNewFileConfig({
         ...BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
         considerHoliday: true,
       })
-    ).toEqual(expected)
-  })
-})
+    ).toEqual(expected);
+  });
+});

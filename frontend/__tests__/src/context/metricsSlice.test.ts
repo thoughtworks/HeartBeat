@@ -16,11 +16,11 @@ import saveMetricsSettingReducer, {
   updatePipelineSettings,
   updatePipelineStep,
   updateTreatFlagCardAsBlock,
-} from '@src/context/Metrics/metricsSlice'
-import { store } from '@src/store'
-import { CLASSIFICATION_WARNING_MESSAGE, NO_RESULT_DASH, PIPELINE_SETTING_TYPES } from '../fixtures'
-import { ASSIGNEE_FILTER_TYPES, MESSAGE } from '@src/constants/resources'
-import { setupStore } from '../utils/setupStoreUtil'
+} from '@src/context/Metrics/metricsSlice';
+import { store } from '@src/store';
+import { CLASSIFICATION_WARNING_MESSAGE, NO_RESULT_DASH, PIPELINE_SETTING_TYPES } from '../fixtures';
+import { ASSIGNEE_FILTER_TYPES, MESSAGE } from '@src/constants/resources';
+import { setupStore } from '../utils/setupStoreUtil';
 
 const initState = {
   jiraColumns: [],
@@ -52,7 +52,7 @@ const initState = {
   realDoneWarningMessage: null,
   deploymentWarningMessage: [],
   leadTimeWarningMessage: [],
-}
+};
 
 const mockJiraResponse = {
   targetFields: [{ key: 'issuetype', name: 'Issue Type', flag: false }],
@@ -81,22 +81,22 @@ const mockJiraResponse = {
       },
     },
   ],
-}
+};
 
 describe('saveMetricsSetting reducer', () => {
   it('should show empty array when handle initial state', () => {
-    const savedMetricsSetting = saveMetricsSettingReducer(undefined, { type: 'unknown' })
+    const savedMetricsSetting = saveMetricsSettingReducer(undefined, { type: 'unknown' });
 
-    expect(savedMetricsSetting.users).toEqual([])
-    expect(savedMetricsSetting.targetFields).toEqual([])
-    expect(savedMetricsSetting.jiraColumns).toEqual([])
-    expect(savedMetricsSetting.doneColumn).toEqual([])
-    expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
+    expect(savedMetricsSetting.users).toEqual([]);
+    expect(savedMetricsSetting.targetFields).toEqual([]);
+    expect(savedMetricsSetting.jiraColumns).toEqual([]);
+    expect(savedMetricsSetting.doneColumn).toEqual([]);
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([]);
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-    ])
-    expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true)
-    expect(savedMetricsSetting.assigneeFilter).toBe(ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE)
+    ]);
+    expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true);
+    expect(savedMetricsSetting.assigneeFilter).toBe(ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE);
     expect(savedMetricsSetting.importedData).toEqual({
       importedCrews: [],
       importedAssigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
@@ -108,8 +108,8 @@ describe('saveMetricsSetting reducer', () => {
       importedClassification: [],
       importedDeployment: [],
       importedPipelineCrews: [],
-    })
-  })
+    });
+  });
 
   it('should store updated targetFields when its value changed', () => {
     const mockUpdatedTargetFields = {
@@ -118,60 +118,60 @@ describe('saveMetricsSetting reducer', () => {
         { key: 'parent', name: 'Parent', flag: false },
         { key: 'customfield_10020', name: 'Sprint', flag: false },
       ],
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
       saveTargetFields({
         targetFields: mockUpdatedTargetFields.targetFields,
       })
-    )
+    );
 
-    expect(savedMetricsSetting.targetFields).toEqual(mockUpdatedTargetFields)
-    expect(savedMetricsSetting.users).toEqual([])
-    expect(savedMetricsSetting.jiraColumns).toEqual([])
-  })
+    expect(savedMetricsSetting.targetFields).toEqual(mockUpdatedTargetFields);
+    expect(savedMetricsSetting.users).toEqual([]);
+    expect(savedMetricsSetting.jiraColumns).toEqual([]);
+  });
 
   it('should store updated doneColumn when its value changed', () => {
     const mockUpdatedDoneColumn = {
       doneColumn: ['DONE', 'CANCELLED'],
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
       saveDoneColumn({
         doneColumn: mockUpdatedDoneColumn.doneColumn,
       })
-    )
+    );
 
-    expect(savedMetricsSetting.doneColumn).toEqual(mockUpdatedDoneColumn)
-  })
+    expect(savedMetricsSetting.doneColumn).toEqual(mockUpdatedDoneColumn);
+  });
 
   it('should store updated users when its value changed', () => {
     const mockUpdatedUsers = {
       users: ['userOne', 'userTwo', 'userThree'],
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
       saveUsers({
         users: mockUpdatedUsers.users,
       })
-    )
+    );
 
-    expect(savedMetricsSetting.users).toEqual(mockUpdatedUsers)
-  })
+    expect(savedMetricsSetting.users).toEqual(mockUpdatedUsers);
+  });
 
   it('should store saved cycleTimeSettings when its value changed', () => {
     const mockSavedCycleTimeSettings = {
       cycleTimeSettings: [{ name: 'TODO', value: 'To do' }],
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
       saveCycleTimeSettings({
         cycleTimeSettings: mockSavedCycleTimeSettings.cycleTimeSettings,
       })
-    )
+    );
 
-    expect(savedMetricsSetting.cycleTimeSettings).toEqual(mockSavedCycleTimeSettings)
-  })
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual(mockSavedCycleTimeSettings);
+  });
 
   it('should update metricsImportedData when its value changed given initial state', () => {
     const mockMetricsImportedData = {
@@ -186,8 +186,11 @@ describe('saveMetricsSetting reducer', () => {
       deployment: [{ id: 0, organization: 'organization', pipelineName: 'pipelineName', step: 'step' }],
       leadTime: [],
       pipelineCrews: [],
-    }
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))
+    };
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      initState,
+      updateMetricsImportedData(mockMetricsImportedData)
+    );
 
     expect(savedMetricsSetting.importedData).toEqual({
       importedCrews: mockMetricsImportedData.crews,
@@ -201,8 +204,8 @@ describe('saveMetricsSetting reducer', () => {
       importedClassification: mockMetricsImportedData.classification,
       importedDeployment: mockMetricsImportedData.deployment,
       importedLeadTime: mockMetricsImportedData.leadTime,
-    })
-  })
+    });
+  });
 
   it('should not update metricsImportedData when imported data is broken given initial state', () => {
     const mockMetricsImportedData = {
@@ -215,26 +218,29 @@ describe('saveMetricsSetting reducer', () => {
       classification: null,
       deployment: null,
       leadTime: null,
-    }
+    };
 
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateMetricsImportedData(mockMetricsImportedData))
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      initState,
+      updateMetricsImportedData(mockMetricsImportedData)
+    );
 
-    expect(savedMetricsSetting.users).toEqual([])
-    expect(savedMetricsSetting.targetFields).toEqual([])
-    expect(savedMetricsSetting.jiraColumns).toEqual([])
-    expect(savedMetricsSetting.doneColumn).toEqual([])
-    expect(savedMetricsSetting.cycleTimeSettings).toEqual([])
-    expect(savedMetricsSetting.treatFlagCardAsBlock).toEqual(true)
+    expect(savedMetricsSetting.users).toEqual([]);
+    expect(savedMetricsSetting.targetFields).toEqual([]);
+    expect(savedMetricsSetting.jiraColumns).toEqual([]);
+    expect(savedMetricsSetting.doneColumn).toEqual([]);
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([]);
+    expect(savedMetricsSetting.treatFlagCardAsBlock).toEqual(true);
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-    ])
-  })
+    ]);
+  });
 
   it('should update metricsState when its value changed given isProjectCreated is false and selectedDoneColumns', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -250,23 +256,23 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }])
-    expect(savedMetricsSetting.users).toEqual(['User B'])
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }]);
+    expect(savedMetricsSetting.users).toEqual(['User B']);
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
       { name: 'Done', value: 'Done' },
       { name: 'Doing', value: NO_RESULT_DASH },
       { name: 'Testing', value: NO_RESULT_DASH },
-    ])
-    expect(savedMetricsSetting.doneColumn).toEqual(['DONE'])
-  })
+    ]);
+    expect(savedMetricsSetting.doneColumn).toEqual(['DONE']);
+  });
 
   it('should update metricsState when its value changed given isProjectCreated is false and no selectedDoneColumns', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
 
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
@@ -281,41 +287,41 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.doneColumn).toEqual([])
-  })
+    expect(savedMetricsSetting.doneColumn).toEqual([]);
+  });
 
   it('should update metricsState when its value changed given isProjectCreated is true', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: true,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: false }])
-    expect(savedMetricsSetting.users).toEqual(['User A', 'User B'])
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: false }]);
+    expect(savedMetricsSetting.users).toEqual(['User A', 'User B']);
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
       { name: 'Done', value: NO_RESULT_DASH },
       { name: 'Doing', value: NO_RESULT_DASH },
       { name: 'Testing', value: NO_RESULT_DASH },
-    ])
-    expect(savedMetricsSetting.doneColumn).toEqual([])
-  })
+    ]);
+    expect(savedMetricsSetting.doneColumn).toEqual([]);
+  });
 
   it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
       updateDeploymentFrequencySettings({ updateId: 0, label: 'Steps', value: 'step1' })
-    )
+    );
 
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
       { id: 0, organization: '', pipelineName: '', step: 'step1', branches: [] },
-    ])
-  })
+    ]);
+  });
 
   it('should update a deploymentFrequencySetting when handle updateDeploymentFrequencySettings given multiple deploymentFrequencySettings', () => {
     const multipleDeploymentFrequencySettingsInitState = {
@@ -324,55 +330,55 @@ describe('saveMetricsSetting reducer', () => {
         { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
         { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
       ],
-    }
+    };
     const updatedDeploymentFrequencySettings = [
       { id: 0, organization: 'mock new organization', pipelineName: '', step: '', branches: [] },
       { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
-    ]
+    ];
     const savedMetricsSetting = saveMetricsSettingReducer(
       multipleDeploymentFrequencySettingsInitState,
       updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' })
-    )
+    );
 
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(updatedDeploymentFrequencySettings)
-  })
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(updatedDeploymentFrequencySettings);
+  });
 
   it('should add a deploymentFrequencySetting when handle addADeploymentFrequencySettings given initial state', () => {
     const addedDeploymentFrequencySettings = [
       { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
       { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
-    ]
+    ];
 
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, addADeploymentFrequencySetting())
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, addADeploymentFrequencySetting());
 
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings)
-  })
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings);
+  });
 
   it('should add a deploymentFrequencySetting when handle addADeploymentFrequencySettings but initState dont have DeploymentFrequencySettings', () => {
-    const addedDeploymentFrequencySettings = [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }]
+    const addedDeploymentFrequencySettings = [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }];
 
     const initStateWithoutDeploymentFrequencySettings = {
       ...initState,
       deploymentFrequencySettings: [],
-    }
+    };
 
     const savedMetricsSetting = saveMetricsSettingReducer(
       initStateWithoutDeploymentFrequencySettings,
       addADeploymentFrequencySetting()
-    )
+    );
 
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings)
-  })
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings);
+  });
 
   it('should delete a deploymentFrequencySetting when handle deleteADeploymentFrequencySettings given initial state', () => {
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, deleteADeploymentFrequencySetting(0))
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, deleteADeploymentFrequencySetting(0));
 
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([])
-  })
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([]);
+  });
 
   it('should return deploymentFrequencySettings when call selectDeploymentFrequencySettings functions', () => {
-    expect(selectDeploymentFrequencySettings(store.getState())).toEqual(initState.deploymentFrequencySettings)
-  })
+    expect(selectDeploymentFrequencySettings(store.getState())).toEqual(initState.deploymentFrequencySettings);
+  });
 
   it('should init deploymentFrequencySettings when handle initDeploymentFrequencySettings given multiple deploymentFrequencySettings', () => {
     const multipleDeploymentFrequencySettingsInitState = {
@@ -381,31 +387,31 @@ describe('saveMetricsSetting reducer', () => {
         { id: 0, organization: 'mockOrgName1', pipelineName: 'mockName1', step: 'step1', branches: [] },
         { id: 1, organization: 'mockOrgName2', pipelineName: 'mockName2', step: 'step2', branches: [] },
       ],
-    }
+    };
 
     const savedMetricsSetting = saveMetricsSettingReducer(
       multipleDeploymentFrequencySettingsInitState,
       initDeploymentFrequencySettings()
-    )
+    );
 
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(initState.deploymentFrequencySettings)
-  })
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(initState.deploymentFrequencySettings);
+  });
 
   it('should return false when update TreatFlagCardAsBlock value  given false', () => {
-    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateTreatFlagCardAsBlock(false))
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateTreatFlagCardAsBlock(false));
 
-    expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(false)
-  })
+    expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(false);
+  });
 
   describe('updatePipelineSettings', () => {
     const mockImportedDeployment = [
       { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
       { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2', branches: [] },
       { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3', branches: [] },
-    ]
+    ];
     const mockImportedLeadTime = [
       { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
-    ]
+    ];
     const mockInitState = {
       ...initState,
       importedData: {
@@ -413,7 +419,7 @@ describe('saveMetricsSetting reducer', () => {
         importedDeployment: mockImportedDeployment,
         importedLeadTime: mockImportedLeadTime,
       },
-    }
+    };
     const mockPipelineList = [
       {
         id: 'mockId1',
@@ -424,7 +430,7 @@ describe('saveMetricsSetting reducer', () => {
         steps: ['mock step 1', 'mock step 2'],
         branches: [],
       },
-    ]
+    ];
     const testCases = [
       {
         isProjectCreated: false,
@@ -454,30 +460,30 @@ describe('saveMetricsSetting reducer', () => {
           leadTimeWarningMessage: [],
         },
       },
-    ]
+    ];
 
     testCases.forEach(({ isProjectCreated, expectSetting }) => {
       it(`should update pipeline settings When call updatePipelineSettings given isProjectCreated ${isProjectCreated}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(
           mockInitState,
           updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated })
-        )
+        );
 
-        expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(expectSetting.deploymentFrequencySettings)
-        expect(savedMetricsSetting.deploymentWarningMessage).toEqual(expectSetting.deploymentWarningMessage)
-      })
-    })
-  })
+        expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(expectSetting.deploymentFrequencySettings);
+        expect(savedMetricsSetting.deploymentWarningMessage).toEqual(expectSetting.deploymentWarningMessage);
+      });
+    });
+  });
 
   describe('updatePipelineSteps', () => {
     const mockImportedDeployment = [
       { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
       { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2', branches: [] },
       { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3', branches: [] },
-    ]
+    ];
     const mockImportedLeadTime = [
       { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
-    ]
+    ];
     const mockInitState = {
       ...initState,
       deploymentFrequencySettings: [
@@ -503,8 +509,8 @@ describe('saveMetricsSetting reducer', () => {
         { id: 1, organization: null, pipelineName: null, step: null },
       ],
       leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
-    }
-    const mockSteps = ['mockStep1']
+    };
+    const mockSteps = ['mockStep1'];
     const testSettingsCases = [
       {
         id: 0,
@@ -543,11 +549,11 @@ describe('saveMetricsSetting reducer', () => {
           },
         ],
       },
-    ]
+    ];
 
     testSettingsCases.forEach(({ id, type, steps, expectedSettings, expectedWarning }) => {
-      const settingsKey = 'deploymentFrequencySettings'
-      const warningKey = 'deploymentWarningMessage'
+      const settingsKey = 'deploymentFrequencySettings';
+      const warningKey = 'deploymentWarningMessage';
 
       it(`should update ${settingsKey} step when call updatePipelineSteps with id ${id}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(
@@ -557,19 +563,19 @@ describe('saveMetricsSetting reducer', () => {
             id: id,
             type: type,
           })
-        )
+        );
 
-        expect(savedMetricsSetting[settingsKey]).toEqual(expectedSettings)
-        expect(savedMetricsSetting[warningKey]).toEqual(expectedWarning)
-      })
-    })
-  })
+        expect(savedMetricsSetting[settingsKey]).toEqual(expectedSettings);
+        expect(savedMetricsSetting[warningKey]).toEqual(expectedWarning);
+      });
+    });
+  });
 
   it('should set warningMessage have value when there are more values in the import file than in the response', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -587,18 +593,18 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
     expect(savedMetricsSetting.cycleTimeWarningMessage).toEqual(
       'The column of ToDo is a deleted column, which means this column existed the time you saved config, but was deleted. Please confirm!'
-    )
-  })
+    );
+  });
 
   it('should set warningMessage have value when the values in the import file are less than those in the response', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -611,18 +617,18 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
     expect(savedMetricsSetting.cycleTimeWarningMessage).toEqual(
       'The column of Testing is a new column. Please select a value for it!'
-    )
-  })
+    );
+  });
 
   it('should set warningMessage have value when the key value in the import file matches the value in the response, but the value does not match the fixed column', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -635,18 +641,18 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
     expect(savedMetricsSetting.cycleTimeWarningMessage).toEqual(
       'The value of Doing in imported json is not in dropdown list now. Please select a value for it!'
-    )
-  })
+    );
+  });
 
   it('should set warningMessage null when the key value in the imported file matches the value in the response and the value matches the fixed column', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -659,16 +665,16 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.cycleTimeWarningMessage).toBeNull()
-  })
+    expect(savedMetricsSetting.cycleTimeWarningMessage).toBeNull();
+  });
 
   it('should set warningMessage null when importedCycleTimeSettings in the imported file matches is empty', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -681,16 +687,16 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.cycleTimeWarningMessage).toBeNull()
-  })
+    expect(savedMetricsSetting.cycleTimeWarningMessage).toBeNull();
+  });
 
   it('should set classification warningMessage null when the key value in the imported file matches the value in the response and the value matches the fixed column', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -700,16 +706,16 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.classificationWarningMessage).toBeNull()
-  })
+    expect(savedMetricsSetting.classificationWarningMessage).toBeNull();
+  });
 
   it('should set classification warningMessage have value when the key value in the imported file matches the value in the response and the value matches the fixed column', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -719,10 +725,10 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.classificationWarningMessage).toEqual(CLASSIFICATION_WARNING_MESSAGE)
-  })
+    expect(savedMetricsSetting.classificationWarningMessage).toEqual(CLASSIFICATION_WARNING_MESSAGE);
+  });
 
   it('should set realDone warning message null when doneColumns in imported file matches the value in the response', () => {
     const mockUpdateMetricsStateArguments = {
@@ -737,7 +743,7 @@ describe('saveMetricsSetting reducer', () => {
         },
       ],
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -747,10 +753,10 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.realDoneWarningMessage).toBeNull()
-  })
+    expect(savedMetricsSetting.realDoneWarningMessage).toBeNull();
+  });
 
   it('should set realDone warning message have value when doneColumns in imported file not matches the value in the response', () => {
     const mockUpdateMetricsStateArguments = {
@@ -765,7 +771,7 @@ describe('saveMetricsSetting reducer', () => {
         },
       ],
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -775,10 +781,10 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(MESSAGE.REAL_DONE_WARNING)
-  })
+    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(MESSAGE.REAL_DONE_WARNING);
+  });
 
   it('should set realDone warning message null when doneColumns in imported file matches the value in cycleTimeSettings', () => {
     const mockUpdateMetricsStateArguments = {
@@ -793,7 +799,7 @@ describe('saveMetricsSetting reducer', () => {
         },
       ],
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -804,10 +810,10 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.realDoneWarningMessage).toBeNull()
-  })
+    expect(savedMetricsSetting.realDoneWarningMessage).toBeNull();
+  });
 
   it('should set realDone warning message have value when doneColumns in imported file not matches the value in cycleTimeSettings', () => {
     const mockUpdateMetricsStateArguments = {
@@ -822,7 +828,7 @@ describe('saveMetricsSetting reducer', () => {
         },
       ],
       isProjectCreated: false,
-    }
+    };
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
@@ -833,10 +839,10 @@ describe('saveMetricsSetting reducer', () => {
         },
       },
       updateMetricsState(mockUpdateMetricsStateArguments)
-    )
+    );
 
-    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(MESSAGE.REAL_DONE_WARNING)
-  })
+    expect(savedMetricsSetting.realDoneWarningMessage).toEqual(MESSAGE.REAL_DONE_WARNING);
+  });
 
   describe('select pipeline settings warning message', () => {
     const mockPipelineSettings = [
@@ -852,11 +858,11 @@ describe('saveMetricsSetting reducer', () => {
         pipelineName: 'mockPipelineName2',
         step: ' mockStep1',
       },
-    ]
+    ];
     const mockImportData = {
       deployment: mockPipelineSettings,
       leadTime: mockPipelineSettings,
-    }
+    };
     const mockPipelineList = [
       {
         id: 'mockId1',
@@ -866,60 +872,48 @@ describe('saveMetricsSetting reducer', () => {
         repository: 'mockRepository1',
         steps: ['mock step 1', 'mock step 2'],
       },
-    ]
-    const mockSteps = ['mockStep']
-    const ORGANIZATION_WARNING_MESSAGE = 'This organization in import data might be removed'
-    const PIPELINE_NAME_WARNING_MESSAGE = 'This Pipeline in import data might be removed'
-    const STEP_WARNING_MESSAGE = 'Selected step of this pipeline in import data might be removed'
+    ];
+    const mockSteps = ['mockStep'];
+    const ORGANIZATION_WARNING_MESSAGE = 'This organization in import data might be removed';
+    const PIPELINE_NAME_WARNING_MESSAGE = 'This Pipeline in import data might be removed';
+    const STEP_WARNING_MESSAGE = 'Selected step of this pipeline in import data might be removed';
 
-    let store = setupStore()
+    let store = setupStore();
     beforeEach(async () => {
-      store = setupStore()
-      await store.dispatch(updateMetricsImportedData(mockImportData))
-      await store.dispatch(updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated: false }))
+      store = setupStore();
+      await store.dispatch(updateMetricsImportedData(mockImportData));
+      await store.dispatch(updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated: false }));
       await store.dispatch(
         updatePipelineStep({
           steps: mockSteps,
           id: 0,
           type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         })
-      )
+      );
       await store.dispatch(
         updatePipelineStep({
           steps: mockSteps,
           id: 1,
           type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         })
-      )
-    })
+      );
+    });
     afterEach(() => {
-      jest.clearAllMocks()
-    })
+      jest.clearAllMocks();
+    });
     it('should return organization warning message given its id and type', () => {
-      expect(
-        selectOrganizationWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-      ).toEqual(ORGANIZATION_WARNING_MESSAGE)
-      expect(
-        selectOrganizationWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-      ).toBeNull()
-    })
+      expect(selectOrganizationWarningMessage(store.getState(), 0)).toEqual(ORGANIZATION_WARNING_MESSAGE);
+      expect(selectOrganizationWarningMessage(store.getState(), 1)).toBeNull();
+    });
 
     it('should return pipelineName warning message given its id and type', () => {
-      expect(
-        selectPipelineNameWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-      ).toBeNull()
-      expect(
-        selectPipelineNameWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-      ).toEqual(PIPELINE_NAME_WARNING_MESSAGE)
-    })
+      expect(selectPipelineNameWarningMessage(store.getState(), 0)).toBeNull();
+      expect(selectPipelineNameWarningMessage(store.getState(), 1)).toEqual(PIPELINE_NAME_WARNING_MESSAGE);
+    });
 
     it('should return step warning message given its id and type', () => {
-      expect(
-        selectStepWarningMessage(store.getState(), 0, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-      ).toBeNull()
-      expect(
-        selectStepWarningMessage(store.getState(), 1, PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE)
-      ).toEqual(STEP_WARNING_MESSAGE)
-    })
-  })
-})
+      expect(selectStepWarningMessage(store.getState(), 0)).toBeNull();
+      expect(selectStepWarningMessage(store.getState(), 1)).toEqual(STEP_WARNING_MESSAGE);
+    });
+  });
+});

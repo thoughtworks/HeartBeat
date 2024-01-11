@@ -1,6 +1,8 @@
 package heartbeat.controller.report.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.Gson;
+import heartbeat.util.MetricsUtil;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,5 +36,24 @@ public class GenerateReportRequest {
 
 	@NotBlank
 	private String csvTimeStamp;
+
+	public GenerateReportRequest convertToPipelineRequest(GenerateReportRequest request) {
+		List<String> pipelineMetrics = MetricsUtil
+			.getPipelineMetrics(request.getMetrics().stream().map(String::toLowerCase).toList());
+		Gson gson = new Gson();
+		GenerateReportRequest result = gson.fromJson(gson.toJson(request), GenerateReportRequest.class);
+
+		result.setMetrics(pipelineMetrics);
+		return result;
+	}
+
+	public GenerateReportRequest convertToSourceControlRequest(GenerateReportRequest request) {
+		List<String> codebaseMetrics = MetricsUtil
+			.getCodeBaseMetrics(request.getMetrics().stream().map(String::toLowerCase).toList());
+		Gson gson = new Gson();
+		GenerateReportRequest result = gson.fromJson(gson.toJson(request), GenerateReportRequest.class);
+		result.setMetrics(codebaseMetrics);
+		return result;
+	}
 
 }

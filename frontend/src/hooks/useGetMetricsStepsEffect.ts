@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { getStepsParams, metricsClient } from '@src/clients/MetricsClient'
-import { DURATION } from '@src/constants/commons'
-import { MESSAGE } from '@src/constants/resources'
+import { useState } from 'react';
+import { getStepsParams, metricsClient } from '@src/clients/MetricsClient';
+import { DURATION } from '@src/constants/commons';
+import { MESSAGE } from '@src/constants/resources';
 
 export interface useGetMetricsStepsEffectInterface {
   getSteps: (
@@ -12,20 +12,20 @@ export interface useGetMetricsStepsEffectInterface {
     token: string
   ) => Promise<
     | {
-        haveStep: boolean
-        response: string[]
-        branches: string[]
-        pipelineCrews: string[]
+        haveStep: boolean;
+        response: string[];
+        branches: string[];
+        pipelineCrews: string[];
       }
     | undefined
-  >
-  isLoading: boolean
-  errorMessage: string
+  >;
+  isLoading: boolean;
+  errorMessage: string;
 }
 
 export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const getSteps = async (
     params: getStepsParams,
@@ -34,19 +34,19 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
     pipelineType: string,
     token: string
   ) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      return await metricsClient.getSteps(params, organizationId, buildId, pipelineType, token)
+      return await metricsClient.getSteps(params, organizationId, buildId, pipelineType, token);
     } catch (e) {
-      const err = e as Error
-      setErrorMessage(`${pipelineType} ${MESSAGE.GET_STEPS_FAILED}: ${err.message}`)
+      const err = e as Error;
+      setErrorMessage(`${pipelineType} ${MESSAGE.GET_STEPS_FAILED}: ${err.message}`);
       setTimeout(() => {
-        setErrorMessage('')
-      }, DURATION.ERROR_MESSAGE_TIME)
+        setErrorMessage('');
+      }, DURATION.ERROR_MESSAGE_TIME);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  return { isLoading, getSteps, errorMessage }
-}
+  return { isLoading, getSteps, errorMessage };
+};

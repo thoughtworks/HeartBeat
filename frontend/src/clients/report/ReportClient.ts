@@ -1,13 +1,13 @@
-import { HttpClient } from '@src/clients/Httpclient'
-import { ReportRequestDTO } from '@src/clients/report/dto/request'
-import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/dto/response'
+import { HttpClient } from '@src/clients/Httpclient';
+import { ReportRequestDTO } from '@src/clients/report/dto/request';
+import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
 
 export class ReportClient extends HttpClient {
-  status = 0
+  status = 0;
   reportCallbackResponse: ReportCallbackResponse = {
     callbackUrl: '',
     interval: 0,
-  }
+  };
   reportResponse: ReportResponseDTO = {
     velocity: {
       velocityForSP: 0,
@@ -63,37 +63,37 @@ export class ReportClient extends HttpClient {
     isPipelineMetricsReady: false,
     isSourceControlMetricsReady: false,
     isAllMetricsReady: false,
-  }
+  };
 
   retrieveReportByUrl = async (params: ReportRequestDTO, url: string) => {
     await this.axiosInstance
       .post(url, params, {})
       .then((res) => {
-        this.reportCallbackResponse = res.data
+        this.reportCallbackResponse = res.data;
       })
       .catch((e) => {
-        throw e
-      })
+        throw e;
+      });
     return {
       response: this.reportCallbackResponse,
-    }
-  }
+    };
+  };
 
   pollingReport = async (url: string) => {
     await this.axiosInstance
       .get(url)
       .then((res) => {
-        this.status = res.status
-        this.reportResponse = res.data
+        this.status = res.status;
+        this.reportResponse = res.data;
       })
       .catch((e) => {
-        throw e
-      })
+        throw e;
+      });
     return {
       status: this.status,
       response: this.reportResponse,
-    }
-  }
+    };
+  };
 }
 
-export const reportClient = new ReportClient()
+export const reportClient = new ReportClient();

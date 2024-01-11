@@ -7,17 +7,17 @@ import {
   StyledValue,
   StyledValueSection,
   StyledWrapper,
-} from '@src/components/Common/ReportGrid/ReportCardItem/style'
-import DividingLine from '@src/assets/DividingLine.svg'
-import React, { HTMLAttributes } from 'react'
-import { Tooltip } from '@mui/material'
+} from '@src/components/Common/ReportGrid/ReportCardItem/style';
+import DividingLine from '@src/assets/DividingLine.svg';
+import React, { HTMLAttributes } from 'react';
+import { Tooltip } from '@mui/material';
 
 export interface ReportCardItemProps extends HTMLAttributes<HTMLDivElement> {
-  value: number
-  isToFixed?: boolean
-  extraValue?: string
-  subtitle: string
-  showDividingLine?: boolean
+  value: number;
+  isToFixed?: boolean;
+  extraValue?: string;
+  subtitle: string;
+  showDividingLine?: boolean;
 }
 
 export const ReportCardItem = ({
@@ -43,5 +43,5 @@ export const ReportCardItem = ({
         </Tooltip>
       </StyledWrapper>
     </StyledItem>
-  )
-}
+  );
+};

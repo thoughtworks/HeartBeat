@@ -1,19 +1,19 @@
-import { render, within, screen } from '@testing-library/react'
-import { Provider } from 'react-redux'
-import { store } from '@src/store'
-import userEvent from '@testing-library/user-event'
-import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings'
+import { render, within, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { store } from '@src/store';
+import userEvent from '@testing-library/user-event';
+import { DeploymentFrequencySettings } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings';
 import {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
-} from '@src/context/Metrics/metricsSlice'
-import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, ORGANIZATION, REMOVE_BUTTON } from '../../../../fixtures'
+} from '@src/context/Metrics/metricsSlice';
+import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, ORGANIZATION, REMOVE_BUTTON } from '../../../../fixtures';
 
 jest.mock('@src/hooks', () => ({
   ...jest.requireActual('@src/hooks'),
   useAppDispatch: () => jest.fn(),
-}))
+}));
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -28,7 +28,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   selectPipelineNameWarningMessage: jest.fn().mockReturnValue(null),
   selectStepWarningMessage: jest.fn().mockReturnValue(null),
   selectMetricsContent: jest.fn().mockReturnValue({ pipelineCrews: [], users: [] }),
-}))
+}));
 
 jest.mock('@src/context/config/configSlice', () => ({
   ...jest.requireActual('@src/context/config/configSlice'),
@@ -37,16 +37,16 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectSteps: jest.fn().mockReturnValue(['']),
   selectBranches: jest.fn().mockReturnValue(['']),
   selectPipelineCrews: jest.fn().mockReturnValue(['']),
-}))
+}));
 
 const mockValidationCheckContext = {
   isPipelineValid: jest.fn().mockReturnValue(true),
   getDuplicatedPipeLineIds: jest.fn().mockReturnValue([]),
-}
+};
 
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
-}))
+}));
 
 describe('DeploymentFrequencySettings', () => {
   const setup = () =>
@@ -54,38 +54,38 @@ describe('DeploymentFrequencySettings', () => {
       <Provider store={store}>
         <DeploymentFrequencySettings />
       </Provider>
-    )
+    );
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   it('should render DeploymentFrequencySettings component', () => {
-    const { getByText, getAllByText } = setup()
+    const { getByText, getAllByText } = setup();
 
-    expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument()
-    expect(getAllByText(ORGANIZATION).length).toBe(2)
-  })
+    expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument();
+    expect(getAllByText(ORGANIZATION).length).toBe(2);
+  });
 
   it('should call addADeploymentFrequencySetting function when click add another pipeline button', async () => {
-    setup()
-    await userEvent.click(screen.getByTestId('AddIcon'))
+    setup();
+    await userEvent.click(screen.getByTestId('AddIcon'));
 
-    expect(addADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
-  })
+    expect(addADeploymentFrequencySetting).toHaveBeenCalledTimes(1);
+  });
 
   it('should call deleteADeploymentFrequencySetting function when click remove pipeline button', async () => {
-    setup()
-    await userEvent.click(screen.getAllByRole('button', { name: REMOVE_BUTTON })[0])
+    setup();
+    await userEvent.click(screen.getAllByRole('button', { name: REMOVE_BUTTON })[0]);
 
-    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1)
-  })
+    expect(deleteADeploymentFrequencySetting).toHaveBeenCalledTimes(1);
+  });
 
   it('should call updateDeploymentFrequencySetting function and clearErrorMessages function when select organization', async () => {
-    const { getByRole } = setup()
-    await userEvent.click(screen.getAllByRole('button', { name: LIST_OPEN })[0])
-    const listBox = within(getByRole('listbox'))
-    await userEvent.click(listBox.getByText('mockOrgName'))
+    const { getByRole } = setup();
+    await userEvent.click(screen.getAllByRole('button', { name: LIST_OPEN })[0]);
+    const listBox = within(getByRole('listbox'));
+    await userEvent.click(listBox.getByText('mockOrgName'));
 
-    expect(updateDeploymentFrequencySettings).toHaveBeenCalledTimes(1)
-  })
-})
+    expect(updateDeploymentFrequencySettings).toHaveBeenCalledTimes(1);
+  });
+});

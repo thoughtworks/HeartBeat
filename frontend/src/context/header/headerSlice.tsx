@@ -1,26 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { RootState } from '@src/store'
+import { createSlice } from '@reduxjs/toolkit';
+import { RootState } from '@src/store';
 
 export interface headerState {
-  version: string
+  version: string;
 }
 
 const initialState: headerState = {
   version: '',
-}
+};
 
 export const headerSlice = createSlice({
   name: 'header',
   initialState,
   reducers: {
     saveVersion: (state, action) => {
-      state.version = action.payload
+      state.version = action.payload;
     },
   },
-})
+});
 
-export const { saveVersion } = headerSlice.actions
+export const { saveVersion } = headerSlice.actions;
 
-export const getVersion = (state: RootState) => state.header.version
+export const getVersion = (state: RootState) => state.header.version;
 
-export default headerSlice.reducer
+export default headerSlice.reducer;

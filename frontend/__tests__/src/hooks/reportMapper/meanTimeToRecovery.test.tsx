@@ -1,4 +1,4 @@
-import { meanTimeToRecoveryMapper } from '@src/hooks/reportMapper/meanTimeToRecovery'
+import { meanTimeToRecoveryMapper } from '@src/hooks/reportMapper/meanTimeToRecovery';
 
 describe('mean time to recovery data mapper', () => {
   const mockMeanTimeToRecovery = {
@@ -13,7 +13,7 @@ describe('mean time to recovery data mapper', () => {
         timeToRecovery: 162120031.8,
       },
     ],
-  }
+  };
   it('maps response change failure rate values to ui display value', () => {
     const expectedMeanTimeToRecovery = [
       {
@@ -36,11 +36,11 @@ describe('mean time to recovery data mapper', () => {
           },
         ],
       },
-    ]
-    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery)
+    ];
+    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery);
 
-    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery)
-  })
+    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery);
+  });
 
   it('should format time when timeToRecovery is greater than 0 but less than 1', () => {
     const mockMeanTimeToRecovery = {
@@ -55,7 +55,7 @@ describe('mean time to recovery data mapper', () => {
           timeToRecovery: 0.32,
         },
       ],
-    }
+    };
     const expectedMeanTimeToRecovery = [
       {
         id: 0,
@@ -77,11 +77,11 @@ describe('mean time to recovery data mapper', () => {
           },
         ],
       },
-    ]
-    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery)
+    ];
+    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery);
 
-    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery)
-  })
+    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery);
+  });
 
   it('should map time to 0 minute when it is 0', () => {
     const mockMeanTimeToRecovery = {
@@ -96,7 +96,7 @@ describe('mean time to recovery data mapper', () => {
           timeToRecovery: 0,
         },
       ],
-    }
+    };
     const expectedMeanTimeToRecovery = [
       {
         id: 0,
@@ -118,9 +118,9 @@ describe('mean time to recovery data mapper', () => {
           },
         ],
       },
-    ]
-    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery)
+    ];
+    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery);
 
-    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery)
-  })
-})
+    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery);
+  });
+});

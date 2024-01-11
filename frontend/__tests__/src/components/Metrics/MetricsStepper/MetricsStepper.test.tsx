@@ -1,23 +1,23 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import MetricsStepper from '@src/components/Metrics/MetricsStepper'
-import { Provider } from 'react-redux'
-import { setupStore } from '../../../utils/setupStoreUtil'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import MetricsStepper from '@src/components/Metrics/MetricsStepper';
+import { Provider } from 'react-redux';
+import { setupStore } from '../../../utils/setupStoreUtil';
 import {
-  BACK,
+  BASE_PAGE_ROUTE,
   BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
-  BASE_PAGE_ROUTE,
   MOCK_REPORT_URL,
   NEXT,
   PIPELINE_TOOL_TYPES,
+  PREVIOUS,
   PROJECT_NAME_LABEL,
   SAVE,
   SOURCE_CONTROL_TYPES,
   STEPPER,
   TEST_PROJECT_NAME,
   VELOCITY,
-} from '../../../fixtures'
-import userEvent from '@testing-library/user-event'
+} from '../../../fixtures';
+import userEvent from '@testing-library/user-event';
 import {
   updateBoard,
   updateBoardVerifyState,
@@ -26,12 +26,12 @@ import {
   updatePipelineToolVerifyState,
   updateSourceControl,
   updateSourceControlVerifyState,
-} from '@src/context/config/configSlice'
-import dayjs from 'dayjs'
-import { navigateMock } from '../../../../setupTests'
-import { setupServer } from 'msw/node'
-import { rest } from 'msw'
-import { HttpStatusCode } from 'axios'
+} from '@src/context/config/configSlice';
+import dayjs from 'dayjs';
+import { navigateMock } from '../../../../setupTests';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
+import { HttpStatusCode } from 'axios';
 import {
   saveCycleTimeSettings,
   saveDoneColumn,
@@ -39,19 +39,19 @@ import {
   saveUsers,
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
-} from '@src/context/Metrics/metricsSlice'
-import { exportToJsonFile } from '@src/utils/util'
-import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources'
+} from '@src/context/Metrics/metricsSlice';
+import { exportToJsonFile } from '@src/utils/util';
+import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
 
-const START_DATE_LABEL = 'From *'
-const TODAY = dayjs()
-const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY')
-const END_DATE_LABEL = 'To *'
-const YES = 'Yes'
-const CANCEL = 'Cancel'
-const METRICS = 'Metrics'
-const REPORT = 'Report'
-const stepperColor = 'rgba(0, 0, 0, 0.87)'
+const START_DATE_LABEL = 'From *';
+const TODAY = dayjs();
+const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY');
+const END_DATE_LABEL = 'To *';
+const YES = 'Yes';
+const CANCEL = 'Cancel';
+const METRICS = 'Metrics';
+const REPORT = 'Report';
+const stepperColor = 'rgba(0, 0, 0, 0.87)';
 
 const mockValidationCheckContext = {
   deploymentFrequencySettingsErrorMessages: [],
@@ -60,11 +60,11 @@ const mockValidationCheckContext = {
   checkDuplicatedPipeline: jest.fn(),
   isPipelineValid: jest.fn().mockReturnValue(true),
   getDuplicatedPipeLineIds: jest.fn().mockReturnValue([]),
-}
+};
 
 jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
   useMetricsStepValidationCheckContext: () => mockValidationCheckContext,
-}))
+}));
 
 jest.mock('@src/context/config/configSlice', () => ({
   ...jest.requireActual('@src/context/config/configSlice'),
@@ -75,12 +75,12 @@ jest.mock('@src/context/config/configSlice', () => ({
   updateSourceControl: jest.fn().mockReturnValue({ type: 'UPDATE_SOURCE_CONTROL' }),
   updatePipelineTool: jest.fn().mockReturnValue({ type: 'UPDATE_PIPELINE_TOOL' }),
   updateBoard: jest.fn().mockReturnValue({ type: 'UPDATE_BOARD' }),
-}))
+}));
 
 jest.mock('@src/emojis/emoji', () => ({
   getEmojiUrls: jest.fn().mockReturnValue(['https://buildkiteassets.com/emojis/img-buildkite-64/charger64.png']),
   removeExtraEmojiName: jest.fn(),
-}))
+}));
 
 jest.mock('@src/utils/util', () => ({
   exportToJsonFile: jest.fn(),
@@ -89,7 +89,7 @@ jest.mock('@src/utils/util', () => ({
   findCaseInsensitiveType: jest.fn(),
   filterAndMapCycleTimeSettings: jest.fn(),
   formatDate: jest.fn(),
-}))
+}));
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
@@ -99,33 +99,33 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
     isServerError: false,
     errorMessage: '',
   }),
-}))
+}));
 
-const server = setupServer(rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))))
+const server = setupServer(rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))));
 
-const mockLocation = { reload: jest.fn() }
-Object.defineProperty(window, 'location', { value: mockLocation })
+const mockLocation = { reload: jest.fn() };
+Object.defineProperty(window, 'location', { value: mockLocation });
 
-let store = setupStore()
+let store = setupStore();
 const fillConfigPageData = async () => {
-  const projectNameInput = await screen.findByRole('textbox', { name: PROJECT_NAME_LABEL })
-  fireEvent.change(projectNameInput, { target: { value: TEST_PROJECT_NAME } })
-  const startDateInput = (await screen.findByRole('textbox', { name: START_DATE_LABEL })) as HTMLInputElement
-  fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } })
+  const projectNameInput = await screen.findByRole('textbox', { name: PROJECT_NAME_LABEL });
+  fireEvent.change(projectNameInput, { target: { value: TEST_PROJECT_NAME } });
+  const startDateInput = (await screen.findByRole('textbox', { name: START_DATE_LABEL })) as HTMLInputElement;
+  fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } });
 
   act(() => {
-    store.dispatch(updateMetrics([VELOCITY]))
-    store.dispatch(updateBoardVerifyState(true))
-    store.dispatch(updatePipelineToolVerifyState(true))
-    store.dispatch(updateSourceControlVerifyState(true))
-  })
-}
+    store.dispatch(updateMetrics([VELOCITY]));
+    store.dispatch(updateBoardVerifyState(true));
+    store.dispatch(updatePipelineToolVerifyState(true));
+    store.dispatch(updateSourceControlVerifyState(true));
+  });
+};
 
 const fillMetricsData = () => {
   act(() => {
-    store.dispatch(updateMetrics([VELOCITY]))
-  })
-}
+    store.dispatch(updateMetrics([VELOCITY]));
+  });
+};
 
 const fillMetricsPageDate = async () => {
   await act(async () => {
@@ -142,148 +142,148 @@ const fillMetricsPageDate = async () => {
         updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' })
       ),
       store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock new step' })),
-    ])
-  })
-}
+    ]);
+  });
+};
 
 describe('MetricsStepper', () => {
-  beforeAll(() => server.listen())
-  afterAll(() => server.close())
+  beforeAll(() => server.listen());
+  afterAll(() => server.close());
   beforeEach(() => {
-    store = setupStore()
-  })
+    store = setupStore();
+  });
   afterEach(() => {
-    navigateMock.mockClear()
-  })
+    navigateMock.mockClear();
+  });
   const setup = () =>
     render(
       <Provider store={store}>
         <MetricsStepper />
       </Provider>
-    )
+    );
   it('should show metrics stepper', () => {
-    const { getByText } = setup()
+    setup();
 
     STEPPER.map((label) => {
-      expect(getByText(label)).toBeInTheDocument()
-    })
+      expect(screen.getByText(label)).toBeInTheDocument();
+    });
 
-    expect(getByText(NEXT)).toBeInTheDocument()
-    expect(getByText(BACK)).toBeInTheDocument()
-  })
+    expect(screen.getByText(NEXT)).toBeInTheDocument();
+    expect(screen.getByText(PREVIOUS)).toBeInTheDocument();
+  });
 
   it('should show metrics config step when click back button given config step ', async () => {
-    const { getByText } = setup()
+    setup();
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(screen.getByText(PREVIOUS));
 
-    expect(getByText(PROJECT_NAME_LABEL)).toBeInTheDocument()
-  })
+    expect(screen.getByText(PROJECT_NAME_LABEL)).toBeInTheDocument();
+  });
 
   it('should show confirm dialog when click back button in config page', async () => {
-    const { getByText } = setup()
+    setup();
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(screen.getByText(PREVIOUS));
 
-    expect(getByText(CONFIRM_DIALOG_DESCRIPTION)).toBeInTheDocument()
-  })
+    expect(screen.getByText(CONFIRM_DIALOG_DESCRIPTION)).toBeInTheDocument();
+  });
 
   it('should close confirm dialog when click cancel button', async () => {
-    const { getByText, queryByText } = setup()
+    setup();
 
-    await userEvent.click(getByText(BACK))
-    await userEvent.click(getByText(CANCEL))
+    await userEvent.click(screen.getByText(PREVIOUS));
+    await userEvent.click(screen.getByText(CANCEL));
 
-    expect(queryByText(CONFIRM_DIALOG_DESCRIPTION)).not.toBeInTheDocument()
-  })
+    expect(screen.queryByText(CONFIRM_DIALOG_DESCRIPTION)).not.toBeInTheDocument();
+  });
 
   it('should go to home page when click Yes button', async () => {
-    const { getByText } = setup()
+    setup();
 
-    await userEvent.click(getByText(BACK))
+    await userEvent.click(screen.getByText(PREVIOUS));
 
-    expect(getByText(YES)).toBeVisible()
+    expect(screen.getByText(YES)).toBeVisible();
 
-    await userEvent.click(getByText(YES))
+    await userEvent.click(screen.getByText(YES));
 
-    expect(navigateMock).toHaveBeenCalledTimes(1)
-    expect(navigateMock).toHaveBeenCalledWith(BASE_PAGE_ROUTE)
-  })
+    expect(navigateMock).toHaveBeenCalledTimes(1);
+    expect(navigateMock).toHaveBeenCalledWith(BASE_PAGE_ROUTE);
+  });
 
   it('should disable next when required data is empty ', async () => {
-    const { getByText } = setup()
+    setup();
     act(() => {
-      store.dispatch(updateMetrics([]))
-    })
+      store.dispatch(updateMetrics([]));
+    });
 
-    expect(getByText(NEXT)).toBeDisabled()
-  })
+    expect(screen.getByText(NEXT)).toBeDisabled();
+  });
 
   it('should disable next when dataRange is empty ', async () => {
-    const { getByText, getByRole } = setup()
-    await fillConfigPageData()
+    setup();
+    await fillConfigPageData();
 
-    const startDateInput = getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement
-    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
+    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
 
-    await userEvent.clear(startDateInput)
-    await userEvent.clear(endDateInput)
+    await userEvent.clear(startDateInput);
+    await userEvent.clear(endDateInput);
 
-    expect(getByText(NEXT)).toBeDisabled()
-  }, 50000)
+    expect(screen.getByText(NEXT)).toBeDisabled();
+  }, 50000);
 
   it('should disable next when endDate is empty ', async () => {
-    const { getByText, getByRole } = setup()
-    await fillConfigPageData()
+    setup();
+    await fillConfigPageData();
 
-    const endDateInput = getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
 
-    await userEvent.clear(endDateInput)
+    await userEvent.clear(endDateInput);
 
-    expect(getByText(NEXT)).toBeDisabled()
-  })
+    expect(screen.getByText(NEXT)).toBeDisabled();
+  });
 
   it('should enable next when every selected component is show and verified', async () => {
-    const { getByText } = setup()
-    await fillConfigPageData()
+    setup();
+    await fillConfigPageData();
 
-    expect(getByText(NEXT)).toBeEnabled()
-  })
+    expect(screen.getByText(NEXT)).toBeEnabled();
+  });
 
   it('should disable next when board component is exist but not verified successfully', async () => {
-    const { getByText } = setup()
+    setup();
     act(() => {
-      store.dispatch(updateMetrics([VELOCITY]))
-      store.dispatch(updateBoardVerifyState(false))
-    })
+      store.dispatch(updateMetrics([VELOCITY]));
+      store.dispatch(updateBoardVerifyState(false));
+    });
 
-    expect(getByText(NEXT)).toBeDisabled()
-  })
+    expect(screen.getByText(NEXT)).toBeDisabled();
+  });
 
   it('should go metrics page when click next button given next button enabled', async () => {
-    const { getByText } = setup()
+    setup();
 
-    await fillConfigPageData()
-    fireEvent.click(getByText(NEXT))
+    await fillConfigPageData();
+    fireEvent.click(screen.getByText(NEXT));
 
-    expect(getByText(METRICS)).toHaveStyle(`color:${stepperColor}`)
-  })
+    expect(screen.getByText(METRICS)).toHaveStyle(`color:${stepperColor}`);
+  });
 
   it('should show metrics export step when click next button given export step', async () => {
-    const { getByText } = setup()
-    await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
-    await fillMetricsPageDate()
+    setup();
+    await fillConfigPageData();
+    await userEvent.click(screen.getByText(NEXT));
+    await fillMetricsPageDate();
     waitFor(() => {
-      expect(getByText(NEXT)).toBeInTheDocument()
-    })
-    await userEvent.click(getByText(NEXT))
+      expect(screen.getByText(NEXT)).toBeInTheDocument();
+    });
+    await userEvent.click(screen.getByText(NEXT));
 
-    expect(getByText(REPORT)).toHaveStyle(`color:${stepperColor}`)
-  })
+    expect(screen.getByText(REPORT)).toHaveStyle(`color:${stepperColor}`);
+  });
 
   it('should export json when click save button', async () => {
-    const expectedFileName = 'config'
+    const expectedFileName = 'config';
     const expectedJson = {
       board: undefined,
       calendarType: 'Regular Calendar(Weekend Considered)',
@@ -295,16 +295,16 @@ describe('MetricsStepper', () => {
       pipelineTool: undefined,
       projectName: '',
       sourceControl: undefined,
-    }
-    const { getByText } = setup()
+    };
+    setup();
 
-    await userEvent.click(getByText(SAVE))
+    await userEvent.click(screen.getByText(SAVE));
 
-    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
-  })
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
+  });
 
   it('should export json when click save button when pipelineTool, sourceControl, and board is not empty', async () => {
-    const expectedFileName = 'config'
+    const expectedFileName = 'config';
     const expectedJson = {
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
@@ -316,18 +316,18 @@ describe('MetricsStepper', () => {
       pipelineTool: undefined,
       projectName: '',
       sourceControl: undefined,
-    }
+    };
 
-    const { getByText } = setup()
-    await fillMetricsData()
+    setup();
+    await fillMetricsData();
 
-    await userEvent.click(getByText(SAVE))
+    await userEvent.click(screen.getByText(SAVE));
 
-    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
-  })
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
+  });
 
   it('should export json file when click save button in metrics page given all content is empty', async () => {
-    const expectedFileName = 'config'
+    const expectedFileName = 'config';
     const expectedJson = {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
@@ -346,18 +346,18 @@ describe('MetricsStepper', () => {
       deployment: undefined,
       doneStatus: undefined,
       leadTime: undefined,
-    }
-    const { getByText } = setup()
+    };
+    setup();
 
-    await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
-    await userEvent.click(getByText(SAVE))
+    await fillConfigPageData();
+    await userEvent.click(screen.getByText(NEXT));
+    await userEvent.click(screen.getByText(SAVE));
 
-    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
-  }, 50000)
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
+  }, 50000);
 
   it('should export json file when click save button in report page given all content is empty', async () => {
-    const expectedFileName = 'config'
+    const expectedFileName = 'config';
     const expectedJson = {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
@@ -376,26 +376,26 @@ describe('MetricsStepper', () => {
       deployment: undefined,
       doneStatus: undefined,
       leadTime: undefined,
-    }
+    };
 
-    const { getByText } = setup()
-    await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
-    await fillMetricsPageDate()
+    setup();
+    await fillConfigPageData();
+    await userEvent.click(screen.getByText(NEXT));
+    await fillMetricsPageDate();
     waitFor(() => {
-      expect(getByText(NEXT)).toBeInTheDocument()
-    })
-    await userEvent.click(getByText(NEXT))
-    await userEvent.click(getByText(SAVE))
+      expect(screen.getByText(NEXT)).toBeInTheDocument();
+    });
+    await userEvent.click(screen.getByText(NEXT));
+    await userEvent.click(screen.getByText(SAVE));
 
-    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson)
-  }, 50000)
+    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
+  }, 50000);
 
   it('should clean the config information that is hidden when click next button', async () => {
-    const { getByText } = setup()
+    setup();
 
-    await fillConfigPageData()
-    await userEvent.click(getByText(NEXT))
+    await fillConfigPageData();
+    await userEvent.click(screen.getByText(NEXT));
 
     expect(updateBoard).not.toHaveBeenCalledWith({
       type: BOARD_TYPES.JIRA,
@@ -404,8 +404,8 @@ describe('MetricsStepper', () => {
       projectKey: '',
       site: '',
       token: '',
-    })
-    expect(updateSourceControl).toHaveBeenCalledWith({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' })
-    expect(updatePipelineTool).toHaveBeenCalledWith({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' })
-  }, 50000)
-})
+    });
+    expect(updateSourceControl).toHaveBeenCalledWith({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' });
+    expect(updatePipelineTool).toHaveBeenCalledWith({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' });
+  }, 50000);
+});

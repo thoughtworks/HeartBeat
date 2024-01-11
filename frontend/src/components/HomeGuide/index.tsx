@@ -1,71 +1,71 @@
-import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '@src/hooks/useAppDispatch'
-import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice'
-import React, { useState } from 'react'
-import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice'
-import { resetStep } from '@src/context/stepper/StepperSlice'
-import { WarningNotification } from '@src/components/Common/WarningNotification'
-import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig'
-import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/HomeGuide/style'
-import { MESSAGE } from '@src/constants/resources'
-import { ROUTE } from '@src/constants/router'
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice';
+import React, { useState } from 'react';
+import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice';
+import { resetStep } from '@src/context/stepper/StepperSlice';
+import { WarningNotification } from '@src/components/Common/WarningNotification';
+import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig';
+import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/HomeGuide/style';
+import { MESSAGE } from '@src/constants/resources';
+import { ROUTE } from '@src/constants/router';
 
 export const HomeGuide = () => {
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const [validConfig, setValidConfig] = useState(true)
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [validConfig, setValidConfig] = useState(true);
 
-  const getImportFileElement = () => document.getElementById('importJson') as HTMLInputElement
+  const getImportFileElement = () => document.getElementById('importJson') as HTMLInputElement;
   const isValidImportedConfig = (config: NewFileConfig) => {
     try {
       const {
         projectName,
         metrics,
         dateRange: { startDate, endDate },
-      } = config
-      return projectName || startDate || endDate || metrics.length > 0
+      } = config;
+      return projectName || startDate || endDate || metrics.length > 0;
     } catch {
-      return false
+      return false;
     }
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.files?.[0]
-    const reader = new FileReader()
+    const input = e.target.files?.[0];
+    const reader = new FileReader();
     if (input) {
       reader.onload = () => {
         if (reader.result && typeof reader.result === 'string') {
-          const importedConfig: OldFileConfig | NewFileConfig = JSON.parse(reader.result)
-          const config: NewFileConfig = convertToNewFileConfig(importedConfig)
+          const importedConfig: OldFileConfig | NewFileConfig = JSON.parse(reader.result);
+          const config: NewFileConfig = convertToNewFileConfig(importedConfig);
           if (isValidImportedConfig(config)) {
-            dispatch(updateProjectCreatedState(false))
-            dispatch(updateBasicConfigState(config))
-            dispatch(updateMetricsImportedData(config))
-            navigate(ROUTE.METRICS_PAGE)
+            dispatch(updateProjectCreatedState(false));
+            dispatch(updateBasicConfigState(config));
+            dispatch(updateMetricsImportedData(config));
+            navigate(ROUTE.METRICS_PAGE);
           } else {
-            setValidConfig(false)
+            setValidConfig(false);
           }
         }
-        const fileInput = getImportFileElement()
-        fileInput.value = ''
-      }
-      reader.readAsText(input, 'utf-8')
+        const fileInput = getImportFileElement();
+        fileInput.value = '';
+      };
+      reader.readAsText(input, 'utf-8');
     }
-  }
+  };
 
   const openFileImportBox = () => {
-    setValidConfig(true)
-    dispatch(resetImportedData())
-    dispatch(resetStep())
-    const fileInput = getImportFileElement()
-    fileInput.click()
-  }
+    setValidConfig(true);
+    dispatch(resetImportedData());
+    dispatch(resetStep());
+    const fileInput = getImportFileElement();
+    fileInput.click();
+  };
 
   const createNewProject = () => {
-    dispatch(resetStep())
-    dispatch(resetImportedData())
-    navigate(ROUTE.METRICS_PAGE)
-  }
+    dispatch(resetStep());
+    dispatch(resetImportedData());
+    navigate(ROUTE.METRICS_PAGE);
+  };
 
   return (
     <HomeGuideContainer>
@@ -76,5 +76,5 @@ export const HomeGuide = () => {
         <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
       </StyledStack>
     </HomeGuideContainer>
-  )
-}
+  );
+};

@@ -1,31 +1,31 @@
-import { GITHUB_TOKEN, METRICS_TITLE } from '../fixtures/fixtures'
-import homePage from '../pages/home'
-import configPage from '../pages/metrics/config'
-import metricsPage from '../pages/metrics/metrics'
-import reportPage from '../pages/metrics/report'
-import { TIPS } from '../../src/constants/resources'
+import { GITHUB_TOKEN, METRICS_TITLE } from '../fixtures/fixtures';
+import homePage from '../pages/home';
+import configPage from '../pages/metrics/config';
+import metricsPage from '../pages/metrics/metrics';
+import reportPage from '../pages/metrics/report';
+import { TIPS } from '../../src/constants/resources';
 
 const cycleTimeData = [
   { label: 'Average Cycle Time(Days/SP)', value: '6.75' },
   { label: 'Average Cycle Time(Days/Card)', value: '9.85' },
-]
+];
 
 const velocityData = [
   { label: 'Velocity(Story Point)', value: '17.5' },
   { label: 'Throughput(Cards Count)', value: '12' },
-]
+];
 
-const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '2.36' }]
+const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '2.36' }];
 
-const meanTimeToRecoveryData = [{ label: 'Mean Time To Recovery(Hours)', value: '4.43' }]
+const meanTimeToRecoveryData = [{ label: 'Mean Time To Recovery(Hours)', value: '4.43' }];
 
 const leadTimeForChangeData = [
   { label: 'PR Lead Time(Hours)', value: '0.00' },
   { label: 'Pipeline Lead Time(Hours)', value: '-4.87' },
   { label: 'Total Lead Time(Hours)', value: '-4.87' },
-]
+];
 
-const changeFailureRateData = [{ label: 'Failure Rate', value: '49' }]
+const changeFailureRateData = [{ label: 'Failure Rate', value: '49' }];
 
 const metricsTextList = [
   'Board configuration',
@@ -80,12 +80,12 @@ const metricsTextList = [
   'Time to Detect - Hrs',
   'Cause by - System',
   'Pipeline settings',
-]
+];
 
 const pipelineSettingsAutoCompleteTextList = [
   { name: 'Organization', value: 'XXXX' },
   { name: 'Step', value: 'RECORD RELEASE TO PROD' },
-]
+];
 
 const cycleTimeSettingsAutoCompleteTextList = [
   { name: 'In Analysis', value: 'Analysis' },
@@ -96,7 +96,7 @@ const cycleTimeSettingsAutoCompleteTextList = [
   { name: 'In Test', value: 'Testing' },
   { name: 'Ready to Deploy', value: 'Review' },
   { name: 'Done', value: 'Done' },
-]
+];
 
 const configTextList = [
   'Project name *',
@@ -104,7 +104,7 @@ const configTextList = [
   'Classic Jira',
   'BuildKite',
   'GitHub',
-]
+];
 
 const textInputValues = [
   { index: 0, value: 'E2E Project' },
@@ -114,109 +114,129 @@ const textInputValues = [
   { index: 4, value: 'test@test.com' },
   { index: 5, value: 'PLL' },
   { index: 6, value: 'site' },
-]
+];
 
 const tokenInputValues = [
   { index: 0, value: 'mockToken' },
   { index: 1, value: 'mock1234'.repeat(5) },
   { index: 2, value: `${GITHUB_TOKEN}` },
-]
+];
 
 interface MetricsDataItem {
-  label: string
-  value?: string
+  label: string;
+  value?: string;
 }
 
 const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) => {
-  cy.get(testId).should('exist')
+  cy.get(testId).should('exist');
   cy.get(testId)
     .children('[data-test-id="report-section"]')
     .children()
     .each((section, index) => {
       cy.wrap(section).within(() => {
-        cy.contains(boardData[index].label).should('exist')
-        cy.contains(boardData[index].value).should('exist')
-      })
-    })
-}
+        cy.contains(boardData[index].label).should('exist');
+        cy.contains(boardData[index].value).should('exist');
+      });
+    });
+};
 
-// const checkPipelineCalculation = (testId: string) => {
-//   cy.get(testId).find('tr').contains('Deployment frequency(deployments/day)').should('exist')
-// }
+const checkBoardShowMore = () => {
+  reportPage.showMoreBoardButton.should('exist');
+  reportPage.goToBoardDetailPage();
+  cy.get(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`).find('tbody > tr').should('have.length', 2);
+  cy.get(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`).find('tbody > tr').should('have.length', 17);
+  cy.get(`[data-test-id="${METRICS_TITLE.CLASSIFICATION}"]`).find('tbody > tr').should('have.length', 103);
 
-// const checkTimeToRecoveryPipelineCalculation = (testId: string) => {
-//   cy.get(testId).find('tr').contains('Mean Time To Recovery').should('exist')
-// }
+  reportPage.exportBoardData();
+  checkBoardCSV();
+
+  reportPage.boardGoToReportPage();
+};
+
+const checkDoraShowMore = () => {
+  reportPage.showMoreDoraButton.should('exist');
+  reportPage.goToDoraDetailPage();
+
+  cy.get(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`).find('tbody > tr').should('have.length', 2);
+  cy.get(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`).find('tbody > tr').should('have.length', 4);
+  cy.get(`[data-test-id="${METRICS_TITLE.CHANGE_FAILURE_RATE}"]`).find('tbody > tr').should('have.length', 2);
+  cy.get(`[data-test-id="${METRICS_TITLE.MEAN_TIME_TO_RECOVERY}"]`).find('tbody > tr').should('have.length', 2);
+
+  reportPage.exportPipelineData();
+  checkPipelineCSV();
+
+  reportPage.doraGoToReportPage();
+};
 
 const checkCycleTimeTooltip = () => {
-  metricsPage.cycleTimeTitleTooltip.trigger('mouseover')
-  cy.contains(TIPS.CYCLE_TIME).should('be.visible')
-}
+  metricsPage.cycleTimeTitleTooltip.trigger('mouseover');
+  cy.contains(TIPS.CYCLE_TIME).should('be.visible');
+};
 
 const clearDownloadFile = () => {
-  cy.task('clearDownloads')
-  cy.wait(500)
-}
+  cy.task('clearDownloads');
+  cy.wait(500);
+};
 
 const checkMetricCSV = () => {
-  cy.wait(2000)
+  cy.wait(2000);
   cy.fixture('metric.csv').then((localFileContent) => {
     cy.task('readDir', 'cypress/downloads').then((files: string[]) => {
-      expect(files).to.match(new RegExp(/metric-.*\.csv/))
+      expect(files).to.match(new RegExp(/metric-.*\.csv/));
       files.forEach((file: string) => {
         if (file.match(/metric-.*\.csv/)) {
           cy.readFile(`cypress/downloads/${file}`).then((fileContent) => {
-            expect(fileContent).to.contains(localFileContent)
-          })
+            expect(fileContent).to.contains(localFileContent);
+          });
         }
-      })
-    })
-  })
-}
+      });
+    });
+  });
+};
 
 const checkPipelineCSV = () => {
-  cy.wait(2000)
+  cy.wait(2000);
   return cy.task('readDir', 'cypress/downloads').then((files) => {
-    expect(files).to.match(new RegExp(/pipeline-.*\.csv/))
-  })
-}
+    expect(files).to.match(new RegExp(/pipeline-.*\.csv/));
+  });
+};
 
 const checkBoardCSV = () => {
-  cy.wait(2000)
+  cy.wait(2000);
   return cy.task('readDir', 'cypress/downloads').then((files) => {
-    expect(files).to.match(new RegExp(/board-.*\.csv/))
-  })
-}
+    expect(files).to.match(new RegExp(/board-.*\.csv/));
+  });
+};
 
 const checkFieldsExist = (fields: string[]) => {
   fields.forEach((item) => {
-    cy.contains(item).should('exist')
-  })
-}
+    cy.contains(item).should('exist');
+  });
+};
 
 const checkPipelineSettingsAutoCompleteFields = (fields: { name: string; value: string }[]) => {
   fields.forEach((item) => {
-    metricsPage.getPipelineSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value)
-  })
-}
+    metricsPage.getPipelineSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value);
+  });
+};
 
 const checkCycleTimeSettingsAutoCompleteFields = (fields: { name: string; value: string }[]) => {
   fields.forEach((item) => {
-    metricsPage.getCycleTimeSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value)
-  })
-}
+    metricsPage.getCycleTimeSettingsAutoCompleteField(item.name).find('input').should('have.value', item.value);
+  });
+};
 
 const checkTextInputValuesExist = (fields: { index: number; value: string }[]) => {
   fields.forEach(({ index, value }) => {
-    cy.get('.MuiInputBase-root input[type="text"]').eq(index).should('have.value', value)
-  })
-}
+    cy.get('.MuiInputBase-root input[type="text"]').eq(index).should('have.value', value);
+  });
+};
 
 const checkTokenInputValuesExist = (fields: { index: number; value: string }[]) => {
   fields.forEach(({ index, value }) => {
-    cy.get('[type="password"]').eq(index).should('have.value', value)
-  })
-}
+    cy.get('[type="password"]').eq(index).should('have.value', value);
+  });
+};
 
 describe('Create a new project', () => {
   beforeEach(() => {
@@ -224,128 +244,131 @@ describe('Create a new project', () => {
       method: '*',
       pattern: '/api/**',
       alias: 'api',
-    })
-  })
+    });
+  });
 
   it('Should create a new project manually', () => {
-    homePage.navigate()
+    homePage.navigate();
 
-    homePage.headerVersion.should('exist')
+    homePage.headerVersion.should('exist');
 
-    homePage.createANewProject()
-    cy.url().should('include', '/metrics')
+    homePage.createANewProject();
+    cy.url().should('include', '/metrics');
 
-    configPage.typeProjectName('E2E Project')
+    configPage.typeProjectName('E2E Project');
 
-    configPage.goHomePage()
-    cy.url().should('include', '/')
+    configPage.goHomePage();
+    cy.url().should('include', '/');
 
-    homePage.createANewProject()
-    cy.contains('Project name *').should('have.value', '')
+    homePage.createANewProject();
+    cy.contains('Project name *').should('have.value', '');
 
-    configPage.typeProjectName('E2E Project')
+    configPage.typeProjectName('E2E Project');
 
-    configPage.selectDateRange()
+    configPage.selectDateRange();
 
-    configPage.nextStepButton.should('be.disabled')
+    configPage.nextStepButton.should('be.disabled');
 
-    configPage.selectMetricsData()
+    configPage.selectMetricsData();
 
-    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken')
-    configPage.getVerifiedButton(configPage.boardConfigSection).should('be.disabled')
-    configPage.getResetButton(configPage.boardConfigSection).should('be.enabled')
+    configPage.fillBoardInfoAndVerifyWithClassicJira('1963', 'test@test.com', 'PLL', 'site', 'mockToken');
+    configPage.getVerifiedButton(configPage.boardConfigSection).should('be.disabled');
+    configPage.getResetButton(configPage.boardConfigSection).should('be.enabled');
 
-    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5))
+    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5));
 
-    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`)
+    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`);
 
-    configPage.nextStepButton.should('be.enabled')
+    configPage.nextStepButton.should('be.enabled');
 
-    configPage.CancelBackToHomePage()
+    configPage.CancelBackToHomePage();
 
-    configPage.goMetricsStep()
+    configPage.goMetricsStep();
 
-    configPage.nextStepButton.should('be.disabled')
+    configPage.nextStepButton.should('be.disabled');
 
-    checkCycleTimeTooltip()
+    checkCycleTimeTooltip();
 
-    metricsPage.checkCycleTime()
+    metricsPage.checkCycleTime();
 
-    cy.contains('Real done').should('exist')
+    cy.contains('Real done').should('exist');
 
-    metricsPage.clickRealDone()
+    metricsPage.clickRealDone();
 
-    metricsPage.clickClassification()
+    metricsPage.clickClassification();
 
-    metricsPage.pipelineSettingTitle.should('be.exist')
+    metricsPage.pipelineSettingTitle.should('be.exist');
 
-    metricsPage.addOneCorrectPipelineConfig(0)
-    metricsPage.selectBranchOption()
+    metricsPage.addOneCorrectPipelineConfig(0);
+    metricsPage.selectBranchOption();
 
-    metricsPage.addOnePipelineButton.click()
-    metricsPage.addOneErrorPipelineConfig(1)
-    metricsPage.buildKiteStepNotFoundTips.should('exist')
-    metricsPage.pipelineRemoveButton.click()
+    metricsPage.addOnePipelineButton.click();
+    metricsPage.addOneErrorPipelineConfig(1);
+    metricsPage.buildKiteStepNotFoundTips.should('exist');
+    metricsPage.pipelineRemoveButton.click();
 
-    metricsPage.addOnePipelineButton.click()
-    metricsPage.addOneCorrectPipelineConfig(1)
-    cy.contains('This pipeline is the same as another one!').should('exist')
-    metricsPage.pipelineRemoveButton.click()
+    metricsPage.addOnePipelineButton.click();
+    metricsPage.addOneCorrectPipelineConfig(1);
+    cy.contains('This pipeline is the same as another one!').should('exist');
+    metricsPage.pipelineRemoveButton.click();
 
-    configPage.nextStepButton.should('be.enabled')
+    configPage.nextStepButton.should('be.enabled');
 
-    metricsPage.goReportStep()
+    metricsPage.goReportStep();
 
-    reportPage.pageIndicator.should('be.visible')
+    reportPage.pageIndicator.should('be.visible');
 
-    reportPage.firstNotification.should('exist')
+    reportPage.firstNotification.should('exist');
 
-    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`, velocityData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`, velocityData);
 
-    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`, cycleTimeData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`, cycleTimeData);
 
-    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`, deploymentFrequencyData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`, deploymentFrequencyData);
 
-    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.MEAN_TIME_TO_RECOVERY}"]`, meanTimeToRecoveryData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.MEAN_TIME_TO_RECOVERY}"]`, meanTimeToRecoveryData);
 
-    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`, leadTimeForChangeData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`, leadTimeForChangeData);
 
-    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.CHANGE_FAILURE_RATE}"]`, changeFailureRateData)
+    checkMetricsCalculation(`[data-test-id="${METRICS_TITLE.CHANGE_FAILURE_RATE}"]`, changeFailureRateData);
 
-    clearDownloadFile()
+    clearDownloadFile();
 
-    reportPage.exportMetricDataButton.should('be.enabled')
+    reportPage.exportMetricDataButton.should('be.enabled');
 
-    reportPage.exportMetricData()
+    reportPage.exportMetricData();
 
-    checkMetricCSV()
+    checkMetricCSV();
 
-    reportPage.exportPipelineDataButton.should('be.enabled')
+    reportPage.exportPipelineDataButton.should('be.enabled');
 
-    reportPage.exportPipelineData()
+    reportPage.exportPipelineData();
 
-    checkPipelineCSV()
+    checkPipelineCSV();
 
-    reportPage.exportBoardDataButton.should('be.enabled')
+    reportPage.exportBoardDataButton.should('be.enabled');
 
-    reportPage.exportBoardData()
+    reportPage.exportBoardData();
 
-    checkBoardCSV()
+    checkBoardCSV();
 
-    reportPage.firstNotification.should('not.exist')
+    reportPage.firstNotification.should('not.exist');
+
+    checkBoardShowMore();
+    checkDoraShowMore();
 
     // checkpoint back to metrics step
-    reportPage.backToMetricsStep()
+    reportPage.backToMetricsStep();
 
-    checkFieldsExist(metricsTextList)
-    checkPipelineSettingsAutoCompleteFields(pipelineSettingsAutoCompleteTextList)
-    checkCycleTimeSettingsAutoCompleteFields(cycleTimeSettingsAutoCompleteTextList)
+    checkFieldsExist(metricsTextList);
+    checkPipelineSettingsAutoCompleteFields(pipelineSettingsAutoCompleteTextList);
+    checkCycleTimeSettingsAutoCompleteFields(cycleTimeSettingsAutoCompleteTextList);
 
     // checkpoint back to config step
-    metricsPage.BackToConfigStep()
+    metricsPage.BackToConfigStep();
 
-    checkFieldsExist(configTextList)
-    checkTextInputValuesExist(textInputValues)
-    checkTokenInputValuesExist(tokenInputValues)
-  })
-})
+    checkFieldsExist(configTextList);
+    checkTextInputValuesExist(textInputValues);
+    checkTokenInputValuesExist(tokenInputValues);
+  });
+});

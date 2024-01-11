@@ -1,5 +1,5 @@
-import { PIPELINE_LEAD_TIME, PR_LEAD_TIME, TOTAL_DELAY_TIME } from '../../fixtures'
-import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges'
+import { PIPELINE_LEAD_TIME, PR_LEAD_TIME, TOTAL_DELAY_TIME } from '../../fixtures';
+import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges';
 
 describe('lead time for changes data mapper', () => {
   const mockLeadTimeForChangesRes = {
@@ -18,7 +18,7 @@ describe('lead time for changes data mapper', () => {
       pipelineLeadTime: 4167.97,
       totalDelayTime: 18313.579999999998,
     },
-  }
+  };
   it('maps response lead time for changes values to ui display value', () => {
     const expectedLeadTimeForChangesValues = [
       {
@@ -57,11 +57,11 @@ describe('lead time for changes data mapper', () => {
           },
         ],
       },
-    ]
-    const mappedLeadTimeForChanges = leadTimeForChangesMapper(mockLeadTimeForChangesRes)
+    ];
+    const mappedLeadTimeForChanges = leadTimeForChangesMapper(mockLeadTimeForChangesRes);
 
-    expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues)
-  })
+    expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues);
+  });
 
   it('should map time to 0 minute when it is 0', () => {
     const mockLeadTimeForChangesResMock = {
@@ -80,7 +80,7 @@ describe('lead time for changes data mapper', () => {
         pipelineLeadTime: 0,
         totalDelayTime: 0,
       },
-    }
+    };
 
     const expectedLeadTimeForChangesValues = [
       {
@@ -101,9 +101,9 @@ describe('lead time for changes data mapper', () => {
           { name: TOTAL_DELAY_TIME, value: '0.00' },
         ],
       },
-    ]
-    const mappedLeadTimeForChanges = leadTimeForChangesMapper(mockLeadTimeForChangesResMock)
+    ];
+    const mappedLeadTimeForChanges = leadTimeForChangesMapper(mockLeadTimeForChangesResMock);
 
-    expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues)
-  })
-})
+    expect(mappedLeadTimeForChanges).toEqual(expectedLeadTimeForChangesValues);
+  });
+});

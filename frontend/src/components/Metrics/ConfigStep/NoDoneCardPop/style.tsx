@@ -1,6 +1,6 @@
-import { styled } from '@mui/material/styles'
-import { theme } from '@src/theme'
-import { Dialog } from '@mui/material'
+import { styled } from '@mui/material/styles';
+import { theme } from '@src/theme';
+import { Dialog } from '@mui/material';
 
 export const StyledDialog = styled(Dialog)`
   & .MuiDialog-paper {
@@ -10,7 +10,7 @@ export const StyledDialog = styled(Dialog)`
     align-items: center;
     font-size: 1rem;
   }
-`
+`;
 
 export const OkButton = styled('button')({
   width: '4rem',
@@ -21,4 +21,4 @@ export const OkButton = styled('button')({
   borderRadius: '0.3rem',
   color: 'White',
   backgroundColor: theme.main.backgroundColor,
-})
+});

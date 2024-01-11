@@ -40,6 +40,7 @@ public class JiraControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
+	@Deprecated
 	void shouldReturnCorrectBoardConfigResponseWhenGivenTheCorrectBoardRequest() throws Exception {
 		BoardConfigDTO boardConfigDTO = BOARD_CONFIG_RESPONSE_BUILDER().build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -85,6 +86,7 @@ public class JiraControllerTest {
 	}
 
 	@Test
+	@Deprecated
 	void shouldHandleServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";

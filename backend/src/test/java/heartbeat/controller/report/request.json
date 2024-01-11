@@ -9,6 +9,7 @@
   ],
   "startTime": 1661702400000,
   "endTime": 1662739199000,
+  "considerHoliday": true,
   "buildKiteSetting": {
     "type": "BuildKite",
     "token": "0d6*********************************a57a",
@@ -36,6 +37,11 @@
       }
     ]
   },
+  "codebaseSetting": {
+      "type": "GitHub",
+      "token": "ghp*********************************FX",
+      "leadTime": []
+    },
   "jiraBoardSetting": {
     "type": "classic jira",
     "token": "Basic exxxxxhhbmdxxxxvYixxxxxxZzlxxxxxx3Rqaxxxxxlodxxxxx9BRUU3",

@@ -1,12 +1,12 @@
-import React from 'react'
+import React from 'react';
 import {
   StyledMetricsSign,
   StyledMetricsTitle,
   StyledMetricsTitleSection,
-} from '@src/components/Common/ReportGrid/ReportTitle/style'
+} from '@src/components/Common/ReportGrid/ReportTitle/style';
 
 interface ReportTitleProps {
-  title: string
+  title: string;
 }
 export const ReportTitle = ({ title }: ReportTitleProps) => {
   return (
@@ -14,5 +14,5 @@ export const ReportTitle = ({ title }: ReportTitleProps) => {
       <StyledMetricsSign />
       <StyledMetricsTitle>{title}</StyledMetricsTitle>
     </StyledMetricsTitleSection>
-  )
-}
+  );
+};

@@ -1,7 +1,16 @@
 export const CALENDAR = {
   REGULAR: 'Regular Calendar(Weekend Considered)',
   CHINA: 'Calendar with Chinese Holiday',
-}
+};
+
+export const REPORT_PAGE_TYPE = {
+  SUMMARY: 'Summary',
+  BOARD: 'BoardReport',
+  DORA: 'DoraReport',
+};
+
+export const SHOW_MORE = 'show more >';
+export const BACK = 'Back';
 
 export enum REQUIRED_DATA {
   All = 'All',
@@ -42,9 +51,9 @@ export const DORA_METRICS: string[] = [
   REQUIRED_DATA.DEPLOYMENT_FREQUENCY,
   REQUIRED_DATA.CHANGE_FAILURE_RATE,
   REQUIRED_DATA.MEAN_TIME_TO_RECOVERY,
-]
+];
 
-export const BOARD_METRICS: string[] = [REQUIRED_DATA.VELOCITY, REQUIRED_DATA.CYCLE_TIME, REQUIRED_DATA.CLASSIFICATION]
+export const BOARD_METRICS: string[] = [REQUIRED_DATA.VELOCITY, REQUIRED_DATA.CYCLE_TIME, REQUIRED_DATA.CLASSIFICATION];
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
@@ -55,16 +64,16 @@ export enum CONFIG_TITLE {
 export const BOARD_TYPES = {
   CLASSIC_JIRA: 'Classic Jira',
   JIRA: 'Jira',
-}
+};
 
 export const PIPELINE_TOOL_TYPES = {
   BUILD_KITE: 'BuildKite',
   GO_CD: 'GoCD',
-}
+};
 
 export const SOURCE_CONTROL_TYPES = {
   GITHUB: 'GitHub',
-}
+};
 
 export enum PIPELINE_SETTING_TYPES {
   DEPLOYMENT_FREQUENCY_SETTINGS_TYPE = 'DeploymentFrequencySettings',
@@ -74,13 +83,13 @@ export enum PIPELINE_SETTING_TYPES {
 export const ASSIGNEE_FILTER_TYPES = {
   LAST_ASSIGNEE: 'lastAssignee',
   HISTORICAL_ASSIGNEE: 'historicalAssignee',
-}
+};
 
-export const EMAIL = 'Email'
+export const EMAIL = 'Email';
 
-export const BOARD_TOKEN = 'Token'
+export const BOARD_TOKEN = 'Token';
 
-export const DONE = 'Done'
+export const DONE = 'Done';
 
 export const METRICS_CONSTANTS = {
   cycleTimeEmptyStr: '----',
@@ -93,7 +102,7 @@ export const METRICS_CONSTANTS = {
   waitingValue: 'Waiting for testing',
   testingValue: 'Testing',
   reviewValue: 'Review',
-}
+};
 
 export const CYCLE_TIME_LIST = [
   METRICS_CONSTANTS.cycleTimeEmptyStr,
@@ -105,18 +114,18 @@ export const CYCLE_TIME_LIST = [
   METRICS_CONSTANTS.testingValue,
   METRICS_CONSTANTS.reviewValue,
   METRICS_CONSTANTS.doneValue,
-]
+];
 
 export const TOKEN_HELPER_TEXT = {
   RequiredTokenText: 'Token is required',
   InvalidTokenText: 'Token is invalid',
-}
+};
 
 export const TIPS = {
   SAVE_CONFIG:
     'Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)',
   CYCLE_TIME: 'The report page will sum all the status in the column for cycletime calculation',
-}
+};
 
 export enum VELOCITY_METRICS_NAME {
   VELOCITY_SP = 'Velocity(Story Point)',
@@ -137,17 +146,17 @@ export enum CYCLE_TIME_METRICS_NAME {
   AVERAGE_TESTING_TIME = 'Average testing time',
 }
 
-export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency(deployments/day)'
+export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency(deployments/day)';
 
-export const FAILURE_RATE_NAME = 'Failure rate'
+export const FAILURE_RATE_NAME = 'Failure rate';
 
-export const MEAN_TIME_TO_RECOVERY_NAME = 'Mean Time To Recovery'
+export const MEAN_TIME_TO_RECOVERY_NAME = 'Mean Time To Recovery';
 
-export const PIPELINE_STEP = 'Pipeline/step'
+export const PIPELINE_STEP = 'Pipeline/step';
 
-export const NAME = 'Name'
+export const NAME = 'Name';
 
-export const AVERAGE_FIELD = 'Average'
+export const AVERAGE_FIELD = 'Average';
 
 export enum REPORT_SUFFIX_UNITS {
   PER_SP = '(days/SP)',
@@ -172,7 +181,7 @@ export const MESSAGE = {
   NOTIFICATION_FIRST_REPORT: 'The file needs to be exported within %s minutes, otherwise it will expire.',
   EXPIRE_IN_FIVE_MINUTES: 'The file will expire in 5 minutes, please download it in time.',
   REPORT_LOADING: 'The report is being generated, please do not refresh the page or all the data will be disappeared.',
-}
+};
 
 export const METRICS_CYCLE_SETTING_TABLE_HEADER = [
   {
@@ -187,7 +196,7 @@ export const METRICS_CYCLE_SETTING_TABLE_HEADER = [
     text: 'Heartbeat State',
     emphasis: true,
   },
-]
+];
 
 export const REPORT_PAGE = {
   BOARD: {
@@ -196,4 +205,4 @@ export const REPORT_PAGE = {
   DORA: {
     TITLE: 'DORA Metrics',
   },
-}
+};

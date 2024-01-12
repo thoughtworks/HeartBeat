@@ -39,7 +39,7 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
       return await metricsClient.getSteps(params, organizationId, buildId, pipelineType, token);
     } catch (e) {
       const err = e as Error;
-      setErrorMessage(`${pipelineType} ${MESSAGE.GET_STEPS_FAILED}: ${err.message}`);
+      setErrorMessage(`${MESSAGE.GET_STEPS_FAILED} ${pipelineType} steps: ${err.message}`);
       setTimeout(() => {
         setErrorMessage('');
       }, DURATION.ERROR_MESSAGE_TIME);

@@ -40,6 +40,6 @@ describe('use get steps effect', () => {
       result.current.getSteps(params, buildId, organizationId, pipelineType, token);
     });
 
-    expect(result.current.errorMessage).toEqual('BuildKite get steps failed: error message');
+    expect(result.current.errorMessage).toEqual('Failed to get BuildKite steps: error message');
   });
 });

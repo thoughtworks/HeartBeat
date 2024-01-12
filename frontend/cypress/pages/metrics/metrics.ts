@@ -76,7 +76,7 @@ export class Metrics {
   }
 
   get buildKiteStepNotFoundTips() {
-    return cy.contains('BuildKite get steps failed: Not found');
+    return cy.contains('Failed to get BuildKite steps: Not found');
   }
 
   get pipelineRemoveButton() {

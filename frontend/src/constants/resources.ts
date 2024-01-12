@@ -168,7 +168,7 @@ export enum REPORT_SUFFIX_UNITS {
 export const MESSAGE = {
   VERIFY_FAILED_ERROR: 'verify failed',
   UNKNOWN_ERROR: 'Unknown',
-  GET_STEPS_FAILED: 'get steps failed',
+  GET_STEPS_FAILED: 'Failed to get',
   HOME_VERIFY_IMPORT_WARNING: 'The content of the imported JSON file is empty. Please confirm carefully',
   CONFIG_PAGE_VERIFY_IMPORT_ERROR: 'Imported data is not perfectly matched. Please review carefully before going next!',
   CLASSIFICATION_WARNING: 'Some classifications in import data might be removed.',

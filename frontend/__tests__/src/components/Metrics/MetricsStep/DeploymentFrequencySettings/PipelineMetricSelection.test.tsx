@@ -150,7 +150,7 @@ describe('PipelineMetricSelection', () => {
     });
 
     await waitFor(() => {
-      expect(getByText('BuildKite get steps failed: error message')).toBeInTheDocument();
+      expect(getByText('Failed to get BuildKite steps: error message')).toBeInTheDocument();
     });
     expect(mockUpdatePipeline).toHaveBeenCalledTimes(2);
   });

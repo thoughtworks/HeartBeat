@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import each from 'jest-each';
 import { store } from '@src/store';
 import PresentationForErrorCases, {
   IPresentationForErrorCasesProps,
@@ -26,7 +25,7 @@ describe('<PresentationForErrorCases />', () => {
   ];
   const errorMessage =
     'Please go back to the previous page and change your pipeline token with correct access permission.';
-  each(errors).it(
+  it.each(errors)(
     'should properly render error UI with title:$title and corresponding message',
     ({ code, title: errorTitle }) => {
       const props = { code, errorTitle, errorMessage, isLoading: false, retry: () => '' };

@@ -177,6 +177,6 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByRole('button', { name: VERIFY }));
-    expect(getByText('BuildKite verify failed: Unauthorized')).toBeInTheDocument();
+    expect(getByText('Token is incorrect!')).toBeInTheDocument();
   });
 });

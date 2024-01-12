@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
-import { MESSAGE } from '@src/constants/resources';
 import { PipelineRequestDTO } from '@src/clients/pipeline/dto/request';
+import { useAppDispatch } from '@src/hooks';
+import { HttpStatusCode } from 'axios';
+import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
+import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 
 export interface useVerifyPipeLineToolStateInterface {
-  verifyPipelineTool: (params: PipelineRequestDTO) => Promise<
-    | {
-        isPipelineToolVerified: boolean;
-      }
-    | undefined
-  >;
+  verifyPipelineTool: (params: PipelineRequestDTO) => void;
   isLoading: boolean;
   errorMessage: string;
   clearErrorMessage: () => void;
@@ -18,17 +16,18 @@ export interface useVerifyPipeLineToolStateInterface {
 export const useVerifyPipelineToolEffect = (): useVerifyPipeLineToolStateInterface => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const dispatch = useAppDispatch();
 
   const verifyPipelineTool = async (params: PipelineRequestDTO) => {
     setIsLoading(true);
-    try {
-      return await pipelineToolClient.verifyPipelineTool(params);
-    } catch (e) {
-      const err = e as Error;
-      setErrorMessage(`${params.type} ${MESSAGE.VERIFY_FAILED_ERROR}: ${err.message}`);
-    } finally {
-      setIsLoading(false);
+    const response = await pipelineToolClient.verifyPipelineTool(params);
+    if (response.code === HttpStatusCode.NoContent) {
+      dispatch(updatePipelineToolVerifyState(true));
+      dispatch(initDeploymentFrequencySettings());
+    } else {
+      setErrorMessage(response.errorTitle);
     }
+    setIsLoading(false);
   };
 
   const clearErrorMessage = () => {

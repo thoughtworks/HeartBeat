@@ -131,12 +131,7 @@ export const PipelineTool = () => {
       endTime: DateRange.endDate,
     };
 
-    await verifyPipelineTool(params).then((res) => {
-      if (res) {
-        dispatch(updatePipelineToolVerifyState(res.isPipelineToolVerified));
-        dispatch(initDeploymentFrequencySettings());
-      }
-    });
+    verifyPipelineTool(params);
   };
 
   const handleResetPipelineToolFields = () => {

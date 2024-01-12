@@ -1,6 +1,5 @@
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
-import each from 'jest-each';
 import {
   MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
   MOCK_PIPELINE_GET_INFO_URL,
@@ -24,7 +23,7 @@ describe('PipelineToolClient', () => {
     it('should isPipelineVerified is true when pipelineTool verify response status 204', async () => {
       const result = await pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
-      expect(result.isPipelineToolVerified).toEqual(true);
+      expect(result.code).toEqual(HttpStatusCode.NoContent);
     });
 
     describe('Error cases', () => {
@@ -43,20 +42,13 @@ describe('PipelineToolClient', () => {
         },
       ];
 
-      each(errorCases).it(
-        'should log error with its corresponding error message when verify endponint returns error',
-        async ({ code }) => {
-          server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(code))));
-          const logSpy = jest.fn();
-          console.error = logSpy;
+      it.each(errorCases)('should return error code when verify endponint returns error', async ({ code }) => {
+        server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(code))));
 
-          await expect(() =>
-            pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS)
-          ).rejects.toThrow();
+        const result = await pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
-          expect(logSpy).toHaveBeenCalledWith('Failed to verify BuildKite token', expect.any(Error));
-        }
-      );
+        expect(result.code).toEqual(code);
+      });
     });
   });
 
@@ -107,7 +99,7 @@ describe('PipelineToolClient', () => {
         },
       ];
 
-      each(errorCases).it(
+      it.each(errorCases)(
         `should return result with code:$code and title:$errorTitle and unify errorMessage when verify endpoint returns code:$code`,
         async ({ code, errorTitle, errorMessage }) => {
           server.use(rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => res(ctx.status(code))));

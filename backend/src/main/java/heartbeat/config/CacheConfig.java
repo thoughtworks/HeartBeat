@@ -24,6 +24,7 @@ import org.ehcache.jsr107.Eh107Configuration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 
 @Configuration
 @EnableCaching
@@ -45,6 +46,8 @@ public class CacheConfig {
 		cacheManager.createCache("tokenInfo", getCacheConfiguration(BuildKiteTokenInfo.class));
 		cacheManager.createCache("buildKiteOrganizationInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("pipelineInfo", getCacheConfiguration(List.class));
+		cacheManager.createCache("pipelineSteps", getCacheConfiguration(ResponseEntity.class));
+		cacheManager.createCache("pipelineStepsInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("githubOrganizationInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("githubAllRepos", getCacheConfiguration(List.class));
 		cacheManager.createCache("githubRepos", getCacheConfiguration(List.class));

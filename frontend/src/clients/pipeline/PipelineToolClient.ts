@@ -31,9 +31,7 @@ export class PipelineToolClient extends HttpClient {
     };
     try {
       const response = await this.axiosInstance.post(`/pipelines/${params.type.toLowerCase()}/verify`, params);
-      if (response.status === HttpStatusCode.NoContent) {
-        result.code = HttpStatusCode.NoContent;
-      }
+      result.code = response.status;
     } catch (e) {
       if (isHeartBeatException(e)) {
         const exception = e as IHeartBeatException;

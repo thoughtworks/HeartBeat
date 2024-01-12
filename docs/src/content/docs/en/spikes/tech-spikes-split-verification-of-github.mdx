@@ -23,7 +23,7 @@ Triggered after clicking GitHub's verify on the config page.
 
 - Api Design
 ```
-paths: /api/v1/source-control/{sourcetype}/verify
+paths: /api/v1/source-control/{sourceType}/verify
 method: post
 request: {
   token: "..."
@@ -45,15 +45,12 @@ header: "Authorization: Bearer YOUR-TOKEN"
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="4">400</td>
+    <td rowspan="3">400</td>
     <td>Token cannot be empty.</td>
-    <td rowspan="4"></td>
+    <td rowspan="3"></td>
   </tr>
   <tr>
     <td>Token's pattern is incorrect.</td>
-  </tr>
-  <tr>
-    <td>Source type cannot be empty.</td>
   </tr>
   <tr>
     <td>Source type is incorrect.</td>
@@ -142,21 +139,15 @@ header: "Authorization: Bearer <YOUR-TOKEN>"
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="7">400</td>
+    <td rowspan="5">400</td>
     <td>Token cannot be empty.</td>
-    <td rowspan="7"></td>
+    <td rowspan="5"></td>
   </tr>
   <tr>
     <td>Token's pattern is incorrect.</td>
   </tr>
   <tr>
     <td>Repository cannot be empty.</td>
-  </tr>
-  <tr>
-    <td>Repository's pattern is incorrect.</td>
-  </tr>
-  <tr>
-    <td>Source type cannot be empty.</td>
   </tr>
   <tr>
     <td>Source type is incorrect.</td>

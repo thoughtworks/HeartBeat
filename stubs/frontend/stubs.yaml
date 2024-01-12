@@ -23,7 +23,7 @@
 
 - request:
     method: POST
-    url: /api/v1/pipelines/BuildKite/info
+    url: /api/v1/pipelines/buildkite/info
 
   response:
     headers:
@@ -67,7 +67,7 @@
 
 - request:
     method: POST
-    url: /api/v1/pipelines/BuildKite/verify
+    url: /api/v1/pipelines/buildkite/verify
   response:
     headers:
       content-type: application/json

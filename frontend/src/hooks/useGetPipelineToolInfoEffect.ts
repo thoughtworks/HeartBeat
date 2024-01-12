@@ -52,10 +52,6 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
       apiTouchedRef.current = true;
       getPipelineToolInfo();
     }
-
-    return () => {
-      dispatch(resetPipelineSettings());
-    };
   }, [pipelineToolVerified, isProjectCreated, restoredPipelineTool, dateRange, isLoading, dispatch]);
 
   return {

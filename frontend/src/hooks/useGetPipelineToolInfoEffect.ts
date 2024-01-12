@@ -8,7 +8,7 @@ import {
   selectPipelineTool,
   selectDateRange,
 } from '@src/context/config/configSlice';
-import { updatePipelineSettings, resetPipelineSettings } from '@src/context/Metrics/metricsSlice';
+import { updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
 
 export interface IUseVerifyPipeLineToolStateInterface {
   result: IGetPipelineToolInfoResult;

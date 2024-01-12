@@ -12,7 +12,6 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import {
   isPipelineToolVerified,
-  selectDateRange,
   selectPipelineTool,
   updatePipelineTool,
   updatePipelineToolVerifyState,
@@ -27,7 +26,6 @@ import { REGEX } from '@src/constants/regex';
 export const PipelineTool = () => {
   const dispatch = useAppDispatch();
   const pipelineToolFields = useAppSelector(selectPipelineTool);
-  const DateRange = useAppSelector(selectDateRange);
   const isVerified = useAppSelector(isPipelineToolVerified);
   const { verifyPipelineTool, isLoading, errorMessage, clearErrorMessage } = useVerifyPipelineToolEffect();
   const type = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), pipelineToolFields.type);
@@ -126,8 +124,6 @@ export const PipelineTool = () => {
     const params = {
       type: fields[0].value,
       token: fields[1].value,
-      startTime: DateRange.startDate,
-      endTime: DateRange.endDate,
     };
 
     verifyPipelineTool(params);

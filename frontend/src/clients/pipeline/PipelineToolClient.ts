@@ -2,7 +2,7 @@ import { HttpClient } from '@src/clients/Httpclient';
 import { HttpStatusCode } from 'axios';
 import { isHeartBeatException } from '@src/exceptions';
 import { IHeartBeatException } from '@src/exceptions/ExceptionType';
-import { PipelineRequestDTO } from '@src/clients/pipeline/dto/request';
+import { IPipelineVerifyRequestDTO, PipelineInfoRequestDTO } from '@src/clients/pipeline/dto/request';
 import { IPipelineInfoResponseDTO } from '@src/clients/pipeline/dto/response';
 import {
   PIPELINE_TOOL_VERIFY_ERROR_CASE_TEXT_MAPPING,
@@ -24,7 +24,7 @@ export interface IGetPipelineToolInfoResult {
 }
 
 export class PipelineToolClient extends HttpClient {
-  verifyPipelineTool = async (params: PipelineRequestDTO): Promise<IVerifyPipelineToolResult> => {
+  verifyPipelineTool = async (params: IPipelineVerifyRequestDTO): Promise<IVerifyPipelineToolResult> => {
     const result: IVerifyPipelineToolResult = {
       code: null,
       errorTitle: '',
@@ -43,7 +43,7 @@ export class PipelineToolClient extends HttpClient {
     return result;
   };
 
-  getPipelineToolInfo = async (params: PipelineRequestDTO): Promise<IGetPipelineToolInfoResult> => {
+  getPipelineToolInfo = async (params: PipelineInfoRequestDTO): Promise<IGetPipelineToolInfoResult> => {
     const result: IGetPipelineToolInfoResult = {
       code: null,
       data: undefined,

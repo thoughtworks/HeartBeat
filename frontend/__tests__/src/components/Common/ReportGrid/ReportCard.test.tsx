@@ -26,18 +26,16 @@ describe('Report Card', () => {
 
     const { getByText, queryByText } = render(<ReportCard title={'card'} items={items} xs={6} errorMessage={''} />);
 
-    expect(screen.getByText('1.00')).toBeInTheDocument();
-    expect(screen.getByText('2.00')).toBeInTheDocument();
-    expect(screen.queryByText('3.00')).not.toBeInTheDocument();
+    expect(getByText('1.00')).toBeInTheDocument();
+    expect(getByText('2.00')).toBeInTheDocument();
+    expect(queryByText('3.00')).not.toBeInTheDocument();
   });
 
   it('should show error message when errorMessage is not empty', () => {
     const errorMessage = 'Data loading failed';
 
-    const { getByText, queryByText } = render(
-      <ReportCard title={'card'} items={null} xs={6} errorMessage={errorMessage} />
-    );
+    const { getByText } = render(<ReportCard title={'card'} items={null} xs={6} errorMessage={errorMessage} />);
 
-    expect(screen.getByText('Data loading failed')).toBeInTheDocument();
+    expect(getByText('Data loading failed')).toBeInTheDocument();
   });
 });

@@ -32,7 +32,7 @@ export const StyledErrorSection = styled.div({
 });
 
 export const StyledImgSection = styled.img({
-  height: '4.43rem',
+  height: '3.8rem',
 });
 
 export const StyledErrorMessage = styled.div({

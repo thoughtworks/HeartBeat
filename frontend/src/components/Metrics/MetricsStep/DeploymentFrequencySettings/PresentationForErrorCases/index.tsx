@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { Box } from '@mui/material';
+import errorSvg from '@src/assets/pipeline-info-error.svg';
 import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import {
   StyledContainer,
@@ -23,7 +24,7 @@ const PresentationForErrorCases = (props: IPresentationForErrorCasesProps) => {
   return (
     <StyledContainer aria-label='Error UI for pipeline settings'>
       <StyledImageContainer>
-        <StyledImage src={`/pipeline-info-error.png`} alt={'pipeline info error'} loading='lazy' />
+        <StyledImage src={errorSvg} alt={'pipeline info error'} loading='lazy' />
       </StyledImageContainer>
       {props.code === HttpStatusCode.ServiceUnavailable ? (
         <StyledRetryMessage>

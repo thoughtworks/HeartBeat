@@ -68,13 +68,7 @@ export const PipelineTool = () => {
 
   useEffect(() => {
     if (errorMessage) {
-      const newFields = fields.map((field, index) => {
-        if (!index) {
-          return { ...field };
-        } else {
-          return { ...field, isValid: false };
-        }
-      });
+      const newFields = fields.map((field, index) => (index ? { ...field, isValid: false } : { ...field }));
       setFields(newFields);
     }
   }, [errorMessage]);

@@ -47,7 +47,6 @@ export class PipelineToolClient extends HttpClient {
       }
       result.code = response.status;
     } catch (e) {
-      console.error(`Failed to get pipeline tool info for ${params.type}`, e);
       if (isHeartBeatException(e)) {
         const exception = e as IHeartBeatException;
         result.code = exception.code;

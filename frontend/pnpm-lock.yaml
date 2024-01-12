@@ -151,9 +151,6 @@ devDependencies:
   jest:
     specifier: ^29.7.0
     version: 29.7.0(@types/node@18.19.2)(ts-node@10.9.2)
-  jest-each:
-    specifier: ^29.7.0
-    version: 29.7.0
   jest-environment-jsdom:
     specifier: ^29.5.0
     version: 29.6.3

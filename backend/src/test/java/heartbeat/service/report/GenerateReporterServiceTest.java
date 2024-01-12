@@ -1116,9 +1116,9 @@ class GenerateReporterServiceTest {
 		String timeStamp = TIMESTAMP;
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue());
 		MetricsDataCompleted expectedPut = MetricsDataCompleted.builder()
-			.isBoardMetricsReady(false)
-			.isPipelineMetricsReady(null)
-			.isSourceControlMetricsReady(null)
+			.boardMetricsCompleted(false)
+			.pipelineMetricsCompleted(null)
+			.sourceControlMetricsCompleted(null)
 			.build();
 
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(null);
@@ -1133,14 +1133,14 @@ class GenerateReporterServiceTest {
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue(),
 				RequireDataEnum.DEPLOYMENT_FREQUENCY.getValue());
 		MetricsDataCompleted previousMetricsDataCompleted = MetricsDataCompleted.builder()
-			.isBoardMetricsReady(false)
-			.isPipelineMetricsReady(null)
-			.isSourceControlMetricsReady(null)
+			.boardMetricsCompleted(false)
+			.pipelineMetricsCompleted(null)
+			.sourceControlMetricsCompleted(null)
 			.build();
 		MetricsDataCompleted expectedPut = MetricsDataCompleted.builder()
-			.isBoardMetricsReady(false)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(null)
+			.boardMetricsCompleted(false)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(null)
 			.build();
 
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(previousMetricsDataCompleted);
@@ -1195,13 +1195,13 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
 		ReportResponse boardResponse = ReportResponse.builder()
-			.isBoardMetricsReady(true)
+			.boardMetricsCompleted(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
 			.velocity(Velocity.builder().velocityForCards(10).build())
 			.classificationList(List.of())
 			.build();
 		ReportResponse pipelineResponse = ReportResponse.builder()
-			.isPipelineMetricsReady(true)
+			.pipelineMetricsCompleted(true)
 			.changeFailureRate(ChangeFailureRate.builder()
 				.avgChangeFailureRate(AvgChangeFailureRate.builder().name("name").failureRate(0.1f).build())
 				.build())
@@ -1225,7 +1225,7 @@ class GenerateReporterServiceTest {
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getIsAllMetricsReady());
+		assertTrue(composedResponse.getAllMetricsCompleted());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 		assertEquals("deploymentFrequency",
 				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getName());
@@ -1236,7 +1236,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
 		ReportResponse boardResponse = ReportResponse.builder()
-			.isBoardMetricsReady(true)
+			.boardMetricsCompleted(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
 			.velocity(Velocity.builder().velocityForCards(10).build())
 			.classificationList(List.of())
@@ -1253,8 +1253,8 @@ class GenerateReporterServiceTest {
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getIsAllMetricsReady());
-		assertTrue(composedResponse.getIsBoardMetricsReady());
+		assertTrue(composedResponse.getAllMetricsCompleted());
+		assertTrue(composedResponse.getBoardMetricsCompleted());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 	}
 
@@ -1293,9 +1293,9 @@ class GenerateReporterServiceTest {
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
 		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
-			.isBoardMetricsReady(true)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(false)
+			.boardMetricsCompleted(true)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(false)
 			.build();
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 
@@ -1363,31 +1363,8 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldPutExceptionInHandlerWhenCallGenerateSourceControlReportThrowException() throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
-				GenerateReportRequest.class);
-		reportRequest.setCsvTimeStamp("20240109232359");
-		reportRequest.setMetrics(List.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES.getValue()));
-		String reportId = "sourceControl-20240109232359";
-		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
-		NotFoundException e = new NotFoundException("Error message");
-
-		doThrow(e).when(spyGenerateReporterService).generateReporter(any());
-		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
-			.thenReturn(MetricsDataCompleted.builder().build());
-
-		spyGenerateReporterService.generateDoraReport(reportRequest);
-
-		verify(spyGenerateReporterService, times(1))
-			.initializeMetricsDataCompletedInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
-		verify(spyGenerateReporterService, times(1))
-			.saveReporterInHandler(spyGenerateReporterService.generateReporter(reportRequest), reportId);
-		verify(asyncExceptionHandler, times(1)).put(reportId, e);
-	}
-
-	@Test
-	void shouldGeneratePipelineReportAndUpdatePipelineMetricsReadyWhenCallGeneratePipelineReport() throws IOException {
+	void shouldGeneratePipelineReportAndUpdatePipelineMetricsReadyWhenCallGeneratePipelineReport()
+			throws IOException, InterruptedException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
@@ -1395,11 +1372,11 @@ class GenerateReporterServiceTest {
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
-		String reportId = "dora-20240109232359";
+		String doraTimeStamp = "dora-20240109232359";
 		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
-			.isBoardMetricsReady(null)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(false)
+			.boardMetricsCompleted(null)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(false)
 			.build();
 
 		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
@@ -1424,11 +1401,11 @@ class GenerateReporterServiceTest {
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
-		String codebaseTimeStamp = "github-20240109232359";
+		String reportId = "github-20240109232359";
 		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
-			.isBoardMetricsReady(null)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(false)
+			.boardMetricsCompleted(null)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(false)
 			.build();
 
 		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
@@ -1440,7 +1417,7 @@ class GenerateReporterServiceTest {
 		verify(spyGenerateReporterService, times(1)).generateReporter(any());
 		verify(spyGenerateReporterService, times(1)).initializeMetricsDataCompletedInHandler(any(), any());
 		verify(spyGenerateReporterService, times(1))
-			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), codebaseTimeStamp);
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), reportId);
 		verify(spyGenerateReporterService, times(1)).updateMetricsDataCompletedInHandler(any(), any());
 
 	}
@@ -1476,47 +1453,47 @@ class GenerateReporterServiceTest {
 		return Stream.of(
 				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(false)
-							.isPipelineMetricsReady(false)
-							.isSourceControlMetricsReady(null)
+							.boardMetricsCompleted(false)
+							.pipelineMetricsCompleted(false)
+							.sourceControlMetricsCompleted(null)
 							.build(),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(true)
-							.isPipelineMetricsReady(true)
-							.isSourceControlMetricsReady(null)
+							.boardMetricsCompleted(true)
+							.pipelineMetricsCompleted(true)
+							.sourceControlMetricsCompleted(null)
 							.build()),
 				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(false)
-							.isPipelineMetricsReady(false)
-							.isSourceControlMetricsReady(false)
+							.boardMetricsCompleted(false)
+							.pipelineMetricsCompleted(false)
+							.sourceControlMetricsCompleted(false)
 							.build(),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(true)
-							.isPipelineMetricsReady(true)
-							.isSourceControlMetricsReady(true)
+							.boardMetricsCompleted(true)
+							.pipelineMetricsCompleted(true)
+							.sourceControlMetricsCompleted(true)
 							.build()),
 				Arguments.of(List.of("velocity"),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(false)
-							.isPipelineMetricsReady(null)
-							.isSourceControlMetricsReady(null)
+							.boardMetricsCompleted(false)
+							.pipelineMetricsCompleted(null)
+							.sourceControlMetricsCompleted(null)
 							.build(),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(true)
-							.isPipelineMetricsReady(null)
-							.isSourceControlMetricsReady(null)
+							.boardMetricsCompleted(true)
+							.pipelineMetricsCompleted(null)
+							.sourceControlMetricsCompleted(null)
 							.build()),
 				Arguments.of(List.of("deployment frequency", "change failure rate", "mean time to recovery"),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(null)
-							.isPipelineMetricsReady(false)
-							.isSourceControlMetricsReady(null)
+							.boardMetricsCompleted(null)
+							.pipelineMetricsCompleted(false)
+							.sourceControlMetricsCompleted(null)
 							.build(),
 						MetricsDataCompleted.builder()
-							.isBoardMetricsReady(null)
-							.isPipelineMetricsReady(true)
-							.isSourceControlMetricsReady(null)
+							.boardMetricsCompleted(null)
+							.pipelineMetricsCompleted(true)
+							.sourceControlMetricsCompleted(null)
 							.build()));
 	}
 

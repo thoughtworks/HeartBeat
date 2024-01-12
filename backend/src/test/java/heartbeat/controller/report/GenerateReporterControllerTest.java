@@ -74,8 +74,8 @@ class GenerateReporterControllerTest {
 	void shouldReturnOkStatusWhenCheckGenerateReportIsFalse() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis());
 		ReportResponse reportResponse = ReportResponse.builder()
-			.isBoardMetricsReady(false)
-			.isAllMetricsReady(false)
+			.boardMetricsCompleted(false)
+			.allMetricsCompleted(false)
 			.build();
 
 		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
@@ -87,7 +87,7 @@ class GenerateReporterControllerTest {
 			.andReturn()
 			.getResponse();
 		final var content = response.getContentAsString();
-		final var isAllMetricsReady = JsonPath.parse(content).read("$.isAllMetricsReady");
+		final var isAllMetricsReady = JsonPath.parse(content).read("$.allMetricsCompleted");
 
 		assertEquals(false, isAllMetricsReady);
 	}

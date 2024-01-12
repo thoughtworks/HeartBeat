@@ -19,11 +19,10 @@ export class PipelineToolClient extends HttpClient {
   verifyPipelineTool = async (params: PipelineRequestDTO) => {
     let isPipelineToolVerified = false;
     try {
-      await this.axiosInstance.post(`/pipelines/${params.type}/verify`, params);
+      await this.axiosInstance.post(`/pipelines/${params.type.toLowerCase()}/verify`, params);
       isPipelineToolVerified = true;
     } catch (e) {
       isPipelineToolVerified = false;
-      console.error(`Failed to verify ${params.type} token`, e);
       throw e;
     }
     return { isPipelineToolVerified };
@@ -38,7 +37,7 @@ export class PipelineToolClient extends HttpClient {
     };
 
     try {
-      const response = await this.axiosInstance.post(`/pipelines/${params.type}/info`, params);
+      const response = await this.axiosInstance.post(`/pipelines/${params.type.toLowerCase}/info`, params);
       if (response.status === HttpStatusCode.Ok) {
         result.data = response.data as IPipelineInfoResponseDTO;
       } else if (response.status === HttpStatusCode.NoContent) {

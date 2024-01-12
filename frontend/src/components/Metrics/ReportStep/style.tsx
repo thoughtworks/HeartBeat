@@ -19,9 +19,9 @@ export const basicButtonStyle = {
   textTransform: theme.typography.button.textTransform,
 };
 
-export const StyledCalendarWrapper = styled('div')({
+export const StyledCalendarWrapper = styled('div')((props: { isSummaryPage: boolean }) => ({
   display: 'flex',
   justifyContent: 'flex-end',
-  position: 'relative',
-  top: '1.6rem',
-});
+  marginTop: '0.25rem',
+  marginBottom: props.isSummaryPage ? '-3.5rem' : '-2rem',
+}));

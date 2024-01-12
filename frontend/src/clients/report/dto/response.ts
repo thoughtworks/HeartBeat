@@ -14,11 +14,23 @@ export interface ReportResponseDTO {
   isPipelineMetricsReady: Nullable<boolean>;
   isSourceControlMetricsReady: Nullable<boolean>;
   isAllMetricsReady: boolean;
+  reportError: Nullable<AllErrorResponse>;
 }
 
 export interface VelocityResponse {
   velocityForSP: number;
   velocityForCards: number;
+}
+
+export interface AllErrorResponse {
+  boardError: ErrorResponse | null;
+  pipelineError: ErrorResponse | null;
+  sourceControlError: ErrorResponse | null;
+}
+
+export interface ErrorResponse {
+  status: number;
+  message: string;
 }
 
 export interface CycleTimeResponse {

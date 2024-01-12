@@ -18,3 +18,11 @@ export const StyledShowMore = styled('div')({
   color: theme.main.alert.info.iconColor,
   cursor: 'pointer',
 });
+
+export const StyledRetry = styled('div')({
+  marginLeft: '0.5rem',
+  fontSize: '0.8rem',
+  textDecoration: 'none',
+  color: '#4350AF',
+  cursor: 'pointer',
+});

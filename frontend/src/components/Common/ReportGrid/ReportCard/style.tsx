@@ -23,3 +23,19 @@ export const StyledReportCardTitle = styled(Typography)({
   fontWeight: 500,
   fontSize: '1rem',
 });
+
+export const StyledErrorSection = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+export const StyledImgSection = styled.img({
+  height: '4.43rem',
+});
+
+export const StyledErrorMessage = styled.div({
+  color: '#A2A2A2',
+  fontSize: '0.875rem',
+});

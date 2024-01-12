@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
 import { useAppSelector } from '@src/hooks';
 import { selectConfig } from '@src/context/config/configSlice';
 import {
@@ -9,6 +10,7 @@ import {
   METRICS_TITLE,
   REQUIRED_DATA,
   SHOW_MORE,
+  RETRY,
 } from '@src/constants/resources';
 import { ReportRequestDTO } from '@src/clients/report/dto/request';
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
@@ -20,6 +22,7 @@ import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { StyledSpacing } from '@src/components/Metrics/ReportStep/style';
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util';
 import { StyledShowMore, StyledTitleWrapper } from '@src/components/Metrics/ReportStep/DoraMetrics/style';
+import { StyledRetry } from '../BoradMetrics/style';
 import { Nullable } from '@src/utils/types';
 
 interface DoraMetricsProps {
@@ -30,6 +33,7 @@ interface DoraMetricsProps {
   startDate: Nullable<string>;
   endDate: Nullable<string>;
   isBackFromDetail: boolean;
+  timeoutError: string;
 }
 
 const DoraMetrics = ({
@@ -40,6 +44,7 @@ const DoraMetrics = ({
   csvTimeStamp,
   startDate,
   endDate,
+  timeoutError,
 }: DoraMetricsProps) => {
   const configData = useAppSelector(selectConfig);
   const { pipelineTool, sourceControl } = configData;
@@ -174,22 +179,47 @@ const DoraMetrics = ({
     return [...deploymentFrequencyList, ...changeFailureRateList, ...meanTimeToRecoveryList];
   };
 
+  const errorMessage4BuildKite = _.get(doraReport, ['reportError', 'pipelineError'])
+    ? `Failed to get BuildKite info_status: ${_.get(doraReport, ['reportError', 'pipelineError', 'status'])}...`
+    : '';
+
+  const errorMessage4Github = _.get(doraReport, ['reportError', 'sourceControlError'])
+    ? `Failed to get Github info_status: ${_.get(doraReport, ['reportError', 'sourceControlError', 'status'])}...`
+    : '';
+
+  const showRetryButton = !!(timeoutError || errorMessage4BuildKite || errorMessage4Github);
+
+  const [error4Github, setError4Github] = useState('');
+  const [error4BuildKite, setError4BuildKite] = useState('');
+
+  const handleRetry = () => {
+    startToRequestDoraData(getDoraReportRequestBody());
+    setError4Github('');
+    setError4BuildKite('');
+  };
+
   useEffect(() => {
     !isBackFromDetail && startToRequestDoraData(getDoraReportRequestBody());
   }, []);
+
+  useEffect(() => {
+    setError4Github(timeoutError || errorMessage4Github);
+    setError4BuildKite(timeoutError || errorMessage4BuildKite);
+  }, [timeoutError, errorMessage4Github, errorMessage4BuildKite]);
 
   return (
     <>
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          {(doraReport?.isPipelineMetricsReady || doraReport?.isSourceControlMetricsReady) && (
+          {!showRetryButton && (doraReport?.isPipelineMetricsReady || doraReport?.isSourceControlMetricsReady) && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
+          {showRetryButton && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
-        {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} />}
+        {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} errorMessage={error4Github} />}
         <StyledSpacing />
-        <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} />
+        <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} errorMessage={error4BuildKite} />
       </StyledMetricsSection>
     </>
   );

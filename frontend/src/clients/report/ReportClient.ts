@@ -57,6 +57,7 @@ export class ReportClient extends HttpClient {
       },
       changeFailureRateOfPipelines: [],
     },
+    reportError: null,
     meanTimeToRecovery: null,
     exportValidityTime: null,
     isBoardMetricsReady: false,

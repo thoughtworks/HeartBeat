@@ -28,7 +28,7 @@ class Report {
   }
 
   get firstNotification() {
-    return cy.contains('The file needs to be exported within 30 minutes, otherwise it will expire.');
+    return cy.contains('The file will expire in 30 minutes，please download it in time.');
   }
 
   get showMoreBoardButton() {

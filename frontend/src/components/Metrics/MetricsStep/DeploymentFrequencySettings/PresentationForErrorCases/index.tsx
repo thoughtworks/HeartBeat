@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Box } from '@mui/material';
-import errorSvg from '@src/assets/pipeline-info-error.svg';
+import errorSvg from '@src/assets/PipelineInfoError.svg';
 import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import {
   StyledContainer,

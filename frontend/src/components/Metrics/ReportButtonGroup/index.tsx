@@ -74,7 +74,7 @@ export const ReportButtonGroup = ({
           </BackButton>
           {isShowExportMetrics && (
             <StyledExportButton
-              disabled={!reportData?.isAllMetricsReady}
+              disabled={!reportData?.allMetricsCompleted}
               onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}
@@ -82,7 +82,7 @@ export const ReportButtonGroup = ({
           )}
           {isShowExportBoardButton && (
             <StyledExportButton
-              disabled={!reportData?.isBoardMetricsReady}
+              disabled={!reportData?.boardMetricsCompleted}
               onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
@@ -92,8 +92,8 @@ export const ReportButtonGroup = ({
             <StyledExportButton
               disabled={
                 !reportData ||
-                reportData.isPipelineMetricsReady === false ||
-                reportData.isSourceControlMetricsReady === false
+                reportData.pipelineMetricsCompleted === false ||
+                reportData.sourceControlMetricsCompleted === false
               }
               onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}
             >

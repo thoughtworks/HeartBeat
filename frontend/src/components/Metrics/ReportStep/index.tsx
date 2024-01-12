@@ -38,7 +38,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
   const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY);
   const [isBackFromDetail, setIsBackFromDetail] = useState<boolean>(false);
-  const [isAllMetricsReady, setIsAllMetricsReady] = useState<boolean>(false);
+  const [allMetricsCompleted, setallMetricsCompleted] = useState<boolean>(false);
   const configData = useAppSelector(selectConfig);
   const csvTimeStamp = useAppSelector(selectTimeStamp);
 
@@ -53,17 +53,17 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
-      isAllMetricsReady &&
+      allMetricsCompleted &&
       updateProps({
         open: true,
         title: 'Help Information',
         message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
         closeAutomatically: true,
       });
-  }, [exportValidityTimeMin, isAllMetricsReady, updateProps]);
+  }, [exportValidityTimeMin, allMetricsCompleted, updateProps]);
 
   useLayoutEffect(() => {
-    if (exportValidityTimeMin && isAllMetricsReady) {
+    if (exportValidityTimeMin && allMetricsCompleted) {
       const startTime = Date.now();
       const timer = setInterval(() => {
         const currentTime = Date.now();
@@ -86,7 +86,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         clearInterval(timer);
       };
     }
-  }, [exportValidityTimeMin, isAllMetricsReady, updateProps]);
+  }, [exportValidityTimeMin, allMetricsCompleted, updateProps]);
 
   useLayoutEffect(() => {
     resetProps();
@@ -94,7 +94,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   useEffect(() => {
     setExportValidityTimeMin(reportData?.exportValidityTime);
-    reportData && setIsAllMetricsReady(reportData.isAllMetricsReady);
+    reportData && setallMetricsCompleted(reportData.allMetricsCompleted);
   }, [reportData]);
 
   useLayoutEffect(() => {

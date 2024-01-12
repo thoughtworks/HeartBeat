@@ -10,10 +10,10 @@ export interface ReportResponseDTO {
   leadTimeForChanges: Nullable<LeadTimeForChangesResponse>;
   changeFailureRate: Nullable<ChangeFailureRateResponse>;
   exportValidityTime: Nullable<number>;
-  isBoardMetricsReady: Nullable<boolean>;
-  isPipelineMetricsReady: Nullable<boolean>;
-  isSourceControlMetricsReady: Nullable<boolean>;
-  isAllMetricsReady: boolean;
+  boardMetricsCompleted: Nullable<boolean>;
+  pipelineMetricsCompleted: Nullable<boolean>;
+  sourceControlMetricsCompleted: Nullable<boolean>;
+  allMetricsCompleted: boolean;
   reportError: Nullable<AllErrorResponse>;
 }
 

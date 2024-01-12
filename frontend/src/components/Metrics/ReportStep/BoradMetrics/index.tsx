@@ -151,7 +151,7 @@ const BoardMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {!(timeoutError || errorMessage) && boardReport?.isBoardMetricsReady && (
+          {!(timeoutError || errorMessage) && boardReport?.boardMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
           {(timeoutError || errorMessage) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}

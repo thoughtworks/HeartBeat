@@ -474,10 +474,10 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
     },
   ],
   exportValidityTime: 1800000,
-  isBoardMetricsReady: true,
-  isPipelineMetricsReady: true,
-  isSourceControlMetricsReady: true,
-  isAllMetricsReady: true,
+  boardMetricsCompleted: true,
+  pipelineMetricsCompleted: true,
+  sourceControlMetricsCompleted: true,
+  allMetricsCompleted: true,
   reportError: null,
 };
 
@@ -639,10 +639,10 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   meanTimeToRecovery: null,
   leadTimeForChanges: null,
   exportValidityTime: null,
-  isBoardMetricsReady: false,
-  isPipelineMetricsReady: false,
-  isSourceControlMetricsReady: false,
-  isAllMetricsReady: false,
+  boardMetricsCompleted: false,
+  pipelineMetricsCompleted: false,
+  sourceControlMetricsCompleted: false,
+  allMetricsCompleted: false,
   reportError: null,
 };
 

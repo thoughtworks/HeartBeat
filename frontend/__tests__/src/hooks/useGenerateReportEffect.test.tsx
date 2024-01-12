@@ -126,7 +126,7 @@ describe('use generate report effect', () => {
   it('should call polling report more than one time when allMetricsReady field in response is false', async () => {
     reportClient.pollingReport = jest.fn().mockImplementation(async () => ({
       status: HttpStatusCode.NoContent,
-      response: { ...MOCK_REPORT_RESPONSE, isAllMetricsReady: false },
+      response: { ...MOCK_REPORT_RESPONSE, allMetricsCompleted: false },
     }));
     reportClient.retrieveReportByUrl = jest
       .fn()

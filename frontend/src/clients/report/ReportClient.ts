@@ -60,10 +60,10 @@ export class ReportClient extends HttpClient {
     reportError: null,
     meanTimeToRecovery: null,
     exportValidityTime: null,
-    isBoardMetricsReady: false,
-    isPipelineMetricsReady: false,
-    isSourceControlMetricsReady: false,
-    isAllMetricsReady: false,
+    boardMetricsCompleted: false,
+    pipelineMetricsCompleted: false,
+    sourceControlMetricsCompleted: false,
+    allMetricsCompleted: false,
   };
 
   retrieveReportByUrl = async (params: ReportRequestDTO, url: string) => {

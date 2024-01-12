@@ -212,7 +212,7 @@ const DoraMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          {!showRetryButton && (doraReport?.isPipelineMetricsReady || doraReport?.isSourceControlMetricsReady) && (
+          {!showRetryButton && (doraReport?.pipelineMetricsCompleted || doraReport?.sourceControlMetricsCompleted) && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
           {showRetryButton && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}

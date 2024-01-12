@@ -7,13 +7,12 @@ import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
 import { MOCK_BUILD_KITE_GET_INFO_RESPONSE } from '../fixtures';
 import { HttpStatusCode } from 'axios';
 import { ReactNode } from 'react';
-import { RootState } from '@src/store';
 
 const mockDispatch = jest.fn();
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatch,
-  useSelector: (selector: <TSelected>(state: RootState) => TSelected) => {
+  useSelector: (selector: <TSelected>() => TSelected) => {
     const originalUseSelector = jest.requireActual('react-redux').useSelector;
     if (selector.name === 'isPipelineToolVerified') {
       return true;

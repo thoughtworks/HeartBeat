@@ -58,6 +58,13 @@ export const ReportButtonGroup = ({
     fetchExportData(exportCSV(dataType, startDate, endDate));
   };
 
+  const pipelineButtonDisabled =
+    !reportData ||
+    reportData.pipelineMetricsCompleted === false ||
+    reportData.sourceControlMetricsCompleted === false ||
+    reportData?.reportError?.pipelineError ||
+    reportData?.reportError?.sourceControlError;
+
   return (
     <>
       <StyledButtonGroup isShowSave={isShowSave}>
@@ -74,7 +81,7 @@ export const ReportButtonGroup = ({
           </BackButton>
           {isShowExportMetrics && (
             <StyledExportButton
-              disabled={!reportData?.allMetricsCompleted}
+              disabled={!(reportData?.allMetricsCompleted && !reportData?.reportError)}
               onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}
@@ -82,7 +89,7 @@ export const ReportButtonGroup = ({
           )}
           {isShowExportBoardButton && (
             <StyledExportButton
-              disabled={!reportData?.boardMetricsCompleted}
+              disabled={!(reportData?.boardMetricsCompleted && !reportData?.reportError?.boardError)}
               onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
@@ -90,11 +97,7 @@ export const ReportButtonGroup = ({
           )}
           {isShowExportPipelineButton && (
             <StyledExportButton
-              disabled={
-                !reportData ||
-                reportData.pipelineMetricsCompleted === false ||
-                reportData.sourceControlMetricsCompleted === false
-              }
+              disabled={!!pipelineButtonDisabled}
               onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}

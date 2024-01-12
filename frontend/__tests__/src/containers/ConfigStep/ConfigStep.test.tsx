@@ -216,9 +216,9 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(wrapper.getByRole('listbox'));
     fireEvent.click(requireDateSelection.getByRole('option', { name: DEPLOYMENT_FREQUENCY }));
 
-    const tokenNode = wrapper.getByTestId('pipelineToolTextField');
+    const tokenNode = within(wrapper.getByTestId('pipelineToolTextField')).getByLabelText('input Token');
 
-    fireEvent.change(tokenNode.querySelector('input') as HTMLInputElement, { target: { value: mockToken } });
+    fireEvent.change(tokenNode, { target: { value: mockToken } });
 
     const submitButton = wrapper.getByText(VERIFY);
     fireEvent.click(submitButton);

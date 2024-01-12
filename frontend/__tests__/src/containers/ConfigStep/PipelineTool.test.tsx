@@ -20,7 +20,9 @@ import { HttpStatusCode } from 'axios';
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
-  const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
+  const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
+    'input Token'
+  ) as HTMLInputElement;
   await userEvent.type(tokenInput, mockInfo);
 
   expect(tokenInput.value).toEqual(mockInfo);
@@ -69,7 +71,9 @@ describe('PipelineTool', () => {
 
   it('should clear other fields information when change pipelineTool Field selection', async () => {
     const { getByText, getByLabelText } = setup();
-    const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
+    const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
+      'input Token'
+    ) as HTMLInputElement;
 
     await fillPipelineToolFieldsInformation();
     await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
@@ -84,7 +88,9 @@ describe('PipelineTool', () => {
 
   it('should clear all fields information when click reset button', async () => {
     const { getByText, queryByRole } = setup();
-    const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
+    const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
+      'input Token'
+    ) as HTMLInputElement;
     await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByText(VERIFY));
@@ -122,7 +128,9 @@ describe('PipelineTool', () => {
     const { getByText } = setup();
     await fillPipelineToolFieldsInformation();
     const mockInfo = 'mockToken';
-    const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
+    const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
+      'input Token'
+    ) as HTMLInputElement;
     await userEvent.type(tokenInput, mockInfo);
     await userEvent.clear(tokenInput);
 
@@ -133,7 +141,9 @@ describe('PipelineTool', () => {
   it('should show error message and error style when token is invalid', async () => {
     const { getByText } = setup();
     const mockInfo = 'mockToken';
-    const tokenInput = screen.getByTestId('pipelineToolTextField').querySelector('input') as HTMLInputElement;
+    const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
+      'input Token'
+    ) as HTMLInputElement;
     await userEvent.type(tokenInput, mockInfo);
 
     expect(tokenInput.value).toEqual(mockInfo);

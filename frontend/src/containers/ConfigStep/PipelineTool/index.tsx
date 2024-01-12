@@ -20,7 +20,6 @@ import {
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
 import { Loading } from '@src/components/Loading';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
-import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
 import { findCaseInsensitiveType } from '@src/utils/util';
 import { REGEX } from '@src/constants/regex';
@@ -171,6 +170,9 @@ export const PipelineTool = () => {
           label={fields[1].key}
           variant='standard'
           type='password'
+          inputProps={{
+            'aria-label': `input ${fields[1].key}`,
+          }}
           value={fields[1].value}
           onChange={(e) => onFormUpdate(1, e.target.value)}
           error={!fields[1].isValid || !fields[1].isRequired}

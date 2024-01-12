@@ -7,6 +7,7 @@ import {
   EXPORT_BOARD_DATA,
   EXPORT_METRIC_DATA,
   EXPORT_PIPELINE_DATA,
+  MOCK_DATE_RANGE,
   MOCK_JIRA_VERIFY_RESPONSE,
   MOCK_REPORT_RESPONSE,
   PREVIOUS,
@@ -18,6 +19,7 @@ import { setupStore } from '../../../utils/setupStoreUtil';
 import { Provider } from 'react-redux';
 import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import {
+  updateDateRange,
   updateJiraVerifyResponse,
   updateMetrics,
   updatePipelineToolVerifyResponse,
@@ -60,6 +62,7 @@ jest.mock('@src/emojis/emoji', () => ({
 }));
 
 jest.mock('@src/utils/util', () => ({
+  ...jest.requireActual('@src/utils/util'),
   transformToCleanedBuildKiteEmoji: jest.fn(),
   getJiraBoardToken: jest.fn(),
   filterAndMapCycleTimeSettings: jest.fn(),
@@ -86,8 +89,9 @@ describe('Report Step', () => {
     reportHook.current.reportData = { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 };
   };
   const handleSaveMock = jest.fn();
-  const setup = (params: string[]) => {
+  const setup = (params: string[], dateRange?: { startDate: string; endDate: string }) => {
     store = setupStore();
+    dateRange && store.dispatch(updateDateRange(dateRange));
     store.dispatch(
       updateJiraVerifyResponse({
         jiraColumns: MOCK_JIRA_VERIFY_RESPONSE.jiraColumns,
@@ -266,7 +270,7 @@ describe('Report Step', () => {
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
       'should render detail page when clicking show more button given metric %s',
       async (requiredData) => {
-        setup([requiredData]);
+        setup([requiredData], MOCK_DATE_RANGE);
 
         await userEvent.click(screen.getByText(SHOW_MORE));
 

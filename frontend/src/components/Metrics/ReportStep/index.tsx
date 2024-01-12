@@ -151,7 +151,10 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       ) : (
         <>
           {startDate && endDate && (
-            <StyledCalendarWrapper isSummaryPage={pageType === REPORT_PAGE_TYPE.SUMMARY}>
+            <StyledCalendarWrapper
+              data-testid={'calendarWrapper'}
+              isSummaryPage={pageType === REPORT_PAGE_TYPE.SUMMARY}
+            >
               <DateRangeViewer startDate={startDate} endDate={endDate} />
             </StyledCalendarWrapper>
           )}

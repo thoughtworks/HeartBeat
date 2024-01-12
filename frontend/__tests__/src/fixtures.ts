@@ -254,6 +254,11 @@ export const MOCK_IMPORT_FILE = {
   metrics: [],
 };
 
+export const MOCK_DATE_RANGE = {
+  startDate: '2023-04-04T00:00:00+08:00',
+  endDate: '2023-04-18T00:00:00+08:00',
+};
+
 export const MOCK_JIRA_VERIFY_RESPONSE = {
   jiraColumns: [
     { key: 'indeterminate', value: { name: 'Doing', statuses: ['DOING'] } },

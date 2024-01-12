@@ -4,8 +4,7 @@ import { Divider } from '@src/components/Common/MetricsSettingTitle/style';
 export const MetricSelectionHeader = styled('div')({
   display: 'flex',
   justifyContent: 'flex-end',
-  position: 'relative',
-  top: '1.6rem',
+  marginBottom: '2rem',
 });
 
 export const MetricSelectionWrapper = styled('div')({

@@ -18,3 +18,10 @@ export const basicButtonStyle = {
   fontWeight: '500',
   textTransform: theme.typography.button.textTransform,
 };
+
+export const StyledCalendarWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  position: 'relative',
+  top: '1.6rem',
+});

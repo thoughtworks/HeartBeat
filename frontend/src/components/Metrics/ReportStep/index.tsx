@@ -3,7 +3,7 @@ import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
 import { useAppSelector } from '@src/hooks';
 import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice';
 import { MESSAGE, REPORT_PAGE_TYPE } from '@src/constants/resources';
-import { StyledErrorNotification } from '@src/components/Metrics/ReportStep/style';
+import { StyledCalendarWrapper, StyledErrorNotification } from '@src/components/Metrics/ReportStep/style';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { useNavigate } from 'react-router-dom';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
@@ -13,7 +13,6 @@ import BoardMetrics from '@src/components/Metrics/ReportStep/BoradMetrics';
 import DoraMetrics from '@src/components/Metrics/ReportStep/DoraMetrics';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
-import { MetricSelectionHeader } from '../MetricsStep/style';
 import { BoardDetail, DoraDetail } from './ReportDetail';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
@@ -143,9 +142,9 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       ) : (
         <>
           {startDate && endDate && (
-            <MetricSelectionHeader>
+            <StyledCalendarWrapper>
               <DateRangeViewer startDate={startDate} endDate={endDate} />
-            </MetricSelectionHeader>
+            </StyledCalendarWrapper>
           )}
           {errorMessage && (
             <StyledErrorNotification>

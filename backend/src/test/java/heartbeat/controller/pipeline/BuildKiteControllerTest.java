@@ -55,6 +55,7 @@ public class BuildKiteControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Deprecated
 	@Test
 	void shouldReturnCorrectPipelineInfoWhenCallBuildKiteMockServer() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();

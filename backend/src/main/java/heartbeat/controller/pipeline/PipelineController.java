@@ -50,6 +50,7 @@ public class PipelineController {
 	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(@PathVariable @NotBlank String pipelineType,
 			@Valid @RequestBody PipelineParam pipelineParam) {
 		PipelineType.fromValue(pipelineType);
+		buildKiteService.checkTime(pipelineParam.getStartTime(), pipelineParam.getEndTime());
 		BuildKiteResponseDTO buildKiteResponse = buildKiteService.getBuildKiteInfo(pipelineParam);
 		if (buildKiteResponse.getPipelineList().isEmpty()) {
 			return ResponseEntity.noContent().build();

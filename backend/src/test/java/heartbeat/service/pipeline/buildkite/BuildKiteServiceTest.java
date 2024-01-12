@@ -1,5 +1,6 @@
 package heartbeat.service.pipeline.buildkite;
 
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.ServiceUnavailableException;
@@ -8,6 +9,7 @@ import heartbeat.exception.UnauthorizedException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -644,6 +646,19 @@ class BuildKiteServiceTest {
 		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(pipelineParam))
 			.isInstanceOf(UnauthorizedException.class)
 			.hasMessageContaining(UNAUTHORIZED_MSG);
+	}
+
+	@Test
+	void shouldNotThrowExceptionGivenStartTimeSmallerThanEndTimeWhenCheckTime() {
+		assertDoesNotThrow(() -> {
+			buildKiteService.checkTime(MOCK_START_TIME, MOCK_END_TIME);
+		});
+	}
+
+	@Test
+	void shouldThrowExceptionGivenStartTimeBiggerThanEndTimeWhenCheckTime() {
+		assertThatThrownBy(() -> buildKiteService.checkTime("166533", "155532")).isInstanceOf(BadRequestException.class)
+			.hasMessageContaining("StartTime can not bigger than EndTime");
 	}
 
 }

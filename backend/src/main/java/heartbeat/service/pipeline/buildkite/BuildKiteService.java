@@ -14,6 +14,7 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
@@ -352,6 +353,12 @@ public class BuildKiteService {
 			throw new InternalServerErrorException(
 					String.format("Failed to call BuildKite, cause is %s", cause.getMessage()));
 
+		}
+	}
+
+	public void checkTime(String startTime, String endTime) {
+		if (Long.parseLong(startTime) > Long.parseLong(endTime)) {
+			throw new BadRequestException("StartTime can not bigger than EndTime");
 		}
 	}
 

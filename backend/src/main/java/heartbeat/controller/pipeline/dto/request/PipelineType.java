@@ -1,5 +1,6 @@
 package heartbeat.controller.pipeline.dto.request;
 
+import heartbeat.exception.BadRequestException;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -18,7 +19,7 @@ public enum PipelineType {
 			case "buildkite" -> BUILDKITE;
 			default -> {
 				log.error("Failed to match Pipeline type: {} ", type);
-				throw new IllegalArgumentException("Pipeline type does not find!");
+				throw new BadRequestException("Pipeline type does not find!");
 			}
 		};
 	}

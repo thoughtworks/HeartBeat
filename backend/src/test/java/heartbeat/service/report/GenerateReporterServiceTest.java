@@ -1297,7 +1297,6 @@ class GenerateReporterServiceTest {
 
 		spyGenerateReporterService.generateBoardReport(reportRequest);
 
-		Thread.sleep(2000);
 		verify(spyGenerateReporterService, times(1)).generateReporter(reportRequest);
 		verify(spyGenerateReporterService, times(1))
 			.initializeMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
@@ -1326,7 +1325,6 @@ class GenerateReporterServiceTest {
 
 		spyGenerateReporterService.generateBoardReport(reportRequest);
 
-		Thread.sleep(2000L);
 		verify(spyGenerateReporterService, times(1))
 			.initializeMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
 		verify(spyGenerateReporterService, times(1))
@@ -1357,7 +1355,6 @@ class GenerateReporterServiceTest {
 
 		spyGenerateReporterService.generateDoraReport(reportRequest);
 
-		Thread.sleep(2000);
 		verify(spyGenerateReporterService, times(1)).generateReporter(any());
 		verify(spyGenerateReporterService, times(1)).initializeMetricsDataReadyInHandler(any(), any());
 		verify(spyGenerateReporterService, times(1))
@@ -1388,7 +1385,6 @@ class GenerateReporterServiceTest {
 
 		spyGenerateReporterService.generateDoraReport(reportRequest);
 
-		Thread.sleep(2000);
 		verify(spyGenerateReporterService, times(1)).generateReporter(any());
 		verify(spyGenerateReporterService, times(1)).initializeMetricsDataReadyInHandler(any(), any());
 		verify(spyGenerateReporterService, times(1))

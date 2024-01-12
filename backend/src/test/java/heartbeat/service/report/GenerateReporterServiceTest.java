@@ -12,6 +12,7 @@ import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
+import heartbeat.controller.pipeline.dto.request.PipelineType;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.ExportCSVRequest;
@@ -32,9 +33,10 @@ import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
-import heartbeat.controller.report.dto.response.MetricsDataReady;
+import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.controller.source.SourceType;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
@@ -62,7 +64,7 @@ import heartbeat.service.source.github.GitHubService;
 import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.util.IdUtil;
 import lombok.val;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -106,6 +108,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
+import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
+import static heartbeat.TestFixtures.GITHUB_TOKEN;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doNothing;
@@ -125,6 +129,10 @@ class GenerateReporterServiceTest {
 	private static final String REQUEST_FILE_PATH = "src/test/java/heartbeat/controller/report/request.json";
 
 	private static final String RESPONSE_FILE_PATH = "src/test/java/heartbeat/controller/report/reportResponse.json";
+
+	private static final String TIMESTAMP = "1683734399999";
+
+	private static final String CSV_TIMESTAMP = "20240109232359";
 
 	@InjectMocks
 	GenerateReporterService generateReporterService;
@@ -184,7 +192,7 @@ class GenerateReporterServiceTest {
 	private AsyncExceptionHandler asyncExceptionHandler;
 
 	@Captor
-	private ArgumentCaptor<MetricsDataReady> metricsCaptor;
+	private ArgumentCaptor<MetricsDataCompleted> metricsCaptor;
 
 	@Captor
 	private ArgumentCaptor<String> keyCaptor;
@@ -208,7 +216,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
@@ -257,7 +265,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		Classification classification = Classification.builder()
@@ -308,7 +316,7 @@ class GenerateReporterServiceTest {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
+			.type(PipelineType.BUILDKITE.name())
 			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
@@ -319,7 +327,7 @@ class GenerateReporterServiceTest {
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		DeploymentFrequency deploymentFrequency = DeploymentFrequency.builder()
@@ -352,7 +360,7 @@ class GenerateReporterServiceTest {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
+			.type(PipelineType.BUILDKITE.name())
 			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
@@ -362,7 +370,7 @@ class GenerateReporterServiceTest {
 			.buildKiteSetting(buildKiteSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		ChangeFailureRate changeFailureRate = ChangeFailureRate.builder()
@@ -393,7 +401,7 @@ class GenerateReporterServiceTest {
 	@Test
 	void testNotGenerateReporterWithNullDevelopmentMetric() {
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
+			.type(PipelineType.BUILDKITE.name())
 			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(Collections.emptyList())
 			.build();
@@ -404,7 +412,7 @@ class GenerateReporterServiceTest {
 			.startTime("1661702400000")
 			.endTime("1662739199000")
 			.codebaseSetting(null)
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -443,7 +451,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any())).thenReturn(cardCollection);
@@ -472,17 +480,17 @@ class GenerateReporterServiceTest {
 	@Test
 	void testGenerateReporterWithLeadTimeForChangesMetric() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 
 		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
+			.type(SourceType.GITHUB.name())
+			.token(GITHUB_TOKEN)
 			.leadTime(List.of(mockDeployment))
 			.build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
+			.type(PipelineType.BUILDKITE.name())
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 
@@ -493,7 +501,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		PipelineLeadTime pipelineLeadTime = PipelineLeadTime.builder()
@@ -549,17 +557,17 @@ class GenerateReporterServiceTest {
 	void shouldGenerateCsvForPipelineWithPipelineMetricAndBuildInfoIsEmpty() throws IOException {
 		Path csvFilePath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 
 		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
+			.type(SourceType.GITHUB.name())
+			.token(GITHUB_TOKEN)
 			.leadTime(List.of(mockDeployment))
 			.build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
+			.type(PipelineType.BUILDKITE.name())
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 
@@ -570,7 +578,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime("1661702400000")
 			.endTime("1662739199000")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -591,24 +599,24 @@ class GenerateReporterServiceTest {
 		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(csvFilePath);
-		Assertions.assertTrue(isExists);
+		assertTrue(isExists);
 		Files.deleteIfExists(csvFilePath);
 	}
 
 	@Test
 	void shouldGenerateCsvForPipelineWithPipelineMetric() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 
 		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
+			.type(SourceType.GITHUB.name())
+			.token(GITHUB_TOKEN)
 			.leadTime(List.of(mockDeployment))
 			.build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
+			.type(PipelineType.BUILDKITE.name())
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 
@@ -619,7 +627,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime(String.valueOf(Instant.MIN.getEpochSecond()))
 			.endTime(String.valueOf(Instant.MAX.getEpochSecond()))
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -641,24 +649,24 @@ class GenerateReporterServiceTest {
 		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
-		Assertions.assertTrue(isExists);
+		assertTrue(isExists);
 		Files.deleteIfExists(mockPipelineCsvPath);
 	}
 
 	@Test
 	void shouldNotGenerateCsvForPipelineWithPipelineLeadTimeIsNull() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 
 		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
+			.type(SourceType.GITHUB.name())
+			.token(GITHUB_TOKEN)
 			.leadTime(List.of(mockDeployment))
 			.build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
+			.type(PipelineType.BUILDKITE.name())
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.pipelineCrews(List.of("xx"))
 			.build();
@@ -670,7 +678,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime(String.valueOf(Instant.MIN.getEpochSecond()))
 			.endTime(String.valueOf(Instant.MAX.getEpochSecond()))
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -687,24 +695,24 @@ class GenerateReporterServiceTest {
 		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
-		Assertions.assertFalse(isExists);
+		assertFalse(isExists);
 		Files.deleteIfExists(mockPipelineCsvPath);
 	}
 
 	@Test
 	void shouldNotGenerateCsvForPipelineWithCommitIsNull() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 
 		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
+			.type(SourceType.GITHUB.name())
+			.token(GITHUB_TOKEN)
 			.leadTime(List.of(mockDeployment))
 			.build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
+			.type(PipelineType.BUILDKITE.name())
+			.token(BUILDKITE_TOKEN)
 			.pipelineCrews(List.of("xxx"))
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
@@ -716,7 +724,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime(String.valueOf(Instant.MIN.getEpochSecond()))
 			.endTime(String.valueOf(Instant.MAX.getEpochSecond()))
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -732,24 +740,24 @@ class GenerateReporterServiceTest {
 		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
-		Assertions.assertFalse(isExists);
+		assertFalse(isExists);
 		Files.deleteIfExists(mockPipelineCsvPath);
 	}
 
 	@Test
 	void shouldNotGenerateCsvForPipeline() throws IOException {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 
 		CodebaseSetting codebaseSetting = CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
+			.type(SourceType.GITHUB.name())
+			.token(GITHUB_TOKEN)
 			.leadTime(List.of(mockDeployment))
 			.build();
 
 		BuildKiteSetting buildKiteSetting = BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
+			.type(PipelineType.BUILDKITE.name())
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 
@@ -760,7 +768,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(codebaseSetting)
 			.startTime(String.valueOf(Instant.MIN.getEpochSecond()))
 			.endTime(String.valueOf(Instant.MAX.getEpochSecond()))
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any()))
@@ -776,7 +784,7 @@ class GenerateReporterServiceTest {
 		generateReporterService.generateDoraReport(request);
 
 		boolean isExists = Files.exists(mockPipelineCsvPath);
-		Assertions.assertFalse(isExists);
+		assertFalse(isExists);
 		Files.deleteIfExists(mockPipelineCsvPath);
 	}
 
@@ -824,7 +832,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(jiraBoardSetting)
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		URI mockUrl = URI.create(SITE_ATLASSIAN_NET);
@@ -854,7 +862,7 @@ class GenerateReporterServiceTest {
 		generateReporterService.generateReporter(request);
 
 		boolean isExists = Files.exists(mockBoardCsvPath);
-		Assertions.assertTrue(isExists);
+		assertTrue(isExists);
 		Files.deleteIfExists(mockBoardCsvPath);
 	}
 
@@ -865,7 +873,7 @@ class GenerateReporterServiceTest {
 		generateReporterService.deleteExpireCSV(System.currentTimeMillis(), new File("./csv/"));
 
 		boolean isFileDeleted = Files.notExists(mockPipelineCsvPath);
-		Assertions.assertTrue(isFileDeleted);
+		assertTrue(isFileDeleted);
 	}
 
 	@Test
@@ -877,7 +885,7 @@ class GenerateReporterServiceTest {
 		generateReporterService.deleteExpireCSV(currentTimeStamp - 800000, new File("./csv/"));
 
 		boolean isFileDeleted = Files.notExists(csvFilePath);
-		Assertions.assertFalse(isFileDeleted);
+		assertFalse(isFileDeleted);
 		Files.deleteIfExists(csvFilePath);
 	}
 
@@ -892,7 +900,7 @@ class GenerateReporterServiceTest {
 
 		Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
 
-		Assertions.assertTrue(deleteStatus);
+		assertTrue(deleteStatus);
 	}
 
 	@Test
@@ -906,7 +914,7 @@ class GenerateReporterServiceTest {
 
 		Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
 
-		Assertions.assertFalse(deleteStatus);
+		assertFalse(deleteStatus);
 	}
 
 	private MeanTimeToRecovery createMockMeanToRecovery() {
@@ -1062,7 +1070,7 @@ class GenerateReporterServiceTest {
 			.jiraBoardSetting(null)
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
@@ -1078,7 +1086,7 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(null)
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
@@ -1094,7 +1102,7 @@ class GenerateReporterServiceTest {
 			.buildKiteSetting(null)
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		BadRequestException badRequestException = assertThrows(BadRequestException.class,
@@ -1105,46 +1113,46 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldInitializeValueFalseGivenPreviousMapperIsNullWhenInitializeRelatedMetricsReady() {
-		String timeStamp = "1683734399999";
+		String timeStamp = TIMESTAMP;
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue());
-		MetricsDataReady expectedPut = MetricsDataReady.builder()
-			.isBoardMetricsReady(false)
-			.isPipelineMetricsReady(null)
-			.isSourceControlMetricsReady(null)
+		MetricsDataCompleted expectedPut = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(false)
+			.pipelineMetricsCompleted(null)
+			.sourceControlMetricsCompleted(null)
 			.build();
 
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(null);
 
-		generateReporterService.initializeMetricsDataReadyInHandler(timeStamp, metrics);
+		generateReporterService.initializeMetricsDataCompletedInHandler(timeStamp, metrics);
 		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
 	}
 
 	@Test
 	void shouldReturnPreviousValueGivenPreviousValueExistWhenInitializeRelatedMetricsReady() {
-		String timeStamp = "1683734399999";
+		String timeStamp = TIMESTAMP;
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue(),
 				RequireDataEnum.DEPLOYMENT_FREQUENCY.getValue());
-		MetricsDataReady previousMetricsDataReady = MetricsDataReady.builder()
-			.isBoardMetricsReady(false)
-			.isPipelineMetricsReady(null)
-			.isSourceControlMetricsReady(null)
+		MetricsDataCompleted previousMetricsDataCompleted = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(false)
+			.pipelineMetricsCompleted(null)
+			.sourceControlMetricsCompleted(null)
 			.build();
-		MetricsDataReady expectedPut = MetricsDataReady.builder()
-			.isBoardMetricsReady(false)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(null)
+		MetricsDataCompleted expectedPut = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(false)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(null)
 			.build();
 
-		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(previousMetricsDataReady);
+		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(previousMetricsDataCompleted);
 
-		generateReporterService.initializeMetricsDataReadyInHandler(timeStamp, metrics);
+		generateReporterService.initializeMetricsDataCompletedInHandler(timeStamp, metrics);
 		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
 	}
 
 	@ParameterizedTest
 	@MethodSource({ "provideDataForTest" })
 	void shouldUpdateAndSetMetricsReadyNonnullTrueWhenMetricsExistAndPreviousMetricsReadyNotNull(List<String> metrics,
-			MetricsDataReady previousReady, MetricsDataReady expectedReady) {
+			MetricsDataCompleted previousReady, MetricsDataCompleted expectedReady) {
 		GenerateReportRequest request = GenerateReportRequest.builder()
 			.considerHoliday(false)
 			.metrics(metrics)
@@ -1153,12 +1161,12 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(buildCodeBaseSetting())
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
 
-		generateReporterService.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		generateReporterService.updateMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
 
 		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), expectedReady);
 	}
@@ -1174,26 +1182,26 @@ class GenerateReporterServiceTest {
 			.codebaseSetting(buildCodeBaseSetting())
 			.startTime("123")
 			.endTime("123")
-			.csvTimeStamp("1683734399999")
+			.csvTimeStamp(TIMESTAMP)
 			.build();
 
 		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(null);
 
 		assertThrows(GenerateReportException.class, () -> generateReporterService
-			.updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics()));
+			.updateMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics()));
 
 	}
 
 	@Test
 	void shouldReturnComposedReportResponseWhenBothBoardResponseAndDoraResponseReady() {
 		ReportResponse boardResponse = ReportResponse.builder()
-			.isBoardMetricsReady(true)
+			.boardMetricsCompleted(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
 			.velocity(Velocity.builder().velocityForCards(10).build())
 			.classificationList(List.of())
 			.build();
 		ReportResponse pipelineResponse = ReportResponse.builder()
-			.isPipelineMetricsReady(true)
+			.pipelineMetricsCompleted(true)
 			.changeFailureRate(ChangeFailureRate.builder()
 				.avgChangeFailureRate(AvgChangeFailureRate.builder().name("name").failureRate(0.1f).build())
 				.build())
@@ -1206,18 +1214,18 @@ class GenerateReporterServiceTest {
 				.build())
 			.build();
 
-		String timeStamp = "1683734399999";
+		String timeStamp = TIMESTAMP;
 		String boardTimeStamp = "board-1683734399999";
 		String pipelineTimestamp = "pipeline-1683734399999";
 
 		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
 		when(generateReporterService.getReportFromHandler(pipelineTimestamp)).thenReturn(pipelineResponse);
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
-			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
+			.thenReturn(new MetricsDataCompleted(Boolean.TRUE, Boolean.TRUE, null));
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getIsAllMetricsReady());
+		assertTrue(composedResponse.getAllMetricsCompleted());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 		assertEquals("deploymentFrequency",
 				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getName());
@@ -1228,31 +1236,31 @@ class GenerateReporterServiceTest {
 	@Test
 	void shouldReturnBoardReportResponseWhenDoraResponseIsNullAndGenerateReportIsOver() {
 		ReportResponse boardResponse = ReportResponse.builder()
-			.isBoardMetricsReady(true)
+			.boardMetricsCompleted(true)
 			.cycleTime(CycleTime.builder().averageCycleTimePerCard(20.0).build())
 			.velocity(Velocity.builder().velocityForCards(10).build())
 			.classificationList(List.of())
 			.build();
 
-		String timeStamp = "1683734399999";
+		String timeStamp = TIMESTAMP;
 		String boardTimeStamp = "board-1683734399999";
 		String doraTimestamp = "dora-1683734399999";
 
 		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
 		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(null);
 		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
-			.thenReturn(new MetricsDataReady(Boolean.TRUE, Boolean.TRUE, null));
+			.thenReturn(new MetricsDataCompleted(Boolean.TRUE, Boolean.TRUE, null));
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getIsAllMetricsReady());
-		assertTrue(composedResponse.getIsBoardMetricsReady());
+		assertTrue(composedResponse.getAllMetricsCompleted());
+		assertTrue(composedResponse.getBoardMetricsCompleted());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 	}
 
 	@Test
 	void shouldDoConvertMetricDataToCSVWhenCallGenerateCSVForMetrics() throws IOException {
-		String timeStamp = "1683734399999";
+		String timeStamp = TIMESTAMP;
 		ObjectMapper mapper = new ObjectMapper();
 		ReportResponse reportResponse = mapper
 			.readValue(new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
@@ -1265,7 +1273,7 @@ class GenerateReporterServiceTest {
 
 	@Test
 	void shouldPutReportInHandlerWhenCallSaveReporterInHandler() throws IOException {
-		String timeStamp = "20240109232359";
+		String timeStamp = CSV_TIMESTAMP;
 		String reportId = IdUtil.getPipelineReportId(timeStamp);
 		ObjectMapper mapper = new ObjectMapper();
 		ReportResponse reportResponse = mapper
@@ -1278,16 +1286,16 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldPutBoardReportIntoHandlerWhenCallGenerateBoardReport() throws IOException, InterruptedException {
+	void shouldPutBoardReportIntoHandlerWhenCallGenerateBoardReport() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
-		reportRequest.setCsvTimeStamp("20240109232359");
-		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
-			.isBoardMetricsReady(true)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(false)
+		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
+		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(true)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(false)
 			.build();
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 
@@ -1299,54 +1307,99 @@ class GenerateReporterServiceTest {
 
 		verify(spyGenerateReporterService, times(1)).generateReporter(reportRequest);
 		verify(spyGenerateReporterService, times(1))
-			.initializeMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
+			.initializeMetricsDataCompletedInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
 		verify(spyGenerateReporterService, times(1)).saveReporterInHandler(
 				spyGenerateReporterService.generateReporter(reportRequest), reportRequest.getCsvTimeStamp());
-		verify(spyGenerateReporterService, times(1)).updateMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(),
-				reportRequest.getMetrics());
+		verify(spyGenerateReporterService, times(1))
+			.updateMetricsDataCompletedInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
 	}
 
 	@Test
-	void shouldPutExceptionInHandlerWhenCallGenerateBoardReportThrowException()
-			throws IOException, InterruptedException {
+	void shouldPutExceptionInHandlerWhenCallGenerateBoardReportThrowException() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
-		reportRequest.setCsvTimeStamp("20240109232359");
-		String boardTimeStamp = "board-20240109232359";
+		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
+		String reportId = "board-20240109232359";
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
-		GenerateReportException e = new GenerateReportException(
-				"Failed to update metrics data ready through this timestamp.");
+		UnauthorizedException e = new UnauthorizedException("Error message");
 
-		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
-		doThrow(e).when(spyGenerateReporterService).updateMetricsDataReadyInHandler(any(), any());
-		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp())).thenReturn(null);
+		doThrow(e).when(spyGenerateReporterService).generateReporter(any());
+		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+			.thenReturn(MetricsDataCompleted.builder().build());
 
 		spyGenerateReporterService.generateBoardReport(reportRequest);
 
 		verify(spyGenerateReporterService, times(1))
-			.initializeMetricsDataReadyInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
+			.initializeMetricsDataCompletedInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
 		verify(spyGenerateReporterService, times(1))
-			.saveReporterInHandler(spyGenerateReporterService.generateReporter(reportRequest), boardTimeStamp);
-		verify(asyncExceptionHandler, times(1)).put(boardTimeStamp, e);
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(reportRequest), reportId);
+		verify(asyncExceptionHandler, times(1)).put(reportId, e);
 	}
 
 	@Test
-	void shouldGeneratePipelineReportAndUpdatePipelineMetricsReadyWhenCallGeneratePipelineReport()
-			throws IOException, InterruptedException {
+	void shouldPutExceptionInHandlerWhenCallGeneratePipelineReportThrowException() throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateReportRequest.class);
+		reportRequest.setCsvTimeStamp("20240109232359");
+		reportRequest.setMetrics(List.of(RequireDataEnum.DEPLOYMENT_FREQUENCY.getValue()));
+		String reportId = "pipeline-20240109232359";
+		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
+		PermissionDenyException e = new PermissionDenyException("Error message");
+
+		doThrow(e).when(spyGenerateReporterService).generateReporter(any());
+		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+			.thenReturn(MetricsDataCompleted.builder().build());
+
+		spyGenerateReporterService.generateDoraReport(reportRequest);
+
+		verify(spyGenerateReporterService, times(1))
+			.initializeMetricsDataCompletedInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
+		verify(spyGenerateReporterService, times(1))
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(reportRequest), reportId);
+		verify(asyncExceptionHandler, times(1)).put(reportId, e);
+	}
+
+	@Test
+	void shouldPutExceptionInHandlerWhenCallGenerateSourceControlReportThrowException() throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
+				GenerateReportRequest.class);
+		reportRequest.setCsvTimeStamp("20240109232359");
+		reportRequest.setMetrics(List.of(RequireDataEnum.LEAD_TIME_FOR_CHANGES.getValue()));
+		String reportId = "sourceControl-20240109232359";
+		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
+		NotFoundException e = new NotFoundException("Error message");
+
+		doThrow(e).when(spyGenerateReporterService).generateReporter(any());
+		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+			.thenReturn(MetricsDataCompleted.builder().build());
+
+		spyGenerateReporterService.generateDoraReport(reportRequest);
+
+		verify(spyGenerateReporterService, times(1))
+			.initializeMetricsDataCompletedInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
+		verify(spyGenerateReporterService, times(1))
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(reportRequest), reportId);
+		verify(asyncExceptionHandler, times(1)).put(reportId, e);
+	}
+
+	@Test
+	void shouldGeneratePipelineReportAndUpdatePipelineMetricsReadyWhenCallGeneratePipelineReport() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
 		reportRequest.setMetrics(List.of("Deployment frequency"));
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
-		reportRequest.setCsvTimeStamp("20240109232359");
-		String doraTimeStamp = "dora-20240109232359";
-		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
-			.isBoardMetricsReady(null)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(false)
+		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
+		String reportId = "dora-20240109232359";
+		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(null)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(false)
 			.build();
 
 		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
@@ -1356,27 +1409,26 @@ class GenerateReporterServiceTest {
 		spyGenerateReporterService.generateDoraReport(reportRequest);
 
 		verify(spyGenerateReporterService, times(1)).generateReporter(any());
-		verify(spyGenerateReporterService, times(1)).initializeMetricsDataReadyInHandler(any(), any());
+		verify(spyGenerateReporterService, times(1)).initializeMetricsDataCompletedInHandler(any(), any());
 		verify(spyGenerateReporterService, times(1))
-			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), doraTimeStamp);
-		verify(spyGenerateReporterService, times(1)).updateMetricsDataReadyInHandler(any(), any());
+			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), reportId);
+		verify(spyGenerateReporterService, times(1)).updateMetricsDataCompletedInHandler(any(), any());
 	}
 
 	@Test
-	void shouldGenerateCodebaseReportAndUpdateCodebaseMetricsReadyWhenCallGeneratePipelineReport()
-			throws IOException, InterruptedException {
+	void shouldGenerateCodebaseReportAndUpdateCodebaseMetricsReadyWhenCallGeneratePipelineReport() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
 		reportRequest.setMetrics(List.of("Lead time for changes"));
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
-		reportRequest.setCsvTimeStamp("20240109232359");
+		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
 		String codebaseTimeStamp = "github-20240109232359";
-		MetricsDataReady previousMetricsReady = MetricsDataReady.builder()
-			.isBoardMetricsReady(null)
-			.isPipelineMetricsReady(false)
-			.isSourceControlMetricsReady(false)
+		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(null)
+			.pipelineMetricsCompleted(false)
+			.sourceControlMetricsCompleted(false)
 			.build();
 
 		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
@@ -1386,10 +1438,10 @@ class GenerateReporterServiceTest {
 		spyGenerateReporterService.generateDoraReport(reportRequest);
 
 		verify(spyGenerateReporterService, times(1)).generateReporter(any());
-		verify(spyGenerateReporterService, times(1)).initializeMetricsDataReadyInHandler(any(), any());
+		verify(spyGenerateReporterService, times(1)).initializeMetricsDataCompletedInHandler(any(), any());
 		verify(spyGenerateReporterService, times(1))
 			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), codebaseTimeStamp);
-		verify(spyGenerateReporterService, times(1)).updateMetricsDataReadyInHandler(any(), any());
+		verify(spyGenerateReporterService, times(1)).updateMetricsDataCompletedInHandler(any(), any());
 
 	}
 
@@ -1402,20 +1454,20 @@ class GenerateReporterServiceTest {
 
 	private BuildKiteSetting buildPipelineSetting() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 		return BuildKiteSetting.builder()
-			.type("BuildKite")
-			.token("buildKite_fake_token")
+			.type(PipelineType.BUILDKITE.name())
+			.token(BUILDKITE_TOKEN)
 			.deploymentEnvList(List.of(mockDeployment))
 			.build();
 	}
 
 	private CodebaseSetting buildCodeBaseSetting() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		mockDeployment.setRepository("https://github.com/XXXX-fs/fs-platform-onboarding");
+		mockDeployment.setRepository(GITHUB_REPOSITORY);
 		return CodebaseSetting.builder()
-			.type("Github")
-			.token("github_fake_token")
+			.type(SourceType.GITHUB.name())
+			.token(GITHUB_TOKEN)
 			.leadTime(List.of(mockDeployment))
 			.build();
 	}
@@ -1423,48 +1475,48 @@ class GenerateReporterServiceTest {
 	private static Stream<Arguments> provideDataForTest() {
 		return Stream.of(
 				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(false)
-							.isPipelineMetricsReady(false)
-							.isSourceControlMetricsReady(null)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(false)
+							.pipelineMetricsCompleted(false)
+							.sourceControlMetricsCompleted(null)
 							.build(),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(true)
-							.isPipelineMetricsReady(true)
-							.isSourceControlMetricsReady(null)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(true)
+							.pipelineMetricsCompleted(true)
+							.sourceControlMetricsCompleted(null)
 							.build()),
 				Arguments.of(List.of("velocity", "deployment frequency", "lead time for changes"),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(false)
-							.isPipelineMetricsReady(false)
-							.isSourceControlMetricsReady(false)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(false)
+							.pipelineMetricsCompleted(false)
+							.sourceControlMetricsCompleted(false)
 							.build(),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(true)
-							.isPipelineMetricsReady(true)
-							.isSourceControlMetricsReady(true)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(true)
+							.pipelineMetricsCompleted(true)
+							.sourceControlMetricsCompleted(true)
 							.build()),
 				Arguments.of(List.of("velocity"),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(false)
-							.isPipelineMetricsReady(null)
-							.isSourceControlMetricsReady(null)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(false)
+							.pipelineMetricsCompleted(null)
+							.sourceControlMetricsCompleted(null)
 							.build(),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(true)
-							.isPipelineMetricsReady(null)
-							.isSourceControlMetricsReady(null)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(true)
+							.pipelineMetricsCompleted(null)
+							.sourceControlMetricsCompleted(null)
 							.build()),
 				Arguments.of(List.of("deployment frequency", "change failure rate", "mean time to recovery"),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(null)
-							.isPipelineMetricsReady(false)
-							.isSourceControlMetricsReady(null)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(null)
+							.pipelineMetricsCompleted(false)
+							.sourceControlMetricsCompleted(null)
 							.build(),
-						MetricsDataReady.builder()
-							.isBoardMetricsReady(null)
-							.isPipelineMetricsReady(true)
-							.isSourceControlMetricsReady(null)
+						MetricsDataCompleted.builder()
+							.boardMetricsCompleted(null)
+							.pipelineMetricsCompleted(true)
+							.sourceControlMetricsCompleted(null)
 							.build()));
 	}
 

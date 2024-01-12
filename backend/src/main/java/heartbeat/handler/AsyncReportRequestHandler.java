@@ -1,6 +1,6 @@
 package heartbeat.handler;
 
-import heartbeat.controller.report.dto.response.MetricsDataReady;
+import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.util.IdUtil;
@@ -23,7 +23,7 @@ public class AsyncReportRequestHandler {
 
 	private final Map<String, ReportResponse> reportMap = new ConcurrentHashMap<>();
 
-	private final Map<String, MetricsDataReady> metricsDataReadyMap = new ConcurrentHashMap<>();
+	private final Map<String, MetricsDataCompleted> metricsDataReadyMap = new ConcurrentHashMap<>();
 
 	public void putReport(String reportId, ReportResponse e) {
 		reportMap.put(reportId, e);
@@ -33,23 +33,23 @@ public class AsyncReportRequestHandler {
 		return reportMap.get(reportId);
 	}
 
-	public void putMetricsDataReady(String timeStamp, MetricsDataReady metricsDataReady) {
-		metricsDataReadyMap.put(timeStamp, metricsDataReady);
+	public void putMetricsDataReady(String timeStamp, MetricsDataCompleted metricsDataCompleted) {
+		metricsDataReadyMap.put(timeStamp, metricsDataCompleted);
 	}
 
-	public MetricsDataReady getMetricsDataReady(String timeStamp) {
+	public MetricsDataCompleted getMetricsDataReady(String timeStamp) {
 		return metricsDataReadyMap.get(timeStamp);
 	}
 
 	public boolean isReportReady(String timeStamp) {
-		MetricsDataReady metricsDataReady = getMetricsDataReady(timeStamp);
-		if (metricsDataReady == null) {
+		MetricsDataCompleted metricsDataCompleted = getMetricsDataReady(timeStamp);
+		if (metricsDataCompleted == null) {
 			throw new GenerateReportException("Failed to locate the report using this report ID.");
 		}
 
 		List<Boolean> metricsReady = Stream
-			.of(metricsDataReady.isBoardMetricsReady(), metricsDataReady.isPipelineMetricsReady(),
-					metricsDataReady.isSourceControlMetricsReady())
+			.of(metricsDataCompleted.boardMetricsCompleted(), metricsDataCompleted.pipelineMetricsCompleted(),
+					metricsDataCompleted.sourceControlMetricsCompleted())
 			.filter(Objects::nonNull)
 			.toList();
 

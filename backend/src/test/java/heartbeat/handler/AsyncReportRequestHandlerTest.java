@@ -1,6 +1,6 @@
 package heartbeat.handler;
 
-import heartbeat.controller.report.dto.response.MetricsDataReady;
+import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.util.IdUtil;
@@ -53,9 +53,9 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder().isBoardMetricsReady(false).build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
-		asyncReportRequestHandler.putMetricsDataReady(expireTime, metricsDataReady);
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
+		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
+		asyncReportRequestHandler.putMetricsDataReady(expireTime, metricsDataCompleted);
 
 		asyncReportRequestHandler.deleteExpireMetricsDataReady(currentTimeMillis);
 
@@ -67,8 +67,8 @@ class AsyncReportRequestHandlerTest {
 	void shouldGetAsyncMetricsDataReadyWhenPuttingMetricsReadyIntoAsyncReportRequestHandler() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder().isBoardMetricsReady(false).build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
+		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
 
 		assertNotNull(asyncReportRequestHandler.getMetricsDataReady(currentTime));
 	}
@@ -87,12 +87,12 @@ class AsyncReportRequestHandlerTest {
 	void shouldReturnFalseWhenExistFalseValue() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.isBoardMetricsReady(false)
-			.isSourceControlMetricsReady(false)
-			.isPipelineMetricsReady(null)
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(false)
+			.sourceControlMetricsCompleted(false)
+			.pipelineMetricsCompleted(null)
 			.build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
+		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
 
 		boolean reportReady = asyncReportRequestHandler.isReportReady(currentTime);
 
@@ -103,12 +103,12 @@ class AsyncReportRequestHandlerTest {
 	void shouldReturnTrueWhenNotExistFalseValue() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.isBoardMetricsReady(true)
-			.isSourceControlMetricsReady(null)
-			.isPipelineMetricsReady(true)
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(true)
+			.sourceControlMetricsCompleted(null)
+			.pipelineMetricsCompleted(true)
 			.build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataReady);
+		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
 
 		boolean reportReady = asyncReportRequestHandler.isReportReady(currentTime);
 

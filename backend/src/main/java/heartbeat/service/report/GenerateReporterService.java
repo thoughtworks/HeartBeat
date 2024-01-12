@@ -32,7 +32,7 @@ import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
 import heartbeat.controller.report.dto.response.ErrorInfo;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
-import heartbeat.controller.report.dto.response.MetricsDataReady;
+import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportError;
 import heartbeat.controller.report.dto.response.ReportResponse;
@@ -70,7 +70,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -200,7 +199,7 @@ public class GenerateReporterService {
 	}
 
 	public void generateBoardReport(GenerateReportRequest request) {
-		initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		initializeMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		String boardReportId = IdUtil.getBoardReportId(request.getCsvTimeStamp());
 		log.info(
 				"Start to generate board report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _boardReportId: {}",
@@ -208,25 +207,32 @@ public class GenerateReporterService {
 				boardReportId);
 		try {
 			saveReporterInHandler(generateReporter(request), boardReportId);
-			updateMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
+			updateMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
 			log.info(
 					"Successfully generate board report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _boardReportId: {}",
 					request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
 					boardReportId);
 		}
 		catch (BaseException e) {
-			asyncExceptionHandler.put(boardReportId, e);
+			handleException(request, boardReportId, e);
 		}
 	}
 
+	private void handleException(GenerateReportRequest request, String reportId, BaseException e) {
+		asyncExceptionHandler.put(reportId, e);
+		if (e.getStatus() == 401 || e.getStatus() == 403 || e.getStatus() == 404)
+			updateMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
+	}
+
 	public void generateDoraReport(GenerateReportRequest request) {
-		MetricsDataReady metricsDataStatus = getMetricsStatus(request.getMetrics(), Boolean.TRUE);
-		initializeMetricsDataReadyInHandler(request.getCsvTimeStamp(), request.getMetrics());
-		if (Objects.nonNull(metricsDataStatus.isPipelineMetricsReady()) && metricsDataStatus.isPipelineMetricsReady()) {
+		MetricsDataCompleted metricsDataStatus = getMetricsStatus(request.getMetrics(), Boolean.TRUE);
+		initializeMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		if (Objects.nonNull(metricsDataStatus.pipelineMetricsCompleted())
+				&& metricsDataStatus.pipelineMetricsCompleted()) {
 			generatePipelineReport(request);
 		}
-		if (Objects.nonNull(metricsDataStatus.isSourceControlMetricsReady())
-				&& metricsDataStatus.isSourceControlMetricsReady()) {
+		if (Objects.nonNull(metricsDataStatus.sourceControlMetricsCompleted())
+				&& metricsDataStatus.sourceControlMetricsCompleted()) {
 			generateSourceControlReport(request);
 		}
 		generateCsvForDora(request);
@@ -241,14 +247,14 @@ public class GenerateReporterService {
 				pipelineRequest.getEndTime(), pipelineReportId);
 		try {
 			saveReporterInHandler(generateReporter(pipelineRequest), pipelineReportId);
-			updateMetricsDataReadyInHandler(pipelineRequest.getCsvTimeStamp(), pipelineRequest.getMetrics());
+			updateMetricsDataCompletedInHandler(pipelineRequest.getCsvTimeStamp(), pipelineRequest.getMetrics());
 			log.info(
 					"Successfully generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _pipelineReportId: {}",
 					pipelineRequest.getMetrics(), pipelineRequest.getConsiderHoliday(), pipelineRequest.getStartTime(),
 					pipelineRequest.getEndTime(), pipelineReportId);
 		}
 		catch (BaseException e) {
-			asyncExceptionHandler.put(pipelineReportId, e);
+			handleException(request, pipelineReportId, e);
 		}
 	}
 
@@ -261,14 +267,15 @@ public class GenerateReporterService {
 				sourceControlRequest.getStartTime(), sourceControlRequest.getEndTime(), sourceControlReportId);
 		try {
 			saveReporterInHandler(generateReporter(sourceControlRequest), sourceControlReportId);
-			updateMetricsDataReadyInHandler(sourceControlRequest.getCsvTimeStamp(), sourceControlRequest.getMetrics());
+			updateMetricsDataCompletedInHandler(sourceControlRequest.getCsvTimeStamp(),
+					sourceControlRequest.getMetrics());
 			log.info(
 					"Successfully generate source control report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
 					sourceControlRequest.getMetrics(), sourceControlRequest.getConsiderHoliday(),
 					sourceControlRequest.getStartTime(), sourceControlRequest.getEndTime(), sourceControlReportId);
 		}
 		catch (BaseException e) {
-			asyncExceptionHandler.put(sourceControlReportId, e);
+			handleException(request, sourceControlReportId, e);
 		}
 	}
 
@@ -642,30 +649,32 @@ public class GenerateReporterService {
 		asyncReportRequestHandler.putReport(reportId, reportContent);
 	}
 
-	public void initializeMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
-		MetricsDataReady metricsStatus = getMetricsStatus(metrics, Boolean.FALSE);
-		MetricsDataReady isPreviousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
-		MetricsDataReady isMetricsDataReady = createMetricsDataReady(metricsStatus.isBoardMetricsReady(),
-				metricsStatus.isSourceControlMetricsReady(), metricsStatus.isPipelineMetricsReady(),
+	public void initializeMetricsDataCompletedInHandler(String timeStamp, List<String> metrics) {
+		MetricsDataCompleted metricsStatus = getMetricsStatus(metrics, Boolean.FALSE);
+		MetricsDataCompleted isPreviousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
+		MetricsDataCompleted isMetricsDataCompleted = createMetricsDataReady(metricsStatus.boardMetricsCompleted(),
+				metricsStatus.sourceControlMetricsCompleted(), metricsStatus.pipelineMetricsCompleted(),
 				isPreviousMetricsReady);
-		asyncReportRequestHandler.putMetricsDataReady(timeStamp, isMetricsDataReady);
+		asyncReportRequestHandler.putMetricsDataReady(timeStamp, isMetricsDataCompleted);
 	}
 
-	private MetricsDataReady createMetricsDataReady(Boolean isBoardMetricsReady, Boolean isSourceControlMetricsReady,
-			Boolean isPipelineMetricsReady, MetricsDataReady previousMetricsReady) {
+	private MetricsDataCompleted createMetricsDataReady(Boolean isBoardMetricsReady,
+			Boolean isSourceControlMetricsReady, Boolean isPipelineMetricsReady,
+			MetricsDataCompleted previousMetricsReady) {
 		if (previousMetricsReady == null) {
-			return MetricsDataReady.builder()
-				.isBoardMetricsReady(isBoardMetricsReady)
-				.isPipelineMetricsReady(isPipelineMetricsReady)
-				.isSourceControlMetricsReady(isSourceControlMetricsReady)
+			return MetricsDataCompleted.builder()
+				.boardMetricsCompleted(isBoardMetricsReady)
+				.pipelineMetricsCompleted(isPipelineMetricsReady)
+				.sourceControlMetricsCompleted(isSourceControlMetricsReady)
 				.build();
 		}
 
-		return MetricsDataReady.builder()
-			.isBoardMetricsReady(getCombinedReadyValue(previousMetricsReady.isBoardMetricsReady(), isBoardMetricsReady))
-			.isPipelineMetricsReady(
-					getCombinedReadyValue(previousMetricsReady.isPipelineMetricsReady(), isPipelineMetricsReady))
-			.isSourceControlMetricsReady(getCombinedReadyValue(previousMetricsReady.isSourceControlMetricsReady(),
+		return MetricsDataCompleted.builder()
+			.boardMetricsCompleted(
+					getCombinedReadyValue(previousMetricsReady.boardMetricsCompleted(), isBoardMetricsReady))
+			.pipelineMetricsCompleted(
+					getCombinedReadyValue(previousMetricsReady.pipelineMetricsCompleted(), isPipelineMetricsReady))
+			.sourceControlMetricsCompleted(getCombinedReadyValue(previousMetricsReady.sourceControlMetricsCompleted(),
 					isSourceControlMetricsReady))
 			.build();
 
@@ -675,22 +684,22 @@ public class GenerateReporterService {
 		return (isPreviousReadyValue != null || isNewReadyValue == null) ? isPreviousReadyValue : isNewReadyValue;
 	}
 
-	public void updateMetricsDataReadyInHandler(String timeStamp, List<String> metrics) {
-		MetricsDataReady metricsStatus = getMetricsStatus(metrics, Boolean.TRUE);
-		MetricsDataReady previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
+	public void updateMetricsDataCompletedInHandler(String timeStamp, List<String> metrics) {
+		MetricsDataCompleted metricsStatus = getMetricsStatus(metrics, Boolean.TRUE);
+		MetricsDataCompleted previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
 		if (previousMetricsReady == null) {
 			log.error("Failed to update metrics data ready through this timestamp.");
 			throw new GenerateReportException("Failed to update metrics data ready through this timestamp.");
 		}
-		MetricsDataReady metricsDataReady = MetricsDataReady.builder()
-			.isBoardMetricsReady(checkCurrentMetricsReadyState(metricsStatus.isBoardMetricsReady(),
-					previousMetricsReady.isBoardMetricsReady()))
-			.isPipelineMetricsReady(checkCurrentMetricsReadyState(metricsStatus.isPipelineMetricsReady(),
-					previousMetricsReady.isPipelineMetricsReady()))
-			.isSourceControlMetricsReady(checkCurrentMetricsReadyState(metricsStatus.isSourceControlMetricsReady(),
-					previousMetricsReady.isSourceControlMetricsReady()))
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.boardMetricsCompleted(),
+					previousMetricsReady.boardMetricsCompleted()))
+			.pipelineMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.pipelineMetricsCompleted(),
+					previousMetricsReady.pipelineMetricsCompleted()))
+			.sourceControlMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.sourceControlMetricsCompleted(),
+					previousMetricsReady.sourceControlMetricsCompleted()))
 			.build();
-		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataReady);
+		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataCompleted);
 	}
 
 	private Boolean checkCurrentMetricsReadyState(Boolean exist, Boolean previousValue) {
@@ -699,7 +708,7 @@ public class GenerateReporterService {
 		return previousValue;
 	}
 
-	private MetricsDataReady getMetricsStatus(List<String> metrics, Boolean flag) {
+	private MetricsDataCompleted getMetricsStatus(List<String> metrics, Boolean flag) {
 		List<String> lowerMetrics = metrics.stream().map(String::toLowerCase).toList();
 		boolean boardMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getBoardMetrics(lowerMetrics));
 		boolean codebaseMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getCodeBaseMetrics(lowerMetrics));
@@ -707,10 +716,10 @@ public class GenerateReporterService {
 		Boolean isBoardMetricsReady = boardMetricsExist ? flag : null;
 		Boolean isPipelineMetricsReady = buildKiteMetricsExist ? flag : null;
 		Boolean isSourceControlMetricsReady = codebaseMetricsExist ? flag : null;
-		return MetricsDataReady.builder()
-			.isBoardMetricsReady(isBoardMetricsReady)
-			.isPipelineMetricsReady(isPipelineMetricsReady)
-			.isSourceControlMetricsReady(isSourceControlMetricsReady)
+		return MetricsDataCompleted.builder()
+			.boardMetricsCompleted(isBoardMetricsReady)
+			.pipelineMetricsCompleted(isPipelineMetricsReady)
+			.sourceControlMetricsCompleted(isSourceControlMetricsReady)
 			.build();
 	}
 
@@ -861,7 +870,7 @@ public class GenerateReporterService {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getPipelineReportId(reportId));
 		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getSourceControlReportId(reportId));
-		MetricsDataReady metricsDataReady = asyncReportRequestHandler.getMetricsDataReady(reportId);
+		MetricsDataCompleted metricsDataCompleted = asyncReportRequestHandler.getMetricsDataReady(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 		ReportError reportError = getReportErrorAndHandleAsyncException(reportId);
 
@@ -874,11 +883,12 @@ public class GenerateReporterService {
 			.changeFailureRate(getValueOrNull(doraReportResponse, ReportResponse::getChangeFailureRate))
 			.meanTimeToRecovery(getValueOrNull(doraReportResponse, ReportResponse::getMeanTimeToRecovery))
 			.leadTimeForChanges(getValueOrNull(codebaseReportResponse, ReportResponse::getLeadTimeForChanges))
-			.isBoardMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::isBoardMetricsReady))
-			.isPipelineMetricsReady(getValueOrNull(metricsDataReady, MetricsDataReady::isPipelineMetricsReady))
-			.isSourceControlMetricsReady(
-					getValueOrNull(metricsDataReady, MetricsDataReady::isSourceControlMetricsReady))
-			.isAllMetricsReady(isReportReady)
+			.boardMetricsCompleted(getValueOrNull(metricsDataCompleted, MetricsDataCompleted::boardMetricsCompleted))
+			.pipelineMetricsCompleted(
+					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::pipelineMetricsCompleted))
+			.sourceControlMetricsCompleted(
+					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::sourceControlMetricsCompleted))
+			.allMetricsCompleted(isReportReady)
 			.reportError(reportError)
 			.build();
 	}

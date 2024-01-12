@@ -45,9 +45,6 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
       setInfo(response);
       dispatch(updatePipelineToolVerifyResponse(response.data));
       pipelineToolVerified && dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
-    } catch (e) {
-      const err = e as Error;
-      console.error(`Failed to get pipeline tool info in useGetPipelineToolInfoEffect hook`, err?.message);
     } finally {
       setIsLoading(false);
     }

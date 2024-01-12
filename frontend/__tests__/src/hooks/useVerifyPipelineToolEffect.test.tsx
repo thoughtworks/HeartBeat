@@ -12,7 +12,7 @@ describe('use verify pipelineTool state', () => {
     expect(result.current.isLoading).toEqual(false);
   });
 
-  it('should set error message when get verify pipeline response status 500', async () => {
+  it('should set error message when verifying pipeline given response status 500', async () => {
     pipelineToolClient.verifyPipelineTool = jest.fn().mockImplementation(() => {
       throw new InternalServerException('error message', HttpStatusCode.InternalServerError);
     });

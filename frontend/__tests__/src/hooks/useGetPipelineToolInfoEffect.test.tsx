@@ -47,7 +47,7 @@ beforeEach(() => {
 });
 
 describe('use get pipelineTool info side effect', () => {
-  it('should properly return data and loading state when client works properly', async () => {
+  it('should return success data and loading state when client goes happy path', async () => {
     const { result } = renderHook(() => useGetPipelineToolInfoEffect(), { wrapper: Wrapper });
     expect(result.current.isLoading).toBeTruthy();
 
@@ -65,30 +65,6 @@ describe('use get pipelineTool info side effect', () => {
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
-
     expect(clientSpy).toBeCalledTimes(1);
-  });
-
-  it('should log error when error happens', async () => {
-    const clientErrorMock = jest.fn().mockImplementation(() => {
-      clientSpy();
-      const error = {
-        code: 401,
-        message: 'Unauthorized',
-      };
-      throw error;
-    });
-    const consoleErrorSpy = jest.spyOn(console, 'error');
-    pipelineToolClient.getPipelineToolInfo = clientErrorMock;
-
-    const { result } = renderHook(() => useGetPipelineToolInfoEffect(), { wrapper: Wrapper });
-    await waitFor(() => {
-      expect(result.current.isLoading).toBeFalsy();
-    });
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Failed to get pipeline tool info in useGetPipelineToolInfoEffect hook',
-      'Unauthorized'
-    );
   });
 });

@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  follow-redirects@<1.15.4: '>=1.15.4'
-
 dependencies:
   '@emotion/react':
     specifier: ^11.10.6

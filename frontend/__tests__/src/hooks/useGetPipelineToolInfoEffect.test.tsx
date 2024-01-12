@@ -49,12 +49,11 @@ beforeEach(() => {
 describe('use get pipelineTool info side effect', () => {
   it('should return success data and loading state when client goes happy path', async () => {
     const { result } = renderHook(() => useGetPipelineToolInfoEffect(), { wrapper: Wrapper });
-    expect(result.current.isLoading).toBeTruthy();
 
+    expect(result.current.isLoading).toBeTruthy();
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
-
     expect(clientSpy).toBeCalled();
   });
 

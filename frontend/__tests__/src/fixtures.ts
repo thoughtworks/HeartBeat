@@ -478,6 +478,7 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   isPipelineMetricsReady: true,
   isSourceControlMetricsReady: true,
   isAllMetricsReady: true,
+  reportError: null,
 };
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
@@ -642,6 +643,7 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   isPipelineMetricsReady: false,
   isSourceControlMetricsReady: false,
   isAllMetricsReady: false,
+  reportError: null,
 };
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

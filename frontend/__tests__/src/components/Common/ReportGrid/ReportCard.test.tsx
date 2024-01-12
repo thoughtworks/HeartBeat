@@ -1,8 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ReportCard } from '@src/components/Common/ReportGrid/ReportCard';
+import clearAllMocks = jest.clearAllMocks;
 
 describe('Report Card', () => {
+  afterEach(() => {
+    clearAllMocks();
+  });
+
   it('should not show exceeding items', () => {
     const items = [
       {
@@ -19,10 +24,20 @@ describe('Report Card', () => {
       },
     ];
 
-    render(<ReportCard title={'card'} items={items} xs={6} />);
+    const { getByText, queryByText } = render(<ReportCard title={'card'} items={items} xs={6} errorMessage={''} />);
 
     expect(screen.getByText('1.00')).toBeInTheDocument();
     expect(screen.getByText('2.00')).toBeInTheDocument();
     expect(screen.queryByText('3.00')).not.toBeInTheDocument();
+  });
+
+  it('should show error message when errorMessage is not empty', () => {
+    const errorMessage = 'Data loading failed';
+
+    const { getByText, queryByText } = render(
+      <ReportCard title={'card'} items={null} xs={6} errorMessage={errorMessage} />
+    );
+
+    expect(screen.getByText('Data loading failed')).toBeInTheDocument();
   });
 });

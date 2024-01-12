@@ -85,7 +85,6 @@ describe('Report Step', () => {
     reportHook.current.startToRequestDoraData = jest.fn();
     reportHook.current.stopPollingReports = jest.fn();
     reportHook.current.isServerError = false;
-    reportHook.current.errorMessage = '';
     reportHook.current.reportData = { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 };
   };
   const handleSaveMock = jest.fn();
@@ -194,14 +193,6 @@ describe('Report Step', () => {
 
       expect(screen.getByText('4.00')).toBeInTheDocument();
     });
-
-    it('should show errorMessage when generating report has error message', () => {
-      reportHook.current.errorMessage = 'error message';
-
-      setup(['']);
-
-      expect(screen.getByText('error message')).toBeInTheDocument();
-    });
   });
 
   describe('behavior', () => {
@@ -225,7 +216,6 @@ describe('Report Step', () => {
 
     it('should check error page show when isReportError is true', () => {
       reportHook.current.isServerError = true;
-      reportHook.current.errorMessage = 'error message';
 
       setup([REQUIRED_DATA_LIST[1]]);
 

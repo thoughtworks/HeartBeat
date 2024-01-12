@@ -23,6 +23,27 @@ declare module '@mui/material/styles' {
           color: string;
         };
       };
+      alert: {
+        title: {
+          color: string;
+        };
+        error: {
+          iconColor: string;
+          backgroundColor: string;
+        };
+        success: {
+          iconColor: string;
+          backgroundColor: string;
+        };
+        warning: {
+          iconColor: string;
+          backgroundColor: string;
+        };
+        info: {
+          iconColor: string;
+          backgroundColor: string;
+        };
+      };
     };
   }
 
@@ -44,6 +65,27 @@ declare module '@mui/material/styles' {
         disabled: {
           backgroundColor: string;
           color: string;
+        };
+      };
+      alert: {
+        title: {
+          color: string;
+        };
+        error: {
+          iconColor: string;
+          backgroundColor: string;
+        };
+        success: {
+          iconColor: string;
+          backgroundColor: string;
+        };
+        warning: {
+          iconColor: string;
+          backgroundColor: string;
+        };
+        info: {
+          iconColor: string;
+          backgroundColor: string;
         };
       };
     };
@@ -95,6 +137,27 @@ export const theme = createTheme({
       disabled: {
         backgroundColor: '#E0E0E0',
         color: '#929292',
+      },
+    },
+    alert: {
+      title: {
+        color: '#000000D9',
+      },
+      error: {
+        iconColor: '#D74257',
+        backgroundColor: '#FFE7EA',
+      },
+      success: {
+        iconColor: '#5E9E66',
+        backgroundColor: '#EFFFF1',
+      },
+      warning: {
+        iconColor: '#D78D20',
+        backgroundColor: '#FFF4E3',
+      },
+      info: {
+        iconColor: '#4050B5',
+        backgroundColor: '#E9ECFF',
       },
     },
   },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DURATION } from '@src/constants/commons';
 import { AlertColor } from '@mui/material';
 
@@ -26,7 +26,7 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
     durationTimeout: DURATION.NOTIFICATION_TIME,
   });
 
-  const resetProps = () => {
+  const resetProps = useCallback(() => {
     setNotificationProps(() => ({
       open: false,
       title: '',
@@ -34,11 +34,11 @@ export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterf
       closeAutomatically: false,
       durationTimeout: DURATION.NOTIFICATION_TIME,
     }));
-  };
+  }, []);
 
-  const updateProps = (notificationProps: NotificationTipProps) => {
+  const updateProps = useCallback((notificationProps: NotificationTipProps) => {
     setNotificationProps(notificationProps);
-  };
+  }, []);
 
   const closeAutomatically = () => {
     const durationTimeout = notificationProps.durationTimeout

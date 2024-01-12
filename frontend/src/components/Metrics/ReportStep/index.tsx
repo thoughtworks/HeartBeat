@@ -59,7 +59,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
         closeAutomatically: true,
       });
-  }, [exportValidityTimeMin, isAllMetricsReady]);
+  }, [exportValidityTimeMin, isAllMetricsReady, updateProps]);
 
   useLayoutEffect(() => {
     if (exportValidityTimeMin && isAllMetricsReady) {
@@ -85,11 +85,11 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         clearInterval(timer);
       };
     }
-  }, [exportValidityTimeMin, isAllMetricsReady]);
+  }, [exportValidityTimeMin, isAllMetricsReady, updateProps]);
 
   useLayoutEffect(() => {
     resetProps();
-  }, [pageType]);
+  }, [pageType, resetProps]);
 
   useEffect(() => {
     setErrorMessage(reportErrorMsg);

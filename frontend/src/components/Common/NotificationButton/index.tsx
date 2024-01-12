@@ -5,33 +5,34 @@ import InfoIcon from '@mui/icons-material/Info';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import React from 'react';
+import { theme } from '@src/theme';
 
 const getStyles = (type: AlertColor | undefined) => {
   switch (type) {
     case 'error':
       return {
         icon: CancelIcon,
-        iconColor: '#D74257',
-        backgroundColor: '#FFE7EA',
+        iconColor: theme.main.alert.error.iconColor,
+        backgroundColor: theme.main.alert.error.backgroundColor,
       };
     case 'success':
       return {
         icon: CheckCircleIcon,
-        iconColor: '#5E9E66',
-        backgroundColor: '#EFFFF1',
+        iconColor: theme.main.alert.success.iconColor,
+        backgroundColor: theme.main.alert.success.backgroundColor,
       };
     case 'warning':
       return {
         icon: InfoIcon,
-        iconColor: '#D78D20',
-        backgroundColor: '#FFF4E3',
+        iconColor: theme.main.alert.warning.iconColor,
+        backgroundColor: theme.main.alert.warning.backgroundColor,
       };
     case 'info':
     default:
       return {
         icon: InfoIcon,
-        iconColor: '#4050B5',
-        backgroundColor: '#E9ECFF',
+        iconColor: theme.main.alert.info.iconColor,
+        backgroundColor: theme.main.alert.info.backgroundColor,
       };
   }
 };

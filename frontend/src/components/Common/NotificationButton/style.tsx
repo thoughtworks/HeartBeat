@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Alert, AlertTitle } from '@mui/material';
 import { Z_INDEX } from '@src/constants/commons';
+import { theme } from '@src/theme';
 
 export const AlertWrapper = styled(Alert)((props: { backgroundcolor: string; iconcolor: string }) => ({
   backgroundColor: props.backgroundcolor,
@@ -21,6 +22,6 @@ export const AlertWrapper = styled(Alert)((props: { backgroundcolor: string; ico
 }));
 
 export const AlertTitleWrapper = styled(AlertTitle)({
-  color: '#000000D9',
+  color: theme.main.alert.title.color,
   marginBottom: '0.5rem',
 });

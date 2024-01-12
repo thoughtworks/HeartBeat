@@ -56,6 +56,11 @@ export default [
 		key: 'designs/flow-diagrams',
 	},
 	{
+		text: 'Frontend Structure',
+		slug: 'designs/frontend-structure',
+		key: 'designs/frontend-structure',
+	},
+	{
 		text: 'Origin cycle time calculation',
 		slug: 'designs/origin-cycle-time-calculation',
 		key: 'designs/origin-cycle-time-calculation',

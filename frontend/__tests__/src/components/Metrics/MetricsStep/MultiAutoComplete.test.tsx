@@ -44,17 +44,8 @@ describe('MultiAutoComplete', () => {
     const inputField = screen.getByRole('combobox');
     await userEvent.click(inputField);
     const allOption = screen.getByRole('option', { name: 'All' });
-    await act(async () => {
-      await userEvent.click(allOption);
-    });
+    await userEvent.click(allOption);
 
-    expect(onChangeHandler).toHaveBeenCalledWith(
-      expect.anything(),
-      [MOCK_AUTOCOMPLETE_LIST[0], ALL],
-      AUTOCOMPLETE_SELECT_ACTION,
-      {
-        option: ALL,
-      }
-    );
+    expect(onChangeHandler).toHaveBeenCalledWith(expect.anything(), [MOCK_AUTOCOMPLETE_LIST[0], ALL]);
   });
 });

@@ -6,8 +6,7 @@ import { Z_INDEX } from '@src/constants/commons';
 type Props = {
   optionList: string[];
   selectedOption: string[];
-  // There is an any because m-ui strictly define its type, but the parameters are not that strict. Maybe because of version diff
-  onChangeHandler: any;
+  onChangeHandler: (event: React.SyntheticEvent, value: string[]) => void;
   isSelectAll: boolean;
   textFieldLabel: string;
   isError: boolean;
@@ -38,7 +37,7 @@ const MultiAutoComplete = ({
         return ['All', ...filtered];
       }}
       getOptionLabel={(option) => option as string}
-      onChange={onChangeHandler}
+      onChange={(event, value) => !!value && onChangeHandler(event, value as unknown as string[])}
       renderOption={(props, option, { selected }) => {
         const selectAllProps = option === 'All' ? { checked: isSelectAll } : {};
         return (

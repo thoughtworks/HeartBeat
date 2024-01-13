@@ -34,7 +34,7 @@ interface pipelineMetricSelectionProps {
   };
   isShowRemoveButton: boolean;
   onRemovePipeline: (id: number) => void;
-  onUpdatePipeline: (id: number, label: string, value: any) => void;
+  onUpdatePipeline: (id: number, label: string, value: string | StringConstructor[] | unknown) => void;
   isDuplicated: boolean;
 }
 

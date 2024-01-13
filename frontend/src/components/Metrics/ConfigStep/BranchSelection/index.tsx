@@ -10,7 +10,7 @@ export interface BranchSelectionProps {
   organization: string;
   pipelineName: string;
   branches: string[];
-  onUpdatePipeline: (id: number, label: string, value: any) => void;
+  onUpdatePipeline: (id: number, label: string, value: string[] | unknown) => void;
 }
 
 export const BranchSelection = (props: BranchSelectionProps) => {

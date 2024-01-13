@@ -29,7 +29,7 @@ export const DeploymentFrequencySettings = () => {
     dispatch(deleteADeploymentFrequencySetting(id));
   };
 
-  const handleUpdatePipeline = (id: number, label: string, value: string) => {
+  const handleUpdatePipeline = (id: number, label: string, value: string | StringConstructor[] | unknown) => {
     dispatch(updateDeploymentFrequencySettings({ updateId: id, label, value }));
   };
 

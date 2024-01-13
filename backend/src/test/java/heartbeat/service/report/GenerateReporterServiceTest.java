@@ -1225,7 +1225,7 @@ class GenerateReporterServiceTest {
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getAllMetricsCompleted());
+		assertTrue(composedResponse.getIsAllMetricsReady());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 		assertEquals("deploymentFrequency",
 				composedResponse.getDeploymentFrequency().getAvgDeploymentFrequency().getName());
@@ -1253,8 +1253,8 @@ class GenerateReporterServiceTest {
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
 
-		assertTrue(composedResponse.getAllMetricsCompleted());
-		assertTrue(composedResponse.getBoardMetricsCompleted());
+		assertTrue(composedResponse.getIsAllMetricsReady());
+		assertTrue(composedResponse.getIsBoardMetricsReady());
 		assertEquals(20.0, composedResponse.getCycleTime().getAverageCycleTimePerCard());
 	}
 

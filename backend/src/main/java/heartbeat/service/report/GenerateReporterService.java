@@ -883,12 +883,12 @@ public class GenerateReporterService {
 			.changeFailureRate(getValueOrNull(doraReportResponse, ReportResponse::getChangeFailureRate))
 			.meanTimeToRecovery(getValueOrNull(doraReportResponse, ReportResponse::getMeanTimeToRecovery))
 			.leadTimeForChanges(getValueOrNull(codebaseReportResponse, ReportResponse::getLeadTimeForChanges))
-			.boardMetricsCompleted(getValueOrNull(metricsDataCompleted, MetricsDataCompleted::boardMetricsCompleted))
-			.pipelineMetricsCompleted(
+			.isBoardMetricsReady(getValueOrNull(metricsDataCompleted, MetricsDataCompleted::boardMetricsCompleted))
+			.isPipelineMetricsReady(
 					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::pipelineMetricsCompleted))
-			.sourceControlMetricsCompleted(
+					.isSourceControlMetricsReady(
 					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::sourceControlMetricsCompleted))
-			.allMetricsCompleted(isReportReady)
+			.isAllMetricsReady(isReportReady)
 			.reportError(reportError)
 			.build();
 	}

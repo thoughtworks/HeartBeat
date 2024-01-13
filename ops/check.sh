@@ -4,17 +4,18 @@ set -euo pipefail
 display_help() {
   echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e}" >&2
   echo
-  echo "   shell              run shell check for the whole project"
-  echo "   security           run security check for the whole project"
-  echo "   frontend           run check for the frontend"
-  echo "   px                 run css px check for the frontend"
-  echo "   backend            run check for the backend"
-  echo "   dot-star           run .* check for the backend"
-  echo "   rgba               run css rgba check to deny it"
-  echo "   hex                run css hex check to deny it"
-  echo "   backend-license    check license for the backend"
-  echo "   frontend-license   check license for the frontend"
-  echo "   e2e                run e2e for the frontend"
+  echo "   shell                run shell check for the whole project"
+  echo "   security             run security check for the whole project"
+  echo "   frontend             run check for the frontend"
+  echo "   frontned-type-check  run typescript check for the frontend"
+  echo "   px                   run css px check for the frontend"
+  echo "   backend              run check for the backend"
+  echo "   dot-star             run .* check for the backend"
+  echo "   rgba                 run css rgba check to deny it"
+  echo "   hex                  run css hex check to deny it"
+  echo "   backend-license      check license for the backend"
+  echo "   frontend-license     check license for the frontend"
+  echo "   e2e                  run e2e for the frontend"
   echo
   exit 1
 }
@@ -83,6 +84,11 @@ px_check() {
   else
     echo "No matching files found."
   fi
+}
+
+frontned_type_check() {
+  cd frontend
+  pnpm run type-check
 }
 
 rgba_check() {
@@ -162,6 +168,7 @@ while [[ "$#" -gt 0 ]]; do
     shell) check_shell ;;
     security) security_check ;;
     frontend) frontend_check ;;
+    "frontend-type") frontned_type_check ;;
     px) px_check ;;
     backend) backend_check ;;
     "dot-star") dot_star_check ;;

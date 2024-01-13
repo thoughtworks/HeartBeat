@@ -177,6 +177,23 @@ jobs:
       - name: CSS rgba check
         shell: bash {0}
         run: ./ops/check.sh rgba
+  frontend-type-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+      - name: Install & Lint
+        run: |
+          npm install -g pnpm
+          pnpm install --no-frozen-lockfile
+          pnpm run type-check
+
   frontend-check:
     runs-on: ubuntu-latest
     defaults:
@@ -244,6 +261,7 @@ jobs:
       - deny-px-check
       - deny-css-hex-check
       - deny-css-rgba-check
+      - frontend-type-check
       - backend-check
       - deny-dot-star-check
       - security-check

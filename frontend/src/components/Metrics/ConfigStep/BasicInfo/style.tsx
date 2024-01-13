@@ -18,7 +18,7 @@ export const StyledFormControlLabel = styled(FormControlLabel)`
 
 export const CollectionDateLabel = styled('div')({
   width: '100%',
-  color: '#00000096',
+  color: theme.palette.secondary.contrastText,
   fontSize: '0.8rem',
   lineHeight: '2em',
   boxSizing: 'border-box',

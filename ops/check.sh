@@ -10,6 +10,8 @@ display_help() {
   echo "   px                 run css px check for the frontend"
   echo "   backend            run check for the backend"
   echo "   dot-star           run .* check for the backend"
+  echo "   rgba               run css rgba check to deny it"
+  echo "   hex                run css hex check to deny it"
   echo "   backend-license    check license for the backend"
   echo "   frontend-license   check license for the frontend"
   echo "   e2e                run e2e for the frontend"
@@ -67,9 +69,63 @@ frontend_check(){
 px_check() {
   cd frontend
   local result
-  result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '[0-9]\+px' ./ || true)
+  result=$(grep -rin \
+    --exclude='*.svg' \
+    --exclude='*.png' \
+    --exclude='*.yaml' \
+    --exclude-dir='node_modules' \
+    '[0-9]\+px' \
+    ./ || true)
   if [ -n "$result" ]; then
     echo "Error: Found files with [0-9]+px pattern:"
+    echo "$result"
+    exit 1
+  else
+    echo "No matching files found."
+  fi
+}
+
+rgba_check() {
+  cd frontend
+  local result
+  result=$(grep -rinE \
+   --exclude-dir='node_modules'\
+   --exclude-dir='coverage' \
+   --exclude='*.html' \
+   --exclude='*.svg' \
+   --exclude='*.xml' \
+   --exclude='*.test.tsx' \
+   --exclude='theme.ts' \
+   --exclude='*.webmanifest' \
+   'rgb\(([0-9]{1,3}, ?){2}[0-9]{1,3}\)' \
+  ./ || true)
+  if [ -n "$result" ]; then
+    echo "Error: Found files with Hex color:"
+    echo "$result"
+    exit 1
+  else
+    echo "No matching files found."
+  fi
+}
+
+hex_check() {
+  cd frontend
+  local result
+  result=$(grep -rinE \
+   --exclude-dir='node_modules'\
+   --exclude-dir='coverage' \
+   --exclude='*.html' \
+   --exclude='*.svg' \
+   --exclude='*.xml' \
+   --exclude='*.test.tsx' \
+   --exclude='theme.ts' \
+   --exclude='fixtures.ts' \
+   --exclude='vite.config.ts' \
+   --exclude='*.webmanifest' \
+   '#[0-9a-fA-F]{6}|#[0-9a-fA-F]{8}' \
+  ./ || true)
+  if [ -n "$result" ]; then
+    echo "Error: Found files with Hex color:"
     echo "$result"
     exit 1
   else
@@ -109,6 +165,8 @@ while [[ "$#" -gt 0 ]]; do
     px) px_check ;;
     backend) backend_check ;;
     "dot-star") dot_star_check ;;
+    hex) hex_check ;;
+    rgba) rgba_check ;;
     e2e) e2e_check ;;
     "backend-license") backend_license_check ;;
     "frontend-license") frontend_license_check ;;

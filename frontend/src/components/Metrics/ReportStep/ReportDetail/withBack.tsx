@@ -2,6 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { ArrowBack } from '@mui/icons-material';
 import { BACK } from '@src/constants/resources';
+import { theme } from '@src/theme';
 interface Property {
   onBack: () => void;
 }
@@ -12,7 +13,7 @@ const StyledDiv = styled('div')`
   width: max-content;
   z-index: 2;
   margin-bottom: 2.5rem;
-  color: #595959;
+  color: ${theme.main.button.disabled.color};
   cursor: pointer;
   font-size: 1rem;
 `;

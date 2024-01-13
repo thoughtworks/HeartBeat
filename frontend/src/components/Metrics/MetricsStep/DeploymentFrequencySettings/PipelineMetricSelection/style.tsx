@@ -26,7 +26,7 @@ export const RemoveButton = styled(BasicButton)({
 
 export const WarningMessage = styled('p')({
   fontFamily: theme.typography.fontFamily,
-  color: '#d32f2f',
+  color: theme.components?.errorMessage.color,
   margin: '0 0 0 2.5%',
   width: '95%',
 });

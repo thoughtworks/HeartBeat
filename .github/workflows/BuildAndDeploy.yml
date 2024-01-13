@@ -124,7 +124,7 @@ jobs:
           name: backend-license-report
           path: backend/build/reports/dependency-license/
           retention-days: ${{ vars.RETENTION_DAYS }}
-  dot-star-check:
+  deny-dot-star-check:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -143,7 +143,7 @@ jobs:
           else
             echo "No matching files found."
           fi
-  px-check:
+  deny-px-check:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -162,8 +162,21 @@ jobs:
           else
             echo "No matching files found."
           fi
+  deny-css-hex-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: CSS hex check
+        shell: bash {0}
+        run: ./ops/check.sh hex
 
-
+  deny-css-rgba-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: CSS rgba check
+        shell: bash {0}
+        run: ./ops/check.sh rgba
   frontend-check:
     runs-on: ubuntu-latest
     defaults:
@@ -228,9 +241,11 @@ jobs:
     needs:
       - fossa-check
       - frontend-check
-      - px-check
+      - deny-px-check
+      - deny-css-hex-check
+      - deny-css-rgba-check
       - backend-check
-      - dot-star-check
+      - deny-dot-star-check
       - security-check
       - shellcheck
       - credential-check

@@ -11,6 +11,6 @@ export const BasicButton = styled(Button)({
 
 export const VerifyButton = styled(BasicButton)({});
 export const ResetButton = styled(BasicButton)({
-  color: '#f44336',
+  color: theme.components?.errorMessage.color,
   marginLeft: '0.5rem',
 });

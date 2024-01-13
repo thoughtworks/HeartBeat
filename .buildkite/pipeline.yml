@@ -14,6 +14,14 @@ steps:
     key: "check-px"
     command: ./ops/check.sh px
 
+  - label: ":lock: Deny CSS hex"
+    key: "deny-css-hex-check"
+    command: ./ops/check.sh hex
+
+  - label: ":lock: Deny CSS rgba"
+    key: "deny-css-rgba-check"
+    command: ./ops/check.sh rgba
+
   - label: ":lock: Check .* in backend"
     key: "check-dot-star"
     command: ./ops/check.sh dot-star
@@ -50,6 +58,8 @@ steps:
       - "check-security"
       - "check-frontend"
       - "check-px"
+      - deny-css-rgba-check
+      - deny-css-hex-check
       - "check-backend"
       - "check-frontend-license"
       - "check-backend-license"
@@ -101,6 +111,8 @@ steps:
       - "check-security"
       - "check-frontend"
       - "check-px"
+      - deny-css-rgba-check
+      - deny-css-hex-check
       - "check-backend"
       - "check-frontend-license"
       - "check-backend-license"

@@ -25,7 +25,7 @@ export const TextBox = styled(Paper)({
 export const GreyTransitionBox = styled('div')({
   width: '10rem',
   height: '3.5rem',
-  backgroundColor: '#CCCCCC47',
+  backgroundColor: theme.palette.info.light,
   border: 0,
   borderRadius: 0,
 });

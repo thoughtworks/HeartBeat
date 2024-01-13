@@ -320,7 +320,7 @@ describe('Create a new project', () => {
 
     reportPage.pageIndicator.should('be.visible');
 
-    // reportPage.firstNotification.should('exist');
+    reportPage.firstNotification.should('exist');
 
     reportPage.checkDateRange();
 
@@ -356,7 +356,7 @@ describe('Create a new project', () => {
 
     checkBoardCSV();
 
-    // reportPage.firstNotification.should('not.exist');
+    reportPage.firstNotification.should('not.exist');
 
     checkBoardShowMore();
     checkDoraShowMore();

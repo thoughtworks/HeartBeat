@@ -13,22 +13,22 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class MetricsDataCompleted {
 
-	private Boolean boardMetricsCompleted;
+	private Boolean isBoardMetricsReady;
 
-	private Boolean pipelineMetricsCompleted;
+	private Boolean isPipelineMetricsReady;
 
-	private Boolean sourceControlMetricsCompleted;
+	private Boolean isSourceControlMetricsReady;
 
 	public Boolean boardMetricsCompleted() {
-		return boardMetricsCompleted;
+		return isBoardMetricsReady;
 	}
 
 	public Boolean pipelineMetricsCompleted() {
-		return pipelineMetricsCompleted;
+		return isPipelineMetricsReady;
 	}
 
 	public Boolean sourceControlMetricsCompleted() {
-		return sourceControlMetricsCompleted;
+		return isSourceControlMetricsReady;
 	}
 
 }

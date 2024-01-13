@@ -144,8 +144,8 @@
     }
   },
   "exportValidityTime": 1800000,
-  "boardMetricsCompleted": true,
-  "pipelineMetricsCompleted": true,
-  "sourceControlMetricsCompleted": true,
-  "allMetricsCompleted": true
+  "isBoardMetricsReady": true,
+  "isPipelineMetricsReady": true,
+  "isPipelineMetricsReady": true,
+  "isAllMetricsReady": true
 }

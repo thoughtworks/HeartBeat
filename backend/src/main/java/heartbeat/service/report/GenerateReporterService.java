@@ -663,18 +663,18 @@ public class GenerateReporterService {
 			MetricsDataCompleted previousMetricsReady) {
 		if (previousMetricsReady == null) {
 			return MetricsDataCompleted.builder()
-				.boardMetricsCompleted(isBoardMetricsReady)
-				.pipelineMetricsCompleted(isPipelineMetricsReady)
-				.sourceControlMetricsCompleted(isSourceControlMetricsReady)
+				.isBoardMetricsReady(isBoardMetricsReady)
+				.isPipelineMetricsReady(isPipelineMetricsReady)
+				.isSourceControlMetricsReady(isSourceControlMetricsReady)
 				.build();
 		}
 
 		return MetricsDataCompleted.builder()
-			.boardMetricsCompleted(
+			.isBoardMetricsReady(
 					getCombinedReadyValue(previousMetricsReady.boardMetricsCompleted(), isBoardMetricsReady))
-			.pipelineMetricsCompleted(
+			.isPipelineMetricsReady(
 					getCombinedReadyValue(previousMetricsReady.pipelineMetricsCompleted(), isPipelineMetricsReady))
-			.sourceControlMetricsCompleted(getCombinedReadyValue(previousMetricsReady.sourceControlMetricsCompleted(),
+			.isSourceControlMetricsReady(getCombinedReadyValue(previousMetricsReady.sourceControlMetricsCompleted(),
 					isSourceControlMetricsReady))
 			.build();
 
@@ -692,11 +692,11 @@ public class GenerateReporterService {
 			throw new GenerateReportException("Failed to update metrics data ready through this timestamp.");
 		}
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
-			.boardMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.boardMetricsCompleted(),
+			.isBoardMetricsReady(checkCurrentMetricsReadyState(metricsStatus.boardMetricsCompleted(),
 					previousMetricsReady.boardMetricsCompleted()))
-			.pipelineMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.pipelineMetricsCompleted(),
+			.isPipelineMetricsReady(checkCurrentMetricsReadyState(metricsStatus.pipelineMetricsCompleted(),
 					previousMetricsReady.pipelineMetricsCompleted()))
-			.sourceControlMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.sourceControlMetricsCompleted(),
+			.isSourceControlMetricsReady(checkCurrentMetricsReadyState(metricsStatus.sourceControlMetricsCompleted(),
 					previousMetricsReady.sourceControlMetricsCompleted()))
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataCompleted);
@@ -717,9 +717,9 @@ public class GenerateReporterService {
 		Boolean isPipelineMetricsReady = buildKiteMetricsExist ? flag : null;
 		Boolean isSourceControlMetricsReady = codebaseMetricsExist ? flag : null;
 		return MetricsDataCompleted.builder()
-			.boardMetricsCompleted(isBoardMetricsReady)
-			.pipelineMetricsCompleted(isPipelineMetricsReady)
-			.sourceControlMetricsCompleted(isSourceControlMetricsReady)
+			.isBoardMetricsReady(isBoardMetricsReady)
+			.isPipelineMetricsReady(isPipelineMetricsReady)
+			.isSourceControlMetricsReady(isSourceControlMetricsReady)
 			.build();
 	}
 
@@ -886,7 +886,7 @@ public class GenerateReporterService {
 			.isBoardMetricsReady(getValueOrNull(metricsDataCompleted, MetricsDataCompleted::boardMetricsCompleted))
 			.isPipelineMetricsReady(
 					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::pipelineMetricsCompleted))
-					.isSourceControlMetricsReady(
+			.isSourceControlMetricsReady(
 					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::sourceControlMetricsCompleted))
 			.isAllMetricsReady(isReportReady)
 			.reportError(reportError)

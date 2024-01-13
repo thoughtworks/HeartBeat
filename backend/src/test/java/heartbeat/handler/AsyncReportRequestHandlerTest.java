@@ -53,7 +53,7 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
-		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().isBoardMetricsReady(false).build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
 		asyncReportRequestHandler.putMetricsDataReady(expireTime, metricsDataCompleted);
 
@@ -67,7 +67,7 @@ class AsyncReportRequestHandlerTest {
 	void shouldGetAsyncMetricsDataReadyWhenPuttingMetricsReadyIntoAsyncReportRequestHandler() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().isBoardMetricsReady(false).build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
 
 		assertNotNull(asyncReportRequestHandler.getMetricsDataReady(currentTime));
@@ -88,9 +88,9 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
-			.boardMetricsCompleted(false)
-			.sourceControlMetricsCompleted(false)
-			.pipelineMetricsCompleted(null)
+			.isBoardMetricsReady(false)
+			.isSourceControlMetricsReady(false)
+			.isPipelineMetricsReady(null)
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
 
@@ -104,9 +104,9 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
-			.boardMetricsCompleted(true)
-			.sourceControlMetricsCompleted(null)
-			.pipelineMetricsCompleted(true)
+			.isBoardMetricsReady(true)
+			.isSourceControlMetricsReady(null)
+			.isPipelineMetricsReady(true)
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
 

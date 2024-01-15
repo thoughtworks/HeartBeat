@@ -7,11 +7,7 @@ import React, { useEffect } from 'react';
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
 import { ExpiredDialog } from '@src/containers/ReportStep/ExpiredDialog';
-import {
-  StyledButtonGroup,
-  StyledExportButton,
-  StyledRightButtonGroup,
-} from '@src/containers/ReportButtonGroup/style';
+import { StyledButtonGroup, StyledExportButton, StyledRightButtonGroup } from '@src/containers/ReportButtonGroup/style';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 
 interface ReportButtonGroupProps {

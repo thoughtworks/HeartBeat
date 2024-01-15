@@ -4,11 +4,7 @@ import { selectCycleTimeWarningMessage } from '@src/context/Metrics/metricsSlice
 import { useAppSelector } from '@src/hooks';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { TIPS } from '@src/constants/resources';
-import {
-  StyledTooltip,
-  TitleAndTooltipContainer,
-  TooltipContainer,
-} from '@src/containers/MetricsStep/CycleTime/style';
+import { StyledTooltip, TitleAndTooltipContainer, TooltipContainer } from '@src/containers/MetricsStep/CycleTime/style';
 import { IconButton } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import CycleTimeTable from '@src/containers/MetricsStep/CycleTime/Table';

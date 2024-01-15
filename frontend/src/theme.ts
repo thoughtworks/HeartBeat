@@ -30,18 +30,22 @@ declare module '@mui/material/styles' {
         error: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
         success: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
         warning: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
         info: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
       };
     };
@@ -74,18 +78,22 @@ declare module '@mui/material/styles' {
         error: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
         success: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
         warning: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
         info: {
           iconColor: string;
           backgroundColor: string;
+          borderColor: string;
         };
       };
     };
@@ -146,18 +154,22 @@ export const theme = createTheme({
       error: {
         iconColor: '#D74257',
         backgroundColor: '#FFE7EA',
+        borderColor: '#F3B6BE',
       },
       success: {
         iconColor: '#5E9E66',
         backgroundColor: '#EFFFF1',
+        borderColor: '#CFE2D1',
       },
       warning: {
         iconColor: '#D78D20',
         backgroundColor: '#FFF4E3',
+        borderColor: '#F3D5A9',
       },
       info: {
         iconColor: '#4050B5',
         backgroundColor: '#E9ECFF',
+        borderColor: '#939DDA',
       },
     },
   },

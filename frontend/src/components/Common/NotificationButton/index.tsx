@@ -14,18 +14,21 @@ const getStyles = (type: AlertColor | undefined) => {
         icon: CancelIcon,
         iconColor: theme.main.alert.error.iconColor,
         backgroundColor: theme.main.alert.error.backgroundColor,
+        borderColor: theme.main.alert.error.borderColor,
       };
     case 'success':
       return {
         icon: CheckCircleIcon,
         iconColor: theme.main.alert.success.iconColor,
         backgroundColor: theme.main.alert.success.backgroundColor,
+        borderColor: theme.main.alert.success.borderColor,
       };
     case 'warning':
       return {
         icon: InfoIcon,
         iconColor: theme.main.alert.warning.iconColor,
         backgroundColor: theme.main.alert.warning.backgroundColor,
+        borderColor: theme.main.alert.warning.borderColor,
       };
     case 'info':
     default:
@@ -33,6 +36,7 @@ const getStyles = (type: AlertColor | undefined) => {
         icon: InfoIcon,
         iconColor: theme.main.alert.info.iconColor,
         backgroundColor: theme.main.alert.info.backgroundColor,
+        borderColor: theme.main.alert.info.borderColor,
       };
   }
 };
@@ -57,6 +61,7 @@ export const Notification = ({ notificationProps, updateProps }: useNotification
           icon={<SvgIcon component={styles.icon} inheritViewBox />}
           backgroundcolor={styles.backgroundColor}
           iconcolor={styles.iconColor}
+          bordercolor={styles.borderColor}
         >
           <AlertTitleWrapper>{notificationProps.title}</AlertTitleWrapper>
           {notificationProps.message}

@@ -58,14 +58,14 @@ describe('Notification', () => {
   });
 
   it.each`
-    type         | backgroundColor | icon                 | iconColor
-    ${'error'}   | ${'#FFE7EA'}    | ${'CancelIcon'}      | ${'#D74257'}
-    ${'success'} | ${'#EFFFF1'}    | ${'CheckCircleIcon'} | ${'#5E9E66'}
-    ${'warning'} | ${'#FFF4E3'}    | ${'InfoIcon'}        | ${'#D78D20'}
-    ${'info'}    | ${'#E9ECFF'}    | ${'InfoIcon'}        | ${'#4050B5'}
+    type         | backgroundColor | icon                 | iconColor    | borderColor
+    ${'error'}   | ${'#FFE7EA'}    | ${'CancelIcon'}      | ${'#D74257'} | ${'#F3B6BE'}
+    ${'success'} | ${'#EFFFF1'}    | ${'CheckCircleIcon'} | ${'#5E9E66'} | ${'#CFE2D1'}
+    ${'warning'} | ${'#FFF4E3'}    | ${'InfoIcon'}        | ${'#D78D20'} | ${'#F3D5A9'}
+    ${'info'}    | ${'#E9ECFF'}    | ${'InfoIcon'}        | ${'#4050B5'} | ${'#939DDA'}
   `(
     `should render background color $backgroundColor and $icon in $iconColor given the "type" value is $type`,
-    async ({ type, backgroundColor, icon, iconColor }) => {
+    async ({ type, backgroundColor, icon, iconColor, borderColor }) => {
       act(() => {
         result.current.notificationProps = { ...openNotificationProps, type };
       });
@@ -74,6 +74,7 @@ describe('Notification', () => {
 
       const alertElement = screen.getByRole('alert');
       expect(alertElement).toHaveStyle({ 'background-color': backgroundColor });
+      expect(alertElement).toHaveStyle({ border: `1px solid ${borderColor}` });
 
       const iconElement = screen.getByTestId(icon).parentElement;
       expect(iconElement).toBeInTheDocument();

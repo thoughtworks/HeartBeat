@@ -6,14 +6,14 @@ import { HttpStatusCode } from 'axios';
 import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
 import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 
-export interface useVerifyPipeLineToolStateInterface {
+export interface IUseVerifyPipeLineToolStateInterface {
   verifyPipelineTool: (_params: IPipelineVerifyRequestDTO) => void;
   isLoading: boolean;
   errorMessage: string;
   clearErrorMessage: () => void;
 }
 
-export const useVerifyPipelineToolEffect = (): useVerifyPipeLineToolStateInterface => {
+export const useVerifyPipelineToolEffect = (): IUseVerifyPipeLineToolStateInterface => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useAppDispatch();

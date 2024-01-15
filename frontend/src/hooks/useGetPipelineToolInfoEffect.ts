@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import {
@@ -31,28 +31,36 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
   const restoredPipelineTool = useAppSelector(selectPipelineTool);
   const dateRange = useAppSelector(selectDateRange);
 
-  const params = {
-    type: restoredPipelineTool.type,
-    token: restoredPipelineTool.token,
-    startTime: dateRange.startDate,
-    endTime: dateRange.endDate,
-  };
+  const getPipelineToolInfo = useCallback(async () => {
+    const params = {
+      type: restoredPipelineTool.type,
+      token: restoredPipelineTool.token,
+      startTime: dateRange.startDate,
+      endTime: dateRange.endDate,
+    };
 
-  const getPipelineToolInfo = async () => {
     setIsLoading(true);
     const response = await pipelineToolClient.getPipelineToolInfo(params);
     setInfo(response);
     dispatch(updatePipelineToolVerifyResponse(response.data));
     pipelineToolVerified && dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
     setIsLoading(false);
-  };
+  }, [
+    dispatch,
+    isProjectCreated,
+    pipelineToolVerified,
+    dateRange.startDate,
+    dateRange.endDate,
+    restoredPipelineTool.type,
+    restoredPipelineTool.token,
+  ]);
 
   useEffect(() => {
     if (!apiTouchedRef.current && !isLoading) {
       apiTouchedRef.current = true;
       getPipelineToolInfo();
     }
-  }, [pipelineToolVerified, isProjectCreated, restoredPipelineTool, dateRange, isLoading, dispatch]);
+  }, [getPipelineToolInfo, isLoading]);
 
   return {
     result: info,

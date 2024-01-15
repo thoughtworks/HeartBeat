@@ -7,6 +7,7 @@ import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
 import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 
 export interface IUseVerifyPipeLineToolStateInterface {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   verifyPipelineTool: (_params: IPipelineVerifyRequestDTO) => void;
   isLoading: boolean;
   errorMessage: string;

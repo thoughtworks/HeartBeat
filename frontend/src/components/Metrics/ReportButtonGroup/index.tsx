@@ -65,6 +65,11 @@ export const ReportButtonGroup = ({
     reportData?.reportError?.pipelineError ||
     reportData?.reportError?.sourceControlError;
 
+  const isReportHasError =
+    !!reportData?.reportError?.boardError &&
+    !!reportData?.reportError?.pipelineError &&
+    !!reportData?.reportError?.sourceControlError;
+
   return (
     <>
       <StyledButtonGroup isShowSave={isShowSave}>
@@ -81,7 +86,7 @@ export const ReportButtonGroup = ({
           </BackButton>
           {isShowExportMetrics && (
             <StyledExportButton
-              disabled={!(reportData?.allMetricsCompleted && !reportData?.reportError)}
+              disabled={!(reportData?.allMetricsCompleted && !isReportHasError)}
               onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}

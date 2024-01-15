@@ -39,17 +39,15 @@ public class PipelineController {
 	}
 
 	@PostMapping("/{pipelineType}/verify")
-	public ResponseEntity<Void> verifyBuildKiteToken(@PathVariable @NotBlank String pipelineType,
+	public ResponseEntity<Void> verifyBuildKiteToken(@PathVariable PipelineType pipelineType,
 			@Valid @RequestBody TokenParam tokenParam) {
-		PipelineType.fromValue(pipelineType);
 		buildKiteService.verifyToken(tokenParam.getToken());
 		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/{pipelineType}/info")
-	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(@PathVariable @NotBlank String pipelineType,
+	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(@PathVariable PipelineType pipelineType,
 			@Valid @RequestBody TokenParam tokenParam) {
-		PipelineType.fromValue(pipelineType);
 		BuildKiteResponseDTO buildKiteResponse = buildKiteService.getBuildKiteInfo(tokenParam);
 		if (buildKiteResponse.getPipelineList().isEmpty()) {
 			return ResponseEntity.noContent().build();

@@ -3,7 +3,6 @@ package heartbeat.controller.source;
 import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.controller.source.dto.VerifyBranchRequest;
-import heartbeat.exception.BadRequestException;
 import heartbeat.service.source.github.GitHubService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -45,10 +44,10 @@ public class GithubController {
 	}
 
 	@PostMapping("/{sourceType}/verify")
-	public ResponseEntity<Void> verifyToken(@PathVariable @NotBlank String sourceType,
+	public ResponseEntity<Void> verifyToken(@PathVariable SourceType sourceType,
 			@RequestBody @Valid SourceControlDTO sourceControlDTO) {
 		log.info("Start to verify source type: {} token.", sourceType);
-		switch (SourceType.fromValue(sourceType)) {
+		switch (sourceType) {
 			case GITHUB -> {
 				gitHubService.verifyTokenV2(sourceControlDTO.getToken());
 				log.info("Successfully verify source type: {} token.", sourceType);
@@ -60,10 +59,10 @@ public class GithubController {
 	}
 
 	@PostMapping("/{sourceType}/repos/branches/{branch}/verify")
-	public ResponseEntity<Void> verifyBranch(@PathVariable @NotBlank String sourceType,
-			@PathVariable @NotBlank String branch, @RequestBody @Valid VerifyBranchRequest request) {
+	public ResponseEntity<Void> verifyBranch(@PathVariable SourceType sourceType, @PathVariable @NotBlank String branch,
+			@RequestBody @Valid VerifyBranchRequest request) {
 		log.info("Start to verify source type: {} branch: {}.", sourceType, branch);
-		switch (SourceType.fromValue(sourceType)) {
+		switch (sourceType) {
 			case GITHUB -> {
 				gitHubService.verifyCanReadTargetBranch(request.getRepository(), branch, request.getToken());
 				log.info("Successfully verify source type: {} branch: {}.", sourceType, branch);

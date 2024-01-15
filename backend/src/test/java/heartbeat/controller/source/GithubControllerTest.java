@@ -36,6 +36,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureJsonTesters
 class GithubControllerTest {
 
+	public static final String BAD_SOURCE_TYPE = "GitHub";
+
+	public static final String NORMAL_SOURCE_TYPE = "github";
+
+	public static final String MAIN_BRANCH = "main";
+
+	public static final String EMPTY_BRANCH_NAME = "  ";
+
 	@MockBean
 	private GitHubService gitHubVerifyService;
 
@@ -67,7 +75,7 @@ class GithubControllerTest {
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
 
 		mockMvc
-			.perform(post("/source-control/github/verify")
+			.perform(post("/source-control/{sourceType}/verify", NORMAL_SOURCE_TYPE)
 				.content(new ObjectMapper().writeValueAsString(sourceControlDTO))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent());
@@ -79,12 +87,13 @@ class GithubControllerTest {
 			.repository(GITHUB_REPOSITORY)
 			.token(GITHUB_TOKEN)
 			.build();
-		doNothing().when(gitHubVerifyService).verifyCanReadTargetBranch("fake/repo", "main", GITHUB_TOKEN);
+		doNothing().when(gitHubVerifyService).verifyCanReadTargetBranch("fake/repo", MAIN_BRANCH, GITHUB_TOKEN);
 
 		mockMvc
-			.perform(post("/source-control/github/repos/branches/main/verify")
-				.content(new ObjectMapper().writeValueAsString(verifyBranchRequest))
-				.contentType(MediaType.APPLICATION_JSON))
+			.perform(
+					post("/source-control/{sourceType}/repos/branches/{branch}/verify", NORMAL_SOURCE_TYPE, MAIN_BRANCH)
+						.content(new ObjectMapper().writeValueAsString(verifyBranchRequest))
+						.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent());
 	}
 
@@ -110,7 +119,7 @@ class GithubControllerTest {
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().build();
 
 		final var response = mockMvc
-			.perform(post("/source-control/GitHub/verify")
+			.perform(post("/source-control/{sourceType}/verify", NORMAL_SOURCE_TYPE)
 				.content(new ObjectMapper().writeValueAsString(sourceControlDTO))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
@@ -127,9 +136,10 @@ class GithubControllerTest {
 		VerifyBranchRequest verifyBranchRequest = VerifyBranchRequest.builder().build();
 
 		final var response = mockMvc
-			.perform(post("/source-control/GitHub/repos/branches/main/verify")
-				.content(new ObjectMapper().writeValueAsString(verifyBranchRequest))
-				.contentType(MediaType.APPLICATION_JSON))
+			.perform(
+					post("/source-control/{sourceType}/repos/branches/{branch}/verify", NORMAL_SOURCE_TYPE, MAIN_BRANCH)
+						.content(new ObjectMapper().writeValueAsString(verifyBranchRequest))
+						.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();
@@ -144,9 +154,10 @@ class GithubControllerTest {
 		VerifyBranchRequest verifyBranchRequest = VerifyBranchRequest.builder().token(GITHUB_TOKEN).build();
 
 		final var response = mockMvc
-			.perform(post("/source-control/GitHub/repos/branches/main/verify")
-				.content(new ObjectMapper().writeValueAsString(verifyBranchRequest))
-				.contentType(MediaType.APPLICATION_JSON))
+			.perform(
+					post("/source-control/{sourceType}/repos/branches/{branch}/verify", NORMAL_SOURCE_TYPE, MAIN_BRANCH)
+						.content(new ObjectMapper().writeValueAsString(verifyBranchRequest))
+						.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();
@@ -160,17 +171,11 @@ class GithubControllerTest {
 	void shouldReturnBadRequestGivenSourceTypeIsWrongWhenVerifyToken() throws Exception {
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
 
-		final var response = mockMvc
-			.perform(post("/source-control/GitHub/verify")
+		mockMvc
+			.perform(post("/source-control/{sourceType}/verify", BAD_SOURCE_TYPE)
 				.content(new ObjectMapper().writeValueAsString(sourceControlDTO))
 				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
-			.andReturn()
-			.getResponse();
-
-		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.message").toString();
-		assertThat(result).contains("Source type is incorrect.");
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -180,33 +185,11 @@ class GithubControllerTest {
 			.token(GITHUB_TOKEN)
 			.build();
 
-		final var response = mockMvc
-			.perform(post("/source-control/GitHub/repos/branches/main/verify")
+		mockMvc
+			.perform(post("/source-control/{sourceType}/repos/branches/{branch}/verify", BAD_SOURCE_TYPE, MAIN_BRANCH)
 				.content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
-			.andReturn()
-			.getResponse();
-
-		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.message").toString();
-		assertThat(result).contains("Source type is incorrect.");
-	}
-
-	@Test
-	void shouldReturnBadRequestGivenSourceTypeIsBlankWhenVerifyToken() throws Exception {
-		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
-
-		final var response = mockMvc
-			.perform(post("/source-control/  /verify").content(new ObjectMapper().writeValueAsString(sourceControlDTO))
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
-			.andReturn()
-			.getResponse();
-
-		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.message").toString();
-		assertThat(result).contains("verifyToken.sourceType: must not be blank");
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -216,8 +199,9 @@ class GithubControllerTest {
 			.repository(GITHUB_REPOSITORY)
 			.build();
 
-		final var response = mockMvc
-			.perform(post("/source-control/GitHub/repos/branches/ /verify")
+		var response = mockMvc
+			.perform(post("/source-control/{sourceType}/repos/branches/{branch}/verify", NORMAL_SOURCE_TYPE,
+					EMPTY_BRANCH_NAME)
 				.content(new ObjectMapper().writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
@@ -247,12 +231,12 @@ class GithubControllerTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "12345", "  ", "" })
+	@ValueSource(strings = { "12345", EMPTY_BRANCH_NAME, "" })
 	void shouldReturnBadRequestGivenRequestParamPatternIsIncorrectWhenVerifyToken(String token) throws Exception {
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(token).build();
 
 		final var response = mockMvc
-			.perform(post("/source-control/github/verify")
+			.perform(post("/source-control/{sourceType}/verify", NORMAL_SOURCE_TYPE)
 				.content(new ObjectMapper().writeValueAsString(sourceControlDTO))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
@@ -265,14 +249,15 @@ class GithubControllerTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "12345", "  ", "" })
+	@ValueSource(strings = { "12345", EMPTY_BRANCH_NAME, "" })
 	void shouldReturnBadRequestGivenRequestParamPatternIsIncorrectWhenVerifyBranch(String token) throws Exception {
 		VerifyBranchRequest request = VerifyBranchRequest.builder().token(token).build();
 
 		final var response = mockMvc
-			.perform(post("/source-control/GitHub/repos/branches/main/verify")
-				.content(new ObjectMapper().writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
+			.perform(
+					post("/source-control/{sourceType}/repos/branches/{branch}/verify", NORMAL_SOURCE_TYPE, MAIN_BRANCH)
+						.content(new ObjectMapper().writeValueAsString(request))
+						.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
 			.andReturn()
 			.getResponse();

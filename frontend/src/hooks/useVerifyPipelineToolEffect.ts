@@ -6,21 +6,12 @@ import { HttpStatusCode } from 'axios';
 import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
 import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 
-export type TVerifyPipelineTool = (_params: IPipelineVerifyRequestDTO) => Promise<void>;
-
-export interface IUseVerifyPipeLineToolStateInterface {
-  verifyPipelineTool: TVerifyPipelineTool;
-  isLoading: boolean;
-  errorMessage: string;
-  clearErrorMessage: () => void;
-}
-
-export const useVerifyPipelineToolEffect = (): IUseVerifyPipeLineToolStateInterface => {
+export const useVerifyPipelineToolEffect = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useAppDispatch();
 
-  const verifyPipelineTool = async (params: IPipelineVerifyRequestDTO) => {
+  const verifyPipelineTool = async (params: IPipelineVerifyRequestDTO): Promise<void> => {
     setIsLoading(true);
     const response = await pipelineToolClient.verifyPipelineTool(params);
     if (response.code === HttpStatusCode.NoContent) {

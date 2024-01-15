@@ -45,6 +45,7 @@ import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NoContentException;
+import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.util.BoardUtil;
 import heartbeat.util.SystemUtil;
@@ -109,21 +110,24 @@ public class JiraService {
 
 	public String verify(BoardType boardType, BoardVerifyRequestParam boardVerifyRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardVerifyRequestParam.getSite());
+		if (!BoardType.JIRA.equals(boardType)) {
+			throw new BadRequestException("boardType param is not correct");
+		}
+		checkSite(baseUrl);
+
 		try {
-			if (!BoardType.JIRA.equals(boardType)) {
-				throw new BadRequestException("boardType param is not correct");
-			}
 			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl,
 					boardVerifyRequestParam.getBoardId(), boardVerifyRequestParam.getToken());
 			return jiraBoardVerifyDTO.getLocation().getProjectKey();
+		}
+		catch (NotFoundException e) {
+			log.error("Failed to call Jira to verify board url, url: {}", baseUrl);
+			throw new NotFoundException("boardId not found");
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to call Jira to verify board, board id: {}, e: {}", boardVerifyRequestParam.getBoardId(),
 					cause.getMessage());
-			if (cause instanceof BaseException baseException) {
-				throw baseException;
-			}
 			throw new InternalServerErrorException(
 					String.format("Failed to call Jira to verify board, cause is %s", cause.getMessage()));
 		}
@@ -205,6 +209,16 @@ public class JiraService {
 
 	private boolean isIgnoredTargetField(TargetField targetField) {
 		return (FIELDS_IGNORE.contains(targetField.getKey())) || FIELDS_IGNORE.contains(targetField.getName());
+	}
+
+	private void checkSite(URI baseUrl) {
+		try {
+			jiraFeignClient.getSite(baseUrl);
+		}
+		catch (NotFoundException e) {
+			log.error("Failed to call Jira to verify board url, url: {}", baseUrl);
+			throw new NotFoundException("site not found");
+		}
 	}
 
 	public CardCollection getStoryPointsAndCycleTimeForDoneCards(StoryPointsAndCycleTimeRequest request,

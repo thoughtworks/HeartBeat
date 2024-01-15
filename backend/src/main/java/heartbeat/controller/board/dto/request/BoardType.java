@@ -1,5 +1,7 @@
 package heartbeat.controller.board.dto.request;
 
+import heartbeat.exception.BadRequestException;
+
 public enum BoardType {
 
 	JIRA("jira"), CLASSIC_JIRA("classic-jira");
@@ -14,7 +16,7 @@ public enum BoardType {
 		return switch (type) {
 			case "jira" -> JIRA;
 			case "classic-jira" -> CLASSIC_JIRA;
-			default -> throw new IllegalArgumentException("Board type does not find!");
+			default -> throw new BadRequestException("Board type does not find!");
 		};
 	}
 
@@ -22,7 +24,7 @@ public enum BoardType {
 		return switch (style) {
 			case "next-gen" -> JIRA;
 			case "classic" -> CLASSIC_JIRA;
-			default -> throw new IllegalArgumentException("Board type does not find!");
+			default -> throw new BadRequestException("Board type does not find!");
 		};
 	}
 

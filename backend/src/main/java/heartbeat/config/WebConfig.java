@@ -1,6 +1,5 @@
 package heartbeat.config;
 
-import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.report.dto.request.DataType;
 import heartbeat.controller.report.dto.request.ReportType;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +12,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
-		registry.addConverter(new Converter<String, BoardType>() {
-			@Override
-			public BoardType convert(String source) {
-				return BoardType.fromValue(source.toLowerCase());
-			}
-		});
-
 		registry.addConverter(new Converter<String, DataType>() {
 			@Override
 			public DataType convert(String source) {

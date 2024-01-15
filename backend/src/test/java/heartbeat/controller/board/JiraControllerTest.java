@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
-import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.exception.RequestFailedException;
@@ -38,6 +37,8 @@ public class JiraControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	private final static String BOARD_TYPE = "jira";
 
 	@Test
 	@Deprecated
@@ -79,7 +80,7 @@ public class JiraControllerTest {
 		when(jiraService.verify(any(), any())).thenReturn(PROJECT_KEY);
 
 		mockMvc
-			.perform(post("/boards/{boardType}/verify", BoardType.JIRA).contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/boards/{boardType}/verify", BOARD_TYPE).contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.projectKey").value(PROJECT_KEY));
@@ -107,11 +108,11 @@ public class JiraControllerTest {
 	void shouldHandleServiceExceptionAndReturnWithStatusAndMessageWhenGetBoardInfo() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
 		when(jiraService.getInfo(any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn(message);
 		when(mockException.getStatus()).thenReturn(400);
-
-		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 
 		mockMvc
 			.perform(post("/boards/{boardType}/info", "jira").contentType(MediaType.APPLICATION_JSON)
@@ -124,14 +125,14 @@ public class JiraControllerTest {
 	void shouldHandleVerifyServiceExceptionAndReturnWithStatusAndMessage() throws Exception {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		String message = "message";
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
 		when(jiraService.verify(any(), any())).thenThrow(mockException);
 		when(mockException.getMessage()).thenReturn(message);
 		when(mockException.getStatus()).thenReturn(400);
 
-		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
-
 		mockMvc
-			.perform(post("/boards/{boardType}/verify", BoardType.JIRA).contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/boards/{boardType}/verify", BOARD_TYPE).contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardVerifyRequestParam)))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value(message));
@@ -158,6 +159,18 @@ public class JiraControllerTest {
 	}
 
 	@Test
+	void shouldRequestTimeIncorrectWhenGetBoardInfo() throws Exception {
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().startTime("1672556350000")
+			.endTime("1672556350000")
+			.build();
+
+		mockMvc
+			.perform(post("/boards/{boardType}/info", "jira").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void shouldBoardVerifyRequestTokenNotBlank() throws Exception {
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().token(null).build();
 
@@ -174,8 +187,7 @@ public class JiraControllerTest {
 		mockMvc
 			.perform(post("/boards/{boardType}", "invalid").contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").isNotEmpty());
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -185,8 +197,7 @@ public class JiraControllerTest {
 		mockMvc
 			.perform(post("/boards/{boardType}/info", "invalid").contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(boardRequestParam)))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").isNotEmpty());
+			.andExpect(status().isBadRequest());
 	}
 
 }

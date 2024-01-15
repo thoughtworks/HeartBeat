@@ -103,6 +103,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -213,7 +214,6 @@ class JiraServiceTest {
 				new TargetField("customfield_10016", "Story point estimate", false),
 				new TargetField("customfield_10020", "Sprint", false),
 				new TargetField("customfield_10021", "Flagged", false));
-
 		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
 			.replaceAll("sprint", "customfield_10020")
 			.replaceAll("partner", "customfield_10037")
@@ -231,9 +231,9 @@ class JiraServiceTest {
 			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
 		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
 		jiraService.shutdownExecutor();
-
 		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
@@ -246,7 +246,6 @@ class JiraServiceTest {
 	@Test
 	void shouldCallJiraFeignClientAndReturnBoardVerifyResponseWhenVerifyJiraBoard() {
 		JiraBoardVerifyDTO jiraBoardVerifyDTO = JIRA_BOARD_VERIFY_RESPONSE_BUILDER().build();
-
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 
@@ -256,7 +255,6 @@ class JiraServiceTest {
 
 		String projectKey = jiraService.verify(BoardType.JIRA, boardVerifyRequestParam);
 		jiraService.shutdownExecutor();
-
 		assertThat(Objects.requireNonNull(projectKey)).isEqualTo("ADM");
 	}
 
@@ -289,7 +287,6 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigDTO boardConfigDTO = jiraService.getJiraConfiguration(boardTypeJira, boardRequestParam);
-
 		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
@@ -330,7 +327,6 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
-
 		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
@@ -415,7 +411,6 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
-
 		assertThat(boardConfigDTO.getJiraColumnResponse()).hasSize(1);
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getName()).isEqualTo("TODO");
 		assertThat(boardConfigDTO.getJiraColumnResponse().get(0).getValue().getStatuses().get(0)).isEqualTo("DONE");
@@ -477,6 +472,31 @@ class JiraServiceTest {
 		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to call Jira to verify board, cause is");
+	}
+
+	@Test
+	void shouldCallJiraFeignClientSiteAndThrowNotFoundWhenVerifyJiraBoard() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		doThrow(new NotFoundException("site not found")).when(jiraFeignClient).getSite(baseUrl);
+
+		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
+		assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaining("site not found");
+	}
+
+	@Test
+	void shouldCallJiraFeignClientBoardAndThrowNotFoundWhenVerifyJiraBoard() {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
+		doThrow(new NotFoundException("boardId not found")).when(jiraFeignClient).getBoard(baseUrl, BOARD_ID, token);
+
+		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
+		assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaining("boardId not found");
 	}
 
 	@Test
@@ -618,6 +638,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		doReturn(jiraBoardConfigDTO).when(jiraFeignClient).getJiraBoardConfiguration(baseUrl, BOARD_ID, token);
 		when(jiraFeignClient.getProject(baseUrl, "project key", token))
@@ -627,9 +648,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", token))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
-		Throwable thrown = catchThrowable(() -> {
-			jiraService.getInfo(boardTypeJira, boardRequestParam);
-		});
+		Throwable thrown = catchThrowable(() -> jiraService.getInfo(boardTypeJira, boardRequestParam));
 		assertThat(thrown).isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to call Jira to get board info, cause is");
 	}
@@ -687,6 +706,7 @@ class JiraServiceTest {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
 		when(jiraFeignClient.getJiraBoardConfiguration(any(URI.class), any(), any()))
 			.thenThrow(new CompletionException(new Exception("UnExpected Exception")));
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
@@ -694,6 +714,7 @@ class JiraServiceTest {
 			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
 		when(jiraFeignClient.getTargetField(baseUrl, "project key", "token"))
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
+
 		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, boardRequestParam))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("UnExpected Exception");
@@ -753,7 +774,6 @@ class JiraServiceTest {
 			.thenReturn(FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
-
 		assertThat(boardConfigDTO.getUsers()).hasSize(1);
 		assertThat(boardConfigDTO.getUsers().get(0)).isEqualTo("Zhang San");
 	}
@@ -875,6 +895,7 @@ class JiraServiceTest {
 	void shouldThrowCustomExceptionWhenGetJiraBoardInfo() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
+
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getProject(baseUrl, "project key", token))
 			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
@@ -902,6 +923,7 @@ class JiraServiceTest {
 	void shouldThrowCustomExceptionWhenCallJiraFeignClientToGetBoardInfoFailed() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
+
 		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
 		when(jiraFeignClient.getProject(baseUrl, "project key", token))
 			.thenReturn(JiraBoardProject.builder().style("next-gen").build());
@@ -1008,17 +1030,19 @@ class JiraServiceTest {
 
 		assertThatThrownBy(() -> jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), null))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(BadRequestException.class)
 			.hasMessageContaining("Board type does not find!");
 	}
 
 	@Test
 	void shouldReturnBadRequestExceptionWhenBoardStyleIsNotCorrect() {
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+
 		when(jiraFeignClient.getProject(any(), any(), any()))
 			.thenReturn(JiraBoardProject.builder().style("unknown").build());
+
 		assertThatThrownBy(() -> jiraService.getInfo(boardTypeJira, boardRequestParam))
-			.isInstanceOf(InternalServerErrorException.class)
+			.isInstanceOf(BadRequestException.class)
 			.hasMessageContaining("Board type does not find!");
 	}
 
@@ -1347,7 +1371,6 @@ class JiraServiceTest {
 			.thenReturn(INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER().build());
 
 		BoardConfigDTO boardConfigDTO = jiraService.getInfo(boardTypeJira, boardRequestParam);
-
 		assertThat(boardConfigDTO.getTargetFields()).hasSize(3);
 		assertThat(
 				boardConfigDTO.getTargetFields().contains(new TargetField("customfield_10000", "Development", false)))

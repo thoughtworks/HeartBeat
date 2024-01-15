@@ -89,7 +89,8 @@ responses: {
 | 400    | boardType param is not correct                    | Please reconfirm the input |
 | 401    | Failed to get Jira info_status: 401 UNAUTHORIZED, reason: xxx | Token is incorrect |
 | 403    | Failed to get Jira info_status: 403 FORBIDDEN, reason: xxx   | 403 Forbidden       |
-| 404    | Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx   | 404 Not Found       |
+| 404    | Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx   | 404 site Not Found       |
+| 404    | Failed to get Jira info_status: 404 NOT_FOUND, reason: xxx   | 404 boardId Not Found       |
 | 500    |                                                   | Internal Server Error  |
 
 - Jira API
@@ -122,9 +123,15 @@ participant Jira
     activate JiraService
     JiraService -> JiraFeignClient: verify
     activate JiraFeignClient
+    JiraFeignClient -> Jira: call site
+    activate Jira
+    Jira --> JiraFeignClient: 200
+    deactivate Jira
+    JiraFeignClient --> JiraService: 200
+    deactivate JiraFeignClient
     JiraFeignClient -> Jira: rest/agile/1.0/board/{boardId}
     activate Jira
-alt Verification success
+    activate JiraFeignClient
     Jira --> JiraFeignClient: 200
     deactivate Jira
     JiraFeignClient --> JiraService: 200
@@ -133,7 +140,7 @@ alt Verification success
     deactivate JiraService
     JiraController --> FrontEnd: response: 200
     deactivate JiraController
-else Verification failed
+group Verification failed
     activate JiraFeignClient
     Jira --> JiraFeignClient: response 401, 403, 404
     activate Jira
@@ -227,6 +234,7 @@ Example
 
 | status | message                                           | hintInfo               |
 |--------|---------------------------------------------------|------------------------|
+| 400    | Time inputs wrong.                                | Please reconfirm the input |
 | 400    | Token cannot be empty.                            | Please reconfirm the input |
 | 400    | Token's pattern is incorrect.                     | Please reconfirm the input |
 | 400    | boardType param is not correct                    | Please reconfirm the input |

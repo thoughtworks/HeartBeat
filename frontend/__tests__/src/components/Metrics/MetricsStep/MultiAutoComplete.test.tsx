@@ -2,8 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
-import { act } from 'react-dom/test-utils';
-import { ALL, AUTOCOMPLETE_SELECT_ACTION, MOCK_AUTOCOMPLETE_LIST } from '../../../fixtures';
+import { ALL, MOCK_AUTOCOMPLETE_LIST } from '../../../fixtures';
 
 describe('MultiAutoComplete', () => {
   const optionList = ['Option 1', 'Option 2', 'Option 3'];

@@ -1,14 +1,12 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
 import {
-  ERROR_MESSAGE_TIME_DURATION,
   INTERNAL_SERVER_ERROR_MESSAGE,
   MOCK_GENERATE_REPORT_REQUEST_PARAMS,
   MOCK_REPORT_RESPONSE,
   MOCK_RETRIEVE_REPORT_RESPONSE,
 } from '../fixtures';
 import { reportClient } from '@src/clients/report/ReportClient';
-import { NotFoundException } from '@src/exceptions/NotFoundException';
 import { UnknownException } from '@src/exceptions/UnkonwException';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { HttpStatusCode } from 'axios';

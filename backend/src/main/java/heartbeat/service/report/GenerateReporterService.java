@@ -693,11 +693,11 @@ public class GenerateReporterService {
 		}
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
 			.boardMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.boardMetricsCompleted(),
-				previousMetricsReady.boardMetricsCompleted()))
+					previousMetricsReady.boardMetricsCompleted()))
 			.pipelineMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.pipelineMetricsCompleted(),
-				previousMetricsReady.pipelineMetricsCompleted()))
+					previousMetricsReady.pipelineMetricsCompleted()))
 			.sourceControlMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.sourceControlMetricsCompleted(),
-				previousMetricsReady.sourceControlMetricsCompleted()))
+					previousMetricsReady.sourceControlMetricsCompleted()))
 			.build();
 		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataCompleted);
 	}

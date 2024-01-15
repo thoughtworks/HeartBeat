@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { theme } from '@src/theme';
 import { Button } from '@mui/material';
-import { basicButtonStyle } from '@src/components/Metrics/MetricsStepper/style';
+import { basicButtonStyle } from '@src/containers/MetricsStepper/style';
 
 export const Container = styled.div({
   display: 'flex',

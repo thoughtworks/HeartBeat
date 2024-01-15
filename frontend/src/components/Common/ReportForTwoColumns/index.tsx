@@ -8,7 +8,7 @@ import {
 } from '@src/components/Common/ReportForTwoColumns/style';
 import React, { Fragment } from 'react';
 import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
-import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style';
+import { ReportSelectionTitle } from '@src/containers/MetricsStep/style';
 
 interface ReportForTwoColumnsProps {
   title: string;

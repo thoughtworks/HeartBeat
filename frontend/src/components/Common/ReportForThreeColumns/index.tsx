@@ -11,7 +11,7 @@ import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIData
 import { AVERAGE_FIELD, METRICS_TITLE, REPORT_SUFFIX_UNITS } from '@src/constants/resources';
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
 import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style';
-import { ReportSelectionTitle } from '@src/components/Metrics/MetricsStep/style';
+import { ReportSelectionTitle } from '@src/containers/MetricsStep/style';
 
 interface ReportForThreeColumnsProps {
   title: string;

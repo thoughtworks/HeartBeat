@@ -6,9 +6,10 @@ import { HttpStatusCode } from 'axios';
 import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
 import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 
+export type TVerifyPipelineTool = (_params: IPipelineVerifyRequestDTO) => Promise<void>;
+
 export interface IUseVerifyPipeLineToolStateInterface {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  verifyPipelineTool: (_params: IPipelineVerifyRequestDTO) => void;
+  verifyPipelineTool: TVerifyPipelineTool;
   isLoading: boolean;
   errorMessage: string;
   clearErrorMessage: () => void;

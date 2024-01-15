@@ -32,7 +32,7 @@ class Report {
   }
 
   get firstNotification() {
-    return cy.contains('The file will expire in 30 minutes，please download it in time.');
+    return cy.contains('The file will expire in 30 minutes, please download it in time.');
   }
 
   get showMoreBoardButton() {

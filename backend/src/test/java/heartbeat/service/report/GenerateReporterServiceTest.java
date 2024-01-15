@@ -1372,7 +1372,7 @@ class GenerateReporterServiceTest {
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
-		String doraTimeStamp = "dora-20240109232359";
+		String reportId = "dora-20240109232359";
 		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
 			.boardMetricsCompleted(null)
 			.pipelineMetricsCompleted(false)

@@ -7,7 +7,7 @@ import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
 import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 
 export interface useVerifyPipeLineToolStateInterface {
-  verifyPipelineTool: (params: IPipelineVerifyRequestDTO) => void;
+  verifyPipelineTool: (_params: IPipelineVerifyRequestDTO) => void;
   isLoading: boolean;
   errorMessage: string;
   clearErrorMessage: () => void;

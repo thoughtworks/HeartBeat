@@ -7,6 +7,7 @@ import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { DURATION, RETRIEVE_REPORT_TYPES } from '@src/constants/commons';
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
+import { TIMEOUT_PROMPT } from '@src/constants/resources';
 
 export interface useGenerateReportEffectInterface {
   startToRequestBoardData: (boardParams: BoardReportRequestDTO) => void;
@@ -47,12 +48,12 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
       setIsServerError(true);
     } else {
       if (source === 'Board') {
-        setTimeout4Board('Data loading failed');
+        setTimeout4Board(TIMEOUT_PROMPT);
       } else if (source === 'Dora') {
-        setTimeout4Dora('Data loading failed');
+        setTimeout4Dora(TIMEOUT_PROMPT);
       } else {
-        setTimeout4Board('Data loading failed');
-        setTimeout4Dora('Data loading failed');
+        setTimeout4Board(TIMEOUT_PROMPT);
+        setTimeout4Dora(TIMEOUT_PROMPT);
       }
     }
   };

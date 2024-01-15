@@ -36,6 +36,6 @@ export const StyledImgSection = styled.img({
 });
 
 export const StyledErrorMessage = styled.div({
-  color: '#A2A2A2',
+  color: theme.main.button.disabled.color,
   fontSize: '0.875rem',
 });

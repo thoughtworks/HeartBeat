@@ -478,7 +478,11 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   pipelineMetricsCompleted: true,
   sourceControlMetricsCompleted: true,
   allMetricsCompleted: true,
-  reportError: null,
+  reportError: {
+    boardError: null,
+    pipelineError: null,
+    sourceControlError: null,
+  },
 };
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
@@ -643,7 +647,11 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   pipelineMetricsCompleted: false,
   sourceControlMetricsCompleted: false,
   allMetricsCompleted: false,
-  reportError: null,
+  reportError: {
+    boardError: null,
+    pipelineError: null,
+    sourceControlError: null,
+  },
 };
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

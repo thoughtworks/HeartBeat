@@ -57,7 +57,11 @@ export class ReportClient extends HttpClient {
       },
       changeFailureRateOfPipelines: [],
     },
-    reportError: null,
+    reportError: {
+      boardError: null,
+      pipelineError: null,
+      sourceControlError: null,
+    },
     meanTimeToRecovery: null,
     exportValidityTime: null,
     boardMetricsCompleted: false,

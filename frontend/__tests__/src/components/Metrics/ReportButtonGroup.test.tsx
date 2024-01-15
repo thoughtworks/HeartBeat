@@ -7,7 +7,6 @@ describe('test', () => {
   const mockData = {
     ...MOCK_REPORT_RESPONSE,
     exportValidityTime: 30,
-
     reportError: {
       boardError: {
         status: 401,

@@ -362,6 +362,12 @@ export const PR_LEAD_TIME = 'PR Lead Time';
 export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time';
 export const TOTAL_DELAY_TIME = 'Total Lead Time';
 
+const reportError = {
+  boardError: null,
+  pipelineError: null,
+  sourceControlError: null,
+};
+
 export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   velocity: {
     velocityForSP: 20,
@@ -478,11 +484,7 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   pipelineMetricsCompleted: true,
   sourceControlMetricsCompleted: true,
   allMetricsCompleted: true,
-  reportError: {
-    boardError: null,
-    pipelineError: null,
-    sourceControlError: null,
-  },
+  reportError,
 };
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
@@ -647,11 +649,7 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   pipelineMetricsCompleted: false,
   sourceControlMetricsCompleted: false,
   allMetricsCompleted: false,
-  reportError: {
-    boardError: null,
-    pipelineError: null,
-    sourceControlError: null,
-  },
+  reportError,
 };
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

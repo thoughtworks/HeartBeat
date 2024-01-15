@@ -24,7 +24,7 @@
     "type-check": "tsc --noEmit"
   },
   "lint-staged": {
-    "**/*": [
+    "**/*.(ts|tsx)": [
       "npm run lint",
       "npm run type-check",
       "npx prettier --write . --ignore-unknown"
@@ -56,7 +56,7 @@
     "@types/lodash.camelcase": "^4.3.7",
     "@types/node": "^18.15.11",
     "@types/node-fetch": "^2.6.9",
-    "@types/react": "^18.0.33",
+    "@types/react": "^18.2.48",
     "@types/react-dom": "^18.0.11",
     "@types/react-redux": "^7.1.25",
     "@types/testing-library__jest-dom": "^5.14.5",

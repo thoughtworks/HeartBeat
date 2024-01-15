@@ -81,7 +81,7 @@ export const ReportCard = ({ title, items, xs, errorMessage }: ReportCardProps) 
       {!errorMessage && !items && <Loading size='1.5rem' backgroundColor='transparent' />}
       <StyledReportCardTitle>{title}</StyledReportCardTitle>
       {errorMessage && <ErrorMessagePrompt errorMessage={errorMessage} />}
-      {items && getReportItems()}
+      {!errorMessage && items && getReportItems()}
     </StyledReportCard>
   );
 };

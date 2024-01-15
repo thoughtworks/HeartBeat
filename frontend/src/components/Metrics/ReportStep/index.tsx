@@ -38,7 +38,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
   const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY);
   const [isBackFromDetail, setIsBackFromDetail] = useState<boolean>(false);
-  const [allMetricsCompleted, setallMetricsCompleted] = useState<boolean>(false);
+  const [allMetricsCompleted, setAllMetricsCompleted] = useState<boolean>(false);
   const configData = useAppSelector(selectConfig);
   const csvTimeStamp = useAppSelector(selectTimeStamp);
 
@@ -94,7 +94,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   useEffect(() => {
     setExportValidityTimeMin(reportData?.exportValidityTime);
-    reportData && setallMetricsCompleted(reportData.allMetricsCompleted);
+    reportData && setAllMetricsCompleted(reportData.allMetricsCompleted);
   }, [reportData]);
 
   useLayoutEffect(() => {

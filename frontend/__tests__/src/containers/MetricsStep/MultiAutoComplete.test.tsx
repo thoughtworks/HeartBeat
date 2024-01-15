@@ -31,7 +31,7 @@ describe('MultiAutoComplete', () => {
     expect(screen.getByTestId(testId)).toBeInTheDocument();
   });
 
-  it('When passed selectedoption changed, the correct option would be displayed', async () => {
+  it('When passed selected option changed, the correct option would be displayed', async () => {
     setup();
 
     expect(screen.getByRole('button', { name: 'Option 1' })).toBeVisible();

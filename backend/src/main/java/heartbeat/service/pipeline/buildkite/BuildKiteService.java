@@ -10,11 +10,11 @@ import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
+import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineTransformer;
-import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
@@ -74,9 +74,7 @@ public class BuildKiteService {
 
 			log.info("Start to query BuildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-				.flatMap(org -> buildKiteFeignClient
-					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
-							pipelineParam.getEndTime())
+				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100")
 					.stream()
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))
@@ -321,9 +319,9 @@ public class BuildKiteService {
 		}
 	}
 
-	public BuildKiteResponseDTO getBuildKiteInfo(PipelineParam pipelineParam) {
+	public BuildKiteResponseDTO getBuildKiteInfo(TokenParam tokenParam) {
 		try {
-			String buildKiteToken = "Bearer " + pipelineParam.getToken();
+			String buildKiteToken = "Bearer " + tokenParam.getToken();
 			log.info("Start to query BuildKite organizations by token");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
 				.getBuildKiteOrganizationsInfo(buildKiteToken);
@@ -331,9 +329,7 @@ public class BuildKiteService {
 
 			log.info("Start to query BuildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
 			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-				.flatMap(org -> buildKiteFeignClient
-					.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100", pipelineParam.getStartTime(),
-							pipelineParam.getEndTime())
+				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100")
 					.stream()
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))
@@ -345,20 +341,13 @@ public class BuildKiteService {
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed to call BuildKite, start time: {}, e: {}", pipelineParam.getStartTime(),
-					cause.getMessage());
+			log.error("Failed to call BuildKite, e: {}", cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
 			}
 			throw new InternalServerErrorException(
 					String.format("Failed to call BuildKite, cause is %s", cause.getMessage()));
 
-		}
-	}
-
-	public void checkTime(String startTime, String endTime) {
-		if (Long.parseLong(startTime) > Long.parseLong(endTime)) {
-			throw new BadRequestException("StartTime can not bigger than EndTime");
 		}
 	}
 

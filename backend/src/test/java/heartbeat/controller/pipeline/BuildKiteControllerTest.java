@@ -153,16 +153,12 @@ public class BuildKiteControllerTest {
 				new File("src/test/java/heartbeat/controller/pipeline/pipelineInfoData.json"), new TypeReference<>() {
 				});
 		BuildKiteResponseDTO buildKiteResponseDTO = BuildKiteResponseDTO.builder().pipelineList(pipelines).build();
-		PipelineParam pipelineParam = PipelineParam.builder()
-			.token(TEST_TOKEN)
-			.startTime(TEST_START_TIME)
-			.endTime(TEST_END_TIME)
-			.build();
+		TokenParam tokenParam = TokenParam.builder().token(TEST_TOKEN).build();
 		when(buildKiteService.getBuildKiteInfo(any())).thenReturn(buildKiteResponseDTO);
 
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/pipelines/{pipelineType}/info", BUILD_KITE).contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(pipelineParam)))
+				.content(mapper.writeValueAsString(tokenParam)))
 			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();
@@ -179,16 +175,12 @@ public class BuildKiteControllerTest {
 		BuildKiteResponseDTO buildKiteResponseDTO = BuildKiteResponseDTO.builder()
 			.pipelineList(Collections.emptyList())
 			.build();
-		PipelineParam pipelineParam = PipelineParam.builder()
-			.token(TEST_TOKEN)
-			.startTime(TEST_START_TIME)
-			.endTime(TEST_END_TIME)
-			.build();
+		TokenParam tokenParam = TokenParam.builder().token(TEST_TOKEN).build();
 		when(buildKiteService.getBuildKiteInfo(any())).thenReturn(buildKiteResponseDTO);
 
 		MockHttpServletResponse response = mockMvc
 			.perform(post("/pipelines/{pipelineType}/info", BUILD_KITE).contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(pipelineParam)))
+				.content(mapper.writeValueAsString(tokenParam)))
 			.andExpect(status().isNoContent())
 			.andReturn()
 			.getResponse();

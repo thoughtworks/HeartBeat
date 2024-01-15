@@ -48,10 +48,9 @@ public class PipelineController {
 
 	@PostMapping("/{pipelineType}/info")
 	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(@PathVariable @NotBlank String pipelineType,
-			@Valid @RequestBody PipelineParam pipelineParam) {
+			@Valid @RequestBody TokenParam tokenParam) {
 		PipelineType.fromValue(pipelineType);
-		buildKiteService.checkTime(pipelineParam.getStartTime(), pipelineParam.getEndTime());
-		BuildKiteResponseDTO buildKiteResponse = buildKiteService.getBuildKiteInfo(pipelineParam);
+		BuildKiteResponseDTO buildKiteResponse = buildKiteService.getBuildKiteInfo(tokenParam);
 		if (buildKiteResponse.getPipelineList().isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}

@@ -171,11 +171,7 @@ The api should be called when entering the Metrics page. Only after two parts of
 paths: api/v1/pipelines/{pipelineType}/info
 method: post
 request: {
-  PipelineParam:{
   token:"your_token",
-  startTime: "xxx",
-  endTime:"xxx",
-  }
 }
 responses:{
   "pipelineList":
@@ -200,15 +196,9 @@ When pipelineList is empty， responses 204
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="3">400</td>
+    <td>400</td>
     <td>Token cannot be empty.</td>
-    <td rowspan="3"></td>
-  </tr>
-  <tr>
-    <td>StartTime cannot be empty.</td>
-  </tr>
-  <tr>
-    <td>EndTime cannot be empty.</td>
+    <td></td>
   </tr>
   <tr>
     <td>401</td>
@@ -241,16 +231,16 @@ participant RestResponseEntityExceptionHandler
 participant BuildKite
 
 ' group Get BuildKite Info
-    FrontEnd -> BuildKiteController: request: PipelineParam{token,startTime,endTime}, type
+    FrontEnd -> BuildKiteController: request: TokenParam{token}, type
     activate BuildKiteController
-    BuildKiteController -> BuildKiteService: PipelineParam{token,startTime,endTime}
+    BuildKiteController -> BuildKiteService: token
     activate BuildKiteService
     BuildKiteService -> BuildKiteFeignClient: [1] token
     activate BuildKiteFeignClient
     BuildKiteFeignClient -> BuildKite: [1] v2/organizations
     BuildKite -> BuildKiteFeignClient: [1] BuildKiteOrganizationsInfoList{name,slug}
     BuildKiteFeignClient -> BuildKiteService: [1] BuildKiteOrganizationsInfoList{name,slug}
-    BuildKiteService -> BuildKiteFeignClient: [2] token,slug,startTime,endTime,page,perPage
+    BuildKiteService -> BuildKiteFeignClient: [2] token,slug,page,perPage
     BuildKiteFeignClient -> BuildKite: [2] v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}
     BuildKite -> BuildKiteFeignClient: [2] BuildKitePipelineDTOList{id,url,name ...}
 alt Verification success

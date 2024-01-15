@@ -1,6 +1,7 @@
 package heartbeat.service.pipeline.buildkite;
 
-import heartbeat.exception.BadRequestException;
+import heartbeat.controller.pipeline.dto.request.PipelineParam;
+import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.ServiceUnavailableException;
@@ -9,7 +10,6 @@ import heartbeat.exception.UnauthorizedException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +29,6 @@ import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
-import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
@@ -147,8 +146,7 @@ class BuildKiteServiceTest {
 			.build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
-		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100", MOCK_START_TIME,
-				MOCK_END_TIME))
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100"))
 			.thenReturn(pipelineDTOS);
 		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
 
@@ -587,11 +585,7 @@ class BuildKiteServiceTest {
 
 	@Test
 	void shouldReturnBuildKiteResponseWhenGetBuildKiteInfo() throws IOException {
-		PipelineParam pipelineParam = PipelineParam.builder()
-			.token(MOCK_TOKEN)
-			.startTime(MOCK_START_TIME)
-			.endTime(MOCK_END_TIME)
-			.build();
+		TokenParam tokenParam = TokenParam.builder().token(MOCK_TOKEN).build();
 		ObjectMapper mapper = new ObjectMapper();
 		List<BuildKitePipelineDTO> pipelineDTOS = mapper.readValue(
 				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
@@ -599,11 +593,10 @@ class BuildKiteServiceTest {
 				});
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
-		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100", MOCK_START_TIME,
-				MOCK_END_TIME))
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100"))
 			.thenReturn(pipelineDTOS);
 
-		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.getBuildKiteInfo(pipelineParam);
+		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.getBuildKiteInfo(tokenParam);
 
 		assertThat(buildKiteResponseDTO.getPipelineList().size()).isEqualTo(1);
 		Pipeline pipeline = buildKiteResponseDTO.getPipelineList().get(0);
@@ -618,47 +611,24 @@ class BuildKiteServiceTest {
 
 	@Test
 	void shouldThrowInternalServerErrorExceptionWhenGetBuildKiteInfo500Exception() {
-		PipelineParam pipelineParam = PipelineParam.builder()
-			.token(MOCK_TOKEN)
-			.startTime(MOCK_START_TIME)
-			.endTime(MOCK_END_TIME)
-			.build();
+		TokenParam tokenParam = TokenParam.builder().token(MOCK_TOKEN).build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any())).thenReturn(null);
-		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100", MOCK_START_TIME,
-				MOCK_END_TIME))
-			.thenReturn(null);
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100")).thenReturn(null);
 
-		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(pipelineParam))
+		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(tokenParam))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to call BuildKite, cause is");
 	}
 
 	@Test
 	void shouldThrowUnauthorizedExceptionWhenGetBuildKiteInfoAndTokenIsIncorrect() {
-		PipelineParam pipelineParam = PipelineParam.builder()
-			.token(MOCK_TOKEN)
-			.startTime(MOCK_START_TIME)
-			.endTime(MOCK_END_TIME)
-			.build();
+		TokenParam tokenParam = TokenParam.builder().token(MOCK_TOKEN).build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
 			.thenThrow(new UnauthorizedException(UNAUTHORIZED_MSG));
 
-		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(pipelineParam))
+		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(tokenParam))
 			.isInstanceOf(UnauthorizedException.class)
 			.hasMessageContaining(UNAUTHORIZED_MSG);
-	}
-
-	@Test
-	void shouldNotThrowExceptionGivenStartTimeSmallerThanEndTimeWhenCheckTime() {
-		assertDoesNotThrow(() -> {
-			buildKiteService.checkTime(MOCK_START_TIME, MOCK_END_TIME);
-		});
-	}
-
-	@Test
-	void shouldThrowExceptionGivenStartTimeBiggerThanEndTimeWhenCheckTime() {
-		assertThatThrownBy(() -> buildKiteService.checkTime("166533", "155532")).isInstanceOf(BadRequestException.class)
-			.hasMessageContaining("StartTime can not bigger than EndTime");
 	}
 
 }

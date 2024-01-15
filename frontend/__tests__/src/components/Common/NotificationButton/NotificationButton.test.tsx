@@ -74,7 +74,7 @@ describe('Notification', () => {
 
       const alertElement = screen.getByRole('alert');
       expect(alertElement).toHaveStyle({ 'background-color': backgroundColor });
-      expect(alertElement).toHaveStyle({ border: `1px solid ${borderColor}` });
+      expect(alertElement).toHaveStyle({ border: `0.0625rem solid ${borderColor}` });
 
       const iconElement = screen.getByTestId(icon).parentElement;
       expect(iconElement).toBeInTheDocument();

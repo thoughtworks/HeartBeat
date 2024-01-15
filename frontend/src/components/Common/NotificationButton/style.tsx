@@ -12,7 +12,7 @@ export const AlertWrapper = styled(Alert)(
     right: '0.75rem',
     padding: '0.75rem 1.5rem',
     borderRadius: '0.5rem',
-    border: `1px solid ${props.bordercolor}`,
+    border: `0.0625rem solid ${props.bordercolor}`,
     '& .MuiAlert-action': {
       padding: '0',
     },

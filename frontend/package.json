@@ -26,7 +26,7 @@
   "lint-staged": {
     "**/*.(ts|tsx)": [
       "npm run lint",
-      "npm run type-check",
+      "tsc-files --noEmit",
       "npx prettier --write . --ignore-unknown"
     ]
   },
@@ -89,6 +89,7 @@
     "prettier": "2.8.7",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.2",
+    "tsc-files": "^1.1.4",
     "typescript": "^5.0.3",
     "vite": "^5.0.5",
     "vite-plugin-pwa": "^0.17.2"

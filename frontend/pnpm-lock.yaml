@@ -175,6 +175,9 @@ devDependencies:
   ts-node:
     specifier: ^10.9.2
     version: 10.9.2(@types/node@18.19.2)(typescript@5.1.6)
+  tsc-files:
+    specifier: ^1.1.4
+    version: 1.1.4(typescript@5.1.6)
   typescript:
     specifier: ^5.0.3
     version: 5.1.6
@@ -9439,6 +9442,15 @@ packages:
       typescript: 5.1.6
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: true
+
+  /tsc-files@1.1.4(typescript@5.1.6):
+    resolution: {integrity: sha512-RePsRsOLru3BPpnf237y1Xe1oCGta8rmSYzM76kYo5tLGsv5R2r3s64yapYorGTPuuLyfS9NVbh9ydzmvNie2w==}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=3'
+    dependencies:
+      typescript: 5.1.6
     dev: true
 
   /tsconfig-paths@3.14.2:

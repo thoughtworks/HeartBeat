@@ -51,13 +51,10 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
+  const onlySelectClassification = metrics.length === 1 && metrics[0] === REQUIRED_DATA.CLASSIFICATION;
 
   useEffect(() => {
-    setPageType(
-      metrics.length === 1 && metrics[0] === REQUIRED_DATA.CLASSIFICATION
-        ? REPORT_PAGE_TYPE.BOARD
-        : REPORT_PAGE_TYPE.SUMMARY
-    );
+    setPageType(onlySelectClassification ? REPORT_PAGE_TYPE.BOARD : REPORT_PAGE_TYPE.SUMMARY);
   }, []);
 
   useLayoutEffect(() => {
@@ -140,11 +137,11 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       )}
     </>
   );
-  const showBoardDetail = (data: ReportResponseDTO) => <BoardDetail onBack={() => backToSummaryPage()} data={data} />;
+  const showBoardDetail = (data: ReportResponseDTO) => <BoardDetail onBack={() => handleBack()} data={data} />;
   const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => backToSummaryPage()} data={data} />;
 
   const handleBack = () => {
-    pageType === REPORT_PAGE_TYPE.SUMMARY ? dispatch(backStep()) : backToSummaryPage();
+    pageType === REPORT_PAGE_TYPE.SUMMARY || onlySelectClassification ? dispatch(backStep()) : backToSummaryPage();
   };
 
   const backToSummaryPage = () => {

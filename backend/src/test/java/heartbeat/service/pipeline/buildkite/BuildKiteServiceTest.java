@@ -2,6 +2,8 @@ package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.TokenParam;
+import heartbeat.client.dto.pipeline.buildkite.CachePageService;
+import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.ServiceUnavailableException;
@@ -59,7 +61,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -67,19 +68,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class BuildKiteServiceTest {
-
-	public static final String TOTAL_PAGE_HEADER = """
-			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="first",
-			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="prev",
-			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next",
-			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=3&per_page=100>; rel="last"
-			""";
-
-	public static final String NONE_TOTAL_PAGE_HEADER = """
-			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="first",
-			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="prev",
-			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&page=2>; rel="next"
-			""";
 
 	public static final String MOCK_TOKEN = "mock_token";
 
@@ -106,13 +94,16 @@ class BuildKiteServiceTest {
 	@Mock
 	BuildKiteFeignClient buildKiteFeignClient;
 
+	@Mock
+	CachePageService cachePageService;
+
 	BuildKiteService buildKiteService;
 
 	ThreadPoolTaskExecutor executor;
 
 	@BeforeEach
 	public void setUp() {
-		buildKiteService = new BuildKiteService(executor = getTaskExecutor(), buildKiteFeignClient);
+		buildKiteService = new BuildKiteService(cachePageService, executor = getTaskExecutor(), buildKiteFeignClient);
 	}
 
 	public ThreadPoolTaskExecutor getTaskExecutor() {
@@ -200,9 +191,9 @@ class BuildKiteServiceTest {
 			.build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenReturn(responseEntity);
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(1).build());
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID,
 				TEST_PIPELINE_ID, stepsParam);
@@ -216,8 +207,8 @@ class BuildKiteServiceTest {
 		RequestFailedException mockException = mock(RequestFailedException.class);
 		when(mockException.getMessage()).thenReturn("exception");
 		when(mockException.getStatus()).thenReturn(500);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any(), any()))
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), any()))
 			.thenThrow(mockException);
 
 		assertThrows(RequestFailedException.class,
@@ -231,19 +222,15 @@ class BuildKiteServiceTest {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
 		stepsParam.setStartTime(MOCK_START_TIME);
 		stepsParam.setEndTime(MOCK_END_TIME);
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		BuildKiteJob testJob2 = BuildKiteJob.builder().name("testJob2").build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob, testJob2)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
-				httpHeaders, HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenReturn(responseEntity);
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(3).build());
 		BuildKiteJob testJob3 = BuildKiteJob.builder().name("testJob3").build();
 		BuildKiteJob testJob4 = BuildKiteJob.builder().name("").build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList2 = new ArrayList<>();
@@ -264,18 +251,14 @@ class BuildKiteServiceTest {
 
 	@Test
 	public void shouldRThrowServerErrorWhenPageFetchPipelineStepsAndFetchNextPage404Exception() {
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
-				httpHeaders, HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any(), any()))
-			.thenReturn(responseEntity);
+				HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), any()))
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(3).build());
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any(), any()))
 			.thenThrow(new CompletionException(new NotFoundException("Client Error")));
@@ -288,18 +271,14 @@ class BuildKiteServiceTest {
 
 	@Test
 	public void shouldRThrowTimeoutExceptionWhenPageFetchPipelineStepsAndFetchNextPage503Exception() {
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
-				httpHeaders, HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
-				any(), any(), any()))
-			.thenReturn(responseEntity);
+				HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), any()))
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(3).build());
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any(), any()))
 			.thenThrow(new CompletionException(new ServiceUnavailableException("Service Unavailable")));
@@ -312,18 +291,14 @@ class BuildKiteServiceTest {
 
 	@Test
 	public void shouldThrowServerErrorWhenPageFetchPipelineStepsAndFetchNextPage5xxException() {
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
-				httpHeaders, HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenReturn(responseEntity);
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(3).build());
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any(), any()))
 			.thenThrow(new RequestFailedException(504, "Server Error"));
@@ -336,18 +311,14 @@ class BuildKiteServiceTest {
 
 	@Test
 	public void shouldThrowInternalServerErrorExceptionWhenPageFetchPipelineStepsAndFetchNextPage5xxException() {
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
-				httpHeaders, HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenReturn(responseEntity);
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(3).build());
 		when(buildKiteFeignClient.getPipelineStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				any(), any(), any()))
 			.thenReturn(buildKiteBuildInfoList);
@@ -364,18 +335,14 @@ class BuildKiteServiceTest {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
 		stepsParam.setStartTime(MOCK_START_TIME);
 		stepsParam.setEndTime(MOCK_END_TIME);
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
-				httpHeaders, HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenReturn(responseEntity);
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(1).build());
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID,
 				TEST_PIPELINE_ID, stepsParam);
@@ -390,15 +357,10 @@ class BuildKiteServiceTest {
 		PipelineStepsParam stepsParam = new PipelineStepsParam();
 		stepsParam.setStartTime(MOCK_START_TIME);
 		stepsParam.setEndTime(MOCK_END_TIME);
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
-		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
-				HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenReturn(responseEntity);
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(1).build());
 
 		PipelineStepsDTO pipelineStepsDTO = buildKiteService.fetchPipelineSteps(MOCK_TOKEN, TEST_ORG_ID,
 				TEST_PIPELINE_ID, stepsParam);
@@ -410,15 +372,10 @@ class BuildKiteServiceTest {
 	@Test
 	public void shouldReturnBuildKiteBuildInfoWhenFetchPipelineBuilds() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
-		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
-				HttpStatus.OK);
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
-			.thenReturn(responseEntity);
+			.thenReturn(PageStepsInfoDto.builder().firstPageStepsInfo(responseEntity.getBody()).totalPage(1).build());
 
 		List<BuildKiteBuildInfo> pipelineBuilds = buildKiteService.fetchPipelineBuilds(MOCK_TOKEN, mockDeployment,
 				MOCK_START_TIME, MOCK_END_TIME);
@@ -430,7 +387,7 @@ class BuildKiteServiceTest {
 	@Test
 	public void shouldThrowUnauthorizedExceptionWhenFetchPipelineBuilds401Exception() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+		when(cachePageService.fetchPageStepsInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
 			.thenThrow(new UnauthorizedException(UNAUTHORIZED_MSG));
 
@@ -443,12 +400,7 @@ class BuildKiteServiceTest {
 	@Test
 	public void shouldThrowInternalServerErrorExceptionWhenFetchPipelineBuilds500Exception() {
 		DeploymentEnvironment mockDeployment = DeploymentEnvironmentBuilder.withDefault().build();
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
-		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, httpHeaders,
-				HttpStatus.OK);
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
 		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
 				anyString(), anyString(), any()))
 			.thenReturn(responseEntity);

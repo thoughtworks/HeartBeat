@@ -5,8 +5,10 @@ import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
+import heartbeat.client.dto.pipeline.buildkite.CachePageService;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
@@ -23,9 +25,6 @@ import heartbeat.util.TimeUtil;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +34,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -45,9 +42,9 @@ import java.util.stream.IntStream;
 @Log4j2
 public class BuildKiteService {
 
-	public static final String BUILD_KITE_LINK_HEADER = HttpHeaders.LINK;
-
 	private static final List<String> permissions = List.of("read_builds", "read_organizations", "read_pipelines");
+
+	private final CachePageService cachePageService;
 
 	private final ThreadPoolTaskExecutor customTaskExecutor;
 
@@ -190,17 +187,10 @@ public class BuildKiteService {
 		stepsParam.setStartTime(TimeUtil.convertToISOFormat(stepsParam.getStartTime()));
 		stepsParam.setEndTime(TimeUtil.convertToISOFormat(stepsParam.getEndTime()));
 
-		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(realToken,
-				orgId, pipelineId, page, perPage, stepsParam.getStartTime(), stepsParam.getEndTime(), branches);
-
-		log.info(
-				"Successfully get paginated pipeline steps pagination info, orgId: {},pipelineId: {}, stepsParam: {}, result status code: {}, page:{}",
-				orgId, pipelineId, stepsParam, pipelineStepsInfo.getStatusCode(), page);
-
-		int totalPage = parseTotalPage(pipelineStepsInfo.getHeaders().get(BUILD_KITE_LINK_HEADER));
-		log.info("Successfully parse the total page_total page: {}", totalPage);
-
-		List<BuildKiteBuildInfo> firstPageStepsInfo = pipelineStepsInfo.getBody();
+		PageStepsInfoDto pageStepsInfoDto = cachePageService.fetchPageStepsInfo(realToken, orgId, pipelineId, page,
+				perPage, stepsParam.getStartTime(), stepsParam.getEndTime(), branches);
+		List<BuildKiteBuildInfo> firstPageStepsInfo = pageStepsInfoDto.getFirstPageStepsInfo();
+		int totalPage = pageStepsInfoDto.getTotalPage();
 		List<BuildKiteBuildInfo> pageStepsInfo = new ArrayList<>();
 		if (firstPageStepsInfo != null) {
 			pageStepsInfo.addAll(firstPageStepsInfo);
@@ -233,18 +223,6 @@ public class BuildKiteService {
 					organizationId, pipelineId, pipelineStepsInfo.size(), page);
 			return pipelineStepsInfo;
 		}, customTaskExecutor);
-	}
-
-	private int parseTotalPage(@Nullable List<String> linkHeader) {
-		if (linkHeader == null) {
-			return 1;
-		}
-		String lastLink = linkHeader.stream().map(link -> link.replaceAll("per_page=\\d+", "")).findFirst().orElse("");
-		Matcher matcher = Pattern.compile("page=(\\d+)[^>]*>;\\s*rel=\"last\"").matcher(lastLink);
-		if (matcher.find()) {
-			return Integer.parseInt(matcher.group(1));
-		}
-		return 1;
 	}
 
 	public List<BuildKiteBuildInfo> fetchPipelineBuilds(String token, DeploymentEnvironment deploymentEnvironment,

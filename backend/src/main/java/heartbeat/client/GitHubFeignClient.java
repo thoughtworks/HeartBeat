@@ -37,26 +37,26 @@ public interface GitHubFeignClient {
 	@Deprecated
 	List<GitHubRepo> getAllRepos(@RequestHeader("Authorization") String token);
 
-	@Cacheable(cacheNames = "githubRepos", key = "#organizationName")
+	@Cacheable(cacheNames = "githubRepos", key = "#organizationName+'-'+#token")
 	@GetMapping(path = "/orgs/{organizationName}/repos")
 	@ResponseStatus(HttpStatus.OK)
 	@Deprecated
 	List<GitHubRepo> getReposByOrganizationName(@PathVariable String organizationName,
 			@RequestHeader("Authorization") String token);
 
-	@Cacheable(cacheNames = "commitInfo", key = "#repository+'-'+#commitId")
+	@Cacheable(cacheNames = "commitInfo", key = "#repository+'-'+#commitId+'-'+#token")
 	@GetMapping(path = "/repos/{repository}/commits/{commitId}")
 	@ResponseStatus(HttpStatus.OK)
 	CommitInfo getCommitInfo(@PathVariable String repository, @PathVariable String commitId,
 			@RequestHeader("Authorization") String token);
 
-	@Cacheable(cacheNames = "pullRequestCommitInfo", key = "#repository+'-'+#mergedPullNumber")
+	@Cacheable(cacheNames = "pullRequestCommitInfo", key = "#repository+'-'+#mergedPullNumber+'-'+#token")
 	@GetMapping(path = "/repos/{repository}/pulls/{mergedPullNumber}/commits")
 	@ResponseStatus(HttpStatus.OK)
 	List<CommitInfo> getPullRequestCommitInfo(@PathVariable String repository, @PathVariable String mergedPullNumber,
 			@RequestHeader("Authorization") String token);
 
-	@Cacheable(cacheNames = "pullRequestListInfo", key = "#repository+'-'+#deployId")
+	@Cacheable(cacheNames = "pullRequestListInfo", key = "#repository+'-'+#deployId+'-'+#token")
 	@GetMapping(path = "/repos/{repository}/commits/{deployId}/pulls")
 	@ResponseStatus(HttpStatus.OK)
 	List<PullRequestInfo> getPullRequestListInfo(@PathVariable String repository, @PathVariable String deployId,

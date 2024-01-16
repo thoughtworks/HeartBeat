@@ -39,12 +39,15 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
       endTime: dateRange.endDate,
     };
 
-    setIsLoading(true);
-    const response = await pipelineToolClient.getInfo(params);
-    setInfo(response);
-    dispatch(updatePipelineToolVerifyResponse(response.data));
-    pipelineToolVerified && dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const response = await pipelineToolClient.getInfo(params);
+      setInfo(response);
+      dispatch(updatePipelineToolVerifyResponse(response.data));
+      pipelineToolVerified && dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
+    } finally {
+      setIsLoading(false);
+    }
   }, [
     dispatch,
     isProjectCreated,

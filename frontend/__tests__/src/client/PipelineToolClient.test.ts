@@ -21,7 +21,7 @@ afterAll(() => server.close());
 describe('PipelineToolClient', () => {
   describe('verify pipelineTool request', () => {
     it('should isPipelineVerified is true when pipelineTool verify response status 204', async () => {
-      const result = await pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
+      const result = await pipelineToolClient.verify(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
       expect(result.code).toEqual(HttpStatusCode.NoContent);
     });
@@ -45,7 +45,7 @@ describe('PipelineToolClient', () => {
       it.each(errorCases)('should return error code when verify endponint returns error', async ({ code }) => {
         server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(code))));
 
-        const result = await pipelineToolClient.verifyPipelineTool(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
+        const result = await pipelineToolClient.verify(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
         expect(result.code).toEqual(code);
       });
@@ -60,7 +60,7 @@ describe('PipelineToolClient', () => {
         )
       );
 
-      const result = await pipelineToolClient.getPipelineToolInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
+      const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
       expect(result.code).toEqual(200);
       expect(result.data).not.toBeNull();
@@ -104,7 +104,7 @@ describe('PipelineToolClient', () => {
         async ({ code, errorTitle, errorMessage }) => {
           server.use(rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => res(ctx.status(code))));
 
-          const result = await pipelineToolClient.getPipelineToolInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
+          const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
           expect(result.code).toEqual(code);
           expect(result.errorTitle).toEqual(errorTitle);
@@ -116,7 +116,7 @@ describe('PipelineToolClient', () => {
       it('should return "Unknown error" as a last resort when error code didn\'t match the predeifned erorr cases', async () => {
         server.use(rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => res(ctx.status(503))));
 
-        const result = await pipelineToolClient.getPipelineToolInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
+        const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
         expect(result.errorTitle).toEqual('Unknown error');
         expect(result.errorMessage).toEqual(errorMessage);

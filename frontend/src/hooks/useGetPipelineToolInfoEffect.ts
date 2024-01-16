@@ -40,7 +40,7 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
     };
 
     setIsLoading(true);
-    const response = await pipelineToolClient.getPipelineToolInfo(params);
+    const response = await pipelineToolClient.getInfo(params);
     setInfo(response);
     dispatch(updatePipelineToolVerifyResponse(response.data));
     pipelineToolVerified && dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));

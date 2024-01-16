@@ -41,7 +41,7 @@ const clientOkMock = jest.fn().mockImplementation(async () => {
 });
 
 beforeEach(() => {
-  pipelineToolClient.getPipelineToolInfo = clientOkMock;
+  pipelineToolClient.getInfo = clientOkMock;
   clientSpy.mockClear();
 });
 

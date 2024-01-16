@@ -24,7 +24,7 @@ export interface IGetPipelineToolInfoResult {
 }
 
 export class PipelineToolClient extends HttpClient {
-  verifyPipelineTool = async (params: IPipelineVerifyRequestDTO): Promise<IVerifyPipelineToolResult> => {
+  verify = async (params: IPipelineVerifyRequestDTO): Promise<IVerifyPipelineToolResult> => {
     const result: IVerifyPipelineToolResult = {
       code: null,
       errorTitle: '',
@@ -43,7 +43,7 @@ export class PipelineToolClient extends HttpClient {
     return result;
   };
 
-  getPipelineToolInfo = async (params: PipelineInfoRequestDTO): Promise<IGetPipelineToolInfoResult> => {
+  getInfo = async (params: PipelineInfoRequestDTO): Promise<IGetPipelineToolInfoResult> => {
     const result: IGetPipelineToolInfoResult = {
       code: null,
       data: undefined,

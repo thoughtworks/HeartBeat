@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within, act } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { PipelineTool } from '@src/containers/ConfigStep/PipelineTool';
 import {
   CONFIG_TITLE,
@@ -183,10 +183,13 @@ describe('PipelineTool', () => {
 
   it('should check error text appear when pipelineTool verify response status is 401', async () => {
     server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))));
-    const { getByRole, getByText } = setup();
+    const { getByText } = setup();
     await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByRole('button', { name: VERIFY }));
-    expect(getByText('Token is incorrect!')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(getByText('Token is incorrect!')).toBeInTheDocument();
+    });
   });
 });

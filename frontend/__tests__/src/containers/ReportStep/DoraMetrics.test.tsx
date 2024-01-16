@@ -1,12 +1,13 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import clearAllMocks = jest.clearAllMocks;
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
-import { MOCK_REPORT_RESPONSE } from '../../../src/fixtures';
+import { MOCK_REPORT_RESPONSE, REQUIRED_DATA_LIST } from '../../../src/fixtures';
 import { setupStore } from '../../../src/utils/setupStoreUtil';
 import { Provider } from 'react-redux';
 import { RETRY } from '@src/constants/resources';
 import userEvent from '@testing-library/user-event';
+import { updateMetrics } from '@src/context/config/configSlice';
 
 describe('Report Card', () => {
   afterEach(() => {
@@ -35,6 +36,7 @@ describe('Report Card', () => {
 
   const setup = () => {
     store = setupStore();
+    store.dispatch(updateMetrics(REQUIRED_DATA_LIST));
     return render(
       <Provider store={store}>
         <DoraMetrics
@@ -52,11 +54,12 @@ describe('Report Card', () => {
   };
 
   it('should show retry button when have reportError and click retry will triger api call', async () => {
-    const { getByText } = setup();
+    setup();
 
-    expect(getByText(RETRY)).toBeInTheDocument();
+    expect(screen.getByText(RETRY)).toBeInTheDocument();
+    expect(screen.getByText('Failed to get Github info_status: 404...')).toBeInTheDocument();
 
-    await userEvent.click(getByText(RETRY));
+    await userEvent.click(screen.getByText(RETRY));
 
     expect(mockHandleRetry).toHaveBeenCalled();
   });

@@ -179,33 +179,25 @@ const DoraMetrics = ({
     return [...deploymentFrequencyList, ...changeFailureRateList, ...meanTimeToRecoveryList];
   };
 
-  const errorMessage4BuildKite = _.get(doraReport, ['reportError', 'pipelineError'])
-    ? `Failed to get BuildKite info_status: ${_.get(doraReport, ['reportError', 'pipelineError', 'status'])}...`
-    : '';
+  const getErrorMessage4BuildKite = () =>
+    _.get(doraReport, ['reportError', 'pipelineError'])
+      ? `Failed to get BuildKite info_status: ${_.get(doraReport, ['reportError', 'pipelineError', 'status'])}...`
+      : '';
 
-  const errorMessage4Github = _.get(doraReport, ['reportError', 'sourceControlError'])
-    ? `Failed to get Github info_status: ${_.get(doraReport, ['reportError', 'sourceControlError', 'status'])}...`
-    : '';
+  const getErrorMessage4Github = () =>
+    _.get(doraReport, ['reportError', 'sourceControlError'])
+      ? `Failed to get Github info_status: ${_.get(doraReport, ['reportError', 'sourceControlError', 'status'])}...`
+      : '';
 
-  const showRetryButton = !!(timeoutError || errorMessage4BuildKite || errorMessage4Github);
-
-  const [error4Github, setError4Github] = useState('');
-  const [error4BuildKite, setError4BuildKite] = useState('');
+  const showRetryButton = !!(timeoutError || getErrorMessage4BuildKite() || getErrorMessage4Github());
 
   const handleRetry = () => {
     startToRequestDoraData(getDoraReportRequestBody());
-    setError4Github('');
-    setError4BuildKite('');
   };
 
   useEffect(() => {
     !isBackFromDetail && startToRequestDoraData(getDoraReportRequestBody());
   }, []);
-
-  useEffect(() => {
-    setError4Github(timeoutError || errorMessage4Github);
-    setError4BuildKite(timeoutError || errorMessage4BuildKite);
-  }, [timeoutError, errorMessage4Github, errorMessage4BuildKite]);
 
   return (
     <>
@@ -217,9 +209,15 @@ const DoraMetrics = ({
           )}
           {showRetryButton && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
-        {shouldShowSourceControl && <ReportGrid reportDetails={getSourceControlItems()} errorMessage={error4Github} />}
+        {shouldShowSourceControl && (
+          <ReportGrid reportDetails={getSourceControlItems()} errorMessage={timeoutError || getErrorMessage4Github()} />
+        )}
         <StyledSpacing />
-        <ReportGrid reportDetails={getPipelineItems()} lastGrid={true} errorMessage={error4BuildKite} />
+        <ReportGrid
+          reportDetails={getPipelineItems()}
+          lastGrid={true}
+          errorMessage={timeoutError || getErrorMessage4BuildKite()}
+        />
       </StyledMetricsSection>
     </>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
 import { useAppSelector } from '@src/hooks';
 import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice';
-import { MESSAGE, REPORT_PAGE_TYPE } from '@src/constants/resources';
+import { MESSAGE, REPORT_PAGE_TYPE, REQUIRED_DATA } from '@src/constants/resources';
 import { StyledCalendarWrapper, StyledErrorNotification } from '@src/containers/ReportStep/style';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { useNavigate } from 'react-router-dom';
@@ -44,12 +44,21 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   const startDate = configData.basic.dateRange.startDate ?? '';
   const endDate = configData.basic.dateRange.endDate ?? '';
+  const metrics = configData.basic.metrics;
 
   const { updateProps, resetProps } = notification;
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
+
+  useEffect(() => {
+    setPageType(
+      metrics.length === 1 && metrics[0] === REQUIRED_DATA.CLASSIFICATION
+        ? REPORT_PAGE_TYPE.BOARD
+        : REPORT_PAGE_TYPE.SUMMARY
+    );
+  }, []);
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&

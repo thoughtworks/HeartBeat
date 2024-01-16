@@ -256,7 +256,7 @@ public class GenerateReporterService {
 					pipelineRequest.getEndTime(), pipelineReportId);
 		}
 		catch (BaseException e) {
-			handleException(request, pipelineReportId, e);
+			handleException(pipelineRequest, pipelineReportId, e);
 		}
 	}
 
@@ -278,7 +278,7 @@ public class GenerateReporterService {
 					sourceControlRequest.getStartTime(), sourceControlRequest.getEndTime(), sourceControlReportId);
 		}
 		catch (BaseException e) {
-			handleException(request, sourceControlReportId, e);
+			handleException(sourceControlRequest, sourceControlReportId, e);
 		}
 	}
 

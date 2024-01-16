@@ -228,6 +228,8 @@ public class GenerateReporterService {
 	public void generateDoraReport(GenerateReportRequest request) {
 		MetricsDataCompleted metricsDataStatus = getMetricsStatus(request.getMetrics(), Boolean.TRUE);
 		initializeMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
+		removePreviousAsyncException(IdUtil.getPipelineReportId(request.getCsvTimeStamp()));
+		removePreviousAsyncException(IdUtil.getSourceControlReportId(request.getCsvTimeStamp()));
 		if (Objects.nonNull(metricsDataStatus.pipelineMetricsCompleted())
 				&& metricsDataStatus.pipelineMetricsCompleted()) {
 			generatePipelineReport(request);
@@ -242,7 +244,6 @@ public class GenerateReporterService {
 	private void generatePipelineReport(GenerateReportRequest request) {
 		GenerateReportRequest pipelineRequest = request.convertToPipelineRequest(request);
 		String pipelineReportId = IdUtil.getPipelineReportId(request.getCsvTimeStamp());
-		removePreviousAsyncException(pipelineReportId);
 		log.info(
 				"Start to generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _pipelineReportId: {}",
 				pipelineRequest.getMetrics(), pipelineRequest.getConsiderHoliday(), pipelineRequest.getStartTime(),
@@ -263,7 +264,6 @@ public class GenerateReporterService {
 	private void generateSourceControlReport(GenerateReportRequest request) {
 		GenerateReportRequest sourceControlRequest = request.convertToSourceControlRequest(request);
 		String sourceControlReportId = IdUtil.getSourceControlReportId(request.getCsvTimeStamp());
-		removePreviousAsyncException(sourceControlReportId);
 		log.info(
 				"Start to generate source control report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
 				sourceControlRequest.getMetrics(), sourceControlRequest.getConsiderHoliday(),

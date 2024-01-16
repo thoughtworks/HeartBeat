@@ -16,7 +16,7 @@ public enum BoardType {
 		return switch (type) {
 			case "jira" -> JIRA;
 			case "classic-jira" -> CLASSIC_JIRA;
-			default -> throw new BadRequestException("Board type does not find!");
+			default -> throw new IllegalArgumentException("Board type does not find!");
 		};
 	}
 
@@ -24,7 +24,7 @@ public enum BoardType {
 		return switch (style) {
 			case "next-gen" -> JIRA;
 			case "classic" -> CLASSIC_JIRA;
-			default -> throw new BadRequestException("Board type does not find!");
+			default -> throw new IllegalArgumentException("Board type does not find!");
 		};
 	}
 

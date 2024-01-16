@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
+import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.exception.RequestFailedException;
@@ -38,7 +39,7 @@ public class JiraControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private final static String BOARD_TYPE = "jira";
+	private final static BoardType BOARD_TYPE = BoardType.JIRA;
 
 	@Test
 	@Deprecated

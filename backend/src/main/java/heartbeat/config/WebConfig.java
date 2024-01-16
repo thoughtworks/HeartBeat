@@ -1,5 +1,6 @@
 package heartbeat.config;
 
+import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.pipeline.dto.request.PipelineType;
 import heartbeat.controller.report.dto.request.DataType;
 import heartbeat.controller.report.dto.request.ReportType;
@@ -14,6 +15,13 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
+		registry.addConverter(new Converter<String, BoardType>() {
+			@Override
+			public BoardType convert(String source) {
+				return BoardType.fromValue(source);
+			}
+		});
+
 		registry.addConverter(new Converter<String, DataType>() {
 			@Override
 			public DataType convert(String source) {

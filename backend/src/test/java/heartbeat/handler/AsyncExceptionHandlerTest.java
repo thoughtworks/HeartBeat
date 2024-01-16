@@ -50,4 +50,18 @@ class AsyncExceptionHandlerTest {
 		assertNull(asyncExceptionHandler.get(currentTime));
 	}
 
+	@Test
+	void shouldPutAndRemoveAsyncException() {
+		long currentTimeMillis = System.currentTimeMillis();
+		String currentTime = Long.toString(currentTimeMillis);
+		String boardReportId = IdUtil.getBoardReportId(currentTime);
+		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
+
+		BaseException baseException = asyncExceptionHandler.remove(boardReportId);
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), baseException.getStatus());
+		assertEquals("test", baseException.getMessage());
+
+		assertNull(asyncExceptionHandler.get(currentTime));
+	}
+
 }

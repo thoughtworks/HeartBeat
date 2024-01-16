@@ -54,13 +54,13 @@ class AsyncReportRequestHandlerTest {
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
-		asyncReportRequestHandler.putMetricsDataReady(expireTime, metricsDataCompleted);
+		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
+		asyncReportRequestHandler.putMetricsDataCompleted(expireTime, metricsDataCompleted);
 
-		asyncReportRequestHandler.deleteExpireMetricsDataReady(currentTimeMillis);
+		asyncReportRequestHandler.deleteExpireMetricsDataCompleted(currentTimeMillis);
 
-		assertNull(asyncReportRequestHandler.getMetricsDataReady(expireTime));
-		assertNotNull(asyncReportRequestHandler.getMetricsDataReady(currentTime));
+		assertNull(asyncReportRequestHandler.getMetricsDataCompleted(expireTime));
+		assertNotNull(asyncReportRequestHandler.getMetricsDataCompleted(currentTime));
 	}
 
 	@Test
@@ -68,9 +68,9 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
+		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-		assertNotNull(asyncReportRequestHandler.getMetricsDataReady(currentTime));
+		assertNotNull(asyncReportRequestHandler.getMetricsDataCompleted(currentTime));
 	}
 
 	@Test
@@ -92,7 +92,7 @@ class AsyncReportRequestHandlerTest {
 			.sourceControlMetricsCompleted(false)
 			.pipelineMetricsCompleted(null)
 			.build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
+		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
 		boolean reportReady = asyncReportRequestHandler.isReportReady(currentTime);
 
@@ -108,7 +108,7 @@ class AsyncReportRequestHandlerTest {
 			.sourceControlMetricsCompleted(null)
 			.pipelineMetricsCompleted(true)
 			.build();
-		asyncReportRequestHandler.putMetricsDataReady(currentTime, metricsDataCompleted);
+		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
 		boolean reportReady = asyncReportRequestHandler.isReportReady(currentTime);
 

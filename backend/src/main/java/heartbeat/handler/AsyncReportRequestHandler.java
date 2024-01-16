@@ -23,7 +23,7 @@ public class AsyncReportRequestHandler {
 
 	private final Map<String, ReportResponse> reportMap = new ConcurrentHashMap<>();
 
-	private final Map<String, MetricsDataCompleted> metricsDataReadyMap = new ConcurrentHashMap<>();
+	private final Map<String, MetricsDataCompleted> metricsDataCompletedMap = new ConcurrentHashMap<>();
 
 	public void putReport(String reportId, ReportResponse e) {
 		reportMap.put(reportId, e);
@@ -33,16 +33,16 @@ public class AsyncReportRequestHandler {
 		return reportMap.get(reportId);
 	}
 
-	public void putMetricsDataReady(String timeStamp, MetricsDataCompleted metricsDataCompleted) {
-		metricsDataReadyMap.put(timeStamp, metricsDataCompleted);
+	public void putMetricsDataCompleted(String timeStamp, MetricsDataCompleted metricsDataCompleted) {
+		metricsDataCompletedMap.put(timeStamp, metricsDataCompleted);
 	}
 
-	public MetricsDataCompleted getMetricsDataReady(String timeStamp) {
-		return metricsDataReadyMap.get(timeStamp);
+	public MetricsDataCompleted getMetricsDataCompleted(String timeStamp) {
+		return metricsDataCompletedMap.get(timeStamp);
 	}
 
 	public boolean isReportReady(String timeStamp) {
-		MetricsDataCompleted metricsDataCompleted = getMetricsDataReady(timeStamp);
+		MetricsDataCompleted metricsDataCompleted = getMetricsDataCompleted(timeStamp);
 		if (metricsDataCompleted == null) {
 			throw new GenerateReportException("Failed to locate the report using this report ID.");
 		}
@@ -65,13 +65,13 @@ public class AsyncReportRequestHandler {
 		reportMap.keySet().removeAll(keys);
 	}
 
-	public void deleteExpireMetricsDataReady(long currentTimeStamp) {
+	public void deleteExpireMetricsDataCompleted(long currentTimeStamp) {
 		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
-		Set<String> keys = metricsDataReadyMap.keySet()
+		Set<String> keys = metricsDataCompletedMap.keySet()
 			.stream()
 			.filter(timeStamp -> Long.parseLong(timeStamp) < exportTime)
 			.collect(Collectors.toSet());
-		metricsDataReadyMap.keySet().removeAll(keys);
+		metricsDataCompletedMap.keySet().removeAll(keys);
 	}
 
 }

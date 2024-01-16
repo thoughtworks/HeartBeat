@@ -32,7 +32,7 @@ public class DeleteExpireCSVScheduler {
 		log.info("Start to delete expired CSV files, currentTimeStamp: {}", currentTimeStamp);
 		generateReporterService.deleteExpireCSV(currentTimeStamp, new File("./csv/"));
 		asyncReportRequestHandler.deleteExpireReport(currentTimeStamp);
-		asyncReportRequestHandler.deleteExpireMetricsDataReady(currentTimeStamp);
+		asyncReportRequestHandler.deleteExpireMetricsDataCompleted(currentTimeStamp);
 		asyncExceptionHandler.deleteExpireException(currentTimeStamp);
 	}
 

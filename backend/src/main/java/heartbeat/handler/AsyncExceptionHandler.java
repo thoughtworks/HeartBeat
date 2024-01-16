@@ -26,6 +26,10 @@ public class AsyncExceptionHandler {
 		return exceptionMap.get(reportId);
 	}
 
+	public BaseException remove(String reportId) {
+		return exceptionMap.remove(reportId);
+	}
+
 	public void deleteExpireException(long currentTimeStamp) {
 		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
 		Set<String> keys = exceptionMap.keySet()

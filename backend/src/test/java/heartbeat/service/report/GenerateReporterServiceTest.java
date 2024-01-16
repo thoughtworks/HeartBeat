@@ -1112,7 +1112,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldInitializeValueFalseGivenPreviousMapperIsNullWhenInitializeRelatedMetricsReady() {
+	void shouldInitializeValueFalseGivenPreviousMapperIsNullWhenInitializeRelatedMetricsCompleted() {
 		String timeStamp = TIMESTAMP;
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue());
 		MetricsDataCompleted expectedPut = MetricsDataCompleted.builder()
@@ -1121,19 +1121,19 @@ class GenerateReporterServiceTest {
 			.sourceControlMetricsCompleted(null)
 			.build();
 
-		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(null);
+		when(asyncReportRequestHandler.getMetricsDataCompleted(timeStamp)).thenReturn(null);
 
 		generateReporterService.initializeMetricsDataCompletedInHandler(timeStamp, metrics);
-		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
+		verify(asyncReportRequestHandler).putMetricsDataCompleted(timeStamp, expectedPut);
 	}
 
 	@Test
-	void shouldReturnPreviousValueGivenPreviousValueExistWhenInitializeRelatedMetricsReady() {
+	void shouldInitializeValueFalseGivenPreviousValueExistWhenInitializeRelatedMetricsCompleted() {
 		String timeStamp = TIMESTAMP;
 		List<String> metrics = List.of(RequireDataEnum.CYCLE_TIME.getValue(),
 				RequireDataEnum.DEPLOYMENT_FREQUENCY.getValue());
 		MetricsDataCompleted previousMetricsDataCompleted = MetricsDataCompleted.builder()
-			.boardMetricsCompleted(false)
+			.boardMetricsCompleted(true)
 			.pipelineMetricsCompleted(null)
 			.sourceControlMetricsCompleted(null)
 			.build();
@@ -1143,10 +1143,10 @@ class GenerateReporterServiceTest {
 			.sourceControlMetricsCompleted(null)
 			.build();
 
-		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp)).thenReturn(previousMetricsDataCompleted);
+		when(asyncReportRequestHandler.getMetricsDataCompleted(timeStamp)).thenReturn(previousMetricsDataCompleted);
 
 		generateReporterService.initializeMetricsDataCompletedInHandler(timeStamp, metrics);
-		verify(asyncReportRequestHandler).putMetricsDataReady(timeStamp, expectedPut);
+		verify(asyncReportRequestHandler).putMetricsDataCompleted(timeStamp, expectedPut);
 	}
 
 	@ParameterizedTest
@@ -1164,11 +1164,11 @@ class GenerateReporterServiceTest {
 			.csvTimeStamp(TIMESTAMP)
 			.build();
 
-		when(asyncReportRequestHandler.getMetricsDataReady(request.getCsvTimeStamp())).thenReturn(previousReady);
+		when(asyncReportRequestHandler.getMetricsDataCompleted(request.getCsvTimeStamp())).thenReturn(previousReady);
 
 		generateReporterService.updateMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
 
-		verify(asyncReportRequestHandler, times(1)).putMetricsDataReady(request.getCsvTimeStamp(), expectedReady);
+		verify(asyncReportRequestHandler, times(1)).putMetricsDataCompleted(request.getCsvTimeStamp(), expectedReady);
 	}
 
 	@Test
@@ -1185,7 +1185,7 @@ class GenerateReporterServiceTest {
 			.csvTimeStamp(TIMESTAMP)
 			.build();
 
-		when(asyncReportRequestHandler.getMetricsDataReady(anyString())).thenReturn(null);
+		when(asyncReportRequestHandler.getMetricsDataCompleted(anyString())).thenReturn(null);
 
 		assertThrows(GenerateReportException.class, () -> generateReporterService
 			.updateMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics()));
@@ -1220,7 +1220,7 @@ class GenerateReporterServiceTest {
 
 		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
 		when(generateReporterService.getReportFromHandler(pipelineTimestamp)).thenReturn(pipelineResponse);
-		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
+		when(asyncReportRequestHandler.getMetricsDataCompleted(timeStamp))
 			.thenReturn(new MetricsDataCompleted(Boolean.TRUE, Boolean.TRUE, null));
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
@@ -1248,7 +1248,7 @@ class GenerateReporterServiceTest {
 
 		when(generateReporterService.getReportFromHandler(boardTimeStamp)).thenReturn(boardResponse);
 		when(generateReporterService.getReportFromHandler(doraTimestamp)).thenReturn(null);
-		when(asyncReportRequestHandler.getMetricsDataReady(timeStamp))
+		when(asyncReportRequestHandler.getMetricsDataCompleted(timeStamp))
 			.thenReturn(new MetricsDataCompleted(Boolean.TRUE, Boolean.TRUE, null));
 
 		ReportResponse composedResponse = generateReporterService.getComposedReportResponse(timeStamp, true);
@@ -1292,6 +1292,7 @@ class GenerateReporterServiceTest {
 				GenerateReportRequest.class);
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
+		String reportId = "board-20240109232359";
 		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
 			.boardMetricsCompleted(true)
 			.pipelineMetricsCompleted(false)
@@ -1300,12 +1301,13 @@ class GenerateReporterServiceTest {
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 
 		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
-		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+		when(asyncReportRequestHandler.getMetricsDataCompleted(reportRequest.getCsvTimeStamp()))
 			.thenReturn(previousMetricsReady);
 
 		spyGenerateReporterService.generateBoardReport(reportRequest);
 
 		verify(spyGenerateReporterService, times(1)).generateReporter(reportRequest);
+		verify(asyncExceptionHandler, times(1)).remove(reportId);
 		verify(spyGenerateReporterService, times(1))
 			.initializeMetricsDataCompletedInHandler(reportRequest.getCsvTimeStamp(), reportRequest.getMetrics());
 		verify(spyGenerateReporterService, times(1)).saveReporterInHandler(
@@ -1319,14 +1321,13 @@ class GenerateReporterServiceTest {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
-		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
 		String reportId = "board-20240109232359";
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 		UnauthorizedException e = new UnauthorizedException("Error message");
 
 		doThrow(e).when(spyGenerateReporterService).generateReporter(any());
-		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+		when(asyncReportRequestHandler.getMetricsDataCompleted(reportRequest.getCsvTimeStamp()))
 			.thenReturn(MetricsDataCompleted.builder().build());
 
 		spyGenerateReporterService.generateBoardReport(reportRequest);
@@ -1350,7 +1351,7 @@ class GenerateReporterServiceTest {
 		PermissionDenyException e = new PermissionDenyException("Error message");
 
 		doThrow(e).when(spyGenerateReporterService).generateReporter(any());
-		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+		when(asyncReportRequestHandler.getMetricsDataCompleted(reportRequest.getCsvTimeStamp()))
 			.thenReturn(MetricsDataCompleted.builder().build());
 
 		spyGenerateReporterService.generateDoraReport(reportRequest);
@@ -1363,8 +1364,7 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldGeneratePipelineReportAndUpdatePipelineMetricsReadyWhenCallGeneratePipelineReport()
-			throws IOException, InterruptedException {
+	void shouldGeneratePipelineReportAndUpdatePipelineMetricsReadyWhenCallGeneratePipelineReport() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
@@ -1372,7 +1372,7 @@ class GenerateReporterServiceTest {
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
-		String reportId = "dora-20240109232359";
+		String reportId = "pipeline-20240109232359";
 		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
 			.boardMetricsCompleted(null)
 			.pipelineMetricsCompleted(false)
@@ -1380,12 +1380,13 @@ class GenerateReporterServiceTest {
 			.build();
 
 		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
-		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+		when(asyncReportRequestHandler.getMetricsDataCompleted(reportRequest.getCsvTimeStamp()))
 			.thenReturn(previousMetricsReady);
 
 		spyGenerateReporterService.generateDoraReport(reportRequest);
 
 		verify(spyGenerateReporterService, times(1)).generateReporter(any());
+		verify(asyncExceptionHandler, times(1)).remove(reportId);
 		verify(spyGenerateReporterService, times(1)).initializeMetricsDataCompletedInHandler(any(), any());
 		verify(spyGenerateReporterService, times(1))
 			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), reportId);
@@ -1393,7 +1394,8 @@ class GenerateReporterServiceTest {
 	}
 
 	@Test
-	void shouldGenerateCodebaseReportAndUpdateCodebaseMetricsReadyWhenCallGeneratePipelineReport() throws IOException {
+	void shouldGenerateCodebaseReportAndUpdateCodebaseMetricsReadyWhenCallGenerateSourceControlReport()
+			throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest reportRequest = mapper.readValue(new File(REQUEST_FILE_PATH),
 				GenerateReportRequest.class);
@@ -1401,7 +1403,7 @@ class GenerateReporterServiceTest {
 		ReportResponse reportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		GenerateReporterService spyGenerateReporterService = spy(generateReporterService);
 		reportRequest.setCsvTimeStamp(CSV_TIMESTAMP);
-		String reportId = "github-20240109232359";
+		String reportId = "sourceControl-20240109232359";
 		MetricsDataCompleted previousMetricsReady = MetricsDataCompleted.builder()
 			.boardMetricsCompleted(null)
 			.pipelineMetricsCompleted(false)
@@ -1409,12 +1411,13 @@ class GenerateReporterServiceTest {
 			.build();
 
 		doReturn(reportResponse).when(spyGenerateReporterService).generateReporter(reportRequest);
-		when(asyncReportRequestHandler.getMetricsDataReady(reportRequest.getCsvTimeStamp()))
+		when(asyncReportRequestHandler.getMetricsDataCompleted(reportRequest.getCsvTimeStamp()))
 			.thenReturn(previousMetricsReady);
 
 		spyGenerateReporterService.generateDoraReport(reportRequest);
 
 		verify(spyGenerateReporterService, times(1)).generateReporter(any());
+		verify(asyncExceptionHandler, times(1)).remove(reportId);
 		verify(spyGenerateReporterService, times(1)).initializeMetricsDataCompletedInHandler(any(), any());
 		verify(spyGenerateReporterService, times(1))
 			.saveReporterInHandler(spyGenerateReporterService.generateReporter(any()), reportId);

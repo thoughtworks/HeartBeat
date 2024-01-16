@@ -201,6 +201,7 @@ public class GenerateReporterService {
 	public void generateBoardReport(GenerateReportRequest request) {
 		initializeMetricsDataCompletedInHandler(request.getCsvTimeStamp(), request.getMetrics());
 		String boardReportId = IdUtil.getBoardReportId(request.getCsvTimeStamp());
+		removePreviousAsyncException(boardReportId);
 		log.info(
 				"Start to generate board report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _boardReportId: {}",
 				request.getMetrics(), request.getConsiderHoliday(), request.getStartTime(), request.getEndTime(),
@@ -241,6 +242,7 @@ public class GenerateReporterService {
 	private void generatePipelineReport(GenerateReportRequest request) {
 		GenerateReportRequest pipelineRequest = request.convertToPipelineRequest(request);
 		String pipelineReportId = IdUtil.getPipelineReportId(request.getCsvTimeStamp());
+		removePreviousAsyncException(pipelineReportId);
 		log.info(
 				"Start to generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _pipelineReportId: {}",
 				pipelineRequest.getMetrics(), pipelineRequest.getConsiderHoliday(), pipelineRequest.getStartTime(),
@@ -261,6 +263,7 @@ public class GenerateReporterService {
 	private void generateSourceControlReport(GenerateReportRequest request) {
 		GenerateReportRequest sourceControlRequest = request.convertToSourceControlRequest(request);
 		String sourceControlReportId = IdUtil.getSourceControlReportId(request.getCsvTimeStamp());
+		removePreviousAsyncException(sourceControlReportId);
 		log.info(
 				"Start to generate source control report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
 				sourceControlRequest.getMetrics(), sourceControlRequest.getConsiderHoliday(),
@@ -277,6 +280,10 @@ public class GenerateReporterService {
 		catch (BaseException e) {
 			handleException(request, sourceControlReportId, e);
 		}
+	}
+
+	private void removePreviousAsyncException(String reportId) {
+		asyncExceptionHandler.remove(reportId);
 	}
 
 	public synchronized ReportResponse generateReporter(GenerateReportRequest request) {
@@ -651,58 +658,59 @@ public class GenerateReporterService {
 
 	public void initializeMetricsDataCompletedInHandler(String timeStamp, List<String> metrics) {
 		MetricsDataCompleted metricsStatus = getMetricsStatus(metrics, Boolean.FALSE);
-		MetricsDataCompleted isPreviousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
-		MetricsDataCompleted isMetricsDataCompleted = createMetricsDataReady(metricsStatus.boardMetricsCompleted(),
+		MetricsDataCompleted previousMetricsCompleted = asyncReportRequestHandler.getMetricsDataCompleted(timeStamp);
+		MetricsDataCompleted isMetricsDataCompleted = createMetricsDataCompleted(metricsStatus.boardMetricsCompleted(),
 				metricsStatus.sourceControlMetricsCompleted(), metricsStatus.pipelineMetricsCompleted(),
-				isPreviousMetricsReady);
-		asyncReportRequestHandler.putMetricsDataReady(timeStamp, isMetricsDataCompleted);
+				previousMetricsCompleted);
+		asyncReportRequestHandler.putMetricsDataCompleted(timeStamp, isMetricsDataCompleted);
 	}
 
-	private MetricsDataCompleted createMetricsDataReady(Boolean isBoardMetricsReady,
-			Boolean isSourceControlMetricsReady, Boolean isPipelineMetricsReady,
-			MetricsDataCompleted previousMetricsReady) {
-		if (previousMetricsReady == null) {
+	private MetricsDataCompleted createMetricsDataCompleted(Boolean boardMetricsCompleted,
+			Boolean sourceControlMetricsCompleted, Boolean pipelineMetricsCompleted,
+			MetricsDataCompleted previousMetricsCompleted) {
+		if (previousMetricsCompleted == null) {
 			return MetricsDataCompleted.builder()
-				.boardMetricsCompleted(isBoardMetricsReady)
-				.pipelineMetricsCompleted(isPipelineMetricsReady)
-				.sourceControlMetricsCompleted(isSourceControlMetricsReady)
+				.boardMetricsCompleted(boardMetricsCompleted)
+				.pipelineMetricsCompleted(pipelineMetricsCompleted)
+				.sourceControlMetricsCompleted(sourceControlMetricsCompleted)
 				.build();
 		}
 
 		return MetricsDataCompleted.builder()
 			.boardMetricsCompleted(
-					getCombinedReadyValue(previousMetricsReady.boardMetricsCompleted(), isBoardMetricsReady))
+					getCompletedValue(previousMetricsCompleted.boardMetricsCompleted(), boardMetricsCompleted))
 			.pipelineMetricsCompleted(
-					getCombinedReadyValue(previousMetricsReady.pipelineMetricsCompleted(), isPipelineMetricsReady))
-			.sourceControlMetricsCompleted(getCombinedReadyValue(previousMetricsReady.sourceControlMetricsCompleted(),
-					isSourceControlMetricsReady))
+					getCompletedValue(previousMetricsCompleted.pipelineMetricsCompleted(), pipelineMetricsCompleted))
+			.sourceControlMetricsCompleted(getCompletedValue(previousMetricsCompleted.sourceControlMetricsCompleted(),
+					sourceControlMetricsCompleted))
 			.build();
 
 	}
 
-	private Boolean getCombinedReadyValue(Boolean isPreviousReadyValue, Boolean isNewReadyValue) {
-		return (isPreviousReadyValue != null || isNewReadyValue == null) ? isPreviousReadyValue : isNewReadyValue;
+	private Boolean getCompletedValue(Boolean previousCompletedValue, Boolean newCompletedValue) {
+		return newCompletedValue == null ? previousCompletedValue : newCompletedValue;
 	}
 
 	public void updateMetricsDataCompletedInHandler(String timeStamp, List<String> metrics) {
 		MetricsDataCompleted metricsStatus = getMetricsStatus(metrics, Boolean.TRUE);
-		MetricsDataCompleted previousMetricsReady = asyncReportRequestHandler.getMetricsDataReady(timeStamp);
-		if (previousMetricsReady == null) {
-			log.error("Failed to update metrics data ready through this timestamp.");
-			throw new GenerateReportException("Failed to update metrics data ready through this timestamp.");
+		MetricsDataCompleted previousMetricsCompleted = asyncReportRequestHandler.getMetricsDataCompleted(timeStamp);
+		if (previousMetricsCompleted == null) {
+			log.error("Failed to update metrics data completed through this timestamp.");
+			throw new GenerateReportException("Failed to update metrics data completed through this timestamp.");
 		}
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
-			.boardMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.boardMetricsCompleted(),
-					previousMetricsReady.boardMetricsCompleted()))
-			.pipelineMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.pipelineMetricsCompleted(),
-					previousMetricsReady.pipelineMetricsCompleted()))
-			.sourceControlMetricsCompleted(checkCurrentMetricsReadyState(metricsStatus.sourceControlMetricsCompleted(),
-					previousMetricsReady.sourceControlMetricsCompleted()))
+			.boardMetricsCompleted(checkCurrentMetricsCompletedState(metricsStatus.boardMetricsCompleted(),
+					previousMetricsCompleted.boardMetricsCompleted()))
+			.pipelineMetricsCompleted(checkCurrentMetricsCompletedState(metricsStatus.pipelineMetricsCompleted(),
+					previousMetricsCompleted.pipelineMetricsCompleted()))
+			.sourceControlMetricsCompleted(
+					checkCurrentMetricsCompletedState(metricsStatus.sourceControlMetricsCompleted(),
+							previousMetricsCompleted.sourceControlMetricsCompleted()))
 			.build();
-		asyncReportRequestHandler.putMetricsDataReady(timeStamp, metricsDataCompleted);
+		asyncReportRequestHandler.putMetricsDataCompleted(timeStamp, metricsDataCompleted);
 	}
 
-	private Boolean checkCurrentMetricsReadyState(Boolean exist, Boolean previousValue) {
+	private Boolean checkCurrentMetricsCompletedState(Boolean exist, Boolean previousValue) {
 		if (Boolean.TRUE.equals(exist) && Objects.nonNull(previousValue))
 			return Boolean.TRUE;
 		return previousValue;
@@ -870,7 +878,7 @@ public class GenerateReporterService {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getPipelineReportId(reportId));
 		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getSourceControlReportId(reportId));
-		MetricsDataCompleted metricsDataCompleted = asyncReportRequestHandler.getMetricsDataReady(reportId);
+		MetricsDataCompleted metricsDataCompleted = asyncReportRequestHandler.getMetricsDataCompleted(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 		ReportError reportError = getReportErrorAndHandleAsyncException(reportId);
 

@@ -21,6 +21,8 @@ export const SHOW_MORE = 'show more >';
 
 export const BACK = 'Back';
 
+export const BOARD_METRICS_TITLE = 'Board Metrics';
+
 export const VERIFY = 'Verify';
 
 export const RESET = 'Reset';

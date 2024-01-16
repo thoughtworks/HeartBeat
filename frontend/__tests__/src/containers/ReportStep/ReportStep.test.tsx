@@ -2,11 +2,14 @@ import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import ReportStep from '@src/containers/ReportStep';
 import {
   BACK,
+  BOARD_METRICS_TITLE,
+  CLASSIFICATION,
   EMPTY_REPORT_VALUES,
   ERROR_PAGE_ROUTE,
   EXPORT_BOARD_DATA,
   EXPORT_METRIC_DATA,
   EXPORT_PIPELINE_DATA,
+  LEAD_TIME_FOR_CHANGES,
   MOCK_DATE_RANGE,
   MOCK_JIRA_VERIFY_RESPONSE,
   MOCK_REPORT_RESPONSE,
@@ -151,6 +154,18 @@ describe('Report Step', () => {
       setup(REQUIRED_DATA_LIST);
 
       expect(screen.getAllByTestId('loading-page')).toHaveLength(6);
+    });
+
+    it('should render detail page when metrics only select classification', () => {
+      setup([CLASSIFICATION]);
+
+      expect(screen.getByText(BACK)).toBeInTheDocument();
+    });
+
+    it('should render report page when board metrics select classification and dora metrics has value too', () => {
+      setup([CLASSIFICATION, LEAD_TIME_FOR_CHANGES]);
+
+      expect(screen.getByText(BOARD_METRICS_TITLE)).toBeInTheDocument();
     });
 
     it('should render the velocity component with correct props', async () => {

@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { Divider } from '@src/components/Common/MetricsSettingTitle/style';
+import { theme } from '@src/theme';
 
 export const MetricSelectionHeader = styled('div')({
   display: 'flex',
@@ -16,8 +17,9 @@ export const MetricSelectionWrapper = styled('div')({
   padding: '1.5rem',
   marginBottom: '1.5rem',
   borderRadius: '0.75rem',
-  border: '0.1rem',
-  boxShadow: '0 0.25rem 1rem 0 rgba(0, 0, 0, 0.08)',
+  border: theme.main.cardBorder,
+  background: theme.main.color,
+  boxShadow: theme.main.cardShadow,
   position: 'relative',
 });
 

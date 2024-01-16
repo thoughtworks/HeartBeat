@@ -48,7 +48,6 @@ const BoardMetrics = ({
   endDate,
   timeoutError,
 }: BoardMetricsProps) => {
-  const [allErrorMessage, setAllErrorMessage] = useState('');
   const configData = useAppSelector(selectConfig);
   const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
     useAppSelector(selectMetricsContent);
@@ -63,9 +62,10 @@ const BoardMetrics = ({
   );
   const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric));
 
-  const errorMessage = _.get(boardReport, ['reportError', 'boardError'])
-    ? `Failed to get Jira info_status: ${_.get(boardReport, ['reportError', 'boardError', 'status'])}...`
-    : '';
+  const getErrorMessage = () =>
+    _.get(boardReport, ['reportError', 'boardError'])
+      ? `Failed to get Jira info_status: ${_.get(boardReport, ['reportError', 'boardError', 'status'])}...`
+      : '';
 
   const getBoardReportRequestBody = (): BoardReportRequestDTO => {
     return {
@@ -142,21 +142,17 @@ const BoardMetrics = ({
     !isBackFromDetail && startToRequestBoardData(getBoardReportRequestBody());
   }, []);
 
-  useEffect(() => {
-    setAllErrorMessage(timeoutError || errorMessage);
-  }, [timeoutError, errorMessage]);
-
   return (
     <>
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {!(timeoutError || errorMessage) && boardReport?.boardMetricsCompleted && (
+          {!(timeoutError || getErrorMessage()) && boardReport?.boardMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
-          {(timeoutError || errorMessage) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
+          {(timeoutError || getErrorMessage()) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
-        <ReportGrid reportDetails={getBoardItems()} errorMessage={allErrorMessage} />
+        <ReportGrid reportDetails={getBoardItems()} errorMessage={timeoutError || getErrorMessage()} />
       </StyledMetricsSection>
     </>
   );

@@ -1,7 +1,5 @@
 package heartbeat.controller.board.dto.request;
 
-import heartbeat.exception.BadRequestException;
-
 public enum BoardType {
 
 	JIRA("jira"), CLASSIC_JIRA("classic-jira");

@@ -44,11 +44,17 @@ public class JiraController {
 		return jiraService.getInfo(boardType, boardRequestParam);
 	}
 
-	private void checkTime(String startTimeString, String endTimeString) {
-		long startTime = Long.parseLong(startTimeString);
-		long endTime = Long.parseLong(endTimeString);
-		if (startTime >= endTime) {
-			throw new BadRequestException("Time inputs wrong.");
+	private void checkTime(String startTime, String endTime) {
+		String errorMessage = "The startTime should be before the endTime.";
+		try {
+			long start = Long.parseLong(startTime);
+			long end = Long.parseLong(endTime);
+			if (start >= end) {
+				throw new BadRequestException(errorMessage);
+			}
+		}
+		catch (Exception e) {
+			throw new BadRequestException(errorMessage);
 		}
 	}
 

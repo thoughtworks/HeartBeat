@@ -15,6 +15,7 @@ import javax.cache.spi.CachingProvider;
 import heartbeat.client.dto.board.jira.HolidaysResponseDTO;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
+import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import lombok.val;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
@@ -24,7 +25,6 @@ import org.ehcache.jsr107.Eh107Configuration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
 
 @Configuration
 @EnableCaching
@@ -46,7 +46,7 @@ public class CacheConfig {
 		cacheManager.createCache("tokenInfo", getCacheConfiguration(BuildKiteTokenInfo.class));
 		cacheManager.createCache("buildKiteOrganizationInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("pipelineInfo", getCacheConfiguration(List.class));
-		cacheManager.createCache("pipelineSteps", getCacheConfiguration(ResponseEntity.class));
+		cacheManager.createCache("pageStepsInfo", getCacheConfiguration(PageStepsInfoDto.class));
 		cacheManager.createCache("pipelineStepsInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("githubOrganizationInfo", getCacheConfiguration(List.class));
 		cacheManager.createCache("githubAllRepos", getCacheConfiguration(List.class));

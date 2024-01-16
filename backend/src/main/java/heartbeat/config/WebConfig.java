@@ -3,6 +3,7 @@ package heartbeat.config;
 import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.pipeline.dto.request.PipelineType;
 import heartbeat.controller.report.dto.request.DataType;
+import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.request.ReportType;
 import heartbeat.controller.source.SourceType;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,13 @@ public class WebConfig implements WebMvcConfigurer {
 			@Override
 			public DataType convert(String source) {
 				return DataType.fromValue(source);
+			}
+		});
+
+		registry.addConverter(new Converter<String, MetricType>() {
+			@Override
+			public MetricType convert(String type) {
+				return MetricType.fromValue(type);
 			}
 		});
 

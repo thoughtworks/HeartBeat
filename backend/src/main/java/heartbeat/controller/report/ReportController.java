@@ -1,12 +1,13 @@
 package heartbeat.controller.report;
 
-import heartbeat.controller.report.dto.request.DataType;
-import heartbeat.controller.report.dto.request.ReportType;
+import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
-import heartbeat.controller.report.dto.request.ExportCSVRequest;
+import heartbeat.controller.report.dto.request.ReportType;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.service.report.GenerateReporterService;
+import heartbeat.service.report.ReportService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,19 +29,24 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/reports")
 @Validated
 @Log4j2
-public class GenerateReportController {
+public class ReportController {
 
 	private final GenerateReporterService generateReporterService;
+
+	private final ReportService reportService;
 
 	@Value("${callback.interval}")
 	private Integer interval;
 
-	@GetMapping("/{dataType}/{filename}")
-	public InputStreamResource exportCSV(@PathVariable DataType dataType, @PathVariable String filename) {
-		log.info("Start to export CSV file, _dataType: {}, _timeStamp: {}", dataType, filename);
-		ExportCSVRequest request = new ExportCSVRequest(dataType.name().toLowerCase(), filename);
-		InputStreamResource result = generateReporterService.fetchCSVData(request);
-		log.info("Successfully get CSV file, _dataType: {}, _timeStamp: {}, _result: {}", dataType, filename, result);
+	@GetMapping("/{reportType}/{filename}")
+	public InputStreamResource exportCSV(
+			@Schema(type = "string", allowableValues = { "metric", "pipeline", "board" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable() ReportType reportType,
+			@PathVariable String filename) {
+		log.info("Start to export CSV file_reportType: {}, _timeStamp: {}", reportType.getValue(), filename);
+		InputStreamResource result = reportService.exportCsv(reportType, Long.parseLong(filename));
+		log.info("Successfully get CSV file_reportType: {}, _timeStamp: {}, _result: {}", reportType.getValue(),
+				filename, result);
 		return result;
 	}
 
@@ -57,11 +63,13 @@ public class GenerateReportController {
 		return ResponseEntity.status(HttpStatus.OK).body(reportResponse);
 	}
 
-	@PostMapping("{reportType}")
-	public ResponseEntity<CallbackResponse> generateReport(@PathVariable ReportType reportType,
+	@PostMapping("{metricType}")
+	public ResponseEntity<CallbackResponse> generateReport(
+			@Schema(type = "string", allowableValues = { "board", "dora" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable MetricType metricType,
 			@RequestBody GenerateReportRequest request) {
 		CompletableFuture.runAsync(() -> {
-			switch (reportType) {
+			switch (metricType) {
 				case BOARD -> generateReporterService.generateBoardReport(request);
 				case DORA -> generateReporterService.generateDoraReport(request);
 			}

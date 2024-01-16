@@ -2,12 +2,13 @@ package heartbeat.controller.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
+import heartbeat.controller.report.dto.request.ReportType;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.GenerateReportException;
-import heartbeat.service.report.GenerateReporterService;
 import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.service.report.GenerateReporterService;
+import heartbeat.service.report.ReportService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +23,20 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(GenerateReportController.class)
+@WebMvcTest(ReportController.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
-class GenerateReporterControllerTest {
+class ReporterControllerTest {
 
 	private static final String REQUEST_FILE_PATH = "src/test/java/heartbeat/controller/report/request.json";
 
@@ -43,6 +44,9 @@ class GenerateReporterControllerTest {
 
 	@MockBean
 	private GenerateReporterService generateReporterService;
+
+	@MockBean
+	private ReportService reporterService;
 
 	@MockBean
 	private AsyncExceptionHandler asyncExceptionHandler;
@@ -114,16 +118,14 @@ class GenerateReporterControllerTest {
 
 	@Test
 	void shouldReturnWhenExportCsv() throws Exception {
-		String dataType = "pipeline";
-		String csvTimeStamp = "1685010080107";
+		Long csvTimeStamp = 1685010080107L;
 		String expectedResponse = "csv data";
 
-		when(generateReporterService
-			.fetchCSVData(ExportCSVRequest.builder().dataType(dataType).csvTimeStamp(csvTimeStamp).build()))
+		when(reporterService.exportCsv(ReportType.PIPELINE, csvTimeStamp))
 			.thenReturn(new InputStreamResource(new ByteArrayInputStream(expectedResponse.getBytes())));
 
 		MockHttpServletResponse response = mockMvc
-			.perform(get("/reports/{dataType}/{csvTimeStamp}", dataType, csvTimeStamp))
+			.perform(get("/reports/{reportType}/{csvTimeStamp}", ReportType.PIPELINE.getValue(), csvTimeStamp))
 			.andExpect(status().isOk())
 			.andReturn()
 			.getResponse();

@@ -79,7 +79,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -803,12 +802,6 @@ public class GenerateReporterService {
 		return pipelineCSVInfos;
 	}
 
-	public InputStreamResource fetchCSVData(ExportCSVRequest request) {
-		long csvTimeStamp = Long.parseLong(request.getCsvTimeStamp());
-		validateExpire(csvTimeStamp);
-		return csvFileGenerator.getDataFromCSV(request.getDataType(), csvTimeStamp);
-	}
-
 	public boolean checkGenerateReportIsDone(String reportTimeStamp) {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Failed to get report due to report time expires");
@@ -830,12 +823,6 @@ public class GenerateReporterService {
 			}
 		}
 		return null;
-	}
-
-	private void validateExpire(long csvTimeStamp) {
-		if (validateExpire(System.currentTimeMillis(), csvTimeStamp)) {
-			throw new NotFoundException("Failed to fetch CSV data due to CSV not found");
-		}
 	}
 
 	private void deleteOldCSV(long currentTimeStamp, File directory) {

@@ -13,58 +13,56 @@ import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.pipeline.dto.request.PipelineType;
-import heartbeat.controller.report.dto.request.BuildKiteSetting;
-import heartbeat.controller.report.dto.request.CodebaseSetting;
-import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.controller.report.dto.request.CodebaseSetting;
+import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.RequireDataEnum;
+import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
-import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
-import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.ChangeFailureRate;
+import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.MetricsDataCompleted;
+import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.Classification;
+import heartbeat.controller.report.dto.response.LeadTimeForChanges;
+import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.CycleTime;
-import heartbeat.controller.report.dto.response.DeploymentFrequency;
-import heartbeat.controller.report.dto.response.ErrorInfo;
-import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
-import heartbeat.controller.report.dto.response.MetricsDataCompleted;
-import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.controller.report.dto.response.ErrorInfo;
 import heartbeat.controller.source.SourceType;
-import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
-import heartbeat.exception.GenerateReportException;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.NotFoundException;
-import heartbeat.exception.PermissionDenyException;
-import heartbeat.exception.RequestFailedException;
-import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.UnauthorizedException;
+import heartbeat.exception.PermissionDenyException;
+import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.RequestFailedException;
+import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
-import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
-import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
+import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
+import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
-import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
-import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
-import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
+import heartbeat.service.report.calculator.ClassificationCalculator;
+import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
+import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.source.github.GitHubService;
-import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.util.IdUtil;
 import lombok.val;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -77,14 +75,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.core.io.InputStreamResource;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
@@ -92,32 +85,29 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
-import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import static heartbeat.TestFixtures.BUILDKITE_TOKEN;
 import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
 import static heartbeat.TestFixtures.GITHUB_TOKEN;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static heartbeat.service.report.CycleTimeFixture.JIRA_BOARD_COLUMNS_SETTING;
+import static heartbeat.service.report.CycleTimeFixture.MOCK_CARD_COLLECTION;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -786,38 +776,6 @@ class GenerateReporterServiceTest {
 		boolean isExists = Files.exists(mockPipelineCsvPath);
 		assertFalse(isExists);
 		Files.deleteIfExists(mockPipelineCsvPath);
-	}
-
-	@Test
-	void shouldThrowNotFoundExceptionWhenExportCsvExpire() {
-		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
-			.dataType("pipeline")
-			.csvTimeStamp("1685010080107") // csvTimeStamp convert to 2023-5-25 18:21:20
-			.build();
-
-		assertThatThrownBy(() -> generateReporterService.fetchCSVData(mockExportCSVRequest))
-			.isInstanceOf(NotFoundException.class)
-			.hasMessageContaining("Failed to fetch CSV data due to CSV not found");
-	}
-
-	@Test
-	void shouldReturnCsvDataForPipelineWhenExportCsv() throws IOException {
-		String mockedCsvData = "csv data";
-		ExportCSVRequest mockExportCSVRequest = ExportCSVRequest.builder()
-			.dataType("pipeline")
-			.csvTimeStamp(String.valueOf(System.currentTimeMillis()))
-			.build();
-
-		InputStream inputStream = new ByteArrayInputStream(mockedCsvData.getBytes());
-		InputStreamResource mockInputStreamResource = new InputStreamResource(inputStream);
-		when(csvFileGenerator.getDataFromCSV(any(), anyLong())).thenReturn(mockInputStreamResource);
-
-		InputStreamResource csvDataResource = generateReporterService.fetchCSVData(mockExportCSVRequest);
-		InputStream csvDataInputStream = csvDataResource.getInputStream();
-		String csvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
-			.collect(Collectors.joining("\n"));
-
-		assertThat(csvData).isEqualTo(mockedCsvData);
 	}
 
 	@Test

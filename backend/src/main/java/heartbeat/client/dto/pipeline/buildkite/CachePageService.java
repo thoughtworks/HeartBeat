@@ -22,7 +22,7 @@ public class CachePageService {
 
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
-	@Cacheable(cacheNames = "pageStepsInfo", key = "#orgId+'-'+#pipelineId+'-'+#page+'-'+#perPage+'-'"
+	@Cacheable(cacheNames = "pageStepsInfo", key = "#realToken+'-'+#orgId+'-'+#pipelineId+'-'+#page+'-'+#perPage+'-'"
 			+ "+#createdFrom+'-'+#createdTo+'-'+(#branch!=null ? #branch.toString() : '')")
 	public PageStepsInfoDto fetchPageStepsInfo(String realToken, String orgId, String pipelineId, String page,
 			String perPage, String createdFrom, String createdTo, List<String> branches) {

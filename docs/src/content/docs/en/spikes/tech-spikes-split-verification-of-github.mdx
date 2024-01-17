@@ -115,17 +115,23 @@ end
 Triggered when the user selects a branch in the Pipeline settings module of the Metrics page.
 
 - Api Design
+
 ```
-paths: /api/v1/source-control/{sourceType}/repos/branches/{branch}/verify
+paths: /api/v1/source-control/{sourceType}/repos/branches/verify
 method: post
 request: {
   repository: "git@github.com:XXXX/XXXX.git",
-  token: "..."
+  token: "...",
+  branch: "main"
 }
 responses:
   Status Code: 204
 ```
+
+Note：Since the branch name may contain special characters, which will cause the URL to be unsafe, put it in the request body.
+
 - GitHub Api for verification
+
 ```
 paths: https://api.github.com/repos/{owner}/{repo}/branches/{branch}
 method: get

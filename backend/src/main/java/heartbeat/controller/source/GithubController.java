@@ -5,7 +5,6 @@ import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.controller.source.dto.VerifyBranchRequest;
 import heartbeat.service.source.github.GitHubService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -58,14 +57,15 @@ public class GithubController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
-	@PostMapping("/{sourceType}/repos/branches/{branch}/verify")
-	public ResponseEntity<Void> verifyBranch(@PathVariable SourceType sourceType, @PathVariable @NotBlank String branch,
+	@PostMapping("/{sourceType}/repos/branches/verify")
+	public ResponseEntity<Void> verifyBranch(@PathVariable SourceType sourceType,
 			@RequestBody @Valid VerifyBranchRequest request) {
-		log.info("Start to verify source type: {} branch: {}.", sourceType, branch);
+		log.info("Start to verify source type: {} branch: {}.", sourceType, request.getBranch());
 		switch (sourceType) {
 			case GITHUB -> {
-				gitHubService.verifyCanReadTargetBranch(request.getRepository(), branch, request.getToken());
-				log.info("Successfully verify source type: {} branch: {}.", sourceType, branch);
+				gitHubService.verifyCanReadTargetBranch(request.getRepository(), request.getBranch(),
+						request.getToken());
+				log.info("Successfully verify source type: {} branch: {}.", sourceType, request.getBranch());
 			}
 			default -> {
 			}

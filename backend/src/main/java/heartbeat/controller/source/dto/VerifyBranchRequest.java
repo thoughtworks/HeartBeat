@@ -25,4 +25,7 @@ public class VerifyBranchRequest {
 	@NotBlank(message = "Repository is required.")
 	private String repository;
 
+	@NotBlank(message = "Branch cannot be empty.")
+	private String branch;
+
 }

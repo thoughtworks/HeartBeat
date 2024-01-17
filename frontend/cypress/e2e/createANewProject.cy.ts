@@ -6,13 +6,13 @@ import reportPage from '../pages/metrics/report';
 import { TIPS } from '../../src/constants/resources';
 
 const cycleTimeData = [
-  { label: 'Average Cycle Time(Days/SP)', value: '6.75' },
-  { label: 'Average Cycle Time(Days/Card)', value: '9.85' },
+  { label: 'Average Cycle Time(Days/SP)', value: '7.64' },
+  { label: 'Average Cycle Time(Days/Card)', value: '9.55' },
 ];
 
 const velocityData = [
   { label: 'Velocity(Story Point)', value: '17.5' },
-  { label: 'Throughput(Cards Count)', value: '12' },
+  { label: 'Throughput(Cards Count)', value: '14' },
 ];
 
 const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '2.36' }];
@@ -25,7 +25,7 @@ const leadTimeForChangeData = [
   { label: 'Total Lead Time(Hours)', value: '-4.87' },
 ];
 
-const changeFailureRateData = [{ label: 'Failure Rate', value: '49' }];
+const changeFailureRateData = [{ label: 'Failure Rate', value: '49.02' }];
 
 const metricsTextList = [
   'Board configuration',
@@ -145,7 +145,7 @@ const checkBoardShowMore = () => {
   reportPage.goToBoardDetailPage();
   cy.get(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`).find('tbody > tr').should('have.length', 2);
   cy.get(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`).find('tbody > tr').should('have.length', 17);
-  cy.get(`[data-test-id="${METRICS_TITLE.CLASSIFICATION}"]`).find('tbody > tr').should('have.length', 103);
+  cy.get(`[data-test-id="${METRICS_TITLE.CLASSIFICATION}"]`).find('tbody > tr').should('have.length', 122);
 
   reportPage.exportBoardData();
   checkBoardCSV();

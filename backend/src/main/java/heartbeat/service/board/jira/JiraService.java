@@ -628,6 +628,7 @@ public class JiraService {
 		Optional<Long> lastTimeToRealDone = jiraCardHistory.getItems()
 			.stream()
 			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
+			.filter(history -> !realDoneStatuses.contains(history.getFrom().getDisplayValue().toUpperCase()))
 			.filter(history -> realDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
 			.map(HistoryDetail::getTimestamp)
 			.max(Long::compareTo);

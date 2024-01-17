@@ -229,7 +229,7 @@ describe('Report Step', () => {
       expect(handleSaveMock).toHaveBeenCalledTimes(1);
     });
 
-    it('should check error page show when isReportError is true', () => {
+    it('should check error page show when isreportMetricsError is true', () => {
       reportHook.current.isServerError = true;
 
       setup([REQUIRED_DATA_LIST[1]]);

@@ -14,7 +14,7 @@ export interface ReportResponseDTO {
   pipelineMetricsCompleted: Nullable<boolean>;
   sourceControlMetricsCompleted: Nullable<boolean>;
   allMetricsCompleted: boolean;
-  reportError: AllErrorResponse;
+  reportMetricsError: AllErrorResponse;
 }
 
 export interface VelocityResponse {
@@ -23,9 +23,9 @@ export interface VelocityResponse {
 }
 
 export interface AllErrorResponse {
-  boardError: ErrorResponse | null;
-  pipelineError: ErrorResponse | null;
-  sourceControlError: ErrorResponse | null;
+  boardMetricsError: ErrorResponse | null;
+  pipelineMetricsError: ErrorResponse | null;
+  sourceControlMetricsError: ErrorResponse | null;
 }
 
 export interface ErrorResponse {

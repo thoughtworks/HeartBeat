@@ -18,13 +18,13 @@ describe('Report Card', () => {
 
   const mockData = {
     ...MOCK_REPORT_RESPONSE,
-    reportError: {
-      boardError: null,
-      sourceControlError: {
+    reportMetricsError: {
+      boardMetricsError: null,
+      sourceControlMetricsError: {
         status: 404,
         message: 'Not Found',
       },
-      pipelineError: {
+      pipelineMetricsError: {
         status: 404,
         message: 'Not Found',
       },
@@ -53,11 +53,11 @@ describe('Report Card', () => {
     );
   };
 
-  it('should show retry button when have reportError and click retry will triger api call', async () => {
+  it('should show retry button when have reportMetricsError and click retry will triger api call', async () => {
     setup();
 
     expect(screen.getByText(RETRY)).toBeInTheDocument();
-    expect(screen.getByText('Failed to get Github info_status: 404...')).toBeInTheDocument();
+    expect(screen.getByText('Failed to get Github info_status: 404')).toBeInTheDocument();
 
     await userEvent.click(screen.getByText(RETRY));
 

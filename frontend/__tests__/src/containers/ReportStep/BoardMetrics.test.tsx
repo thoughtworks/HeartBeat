@@ -17,10 +17,10 @@ describe('Report Card', () => {
 
   const mockData = {
     ...MOCK_REPORT_RESPONSE,
-    reportError: {
-      pipelineError: null,
-      sourceControlError: null,
-      boardError: {
+    reportMetricsError: {
+      pipelineMetricsError: null,
+      sourceControlMetricsError: null,
+      boardMetricsError: {
         status: 404,
         message: 'Not Found',
       },
@@ -48,7 +48,7 @@ describe('Report Card', () => {
     );
   };
 
-  it('should show retry button when have reportError and click retry will triger api call', async () => {
+  it('should show retry button when have reportMetricsError and click retry will triger api call', async () => {
     const { getByText } = setup();
 
     expect(getByText(RETRY)).toBeInTheDocument();

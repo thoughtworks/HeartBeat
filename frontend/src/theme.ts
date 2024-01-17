@@ -23,6 +23,9 @@ declare module '@mui/material/styles' {
           color: string;
         };
       };
+      errorMessage: {
+        color: string;
+      };
       alert: {
         title: {
           color: string;
@@ -70,6 +73,9 @@ declare module '@mui/material/styles' {
           backgroundColor: string;
           color: string;
         };
+      };
+      errorMessage: {
+        color: string;
       };
       alert: {
         title: {
@@ -146,6 +152,9 @@ export const theme = createTheme({
         backgroundColor: '#E0E0E0',
         color: '#929292',
       },
+    },
+    errorMessage: {
+      color: '#A2A2A2',
     },
     alert: {
       title: {

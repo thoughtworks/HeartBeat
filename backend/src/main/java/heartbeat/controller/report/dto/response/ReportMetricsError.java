@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReportError {
+public class ReportMetricsError {
 
-	private ErrorInfo boardError;
+	private ErrorInfo boardMetricsError;
 
-	private ErrorInfo pipelineError;
+	private ErrorInfo pipelineMetricsError;
 
-	private ErrorInfo sourceControlError;
+	private ErrorInfo sourceControlMetricsError;
 
 }

@@ -25,7 +25,6 @@ import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
-import heartbeat.controller.report.dto.request.ExportCSVRequest;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -34,12 +33,11 @@ import heartbeat.controller.report.dto.response.ErrorInfo;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
-import heartbeat.controller.report.dto.response.ReportError;
+import heartbeat.controller.report.dto.response.ReportMetricsError;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
-import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.handler.AsyncExceptionHandler;
@@ -720,13 +718,13 @@ public class GenerateReporterService {
 		boolean boardMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getBoardMetrics(lowerMetrics));
 		boolean codebaseMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getCodeBaseMetrics(lowerMetrics));
 		boolean buildKiteMetricsExist = CollectionUtils.isNotEmpty(MetricsUtil.getPipelineMetrics(lowerMetrics));
-		Boolean isBoardMetricsReady = boardMetricsExist ? flag : null;
-		Boolean isPipelineMetricsReady = buildKiteMetricsExist ? flag : null;
-		Boolean isSourceControlMetricsReady = codebaseMetricsExist ? flag : null;
+		Boolean boardMetricsCompleted = boardMetricsExist ? flag : null;
+		Boolean pipelineMetricsCompleted = buildKiteMetricsExist ? flag : null;
+		Boolean sourceControlMetricsCompleted = codebaseMetricsExist ? flag : null;
 		return MetricsDataCompleted.builder()
-			.boardMetricsCompleted(isBoardMetricsReady)
-			.pipelineMetricsCompleted(isPipelineMetricsReady)
-			.sourceControlMetricsCompleted(isSourceControlMetricsReady)
+			.boardMetricsCompleted(boardMetricsCompleted)
+			.pipelineMetricsCompleted(pipelineMetricsCompleted)
+			.sourceControlMetricsCompleted(sourceControlMetricsCompleted)
 			.build();
 	}
 
@@ -867,7 +865,7 @@ public class GenerateReporterService {
 		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getSourceControlReportId(reportId));
 		MetricsDataCompleted metricsDataCompleted = asyncReportRequestHandler.getMetricsDataCompleted(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
-		ReportError reportError = getReportErrorAndHandleAsyncException(reportId);
+		ReportMetricsError reportMetricsError = getReportErrorAndHandleAsyncException(reportId);
 
 		return ReportResponse.builder()
 			.velocity(getValueOrNull(boardReportResponse, ReportResponse::getVelocity))
@@ -884,21 +882,21 @@ public class GenerateReporterService {
 			.sourceControlMetricsCompleted(
 					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::sourceControlMetricsCompleted))
 			.allMetricsCompleted(isReportReady)
-			.reportError(reportError)
+			.reportMetricsError(reportMetricsError)
 			.build();
 	}
 
-	public ReportError getReportErrorAndHandleAsyncException(String reportId) {
+	public ReportMetricsError getReportErrorAndHandleAsyncException(String reportId) {
 		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportId));
 		BaseException pipelineException = asyncExceptionHandler.get(IdUtil.getPipelineReportId(reportId));
 		BaseException sourceControlException = asyncExceptionHandler.get(IdUtil.getSourceControlReportId(reportId));
-		ErrorInfo boardError = handleAsyncExceptionAndGetErrorInfo(boardException);
-		ErrorInfo pipelineError = handleAsyncExceptionAndGetErrorInfo(pipelineException);
-		ErrorInfo sourceControlError = handleAsyncExceptionAndGetErrorInfo(sourceControlException);
-		return ReportError.builder()
-			.boardError(boardError)
-			.pipelineError(pipelineError)
-			.sourceControlError(sourceControlError)
+		ErrorInfo boardMetricsError = handleAsyncExceptionAndGetErrorInfo(boardException);
+		ErrorInfo pipelineMetricsError = handleAsyncExceptionAndGetErrorInfo(pipelineException);
+		ErrorInfo sourceControlMetricsError = handleAsyncExceptionAndGetErrorInfo(sourceControlException);
+		return ReportMetricsError.builder()
+			.boardMetricsError(boardMetricsError)
+			.pipelineMetricsError(pipelineMetricsError)
+			.sourceControlMetricsError(sourceControlMetricsError)
 			.build();
 	}
 

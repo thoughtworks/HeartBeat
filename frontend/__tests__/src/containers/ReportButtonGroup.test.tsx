@@ -7,16 +7,16 @@ describe('test', () => {
   const mockData = {
     ...MOCK_REPORT_RESPONSE,
     exportValidityTime: 30,
-    reportError: {
-      boardError: {
+    reportMetricsError: {
+      boardMetricsError: {
         status: 401,
         message: 'Unauthorized',
       },
-      pipelineError: {
+      pipelineMetricsError: {
         status: 401,
         message: 'Unauthorized',
       },
-      sourceControlError: {
+      sourceControlMetricsError: {
         status: 401,
         message: 'Unauthorized',
       },

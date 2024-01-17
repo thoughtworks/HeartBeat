@@ -27,7 +27,7 @@ public class ReportResponse {
 
 	private LeadTimeForChanges leadTimeForChanges;
 
-	private ReportError reportError;
+	private ReportMetricsError reportMetricsError;
 
 	private Long exportValidityTime;
 

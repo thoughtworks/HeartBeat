@@ -380,10 +380,10 @@ export const PR_LEAD_TIME = 'PR Lead Time';
 export const PIPELINE_LEAD_TIME = 'Pipeline Lead Time';
 export const TOTAL_DELAY_TIME = 'Total Lead Time';
 
-const reportError = {
-  boardError: null,
-  pipelineError: null,
-  sourceControlError: null,
+const reportMetricsError = {
+  boardMetricsError: null,
+  pipelineMetricsError: null,
+  sourceControlMetricsError: null,
 };
 
 export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
@@ -502,7 +502,7 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   pipelineMetricsCompleted: true,
   sourceControlMetricsCompleted: true,
   allMetricsCompleted: true,
-  reportError,
+  reportMetricsError,
 };
 
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
@@ -667,7 +667,7 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   pipelineMetricsCompleted: false,
   sourceControlMetricsCompleted: false,
   allMetricsCompleted: false,
-  reportError,
+  reportMetricsError,
 };
 
 export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =

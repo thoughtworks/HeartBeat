@@ -58,13 +58,13 @@ export const ReportButtonGroup = ({
     !reportData ||
     reportData.pipelineMetricsCompleted === false ||
     reportData.sourceControlMetricsCompleted === false ||
-    reportData?.reportError?.pipelineError ||
-    reportData?.reportError?.sourceControlError;
+    reportData?.reportMetricsError?.pipelineMetricsError ||
+    reportData?.reportMetricsError?.sourceControlMetricsError;
 
   const isReportHasError =
-    !!reportData?.reportError.boardError &&
-    !!reportData?.reportError.pipelineError &&
-    !!reportData?.reportError.sourceControlError;
+    !!reportData?.reportMetricsError.boardMetricsError ||
+    !!reportData?.reportMetricsError.pipelineMetricsError ||
+    !!reportData?.reportMetricsError.sourceControlMetricsError;
 
   return (
     <>
@@ -90,7 +90,7 @@ export const ReportButtonGroup = ({
           )}
           {isShowExportBoardButton && (
             <StyledExportButton
-              disabled={!(reportData?.boardMetricsCompleted && !reportData?.reportError?.boardError)}
+              disabled={!(reportData?.boardMetricsCompleted && !reportData?.reportMetricsError?.boardMetricsError)}
               onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}

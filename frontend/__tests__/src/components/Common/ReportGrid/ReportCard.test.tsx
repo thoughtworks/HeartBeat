@@ -36,6 +36,6 @@ describe('Report Card', () => {
 
     render(<ReportCard title={'card'} items={null} xs={6} errorMessage={errorMessage} />);
 
-    expect(screen.getByText('Data loading failed')).toBeInTheDocument();
+    expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
 });

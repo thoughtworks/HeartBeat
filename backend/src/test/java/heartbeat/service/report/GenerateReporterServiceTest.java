@@ -941,7 +941,7 @@ class GenerateReporterServiceTest {
 			.thenReturn(new UnauthorizedException("Failed to get GitHub info_status: 401, reason: PermissionDeny"));
 
 		ErrorInfo pipelineError = generateReporterService.getReportErrorAndHandleAsyncException(timeStamp)
-			.getPipelineError();
+			.getPipelineMetricsError();
 
 		assertEquals(401, pipelineError.getStatus());
 		assertEquals("Failed to get GitHub info_status: 401, reason: PermissionDeny", pipelineError.getErrorMessage());
@@ -957,7 +957,7 @@ class GenerateReporterServiceTest {
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new PermissionDenyException("Failed to get GitHub info_status: 403, reason: PermissionDeny"));
 		ErrorInfo pipelineError = generateReporterService.getReportErrorAndHandleAsyncException(timeStamp)
-			.getPipelineError();
+			.getPipelineMetricsError();
 
 		assertEquals(403, pipelineError.getStatus());
 		assertEquals("Failed to get GitHub info_status: 403, reason: PermissionDeny", pipelineError.getErrorMessage());
@@ -971,7 +971,7 @@ class GenerateReporterServiceTest {
 		when(asyncExceptionHandler.get(reportId))
 			.thenReturn(new NotFoundException("Failed to get GitHub info_status: 404, reason: NotFound"));
 		ErrorInfo pipelineError = generateReporterService.getReportErrorAndHandleAsyncException(timeStamp)
-			.getPipelineError();
+			.getPipelineMetricsError();
 
 		assertEquals(404, pipelineError.getStatus());
 		assertEquals("Failed to get GitHub info_status: 404, reason: NotFound", pipelineError.getErrorMessage());

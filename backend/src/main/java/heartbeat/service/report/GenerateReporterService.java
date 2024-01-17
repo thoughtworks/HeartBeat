@@ -626,9 +626,9 @@ public class GenerateReporterService {
 		List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService
 			.fetchPipelineBuilds(token, deploymentEnvironment, startTime, endTime)
 			.stream()
-			.filter(info -> Objects.nonNull(info.getAuthor()))
 			.toList();
 
+		// TODO: use creator.name instead of author for filtering
 		if (!CollectionUtils.isEmpty(pipelineCrews)) {
 			buildKiteBuildInfo = buildKiteBuildInfo.stream()
 				.filter(info -> pipelineCrews.contains(info.getAuthor().getName()))

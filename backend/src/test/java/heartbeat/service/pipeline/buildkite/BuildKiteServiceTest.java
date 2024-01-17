@@ -1,11 +1,10 @@
 package heartbeat.service.pipeline.buildkite;
 
-import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.client.dto.pipeline.buildkite.CachePageService;
 import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
-import heartbeat.exception.CustomFeignClientException;
 import heartbeat.exception.InternalServerErrorException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.exception.UnauthorizedException;
 
@@ -36,7 +35,6 @@ import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.exception.NotFoundException;
-import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
@@ -120,62 +118,6 @@ class BuildKiteServiceTest {
 	@AfterEach
 	public void tearDown() {
 		buildKiteService.shutdownExecutor();
-	}
-
-	@Test
-	void shouldReturnBuildKiteResponseWhenCallBuildKiteApi() throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		List<BuildKitePipelineDTO> pipelineDTOS = mapper.readValue(
-				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
-				new TypeReference<>() {
-				});
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(PERMISSION_SCOPES).build();
-		PipelineParam pipelineParam = PipelineParam.builder()
-			.token(MOCK_TOKEN)
-			.startTime(MOCK_START_TIME)
-			.endTime(MOCK_END_TIME)
-			.build();
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
-			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
-		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100"))
-			.thenReturn(pipelineDTOS);
-		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
-
-		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.fetchPipelineInfo(pipelineParam);
-
-		assertThat(buildKiteResponseDTO.getPipelineList().size()).isEqualTo(1);
-		Pipeline pipeline = buildKiteResponseDTO.getPipelineList().get(0);
-		assertThat(pipeline.getId()).isEqualTo("payment-selector-ui");
-		assertThat(pipeline.getName()).isEqualTo("payment-selector-ui");
-		assertThat(pipeline.getOrgId()).isEqualTo(TEST_ORG_ID);
-		assertThat(pipeline.getOrgName()).isEqualTo(TEST_ORG_NAME);
-		assertThat(pipeline.getRepository())
-			.isEqualTo("https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git");
-		assertThat(pipeline.getSteps().size()).isEqualTo(1);
-	}
-
-	@Test
-	void shouldThrowRequestFailedExceptionWhenFeignClientCallFailed() {
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(PERMISSION_SCOPES).build();
-		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
-			.thenThrow(new CustomFeignClientException(401, "Bad credentials"));
-		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
-
-		assertThatThrownBy(() -> buildKiteService.fetchPipelineInfo(
-				PipelineParam.builder().token(MOCK_TOKEN).startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()))
-			.isInstanceOf(Exception.class)
-			.hasMessageContaining("Bad credentials");
-
-		verify(buildKiteFeignClient).getBuildKiteOrganizationsInfo(any());
-	}
-
-	@Test
-	void shouldThrowNoPermissionExceptionWhenTokenPermissionDeny() {
-		BuildKiteTokenInfo buildKiteTokenInfo = BuildKiteTokenInfo.builder().scopes(List.of("mock")).build();
-		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(buildKiteTokenInfo);
-
-		assertThrows(PermissionDenyException.class, () -> buildKiteService.fetchPipelineInfo(
-				PipelineParam.builder().token(MOCK_TOKEN).startTime(MOCK_START_TIME).endTime(MOCK_END_TIME).build()));
 	}
 
 	@Test
@@ -533,6 +475,15 @@ class BuildKiteServiceTest {
 		assertThatThrownBy(() -> buildKiteService.verifyToken(MOCK_TOKEN))
 			.isInstanceOf(InternalServerErrorException.class)
 			.hasMessageContaining("Failed to call BuildKite, cause is");
+	}
+
+	@Test
+	void shouldThrowPermissionDenyExceptionGivenOtherPermissionWhenVerifyBuildKite() {
+		when(buildKiteFeignClient.getTokenInfo(any())).thenReturn(BuildKiteTokenInfo.builder().scopes(List.of("fakePermissions")).build());
+
+		assertThatThrownBy(() -> buildKiteService.verifyToken(MOCK_TOKEN))
+			.isInstanceOf(PermissionDenyException.class)
+			.hasMessageContaining("Failed to call BuildKite, because of insufficient permission!");
 	}
 
 	@Test

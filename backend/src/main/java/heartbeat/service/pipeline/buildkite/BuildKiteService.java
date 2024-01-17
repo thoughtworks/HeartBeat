@@ -10,7 +10,6 @@ import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
-import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
@@ -55,45 +54,6 @@ public class BuildKiteService {
 		customTaskExecutor.shutdown();
 	}
 
-	@Deprecated
-	public BuildKiteResponseDTO fetchPipelineInfo(PipelineParam pipelineParam) {
-		try {
-			String buildKiteToken = "Bearer " + pipelineParam.getToken();
-			log.info("Start to query token permissions by token");
-			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
-			log.info("Successfully query token permissions by token, token info scopes: {}",
-					buildKiteTokenInfo.getScopes());
-			verifyTokenScopes(buildKiteTokenInfo);
-			log.info("Start to query BuildKite organizations by token");
-			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
-				.getBuildKiteOrganizationsInfo(buildKiteToken);
-			log.info("Successfully query BuildKite organizations by token, slug: {}", buildKiteOrganizationsInfo);
-
-			log.info("Start to query BuildKite pipelineInfo by organizations slug: {}", buildKiteOrganizationsInfo);
-			List<Pipeline> buildKiteInfoList = buildKiteOrganizationsInfo.stream()
-				.flatMap(org -> buildKiteFeignClient.getPipelineInfo(buildKiteToken, org.getSlug(), "1", "100")
-					.stream()
-					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
-							org.getName())))
-				.collect(Collectors.toList());
-			log.info("Successfully get BuildKite pipelineInfo, slug:{}, pipelineInfoList size:{}",
-					buildKiteOrganizationsInfo, buildKiteInfoList.size());
-
-			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
-		}
-		catch (RuntimeException e) {
-			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
-			log.error("Failed to call BuildKite, start time: {}, e: {}", pipelineParam.getStartTime(),
-					cause.getMessage());
-			if (cause instanceof BaseException baseException) {
-				throw baseException;
-			}
-			throw new InternalServerErrorException(
-					String.format("Failed to call BuildKite, cause is %s", cause.getMessage()));
-
-		}
-	}
-
 	private void verifyTokenScopes(BuildKiteTokenInfo buildKiteTokenInfo) {
 		for (String permission : permissions) {
 			if (!buildKiteTokenInfo.getScopes().contains(permission)) {
@@ -119,7 +79,7 @@ public class BuildKiteService {
 			.map(buildKiteBuildInfo -> buildKiteBuildInfo.getAuthor().getName())
 			.distinct()
 			.sorted()
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	public List<String> getStepsBeforeEndStep(String endStep, List<String> steps) {
@@ -311,7 +271,7 @@ public class BuildKiteService {
 					.stream()
 					.map(pipeline -> PipelineTransformer.fromBuildKitePipelineDto(pipeline, org.getSlug(),
 							org.getName())))
-				.collect(Collectors.toList());
+				.toList();
 			log.info("Successfully get BuildKite pipelineInfo, slug:{}, pipelineInfoList size:{}",
 					buildKiteOrganizationsInfo, buildKiteInfoList.size());
 

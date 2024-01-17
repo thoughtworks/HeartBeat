@@ -2,7 +2,6 @@ package heartbeat.controller.pipeline;
 
 import heartbeat.controller.pipeline.dto.request.PipelineType;
 import heartbeat.controller.pipeline.dto.request.TokenParam;
-import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
@@ -30,13 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PipelineController {
 
 	private final BuildKiteService buildKiteService;
-
-	@Deprecated
-	@PostMapping("/{pipelineType}")
-	public BuildKiteResponseDTO getBuildKiteInfo(@PathVariable String pipelineType,
-			@Valid @RequestBody PipelineParam pipelineParam) {
-		return buildKiteService.fetchPipelineInfo(pipelineParam);
-	}
 
 	@PostMapping("/{pipelineType}/verify")
 	public ResponseEntity<Void> verifyBuildKiteToken(@PathVariable PipelineType pipelineType,

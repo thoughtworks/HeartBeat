@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.pipeline.dto.request.PipelineParam;
 import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
@@ -43,10 +42,6 @@ public class BuildKiteControllerTest {
 
 	public static final String TEST_TOKEN = "test_token";
 
-	public static final String TEST_START_TIME = "16737733";
-
-	public static final String TEST_END_TIME = "17657557";
-
 	public static final String BUILD_KITE = "buildkite";
 
 	@MockBean
@@ -54,34 +49,6 @@ public class BuildKiteControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-
-	@Deprecated
-	@Test
-	void shouldReturnCorrectPipelineInfoWhenCallBuildKiteMockServer() throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-		List<Pipeline> pipelines = mapper.readValue(
-				new File("src/test/java/heartbeat/controller/pipeline/pipelineInfoData.json"), new TypeReference<>() {
-				});
-		BuildKiteResponseDTO buildKiteResponseDTO = BuildKiteResponseDTO.builder().pipelineList(pipelines).build();
-		when(buildKiteService.fetchPipelineInfo(any())).thenReturn(buildKiteResponseDTO);
-		PipelineParam pipelineParam = PipelineParam.builder()
-			.token(TEST_TOKEN)
-			.startTime(TEST_START_TIME)
-			.endTime(TEST_END_TIME)
-			.build();
-
-		MockHttpServletResponse response = mockMvc
-			.perform(post("/pipelines/buildKite").contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(pipelineParam)))
-			.andExpect(status().isOk())
-			.andReturn()
-			.getResponse();
-
-		final var resultId = JsonPath.parse(response.getContentAsString()).read("$.pipelineList[0].id").toString();
-		assertThat(resultId).contains("payment-selector-ui");
-		final var resultName = JsonPath.parse(response.getContentAsString()).read("$.pipelineList[0].name").toString();
-		assertThat(resultName).contains("payment-selector-ui");
-	}
 
 	@Test
 	void shouldReturnCorrectPipelineStepsWhenCalBuildKiteMockServer() throws Exception {

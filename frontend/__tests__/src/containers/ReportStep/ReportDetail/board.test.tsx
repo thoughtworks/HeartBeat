@@ -3,6 +3,10 @@ import { render, screen, within } from '@testing-library/react';
 import { BoardDetail } from '@src/containers/ReportStep/ReportDetail';
 import { reportMapper } from '@src/hooks/reportMapper/report';
 import React from 'react';
+import { Provider } from 'react-redux';
+import { setupStore } from '../../../utils/setupStoreUtil';
+import { updateMetrics } from '@src/context/config/configSlice';
+import { REQUIRED_DATA_LIST } from '../../../fixtures';
 
 jest.mock('@src/hooks/reportMapper/report');
 
@@ -13,7 +17,13 @@ describe('board', () => {
 
   it('should render a back link', () => {
     (reportMapper as jest.Mock).mockReturnValue({});
-    render(<BoardDetail data={data} onBack={jest.fn()} />);
+
+    render(
+      <Provider store={setupStore()}>
+        <BoardDetail data={data} onBack={jest.fn()} />
+      </Provider>
+    );
+
     expect(screen.getByTestId('ArrowBackIcon')).toBeInTheDocument();
     expect(screen.getByText('Back')).toBeInTheDocument();
   });
@@ -26,7 +36,13 @@ describe('board', () => {
           { id: 1, name: 'name2', valueList: [{ value: 2 }] },
         ],
       });
-      render(<BoardDetail data={data} onBack={jest.fn()} />);
+
+      render(
+        <Provider store={setupStore()}>
+          <BoardDetail data={data} onBack={jest.fn()} />
+        </Provider>
+      );
+
       const velocityTable = screen.getByTestId('Velocity');
       expect(screen.getByText('Velocity')).toBeInTheDocument();
       expect(velocityTable).toBeInTheDocument();
@@ -37,7 +53,13 @@ describe('board', () => {
       (reportMapper as jest.Mock).mockReturnValue({
         velocityList: null,
       });
-      render(<BoardDetail data={data} onBack={jest.fn()} />);
+
+      render(
+        <Provider store={setupStore()}>
+          <BoardDetail data={data} onBack={jest.fn()} />
+        </Provider>
+      );
+
       expect(screen.queryAllByText('Velocity').length).toEqual(0);
     });
   });
@@ -51,7 +73,13 @@ describe('board', () => {
           { id: 2, name: 'name3', valueList: [{ value: 3 }] },
         ],
       });
-      render(<BoardDetail data={data} onBack={jest.fn()} />);
+
+      render(
+        <Provider store={setupStore()}>
+          <BoardDetail data={data} onBack={jest.fn()} />
+        </Provider>
+      );
+
       const cycleTimeTable = screen.getByTestId('Cycle Time');
       expect(screen.getByText('Cycle Time')).toBeInTheDocument();
       expect(cycleTimeTable).toBeInTheDocument();
@@ -62,7 +90,13 @@ describe('board', () => {
       (reportMapper as jest.Mock).mockReturnValue({
         cycleTimeList: null,
       });
-      render(<BoardDetail data={data} onBack={jest.fn()} />);
+
+      render(
+        <Provider store={setupStore()}>
+          <BoardDetail data={data} onBack={jest.fn()} />
+        </Provider>
+      );
+
       expect(screen.queryAllByText('Cycle Time').length).toEqual(0);
     });
   });
@@ -77,8 +111,15 @@ describe('board', () => {
           { id: 3, name: 'name4', valuesList: [{ name: 'test4', value: 4 }] },
         ],
       });
+      const store = setupStore();
+      store.dispatch(updateMetrics(REQUIRED_DATA_LIST));
 
-      render(<BoardDetail data={data} onBack={jest.fn()} />);
+      render(
+        <Provider store={store}>
+          <BoardDetail data={data} onBack={jest.fn()} />
+        </Provider>
+      );
+
       const classificationTable = screen.getByTestId('Classification');
       expect(screen.getByText('Classification')).toBeInTheDocument();
       expect(classificationTable).toBeInTheDocument();
@@ -89,7 +130,13 @@ describe('board', () => {
       (reportMapper as jest.Mock).mockReturnValue({
         classification: null,
       });
-      render(<BoardDetail data={data} onBack={jest.fn()} />);
+
+      render(
+        <Provider store={setupStore()}>
+          <BoardDetail data={data} onBack={jest.fn()} />
+        </Provider>
+      );
+
       expect(screen.queryAllByText('Classification').length).toEqual(0);
     });
   });
@@ -107,7 +154,15 @@ describe('board', () => {
         { id: 2, name: 'name3', valuesList: [{ name: 'test3', value: 3 }] },
       ],
     });
-    render(<BoardDetail data={data} onBack={jest.fn()} />);
+    const store = setupStore();
+    store.dispatch(updateMetrics(REQUIRED_DATA_LIST));
+
+    render(
+      <Provider store={store}>
+        <BoardDetail data={data} onBack={jest.fn()} />
+      </Provider>
+    );
+
     const velocityTable = screen.getByTestId('Velocity');
     const cycleTimeTable = screen.getByTestId('Cycle Time');
     const classificationTable = screen.getByTestId('Classification');

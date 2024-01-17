@@ -9,6 +9,7 @@ export const StyledTitleWrapper = styled('div')({
   display: 'flex',
   alignItems: 'center',
   marginBottom: '1rem',
+  position: 'relative',
 });
 
 export const StyledShowMore = styled('div')({
@@ -17,6 +18,11 @@ export const StyledShowMore = styled('div')({
   textDecoration: 'none',
   color: theme.main.alert.info.iconColor,
   cursor: 'pointer',
+});
+
+export const StyledLoading = styled('div')({
+  position: 'relative',
+  left: '1rem',
 });
 
 export const StyledRetry = styled('div')({

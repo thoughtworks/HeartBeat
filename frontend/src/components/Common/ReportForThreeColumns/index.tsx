@@ -12,13 +12,22 @@ import { AVERAGE_FIELD, METRICS_TITLE, REPORT_SUFFIX_UNITS } from '@src/constant
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
 import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style';
 import { ReportSelectionTitle } from '@src/containers/MetricsStep/style';
+import { Loading } from '@src/components/Loading';
+import { styled } from '@mui/material/styles';
+import { Optional } from '@src/utils/types';
 
 interface ReportForThreeColumnsProps {
   title: string;
   fieldName: string;
   listName: string;
-  data: ReportDataWithThreeColumns[];
+  data: Optional<ReportDataWithThreeColumns[]>;
 }
+
+export const StyledLoadingWrapper = styled('div')({
+  position: 'relative',
+  height: '12rem',
+  width: '100%',
+});
 
 export const ReportForThreeColumns = ({ title, fieldName, listName, data }: ReportForThreeColumnsProps) => {
   const emojiRow = (row: ReportDataWithThreeColumns) => {
@@ -40,7 +49,7 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
   };
 
   const renderRows = () =>
-    data.slice(0, data.length === 2 && data[1].name === AVERAGE_FIELD ? 1 : data.length).map((row) => (
+    data?.slice(0, data?.length === 2 && data[1]?.name === AVERAGE_FIELD ? 1 : data?.length).map((row) => (
       <Fragment key={row.id}>
         <TableRow data-testid={'tr'}>
           <ColumnTableCell rowSpan={row.valuesList.length + 1}>{emojiRow(row)}</ColumnTableCell>
@@ -66,16 +75,22 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
     <>
       <Container>
         <ReportSelectionTitle>{title}</ReportSelectionTitle>
-        <Table data-test-id={title} data-testid={title}>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>{fieldName}</StyledTableCell>
-              <StyledTableCell>{listName}</StyledTableCell>
-              <StyledTableCell>{`Value${getTitleUnit(title)}`}</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{renderRows()}</TableBody>
-        </Table>
+        {data ? (
+          <Table data-test-id={title} data-testid={title}>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>{fieldName}</StyledTableCell>
+                <StyledTableCell>{listName}</StyledTableCell>
+                <StyledTableCell>{`Value${getTitleUnit(title)}`}</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{renderRows()}</TableBody>
+          </Table>
+        ) : (
+          <StyledLoadingWrapper>
+            <Loading size='1.5rem' backgroundColor='transparent' />
+          </StyledLoadingWrapper>
+        )}
       </Container>
     </>
   );

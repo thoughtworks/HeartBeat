@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Loading } from '@src/components/Loading';
 
 describe('Loading', () => {
@@ -11,8 +11,20 @@ describe('Loading', () => {
   });
 
   it('should show Loading message when has message', () => {
-    const { getByText } = render(<Loading message={'loading...'} />);
+    render(<Loading message={'loading...'} />);
 
-    expect(getByText('loading...')).toBeInTheDocument();
+    expect(screen.getByText('loading...')).toBeInTheDocument();
+  });
+
+  it('should in page center when placement is center', () => {
+    render(<Loading placement={'center'} />);
+
+    expect(screen.getByTestId('loading')).toHaveStyle({ 'align-items': 'center' });
+  });
+
+  it('should in page start when placement is start', () => {
+    render(<Loading placement={'start'} />);
+
+    expect(screen.getByTestId('loading')).toHaveStyle({ 'align-items': 'flex-start' });
   });
 });

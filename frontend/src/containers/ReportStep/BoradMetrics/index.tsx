@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAppSelector } from '@src/hooks';
 import _ from 'lodash';
 import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice';
@@ -16,6 +16,7 @@ import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import dayjs from 'dayjs';
 import {
+  StyledLoading,
   StyledMetricsSection,
   StyledRetry,
   StyledShowMore,
@@ -26,6 +27,7 @@ import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
 import { ReportGrid } from '@src/components/Common/ReportGrid';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { Nullable } from '@src/utils/types';
+import { Loading } from '@src/components/Loading';
 
 interface BoardMetricsProps {
   startToRequestBoardData: (request: ReportRequestDTO) => void;
@@ -138,6 +140,15 @@ const BoardMetrics = ({
     startToRequestBoardData(getBoardReportRequestBody());
   };
 
+  const isShowShowMoreLoading = () => {
+    return (
+      boardMetrics.length === 1 &&
+      boardMetrics[0] === REQUIRED_DATA.CLASSIFICATION &&
+      !(timeoutError || getErrorMessage()) &&
+      !boardReport?.boardMetricsCompleted
+    );
+  };
+
   useEffect(() => {
     !isBackFromDetail && startToRequestBoardData(getBoardReportRequestBody());
   }, []);
@@ -149,6 +160,11 @@ const BoardMetrics = ({
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
           {!(timeoutError || getErrorMessage()) && boardReport?.boardMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
+          )}
+          {isShowShowMoreLoading() && (
+            <StyledLoading>
+              <Loading placement='start' size='0.8rem' backgroundColor='transparent' />
+            </StyledLoading>
           )}
           {(timeoutError || getErrorMessage()) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>

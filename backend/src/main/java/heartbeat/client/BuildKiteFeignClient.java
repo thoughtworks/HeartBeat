@@ -48,7 +48,7 @@ public interface BuildKiteFeignClient {
 
 	@Cacheable(cacheNames = "pipelineStepsInfo",
 			key = "#token+'-'+#organizationId+'-'+#pipelineId+'-'+#page+'-'+#perPage+'-'"
-					+ "+#createdFrom+'-'+#createdTo+'-'" + "+(#branch!=null ? #branch.toString() : '')")
+					+ "+#createdFrom+'-'+#createdTo+'-'+(#branch!=null ? #branch.toString() : '')")
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds",
 			consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	@ResponseStatus(HttpStatus.OK)

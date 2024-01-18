@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { reportClient } from '@src/clients/report/ReportClient';
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
-import { UnknownException } from '@src/exceptions/UnkonwException';
+import { UnknownException } from '@src/exceptions/UnknownException';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { DURATION, RETRIEVE_REPORT_TYPES } from '@src/constants/commons';

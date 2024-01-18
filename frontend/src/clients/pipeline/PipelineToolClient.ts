@@ -1,4 +1,4 @@
-import { HttpClient } from '@src/clients/Httpclient';
+import { HttpClient } from '@src/clients/HttpClient.base';
 import { HttpStatusCode } from 'axios';
 import { isHeartBeatException } from '@src/exceptions';
 import { IHeartBeatException } from '@src/exceptions/ExceptionType';

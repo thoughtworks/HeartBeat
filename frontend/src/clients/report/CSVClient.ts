@@ -1,4 +1,4 @@
-import { HttpClient } from '@src/clients/Httpclient';
+import { HttpClient } from '@src/clients/HttpClient.base';
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
 import dayjs from 'dayjs';
 import { downloadCSV } from '@src/utils/util';

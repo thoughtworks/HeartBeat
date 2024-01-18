@@ -7,7 +7,7 @@ import {
   MOCK_RETRIEVE_REPORT_RESPONSE,
 } from '../fixtures';
 import { reportClient } from '@src/clients/report/ReportClient';
-import { UnknownException } from '@src/exceptions/UnkonwException';
+import { UnknownException } from '@src/exceptions/UnknownException';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { HttpStatusCode } from 'axios';
 import clearAllMocks = jest.clearAllMocks;

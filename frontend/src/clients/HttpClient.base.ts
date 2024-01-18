@@ -4,7 +4,7 @@ import { AXIOS_NETWORK_ERROR_CODES, HEARTBEAT_EXCEPTION_CODE } from '@src/consta
 import { BadRequestException } from '@src/exceptions/BadRequestException';
 import { UnauthorizedException } from '@src/exceptions/UnauthorizedException';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
-import { UnknownException } from '@src/exceptions/UnkonwException';
+import { UnknownException } from '@src/exceptions/UnknownException';
 import { NotFoundException } from '@src/exceptions/NotFoundException';
 import { ForbiddenException } from '@src/exceptions/ForbiddenException';
 import { TimeoutException } from '@src/exceptions/TimeoutException';

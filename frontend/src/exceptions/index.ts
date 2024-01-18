@@ -4,7 +4,7 @@ import { ForbiddenException } from '@src/exceptions/ForbiddenException';
 import { NotFoundException } from '@src/exceptions/NotFoundException';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
-import { UnknownException } from '@src/exceptions/UnkonwException';
+import { UnknownException } from '@src/exceptions/UnknownException';
 
 export const isHeartBeatException = (o: unknown) =>
   [

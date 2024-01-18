@@ -2,7 +2,7 @@ import { CircularProgress } from '@mui/material';
 import { LoadingDrop, LoadingTypography } from './style';
 import React from 'react';
 
-export type Placement = 'start' | 'center';
+export type Placement = 'left' | 'center';
 
 export interface LoadingProps {
   message?: string;

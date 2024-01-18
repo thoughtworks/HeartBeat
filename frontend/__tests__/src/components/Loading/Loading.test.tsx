@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Loading } from '@src/components/Loading';
+import { LOADING } from '../../fixtures';
 
 describe('Loading', () => {
   it('should show Loading', () => {
@@ -11,20 +12,20 @@ describe('Loading', () => {
   });
 
   it('should show Loading message when has message', () => {
-    render(<Loading message={'loading...'} />);
+    render(<Loading message={LOADING} />);
 
-    expect(screen.getByText('loading...')).toBeInTheDocument();
+    expect(screen.getByText(LOADING)).toBeInTheDocument();
   });
 
   it('should in page center when placement is center', () => {
     render(<Loading placement={'center'} />);
 
-    expect(screen.getByTestId('loading')).toHaveStyle({ 'align-items': 'center' });
+    expect(screen.getByTestId(LOADING)).toHaveStyle({ 'align-items': 'center' });
   });
 
-  it('should in page start when placement is start', () => {
-    render(<Loading placement={'start'} />);
+  it('should in page start when placement is left', () => {
+    render(<Loading placement={'left'} />);
 
-    expect(screen.getByTestId('loading')).toHaveStyle({ 'align-items': 'flex-start' });
+    expect(screen.getByTestId(LOADING)).toHaveStyle({ 'align-items': 'flex-start' });
   });
 });

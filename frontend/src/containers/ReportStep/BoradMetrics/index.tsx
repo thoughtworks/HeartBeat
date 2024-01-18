@@ -140,14 +140,11 @@ const BoardMetrics = ({
     startToRequestBoardData(getBoardReportRequestBody());
   };
 
-  const isShowShowMoreLoading = () => {
-    return (
-      boardMetrics.length === 1 &&
-      boardMetrics[0] === REQUIRED_DATA.CLASSIFICATION &&
-      !(timeoutError || getErrorMessage()) &&
-      !boardReport?.boardMetricsCompleted
-    );
-  };
+  const isShowMoreLoadingDisplay = () =>
+    boardMetrics.length === 1 &&
+    boardMetrics[0] === REQUIRED_DATA.CLASSIFICATION &&
+    !(timeoutError || getErrorMessage()) &&
+    !boardReport?.boardMetricsCompleted;
 
   useEffect(() => {
     !isBackFromDetail && startToRequestBoardData(getBoardReportRequestBody());
@@ -161,9 +158,9 @@ const BoardMetrics = ({
           {!(timeoutError || getErrorMessage()) && boardReport?.boardMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
-          {isShowShowMoreLoading() && (
+          {isShowMoreLoadingDisplay() && (
             <StyledLoading>
-              <Loading placement='start' size='0.8rem' backgroundColor='transparent' />
+              <Loading placement='left' size='0.8rem' backgroundColor='transparent' />
             </StyledLoading>
           )}
           {(timeoutError || getErrorMessage()) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}

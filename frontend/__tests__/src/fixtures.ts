@@ -13,6 +13,8 @@ export const CHINA_CALENDAR = 'Calendar with Chinese Holiday';
 
 export const NEXT = 'Next';
 
+export const LOADING = 'loading';
+
 export const PREVIOUS = 'Previous';
 
 export const SAVE = 'Save';

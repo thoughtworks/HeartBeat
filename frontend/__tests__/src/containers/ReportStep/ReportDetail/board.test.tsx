@@ -20,7 +20,7 @@ describe('board', () => {
 
     render(
       <Provider store={setupStore()}>
-        <BoardDetail data={data} onBack={jest.fn()} />
+        <BoardDetail data={data} onBack={() => 'back'} />
       </Provider>
     );
 
@@ -39,7 +39,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={jest.fn()} />
+          <BoardDetail data={data} onBack={() => 'back'} />
         </Provider>
       );
 
@@ -56,7 +56,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={jest.fn()} />
+          <BoardDetail data={data} onBack={() => 'back'} />
         </Provider>
       );
 
@@ -76,7 +76,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={jest.fn()} />
+          <BoardDetail data={data} onBack={() => 'back'} />
         </Provider>
       );
 
@@ -93,7 +93,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={jest.fn()} />
+          <BoardDetail data={data} onBack={() => 'back'} />
         </Provider>
       );
 
@@ -116,7 +116,7 @@ describe('board', () => {
 
       render(
         <Provider store={store}>
-          <BoardDetail data={data} onBack={jest.fn()} />
+          <BoardDetail data={data} onBack={() => 'back'} />
         </Provider>
       );
 
@@ -133,7 +133,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={jest.fn()} />
+          <BoardDetail data={data} onBack={() => 'back'} />
         </Provider>
       );
 
@@ -159,7 +159,7 @@ describe('board', () => {
 
     render(
       <Provider store={store}>
-        <BoardDetail data={data} onBack={jest.fn()} />
+        <BoardDetail data={data} onBack={() => 'back'} />
       </Provider>
     );
 

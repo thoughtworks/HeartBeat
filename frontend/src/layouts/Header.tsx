@@ -20,6 +20,7 @@ import { getVersion, saveVersion } from '@src/context/header/headerSlice';
 import { useAppSelector } from '@src/hooks';
 import { isEmpty } from 'lodash';
 import { resetImportedData } from '@src/context/config/configSlice';
+import { resetStep } from '@src/context/stepper/StepperSlice';
 
 const Header = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const Header = () => {
   const version = useAppSelector(getVersion);
 
   const goHome = () => {
+    dispatch(resetStep());
     dispatch(resetImportedData());
     navigate('/');
   };

@@ -30,9 +30,9 @@ describe('report client', () => {
       )
     );
 
-    await expect(
-      reportClient.retrieveReportByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS, '/reports')
-    ).resolves.toStrictEqual(excepted);
+    await expect(reportClient.retrieveByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS, '/reports')).resolves.toStrictEqual(
+      excepted
+    );
   });
 
   it('should throw error when generate report response status 500', async () => {
@@ -48,7 +48,7 @@ describe('report client', () => {
     );
 
     await expect(async () => {
-      await reportClient.retrieveReportByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS, '/reports');
+      await reportClient.retrieveByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS, '/reports');
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR);
   });
 
@@ -65,7 +65,7 @@ describe('report client', () => {
     );
 
     await expect(async () => {
-      await reportClient.retrieveReportByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS, '/reports');
+      await reportClient.retrieveByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS, '/reports');
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.BAD_REQUEST);
   });
 
@@ -82,7 +82,7 @@ describe('report client', () => {
     );
 
     expect(async () => {
-      await reportClient.pollingReport(MOCK_REPORT_URL);
+      await reportClient.polling(MOCK_REPORT_URL);
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR);
   });
 
@@ -97,6 +97,6 @@ describe('report client', () => {
       )
     );
 
-    await expect(reportClient.pollingReport(MOCK_REPORT_URL)).resolves.toEqual(excepted);
+    await expect(reportClient.polling(MOCK_REPORT_URL)).resolves.toEqual(excepted);
   });
 });

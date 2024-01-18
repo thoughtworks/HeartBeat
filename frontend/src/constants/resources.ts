@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+
 export const CALENDAR = {
   REGULAR: 'Regular Calendar(Weekend Considered)',
   CHINA: 'Calendar with Chinese Holiday',
@@ -208,6 +210,11 @@ export const REPORT_PAGE = {
     TITLE: 'DORA Metrics',
   },
 };
+
+export const AXIOS_NETWORK_ERROR_CODES = [AxiosError.ECONNABORTED, AxiosError.ETIMEDOUT, AxiosError.ERR_NETWORK];
+export enum HEARTBEAT_EXCEPTION_CODE {
+  TIMEOUT = 'HB_TIMEOUT',
+}
 
 export const PIPELINE_TOOL_VERIFY_ERROR_CASE_TEXT_MAPPING: { [key: string]: string } = {
   '401': 'Token is incorrect!',

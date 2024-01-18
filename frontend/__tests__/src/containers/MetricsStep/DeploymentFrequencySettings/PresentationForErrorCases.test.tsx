@@ -15,7 +15,7 @@ const setup = (props: IPresentationForErrorCasesProps) =>
   );
 
 describe('<PresentationForErrorCases />', () => {
-  const errors = [
+  const commonErrors = [
     { code: 204, title: 'No pipeline!' },
     { code: 400, title: 'Invalid input!' },
     { code: 401, title: 'Unauthorized request!' },
@@ -25,7 +25,7 @@ describe('<PresentationForErrorCases />', () => {
   ];
   const errorMessage =
     'Please go back to the previous page and change your pipeline token with correct access permission.';
-  it.each(errors)(
+  it.each(commonErrors)(
     'should properly render error UI with title:$title and corresponding message',
     ({ code, title: errorTitle }) => {
       const props = { code, errorTitle, errorMessage, isLoading: false, retry: () => '' };
@@ -33,16 +33,15 @@ describe('<PresentationForErrorCases />', () => {
 
       const titleNode = screen.getByText(errorTitle);
       const messageNode = screen.getByText(errorMessage);
-
       expect(titleNode).toBeVisible();
       expect(messageNode).toBeVisible();
     }
   );
 
-  it('should display "try again" when error code is 503', async () => {
+  it('should display "try again" when error code is axios predefined error: $code', async () => {
     const retrySpy = jest.fn();
     const mockTimeoutError = {
-      code: 503,
+      code: 'HB_TIMEOUT',
       errorTitle: 'Service Unavailable!',
       errorMessage: 'Data loading failed, please try again',
       isLoading: false,
@@ -64,7 +63,7 @@ describe('<PresentationForErrorCases />', () => {
   it('should not fire duplicated retry behavior when retry func is loading', async () => {
     const retrySpy = jest.fn();
     const mockTimeoutErrorProps = {
-      code: 503,
+      code: 'HB_TIMEOUT',
       errorTitle: 'Service Unavailable!',
       errorMessage: 'Data loading failed, please try again',
       isLoading: true,

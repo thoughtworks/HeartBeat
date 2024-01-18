@@ -119,6 +119,10 @@ export enum VERIFY_ERROR_MESSAGE {
   UNKNOWN = 'Unknown',
 }
 
+export enum AXIOS_ERROR_MESSAGE {
+  ERR_NETWORK = 'Network Error',
+}
+
 export const VERIFY_FAILED = 'verify failed';
 
 export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {

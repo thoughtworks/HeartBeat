@@ -8,6 +8,7 @@ import {
   VERIFY_ERROR_MESSAGE,
 } from '../fixtures';
 import { boardClient } from '@src/clients/board/BoardClient';
+import { AXIOS_ERROR_MESSAGE } from '../../src/fixtures';
 import { HttpStatusCode } from 'axios';
 
 const server = setupServer(
@@ -102,11 +103,11 @@ describe('verify board request', () => {
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN);
   });
 
-  it('should throw unknown error when board verify response empty', async () => {
+  it('should throw `Network Error` when board verify encountered netwrok error', async () => {
     server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res) => res.networkError('Network Error')));
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS);
-    }).rejects.toThrow(VERIFY_ERROR_MESSAGE.UNKNOWN);
+    }).rejects.toThrow(AXIOS_ERROR_MESSAGE.ERR_NETWORK);
   });
 });

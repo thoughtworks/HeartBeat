@@ -12,12 +12,12 @@ import {
 } from '@src/constants/resources';
 
 export interface IVerifyPipelineToolResult {
-  code: number | undefined | null;
+  code: number | string | undefined | null;
   errorTitle: string;
 }
 
 export interface IGetPipelineToolInfoResult {
-  code: number | undefined | null;
+  code: number | string | undefined | null;
   data?: IPipelineInfoResponseDTO;
   errorTitle: string;
   errorMessage: string;

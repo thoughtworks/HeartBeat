@@ -113,8 +113,25 @@ describe('PipelineToolClient', () => {
         }
       );
 
-      it('should return "Unknown error" as a last resort when error code didn\'t match the predeifned erorr cases', async () => {
-        server.use(rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => res(ctx.status(503))));
+      it('should return ERR_NETWORK error as its code when axios client detect network error', async () => {
+        server.use(
+          rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res) => {
+            return res.networkError('mock network error');
+          })
+        );
+
+        const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
+
+        expect(result.code).toEqual('HB_TIMEOUT');
+        expect(result.data).toBeUndefined();
+      });
+
+      it('should return "Unknown error" as a last resort when axios error code didn\'t match the predeifned erorr cases', async () => {
+        server.use(
+          rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => {
+            return res(ctx.status(-1), ctx.body('mock error not covered by httpClient'));
+          })
+        );
 
         const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 

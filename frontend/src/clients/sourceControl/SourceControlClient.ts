@@ -1,4 +1,4 @@
-import { HttpClient } from '@src/clients/HttpClient.base';
+import { HttpClient } from '@src/clients/HttpClient';
 import { SourceControlRequestDTO } from '@src/clients/sourceControl/dto/request';
 
 export class SourceControlClient extends HttpClient {

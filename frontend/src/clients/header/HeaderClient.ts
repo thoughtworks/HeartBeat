@@ -1,4 +1,4 @@
-import { HttpClient } from '@src/clients/HttpClient.base';
+import { HttpClient } from '@src/clients/HttpClient';
 import { VersionResponseDTO } from '@src/clients/header/dto/request';
 
 export class HeaderClient extends HttpClient {

@@ -1,4 +1,4 @@
-import { HttpClient } from '@src/clients/HttpClient.base';
+import { HttpClient } from '@src/clients/HttpClient';
 import { ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
 

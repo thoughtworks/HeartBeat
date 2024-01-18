@@ -57,7 +57,7 @@ describe('Report Card', () => {
     setup();
 
     expect(screen.getByText(RETRY)).toBeInTheDocument();
-    expect(screen.getByText('Failed to get Github info_status: 404')).toBeInTheDocument();
+    expect(screen.getByText('Failed to get Github info, status: 404')).toBeInTheDocument();
 
     await userEvent.click(screen.getByText(RETRY));
 

@@ -181,7 +181,7 @@ const DoraMetrics = ({
 
   const getErrorMessage4BuildKite = () =>
     _.get(doraReport, ['reportMetricsError', 'pipelineMetricsError'])
-      ? `Failed to get BuildKite info_status: ${_.get(doraReport, [
+      ? `Failed to get BuildKite info, status: ${_.get(doraReport, [
           'reportMetricsError',
           'pipelineMetricsError',
           'status',
@@ -190,7 +190,7 @@ const DoraMetrics = ({
 
   const getErrorMessage4Github = () =>
     _.get(doraReport, ['reportMetricsError', 'sourceControlMetricsError'])
-      ? `Failed to get Github info_status: ${_.get(doraReport, [
+      ? `Failed to get Github info, status: ${_.get(doraReport, [
           'reportMetricsError',
           'sourceControlMetricsError',
           'status',

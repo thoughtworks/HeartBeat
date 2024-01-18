@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 
-export const routes = [
+const routes = [
   {
     path: '/',
     exact: true,
@@ -23,3 +23,5 @@ export const routes = [
     name: 'Home',
   },
 ];
+
+export default routes;

@@ -1,5 +1,6 @@
 package heartbeat.service.report.scheduler;
 
+import heartbeat.handler.AsyncMetricsDataHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.handler.AsyncExceptionHandler;
@@ -24,6 +25,8 @@ public class DeleteExpireCSVScheduler {
 
 	private final AsyncReportRequestHandler asyncReportRequestHandler;
 
+	private final AsyncMetricsDataHandler asyncMetricsDataHandler;
+
 	private final AsyncExceptionHandler asyncExceptionHandler;
 
 	@Scheduled(fixedRate = DELETE_INTERVAL_IN_MINUTES, timeUnit = TimeUnit.MINUTES)
@@ -32,7 +35,7 @@ public class DeleteExpireCSVScheduler {
 		log.info("Start to delete expired CSV files, currentTimeStamp: {}", currentTimeStamp);
 		generateReporterService.deleteExpireCSV(currentTimeStamp, new File("./csv/"));
 		asyncReportRequestHandler.deleteExpireReport(currentTimeStamp);
-		asyncReportRequestHandler.deleteExpireMetricsDataCompleted(currentTimeStamp);
+		asyncMetricsDataHandler.deleteExpireMetricsDataCompleted(currentTimeStamp);
 		asyncExceptionHandler.deleteExpireException(currentTimeStamp);
 	}
 

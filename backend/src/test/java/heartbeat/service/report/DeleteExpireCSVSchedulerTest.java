@@ -1,6 +1,7 @@
 package heartbeat.service.report;
 
 import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.handler.AsyncMetricsDataHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.report.scheduler.DeleteExpireCSVScheduler;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class DeleteExpireCSVSchedulerTest {
 
 	@Mock
 	private AsyncReportRequestHandler asyncReportRequestHandler;
+
+	@Mock
+	private AsyncMetricsDataHandler asyncMetricsDataHandler;
 
 	@Mock
 	private AsyncExceptionHandler asyncExceptionHandler;

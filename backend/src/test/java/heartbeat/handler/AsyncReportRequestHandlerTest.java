@@ -22,6 +22,9 @@ class AsyncReportRequestHandlerTest {
 	@InjectMocks
 	AsyncReportRequestHandler asyncReportRequestHandler;
 
+	@InjectMocks
+	AsyncMetricsDataHandler asyncMetricsDataHandler;
+
 	@Test
 	void shouldDeleteReportWhenReportIsExpire() {
 		long currentTimeMillis = System.currentTimeMillis();
@@ -54,13 +57,13 @@ class AsyncReportRequestHandlerTest {
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
-		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
-		asyncReportRequestHandler.putMetricsDataCompleted(expireTime, metricsDataCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(expireTime, metricsDataCompleted);
 
-		asyncReportRequestHandler.deleteExpireMetricsDataCompleted(currentTimeMillis);
+		asyncMetricsDataHandler.deleteExpireMetricsDataCompleted(currentTimeMillis);
 
-		assertNull(asyncReportRequestHandler.getMetricsDataCompleted(expireTime));
-		assertNotNull(asyncReportRequestHandler.getMetricsDataCompleted(currentTime));
+		assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(expireTime));
+		assertNotNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
 	}
 
 	@Test
@@ -68,9 +71,9 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
-		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-		assertNotNull(asyncReportRequestHandler.getMetricsDataCompleted(currentTime));
+		assertNotNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
 	}
 
 	@Test
@@ -79,7 +82,7 @@ class AsyncReportRequestHandlerTest {
 		String currentTime = Long.toString(currentTimeMillis);
 
 		Exception exception = assertThrows(GenerateReportException.class,
-				() -> asyncReportRequestHandler.isReportReady(currentTime));
+				() -> asyncMetricsDataHandler.isReportReady(currentTime));
 		assertEquals("Failed to locate the report using this report ID.", exception.getMessage());
 	}
 
@@ -92,9 +95,9 @@ class AsyncReportRequestHandlerTest {
 			.sourceControlMetricsCompleted(false)
 			.pipelineMetricsCompleted(null)
 			.build();
-		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-		boolean reportReady = asyncReportRequestHandler.isReportReady(currentTime);
+		boolean reportReady = asyncMetricsDataHandler.isReportReady(currentTime);
 
 		assertFalse(reportReady);
 	}
@@ -108,9 +111,9 @@ class AsyncReportRequestHandlerTest {
 			.sourceControlMetricsCompleted(null)
 			.pipelineMetricsCompleted(true)
 			.build();
-		asyncReportRequestHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-		boolean reportReady = asyncReportRequestHandler.isReportReady(currentTime);
+		boolean reportReady = asyncMetricsDataHandler.isReportReady(currentTime);
 
 		assertTrue(reportReady);
 	}

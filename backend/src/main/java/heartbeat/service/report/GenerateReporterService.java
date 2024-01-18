@@ -41,6 +41,7 @@ import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.handler.AsyncExceptionHandler;
+import heartbeat.handler.AsyncMetricsDataHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
@@ -121,6 +122,8 @@ public class GenerateReporterService {
 	private final JiraUriGenerator urlGenerator;
 
 	private final AsyncReportRequestHandler asyncReportRequestHandler;
+
+	private final AsyncMetricsDataHandler asyncMetricsDataHandler;
 
 	private final AsyncExceptionHandler asyncExceptionHandler;
 
@@ -655,11 +658,11 @@ public class GenerateReporterService {
 
 	public void initializeMetricsDataCompletedInHandler(String timeStamp, List<String> metrics) {
 		MetricsDataCompleted metricsStatus = getMetricsStatus(metrics, Boolean.FALSE);
-		MetricsDataCompleted previousMetricsCompleted = asyncReportRequestHandler.getMetricsDataCompleted(timeStamp);
+		MetricsDataCompleted previousMetricsCompleted = asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp);
 		MetricsDataCompleted isMetricsDataCompleted = createMetricsDataCompleted(metricsStatus.boardMetricsCompleted(),
 				metricsStatus.sourceControlMetricsCompleted(), metricsStatus.pipelineMetricsCompleted(),
 				previousMetricsCompleted);
-		asyncReportRequestHandler.putMetricsDataCompleted(timeStamp, isMetricsDataCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(timeStamp, isMetricsDataCompleted);
 	}
 
 	private MetricsDataCompleted createMetricsDataCompleted(Boolean boardMetricsCompleted,
@@ -690,7 +693,7 @@ public class GenerateReporterService {
 
 	public void updateMetricsDataCompletedInHandler(String timeStamp, List<String> metrics) {
 		MetricsDataCompleted metricsStatus = getMetricsStatus(metrics, Boolean.TRUE);
-		MetricsDataCompleted previousMetricsCompleted = asyncReportRequestHandler.getMetricsDataCompleted(timeStamp);
+		MetricsDataCompleted previousMetricsCompleted = asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp);
 		if (previousMetricsCompleted == null) {
 			log.error("Failed to update metrics data completed through this timestamp.");
 			throw new GenerateReportException("Failed to update metrics data completed through this timestamp.");
@@ -704,7 +707,7 @@ public class GenerateReporterService {
 					checkCurrentMetricsCompletedState(metricsStatus.sourceControlMetricsCompleted(),
 							previousMetricsCompleted.sourceControlMetricsCompleted()))
 			.build();
-		asyncReportRequestHandler.putMetricsDataCompleted(timeStamp, metricsDataCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(timeStamp, metricsDataCompleted);
 	}
 
 	private Boolean checkCurrentMetricsCompletedState(Boolean exist, Boolean previousValue) {
@@ -804,7 +807,7 @@ public class GenerateReporterService {
 		if (validateExpire(System.currentTimeMillis(), Long.parseLong(reportTimeStamp))) {
 			throw new GenerateReportException("Failed to get report due to report time expires");
 		}
-		return asyncReportRequestHandler.isReportReady(reportTimeStamp);
+		return asyncMetricsDataHandler.isReportReady(reportTimeStamp);
 	}
 
 	private ErrorInfo handleAsyncExceptionAndGetErrorInfo(BaseException exception) {
@@ -863,7 +866,7 @@ public class GenerateReporterService {
 		ReportResponse boardReportResponse = getReportFromHandler(IdUtil.getBoardReportId(reportId));
 		ReportResponse doraReportResponse = getReportFromHandler(IdUtil.getPipelineReportId(reportId));
 		ReportResponse codebaseReportResponse = getReportFromHandler(IdUtil.getSourceControlReportId(reportId));
-		MetricsDataCompleted metricsDataCompleted = asyncReportRequestHandler.getMetricsDataCompleted(reportId);
+		MetricsDataCompleted metricsDataCompleted = asyncMetricsDataHandler.getMetricsDataCompleted(reportId);
 		ReportResponse response = Optional.ofNullable(boardReportResponse).orElse(doraReportResponse);
 		ReportMetricsError reportMetricsError = getReportErrorAndHandleAsyncException(reportId);
 

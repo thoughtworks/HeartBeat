@@ -12,9 +12,10 @@ describe('Loading', () => {
   });
 
   it('should show Loading message when has message', () => {
-    render(<Loading message={LOADING} />);
+    const mockText = 'loading...';
+    render(<Loading message={mockText} />);
 
-    expect(screen.getByText(LOADING)).toBeInTheDocument();
+    expect(screen.getByText(mockText)).toBeInTheDocument();
   });
 
   it('should in page center when placement is center', () => {

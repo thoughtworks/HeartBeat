@@ -1,6 +1,9 @@
-package heartbeat.client.dto.pipeline.buildkite;
+package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.client.BuildKiteFeignClient;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
+import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

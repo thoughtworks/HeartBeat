@@ -34,6 +34,8 @@ public interface JiraFeignClient {
 			@PathVariable int startAt, @PathVariable String jql, @RequestHeader String authorization);
 
 	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed?startAt={startAt}&maxResults={queryCount}")
+	@Cacheable(cacheNames = "jiraCardHistoryByCount",
+			key = "#jiraCardKey+'-'+#queryCount+'-'+#startAt+'-'+#authorization")
 	CardHistoryResponseDTO getJiraCardHistoryByCount(URI baseUrl, @PathVariable String jiraCardKey,
 			@PathVariable int startAt, @PathVariable int queryCount, @RequestHeader String authorization);
 

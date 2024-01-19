@@ -1,6 +1,8 @@
-package heartbeat.client.dto.pipeline.buildkite;
+package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.client.BuildKiteFeignClient;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
+import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,7 +25,7 @@ public class CachePageService {
 	private final BuildKiteFeignClient buildKiteFeignClient;
 
 	@Cacheable(cacheNames = "pageStepsInfo", key = "#realToken+'-'+#orgId+'-'+#pipelineId+'-'+#page+'-'+#perPage+'-'"
-			+ "+#createdFrom+'-'+#createdTo+'-'+(#branch!=null ? #branch.toString() : '')")
+			+ "+#createdFrom+'-'+#createdTo+'-'+(#branches!=null ? #branches.toString() : '')")
 	public PageStepsInfoDto fetchPageStepsInfo(String realToken, String orgId, String pipelineId, String page,
 			String perPage, String createdFrom, String createdTo, List<String> branches) {
 		ResponseEntity<List<BuildKiteBuildInfo>> pipelineStepsInfo = buildKiteFeignClient.getPipelineSteps(realToken,

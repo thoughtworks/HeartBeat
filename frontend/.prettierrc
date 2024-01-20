@@ -4,5 +4,7 @@
   "jsxSingleQuote": true,
   "useTabs": false,
   "tabWidth": 2,
-  "bracketSpacing": true
+  "bracketSpacing": true,
+  "plugins": ["prettier-plugin-sort-imports"],
+  "sortImports": true
 }

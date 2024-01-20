@@ -19,9 +19,9 @@ import { StyledSpacing } from '@src/containers/ReportStep/style';
 import { ReportGrid } from '@src/components/Common/ReportGrid';
 import { selectConfig } from '@src/context/config/configSlice';
 import { StyledRetry } from '../BoradMetrics/style';
-import React, { useEffect, useState } from 'react';
 import { Nullable } from '@src/utils/types';
 import { useAppSelector } from '@src/hooks';
+import { useEffect } from 'react';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 

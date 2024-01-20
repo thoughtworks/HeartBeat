@@ -1,11 +1,10 @@
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
-import { DURATION, RETRIEVE_REPORT_TYPES } from '@src/constants/commons';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { UnknownException } from '@src/exceptions/UnknownException';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
 import { reportClient } from '@src/clients/report/ReportClient';
+import { RETRIEVE_REPORT_TYPES } from '@src/constants/commons';
 import { TIMEOUT_PROMPT } from '@src/constants/resources';
 import { useRef, useState } from 'react';
 

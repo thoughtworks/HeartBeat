@@ -23,6 +23,7 @@
   "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
   "rules": {
     "semi": 2,
+    "no-unused-vars": ["warn"],
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export": "off",
     "react/display-name": "off",

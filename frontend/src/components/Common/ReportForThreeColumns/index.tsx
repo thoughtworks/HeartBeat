@@ -1,4 +1,3 @@
-import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import {
   BorderTableCell,
   ColumnTableCell,
@@ -6,15 +5,16 @@ import {
   Row,
   StyledTableCell,
 } from '@src/components/Common/ReportForTwoColumns/style';
-import React, { Fragment } from 'react';
-import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
 import { AVERAGE_FIELD, METRICS_TITLE, REPORT_SUFFIX_UNITS } from '@src/constants/resources';
-import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
+import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
 import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style';
 import { ReportSelectionTitle } from '@src/containers/MetricsStep/style';
+import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
+import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import { Loading } from '@src/components/Loading';
 import { styled } from '@mui/material/styles';
 import { Optional } from '@src/utils/types';
+import React, { Fragment } from 'react';
 
 interface ReportForThreeColumnsProps {
   title: string;
@@ -67,8 +67,8 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
     return title === METRICS_TITLE.LEAD_TIME_FOR_CHANGES || title === METRICS_TITLE.MEAN_TIME_TO_RECOVERY
       ? REPORT_SUFFIX_UNITS.HOURS
       : title === METRICS_TITLE.DEPLOYMENT_FREQUENCY
-      ? REPORT_SUFFIX_UNITS.DEPLOYMENTS_DAY
-      : '';
+        ? REPORT_SUFFIX_UNITS.DEPLOYMENTS_DAY
+        : '';
   };
 
   return (

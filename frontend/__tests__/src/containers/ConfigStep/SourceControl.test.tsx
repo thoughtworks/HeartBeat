@@ -1,8 +1,3 @@
-import React from 'react';
-import { setupStore } from '../../utils/setupStoreUtil';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { SourceControl } from '@src/containers/ConfigStep/SourceControl';
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
@@ -16,9 +11,14 @@ import {
   VERIFY_ERROR_MESSAGE,
   VERIFY_FAILED,
 } from '../../fixtures';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { SourceControl } from '@src/containers/ConfigStep/SourceControl';
+import { setupStore } from '../../utils/setupStoreUtil';
+import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
 import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
+import React from 'react';
 
 export const fillSourceControlFieldsInformation = () => {
   const mockInfo = 'AAAAA_XXXXXX'
@@ -39,9 +39,9 @@ const server = setupServer(
       ctx.json({
         githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
       }),
-      ctx.status(200)
-    )
-  )
+      ctx.status(200),
+    ),
+  ),
 );
 
 describe('SourceControl', () => {
@@ -53,7 +53,7 @@ describe('SourceControl', () => {
     return render(
       <Provider store={store}>
         <SourceControl />
-      </Provider>
+      </Provider>,
     );
   };
   afterEach(() => {
@@ -149,8 +149,8 @@ describe('SourceControl', () => {
   it('should show error notification when sourceControl verify response status is 401', async () => {
     server.use(
       rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
-      )
+        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED })),
+      ),
     );
     setup();
 
@@ -160,7 +160,7 @@ describe('SourceControl', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(`${SOURCE_CONTROL_TYPES.GITHUB} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
+        screen.getByText(`${SOURCE_CONTROL_TYPES.GITHUB} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`),
       ).toBeInTheDocument();
     });
   });

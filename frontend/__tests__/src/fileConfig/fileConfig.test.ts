@@ -1,10 +1,10 @@
-import { convertToNewFileConfig } from '@src/fileConfig/fileConfig';
 import {
   IMPORTED_NEW_CONFIG_FIXTURE,
   BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
   REGULAR_CALENDAR,
   CHINA_CALENDAR,
 } from '../fixtures';
+import { convertToNewFileConfig } from '@src/fileConfig/fileConfig';
 
 describe('#fileConfig', () => {
   const BASIC_NEW_CONFIG = {
@@ -58,7 +58,7 @@ describe('#fileConfig', () => {
       convertToNewFileConfig({
         ...BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
         considerHoliday: false,
-      })
+      }),
     ).toEqual(expected);
   });
 
@@ -71,7 +71,7 @@ describe('#fileConfig', () => {
       convertToNewFileConfig({
         ...BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
         considerHoliday: true,
-      })
+      }),
     ).toEqual(expected);
   });
 });

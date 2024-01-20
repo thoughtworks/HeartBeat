@@ -1,9 +1,9 @@
-import { act, render, within } from '@testing-library/react';
 import { SingleSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/SingleSelection';
-import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
+import { act, render, within } from '@testing-library/react';
 import { setupStore } from '../../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
 import { LIST_OPEN } from '../../../fixtures';
+import { Provider } from 'react-redux';
 
 const mockValidationCheckContext = {
   checkDuplicatedPipeLine: jest.fn(),
@@ -45,7 +45,7 @@ describe('SingleSelection', () => {
           onGetSteps={mockOnGetSteps}
           onUpDatePipeline={mockUpdatePipeline}
         />
-      </Provider>
+      </Provider>,
     );
 
   it('should show selected label and value when render a SingleSelection', () => {

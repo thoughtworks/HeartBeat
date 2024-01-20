@@ -1,10 +1,10 @@
-import { act, renderHook } from '@testing-library/react';
 import { ContextProvider, useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
-import React from 'react';
 import { addADeploymentFrequencySetting, updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
-import { Provider } from 'react-redux';
-import { setupStore } from '../utils/setupStoreUtil';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
+import { act, renderHook } from '@testing-library/react';
+import { setupStore } from '../utils/setupStoreUtil';
+import { Provider } from 'react-redux';
+import React from 'react';
 
 describe('useMetricsStepValidationCheckContext', () => {
   const DEPLOYMENT_FREQUENCY_SETTINGS = 'DeploymentFrequencySettings';
@@ -48,7 +48,7 @@ describe('useMetricsStepValidationCheckContext', () => {
     expect(result.current?.isPipelineValid(DEPLOYMENT_FREQUENCY_SETTINGS)).toBe(false);
     expect(result.current?.isPipelineValid(LEAD_TIME_FOR_CHANGES)).toBe(false);
     expect(
-      result.current?.getDuplicatedPipeLineIds([{ id: 1, organization: '', pipelineName: '', step: '', branches: [] }])
+      result.current?.getDuplicatedPipeLineIds([{ id: 1, organization: '', pipelineName: '', step: '', branches: [] }]),
     ).toEqual([]);
   });
 
@@ -62,10 +62,10 @@ describe('useMetricsStepValidationCheckContext', () => {
     const { result, store } = setup();
     act(() => {
       store.dispatch(
-        updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mockOrganization' })
+        updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mockOrganization' }),
       );
       store.dispatch(
-        updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mockPipelineName' })
+        updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mockPipelineName' }),
       );
       store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mockstep' }));
     });

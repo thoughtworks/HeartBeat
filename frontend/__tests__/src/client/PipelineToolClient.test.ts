@@ -1,5 +1,3 @@
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
 import {
   MOCK_PIPELINE_VERIFY_REQUEST_PARAMS,
   MOCK_PIPELINE_GET_INFO_URL,
@@ -7,12 +5,14 @@ import {
   MOCK_PIPELINE_VERIFY_URL,
 } from '../fixtures';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
+import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
 
 const server = setupServer(
   rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => {
     return res(ctx.status(HttpStatusCode.NoContent));
-  })
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -56,8 +56,8 @@ describe('PipelineToolClient', () => {
     it('should return 200 code and corresponding data when pipelineTool get info returns code 200', async () => {
       server.use(
         rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) =>
-          res(ctx.status(HttpStatusCode.Ok), ctx.json(MOCK_BUILD_KITE_GET_INFO_RESPONSE))
-        )
+          res(ctx.status(HttpStatusCode.Ok), ctx.json(MOCK_BUILD_KITE_GET_INFO_RESPONSE)),
+        ),
       );
 
       const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
@@ -110,14 +110,14 @@ describe('PipelineToolClient', () => {
           expect(result.errorTitle).toEqual(errorTitle);
           expect(result.errorMessage).toEqual(errorMessage);
           expect(result.data).toBeUndefined();
-        }
+        },
       );
 
       it('should return ERR_NETWORK error as its code when axios client detect network error', async () => {
         server.use(
           rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res) => {
             return res.networkError('mock network error');
-          })
+          }),
         );
 
         const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
@@ -130,7 +130,7 @@ describe('PipelineToolClient', () => {
         server.use(
           rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => {
             return res(ctx.status(-1), ctx.body('mock error not covered by httpClient'));
-          })
+          }),
         );
 
         const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);

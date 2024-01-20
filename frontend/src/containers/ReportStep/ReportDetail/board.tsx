@@ -1,14 +1,14 @@
-import React from 'react';
-import { ReportResponseDTO } from '@src/clients/report/dto/response';
+import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns';
 import ReportForTwoColumns from '@src/components/Common/ReportForTwoColumns';
-import { reportMapper } from '@src/hooks/reportMapper/report';
-import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
-import { Optional } from '@src/utils/types';
-import { withGoBack } from './withBack';
 import { METRICS_TITLE, REQUIRED_DATA } from '@src/constants/resources';
-import { useAppSelector } from '@src/hooks';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { selectMetrics } from '@src/context/config/configSlice';
+import { reportMapper } from '@src/hooks/reportMapper/report';
+import { Optional } from '@src/utils/types';
+import { useAppSelector } from '@src/hooks';
+import { withGoBack } from './withBack';
+import React from 'react';
 
 interface Property {
   data: ReportResponseDTO;

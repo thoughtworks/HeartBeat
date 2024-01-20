@@ -1,7 +1,3 @@
-import React, { useEffect } from 'react';
-import { useAppSelector } from '@src/hooks';
-import _ from 'lodash';
-import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice';
 import {
   BOARD_METRICS,
   CALENDAR,
@@ -12,9 +8,6 @@ import {
   SHOW_MORE,
   RETRY,
 } from '@src/constants/resources';
-import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
-import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
-import dayjs from 'dayjs';
 import {
   StyledLoading,
   StyledMetricsSection,
@@ -22,12 +15,19 @@ import {
   StyledShowMore,
   StyledTitleWrapper,
 } from '@src/containers/ReportStep/BoradMetrics/style';
+import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util';
+import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
-import { ReportGrid } from '@src/components/Common/ReportGrid';
+import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { Nullable } from '@src/utils/types';
+import { ReportGrid } from '@src/components/Common/ReportGrid';
 import { Loading } from '@src/components/Loading';
+import { Nullable } from '@src/utils/types';
+import { useAppSelector } from '@src/hooks';
+import React, { useEffect } from 'react';
+import dayjs from 'dayjs';
+import _ from 'lodash';
 
 interface BoardMetricsProps {
   startToRequestBoardData: (request: ReportRequestDTO) => void;
@@ -60,7 +60,7 @@ const BoardMetrics = ({
   const { token, type, site, projectKey, boardId, email } = board.config;
   const jiraToken = getJiraBoardToken(token, email);
   const jiraColumnsWithValue = jiraColumns?.map(
-    (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
+    (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value,
   );
   const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric));
 

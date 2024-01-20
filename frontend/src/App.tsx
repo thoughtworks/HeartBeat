@@ -1,7 +1,7 @@
-import './App.css';
 import { BrowserRouter } from 'react-router-dom';
-import Router from './router';
 import styled from '@emotion/styled';
+import Router from './router';
+import './App.css';
 
 const AppContainer = styled.div({
   display: 'flex',

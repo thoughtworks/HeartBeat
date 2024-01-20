@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { BoardRequestDTO } from '@src/clients/board/dto/request';
 import { boardClient } from '@src/clients/board/BoardClient';
 import { MESSAGE } from '@src/constants/resources';
-import { BoardRequestDTO } from '@src/clients/board/dto/request';
 import { DURATION } from '@src/constants/commons';
+import { useState } from 'react';
 
 export interface useVerifyBoardStateInterface {
   verifyJira: (params: BoardRequestDTO) => Promise<

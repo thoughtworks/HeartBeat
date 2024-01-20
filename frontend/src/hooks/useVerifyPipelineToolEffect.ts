@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
+import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
 import { IPipelineVerifyRequestDTO } from '@src/clients/pipeline/dto/request';
 import { useAppDispatch } from '@src/hooks';
 import { HttpStatusCode } from 'axios';
-import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
-import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
+import { useState } from 'react';
 
 export const useVerifyPipelineToolEffect = () => {
   const [isLoading, setIsLoading] = useState(false);

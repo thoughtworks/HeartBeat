@@ -1,7 +1,7 @@
+import { basicButtonStyle } from '@src/containers/ReportStep/style';
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
 import { theme } from '@src/theme';
-import { basicButtonStyle } from '@src/containers/ReportStep/style';
 
 export const StyledRightButtonGroup = styled('div')({
   [theme.breakpoints.down('lg')]: {

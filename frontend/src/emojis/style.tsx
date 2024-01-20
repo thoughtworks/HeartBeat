@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
 import { Avatar, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 export const StyledAvatar = styled(Avatar)({
   width: '1.25rem',

@@ -1,29 +1,3 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
-import {
-  BackButton,
-  ButtonContainer,
-  MetricsStepperContent,
-  NextButton,
-  SaveButton,
-  StyledStep,
-  StyledStepLabel,
-  StyledStepper,
-} from './style';
-import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
-import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
-import {
-  BOARD_TYPES,
-  DONE,
-  METRICS_CONSTANTS,
-  PIPELINE_SETTING_TYPES,
-  PIPELINE_TOOL_TYPES,
-  REQUIRED_DATA,
-  SOURCE_CONTROL_TYPES,
-  TIPS,
-} from '@src/constants/resources';
-import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
-import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
-import { useNavigate } from 'react-router-dom';
 import {
   selectConfig,
   selectMetrics,
@@ -34,18 +8,44 @@ import {
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
-import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
-import { Tooltip } from '@mui/material';
-import { exportToJsonFile } from '@src/utils/util';
+import {
+  BOARD_TYPES,
+  DONE,
+  METRICS_CONSTANTS,
+  PIPELINE_SETTING_TYPES,
+  PIPELINE_TOOL_TYPES,
+  REQUIRED_DATA,
+  SOURCE_CONTROL_TYPES,
+  TIPS,
+} from '@src/constants/resources';
+import {
+  BackButton,
+  ButtonContainer,
+  MetricsStepperContent,
+  NextButton,
+  SaveButton,
+  StyledStep,
+  StyledStepLabel,
+  StyledStepper,
+} from './style';
 import {
   savedMetricsSettingState,
   selectCycleTimeSettings,
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice';
-import _ from 'lodash';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
+import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
+import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
+import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { exportToJsonFile } from '@src/utils/util';
+import { useNavigate } from 'react-router-dom';
 import { ROUTE } from '@src/constants/router';
+import { Tooltip } from '@mui/material';
+import _ from 'lodash';
 
 const ConfigStep = lazy(() => import('@src/containers/ConfigStep'));
 const MetricsStep = lazy(() => import('@src/containers/MetricsStep'));
@@ -150,7 +150,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
         } else {
           return true;
         }
-      })
+      }),
     );
   };
 
@@ -259,7 +259,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
           projectKey: '',
           site: '',
           token: '',
-        })
+        }),
       );
     isShowBoard ? dispatch(updateBoardVerifyState(isBoardVerified)) : dispatch(updateBoardVerifyState(false));
   };

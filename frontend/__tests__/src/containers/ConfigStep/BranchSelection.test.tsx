@@ -1,10 +1,10 @@
-import React from 'react';
-import { act, render, screen } from '@testing-library/react';
 import { BranchSelection } from '@src/containers/ConfigStep/BranchSelection';
 import { ALL, BRANCH, MOCK_AUTOCOMPLETE_LIST } from '../../fixtures';
+import { act, render, screen } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
-import { Provider } from 'react-redux';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import React from 'react';
 
 describe('BranchSelection', () => {
   let store = null;
@@ -22,7 +22,7 @@ describe('BranchSelection', () => {
     return render(
       <Provider store={store}>
         <BranchSelection {...pipelineSetting} onUpdatePipeline={onUpdatePipeline} />
-      </Provider>
+      </Provider>,
     );
   };
 

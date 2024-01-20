@@ -1,5 +1,5 @@
-import { PIPELINE_TOOL_TYPES } from '@src/constants/resources';
 import { initialPipelineToolVerifiedResponseState, IPipelineToolVerifyResponse } from './verifyResponseSlice';
+import { PIPELINE_TOOL_TYPES } from '@src/constants/resources';
 
 export interface IPipelineToolState {
   config: { type: string; token: string };

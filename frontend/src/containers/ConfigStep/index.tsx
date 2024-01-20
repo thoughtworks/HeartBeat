@@ -1,8 +1,8 @@
-import { ConfigStepWrapper } from './style';
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { MetricsTypeCheckbox } from '@src/containers/ConfigStep/MetricsTypeCheckbox';
 import BasicInfo from '@src/containers/ConfigStep/BasicInfo';
+import { ConfigStepWrapper } from './style';
 import { useLayoutEffect } from 'react';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 
 const ConfigStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
   useLayoutEffect(() => {

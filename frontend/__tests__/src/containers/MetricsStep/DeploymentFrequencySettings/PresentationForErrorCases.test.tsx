@@ -1,17 +1,17 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { store } from '@src/store';
 import PresentationForErrorCases, {
   IPresentationForErrorCasesProps,
 } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { store } from '@src/store';
+import React from 'react';
 
 const setup = (props: IPresentationForErrorCasesProps) =>
   render(
     <Provider store={store}>
       <PresentationForErrorCases {...props} />
-    </Provider>
+    </Provider>,
   );
 
 describe('<PresentationForErrorCases />', () => {
@@ -35,7 +35,7 @@ describe('<PresentationForErrorCases />', () => {
       const messageNode = screen.getByText(errorMessage);
       expect(titleNode).toBeVisible();
       expect(messageNode).toBeVisible();
-    }
+    },
   );
 
   it('should display "try again" when error code is axios predefined error: $code', async () => {

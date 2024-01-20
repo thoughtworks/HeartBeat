@@ -1,6 +1,6 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { ReportCard } from '@src/components/Common/ReportGrid/ReportCard';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 import clearAllMocks = jest.clearAllMocks;
 
 describe('Report Card', () => {

@@ -1,6 +1,3 @@
-import React from 'react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { Board } from '@src/containers/ConfigStep/Board';
 import {
   BOARD_FIELDS,
   BOARD_TYPES,
@@ -14,11 +11,14 @@ import {
   VERIFY_ERROR_MESSAGE,
   VERIFY_FAILED,
 } from '../../fixtures';
-import { Provider } from 'react-redux';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { Board } from '@src/containers/ConfigStep/Board';
 import { setupStore } from '../../utils/setupStoreUtil';
+import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
 import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
+import React from 'react';
 
 export const fillBoardFieldsInformation = () => {
   const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token'];
@@ -46,7 +46,7 @@ describe('Board', () => {
     return render(
       <Provider store={store}>
         <Board />
-      </Provider>
+      </Provider>,
     );
   };
 
@@ -135,7 +135,7 @@ describe('Board', () => {
         screen.getByRole('textbox', {
           name: label,
           hidden: true,
-        }) as HTMLInputElement
+        }) as HTMLInputElement,
     );
     fillBoardFieldsInformation();
 
@@ -216,8 +216,8 @@ describe('Board', () => {
   it('should check error notification show and disappear when board verify response status is 401', async () => {
     server.use(
       rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED }))
-      )
+        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED })),
+      ),
     );
     setup();
     fillBoardFieldsInformation();
@@ -226,7 +226,7 @@ describe('Board', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(`${BOARD_TYPES.JIRA} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`)
+        screen.getByText(`${BOARD_TYPES.JIRA} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`),
       ).toBeInTheDocument();
     });
   });

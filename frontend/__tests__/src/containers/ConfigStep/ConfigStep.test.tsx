@@ -1,6 +1,3 @@
-import React from 'react';
-import { act, fireEvent, Matcher, render, renderHook, waitFor, within, screen } from '@testing-library/react';
-import ConfigStep from '@src/containers/ConfigStep';
 import {
   CHINA_CALENDAR,
   CONFIG_TITLE,
@@ -18,19 +15,22 @@ import {
   DEPLOYMENT_FREQUENCY,
   MOCK_PIPELINE_VERIFY_URL,
 } from '../../fixtures';
-import { Provider } from 'react-redux';
+import { act, fireEvent, Matcher, render, renderHook, waitFor, within, screen } from '@testing-library/react';
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import { fillBoardFieldsInformation } from './Board.test';
 import { setupStore } from '../../utils/setupStoreUtil';
-import dayjs from 'dayjs';
+import ConfigStep from '@src/containers/ConfigStep';
+import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
-import { fillBoardFieldsInformation } from './Board.test';
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import React from 'react';
+import dayjs from 'dayjs';
 
 const server = setupServer(
   rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(204))),
   rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_JIRA_VERIFY_RESPONSE)))
-  )
+    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_JIRA_VERIFY_RESPONSE))),
+  ),
 );
 
 let store = null;
@@ -45,7 +45,7 @@ describe('ConfigStep', () => {
     return render(
       <Provider store={store}>
         <ConfigStep {...result.current} />
-      </Provider>
+      </Provider>,
     );
   };
 

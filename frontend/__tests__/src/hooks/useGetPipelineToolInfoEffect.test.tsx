@@ -1,12 +1,12 @@
-import React from 'react';
-import { renderHook, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { setupStore } from '../utils/setupStoreUtil';
 import { useGetPipelineToolInfoEffect } from '@src/hooks/useGetPipelineToolInfoEffect';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
 import { MOCK_BUILD_KITE_GET_INFO_RESPONSE } from '../fixtures';
+import { renderHook, waitFor } from '@testing-library/react';
+import { setupStore } from '../utils/setupStoreUtil';
+import { Provider } from 'react-redux';
 import { HttpStatusCode } from 'axios';
 import { ReactNode } from 'react';
+import React from 'react';
 
 const mockDispatch = jest.fn();
 jest.mock('react-redux', () => ({

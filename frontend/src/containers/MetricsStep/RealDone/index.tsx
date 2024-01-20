@@ -1,19 +1,19 @@
-import { FormHelperText } from '@mui/material';
-import React, { useEffect, useState } from 'react';
 import {
   saveDoneColumn,
   selectCycleTimeSettings,
   selectMetricsContent,
   selectRealDoneWarningMessage,
 } from '@src/context/Metrics/metricsSlice';
-import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
-import { METRICS_CONSTANTS } from '@src/constants/resources';
-import { DEFAULT_HELPER_TEXT } from '@src/constants/commons';
-import { useAppSelector } from '@src/hooks';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { WarningMessage } from '@src/containers/MetricsStep/Crews/style';
+import { METRICS_CONSTANTS } from '@src/constants/resources';
+import { DEFAULT_HELPER_TEXT } from '@src/constants/commons';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import React, { useEffect, useState } from 'react';
+import { FormHelperText } from '@mui/material';
+import { useAppSelector } from '@src/hooks';
 
 interface realDoneProps {
   columns: { key: string; value: { name: string; statuses: string[] } }[];
@@ -26,7 +26,7 @@ const getSelectedDoneColumns = (selectedBoardColumns: { name: string; value: str
 
 const getFilteredStatus = (
   columns: { key: string; value: { name: string; statuses: string[] } }[],
-  selectedDoneColumns: string[]
+  selectedDoneColumns: string[],
 ): string[] =>
   columns.filter(({ value }) => selectedDoneColumns.includes(value.name)).flatMap(({ value }) => value.statuses);
 

@@ -35,11 +35,11 @@ describe('sourceControl reducer', () => {
     it('should store sourceControl data when get network sourceControl verify response', () => {
       const sourceControlResponse = sourceControlReducer(
         initialConfigState,
-        updateSourceControlVerifiedResponse(MOCK_GITHUB_VERIFY_RESPONSE)
+        updateSourceControlVerifiedResponse(MOCK_GITHUB_VERIFY_RESPONSE),
       );
 
       expect(sourceControlResponse.sourceControl.verifiedResponse.repoList).toEqual(
-        MOCK_GITHUB_VERIFY_RESPONSE.githubRepos
+        MOCK_GITHUB_VERIFY_RESPONSE.githubRepos,
       );
     });
   });

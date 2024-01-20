@@ -1,7 +1,7 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns';
+import { render, screen } from '@testing-library/react';
 import { LOADING, VELOCITY } from '../../fixtures';
+import React from 'react';
 
 describe('Report for three columns', () => {
   it('should show loading when data is empty', () => {

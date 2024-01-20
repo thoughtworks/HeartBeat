@@ -1,7 +1,3 @@
-import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
-import MetricsStepper from '@src/containers/MetricsStepper';
-import { Provider } from 'react-redux';
-import { setupStore } from '../../utils/setupStoreUtil';
 import {
   BASE_PAGE_ROUTE,
   BOARD_TYPES,
@@ -17,7 +13,6 @@ import {
   TEST_PROJECT_NAME,
   VELOCITY,
 } from '../../fixtures';
-import userEvent from '@testing-library/user-event';
 import {
   updateBoard,
   updateBoardVerifyState,
@@ -27,11 +22,6 @@ import {
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
-import dayjs from 'dayjs';
-import { navigateMock } from '../../../setupTests';
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
-import { HttpStatusCode } from 'axios';
 import {
   saveCycleTimeSettings,
   saveDoneColumn,
@@ -40,9 +30,19 @@ import {
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
-import { exportToJsonFile } from '@src/utils/util';
-import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
+import MetricsStepper from '@src/containers/MetricsStepper';
+import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import { navigateMock } from '../../../setupTests';
+import { exportToJsonFile } from '@src/utils/util';
+import { Provider } from 'react-redux';
+import { setupServer } from 'msw/node';
+import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
+import dayjs from 'dayjs';
 import React from 'react';
 
 const START_DATE_LABEL = 'From *';
@@ -138,10 +138,10 @@ const fillMetricsPageDate = async () => {
       store.dispatch(saveCycleTimeSettings([{ name: 'TODO', value: 'To do' }])),
       store.dispatch(updateTreatFlagCardAsBlock(false)),
       store.dispatch(
-        updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' })
+        updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' }),
       ),
       store.dispatch(
-        updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' })
+        updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' }),
       ),
       store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock new step' })),
     ]);
@@ -163,7 +163,7 @@ describe('MetricsStepper', () => {
     render(
       <Provider store={store}>
         <MetricsStepper {...result.current} />
-      </Provider>
+      </Provider>,
     );
   it('should show metrics stepper', () => {
     setup();

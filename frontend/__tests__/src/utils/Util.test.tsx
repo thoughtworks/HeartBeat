@@ -7,14 +7,14 @@ import {
   getJiraBoardToken,
   transformToCleanedBuildKiteEmoji,
 } from '@src/utils/util';
-import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji';
-import { EMPTY_STRING } from '@src/constants/commons';
 import {
   FILTER_CYCLE_TIME_SETTINGS,
   MOCK_CYCLE_TIME_SETTING,
   MOCK_JIRA_WITH_STATUES_SETTING,
   PIPELINE_TOOL_TYPES,
 } from '../fixtures';
+import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji';
+import { EMPTY_STRING } from '@src/constants/commons';
 
 describe('exportToJsonFile function', () => {
   it('should create a link element with the correct attributes and click it', () => {

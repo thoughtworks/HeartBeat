@@ -1,8 +1,8 @@
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
-import { metricsClient } from '@src/clients/MetricsClient';
 import { BASE_URL, MOCK_GET_STEPS_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures';
+import { metricsClient } from '@src/clients/MetricsClient';
+import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
 
 describe('get steps from metrics response', () => {
   const { params, buildId, organizationId, pipelineType, token } = MOCK_GET_STEPS_PARAMS;
@@ -15,7 +15,7 @@ describe('get steps from metrics response', () => {
     server.use(
       rest.get(getStepsUrl, (req, res, ctx) => {
         return res(ctx.status(HttpStatusCode.Ok), ctx.json({ steps: ['step1'] }));
-      })
+      }),
     );
 
     const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token);
@@ -30,9 +30,9 @@ describe('get steps from metrics response', () => {
           ctx.status(HttpStatusCode.InternalServerError),
           ctx.json({
             hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
 
     await expect(async () => {
@@ -43,8 +43,8 @@ describe('get steps from metrics response', () => {
   it('should throw error when getSteps response status 400', async () => {
     server.use(
       rest.get(getStepsUrl, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST }))
-      )
+        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST })),
+      ),
     );
 
     await expect(async () => {

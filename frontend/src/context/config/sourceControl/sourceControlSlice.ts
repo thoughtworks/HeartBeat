@@ -1,5 +1,5 @@
-import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { initSourceControlVerifyResponseState, ISourceControlVerifyResponse } from './verifyResponseSlice';
+import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 
 export interface ISourceControl {
   config: { type: string; token: string };

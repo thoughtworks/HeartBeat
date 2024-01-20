@@ -1,9 +1,9 @@
+import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { act, render, waitFor } from '@testing-library/react';
+import { ERROR_MESSAGE_TIME_DURATION } from '../../fixtures';
 import { setupStore } from '../../utils/setupStoreUtil';
 import { Provider } from 'react-redux';
 import React from 'react';
-import { WarningNotification } from '@src/components/Common/WarningNotification';
-import { ERROR_MESSAGE_TIME_DURATION } from '../../fixtures';
 
 let store = null;
 jest.useFakeTimers();
@@ -15,7 +15,7 @@ describe('ErrorNotificationAutoDismiss', () => {
     return render(
       <Provider store={store}>
         <WarningNotification message={message} />
-      </Provider>
+      </Provider>,
     );
   };
   afterEach(() => {

@@ -1,8 +1,8 @@
-import { act, renderHook } from '@testing-library/react';
-import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
-import { metricsClient } from '@src/clients/MetricsClient';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_GET_STEPS_PARAMS } from '../fixtures';
+import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
+import { metricsClient } from '@src/clients/MetricsClient';
+import { act, renderHook } from '@testing-library/react';
 import { HttpStatusCode } from 'axios';
 
 describe('use get steps effect', () => {

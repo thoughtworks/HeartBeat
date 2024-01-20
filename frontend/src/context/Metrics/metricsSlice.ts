@@ -1,9 +1,9 @@
 /* istanbul ignore file */
+import { ASSIGNEE_FILTER_TYPES, CYCLE_TIME_LIST, MESSAGE, METRICS_CONSTANTS } from '@src/constants/resources';
+import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { createSlice } from '@reduxjs/toolkit';
 import camelCase from 'lodash.camelcase';
 import { RootState } from '@src/store';
-import { ASSIGNEE_FILTER_TYPES, CYCLE_TIME_LIST, MESSAGE, METRICS_CONSTANTS } from '@src/constants/resources';
-import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import _ from 'lodash';
 
 export interface IPipelineConfig {
@@ -132,7 +132,7 @@ const setPipelineCrews = (pipelineCrews: string[], importedPipelineCrews: string
 
 const setSelectTargetFields = (
   targetFields: { name: string; key: string; flag: boolean }[],
-  importedClassification: string[]
+  importedClassification: string[],
 ) =>
   targetFields.map((item: { name: string; key: string; flag: boolean }) => ({
     ...item,
@@ -141,7 +141,7 @@ const setSelectTargetFields = (
 
 const setCycleTimeSettings = (
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
-  importedCycleTimeSettings: { [key: string]: string }[]
+  importedCycleTimeSettings: { [key: string]: string }[],
 ) => {
   return jiraColumns?.map((item: { key: string; value: { name: string; statuses: string[] } }) => {
     const controlName = item.value.name;
@@ -157,7 +157,7 @@ const setCycleTimeSettings = (
 const setSelectDoneColumns = (
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
   cycleTimeSettings: { name: string; value: string }[],
-  importedDoneStatus: string[]
+  importedDoneStatus: string[],
 ) => {
   const doneStatus =
     jiraColumns?.find((item) => item.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? [];
@@ -240,19 +240,19 @@ export const metricsSlice = createSlice({
 
       if (!isProjectCreated && importedCycleTime?.importedCycleTimeSettings?.length > 0) {
         const importedCycleTimeSettingsKeys = importedCycleTime.importedCycleTimeSettings.flatMap((obj) =>
-          Object.keys(obj)
+          Object.keys(obj),
         );
         const importedCycleTimeSettingsValues = importedCycleTime.importedCycleTimeSettings.flatMap((obj) =>
-          Object.values(obj)
+          Object.values(obj),
         );
         const jiraColumnsNames = jiraColumns?.map(
-          (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value.name
+          (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value.name,
         );
         const metricsContainsValues = Object.values(METRICS_CONSTANTS);
         const importedKeyMismatchWarning = compareArrays(importedCycleTimeSettingsKeys, jiraColumnsNames);
         const importedValueMismatchWarning = findDifferentValues(
           importedCycleTimeSettingsValues,
-          metricsContainsValues
+          metricsContainsValues,
         );
 
         const getWarningMessage = (): string | null => {
@@ -272,7 +272,7 @@ export const metricsSlice = createSlice({
       if (!isProjectCreated && importedClassification?.length > 0) {
         const keyArray = targetFields?.map((field: { key: string; name: string; flag: boolean }) => field.key);
         const ignoredKeyArray = ignoredTargetFields?.map(
-          (field: { key: string; name: string; flag: boolean }) => field.key
+          (field: { key: string; name: string; flag: boolean }) => field.key,
         );
         const filteredImportedClassification = importedClassification.filter((item) => !ignoredKeyArray.includes(item));
         if (filteredImportedClassification.every((item) => keyArray.includes(item))) {
@@ -376,7 +376,7 @@ export const metricsSlice = createSlice({
                 step: validStep,
                 branches: validBranches,
               }
-            : pipeline
+            : pipeline,
         );
 
       const getStepWarningMessage = (pipelines: IPipelineWarningMessageConfig[]) => {
@@ -386,7 +386,7 @@ export const metricsSlice = createSlice({
                 ...pipeline,
                 step: stepWarningMessage,
               }
-            : pipeline
+            : pipeline,
         );
       };
 

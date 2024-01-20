@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { Typography } from '@mui/material';
+import styled from '@emotion/styled';
 import { theme } from '@src/theme';
 
 export const StyledItem = styled.div({

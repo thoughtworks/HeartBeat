@@ -1,7 +1,7 @@
+import { Z_INDEX } from '@src/constants/commons';
+import HomeIcon from '@mui/icons-material/Home';
 import styled from '@emotion/styled';
 import { theme } from '@src/theme';
-import HomeIcon from '@mui/icons-material/Home';
-import { Z_INDEX } from '@src/constants/commons';
 
 export const LogoWarp = styled.div({
   display: 'flex',

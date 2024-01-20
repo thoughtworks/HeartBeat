@@ -1,8 +1,8 @@
-import { act, renderHook } from '@testing-library/react';
+import { ERROR_MESSAGE_TIME_DURATION, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures';
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
-import { ERROR_MESSAGE_TIME_DURATION, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
+import { act, renderHook } from '@testing-library/react';
 import { HttpStatusCode } from 'axios';
 
 describe('use verify sourceControl state', () => {
@@ -40,7 +40,7 @@ describe('use verify sourceControl state', () => {
     });
 
     expect(result.current.errorMessage).toEqual(
-      `${MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`
+      `${MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`,
     );
   });
 });

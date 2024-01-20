@@ -17,11 +17,11 @@
     "jsx": "react-jsx",
     "baseUrl": "./",
     "paths": {
-      "@src/*": ["./src/*"]
+      "@src/*": ["./src/*"],
     },
-    "types": ["node", "vite-plugin-pwa/react", "jest"]
+    "types": ["node", "vite-plugin-pwa/react", "jest"],
   },
   "include": ["src", "__tests__"],
   "exclude": ["__tests__/__mocks__/svgTransformer.ts", "package.json", "pnpm-lock.yaml"],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.scripts.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.scripts.json" }],
 }

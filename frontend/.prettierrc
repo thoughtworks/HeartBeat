@@ -5,6 +5,5 @@
   "useTabs": false,
   "tabWidth": 2,
   "bracketSpacing": true,
-  "plugins": ["prettier-plugin-sort-imports"],
-  "sortImports": true
+  "plugins": ["prettier-plugin-sort-imports"]
 }

@@ -1,12 +1,12 @@
-import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { render, screen, within } from '@testing-library/react';
 import { BoardDetail } from '@src/containers/ReportStep/ReportDetail';
-import { reportMapper } from '@src/hooks/reportMapper/report';
-import React from 'react';
-import { Provider } from 'react-redux';
-import { setupStore } from '../../../utils/setupStoreUtil';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { updateMetrics } from '@src/context/config/configSlice';
+import { render, screen, within } from '@testing-library/react';
+import { reportMapper } from '@src/hooks/reportMapper/report';
+import { setupStore } from '../../../utils/setupStoreUtil';
 import { REQUIRED_DATA_LIST } from '../../../fixtures';
+import { Provider } from 'react-redux';
+import React from 'react';
 
 jest.mock('@src/hooks/reportMapper/report');
 
@@ -21,7 +21,7 @@ describe('board', () => {
     render(
       <Provider store={setupStore()}>
         <BoardDetail data={data} onBack={() => 'back'} />
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByTestId('ArrowBackIcon')).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe('board', () => {
       render(
         <Provider store={setupStore()}>
           <BoardDetail data={data} onBack={() => 'back'} />
-        </Provider>
+        </Provider>,
       );
 
       const velocityTable = screen.getByTestId('Velocity');
@@ -57,7 +57,7 @@ describe('board', () => {
       render(
         <Provider store={setupStore()}>
           <BoardDetail data={data} onBack={() => 'back'} />
-        </Provider>
+        </Provider>,
       );
 
       expect(screen.queryAllByText('Velocity').length).toEqual(0);
@@ -77,7 +77,7 @@ describe('board', () => {
       render(
         <Provider store={setupStore()}>
           <BoardDetail data={data} onBack={() => 'back'} />
-        </Provider>
+        </Provider>,
       );
 
       const cycleTimeTable = screen.getByTestId('Cycle Time');
@@ -94,7 +94,7 @@ describe('board', () => {
       render(
         <Provider store={setupStore()}>
           <BoardDetail data={data} onBack={() => 'back'} />
-        </Provider>
+        </Provider>,
       );
 
       expect(screen.queryAllByText('Cycle Time').length).toEqual(0);
@@ -117,7 +117,7 @@ describe('board', () => {
       render(
         <Provider store={store}>
           <BoardDetail data={data} onBack={() => 'back'} />
-        </Provider>
+        </Provider>,
       );
 
       const classificationTable = screen.getByTestId('Classification');
@@ -134,7 +134,7 @@ describe('board', () => {
       render(
         <Provider store={setupStore()}>
           <BoardDetail data={data} onBack={() => 'back'} />
-        </Provider>
+        </Provider>,
       );
 
       expect(screen.queryAllByText('Classification').length).toEqual(0);
@@ -160,7 +160,7 @@ describe('board', () => {
     render(
       <Provider store={store}>
         <BoardDetail data={data} onBack={() => 'back'} />
-      </Provider>
+      </Provider>,
     );
 
     const velocityTable = screen.getByTestId('Velocity');

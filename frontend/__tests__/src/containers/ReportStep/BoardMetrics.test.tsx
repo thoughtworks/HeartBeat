@@ -1,13 +1,13 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import clearAllMocks = jest.clearAllMocks;
-import BoardMetrics from '@src/containers/ReportStep/BoradMetrics';
 import { CLASSIFICATION, LEAD_TIME_FOR_CHANGES, MOCK_REPORT_RESPONSE } from '../../../src/fixtures';
-import { setupStore } from '../../../src/utils/setupStoreUtil';
-import { Provider } from 'react-redux';
-import { RETRY } from '@src/constants/resources';
-import userEvent from '@testing-library/user-event';
+import BoardMetrics from '@src/containers/ReportStep/BoradMetrics';
 import { updateMetrics } from '@src/context/config/configSlice';
+import { setupStore } from '../../../src/utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import { RETRY } from '@src/constants/resources';
+import { Provider } from 'react-redux';
 
 describe('Report Card', () => {
   afterEach(() => {
@@ -45,7 +45,7 @@ describe('Report Card', () => {
           csvTimeStamp={1705014731}
           timeoutError={''}
         />
-      </Provider>
+      </Provider>,
     );
   };
 
@@ -79,7 +79,7 @@ describe('Report Card', () => {
           csvTimeStamp={1705014731}
           timeoutError={''}
         />
-      </Provider>
+      </Provider>,
     );
 
     expect(screen.getByTestId('loading')).toBeInTheDocument();

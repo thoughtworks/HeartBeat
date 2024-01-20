@@ -1,11 +1,11 @@
-import React from 'react';
-import { ReportResponseDTO } from '@src/clients/report/dto/response';
+import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
 import ReportForThreeColumns from '@src/components/Common/ReportForThreeColumns';
 import { METRICS_TITLE, NAME, PIPELINE_STEP } from '@src/constants/resources';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { reportMapper } from '@src/hooks/reportMapper/report';
-import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
 import { Optional } from '@src/utils/types';
 import { withGoBack } from './withBack';
+import React from 'react';
 
 interface Property {
   data: ReportResponseDTO;

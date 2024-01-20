@@ -1,10 +1,3 @@
-import React, { useState } from 'react';
-import { SingleSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/SingleSelection';
-import { useAppDispatch } from '@src/hooks';
-import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style';
-import { Loading } from '@src/components/Loading';
-import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
-import { ErrorNotification } from '@src/components/ErrorNotification';
 import {
   selectPipelineNames,
   selectPipelineOrganizations,
@@ -12,16 +5,23 @@ import {
   selectStepsParams,
   updatePipelineToolVerifyResponseSteps,
 } from '@src/context/config/configSlice';
-import { store } from '@src/store';
 import {
   selectOrganizationWarningMessage,
   selectPipelineNameWarningMessage,
   selectStepWarningMessage,
   updatePipelineStep,
 } from '@src/context/Metrics/metricsSlice';
+import { SingleSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/SingleSelection';
+import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
+import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
 import { BranchSelection } from '@src/containers/ConfigStep/BranchSelection';
+import { ErrorNotification } from '@src/components/ErrorNotification';
 import { MESSAGE } from '@src/constants/resources';
+import { Loading } from '@src/components/Loading';
+import { useAppDispatch } from '@src/hooks';
+import React, { useState } from 'react';
+import { store } from '@src/store';
 
 interface pipelineMetricSelectionProps {
   type: string;
@@ -65,7 +65,7 @@ export const PipelineMetricSelection = ({
     const { params, buildId, organizationId, pipelineType, token } = selectStepsParams(
       store.getState(),
       organization,
-      _pipelineName
+      _pipelineName,
     );
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
       if (res && !res.haveStep) {
@@ -81,7 +81,7 @@ export const PipelineMetricSelection = ({
             steps,
             branches,
             pipelineCrews,
-          })
+          }),
         );
         res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches, pipelineCrews }));
       }

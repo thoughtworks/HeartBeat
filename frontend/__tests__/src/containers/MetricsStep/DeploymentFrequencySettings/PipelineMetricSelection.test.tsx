@@ -1,10 +1,3 @@
-import { act, render, waitFor, within, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import { setupStore } from '../../../utils/setupStoreUtil';
-import { PipelineMetricSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection';
-import { metricsClient } from '@src/clients/MetricsClient';
-import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice';
 import {
   BRANCH,
   ERROR_MESSAGE_TIME_DURATION,
@@ -15,7 +8,14 @@ import {
   REMOVE_BUTTON,
   STEP,
 } from '../../../fixtures';
+import { PipelineMetricSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection';
+import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice';
+import { act, render, waitFor, within, screen } from '@testing-library/react';
+import { setupStore } from '../../../utils/setupStoreUtil';
+import { metricsClient } from '@src/clients/MetricsClient';
 import { PipelineSetting } from '@src/context/interface';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -64,7 +64,7 @@ describe('PipelineMetricSelection', () => {
   const setup = async (
     deploymentFrequencySetting: PipelineSetting,
     isShowRemoveButton: boolean,
-    isDuplicated: boolean
+    isDuplicated: boolean,
   ) => {
     const store = setupStore();
     return render(
@@ -77,7 +77,7 @@ describe('PipelineMetricSelection', () => {
           onUpdatePipeline={mockUpdatePipeline}
           isDuplicated={isDuplicated}
         />
-      </Provider>
+      </Provider>,
     );
   };
 
@@ -122,7 +122,7 @@ describe('PipelineMetricSelection', () => {
     const { getByText } = await setup(
       { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
       false,
-      false
+      false,
     );
 
     expect(getByText(ORGANIZATION)).toBeInTheDocument();
@@ -138,7 +138,7 @@ describe('PipelineMetricSelection', () => {
     const { getByText, getByRole, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
-      false
+      false,
     );
     await act(async () => {
       await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1]);
@@ -159,7 +159,7 @@ describe('PipelineMetricSelection', () => {
     const { getByText, getByRole, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
-      false
+      false,
     );
     await act(async () => {
       await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1]);
@@ -173,8 +173,8 @@ describe('PipelineMetricSelection', () => {
     await waitFor(() => {
       expect(
         getByText(
-          'There is no step during this period for this pipeline! Please change the search time in the Config page!'
-        )
+          'There is no step during this period for this pipeline! Please change the search time in the Config page!',
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -184,7 +184,7 @@ describe('PipelineMetricSelection', () => {
     const { getByRole, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       true,
-      false
+      false,
     );
     await act(async () => {
       await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1]);
@@ -205,7 +205,7 @@ describe('PipelineMetricSelection', () => {
     const { getByRole, getByText, getAllByRole } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: [] },
       false,
-      false
+      false,
     );
 
     await waitFor(() => {
@@ -232,7 +232,7 @@ describe('PipelineMetricSelection', () => {
     const { getByRole, getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: '', branches: ['branch1', 'branch2'] },
       false,
-      false
+      false,
     );
 
     await waitFor(() => {
@@ -267,7 +267,7 @@ describe('PipelineMetricSelection', () => {
     const { getByText } = await setup(
       { id: 0, organization: 'mockOrgName', pipelineName: 'mockName', step: 'step1', branches: [] },
       false,
-      true
+      true,
     );
 
     expect(getByText('This pipeline is the same as another one!')).toBeInTheDocument();

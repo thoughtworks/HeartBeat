@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { getStepsParams, metricsClient } from '@src/clients/MetricsClient';
-import { DURATION } from '@src/constants/commons';
 import { MESSAGE } from '@src/constants/resources';
+import { DURATION } from '@src/constants/commons';
+import { useState } from 'react';
 
 export interface useGetMetricsStepsEffectInterface {
   getSteps: (
@@ -9,7 +9,7 @@ export interface useGetMetricsStepsEffectInterface {
     organizationId: string,
     buildId: string,
     pipelineType: string,
-    token: string
+    token: string,
   ) => Promise<
     | {
         haveStep: boolean;
@@ -32,7 +32,7 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
     organizationId: string,
     buildId: string,
     pipelineType: string,
-    token: string
+    token: string,
   ) => {
     setIsLoading(true);
     try {

@@ -1,7 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import _ from 'lodash';
-import { useAppSelector } from '@src/hooks';
-import { selectConfig } from '@src/context/config/configSlice';
 import {
   CALENDAR,
   DORA_METRICS,
@@ -12,18 +8,22 @@ import {
   SHOW_MORE,
   RETRY,
 } from '@src/constants/resources';
-import { ReportRequestDTO } from '@src/clients/report/dto/request';
-import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
-import dayjs from 'dayjs';
-import { StyledMetricsSection } from '@src/containers/ReportStep/DoraMetrics/style';
-import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
-import { ReportGrid } from '@src/components/Common/ReportGrid';
-import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { StyledSpacing } from '@src/containers/ReportStep/style';
-import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util';
 import { StyledShowMore, StyledTitleWrapper } from '@src/containers/ReportStep/DoraMetrics/style';
+import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
+import { StyledMetricsSection } from '@src/containers/ReportStep/DoraMetrics/style';
+import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util';
+import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
+import { ReportRequestDTO } from '@src/clients/report/dto/request';
+import { StyledSpacing } from '@src/containers/ReportStep/style';
+import { ReportGrid } from '@src/components/Common/ReportGrid';
+import { selectConfig } from '@src/context/config/configSlice';
 import { StyledRetry } from '../BoradMetrics/style';
+import React, { useEffect, useState } from 'react';
 import { Nullable } from '@src/utils/types';
+import { useAppSelector } from '@src/hooks';
+import dayjs from 'dayjs';
+import _ from 'lodash';
 
 interface DoraMetricsProps {
   startToRequestDoraData: (request: ReportRequestDTO) => void;
@@ -80,7 +80,7 @@ const DoraMetrics = ({
     }
     return pipelineConfigs.map(({ organization, pipelineName, step, branches }) => {
       const pipelineConfigFromPipelineList = configData.pipelineTool.verifiedResponse.pipelineList.find(
-        (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization
+        (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization,
       );
       if (pipelineConfigFromPipelineList != undefined) {
         const { orgName, orgId, name, id, repository } = pipelineConfigFromPipelineList;

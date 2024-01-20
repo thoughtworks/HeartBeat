@@ -1,5 +1,5 @@
-import { fireEvent, render } from '@testing-library/react';
 import { NoCardPop } from '@src/containers/ConfigStep/NoDoneCardPop';
+import { fireEvent, render } from '@testing-library/react';
 import { NO_CARD_ERROR_MESSAGE } from '../../fixtures';
 
 const OK = 'Ok';

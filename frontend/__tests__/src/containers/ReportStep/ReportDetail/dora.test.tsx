@@ -1,7 +1,7 @@
+import { DoraDetail } from '@src/containers/ReportStep/ReportDetail';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { render, screen, within } from '@testing-library/react';
 import { reportMapper } from '@src/hooks/reportMapper/report';
-import { DoraDetail } from '@src/containers/ReportStep/ReportDetail';
 import React from 'react';
 
 jest.mock('@src/hooks/reportMapper/report');

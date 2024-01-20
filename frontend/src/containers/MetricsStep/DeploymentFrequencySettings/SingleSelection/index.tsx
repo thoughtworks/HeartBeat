@@ -1,9 +1,9 @@
 import { Autocomplete, Box, ListItemText, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { FormControlWrapper } from './style';
 import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
 import { EmojiWrap, StyledAvatar } from '@src/emojis/style';
+import React, { useEffect, useState } from 'react';
 import { Z_INDEX } from '@src/constants/commons';
+import { FormControlWrapper } from './style';
 
 interface Props {
   options: string[];

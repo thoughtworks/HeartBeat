@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
 import { stepperSlice } from '@src/context/stepper/StepperSlice';
-import { configSlice } from '@src/context/config/configSlice';
 import { metricsSlice } from '@src/context/Metrics/metricsSlice';
+import { configSlice } from '@src/context/config/configSlice';
 import { headerSlice } from '@src/context/header/headerSlice';
+import { configureStore } from '@reduxjs/toolkit';
 
 export const setupStore = () => {
   return configureStore({

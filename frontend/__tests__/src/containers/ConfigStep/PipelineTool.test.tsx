@@ -1,5 +1,3 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { PipelineTool } from '@src/containers/ConfigStep/PipelineTool';
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
@@ -11,17 +9,19 @@ import {
   VERIFY,
   MOCK_PIPELINE_VERIFY_URL,
 } from '../../fixtures';
-import { Provider } from 'react-redux';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { PipelineTool } from '@src/containers/ConfigStep/PipelineTool';
 import { setupStore } from '../../utils/setupStoreUtil';
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
 
 export const fillPipelineToolFieldsInformation = async () => {
   const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
   const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
-    'input Token'
+    'input Token',
   ) as HTMLInputElement;
   await userEvent.type(tokenInput, mockInfo);
 
@@ -41,7 +41,7 @@ describe('PipelineTool', () => {
     return render(
       <Provider store={store}>
         <PipelineTool />
-      </Provider>
+      </Provider>,
     );
   };
   afterEach(() => {
@@ -72,7 +72,7 @@ describe('PipelineTool', () => {
   it('should clear other fields information when change pipelineTool Field selection', async () => {
     const { getByText, getByLabelText } = setup();
     const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
-      'input Token'
+      'input Token',
     ) as HTMLInputElement;
 
     await fillPipelineToolFieldsInformation();
@@ -89,7 +89,7 @@ describe('PipelineTool', () => {
   it('should clear all fields information when click reset button', async () => {
     const { getByText, queryByRole } = setup();
     const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
-      'input Token'
+      'input Token',
     ) as HTMLInputElement;
     await fillPipelineToolFieldsInformation();
 
@@ -129,7 +129,7 @@ describe('PipelineTool', () => {
     await fillPipelineToolFieldsInformation();
     const mockInfo = 'mockToken';
     const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
-      'input Token'
+      'input Token',
     ) as HTMLInputElement;
     await userEvent.type(tokenInput, mockInfo);
     await userEvent.clear(tokenInput);
@@ -142,7 +142,7 @@ describe('PipelineTool', () => {
     const { getByText } = setup();
     const mockInfo = 'mockToken';
     const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
-      'input Token'
+      'input Token',
     ) as HTMLInputElement;
     await userEvent.type(tokenInput, mockInfo);
 

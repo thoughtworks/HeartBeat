@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
 import { Z_INDEX } from '@src/constants/commons';
+import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
 
 export const StyledErrorNotification = styled('div')({

@@ -1,21 +1,21 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
-import { useAppSelector } from '@src/hooks';
 import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice';
-import { MESSAGE, REPORT_PAGE_TYPE, REQUIRED_DATA } from '@src/constants/resources';
 import { StyledCalendarWrapper, StyledErrorNotification } from '@src/containers/ReportStep/style';
-import { ErrorNotification } from '@src/components/ErrorNotification';
-import { useNavigate } from 'react-router-dom';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
-import { ROUTE } from '@src/constants/router';
+import { MESSAGE, REPORT_PAGE_TYPE, REQUIRED_DATA } from '@src/constants/resources';
+import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
+import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
+import { ErrorNotification } from '@src/components/ErrorNotification';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
+import DateRangeViewer from '@src/components/Common/DateRangeViewer';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import BoardMetrics from '@src/containers/ReportStep/BoradMetrics';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
-import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
-import DateRangeViewer from '@src/components/Common/DateRangeViewer';
-import { BoardDetail, DoraDetail } from './ReportDetail';
-import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { BoardDetail, DoraDetail } from './ReportDetail';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE } from '@src/constants/router';
+import { useAppSelector } from '@src/hooks';
 
 export interface ReportStepProps {
   notification: useNotificationLayoutEffectInterface;

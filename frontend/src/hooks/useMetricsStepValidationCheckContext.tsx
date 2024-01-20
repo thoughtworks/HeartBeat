@@ -1,7 +1,7 @@
-import React, { createContext, useContext } from 'react';
-import { useAppSelector } from '@src/hooks/index';
 import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { PipelineSetting } from '@src/context/interface';
+import React, { createContext, useContext } from 'react';
+import { useAppSelector } from '@src/hooks/index';
 
 interface ProviderContextType {
   isPipelineValid: (type: string) => boolean;

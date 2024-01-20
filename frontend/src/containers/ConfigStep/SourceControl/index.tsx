@@ -1,16 +1,3 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { REGEX } from '@src/constants/regex';
-import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
-import { CONFIG_TITLE, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
-import {
-  ConfigSectionContainer,
-  StyledButtonGroup,
-  StyledForm,
-  StyledTextField,
-  StyledTypeSelections,
-} from '@src/components/Common/ConfigForms';
-import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import {
   isSourceControlVerified,
   selectDateRange,
@@ -18,12 +5,25 @@ import {
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
+import {
+  ConfigSectionContainer,
+  StyledButtonGroup,
+  StyledForm,
+  StyledTextField,
+  StyledTypeSelections,
+} from '@src/components/Common/ConfigForms';
+import { CONFIG_TITLE, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
 import { useVerifySourceControlEffect } from '@src/hooks/useVeritySourceControlEffect';
-import { ErrorNotification } from '@src/components/ErrorNotification';
-import { Loading } from '@src/components/Loading';
 import { VerifyButton, ResetButton } from '@src/components/Common/Buttons';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
+import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
+import { ErrorNotification } from '@src/components/ErrorNotification';
 import { findCaseInsensitiveType } from '@src/utils/util';
+import { FormEvent, useEffect, useState } from 'react';
+import { Loading } from '@src/components/Loading';
+import { REGEX } from '@src/constants/regex';
 
 export const SourceControl = () => {
   const dispatch = useAppDispatch();
@@ -73,7 +73,7 @@ export const SourceControl = () => {
       updateSourceControl({
         type: fields[0].value,
         token: fields[1].value,
-      })
+      }),
     );
   };
 

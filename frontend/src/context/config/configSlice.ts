@@ -1,12 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { RootState } from '@src/store';
-import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE } from '@src/constants/resources';
-import { REQUIRED_DATA } from '@src/constants/resources';
-import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice';
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice';
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice';
-import dayjs from 'dayjs';
+import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE } from '@src/constants/resources';
+import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
+import { REQUIRED_DATA } from '@src/constants/resources';
+import { createSlice } from '@reduxjs/toolkit';
+import type { RootState } from '@src/store';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 
 export interface BasicConfigState {
@@ -76,7 +76,7 @@ export const configSlice = createSlice({
       state.basic.metrics = action.payload;
 
       state.board.isShow = [VELOCITY, CYCLE_TIME, CLASSIFICATION].some((metric) =>
-        state.basic.metrics.includes(metric)
+        state.basic.metrics.includes(metric),
       );
 
       state.pipelineTool.isShow = [
@@ -140,12 +140,12 @@ export const configSlice = createSlice({
                 branches: branches,
                 steps: steps,
               }
-            : pipeline
+            : pipeline,
       );
 
       state.pipelineTool.verifiedResponse.pipelineCrews = _.union(
         state.pipelineTool.verifiedResponse.pipelineCrews,
-        pipelineCrews
+        pipelineCrews,
       );
     },
     updateSourceControlVerifyState: (state, action) => {
@@ -214,7 +214,7 @@ export const selectPipelineNames = (state: RootState, organization: string) =>
 
 export const selectStepsParams = (state: RootState, organizationName: string, pipelineName: string) => {
   const pipeline = state.config.pipelineTool.verifiedResponse.pipelineList.find(
-    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName,
   );
   const { startDate, endDate } = state.config.basic.dateRange;
   const pipelineType = state.config.pipelineTool.config.type;
@@ -237,13 +237,13 @@ export const selectStepsParams = (state: RootState, organizationName: string, pi
 
 export const selectSteps = (state: RootState, organizationName: string, pipelineName: string) =>
   state.config.pipelineTool.verifiedResponse.pipelineList.find(
-    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName,
   )?.steps ?? [];
 
 export const selectBranches = (state: RootState, organizationName: string, pipelineName: string) =>
   state.config.pipelineTool.verifiedResponse.pipelineList.find(
     /* istanbul ignore next */
-    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName
+    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName,
   )?.branches ?? [];
 
 export const selectPipelineCrews = (state: RootState) => state.config.pipelineTool.verifiedResponse.pipelineCrews;

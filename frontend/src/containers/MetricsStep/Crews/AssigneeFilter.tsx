@@ -1,9 +1,9 @@
-import { FormControlLabel, RadioGroup, Radio } from '@mui/material';
-import React from 'react';
-import { useAppDispatch } from '@src/hooks/useAppDispatch';
-import { useAppSelector } from '@src/hooks';
 import { selectAssigneeFilter, updateAssigneeFilter } from '@src/context/Metrics/metricsSlice';
 import { AssigneeFilterContainer } from '@src/containers/MetricsStep/Crews/style';
+import { FormControlLabel, RadioGroup, Radio } from '@mui/material';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { useAppSelector } from '@src/hooks';
+import React from 'react';
 
 export const AssigneeFilter = () => {
   const dispatch = useAppDispatch();

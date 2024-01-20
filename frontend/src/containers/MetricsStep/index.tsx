@@ -1,20 +1,20 @@
-import { Crews } from '@src/containers/MetricsStep/Crews';
-import { useAppSelector } from '@src/hooks';
-import { RealDone } from '@src/containers/MetricsStep/RealDone';
-import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
-import { Classification } from '@src/containers/MetricsStep/Classification';
-import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice';
-import { DONE, REQUIRED_DATA } from '@src/constants/resources';
-import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
-import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
-import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import {
   MetricSelectionHeader,
   MetricSelectionWrapper,
   MetricsSelectionTitle,
 } from '@src/containers/MetricsStep/style';
-import { useLayoutEffect } from 'react';
+import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice';
+import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
+import { selectCycleTimeSettings, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
+import { Classification } from '@src/containers/MetricsStep/Classification';
+import DateRangeViewer from '@src/components/Common/DateRangeViewer';
+import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
+import { RealDone } from '@src/containers/MetricsStep/RealDone';
+import { DONE, REQUIRED_DATA } from '@src/constants/resources';
+import { Crews } from '@src/containers/MetricsStep/Crews';
+import { useAppSelector } from '@src/hooks';
+import { useLayoutEffect } from 'react';
 
 const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
   const requiredData = useAppSelector(selectMetrics);

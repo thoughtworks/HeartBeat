@@ -41,7 +41,7 @@ describe('board reducer', () => {
           jiraColumns: MOCK_JIRA_VERIFY_RESPONSE.jiraColumns,
           targetFields: MOCK_JIRA_VERIFY_RESPONSE.targetFields,
           users: MOCK_JIRA_VERIFY_RESPONSE.users,
-        })
+        }),
       );
 
       expect(boardVerifyResponse.board.verifiedResponse.jiraColumns).toEqual(MOCK_JIRA_VERIFY_RESPONSE.jiraColumns);

@@ -1,11 +1,11 @@
 import { AlertTitleWrapper, AlertWrapper } from '@src/components/Common/NotificationButton/style';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { AlertColor, SvgIcon } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import React from 'react';
 import { theme } from '@src/theme';
+import React from 'react';
 
 const getStyles = (type: AlertColor | undefined) => {
   switch (type) {

@@ -1,10 +1,10 @@
-import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
 import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker';
-import { ERROR_DATE } from '../../fixtures';
-import dayjs from 'dayjs';
-import { Provider } from 'react-redux';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
+import { ERROR_DATE } from '../../fixtures';
+import { Provider } from 'react-redux';
+import React from 'react';
+import dayjs from 'dayjs';
 
 const START_DATE_LABEL = 'From *';
 const END_DATE_LABEL = 'To *';
@@ -17,7 +17,7 @@ const setup = () => {
   return render(
     <Provider store={store}>
       <DateRangePicker />
-    </Provider>
+    </Provider>,
   );
 };
 

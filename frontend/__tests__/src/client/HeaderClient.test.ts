@@ -1,8 +1,8 @@
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
 import { MOCK_VERSION_URL, VERIFY_ERROR_MESSAGE, VERSION_RESPONSE } from '../fixtures';
-import { HttpStatusCode } from 'axios';
 import { headerClient } from '@src/clients/header/HeaderClient';
+import { setupServer } from 'msw/node';
+import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
 
 const server = setupServer(rest.get(MOCK_VERSION_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))));
 
@@ -15,8 +15,8 @@ describe('header client', () => {
     const excepted = '1.11';
     server.use(
       rest.get(MOCK_VERSION_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Accepted), ctx.json(VERSION_RESPONSE))
-      )
+        res(ctx.status(HttpStatusCode.Accepted), ctx.json(VERSION_RESPONSE)),
+      ),
     );
 
     await expect(headerClient.getVersion()).resolves.toEqual(excepted);
@@ -29,9 +29,9 @@ describe('header client', () => {
           ctx.status(HttpStatusCode.InternalServerError),
           ctx.json({
             hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
 
     expect(async () => {

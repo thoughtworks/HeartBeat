@@ -1,12 +1,12 @@
-import { FormHelperText } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
-import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { saveUsers, selectMetricsContent, savePipelineCrews } from '@src/context/Metrics/metricsSlice';
-import { useAppSelector } from '@src/hooks';
 import { AssigneeFilter } from '@src/containers/MetricsStep/Crews/AssigneeFilter';
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { WarningMessage } from '@src/containers/MetricsStep/Crews/style';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import React, { useEffect, useState } from 'react';
+import { FormHelperText } from '@mui/material';
+import { useAppSelector } from '@src/hooks';
 
 interface crewsProps {
   options: string[];

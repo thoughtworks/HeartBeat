@@ -1,8 +1,8 @@
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
 import { MOCK_SOURCE_CONTROL_URL, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
+import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
 
 const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) => res(ctx.status(200))));
 
@@ -19,8 +19,8 @@ describe('verify sourceControl request', () => {
   it('should throw error when sourceControl verify response status is 400', () => {
     server.use(
       rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST }))
-      )
+        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST })),
+      ),
     );
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
@@ -32,8 +32,8 @@ describe('verify sourceControl request', () => {
   it('should throw error when sourceControl verify response status is 404', async () => {
     server.use(
       rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.NotFound), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.NOT_FOUND }))
-      )
+        res(ctx.status(HttpStatusCode.NotFound), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.NOT_FOUND })),
+      ),
     );
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
@@ -49,9 +49,9 @@ describe('verify sourceControl request', () => {
           ctx.status(HttpStatusCode.InternalServerError),
           ctx.json({
             hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
 
     sourceControlClient.getVerifySourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS).catch((e) => {
@@ -67,9 +67,9 @@ describe('verify sourceControl request', () => {
           ctx.status(HttpStatusCode.MultipleChoices),
           ctx.json({
             hintInfo: VERIFY_ERROR_MESSAGE.UNKNOWN,
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
 
     await expect(async () => {

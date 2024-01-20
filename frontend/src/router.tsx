@@ -1,8 +1,8 @@
-import { Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
-import routes from '@src/config/routes';
+import { Route, Routes } from 'react-router-dom';
 import { Loading } from './components/Loading';
+import routes from '@src/config/routes';
+import { Suspense } from 'react';
 import Home from './pages/Home';
 
 const Router = () => {

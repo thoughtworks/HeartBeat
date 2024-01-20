@@ -1,9 +1,9 @@
+import { MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, MOCK_PIPELINE_VERIFY_URL } from '../fixtures';
+import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
-import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
-import { MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, MOCK_PIPELINE_VERIFY_URL } from '../fixtures';
 import { HttpStatusCode } from 'axios';
+import { rest } from 'msw';
 
 const mockDispatch = jest.fn();
 jest.mock('react-redux', () => ({
@@ -14,7 +14,7 @@ jest.mock('react-redux', () => ({
 const server = setupServer(
   rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => {
     return res(ctx.status(HttpStatusCode.NoContent));
-  })
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -57,7 +57,7 @@ describe('use verify pipelineTool state', () => {
 
     await waitFor(() => {
       expect(result.current.errorMessage).toEqual(
-        'Forbidden request, please change your token with correct access permission.'
+        'Forbidden request, please change your token with correct access permission.',
       );
     });
 

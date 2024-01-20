@@ -1,11 +1,10 @@
 import { act, render, renderHook, waitFor, within } from '@testing-library/react';
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
+import { setupStore } from '../../utils/setupStoreUtil';
 import MetricsStep from '@src/containers/MetricsStep';
 import { Provider } from 'react-redux';
-import { setupStore } from '../../utils/setupStoreUtil';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 
-import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
 import {
   CLASSIFICATION_SETTING,
   CREWS_SETTING,
@@ -22,14 +21,15 @@ import {
   MOCK_BUILD_KITE_GET_INFO_RESPONSE,
 } from '../../fixtures';
 import { saveCycleTimeSettings, saveDoneColumn } from '@src/context/Metrics/metricsSlice';
+import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import userEvent from '@testing-library/user-event';
 
 let store = setupStore();
 const server = setupServer(
   rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) =>
-    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_GET_INFO_RESPONSE)))
-  )
+    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_GET_INFO_RESPONSE))),
+  ),
 );
 
 beforeAll(() => server.listen());
@@ -40,7 +40,7 @@ const setup = () =>
   render(
     <Provider store={store}>
       <MetricsStep {...result.current} />
-    </Provider>
+    </Provider>,
   );
 
 describe('MetricsStep', () => {
@@ -102,8 +102,8 @@ describe('MetricsStep', () => {
       render(
         <Provider store={store}>
           <MetricsStep {...result.current} />
-        </Provider>
-      )
+        </Provider>,
+      ),
     );
 
     expect(result.current.resetProps).toBeCalled();
@@ -149,7 +149,7 @@ describe('MetricsStep', () => {
         updateJiraVerifyResponse({
           jiraColumns,
           users: MOCK_JIRA_VERIFY_RESPONSE.users,
-        })
+        }),
       );
     });
 

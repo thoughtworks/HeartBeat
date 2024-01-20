@@ -1,10 +1,10 @@
-import React, { lazy } from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Router from '@src/router';
-import { Provider } from 'react-redux';
-import { store } from '@src/store';
 import { METRICS_PAGE_ROUTE } from './fixtures';
+import { Provider } from 'react-redux';
+import React, { lazy } from 'react';
+import { store } from '@src/store';
+import Router from '@src/router';
 
 jest.spyOn(React, 'lazy').mockImplementationOnce(() => {
   throw new Error('error');
@@ -28,7 +28,7 @@ describe('router', () => {
         <MemoryRouter initialEntries={[routeUrl]}>
           <Router />
         </MemoryRouter>
-      </Provider>
+      </Provider>,
     );
 
   it('should redirect to home page', async () => {

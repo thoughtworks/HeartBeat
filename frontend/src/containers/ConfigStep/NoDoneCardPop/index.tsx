@@ -1,5 +1,5 @@
-import { DialogContent } from '@mui/material';
 import { OkButton, StyledDialog } from '@src/containers/ConfigStep/NoDoneCardPop/style';
+import { DialogContent } from '@mui/material';
 
 interface NoDoneCardPopProps {
   isOpen: boolean;

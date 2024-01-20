@@ -1,6 +1,6 @@
+import { DatePicker } from '@mui/x-date-pickers';
 import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
-import { DatePicker } from '@mui/x-date-pickers';
 export const StyledDateRangePickerContainer = styled('div')({
   display: 'flex',
   width: '100%',

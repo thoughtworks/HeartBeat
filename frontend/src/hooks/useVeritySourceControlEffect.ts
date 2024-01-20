@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
-import { MESSAGE } from '@src/constants/resources';
 import { SourceControlRequestDTO } from '@src/clients/sourceControl/dto/request';
+import { MESSAGE } from '@src/constants/resources';
 import { DURATION } from '@src/constants/commons';
+import { useState } from 'react';
 
 export interface useVerifySourceControlStateInterface {
   verifyGithub: (params: SourceControlRequestDTO) => Promise<

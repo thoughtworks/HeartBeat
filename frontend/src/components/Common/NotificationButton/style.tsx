@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
 import { Alert, AlertTitle } from '@mui/material';
 import { Z_INDEX } from '@src/constants/commons';
+import styled from '@emotion/styled';
 import { theme } from '@src/theme';
 
 export const AlertWrapper = styled(Alert)(
@@ -22,7 +22,7 @@ export const AlertWrapper = styled(Alert)(
     '& .MuiAlert-icon': {
       color: props.iconcolor,
     },
-  })
+  }),
 );
 
 export const AlertTitleWrapper = styled(AlertTitle)({

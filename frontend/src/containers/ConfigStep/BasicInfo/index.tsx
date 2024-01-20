@@ -1,10 +1,3 @@
-import { Radio, RadioGroup } from '@mui/material';
-import { useState } from 'react';
-import { CALENDAR } from '@src/constants/resources';
-import { DEFAULT_HELPER_TEXT } from '@src/constants/commons';
-import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker';
-import { CollectionDateLabel, ProjectNameInput, StyledFormControlLabel } from './style';
-import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import {
   selectCalendarType,
   selectProjectName,
@@ -14,10 +7,17 @@ import {
   updateProjectName,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
-import { WarningNotification } from '@src/components/Common/WarningNotification';
-import { ConfigSectionContainer } from '@src/components/Common/ConfigForms';
-import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
+import { CollectionDateLabel, ProjectNameInput, StyledFormControlLabel } from './style';
 import { RequiredMetrics } from '@src/containers/ConfigStep/BasicInfo/RequiredMetrics';
+import { WarningNotification } from '@src/components/Common/WarningNotification';
+import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker';
+import { ConfigSectionContainer } from '@src/components/Common/ConfigForms';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
+import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
+import { DEFAULT_HELPER_TEXT } from '@src/constants/commons';
+import { CALENDAR } from '@src/constants/resources';
+import { Radio, RadioGroup } from '@mui/material';
+import { useState } from 'react';
 
 const BasicInfo = () => {
   const dispatch = useAppDispatch();

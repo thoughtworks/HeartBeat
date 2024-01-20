@@ -13,11 +13,11 @@ import {
 } from '../../fixtures';
 import { act, fireEvent, render, waitFor, within, screen } from '@testing-library/react';
 import { MetricsTypeCheckbox } from '@src/containers/ConfigStep/MetricsTypeCheckbox';
-import { Provider } from 'react-redux';
-import { setupStore } from '../../utils/setupStoreUtil';
-import userEvent from '@testing-library/user-event';
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons';
 import BasicInfo from '@src/containers/ConfigStep/BasicInfo';
+import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
 
 let store = null;
 
@@ -28,7 +28,7 @@ describe('MetricsTypeCheckbox', () => {
       <Provider store={store}>
         <BasicInfo />
         <MetricsTypeCheckbox />
-      </Provider>
+      </Provider>,
     );
   };
   afterEach(() => {

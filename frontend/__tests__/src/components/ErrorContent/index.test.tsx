@@ -1,21 +1,21 @@
-import { render } from '@testing-library/react';
-import ErrorPage from '@src/pages/ErrorPage';
 import { BASE_PAGE_ROUTE, ERROR_PAGE_MESSAGE, RETRY_BUTTON } from '../../fixtures';
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { headerClient } from '@src/clients/header/HeaderClient';
+import { ErrorContent } from '@src/components/ErrorContent';
+import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import { navigateMock } from '../../../setupTests';
-import { ErrorContent } from '@src/components/ErrorContent';
-import { headerClient } from '@src/clients/header/HeaderClient';
-import { setupStore } from '../../utils/setupStoreUtil';
+import { BrowserRouter } from 'react-router-dom';
+import { render } from '@testing-library/react';
+import ErrorPage from '@src/pages/ErrorPage';
 import { Provider } from 'react-redux';
+import React from 'react';
 
 describe('error content', () => {
   it('should show error message when render error page', () => {
     const { getByText } = render(
       <BrowserRouter>
         <ErrorContent />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(getByText(ERROR_PAGE_MESSAGE)).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe('error content', () => {
         <BrowserRouter>
           <ErrorPage />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
     await userEvent.click(getByText(RETRY_BUTTON));
 

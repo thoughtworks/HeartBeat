@@ -141,7 +141,7 @@ class Config {
     email: string,
     projectKey: string,
     site: string,
-    token: string
+    token: string,
   ) {
     this.boardInfoSelectionJira.click();
     this.boardInfoSelectionClassicJira.click();

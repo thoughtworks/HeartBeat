@@ -1,8 +1,8 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { ALL, MOCK_AUTOCOMPLETE_LIST } from '../../fixtures';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 
 describe('MultiAutoComplete', () => {
   const optionList = ['Option 1', 'Option 2', 'Option 3'];
@@ -22,7 +22,7 @@ describe('MultiAutoComplete', () => {
         textFieldLabel={textFieldLabel}
         isError={isError}
         testId={testId}
-      />
+      />,
     );
 
   it('renders the component', () => {

@@ -1,6 +1,6 @@
-import { styled } from '@mui/material/styles';
 import TableCell from '@mui/material/TableCell';
 import TextField from '@mui/material/TextField';
+import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
 
 export const StyledTableHeaderCell = styled(TableCell)({

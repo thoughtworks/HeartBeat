@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { RootState } from '@src/store';
 import { ZERO } from '@src/constants/commons';
+import type { RootState } from '@src/store';
 
 export interface StepState {
   stepNumber: number;

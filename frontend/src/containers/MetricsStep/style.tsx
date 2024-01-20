@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
 import { Divider } from '@src/components/Common/MetricsSettingTitle/style';
+import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
 
 export const MetricSelectionHeader = styled('div')({

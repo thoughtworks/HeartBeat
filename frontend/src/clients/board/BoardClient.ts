@@ -1,6 +1,6 @@
+import { BoardRequestDTO } from '@src/clients/board/dto/request';
 import { HttpClient } from '@src/clients/HttpClient';
 import { HttpStatusCode } from 'axios';
-import { BoardRequestDTO } from '@src/clients/board/dto/request';
 
 export class BoardClient extends HttpClient {
   isBoardVerify = false;

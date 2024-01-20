@@ -1,19 +1,19 @@
-import React, { useCallback } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
+import { saveCycleTimeSettings, saveDoneColumn, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
+import { StyledTableHeaderCell, StyledTableRowCell } from '@src/containers/MetricsStep/CycleTime/Table/style';
+import CellAutoComplete from '@src/containers/MetricsStep/CycleTime/Table/CellAutoComplete';
+import { DONE, METRICS_CYCLE_SETTING_TABLE_HEADER } from '@src/constants/resources';
+import { selectJiraColumns } from '@src/context/config/configSlice';
+import EllipsisText from '@src/components/Common/EllipsisText';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import TableContainer from '@mui/material/TableContainer';
+import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import { useAppSelector } from '@src/hooks';
-import { useAppDispatch } from '@src/hooks/useAppDispatch';
-import { saveCycleTimeSettings, saveDoneColumn, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
-import { selectJiraColumns } from '@src/context/config/configSlice';
-import { DONE, METRICS_CYCLE_SETTING_TABLE_HEADER } from '@src/constants/resources';
+import React, { useCallback } from 'react';
+import Table from '@mui/material/Table';
 import { theme } from '@src/theme';
-import CellAutoComplete from '@src/containers/MetricsStep/CycleTime/Table/CellAutoComplete';
-import { StyledTableHeaderCell, StyledTableRowCell } from '@src/containers/MetricsStep/CycleTime/Table/style';
-import EllipsisText from '@src/components/Common/EllipsisText';
 
 export const columns = METRICS_CYCLE_SETTING_TABLE_HEADER.map(
   (config) =>
@@ -26,7 +26,7 @@ export const columns = METRICS_CYCLE_SETTING_TABLE_HEADER.map(
       ) : (
         config.text
       );
-    }
+    },
 );
 
 const CycleTimeTable = () => {
@@ -34,7 +34,7 @@ const CycleTimeTable = () => {
   const { cycleTimeSettings } = useAppSelector(selectMetricsContent);
   const jiraColumns = useAppSelector(selectJiraColumns);
   const jiraColumnsWithValue = jiraColumns?.map(
-    (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value
+    (obj: { key: string; value: { name: string; statuses: string[] } }) => obj.value,
   );
   const rows = cycleTimeSettings.map((setting) => ({
     ...setting,
@@ -53,7 +53,7 @@ const CycleTimeTable = () => {
         dispatch(saveDoneColumn([]));
       }
     },
-    [cycleTimeSettings, dispatch]
+    [cycleTimeSettings, dispatch],
   );
   const saveCycleTimeOptions = useCallback(
     (name: string, value: string) => {
@@ -63,13 +63,13 @@ const CycleTimeTable = () => {
               ...item,
               value,
             }
-          : item
+          : item,
       );
 
       resetRealDoneColumn(name, value);
       dispatch(saveCycleTimeSettings(newCycleTimeSettings));
     },
-    [cycleTimeSettings, dispatch, resetRealDoneColumn]
+    [cycleTimeSettings, dispatch, resetRealDoneColumn],
   );
 
   return (

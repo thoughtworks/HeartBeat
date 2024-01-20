@@ -1,8 +1,8 @@
-import React from 'react';
+import { selectTreatFlagCardAsBlock, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { FlagCardItem, ItemCheckbox, ItemText } from '@src/containers/MetricsStep/CycleTime/style';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
-import { selectTreatFlagCardAsBlock, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { useAppSelector } from '@src/hooks';
+import React from 'react';
 
 const FlagCard = () => {
   const dispatch = useAppDispatch();

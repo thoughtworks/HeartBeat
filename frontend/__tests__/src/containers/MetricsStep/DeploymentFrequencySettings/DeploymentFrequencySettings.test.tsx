@@ -1,15 +1,15 @@
-import { render, within, act, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { store } from '@src/store';
-import userEvent from '@testing-library/user-event';
-import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice';
-import { IUseVerifyPipeLineToolStateInterface } from '@src/hooks/useGetPipelineToolInfoEffect';
 import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, ORGANIZATION, REMOVE_BUTTON } from '../../../fixtures';
+import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
+import { IUseVerifyPipeLineToolStateInterface } from '@src/hooks/useGetPipelineToolInfoEffect';
+import { render, within, act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { store } from '@src/store';
 
 jest.mock('@src/hooks', () => ({
   ...jest.requireActual('@src/hooks'),
@@ -81,7 +81,7 @@ describe('DeploymentFrequencySettings', () => {
     render(
       <Provider store={store}>
         <DeploymentFrequencySettings />
-      </Provider>
+      </Provider>,
     );
   afterEach(() => {
     jest.clearAllMocks();

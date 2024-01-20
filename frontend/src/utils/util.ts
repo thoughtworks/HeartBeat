@@ -1,8 +1,8 @@
-import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji';
 import { ICycleTimeSetting, IJiraColumnsWithValue } from '@src/context/Metrics/metricsSlice';
-import dayjs from 'dayjs';
+import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
 import duration from 'dayjs/plugin/duration';
+import dayjs from 'dayjs';
 dayjs.extend(duration);
 
 export const exportToJsonFile = (filename: string, json: object) => {
@@ -44,7 +44,7 @@ export const getJiraBoardToken = (token: string, email: string) => {
 
 export const filterAndMapCycleTimeSettings = (
   cycleTimeSettings: ICycleTimeSetting[],
-  jiraColumnsWithValue: IJiraColumnsWithValue[]
+  jiraColumnsWithValue: IJiraColumnsWithValue[],
 ) => {
   return cycleTimeSettings
     .filter((item) => item.value !== '----')

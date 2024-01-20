@@ -1,6 +1,6 @@
-import { HttpClient } from '@src/clients/HttpClient';
-import { ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
+import { ReportRequestDTO } from '@src/clients/report/dto/request';
+import { HttpClient } from '@src/clients/HttpClient';
 
 export class ReportClient extends HttpClient {
   status = 0;

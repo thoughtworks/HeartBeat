@@ -1,5 +1,3 @@
-import { render, renderHook, screen, waitFor } from '@testing-library/react';
-import ReportStep from '@src/containers/ReportStep';
 import {
   BACK,
   BOARD_METRICS_TITLE,
@@ -18,23 +16,25 @@ import {
   SAVE,
   SHOW_MORE,
 } from '../../fixtures';
-import { setupStore } from '../../utils/setupStoreUtil';
-import { Provider } from 'react-redux';
-import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import {
   updateDateRange,
   updateJiraVerifyResponse,
   updateMetrics,
   updatePipelineToolVerifyResponse,
 } from '@src/context/config/configSlice';
-import userEvent from '@testing-library/user-event';
-import { backStep } from '@src/context/stepper/StepperSlice';
-import { navigateMock } from '../../../setupTests';
-import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
+import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
-import React from 'react';
+import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
+import { backStep } from '@src/context/stepper/StepperSlice';
+import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import ReportStep from '@src/containers/ReportStep';
 import { MESSAGE } from '@src/constants/resources';
+import { navigateMock } from '../../../setupTests';
+import { Provider } from 'react-redux';
+import React from 'react';
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({
   ...jest.requireActual('@src/context/stepper/StepperSlice'),
@@ -99,14 +99,14 @@ describe('Report Step', () => {
         jiraColumns: MOCK_JIRA_VERIFY_RESPONSE.jiraColumns,
         targetFields: MOCK_JIRA_VERIFY_RESPONSE.targetFields,
         users: MOCK_JIRA_VERIFY_RESPONSE.users,
-      })
+      }),
     );
     store.dispatch(updateMetrics(params));
     store.dispatch(
-      updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock organization' })
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock organization' }),
     );
     store.dispatch(
-      updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock pipeline name' })
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock pipeline name' }),
     );
     store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock step1' }));
     store.dispatch(
@@ -121,12 +121,12 @@ describe('Report Step', () => {
             repository: 'mock url',
           },
         ],
-      })
+      }),
     );
     return render(
       <Provider store={store}>
         <ReportStep notification={notificationHook.current} handleSave={handleSaveMock} />
-      </Provider>
+      </Provider>,
     );
   };
   afterEach(() => {
@@ -283,7 +283,7 @@ describe('Report Step', () => {
           expect(screen.queryByText(SHOW_MORE)).not.toBeInTheDocument();
         });
         expect(screen.getByText(BACK)).toBeInTheDocument();
-      }
+      },
     );
 
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
@@ -303,7 +303,7 @@ describe('Report Step', () => {
           expect(screen.queryByText(BACK)).not.toBeInTheDocument();
         });
         expect(screen.getByText(SHOW_MORE)).toBeInTheDocument();
-      }
+      },
     );
 
     it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
@@ -325,7 +325,7 @@ describe('Report Step', () => {
         await waitFor(() => {
           expect(screen.getByText(SHOW_MORE)).toBeInTheDocument();
         });
-      }
+      },
     );
   });
 
@@ -346,7 +346,7 @@ describe('Report Step', () => {
         const exportPipelineButton = screen.getByText(EXPORT_PIPELINE_DATA);
 
         expect(exportPipelineButton).toBeInTheDocument();
-      }
+      },
     );
 
     it('should call fetchExportData when clicking "Export pipeline data"', async () => {
@@ -383,7 +383,7 @@ describe('Report Step', () => {
         const exportPipelineButton = screen.getByText(EXPORT_BOARD_DATA);
 
         expect(exportPipelineButton).toBeInTheDocument();
-      }
+      },
     );
 
     it('should call fetchExportData when clicking "Export board data"', async () => {

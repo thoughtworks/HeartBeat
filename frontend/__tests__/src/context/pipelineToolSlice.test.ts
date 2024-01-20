@@ -9,9 +9,9 @@ import {
   updatePipelineToolVerifyResponseSteps,
   updatePipelineToolVerifyState,
 } from '@src/context/config/configSlice';
+import { MOCK_BUILD_KITE_VERIFY_RESPONSE, PIPELINE_TOOL_TYPES } from '../fixtures';
 import configReducer from '@src/context/config/configSlice';
 import initialConfigState from '../initialConfigState';
-import { MOCK_BUILD_KITE_VERIFY_RESPONSE, PIPELINE_TOOL_TYPES } from '../fixtures';
 import { setupStore } from '../utils/setupStoreUtil';
 
 describe('pipelineTool reducer', () => {
@@ -105,7 +105,7 @@ describe('pipelineTool reducer', () => {
     };
     const pipelineVerifiedResponse = configReducer(
       mockConfigStateHasPipelineList,
-      updatePipelineToolVerifyResponseSteps(mockParams)
+      updatePipelineToolVerifyResponseSteps(mockParams),
     );
 
     expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
@@ -153,7 +153,7 @@ describe('pipelineTool reducer', () => {
     };
     const pipelineVerifiedResponse = configReducer(
       mockConfigStateHasPipelineList,
-      updatePipelineToolVerifyResponseSteps(mockParams)
+      updatePipelineToolVerifyResponseSteps(mockParams),
     );
 
     expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([
@@ -177,7 +177,7 @@ describe('pipelineTool reducer', () => {
     };
     const pipelineVerifiedResponse = configReducer(
       initialConfigState,
-      updatePipelineToolVerifyResponseSteps(mockParams)
+      updatePipelineToolVerifyResponseSteps(mockParams),
     );
 
     expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([]);
@@ -193,7 +193,7 @@ describe('pipelineTool reducer', () => {
     it('should store pipelineTool data when get network pipelineTool verify response', () => {
       const pipelineVerifiedResponse = configReducer(
         initialConfigState,
-        updatePipelineToolVerifyResponse(MOCK_BUILD_KITE_VERIFY_RESPONSE)
+        updatePipelineToolVerifyResponse(MOCK_BUILD_KITE_VERIFY_RESPONSE),
       );
 
       expect(pipelineVerifiedResponse.pipelineTool.verifiedResponse.pipelineList).toEqual([

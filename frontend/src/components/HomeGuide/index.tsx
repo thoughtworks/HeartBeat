@@ -1,14 +1,14 @@
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice';
-import React, { useState } from 'react';
-import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice';
-import { resetStep } from '@src/context/stepper/StepperSlice';
-import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig';
 import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/HomeGuide/style';
+import { WarningNotification } from '@src/components/Common/WarningNotification';
+import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice';
+import { resetStep } from '@src/context/stepper/StepperSlice';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { MESSAGE } from '@src/constants/resources';
+import { useNavigate } from 'react-router-dom';
 import { ROUTE } from '@src/constants/router';
+import React, { useState } from 'react';
 
 export const HomeGuide = () => {
   const navigate = useNavigate();

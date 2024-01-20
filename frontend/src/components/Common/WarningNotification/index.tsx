@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { StyledAlert, WarningBar } from './style';
 import { DURATION } from '@src/constants/commons';
+import { StyledAlert, WarningBar } from './style';
+import { useEffect, useState } from 'react';
 
 export const WarningNotification = (props: { message: string }) => {
   const { message } = props;

@@ -1,7 +1,7 @@
-import { theme } from '@src/theme';
 import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import { DialogContent } from '@mui/material';
+import Button from '@mui/material/Button';
+import { theme } from '@src/theme';
 
 export const ConformationDialog = styled(DialogContent)({
   margin: '1rem 0 0 0',

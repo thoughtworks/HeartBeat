@@ -1,7 +1,7 @@
-import { styled } from '@mui/material/styles';
-import { TableCell, TableRow } from '@mui/material';
 import { MetricSelectionWrapper } from '@src/containers/MetricsStep/style';
 import { tableCellClasses } from '@mui/material/TableCell';
+import { TableCell, TableRow } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
 
 export const Container = styled(MetricSelectionWrapper)({});

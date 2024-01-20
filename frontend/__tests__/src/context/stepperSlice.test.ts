@@ -21,7 +21,7 @@ describe('stepper reducer', () => {
         stepNumber: 0,
         timeStamp: 0,
       },
-      nextStep()
+      nextStep(),
     );
 
     expect(stepper.stepNumber).toEqual(1);
@@ -33,7 +33,7 @@ describe('stepper reducer', () => {
         stepNumber: 0,
         timeStamp: 0,
       },
-      backStep()
+      backStep(),
     );
 
     expect(stepper.stepNumber).toEqual(ZERO);
@@ -45,7 +45,7 @@ describe('stepper reducer', () => {
         stepNumber: 2,
         timeStamp: 0,
       },
-      backStep()
+      backStep(),
     );
 
     expect(stepper.stepNumber).toEqual(1);
@@ -58,7 +58,7 @@ describe('stepper reducer', () => {
         stepNumber: 2,
         timeStamp: 0,
       },
-      updateTimeStamp(mockTime)
+      updateTimeStamp(mockTime),
     );
 
     expect(stepper.timeStamp).toEqual(mockTime);

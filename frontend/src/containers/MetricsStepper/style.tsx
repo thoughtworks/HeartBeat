@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
 import { Button, Step, StepLabel, Stepper } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
 
 export const StyledStepper = styled(Stepper)({

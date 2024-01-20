@@ -1,8 +1,8 @@
-import { BadRequestException } from '@src/exceptions/BadRequestException';
+import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { UnauthorizedException } from '@src/exceptions/UnauthorizedException';
+import { BadRequestException } from '@src/exceptions/BadRequestException';
 import { ForbiddenException } from '@src/exceptions/ForbiddenException';
 import { NotFoundException } from '@src/exceptions/NotFoundException';
-import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
 import { UnknownException } from '@src/exceptions/UnknownException';
 

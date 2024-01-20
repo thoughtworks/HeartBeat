@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom';
 import { configure } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
 export const navigateMock = jest.fn();
 

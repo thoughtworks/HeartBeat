@@ -1,13 +1,13 @@
+import { AXIOS_NETWORK_ERROR_CODES, HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
+import { InternalServerException } from '@src/exceptions/InternalServerException';
+import { UnauthorizedException } from '@src/exceptions/UnauthorizedException';
+import { BadRequestException } from '@src/exceptions/BadRequestException';
+import { ForbiddenException } from '@src/exceptions/ForbiddenException';
+import { NotFoundException } from '@src/exceptions/NotFoundException';
+import { UnknownException } from '@src/exceptions/UnknownException';
+import { TimeoutException } from '@src/exceptions/TimeoutException';
 import axios, { AxiosInstance, HttpStatusCode } from 'axios';
 import { ROUTE } from '@src/constants/router';
-import { AXIOS_NETWORK_ERROR_CODES, HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
-import { BadRequestException } from '@src/exceptions/BadRequestException';
-import { UnauthorizedException } from '@src/exceptions/UnauthorizedException';
-import { InternalServerException } from '@src/exceptions/InternalServerException';
-import { UnknownException } from '@src/exceptions/UnknownException';
-import { NotFoundException } from '@src/exceptions/NotFoundException';
-import { ForbiddenException } from '@src/exceptions/ForbiddenException';
-import { TimeoutException } from '@src/exceptions/TimeoutException';
 
 export class HttpClient {
   protected httpTimeout = 300000;
@@ -46,7 +46,7 @@ export class HttpClient {
         } else {
           throw new UnknownException();
         }
-      }
+      },
     );
   }
 }

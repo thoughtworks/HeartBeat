@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import { resolve } from 'path/posix';
 import { VitePWA } from 'vite-plugin-pwa';
+import { resolve } from 'path/posix';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   server: {

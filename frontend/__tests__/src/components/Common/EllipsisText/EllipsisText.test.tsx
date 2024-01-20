@@ -1,6 +1,6 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import EllipsisText from '@src/components/Common/EllipsisText';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 
 describe('EllipsisText', () => {
   const WIDTH = '500rem';
@@ -12,7 +12,7 @@ describe('EllipsisText', () => {
         <div aria-label='test-ref' ref={ref}>
           test
         </div>
-      </EllipsisText>
+      </EllipsisText>,
     );
 
     const childDOM = screen.getByLabelText('test-ref');
@@ -25,7 +25,7 @@ describe('EllipsisText', () => {
         <EllipsisText aria-label='test-ellipsis-text' fitContent>
           <div>test</div>
         </EllipsisText>
-      </div>
+      </div>,
     );
 
     const targetElement = screen.getByLabelText('test-ellipsis-text');
@@ -38,7 +38,7 @@ describe('EllipsisText', () => {
         <EllipsisText aria-label='test-ellipsis-text' fitContent={false}>
           <div>test</div>
         </EllipsisText>
-      </div>
+      </div>,
     );
 
     const targetElement = screen.getByLabelText('test-ellipsis-text');

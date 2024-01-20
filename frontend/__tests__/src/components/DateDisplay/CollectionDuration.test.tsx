@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import CollectionDuration from '@src/components/Common/CollectionDuration';
-import React from 'react';
 import { IMPORTED_NEW_CONFIG_FIXTURE, TIME_DISPLAY_TITTLE_END, TIME_DISPLAY_TITTLE_START } from '../../fixtures';
+import CollectionDuration from '@src/components/Common/CollectionDuration';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 
 describe('Collection Duration', () => {
   const setup = () =>
@@ -9,7 +9,7 @@ describe('Collection Duration', () => {
       <CollectionDuration
         startDate={IMPORTED_NEW_CONFIG_FIXTURE.dateRange.startDate}
         endDate={IMPORTED_NEW_CONFIG_FIXTURE.dateRange.endDate}
-      />
+      />,
     );
   it('should render the start and end text correctly', () => {
     setup();

@@ -1,12 +1,12 @@
-import { ReportResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
-import { changeFailureRateMapper } from '@src/hooks/reportMapper/changeFailureRate';
-import { velocityMapper } from '@src/hooks/reportMapper/velocity';
-import { cycleTimeMapper } from '@src/hooks/reportMapper/cycleTime';
-import { classificationMapper } from '@src/hooks/reportMapper/classification';
 import { deploymentFrequencyMapper } from '@src/hooks/reportMapper/deploymentFrequency';
 import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges';
 import { meanTimeToRecoveryMapper } from '@src/hooks/reportMapper/meanTimeToRecovery';
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime';
+import { ReportResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
+import { changeFailureRateMapper } from '@src/hooks/reportMapper/changeFailureRate';
+import { classificationMapper } from '@src/hooks/reportMapper/classification';
+import { cycleTimeMapper } from '@src/hooks/reportMapper/cycleTime';
+import { velocityMapper } from '@src/hooks/reportMapper/velocity';
 
 export const reportMapper = ({
   velocity,

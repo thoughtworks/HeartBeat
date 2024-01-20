@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
 import { Checkbox, Tooltip } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 export const FlagCardItem = styled('div')({
   display: 'flex',

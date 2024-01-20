@@ -1,10 +1,10 @@
-import React, { lazy } from 'react';
+import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, BASE_PAGE_ROUTE, METRICS_PAGE_ROUTE } from './fixtures';
 import { render, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Router from '@src/router';
 import { Provider } from 'react-redux';
+import React, { lazy } from 'react';
 import { store } from '@src/store';
-import { ERROR_PAGE_MESSAGE, ERROR_PAGE_ROUTE, BASE_PAGE_ROUTE, METRICS_PAGE_ROUTE } from './fixtures';
+import Router from '@src/router';
 
 jest.mock('@src/pages/Metrics', () => ({
   __esModule: true,
@@ -18,7 +18,7 @@ describe('router', () => {
         <MemoryRouter initialEntries={[routeUrl]}>
           <Router />
         </MemoryRouter>
-      </Provider>
+      </Provider>,
     );
 
   it('should show home page when loading on a bad page', async () => {

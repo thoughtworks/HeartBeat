@@ -1,6 +1,6 @@
+import { BasicButton } from '@src/components/Common/Buttons';
 import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
-import { BasicButton } from '@src/components/Common/Buttons';
 
 export const PipelineMetricSelectionWrapper = styled('div')`
   position: relative;

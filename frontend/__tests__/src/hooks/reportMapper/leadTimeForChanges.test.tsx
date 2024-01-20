@@ -1,5 +1,5 @@
-import { PIPELINE_LEAD_TIME, PR_LEAD_TIME, TOTAL_DELAY_TIME } from '../../fixtures';
 import { leadTimeForChangesMapper } from '@src/hooks/reportMapper/leadTimeForChanges';
+import { PIPELINE_LEAD_TIME, PR_LEAD_TIME, TOTAL_DELAY_TIME } from '../../fixtures';
 
 describe('lead time for changes data mapper', () => {
   const mockLeadTimeForChangesRes = {

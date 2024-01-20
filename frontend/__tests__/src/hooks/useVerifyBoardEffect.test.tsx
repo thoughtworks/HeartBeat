@@ -1,8 +1,8 @@
-import { act, renderHook } from '@testing-library/react';
-import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect';
-import { boardClient } from '@src/clients/board/BoardClient';
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_BOARD_VERIFY_REQUEST_PARAMS, VERIFY_FAILED } from '../fixtures';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
+import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect';
+import { boardClient } from '@src/clients/board/BoardClient';
+import { act, renderHook } from '@testing-library/react';
 import { HttpStatusCode } from 'axios';
 
 describe('use verify board state', () => {
@@ -38,7 +38,7 @@ describe('use verify board state', () => {
     });
 
     expect(result.current.errorMessage).toEqual(
-      `${MOCK_BOARD_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`
+      `${MOCK_BOARD_VERIFY_REQUEST_PARAMS.type} ${VERIFY_FAILED}: error message`,
     );
   });
 });

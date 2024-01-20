@@ -1,7 +1,7 @@
-import { styled } from '@mui/material/styles';
-import { FormControl, TextField } from '@mui/material';
-import { theme } from '@src/theme';
 import { MetricSelectionWrapper } from '@src/containers/MetricsStep/style';
+import { FormControl, TextField } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { theme } from '@src/theme';
 
 export const ConfigSectionContainer = styled(MetricSelectionWrapper)({});
 

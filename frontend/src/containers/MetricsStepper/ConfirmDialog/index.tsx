@@ -1,11 +1,11 @@
-import React from 'react';
-import { Dialog } from '@mui/material';
 import {
   CancelButton,
   ConformationDialog,
   DialogButtonGroup,
   YesButton,
 } from '@src/containers/MetricsStepper/ConfirmDialog/style';
+import { Dialog } from '@mui/material';
+import React from 'react';
 
 export const ConfirmDialog = (props: { onConfirm: () => void; onClose: () => void; isDialogShowing: boolean }) => {
   const { onConfirm, onClose, isDialogShowing } = props;

@@ -1,9 +1,9 @@
-import homePage from '../pages/home';
-import configPage from '../pages/metrics/config';
-import metricsPage from '../pages/metrics/metrics';
-import reportPage from '../pages/metrics/report';
 import { GITHUB_TOKEN } from '../fixtures/fixtures';
+import metricsPage from '../pages/metrics/metrics';
 import { Metrics } from '../pages/metrics/metrics';
+import configPage from '../pages/metrics/config';
+import reportPage from '../pages/metrics/report';
+import homePage from '../pages/home';
 
 const metricsTextList = [
   'Board configuration',

@@ -1,13 +1,13 @@
-import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
-import FlagCard from '@src/containers/MetricsStep/CycleTime/FlagCard';
-import { selectCycleTimeWarningMessage } from '@src/context/Metrics/metricsSlice';
-import { useAppSelector } from '@src/hooks';
-import { WarningNotification } from '@src/components/Common/WarningNotification';
-import { TIPS } from '@src/constants/resources';
 import { StyledTooltip, TitleAndTooltipContainer, TooltipContainer } from '@src/containers/MetricsStep/CycleTime/style';
-import { IconButton } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { selectCycleTimeWarningMessage } from '@src/context/Metrics/metricsSlice';
+import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
+import { WarningNotification } from '@src/components/Common/WarningNotification';
 import CycleTimeTable from '@src/containers/MetricsStep/CycleTime/Table';
+import FlagCard from '@src/containers/MetricsStep/CycleTime/FlagCard';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { TIPS } from '@src/constants/resources';
+import { useAppSelector } from '@src/hooks';
+import { IconButton } from '@mui/material';
 
 export const CycleTime = () => {
   const warningMessage = useAppSelector(selectCycleTimeWarningMessage);

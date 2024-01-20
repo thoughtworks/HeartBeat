@@ -1,5 +1,5 @@
-import { CircularProgress } from '@mui/material';
 import { LoadingDrop, LoadingTypography } from './style';
+import { CircularProgress } from '@mui/material';
 import React from 'react';
 
 export type Placement = 'left' | 'center';

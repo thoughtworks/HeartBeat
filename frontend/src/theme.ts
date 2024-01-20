@@ -1,6 +1,6 @@
+import { FIVE_HUNDRED } from '@src/constants/commons';
 import { createTheme } from '@mui/material/styles';
 import { indigo } from '@mui/material/colors';
-import { FIVE_HUNDRED } from '@src/constants/commons';
 import '@fontsource/roboto';
 
 declare module '@mui/material/styles' {

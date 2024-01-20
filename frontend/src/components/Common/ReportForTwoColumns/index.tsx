@@ -1,4 +1,3 @@
-import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import {
   BorderTableCell,
   ColumnTableCell,
@@ -6,9 +5,10 @@ import {
   Row,
   StyledTableCell,
 } from '@src/components/Common/ReportForTwoColumns/style';
-import React, { Fragment } from 'react';
 import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
 import { ReportSelectionTitle } from '@src/containers/MetricsStep/style';
+import { Table, TableBody, TableHead, TableRow } from '@mui/material';
+import React, { Fragment } from 'react';
 
 interface ReportForTwoColumnsProps {
   title: string;

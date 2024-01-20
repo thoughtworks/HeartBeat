@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react';
-import { PROJECT_NAME } from '../fixtures';
-import Home from '@src/pages/Home';
-import { MemoryRouter } from 'react-router-dom';
 import { setupStore } from '../utils/setupStoreUtil';
+import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { PROJECT_NAME } from '../fixtures';
 import { Provider } from 'react-redux';
+import Home from '@src/pages/Home';
 
 const setup = () => {
   store = setupStore();
@@ -12,7 +12,7 @@ const setup = () => {
       <MemoryRouter>
         <Home />
       </MemoryRouter>
-    </Provider>
+    </Provider>,
   );
 };
 let store = null;

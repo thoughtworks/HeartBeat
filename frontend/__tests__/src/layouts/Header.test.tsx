@@ -1,11 +1,11 @@
+import { headerClient } from '@src/clients/header/HeaderClient';
 import { act, fireEvent, render } from '@testing-library/react';
-import Header from '@src/layouts/Header';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { setupStore } from '../utils/setupStoreUtil';
 import { navigateMock } from '../../setupTests';
 import { PROJECT_NAME } from '../fixtures';
-import { headerClient } from '@src/clients/header/HeaderClient';
+import Header from '@src/layouts/Header';
 import { Provider } from 'react-redux';
-import { setupStore } from '../utils/setupStoreUtil';
 
 describe('Header', () => {
   let store = setupStore();
@@ -24,7 +24,7 @@ describe('Header', () => {
         <BrowserRouter>
           <Header />
         </BrowserRouter>
-      </Provider>
+      </Provider>,
     );
 
   it('should show project name', () => {
@@ -71,7 +71,7 @@ describe('Header', () => {
           <MemoryRouter initialEntries={[{ pathname }]}>
             <Header />
           </MemoryRouter>
-        </Provider>
+        </Provider>,
       );
 
     afterEach(() => {

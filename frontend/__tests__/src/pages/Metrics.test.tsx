@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import Metrics from '@src/pages/Metrics';
 import { Provider } from 'react-redux';
 import { store } from '@src/store';
-import { MemoryRouter } from 'react-router-dom';
 
 describe('Metrics', () => {
   it('should render Metrics page', () => {
@@ -11,7 +11,7 @@ describe('Metrics', () => {
         <MemoryRouter>
           <Metrics />
         </MemoryRouter>
-      </Provider>
+      </Provider>,
     );
     const steps = ['Config', 'Metrics', 'Report'];
 

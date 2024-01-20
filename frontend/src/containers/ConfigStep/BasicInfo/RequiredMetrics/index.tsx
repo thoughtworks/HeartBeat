@@ -1,10 +1,10 @@
 import { Checkbox, FormHelperText, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { RequireDataSelections } from '@src/containers/ConfigStep/BasicInfo/RequiredMetrics/style';
+import { selectConfig, updateMetrics } from '@src/context/config/configSlice';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons';
 import { REQUIRED_DATA } from '@src/constants/resources';
 import { useEffect, useState } from 'react';
-import { RequireDataSelections } from '@src/containers/ConfigStep/BasicInfo/RequiredMetrics/style';
-import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
-import { selectConfig, updateMetrics } from '@src/context/config/configSlice';
 
 export const RequiredMetrics = () => {
   const dispatch = useAppDispatch();

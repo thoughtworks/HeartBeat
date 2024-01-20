@@ -1,7 +1,7 @@
-import { theme } from '@src/theme';
 import Button, { ButtonProps } from '@mui/material/Button';
-import styled from '@emotion/styled';
 import Stack from '@mui/material/Stack';
+import styled from '@emotion/styled';
+import { theme } from '@src/theme';
 
 export const basicStyle = {
   backgroundColor: theme.main.backgroundColor,

@@ -1,10 +1,10 @@
-import React from 'react';
 import { act, render, waitFor, within, screen } from '@testing-library/react';
 import { Classification } from '@src/containers/MetricsStep/Classification';
-import userEvent from '@testing-library/user-event';
-import { setupStore } from '../../utils/setupStoreUtil';
-import { Provider } from 'react-redux';
 import { ERROR_MESSAGE_TIME_DURATION } from '../../fixtures';
+import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import React from 'react';
 
 const mockTitle = 'Classification Setting';
 const mockLabel = 'Distinguished by';
@@ -28,7 +28,7 @@ const setup = () => {
   return render(
     <Provider store={store}>
       <Classification title={mockTitle} label={mockLabel} targetFields={mockTargetFields} />
-    </Provider>
+    </Provider>,
   );
 };
 

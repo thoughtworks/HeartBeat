@@ -1,10 +1,10 @@
+import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice';
 import { act, render, waitFor, within } from '@testing-library/react';
 import { RealDone } from '@src/containers/MetricsStep/RealDone';
-import userEvent from '@testing-library/user-event';
-import { setupStore } from '../../utils/setupStoreUtil';
-import { Provider } from 'react-redux';
-import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice';
 import { ERROR_MESSAGE_TIME_DURATION } from '../../fixtures';
+import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -30,7 +30,7 @@ describe('RealDone', () => {
       render(
         <Provider store={store}>
           <RealDone columns={mockColumnsList} label={mockLabel} title={mockTitle} />
-        </Provider>
+        </Provider>,
       );
 
     beforeEach(() => {
@@ -160,7 +160,7 @@ describe('RealDone', () => {
       const { queryByText } = render(
         <Provider store={store}>
           <RealDone columns={mockColumnsList} label={mockLabel} title={mockTitle} />
-        </Provider>
+        </Provider>,
       );
 
       expect(queryByText(mockTitle)).not.toBeInTheDocument();

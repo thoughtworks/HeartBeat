@@ -1,6 +1,6 @@
-import path from 'path';
-import process from 'process';
 import fetch from 'node-fetch';
+import process from 'process';
+import path from 'path';
 
 const LOCALHOST = 'http://127.0.0.1';
 const WAIT_TIMEOUT = 30000;
@@ -32,7 +32,7 @@ const main = async (args: string[]) => {
             resolve(false);
           }
         })
-        .catch(() => resolve(false))
+        .catch(() => resolve(false)),
     );
 
   const checkEndpoints = async () => {

@@ -1,14 +1,14 @@
 import { render, RenderResult, waitFor } from '@testing-library/react';
-import App from '@src/App';
 import { Provider } from 'react-redux';
 import { store } from '@src/store';
+import App from '@src/App';
 jest.useFakeTimers();
 describe('render app', () => {
   const setup = (): RenderResult =>
     render(
       <Provider store={store}>
         <App />
-      </Provider>
+      </Provider>,
     );
   it('should show hello World when render app', async () => {
     const { container } = setup();

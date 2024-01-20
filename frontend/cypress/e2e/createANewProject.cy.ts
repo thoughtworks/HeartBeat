@@ -1,9 +1,9 @@
 import { GITHUB_TOKEN, METRICS_TITLE } from '../fixtures/fixtures';
-import homePage from '../pages/home';
-import configPage from '../pages/metrics/config';
-import metricsPage from '../pages/metrics/metrics';
-import reportPage from '../pages/metrics/report';
 import { TIPS } from '../../src/constants/resources';
+import metricsPage from '../pages/metrics/metrics';
+import configPage from '../pages/metrics/config';
+import reportPage from '../pages/metrics/report';
+import homePage from '../pages/home';
 
 const cycleTimeData = [
   { label: 'Average Cycle Time(Days/SP)', value: '7.64' },

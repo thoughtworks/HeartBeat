@@ -1,7 +1,3 @@
-import React, { useCallback } from 'react';
-import { Box } from '@mui/material';
-import errorSvg from '@src/assets/PipelineInfoError.svg';
-import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import {
   StyledContainer,
   StyledImageContainer,
@@ -12,7 +8,11 @@ import {
   StyledRetryButton,
 } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases/style';
 import { PIPELINE_TOOL_RETRY_MESSAGE, PIPELINE_TOOL_RETRY_TRIGGER_MESSAGE } from '@src/constants/resources';
+import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
+import errorSvg from '@src/assets/PipelineInfoError.svg';
+import React, { useCallback } from 'react';
+import { Box } from '@mui/material';
 
 export interface IPresentationForErrorCasesProps extends IGetPipelineToolInfoResult {
   retry: () => void;

@@ -1,7 +1,3 @@
-import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { DEFAULT_HELPER_TEXT, EMPTY_STRING, ZERO } from '@src/constants/commons';
-import { CONFIG_TITLE, PIPELINE_TOOL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
-import { FormEvent, useEffect, useState } from 'react';
 import {
   ConfigSectionContainer,
   StyledButtonGroup,
@@ -9,18 +5,22 @@ import {
   StyledTextField,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms';
-import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import {
   isPipelineToolVerified,
   selectPipelineTool,
   updatePipelineTool,
   updatePipelineToolVerifyState,
 } from '@src/context/config/configSlice';
+import { CONFIG_TITLE, PIPELINE_TOOL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
-import { Loading } from '@src/components/Loading';
+import { DEFAULT_HELPER_TEXT, EMPTY_STRING, ZERO } from '@src/constants/commons';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
 import { findCaseInsensitiveType } from '@src/utils/util';
+import { FormEvent, useEffect, useState } from 'react';
+import { Loading } from '@src/components/Loading';
 import { REGEX } from '@src/constants/regex';
 
 export const PipelineTool = () => {
@@ -91,7 +91,7 @@ export const PipelineTool = () => {
       updatePipelineTool({
         type: fields[0].value,
         token: fields[1].value,
-      })
+      }),
     );
   };
 
@@ -115,7 +115,7 @@ export const PipelineTool = () => {
       updatePipelineTool({
         type: fields[0].value,
         token: fields[1].value,
-      })
+      }),
     );
   };
 

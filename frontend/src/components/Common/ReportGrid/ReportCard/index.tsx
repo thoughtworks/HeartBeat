@@ -6,11 +6,11 @@ import {
   StyledReportCard,
   StyledReportCardTitle,
 } from '@src/components/Common/ReportGrid/ReportCard/style';
-import React, { HTMLAttributes } from 'react';
 import { ReportCardItem, ReportCardItemProps } from '@src/components/Common/ReportGrid/ReportCardItem';
 import { GRID_CONFIG } from '@src/constants/commons';
 import { Loading } from '@src/components/Loading';
 import EmptyBox from '@src/assets/EmptyBox.svg';
+import React, { HTMLAttributes } from 'react';
 
 interface ReportCardProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -70,7 +70,7 @@ export const ReportCard = ({ title, items, xs, errorMessage }: ReportCardProps) 
             />
           ) : (
             <></>
-          )
+          ),
         )}
       </StyledItemSection>
     );

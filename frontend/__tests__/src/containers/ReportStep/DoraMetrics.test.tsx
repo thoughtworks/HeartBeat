@@ -1,13 +1,13 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import clearAllMocks = jest.clearAllMocks;
-import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import { MOCK_REPORT_RESPONSE, REQUIRED_DATA_LIST } from '../../../src/fixtures';
-import { setupStore } from '../../../src/utils/setupStoreUtil';
-import { Provider } from 'react-redux';
-import { RETRY } from '@src/constants/resources';
-import userEvent from '@testing-library/user-event';
+import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import { updateMetrics } from '@src/context/config/configSlice';
+import { setupStore } from '../../../src/utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import { RETRY } from '@src/constants/resources';
+import { Provider } from 'react-redux';
 
 describe('Report Card', () => {
   afterEach(() => {
@@ -49,7 +49,7 @@ describe('Report Card', () => {
           csvTimeStamp={1705014731}
           timeoutError={''}
         />
-      </Provider>
+      </Provider>,
     );
   };
 

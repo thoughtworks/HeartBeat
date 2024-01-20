@@ -1,9 +1,3 @@
-import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { REGEX } from '@src/constants/regex';
-import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
-import { BOARD_TYPES, CONFIG_TITLE, EMAIL, BOARD_TOKEN } from '@src/constants/resources';
-import { FormEvent, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import {
   selectBoard,
   selectDateRange,
@@ -13,11 +7,6 @@ import {
   updateBoardVerifyState,
   updateJiraVerifyResponse,
 } from '@src/context/config/configSlice';
-import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect';
-import { ErrorNotification } from '@src/components/ErrorNotification';
-import { NoCardPop } from '@src/containers/ConfigStep/NoDoneCardPop';
-import { Loading } from '@src/components/Loading';
-import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
 import {
   ConfigSectionContainer,
   StyledButtonGroup,
@@ -25,10 +14,21 @@ import {
   StyledTextField,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms';
-import dayjs from 'dayjs';
 import { updateMetricsState, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
+import { BOARD_TYPES, CONFIG_TITLE, EMAIL, BOARD_TOKEN } from '@src/constants/resources';
+import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
+import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
+import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
+import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect';
+import { ErrorNotification } from '@src/components/ErrorNotification';
+import { NoCardPop } from '@src/containers/ConfigStep/NoDoneCardPop';
 import { findCaseInsensitiveType } from '@src/utils/util';
+import { FormEvent, useEffect, useState } from 'react';
+import { Loading } from '@src/components/Loading';
+import { REGEX } from '@src/constants/regex';
+import dayjs from 'dayjs';
 
 export const Board = () => {
   const dispatch = useAppDispatch();
@@ -78,7 +78,7 @@ export const Board = () => {
     },
   ]);
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(
-    !fields.every((field) => field.value && field.isValid)
+    !fields.every((field) => field.value && field.isValid),
   );
 
   const initBoardFields = () => {
@@ -93,7 +93,7 @@ export const Board = () => {
   const updateFields = (
     fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[],
     index: number,
-    value: string
+    value: string,
   ) => {
     return fields.map((field, fieldIndex) => {
       if (fieldIndex !== index) {
@@ -105,8 +105,8 @@ export const Board = () => {
         field.key === EMAIL
           ? REGEX.EMAIL.test(newValue)
           : field.key === BOARD_TOKEN
-          ? REGEX.BOARD_TOKEN.test(newValue)
-          : true;
+            ? REGEX.BOARD_TOKEN.test(newValue)
+            : true;
       return {
         ...field,
         value: newValue,
@@ -150,7 +150,7 @@ export const Board = () => {
         projectKey: fields[3].value,
         site: fields[4].value,
         token: fields[5].value,
-      })
+      }),
     );
   };
 
@@ -239,7 +239,7 @@ export const Board = () => {
               type={field.key === 'Token' ? 'password' : 'text'}
               helperText={updateFieldHelpText(field)}
             />
-          )
+          ),
         )}
         <StyledButtonGroup>
           {isVerified && !isLoading ? (

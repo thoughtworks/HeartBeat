@@ -1,9 +1,9 @@
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { Notification } from '@src/components/Common/NotificationButton';
-import React from 'react';
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
-import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
+import React from 'react';
 
 describe('Notification', () => {
   const closeNotificationProps = {
@@ -80,6 +80,6 @@ describe('Notification', () => {
       expect(iconElement).toBeInTheDocument();
       expect(iconElement).toHaveStyle({ color: iconColor });
       expect(screen.getByTestId(icon)).toBeInTheDocument();
-    }
+    },
   );
 });

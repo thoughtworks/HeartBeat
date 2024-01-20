@@ -1,5 +1,5 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { DURATION } from '@src/constants/commons';
 import clearAllMocks = jest.clearAllMocks;
 

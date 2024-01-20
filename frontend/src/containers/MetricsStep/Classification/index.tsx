@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { saveTargetFields, selectClassificationWarningMessage } from '@src/context/Metrics/metricsSlice';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
-import { useAppSelector } from '@src/hooks';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { useAppSelector } from '@src/hooks';
+import React, { useState } from 'react';
 
 interface classificationProps {
   title: string;

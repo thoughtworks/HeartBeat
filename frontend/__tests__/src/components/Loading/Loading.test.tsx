@@ -1,7 +1,7 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Loading } from '@src/components/Loading';
 import { LOADING } from '../../fixtures';
+import React from 'react';
 
 describe('Loading', () => {
   it('should show Loading', () => {

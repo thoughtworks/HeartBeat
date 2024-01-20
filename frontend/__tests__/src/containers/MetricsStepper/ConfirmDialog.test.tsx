@@ -1,6 +1,6 @@
-import { render } from '@testing-library/react';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
 import { CONFIRM_DIALOG_DESCRIPTION } from '../../fixtures';
+import { render } from '@testing-library/react';
 
 const onClose = jest.fn();
 const onConfirm = jest.fn();

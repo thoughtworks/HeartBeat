@@ -1,6 +1,3 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '@src/hooks';
-import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import {
   updatePipelineToolVerifyResponse,
   isPipelineToolVerified,
@@ -8,7 +5,10 @@ import {
   selectPipelineTool,
   selectDateRange,
 } from '@src/context/config/configSlice';
+import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '@src/hooks';
 
 export interface IUseVerifyPipeLineToolStateInterface {
   result: IGetPipelineToolInfoResult;

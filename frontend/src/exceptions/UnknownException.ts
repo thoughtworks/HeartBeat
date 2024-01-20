@@ -1,5 +1,5 @@
-import { MESSAGE } from '@src/constants/resources';
 import { IHeartBeatException } from '@src/exceptions/ExceptionType';
+import { MESSAGE } from '@src/constants/resources';
 
 export class UnknownException extends Error implements IHeartBeatException {
   constructor() {

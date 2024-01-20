@@ -1,7 +1,3 @@
-import { HomeGuide } from '@src/components/HomeGuide';
-import { fireEvent, render, waitFor, screen } from '@testing-library/react';
-import { setupStore } from '../../utils/setupStoreUtil';
-import { Provider } from 'react-redux';
 import {
   CREATE_NEW_PROJECT,
   HOME_VERIFY_IMPORT_WARNING_MESSAGE,
@@ -9,8 +5,12 @@ import {
   METRICS_PAGE_ROUTE,
   IMPORTED_NEW_CONFIG_FIXTURE,
 } from '../../fixtures';
+import { fireEvent, render, waitFor, screen } from '@testing-library/react';
+import { setupStore } from '../../utils/setupStoreUtil';
+import { HomeGuide } from '@src/components/HomeGuide';
 import userEvent from '@testing-library/user-event';
 import { navigateMock } from '../../../setupTests';
+import { Provider } from 'react-redux';
 
 const mockedUseAppDispatch = jest.fn();
 
@@ -26,7 +26,7 @@ const setup = () => {
   return render(
     <Provider store={store}>
       <HomeGuide />
-    </Provider>
+    </Provider>,
   );
 };
 

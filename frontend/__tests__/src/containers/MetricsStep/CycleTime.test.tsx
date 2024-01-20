@@ -1,11 +1,11 @@
-import React from 'react';
-import { act, render, waitFor, within, screen } from '@testing-library/react';
-import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
-import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import { setupStore } from '../../utils/setupStoreUtil';
 import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION, LIST_OPEN, NO_RESULT_DASH } from '../../fixtures';
 import { saveDoneColumn, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
+import { act, render, waitFor, within, screen } from '@testing-library/react';
+import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
+import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import React from 'react';
 
 const FlagAsBlock = 'Consider the "Flag" as "Block"';
 
@@ -49,7 +49,7 @@ const setup = () =>
   render(
     <Provider store={store}>
       <CycleTime />
-    </Provider>
+    </Provider>,
   );
 
 describe('CycleTime', () => {

@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
-import { theme } from '@src/theme';
 import { Typography } from '@mui/material';
+import { theme } from '@src/theme';
 
 export const StyledMetricsTitleSection = styled('div')({
   display: 'flex',

@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
 import { DialogActions, DialogTitle } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 export const StyleDialogTitle = styled(DialogTitle)({
   display: 'flex',

@@ -18,8 +18,8 @@ import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { findCaseInsensitiveType } from '@src/utils/util';
-import { FormEvent, useEffect, useState } from 'react';
 import { Loading } from '@src/components/Loading';
 import { REGEX } from '@src/constants/regex';
 
@@ -29,20 +29,23 @@ export const PipelineTool = () => {
   const isVerified = useAppSelector(isPipelineToolVerified);
   const { verifyPipelineTool, isLoading, errorMessage, clearErrorMessage } = useVerifyPipelineToolEffect();
   const type = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), pipelineToolFields.type);
-  const [fields, setFields] = useState([
-    {
-      key: 'PipelineTool',
-      value: type,
-      isValid: true,
-      isRequired: true,
-    },
-    {
-      key: 'Token',
-      value: pipelineToolFields.token,
-      isValid: true,
-      isRequired: true,
-    },
-  ]);
+  const FIELDS_LIST = useMemo(() => {
+    return [
+      {
+        key: 'PipelineTool',
+        value: type,
+        isValid: true,
+        isRequired: true,
+      },
+      {
+        key: 'Token',
+        value: pipelineToolFields.token,
+        isValid: true,
+        isRequired: true,
+      },
+    ];
+  }, [type, pipelineToolFields]);
+  const [fields, setFields] = useState(FIELDS_LIST);
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(!(fields[1].isValid && fields[1].value));
 
   const initPipeLineFields = () => {
@@ -65,10 +68,10 @@ export const PipelineTool = () => {
 
   useEffect(() => {
     if (errorMessage) {
-      const newFields = fields.map((field, index) => (index ? { ...field, isValid: false } : { ...field }));
+      const newFields = FIELDS_LIST.map((field, index) => (index ? { ...field, isValid: false } : { ...field }));
       setFields(newFields);
     }
-  }, [errorMessage]);
+  }, [errorMessage, FIELDS_LIST]);
 
   const onFormUpdate = (index: number, value: string) => {
     clearErrorMessage();

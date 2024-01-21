@@ -55,13 +55,13 @@ export const Z_INDEX = {
   FIXED: 1070,
 };
 
-export enum DOWNLOAD_TYPES {
+export enum REPORT_TYPES {
   METRICS = 'metric',
   BOARD = 'board',
   PIPELINE = 'pipeline',
 }
 
-export enum RETRIEVE_REPORT_TYPES {
+export enum METRIC_TYPES {
   BOARD = 'board',
   DORA = 'dora',
 }

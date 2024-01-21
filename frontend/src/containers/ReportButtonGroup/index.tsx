@@ -1,8 +1,8 @@
 import { StyledButtonGroup, StyledExportButton, StyledRightButtonGroup } from '@src/containers/ReportButtonGroup/style';
 import { BackButton, SaveButton } from '@src/containers/MetricsStepper/style';
 import { ExpiredDialog } from '@src/containers/ReportStep/ExpiredDialog';
-import { COMMON_BUTTONS, DOWNLOAD_TYPES } from '@src/constants/commons';
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
+import { COMMON_BUTTONS, REPORT_TYPES } from '@src/constants/commons';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -43,14 +43,14 @@ export const ReportButtonGroup = ({
     setErrorMessage(errorMessage);
   }, [errorMessage]);
 
-  const exportCSV = (dataType: DOWNLOAD_TYPES, startDate: string, endDate: string): CSVReportRequestDTO => ({
+  const exportCSV = (dataType: REPORT_TYPES, startDate: string, endDate: string): CSVReportRequestDTO => ({
     dataType: dataType,
     csvTimeStamp: csvTimeStamp,
     startDate: startDate,
     endDate: endDate,
   });
 
-  const handleDownload = (dataType: DOWNLOAD_TYPES, startDate: string, endDate: string) => {
+  const handleDownload = (dataType: REPORT_TYPES, startDate: string, endDate: string) => {
     fetchExportData(exportCSV(dataType, startDate, endDate));
   };
 
@@ -83,7 +83,7 @@ export const ReportButtonGroup = ({
           {isShowExportMetrics && (
             <StyledExportButton
               disabled={!(reportData?.allMetricsCompleted && !isReportHasError)}
-              onClick={() => handleDownload(DOWNLOAD_TYPES.METRICS, startDate, endDate)}
+              onClick={() => handleDownload(REPORT_TYPES.METRICS, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}
             </StyledExportButton>
@@ -91,7 +91,7 @@ export const ReportButtonGroup = ({
           {isShowExportBoardButton && (
             <StyledExportButton
               disabled={!(reportData?.boardMetricsCompleted && !reportData?.reportMetricsError?.boardMetricsError)}
-              onClick={() => handleDownload(DOWNLOAD_TYPES.BOARD, startDate, endDate)}
+              onClick={() => handleDownload(REPORT_TYPES.BOARD, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
             </StyledExportButton>
@@ -99,7 +99,7 @@ export const ReportButtonGroup = ({
           {isShowExportPipelineButton && (
             <StyledExportButton
               disabled={!!pipelineButtonDisabled}
-              onClick={() => handleDownload(DOWNLOAD_TYPES.PIPELINE, startDate, endDate)}
+              onClick={() => handleDownload(REPORT_TYPES.PIPELINE, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
             </StyledExportButton>

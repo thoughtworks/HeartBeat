@@ -4,8 +4,8 @@ import { InternalServerException } from '@src/exceptions/InternalServerException
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
 import { reportClient } from '@src/clients/report/ReportClient';
-import { RETRIEVE_REPORT_TYPES } from '@src/constants/commons';
 import { TIMEOUT_PROMPT } from '@src/constants/resources';
+import { METRIC_TYPES } from '@src/constants/commons';
 import { useRef, useState } from 'react';
 
 export interface useGenerateReportEffectInterface {
@@ -30,7 +30,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const startToRequestBoardData = (boardParams: ReportRequestDTO) => {
     setTimeout4Board('');
     reportClient
-      .retrieveByUrl(boardParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.BOARD}`)
+      .retrieveByUrl(boardParams, `${reportPath}/${METRIC_TYPES.BOARD}`)
       .then((res) => {
         if (hasPollingStarted) return;
         hasPollingStarted = true;
@@ -60,7 +60,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const startToRequestDoraData = (doraParams: ReportRequestDTO) => {
     setTimeout4Dora('');
     reportClient
-      .retrieveByUrl(doraParams, `${reportPath}/${RETRIEVE_REPORT_TYPES.DORA}`)
+      .retrieveByUrl(doraParams, `${reportPath}/${METRIC_TYPES.DORA}`)
       .then((res) => {
         if (hasPollingStarted) return;
         hasPollingStarted = true;

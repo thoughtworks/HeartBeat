@@ -18,7 +18,7 @@ import { ReportRequestDTO } from '@src/clients/report/dto/request';
 import { StyledSpacing } from '@src/containers/ReportStep/style';
 import { ReportGrid } from '@src/components/Common/ReportGrid';
 import { selectConfig } from '@src/context/config/configSlice';
-import { StyledRetry } from '../BoradMetrics/style';
+import { StyledRetry } from '../BoardMetrics/BoardMetrics';
 import { Nullable } from '@src/utils/types';
 import { useAppSelector } from '@src/hooks';
 import { useEffect } from 'react';

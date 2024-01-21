@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import clearAllMocks = jest.clearAllMocks;
 import { CLASSIFICATION, LEAD_TIME_FOR_CHANGES, MOCK_REPORT_RESPONSE } from '../../../src/fixtures';
-import BoardMetrics from '@src/containers/ReportStep/BoradMetrics';
+import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import { updateMetrics } from '@src/context/config/configSlice';
 import { setupStore } from '../../../src/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';

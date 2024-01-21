@@ -9,7 +9,7 @@ import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import BoardMetrics from '@src/containers/ReportStep/BoradMetrics';
+import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { BoardDetail, DoraDetail } from './ReportDetail';

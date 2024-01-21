@@ -1,4 +1,11 @@
 import {
+  StyledLoading,
+  StyledMetricsSection,
+  StyledRetry,
+  StyledShowMore,
+  StyledTitleWrapper,
+} from '@src/containers/ReportStep/BoardMetrics/BoardMetrics';
+import {
   BOARD_METRICS,
   CALENDAR,
   METRICS_SUBTITLE,
@@ -8,13 +15,6 @@ import {
   SHOW_MORE,
   RETRY,
 } from '@src/constants/resources';
-import {
-  StyledLoading,
-  StyledMetricsSection,
-  StyledRetry,
-  StyledShowMore,
-  StyledTitleWrapper,
-} from '@src/containers/ReportStep/BoradMetrics/style';
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util';
 import { selectConfig, selectJiraColumns } from '@src/context/config/configSlice';

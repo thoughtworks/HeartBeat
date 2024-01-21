@@ -3,7 +3,7 @@ import {
   BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
   REGULAR_CALENDAR,
   CHINA_CALENDAR,
-} from '../fixtures';
+} from '../../fixtures';
 import { convertToNewFileConfig } from '@src/constants/fileConfig';
 
 describe('#fileConfig', () => {

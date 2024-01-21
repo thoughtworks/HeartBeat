@@ -1,4 +1,4 @@
-import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
+import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
 
 jest.mock('@src/utils/util', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn().mockReturnValue([

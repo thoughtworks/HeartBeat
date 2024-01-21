@@ -13,7 +13,7 @@ import {
   MOCK_JIRA_WITH_STATUES_SETTING,
   PIPELINE_TOOL_TYPES,
 } from '../fixtures';
-import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji';
+import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { EMPTY_STRING } from '@src/constants/commons';
 
 describe('exportToJsonFile function', () => {

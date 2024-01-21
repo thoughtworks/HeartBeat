@@ -7,9 +7,9 @@ import {
 } from '@src/components/Common/ReportForTwoColumns/style';
 import { AVERAGE_FIELD, METRICS_TITLE, REPORT_SUFFIX_UNITS } from '@src/constants/resources';
 import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
-import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/emojis/style';
+import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/constants/emojis/style';
+import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
 import { ReportSelectionTitle } from '@src/containers/MetricsStep/style';
-import { getEmojiUrls, removeExtraEmojiName } from '@src/emojis/emoji';
 import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import { Loading } from '@src/components/Loading';
 import { styled } from '@mui/material/styles';

@@ -1,5 +1,5 @@
 import { ICycleTimeSetting, IJiraColumnsWithValue } from '@src/context/Metrics/metricsSlice';
-import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/emojis/emoji';
+import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';

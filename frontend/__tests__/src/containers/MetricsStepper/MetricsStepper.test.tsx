@@ -79,7 +79,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   updateBoard: jest.fn().mockReturnValue({ type: 'UPDATE_BOARD' }),
 }));
 
-jest.mock('@src/emojis/emoji', () => ({
+jest.mock('@src/constants/emojis/emoji', () => ({
   getEmojiUrls: jest.fn().mockReturnValue(['https://buildkiteassets.com/emojis/img-buildkite-64/charger64.png']),
   removeExtraEmojiName: jest.fn(),
 }));

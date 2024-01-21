@@ -59,7 +59,7 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   }),
 }));
 
-jest.mock('@src/emojis/emoji', () => ({
+jest.mock('@src/constants/emojis/emoji', () => ({
   getEmojiUrls: jest.fn().mockReturnValue(['']),
   removeExtraEmojiName: jest.fn(),
 }));

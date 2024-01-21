@@ -1,5 +1,5 @@
 import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice';
-import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/fileConfig/fileConfig';
+import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/constants/fileConfig';
 import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/HomeGuide/style';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice';

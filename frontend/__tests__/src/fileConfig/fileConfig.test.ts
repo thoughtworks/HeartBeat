@@ -4,7 +4,7 @@ import {
   REGULAR_CALENDAR,
   CHINA_CALENDAR,
 } from '../fixtures';
-import { convertToNewFileConfig } from '@src/fileConfig/fileConfig';
+import { convertToNewFileConfig } from '@src/constants/fileConfig';
 
 describe('#fileConfig', () => {
   const BASIC_NEW_CONFIG = {

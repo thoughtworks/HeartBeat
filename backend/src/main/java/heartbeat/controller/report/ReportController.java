@@ -8,6 +8,7 @@ import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.service.report.GenerateReporterService;
 import heartbeat.service.report.ReportService;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Report")
 @RequestMapping("/reports")
 @Validated
 @Log4j2

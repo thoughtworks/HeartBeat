@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static heartbeat.controller.source.GithubController.TOKEN_PATTER;
+import static heartbeat.controller.source.SourceController.TOKEN_PATTER;
 
 @Builder
 @NoArgsConstructor

@@ -4,6 +4,7 @@ import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.controller.source.dto.VerifyBranchRequest;
 import heartbeat.service.source.github.GitHubService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,10 +22,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Source Control")
 @RequestMapping("/source-control")
 @Validated
 @Log4j2
-public class GithubController {
+public class SourceController {
 
 	public static final String TOKEN_PATTER = "^(ghp|gho|ghu|ghs|ghr)_([a-zA-Z0-9]{36})$";
 

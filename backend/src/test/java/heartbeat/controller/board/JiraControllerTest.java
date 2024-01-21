@@ -28,7 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(JiraController.class)
+@WebMvcTest(BoardController.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
 public class JiraControllerTest {

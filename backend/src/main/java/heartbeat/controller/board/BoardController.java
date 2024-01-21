@@ -7,6 +7,7 @@ import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.JiraVerifyResponse;
 import heartbeat.exception.BadRequestException;
 import heartbeat.service.board.jira.JiraService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Board")
 @RequestMapping("/boards")
-public class JiraController {
+public class BoardController {
 
 	private final JiraService jiraService;
 

@@ -5,6 +5,7 @@ import heartbeat.controller.crypto.request.EncryptRequest;
 import heartbeat.controller.crypto.response.DecryptResponse;
 import heartbeat.controller.crypto.response.EncryptResponse;
 import heartbeat.service.crypto.EncryptDecryptService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController
+@Tag(name = "Crypto")
 @RequiredArgsConstructor
 public class CryptoController {
 

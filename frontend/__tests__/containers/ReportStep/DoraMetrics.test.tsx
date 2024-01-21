@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import clearAllMocks = jest.clearAllMocks;
-import { MOCK_REPORT_RESPONSE, REQUIRED_DATA_LIST } from '../../../src/fixtures';
+import { MOCK_REPORT_RESPONSE, REQUIRED_DATA_LIST } from '@test/fixtures';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import { updateMetrics } from '@src/context/config/configSlice';
-import { setupStore } from '../../../src/utils/setupStoreUtil';
+import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import { RETRY } from '@src/constants/resources';
 import { Provider } from 'react-redux';

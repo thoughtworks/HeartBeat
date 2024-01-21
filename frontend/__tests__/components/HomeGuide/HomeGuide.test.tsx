@@ -9,7 +9,7 @@ import { fireEvent, render, waitFor, screen } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
 import { HomeGuide } from '@src/components/HomeGuide';
 import userEvent from '@testing-library/user-event';
-import { navigateMock } from '../../../setupTests';
+import { navigateMock } from '../../setupTests';
 import { Provider } from 'react-redux';
 
 const mockedUseAppDispatch = jest.fn();

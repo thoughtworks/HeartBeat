@@ -32,7 +32,7 @@ import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import ReportStep from '@src/containers/ReportStep';
 import { MESSAGE } from '@src/constants/resources';
-import { navigateMock } from '../../../setupTests';
+import { navigateMock } from '../../setupTests';
 import { Provider } from 'react-redux';
 import React from 'react';
 

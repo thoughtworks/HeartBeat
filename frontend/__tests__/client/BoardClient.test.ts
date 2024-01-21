@@ -4,9 +4,9 @@ import {
   MOCK_BOARD_VERIFY_REQUEST_PARAMS,
   MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS,
   VERIFY_ERROR_MESSAGE,
+  AXIOS_ERROR_MESSAGE,
 } from '../fixtures';
 import { boardClient } from '@src/clients/board/BoardClient';
-import { AXIOS_ERROR_MESSAGE } from '../../src/fixtures';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
 import { rest } from 'msw';

@@ -2,7 +2,7 @@ import { headerClient } from '@src/clients/header/HeaderClient';
 import { act, fireEvent, render } from '@testing-library/react';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { setupStore } from '../utils/setupStoreUtil';
-import { navigateMock } from '../../setupTests';
+import { navigateMock } from '../setupTests';
 import { PROJECT_NAME } from '../fixtures';
 import Header from '@src/layouts/Header';
 import { Provider } from 'react-redux';

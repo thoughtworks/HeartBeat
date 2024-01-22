@@ -47,6 +47,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RE
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_FIELD_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_REAL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD1_HISTORY_FOR_MULTIPLE_STATUSES;
@@ -54,7 +55,9 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD2_HISTORY_FOR_MULTIPLE_STATUSES;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_MULTI_REAL_DONE_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_MULTI_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_REAL_DONE_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_RESPONSE_BUILDER_TO_DONE;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.CARD_HISTORY_WITH_NO_STATUS_FIELD;
@@ -73,6 +76,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.INCLUDE_UNREASONA
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.INCORRECT_JIRA_BOARD_SETTING_BUILD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.INCORRECT_JIRA_STORY_POINTS_FORM_ALL_DONE_CARD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_CONFIG_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_REAL_DONE_SETTING_BUILD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_SETTING_BUILD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_SETTING_HAVE_UNKNOWN_COLUMN_BUILD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD;
@@ -81,6 +85,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.NONE_STATUS_SELF_
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_FORM_ALL_REAL_DONE_CARD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_ASSIGNEE_FILTER_METHOD;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.STORY_POINTS_REQUEST_WITH_MULTIPLE_REAL_DONE_STATUSES;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -600,7 +605,7 @@ class JiraServiceTest {
 
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
 				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(0);
 	}
 
 	@Test
@@ -627,7 +632,7 @@ class JiraServiceTest {
 
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
 				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
-		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(0);
 	}
 
 	@Test

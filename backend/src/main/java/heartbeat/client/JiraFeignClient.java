@@ -38,4 +38,10 @@ public interface JiraFeignClient {
 	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields")
 	FieldResponseDTO getTargetField(URI baseUrl, @PathVariable String projectKey, @RequestHeader String authorization);
 
+	@GetMapping(path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed?startAt={startAt}&maxResults={queryCount}")
+	@Cacheable(cacheNames = "jiraCardHistoryByCount",
+			key = "#jiraCardKey+'-'+#queryCount+'-'+#startAt+'-'+#authorization")
+	CardHistoryResponseDTO getJiraCardHistoryByCount(URI baseUrl, @PathVariable String jiraCardKey,
+			@PathVariable int startAt, @PathVariable int queryCount, @RequestHeader String authorization);
+
 }

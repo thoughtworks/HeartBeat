@@ -486,7 +486,7 @@ public class JiraService {
 			log.info(
 					"[Jira Service History] Successfully get jira card history, card key: {}, card history items size:{}",
 					allDoneCard.getKey(), jiraCardHistory.getItems().size());
-			if (isRealDoneCardByHistory(jiraCardHistory, request, allDoneCard.getKey())) {
+			if (isRealDoneCardByHistory(jiraCardHistory, request, allDoneCard)) {
 				futures.add(allDoneCard);
 			}
 			else {
@@ -571,52 +571,38 @@ public class JiraService {
 	}
 
 	private boolean isRealDoneCardByHistory(CardHistoryResponseDTO jiraCardHistory,
-			StoryPointsAndCycleTimeRequest request, String card) {
+			StoryPointsAndCycleTimeRequest request, JiraCard allDoneCard) {
 		List<String> realDoneStatuses = request.getStatus().stream().map(String::toUpperCase).toList();
-
-		List<HistoryDetail> items = jiraCardHistory.getItems();
-		List<HistoryDetail> items2 = new ArrayList<>();
-		List<HistoryDetail> items3 = new ArrayList<>();
-		for (HistoryDetail item : items) {
-			if (STATUS_FIELD_ID.equals(item.getFieldId())) {
-				items2.add(item);
-			}
-		}
-		if (items2.isEmpty()) {
-			log.error("[Jira Service Card RealDoneCards] Failed card history field id equal to status, card:{}", card);
-		}
-		for (HistoryDetail item : items2) {
-			if (realDoneStatuses.contains(item.getTo().getDisplayValue().toUpperCase())) {
-				items3.add(item);
-			}
-		}
-		if (items3.isEmpty()) {
-			log.error(
-					"[Jira Service Card RealDoneCards] Failed to move card history to real done, card:{}, real done status: {}",
-					card, realDoneStatuses);
-		}
-		else {
-			log.info(
-					"[Jira Service Card RealDoneCards] Successfully to get history, card:{}, history{}， real done status: {}",
-					card, items3, realDoneStatuses);
-		}
-		Optional<Long> lastTimeToRealDone = items3.stream().map(HistoryDetail::getTimestamp).max(Long::compareTo);
-
 		long validStartTime = parseLong(request.getStartTime());
 		long validEndTime = parseLong(request.getEndTime());
-		return lastTimeToRealDone.filter(lastTime -> {
-			if (validStartTime <= lastTime && validEndTime >= lastTime) {
-				return true;
+
+		Optional<Long> moveUndoneLastTime = jiraCardHistory.getItems()
+			.stream()
+			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
+			.filter(history -> realDoneStatuses.contains(history.getFrom().getDisplayValue().toUpperCase()))
+			.filter(history -> !realDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
+			.map(HistoryDetail::getTimestamp)
+			.filter(time -> time >= validStartTime && time <= validEndTime)
+			.max(Long::compareTo);
+
+		Optional<HistoryDetail> realDoneHistory = jiraCardHistory.getItems()
+			.stream()
+			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
+			.filter(history -> !realDoneStatuses.contains(history.getFrom().getDisplayValue().toUpperCase()))
+			.filter(history -> realDoneStatuses.contains(history.getTo().getDisplayValue().toUpperCase()))
+			.filter(history -> history.getTimestamp() >= validStartTime && history.getTimestamp() <= validEndTime)
+			.filter(history -> history.getTimestamp() > moveUndoneLastTime.orElse(0L))
+			.findFirst();
+
+		if (realDoneHistory.isPresent()) {
+			if (Objects.nonNull(allDoneCard.getFields().getStatus())) {
+				allDoneCard.getFields().getStatus().setName(realDoneHistory.get().getTo().getDisplayValue());
 			}
-			else {
-				log.error(
-						"[Jira Service Card RealDoneCards] Failed lastTime not in the valid time card:{} last time:{}, start time:{}, end time:{}",
-						card, new SimpleDateFormat("yyyy 年 MM 月 dd 日 HH 时").format(new Date(lastTime)),
-						new SimpleDateFormat("yyyy 年 MM 月 dd 日 HH 时").format(new Date(validStartTime)),
-						new SimpleDateFormat("yyyy 年 MM 月 dd 日 HH 时").format(new Date(validEndTime)));
-				return false;
-			}
-		}).isPresent();
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	private CycleTimeInfoDTO getCycleTime(CardHistoryResponseDTO cardHistoryResponseDTO, Boolean treatFlagCardAsBlock,

@@ -28,6 +28,7 @@
   "crews": ["Yu Zhang"],
   "assigneeFilter": "lastAssignee",
   "cycleTime": {
+    "type": "byColumn",
     "jiraColumns": [
       {
         "In Analysis": "Analysis"

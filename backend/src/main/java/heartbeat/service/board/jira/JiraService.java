@@ -21,7 +21,6 @@ import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardWithFields;
 import heartbeat.client.dto.board.jira.JiraColumn;
 import heartbeat.client.dto.board.jira.Sprint;
-import heartbeat.client.dto.board.jira.Status;
 import heartbeat.client.dto.board.jira.StatusSelfDTO;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.BoardType;
@@ -647,7 +646,7 @@ public class JiraService {
 			.findFirst();
 
 		if (realDoneHistory.isPresent()) {
-			if (Objects.nonNull(allDoneCard.getFields().getStatus())) {
+			if (nonNull(allDoneCard.getFields().getStatus())) {
 				allDoneCard.getFields().getStatus().setName(realDoneHistory.get().getTo().getDisplayValue());
 			}
 			return true;

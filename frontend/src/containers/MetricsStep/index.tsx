@@ -16,7 +16,7 @@ import { Crews } from '@src/containers/MetricsStep/Crews';
 import { useAppSelector } from '@src/hooks';
 import { useLayoutEffect } from 'react';
 
-const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
+const MetricsStep = ({ closeAllNotifications }: useNotificationLayoutEffectInterface) => {
   const requiredData = useAppSelector(selectMetrics);
   const users = useAppSelector(selectUsers);
   const jiraColumns = useAppSelector(selectJiraColumns);
@@ -30,7 +30,7 @@ const MetricsStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
   const isShowRealDone = cycleTimeSettings.some((e) => e.value === DONE);
 
   useLayoutEffect(() => {
-    resetProps();
+    closeAllNotifications();
   }, []);
 
   return (

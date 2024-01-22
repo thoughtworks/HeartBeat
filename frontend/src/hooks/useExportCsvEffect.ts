@@ -1,17 +1,18 @@
+import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { NotFoundException } from '@src/exceptions/NotFoundException';
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
 import { csvClient } from '@src/clients/report/CSVClient';
-import { DURATION } from '@src/constants/commons';
+import { MESSAGE } from '@src/constants/resources';
 import { useState } from 'react';
 
 export interface useExportCsvEffectInterface {
   fetchExportData: (params: CSVReportRequestDTO) => void;
-  errorMessage: string;
   isExpired: boolean;
 }
 
-export const useExportCsvEffect = (): useExportCsvEffectInterface => {
-  const [errorMessage, setErrorMessage] = useState('');
+export const useExportCsvEffect = ({
+  addNotification,
+}: useNotificationLayoutEffectInterface): useExportCsvEffectInterface => {
   const [isExpired, setIsExpired] = useState(false);
 
   const fetchExportData = async (params: CSVReportRequestDTO) => {
@@ -23,13 +24,13 @@ export const useExportCsvEffect = (): useExportCsvEffectInterface => {
       if (err instanceof NotFoundException) {
         setIsExpired(true);
       } else {
-        setErrorMessage(`failed to export csv: ${err.message}`);
-        setTimeout(() => {
-          setErrorMessage('');
-        }, DURATION.ERROR_MESSAGE_TIME);
+        addNotification({
+          message: MESSAGE.FAILED_TO_EXPORT_CSV,
+          type: 'error',
+        });
       }
     }
   };
 
-  return { fetchExportData, errorMessage, isExpired };
+  return { fetchExportData, isExpired };
 };

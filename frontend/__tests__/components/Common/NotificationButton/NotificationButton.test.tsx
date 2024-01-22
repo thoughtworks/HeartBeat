@@ -5,73 +5,61 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import React from 'react';
 
+const mockNotifications = [
+  { id: '1', title: 'Notification', message: 'Notification Message 1' },
+  {
+    id: '2',
+    title: 'Notification',
+    message: 'Notification Message 2',
+  },
+];
 describe('Notification', () => {
-  const closeNotificationProps = {
-    open: false,
-    title: 'NotificationPopper',
-    message: 'Notification Message',
-    closeAutomatically: false,
-  };
-  const openNotificationProps = {
-    open: true,
-    title: 'NotificationPopper',
-    message: 'Notification Message',
-    closeAutomatically: false,
-  };
   const { result } = renderHook(() => useNotificationLayoutEffect());
 
-  it('should show title and message given the "open" value is true', () => {
+  it('should render all notifications correctly', () => {
     act(() => {
-      result.current.notificationProps = openNotificationProps;
+      result.current.notifications = mockNotifications;
     });
     render(<Notification {...result.current} />);
 
-    expect(screen.getByText('NotificationPopper')).toBeInTheDocument();
-    expect(screen.getByText('Notification Message')).toBeInTheDocument();
+    expect(screen.queryAllByText('Notification')).toHaveLength(2);
+    expect(screen.getByText('Notification Message 1')).toBeInTheDocument();
+    expect(screen.getByText('Notification Message 2')).toBeInTheDocument();
   });
 
-  it('should not show title and message given the "open" value is false', () => {
+  it('should call closeNotification with corresponding id when clicking close button', async () => {
     act(() => {
-      result.current.notificationProps = closeNotificationProps;
-    });
-    render(<Notification {...result.current} />);
-
-    expect(screen.queryByText('NotificationPopper')).not.toBeInTheDocument();
-    expect(screen.queryByText('Notification Message')).not.toBeInTheDocument();
-  });
-
-  it('should call updateProps when clicking close button given the "open" value is true', async () => {
-    act(() => {
-      result.current.notificationProps = openNotificationProps;
-      result.current.updateProps = jest.fn();
+      result.current.notifications = mockNotifications;
+      result.current.closeNotification = jest.fn();
     });
 
     render(<Notification {...result.current} />);
 
-    const closeButton = screen.getByRole('button', { name: 'Close' });
+    const closeButton = screen.getAllByRole('button', { name: 'Close' });
 
-    await userEvent.click(closeButton);
+    await userEvent.click(closeButton[0]);
 
     await waitFor(() => {
-      expect(result.current.updateProps).toBeCalledWith(closeNotificationProps);
+      expect(result.current.closeNotification).toBeCalledWith('1');
     });
   });
 
   it.each`
-    type         | backgroundColor | icon                 | iconColor    | borderColor
-    ${'error'}   | ${'#FFE7EA'}    | ${'CancelIcon'}      | ${'#D74257'} | ${'#F3B6BE'}
-    ${'success'} | ${'#EFFFF1'}    | ${'CheckCircleIcon'} | ${'#5E9E66'} | ${'#CFE2D1'}
-    ${'warning'} | ${'#FFF4E3'}    | ${'InfoIcon'}        | ${'#D78D20'} | ${'#F3D5A9'}
-    ${'info'}    | ${'#E9ECFF'}    | ${'InfoIcon'}        | ${'#4050B5'} | ${'#939DDA'}
+    type         | title                        | backgroundColor | icon                 | iconColor    | borderColor
+    ${'error'}   | ${'Something went wrong!'}   | ${'#FFE7EA'}    | ${'CancelIcon'}      | ${'#D74257'} | ${'#F3B6BE'}
+    ${'success'} | ${'Successfully completed!'} | ${'#EFFFF1'}    | ${'CheckCircleIcon'} | ${'#5E9E66'} | ${'#CFE2D1'}
+    ${'warning'} | ${'Please note that'}        | ${'#FFF4E3'}    | ${'InfoIcon'}        | ${'#D78D20'} | ${'#F3D5A9'}
+    ${'info'}    | ${'Help Information'}        | ${'#E9ECFF'}    | ${'InfoIcon'}        | ${'#4050B5'} | ${'#939DDA'}
   `(
-    `should render background color $backgroundColor and $icon in $iconColor given the "type" value is $type`,
-    async ({ type, backgroundColor, icon, iconColor, borderColor }) => {
+    `should render title $title background color $backgroundColor, $icon in $iconColor, border color $borderColor given the "type" value is $type`,
+    async ({ type, title, backgroundColor, icon, iconColor, borderColor }) => {
       act(() => {
-        result.current.notificationProps = { ...openNotificationProps, type };
+        result.current.notifications = [{ id: '1', message: 'Notification Message 1', type }];
       });
 
       render(<Notification {...result.current} />);
 
+      expect(screen.getByText(title)).toBeInTheDocument();
       const alertElement = screen.getByRole('alert');
       expect(alertElement).toHaveStyle({ 'background-color': backgroundColor });
       expect(alertElement).toHaveStyle({ border: `0.0625rem solid ${borderColor}` });

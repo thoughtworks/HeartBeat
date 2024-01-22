@@ -12,13 +12,13 @@ import {
   CYCLE_TIME_SETTINGS_SECTION,
   DEPLOYMENT_FREQUENCY_SETTINGS,
   LIST_OPEN,
+  MOCK_BUILD_KITE_GET_INFO_RESPONSE,
   MOCK_JIRA_VERIFY_RESPONSE,
+  MOCK_PIPELINE_GET_INFO_URL,
   REAL_DONE,
   REAL_DONE_SETTING_SECTION,
   REQUIRED_DATA_LIST,
   SELECT_CONSIDER_AS_DONE_MESSAGE,
-  MOCK_PIPELINE_GET_INFO_URL,
-  MOCK_BUILD_KITE_GET_INFO_RESPONSE,
 } from '../../fixtures';
 import { saveCycleTimeSettings, saveDoneColumn } from '@src/context/Metrics/metricsSlice';
 import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
@@ -93,9 +93,9 @@ describe('MetricsStep', () => {
     expect(getByText(DEPLOYMENT_FREQUENCY_SETTINGS)).toBeInTheDocument();
   });
 
-  it('should call resetProps when resetProps is not undefined', async () => {
+  it('should call closeAllNotifications', async () => {
     act(() => {
-      result.current.resetProps = jest.fn();
+      result.current.closeAllNotifications = jest.fn();
     });
 
     await waitFor(() =>
@@ -106,7 +106,7 @@ describe('MetricsStep', () => {
       ),
     );
 
-    expect(result.current.resetProps).toBeCalled();
+    expect(result.current.closeAllNotifications).toBeCalled();
   });
 
   describe('with pre-filled cycle time data', () => {

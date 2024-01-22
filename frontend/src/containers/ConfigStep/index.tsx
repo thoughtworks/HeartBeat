@@ -4,10 +4,10 @@ import BasicInfo from '@src/containers/ConfigStep/BasicInfo';
 import { ConfigStepWrapper } from './style';
 import { useLayoutEffect } from 'react';
 
-const ConfigStep = ({ resetProps }: useNotificationLayoutEffectInterface) => {
+const ConfigStep = ({ closeAllNotifications }: useNotificationLayoutEffectInterface) => {
   useLayoutEffect(() => {
-    resetProps();
-  }, [resetProps]);
+    closeAllNotifications();
+  }, []);
 
   return (
     <ConfigStepWrapper>

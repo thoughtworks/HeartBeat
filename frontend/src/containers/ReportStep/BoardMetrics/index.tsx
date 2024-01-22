@@ -9,11 +9,11 @@ import {
   BOARD_METRICS,
   CALENDAR,
   METRICS_SUBTITLE,
-  REPORT_PAGE,
   METRICS_TITLE,
+  REPORT_PAGE,
   REQUIRED_DATA,
-  SHOW_MORE,
   RETRY,
+  SHOW_MORE,
 } from '@src/constants/resources';
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { filterAndMapCycleTimeSettings, getJiraBoardToken } from '@src/utils/util';

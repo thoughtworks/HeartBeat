@@ -1,8 +1,10 @@
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { EXPORT_METRIC_DATA, MOCK_REPORT_RESPONSE } from '../fixtures';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
-import { render, screen } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
 
 describe('test', () => {
+  const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect());
   const mockHandler = jest.fn();
   const mockData = {
     ...MOCK_REPORT_RESPONSE,
@@ -25,6 +27,7 @@ describe('test', () => {
   it('test', () => {
     render(
       <ReportButtonGroup
+        notification={notificationHook.current}
         isShowSave={true}
         isShowExportMetrics={true}
         isShowExportBoardButton={true}
@@ -35,7 +38,6 @@ describe('test', () => {
         startDate={''}
         endDate={''}
         csvTimeStamp={1239013}
-        setErrorMessage={mockHandler}
       />,
     );
 

@@ -1,25 +1,18 @@
-import {
-  INTERNAL_SERVER_ERROR_MESSAGE,
-  MOCK_GENERATE_REPORT_REQUEST_PARAMS,
-  MOCK_REPORT_RESPONSE,
-  MOCK_RETRIEVE_REPORT_RESPONSE,
-} from '../fixtures';
-import { InternalServerException } from '@src/exceptions/InternalServerException';
+import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE, MOCK_RETRIEVE_REPORT_RESPONSE } from '../fixtures';
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
+import { TimeoutException } from '@src/exceptions/TimeoutException';
 import { UnknownException } from '@src/exceptions/UnknownException';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { reportClient } from '@src/clients/report/ReportClient';
+import { MESSAGE } from '@src/constants/resources';
 import { HttpStatusCode } from 'axios';
 import clearAllMocks = jest.clearAllMocks;
 import resetAllMocks = jest.resetAllMocks;
-import { TimeoutException } from '@src/exceptions/TimeoutException';
-
-jest.mock('@src/hooks/reportMapper/report', () => ({
-  pipelineReportMapper: jest.fn(),
-  sourceControlReportMapper: jest.fn(),
-}));
 
 describe('use generate report effect', () => {
+  const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect());
+
   afterAll(() => {
     clearAllMocks();
   });
@@ -31,68 +24,14 @@ describe('use generate report effect', () => {
     jest.useRealTimers();
   });
 
-  it('should set error message when generate report response status 500', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE, HttpStatusCode.InternalServerError);
-    });
-
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(result.current.isServerError).toEqual(true);
-    });
-  });
-
-  it('should set isServerError is true when throw InternalServerException', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException('5xx error', 500);
-    });
-
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(result.current.isServerError).toEqual(true);
-    });
-  });
-
-  it('should set isServerError is true when throw TimeoutException', async () => {
+  it('should set timeout4Board is "Data loading failed" when timeout', async () => {
     reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new TimeoutException('5xx error', 503));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(result.current.isServerError).toEqual(true);
-    });
-  });
-
-  it('should set timeout4Board is "Data loading failed" when timeout', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownException());
-
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
       expect(result.current.timeout4Board).toEqual('Data loading failed');
-    });
-  });
-
-  it('should return error message when calling startToRequestBoardData given pollingReport response return 5xx ', async () => {
-    reportClient.polling = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException('error', HttpStatusCode.InternalServerError);
-    });
-    reportClient.retrieveByUrl = jest
-      .fn()
-      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
-
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(reportClient.polling).toBeCalledTimes(1);
-      expect(result.current.isServerError).toEqual(true);
     });
   });
 
@@ -104,7 +43,7 @@ describe('use generate report effect', () => {
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
@@ -126,7 +65,7 @@ describe('use generate report effect', () => {
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
@@ -148,7 +87,7 @@ describe('use generate report effect', () => {
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
@@ -162,45 +101,10 @@ describe('use generate report effect', () => {
     });
   });
 
-  it('should set error message when generate report response status 500', async () => {
-    reportClient.retrieveByUrl = jest
-      .fn()
-      .mockRejectedValue(new InternalServerException(INTERNAL_SERVER_ERROR_MESSAGE, HttpStatusCode.NotFound));
-
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(result.current.isServerError).toEqual(true);
-    });
-  });
-
-  it('should set isServerError is true when throw InternalServerException', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new InternalServerException('5xx error', 500));
-
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(result.current.isServerError).toEqual(true);
-    });
-  });
-
-  it('should set isServerError is true when throw TimeoutException', async () => {
+  it('should set timeout4Dora is "Data loading failed" when startToRequestDoraData timeout', async () => {
     reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new TimeoutException('5xx error', 503));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(result.current.isServerError).toEqual(true);
-    });
-  });
-
-  it('should set timeout4Dora is "Data loading failed" when timeout', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownException());
-
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
@@ -208,39 +112,20 @@ describe('use generate report effect', () => {
     });
   });
 
-  it('should set timeout4Dora and timeout4Board is "Data loading failed" when polling timeout', async () => {
+  it('should set timeout4Report is "Data loading failed" when polling timeout', async () => {
     reportClient.polling = jest.fn().mockImplementation(async () => {
-      throw new UnknownException();
+      throw new TimeoutException('5xx error', 503);
     });
 
     reportClient.retrieveByUrl = jest
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(result.current.timeout4Dora).toEqual('Data loading failed');
-      expect(result.current.timeout4Board).toEqual('Data loading failed');
-    });
-  });
-
-  it('should return error message when calling startToRequestDoraData given pollingReport response return 5xx ', async () => {
-    reportClient.polling = jest.fn().mockImplementation(async () => {
-      throw new InternalServerException('error', HttpStatusCode.InternalServerError);
-    });
-
-    reportClient.retrieveByUrl = jest
-      .fn()
-      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
-
-    const { result } = renderHook(() => useGenerateReportEffect());
-
-    await waitFor(() => {
-      result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
-      expect(reportClient.polling).toBeCalledTimes(1);
-      expect(result.current.isServerError).toEqual(true);
+      expect(result.current.timeout4Report).toEqual('Data loading failed');
     });
   });
 
@@ -253,7 +138,7 @@ describe('use generate report effect', () => {
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
@@ -275,7 +160,7 @@ describe('use generate report effect', () => {
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
 
-    const { result } = renderHook(() => useGenerateReportEffect());
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
 
     await waitFor(() => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
@@ -286,6 +171,54 @@ describe('use generate report effect', () => {
 
     await waitFor(() => {
       expect(reportClient.polling).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('should call addNotification when startToRequestBoardData given UnknownException', async () => {
+    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownException());
+    notificationHook.current.addNotification = jest.fn();
+
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
+
+    await waitFor(() => {
+      result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
+      expect(notificationHook.current.addNotification).toBeCalledWith({
+        message: MESSAGE.FAILED_TO_REQUEST,
+        type: 'error',
+      });
+    });
+  });
+
+  it('should call addNotification when startToRequestDoraData given UnknownException', async () => {
+    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownException());
+    notificationHook.current.addNotification = jest.fn();
+
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
+
+    await waitFor(() => {
+      result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
+      expect(notificationHook.current.addNotification).toBeCalledWith({
+        message: MESSAGE.FAILED_TO_REQUEST,
+        type: 'error',
+      });
+    });
+  });
+
+  it('should call addNotification when polling given UnknownException', async () => {
+    reportClient.polling = jest.fn().mockRejectedValue(new UnknownException());
+    reportClient.retrieveByUrl = jest
+      .fn()
+      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
+    notificationHook.current.addNotification = jest.fn();
+
+    const { result } = renderHook(() => useGenerateReportEffect(notificationHook.current));
+
+    await waitFor(() => {
+      result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
+      expect(notificationHook.current.addNotification).toBeCalledWith({
+        message: MESSAGE.FAILED_TO_REQUEST,
+        type: 'error',
+      });
     });
   });
 });

@@ -1,20 +1,17 @@
+import { Notification, useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice';
-import { StyledCalendarWrapper, StyledErrorNotification } from '@src/containers/ReportStep/style';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { MESSAGE, REPORT_PAGE_TYPE, REQUIRED_DATA } from '@src/constants/resources';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
-import { ErrorNotification } from '@src/components/ErrorNotification';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { StyledCalendarWrapper } from '@src/containers/ReportStep/style';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { BoardDetail, DoraDetail } from './ReportDetail';
-import { useNavigate } from 'react-router-dom';
-import { ROUTE } from '@src/constants/router';
 import { useAppSelector } from '@src/hooks';
 
 export interface ReportStepProps {
@@ -23,22 +20,23 @@ export interface ReportStepProps {
 }
 
 const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
-    isServerError,
     startToRequestBoardData,
     startToRequestDoraData,
     reportData,
     stopPollingReports,
     timeout4Board,
     timeout4Dora,
-  } = useGenerateReportEffect();
+    timeout4Report,
+  } = useGenerateReportEffect(notification);
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
   const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY);
   const [isBackFromDetail, setIsBackFromDetail] = useState<boolean>(false);
   const [allMetricsCompleted, setAllMetricsCompleted] = useState<boolean>(false);
+  const [notifications4SummaryPage, setNotifications4SummaryPage] = useState<Omit<Notification, 'id'>[]>([]);
+
   const configData = useAppSelector(selectConfig);
   const csvTimeStamp = useAppSelector(selectTimeStamp);
 
@@ -46,27 +44,27 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const endDate = configData.basic.dateRange.endDate ?? '';
   const metrics = configData.basic.metrics;
 
-  const { updateProps, resetProps } = notification;
-  const [errorMessage, setErrorMessage] = useState<string>();
+  const { addNotification, closeAllNotifications } = notification;
 
   const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
   const onlySelectClassification = metrics.length === 1 && metrics[0] === REQUIRED_DATA.CLASSIFICATION;
+  const isSummaryPage = useMemo(() => pageType === REPORT_PAGE_TYPE.SUMMARY, [pageType]);
 
   useEffect(() => {
     setPageType(onlySelectClassification ? REPORT_PAGE_TYPE.BOARD : REPORT_PAGE_TYPE.SUMMARY);
+    return () => {
+      stopPollingReports();
+    };
   }, []);
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
       allMetricsCompleted &&
-      updateProps({
-        open: true,
-        title: 'Help Information',
+      addNotification({
         message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
-        closeAutomatically: true,
       });
-  }, [exportValidityTimeMin, allMetricsCompleted, updateProps]);
+  }, [exportValidityTimeMin, allMetricsCompleted]);
 
   useLayoutEffect(() => {
     if (exportValidityTimeMin && allMetricsCompleted) {
@@ -78,11 +76,8 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         const remainingExpireTime = 5 * 60 * 1000;
         const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime;
         if (remainingTime <= remainingExpireTime) {
-          updateProps({
-            open: true,
-            title: 'Help Information',
+          addNotification({
             message: MESSAGE.EXPIRE_INFORMATION(5),
-            closeAutomatically: true,
           });
           clearInterval(timer);
         }
@@ -92,22 +87,93 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         clearInterval(timer);
       };
     }
-  }, [exportValidityTimeMin, allMetricsCompleted, updateProps]);
+  }, [exportValidityTimeMin, allMetricsCompleted]);
 
   useLayoutEffect(() => {
-    resetProps();
-  }, [pageType, resetProps]);
+    closeAllNotifications();
+  }, [pageType]);
 
   useEffect(() => {
     setExportValidityTimeMin(reportData?.exportValidityTime);
     reportData && setAllMetricsCompleted(reportData.allMetricsCompleted);
   }, [reportData]);
 
-  useLayoutEffect(() => {
-    return () => {
-      stopPollingReports();
-    };
-  }, []);
+  useEffect(() => {
+    if (isSummaryPage && notifications4SummaryPage.length > 0) {
+      const notification = notifications4SummaryPage[0];
+      notification && addNotification(notification);
+      setNotifications4SummaryPage(notifications4SummaryPage.slice(1));
+    }
+  }, [notifications4SummaryPage, isSummaryPage]);
+
+  useEffect(() => {
+    if (reportData?.reportMetricsError.boardMetricsError) {
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.FAILED_TO_GET_DATA('Board Metrics'),
+          type: 'error',
+        },
+      ]);
+    }
+  }, [reportData?.reportMetricsError.boardMetricsError]);
+
+  useEffect(() => {
+    if (reportData?.reportMetricsError.pipelineMetricsError) {
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.FAILED_TO_GET_DATA('Buildkite'),
+          type: 'error',
+        },
+      ]);
+    }
+  }, [reportData?.reportMetricsError.pipelineMetricsError]);
+
+  useEffect(() => {
+    if (reportData?.reportMetricsError.sourceControlMetricsError) {
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.FAILED_TO_GET_DATA('Github'),
+          type: 'error',
+        },
+      ]);
+    }
+  }, [reportData?.reportMetricsError.sourceControlMetricsError]);
+
+  useEffect(() => {
+    timeout4Report &&
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.LOADING_TIMEOUT('Report'),
+          type: 'error',
+        },
+      ]);
+  }, [timeout4Report]);
+
+  useEffect(() => {
+    timeout4Board &&
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.LOADING_TIMEOUT('Board metrics'),
+          type: 'error',
+        },
+      ]);
+  }, [timeout4Board]);
+
+  useEffect(() => {
+    timeout4Dora &&
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.LOADING_TIMEOUT('DORA metrics'),
+          type: 'error',
+        },
+      ]);
+  }, [timeout4Dora]);
 
   const showSummary = () => (
     <>
@@ -120,7 +186,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           onShowDetail={() => setPageType(REPORT_PAGE_TYPE.BOARD)}
           boardReport={reportData}
           csvTimeStamp={csvTimeStamp}
-          timeoutError={timeout4Board}
+          timeoutError={timeout4Board || timeout4Report}
         />
       )}
       {shouldShowDoraMetrics && (
@@ -132,7 +198,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           onShowDetail={() => setPageType(REPORT_PAGE_TYPE.DORA)}
           doraReport={reportData}
           csvTimeStamp={csvTimeStamp}
-          timeoutError={timeout4Dora}
+          timeoutError={timeout4Dora || timeout4Report}
         />
       )}
     </>
@@ -141,7 +207,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => backToSummaryPage()} data={data} />;
 
   const handleBack = () => {
-    pageType === REPORT_PAGE_TYPE.SUMMARY || onlySelectClassification ? dispatch(backStep()) : backToSummaryPage();
+    isSummaryPage || onlySelectClassification ? dispatch(backStep()) : backToSummaryPage();
   };
 
   const backToSummaryPage = () => {
@@ -151,48 +217,28 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
 
   return (
     <>
-      {isServerError ? (
-        navigate(ROUTE.ERROR_PAGE)
-      ) : (
-        <>
-          {startDate && endDate && (
-            <StyledCalendarWrapper
-              data-testid={'calendarWrapper'}
-              isSummaryPage={pageType === REPORT_PAGE_TYPE.SUMMARY}
-            >
-              <DateRangeViewer startDate={startDate} endDate={endDate} />
-            </StyledCalendarWrapper>
-          )}
-          {errorMessage && (
-            <StyledErrorNotification>
-              <ErrorNotification message={errorMessage} />
-            </StyledErrorNotification>
-          )}
-          {pageType === REPORT_PAGE_TYPE.SUMMARY
-            ? showSummary()
-            : !!reportData &&
-              (pageType === REPORT_PAGE_TYPE.BOARD ? showBoardDetail(reportData) : showDoraDetail(reportData))}
-          <ReportButtonGroup
-            isShowSave={pageType === REPORT_PAGE_TYPE.SUMMARY}
-            isShowExportMetrics={pageType === REPORT_PAGE_TYPE.SUMMARY}
-            isShowExportBoardButton={
-              pageType === REPORT_PAGE_TYPE.SUMMARY ? shouldShowBoardMetrics : pageType === REPORT_PAGE_TYPE.BOARD
-            }
-            isShowExportPipelineButton={
-              pageType === REPORT_PAGE_TYPE.SUMMARY ? shouldShowDoraMetrics : pageType === REPORT_PAGE_TYPE.DORA
-            }
-            handleBack={() => handleBack()}
-            handleSave={() => handleSave()}
-            reportData={reportData}
-            startDate={startDate}
-            endDate={endDate}
-            csvTimeStamp={csvTimeStamp}
-            setErrorMessage={(message) => {
-              setErrorMessage(message);
-            }}
-          />
-        </>
+      {startDate && endDate && (
+        <StyledCalendarWrapper data-testid={'calendarWrapper'} isSummaryPage={isSummaryPage}>
+          <DateRangeViewer startDate={startDate} endDate={endDate} />
+        </StyledCalendarWrapper>
       )}
+      {isSummaryPage
+        ? showSummary()
+        : !!reportData &&
+          (pageType === REPORT_PAGE_TYPE.BOARD ? showBoardDetail(reportData) : showDoraDetail(reportData))}
+      <ReportButtonGroup
+        notification={notification}
+        isShowSave={isSummaryPage}
+        isShowExportMetrics={isSummaryPage}
+        isShowExportBoardButton={isSummaryPage ? shouldShowBoardMetrics : pageType === REPORT_PAGE_TYPE.BOARD}
+        isShowExportPipelineButton={isSummaryPage ? shouldShowDoraMetrics : pageType === REPORT_PAGE_TYPE.DORA}
+        handleBack={() => handleBack()}
+        handleSave={() => handleSave()}
+        reportData={reportData}
+        startDate={startDate}
+        endDate={endDate}
+        csvTimeStamp={csvTimeStamp}
+      />
     </>
   );
 };

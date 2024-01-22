@@ -3,13 +3,17 @@ import { Z_INDEX } from '@src/constants/commons';
 import styled from '@emotion/styled';
 import { theme } from '@src/theme';
 
+export const NotificationContainer = styled('div')({
+  position: 'fixed',
+  zIndex: Z_INDEX.FIXED,
+  top: '4rem',
+  right: '0.75rem',
+});
+
 export const AlertWrapper = styled(Alert)(
   (props: { backgroundcolor: string; iconcolor: string; bordercolor: string }) => ({
     backgroundColor: props.backgroundcolor,
-    position: 'fixed',
-    zIndex: Z_INDEX.FIXED,
-    top: '4.75rem',
-    right: '0.75rem',
+    marginTop: '0.75rem',
     padding: '0.75rem 1.5rem',
     borderRadius: '0.5rem',
     border: `0.0625rem solid ${props.bordercolor}`,

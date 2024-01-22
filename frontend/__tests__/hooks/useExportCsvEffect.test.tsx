@@ -1,49 +1,41 @@
-import { ERROR_MESSAGE_TIME_DURATION, MOCK_EXPORT_CSV_REQUEST_PARAMS } from '../fixtures';
+import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { NotFoundException } from '@src/exceptions/NotFoundException';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
+import { MOCK_EXPORT_CSV_REQUEST_PARAMS } from '../fixtures';
 import { csvClient } from '@src/clients/report/CSVClient';
 import { act, renderHook } from '@testing-library/react';
 import { HttpStatusCode } from 'axios';
 
 describe('use export csv effect', () => {
+  const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect());
+
   afterEach(() => {
     jest.resetAllMocks();
   });
 
-  it('should set error message empty when export csv throw error and last for 4 seconds', async () => {
-    jest.useFakeTimers();
-    csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw new Error('error');
-    });
-    const { result } = renderHook(() => useExportCsvEffect());
-
-    act(() => {
-      result.current.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS);
-      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION);
-    });
-
-    expect(result.current.errorMessage).toEqual('');
-  });
-
-  it('should set error message when export csv response status 500', async () => {
+  it('should call addNotification when export csv response status 500', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
       throw new InternalServerException('error message', HttpStatusCode.InternalServerError);
     });
-    const { result } = renderHook(() => useExportCsvEffect());
+    notificationHook.current.addNotification = jest.fn();
+    const { result } = renderHook(() => useExportCsvEffect(notificationHook.current));
 
     act(() => {
       result.current.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS);
     });
 
-    expect(result.current.errorMessage).toEqual('failed to export csv: error message');
+    expect(notificationHook.current.addNotification).toBeCalledWith({
+      message: 'Failed to export csv.',
+      type: 'error',
+    });
   });
 
-  it('should set error message when export csv response status 404', async () => {
+  it('should set isExpired true when export csv response status 404', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
       throw new NotFoundException('error message', HttpStatusCode.NotFound);
     });
-    const { result } = renderHook(() => useExportCsvEffect());
+    const { result } = renderHook(() => useExportCsvEffect(notificationHook.current));
 
     act(() => {
       result.current.fetchExportData(MOCK_EXPORT_CSV_REQUEST_PARAMS);

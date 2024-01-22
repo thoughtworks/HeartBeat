@@ -143,6 +143,7 @@ const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) =
 const checkBoardShowMore = () => {
   reportPage.showMoreBoardButton.should('exist');
   reportPage.goToBoardDetailPage();
+  reportPage.checkDateRange();
   cy.get(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`).find('tbody > tr').should('have.length', 2);
   cy.get(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`).find('tbody > tr').should('have.length', 17);
   cy.get(`[data-test-id="${METRICS_TITLE.CLASSIFICATION}"]`).find('tbody > tr').should('have.length', 122);
@@ -156,6 +157,7 @@ const checkBoardShowMore = () => {
 const checkDoraShowMore = () => {
   reportPage.showMoreDoraButton.should('exist');
   reportPage.goToDoraDetailPage();
+  reportPage.checkDateRange();
 
   cy.get(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`).find('tbody > tr').should('have.length', 2);
   cy.get(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`).find('tbody > tr').should('have.length', 4);

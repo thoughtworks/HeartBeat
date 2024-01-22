@@ -3,95 +3,88 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { DURATION } from '@src/constants/commons';
 import clearAllMocks = jest.clearAllMocks;
 
+const mockNotification = { title: 'Test', message: 'Notification Message' };
+
 describe('useNotificationLayoutEffect', () => {
   afterAll(() => {
     clearAllMocks();
   });
-  const defaultProps = {
-    title: '',
-    message: '',
-    open: false,
-    closeAutomatically: false,
-    durationTimeout: DURATION.NOTIFICATION_TIME,
-  };
-  it('should init the state of notificationProps when render hook', async () => {
+
+  it('should init the state of notifications when rendering hook', async () => {
     const { result } = renderHook(() => useNotificationLayoutEffect());
 
-    expect(result.current.notificationProps).toEqual(defaultProps);
+    expect(result.current.notifications).toEqual([]);
   });
 
-  it('should reset the notificationProps when call resetProps given mock props', async () => {
-    const mockProps = { title: 'Test', message: 'Notification Message', open: true, closeAutomatically: false };
+  it('should update the notifications when calling addNotification', async () => {
     const { result } = renderHook(() => useNotificationLayoutEffect());
 
     act(() => {
-      result.current.notificationProps = mockProps;
-      result.current.resetProps();
+      result.current.addNotification(mockNotification);
+      result.current.addNotification(mockNotification);
     });
 
-    expect(result.current.notificationProps).toEqual(defaultProps);
+    expect(result.current.notifications).toEqual([
+      { id: expect.anything(), ...mockNotification },
+      {
+        id: expect.anything(),
+        ...mockNotification,
+      },
+    ]);
   });
 
-  it('should update the notificationProps when call updateProps given mock props', async () => {
-    const mockProps = { title: 'Test', message: 'Notification Message', open: true, closeAutomatically: false };
+  it('should close corresponding notification when calling closeNotification by id', async () => {
     const { result } = renderHook(() => useNotificationLayoutEffect());
 
     act(() => {
-      result.current.notificationProps = defaultProps;
-      result.current.updateProps(mockProps);
+      result.current.addNotification(mockNotification);
+      result.current.addNotification(mockNotification);
     });
 
-    expect(result.current.notificationProps).toEqual(mockProps);
+    expect(result.current.notifications.length).toEqual(2);
+    const expected = result.current.notifications[1];
+
+    act(() => {
+      result.current.closeNotification(result.current.notifications[0].id);
+    });
+
+    await waitFor(() => {
+      expect(result.current.notifications).toEqual([expected]);
+    });
   });
 
-  it('should reset the notificationProps when update the value of closeAutomatically given closeAutomatically equals to true', async () => {
+  it('should reset the notifications when calling closeAllNotifications', async () => {
+    const { result } = renderHook(() => useNotificationLayoutEffect());
+
+    act(() => {
+      result.current.addNotification(mockNotification);
+      result.current.addNotification(mockNotification);
+    });
+    expect(result.current.notifications.length).toEqual(2);
+
+    act(() => {
+      result.current.closeAllNotifications();
+    });
+
+    expect(result.current.notifications).toEqual([]);
+  });
+
+  it('should close notification when time exceeds 10s', async () => {
     jest.useFakeTimers();
-    const mockProps = { title: 'Test', message: 'Notification Message', open: true, closeAutomatically: true };
     const { result } = renderHook(() => useNotificationLayoutEffect());
 
     act(() => {
-      result.current.notificationProps = defaultProps;
-      result.current.updateProps(mockProps);
+      result.current.addNotification(mockNotification);
     });
+
+    expect(result.current.notifications).toEqual([{ id: expect.anything(), ...mockNotification }]);
+
     act(() => {
       jest.advanceTimersByTime(DURATION.NOTIFICATION_TIME);
     });
 
     await waitFor(() => {
-      expect(result.current.notificationProps).toEqual(defaultProps);
-    });
-
-    jest.useRealTimers();
-  });
-
-  it('should reset the notificationProps after 5s when update the value of closeAutomatically given durationTimeout equals to 5s', async () => {
-    jest.useFakeTimers();
-    const { result } = renderHook(() => useNotificationLayoutEffect());
-    const expectedTime = 5000;
-    const mockProps = {
-      title: 'Test',
-      message: 'Notification Message',
-      open: true,
-      closeAutomatically: true,
-      durationTimeout: expectedTime,
-    };
-
-    act(() => {
-      result.current.notificationProps = defaultProps;
-      result.current.updateProps(mockProps);
-    });
-
-    jest.advanceTimersByTime(1000);
-
-    await waitFor(() => {
-      expect(result.current.notificationProps).not.toEqual(defaultProps);
-    });
-    act(() => {
-      jest.advanceTimersByTime(expectedTime);
-    });
-
-    await waitFor(() => {
-      expect(result.current.notificationProps).toEqual(defaultProps);
+      expect(result.current.notifications).toEqual([]);
     });
 
     jest.useRealTimers();

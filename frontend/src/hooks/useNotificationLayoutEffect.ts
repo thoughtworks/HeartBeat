@@ -1,57 +1,40 @@
-import { useCallback, useEffect, useState } from 'react';
 import { DURATION } from '@src/constants/commons';
 import { AlertColor } from '@mui/material';
+import { uniqueId } from 'lodash';
+import { useState } from 'react';
 
-export interface NotificationTipProps {
-  title: string;
+export interface Notification {
+  id: string;
+  title?: string;
   message: string;
-  open: boolean;
-  closeAutomatically: boolean;
-  durationTimeout?: number;
   type?: AlertColor;
 }
 
 export interface useNotificationLayoutEffectInterface {
-  notificationProps: NotificationTipProps;
-  resetProps: () => void;
-  updateProps: (notificationProps: NotificationTipProps) => void;
+  notifications: Notification[];
+  addNotification: (notification: Omit<Notification, 'id'>) => void;
+  closeNotification: (id: string) => void;
+  closeAllNotifications: () => void;
 }
 
 export const useNotificationLayoutEffect = (): useNotificationLayoutEffectInterface => {
-  const [notificationProps, setNotificationProps] = useState<NotificationTipProps>({
-    open: false,
-    title: '',
-    message: '',
-    closeAutomatically: false,
-    durationTimeout: DURATION.NOTIFICATION_TIME,
-  });
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const resetProps = useCallback(() => {
-    setNotificationProps(() => ({
-      open: false,
-      title: '',
-      message: '',
-      closeAutomatically: false,
-      durationTimeout: DURATION.NOTIFICATION_TIME,
-    }));
-  }, []);
-
-  const updateProps = useCallback((notificationProps: NotificationTipProps) => {
-    setNotificationProps(notificationProps);
-  }, []);
-
-  const closeAutomatically = () => {
-    const durationTimeout = notificationProps.durationTimeout
-      ? notificationProps.durationTimeout
-      : DURATION.NOTIFICATION_TIME;
+  const addNotification = (notification: Omit<Notification, 'id'>) => {
+    const newNotification = { id: uniqueId(), ...notification };
+    setNotifications((preNotifications) => [...preNotifications, newNotification]);
     window.setTimeout(() => {
-      resetProps();
-    }, durationTimeout);
+      closeNotification(newNotification.id);
+    }, DURATION.NOTIFICATION_TIME);
   };
 
-  useEffect(() => {
-    notificationProps.closeAutomatically && closeAutomatically();
-  }, [notificationProps]);
+  const closeNotification = (id: string) => {
+    setNotifications((preNotifications) => preNotifications.filter((notification) => notification.id !== id));
+  };
 
-  return { notificationProps, resetProps, updateProps };
+  const closeAllNotifications = () => {
+    setNotifications([]);
+  };
+
+  return { notifications, addNotification, closeNotification, closeAllNotifications };
 };

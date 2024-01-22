@@ -1,7 +1,7 @@
+import { HEARTBEAT_EXCEPTION_CODE, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
 import { SourceControlInfoRequestDTO } from '@src/clients/sourceControl/dto/request';
 import { selectSourceControl } from '@src/context/config/configSlice';
-import { HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
 import { FormFieldWithMeta } from '@src/context/meta/metaSlice';
 import ChipExtended from '@src/components/Common/ChipExtended';
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -23,7 +23,7 @@ const BranchChip = ({ value, needVerify, error, updateBranchMeta, repository, er
     pending.current = true;
 
     const params: SourceControlInfoRequestDTO = {
-      type: sourceControlFields.type,
+      type: sourceControlFields.type as SOURCE_CONTROL_TYPES,
       token: sourceControlFields.token,
       branch: value,
       repository,

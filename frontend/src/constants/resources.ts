@@ -82,9 +82,9 @@ export const PIPELINE_TOOL_TYPES = {
   GO_CD: 'GoCD',
 };
 
-export const SOURCE_CONTROL_TYPES = {
-  GITHUB: 'GitHub',
-};
+export enum SOURCE_CONTROL_TYPES {
+  GITHUB = 'GitHub',
+}
 
 export enum PIPELINE_SETTING_TYPES {
   DEPLOYMENT_FREQUENCY_SETTINGS_TYPE = 'DeploymentFrequencySettings',

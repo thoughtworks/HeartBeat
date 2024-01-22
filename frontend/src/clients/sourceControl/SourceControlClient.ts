@@ -14,7 +14,7 @@ export class SourceControlClient extends HttpClient {
     const result: SourceControlResult = {};
     const { token, type } = params;
     try {
-      const response = await this.axiosInstance.post(`/source-control/${type.toLowerCase()}/verify`, {
+      const response = await this.axiosInstance.post(`/source-control/${type.toLocaleLowerCase()}/verify`, {
         token,
       });
       result.code = response.status;
@@ -32,11 +32,14 @@ export class SourceControlClient extends HttpClient {
     const result: SourceControlResult = {};
     const { token, type, repository, branch } = params;
     try {
-      const response = await this.axiosInstance.post(`/source-control/${type.toLowerCase()}/repos/branches/verify`, {
-        token,
-        repository,
-        branch,
-      });
+      const response = await this.axiosInstance.post(
+        `/source-control/${type.toLocaleLowerCase()}/repos/branches/verify`,
+        {
+          token,
+          repository,
+          branch,
+        },
+      );
       result.code = response.status;
     } catch (e) {
       if (isHeartBeatException(e)) {

@@ -8,7 +8,6 @@ import {
   PREVIOUS,
   PROJECT_NAME_LABEL,
   SAVE,
-  SOURCE_CONTROL_TYPES,
   STEPPER,
   TEST_PROJECT_NAME,
   VELOCITY,
@@ -31,8 +30,8 @@ import {
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { ASSIGNEE_FILTER_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
-import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
 import MetricsStepper from '@src/containers/MetricsStepper';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';

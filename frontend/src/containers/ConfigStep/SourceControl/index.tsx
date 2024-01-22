@@ -68,7 +68,7 @@ export const SourceControl = () => {
     async (e: FormEvent<HTMLFormElement>) => {
       updateSourceControlFields(e);
       const params = {
-        type: fields[FIELD_KEY.TYPE].value,
+        type: fields[FIELD_KEY.TYPE].value as SOURCE_CONTROL_TYPES,
         token: fields[FIELD_KEY.TOKEN].value,
       };
       verifyToken(params);

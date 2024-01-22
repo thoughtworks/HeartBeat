@@ -1,5 +1,6 @@
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
+import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 
 export const PROJECT_NAME = 'Heartbeat';
 export const PROJECT_DESCRIPTION =
@@ -77,10 +78,6 @@ export const BOARD_TYPES = {
 export const PIPELINE_TOOL_TYPES = {
   BUILD_KITE: 'BuildKite',
   GO_CD: 'GoCD',
-};
-
-export const SOURCE_CONTROL_TYPES = {
-  GITHUB: 'GitHub',
 };
 
 export enum CONFIG_TITLE {

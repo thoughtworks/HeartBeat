@@ -5,14 +5,15 @@ import {
   MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL,
   RESET,
   SOURCE_CONTROL_FIELDS,
-  SOURCE_CONTROL_TYPES,
   TOKEN_ERROR_MESSAGE,
   VERIFIED,
   VERIFY,
 } from '../../fixtures';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SourceControl } from '@src/containers/ConfigStep/SourceControl';
+import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
@@ -72,11 +73,11 @@ describe('SourceControl', () => {
 
     fillSourceControlFieldsInformation();
 
-    fireEvent.click(screen.getByText(VERIFY));
+    await userEvent.click(screen.getByText(VERIFY));
 
-    await waitFor(() => {
+    await waitFor(async () => {
       expect(screen.getByRole('button', { name: RESET })).toBeTruthy();
-      fireEvent.click(screen.getByRole('button', { name: RESET }));
+      await userEvent.click(screen.getByRole('button', { name: RESET }));
     });
 
     expect(tokenInput.value).toEqual('');

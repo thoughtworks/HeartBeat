@@ -35,6 +35,8 @@
   - [3.5 Export original data](#35-export-original-data)
     - [3.5.1 Export board data](#351-export-board-data)
     - [3.5.2 Export pipeline data](#352-export-pipeline-data)
+  - [3.6 Caching data](#36-caching-data)
+
 - [4 Known issues](#4-known-issues)
   - [4.1 Add/Delete columns in Jira board](#41-adddelete-columns-in-jira-board)
   - [4.2 No crew settings for Pipeline and Github](#42-no-crew-settings-for-pipeline-and-github)
@@ -332,6 +334,11 @@ _Image 3-17，Exported Pipeline Data_
 |PR lead time (mins)|--|
 |Pipeline lead time (mins)|--|
 |Status|Status for pipeline (Pass or Failed)|
+
+## 3.6 Caching data
+   In HeartBeat tool design, we have a cache setting for verify jira & pipeLine & gitHub config function and pipleLine loading function and generate report function. 
+   - `For Jira/Buildkite/Github data`: TTL for cache -> 90 seconds 
+   - `For holiday data`:TTL for cache -> 5 minutes
 
 # 4 Known issues
 

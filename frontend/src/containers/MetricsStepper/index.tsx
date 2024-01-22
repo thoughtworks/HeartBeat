@@ -9,16 +9,6 @@ import {
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
 import {
-  BOARD_TYPES,
-  DONE,
-  METRICS_CONSTANTS,
-  PIPELINE_SETTING_TYPES,
-  PIPELINE_TOOL_TYPES,
-  REQUIRED_DATA,
-  SOURCE_CONTROL_TYPES,
-  TIPS,
-} from '@src/constants/resources';
-import {
   BackButton,
   ButtonContainer,
   MetricsStepperContent,
@@ -29,6 +19,15 @@ import {
   StyledStepper,
 } from './style';
 import {
+  BOARD_TYPES,
+  DONE,
+  METRICS_CONSTANTS,
+  PIPELINE_TOOL_TYPES,
+  REQUIRED_DATA,
+  SOURCE_CONTROL_TYPES,
+  TIPS,
+} from '@src/constants/resources';
+import {
   savedMetricsSettingState,
   selectCycleTimeSettings,
   selectMetricsContent,
@@ -38,8 +37,9 @@ import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepV
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
+import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { getFormMeta } from '@src/context/meta/metaSlice';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { exportToJsonFile } from '@src/utils/util';
 import { useNavigate } from 'react-router-dom';
@@ -63,6 +63,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const [isDisableNextButton, setIsDisableNextButton] = useState(true);
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext();
   const cycleTimeSettings = useAppSelector(selectCycleTimeSettings);
+  const formMeta = useAppSelector(getFormMeta);
 
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board;
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool;
@@ -75,17 +76,6 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const { metrics, projectName, dateRange } = config.basic;
 
   const selectedBoardColumns = useAppSelector(selectCycleTimeSettings);
-  const verifyPipeline = (type: string) => {
-    const pipelines =
-      type === PIPELINE_SETTING_TYPES.LEAD_TIME_FOR_CHANGES_TYPE
-        ? metricsConfig.leadTimeForChanges
-        : metricsConfig.deploymentFrequencySettings;
-    return (
-      pipelines.every(({ step }) => step !== '') &&
-      pipelines.every(({ branches }) => !_.isEmpty(branches)) &&
-      getDuplicatedPipeLineIds(pipelines).length === 0
-    );
-  };
 
   const isShowCrewsSetting = isShowBoard;
   const isShowRealDone =
@@ -96,10 +86,21 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
     requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY);
   const isCrewsSettingValid = metricsConfig.users.length > 0;
   const isRealDoneValid = metricsConfig.doneColumn.length > 0;
-  const isDeploymentFrequencyValid = verifyPipeline(PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE);
+
+  const isDeploymentFrequencyValid = useMemo(() => {
+    const pipelines = metricsConfig.deploymentFrequencySettings;
+    const pipelinesFormMeta = formMeta.metrics.pipelines;
+
+    return (
+      pipelines.every(({ step }) => step !== '') &&
+      pipelines.every(({ branches }) => !_.isEmpty(branches)) &&
+      getDuplicatedPipeLineIds(pipelines).length === 0 &&
+      _.every(pipelinesFormMeta, (item) => _.every(item.branches, (branch) => !branch.error && !branch.needVerify))
+    );
+  }, [formMeta.metrics.pipelines, getDuplicatedPipeLineIds, metricsConfig.deploymentFrequencySettings]);
 
   useEffect(() => {
-    if (!activeStep) {
+    if (activeStep === METRICS_STEPS.CONFIG) {
       const nextButtonValidityOptions = [
         { isShow: isShowBoard, isValid: isBoardVerified },
         { isShow: isShowPipeline, isValid: isPipelineToolVerified },
@@ -109,7 +110,9 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       projectName && dateRange.startDate && dateRange.endDate && metrics.length
         ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
         : setIsDisableNextButton(true);
-    } else if (activeStep === METRICS_STEPS.METRICS) {
+    }
+
+    if (activeStep === METRICS_STEPS.METRICS) {
       const nextButtonValidityOptions = [
         { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
         { isShow: isShowRealDone, isValid: isRealDoneValid },
@@ -135,6 +138,16 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
     dateRange,
     selectedBoardColumns,
     metricsConfig,
+    isShowCrewsSetting,
+    isCrewsSettingValid,
+    isShowRealDone,
+    isRealDoneValid,
+    isShowDeploymentFrequency,
+    isDeploymentFrequencyValid,
+    isShowCycleTimeSettings,
+    isCycleTimeSettingsVerified,
+    isShowClassificationSetting,
+    isClassificationSettingVerified,
   ]);
 
   const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {

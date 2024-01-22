@@ -55,8 +55,18 @@
     file: ./frontend/config/board.json
 
 - request:
+    method: POST
+    url: /api/v1/source-control/.*/verify
+
+  response:
+    headers:
+      content-type: application/json
+      Access-Control-Allow-Origin: "*"
+    status: 204
+
+- request:
     method: GET
-    url: /api/v1/source-control.*
+    url: /api/v1/source-control
 
   response:
     headers:

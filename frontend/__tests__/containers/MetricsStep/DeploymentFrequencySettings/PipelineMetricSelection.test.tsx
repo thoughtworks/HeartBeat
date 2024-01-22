@@ -244,22 +244,8 @@ describe('PipelineMetricSelection', () => {
       await userEvent.click(getByRole('combobox', { name: 'Branches' }));
     });
 
-    const branchesListBox = within(getByRole('listbox'));
-    const allOption = branchesListBox.getByRole('option', { name: 'All' });
-    await act(async () => {
-      await userEvent.click(allOption);
-    });
-
     expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument();
     expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument();
-    await act(async () => {
-      await userEvent.click(allOption);
-    });
-
-    expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument();
-    expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument();
-
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2);
   });
 
   it('should show duplicated message given duplicated id', async () => {

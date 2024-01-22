@@ -235,16 +235,12 @@ export const selectStepsParams = (state: RootState, organizationName: string, pi
   };
 };
 
+export const selectPipelineList = (state: RootState) => state.config.pipelineTool.verifiedResponse.pipelineList;
+
 export const selectSteps = (state: RootState, organizationName: string, pipelineName: string) =>
   state.config.pipelineTool.verifiedResponse.pipelineList.find(
     (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName,
   )?.steps ?? [];
-
-export const selectBranches = (state: RootState, organizationName: string, pipelineName: string) =>
-  state.config.pipelineTool.verifiedResponse.pipelineList.find(
-    /* istanbul ignore next */
-    (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName,
-  )?.branches ?? [];
 
 export const selectPipelineCrews = (state: RootState) => state.config.pipelineTool.verifiedResponse.pipelineCrews;
 

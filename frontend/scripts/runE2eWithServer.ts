@@ -2,14 +2,14 @@ import fetch from 'node-fetch';
 import process from 'process';
 import path from 'path';
 
-const LOCALHOST = 'http://127.0.0.1';
+const LOCALHOST_LIST = ['http://127.0.0.1', 'http://localhost'];
 const WAIT_TIMEOUT = 30000;
 const WAIT_INTERVAL = 3000;
 
-const HEALTH_ENDPOINT = {
-  FRONT_END: `${LOCALHOST}:4321/`,
-  BACK_END: `${LOCALHOST}:4322/api/v1/health`,
-  STUB: `${LOCALHOST}:4323/health`,
+const HEALTH_ENDPOINT_SUFFIX = {
+  FRONT_END: ':4321/',
+  BACK_END: ':4322/api/v1/health',
+  STUB: ':4323/health',
 };
 
 const DIR = {
@@ -21,7 +21,14 @@ const DIR = {
 const main = async (args: string[]) => {
   const { $ } = await import('execa');
 
-  const healthCheck = (url: string) =>
+  const healthCheck = async (suffix: string) => {
+    const requests = LOCALHOST_LIST.map((host) => healthCheckUrl(`${host}${suffix}`));
+    const results = await Promise.all(requests);
+
+    return results.some((res) => res);
+  };
+
+  const healthCheckUrl = (url: string) =>
     new Promise((resolve) =>
       fetch(url)
         .then((response) => {
@@ -36,7 +43,7 @@ const main = async (args: string[]) => {
     );
 
   const checkEndpoints = async () => {
-    const endpoints = Object.values(HEALTH_ENDPOINT);
+    const endpoints = Object.values(HEALTH_ENDPOINT_SUFFIX);
     const checkEndpoints = endpoints.map((url) => healthCheck(url));
     const checkingResult = await Promise.all(checkEndpoints);
     const healthyEndpoints = endpoints.filter((_, idx) => checkingResult[idx]);
@@ -55,7 +62,7 @@ const main = async (args: string[]) => {
       cwd: DIR.BACK_END,
       stderr: 'inherit',
       shell: true,
-    })`./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=${LOCALHOST}:4323'`;
+    })`./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://localhost:4323'`;
 
   const startSTUB = () =>
     $({
@@ -94,13 +101,13 @@ const main = async (args: string[]) => {
 
     const processes = unhealthyEndpoints.map((name) => {
       switch (name) {
-        case HEALTH_ENDPOINT.BACK_END:
+        case HEALTH_ENDPOINT_SUFFIX.BACK_END:
           console.log(`Start to run back-end service`);
           return startBE();
-        case HEALTH_ENDPOINT.FRONT_END:
+        case HEALTH_ENDPOINT_SUFFIX.FRONT_END:
           console.log(`Start to run front-end service`);
           return startFE();
-        case HEALTH_ENDPOINT.STUB:
+        case HEALTH_ENDPOINT_SUFFIX.STUB:
           console.log(`Start to run stub service`);
           return startSTUB();
         default:

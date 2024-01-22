@@ -1,15 +1,14 @@
 import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
-  MOCK_SOURCE_CONTROL_URL,
+  MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT,
+  MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL,
   RESET,
   SOURCE_CONTROL_FIELDS,
   SOURCE_CONTROL_TYPES,
   TOKEN_ERROR_MESSAGE,
   VERIFIED,
   VERIFY,
-  VERIFY_ERROR_MESSAGE,
-  VERIFY_FAILED,
 } from '../../fixtures';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SourceControl } from '@src/containers/ConfigStep/SourceControl';
@@ -33,16 +32,7 @@ export const fillSourceControlFieldsInformation = () => {
 
 let store = null;
 
-const server = setupServer(
-  rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
-    res(
-      ctx.json({
-        githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
-      }),
-      ctx.status(200),
-    ),
-  ),
-);
+const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(204))));
 
 describe('SourceControl', () => {
   beforeAll(() => server.listen());
@@ -148,9 +138,7 @@ describe('SourceControl', () => {
 
   it('should show error notification when sourceControl verify response status is 401', async () => {
     server.use(
-      rest.post(MOCK_SOURCE_CONTROL_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED })),
-      ),
+      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))),
     );
     setup();
 
@@ -159,9 +147,7 @@ describe('SourceControl', () => {
     fireEvent.click(screen.getByRole('button', { name: VERIFY }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(`${SOURCE_CONTROL_TYPES.GITHUB} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`),
-      ).toBeInTheDocument();
+      expect(screen.getByText(MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT)).toBeInTheDocument();
     });
   });
 });

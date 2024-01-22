@@ -5,7 +5,6 @@ import {
   updateBoardVerifyState,
   updateCalendarType,
   updateProjectName,
-  updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
 import { CollectionDateLabel, ProjectNameInput, StyledFormControlLabel } from './style';
 import { RequiredMetrics } from '@src/containers/ConfigStep/BasicInfo/RequiredMetrics';
@@ -51,7 +50,6 @@ const BasicInfo = () => {
           value={calendarType}
           onChange={(e) => {
             dispatch(updateBoardVerifyState(false));
-            dispatch(updateSourceControlVerifyState(false));
             dispatch(updateCalendarType(e.target.value));
           }}
         >

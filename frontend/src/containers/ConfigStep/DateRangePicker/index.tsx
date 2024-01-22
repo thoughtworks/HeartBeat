@@ -1,9 +1,4 @@
-import {
-  selectDateRange,
-  updateBoardVerifyState,
-  updateDateRange,
-  updateSourceControlVerifyState,
-} from '@src/context/config/configSlice';
+import { selectDateRange, updateBoardVerifyState, updateDateRange } from '@src/context/config/configSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
@@ -18,7 +13,6 @@ export const DateRangePicker = () => {
   const { startDate, endDate } = useAppSelector(selectDateRange);
   const updateVerifyStates = () => {
     dispatch(updateBoardVerifyState(false));
-    dispatch(updateSourceControlVerifyState(false));
   };
   const changeStartDate = (value: Nullable<Dayjs>) => {
     if (value === null) {

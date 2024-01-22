@@ -12,7 +12,7 @@ import {
   StyledHeaderInfo,
   StyledVersion,
 } from '@src/layouts/style';
-import { getVersion, saveVersion } from '@src/context/header/headerSlice';
+import { getVersion, resetFormMeta, saveVersion } from '@src/context/meta/metaSlice';
 import { resetImportedData } from '@src/context/config/configSlice';
 import { headerClient } from '@src/clients/header/HeaderClient';
 import { resetStep } from '@src/context/stepper/StepperSlice';
@@ -31,6 +31,7 @@ const Header = () => {
   const goHome = () => {
     dispatch(resetStep());
     dispatch(resetImportedData());
+    dispatch(resetFormMeta());
     navigate('/');
   };
 

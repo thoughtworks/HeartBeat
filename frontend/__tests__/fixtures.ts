@@ -100,7 +100,8 @@ export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`;
 export const MOCK_PIPELINE_VERIFY_URL = `${BASE_URL}/pipelines/buildkite/verify`;
 export const MOCK_PIPELINE_GET_INFO_URL = `${BASE_URL}/pipelines/buildkite/info`;
 export const MOCK_JIRA_URL = `${BASE_URL}/pipelines/jira`;
-export const MOCK_SOURCE_CONTROL_URL = `${BASE_URL}/source-control`;
+export const MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL = `${BASE_URL}/source-control/:type/verify`;
+export const MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL = `${BASE_URL}/source-control/:type/repos/branches/verify`;
 export const MOCK_REPORT_URL = `${BASE_URL}/reports`;
 export const MOCK_VERSION_URL = `${BASE_URL}/version`;
 export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:fileName`;
@@ -155,8 +156,6 @@ export const MOCK_PIPELINE_VERIFY_REQUEST_PARAMS = {
 export const MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
   type: SOURCE_CONTROL_TYPES.GITHUB,
-  startTime: 1613664000000,
-  endTime: 1614873600000,
 };
 
 export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
@@ -758,3 +757,4 @@ export const TIME_DISPLAY_TITTLE_END = 'END';
 export const CYCLE_TIME_SETTINGS_SECTION = 'Cycle time settings section';
 export const REAL_DONE_SETTING_SECTION = 'Real done setting section';
 export const SELECT_CONSIDER_AS_DONE_MESSAGE = 'Must select which you want to consider as Done';
+export const MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT = 'Token is incorrect!';

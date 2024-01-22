@@ -236,3 +236,14 @@ export const PIPELINE_TOOL_GET_INFO_ERROR_MESSAGE =
 
 export const PIPELINE_TOOL_RETRY_MESSAGE = 'Data loading failed, please';
 export const PIPELINE_TOOL_RETRY_TRIGGER_MESSAGE = ' try again';
+
+export const SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT_MAPPING: Record<string, string> = {
+  '401': 'Token is incorrect!',
+};
+
+export const SOURCE_CONTROL_GET_INFO_ERROR_CASE_TEXT_MAPPING: Record<string, string> = {
+  '401': 'Token is incorrect!',
+  '403': 'Unable to read target branch, please check the token or target branch!',
+};
+
+export const SOURCE_CONTROL_BRANCH_INVALID_TEXT = 'The codebase branch marked in red is invalid!';

@@ -66,3 +66,19 @@
       content-type: application/json
     file: ./backend/github/jsons/github.repos.commits.fb1b445a113ef2d1ed465732a5dd02c2e07ca1c4.json
 
+- request:
+    method: GET
+    url: /octocat
+
+  response:
+    status: 200
+
+- request:
+    method: GET
+    url: /repos/([\w.-]+)/([\w.-]+)/branches/([\w.-]+)
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    file: ./backend/github/jsons/github.repos.branches.json

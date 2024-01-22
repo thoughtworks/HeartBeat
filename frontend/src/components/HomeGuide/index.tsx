@@ -4,11 +4,12 @@ import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/Ho
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { updateMetricsImportedData } from '@src/context/Metrics/metricsSlice';
 import { resetStep } from '@src/context/stepper/StepperSlice';
+import { resetFormMeta } from '@src/context/meta/metaSlice';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { MESSAGE } from '@src/constants/resources';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE } from '@src/constants/router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export const HomeGuide = () => {
   const navigate = useNavigate();
@@ -53,17 +54,21 @@ export const HomeGuide = () => {
     }
   };
 
-  const openFileImportBox = () => {
-    setValidConfig(true);
+  const resetState = () => {
     dispatch(resetImportedData());
     dispatch(resetStep());
+    dispatch(resetFormMeta());
+  };
+
+  const openFileImportBox = () => {
+    setValidConfig(true);
+    resetState();
     const fileInput = getImportFileElement();
     fileInput.click();
   };
 
   const createNewProject = () => {
-    dispatch(resetStep());
-    dispatch(resetImportedData());
+    resetState();
     navigate(ROUTE.METRICS_PAGE);
   };
 

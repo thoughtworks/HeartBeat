@@ -12,16 +12,16 @@ import {
   updatePipelineStep,
 } from '@src/context/Metrics/metricsSlice';
 import { SingleSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/SingleSelection';
+import { BranchSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/BranchSelection';
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
-import { BranchSelection } from '@src/containers/ConfigStep/BranchSelection';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { MESSAGE } from '@src/constants/resources';
 import { Loading } from '@src/components/Loading';
 import { useAppDispatch } from '@src/hooks';
-import React, { useState } from 'react';
 import { store } from '@src/store';
+import { useState } from 'react';
 
 interface pipelineMetricSelectionProps {
   type: string;

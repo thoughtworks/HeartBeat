@@ -1,0 +1,128 @@
+{
+  "name": "main",
+  "commit": {
+    "sha": "fa6b0aaa6803e9e71d51d2da9277ba974face526",
+    "node_id": "C_kwDOHtifHNoAKGZhNmIwYWFhNjgwM2U5ZTcxZDUxZDJkYTkyNzdiYTk3NGZhY2U1MjY",
+    "commit": {
+      "author": {
+        "name": "sqsq5566",
+        "email": "154306546+sqsq5566@users.noreply.github.com",
+        "date": "2024-01-19T06:18:27Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2024-01-19T06:18:27Z"
+      },
+      "message": "ADM-675[backend]: fix bug (#960)\n\n* ADM-675: [backend]feat: add cache for getJiraCardHistoryByCount method in JiraFeignClient\r\n\r\n* ADM-675: [backend]fix: fix the bug that cache key parameter not match method parameter\r\n\r\n* ADM-675: [backend]feat: move cachePageService and its test to correct folder\r\n\r\n* ADM-675: [backend]feat: change ttl for holiday feignClient cache",
+      "tree": {
+        "sha": "802a470596db2fbe4e72dc1729add2137fcac798",
+        "url": "https://api.github.com/repos/au-heartbeat/Heartbeat/git/trees/802a470596db2fbe4e72dc1729add2137fcac798"
+      },
+      "url": "https://api.github.com/repos/au-heartbeat/Heartbeat/git/commits/fa6b0aaa6803e9e71d51d2da9277ba974face526",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "",
+        "payload": ""
+      }
+    },
+    "url": "https://api.github.com/repos/au-heartbeat/Heartbeat/commits/fa6b0aaa6803e9e71d51d2da9277ba974face526",
+    "html_url": "https://github.com/au-heartbeat/Heartbeat/commit/fa6b0aaa6803e9e71d51d2da9277ba974face526",
+    "comments_url": "https://api.github.com/repos/au-heartbeat/Heartbeat/commits/fa6b0aaa6803e9e71d51d2da9277ba974face526/comments",
+    "author": {
+      "login": "sqsq5566",
+      "id": 154306546,
+      "node_id": "U_kgDOCTKH8g",
+      "avatar_url": "https://avatars.githubusercontent.com/u/154306546?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/sqsq5566",
+      "html_url": "https://github.com/sqsq5566",
+      "followers_url": "https://api.github.com/users/sqsq5566/followers",
+      "following_url": "https://api.github.com/users/sqsq5566/following{/other_user}",
+      "gists_url": "https://api.github.com/users/sqsq5566/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/sqsq5566/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/sqsq5566/subscriptions",
+      "organizations_url": "https://api.github.com/users/sqsq5566/orgs",
+      "repos_url": "https://api.github.com/users/sqsq5566/repos",
+      "events_url": "https://api.github.com/users/sqsq5566/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/sqsq5566/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "7f946d88e216f5dc8f4c518e8c80de1d565b0f94",
+        "url": "https://api.github.com/repos/au-heartbeat/Heartbeat/commits/7f946d88e216f5dc8f4c518e8c80de1d565b0f94",
+        "html_url": "https://github.com/au-heartbeat/Heartbeat/commit/7f946d88e216f5dc8f4c518e8c80de1d565b0f94"
+      }
+    ]
+  },
+  "_links": {
+    "self": "https://api.github.com/repos/au-heartbeat/Heartbeat/branches/main",
+    "html": "https://github.com/au-heartbeat/Heartbeat/tree/main"
+  },
+  "protected": true,
+  "protection": {
+    "enabled": true,
+    "required_status_checks": {
+      "enforcement_level": "non_admins",
+      "contexts": [
+        "backend-check",
+        "backend-license-check",
+        "frontend-check",
+        "frontend-license-check",
+        "security-check",
+        "buildkite/heartbeat"
+      ],
+      "checks": [
+        {
+          "context": "backend-check",
+          "app_id": 15368
+        },
+        {
+          "context": "backend-license-check",
+          "app_id": 15368
+        },
+        {
+          "context": "frontend-check",
+          "app_id": 15368
+        },
+        {
+          "context": "frontend-license-check",
+          "app_id": 15368
+        },
+        {
+          "context": "security-check",
+          "app_id": 15368
+        },
+        {
+          "context": "buildkite/heartbeat",
+          "app_id": 72
+        }
+      ]
+    }
+  },
+  "protection_url": "https://api.github.com/repos/au-heartbeat/Heartbeat/branches/main/protection"
+}

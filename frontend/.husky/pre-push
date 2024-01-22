@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-cd frontend && npm run audit && npm run type-check && npm run coverage && npm run e2e:with-server && \
+cd frontend && npm run audit && npm run type-check && npm run coverage:silent && npm run e2e:with-server && \
 cd ../backend && ./gradlew clean check

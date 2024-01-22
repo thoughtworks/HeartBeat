@@ -214,7 +214,7 @@ jobs:
         run: pnpm dlx audit-ci@^6 --critical --report-type full
       - name: Testing and coverage
         run: |
-          pnpm coverage
+          pnpm coverage:silent
       - name: Building
         run: pnpm build
       - name: Upload Test Report to Codacy
@@ -238,21 +238,21 @@ jobs:
       - name: License compliance check
         run: |
           npm run license-compliance
-#  check-buildkite-status:
-#    if: ${{ github.event_name == 'pull_request' }}
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Check BuildKite status
-#        run: |
-#          buildkite_status=$(curl -H "Authorization: Bearer ${{ secrets.BUILDKITE_TOKEN }}" "https://api.buildkite.com/v2/organizations/thoughtworks-Heartbeat/pipelines/heartbeat/builds?branch=main"| jq -r '.[0].state')
-#
-#          if [ "$buildkite_status" != "passed" ]; then
-#            echo "BuildKite build failed. Cannot merge the PR."
-#            exit 1
-#          fi
+  #  check-buildkite-status:
+  #    if: ${{ github.event_name == 'pull_request' }}
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #
+  #      - name: Check BuildKite status
+  #        run: |
+  #          buildkite_status=$(curl -H "Authorization: Bearer ${{ secrets.BUILDKITE_TOKEN }}" "https://api.buildkite.com/v2/organizations/thoughtworks-Heartbeat/pipelines/heartbeat/builds?branch=main"| jq -r '.[0].state')
+  #
+  #          if [ "$buildkite_status" != "passed" ]; then
+  #            echo "BuildKite build failed. Cannot merge the PR."
+  #            exit 1
+  #          fi
   deploy-infra:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:

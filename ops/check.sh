@@ -62,7 +62,7 @@ frontend_check(){
   pnpm dlx audit-ci@^6 --config ./audit-ci.jsonc
   pnpm install --no-frozen-lockfile
   pnpm lint
-  pnpm coverage
+  pnpm coverage:silent
   bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./coverage/clover.xml
   pnpm build
 }

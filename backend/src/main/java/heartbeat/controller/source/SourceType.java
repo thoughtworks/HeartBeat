@@ -6,7 +6,13 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public enum SourceType {
 
-	GITHUB;
+	GITHUB("GitHub");
+
+	public final String sourceType;
+
+	SourceType(String sourceType) {
+		this.sourceType = sourceType;
+	}
 
 	public static SourceType fromValue(String type) {
 		return switch (type) {

@@ -1,9 +1,10 @@
 package heartbeat.controller.source;
 
-import heartbeat.controller.source.dto.GitHubResponse;
+import heartbeat.controller.source.dto.SourceControlResponse;
 import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.controller.source.dto.VerifyBranchRequest;
 import heartbeat.service.source.github.GitHubService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +37,18 @@ public class SourceController {
 	@CrossOrigin
 	@Deprecated(since = "frontend completed")
 	@ResponseStatus(HttpStatus.OK)
-	public GitHubResponse getRepos(@RequestBody @Valid SourceControlDTO sourceControlDTO) {
+	public SourceControlResponse getRepos(@RequestBody @Valid SourceControlDTO sourceControlDTO) {
 		log.info("Start to get repos by token");
-		GitHubResponse gitHubRepos = gitHubService.verifyToken(sourceControlDTO.getToken());
+		SourceControlResponse gitHubRepos = gitHubService.verifyToken(sourceControlDTO.getToken());
 		log.info("Successfully get the repos by token, repos size: {}", gitHubRepos.getGithubRepos().size());
 		return gitHubRepos;
 
 	}
 
 	@PostMapping("/{sourceType}/verify")
-	public ResponseEntity<Void> verifyToken(@PathVariable SourceType sourceType,
+	public ResponseEntity<Void> verifyToken(
+			@Schema(type = "string", allowableValues = { "github" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable SourceType sourceType,
 			@RequestBody @Valid SourceControlDTO sourceControlDTO) {
 		log.info("Start to verify source type: {} token.", sourceType);
 		switch (sourceType) {
@@ -60,7 +63,9 @@ public class SourceController {
 	}
 
 	@PostMapping("/{sourceType}/repos/branches/verify")
-	public ResponseEntity<Void> verifyBranch(@PathVariable SourceType sourceType,
+	public ResponseEntity<Void> verifyBranch(
+			@Schema(type = "string", allowableValues = { "github" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable SourceType sourceType,
 			@RequestBody @Valid VerifyBranchRequest request) {
 		log.info("Start to verify source type: {} branch: {}.", sourceType, request.getBranch());
 		switch (sourceType) {

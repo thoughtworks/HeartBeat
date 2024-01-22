@@ -6,6 +6,7 @@ import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -33,14 +34,18 @@ public class PipelineController {
 	private final BuildKiteService buildKiteService;
 
 	@PostMapping("/{pipelineType}/verify")
-	public ResponseEntity<Void> verifyBuildKiteToken(@PathVariable PipelineType pipelineType,
+	public ResponseEntity<Void> verifyBuildKiteToken(
+			@Schema(type = "string", allowableValues = { "buildkite" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable PipelineType pipelineType,
 			@Valid @RequestBody TokenParam tokenParam) {
 		buildKiteService.verifyToken(tokenParam.getToken());
 		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/{pipelineType}/info")
-	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(@PathVariable PipelineType pipelineType,
+	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(
+			@Schema(type = "string", allowableValues = { "buildkite" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable PipelineType pipelineType,
 			@Valid @RequestBody TokenParam tokenParam) {
 		BuildKiteResponseDTO buildKiteResponse = buildKiteService.getBuildKiteInfo(tokenParam);
 		if (buildKiteResponse.getPipelineList().isEmpty()) {
@@ -54,8 +59,10 @@ public class PipelineController {
 	@GetMapping("/{pipelineType}/{organizationId}/pipelines/{buildId}/steps")
 	public ResponseEntity<PipelineStepsDTO> getPipelineSteps(
 			@RequestHeader("Authorization") @NotBlank(message = "Token must not be blank") String token,
-			@PathVariable String pipelineType, @PathVariable String organizationId,
-			@PathVariable("buildId") String pipelineId, @Valid @ModelAttribute PipelineStepsParam params) {
+			@Schema(type = "string", allowableValues = { "buildkite" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable String pipelineType,
+			@PathVariable String organizationId, @PathVariable("buildId") String pipelineId,
+			@Valid @ModelAttribute PipelineStepsParam params) {
 
 		log.info("Start to get pipeline steps, organization id: {}, pipeline id: {}", organizationId, pipelineId);
 		PipelineStepsDTO pipelineSteps = buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId, params);

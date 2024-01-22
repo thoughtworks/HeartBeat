@@ -7,6 +7,7 @@ import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.JiraVerifyResponse;
 import heartbeat.exception.BadRequestException;
 import heartbeat.service.board.jira.JiraService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -33,14 +34,18 @@ public class BoardController {
 	}
 
 	@PostMapping("/{boardType}/verify")
-	public JiraVerifyResponse verify(@PathVariable @NotBlank BoardType boardType,
+	public JiraVerifyResponse verify(
+			@Schema(type = "string", allowableValues = { "jira", "classic-jira" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable @NotBlank BoardType boardType,
 			@Valid @RequestBody BoardVerifyRequestParam boardRequestParam) {
 		String projectKey = jiraService.verify(boardType, boardRequestParam);
 		return JiraVerifyResponse.builder().projectKey(projectKey).build();
 	}
 
 	@PostMapping("/{boardType}/info")
-	public BoardConfigDTO getInfo(@PathVariable @NotBlank BoardType boardType,
+	public BoardConfigDTO getInfo(
+			@Schema(type = "string", allowableValues = { "jira", "classic-jira" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable @NotBlank BoardType boardType,
 			@Valid @RequestBody BoardRequestParam boardRequestParam) {
 		checkTime(boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
 		return jiraService.getInfo(boardType, boardRequestParam);

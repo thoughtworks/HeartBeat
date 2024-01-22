@@ -2,8 +2,8 @@ package heartbeat.controller.source;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import heartbeat.controller.source.dto.GitHubResponse;
 import heartbeat.controller.source.dto.SourceControlDTO;
+import heartbeat.controller.source.dto.SourceControlResponse;
 import heartbeat.controller.source.dto.VerifyBranchRequest;
 import heartbeat.service.source.github.GitHubService;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SourceController.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
-class GithubControllerTest {
+class SourceControllerTest {
 
 	public static final String BAD_SOURCE_TYPE = "GitHub";
 
@@ -59,7 +59,7 @@ class GithubControllerTest {
 		LinkedHashSet<String> repos = new LinkedHashSet<>(
 				List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"));
 
-		GitHubResponse githubReposResponse = GitHubResponse.builder().githubRepos(repos).build();
+		SourceControlResponse githubReposResponse = SourceControlResponse.builder().githubRepos(repos).build();
 
 		when(gitHubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();

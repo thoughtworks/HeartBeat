@@ -9,7 +9,7 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
-import heartbeat.controller.source.dto.GitHubResponse;
+import heartbeat.controller.source.dto.SourceControlResponse;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.GithubRepoEmptyException;
 import heartbeat.exception.InternalServerErrorException;
@@ -55,7 +55,7 @@ public class GitHubService {
 	}
 
 	@Deprecated
-	public GitHubResponse verifyToken(String githubToken) {
+	public SourceControlResponse verifyToken(String githubToken) {
 		try {
 			String token = TOKEN_TITLE + githubToken;
 			log.info("Start to query repository url by token");
@@ -78,7 +78,7 @@ public class GitHubService {
 					Set<String> allGitHubRepos = githubReposByOrganizations.join();
 					log.info("Successfully get all repositories by token, repos size: {}", allGitHubRepos.size());
 					githubRepos.addAll(allGitHubRepos);
-					return GitHubResponse.builder().githubRepos(githubRepos).build();
+					return SourceControlResponse.builder().githubRepos(githubRepos).build();
 				}, customTaskExecutor)
 				.join();
 		}

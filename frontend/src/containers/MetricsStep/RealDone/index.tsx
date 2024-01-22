@@ -21,26 +21,15 @@ interface realDoneProps {
   label: string;
 }
 
-const getSelectedDoneColumns = (selectedBoardColumns: { name: string; value: string }[]) =>
-  selectedBoardColumns.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).map(({ name }) => name);
-
-const getFilteredStatus = (
-  columns: { key: string; value: { name: string; statuses: string[] } }[],
-  selectedDoneColumns: string[],
-): string[] =>
-  columns.filter(({ value }) => selectedDoneColumns.includes(value.name)).flatMap(({ value }) => value.statuses);
-
-const getDoneStatus = (columns: { key: string; value: { name: string; statuses: string[] } }[]) =>
-  columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? [];
-
 export const RealDone = ({ columns, title, label }: realDoneProps) => {
   const dispatch = useAppDispatch();
-  const selectedCycleTimeSettings = useAppSelector(selectCycleTimeSettings);
+  const cycleTimeSettings = useAppSelector(selectCycleTimeSettings);
   const savedDoneColumns = useAppSelector(selectMetricsContent).doneColumn;
   const realDoneWarningMessage = useAppSelector(selectRealDoneWarningMessage);
-  const doneStatus = getDoneStatus(columns);
-  const selectedDoneColumns = getSelectedDoneColumns(selectedCycleTimeSettings);
-  const filteredStatus = getFilteredStatus(columns, selectedDoneColumns);
+  const doneStatus =
+    columns.find((column) => column.key === METRICS_CONSTANTS.doneKeyFromBackend)?.value.statuses ?? [];
+  const selectedDoneColumns = cycleTimeSettings.filter(({ value }) => value === METRICS_CONSTANTS.doneValue);
+  const filteredStatus = selectedDoneColumns.map(({ status }) => status);
   const status = selectedDoneColumns.length < 1 ? doneStatus : filteredStatus;
   const [selectedDoneStatus, setSelectedDoneStatus] = useState<string[]>([]);
   const isAllSelected = savedDoneColumns.length === status.length;

@@ -87,7 +87,7 @@ describe('HomeGuide', () => {
     fireEvent.change(input);
 
     await waitFor(() => {
-      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(3);
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(4);
       expect(navigateMock).toHaveBeenCalledWith(METRICS_PAGE_ROUTE);
     });
   });

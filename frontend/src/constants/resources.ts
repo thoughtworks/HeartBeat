@@ -198,13 +198,28 @@ export const MESSAGE = {
   FAILED_TO_REQUEST: 'Failed to request !',
 };
 
-export const METRICS_CYCLE_SETTING_TABLE_HEADER = [
+export const METRICS_CYCLE_SETTING_TABLE_HEADER_BY_COLUMN = [
   {
     text: 'Board Column',
     emphasis: false,
   },
   {
-    text: 'Status',
+    text: 'Board Status',
+    emphasis: false,
+  },
+  {
+    text: 'Heartbeat State',
+    emphasis: true,
+  },
+];
+
+export const METRICS_CYCLE_SETTING_TABLE_HEADER_BY_STATUS = [
+  {
+    text: 'Board Status',
+    emphasis: false,
+  },
+  {
+    text: 'Board Column',
     emphasis: false,
   },
   {
@@ -221,6 +236,11 @@ export const REPORT_PAGE = {
     TITLE: 'DORA Metrics',
   },
 };
+
+export enum CYCLE_TIME_SETTINGS_TYPES {
+  BY_COLUMN = 'byColumn',
+  BY_STATUS = 'byStatus',
+}
 
 export const AXIOS_NETWORK_ERROR_CODES = [AxiosError.ECONNABORTED, AxiosError.ETIMEDOUT, AxiosError.ERR_NETWORK];
 

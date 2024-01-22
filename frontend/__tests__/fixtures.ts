@@ -237,14 +237,17 @@ export const IMPORTED_NEW_CONFIG_FIXTURE = {
   },
   crews: ['lucy', 'hi hi', 'Yu Zhang'],
   classification: ['type', 'Parent'],
-  cycleTime: [
-    {
-      'In Analysis': 'To do',
-    },
-    {
-      'Ready For Dev': 'Analysis',
-    },
-  ],
+  cycleTime: {
+    type: 'byColumn',
+    jiraColumns: [
+      {
+        'In Analysis': 'To do',
+      },
+      {
+        'Ready For Dev': 'Analysis',
+      },
+    ],
+  },
 };
 
 export const MOCK_EXPORT_CSV_REQUEST_PARAMS: CSVReportRequestDTO = {
@@ -325,25 +328,6 @@ export const MOCK_BUILD_KITE_GET_INFO_RESPONSE = {
     },
   ],
 };
-
-export const FILTER_CYCLE_TIME_SETTINGS = [
-  { name: 'TODO', value: 'TODO' },
-  { name: 'BACKLOG', value: 'TODO' },
-  { name: 'IN DEV', value: 'IN DEV' },
-  { name: 'DOING', value: 'IN DEV' },
-  { name: 'DONE', value: 'DONE' },
-];
-
-export const MOCK_CYCLE_TIME_SETTING = [
-  { name: 'TODO', value: 'TODO' },
-  { name: 'IN DEV', value: 'IN DEV' },
-  { name: 'DONE', value: 'DONE' },
-];
-export const MOCK_JIRA_WITH_STATUES_SETTING = [
-  { name: 'TODO', statuses: ['TODO', 'BACKLOG'] },
-  { name: 'IN DEV', statuses: ['IN DEV', 'DOING'] },
-  { name: 'DONE', statuses: ['DONE'] },
-];
 
 export const MOCK_GITHUB_VERIFY_RESPONSE = {
   githubRepos: ['https://github.com/xxxx1/repo1', 'https://github.com/xxxx1/repo2'],
@@ -749,8 +733,6 @@ export const LIST_OPEN = 'Open';
 export const NO_RESULT_DASH = '----';
 
 export const MOCK_AUTOCOMPLETE_LIST = ['Option 1', 'Option 2', 'Option 3'];
-
-export const AUTOCOMPLETE_SELECT_ACTION = 'selectOption';
 
 export const TIME_DISPLAY_TITTLE_START = 'START';
 export const TIME_DISPLAY_TITTLE_END = 'END';

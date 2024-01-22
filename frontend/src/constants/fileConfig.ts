@@ -27,7 +27,9 @@ export interface OldFileConfig {
   };
   crews?: string[];
   assigneeFilter?: string;
-  cycleTime?: unknown;
+  cycleTime?: {
+    jiraColumns?: unknown;
+  };
   doneStatus?: string[];
   classifications?: string[];
   deployment?: OldConfigSetting[];
@@ -76,7 +78,10 @@ export interface NewFileConfig {
   };
   crews?: string[];
   assigneeFilter?: string;
-  cycleTime?: unknown;
+  cycleTime?: {
+    jiraColumns?: unknown;
+    type?: string;
+  };
   doneStatus?: string[];
   classification?: string[];
   deployment?: NewConfigSetting[];

@@ -1,6 +1,7 @@
-import { ICycleTimeSetting, IJiraColumnsWithValue } from '@src/context/Metrics/metricsSlice';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
+import { ICycleTimeSetting } from '@src/context/Metrics/metricsSlice';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
+import { METRICS_CONSTANTS } from '@src/constants/resources';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';
 dayjs.extend(duration);
@@ -42,22 +43,13 @@ export const getJiraBoardToken = (token: string, email: string) => {
   }
 };
 
-export const filterAndMapCycleTimeSettings = (
-  cycleTimeSettings: ICycleTimeSetting[],
-  jiraColumnsWithValue: IJiraColumnsWithValue[],
-) => {
-  return cycleTimeSettings
-    .filter((item) => item.value !== '----')
-    .flatMap((cycleTimeSetting) => {
-      const previousName = cycleTimeSetting.name;
-      const jiraColumnsStatuses = jiraColumnsWithValue.find((item) => item.name === previousName)?.statuses || [];
-
-      return jiraColumnsStatuses.map((item) => ({
-        name: item,
-        value: cycleTimeSetting.value,
-      }));
-    });
-};
+export const filterAndMapCycleTimeSettings = (cycleTimeSettings: ICycleTimeSetting[]) =>
+  cycleTimeSettings
+    .filter((item) => item.value !== METRICS_CONSTANTS.cycleTimeEmptyStr)
+    .map(({ status, value }) => ({
+      name: status,
+      value,
+    }));
 
 export const findCaseInsensitiveType = (option: string[], value: string): string => {
   const newValue = option.find((item) => value.toLowerCase() === item.toLowerCase());

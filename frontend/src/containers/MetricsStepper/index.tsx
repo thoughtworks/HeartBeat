@@ -9,6 +9,16 @@ import {
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
 import {
+  BOARD_TYPES,
+  CYCLE_TIME_SETTINGS_TYPES,
+  DONE,
+  METRICS_CONSTANTS,
+  PIPELINE_TOOL_TYPES,
+  REQUIRED_DATA,
+  SOURCE_CONTROL_TYPES,
+  TIPS,
+} from '@src/constants/resources';
+import {
   BackButton,
   ButtonContainer,
   MetricsStepperContent,
@@ -19,15 +29,7 @@ import {
   StyledStepper,
 } from './style';
 import {
-  BOARD_TYPES,
-  DONE,
-  METRICS_CONSTANTS,
-  PIPELINE_TOOL_TYPES,
-  REQUIRED_DATA,
-  SOURCE_CONTROL_TYPES,
-  TIPS,
-} from '@src/constants/resources';
-import {
+  ICycleTimeSetting,
   savedMetricsSettingState,
   selectCycleTimeSettings,
   selectMetricsContent,
@@ -191,22 +193,28 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       doneColumn,
       targetFields,
       cycleTimeSettings,
+      cycleTimeSettingsType,
       treatFlagCardAsBlock,
       assigneeFilter,
     } = filterMetricsConfig(metricsConfig);
 
-    /* istanbul ignore next */
     const metricsData = {
       crews: users,
       assigneeFilter: assigneeFilter,
-      /* istanbul ignore next */
       pipelineCrews,
       cycleTime: cycleTimeSettings
         ? {
-            /* istanbul ignore next */
-            jiraColumns: cycleTimeSettings?.map(({ name, value }: { name: string; value: string }) => ({
-              [name]: value,
-            })),
+            type: cycleTimeSettingsType,
+            jiraColumns:
+              cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN
+                ? ([...new Set(cycleTimeSettings.map(({ column }: ICycleTimeSetting) => column))] as string[]).map(
+                    (uniqueColumn) => ({
+                      [uniqueColumn]:
+                        cycleTimeSettings.find(({ column }: ICycleTimeSetting) => column === uniqueColumn)?.value ||
+                        METRICS_CONSTANTS.cycleTimeEmptyStr,
+                    }),
+                  )
+                : cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value })),
             treatFlagCardAsBlock,
           }
         : undefined,

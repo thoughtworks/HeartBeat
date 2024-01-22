@@ -1,5 +1,5 @@
 import { StyledTextField } from '@src/containers/MetricsStep/CycleTime/Table/style';
-import React, { useState, useCallback, SyntheticEvent } from 'react';
+import React, { useState, useCallback, SyntheticEvent, useEffect } from 'react';
 import { CYCLE_TIME_LIST } from '@src/constants/resources';
 import { Z_INDEX } from '@src/constants/commons';
 import { Autocomplete } from '@mui/material';
@@ -14,6 +14,10 @@ interface ICellAutoCompleteProps {
 const CellAutoComplete = ({ name, defaultSelected, onSelect, customRenderInput }: ICellAutoCompleteProps) => {
   const [selectedCycleTime, setSelectedCycleTime] = useState(defaultSelected);
   const [inputValue, setInputValue] = useState<string>('');
+
+  useEffect(() => {
+    setSelectedCycleTime(defaultSelected);
+  }, [defaultSelected]);
 
   const handleInputOnChange = useCallback(
     (event: SyntheticEvent, newInputValue: string) => {

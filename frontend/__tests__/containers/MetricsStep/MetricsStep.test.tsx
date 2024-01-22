@@ -52,16 +52,18 @@ describe('MetricsStep', () => {
 
   it('should render Crews when select velocity, and show Real done when have done column in Cycle time', async () => {
     store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]));
+    store.dispatch(
+      saveCycleTimeSettings([
+        { column: 'Testing', status: 'testing', value: 'Done' },
+        { column: 'Testing', status: 'test', value: 'Done' },
+      ]),
+    );
+
     const { getByText, queryByText } = setup();
 
     expect(getByText(CREWS_SETTING)).toBeInTheDocument();
     expect(queryByText(CYCLE_TIME_SETTINGS)).not.toBeInTheDocument();
     expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument();
-
-    act(() => {
-      store.dispatch(saveCycleTimeSettings([{ name: 'Testing', value: 'Done' }]));
-    });
-
     expect(getByText(REAL_DONE)).toBeInTheDocument();
   });
 
@@ -73,7 +75,7 @@ describe('MetricsStep', () => {
   });
 
   it('should hide Real Done when no done column in cycleTime settings', async () => {
-    await store.dispatch(saveCycleTimeSettings([{ name: 'Testing', value: 'Block' }]));
+    await store.dispatch(saveCycleTimeSettings([{ column: 'Testing', status: 'testing', value: 'Block' }]));
     const { queryByText } = setup();
 
     expect(queryByText(REAL_DONE)).not.toBeInTheDocument();
@@ -113,33 +115,68 @@ describe('MetricsStep', () => {
     beforeEach(() => {
       const cycleTimeSettingsWithTwoDoneValue = [
         {
-          name: 'To Do',
+          column: 'To Do',
+          status: 'BACKLOG',
           value: 'To Do',
         },
         {
-          name: 'In Progress',
+          column: 'To Do',
+          status: 'TO DO',
+          value: 'To Do',
+        },
+        {
+          column: 'To Do',
+          status: 'GOING TO DO',
+          value: 'To Do',
+        },
+        {
+          column: 'In Progress',
+          status: 'IN PROGRESS',
           value: 'Done',
         },
         {
-          name: 'Block',
+          column: 'In Progress',
+          status: 'IN DEV',
+          value: 'Done',
+        },
+        {
+          column: 'Block',
+          status: 'BLOCK',
           value: 'Block',
         },
         {
-          name: 'Test',
+          column: 'Test',
+          status: 'TESTING',
           value: 'To do',
         },
         {
-          name: 'Done',
+          column: 'Test',
+          status: 'TO BE TESTED',
+          value: 'To do',
+        },
+        {
+          column: 'Done',
+          status: 'PRE-DONE,',
+          value: 'Done',
+        },
+        {
+          column: 'Done',
+          status: 'DONE',
+          value: 'Done',
+        },
+        {
+          column: 'Done',
+          status: 'CANCEL',
           value: 'Done',
         },
       ];
-      const doneColumn = ['IN PROGRESS', 'IN DEV', 'PRE-DONE', 'DONE', 'CANCLE'];
+      const doneColumn = ['IN PROGRESS', 'IN DEV', 'PRE-DONE', 'DONE', 'CANCEL'];
       const jiraColumns = [
         { key: 'indeterminate', value: { name: 'To Do', statuses: ['BACKLOG', 'TO DO', 'GOING TO DO'] } },
         { key: 'indeterminate', value: { name: 'In Progress', statuses: ['IN PROGRESS', 'IN DEV'] } },
         { key: 'indeterminate', value: { name: 'Block', statuses: ['BLOCK'] } },
         { key: 'indeterminate', value: { name: 'Test', statuses: ['TESTING', 'TO BE TESTED'] } },
-        { key: 'done', value: { name: 'Done', statuses: ['PRE-DONE,', 'DONE', 'CANCLE'] } },
+        { key: 'done', value: { name: 'Done', statuses: ['PRE-DONE,', 'DONE', 'CANCEL'] } },
       ];
 
       store.dispatch(updateMetrics(REQUIRED_DATA_LIST));

@@ -7,14 +7,9 @@ import {
   getJiraBoardToken,
   transformToCleanedBuildKiteEmoji,
 } from '@src/utils/util';
-import {
-  FILTER_CYCLE_TIME_SETTINGS,
-  MOCK_CYCLE_TIME_SETTING,
-  MOCK_JIRA_WITH_STATUES_SETTING,
-  PIPELINE_TOOL_TYPES,
-} from '../fixtures';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { EMPTY_STRING } from '@src/constants/commons';
+import { PIPELINE_TOOL_TYPES } from '../fixtures';
 
 describe('exportToJsonFile function', () => {
   it('should create a link element with the correct attributes and click it', () => {
@@ -104,30 +99,22 @@ describe('findCaseInsensitiveType function', () => {
 
 describe('filterAndMapCycleTimeSettings function', () => {
   it('should filter and map CycleTimeSettings when generate report', () => {
-    const value = filterAndMapCycleTimeSettings(MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING);
-    expect(value).toStrictEqual(FILTER_CYCLE_TIME_SETTINGS);
-  });
-
-  it('should filter and map CycleTimeSettings when generate report', () => {
-    const filterCycleTimeSettings = [
-      { name: 'IN DEV', value: 'IN DEV' },
-      { name: 'DOING', value: 'IN DEV' },
-      { name: 'DONE', value: 'DONE' },
-    ];
-
     const MOCK_CYCLE_TIME_SETTING = [
-      { name: 'TODO', value: 'TODO' },
-      { name: 'IN DEV', value: 'IN DEV' },
-      { name: 'DONE', value: 'DONE' },
+      { column: 'TODO', status: 'ToDo', value: 'TODO' },
+      { column: 'TODO', status: 'Backlog', value: 'TODO' },
+      { column: 'IN DEV', status: 'InDev', value: 'IN DEV' },
+      { column: 'IN DEV', status: 'Doing', value: 'IN DEV' },
+      { column: 'DONE', status: 'Done', value: 'DONE' },
     ];
+    const value = filterAndMapCycleTimeSettings(MOCK_CYCLE_TIME_SETTING);
 
-    const MOCK_JIRA_WITH_STATUES_SETTING = [
-      { name: 'todo', statuses: ['TODO', 'BACKLOG'] },
-      { name: 'IN DEV', statuses: ['IN DEV', 'DOING'] },
-      { name: 'DONE', statuses: ['DONE'] },
-    ];
-    const value = filterAndMapCycleTimeSettings(MOCK_CYCLE_TIME_SETTING, MOCK_JIRA_WITH_STATUES_SETTING);
-    expect(value).toStrictEqual(filterCycleTimeSettings);
+    expect(value).toStrictEqual([
+      { name: 'ToDo', value: 'TODO' },
+      { name: 'Backlog', value: 'TODO' },
+      { name: 'InDev', value: 'IN DEV' },
+      { name: 'Doing', value: 'IN DEV' },
+      { name: 'Done', value: 'DONE' },
+    ]);
   });
 
   it('Should return 2 hours when passing a min', () => {

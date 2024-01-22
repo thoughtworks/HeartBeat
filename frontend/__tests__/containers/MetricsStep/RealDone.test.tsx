@@ -109,7 +109,12 @@ describe('RealDone', () => {
     });
 
     it('should show doing when choose Testing column is Done', async () => {
-      await store.dispatch(saveCycleTimeSettings([{ name: 'Done', value: 'Done' }]));
+      await store.dispatch(
+        saveCycleTimeSettings([
+          { column: 'Done', status: 'DONE', value: 'Done' },
+          { column: 'Done', status: 'CANCELLED', value: 'Done' },
+        ]),
+      );
       const { getByRole } = setup();
 
       await act(async () => {

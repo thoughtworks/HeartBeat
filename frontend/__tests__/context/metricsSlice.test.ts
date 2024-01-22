@@ -17,8 +17,8 @@ import saveMetricsSettingReducer, {
   updatePipelineStep,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
+import { ASSIGNEE_FILTER_TYPES, CYCLE_TIME_SETTINGS_TYPES, MESSAGE } from '@src/constants/resources';
 import { CLASSIFICATION_WARNING_MESSAGE, NO_RESULT_DASH, PIPELINE_SETTING_TYPES } from '../fixtures';
-import { ASSIGNEE_FILTER_TYPES, MESSAGE } from '@src/constants/resources';
 import { setupStore } from '../utils/setupStoreUtil';
 import { store } from '@src/store';
 
@@ -28,6 +28,7 @@ const initState = {
   users: [],
   pipelineCrews: [],
   doneColumn: [],
+  cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN,
   cycleTimeSettings: [],
   deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
@@ -261,9 +262,10 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }]);
     expect(savedMetricsSetting.users).toEqual(['User B']);
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
-      { name: 'Done', value: 'Done' },
-      { name: 'Doing', value: NO_RESULT_DASH },
-      { name: 'Testing', value: NO_RESULT_DASH },
+      { column: 'Done', status: 'DONE', value: 'Done' },
+      { column: 'Done', status: 'CLOSED', value: 'Done' },
+      { column: 'Doing', status: 'ANALYSIS', value: NO_RESULT_DASH },
+      { column: 'Testing', status: 'TESTING', value: NO_RESULT_DASH },
     ]);
     expect(savedMetricsSetting.doneColumn).toEqual(['DONE']);
   });
@@ -305,9 +307,10 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: false }]);
     expect(savedMetricsSetting.users).toEqual(['User A', 'User B']);
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([
-      { name: 'Done', value: NO_RESULT_DASH },
-      { name: 'Doing', value: NO_RESULT_DASH },
-      { name: 'Testing', value: NO_RESULT_DASH },
+      { column: 'Done', status: 'DONE', value: NO_RESULT_DASH },
+      { column: 'Done', status: 'CLOSED', value: NO_RESULT_DASH },
+      { column: 'Doing', status: 'ANALYSIS', value: NO_RESULT_DASH },
+      { column: 'Testing', status: 'TESTING', value: NO_RESULT_DASH },
     ]);
     expect(savedMetricsSetting.doneColumn).toEqual([]);
   });
@@ -803,7 +806,7 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
-        cycleTimeSettings: [{ name: 'Done', value: 'Done' }],
+        cycleTimeSettings: [{ column: 'Done', status: 'DONE', value: 'Done' }],
         importedData: {
           ...initState.importedData,
           importedDoneStatus: ['DONE', 'CLOSED'],
@@ -832,7 +835,7 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(
       {
         ...initState,
-        cycleTimeSettings: [{ name: 'Done', value: 'Done' }],
+        cycleTimeSettings: [{ column: 'Done', status: 'DONE', value: 'Done' }],
         importedData: {
           ...initState.importedData,
           importedDoneStatus: ['DONE', 'CLOSED', 'CANCELED'],

@@ -1,10 +1,12 @@
 import TableCell from '@mui/material/TableCell';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
+import { RadioGroup } from '@mui/material';
 import { theme } from '@src/theme';
 
-export const StyledTableHeaderCell = styled(TableCell)({
+export const StyledTableHeaderCell = styled(TableCell)((props: { length: number }) => ({
   padding: 0,
+  width: `${(100 / props.length).toFixed(2)}%`,
   height: `3rem`,
   color: `${theme.palette.text.primary}`,
   fontWeight: 600,
@@ -16,7 +18,7 @@ export const StyledTableHeaderCell = styled(TableCell)({
     paddingLeft: '1.5rem',
   },
   borderBottom: 0,
-});
+}));
 
 export const StyledTableRowCell = styled(TableCell)({
   padding: 0,
@@ -58,4 +60,9 @@ export const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: 'transparent',
   },
+});
+
+export const StyledRadioGroup = styled(RadioGroup)({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(4, 1fr)',
 });

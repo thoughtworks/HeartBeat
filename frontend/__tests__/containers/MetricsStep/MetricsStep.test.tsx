@@ -20,9 +20,10 @@ import {
   REQUIRED_DATA_LIST,
   SELECT_CONSIDER_AS_DONE_MESSAGE,
 } from '../../fixtures';
-import { saveCycleTimeSettings, saveDoneColumn } from '@src/context/Metrics/metricsSlice';
+import { saveCycleTimeSettings, saveDoneColumn, setCycleTimeSettingsType } from '@src/context/Metrics/metricsSlice';
 import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import { CYCLE_TIME_SETTINGS_TYPES } from '@src/constants/resources';
 import userEvent from '@testing-library/user-event';
 
 let store = setupStore();
@@ -239,6 +240,13 @@ describe('MetricsStep', () => {
       await userEvent.click(options2[1]);
 
       await waitFor(() => expect(realDoneSettingSection).not.toBeInTheDocument());
+    });
+
+    it('should hide Real Done when cycleTime settings type is by status', async () => {
+      await store.dispatch(setCycleTimeSettingsType(CYCLE_TIME_SETTINGS_TYPES.BY_STATUS));
+      const { queryByText } = setup();
+
+      expect(queryByText(REAL_DONE)).not.toBeInTheDocument();
     });
   });
 });

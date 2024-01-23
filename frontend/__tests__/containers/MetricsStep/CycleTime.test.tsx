@@ -47,7 +47,7 @@ const cycleTimeSettings = [
     value: 'Done',
   },
 ];
-const cycleTimeTypeLabels = ['By Board Column mapping', 'By Board Status mapping'];
+const cycleTimeTypeLabels = ['By Column', 'By Status'];
 let store = setupStore();
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
@@ -376,7 +376,7 @@ describe('CycleTime', () => {
       expect(mockedUseAppDispatch).not.toHaveBeenCalledWith(saveDoneColumn([]));
     });
 
-    it('should reset Real done when marked as done from other options', async () => {
+    it('should not reset Real done when marked as done from other options', async () => {
       setup();
       const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await userEvent.click(columnsArray[0]);
@@ -386,10 +386,10 @@ describe('CycleTime', () => {
       const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
       expect(selectedInputValue).toBe('Done');
-      expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([]));
+      expect(mockedUseAppDispatch).not.toHaveBeenCalledWith(saveDoneColumn([]));
     });
 
-    it('should show the right selected value when cancel the done', async () => {
+    it('should show the correct selected value when cancel the done', async () => {
       setup();
       const columnsArray = screen.getAllByRole('button', { name: LIST_OPEN });
       await userEvent.click(columnsArray[0]);
@@ -402,7 +402,7 @@ describe('CycleTime', () => {
       const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
       expect(selectedInputValue).toBe('Review');
-      expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([]));
+      expect(mockedUseAppDispatch).not.toHaveBeenCalledWith(saveDoneColumn([]));
     });
   });
 });

@@ -35,15 +35,13 @@ const CycleTimeTable = () => {
         dispatch(saveDoneColumn([]));
       }
 
-      const optionNamesWithDone = cycleTimeSettings
-        .filter(({ value }) => value === DONE)
-        .map(({ column, status }) => (isColumnAsKey ? column : status));
+      const optionNamesWithDone = cycleTimeSettings.filter(({ value }) => value === DONE).map(({ column }) => column);
 
       if (optionNamesWithDone.includes(name)) {
         dispatch(saveDoneColumn([]));
       }
     },
-    [cycleTimeSettings, dispatch, isColumnAsKey],
+    [cycleTimeSettings, dispatch],
   );
 
   const saveCycleTimeOptions = useCallback(
@@ -56,7 +54,7 @@ const CycleTimeTable = () => {
             }
           : item,
       );
-      resetRealDoneColumn(name, value);
+      isColumnAsKey && resetRealDoneColumn(name, value);
       dispatch(saveCycleTimeSettings(newCycleTimeSettings));
     },
     [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
@@ -93,16 +91,8 @@ const CycleTimeTable = () => {
   return (
     <>
       <StyledRadioGroup aria-label='cycleTimeSettingsType' value={cycleTimeSettingsType} onChange={handleTypeChange}>
-        <FormControlLabel
-          value={CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN}
-          control={<Radio />}
-          label='By Board Column mapping'
-        />
-        <FormControlLabel
-          value={CYCLE_TIME_SETTINGS_TYPES.BY_STATUS}
-          control={<Radio />}
-          label='By Board Status mapping'
-        />
+        <FormControlLabel value={CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN} control={<Radio />} label='By Column' />
+        <FormControlLabel value={CYCLE_TIME_SETTINGS_TYPES.BY_STATUS} control={<Radio />} label='By Status' />
       </StyledRadioGroup>
       <TableContainer sx={{ mb: '2rem' }}>
         <Table aria-label='cycle time settings table'>

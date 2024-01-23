@@ -28,12 +28,7 @@ import {
   StyledStepLabel,
   StyledStepper,
 } from './style';
-import {
-  ICycleTimeSetting,
-  savedMetricsSettingState,
-  selectCycleTimeSettings,
-  selectMetricsContent,
-} from '@src/context/Metrics/metricsSlice';
+import { ICycleTimeSetting, savedMetricsSettingState, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
 import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
@@ -64,24 +59,21 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const metricsConfig = useAppSelector(selectMetricsContent);
   const [isDisableNextButton, setIsDisableNextButton] = useState(true);
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext();
-  const cycleTimeSettings = useAppSelector(selectCycleTimeSettings);
   const formMeta = useAppSelector(getFormMeta);
 
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board;
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool;
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl;
   const isShowCycleTimeSettings = requiredData.includes(REQUIRED_DATA.CYCLE_TIME);
-  const isCycleTimeSettingsVerified = cycleTimeSettings.some((e) => e.value === DONE);
+  const isCycleTimeSettingsVerified = metricsConfig.cycleTimeSettings.some((e) => e.value === DONE);
   const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
   const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag);
-
   const { metrics, projectName, dateRange } = config.basic;
 
-  const selectedBoardColumns = useAppSelector(selectCycleTimeSettings);
-
-  const isShowCrewsSetting = isShowBoard;
   const isShowRealDone =
-    isShowBoard && selectedBoardColumns.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length > 0;
+    isShowBoard &&
+    metricsConfig.cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN &&
+    metricsConfig.cycleTimeSettings.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length > 0;
   const isShowDeploymentFrequency =
     requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
     requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
@@ -116,7 +108,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
 
     if (activeStep === METRICS_STEPS.METRICS) {
       const nextButtonValidityOptions = [
-        { isShow: isShowCrewsSetting, isValid: isCrewsSettingValid },
+        { isShow: isShowBoard, isValid: isCrewsSettingValid },
         { isShow: isShowRealDone, isValid: isRealDoneValid },
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
         { isShow: isShowCycleTimeSettings, isValid: isCycleTimeSettingsVerified },
@@ -138,9 +130,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
     metrics,
     projectName,
     dateRange,
-    selectedBoardColumns,
     metricsConfig,
-    isShowCrewsSetting,
     isCrewsSettingValid,
     isShowRealDone,
     isRealDoneValid,

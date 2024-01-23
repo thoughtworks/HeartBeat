@@ -196,11 +196,11 @@ const DoraMetrics = ({
         ])}`
       : '';
 
-  const hasDoraError = !!(timeoutError || getErrorMessage4BuildKite() || getErrorMessage4Github());
+  const hasDoraError = !!(getErrorMessage4BuildKite() || getErrorMessage4Github());
 
   const shouldShowRetry = () => {
     const dataGetCompleted = doraReport?.sourceControlMetricsCompleted && doraReport?.pipelineMetricsCompleted;
-    return hasDoraError && dataGetCompleted;
+    return (hasDoraError && dataGetCompleted) || timeoutError;
   };
 
   const handleRetry = () => {
@@ -216,9 +216,11 @@ const DoraMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          {!hasDoraError && (doraReport?.pipelineMetricsCompleted || doraReport?.sourceControlMetricsCompleted) && (
-            <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
-          )}
+          {!hasDoraError &&
+            !timeoutError &&
+            (doraReport?.pipelineMetricsCompleted || doraReport?.sourceControlMetricsCompleted) && (
+              <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
+            )}
           {shouldShowRetry() && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
         {shouldShowSourceControl && (

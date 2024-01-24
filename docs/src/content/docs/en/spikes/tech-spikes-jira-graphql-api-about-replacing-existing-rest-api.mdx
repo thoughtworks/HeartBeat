@@ -1,0 +1,144 @@
+---
+title: Jira graphQL API about replacing existing REST API.
+description: Jira graphQL API about replacing existing REST API.
+---
+
+# Spike -- Consider the current API call for Jira and get the replacement by graphQL API.
+
+## Current situation
+
+The existing jira api are all rest style, and the rest api has the problem of over-fetching or multiple requests.
+
+## Expect
+
+Jira graphQL API about replacing existing REST API.
+
+## Scope of impact
+By checking, in the JiraControl layer, some interface makes multiple calls to the rest api to retrieve the required data. So, in graphQL, we can call an api to get some of the required data, reducing the remote call
+
+## Solutions
+Jira provides the functionality of the graphQL api, which provides us with an api to get a variety of data at once and return only the data we need.
+
+## Example
+### 1.1 `/boards/{boardType}/verify`
+jira interface `path = "/rest/agile/1.0/board/{boardId}"`, only projectKey is used in the logic。
+#### Solution
+Use the graphQL interface instead for `path = "/rest/agile/1.0/board/{boardId}"`, as follows:
+```json
+API:
+POST: https://dorametrics.atlassian.net/jsw2/graphql
+Schema:
+query queryProjectKey($boardId: ID!){
+  boardScope(boardId: $boardId) {
+    projectLocation{
+      key
+    }
+  }
+}
+Query Variables
+{
+"boardId": "2"
+}
+```
+
+### 1.2 `jira interface path = "/boards /{boardType}" and "/boards /{boardType}/info"`
+1. `/rest/agile/1.0/board/{boardId}/configuration`, obtain the board id, name attribute, column name, and status id。
+2. `/rest/api/2/status/{statusNum}`, get the untranslatedName of status and the key and name of category。
+3. `/rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}`, get all cards on the board, but some card fields are missing
+
+#### Solution
+1、Use the graphQL interface instead for `path = "/rest/agile/1.0/board/{boardId}/configuration"` and `path = "/rest/api/2/status/{statusNum}`, as follows:
+```json
+API:
+POST: https://dorametrics.atlassian.net/jsw2/graphql
+Schema:
+query myboard($boardId: ID!){
+  boardScope(boardId: $boardId) {
+		board{
+			columns{
+				id
+				name
+				columnStatus{
+					status{
+						id
+						name
+            category
+					}
+				}
+    }
+  }
+}
+
+Query Variables
+{
+  "boardId": "2"
+}
+```
+As you can see, the rest api needs to call the interface twice to get the required value, and graphQL only needs to call once
+
+2、Use the graphQL interface instead for `path = "/rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}"`, as follows:
+```json
+API:
+POST: https://dorametrics.atlassian.net/jsw2/graphql
+Schema:
+query myboard($boardId: ID!){
+  boardScope(boardId: $boardId) {
+		board{
+			reports{
+				urlName
+			}
+			project{
+				id
+				name
+				key
+			}
+			columns{
+				cards{
+					estimate{
+						storyPoints
+					}
+					parentId
+					priority{
+						name
+					}
+					id
+					dueDate
+					fixVersions
+					issue{
+						labels
+						activeSprint{
+							name
+						}
+						type{
+							name
+						}
+						summary
+						assignee{
+							displayName
+						}
+						id
+						status{
+							name
+						}
+					}
+				}
+			}
+		}
+  }
+}
+Query Variables
+{
+  "boardId": "2"
+}
+```
+With this graphQL replacement, the fields required in the project are the statusCategoryChangeDate and customFields, which require further investigation
+
+As you can see from graphQL above, these three rest apis can be replaced by a single graphQL api, simply by modifying the schema
+
+## Question
+There are three other interfaces to the rest api for jira that do not support graphQL replacement.
+1. `path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed?startAt={startAt}&maxResults={queryCount}"`，No query history card record was found in the current data
+
+2. `path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields"`，No way to query
+
+3. `path = "rest/api/2/project/{projectIdOrKey}"`。The graphQL interface returns a style of TEAM_MANAGED_PROJECT and COMPANY_MANAGED_PROJECT，not in the style we need

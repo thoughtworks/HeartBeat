@@ -5,20 +5,16 @@ import heartbeat.client.dto.codebase.github.Author;
 import heartbeat.client.dto.codebase.github.Commit;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.Committer;
-import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
-import heartbeat.client.dto.codebase.github.GitHubRepo;
 import heartbeat.client.dto.codebase.github.LeadTime;
 import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
-import heartbeat.exception.GithubRepoEmptyException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,14 +23,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
 import static heartbeat.TestFixtures.GITHUB_TOKEN;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,9 +39,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletionException;
@@ -83,11 +75,9 @@ class GithubServiceTest {
 	@Mock
 	Map<String, String> repositoryMap;
 
-	ThreadPoolTaskExecutor executor;
-
 	@BeforeEach
 	public void setUp() {
-		githubService = new GitHubService(executor = getTaskExecutor(), gitHubFeignClient);
+		githubService = new GitHubService(gitHubFeignClient);
 		pullRequestInfo = PullRequestInfo.builder()
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
@@ -149,44 +139,6 @@ class GithubServiceTest {
 			.build();
 	}
 
-	@AfterEach
-	public void tearDown() {
-		executor.shutdown();
-	}
-
-	public ThreadPoolTaskExecutor getTaskExecutor() {
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(10);
-		executor.setMaxPoolSize(100);
-		executor.setQueueCapacity(500);
-		executor.setKeepAliveSeconds(60);
-		executor.setThreadNamePrefix("Heartbeat-");
-		executor.initialize();
-		return executor;
-	}
-
-	@Test
-	@Deprecated
-	void shouldReturnNonRedundantGithubReposWhenCallGithubFeignClientApi() {
-		String githubToken = GITHUB_TOKEN;
-		String token = "token " + githubToken;
-		when(gitHubFeignClient.getAllRepos(token)).thenReturn(List.of(GitHubRepo.builder().htmlUrl("11111").build(),
-				GitHubRepo.builder().htmlUrl("22222").build(), GitHubRepo.builder().htmlUrl("33333").build()));
-		when(gitHubFeignClient.getGithubOrganizationsInfo(token))
-			.thenReturn(List.of(GitHubOrganizationsInfo.builder().login("org1").build(),
-					GitHubOrganizationsInfo.builder().login("org2").build()));
-		when(gitHubFeignClient.getReposByOrganizationName("org1", token))
-			.thenReturn(List.of(GitHubRepo.builder().htmlUrl("22222").build(),
-					GitHubRepo.builder().htmlUrl("33333").build(), GitHubRepo.builder().htmlUrl("44444").build()));
-
-		final var response = githubService.verifyToken(githubToken);
-		githubService.shutdownExecutor();
-
-		assertThat(response.getGithubRepos()).hasSize(4);
-		assertThat(response.getGithubRepos())
-			.isEqualTo(new LinkedHashSet<>(List.of("11111", "22222", "33333", "44444")));
-	}
-
 	@Test
 	void shouldReturnGithubTokenIsVerifyWhenVerifyToken() {
 		String githubToken = GITHUB_TOKEN;
@@ -194,7 +146,7 @@ class GithubServiceTest {
 
 		doNothing().when(gitHubFeignClient).verifyToken(token);
 
-		assertDoesNotThrow(() -> githubService.verifyTokenV2(githubToken));
+		assertDoesNotThrow(() -> githubService.verifyToken(githubToken));
 	}
 
 	@Test
@@ -209,51 +161,13 @@ class GithubServiceTest {
 	}
 
 	@Test
-	@Deprecated
-	void shouldReturnUnauthorizedStatusWhenCallGithubFeignClientApiWithWrongToken() {
-		String wrongGithubToken = GITHUB_TOKEN;
-		String token = "token " + wrongGithubToken;
-
-		when(gitHubFeignClient.getAllRepos(token))
-			.thenThrow(new CompletionException(new UnauthorizedException("Bad credentials")));
-
-		assertThatThrownBy(() -> githubService.verifyToken(wrongGithubToken)).isInstanceOf(UnauthorizedException.class)
-			.hasMessageContaining("Bad credentials");
-	}
-
-	@Test
-    void shouldThrowExceptionWhenVerifyGitHubThrowUnExpectedException() {
-
-        when(gitHubFeignClient.getAllRepos(anyString()))
-                .thenThrow(new CompletionException(new Exception("UnExpected Exception")));
-        when(gitHubFeignClient.getGithubOrganizationsInfo(anyString()))
-                .thenThrow(new CompletionException(new Exception("UnExpected Exception")));
-        when(gitHubFeignClient.getReposByOrganizationName(anyString(), anyString()))
-                .thenThrow(new CompletionException(new Exception("UnExpected Exception")));
-
-        assertThatThrownBy(() -> githubService.verifyToken("mockToken")).isInstanceOf(InternalServerErrorException.class)
-                .hasMessageContaining("UnExpected Exception");
-    }
-
-	@Test
-	@Deprecated
-	void shouldGithubReturnEmptyWhenVerifyGithubThrowGithubRepoEmptyException() {
-		String githubEmptyToken = GITHUB_TOKEN;
-		when(gitHubFeignClient.getReposByOrganizationName("org1", githubEmptyToken)).thenReturn(new ArrayList<>());
-
-		assertThatThrownBy(() -> githubService.verifyToken(githubEmptyToken))
-			.isInstanceOf(GithubRepoEmptyException.class)
-			.hasMessageContaining("No GitHub repositories found.");
-	}
-
-	@Test
 	void shouldThrowExceptionWhenGithubReturnUnExpectedException() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
 			.when(gitHubFeignClient)
 			.verifyToken("token " + githubEmptyToken);
 
-		var exception = assertThrows(UnauthorizedException.class, () -> githubService.verifyTokenV2(githubEmptyToken));
+		var exception = assertThrows(UnauthorizedException.class, () -> githubService.verifyToken(githubEmptyToken));
 		assertEquals("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ...", exception.getMessage());
 	}
 
@@ -287,7 +201,7 @@ class GithubServiceTest {
 			.verifyToken("token " + githubEmptyToken);
 
 		var exception = assertThrows(InternalServerErrorException.class,
-				() -> githubService.verifyTokenV2(githubEmptyToken));
+				() -> githubService.verifyToken(githubEmptyToken));
 		assertEquals("Failed to call GitHub with token_error: UnExpected Exception", exception.getMessage());
 	}
 

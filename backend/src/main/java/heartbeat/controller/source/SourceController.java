@@ -1,6 +1,5 @@
 package heartbeat.controller.source;
 
-import heartbeat.controller.source.dto.SourceControlResponse;
 import heartbeat.controller.source.dto.SourceControlDTO;
 import heartbeat.controller.source.dto.VerifyBranchRequest;
 import heartbeat.service.source.github.GitHubService;
@@ -17,9 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,18 +30,6 @@ public class SourceController {
 
 	private final GitHubService gitHubService;
 
-	@PostMapping
-	@CrossOrigin
-	@Deprecated(since = "frontend completed")
-	@ResponseStatus(HttpStatus.OK)
-	public SourceControlResponse getRepos(@RequestBody @Valid SourceControlDTO sourceControlDTO) {
-		log.info("Start to get repos by token");
-		SourceControlResponse gitHubRepos = gitHubService.verifyToken(sourceControlDTO.getToken());
-		log.info("Successfully get the repos by token, repos size: {}", gitHubRepos.getGithubRepos().size());
-		return gitHubRepos;
-
-	}
-
 	@PostMapping("/{sourceType}/verify")
 	public ResponseEntity<Void> verifyToken(
 			@Schema(type = "string", allowableValues = { "github" },
@@ -53,7 +38,7 @@ public class SourceController {
 		log.info("Start to verify source type: {} token.", sourceType);
 		switch (sourceType) {
 			case GITHUB -> {
-				gitHubService.verifyTokenV2(sourceControlDTO.getToken());
+				gitHubService.verifyToken(sourceControlDTO.getToken());
 				log.info("Successfully verify source type: {} token.", sourceType);
 			}
 			default -> {

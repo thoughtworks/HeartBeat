@@ -3,7 +3,6 @@ package heartbeat.controller.source;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import heartbeat.controller.source.dto.SourceControlDTO;
-import heartbeat.controller.source.dto.SourceControlResponse;
 import heartbeat.controller.source.dto.VerifyBranchRequest;
 import heartbeat.service.source.github.GitHubService;
 import org.junit.jupiter.api.Test;
@@ -19,9 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-
 import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
 import static heartbeat.TestFixtures.GITHUB_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,9 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SourceController.class)
@@ -54,27 +48,8 @@ class SourceControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	@Deprecated
-	void shouldReturnOkStatusAndCorrectResponseWithRepos() throws Exception {
-		LinkedHashSet<String> repos = new LinkedHashSet<>(
-				List.of("https://github.com/xxxx1/repo1", "https://github.com/xxxx2/repo2"));
-
-		SourceControlResponse githubReposResponse = SourceControlResponse.builder().githubRepos(repos).build();
-
-		when(gitHubVerifyService.verifyToken(any())).thenReturn(githubReposResponse);
-		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
-
-		mockMvc
-			.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO))
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.githubRepos[0]").value("https://github.com/xxxx1/repo1"))
-			.andExpect(jsonPath("$.githubRepos[1]").value("https://github.com/xxxx2/repo2"));
-	}
-
-	@Test
 	void shouldReturnNoContentStatusWhenVerifyToken() throws Exception {
-		doNothing().when(gitHubVerifyService).verifyTokenV2(GITHUB_TOKEN);
+		doNothing().when(gitHubVerifyService).verifyToken(GITHUB_TOKEN);
 		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(GITHUB_TOKEN).build();
 
 		mockMvc
@@ -83,7 +58,7 @@ class SourceControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNoContent());
 
-		verify(gitHubVerifyService, times(1)).verifyTokenV2(GITHUB_TOKEN);
+		verify(gitHubVerifyService, times(1)).verifyToken(GITHUB_TOKEN);
 	}
 
 	@Test
@@ -102,23 +77,6 @@ class SourceControllerTest {
 			.andExpect(status().isNoContent());
 
 		verify(gitHubVerifyService, times(1)).verifyCanReadTargetBranch(GITHUB_REPOSITORY, MAIN_BRANCH, GITHUB_TOKEN);
-	}
-
-	@Test
-	@Deprecated
-	void shouldReturnBadRequestWhenRequestBodyIsBlank() throws Exception {
-		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token(null).build();
-
-		final var response = mockMvc
-			.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO))
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
-			.andReturn()
-			.getResponse();
-
-		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.token").toString();
-		assertThat(result).contains("Token cannot be empty.");
 	}
 
 	@Test
@@ -225,23 +183,6 @@ class SourceControllerTest {
 		final var content = response.getContentAsString();
 		final var result = JsonPath.parse(content).read("$.branch").toString();
 		assertThat(result).contains("Branch cannot be empty.");
-	}
-
-	@Test
-	@Deprecated
-	void shouldReturnBadRequestWhenRequestParamPatternIsIncorrect() throws Exception {
-		SourceControlDTO sourceControlDTO = SourceControlDTO.builder().token("12345").build();
-
-		final var response = mockMvc
-			.perform(post("/source-control").content(new ObjectMapper().writeValueAsString(sourceControlDTO))
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isBadRequest())
-			.andReturn()
-			.getResponse();
-
-		final var content = response.getContentAsString();
-		final var result = JsonPath.parse(content).read("$.token").toString();
-		assertThat(result).isEqualTo("token's pattern is incorrect");
 	}
 
 	@ParameterizedTest

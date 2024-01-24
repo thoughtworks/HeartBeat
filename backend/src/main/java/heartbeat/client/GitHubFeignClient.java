@@ -1,8 +1,6 @@
 package heartbeat.client;
 
 import heartbeat.client.dto.codebase.github.CommitInfo;
-import heartbeat.client.dto.codebase.github.GitHubOrganizationsInfo;
-import heartbeat.client.dto.codebase.github.GitHubRepo;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.decoder.GitHubFeignClientDecoder;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,25 +21,6 @@ public interface GitHubFeignClient {
 
 	@GetMapping(path = "/repos/{repository}/branches/{branchName}")
 	void verifyCanReadTargetBranch(@PathVariable String repository, @PathVariable String branchName,
-			@RequestHeader("Authorization") String token);
-
-	@Cacheable(cacheNames = "githubOrganizationInfo", key = "#token")
-	@GetMapping(path = "/user/orgs")
-	@ResponseStatus(HttpStatus.OK)
-	@Deprecated
-	List<GitHubOrganizationsInfo> getGithubOrganizationsInfo(@RequestHeader("Authorization") String token);
-
-	@Cacheable(cacheNames = "githubAllRepos", key = "#token")
-	@GetMapping(path = "/user/repos")
-	@ResponseStatus(HttpStatus.OK)
-	@Deprecated
-	List<GitHubRepo> getAllRepos(@RequestHeader("Authorization") String token);
-
-	@Cacheable(cacheNames = "githubRepos", key = "#organizationName+'-'+#token")
-	@GetMapping(path = "/orgs/{organizationName}/repos")
-	@ResponseStatus(HttpStatus.OK)
-	@Deprecated
-	List<GitHubRepo> getReposByOrganizationName(@PathVariable String organizationName,
 			@RequestHeader("Authorization") String token);
 
 	@Cacheable(cacheNames = "commitInfo", key = "#repository+'-'+#commitId+'-'+#token")

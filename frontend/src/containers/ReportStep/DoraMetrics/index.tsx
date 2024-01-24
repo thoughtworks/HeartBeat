@@ -32,7 +32,7 @@ interface DoraMetricsProps {
   startDate: Nullable<string>;
   endDate: Nullable<string>;
   isBackFromDetail: boolean;
-  timeoutError: string;
+  errorMessage: string;
 }
 
 const DoraMetrics = ({
@@ -43,7 +43,7 @@ const DoraMetrics = ({
   csvTimeStamp,
   startDate,
   endDate,
-  timeoutError,
+  errorMessage,
 }: DoraMetricsProps) => {
   const configData = useAppSelector(selectConfig);
   const { pipelineTool, sourceControl } = configData;
@@ -200,7 +200,7 @@ const DoraMetrics = ({
 
   const shouldShowRetry = () => {
     const dataGetCompleted = doraReport?.sourceControlMetricsCompleted && doraReport?.pipelineMetricsCompleted;
-    return (hasDoraError && dataGetCompleted) || timeoutError;
+    return (hasDoraError && dataGetCompleted) || errorMessage;
   };
 
   const handleRetry = () => {
@@ -217,20 +217,20 @@ const DoraMetrics = ({
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
           {!hasDoraError &&
-            !timeoutError &&
+            !errorMessage &&
             (doraReport?.pipelineMetricsCompleted || doraReport?.sourceControlMetricsCompleted) && (
               <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
             )}
           {shouldShowRetry() && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
         {shouldShowSourceControl && (
-          <ReportGrid reportDetails={getSourceControlItems()} errorMessage={timeoutError || getErrorMessage4Github()} />
+          <ReportGrid reportDetails={getSourceControlItems()} errorMessage={errorMessage || getErrorMessage4Github()} />
         )}
         <StyledSpacing />
         <ReportGrid
           reportDetails={getPipelineItems()}
           lastGrid={true}
-          errorMessage={timeoutError || getErrorMessage4BuildKite()}
+          errorMessage={errorMessage || getErrorMessage4BuildKite()}
         />
       </StyledMetricsSection>
     </>

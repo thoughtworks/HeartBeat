@@ -1,13 +1,13 @@
-import { render, screen } from '@testing-library/react';
-import React from 'react';
-import clearAllMocks = jest.clearAllMocks;
 import { CLASSIFICATION, LEAD_TIME_FOR_CHANGES, MOCK_REPORT_RESPONSE } from '../../fixtures';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import { updateMetrics } from '@src/context/config/configSlice';
 import { setupStore } from '../../utils/setupStoreUtil';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RETRY } from '@src/constants/resources';
 import { Provider } from 'react-redux';
+import React from 'react';
+import clearAllMocks = jest.clearAllMocks;
 
 describe('Report Card', () => {
   afterEach(() => {
@@ -43,7 +43,7 @@ describe('Report Card', () => {
           onShowDetail={onShowDetail}
           boardReport={mockData}
           csvTimeStamp={1705014731}
-          timeoutError={''}
+          errorMessage={''}
         />
       </Provider>,
     );
@@ -77,7 +77,7 @@ describe('Report Card', () => {
           onShowDetail={onShowDetail}
           boardReport={mockData}
           csvTimeStamp={1705014731}
-          timeoutError={''}
+          errorMessage={''}
         />
       </Provider>,
     );

@@ -29,7 +29,10 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
     timeout4Board,
     timeout4Dora,
     timeout4Report,
-  } = useGenerateReportEffect(notification);
+    generalError4Board,
+    generalError4Dora,
+    generalError4Report,
+  } = useGenerateReportEffect();
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
   const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY);
@@ -175,6 +178,39 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
       ]);
   }, [timeout4Dora]);
 
+  useEffect(() => {
+    generalError4Board &&
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.FAILED_TO_REQUEST,
+          type: 'error',
+        },
+      ]);
+  }, [generalError4Board]);
+
+  useEffect(() => {
+    generalError4Dora &&
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.FAILED_TO_REQUEST,
+          type: 'error',
+        },
+      ]);
+  }, [generalError4Dora]);
+
+  useEffect(() => {
+    generalError4Report &&
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          message: MESSAGE.FAILED_TO_REQUEST,
+          type: 'error',
+        },
+      ]);
+  }, [generalError4Report]);
+
   const showSummary = () => (
     <>
       {shouldShowBoardMetrics && (
@@ -186,7 +222,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           onShowDetail={() => setPageType(REPORT_PAGE_TYPE.BOARD)}
           boardReport={reportData}
           csvTimeStamp={csvTimeStamp}
-          timeoutError={timeout4Board || timeout4Report}
+          errorMessage={timeout4Board || timeout4Report || generalError4Board || generalError4Report}
         />
       )}
       {shouldShowDoraMetrics && (
@@ -198,7 +234,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
           onShowDetail={() => setPageType(REPORT_PAGE_TYPE.DORA)}
           doraReport={reportData}
           csvTimeStamp={csvTimeStamp}
-          timeoutError={timeout4Dora || timeout4Report}
+          errorMessage={timeout4Dora || timeout4Report || generalError4Dora || generalError4Report}
         />
       )}
     </>

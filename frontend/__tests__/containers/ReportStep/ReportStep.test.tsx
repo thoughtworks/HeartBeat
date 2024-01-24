@@ -73,7 +73,7 @@ jest.mock('@src/utils/util', () => ({
 let store = null;
 describe('Report Step', () => {
   const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect());
-  const { result: reportHook } = renderHook(() => useGenerateReportEffect(notificationHook.current));
+  const { result: reportHook } = renderHook(() => useGenerateReportEffect());
   beforeEach(() => {
     resetReportHook();
   });
@@ -418,13 +418,13 @@ describe('Report Step', () => {
 
   describe('error notification', () => {
     const addNotification = jest.fn();
-    const timeoutError = 'time out error';
+    const error = 'error';
     beforeEach(() => {
       notificationHook.current.addNotification = addNotification;
     });
 
     it('should call addNotification when having timeout4Board error', () => {
-      reportHook.current.timeout4Board = timeoutError;
+      reportHook.current.timeout4Board = error;
 
       setup(REQUIRED_DATA_LIST);
 
@@ -435,7 +435,7 @@ describe('Report Step', () => {
     });
 
     it('should call addNotification when having timeout4Dora error', () => {
-      reportHook.current.timeout4Dora = timeoutError;
+      reportHook.current.timeout4Dora = error;
 
       setup(REQUIRED_DATA_LIST);
 
@@ -446,7 +446,7 @@ describe('Report Step', () => {
     });
 
     it('should call addNotification when having timeout4Report error', () => {
-      reportHook.current.timeout4Report = timeoutError;
+      reportHook.current.timeout4Report = error;
 
       setup(REQUIRED_DATA_LIST);
 
@@ -515,6 +515,39 @@ describe('Report Step', () => {
 
       expect(addNotification).toBeCalledWith({
         message: MESSAGE.FAILED_TO_GET_DATA('Github'),
+        type: 'error',
+      });
+    });
+
+    it('should call addNotification when having generalError4Board error', () => {
+      reportHook.current.generalError4Board = error;
+
+      setup(REQUIRED_DATA_LIST);
+
+      expect(addNotification).toBeCalledWith({
+        message: MESSAGE.FAILED_TO_REQUEST,
+        type: 'error',
+      });
+    });
+
+    it('should call addNotification when having generalError4Dora error', () => {
+      reportHook.current.generalError4Dora = error;
+
+      setup(REQUIRED_DATA_LIST);
+
+      expect(addNotification).toBeCalledWith({
+        message: MESSAGE.FAILED_TO_REQUEST,
+        type: 'error',
+      });
+    });
+
+    it('should call addNotification when having generalError4Report error', () => {
+      reportHook.current.generalError4Report = error;
+
+      setup(REQUIRED_DATA_LIST);
+
+      expect(addNotification).toBeCalledWith({
+        message: MESSAGE.FAILED_TO_REQUEST,
         type: 'error',
       });
     });

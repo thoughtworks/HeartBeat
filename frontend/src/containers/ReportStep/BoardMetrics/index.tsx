@@ -37,7 +37,7 @@ interface BoardMetricsProps {
   startDate: Nullable<string>;
   endDate: Nullable<string>;
   isBackFromDetail: boolean;
-  timeoutError: string;
+  errorMessage: string;
 }
 
 const BoardMetrics = ({
@@ -48,7 +48,7 @@ const BoardMetrics = ({
   csvTimeStamp,
   startDate,
   endDate,
-  timeoutError,
+  errorMessage,
 }: BoardMetricsProps) => {
   const configData = useAppSelector(selectConfig);
   const { cycleTimeSettings, treatFlagCardAsBlock, users, targetFields, doneColumn, assigneeFilter } =
@@ -139,7 +139,7 @@ const BoardMetrics = ({
   const isShowMoreLoadingDisplay = () =>
     boardMetrics.length === 1 &&
     boardMetrics[0] === REQUIRED_DATA.CLASSIFICATION &&
-    !(timeoutError || getErrorMessage()) &&
+    !(errorMessage || getErrorMessage()) &&
     !boardReport?.boardMetricsCompleted;
 
   useEffect(() => {
@@ -151,7 +151,7 @@ const BoardMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {!(timeoutError || getErrorMessage()) && boardReport?.boardMetricsCompleted && (
+          {!(errorMessage || getErrorMessage()) && boardReport?.boardMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
           {isShowMoreLoadingDisplay() && (
@@ -159,9 +159,9 @@ const BoardMetrics = ({
               <Loading placement='left' size='0.8rem' backgroundColor='transparent' />
             </StyledLoading>
           )}
-          {(timeoutError || getErrorMessage()) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
+          {(errorMessage || getErrorMessage()) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
-        <ReportGrid reportDetails={getBoardItems()} errorMessage={timeoutError || getErrorMessage()} />
+        <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage || getErrorMessage()} />
       </StyledMetricsSection>
     </>
   );

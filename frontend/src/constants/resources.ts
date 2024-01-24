@@ -14,7 +14,7 @@ export const REPORT_PAGE_TYPE = {
 export const SHOW_MORE = 'show more >';
 export const BACK = 'Back';
 export const RETRY = 'retry';
-export const TIMEOUT_PROMPT = 'Data loading failed';
+export const DATA_LOADING_FAILED = 'Data loading failed';
 
 export const NOTIFICATION_TITLE = {
   HELP_INFORMATION: 'Help Information',
@@ -195,7 +195,7 @@ export const MESSAGE = {
   LOADING_TIMEOUT: (name: string) => `${name} loading timeout, please click "Retry"!`,
   FAILED_TO_GET_DATA: (name: string) => `Failed to get ${name} data, please click "retry"!`,
   FAILED_TO_EXPORT_CSV: 'Failed to export csv.',
-  FAILED_TO_REQUEST: 'Failed to request !',
+  FAILED_TO_REQUEST: 'Failed to request!',
 };
 
 export const METRICS_CYCLE_SETTING_TABLE_HEADER_BY_COLUMN = [

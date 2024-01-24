@@ -1,10 +1,9 @@
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
-import { MESSAGE, TIMEOUT_PROMPT } from '@src/constants/resources';
 import { reportClient } from '@src/clients/report/ReportClient';
+import { DATA_LOADING_FAILED } from '@src/constants/resources';
 import { METRIC_TYPES } from '@src/constants/commons';
 import { useRef, useState } from 'react';
 
@@ -15,16 +14,20 @@ export interface useGenerateReportEffectInterface {
   timeout4Board: string;
   timeout4Dora: string;
   timeout4Report: string;
+  generalError4Board: string;
+  generalError4Dora: string;
+  generalError4Report: string;
   reportData: ReportResponseDTO | undefined;
 }
 
-export const useGenerateReportEffect = ({
-  addNotification,
-}: useNotificationLayoutEffectInterface): useGenerateReportEffectInterface => {
+export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   const reportPath = '/reports';
   const [timeout4Board, setTimeout4Board] = useState('');
   const [timeout4Dora, setTimeout4Dora] = useState('');
   const [timeout4Report, setTimeout4Report] = useState('');
+  const [generalError4Board, setGeneralError4Board] = useState('');
+  const [generalError4Dora, setGeneralError4Dora] = useState('');
+  const [generalError4Report, setGeneralError4Report] = useState('');
   const [reportData, setReportData] = useState<ReportResponseDTO | undefined>();
   const timerIdRef = useRef<number>();
   let hasPollingStarted = false;
@@ -40,24 +43,26 @@ export const useGenerateReportEffect = ({
       })
       .catch((e) => {
         handleError(e, 'Board');
-        stopPollingReports();
       });
   };
 
   const handleError = (error: Error, source: string) => {
     if (error instanceof TimeoutException) {
       if (source === 'Board') {
-        setTimeout4Board(TIMEOUT_PROMPT);
+        setTimeout4Board(DATA_LOADING_FAILED);
       } else if (source === 'Dora') {
-        setTimeout4Dora(TIMEOUT_PROMPT);
+        setTimeout4Dora(DATA_LOADING_FAILED);
       } else {
-        setTimeout4Report(TIMEOUT_PROMPT);
+        setTimeout4Report(DATA_LOADING_FAILED);
       }
     } else {
-      addNotification({
-        message: MESSAGE.FAILED_TO_REQUEST,
-        type: 'error',
-      });
+      if (source === 'Board') {
+        setGeneralError4Board(DATA_LOADING_FAILED);
+      } else if (source === 'Dora') {
+        setGeneralError4Dora(DATA_LOADING_FAILED);
+      } else {
+        setGeneralError4Report(DATA_LOADING_FAILED);
+      }
     }
   };
 
@@ -72,7 +77,6 @@ export const useGenerateReportEffect = ({
       })
       .catch((e) => {
         handleError(e, 'Dora');
-        stopPollingReports();
       });
   };
 
@@ -113,5 +117,8 @@ export const useGenerateReportEffect = ({
     timeout4Board,
     timeout4Dora,
     timeout4Report,
+    generalError4Board,
+    generalError4Dora,
+    generalError4Report,
   };
 };

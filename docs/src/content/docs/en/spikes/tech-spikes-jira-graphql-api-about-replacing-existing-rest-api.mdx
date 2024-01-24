@@ -20,6 +20,7 @@ By checking, in the JiraControl layer, some interface makes multiple calls to th
 Jira provides the functionality of the graphQL api, which provides us with an api to get a variety of data at once and return only the data we need.
 
 ## Example
+
 ### 1.1 `/boards/{boardType}/verify`
 jira interface `path = "/rest/agile/1.0/board/{boardId}"`, only projectKey is used in the logic。
 #### Solution
@@ -77,6 +78,7 @@ Query Variables
 As you can see, the rest api needs to call the interface twice to get the required value, and graphQL only needs to call once
 
 2、Use the graphQL interface instead for `path = "/rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}"`, as follows:
+
 ```json
 API:
 POST: https://dorametrics.atlassian.net/jsw2/graphql
@@ -137,6 +139,7 @@ As you can see from graphQL above, these three rest apis can be replaced by a si
 
 ## Question
 There are three other interfaces to the rest api for jira that do not support graphQL replacement.
+
 1. `path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed?startAt={startAt}&maxResults={queryCount}"`，No query history card record was found in the current data
 
 2. `path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields"`，No way to query

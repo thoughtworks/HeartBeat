@@ -1,8 +1,8 @@
 package heartbeat.controller.report;
 
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
-import heartbeat.controller.report.dto.request.ReportDataType;
 import heartbeat.controller.report.dto.request.ReportType;
+import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.service.report.GenerateReporterService;
@@ -41,7 +41,7 @@ public class ReportController {
 	@GetMapping("/{reportDataType}/{filename}")
 	public InputStreamResource exportCSV(
 			@Schema(type = "string", allowableValues = { "metric", "pipeline", "board" },
-					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable() ReportDataType reportDataType,
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable() ReportType reportDataType,
 			@PathVariable String filename) {
 		log.info("Start to export CSV file_reportType: {}, _timeStamp: {}", reportDataType.getValue(), filename);
 		InputStreamResource result = reportService.exportCsv(reportDataType, Long.parseLong(filename));
@@ -66,7 +66,7 @@ public class ReportController {
 	@PostMapping("{reportType}")
 	public ResponseEntity<CallbackResponse> generateReport(
 			@Schema(type = "string", allowableValues = { "board", "dora" },
-					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable ReportType reportType,
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable MetricType reportType,
 			@RequestBody GenerateReportRequest request) {
 		reportService.generateReportByType(request, reportType);
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();

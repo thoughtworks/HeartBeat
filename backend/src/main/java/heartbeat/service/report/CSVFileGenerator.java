@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
-import heartbeat.controller.report.dto.request.ReportDataType;
+import heartbeat.controller.report.dto.request.ReportType;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
@@ -137,7 +137,7 @@ public class CSVFileGenerator {
 		}
 	}
 
-	public InputStreamResource getDataFromCSV(ReportDataType reportDataType, long csvTimeStamp) {
+	public InputStreamResource getDataFromCSV(ReportType reportDataType, long csvTimeStamp) {
 		return switch (reportDataType) {
 			case METRIC -> readStringFromCsvFile(
 					CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);

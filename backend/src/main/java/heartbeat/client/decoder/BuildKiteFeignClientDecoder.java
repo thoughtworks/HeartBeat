@@ -12,7 +12,7 @@ public class BuildKiteFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
-		log.error("failed to get BuildKite info_response status: {}, method key: {}", response.status(), methodKey);
+		log.error("Failed to get BuildKite info_response status: {}, method key: {}", response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());
 		FeignException exception = FeignException.errorStatus(methodKey, response);
 		String errorMessage = String.format("Failed to get BuildKite info_status: %s, reason: %s", statusCode,

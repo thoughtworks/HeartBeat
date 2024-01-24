@@ -12,8 +12,7 @@ public class JiraFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
-		log.error("[JiraFeignClientDecoder] failed to get Jira info_response status: {}, method key: {}",
-				response.status(), methodKey);
+		log.error("Failed to get Jira info_response status: {}, method key: {}", response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());
 		FeignException exception = FeignException.errorStatus(methodKey, response);
 		String errorMessage = String.format("Failed to get Jira info_status: %s, reason: %s", statusCode,

@@ -1,22 +1,31 @@
 import metaReducer, {
   deleteMetricsPipelineFormMeta,
+  initMetricsPipelineFormMeta,
   MetaState,
   resetFormMeta,
   saveVersion,
   updateFormMeta,
+  updateMetricsPipelineBranchFormMeta,
 } from '@src/context/meta/metaSlice';
 import { VERSION_RESPONSE } from '../fixtures';
+
+const MOCK_EMPTY_STATE: MetaState = {
+  version: '',
+  form: {
+    metrics: { pipelines: {} },
+  },
+};
 
 const MOCK_STATE: MetaState = {
   version: '1',
   form: {
     metrics: {
       pipelines: {
-        p1: {
-          branches: {},
+        1: {
+          branches: [],
         },
-        p2: {
-          branches: {},
+        2: {
+          branches: [],
         },
       },
     },
@@ -63,11 +72,34 @@ describe('meta reducer', () => {
   });
 
   it('should return remaining pipeline when delete one', () => {
-    const meta = metaReducer(MOCK_STATE, deleteMetricsPipelineFormMeta('p1'));
+    const meta = metaReducer(MOCK_STATE, deleteMetricsPipelineFormMeta(1));
 
     expect(meta.form.metrics.pipelines).toMatchObject({
-      p2: {
-        branches: {},
+      2: {
+        branches: [],
+      },
+    });
+  });
+
+  it('should return initialized pipeline when initMetricsPipelineFormMeta', () => {
+    const meta = metaReducer(MOCK_EMPTY_STATE, initMetricsPipelineFormMeta(1));
+
+    expect(meta.form.metrics.pipelines).toMatchObject({
+      1: {
+        branches: [],
+      },
+    });
+  });
+
+  it('should update a branch when updateMetricsPipelineBranchFormMeta', () => {
+    const meta = metaReducer(MOCK_STATE, updateMetricsPipelineBranchFormMeta({ id: 1, data: { value: 'val' } }));
+
+    expect(meta.form.metrics.pipelines).toMatchObject({
+      1: {
+        branches: [{ value: 'val' }],
+      },
+      2: {
+        branches: [],
       },
     });
   });

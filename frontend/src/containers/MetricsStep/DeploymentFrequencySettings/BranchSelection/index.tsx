@@ -1,13 +1,18 @@
+import {
+  FormFieldWithMeta,
+  getFormMeta,
+  initMetricsPipelineFormMeta,
+  updateFormMeta,
+  updateMetricsPipelineBranchFormMeta,
+} from '@src/context/meta/metaSlice';
 import { BranchSelectionWrapper } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection/style';
-import { FormFieldWithMeta, getFormMeta, updateFormMeta as updateFormMetaState } from '@src/context/meta/metaSlice';
 import BranchChip from '@src/containers/MetricsStep/DeploymentFrequencySettings/BranchSelection/BranchChip';
 import { SOURCE_CONTROL_BRANCH_INVALID_TEXT } from '@src/constants/resources';
 import { selectPipelineList } from '@src/context/config/configSlice';
 import { Autocomplete, Checkbox, TextField } from '@mui/material';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
-import React, { useCallback, useMemo } from 'react';
 import { useAppSelector } from '@src/hooks';
-import { pickBy } from 'lodash';
 
 export interface BranchSelectionProps {
   id: number;
@@ -35,12 +40,12 @@ export const BranchSelection = (props: BranchSelectionProps) => {
 
   const branchesFormData = useMemo(() => {
     const pipelineMeta = formMeta.metrics.pipelines[id];
-    return pipelineMeta?.branches ?? {};
+    return pipelineMeta?.branches ?? [];
   }, [formMeta.metrics.pipelines, id]);
 
   const selectedBranchesWithMeta = useMemo(() => {
     return branches.map((item) => {
-      const metaInfo = branchesFormData[item];
+      const metaInfo = branchesFormData.find((branch) => branch.value === item);
 
       return metaInfo
         ? metaInfo
@@ -54,8 +59,8 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   const updateSingleBranchMeta = useCallback(
     (branchWithMeta: FormFieldWithMeta) => {
       dispatch(
-        updateFormMetaState({
-          path: `metrics.pipelines[${id}].branches[${branchWithMeta.value}]`,
+        updateMetricsPipelineBranchFormMeta({
+          id,
           data: branchWithMeta,
         }),
       );
@@ -64,20 +69,14 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   );
 
   const updateBranchesMeta = (values: string[]) => {
-    const existingBranchesWithMeta = pickBy(branchesFormData, (item) => values.indexOf(item.value) > -1);
-    const appendedBranches = values.filter((item) => Object.keys(existingBranchesWithMeta).indexOf(item) < 0);
+    const branchesWithMeta = values.map((branch) => {
+      const formData = branchesFormData.find((item) => item.value === branch);
 
-    const appendedBranchesWithMeta = appendedBranches.reduce(
-      (pre, cur) => {
-        pre[cur] = { value: cur, needVerify: true };
-        return pre;
-      },
-      {} as Record<string, FormFieldWithMeta>,
-    );
+      return formData ? formData : { value: branch, needVerify: true };
+    });
 
-    const branchesWithMeta = { ...existingBranchesWithMeta, ...appendedBranchesWithMeta };
     dispatch(
-      updateFormMetaState({
+      updateFormMeta({
         path: `metrics.pipelines[${id}].branches`,
         data: branchesWithMeta,
       }),
@@ -91,6 +90,10 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   };
 
   const isInputError = useMemo(() => Object.values(branchesFormData).some((item) => item.error), [branchesFormData]);
+
+  useEffect(() => {
+    dispatch(initMetricsPipelineFormMeta(id));
+  }, [dispatch, id]);
 
   return (
     <BranchSelectionWrapper>

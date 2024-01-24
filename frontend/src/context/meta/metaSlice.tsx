@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@src/store';
 
-import { omit, set } from 'lodash';
+import omit from 'lodash/omit';
+import set from 'lodash/set';
 
 export interface FormFieldWithMeta {
   value: string;
@@ -11,7 +12,7 @@ export interface FormFieldWithMeta {
 }
 
 interface FormMetaMetricsPipeline {
-  branches: Record<string, FormFieldWithMeta>;
+  branches: FormFieldWithMeta[];
 }
 
 export interface MetaState {
@@ -38,18 +39,38 @@ export const metaSlice = createSlice({
   name: 'meta',
   initialState,
   reducers: {
-    saveVersion: (state, action) => {
+    saveVersion: (state, action: PayloadAction<string>) => {
       state.version = action.payload;
     },
     resetFormMeta: (state) => {
       state.form = initialFormMetaState;
     },
-    updateFormMeta: (state, action) => {
+    updateFormMeta: (state, action: PayloadAction<{ path: string; data: object | string | number }>) => {
       const { path, data } = action.payload;
 
       set(state, `form.${path}`, data);
     },
-    deleteMetricsPipelineFormMeta: (state, action) => {
+    initMetricsPipelineFormMeta: (state, action: PayloadAction<number>) => {
+      const id = action.payload;
+      const branchesFormData = state.form.metrics.pipelines[id];
+
+      if (!branchesFormData)
+        state.form.metrics.pipelines[id] = {
+          branches: [],
+        };
+    },
+    updateMetricsPipelineBranchFormMeta: (state, action: PayloadAction<{ id: number; data: FormFieldWithMeta }>) => {
+      const { id, data } = action.payload;
+      const branchesFormData = state.form.metrics.pipelines[id].branches;
+      const index = branchesFormData.findIndex((item) => item.value === data.value);
+
+      if (index > -1) {
+        state.form.metrics.pipelines[id].branches[index] = data;
+      } else {
+        state.form.metrics.pipelines[id].branches.push(data);
+      }
+    },
+    deleteMetricsPipelineFormMeta: (state, action: PayloadAction<number>) => {
       const deleteId = action.payload;
       const formData = state.form.metrics.pipelines;
       state.form.metrics.pipelines = omit(formData, deleteId);
@@ -57,7 +78,14 @@ export const metaSlice = createSlice({
   },
 });
 
-export const { saveVersion, resetFormMeta, updateFormMeta, deleteMetricsPipelineFormMeta } = metaSlice.actions;
+export const {
+  saveVersion,
+  resetFormMeta,
+  updateFormMeta,
+  initMetricsPipelineFormMeta,
+  deleteMetricsPipelineFormMeta,
+  updateMetricsPipelineBranchFormMeta,
+} = metaSlice.actions;
 
 export const getVersion = (state: RootState) => state.meta.version;
 

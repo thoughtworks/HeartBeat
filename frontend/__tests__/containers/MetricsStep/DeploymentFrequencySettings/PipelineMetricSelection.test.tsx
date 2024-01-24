@@ -2,20 +2,25 @@ import {
   BRANCH,
   ERROR_MESSAGE_TIME_DURATION,
   LIST_OPEN,
+  MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL,
   ORGANIZATION,
   PIPELINE_NAME,
   PIPELINE_SETTING_TYPES,
   REMOVE_BUTTON,
   STEP,
-} from '../../../fixtures';
+} from '@test/fixtures';
 import { PipelineMetricSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection';
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice';
 import { act, render, waitFor, within, screen } from '@testing-library/react';
-import { setupStore } from '../../../utils/setupStoreUtil';
 import { metricsClient } from '@src/clients/MetricsClient';
 import { PipelineSetting } from '@src/context/interface';
+import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
+
+const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, (req, res, ctx) => res(ctx.status(204))));
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
@@ -50,6 +55,9 @@ jest.mock('@src/context/config/configSlice', () => ({
 }));
 
 describe('PipelineMetricSelection', () => {
+  beforeAll(() => server.listen());
+  afterAll(() => server.close());
+
   const mockId = 0;
   const deploymentFrequencySetting = {
     id: 0,

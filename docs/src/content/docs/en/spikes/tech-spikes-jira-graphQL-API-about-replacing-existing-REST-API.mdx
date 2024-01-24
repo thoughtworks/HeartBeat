@@ -21,12 +21,10 @@ Jira provides the functionality of the graphQL api, which provides us with an ap
 
 ## Example
 
-### 1.1 
-```/boards/{boardType}/verify```
-
-jira interface path = "/rest/agile/1.0/board/{boardId}", only projectKey is used in the logic。
+### 1.1 `/boards/{boardType}/verify`
+jira interface `path = "/rest/agile/1.0/board/{boardId}"`, only projectKey is used in the logic。
 #### Solution
-Use the graphQL interface instead for path = "/rest/agile/1.0/board/{boardId}", as follows:
+Use the graphQL interface instead for `path = "/rest/agile/1.0/board/{boardId}"`, as follows:
 ```json
 API:
 POST: https://dorametrics.atlassian.net/jsw2/graphql
@@ -44,16 +42,13 @@ Query Variables
 }
 ```
 
-
-### 1.2 
-```jira interface path = "/boards /{boardType}" and "/boards /{boardType}/info"```
-
-1. /rest/agile/1.0/board/{boardId}/configuration, obtain the board id, name attribute, column name, and status id。
-2. /rest/api/2/status/{statusNum}, get the untranslatedName of status and the key and name of category。
-3. /rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}, get all cards on the board, but some card fields are missing
+### 1.2 `jira interface path = "/boards /{boardType}" and "/boards /{boardType}/info"`
+1. `/rest/agile/1.0/board/{boardId}/configuration`, obtain the board id, name attribute, column name, and status id。
+2. `/rest/api/2/status/{statusNum}`, get the untranslatedName of status and the key and name of category。
+3. `/rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}`, get all cards on the board, but some card fields are missing
 
 #### Solution
-1、Use the graphQL interface instead for path = "/rest/agile/1.0/board/{boardId}/configuration" and path = "/rest/api/2/status/{statusNum}, as follows:
+1、Use the graphQL interface instead for `path = "/rest/agile/1.0/board/{boardId}/configuration"` and `path = "/rest/api/2/status/{statusNum}`, as follows:
 ```json
 API:
 POST: https://dorametrics.atlassian.net/jsw2/graphql
@@ -82,7 +77,8 @@ Query Variables
 ```
 As you can see, the rest api needs to call the interface twice to get the required value, and graphQL only needs to call once
 
-2、Use the graphQL interface instead for path = "/rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}", as follows:
+2、Use the graphQL interface instead for `path = "/rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}"`, as follows:
+
 ```json
 API:
 POST: https://dorametrics.atlassian.net/jsw2/graphql
@@ -143,8 +139,9 @@ As you can see from graphQL above, these three rest apis can be replaced by a si
 
 ## Question
 There are three other interfaces to the rest api for jira that do not support graphQL replacement.
-1. path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed?startAt={startAt}&maxResults={queryCount}"，No query history card record was found in the current data
 
-2. path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields"，No way to query
+1. `path = "/rest/internal/2/issue/{jiraCardKey}/activityfeed?startAt={startAt}&maxResults={queryCount}"`，No query history card record was found in the current data
 
-3. path = "rest/api/2/project/{projectIdOrKey}"。The graphQL interface returns a style of TEAM_MANAGED_PROJECT and COMPANY_MANAGED_PROJECT，not in the style we need
+2. `path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields"`，No way to query
+
+3. `path = "rest/api/2/project/{projectIdOrKey}"`。The graphQL interface returns a style of TEAM_MANAGED_PROJECT and COMPANY_MANAGED_PROJECT，not in the style we need

@@ -136,7 +136,7 @@ class ReporterControllerTest {
 		doAnswer(invocation -> null).when(reporterService).generateReportByType(request, MetricType.DORA);
 
 		mockMvc
-			.perform(post("/reports/{reportType}", MetricType.DORA.metricType).contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/reports/{metricType}", MetricType.DORA.metricType).contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(request)))
 			.andExpect(status().isAccepted())
 			.andExpect(jsonPath("$.callbackUrl").value("/reports/" + currentTimeStamp))

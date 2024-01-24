@@ -38,15 +38,15 @@ public class ReportController {
 	@Value("${callback.interval}")
 	private Integer interval;
 
-	@GetMapping("/{reportDataType}/{filename}")
+	@GetMapping("/{reportType}/{filename}")
 	public InputStreamResource exportCSV(
 			@Schema(type = "string", allowableValues = { "metric", "pipeline", "board" },
-					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable() ReportType reportDataType,
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable() ReportType reportType,
 			@PathVariable String filename) {
-		log.info("Start to export CSV file_reportType: {}, _timeStamp: {}", reportDataType.getValue(), filename);
-		InputStreamResource result = reportService.exportCsv(reportDataType, Long.parseLong(filename));
-		log.info("Successfully get CSV file_reportType: {}, _timeStamp: {}, _result: {}", reportDataType.getValue(),
-				filename, result);
+		log.info("Start to export CSV file_reportType: {}, filename: {}", reportType.getValue(), filename);
+		InputStreamResource result = reportService.exportCsv(reportType, Long.parseLong(filename));
+		log.info("Successfully get CSV file_reportType: {}, filename: {}, _result: {}", reportType.getValue(), filename,
+				result);
 		return result;
 	}
 
@@ -56,19 +56,19 @@ public class ReportController {
 		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId,
 				generateReportIsOver);
 		if (generateReportIsOver) {
-			log.info("Successfully generate Report, _reportId: {}, _reports: {}", reportId, reportResponse);
+			log.info("Successfully generate Report_reportId: {}, reports: {}", reportId, reportResponse);
 			generateReporterService.generateCSVForMetric(reportResponse, reportId);
 			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(reportResponse);
 	}
 
-	@PostMapping("{reportType}")
+	@PostMapping("{metricType}")
 	public ResponseEntity<CallbackResponse> generateReport(
 			@Schema(type = "string", allowableValues = { "board", "dora" },
-					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable MetricType reportType,
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable MetricType metricType,
 			@RequestBody GenerateReportRequest request) {
-		reportService.generateReportByType(request, reportType);
+		reportService.generateReportByType(request, metricType);
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
 			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());

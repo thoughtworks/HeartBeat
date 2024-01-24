@@ -1,4 +1,4 @@
-package heartbeat.enums;
+package heartbeat.service.board.jira;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

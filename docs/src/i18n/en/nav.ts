@@ -129,6 +129,11 @@ export default [
 		slug: 'spikes/tech-spikes-support-multiple-instances-for-backend-service',
 		key: 'spikes/tech-spikes-support-multiple-instances-for-backend-service',
 	},
+	{
+		text: 'Split jira graphQL API',
+		slug: 'spikes/tech-spikes-jira-graphQL-API-about-replacing-existing-REST-API',
+		key: 'spikes/tech-spikes-jira-graphQL-API-about-replacing-existing-REST-API',
+	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },

@@ -20,7 +20,10 @@ By checking, in the JiraControl layer, some interface makes multiple calls to th
 Jira provides the functionality of the graphQL api, which provides us with an api to get a variety of data at once and return only the data we need.
 
 ## Example
-### 1.1 /boards/{boardType}/verify
+
+### 1.1 
+```/boards/{boardType}/verify```
+
 jira interface path = "/rest/agile/1.0/board/{boardId}", only projectKey is used in the logic。
 #### Solution
 Use the graphQL interface instead for path = "/rest/agile/1.0/board/{boardId}", as follows:
@@ -41,7 +44,10 @@ Query Variables
 }
 ```
 
-### 1.2 jira interface path = "/boards /{boardType}" and "/boards /{boardType}/info"。
+
+### 1.2 
+```jira interface path = "/boards /{boardType}" and "/boards /{boardType}/info"```
+
 1. /rest/agile/1.0/board/{boardId}/configuration, obtain the board id, name attribute, column name, and status id。
 2. /rest/api/2/status/{statusNum}, get the untranslatedName of status and the key and name of category。
 3. /rest/agile/1.0/board/{boardId}/issue? maxResults={queryCount}&startAt={startAt}&jql={jql}, get all cards on the board, but some card fields are missing

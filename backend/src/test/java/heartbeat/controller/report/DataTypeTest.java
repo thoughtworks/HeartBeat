@@ -1,6 +1,6 @@
 package heartbeat.controller.report;
 
-import heartbeat.controller.report.dto.request.DataType;
+import heartbeat.config.DataType;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

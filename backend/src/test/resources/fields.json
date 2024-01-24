@@ -60,5 +60,25 @@
     }
   },
   "customfield_1010": "null",
-  "customfield_1011": "{}"
+  "customfield_1011": "{}",
+  "customfield_1012": [
+    {
+      "name": 1
+    }
+  ],
+  "customfield_1013": [
+    {
+      "value": "Sprint 1 value"
+    }
+  ],
+  "customfield_1014": [
+    {
+      "key": "closed"
+    }
+  ],
+  "customfield_1015": [
+    {
+      "displayName": "display"
+    }
+  ]
 }

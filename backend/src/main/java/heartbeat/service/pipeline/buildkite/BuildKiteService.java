@@ -26,13 +26,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -228,7 +229,7 @@ public class BuildKiteService {
 	private List<DeployInfo> getBuildsByState(List<BuildKiteBuildInfo> buildInfos,
 			DeploymentEnvironment deploymentEnvironment, String state, String startTime, String endTime) {
 		return buildInfos.stream()
-			.map(build -> build.mapToDeployInfo(
+			.map(build -> this.mapToDeployInfo(build,
 					getStepsBeforeEndStep(deploymentEnvironment.getStep(), getPipelineStepNames(buildInfos)),
 					List.of(state), startTime, endTime))
 			.filter(job -> !job.equals(DeployInfo.builder().build()))
@@ -286,6 +287,35 @@ public class BuildKiteService {
 					String.format("Failed to call BuildKite, cause is %s", cause.getMessage()));
 
 		}
+	}
+
+	public BuildKiteJob getBuildKiteJob(List<BuildKiteJob> jobs, List<String> steps, List<String> states,
+			String startTime, String endTime) {
+		Instant startDate = Instant.ofEpochMilli(Long.parseLong(startTime));
+		Instant endDate = Instant.ofEpochMilli(Long.parseLong(endTime));
+		return jobs.stream().filter(item -> steps.contains(item.getName())).filter(item -> {
+			if (Objects.nonNull(item.getFinishedAt()) && Objects.nonNull(item.getStartedAt())) {
+				Instant time = Instant.parse(item.getFinishedAt());
+				return TimeUtil.isAfterAndEqual(startDate, time) && TimeUtil.isBeforeAndEqual(endDate, time);
+			}
+			return false;
+		})
+			.max(Comparator.comparing(BuildKiteJob::getFinishedAt))
+			.filter(buildKiteJob -> states.contains(buildKiteJob.getState()))
+			.orElse(null);
+	}
+
+	public DeployInfo mapToDeployInfo(BuildKiteBuildInfo buildInfo, List<String> steps, List<String> states,
+			String startTime, String endTime) {
+		BuildKiteJob job = getBuildKiteJob(buildInfo.getJobs(), steps, states, startTime, endTime);
+
+		if (buildInfo.getPipelineCreateTime() == null || job == null || job.getStartedAt() == null
+				|| job.getFinishedAt() == null) {
+			return DeployInfo.builder().build();
+		}
+
+		return new DeployInfo(buildInfo.getPipelineCreateTime(), job.getStartedAt(), job.getFinishedAt(),
+				buildInfo.getCommit(), job.getState(), job.getName());
 	}
 
 }

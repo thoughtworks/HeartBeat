@@ -2,23 +2,18 @@ package heartbeat.controller.report.dto.request;
 
 public enum ReportType {
 
-	METRIC("metric"), PIPELINE("pipeline"), BOARD("board");
+	BOARD("board"), DORA("dora");
 
-	private String value;
+	public final String reportType;
 
-	ReportType(String value) {
-		this.value = value;
-	}
-
-	public String getValue() {
-		return value;
+	ReportType(String reportType) {
+		this.reportType = reportType;
 	}
 
 	public static ReportType fromValue(String type) {
 		return switch (type) {
-			case "metric" -> METRIC;
-			case "pipeline" -> PIPELINE;
 			case "board" -> BOARD;
+			case "dora" -> DORA;
 			default -> throw new IllegalArgumentException("ReportType not found!");
 		};
 	}

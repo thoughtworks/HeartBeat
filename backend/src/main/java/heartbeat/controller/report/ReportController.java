@@ -1,7 +1,7 @@
 package heartbeat.controller.report;
 
-import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
+import heartbeat.controller.report.dto.request.ReportDataType;
 import heartbeat.controller.report.dto.request.ReportType;
 import heartbeat.controller.report.dto.response.CallbackResponse;
 import heartbeat.controller.report.dto.response.ReportResponse;
@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.concurrent.CompletableFuture;
-
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Report")
@@ -40,14 +38,14 @@ public class ReportController {
 	@Value("${callback.interval}")
 	private Integer interval;
 
-	@GetMapping("/{reportType}/{filename}")
+	@GetMapping("/{reportDataType}/{filename}")
 	public InputStreamResource exportCSV(
 			@Schema(type = "string", allowableValues = { "metric", "pipeline", "board" },
-					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable() ReportType reportType,
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable() ReportDataType reportDataType,
 			@PathVariable String filename) {
-		log.info("Start to export CSV file_reportType: {}, _timeStamp: {}", reportType.getValue(), filename);
-		InputStreamResource result = reportService.exportCsv(reportType, Long.parseLong(filename));
-		log.info("Successfully get CSV file_reportType: {}, _timeStamp: {}, _result: {}", reportType.getValue(),
+		log.info("Start to export CSV file_reportType: {}, _timeStamp: {}", reportDataType.getValue(), filename);
+		InputStreamResource result = reportService.exportCsv(reportDataType, Long.parseLong(filename));
+		log.info("Successfully get CSV file_reportType: {}, _timeStamp: {}, _result: {}", reportDataType.getValue(),
 				filename, result);
 		return result;
 	}
@@ -65,17 +63,12 @@ public class ReportController {
 		return ResponseEntity.status(HttpStatus.OK).body(reportResponse);
 	}
 
-	@PostMapping("{metricType}")
+	@PostMapping("{reportType}")
 	public ResponseEntity<CallbackResponse> generateReport(
 			@Schema(type = "string", allowableValues = { "board", "dora" },
-					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable MetricType metricType,
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable ReportType reportType,
 			@RequestBody GenerateReportRequest request) {
-		CompletableFuture.runAsync(() -> {
-			switch (metricType) {
-				case BOARD -> generateReporterService.generateBoardReport(request);
-				case DORA -> generateReporterService.generateDoraReport(request);
-			}
-		});
+		reportService.generateReportByType(request, reportType);
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
 			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());

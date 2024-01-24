@@ -1,13 +1,16 @@
 package heartbeat.controller.report.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.gson.Gson;
+import heartbeat.controller.report.dto.response.MetricsDataCompleted;
+import heartbeat.util.IdUtil;
 import heartbeat.util.MetricsUtil;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 
@@ -37,23 +40,47 @@ public class GenerateReportRequest {
 	@NotBlank
 	private String csvTimeStamp;
 
-	public GenerateReportRequest convertToPipelineRequest(GenerateReportRequest request) {
-		List<String> pipelineMetrics = MetricsUtil
-			.getPipelineMetrics(request.getMetrics().stream().map(String::toLowerCase).toList());
-		Gson gson = new Gson();
-		GenerateReportRequest result = gson.fromJson(gson.toJson(request), GenerateReportRequest.class);
-
-		result.setMetrics(pipelineMetrics);
-		return result;
+	@JsonIgnore
+	public List<String> getPipelineMetrics() {
+		return this.metrics.stream().map(String::toLowerCase).filter(MetricsUtil.buildKiteMetrics::contains).toList();
 	}
 
-	public GenerateReportRequest convertToSourceControlRequest(GenerateReportRequest request) {
-		List<String> codebaseMetrics = MetricsUtil
-			.getCodeBaseMetrics(request.getMetrics().stream().map(String::toLowerCase).toList());
-		Gson gson = new Gson();
-		GenerateReportRequest result = gson.fromJson(gson.toJson(request), GenerateReportRequest.class);
-		result.setMetrics(codebaseMetrics);
-		return result;
+	public List<String> getMetrics() {
+		return this.metrics.stream().map(String::toLowerCase).toList();
+	}
+
+	@JsonIgnore
+	public List<String> getSourceControlMetrics() {
+		return this.metrics.stream().map(String::toLowerCase).filter(MetricsUtil.codebaseMetrics::contains).toList();
+	}
+
+	@JsonIgnore
+	public List<String> getBoardMetrics() {
+		return this.metrics.stream().map(String::toLowerCase).filter(MetricsUtil.kanbanMetrics::contains).toList();
+	}
+
+	@JsonIgnore
+	public String getPipelineReportId() {
+		return IdUtil.getPipelineReportId(this.csvTimeStamp);
+	}
+
+	@JsonIgnore
+	public String getSourceControlReportId() {
+		return IdUtil.getSourceControlReportId(this.csvTimeStamp);
+	}
+
+	@JsonIgnore
+	public String getBoardReportId() {
+		return IdUtil.getBoardReportId(this.csvTimeStamp);
+	}
+
+	@JsonIgnore
+	public MetricsDataCompleted getMetricsStatus(Boolean flag) {
+		return MetricsDataCompleted.builder()
+			.boardMetricsCompleted(CollectionUtils.isNotEmpty(getBoardMetrics()) ? flag : null)
+			.pipelineMetricsCompleted(CollectionUtils.isNotEmpty(getPipelineMetrics()) ? flag : null)
+			.sourceControlMetricsCompleted(CollectionUtils.isNotEmpty(getSourceControlMetrics()) ? flag : null)
+			.build();
 	}
 
 }

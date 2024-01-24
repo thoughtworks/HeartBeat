@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BoardCsvFixture {
 
@@ -233,20 +234,7 @@ public class BoardCsvFixture {
 	}
 
 	public static List<JiraCardDTO> MOCK_JIRA_CARD_DTO() {
-		JiraCardField jiraCardField = JiraCardField.builder()
-			.summary("summary")
-			.issuetype(IssueType.builder().name("issue type").build())
-			.status(Status.builder().displayValue("done").build())
-			.storyPoints(2)
-			.assignee(Assignee.builder().displayName("name").build())
-			.reporter(Reporter.builder().displayName("name").build())
-			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
-			.priority(Priority.builder().name("Medium").build())
-			.parent(CardParent.builder().fields(Fields.builder().summary("parent").build()).build())
-			.sprint(Sprint.builder().name("sprint 1").build())
-			.labels(Collections.emptyList())
-			.customFields(CUSTOM_FIELDS)
-			.build();
+		JiraCardField jiraCardField = MOCK_JIRA_CARD();
 
 		HashMap<String, Double> cycleTimeFlat = new HashMap<>();
 		cycleTimeFlat.put("DOING", 9.8067E-5);
@@ -264,6 +252,23 @@ public class BoardCsvFixture {
 			.totalCycleTimeDivideStoryPoints("0.90")
 			.build();
 		return List.of(jiraCardDTO);
+	}
+
+	public static JiraCardField MOCK_JIRA_CARD() {
+		return JiraCardField.builder()
+			.summary("summary")
+			.issuetype(IssueType.builder().name("issue type").build())
+			.status(Status.builder().displayValue("done").build())
+			.storyPoints(2)
+			.assignee(Assignee.builder().displayName("name").build())
+			.reporter(Reporter.builder().displayName("name").build())
+			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
+			.priority(Priority.builder().name("Medium").build())
+			.parent(CardParent.builder().fields(Fields.builder().summary("parent").build()).build())
+			.sprint(Sprint.builder().name("sprint 1").build())
+			.labels(Collections.emptyList())
+			.customFields(CUSTOM_FIELDS)
+			.build();
 	}
 
 	public static List<JiraCardDTO> MOCK_JIRA_CARD_DTO_WITH_EMPTY_BASE_INFO() {

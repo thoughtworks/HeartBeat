@@ -16,7 +16,6 @@ import heartbeat.client.dto.board.jira.HolidaysResponseDTO;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
-import lombok.val;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -60,7 +59,7 @@ public class CacheConfig {
 
 	@SuppressWarnings("unchecked")
 	private <K, V> javax.cache.configuration.Configuration<K, V> getCacheConfiguration(Class<V> valueType) {
-		val offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(2, MemoryUnit.MB);
+		ResourcePoolsBuilder offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(2, MemoryUnit.MB);
 		Duration timeToLive;
 		if (valueType == HolidaysResponseDTO.class) {
 			timeToLive = Duration.ofSeconds(300);

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,7 @@ public class BuildKiteControllerTest {
 			.andReturn()
 			.getResponse();
 
-		val resultStep = JsonPath.parse(response.getContentAsString()).read("$.steps[0]");
+		Object resultStep = JsonPath.parse(response.getContentAsString()).read("$.steps[0]");
 		assertThat(resultStep).isEqualTo(":docker: publish image to cloudsmith");
 	}
 
@@ -130,9 +129,11 @@ public class BuildKiteControllerTest {
 			.andReturn()
 			.getResponse();
 
-		final var resultId = JsonPath.parse(response.getContentAsString()).read("$.pipelineList[0].id").toString();
+		final String resultId = JsonPath.parse(response.getContentAsString()).read("$.pipelineList[0].id").toString();
 		assertThat(resultId).contains("payment-selector-ui");
-		final var resultName = JsonPath.parse(response.getContentAsString()).read("$.pipelineList[0].name").toString();
+		final String resultName = JsonPath.parse(response.getContentAsString())
+			.read("$.pipelineList[0].name")
+			.toString();
 		assertThat(resultName).contains("payment-selector-ui");
 	}
 

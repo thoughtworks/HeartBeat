@@ -64,6 +64,40 @@ public class PipelineCsvFixture {
 		return List.of(pipelineCsvInfo);
 	}
 
+	public static List<PipelineCSVInfo> MOCK_PIPELINE_CSV_DATA_WITH_NULL_COMMIT_INFO() {
+		PipelineCSVInfo pipelineCsvInfo = PipelineCSVInfo.builder()
+			.pipeLineName("Heartbeat")
+			.stepName(":rocket: Deploy prod")
+			.buildInfo(BuildKiteBuildInfo.builder()
+				.commit("713b31878c756c205a6c03eac5be3ac7c7e6a227")
+				.pipelineCreateTime("2023-05-10T06:17:21.844Z")
+				.number(880)
+				.jobs(List.of(BuildKiteJob.builder()
+					.name(":rocket: Deploy prod")
+					.state("passed")
+					.startedAt("2023-05-10T06:42:47.498Z")
+					.finishedAt("2023-05-10T06:43:02.653Z")
+					.build()))
+				.branch("branch")
+				.build())
+			.leadTimeInfo(LeadTimeInfo.builder()
+				.firstCommitTimeInPr("2023-05-08T07:18:18Z")
+				.totalTime("8379303")
+				.prMergedTime("1683793037000")
+				.prLeadTime("16837")
+				.prCreatedTime("168369327000")
+				.jobFinishTime("1684793037000")
+				.pipelineLeadTime("653037000")
+				.build())
+			.deployInfo(DeployInfo.builder()
+				.state("passed")
+				.jobFinishTime("1684793037000")
+				.jobStartTime("168369327000")
+				.build())
+			.build();
+		return List.of(pipelineCsvInfo);
+	}
+
 	public static PipelineLeadTime MOCK_PIPELINE_LEAD_TIME_DATA() {
 		return PipelineLeadTime.builder()
 			.pipelineStep("xx")

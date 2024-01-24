@@ -1,6 +1,6 @@
 package heartbeat.controller.report.dto.request;
 
-public enum RequireDataEnum {
+public enum MetricEnum {
 
 	VELOCITY("velocity"), CYCLE_TIME("cycle time"), CLASSIFICATION("classification"),
 	DEPLOYMENT_FREQUENCY("deployment frequency"), CHANGE_FAILURE_RATE("change failure rate"),
@@ -8,7 +8,7 @@ public enum RequireDataEnum {
 
 	private final String value;
 
-	RequireDataEnum(String value) {
+	MetricEnum(String value) {
 		this.value = value;
 	}
 

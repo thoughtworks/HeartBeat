@@ -1,4 +1,4 @@
-package heartbeat.controller.report.dto.request;
+package heartbeat.config;
 
 public enum DataType {
 

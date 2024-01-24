@@ -1,15 +1,26 @@
 package heartbeat.client.dto.pipeline.buildkite;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
+
+import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class BuildKiteBuildInfoTest {
+
+	@InjectMocks
+	BuildKiteService buildKiteService;
 
 	@Test
 	void shouldReturnLastFailedOrSuccessJob() {
@@ -65,16 +76,14 @@ class BuildKiteBuildInfoTest {
 		List<BuildKiteJob> successJobs = Arrays.asList(successJob1, successJob2, successJob3, successJob4, successJob5);
 		List<String> steps = Arrays.asList("test", "build", "deploy qa", "deploy uat");
 
-		BuildKiteBuildInfo info = BuildKiteBuildInfoBuilder.withDefault().build();
-
-		BuildKiteJob failedResult = info.getBuildKiteJob(failedJobs, steps, Arrays.asList("failed", "pass"),
+		BuildKiteJob failedResult = buildKiteService.getBuildKiteJob(failedJobs, steps, Arrays.asList("failed", "pass"),
 				String.valueOf(Instant.MIN.getEpochSecond()), String.valueOf(Instant.MAX.getEpochSecond()));
-		BuildKiteJob successResult = info.getBuildKiteJob(successJobs, steps, Arrays.asList("failed", "pass"),
-				String.valueOf(Instant.MIN.getEpochSecond()), String.valueOf(Instant.MAX.getEpochSecond()));
+		BuildKiteJob successResult = buildKiteService.getBuildKiteJob(successJobs, steps,
+				Arrays.asList("failed", "pass"), String.valueOf(Instant.MIN.getEpochSecond()),
+				String.valueOf(Instant.MAX.getEpochSecond()));
 
 		assertEquals("deploy qa", failedResult.getName());
 		assertEquals("deploy uat", successResult.getName());
-
 	}
 
 }

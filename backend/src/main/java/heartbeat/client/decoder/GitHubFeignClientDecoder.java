@@ -1,4 +1,4 @@
-package heartbeat.decoder;
+package heartbeat.client.decoder;
 
 import feign.FeignException;
 import feign.Response;

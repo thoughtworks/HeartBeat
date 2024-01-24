@@ -1,8 +1,9 @@
 package heartbeat.client;
 
+import heartbeat.client.decoder.GitHubFeignClientDecoder;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
-import heartbeat.decoder.GitHubFeignClientDecoder;
+
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;

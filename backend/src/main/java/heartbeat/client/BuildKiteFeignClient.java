@@ -1,10 +1,10 @@
 package heartbeat.client;
 
+import heartbeat.client.decoder.BuildKiteFeignClientDecoder;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
-import heartbeat.decoder.BuildKiteFeignClientDecoder;
 
 import java.util.List;
 

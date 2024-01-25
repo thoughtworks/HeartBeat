@@ -22,7 +22,7 @@ import {
   updatePipelineToolVerifyResponse,
 } from '@src/context/config/configSlice';
 import { addADeploymentFrequencySetting, updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import { addNotification } from '@src/context/notification/NotificationSlice';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
@@ -33,6 +33,11 @@ import ReportStep from '@src/containers/ReportStep';
 import { MESSAGE } from '@src/constants/resources';
 import { Provider } from 'react-redux';
 import React from 'react';
+
+jest.mock('@src/context/notification/NotificationSlice', () => ({
+  ...jest.requireActual('@src/context/notification/NotificationSlice'),
+  addNotification: jest.fn().mockReturnValue({ type: 'ADD_NOTIFICATION' }),
+}));
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({
   ...jest.requireActual('@src/context/stepper/StepperSlice'),
@@ -72,13 +77,9 @@ jest.mock('@src/utils/util', () => ({
 
 let store = null;
 describe('Report Step', () => {
-  const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect());
   const { result: reportHook } = renderHook(() => useGenerateReportEffect());
   beforeEach(() => {
     resetReportHook();
-  });
-  afterAll(() => {
-    jest.clearAllMocks();
   });
   const resetReportHook = async () => {
     reportHook.current.startToRequestBoardData = jest.fn();
@@ -122,7 +123,7 @@ describe('Report Step', () => {
     );
     return render(
       <Provider store={store}>
-        <ReportStep notification={notificationHook.current} handleSave={handleSaveMock} />
+        <ReportStep handleSave={handleSaveMock} />
       </Provider>,
     );
   };
@@ -227,10 +228,6 @@ describe('Report Step', () => {
     });
 
     it('should call addNotification when remaining time is less than or equal to 5 minutes', () => {
-      const closeAllNotifications = jest.fn();
-      const addNotification = jest.fn();
-      notificationHook.current.closeAllNotifications = closeAllNotifications;
-      notificationHook.current.addNotification = addNotification;
       jest.useFakeTimers();
 
       setup(['']);
@@ -332,7 +329,7 @@ describe('Report Step', () => {
     );
 
     it('should call fetchExportData when clicking "Export pipeline data"', async () => {
-      const { result } = renderHook(() => useExportCsvEffect(notificationHook.current));
+      const { result } = renderHook(() => useExportCsvEffect());
       setup([REQUIRED_DATA_LIST[6]]);
 
       const exportButton = screen.getByText(EXPORT_PIPELINE_DATA);
@@ -369,7 +366,7 @@ describe('Report Step', () => {
     );
 
     it('should call fetchExportData when clicking "Export board data"', async () => {
-      const { result } = renderHook(() => useExportCsvEffect(notificationHook.current));
+      const { result } = renderHook(() => useExportCsvEffect());
       setup([REQUIRED_DATA_LIST[2]]);
 
       const exportButton = screen.getByText(EXPORT_BOARD_DATA);
@@ -395,7 +392,7 @@ describe('Report Step', () => {
     });
 
     it('should call fetchExportData when clicking "Export metric data"', async () => {
-      const { result } = renderHook(() => useExportCsvEffect(notificationHook.current));
+      const { result } = renderHook(() => useExportCsvEffect());
       setup(['']);
 
       const exportButton = screen.getByText(EXPORT_METRIC_DATA);
@@ -418,11 +415,7 @@ describe('Report Step', () => {
   });
 
   describe('error notification', () => {
-    const addNotification = jest.fn();
     const error = 'error';
-    beforeEach(() => {
-      notificationHook.current.addNotification = addNotification;
-    });
 
     it('should call addNotification when having timeout4Board error', () => {
       reportHook.current.timeout4Board = error;

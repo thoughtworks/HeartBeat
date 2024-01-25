@@ -1,3 +1,4 @@
+import { notificationSlice } from '@src/context/notification/NotificationSlice';
 import { stepperSlice } from '@src/context/stepper/StepperSlice';
 import { metricsSlice } from '@src/context/Metrics/metricsSlice';
 import { configSlice } from '@src/context/config/configSlice';
@@ -11,6 +12,7 @@ export const setupStore = () => {
       [configSlice.name]: configSlice.reducer,
       [metricsSlice.name]: metricsSlice.reducer,
       [metaSlice.name]: metaSlice.reducer,
+      [notificationSlice.name]: notificationSlice.reducer,
     },
     middleware: [],
   });

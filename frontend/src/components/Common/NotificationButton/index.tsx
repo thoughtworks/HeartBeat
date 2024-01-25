@@ -3,11 +3,13 @@ import {
   AlertWrapper,
   NotificationContainer,
 } from '@src/components/Common/NotificationButton/style';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
+import { closeNotification, selectNotifications } from '@src/context/notification/NotificationSlice';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { NOTIFICATION_TITLE } from '@src/constants/resources';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { AlertColor, SvgIcon } from '@mui/material';
+import { DURATION } from '@src/constants/commons';
 import InfoIcon from '@mui/icons-material/Info';
 import { theme } from '@src/theme';
 import React from 'react';
@@ -50,17 +52,22 @@ const getStyles = (type: AlertColor | undefined) => {
   }
 };
 
-export const Notification = ({ notifications, closeNotification }: useNotificationLayoutEffectInterface) => {
+export const Notification = () => {
+  const dispatch = useAppDispatch();
+  const notifications = useAppSelector(selectNotifications);
+
   return (
     <NotificationContainer>
       {notifications.map((notification) => {
         const styles = getStyles(notification.type);
-
+        window.setTimeout(() => {
+          dispatch(closeNotification(notification.id));
+        }, DURATION.NOTIFICATION_TIME);
         return (
           <AlertWrapper
             key={notification.id}
             onClose={() => {
-              closeNotification(notification.id);
+              dispatch(closeNotification(notification.id));
             }}
             icon={<SvgIcon component={styles.icon} inheritViewBox />}
             backgroundcolor={styles.backgroundColor}

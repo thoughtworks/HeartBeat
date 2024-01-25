@@ -1,5 +1,4 @@
 import { StyledButtonGroup, StyledExportButton, StyledRightButtonGroup } from '@src/containers/ReportButtonGroup/style';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { BackButton, SaveButton } from '@src/containers/MetricsStepper/style';
 import { ExpiredDialog } from '@src/containers/ReportStep/ExpiredDialog';
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
@@ -12,7 +11,6 @@ import { Tooltip } from '@mui/material';
 import React from 'react';
 
 interface ReportButtonGroupProps {
-  notification: useNotificationLayoutEffectInterface;
   handleSave?: () => void;
   handleBack: () => void;
   csvTimeStamp: number;
@@ -26,7 +24,6 @@ interface ReportButtonGroupProps {
 }
 
 export const ReportButtonGroup = ({
-  notification,
   handleSave,
   handleBack,
   csvTimeStamp,
@@ -38,7 +35,7 @@ export const ReportButtonGroup = ({
   isShowExportBoardButton,
   isShowExportPipelineButton,
 }: ReportButtonGroupProps) => {
-  const { fetchExportData, isExpired } = useExportCsvEffect(notification);
+  const { fetchExportData, isExpired } = useExportCsvEffect();
 
   const exportCSV = (dataType: REPORT_TYPES, startDate: string, endDate: string): CSVReportRequestDTO => ({
     dataType: dataType,

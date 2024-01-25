@@ -1,3 +1,4 @@
+import notificationSlice from '@src/context/notification/NotificationSlice';
 import stepperReducer from './context/stepper/StepperSlice';
 import metricsSlice from './context/Metrics/metricsSlice';
 import configReducer from './context/config/configSlice';
@@ -10,6 +11,7 @@ export const store = configureStore({
     config: configReducer,
     metrics: metricsSlice,
     meta: metaSlice,
+    notification: notificationSlice,
   },
 });
 

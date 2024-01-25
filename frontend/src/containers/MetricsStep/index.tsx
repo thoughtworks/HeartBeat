@@ -5,18 +5,20 @@ import {
 } from '@src/containers/MetricsStep/style';
 import { selectDateRange, selectJiraColumns, selectMetrics, selectUsers } from '@src/context/config/configSlice';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA } from '@src/constants/resources';
+import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
 import { RealDone } from '@src/containers/MetricsStep/RealDone';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import { useAppSelector } from '@src/hooks';
 import { useLayoutEffect } from 'react';
 
-const MetricsStep = ({ closeAllNotifications }: useNotificationLayoutEffectInterface) => {
+const MetricsStep = () => {
+  const dispatch = useAppDispatch();
   const requiredData = useAppSelector(selectMetrics);
   const users = useAppSelector(selectUsers);
   const jiraColumns = useAppSelector(selectJiraColumns);
@@ -32,7 +34,7 @@ const MetricsStep = ({ closeAllNotifications }: useNotificationLayoutEffectInter
     cycleTimeSettings.filter((e) => e.value === DONE).length > 1;
 
   useLayoutEffect(() => {
-    closeAllNotifications();
+    dispatch(closeAllNotifications());
   }, []);
 
   return (

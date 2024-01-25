@@ -31,7 +31,6 @@ import {
 import { ICycleTimeSetting, savedMetricsSettingState, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
-import { useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
 import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
 import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
@@ -49,7 +48,7 @@ const MetricsStep = lazy(() => import('@src/containers/MetricsStep'));
 const ReportStep = lazy(() => import('@src/containers/ReportStep'));
 
 /* istanbul ignore next */
-const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
+const MetricsStepper = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const activeStep = useAppSelector(selectStepNumber);
@@ -286,9 +285,9 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
       </StyledStepper>
       <MetricsStepperContent>
         <Suspense>
-          {activeStep === METRICS_STEPS.CONFIG && <ConfigStep {...props} />}
-          {activeStep === METRICS_STEPS.METRICS && <MetricsStep {...props} />}
-          {activeStep === METRICS_STEPS.REPORT && <ReportStep notification={props} handleSave={handleSave} />}
+          {activeStep === METRICS_STEPS.CONFIG && <ConfigStep />}
+          {activeStep === METRICS_STEPS.METRICS && <MetricsStep />}
+          {activeStep === METRICS_STEPS.REPORT && <ReportStep handleSave={handleSave} />}
         </Suspense>
       </MetricsStepperContent>
       <ButtonContainer>

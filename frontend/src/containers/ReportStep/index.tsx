@@ -1,4 +1,4 @@
-import { Notification, useNotificationLayoutEffectInterface } from '@src/hooks/useNotificationLayoutEffect';
+import { addNotification, closeAllNotifications, Notification } from '@src/context/notification/NotificationSlice';
 import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice';
 import { MESSAGE, REPORT_PAGE_TYPE, REQUIRED_DATA } from '@src/constants/resources';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
@@ -15,11 +15,10 @@ import { BoardDetail, DoraDetail } from './ReportDetail';
 import { useAppSelector } from '@src/hooks';
 
 export interface ReportStepProps {
-  notification: useNotificationLayoutEffectInterface;
   handleSave: () => void;
 }
 
-const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
+const ReportStep = ({ handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch();
   const {
     startToRequestBoardData,
@@ -47,8 +46,6 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   const endDate = configData.basic.dateRange.endDate ?? '';
   const metrics = configData.basic.metrics;
 
-  const { addNotification, closeAllNotifications } = notification;
-
   const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
   const onlySelectClassification = metrics.length === 1 && metrics[0] === REQUIRED_DATA.CLASSIFICATION;
@@ -64,9 +61,11 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   useLayoutEffect(() => {
     exportValidityTimeMin &&
       allMetricsCompleted &&
-      addNotification({
-        message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
-      });
+      dispatch(
+        addNotification({
+          message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
+        }),
+      );
   }, [exportValidityTimeMin, allMetricsCompleted]);
 
   useLayoutEffect(() => {
@@ -79,9 +78,11 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         const remainingExpireTime = 5 * 60 * 1000;
         const remainingTime = exportValidityTimeMin * 60 * 1000 - elapsedTime;
         if (remainingTime <= remainingExpireTime) {
-          addNotification({
-            message: MESSAGE.EXPIRE_INFORMATION(5),
-          });
+          dispatch(
+            addNotification({
+              message: MESSAGE.EXPIRE_INFORMATION(5),
+            }),
+          );
           clearInterval(timer);
         }
       }, 1000);
@@ -93,7 +94,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   }, [exportValidityTimeMin, allMetricsCompleted]);
 
   useLayoutEffect(() => {
-    closeAllNotifications();
+    dispatch(closeAllNotifications());
   }, [pageType]);
 
   useEffect(() => {
@@ -104,7 +105,7 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
   useEffect(() => {
     if (isSummaryPage && notifications4SummaryPage.length > 0) {
       const notification = notifications4SummaryPage[0];
-      notification && addNotification(notification);
+      notification && dispatch(addNotification(notification));
       setNotifications4SummaryPage(notifications4SummaryPage.slice(1));
     }
   }, [notifications4SummaryPage, isSummaryPage]);
@@ -263,7 +264,6 @@ const ReportStep = ({ notification, handleSave }: ReportStepProps) => {
         : !!reportData &&
           (pageType === REPORT_PAGE_TYPE.BOARD ? showBoardDetail(reportData) : showDoraDetail(reportData))}
       <ReportButtonGroup
-        notification={notification}
         isShowSave={isSummaryPage}
         isShowExportMetrics={isSummaryPage}
         isShowExportBoardButton={isSummaryPage ? shouldShowBoardMetrics : pageType === REPORT_PAGE_TYPE.BOARD}

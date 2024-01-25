@@ -29,9 +29,8 @@ import {
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
-import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { ASSIGNEE_FILTER_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import MetricsStepper from '@src/containers/MetricsStepper';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -157,11 +156,10 @@ describe('MetricsStepper', () => {
     navigateMock.mockClear();
   });
 
-  const { result } = renderHook(() => useNotificationLayoutEffect());
   const setup = () =>
     render(
       <Provider store={store}>
-        <MetricsStepper {...result.current} />
+        <MetricsStepper />
       </Provider>,
     );
   it('should show metrics stepper', () => {

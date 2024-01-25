@@ -1,10 +1,10 @@
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { EXPORT_METRIC_DATA, MOCK_REPORT_RESPONSE } from '../fixtures';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
-import { render, renderHook, screen } from '@testing-library/react';
+import { setupStore } from '@test/utils/setupStoreUtil';
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
 
 describe('test', () => {
-  const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect());
   const mockHandler = jest.fn();
   const mockData = {
     ...MOCK_REPORT_RESPONSE,
@@ -24,22 +24,29 @@ describe('test', () => {
       },
     },
   };
-  it('test', () => {
+
+  const setup = () => {
+    const store = setupStore();
     render(
-      <ReportButtonGroup
-        notification={notificationHook.current}
-        isShowSave={true}
-        isShowExportMetrics={true}
-        isShowExportBoardButton={true}
-        isShowExportPipelineButton={true}
-        handleBack={mockHandler}
-        handleSave={mockHandler}
-        reportData={mockData}
-        startDate={''}
-        endDate={''}
-        csvTimeStamp={1239013}
-      />,
+      <Provider store={store}>
+        <ReportButtonGroup
+          isShowSave={true}
+          isShowExportMetrics={true}
+          isShowExportBoardButton={true}
+          isShowExportPipelineButton={true}
+          handleBack={mockHandler}
+          handleSave={mockHandler}
+          reportData={mockData}
+          startDate={''}
+          endDate={''}
+          csvTimeStamp={1239013}
+        />
+      </Provider>,
     );
+  };
+
+  it('test', () => {
+    setup();
 
     expect(screen.queryByRole('button', { name: EXPORT_METRIC_DATA })).toBeDisabled();
   });

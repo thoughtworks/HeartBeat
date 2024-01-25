@@ -1,26 +1,35 @@
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
-import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import { addNotification, closeNotification } from '@src/context/notification/NotificationSlice';
 import { Notification } from '@src/components/Common/NotificationButton';
+import { render, screen, waitFor } from '@testing-library/react';
+import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
+import { DURATION } from '@src/constants/commons';
 import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
 import React from 'react';
 
-const mockNotifications = [
-  { id: '1', title: 'Notification', message: 'Notification Message 1' },
-  {
-    id: '2',
-    title: 'Notification',
-    message: 'Notification Message 2',
-  },
-];
+jest.mock('@src/context/notification/NotificationSlice', () => ({
+  ...jest.requireActual('@src/context/notification/NotificationSlice'),
+  closeNotification: jest.fn().mockReturnValue({ type: 'CLOSE_NOTIFICATION' }),
+}));
+
 describe('Notification', () => {
-  const { result } = renderHook(() => useNotificationLayoutEffect());
+  const setup = () => {
+    const store = setupStore();
+    render(
+      <Provider store={store}>
+        <Notification />
+      </Provider>,
+    );
+    return store;
+  };
 
   it('should render all notifications correctly', () => {
+    const store = setup();
     act(() => {
-      result.current.notifications = mockNotifications;
+      store.dispatch(addNotification({ title: 'Notification', message: 'Notification Message 1' }));
+      store.dispatch(addNotification({ title: 'Notification', message: 'Notification Message 2' }));
     });
-    render(<Notification {...result.current} />);
 
     expect(screen.queryAllByText('Notification')).toHaveLength(2);
     expect(screen.getByText('Notification Message 1')).toBeInTheDocument();
@@ -28,19 +37,18 @@ describe('Notification', () => {
   });
 
   it('should call closeNotification with corresponding id when clicking close button', async () => {
+    const store = setup();
     act(() => {
-      result.current.notifications = mockNotifications;
-      result.current.closeNotification = jest.fn();
+      store.dispatch(addNotification({ id: '1', title: 'Notification', message: 'Notification Message 1' }));
+      store.dispatch(addNotification({ id: '2', title: 'Notification', message: 'Notification Message 2' }));
     });
-
-    render(<Notification {...result.current} />);
 
     const closeButton = screen.getAllByRole('button', { name: 'Close' });
 
     await userEvent.click(closeButton[0]);
 
     await waitFor(() => {
-      expect(result.current.closeNotification).toBeCalledWith('1');
+      expect(closeNotification).toBeCalledWith('1');
     });
   });
 
@@ -53,11 +61,10 @@ describe('Notification', () => {
   `(
     `should render title $title background color $backgroundColor, $icon in $iconColor, border color $borderColor given the "type" value is $type`,
     async ({ type, title, backgroundColor, icon, iconColor, borderColor }) => {
+      const store = setup();
       act(() => {
-        result.current.notifications = [{ id: '1', message: 'Notification Message 1', type }];
+        store.dispatch(addNotification({ message: 'Notification Message 1', type }));
       });
-
-      render(<Notification {...result.current} />);
 
       expect(screen.getByText(title)).toBeInTheDocument();
       const alertElement = screen.getByRole('alert');
@@ -70,4 +77,23 @@ describe('Notification', () => {
       expect(screen.getByTestId(icon)).toBeInTheDocument();
     },
   );
+
+  it('should close notification when time exceeds 10s', async () => {
+    jest.useFakeTimers();
+
+    const store = setup();
+    act(() => {
+      store.dispatch(addNotification({ id: '1', title: 'Notification', message: 'Notification Message 1' }));
+      store.dispatch(addNotification({ id: '2', title: 'Notification', message: 'Notification Message 2' }));
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(DURATION.NOTIFICATION_TIME);
+    });
+
+    expect(closeNotification).toBeCalledWith('1');
+    expect(closeNotification).toBeCalledWith('2');
+
+    jest.useRealTimers();
+  });
 });

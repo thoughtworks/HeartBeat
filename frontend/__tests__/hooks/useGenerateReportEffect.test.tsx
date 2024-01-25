@@ -1,5 +1,4 @@
 import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE, MOCK_RETRIEVE_REPORT_RESPONSE } from '../fixtures';
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
 import { UnknownException } from '@src/exceptions/UnknownException';
@@ -10,8 +9,6 @@ import clearAllMocks = jest.clearAllMocks;
 import resetAllMocks = jest.resetAllMocks;
 
 describe('use generate report effect', () => {
-  const { result: notificationHook } = renderHook(() => useNotificationLayoutEffect());
-
   afterAll(() => {
     clearAllMocks();
   });
@@ -200,7 +197,6 @@ describe('use generate report effect', () => {
     reportClient.retrieveByUrl = jest
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
-    notificationHook.current.addNotification = jest.fn();
 
     const { result } = renderHook(() => useGenerateReportEffect());
 

@@ -2,7 +2,11 @@ import {
   CHINA_CALENDAR,
   CONFIG_TITLE,
   CYCLE_TIME,
+  DEPLOYMENT_FREQUENCY,
   ERROR_MESSAGE_TIME_DURATION,
+  MOCK_BOARD_URL_FOR_JIRA,
+  MOCK_JIRA_VERIFY_RESPONSE,
+  MOCK_PIPELINE_VERIFY_URL,
   PROJECT_NAME_LABEL,
   REGULAR_CALENDAR,
   REQUIRED_DATA,
@@ -10,13 +14,8 @@ import {
   TEST_PROJECT_NAME,
   VELOCITY,
   VERIFY,
-  MOCK_BOARD_URL_FOR_JIRA,
-  MOCK_JIRA_VERIFY_RESPONSE,
-  DEPLOYMENT_FREQUENCY,
-  MOCK_PIPELINE_VERIFY_URL,
 } from '../../fixtures';
-import { act, fireEvent, Matcher, render, renderHook, waitFor, within, screen } from '@testing-library/react';
-import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
+import { act, fireEvent, Matcher, render, screen, waitFor, within } from '@testing-library/react';
 import { fillBoardFieldsInformation } from './Board.test';
 import { setupStore } from '../../utils/setupStoreUtil';
 import ConfigStep from '@src/containers/ConfigStep';
@@ -39,12 +38,11 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
 }));
 describe('ConfigStep', () => {
-  const { result } = renderHook(() => useNotificationLayoutEffect());
   const setup = () => {
     store = setupStore();
     return render(
       <Provider store={store}>
-        <ConfigStep {...result.current} />
+        <ConfigStep />
       </Provider>,
     );
   };

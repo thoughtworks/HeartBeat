@@ -30,7 +30,7 @@ const initState = {
   doneColumn: [],
   cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN,
   cycleTimeSettings: [],
-  deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
+  deploymentFrequencySettings: [],
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   classification: [],
   treatFlagCardAsBlock: true,
@@ -93,9 +93,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.jiraColumns).toEqual([]);
     expect(savedMetricsSetting.doneColumn).toEqual([]);
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([]);
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
-      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-    ]);
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([]);
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(true);
     expect(savedMetricsSetting.assigneeFilter).toBe(ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE);
     expect(savedMetricsSetting.importedData).toEqual({
@@ -232,9 +230,7 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.doneColumn).toEqual([]);
     expect(savedMetricsSetting.cycleTimeSettings).toEqual([]);
     expect(savedMetricsSetting.treatFlagCardAsBlock).toEqual(true);
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
-      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-    ]);
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([]);
   });
 
   it('should update metricsState when its value changed given isProjectCreated is false and selectedDoneColumns', () => {
@@ -315,15 +311,13 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.doneColumn).toEqual([]);
   });
 
-  it('should update deploymentFrequencySettings when handle updateDeploymentFrequencySettings given initial state', () => {
+  it('should keep empty array when handle updateDeploymentFrequencySettings given initial state', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
       updateDeploymentFrequencySettings({ updateId: 0, label: 'Steps', value: 'step1' }),
     );
 
-    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([
-      { id: 0, organization: '', pipelineName: '', step: 'step1', branches: [] },
-    ]);
+    expect(savedMetricsSetting.deploymentFrequencySettings).toEqual([]);
   });
 
   it('should update a deploymentFrequencySetting when handle updateDeploymentFrequencySettings given multiple deploymentFrequencySettings', () => {
@@ -347,10 +341,7 @@ describe('saveMetricsSetting reducer', () => {
   });
 
   it('should add a deploymentFrequencySetting when handle addADeploymentFrequencySettings given initial state', () => {
-    const addedDeploymentFrequencySettings = [
-      { id: 0, organization: '', pipelineName: '', step: '', branches: [] },
-      { id: 1, organization: '', pipelineName: '', step: '', branches: [] },
-    ];
+    const addedDeploymentFrequencySettings = [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }];
 
     const savedMetricsSetting = saveMetricsSettingReducer(initState, addADeploymentFrequencySetting());
 
@@ -407,22 +398,6 @@ describe('saveMetricsSetting reducer', () => {
   });
 
   describe('updatePipelineSettings', () => {
-    const mockImportedDeployment = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
-      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2', branches: [] },
-      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3', branches: [] },
-    ];
-    const mockImportedLeadTime = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
-    ];
-    const mockInitState = {
-      ...initState,
-      importedData: {
-        ...initState.importedData,
-        importedDeployment: mockImportedDeployment,
-        importedLeadTime: mockImportedLeadTime,
-      },
-    };
     const mockPipelineList = [
       {
         id: 'mockId1',
@@ -437,11 +412,55 @@ describe('saveMetricsSetting reducer', () => {
     const testCases = [
       {
         isProjectCreated: false,
+        initialState: {
+          ...initState,
+          importedData: {
+            ...initState.importedData,
+            importedDeployment: [
+              {
+                id: 0,
+                organization: 'mockOrganization1',
+                pipelineName: 'mockPipelineName1',
+                step: 'mockStep1',
+                branches: [],
+              },
+              {
+                id: 1,
+                organization: 'mockOrganization1',
+                pipelineName: 'mockPipelineName2',
+                step: 'mockStep2',
+                branches: [],
+              },
+              {
+                id: 2,
+                organization: 'mockOrganization2',
+                pipelineName: 'mockPipelineName3',
+                step: 'mockStep3',
+                branches: [],
+              },
+            ],
+            importedLeadTime: [
+              {
+                id: 0,
+                organization: 'mockOrganization1',
+                pipelineName: 'mockPipelineName1',
+                step: 'mockStep1',
+                branches: [],
+              },
+            ],
+          },
+        },
         expectSetting: {
           deploymentFrequencySettings: [
-            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
-            { id: 1, organization: 'mockOrganization1', pipelineName: '', step: '', branches: [] },
-            { id: 2, organization: '', pipelineName: '', step: '', branches: [] },
+            {
+              id: 0,
+              organization: 'mockOrganization1',
+              pipelineName: 'mockPipelineName1',
+              step: 'mockStep1',
+              branches: [],
+            },
+            { id: 1, organization: 'mockOrganization1', pipelineName: '', step: 'mockStep2', branches: [] },
+            { id: 2, organization: '', pipelineName: '', step: 'mockStep3', branches: [] },
           ],
           leadTimeForChanges: [
             { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
@@ -456,6 +475,14 @@ describe('saveMetricsSetting reducer', () => {
       },
       {
         isProjectCreated: true,
+        initialState: {
+          ...initState,
+          importedData: {
+            ...initState.importedData,
+            importedDeployment: [],
+            importedLeadTime: [],
+          },
+        },
         expectSetting: {
           deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
           leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
@@ -465,10 +492,12 @@ describe('saveMetricsSetting reducer', () => {
       },
     ];
 
-    testCases.forEach(({ isProjectCreated, expectSetting }) => {
+    beforeEach(jest.clearAllMocks);
+
+    testCases.forEach(({ isProjectCreated, expectSetting, initialState }) => {
       it(`should update pipeline settings When call updatePipelineSettings given isProjectCreated ${isProjectCreated}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(
-          mockInitState,
+          initialState,
           updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated }),
         );
 

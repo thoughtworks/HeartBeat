@@ -1,5 +1,6 @@
 import configReducer, {
   resetImportedData,
+  selectSteps,
   updateCalendarType,
   updateDateRange,
   updateMetrics,
@@ -7,6 +8,7 @@ import configReducer, {
   updateProjectName,
 } from '@src/context/config/configSlice';
 import { CHINA_CALENDAR, CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE, REGULAR_CALENDAR, VELOCITY } from '../fixtures';
+import { setupStore } from '@test/utils/setupStoreUtil';
 import initialConfigState from '../initialConfigState';
 
 const MockBasicState = {
@@ -99,5 +101,10 @@ describe('config reducer', () => {
     const config = configReducer(initialState, action);
 
     expect(config.warningMessage).toEqual(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE);
+  });
+
+  it('should return empty when steps not exists in pipelineList', () => {
+    const store = setupStore();
+    expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual([]);
   });
 });

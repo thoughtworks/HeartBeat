@@ -68,6 +68,18 @@ describe('MetricsStep', () => {
     expect(getByText(REAL_DONE)).toBeInTheDocument();
   });
 
+  it('should not show Real done when only one value is done for cycle time', async () => {
+    store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]));
+    store.dispatch(saveCycleTimeSettings([{ column: 'Testing', status: 'testing', value: 'Done' }]));
+
+    const { getByText, queryByText } = setup();
+
+    expect(getByText(CREWS_SETTING)).toBeInTheDocument();
+    expect(queryByText(CYCLE_TIME_SETTINGS)).not.toBeInTheDocument();
+    expect(queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument();
+    expect(queryByText(REAL_DONE)).not.toBeInTheDocument();
+  });
+
   it('should show Cycle Time Settings when select cycle time in config page', async () => {
     await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[2]]));
     const { getByText } = setup();

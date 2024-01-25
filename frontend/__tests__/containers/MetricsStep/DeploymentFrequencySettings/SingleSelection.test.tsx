@@ -1,8 +1,8 @@
 import { SingleSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/SingleSelection';
 import { act, render, within } from '@testing-library/react';
-import { setupStore } from '../../../utils/setupStoreUtil';
+import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
-import { LIST_OPEN } from '../../../fixtures';
+import { LIST_OPEN } from '@test/fixtures';
 import { Provider } from 'react-redux';
 
 const mockValidationCheckContext = {

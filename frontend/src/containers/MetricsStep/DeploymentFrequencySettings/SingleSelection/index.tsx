@@ -11,12 +11,11 @@ interface Props {
   value: string;
   id: number;
   onGetSteps?: (pipelineName: string) => void;
-  step?: string;
   onUpDatePipeline: (id: number, label: string, value: string) => void;
 }
 
 /* istanbul ignore next */
-export const SingleSelection = ({ options, label, value, id, onGetSteps, step, onUpDatePipeline }: Props) => {
+export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDatePipeline }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`;
   const [selectedOptions, setSelectedOptions] = useState(value);
   const [inputValue, setInputValue] = useState<string>(value);
@@ -31,7 +30,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, step, o
   };
 
   useEffect(() => {
-    if (onGetSteps && !!selectedOptions && !step) {
+    if (onGetSteps && !!selectedOptions) {
       onGetSteps(selectedOptions);
     }
   }, []);

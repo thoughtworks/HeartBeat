@@ -21,7 +21,7 @@ import {
   updateMetrics,
   updatePipelineToolVerifyResponse,
 } from '@src/context/config/configSlice';
-import { updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
+import { addADeploymentFrequencySetting, updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { useNotificationLayoutEffect } from '@src/hooks/useNotificationLayoutEffect';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
@@ -98,6 +98,7 @@ describe('Report Step', () => {
       }),
     );
     store.dispatch(updateMetrics(params));
+    store.dispatch(addADeploymentFrequencySetting());
     store.dispatch(
       updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock organization' }),
     );

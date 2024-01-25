@@ -1,9 +1,10 @@
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
+import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { ICycleTimeSetting } from '@src/context/Metrics/metricsSlice';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
-import { METRICS_CONSTANTS } from '@src/constants/resources';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';
+
 dayjs.extend(duration);
 
 export const exportToJsonFile = (filename: string, json: object) => {
@@ -50,6 +51,22 @@ export const filterAndMapCycleTimeSettings = (cycleTimeSettings: ICycleTimeSetti
       name: status,
       value,
     }));
+
+export const getRealDoneStatus = (
+  cycleTimeSettings: ICycleTimeSetting[],
+  cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES,
+  realDoneStatus: string[],
+) => {
+  const selectedDoneStatus = cycleTimeSettings
+    .filter(({ value }) => value === METRICS_CONSTANTS.doneValue)
+    .map(({ status }) => status);
+  if (selectedDoneStatus.length <= 1) {
+    return selectedDoneStatus;
+  }
+  return cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN
+    ? realDoneStatus
+    : cycleTimeSettings.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).map(({ status }) => status);
+};
 
 export const findCaseInsensitiveType = (option: string[], value: string): string => {
   const newValue = option.find((item) => value.toLowerCase() === item.toLowerCase());

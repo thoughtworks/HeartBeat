@@ -149,27 +149,4 @@ describe('RealDone', () => {
       });
     });
   });
-
-  describe('when done column with only one status', () => {
-    it('should not show read done box', async () => {
-      const mockColumnsList = [
-        {
-          key: 'done',
-          value: {
-            name: 'Done',
-            statuses: ['DONE'],
-          },
-        },
-      ];
-
-      const { queryByText } = render(
-        <Provider store={store}>
-          <RealDone columns={mockColumnsList} label={mockLabel} title={mockTitle} />
-        </Provider>,
-      );
-
-      expect(queryByText(mockTitle)).not.toBeInTheDocument();
-      expect(queryByText(mockLabel)).not.toBeInTheDocument();
-    });
-  });
 });

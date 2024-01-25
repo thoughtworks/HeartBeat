@@ -320,7 +320,7 @@ describe('CycleTime', () => {
     setup();
     await userEvent.click(screen.getByRole('radio', { name: cycleTimeTypeLabels[1] }));
 
-    expect(mockedUseAppDispatch).toHaveBeenCalledTimes(2);
+    expect(mockedUseAppDispatch).toHaveBeenCalledTimes(3);
     expect(mockedUseAppDispatch).toHaveBeenCalledWith(setCycleTimeSettingsType(CYCLE_TIME_SETTINGS_TYPES.BY_STATUS));
     expect(mockedUseAppDispatch).toHaveBeenCalledWith(
       saveCycleTimeSettings(
@@ -330,6 +330,7 @@ describe('CycleTime', () => {
         })),
       ),
     );
+    expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([]));
   });
 
   describe('cycle time by status', () => {

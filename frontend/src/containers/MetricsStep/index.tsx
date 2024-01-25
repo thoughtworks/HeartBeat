@@ -28,7 +28,8 @@ const MetricsStep = ({ closeAllNotifications }: useNotificationLayoutEffectInter
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
     requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
   const isShowRealDone =
-    cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN && cycleTimeSettings.some((e) => e.value === DONE);
+    cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN &&
+    cycleTimeSettings.filter((e) => e.value === DONE).length > 1;
 
   useLayoutEffect(() => {
     closeAllNotifications();

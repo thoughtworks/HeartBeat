@@ -59,7 +59,6 @@ const mockValidationCheckContext = {
   leadTimeForChangesErrorMessages: [],
   clearErrorMessage: jest.fn(),
   checkDuplicatedPipeline: jest.fn(),
-  isPipelineValid: jest.fn().mockReturnValue(true),
   getDuplicatedPipeLineIds: jest.fn().mockReturnValue([]),
 };
 
@@ -89,6 +88,7 @@ jest.mock('@src/utils/util', () => ({
   transformToCleanedBuildKiteEmoji: jest.fn(),
   findCaseInsensitiveType: jest.fn(),
   filterAndMapCycleTimeSettings: jest.fn(),
+  getRealDoneStatus: jest.fn(),
   formatDate: jest.fn(),
 }));
 

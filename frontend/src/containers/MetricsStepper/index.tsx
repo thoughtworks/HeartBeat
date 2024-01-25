@@ -73,7 +73,7 @@ const MetricsStepper = (props: useNotificationLayoutEffectInterface) => {
   const isShowRealDone =
     isShowBoard &&
     metricsConfig.cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN &&
-    metricsConfig.cycleTimeSettings.filter((column) => column.value === METRICS_CONSTANTS.doneValue).length > 0;
+    metricsConfig.cycleTimeSettings.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).length > 1;
   const isShowDeploymentFrequency =
     requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
     requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||

@@ -1,5 +1,9 @@
+import {
+  resetMetricData,
+  setCycleTimeSettingsType,
+  updateMetricsImportedData,
+} from '@src/context/Metrics/metricsSlice';
 import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice';
-import { setCycleTimeSettingsType, updateMetricsImportedData } from '@src/context/Metrics/metricsSlice';
 import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/constants/fileConfig';
 import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/HomeGuide/style';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
@@ -64,7 +68,7 @@ export const HomeGuide = () => {
     dispatch(resetImportedData());
     dispatch(resetStep());
     dispatch(resetFormMeta());
-    dispatch(setCycleTimeSettingsType(CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN));
+    dispatch(resetMetricData());
   };
 
   const openFileImportBox = () => {

@@ -111,7 +111,6 @@ export const PipelineMetricSelection = ({
           options={pipelineNameOptions}
           label={'Pipeline Name'}
           value={pipelineName}
-          step={step}
           onGetSteps={handleGetPipelineData}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
         />

@@ -41,7 +41,6 @@ jest.mock('@src/context/config/configSlice', () => ({
 }));
 
 const mockValidationCheckContext = {
-  isPipelineValid: jest.fn().mockReturnValue(true),
   getDuplicatedPipeLineIds: jest.fn().mockReturnValue([]),
 };
 

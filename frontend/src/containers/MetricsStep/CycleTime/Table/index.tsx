@@ -86,6 +86,7 @@ const CycleTimeTable = () => {
         })),
       ),
     );
+    dispatch(saveDoneColumn([]));
   };
 
   return (

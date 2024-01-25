@@ -73,36 +73,27 @@ const DoraMetrics = ({
     };
   };
 
-  const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) => {
-    if (!pipelineConfigs[0].organization && pipelineConfigs.length === 1) {
-      return [];
-    }
-    return pipelineConfigs.map(({ organization, pipelineName, step, branches }) => {
+  const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) =>
+    pipelineConfigs.flatMap(({ organization, pipelineName, step, branches }) => {
       const pipelineConfigFromPipelineList = configData.pipelineTool.verifiedResponse.pipelineList.find(
         (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization,
       );
-      if (pipelineConfigFromPipelineList != undefined) {
+      if (pipelineConfigFromPipelineList) {
         const { orgName, orgId, name, id, repository } = pipelineConfigFromPipelineList;
-        return {
-          orgId,
-          orgName,
-          id,
-          name,
-          step,
-          repository,
-          branches,
-        };
+        return [
+          {
+            orgId,
+            orgName,
+            id,
+            name,
+            step,
+            repository,
+            branches,
+          },
+        ];
       }
-    }) as {
-      id: string;
-      name: string;
-      orgId: string;
-      orgName: string;
-      repository: string;
-      step: string;
-      branches: string[];
-    }[];
-  };
+      return [];
+    });
 
   const getSourceControlItems = () => {
     const leadTimeForChanges = doraReport?.leadTimeForChanges;

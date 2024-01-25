@@ -25,7 +25,7 @@ const metricsTextList = [
 
 const pipelineSettingsAutoCompleteTextList = [
   { name: 'Organization', value: 'XXXX' },
-  { name: 'Step', value: '' },
+  { name: 'Step', value: 'publish gradle-cache image to cloudsmith' },
 ];
 
 const cycleTimeSettingsAutoCompleteTextList = [

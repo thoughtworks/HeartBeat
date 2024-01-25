@@ -103,7 +103,7 @@ describe('config reducer', () => {
     expect(config.warningMessage).toEqual(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE);
   });
 
-  it('should return empty when steps not exists in pipelineList', () => {
+  it('should return empty given steps not exists in pipelineList', () => {
     const store = setupStore();
     expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual([]);
   });

@@ -20,7 +20,7 @@ jest.mock('react', () => ({
 let store = setupStore();
 
 describe('SingleSelection', () => {
-  const mockOptions = ['mockOptions 1', 'mockOptions 2', 'mockOptions 3'];
+  const mockOptions = [':java:mockOptions 1', ':lock:mockOptions 2', ':react:mockOptions 3'];
   const mockLabel = 'mockLabel';
   const mockValue = 'mockOptions 1';
   const mockOnGetSteps = jest.fn();
@@ -69,7 +69,7 @@ describe('SingleSelection', () => {
     const options = listBox.getAllByRole('option');
     const optionText = options.map((option) => option.textContent);
 
-    expect(optionText).toEqual(mockOptions);
+    expect(optionText).toEqual(['mockOptions 1', 'mockOptions 2', 'mockOptions 3']);
   });
 
   it('should show the right options when search the keyword', async () => {
@@ -107,7 +107,7 @@ describe('SingleSelection', () => {
       await userEvent.click(getByRole('button', { name: LIST_OPEN }));
     });
     await act(async () => {
-      await userEvent.click(getByText(mockOptions[1]));
+      await userEvent.click(getByText('mockOptions 2'));
     });
 
     expect(mockOnGetSteps).toHaveBeenCalledTimes(1);

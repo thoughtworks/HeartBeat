@@ -14,7 +14,6 @@ interface Props {
   onUpDatePipeline: (id: number, label: string, value: string) => void;
 }
 
-/* istanbul ignore next */
 export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDatePipeline }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`;
   const [selectedOptions, setSelectedOptions] = useState(value);

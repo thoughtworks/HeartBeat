@@ -25,7 +25,7 @@ describe('useMetricsStepValidationCheckContext', () => {
     ).toEqual([]);
   });
 
-  it('should return empty id when params is empty array', () => {
+  it('should return empty id given params is empty array', () => {
     const { result } = setup();
 
     expect(result.current?.getDuplicatedPipeLineIds([])).toEqual([]);

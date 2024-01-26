@@ -34,6 +34,20 @@
     status: 200
     file: ./backend/jira/jsons/jira.board.1963.issue.alldone.json
 
+# All Done issue and Jira Type is Classic Jira New Api
+- request:
+    method: GET
+    url: /rest/agile/1.0/board/1963/issue
+    query:
+      maxResults: 100
+      startAt: 0
+      jql: status in %28%27DONE%27%2C%27CLOSED%27%29 AND status changed during %281661961600000%2C 1663171199999%29
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.board.1963.issue.alldone.json
+
 # All Cards issue
 - request:
     method: GET

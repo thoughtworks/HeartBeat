@@ -130,7 +130,7 @@ export default [
 		key: 'spikes/tech-spikes-support-multiple-instances-for-backend-service',
 	},
 	{
-		text: 'use jira graphQL API',
+		text: 'Call jira with graphQL API',
 		slug: 'spikes/tech-spikes-jira-graphql-api-about-replacing-existing-rest-api',
 		key: 'spikes/tech-spikes-jira-graphql-api-about-replacing-existing-rest-api',
 	},

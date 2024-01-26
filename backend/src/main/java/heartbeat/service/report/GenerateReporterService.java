@@ -99,10 +99,10 @@ public class GenerateReporterService {
 		removePreviousAsyncException(request.getSourceControlReportId());
 		FetchedData fetchedData = fetchOriginalData(request, new FetchedData());
 		if (CollectionUtils.isNotEmpty(request.getPipelineMetrics())) {
-			generatePipelineReport(request, fetchedData);
+			generatePipelineReport(request.toPipelineRequest(), fetchedData);
 		}
 		if (CollectionUtils.isNotEmpty(request.getSourceControlMetrics())) {
-			generateSourceControlReport(request, fetchedData);
+			generateSourceControlReport(request.toSourceControlRequest(), fetchedData);
 		}
 		generateCSVForPipeline(request, fetchedData.getBuildKiteData());
 	}
@@ -360,6 +360,14 @@ public class GenerateReporterService {
 		MetricsDataCompleted metricsDataCompleted = asyncMetricsDataHandler.getMetricsDataCompleted(reportId);
 		ReportMetricsError reportMetricsError = getReportErrorAndHandleAsyncException(reportId);
 
+		Boolean boardMetricsCompleted = getValueOrNull(metricsDataCompleted,
+				MetricsDataCompleted::boardMetricsCompleted) == null ? null : boardReportResponse != null;
+		Boolean pipelineMetricsCompleted = getValueOrNull(metricsDataCompleted,
+				MetricsDataCompleted::pipelineMetricsCompleted) == null ? null : pipleineReportResponse != null;
+		Boolean sourceControlMetricsCompleted = getValueOrNull(metricsDataCompleted,
+				MetricsDataCompleted::sourceControlMetricsCompleted) == null ? null
+						: sourceControlReportResponse != null;
+
 		return ReportResponse.builder()
 			.velocity(getValueOrNull(boardReportResponse, ReportResponse::getVelocity))
 			.classificationList(getValueOrNull(boardReportResponse, ReportResponse::getClassificationList))
@@ -369,11 +377,9 @@ public class GenerateReporterService {
 			.changeFailureRate(getValueOrNull(pipleineReportResponse, ReportResponse::getChangeFailureRate))
 			.meanTimeToRecovery(getValueOrNull(pipleineReportResponse, ReportResponse::getMeanTimeToRecovery))
 			.leadTimeForChanges(getValueOrNull(sourceControlReportResponse, ReportResponse::getLeadTimeForChanges))
-			.boardMetricsCompleted(getValueOrNull(metricsDataCompleted, MetricsDataCompleted::boardMetricsCompleted))
-			.pipelineMetricsCompleted(
-					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::pipelineMetricsCompleted))
-			.sourceControlMetricsCompleted(
-					getValueOrNull(metricsDataCompleted, MetricsDataCompleted::sourceControlMetricsCompleted))
+			.boardMetricsCompleted(boardMetricsCompleted)
+			.pipelineMetricsCompleted(pipelineMetricsCompleted)
+			.sourceControlMetricsCompleted(sourceControlMetricsCompleted)
 			.allMetricsCompleted(isReportReady)
 			.reportMetricsError(reportMetricsError)
 			.build();

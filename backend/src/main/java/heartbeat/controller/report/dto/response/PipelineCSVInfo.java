@@ -18,6 +18,8 @@ public class PipelineCSVInfo {
 
 	private String stepName;
 
+	private Boolean valid;
+
 	private BuildKiteBuildInfo buildInfo;
 
 	private DeployInfo deployInfo;

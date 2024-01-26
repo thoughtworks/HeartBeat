@@ -107,6 +107,7 @@ public class PipelineService {
 		return PipelineCSVInfo.builder()
 			.pipeLineName(deploymentEnvironment.getName())
 			.stepName(deployInfo.getJobName())
+			.valid(deployInfo.getJobName().equals(deploymentEnvironment.getStep()))
 			.buildInfo(buildInfo)
 			.deployInfo(deployInfo)
 			.commitInfo(commitInfo)

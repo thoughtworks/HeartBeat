@@ -629,6 +629,65 @@ class GenerateReporterServiceTest {
 		}
 
 		@Test
+		void shouldReturnCompletedFalseGivenResponseNullMetricsDataCompletedFalseWhenGetDataFromCache() {
+			String reportId = "reportId";
+			when(asyncReportRequestHandler.getReport(any())).thenReturn(null);
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId)).thenReturn(MetricsDataCompleted.builder()
+				.boardMetricsCompleted(false)
+				.pipelineMetricsCompleted(false)
+				.sourceControlMetricsCompleted(false)
+				.build());
+			when(asyncExceptionHandler.get(any())).thenReturn(null);
+
+			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, false);
+
+			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
+			assertEquals(false, res.getAllMetricsCompleted());
+			assertEquals(false, res.getBoardMetricsCompleted());
+			assertEquals(false, res.getPipelineMetricsCompleted());
+			assertEquals(false, res.getSourceControlMetricsCompleted());
+			assertEquals(null, res.getReportMetricsError().getBoardMetricsError());
+		}
+
+		@Test
+		void shouldReturnCompletedTrueGivenResponseNonNullMetricsDataCompletedFalseWhenGetDataFromCache() {
+			String reportId = "reportId";
+			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId)).thenReturn(MetricsDataCompleted.builder()
+				.boardMetricsCompleted(false)
+				.pipelineMetricsCompleted(false)
+				.sourceControlMetricsCompleted(false)
+				.build());
+			when(asyncExceptionHandler.get(any())).thenReturn(null);
+
+			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, true);
+
+			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
+			assertEquals(true, res.getAllMetricsCompleted());
+			assertEquals(true, res.getBoardMetricsCompleted());
+			assertEquals(true, res.getPipelineMetricsCompleted());
+			assertEquals(true, res.getSourceControlMetricsCompleted());
+			assertEquals(null, res.getReportMetricsError().getBoardMetricsError());
+		}
+
+		@Test
+		void shouldReturnCompletedNullGivenMetricsDataCompletedNullWhenGetDataFromCache() {
+			String reportId = "reportId";
+			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId)).thenReturn(null);
+			when(asyncExceptionHandler.get(any())).thenReturn(null);
+
+			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, false);
+
+			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
+			assertEquals(false, res.getAllMetricsCompleted());
+			assertEquals(null, res.getBoardMetricsCompleted());
+			assertEquals(null, res.getPipelineMetricsCompleted());
+			assertEquals(null, res.getSourceControlMetricsCompleted());
+			assertEquals(null, res.getReportMetricsError().getBoardMetricsError());
+		}
+
+		@Test
 		void shouldReturnErrorDataWhenExceptionIs404Or403Or401() {
 			String reportId = "reportId";
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());

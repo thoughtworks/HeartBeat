@@ -83,4 +83,30 @@ public class GenerateReportRequest {
 			.build();
 	}
 
+	@JsonIgnore
+	public GenerateReportRequest toPipelineRequest() {
+		return GenerateReportRequest.builder()
+			.startTime(this.startTime)
+			.endTime(this.endTime)
+			.considerHoliday(this.considerHoliday)
+			.metrics(this.getPipelineMetrics())
+			.codebaseSetting(this.codebaseSetting)
+			.buildKiteSetting(this.buildKiteSetting)
+			.csvTimeStamp(this.csvTimeStamp)
+			.build();
+	}
+
+	@JsonIgnore
+	public GenerateReportRequest toSourceControlRequest() {
+		return GenerateReportRequest.builder()
+			.startTime(this.startTime)
+			.endTime(this.endTime)
+			.considerHoliday(this.considerHoliday)
+			.metrics(this.getSourceControlMetrics())
+			.codebaseSetting(this.codebaseSetting)
+			.buildKiteSetting(this.buildKiteSetting)
+			.csvTimeStamp(this.csvTimeStamp)
+			.build();
+	}
+
 }

@@ -25,18 +25,18 @@ Jira API `/rest/agile/1.0/board/{boardId}` is used, but only `projectKey` is use
 Using the graphQL API instead for `/rest/agile/1.0/board/{boardId}`, as follows:
 ```json
 API:
-POST: https://dorametrics.atlassian.net/jsw2/graphql
+POST: https://dorametrics.atlassian.net/gateway/api/graphql
 Schema:
 query queryProjectKey($boardId: ID!){
   boardScope(boardId: $boardId) {
-    projectLocation{
-      key
-    }
-  }
+		projectLocation{
+			key
+		}
+	}
 }
 Query Variables
 {
-"boardId": "2"
+	"boardId": "ari:cloud:jira:c7ae6448-12ae-4811-8176-1b3f45742448:board/2"
 }
 ```
 
@@ -50,28 +50,31 @@ Using the Jira REST API as follows:
 1. Using the graphQL API instead for `/rest/agile/1.0/board/{boardId}/configuration` and `rest/api/2/status/{statusNum}`, as follows:
 ```json
 API:
-POST: https://dorametrics.atlassian.net/jsw2/graphql
+POST: https://dorametrics.atlassian.net/gateway/api/graphql
 Schema:
-query myboard($boardId: ID!){
-  boardScope(boardId: $boardId) {
-		board{
-			columns{
+query myboard($boardId: ID!) {
+	boardScope(boardId: $boardId) {
+		board {
+			id
+			name
+			columns {
 				id
 				name
-				columnStatus{
-					status{
+				columnStatus {
+					status {
 						id
 						name
-            category #Only key is returned, not name, but the name field is used
+						category
 					}
 				}
-    }
-  }
+			}
+		}
+	}
 }
 
 Query Variables
 {
-  "boardId": "2"
+	"boardId": "ari:cloud:jira:c7ae6448-12ae-4811-8176-1b3f45742448:board/2"
 }
 ```
 As we can see, the REST API needs to call the interface twice to get the required value, and graphQL API only needs to call once.
@@ -80,52 +83,51 @@ As we can see, the REST API needs to call the interface twice to get the require
 
 ```json
 API:
-POST: https://dorametrics.atlassian.net/jsw2/graphql
+POST: https://dorametrics.atlassian.net/gateway/api/graphql
 Schema:
 query myboard($boardId: ID!){
   boardScope(boardId: $boardId) {
+    projectLocation{
+        id
+        name
+        key
+      }
 		board{
-			project{
-				id
-				name
-				key
-			}
-			columns{
-				cards{
-					estimate{
-						storyPoints
-					}
-					parentId
-					priority{
+        cards{
+					id
+					key
+					summary
+          estimate{
+            storyPoints
+          }
+          parentId
+          priority{
+            name
+          }
+          fixVersionsIds
+					labels
+					activeSprint{
 						name
 					}
-					id
-					fixVersions #Only id, but the name field is used
-					issue{
-						labels
-						activeSprint{
-							name
-						}
-						type{
-							name
-						}
-						summary
-						assignee{
-							displayName
-						}
-						id
-						status{
-							name
-						}
+					type{
+						name
 					}
-				}
-			}
-		}
+					assignee{
+              name
+            }
+					status{
+						name
+						
+					}
+        }
+      }
+    
   }
 }
+
 Query Variables
 {
-  "boardId": "2"
+	"boardId": "ari:cloud:jira:c7ae6448-12ae-4811-8176-1b3f45742448:board/2"
 }
 ```
 With this graphQL API replacement, the fields required in the project are the `statusCategoryChangeDate`, `customFields` and `reporter`, which require further investigation.
@@ -146,6 +148,7 @@ Here are three apis you can use to test Jira graphQL API, and we can copy the he
 
 2. https://dorametrics.atlassian.net/rest/gira/1/
 
-3. https://dorametrics.atlassian.net/gateway/api/graphql
+3. https://dorametrics.atlassian.net/gateway/api/graphql. Note: This API is provided by official documentation
 
-I found that Jira graphQL is being updated
+## Field correspondence
+https://docs.google.com/spreadsheets/d/1ccERIdeWRN6nlRHb8AaAD8LpdhQyqIw4/edit#gid=1991743326

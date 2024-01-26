@@ -15,14 +15,14 @@ const velocityData = [
   { label: 'Throughput(Cards Count)', value: '14' },
 ];
 
-const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '2.36' }];
+const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '0.18' }];
 
 const meanTimeToRecoveryData = [{ label: 'Mean Time To Recovery(Hours)', value: '4.43' }];
 
 const leadTimeForChangeData = [
   { label: 'PR Lead Time(Hours)', value: '0.00' },
-  { label: 'Pipeline Lead Time(Hours)', value: '-4.87' },
-  { label: 'Total Lead Time(Hours)', value: '-4.87' },
+  { label: 'Pipeline Lead Time(Hours)', value: '-39.73' },
+  { label: 'Total Lead Time(Hours)', value: '-39.73' },
 ];
 
 const changeFailureRateData = [{ label: 'Failure Rate', value: '49.02' }];

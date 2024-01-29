@@ -21,10 +21,11 @@ export const StyledWrapper = styled('div')({
 });
 
 export const StyledValue = styled(Typography)({
+  fontFamily: theme.main.font.primary,
   fontSize: '2rem',
   lineHeight: '2.5rem',
   fontStyle: 'normal',
-  fontWeight: 500,
+  fontWeight: 'bold',
   wordWrap: 'break-word',
   [theme.breakpoints.down('lg')]: {
     fontSize: '1.8rem',

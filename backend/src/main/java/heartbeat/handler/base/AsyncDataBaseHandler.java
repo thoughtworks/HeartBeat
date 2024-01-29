@@ -26,6 +26,8 @@ public class AsyncDataBaseHandler {
 
 	public static final String SUFFIX_TMP = ".tmp";
 
+	public static final String SUFFIX_LOCK = ".lock";
+
 	protected synchronized void createFileByType(FIleType fIleType, String fileId, String json) {
 		createDirToConvertData(fIleType);
 		String fileName = OUTPUT_FILE_PATH + fIleType.getPath() + fileId;
@@ -108,6 +110,45 @@ public class AsyncDataBaseHandler {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to deleted expired {} files, currentTimeStamp：{}, exception: {}", fIleType.getType(),
 					currentTimeStamp, cause.getMessage());
+		}
+	}
+
+	public void acquireLock(FIleType fIleType, String fileId) {
+		String fileName = OUTPUT_FILE_PATH + fIleType.getPath() + fileId + SUFFIX_LOCK;
+		if (!fileName.contains("..") && fileName.startsWith(OUTPUT_FILE_PATH + fIleType.getPath())) {
+			File file = new File(fileName);
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
+			}
+			while (!tryLock(file)) {
+			}
+		}
+		else {
+			throw new GenerateReportException(
+					"Failed locked " + fIleType.getType() + " file " + fileId + "invalid file name");
+		}
+	}
+
+	public boolean tryLock(File file) {
+		try {
+			return file.createNewFile();
+		}
+		catch (IOException e) {
+			return false;
+		}
+	}
+
+	protected void unLock(FIleType fIleType, String fileId) {
+		String fileName = OUTPUT_FILE_PATH + fIleType.getPath() + fileId + SUFFIX_LOCK;
+		if (!fileName.contains("..") && fileName.startsWith(OUTPUT_FILE_PATH + fIleType.getPath())) {
+			File lockFile = new File(fileName);
+			if (lockFile.exists()) {
+				lockFile.delete();
+			}
+		}
+		else {
+			throw new GenerateReportException(
+					"Failed unlocked " + fIleType.getType() + " file " + fileId + "invalid file name");
 		}
 	}
 

@@ -5,6 +5,7 @@ import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.handler.base.AsyncDataBaseHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -14,12 +15,19 @@ import java.util.stream.Stream;
 
 import static heartbeat.handler.base.FIleType.METRICS_DATA_COMPLETED;
 
+@Log4j2
 @Component
 @RequiredArgsConstructor
 public class AsyncMetricsDataHandler extends AsyncDataBaseHandler {
 
 	public void putMetricsDataCompleted(String timeStamp, MetricsDataCompleted metricsDataCompleted) {
-		createFileByType(METRICS_DATA_COMPLETED, timeStamp, new Gson().toJson(metricsDataCompleted));
+		try {
+			acquireLock(METRICS_DATA_COMPLETED, timeStamp);
+			createFileByType(METRICS_DATA_COMPLETED, timeStamp, new Gson().toJson(metricsDataCompleted));
+		}
+		finally {
+			unLock(METRICS_DATA_COMPLETED, timeStamp);
+		}
 	}
 
 	public MetricsDataCompleted getMetricsDataCompleted(String timeStamp) {

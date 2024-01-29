@@ -62,6 +62,8 @@ public class CSVFileGenerator {
 
 	private static final String CSV_EXTENSION = ".csv";
 
+	public static final String FILE_LOCAL_PATH = "./app/output/csv";
+
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
 			InputStream inputStream = new FileInputStream(fileName);
@@ -88,7 +90,7 @@ public class CSVFileGenerator {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-		if (!fileName.contains("..") && fileName.startsWith("./csv")) {
+		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			File file = new File(fileName);
 			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
 				String[] headers = { "Pipeline Name", "Pipeline Step", "Valid", "Build Number", "Code Committer",
@@ -156,7 +158,7 @@ public class CSVFileGenerator {
 	}
 
 	private void createCsvDirToConvertData() {
-		String directoryPath = "./csv";
+		String directoryPath = FILE_LOCAL_PATH;
 		File directory = new File(directoryPath);
 		String message = directory.mkdirs() ? "Successfully create csv directory" : "CSV directory is already exist";
 		log.info(message);
@@ -168,7 +170,7 @@ public class CSVFileGenerator {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-		if (!fileName.contains("..") && fileName.startsWith("./csv")) {
+		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
 				List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
 				fixedFields.removeAll(extraFields);
@@ -362,7 +364,7 @@ public class CSVFileGenerator {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
-		if (!fileName.contains("..") && fileName.startsWith("./csv")) {
+		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			File file = new File(fileName);
 
 			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {

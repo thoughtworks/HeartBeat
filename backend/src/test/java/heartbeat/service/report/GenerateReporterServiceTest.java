@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
@@ -31,6 +32,8 @@ import heartbeat.service.report.calculator.LeadTimeForChangesCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.report.calculator.model.FetchedData;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,10 +55,12 @@ import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -67,6 +72,8 @@ import static org.mockito.Mockito.when;
 class GenerateReporterServiceTest {
 
 	private static final String TIMESTAMP = "1683734399999";
+
+	public static final String APP_OUTPUT_CSV_PATH = "./app/output/csv";
 
 	@InjectMocks
 	GenerateReporterService generateReporterService;
@@ -87,6 +94,9 @@ class GenerateReporterServiceTest {
 	DeploymentFrequencyCalculator deploymentFrequency;
 
 	@Mock
+	VelocityCalculator velocityCalculator;
+
+	@Mock
 	ChangeFailureRateCalculator changeFailureRate;
 
 	@Mock
@@ -94,9 +104,6 @@ class GenerateReporterServiceTest {
 
 	@Mock
 	CycleTimeCalculator cycleTimeCalculator;
-
-	@Mock
-	VelocityCalculator velocityCalculator;
 
 	@Mock
 	CSVFileGenerator csvFileGenerator;
@@ -118,6 +125,17 @@ class GenerateReporterServiceTest {
 
 	@Captor
 	ArgumentCaptor<BaseException> exceptionCaptor;
+
+	@AfterEach
+	void afterEach() {
+		new File(APP_OUTPUT_CSV_PATH).delete();
+	}
+
+	@AfterAll
+	static void afterAll() {
+		new File("./app/output").delete();
+		new File("./app").delete();
+	}
 
 	@Nested
 	class GenerateBoardReport {
@@ -759,25 +777,15 @@ class GenerateReporterServiceTest {
 	@Nested
 	class DeleteExpireCSV {
 
-		Path mockPipelineCsvPath = Path.of("./csv/exportPipelineMetrics-1683734399999.csv");
-
-		@Test
-		void shouldDeleteExpireCsvWhenExportCsvWithCsvOutsideThirtyMinutes() throws IOException {
-			Files.createFile(mockPipelineCsvPath);
-
-			generateReporterService.deleteExpireCSV(System.currentTimeMillis(), new File("./csv/"));
-
-			boolean isFileDeleted = Files.notExists(mockPipelineCsvPath);
-			assertTrue(isFileDeleted);
-		}
-
 		@Test
 		void shouldNotDeleteOldCsvWhenExportCsvWithoutOldCsvInsideThirtyMinutes() throws IOException {
+			Files.createDirectories(Path.of(APP_OUTPUT_CSV_PATH));
 			long currentTimeStamp = System.currentTimeMillis();
-			Path csvFilePath = Path.of(String.format("./csv/exportPipelineMetrics-%s.csv", currentTimeStamp));
+			Path csvFilePath = Path
+				.of(String.format(APP_OUTPUT_CSV_PATH + "exportPipelineMetrics-%s.csv", currentTimeStamp));
 			Files.createFile(csvFilePath);
 
-			generateReporterService.deleteExpireCSV(currentTimeStamp - 800000, new File("./csv/"));
+			generateReporterService.deleteExpireCSV(currentTimeStamp - 800000, new File(APP_OUTPUT_CSV_PATH));
 
 			boolean isFileDeleted = Files.notExists(csvFilePath);
 			assertFalse(isFileDeleted);
@@ -810,6 +818,68 @@ class GenerateReporterServiceTest {
 			Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
 
 			assertFalse(deleteStatus);
+		}
+
+		@Test
+		void shouldDeleteFailWhenDeleteFile() {
+			File mockFile = mock(File.class);
+			when(mockFile.getName()).thenReturn("board-1683734399999");
+			when(mockFile.delete()).thenReturn(false);
+			when(mockFile.exists()).thenReturn(true);
+			File[] mockFiles = new File[] { mockFile };
+			File directory = mock(File.class);
+			when(directory.listFiles()).thenReturn(mockFiles);
+
+			Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
+
+			assertTrue(deleteStatus);
+		}
+
+		@Test
+		void shouldReturnTrueWhenReportIsReady() {
+
+			String fileTimeStamp = Long.toString(System.currentTimeMillis());
+
+			when(asyncMetricsDataHandler.isReportReady(fileTimeStamp)).thenReturn(true);
+			boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
+
+			assertTrue(generateReportIsOver);
+		}
+
+		@Test
+		void shouldReturnFalseWhenReportIsNotReady() {
+
+			String fileTimeStamp = Long.toString(System.currentTimeMillis());
+			asyncReportRequestHandler.putReport("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
+
+			boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
+
+			assertFalse(generateReportIsOver);
+
+		}
+
+		@Test
+		void shouldThrowExceptionWhenTimeOutOf30m() {
+			String fileExpiredTimeStamp = Long.toString(System.currentTimeMillis() - 1900000L);
+
+			var generateReportException = assertThrows(GenerateReportException.class,
+					() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
+
+			assertEquals(500, generateReportException.getStatus());
+			assertEquals("Failed to get report due to report time expires", generateReportException.getMessage());
+		}
+
+		@Test
+		void shouldDoConvertMetricDataToCSVWhenCallGenerateCSVForMetrics() throws IOException {
+			String timeStamp = TIMESTAMP;
+			ObjectMapper mapper = new ObjectMapper();
+			ReportResponse reportResponse = mapper.readValue(
+					new File("src/test/java/heartbeat/controller/report/reportResponse.json"), ReportResponse.class);
+			doNothing().when(csvFileGenerator).convertMetricDataToCSV(any(), any());
+
+			generateReporterService.generateCSVForMetric(reportResponse, timeStamp);
+
+			verify(csvFileGenerator, times(1)).convertMetricDataToCSV(reportResponse, timeStamp);
 		}
 
 	}

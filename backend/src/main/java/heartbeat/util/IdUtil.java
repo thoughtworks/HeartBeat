@@ -20,9 +20,4 @@ public interface IdUtil {
 		return SOURCE_CONTROL_PREFIX + timeStamp;
 	}
 
-	static String getTimeStampFromReportId(String reportId) {
-		String[] splitResult = reportId.split("\\s*\\-|\\.\\s*");
-		return splitResult[1];
-	}
-
 }

@@ -1,42 +1,34 @@
 package heartbeat.handler;
 
+import com.google.gson.Gson;
 import heartbeat.exception.BaseException;
-import heartbeat.util.IdUtil;
+import heartbeat.handler.base.AsyncDataBaseHandler;
+import heartbeat.handler.base.AsyncExceptionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.io.File;
 
-import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+import static heartbeat.handler.base.FIleType.ERROR;
 
 @Component
 @RequiredArgsConstructor
-public class AsyncExceptionHandler {
-
-	private final Map<String, BaseException> exceptionMap = new ConcurrentHashMap<>();
+public class AsyncExceptionHandler extends AsyncDataBaseHandler {
 
 	public void put(String reportId, BaseException e) {
-		exceptionMap.put(reportId, e);
+		createFileByType(ERROR, reportId, new Gson().toJson(e));
 	}
 
 	public BaseException get(String reportId) {
-		return exceptionMap.get(reportId);
+		return readFileByType(ERROR, reportId, AsyncExceptionDTO.class);
 	}
 
 	public BaseException remove(String reportId) {
-		return exceptionMap.remove(reportId);
+		return readAndRemoveFileByType(ERROR, reportId, AsyncExceptionDTO.class);
 	}
 
-	public void deleteExpireException(long currentTimeStamp) {
-		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
-		Set<String> keys = exceptionMap.keySet()
-			.stream()
-			.filter(reportId -> Long.parseLong(IdUtil.getTimeStampFromReportId(reportId)) < exportTime)
-			.collect(Collectors.toSet());
-		exceptionMap.keySet().removeAll(keys);
+	public void deleteExpireExceptionFile(long currentTimeStamp, File directory) {
+		deleteExpireFileByType(ERROR, currentTimeStamp, directory);
 	}
 
 }

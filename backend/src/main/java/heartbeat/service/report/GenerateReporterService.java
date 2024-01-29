@@ -25,18 +25,17 @@ import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.report.calculator.model.FetchedData;
 import heartbeat.service.report.calculator.model.FetchedData.BuildKiteData;
-
-import java.io.File;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import heartbeat.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+
+import java.io.File;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
 import static heartbeat.util.ValueUtil.getValueOrNull;
@@ -324,7 +323,7 @@ public class GenerateReporterService {
 				String fileName = file.getName();
 				String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
 				String timeStamp = splitResult[1];
-				if (validateExpire(currentTimeStamp, Long.parseLong(timeStamp)) && !file.delete()) {
+				if (validateExpire(currentTimeStamp, Long.parseLong(timeStamp)) && !file.delete() && file.exists()) {
 					log.error("Failed to deleted expired CSV file, file name: {}", fileName);
 				}
 			}

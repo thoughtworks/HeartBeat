@@ -1,38 +1,29 @@
 package heartbeat.handler;
 
+import com.google.gson.Gson;
 import heartbeat.controller.report.dto.response.ReportResponse;
-import heartbeat.util.IdUtil;
+import heartbeat.handler.base.AsyncDataBaseHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.io.File;
 
-import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+import static heartbeat.handler.base.FIleType.REPORT;
 
 @Component
 @RequiredArgsConstructor
-public class AsyncReportRequestHandler {
-
-	private final Map<String, ReportResponse> reportMap = new ConcurrentHashMap<>();
+public class AsyncReportRequestHandler extends AsyncDataBaseHandler {
 
 	public void putReport(String reportId, ReportResponse e) {
-		reportMap.put(reportId, e);
+		createFileByType(REPORT, reportId, new Gson().toJson(e));
 	}
 
 	public ReportResponse getReport(String reportId) {
-		return reportMap.get(reportId);
+		return readFileByType(REPORT, reportId, ReportResponse.class);
 	}
 
-	public void deleteExpireReport(long currentTimeStamp) {
-		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
-		Set<String> keys = reportMap.keySet()
-			.stream()
-			.filter(reportId -> Long.parseLong(IdUtil.getTimeStampFromReportId(reportId)) < exportTime)
-			.collect(Collectors.toSet());
-		reportMap.keySet().removeAll(keys);
+	public void deleteExpireReportFile(long currentTimeStamp, File directory) {
+		deleteExpireFileByType(REPORT, currentTimeStamp, directory);
 	}
 
 }

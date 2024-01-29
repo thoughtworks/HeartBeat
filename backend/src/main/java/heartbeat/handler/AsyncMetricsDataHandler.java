@@ -1,32 +1,29 @@
 package heartbeat.handler;
 
+import com.google.gson.Gson;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.GenerateReportException;
+import heartbeat.handler.base.AsyncDataBaseHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+import static heartbeat.handler.base.FIleType.METRICS_DATA_COMPLETED;
 
 @Component
 @RequiredArgsConstructor
-public class AsyncMetricsDataHandler {
-
-	private final Map<String, MetricsDataCompleted> metricsDataCompletedMap = new ConcurrentHashMap<>();
+public class AsyncMetricsDataHandler extends AsyncDataBaseHandler {
 
 	public void putMetricsDataCompleted(String timeStamp, MetricsDataCompleted metricsDataCompleted) {
-		metricsDataCompletedMap.put(timeStamp, metricsDataCompleted);
+		createFileByType(METRICS_DATA_COMPLETED, timeStamp, new Gson().toJson(metricsDataCompleted));
 	}
 
 	public MetricsDataCompleted getMetricsDataCompleted(String timeStamp) {
-		return metricsDataCompletedMap.get(timeStamp);
+		return readFileByType(METRICS_DATA_COMPLETED, timeStamp, MetricsDataCompleted.class);
 	}
 
 	public boolean isReportReady(String timeStamp) {
@@ -44,13 +41,8 @@ public class AsyncMetricsDataHandler {
 		return metricsReady.stream().allMatch(Boolean::valueOf);
 	}
 
-	public void deleteExpireMetricsDataCompleted(long currentTimeStamp) {
-		long exportTime = currentTimeStamp - EXPORT_CSV_VALIDITY_TIME;
-		Set<String> keys = metricsDataCompletedMap.keySet()
-			.stream()
-			.filter(timeStamp -> Long.parseLong(timeStamp) < exportTime)
-			.collect(Collectors.toSet());
-		metricsDataCompletedMap.keySet().removeAll(keys);
+	public void deleteExpireMetricsDataCompletedFile(long currentTimeStamp, File directory) {
+		deleteExpireFileByType(METRICS_DATA_COMPLETED, currentTimeStamp, directory);
 	}
 
 }

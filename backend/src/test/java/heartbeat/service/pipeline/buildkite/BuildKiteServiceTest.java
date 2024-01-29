@@ -129,6 +129,7 @@ class BuildKiteServiceTest {
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder()
 			.jobs(List.of(testJob))
 			.author(BuildKiteBuildInfo.Author.builder().name("xx").build())
+			.creator(BuildKiteBuildInfo.Creator.builder().name("xx").build())
 			.build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
 				HttpStatus.OK);

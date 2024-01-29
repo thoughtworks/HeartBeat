@@ -153,15 +153,16 @@ public class PipelineService {
 
 	private List<BuildKiteBuildInfo> getBuildKiteBuildInfo(String startTime, String endTime,
 			DeploymentEnvironment deploymentEnvironment, String token, List<String> pipelineCrews) {
-		Stream<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService
-			.fetchPipelineBuilds(token, deploymentEnvironment, startTime, endTime)
-			.stream()
-			.filter(info -> Objects.nonNull(info.getAuthor()));
+		List<BuildKiteBuildInfo> buildKiteBuildInfo = buildKiteService.fetchPipelineBuilds(token, deploymentEnvironment,
+				startTime, endTime);
 
 		if (!CollectionUtils.isEmpty(pipelineCrews)) {
-			buildKiteBuildInfo = buildKiteBuildInfo.filter(info -> pipelineCrews.contains(info.getAuthor().getName()));
+			buildKiteBuildInfo = buildKiteBuildInfo.stream()
+				.filter(info -> ((pipelineCrews.contains("Unknown") && info.getCreator() == null))
+						|| (info.getCreator() != null && pipelineCrews.contains(info.getCreator().getName())))
+				.toList();
 		}
-		return buildKiteBuildInfo.toList();
+		return buildKiteBuildInfo;
 	}
 
 }

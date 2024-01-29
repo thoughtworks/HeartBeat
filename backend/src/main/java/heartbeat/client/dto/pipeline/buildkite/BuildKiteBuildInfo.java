@@ -2,17 +2,13 @@ package heartbeat.client.dto.pipeline.buildkite;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import heartbeat.util.TimeUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.Instant;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,6 +28,8 @@ public class BuildKiteBuildInfo implements Serializable {
 
 	private Author author;
 
+	private Creator creator;
+
 	private String branch;
 
 	@Data
@@ -40,6 +38,21 @@ public class BuildKiteBuildInfo implements Serializable {
 	@NoArgsConstructor
 	@Builder
 	public static class Author implements Serializable {
+
+		private String userName;
+
+		private String name;
+
+		private String email;
+
+	}
+
+	@Data
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Builder
+	public static class Creator implements Serializable {
 
 		private String userName;
 

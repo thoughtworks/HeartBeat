@@ -74,12 +74,15 @@ public class BuildKiteService {
 	}
 
 	public List<String> getPipelineCrewNames(List<BuildKiteBuildInfo> buildKiteBuildInfos) {
-		return buildKiteBuildInfos.stream()
-			.filter(buildKiteBuildInfo -> Objects.nonNull(buildKiteBuildInfo.getAuthor()))
-			.map(buildKiteBuildInfo -> buildKiteBuildInfo.getAuthor().getName())
+		List<String> buildInfoList = new ArrayList<>(buildKiteBuildInfos.stream()
+			.filter(buildKiteBuildInfo -> Objects.nonNull(buildKiteBuildInfo.getCreator()))
+			.map(buildKiteBuildInfo -> buildKiteBuildInfo.getCreator().getName())
 			.distinct()
 			.sorted()
-			.toList();
+			.toList());
+
+		buildInfoList.add("Unknown");
+		return buildInfoList;
 	}
 
 	public List<String> getStepsBeforeEndStep(String endStep, List<String> steps) {

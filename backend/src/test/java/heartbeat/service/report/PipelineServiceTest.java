@@ -11,7 +11,6 @@ import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
-import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import heartbeat.service.report.calculator.model.FetchedData;
@@ -175,7 +174,7 @@ public class PipelineServiceTest {
 		@Test
 		void shouldReturnValueWhenDeploymentEnvListIsNotEmpty() {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
-				.author(BuildKiteBuildInfo.Author.builder().name("someone").build())
+				.creator(BuildKiteBuildInfo.Creator.builder().name("someone").build())
 				.build());
 			String startTime = "startTime";
 			String endTime = "endTime";
@@ -205,21 +204,22 @@ public class PipelineServiceTest {
 		}
 
 		@Test
-		void shouldFilterAuthorByInputCrews() {
+		void shouldFilterCreatorByInputCrews() {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = List.of(
 					BuildKiteBuildInfo.builder()
-						.author(BuildKiteBuildInfo.Author.builder().name("test-author1").build())
+						.creator(BuildKiteBuildInfo.Creator.builder().name("test-creator1").build())
 						.build(),
 					BuildKiteBuildInfo.builder()
-						.author(BuildKiteBuildInfo.Author.builder().name("test-author2").build())
-						.build());
+						.creator(BuildKiteBuildInfo.Creator.builder().name("test-creator2").build())
+						.build(),
+					BuildKiteBuildInfo.builder().creator(null).build());
 			String startTime = "startTime";
 			String endTime = "endTime";
 			String token = "token";
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.buildKiteSetting(BuildKiteSetting.builder()
 					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build()))
-					.pipelineCrews(List.of("test-author1"))
+					.pipelineCrews(List.of("test-creator2", "test-creator3", "Unknown"))
 					.build())
 				.startTime(startTime)
 				.endTime(endTime)
@@ -227,15 +227,14 @@ public class PipelineServiceTest {
 				.metrics(new ArrayList<>())
 				.build();
 
-			when(buildKiteService.fetchPipelineBuilds(eq(token), any(), eq(startTime), eq(endTime)))
-				.thenReturn(fakeBuildKiteBuildInfos);
+			when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any())).thenReturn(fakeBuildKiteBuildInfos);
 			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(startTime), eq(endTime)))
 				.thenReturn(DeployTimes.builder().build());
 
 			FetchedData.BuildKiteData result = pipelineService.fetchBuildKiteInfo(request);
 
 			assertEquals(1, result.getBuildInfosList().size());
-			assertEquals(0, result.getBuildInfosList().get(0).getValue().size());
+			assertEquals(2, result.getBuildInfosList().get(0).getValue().size());
 			assertEquals(1, result.getDeployTimesList().size());
 			verify(buildKiteService, times(1)).fetchPipelineBuilds(any(), any(), any(), any());
 			verify(buildKiteService, times(1)).countDeployTimes(any(), any(), any(), any());

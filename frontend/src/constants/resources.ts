@@ -128,8 +128,8 @@ export const CYCLE_TIME_LIST = [
 ];
 
 export const TOKEN_HELPER_TEXT = {
-  RequiredTokenText: 'Token is required',
-  InvalidTokenText: 'Token is invalid',
+  RequiredTokenText: 'Token is required!',
+  InvalidTokenText: 'Token is invalid!',
 };
 
 export const TIPS = {

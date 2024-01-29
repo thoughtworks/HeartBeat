@@ -187,10 +187,10 @@ export const Board = () => {
   const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
     const { key, isRequired, isValid } = field;
     if (!isRequired) {
-      return `${key} is required`;
+      return `${key} is required!`;
     }
     if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
-      return `${key} is invalid`;
+      return `${key} is invalid!`;
     }
     return DEFAULT_HELPER_TEXT;
   };

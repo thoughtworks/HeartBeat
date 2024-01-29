@@ -96,7 +96,7 @@ describe('Board', () => {
 
   it('should show error message when input a wrong type or empty email ', async () => {
     setup();
-    const EMAil_INVALID_ERROR_MESSAGE = 'Email is invalid';
+    const EMAil_INVALID_ERROR_MESSAGE = 'Email is invalid!';
     const emailInput = screen.getByTestId('Email').querySelector('input') as HTMLInputElement;
 
     fireEvent.change(emailInput, { target: { value: 'wrong type email' } });
@@ -106,7 +106,7 @@ describe('Board', () => {
 
     fireEvent.change(emailInput, { target: { value: '' } });
 
-    const EMAIL_REQUIRE_ERROR_MESSAGE = 'Email is required';
+    const EMAIL_REQUIRE_ERROR_MESSAGE = 'Email is required!';
     expect(screen.getByText(EMAIL_REQUIRE_ERROR_MESSAGE)).toBeVisible();
   });
 

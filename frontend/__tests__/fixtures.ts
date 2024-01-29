@@ -38,7 +38,7 @@ export const EXPORT_METRIC_DATA = 'Export metric data';
 
 export const VERIFIED = 'Verified';
 
-export const TOKEN_ERROR_MESSAGE = ['Token is invalid', 'Token is required'];
+export const TOKEN_ERROR_MESSAGE = ['Token is invalid!', 'Token is required!'];
 
 export const PROJECT_NAME_LABEL = 'Project name';
 

@@ -4,9 +4,13 @@ services:
   backend:
     image: heartbeat_backend:latest
     container_name: backend
-    ports:
-      - 4322:4322
+    expose:
+      - 4322
     restart: always
+    deploy:
+      replicas: 3
+    volumes:
+      - file_volume:/app/output
     networks:
       - default
     environment:
@@ -45,7 +49,8 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
-
+volumes:
+  file_volume:
 networks:
   default:
     driver: bridge

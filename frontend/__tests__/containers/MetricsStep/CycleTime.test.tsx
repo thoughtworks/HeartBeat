@@ -97,14 +97,14 @@ describe('CycleTime', () => {
     it('should show selectors title when render Crews component', () => {
       setup();
 
-      expect(screen.getByText('Analysis, In Dev, doing')).toBeInTheDocument();
-      expect(screen.getByText('Test')).toBeInTheDocument();
-      expect(screen.getByText('To do')).toBeInTheDocument();
+      expect(screen.getByText('ANALYSIS, IN DEV, DOING')).toBeInTheDocument();
+      expect(screen.getByText('TEST')).toBeInTheDocument();
+      expect(screen.getByText('TO DO')).toBeInTheDocument();
     });
 
     it('should always show board status column tooltip', async () => {
       setup();
-      userEvent.hover(screen.getByText('Analysis, In Dev, doing'));
+      userEvent.hover(screen.getByText('ANALYSIS, IN DEV, DOING'));
 
       await waitFor(() => {
         expect(screen.getByRole('tooltip', { name: 'Analysis, In Dev, doing' })).toBeVisible();
@@ -344,11 +344,11 @@ describe('CycleTime', () => {
     it('should show status mapping table when cycle time settings type by status', async () => {
       setup();
 
-      expect(screen.getByText('Analysis')).toBeInTheDocument();
-      expect(screen.getByText('In Dev')).toBeInTheDocument();
-      expect(screen.getByText('doing')).toBeInTheDocument();
-      expect(screen.getByText('Test')).toBeInTheDocument();
-      expect(screen.getByText('To do')).toBeInTheDocument();
+      expect(screen.getByText('ANALYSIS')).toBeInTheDocument();
+      expect(screen.getByText('IN DEV')).toBeInTheDocument();
+      expect(screen.getAllByText('DOING')[0]).toBeInTheDocument();
+      expect(screen.getByText('TEST')).toBeInTheDocument();
+      expect(screen.getByText('TO DO')).toBeInTheDocument();
     });
 
     it('should show selected option when click the dropDown button ', async () => {

@@ -116,10 +116,10 @@ const CycleTimeTable = () => {
           <TableBody>
             {data.map(([boardKey, boardSupplement, state], index) => (
               <TableRow hover key={index}>
-                <StyledTableRowCell>{boardKey}</StyledTableRowCell>
+                <StyledTableRowCell>{boardKey.toUpperCase()}</StyledTableRowCell>
                 <StyledTableRowCell>
                   <Tooltip title={boardSupplement} arrow>
-                    <EllipsisText fitContent>{boardSupplement}</EllipsisText>
+                    <EllipsisText fitContent>{boardSupplement.toUpperCase()}</EllipsisText>
                   </Tooltip>
                 </StyledTableRowCell>
                 <StyledTableRowCell>

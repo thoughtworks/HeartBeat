@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -148,7 +147,8 @@ public class PipelineService {
 
 	private Map<String, String> getRepoMap(List<DeploymentEnvironment> deploymentEnvironments) {
 		return deploymentEnvironments.stream()
-			.collect(Collectors.toMap(DeploymentEnvironment::getId, DeploymentEnvironment::getRepository));
+			.collect(Collectors.toMap(DeploymentEnvironment::getId, DeploymentEnvironment::getRepository,
+					(previousValue, newValue) -> newValue));
 	}
 
 	private List<BuildKiteBuildInfo> getBuildKiteBuildInfo(String startTime, String endTime,

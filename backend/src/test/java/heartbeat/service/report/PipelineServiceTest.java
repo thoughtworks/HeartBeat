@@ -19,6 +19,8 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,6 +52,9 @@ public class PipelineServiceTest {
 
 	@Mock
 	private GitHubService gitHubService;
+
+	@Captor
+	ArgumentCaptor<Map<String, String>> roadMapArgumentCaptor;
 
 	@Nested
 	class FetchGithubData {
@@ -109,6 +115,37 @@ public class PipelineServiceTest {
 			verify(buildKiteService, times(2)).countDeployTimes(any(), any(), any(), any());
 			verify(buildKiteService, times(2)).countDeployTimes(any(), any(), any(), any());
 			verify(gitHubService, times(1)).fetchPipelinesLeadTime(any(), any(), eq(token));
+		}
+
+		@Test
+		void shouldGetSecondValueInRoadMapWhenDeployEnvironmentListHasTwoElementWithSameKey() {
+			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = new ArrayList<>();
+			String startTime = "startTime";
+			String endTime = "endTime";
+			String token = "token";
+			GenerateReportRequest request = GenerateReportRequest.builder()
+				.buildKiteSetting(BuildKiteSetting.builder()
+					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build(),
+							DeploymentEnvironment.builder().id("env1").repository("repo2").build()))
+					.build())
+				.startTime(startTime)
+				.endTime(endTime)
+				.codebaseSetting(CodebaseSetting.builder().token(token).build())
+				.metrics(new ArrayList<>())
+				.build();
+
+			when(buildKiteService.fetchPipelineBuilds(eq(token), any(), eq(startTime), eq(endTime)))
+				.thenReturn(fakeBuildKiteBuildInfos);
+			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(startTime), eq(endTime)))
+				.thenReturn(DeployTimes.builder().build());
+			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(token)))
+				.thenReturn(List.of(PipelineLeadTime.builder().build()));
+
+			pipelineService.fetchGithubData(request);
+
+			verify(gitHubService).fetchPipelinesLeadTime(any(), roadMapArgumentCaptor.capture(), any());
+			assertEquals("repo2", roadMapArgumentCaptor.getValue().get("env1"));
+
 		}
 
 		@Test
@@ -349,7 +386,7 @@ public class PipelineServiceTest {
 					List.of(DeploymentEnvironment.builder().id("env1").build()));
 
 			assertEquals(1, result.size());
-			assertEquals(null, result.get(0).getCommitInfo());
+			assertNull(result.get(0).getCommitInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
 		}
@@ -374,7 +411,7 @@ public class PipelineServiceTest {
 					List.of(DeploymentEnvironment.builder().id("env1").build()));
 
 			assertEquals(1, result.size());
-			assertEquals(null, result.get(0).getCommitInfo());
+			assertNull(result.get(0).getCommitInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
 		}
@@ -399,7 +436,7 @@ public class PipelineServiceTest {
 					List.of(DeploymentEnvironment.builder().id("env1").build()));
 
 			assertEquals(1, result.size());
-			assertEquals(null, result.get(0).getCommitInfo());
+			assertNull(result.get(0).getCommitInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
 		}

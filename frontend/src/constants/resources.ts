@@ -194,6 +194,8 @@ export const MESSAGE = {
   REPORT_LOADING: 'The report is being generated, please do not refresh the page or all the data will be disappeared.',
   LOADING_TIMEOUT: (name: string) => `${name} loading timeout, please click "Retry"!`,
   FAILED_TO_GET_DATA: (name: string) => `Failed to get ${name} data, please click "retry"!`,
+  FAILED_TO_GET_CLASSIFICATION_DATA:
+    'Failed to get Classification data, please go back to previous page and try again!',
   FAILED_TO_EXPORT_CSV: 'Failed to export csv.',
   FAILED_TO_REQUEST: 'Failed to request!',
 };

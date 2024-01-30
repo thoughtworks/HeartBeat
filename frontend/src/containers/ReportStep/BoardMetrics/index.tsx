@@ -27,7 +27,6 @@ import { Nullable } from '@src/utils/types';
 import { useAppSelector } from '@src/hooks';
 import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
-import _ from 'lodash';
 
 interface BoardMetricsProps {
   startToRequestBoardData: (request: ReportRequestDTO) => void;
@@ -66,11 +65,6 @@ const BoardMetrics = ({
   const { token, type, site, projectKey, boardId, email } = board.config;
   const jiraToken = getJiraBoardToken(token, email);
   const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric));
-
-  const getErrorMessage = () =>
-    _.get(boardReport, ['reportMetricsError', 'boardMetricsError'])
-      ? `Failed to get Jira info, status: ${_.get(boardReport, ['reportMetricsError', 'boardMetricsError', 'status'])}`
-      : '';
 
   const getBoardReportRequestBody = (): BoardReportRequestDTO => {
     return {
@@ -146,7 +140,7 @@ const BoardMetrics = ({
   const isShowMoreLoadingDisplay = () =>
     boardMetrics.length === 1 &&
     boardMetrics[0] === REQUIRED_DATA.CLASSIFICATION &&
-    !(errorMessage || getErrorMessage()) &&
+    !errorMessage &&
     !boardReport?.boardMetricsCompleted;
 
   useEffect(() => {
@@ -158,7 +152,7 @@ const BoardMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {!(errorMessage || getErrorMessage()) && boardReport?.boardMetricsCompleted && (
+          {!errorMessage && boardReport?.boardMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
           {isShowMoreLoadingDisplay() && (
@@ -166,9 +160,9 @@ const BoardMetrics = ({
               <Loading placement='left' size='0.8rem' backgroundColor='transparent' />
             </StyledLoading>
           )}
-          {(errorMessage || getErrorMessage()) && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
+          {errorMessage && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
-        <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage || getErrorMessage()} />
+        <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage} />
       </StyledMetricsSection>
     </>
   );

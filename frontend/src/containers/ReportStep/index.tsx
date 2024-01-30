@@ -1,6 +1,10 @@
+import {
+  isOnlySelectClassification,
+  isSelectBoardMetrics,
+  isSelectDoraMetrics,
+  selectConfig,
+} from '@src/context/config/configSlice';
 import { addNotification, closeAllNotifications, Notification } from '@src/context/notification/NotificationSlice';
-import { isSelectBoardMetrics, isSelectDoraMetrics, selectConfig } from '@src/context/config/configSlice';
-import { MESSAGE, REPORT_PAGE_TYPE, REQUIRED_DATA } from '@src/constants/resources';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
@@ -8,6 +12,7 @@ import { StyledCalendarWrapper } from '@src/containers/ReportStep/style';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
+import { MESSAGE, REPORT_PAGE_TYPE } from '@src/constants/resources';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
@@ -44,12 +49,18 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
 
   const startDate = configData.basic.dateRange.startDate ?? '';
   const endDate = configData.basic.dateRange.endDate ?? '';
-  const metrics = configData.basic.metrics;
 
   const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
-  const onlySelectClassification = metrics.length === 1 && metrics[0] === REQUIRED_DATA.CLASSIFICATION;
+  const onlySelectClassification = useAppSelector(isOnlySelectClassification);
   const isSummaryPage = useMemo(() => pageType === REPORT_PAGE_TYPE.SUMMARY, [pageType]);
+
+  const getErrorMessage4Board = () => {
+    if (reportData?.reportMetricsError.boardMetricsError) {
+      return `Failed to get Jira info, status: ${reportData.reportMetricsError.boardMetricsError.status}`;
+    }
+    return timeout4Board || timeout4Report || generalError4Board || generalError4Report;
+  };
 
   useEffect(() => {
     setPageType(onlySelectClassification ? REPORT_PAGE_TYPE.BOARD : REPORT_PAGE_TYPE.SUMMARY);
@@ -223,7 +234,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
           onShowDetail={() => setPageType(REPORT_PAGE_TYPE.BOARD)}
           boardReport={reportData}
           csvTimeStamp={csvTimeStamp}
-          errorMessage={timeout4Board || timeout4Report || generalError4Board || generalError4Report}
+          errorMessage={getErrorMessage4Board()}
         />
       )}
       {shouldShowDoraMetrics && (
@@ -240,7 +251,9 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
       )}
     </>
   );
-  const showBoardDetail = (data: ReportResponseDTO) => <BoardDetail onBack={() => handleBack()} data={data} />;
+  const showBoardDetail = (data?: ReportResponseDTO) => (
+    <BoardDetail onBack={() => handleBack()} data={data} errorMessage={getErrorMessage4Board()} />
+  );
   const showDoraDetail = (data: ReportResponseDTO) => <DoraDetail onBack={() => backToSummaryPage()} data={data} />;
 
   const handleBack = () => {
@@ -261,8 +274,9 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
       )}
       {isSummaryPage
         ? showSummary()
-        : !!reportData &&
-          (pageType === REPORT_PAGE_TYPE.BOARD ? showBoardDetail(reportData) : showDoraDetail(reportData))}
+        : pageType === REPORT_PAGE_TYPE.BOARD
+          ? showBoardDetail(reportData)
+          : !!reportData && showDoraDetail(reportData)}
       <ReportButtonGroup
         isShowSave={isSummaryPage}
         isShowExportMetrics={isSummaryPage}

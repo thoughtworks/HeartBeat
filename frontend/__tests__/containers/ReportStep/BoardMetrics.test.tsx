@@ -1,4 +1,5 @@
 import { CLASSIFICATION, LEAD_TIME_FOR_CHANGES, MOCK_REPORT_RESPONSE } from '../../fixtures';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import { updateMetrics } from '@src/context/config/configSlice';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -14,25 +15,11 @@ describe('Report Card', () => {
     clearAllMocks();
   });
 
-  let store = setupStore();
-
-  const mockData = {
-    ...MOCK_REPORT_RESPONSE,
-    reportMetricsError: {
-      pipelineMetricsError: null,
-      sourceControlMetricsError: null,
-      boardMetricsError: {
-        status: 404,
-        message: 'Not Found',
-      },
-    },
-  };
-
+  const store = setupStore();
   const mockHandleRetry = jest.fn();
   const onShowDetail = jest.fn();
 
-  const setup = () => {
-    store = setupStore();
+  const setup = (boardReport: ReportResponseDTO, errorMessage?: string) => {
     return render(
       <Provider store={store}>
         <BoardMetrics
@@ -41,46 +28,43 @@ describe('Report Card', () => {
           endDate={''}
           startToRequestBoardData={mockHandleRetry}
           onShowDetail={onShowDetail}
-          boardReport={mockData}
+          boardReport={boardReport}
           csvTimeStamp={1705014731}
-          errorMessage={''}
+          errorMessage={errorMessage || ''}
         />
       </Provider>,
     );
   };
 
-  it('should show retry button when have reportMetricsError and click retry will triger api call', async () => {
-    const { getByText } = setup();
+  it('should show retry button when have errorMessage and click retry will trigger api call', async () => {
+    const mockData = {
+      ...MOCK_REPORT_RESPONSE,
+      reportMetricsError: {
+        pipelineMetricsError: null,
+        sourceControlMetricsError: null,
+        boardMetricsError: {
+          status: 404,
+          message: 'Not Found',
+        },
+      },
+    };
+    setup(mockData, 'error message');
 
-    expect(getByText(RETRY)).toBeInTheDocument();
+    expect(screen.getByText(RETRY)).toBeInTheDocument();
 
-    await userEvent.click(getByText(RETRY));
+    await userEvent.click(screen.getByText(RETRY));
 
     expect(mockHandleRetry).toHaveBeenCalled();
   });
 
   it('should show loading button when board metrics select classification and dora metrics has value too ', async () => {
-    const store = setupStore();
     store.dispatch(updateMetrics([CLASSIFICATION, LEAD_TIME_FOR_CHANGES]));
     const mockData = {
       ...MOCK_REPORT_RESPONSE,
       boardMetricsCompleted: false,
     };
 
-    render(
-      <Provider store={store}>
-        <BoardMetrics
-          isBackFromDetail={false}
-          startDate={''}
-          endDate={''}
-          startToRequestBoardData={mockHandleRetry}
-          onShowDetail={onShowDetail}
-          boardReport={mockData}
-          csvTimeStamp={1705014731}
-          errorMessage={''}
-        />
-      </Provider>,
-    );
+    setup(mockData);
 
     expect(screen.getByTestId('loading')).toBeInTheDocument();
   });

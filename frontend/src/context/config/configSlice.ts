@@ -1,9 +1,8 @@
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice';
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice';
-import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE } from '@src/constants/resources';
+import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE, REQUIRED_DATA } from '@src/constants/resources';
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
-import { REQUIRED_DATA } from '@src/constants/resources';
 import { createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@src/store';
 import dayjs from 'dayjs';
@@ -189,6 +188,8 @@ export const isSelectBoardMetrics = (state: RootState) =>
   state.config.basic.metrics.some((metric) => BOARD_METRICS.includes(metric));
 export const isSelectDoraMetrics = (state: RootState) =>
   state.config.basic.metrics.some((metric) => DORA_METRICS.includes(metric));
+export const isOnlySelectClassification = (state: RootState) =>
+  state.config.basic.metrics.length === 1 && state.config.basic.metrics[0] === REQUIRED_DATA.CLASSIFICATION;
 export const selectBoard = (state: RootState) => state.config.board.config;
 export const isPipelineToolVerified = (state: RootState) => state.config.pipelineTool.isVerified;
 export const selectPipelineTool = (state: RootState) => state.config.pipelineTool.config;

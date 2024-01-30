@@ -1,14 +1,21 @@
+import { addNotification } from '@src/context/notification/NotificationSlice';
 import { BoardDetail } from '@src/containers/ReportStep/ReportDetail';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { updateMetrics } from '@src/context/config/configSlice';
 import { render, screen, within } from '@testing-library/react';
 import { reportMapper } from '@src/hooks/reportMapper/report';
-import { setupStore } from '../../../utils/setupStoreUtil';
-import { REQUIRED_DATA_LIST } from '../../../fixtures';
+import { setupStore } from '@test/utils/setupStoreUtil';
+import { REQUIRED_DATA_LIST } from '@test/fixtures';
+import { MESSAGE } from '@src/constants/resources';
 import { Provider } from 'react-redux';
 import React from 'react';
 
 jest.mock('@src/hooks/reportMapper/report');
+
+jest.mock('@src/context/notification/NotificationSlice', () => ({
+  ...jest.requireActual('@src/context/notification/NotificationSlice'),
+  addNotification: jest.fn().mockReturnValue({ type: 'ADD_NOTIFICATION' }),
+}));
 
 describe('board', () => {
   const data: ReportResponseDTO = {} as ReportResponseDTO;
@@ -20,7 +27,7 @@ describe('board', () => {
 
     render(
       <Provider store={setupStore()}>
-        <BoardDetail data={data} onBack={() => 'back'} />
+        <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
       </Provider>,
     );
 
@@ -39,7 +46,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={() => 'back'} />
+          <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
         </Provider>,
       );
 
@@ -56,7 +63,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={() => 'back'} />
+          <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
         </Provider>,
       );
 
@@ -76,7 +83,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={() => 'back'} />
+          <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
         </Provider>,
       );
 
@@ -93,7 +100,7 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={() => 'back'} />
+          <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
         </Provider>,
       );
 
@@ -116,7 +123,7 @@ describe('board', () => {
 
       render(
         <Provider store={store}>
-          <BoardDetail data={data} onBack={() => 'back'} />
+          <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
         </Provider>,
       );
 
@@ -133,11 +140,31 @@ describe('board', () => {
 
       render(
         <Provider store={setupStore()}>
-          <BoardDetail data={data} onBack={() => 'back'} />
+          <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
         </Provider>,
       );
 
       expect(screen.queryAllByText('Classification').length).toEqual(0);
+    });
+
+    it('should show error notification when only selecting classification and having errorMessage', () => {
+      (reportMapper as jest.Mock).mockReturnValue({
+        classification: null,
+      });
+      const store = setupStore();
+      store.dispatch(updateMetrics([REQUIRED_DATA_LIST[3]]));
+
+      render(
+        <Provider store={store}>
+          <BoardDetail data={data} onBack={() => 'back'} errorMessage={'Data loading failed'} />
+        </Provider>,
+      );
+
+      expect(addNotification).toBeCalledWith({
+        message: MESSAGE.FAILED_TO_GET_CLASSIFICATION_DATA,
+        type: 'error',
+      });
+      expect(screen.getByText('Data loading failed')).toBeInTheDocument();
     });
   });
 
@@ -159,7 +186,7 @@ describe('board', () => {
 
     render(
       <Provider store={store}>
-        <BoardDetail data={data} onBack={() => 'back'} />
+        <BoardDetail data={data} onBack={() => 'back'} errorMessage={''} />
       </Provider>,
     );
 

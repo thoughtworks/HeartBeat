@@ -10,6 +10,7 @@ import { ReportDataWithThreeColumns } from '@src/hooks/reportMapper/reportUIData
 import { EmojiWrap, StyledAvatar, StyledTypography } from '@src/constants/emojis/style';
 import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
 import { ReportSelectionTitle } from '@src/containers/MetricsStep/style';
+import { ErrorMessagePrompt } from '@src/components/ErrorMessagePrompt';
 import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import { Loading } from '@src/components/Loading';
 import { styled } from '@mui/material/styles';
@@ -21,6 +22,7 @@ interface ReportForThreeColumnsProps {
   fieldName: string;
   listName: string;
   data: Optional<ReportDataWithThreeColumns[]>;
+  errorMessage?: string;
 }
 
 export const StyledLoadingWrapper = styled('div')({
@@ -29,7 +31,13 @@ export const StyledLoadingWrapper = styled('div')({
   width: '100%',
 });
 
-export const ReportForThreeColumns = ({ title, fieldName, listName, data }: ReportForThreeColumnsProps) => {
+export const ReportForThreeColumns = ({
+  title,
+  fieldName,
+  listName,
+  data,
+  errorMessage,
+}: ReportForThreeColumnsProps) => {
   const emojiRow = (row: ReportDataWithThreeColumns) => {
     const { name } = row;
     const emojiUrls: string[] = getEmojiUrls(name);
@@ -71,11 +79,20 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
         : '';
   };
 
+  const shouldShowLoading = !errorMessage && !data;
+  const shouldShowData = !errorMessage && data;
+
   return (
     <>
       <Container>
         <ReportSelectionTitle>{title}</ReportSelectionTitle>
-        {data ? (
+        {errorMessage && <ErrorMessagePrompt errorMessage={errorMessage} style={{ marginBottom: '1.5rem' }} />}
+        {shouldShowLoading && (
+          <StyledLoadingWrapper>
+            <Loading size='1.5rem' backgroundColor='transparent' />
+          </StyledLoadingWrapper>
+        )}
+        {shouldShowData && (
           <Table data-test-id={title} data-testid={title}>
             <TableHead>
               <TableRow>
@@ -86,10 +103,6 @@ export const ReportForThreeColumns = ({ title, fieldName, listName, data }: Repo
             </TableHead>
             <TableBody>{renderRows()}</TableBody>
           </Table>
-        ) : (
-          <StyledLoadingWrapper>
-            <Loading size='1.5rem' backgroundColor='transparent' />
-          </StyledLoadingWrapper>
         )}
       </Container>
     </>

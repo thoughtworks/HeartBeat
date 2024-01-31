@@ -79,31 +79,40 @@ export const ReportForThreeColumns = ({
         : '';
   };
 
-  const shouldShowLoading = !errorMessage && !data;
-  const shouldShowData = !errorMessage && data;
+  const renderLoading = () => (
+    <>
+      {!errorMessage && !data && (
+        <StyledLoadingWrapper>
+          <Loading size='1.5rem' backgroundColor='transparent' />
+        </StyledLoadingWrapper>
+      )}
+    </>
+  );
+
+  const renderData = () => (
+    <>
+      {!errorMessage && data && (
+        <Table data-test-id={title} data-testid={title}>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>{fieldName}</StyledTableCell>
+              <StyledTableCell>{listName}</StyledTableCell>
+              <StyledTableCell>{`Value${getTitleUnit(title)}`}</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>{renderRows()}</TableBody>
+        </Table>
+      )}
+    </>
+  );
 
   return (
     <>
       <Container>
         <ReportSelectionTitle>{title}</ReportSelectionTitle>
         {errorMessage && <ErrorMessagePrompt errorMessage={errorMessage} style={{ marginBottom: '1.5rem' }} />}
-        {shouldShowLoading && (
-          <StyledLoadingWrapper>
-            <Loading size='1.5rem' backgroundColor='transparent' />
-          </StyledLoadingWrapper>
-        )}
-        {shouldShowData && (
-          <Table data-test-id={title} data-testid={title}>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>{fieldName}</StyledTableCell>
-                <StyledTableCell>{listName}</StyledTableCell>
-                <StyledTableCell>{`Value${getTitleUnit(title)}`}</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{renderRows()}</TableBody>
-          </Table>
-        )}
+        {renderLoading()}
+        {renderData()}
       </Container>
     </>
   );

@@ -48,6 +48,10 @@ import java.util.concurrent.CompletionException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class GithubServiceTest {
 
+	public static final String PIPELINE_STEP = "FakeName";
+
+	private static final String JOB_NAME = PIPELINE_STEP;
+
 	@Mock
 	GitHubFeignClient gitHubFeignClient;
 
@@ -100,21 +104,21 @@ class GithubServiceTest {
 		deployTimes = List.of(DeployTimes.builder()
 			.pipelineId("fs-platform-onboarding")
 			.pipelineName("Name")
-			.pipelineStep("Step")
+			.pipelineStep(PIPELINE_STEP)
 			.passed(List.of(DeployInfo.builder()
-				.jobName("Step")
+				.jobName(JOB_NAME)
 				.pipelineCreateTime("2022-07-23T04:05:00.000+00:00")
 				.jobStartTime("2022-07-23T04:04:00.000+00:00")
 				.jobFinishTime("2022-07-23T04:06:00.000+00:00")
 				.commitId("111")
 				.state("passed")
-				.jobName("Step")
+				.jobName(JOB_NAME)
 				.build()))
 			.build());
 
 		pipelineLeadTimes = List.of(PipelineLeadTime.builder()
 			.pipelineName("Name")
-			.pipelineStep("Step")
+			.pipelineStep(PIPELINE_STEP)
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
 				.prCreatedTime(1658548980000L)
@@ -321,7 +325,7 @@ class GithubServiceTest {
 	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoIsEmpty() {
 		String mockToken = "mockToken";
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
-			.pipelineStep("Step")
+			.pipelineStep(PIPELINE_STEP)
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
@@ -345,7 +349,7 @@ class GithubServiceTest {
 	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoGot404Error() {
 		String mockToken = "mockToken";
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
-			.pipelineStep("Step")
+			.pipelineStep(PIPELINE_STEP)
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
@@ -370,7 +374,7 @@ class GithubServiceTest {
 		String mockToken = "mockToken";
 		pullRequestInfo.setMergedAt(null);
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
-			.pipelineStep("Step")
+			.pipelineStep(PIPELINE_STEP)
 			.pipelineName("Name")
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
@@ -482,7 +486,7 @@ class GithubServiceTest {
 			.build();
 		pipelineLeadTimes = List.of(PipelineLeadTime.builder()
 			.pipelineName("Name")
-			.pipelineStep("Step")
+			.pipelineStep(PIPELINE_STEP)
 			.leadTimes(List.of(LeadTime.builder()
 				.commitId("111")
 				.jobFinishTime(1658549160000L)

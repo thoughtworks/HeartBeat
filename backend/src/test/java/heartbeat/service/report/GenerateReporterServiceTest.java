@@ -687,7 +687,7 @@ class GenerateReporterServiceTest {
 		}
 
 		@Test
-		void shouldReturnCompletedNullGivenMetricsDataCompletedNullWhenGetDataFromCache() {
+		void shouldReturnMetricsCompletedStatusIsNullWhenAsyncMetricsStatusIsNull() {
 			String reportId = "reportId";
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId)).thenReturn(null);

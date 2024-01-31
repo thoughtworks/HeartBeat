@@ -25,7 +25,7 @@ const leadTimeForChangeData = [
   { label: 'Total Lead Time(Hours)', value: '-65.70' },
 ];
 
-const changeFailureRateData = [{ label: 'Failure Rate', value: '42.67' }];
+const changeFailureRateData = [{ label: 'Failure Rate', value: '91.43' }];
 
 const metricsTextList = [
   'Board configuration',

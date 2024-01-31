@@ -1,9 +1,9 @@
 package heartbeat.service.report.calculator;
 
-import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
+import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
 import heartbeat.service.report.WorkDay;
 import org.junit.jupiter.api.Test;
@@ -29,15 +29,11 @@ class CalculateDeploymentFrequencyTest {
 
 	private static final String JOB_FINISH_TIME_2023 = "2023-09-08T22:45:33.981Z";
 
-	private static final String PASSED_STATE = "passed";
-
 	private static final String START_TIME = "0000000000000";
 
 	private static final String END_TIME = "1662739199000";
 
-	private static final String JOB_NAME_EQUALS_PIPELINE_STEP = "xx";
-
-	private static final String OTHER_JOB_NAME = "yy";
+	private static final String OTHER_JOB_NAME = "JobName";
 
 	@InjectMocks
 	private DeploymentFrequencyCalculator deploymentFrequency;
@@ -48,22 +44,12 @@ class CalculateDeploymentFrequencyTest {
 	@Test
 	public void testCalculateDeploymentFrequency() {
 		DeployTimes mockedDeployTimes = DeployTimesBuilder.withDefault()
-			.withPassed(List.of(
-					DeployInfo.builder()
-						.jobName(JOB_NAME_EQUALS_PIPELINE_STEP)
-						.jobFinishTime(JOB_FINISH_TIME_2022)
-						.state(PASSED_STATE)
-						.build(),
-					DeployInfo.builder()
-						.jobName(JOB_NAME_EQUALS_PIPELINE_STEP)
-						.jobFinishTime(JOB_FINISH_TIME_2023)
-						.state(PASSED_STATE)
-						.build()))
+			.withPassed(List.of(DeployInfoBuilder.withDefault().withJobFinishTime(JOB_FINISH_TIME_2022).build(),
+					DeployInfoBuilder.withDefault().withJobFinishTime(JOB_FINISH_TIME_2023).build()))
 			.build();
 		DeploymentFrequency expectedDeploymentFrequency = DeploymentFrequency.builder()
 			.avgDeploymentFrequency(AvgDeploymentFrequency.builder().deploymentFrequency(0.2F).build())
 			.build();
-
 		when(workDay.calculateWorkDaysBetween(anyLong(), anyLong())).thenReturn(10);
 
 		DeploymentFrequency deploymentFrequency = this.deploymentFrequency.calculate(List.of(mockedDeployTimes),
@@ -76,16 +62,11 @@ class CalculateDeploymentFrequencyTest {
 	@Test
 	public void testCalculateDeploymentFrequencyWhenWorkDayIsZero() {
 		DeployTimes mockedDeployTimes = DeployTimesBuilder.withDefault()
-			.withPassed(List.of(DeployInfo.builder()
-				.jobName(JOB_NAME_EQUALS_PIPELINE_STEP)
-				.jobFinishTime(JOB_FINISH_TIME_2022)
-				.state(PASSED_STATE)
-				.build()))
+			.withPassed(List.of(DeployInfoBuilder.withDefault().withJobFinishTime(JOB_FINISH_TIME_2022).build()))
 			.build();
 		DeploymentFrequency expectedDeploymentFrequency = DeploymentFrequency.builder()
 			.avgDeploymentFrequency(AvgDeploymentFrequency.builder().deploymentFrequency(0.0F).build())
 			.build();
-
 		when(workDay.calculateWorkDaysBetween(anyLong(), anyLong())).thenReturn(0);
 
 		DeploymentFrequency deploymentFrequency = this.deploymentFrequency.calculate(List.of(mockedDeployTimes),
@@ -101,7 +82,6 @@ class CalculateDeploymentFrequencyTest {
 		DeploymentFrequency expectedDeploymentFrequency = DeploymentFrequency.builder()
 			.avgDeploymentFrequency(AvgDeploymentFrequency.builder().deploymentFrequency(0.0F).build())
 			.build();
-
 		when(workDay.calculateWorkDaysBetween(anyLong(), anyLong())).thenReturn(10);
 
 		DeploymentFrequency deploymentFrequency = this.deploymentFrequency.calculate(List.of(mockedDeployTimes),
@@ -114,22 +94,12 @@ class CalculateDeploymentFrequencyTest {
 	@Test
 	public void testCalculateDeploymentFrequencyWhenHaveTwoDeployInfo() {
 		DeployTimes mockedDeployTimes = DeployTimesBuilder.withDefault()
-			.withPassed(List.of(
-					DeployInfo.builder()
-						.jobName(JOB_NAME_EQUALS_PIPELINE_STEP)
-						.jobFinishTime(JOB_FINISH_TIME_2022)
-						.state(PASSED_STATE)
-						.build(),
-					DeployInfo.builder()
-						.jobName(JOB_NAME_EQUALS_PIPELINE_STEP)
-						.jobFinishTime(JOB_FINISH_TIME_2022)
-						.state(PASSED_STATE)
-						.build()))
+			.withPassed(List.of(DeployInfoBuilder.withDefault().withJobFinishTime(JOB_FINISH_TIME_2022).build(),
+					DeployInfoBuilder.withDefault().withJobFinishTime(JOB_FINISH_TIME_2022).build()))
 			.build();
 		DeploymentFrequency expectedDeploymentFrequency = DeploymentFrequency.builder()
 			.avgDeploymentFrequency(AvgDeploymentFrequency.builder().deploymentFrequency(0.2F).build())
 			.build();
-
 		when(workDay.calculateWorkDaysBetween(anyLong(), anyLong())).thenReturn(10);
 
 		DeploymentFrequency deploymentFrequency = this.deploymentFrequency.calculate(List.of(mockedDeployTimes),
@@ -156,27 +126,16 @@ class CalculateDeploymentFrequencyTest {
 	@Test
 	public void testCalculateDeploymentFrequencyWhenHaveDeployInfoWhoseJobNameIsNotEqualToPipelineStep() {
 		DeployTimes mockedDeployTimes = DeployTimesBuilder.withDefault()
-			.withPassed(List.of(
-					DeployInfo.builder()
-						.jobName(JOB_NAME_EQUALS_PIPELINE_STEP)
-						.jobFinishTime(JOB_FINISH_TIME_2022)
-						.state(PASSED_STATE)
+			.withPassed(List.of(DeployInfoBuilder.withDefault().withJobFinishTime(JOB_FINISH_TIME_2022).build(),
+					DeployInfoBuilder.withDefault()
+						.withJobName(OTHER_JOB_NAME)
+						.withJobFinishTime(JOB_FINISH_TIME_2022)
 						.build(),
-					DeployInfo.builder()
-						.jobName(OTHER_JOB_NAME)
-						.jobFinishTime(JOB_FINISH_TIME_2022)
-						.state(PASSED_STATE)
-						.build(),
-					DeployInfo.builder()
-						.jobName(JOB_NAME_EQUALS_PIPELINE_STEP)
-						.jobFinishTime(JOB_FINISH_TIME_2023)
-						.state(PASSED_STATE)
-						.build()))
+					DeployInfoBuilder.withDefault().withJobFinishTime(JOB_FINISH_TIME_2023).build()))
 			.build();
 		DeploymentFrequency expectedDeploymentFrequency = DeploymentFrequency.builder()
 			.avgDeploymentFrequency(AvgDeploymentFrequency.builder().deploymentFrequency(0.2F).build())
 			.build();
-
 		when(workDay.calculateWorkDaysBetween(anyLong(), anyLong())).thenReturn(10);
 
 		DeploymentFrequency deploymentFrequency = this.deploymentFrequency.calculate(List.of(mockedDeployTimes),

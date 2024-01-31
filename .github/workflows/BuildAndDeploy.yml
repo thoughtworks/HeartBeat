@@ -89,7 +89,7 @@ jobs:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: "adopt"
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@v2
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2.11.1
       - name: Test and check
@@ -113,7 +113,7 @@ jobs:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: "adopt"
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@v2
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2.11.1
       - name: License check

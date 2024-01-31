@@ -7,8 +7,8 @@ import {
 } from '@src/context/meta/metaSlice';
 import { BranchSelectionWrapper } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection/style';
 import BranchChip from '@src/containers/MetricsStep/DeploymentFrequencySettings/BranchSelection/BranchChip';
+import { selectPipelineList, selectSourceControl } from '@src/context/config/configSlice';
 import { SOURCE_CONTROL_BRANCH_INVALID_TEXT } from '@src/constants/resources';
-import { selectPipelineList } from '@src/context/config/configSlice';
 import { Autocomplete, Checkbox, TextField } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
@@ -27,6 +27,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   const { id, organization, pipelineName, branches, onUpdatePipeline } = props;
   const formMeta = useAppSelector(getFormMeta);
   const pipelineList = useAppSelector(selectPipelineList);
+  const sourceControlFields = useAppSelector(selectSourceControl);
 
   const currentPipeline = useMemo(
     () => pipelineList.find((pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization),
@@ -51,7 +52,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
         ? metaInfo
         : {
             value: item,
-            needVerify: true,
+            needVerify: sourceControlFields.token !== '',
           };
     });
   }, [branches, branchesFormData]);
@@ -72,7 +73,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
     const branchesWithMeta = values.map((branch) => {
       const formData = branchesFormData.find((item) => item.value === branch);
 
-      return formData ? formData : { value: branch, needVerify: true };
+      return formData ? formData : { value: branch, needVerify: sourceControlFields.token !== '' };
     });
 
     dispatch(

@@ -1,6 +1,6 @@
+import { MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS } from '@test/fixtures';
 import { BranchSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/BranchSelection';
-import { updatePipelineToolVerifyResponse } from '@src/context/config/configSlice';
-import { MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL } from '@test/fixtures';
+import { updatePipelineToolVerifyResponse, updateSourceControl } from '@src/context/config/configSlice';
 import { render, screen, waitFor } from '@testing-library/react';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -44,6 +44,7 @@ describe('BranchSelection', () => {
   const setup = () => {
     store = setupStore();
     store.dispatch(updatePipelineToolVerifyResponse(MOCK_PIPElINE_TOOL_VERIFY_RESPONSE));
+    store.dispatch(updateSourceControl(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS));
 
     return render(
       <Provider store={store}>

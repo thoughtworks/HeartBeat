@@ -7,7 +7,7 @@ services:
       - 4322
     restart: always
     deploy:
-      replicas: 3
+      replicas: 1
     volumes:
       - file_volume:/app/output
     networks:

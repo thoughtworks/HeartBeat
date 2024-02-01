@@ -101,12 +101,12 @@ describe('Report Step', () => {
     store.dispatch(updateMetrics(params));
     store.dispatch(addADeploymentFrequencySetting());
     store.dispatch(
-      updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock organization' }),
+      updateDeploymentFrequencySettings({ updateId: 1, label: 'organization', value: 'mock organization' }),
     );
     store.dispatch(
-      updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock pipeline name' }),
+      updateDeploymentFrequencySettings({ updateId: 1, label: 'pipelineName', value: 'mock pipeline name' }),
     );
-    store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock step1' }));
+    store.dispatch(updateDeploymentFrequencySettings({ updateId: 1, label: 'step', value: 'mock step1' }));
     store.dispatch(
       updatePipelineToolVerifyResponse({
         pipelineList: [

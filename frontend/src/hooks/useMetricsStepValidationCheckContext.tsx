@@ -1,8 +1,8 @@
-import { PipelineSetting } from '@src/context/interface';
+import { IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import React, { createContext, useContext } from 'react';
 
 interface ProviderContextType {
-  getDuplicatedPipeLineIds: (pipelineSettings: PipelineSetting[]) => number[];
+  getDuplicatedPipeLineIds: (pipelineSettings: IPipelineConfig[]) => number[];
 }
 
 interface ContextProviderProps {
@@ -13,7 +13,7 @@ export const ValidationContext = createContext<ProviderContextType>({
   getDuplicatedPipeLineIds: () => [],
 });
 
-const getDuplicatedPipeLineIds = (pipelineSettings: PipelineSetting[]) => {
+const getDuplicatedPipeLineIds = (pipelineSettings: IPipelineConfig[]) => {
   const errors: { [key: string]: number[] } = {};
   pipelineSettings.forEach(({ id, organization, pipelineName, step }) => {
     if (organization && pipelineName && step) {

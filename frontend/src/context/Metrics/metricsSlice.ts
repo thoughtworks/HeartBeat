@@ -7,7 +7,6 @@ import {
   METRICS_CONSTANTS,
 } from '@src/constants/resources';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
-import { initialBasicConfigState } from '@src/context/config/configSlice';
 import { createSlice } from '@reduxjs/toolkit';
 import camelCase from 'lodash.camelcase';
 import { RootState } from '@src/store';
@@ -212,12 +211,14 @@ export const metricsSlice = createSlice({
       state.cycleTimeSettingsType = action.payload;
     },
     addADeploymentFrequencySetting: (state) => {
+      const { deploymentFrequencySettings, importedData } = state;
       const newId =
-        state.deploymentFrequencySettings.length >= 1
-          ? state.deploymentFrequencySettings[state.deploymentFrequencySettings.length - 1].id + 1
-          : 0;
+        Math.max(
+          deploymentFrequencySettings[deploymentFrequencySettings.length - 1]?.id ?? 0,
+          importedData.importedDeployment[importedData.importedDeployment.length - 1]?.id ?? 0,
+        ) + 1;
       state.deploymentFrequencySettings = [
-        ...state.deploymentFrequencySettings,
+        ...deploymentFrequencySettings,
         { id: newId, organization: '', pipelineName: '', step: '', branches: [] },
       ];
     },
@@ -488,8 +489,7 @@ export const selectOrganizationWarningMessage = (state: RootState, id: number) =
 
 export const selectPipelineNameWarningMessage = (state: RootState, id: number) => {
   const { deploymentWarningMessage } = state.metrics;
-  const warningMessage = deploymentWarningMessage;
-  return warningMessage.find((item) => item.id === id)?.pipelineName;
+  return deploymentWarningMessage.find((item) => item.id === id)?.pipelineName;
 };
 
 export const selectStepWarningMessage = (state: RootState, id: number) => {

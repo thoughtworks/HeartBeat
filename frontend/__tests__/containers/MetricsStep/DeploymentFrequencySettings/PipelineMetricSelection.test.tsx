@@ -11,9 +11,9 @@ import {
 } from '@test/fixtures';
 import { PipelineMetricSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection';
 import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice';
-import { act, render, waitFor, within, screen } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { metricsClient } from '@src/clients/MetricsClient';
-import { PipelineSetting } from '@src/context/interface';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -70,7 +70,7 @@ describe('PipelineMetricSelection', () => {
   const mockUpdatePipeline = jest.fn();
 
   const setup = async (
-    deploymentFrequencySetting: PipelineSetting,
+    deploymentFrequencySetting: IPipelineConfig,
     isShowRemoveButton: boolean,
     isDuplicated: boolean,
   ) => {

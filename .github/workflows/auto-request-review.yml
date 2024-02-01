@@ -13,5 +13,5 @@ jobs:
         uses: necojackarc/auto-request-review@v0.12.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          config: .github/auto_request_review.yml
+          config: .github/auto-request-reviewer.yml
           use_local: true

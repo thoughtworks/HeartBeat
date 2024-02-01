@@ -7,7 +7,6 @@ import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.NotFoundException;
 import heartbeat.handler.AsyncMetricsDataHandler;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 

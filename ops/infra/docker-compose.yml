@@ -4,11 +4,15 @@ services:
   backend:
     image: heartbeat_backend:latest
     container_name: backend
-    ports:
-      - 4322:4322
+    expose:
+      - 4322
     restart: always
+    deploy:
+      replicas: 1
     networks:
       - default
+    volumes:
+      - file_volume:/app/output
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default}
       - MOCK_SERVER_URL=${MOCK_SERVER_URL:-localhost:4323}
@@ -45,7 +49,8 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
-
+volumes:
+  file_volume:
 networks:
   default:
     driver: bridge

@@ -253,7 +253,7 @@ jobs:
   #            echo "BuildKite build failed. Cannot merge the PR."
   #            exit 1
   #          fi
-  images-backend:
+  images-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -304,7 +304,7 @@ jobs:
       - backend-check
       - deny-dot-star-check
       - security-check
-      - images-backend
+      - images-check
       - shellcheck
       - credential-check
       - frontend-license-check

@@ -35,20 +35,12 @@ class Config {
     return cy.contains('Jira');
   }
 
-  get boardInfoSelectionClassicJira() {
-    return cy.contains('Classic Jira');
-  }
-
   get boardInfoBoardIdInput() {
     return this.boardConfigSection.contains('label', 'Board Id').parent();
   }
 
   get boardInfoEmailInput() {
     return this.boardConfigSection.contains('label', 'Email').parent();
-  }
-
-  get boardInfoProjectKeyInput() {
-    return this.boardConfigSection.contains('label', 'Project Key').parent();
   }
 
   get boardInfoSiteInput() {
@@ -136,19 +128,9 @@ class Config {
     this.requiredDataModelCloseElement.click({ force: true });
   }
 
-  fillBoardInfoAndVerifyWithClassicJira(
-    boardId: string,
-    email: string,
-    projectKey: string,
-    site: string,
-    token: string,
-  ) {
-    this.boardInfoSelectionJira.click();
-    this.boardInfoSelectionClassicJira.click();
-
+  fillBoardInfoAndVerifyWithJira(boardId: string, email: string, site: string, token: string) {
     this.boardInfoBoardIdInput.type(boardId);
     this.boardInfoEmailInput.type(email);
-    this.boardInfoProjectKeyInput.type(projectKey);
     this.boardInfoSiteInput.type(site);
     this.boardInfoTokenInput.type(token);
     this.getVerifyButton(this.boardConfigSection).click();

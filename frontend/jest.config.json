@@ -28,5 +28,5 @@
       "statements": 100
     }
   },
-  "testTimeout": 50000
+  "testTimeout": 25000
 }

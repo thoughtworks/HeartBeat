@@ -1,10 +1,13 @@
 import { act, render, waitFor, within, screen } from '@testing-library/react';
+import { TargetFieldType } from '@src/containers/MetricsStep/Classification';
 import { Classification } from '@src/containers/MetricsStep/Classification';
+import { saveTargetFields } from '@src/context/Metrics/metricsSlice';
 import { ERROR_MESSAGE_TIME_DURATION } from '../../fixtures';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import React from 'react';
+import { Provider, useSelector } from 'react-redux';
+
+type State<T> = Record<string, Record<string, T>>;
 
 const mockTitle = 'Classification Setting';
 const mockLabel = 'Distinguished by';
@@ -23,102 +26,99 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   selectClassificationWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
 }));
 
-let store = setupStore();
-const setup = () => {
+const RenderComponent = () => {
+  const targetFields = useSelector((state: State<TargetFieldType[]>) => state.metrics.targetFields);
+  return <Classification title={mockTitle} label={mockLabel} targetFields={targetFields} />;
+};
+
+const setup = async (initField: TargetFieldType[]) => {
+  const store = setupStore();
+  await store.dispatch(saveTargetFields(initField));
   return render(
     <Provider store={store}>
-      <Classification title={mockTitle} label={mockLabel} targetFields={mockTargetFields} />
+      <RenderComponent />
     </Provider>,
   );
 };
 
 describe('Classification', () => {
-  beforeEach(() => {
-    store = setupStore();
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should show Classification when render Classification component', () => {
-    setup();
+  it('should show Classification when render Classification component', async () => {
+    await setup(mockTargetFields);
 
     expect(screen.getByText(mockTitle)).toBeInTheDocument();
     expect(screen.getByText(mockLabel)).toBeInTheDocument();
   });
 
-  it('should show default options when initialization', () => {
-    setup();
+  it('should show default options when initialization', async () => {
+    await setup(mockTargetFields);
 
     expect(screen.getByText('Issue')).toBeInTheDocument();
     expect(screen.queryByText('Type')).not.toBeInTheDocument();
   });
 
   it('should show all options when click selectBox', async () => {
-    setup();
-    await act(async () => {
-      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
-    });
+    await setup(mockTargetFields);
+    await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
 
     expect(screen.getByRole('option', { name: 'Issue' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Type' })).toBeInTheDocument();
   });
 
-  it('should show all targetField when click All and show nothing when cancel click', async () => {
-    setup();
-    await act(async () => {
-      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
+  it('should show all targetField when click All option', async () => {
+    await setup(mockTargetFields);
+    const names = mockTargetFields.map((item) => item.name);
+    await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
+
+    await userEvent.click(screen.getByRole('option', { name: /all/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: names[0] })).toBeVisible();
     });
-    await act(async () => {
-      await userEvent.click(screen.getByText('All'));
-    });
+    expect(screen.getByRole('button', { name: names[1] })).toBeVisible();
+  });
+
+  it('should show toggle show all options when toggle select all option', async () => {
+    await setup(mockTargetFields.map((item) => ({ ...item, flag: true })));
     const names = mockTargetFields.map((item) => item.name);
 
-    expect(screen.getByRole('button', { name: names[0] })).toBeVisible();
-    expect(screen.getByRole('button', { name: names[1] })).toBeVisible();
+    await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
+    await userEvent.click(screen.getByRole('option', { name: /all/i }));
 
-    await act(async () => {
-      await userEvent.click(screen.getByText('All'));
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: names[0] })).not.toBeInTheDocument();
     });
-
-    expect(screen.queryByRole('button', { name: names[0] })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: names[1] })).not.toBeInTheDocument();
   });
 
   it('should show selected targetField when click selected field', async () => {
-    setup();
+    await setup(mockTargetFields);
     const names = mockTargetFields.map((item) => item.name);
 
-    await act(async () => {
-      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
-    });
-    await act(async () => {
-      await userEvent.click(screen.getByText('All'));
-    });
-    await act(async () => {
-      await userEvent.click(screen.getByText('All'));
-    });
+    await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
+    await userEvent.click(screen.getByText('All'));
 
     const listBox = within(screen.getByRole('listbox'));
 
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: names[0] }));
-    });
+    await userEvent.click(listBox.getByRole('option', { name: names[0] }));
 
-    expect(screen.queryByRole('button', { name: names[0] })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: names[1] })).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: names[0] })).not.toBeInTheDocument();
+    });
   });
 
-  it('should show warning message when classification warning message has a value in cycleTime component', () => {
-    setup();
+  it('should show warning message when classification warning message has a value in cycleTime component', async () => {
+    await setup(mockTargetFields);
 
     expect(screen.getByText('Test warning Message')).toBeVisible();
   });
 
   it('should show disable warning message when classification warning message has a value after two seconds in cycleTime component', async () => {
     jest.useFakeTimers();
-    setup();
+    await setup(mockTargetFields);
 
     act(() => {
       jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION);

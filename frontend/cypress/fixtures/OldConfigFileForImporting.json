@@ -12,13 +12,12 @@
   "endDate": "2022-09-14T23:59:59.999+08:00",
   "considerHoliday": true,
   "board": {
-    "type": "Classic Jira",
+    "type": "Jira",
     "verifyToken": "mockVerifyToken",
     "boardId": "1963",
     "token": "mockToken",
     "site": "mockSite",
-    "email": "test@test.com",
-    "projectKey": "PLL"
+    "email": "test@test.com"
   },
   "pipeline": "mockToken",
   "pipelineTool": {

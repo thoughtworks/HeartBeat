@@ -6,7 +6,14 @@ export interface IBoardVerifyResponseState {
   users: string[];
 }
 export interface IBoardState {
-  config: { type: string; boardId: string; email: string; projectKey: string; site: string; token: string };
+  config: {
+    type: string;
+    boardId: string;
+    email: string;
+    projectKey: string;
+    site: string;
+    token: string;
+  };
   isVerified: boolean;
   isShow: boolean;
   verifiedResponse: IBoardVerifyResponseState;
@@ -19,7 +26,14 @@ export const initialVerifiedBoardState: IBoardVerifyResponseState = {
 };
 
 export const initialBoardState: IBoardState = {
-  config: { type: BOARD_TYPES.JIRA, boardId: '', email: '', projectKey: '', site: '', token: '' },
+  config: {
+    type: BOARD_TYPES.JIRA,
+    boardId: '',
+    email: '',
+    projectKey: '',
+    site: '',
+    token: '',
+  },
   isVerified: false,
   isShow: false,
   verifiedResponse: initialVerifiedBoardState,

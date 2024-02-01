@@ -128,21 +128,19 @@ const fillMetricsData = () => {
 };
 
 const fillMetricsPageDate = async () => {
-  await act(async () => {
-    await Promise.all([
-      store.dispatch(saveTargetFields([{ name: 'mockClassification', key: 'mockClassification', flag: true }])),
-      store.dispatch(saveUsers(['mockUsers'])),
-      store.dispatch(saveDoneColumn(['Done', 'Canceled'])),
-      store.dispatch(saveCycleTimeSettings([{ name: 'TODO', value: 'To do' }])),
-      store.dispatch(updateTreatFlagCardAsBlock(false)),
+  act(() => {
+    store.dispatch(saveTargetFields([{ name: 'mockClassification', key: 'mockClassification', flag: true }]));
+    store.dispatch(saveUsers(['mockUsers']));
+    store.dispatch(saveDoneColumn(['Done', 'Canceled'])),
+      store.dispatch(saveCycleTimeSettings([{ name: 'TODO', value: 'To do' }]));
+    store.dispatch(updateTreatFlagCardAsBlock(false)),
       store.dispatch(
         updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' }),
-      ),
-      store.dispatch(
-        updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' }),
-      ),
-      store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock new step' })),
-    ]);
+      );
+    store.dispatch(
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' }),
+    );
+    store.dispatch(updateDeploymentFrequencySettings({ updateId: 0, label: 'step', value: 'mock new step' }));
   });
 };
 
@@ -278,6 +276,11 @@ describe('MetricsStepper', () => {
     waitFor(() => {
       expect(screen.getByText(NEXT)).toBeInTheDocument();
     });
+
+    waitFor(() => {
+      expect(screen.getByText(NEXT)).not.toBeDisabled();
+    });
+
     await userEvent.click(screen.getByText(NEXT));
 
     expect(screen.getByText(REPORT)).toHaveStyle(`color:${stepperColor}`);
@@ -307,7 +310,7 @@ describe('MetricsStepper', () => {
   it('should export json when click save button when pipelineTool, sourceControl, and board is not empty', async () => {
     const expectedFileName = 'config';
     const expectedJson = {
-      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
+      board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
       dateRange: {
         endDate: null,
@@ -331,7 +334,7 @@ describe('MetricsStepper', () => {
     const expectedFileName = 'config';
     const expectedJson = {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
-      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
+      board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
       dateRange: {
         endDate: dayjs().endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
@@ -361,7 +364,7 @@ describe('MetricsStepper', () => {
     const expectedFileName = 'config';
     const expectedJson = {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
-      board: { boardId: '', email: '', projectKey: '', site: '', token: '', type: 'Jira' },
+      board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
       dateRange: {
         endDate: dayjs().endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
@@ -387,10 +390,16 @@ describe('MetricsStepper', () => {
       expect(screen.getByText(NEXT)).toBeInTheDocument();
     });
     await userEvent.click(screen.getByText(NEXT));
+
+    await waitFor(() => {
+      expect(screen.getByText(SAVE)).toBeInTheDocument();
+    });
     await userEvent.click(screen.getByText(SAVE));
 
-    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
-  }, 50000);
+    await waitFor(() => {
+      expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
+    });
+  }, 25000);
 
   it('should clean the config information that is hidden when click next button', async () => {
     setup();
@@ -405,6 +414,8 @@ describe('MetricsStepper', () => {
       projectKey: '',
       site: '',
       token: '',
+      startTime: 0,
+      endTime: 0,
     });
     expect(updateSourceControl).toHaveBeenCalledWith({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' });
     expect(updatePipelineTool).toHaveBeenCalledWith({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' });

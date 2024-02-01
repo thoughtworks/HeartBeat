@@ -14,13 +14,12 @@
   },
   "calendarType": "Calendar with Chinese Holiday",
   "board": {
-    "type": "Classic Jira",
+    "type": "Jira",
     "verifyToken": "mockVerifyToken",
     "boardId": "1963",
     "token": "mockToken",
     "site": "mockSite",
-    "email": "test@test.com",
-    "projectKey": "PLL"
+    "email": "test@test.com"
   },
   "pipeline": "mockToken",
   "pipelineTool": {

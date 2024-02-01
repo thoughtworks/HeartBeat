@@ -4,24 +4,29 @@ import { WarningNotification } from '@src/components/Common/WarningNotification'
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { useAppSelector } from '@src/hooks';
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 
-interface classificationProps {
+export interface TargetFieldType {
+  name: string;
+  key: string;
+  flag: boolean;
+}
+export interface classificationProps {
   title: string;
   label: string;
-  targetFields: { name: string; key: string; flag: boolean }[];
+  targetFields: TargetFieldType[];
 }
 
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
   const dispatch = useAppDispatch();
   const classificationWarningMessage = useAppSelector(selectClassificationWarningMessage);
-  const classificationSettings = targetFields
-    .filter((targetField) => targetField.flag)
-    .map((targetField) => targetField.name);
-  const [selectedClassification, setSelectedClassification] = useState<string[]>(classificationSettings);
-  const isAllSelected = selectedClassification.length > 0 && selectedClassification.length === targetFields.length;
+  const options = targetFields.map(({ name }) => name);
+  const classificationSettings = targetFields.filter(({ flag }) => flag).map(({ name }) => name);
+  const isAllSelected = useMemo(() => {
+    return classificationSettings.length > 0 && classificationSettings.length === targetFields.length;
+  }, [classificationSettings]);
 
-  const handleChange = (event: React.SyntheticEvent, value: string[]) => {
+  const handleChange = (_: React.SyntheticEvent, value: string[]) => {
     const newClassificationSettings =
       value[value.length - 1] === 'All'
         ? isAllSelected
@@ -32,7 +37,6 @@ export const Classification = ({ targetFields, title, label }: classificationPro
       ...targetField,
       flag: newClassificationSettings.includes(targetField.name),
     }));
-    setSelectedClassification(newClassificationSettings);
     dispatch(saveTargetFields(updatedTargetFields));
   };
 
@@ -41,8 +45,8 @@ export const Classification = ({ targetFields, title, label }: classificationPro
       <MetricsSettingTitle title={title} />
       {classificationWarningMessage && <WarningNotification message={classificationWarningMessage} />}
       <MultiAutoComplete
-        optionList={targetFields.map((targetField) => targetField.name)}
-        selectedOption={selectedClassification}
+        optionList={options}
+        selectedOption={classificationSettings}
         textFieldLabel={label}
         isError={false}
         onChangeHandler={handleChange}

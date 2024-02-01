@@ -32,7 +32,7 @@ describe('use export csv effect', () => {
 
   it('should call addNotification when export csv response status 500', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message', HttpStatusCode.InternalServerError);
+      throw new InternalServerException('error message', HttpStatusCode.InternalServerError, 'fake description');
     });
     const { result } = setup();
 
@@ -48,7 +48,7 @@ describe('use export csv effect', () => {
 
   it('should set isExpired true when export csv response status 404', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw new NotFoundException('error message', HttpStatusCode.NotFound);
+      throw new NotFoundException('error message', HttpStatusCode.NotFound, 'fake description');
     });
     const { result } = setup();
 

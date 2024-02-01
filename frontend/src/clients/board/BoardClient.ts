@@ -12,8 +12,7 @@ export class BoardClient extends HttpClient {
     this.haveDoneCard = true;
     this.response = {};
     try {
-      const boardType = params.type === 'Classic Jira' ? 'classic-jira' : params.type.toLowerCase();
-      const result = await this.axiosInstance.post(`/boards/${boardType}`, params);
+      const result = await this.axiosInstance.post(`/boards/${params.type.toLowerCase()}/verify`, params);
       result.status === HttpStatusCode.NoContent
         ? this.handleBoardNoDoneCard()
         : this.handleBoardVerifySucceed(result.data);

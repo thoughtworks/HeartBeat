@@ -8,6 +8,7 @@ import {
   VERIFIED,
   VERIFY,
   MOCK_PIPELINE_VERIFY_URL,
+  FAKE_PIPELINE_TOKEN,
 } from '../../fixtures';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { PipelineTool } from '@src/containers/ConfigStep/PipelineTool';
@@ -19,13 +20,12 @@ import { HttpStatusCode } from 'axios';
 import { rest } from 'msw';
 
 export const fillPipelineToolFieldsInformation = async () => {
-  const mockInfo = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
   const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
     'input Token',
   ) as HTMLInputElement;
-  await userEvent.type(tokenInput, mockInfo);
+  await userEvent.type(tokenInput, FAKE_PIPELINE_TOKEN);
 
-  expect(tokenInput.value).toEqual(mockInfo);
+  expect(tokenInput.value).toEqual(FAKE_PIPELINE_TOKEN);
 };
 
 let store = null;

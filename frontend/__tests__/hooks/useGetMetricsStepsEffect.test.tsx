@@ -32,7 +32,7 @@ describe('use get steps effect', () => {
 
   it('should set error message when get steps response status 500', async () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message', HttpStatusCode.InternalServerError);
+      throw new InternalServerException('error message', HttpStatusCode.InternalServerError, 'fake description');
     });
     const { result } = renderHook(() => useGetMetricsStepsEffect());
 

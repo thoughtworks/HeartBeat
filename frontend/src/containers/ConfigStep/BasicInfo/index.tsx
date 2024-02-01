@@ -2,7 +2,6 @@ import {
   selectCalendarType,
   selectProjectName,
   selectWarningMessage,
-  updateBoardVerifyState,
   updateCalendarType,
   updateProjectName,
 } from '@src/context/config/configSlice';
@@ -49,7 +48,6 @@ const BasicInfo = () => {
         <RadioGroup
           value={calendarType}
           onChange={(e) => {
-            dispatch(updateBoardVerifyState(false));
             dispatch(updateCalendarType(e.target.value));
           }}
         >

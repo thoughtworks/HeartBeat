@@ -1,8 +1,7 @@
 import {
-  MOCK_BOARD_URL_FOR_CLASSIC_JIRA,
   MOCK_BOARD_URL_FOR_JIRA,
   MOCK_BOARD_VERIFY_REQUEST_PARAMS,
-  MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS,
+  MOCK_JIRA_BOARD_VERIFY_REQUEST_PARAMS,
   VERIFY_ERROR_MESSAGE,
   AXIOS_ERROR_MESSAGE,
 } from '../fixtures';
@@ -11,10 +10,7 @@ import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
 import { rest } from 'msw';
 
-const server = setupServer(
-  rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))),
-  rest.post(MOCK_BOARD_URL_FOR_CLASSIC_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))),
-);
+const server = setupServer(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))));
 
 describe('verify board request', () => {
   beforeAll(() => server.listen());
@@ -26,8 +22,8 @@ describe('verify board request', () => {
     expect(result.isBoardVerify).toEqual(true);
   });
 
-  it('should isBoardVerify is true when select classic jira and board verify response status 200', async () => {
-    const result = await boardClient.getVerifyBoard(MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS);
+  it('should isBoardVerify is true when select jira and board verify response status 200', async () => {
+    const result = await boardClient.getVerifyBoard(MOCK_JIRA_BOARD_VERIFY_REQUEST_PARAMS);
 
     expect(result.isBoardVerify).toEqual(true);
   });

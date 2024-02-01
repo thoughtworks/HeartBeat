@@ -71,7 +71,6 @@ export const IMPORT_PROJECT_FROM_FILE = 'Import project from file';
 export const EXPORT_EXPIRED_CSV_MESSAGE = 'The report has been expired, please generate it again';
 
 export const BOARD_TYPES = {
-  CLASSIC_JIRA: 'Classic Jira',
   JIRA: 'Jira',
 };
 
@@ -86,13 +85,13 @@ export enum CONFIG_TITLE {
   SOURCE_CONTROL = 'Source Control',
 }
 
-export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Project Key', 'Site', 'Token'];
+export const BOARD_FIELDS = ['Board', 'Board Id', 'Email', 'Site', 'Token'];
 export const PIPELINE_TOOL_FIELDS = ['Pipeline Tool', 'Token'];
 export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token'];
 
 export const BASE_URL = 'api/v1';
-export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira`;
-export const MOCK_BOARD_URL_FOR_CLASSIC_JIRA = `${BASE_URL}/boards/classic-jira`;
+export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira/verify`;
+export const MOCK_BOARD_INFO_URL = `${BASE_URL}/boards/:type/info`;
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`;
 export const MOCK_PIPELINE_VERIFY_URL = `${BASE_URL}/pipelines/buildkite/verify`;
 export const MOCK_PIPELINE_GET_INFO_URL = `${BASE_URL}/pipelines/buildkite/info`;
@@ -128,15 +127,17 @@ export const MOCK_BOARD_VERIFY_REQUEST_PARAMS = {
   type: BOARD_TYPES.JIRA,
   site: '1',
   projectKey: '1',
+  email: 'fake@mail.com',
   startTime: 1613664000000,
   endTime: 1614873600000,
   boardId: '1',
 };
 
-export const MOCK_CLASSIC_JIRA_BOARD_VERIFY_REQUEST_PARAMS = {
+export const MOCK_JIRA_BOARD_VERIFY_REQUEST_PARAMS = {
   token: 'mockToken',
-  type: BOARD_TYPES.CLASSIC_JIRA,
+  type: BOARD_TYPES.JIRA,
   site: '2',
+  email: 'fake@mail.com',
   projectKey: '2',
   startTime: 1613664000000,
   endTime: 1614873600000,
@@ -193,7 +194,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
   },
   jiraBoardSetting: {
     token: 'mockToken',
-    type: BOARD_TYPES.CLASSIC_JIRA,
+    type: BOARD_TYPES.JIRA,
     site: '2',
     projectKey: '2',
     boardId: '2',
@@ -215,7 +216,7 @@ export const IMPORTED_NEW_CONFIG_FIXTURE = {
   },
   calendarType: 'Calendar with Chinese Holiday',
   board: {
-    type: 'Classic Jira',
+    type: 'Jira',
     verifyToken: 'mockVerifyToken',
     boardId: '1963',
     token: 'mockToken',
@@ -737,3 +738,7 @@ export const CYCLE_TIME_SETTINGS_SECTION = 'Cycle time settings section';
 export const REAL_DONE_SETTING_SECTION = 'Real done setting section';
 export const SELECT_CONSIDER_AS_DONE_MESSAGE = 'Must select which you want to consider as Done';
 export const MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT = 'Token is incorrect!';
+
+export const FAKE_TOKEN = 'fake-token';
+
+export const FAKE_PIPELINE_TOKEN = 'bkua_mockTokenMockTokenMockTokenMockToken1234';

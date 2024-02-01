@@ -1,142 +1,54 @@
 import {
-  selectBoard,
-  selectDateRange,
-  selectIsBoardVerified,
-  selectIsProjectCreated,
-  updateBoard,
-  updateBoardVerifyState,
-  updateJiraVerifyResponse,
-} from '@src/context/config/configSlice';
-import {
   ConfigSectionContainer,
   StyledButtonGroup,
   StyledForm,
   StyledTextField,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms';
-import { updateMetricsState, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
-import { BOARD_TYPES, CONFIG_TITLE, EMAIL, BOARD_TOKEN } from '@src/constants/resources';
+import {
+  selectDateRange,
+  selectIsBoardVerified,
+  updateBoard,
+  updateBoardVerifyState,
+} from '@src/context/config/configSlice';
+import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
-import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
 import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect';
-import { ErrorNotification } from '@src/components/ErrorNotification';
-import { NoCardPop } from '@src/containers/ConfigStep/NoDoneCardPop';
-import { findCaseInsensitiveType } from '@src/utils/util';
+import { BOARD_TYPES, CONFIG_TITLE } from '@src/constants/resources';
 import { FormEvent, useEffect, useState } from 'react';
 import { Loading } from '@src/components/Loading';
-import { REGEX } from '@src/constants/regex';
 import dayjs from 'dayjs';
 
 export const Board = () => {
   const dispatch = useAppDispatch();
   const isVerified = useAppSelector(selectIsBoardVerified);
-  const boardFields = useAppSelector(selectBoard);
   const DateRange = useAppSelector(selectDateRange);
-  const isProjectCreated = useAppSelector(selectIsProjectCreated);
-  const [isShowNoDoneCard, setIsNoDoneCard] = useState(false);
-  const { verifyJira, isLoading, errorMessage } = useVerifyBoardEffect();
-  const type = findCaseInsensitiveType(Object.values(BOARD_TYPES), boardFields.type);
-  const [fields, setFields] = useState([
-    {
-      key: 'Board',
-      value: type,
-      isRequired: true,
-      isValid: true,
-    },
-    {
-      key: 'Board Id',
-      value: boardFields.boardId,
-      isRequired: true,
-      isValid: true,
-    },
-    {
-      key: 'Email',
-      value: boardFields.email,
-      isRequired: true,
-      isValid: true,
-    },
-    {
-      key: 'Project Key',
-      value: boardFields.projectKey,
-      isRequired: true,
-      isValid: true,
-    },
-    {
-      key: 'Site',
-      value: boardFields.site,
-      isRequired: true,
-      isValid: true,
-    },
-    {
-      key: 'Token',
-      value: boardFields.token,
-      isRequired: true,
-      isValid: true,
-    },
-  ]);
+  const {
+    verifyJira,
+    isLoading: verifyLoading,
+    formFields: fields,
+    updateField,
+    resetFormFields,
+  } = useVerifyBoardEffect();
   const [isDisableVerifyButton, setIsDisableVerifyButton] = useState(
     !fields.every((field) => field.value && field.isValid),
   );
 
   const initBoardFields = () => {
-    const newFields = fields.map((field, index) => {
-      field.value = !index ? BOARD_TYPES.JIRA : EMPTY_STRING;
-      return field;
-    });
-    setFields(newFields);
+    resetFormFields();
     dispatch(updateBoardVerifyState(false));
   };
 
-  const updateFields = (
-    fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[],
-    index: number,
-    value: string,
-  ) => {
-    return fields.map((field, fieldIndex) => {
-      if (fieldIndex !== index) {
-        return field;
-      }
-      const newValue = value.trim();
-      const isValueEmpty = !!newValue;
-      const isValueValid =
-        field.key === EMAIL
-          ? REGEX.EMAIL.test(newValue)
-          : field.key === BOARD_TOKEN
-            ? REGEX.BOARD_TOKEN.test(newValue)
-            : true;
-      return {
-        ...field,
-        value: newValue,
-        isRequired: isValueEmpty,
-        isValid: isValueValid,
-      };
-    });
-  };
-
   useEffect(() => {
-    const isFieldInvalid = (field: { key: string; value: string; isRequired: boolean; isValid: boolean }) =>
-      field.isRequired && field.isValid && !!field.value;
-
-    const isAllFieldsValid = (fields: { key: string; value: string; isRequired: boolean; isValid: boolean }[]) =>
-      fields.some((field) => !isFieldInvalid(field));
-    setIsDisableVerifyButton(isAllFieldsValid(fields));
+    const invalidFields = fields.filter(({ value, isRequired, isValid }) => !value || !isRequired || !isValid);
+    setIsDisableVerifyButton(!!invalidFields.length);
   }, [fields]);
 
-  const onFormUpdate = (index: number, value: string) => {
-    const newFieldsValue = !index
-      ? updateFields(fields, index, value).map((field, index) => {
-          return {
-            ...field,
-            value: !index ? value : EMPTY_STRING,
-            isValid: true,
-            isRequired: true,
-          };
-        })
-      : updateFields(fields, index, value);
-    setFields(newFieldsValue);
+  const onFormUpdate = (name: string, value: string) => {
+    updateField(name, value);
     dispatch(updateBoardVerifyState(false));
   };
 
@@ -147,33 +59,30 @@ export const Board = () => {
         type: fields[0].value,
         boardId: fields[1].value,
         email: fields[2].value,
-        projectKey: fields[3].value,
-        site: fields[4].value,
-        token: fields[5].value,
+        site: fields[3].value,
+        token: fields[4].value,
       }),
     );
   };
 
   const handleSubmitBoardFields = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     dispatch(updateTreatFlagCardAsBlock(true));
-    updateBoardFields(e);
-    const msg = `${fields[2].value}:${fields[5].value}`;
-    const encodeToken = `Basic ${btoa(msg)}`;
     const params = {
       type: fields[0].value,
       boardId: fields[1].value,
-      projectKey: fields[3].value,
-      site: fields[4].value,
-      token: encodeToken,
+      email: fields[2].value,
+      site: fields[3].value,
+      token: fields[4].value,
+    };
+    await verifyJira({
+      ...params,
       startTime: dayjs(DateRange.startDate).valueOf(),
       endTime: dayjs(DateRange.endDate).valueOf(),
-    };
-    await verifyJira(params).then((res) => {
-      if (res) {
-        dispatch(updateBoardVerifyState(res.isBoardVerify));
-        dispatch(updateJiraVerifyResponse(res.response));
-        res.isBoardVerify && dispatch(updateMetricsState({ ...res.response, isProjectCreated }));
-        setIsNoDoneCard(!res.haveDoneCard);
+    }).then((res) => {
+      if (res?.response) {
+        dispatch(updateBoardVerifyState(true));
+        dispatch(updateBoard({ ...params, projectKey: res.response.projectKey }));
       }
     });
   };
@@ -184,22 +93,9 @@ export const Board = () => {
     dispatch(updateBoardVerifyState(false));
   };
 
-  const updateFieldHelpText = (field: { key: string; isRequired: boolean; isValid: boolean }) => {
-    const { key, isRequired, isValid } = field;
-    if (!isRequired) {
-      return `${key} is required!`;
-    }
-    if ((key === EMAIL || key === BOARD_TOKEN) && !isValid) {
-      return `${key} is invalid!`;
-    }
-    return DEFAULT_HELPER_TEXT;
-  };
-
   return (
     <ConfigSectionContainer aria-label='Board Config'>
-      <NoCardPop isOpen={isShowNoDoneCard} onClose={() => setIsNoDoneCard(false)} />
-      {errorMessage && <ErrorNotification message={errorMessage} />}
-      {isLoading && <Loading />}
+      {verifyLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.BOARD}</ConfigSelectionTitle>
       <StyledForm
         onSubmit={(e) => handleSubmitBoardFields(e)}
@@ -211,10 +107,11 @@ export const Board = () => {
             <StyledTypeSelections variant='standard' required key={index}>
               <InputLabel id='board-type-checkbox-label'>Board</InputLabel>
               <Select
+                name={field.name}
                 labelId='board-type-checkbox-label'
                 value={field.value}
-                onChange={(e) => {
-                  onFormUpdate(index, e.target.value);
+                onChange={({ target: { name, value } }) => {
+                  onFormUpdate(name, value);
                 }}
               >
                 {Object.values(BOARD_TYPES).map((data) => (
@@ -227,30 +124,32 @@ export const Board = () => {
           ) : (
             <StyledTextField
               data-testid={field.key}
+              name={field.name}
               key={index}
               required
               label={field.key}
               variant='standard'
               value={field.value}
-              onChange={(e) => {
-                onFormUpdate(index, e.target.value);
+              onChange={({ target: { name, value } }) => {
+                onFormUpdate(name, value);
               }}
               error={!field.isRequired || !field.isValid}
               type={field.key === 'Token' ? 'password' : 'text'}
-              helperText={updateFieldHelpText(field)}
+              helperText={field.errorMessage}
+              sx={{ gridColumn: `span ${field.col}` }}
             />
           ),
         )}
         <StyledButtonGroup>
-          {isVerified && !isLoading ? (
+          {isVerified && !verifyLoading ? (
             <VerifyButton disabled>Verified</VerifyButton>
           ) : (
-            <VerifyButton type='submit' disabled={isDisableVerifyButton || isLoading}>
+            <VerifyButton type='submit' disabled={isDisableVerifyButton || verifyLoading}>
               Verify
             </VerifyButton>
           )}
 
-          {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
+          {isVerified && !verifyLoading && <ResetButton type='reset'>Reset</ResetButton>}
         </StyledButtonGroup>
       </StyledForm>
     </ConfigSectionContainer>

@@ -1,0 +1,2373 @@
+{
+  "expand": "projects",
+  "projects": [
+    {
+      "expand": "issuetypes",
+      "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+      "id": "10001",
+      "key": "ADM",
+      "name": "Auto Dora Metrics",
+      "avatarUrls": {
+        "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+        "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+        "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+        "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+      },
+      "issuetypes": [
+        {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10005",
+          "id": "10005",
+          "description": "Tasks track small, distinct pieces of work.",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Task",
+          "untranslatedName": "Task",
+          "subtask": false,
+          "scope": {
+            "type": "PROJECT",
+            "project": {
+              "id": "10001"
+            }
+          },
+          "expand": "fields",
+          "fields": {
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuetype": {
+              "required": false,
+              "schema": {
+                "type": "issuetype",
+                "system": "issuetype"
+              },
+              "name": "Issue Type",
+              "key": "issuetype",
+              "hasDefaultValue": false,
+              "operations": [],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10005",
+                  "id": "10005",
+                  "description": "Tasks track small, distinct pieces of work.",
+                  "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+                  "name": "Task",
+                  "subtask": false,
+                  "avatarId": 10318,
+                  "entityId": "584ca3ca-8604-4a22-9ca2-56f0a5d47a87",
+                  "hierarchyLevel": 0
+                }
+              ]
+            },
+            "parent": {
+              "required": false,
+              "schema": {
+                "type": "issuelink",
+                "system": "parent"
+              },
+              "name": "Parent",
+              "key": "parent",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10061": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:float",
+                "customId": 10061
+              },
+              "name": "Story testing",
+              "key": "customfield_10061",
+              "hasDefaultValue": true,
+              "operations": ["set"],
+              "defaultValue": 1.0
+            },
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10020": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "json",
+                "custom": "com.pyxis.greenhopper.jira:gh-sprint",
+                "customId": 10020
+              },
+              "name": "Sprint",
+              "key": "customfield_10020",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "project": {
+              "required": true,
+              "schema": {
+                "type": "project",
+                "system": "project"
+              },
+              "name": "Project",
+              "key": "project",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+                  "id": "10001",
+                  "key": "ADM",
+                  "name": "Auto Dora Metrics",
+                  "projectTypeKey": "software",
+                  "simplified": true,
+                  "avatarUrls": {
+                    "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+                    "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+                    "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+                    "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+                  }
+                }
+              ]
+            },
+            "customfield_10021": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+                "customId": 10021
+              },
+              "name": "Flagged",
+              "key": "customfield_10021",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10019",
+                  "value": "Impediment",
+                  "id": "10019"
+                }
+              ]
+            },
+            "fixVersions": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "version",
+                "system": "fixVersions"
+              },
+              "name": "Fix versions",
+              "key": "fixVersions",
+              "hasDefaultValue": false,
+              "operations": ["set", "add", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10000",
+                  "id": "10000",
+                  "name": "Release 1",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-05-08",
+                  "releaseDate": "2020-06-05",
+                  "overdue": true,
+                  "userStartDate": "08/May/20",
+                  "userReleaseDate": "05/Jun/20",
+                  "projectId": 10001
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10001",
+                  "id": "10001",
+                  "name": "Release 2",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-06-08",
+                  "releaseDate": "2020-06-19",
+                  "overdue": true,
+                  "userStartDate": "08/Jun/20",
+                  "userReleaseDate": "19/Jun/20",
+                  "projectId": 10001
+                }
+              ]
+            },
+            "customfield_10000": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.atlassian.jira.plugins.jira-development-integration-plugin:devsummarycf",
+                "customId": 10000
+              },
+              "name": "Development",
+              "key": "customfield_10000",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "priority": {
+              "required": false,
+              "schema": {
+                "type": "priority",
+                "system": "priority"
+              },
+              "name": "Priority",
+              "key": "priority",
+              "hasDefaultValue": true,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/1",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/highest.svg",
+                  "name": "Highest",
+                  "id": "1"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/2",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/high.svg",
+                  "name": "High",
+                  "id": "2"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/4",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/low.svg",
+                  "name": "Low",
+                  "id": "4"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/5",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/lowest.svg",
+                  "name": "Lowest",
+                  "id": "5"
+                }
+              ],
+              "defaultValue": {
+                "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                "name": "Medium",
+                "id": "3"
+              }
+            },
+            "customfield_10037": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "user",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:people",
+                "customId": 10037,
+                "configuration": {
+                  "isMulti": true
+                }
+              },
+              "name": "Partner",
+              "key": "customfield_10037",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/users/picker?fieldName=customfield_10037&showAvatar=true&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "labels": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "string",
+                "system": "labels"
+              },
+              "name": "Labels",
+              "key": "labels",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/labels/suggest?query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "timetracking": {
+              "required": false,
+              "schema": {
+                "type": "timetracking",
+                "system": "timetracking"
+              },
+              "name": "Time tracking",
+              "key": "timetracking",
+              "hasDefaultValue": false,
+              "operations": ["set", "edit"]
+            },
+            "customfield_10015": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:datepicker",
+                "customId": 10015
+              },
+              "name": "Start date",
+              "key": "customfield_10015",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10016": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.pyxis.greenhopper.jira:jsw-story-points",
+                "customId": 10016
+              },
+              "name": "Story point estimate",
+              "key": "customfield_10016",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10038": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "user",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:people",
+                "customId": 10038,
+                "configuration": {
+                  "isMulti": true
+                }
+              },
+              "name": "QA",
+              "key": "customfield_10038",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/users/picker?fieldName=customfield_10038&showAvatar=true&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "customfield_10019": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.pyxis.greenhopper.jira:gh-lexo-rank",
+                "customId": 10019
+              },
+              "name": "Rank",
+              "key": "customfield_10019",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "attachment": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "attachment",
+                "system": "attachment"
+              },
+              "name": "Attachment",
+              "key": "attachment",
+              "hasDefaultValue": false,
+              "operations": ["set", "copy"]
+            },
+            "duedate": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "system": "duedate"
+              },
+              "name": "Due date",
+              "key": "duedate",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuelinks": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "issuelinks",
+                "system": "issuelinks"
+              },
+              "name": "Linked Issues",
+              "key": "issuelinks",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/issue/picker?currentProjectId=&showSubTaskParent=true&showSubTasks=true&currentIssueKey=null&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "copy"]
+            },
+            "assignee": {
+              "required": false,
+              "schema": {
+                "type": "user",
+                "system": "assignee"
+              },
+              "name": "Assignee",
+              "key": "assignee",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/user/assignable/search?project=ADM&query=",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            }
+          }
+        },
+        {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10006",
+          "id": "10006",
+          "description": "Epics track collections of related bugs, stories, and tasks.",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10307?size=medium",
+          "name": "Epic",
+          "untranslatedName": "Epic",
+          "subtask": false,
+          "scope": {
+            "type": "PROJECT",
+            "project": {
+              "id": "10001"
+            }
+          },
+          "expand": "fields",
+          "fields": {
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuetype": {
+              "required": true,
+              "schema": {
+                "type": "issuetype",
+                "system": "issuetype"
+              },
+              "name": "Issue Type",
+              "key": "issuetype",
+              "hasDefaultValue": false,
+              "operations": [],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10006",
+                  "id": "10006",
+                  "description": "Epics track collections of related bugs, stories, and tasks.",
+                  "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10307?size=medium",
+                  "name": "Epic",
+                  "subtask": false,
+                  "avatarId": 10307,
+                  "entityId": "51b23675-4bc3-4380-92a2-6fcc5415e15b",
+                  "hierarchyLevel": 1
+                }
+              ]
+            },
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "project": {
+              "required": true,
+              "schema": {
+                "type": "project",
+                "system": "project"
+              },
+              "name": "Project",
+              "key": "project",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+                  "id": "10001",
+                  "key": "ADM",
+                  "name": "Auto Dora Metrics",
+                  "projectTypeKey": "software",
+                  "simplified": true,
+                  "avatarUrls": {
+                    "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+                    "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+                    "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+                    "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+                  }
+                }
+              ]
+            },
+            "customfield_10021": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+                "customId": 10021
+              },
+              "name": "Flagged",
+              "key": "customfield_10021",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10019",
+                  "value": "Impediment",
+                  "id": "10019"
+                }
+              ]
+            },
+            "fixVersions": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "version",
+                "system": "fixVersions"
+              },
+              "name": "Fix versions",
+              "key": "fixVersions",
+              "hasDefaultValue": false,
+              "operations": ["set", "add", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10000",
+                  "id": "10000",
+                  "name": "Release 1",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-05-08",
+                  "releaseDate": "2020-06-05",
+                  "overdue": true,
+                  "userStartDate": "08/May/20",
+                  "userReleaseDate": "05/Jun/20",
+                  "projectId": 10001
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10001",
+                  "id": "10001",
+                  "name": "Release 2",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-06-08",
+                  "releaseDate": "2020-06-19",
+                  "overdue": true,
+                  "userStartDate": "08/Jun/20",
+                  "userReleaseDate": "19/Jun/20",
+                  "projectId": 10001
+                }
+              ]
+            },
+            "customfield_10000": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.atlassian.jira.plugins.jira-development-integration-plugin:devsummarycf",
+                "customId": 10000
+              },
+              "name": "Development",
+              "key": "customfield_10000",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "labels": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "string",
+                "system": "labels"
+              },
+              "name": "Labels",
+              "key": "labels",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/labels/suggest?query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "customfield_10015": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:datepicker",
+                "customId": 10015
+              },
+              "name": "Start date",
+              "key": "customfield_10015",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10017": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "custom": "com.pyxis.greenhopper.jira:jsw-issue-color",
+                "customId": 10017
+              },
+              "name": "Issue color",
+              "key": "customfield_10017",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10019": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.pyxis.greenhopper.jira:gh-lexo-rank",
+                "customId": 10019
+              },
+              "name": "Rank",
+              "key": "customfield_10019",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "attachment": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "attachment",
+                "system": "attachment"
+              },
+              "name": "Attachment",
+              "key": "attachment",
+              "hasDefaultValue": false,
+              "operations": ["set", "copy"]
+            },
+            "duedate": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "system": "duedate"
+              },
+              "name": "Due date",
+              "key": "duedate",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuelinks": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "issuelinks",
+                "system": "issuelinks"
+              },
+              "name": "Linked Issues",
+              "key": "issuelinks",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/issue/picker?currentProjectId=&showSubTaskParent=true&showSubTasks=true&currentIssueKey=null&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "copy"]
+            },
+            "assignee": {
+              "required": false,
+              "schema": {
+                "type": "user",
+                "system": "assignee"
+              },
+              "name": "Assignee",
+              "key": "assignee",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/user/assignable/search?project=ADM&query=",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            }
+          }
+        },
+        {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10007",
+          "id": "10007",
+          "description": "Subtasks track small pieces of work that are part of a larger task.",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
+          "name": "Subtask",
+          "untranslatedName": "Subtask",
+          "subtask": true,
+          "scope": {
+            "type": "PROJECT",
+            "project": {
+              "id": "10001"
+            }
+          },
+          "expand": "fields",
+          "fields": {
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuetype": {
+              "required": true,
+              "schema": {
+                "type": "issuetype",
+                "system": "issuetype"
+              },
+              "name": "Issue Type",
+              "key": "issuetype",
+              "hasDefaultValue": false,
+              "operations": [],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10007",
+                  "id": "10007",
+                  "description": "Subtasks track small pieces of work that are part of a larger task.",
+                  "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
+                  "name": "Subtask",
+                  "subtask": true,
+                  "avatarId": 10316,
+                  "entityId": "430f93b7-1026-4bda-a992-d549e2e35905",
+                  "hierarchyLevel": -1
+                }
+              ]
+            },
+            "parent": {
+              "required": true,
+              "schema": {
+                "type": "issuelink",
+                "system": "parent"
+              },
+              "name": "Parent",
+              "key": "parent",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10020": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "json",
+                "custom": "com.pyxis.greenhopper.jira:gh-sprint",
+                "customId": 10020
+              },
+              "name": "Sprint",
+              "key": "customfield_10020",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "project": {
+              "required": true,
+              "schema": {
+                "type": "project",
+                "system": "project"
+              },
+              "name": "Project",
+              "key": "project",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+                  "id": "10001",
+                  "key": "ADM",
+                  "name": "Auto Dora Metrics",
+                  "projectTypeKey": "software",
+                  "simplified": true,
+                  "avatarUrls": {
+                    "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+                    "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+                    "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+                    "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+                  }
+                }
+              ]
+            },
+            "customfield_10021": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+                "customId": 10021
+              },
+              "name": "Flagged",
+              "key": "customfield_10021",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10019",
+                  "value": "Impediment",
+                  "id": "10019"
+                }
+              ]
+            },
+            "fixVersions": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "version",
+                "system": "fixVersions"
+              },
+              "name": "Fix versions",
+              "key": "fixVersions",
+              "hasDefaultValue": false,
+              "operations": ["set", "add", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10000",
+                  "id": "10000",
+                  "name": "Release 1",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-05-08",
+                  "releaseDate": "2020-06-05",
+                  "overdue": true,
+                  "userStartDate": "08/May/20",
+                  "userReleaseDate": "05/Jun/20",
+                  "projectId": 10001
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10001",
+                  "id": "10001",
+                  "name": "Release 2",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-06-08",
+                  "releaseDate": "2020-06-19",
+                  "overdue": true,
+                  "userStartDate": "08/Jun/20",
+                  "userReleaseDate": "19/Jun/20",
+                  "projectId": 10001
+                }
+              ]
+            },
+            "customfield_10000": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.atlassian.jira.plugins.jira-development-integration-plugin:devsummarycf",
+                "customId": 10000
+              },
+              "name": "Development",
+              "key": "customfield_10000",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "priority": {
+              "required": false,
+              "schema": {
+                "type": "priority",
+                "system": "priority"
+              },
+              "name": "Priority",
+              "key": "priority",
+              "hasDefaultValue": true,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/1",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/highest.svg",
+                  "name": "Highest",
+                  "id": "1"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/2",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/high.svg",
+                  "name": "High",
+                  "id": "2"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/4",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/low.svg",
+                  "name": "Low",
+                  "id": "4"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/5",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/lowest.svg",
+                  "name": "Lowest",
+                  "id": "5"
+                }
+              ],
+              "defaultValue": {
+                "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                "name": "Medium",
+                "id": "3"
+              }
+            },
+            "labels": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "string",
+                "system": "labels"
+              },
+              "name": "Labels",
+              "key": "labels",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/labels/suggest?query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "customfield_10016": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.pyxis.greenhopper.jira:jsw-story-points",
+                "customId": 10016
+              },
+              "name": "Story point estimate",
+              "key": "customfield_10016",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10019": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.pyxis.greenhopper.jira:gh-lexo-rank",
+                "customId": 10019
+              },
+              "name": "Rank",
+              "key": "customfield_10019",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "attachment": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "attachment",
+                "system": "attachment"
+              },
+              "name": "Attachment",
+              "key": "attachment",
+              "hasDefaultValue": false,
+              "operations": ["set", "copy"]
+            },
+            "issuelinks": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "issuelinks",
+                "system": "issuelinks"
+              },
+              "name": "Linked Issues",
+              "key": "issuelinks",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/issue/picker?currentProjectId=&showSubTaskParent=true&showSubTasks=true&currentIssueKey=null&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "copy"]
+            },
+            "assignee": {
+              "required": false,
+              "schema": {
+                "type": "user",
+                "system": "assignee"
+              },
+              "name": "Assignee",
+              "key": "assignee",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/user/assignable/search?project=ADM&query=",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            }
+          }
+        },
+        {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10008",
+          "id": "10008",
+          "description": "Stories track functionality or features expressed as user goals.",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium",
+          "name": "Story",
+          "untranslatedName": "Story",
+          "subtask": false,
+          "scope": {
+            "type": "PROJECT",
+            "project": {
+              "id": "10001"
+            }
+          },
+          "expand": "fields",
+          "fields": {
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuetype": {
+              "required": true,
+              "schema": {
+                "type": "issuetype",
+                "system": "issuetype"
+              },
+              "name": "Issue Type",
+              "key": "issuetype",
+              "hasDefaultValue": false,
+              "operations": [],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10008",
+                  "id": "10008",
+                  "description": "Stories track functionality or features expressed as user goals.",
+                  "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium",
+                  "name": "Story",
+                  "subtask": false,
+                  "avatarId": 10315,
+                  "entityId": "e12b563c-7bea-4a78-9564-57d08e8664e2",
+                  "hierarchyLevel": 0
+                }
+              ]
+            },
+            "parent": {
+              "required": false,
+              "schema": {
+                "type": "issuelink",
+                "system": "parent"
+              },
+              "name": "Parent",
+              "key": "parent",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10020": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "json",
+                "custom": "com.pyxis.greenhopper.jira:gh-sprint",
+                "customId": 10020
+              },
+              "name": "Sprint",
+              "key": "customfield_10020",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "project": {
+              "required": true,
+              "schema": {
+                "type": "project",
+                "system": "project"
+              },
+              "name": "Project",
+              "key": "project",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+                  "id": "10001",
+                  "key": "ADM",
+                  "name": "Auto Dora Metrics",
+                  "projectTypeKey": "software",
+                  "simplified": true,
+                  "avatarUrls": {
+                    "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+                    "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+                    "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+                    "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+                  }
+                }
+              ]
+            },
+            "customfield_10021": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+                "customId": 10021
+              },
+              "name": "Flagged",
+              "key": "customfield_10021",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10019",
+                  "value": "Impediment",
+                  "id": "10019"
+                }
+              ]
+            },
+            "fixVersions": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "version",
+                "system": "fixVersions"
+              },
+              "name": "Fix versions",
+              "key": "fixVersions",
+              "hasDefaultValue": false,
+              "operations": ["set", "add", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10000",
+                  "id": "10000",
+                  "name": "Release 1",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-05-08",
+                  "releaseDate": "2020-06-05",
+                  "overdue": true,
+                  "userStartDate": "08/May/20",
+                  "userReleaseDate": "05/Jun/20",
+                  "projectId": 10001
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10001",
+                  "id": "10001",
+                  "name": "Release 2",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-06-08",
+                  "releaseDate": "2020-06-19",
+                  "overdue": true,
+                  "userStartDate": "08/Jun/20",
+                  "userReleaseDate": "19/Jun/20",
+                  "projectId": 10001
+                }
+              ]
+            },
+            "customfield_10000": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.atlassian.jira.plugins.jira-development-integration-plugin:devsummarycf",
+                "customId": 10000
+              },
+              "name": "Development",
+              "key": "customfield_10000",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "priority": {
+              "required": false,
+              "schema": {
+                "type": "priority",
+                "system": "priority"
+              },
+              "name": "Priority",
+              "key": "priority",
+              "hasDefaultValue": true,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/1",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/highest.svg",
+                  "name": "Highest",
+                  "id": "1"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/2",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/high.svg",
+                  "name": "High",
+                  "id": "2"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/4",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/low.svg",
+                  "name": "Low",
+                  "id": "4"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/5",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/lowest.svg",
+                  "name": "Lowest",
+                  "id": "5"
+                }
+              ],
+              "defaultValue": {
+                "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                "name": "Medium",
+                "id": "3"
+              }
+            },
+            "customfield_10037": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "user",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:people",
+                "customId": 10037,
+                "configuration": {
+                  "isMulti": true
+                }
+              },
+              "name": "Partner",
+              "key": "customfield_10037",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/users/picker?fieldName=customfield_10037&showAvatar=true&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "labels": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "string",
+                "system": "labels"
+              },
+              "name": "Labels",
+              "key": "labels",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/labels/suggest?query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "timetracking": {
+              "required": false,
+              "schema": {
+                "type": "timetracking",
+                "system": "timetracking"
+              },
+              "name": "Time tracking",
+              "key": "timetracking",
+              "hasDefaultValue": false,
+              "operations": ["set", "edit"]
+            },
+            "customfield_10015": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:datepicker",
+                "customId": 10015
+              },
+              "name": "Start date",
+              "key": "customfield_10015",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10038": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "user",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:people",
+                "customId": 10038,
+                "configuration": {
+                  "isMulti": true
+                }
+              },
+              "name": "QA",
+              "key": "customfield_10038",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/users/picker?fieldName=customfield_10038&showAvatar=true&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "customfield_10016": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.pyxis.greenhopper.jira:jsw-story-points",
+                "customId": 10016
+              },
+              "name": "Story point estimate",
+              "key": "customfield_10016",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10027": {
+              "required": false,
+              "schema": {
+                "type": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:select",
+                "customId": 10027
+              },
+              "name": "Feature/Operation",
+              "key": "customfield_10027",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10020",
+                  "value": "Planned Feature",
+                  "id": "10020"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10021",
+                  "value": "Planned Operation",
+                  "id": "10021"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10022",
+                  "value": "Unplanned Operation",
+                  "id": "10022"
+                }
+              ]
+            },
+            "customfield_10019": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.pyxis.greenhopper.jira:gh-lexo-rank",
+                "customId": 10019
+              },
+              "name": "Rank",
+              "key": "customfield_10019",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "attachment": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "attachment",
+                "system": "attachment"
+              },
+              "name": "Attachment",
+              "key": "attachment",
+              "hasDefaultValue": false,
+              "operations": ["set", "copy"]
+            },
+            "duedate": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "system": "duedate"
+              },
+              "name": "Due date",
+              "key": "duedate",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuelinks": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "issuelinks",
+                "system": "issuelinks"
+              },
+              "name": "Linked Issues",
+              "key": "issuelinks",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/issue/picker?currentProjectId=&showSubTaskParent=true&showSubTasks=true&currentIssueKey=null&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "copy"]
+            },
+            "assignee": {
+              "required": false,
+              "schema": {
+                "type": "user",
+                "system": "assignee"
+              },
+              "name": "Assignee",
+              "key": "assignee",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/user/assignable/search?project=ADM&query=",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            }
+          }
+        },
+        {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10009",
+          "id": "10009",
+          "description": "Bugs track problems or errors.",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10303?size=medium",
+          "name": "Bug",
+          "untranslatedName": "Bug",
+          "subtask": false,
+          "scope": {
+            "type": "PROJECT",
+            "project": {
+              "id": "10001"
+            }
+          },
+          "expand": "fields",
+          "fields": {
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuetype": {
+              "required": true,
+              "schema": {
+                "type": "issuetype",
+                "system": "issuetype"
+              },
+              "name": "Issue Type",
+              "key": "issuetype",
+              "hasDefaultValue": false,
+              "operations": [],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10009",
+                  "id": "10009",
+                  "description": "Bugs track problems or errors.",
+                  "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10303?size=medium",
+                  "name": "Bug",
+                  "subtask": false,
+                  "avatarId": 10303,
+                  "entityId": "e5e558af-8ea8-4950-a104-94317f1faae7",
+                  "hierarchyLevel": 0
+                }
+              ]
+            },
+            "parent": {
+              "required": false,
+              "schema": {
+                "type": "issuelink",
+                "system": "parent"
+              },
+              "name": "Parent",
+              "key": "parent",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10020": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "json",
+                "custom": "com.pyxis.greenhopper.jira:gh-sprint",
+                "customId": 10020
+              },
+              "name": "Sprint",
+              "key": "customfield_10020",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "project": {
+              "required": true,
+              "schema": {
+                "type": "project",
+                "system": "project"
+              },
+              "name": "Project",
+              "key": "project",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+                  "id": "10001",
+                  "key": "ADM",
+                  "name": "Auto Dora Metrics",
+                  "projectTypeKey": "software",
+                  "simplified": true,
+                  "avatarUrls": {
+                    "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+                    "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+                    "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+                    "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+                  }
+                }
+              ]
+            },
+            "customfield_10021": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+                "customId": 10021
+              },
+              "name": "Flagged",
+              "key": "customfield_10021",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10019",
+                  "value": "Impediment",
+                  "id": "10019"
+                }
+              ]
+            },
+            "fixVersions": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "version",
+                "system": "fixVersions"
+              },
+              "name": "Fix versions",
+              "key": "fixVersions",
+              "hasDefaultValue": false,
+              "operations": ["set", "add", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10000",
+                  "id": "10000",
+                  "name": "Release 1",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-05-08",
+                  "releaseDate": "2020-06-05",
+                  "overdue": true,
+                  "userStartDate": "08/May/20",
+                  "userReleaseDate": "05/Jun/20",
+                  "projectId": 10001
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10001",
+                  "id": "10001",
+                  "name": "Release 2",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-06-08",
+                  "releaseDate": "2020-06-19",
+                  "overdue": true,
+                  "userStartDate": "08/Jun/20",
+                  "userReleaseDate": "19/Jun/20",
+                  "projectId": 10001
+                }
+              ]
+            },
+            "customfield_10000": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.atlassian.jira.plugins.jira-development-integration-plugin:devsummarycf",
+                "customId": 10000
+              },
+              "name": "Development",
+              "key": "customfield_10000",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "priority": {
+              "required": false,
+              "schema": {
+                "type": "priority",
+                "system": "priority"
+              },
+              "name": "Priority",
+              "key": "priority",
+              "hasDefaultValue": true,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/1",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/highest.svg",
+                  "name": "Highest",
+                  "id": "1"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/2",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/high.svg",
+                  "name": "High",
+                  "id": "2"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/4",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/low.svg",
+                  "name": "Low",
+                  "id": "4"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/5",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/lowest.svg",
+                  "name": "Lowest",
+                  "id": "5"
+                }
+              ],
+              "defaultValue": {
+                "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                "name": "Medium",
+                "id": "3"
+              }
+            },
+            "labels": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "string",
+                "system": "labels"
+              },
+              "name": "Labels",
+              "key": "labels",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/labels/suggest?query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "timetracking": {
+              "required": false,
+              "schema": {
+                "type": "timetracking",
+                "system": "timetracking"
+              },
+              "name": "Time tracking",
+              "key": "timetracking",
+              "hasDefaultValue": false,
+              "operations": ["set", "edit"]
+            },
+            "customfield_10015": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:datepicker",
+                "customId": 10015
+              },
+              "name": "Start date",
+              "key": "customfield_10015",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10016": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.pyxis.greenhopper.jira:jsw-story-points",
+                "customId": 10016
+              },
+              "name": "Story point estimate",
+              "key": "customfield_10016",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10019": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.pyxis.greenhopper.jira:gh-lexo-rank",
+                "customId": 10019
+              },
+              "name": "Rank",
+              "key": "customfield_10019",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "attachment": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "attachment",
+                "system": "attachment"
+              },
+              "name": "Attachment",
+              "key": "attachment",
+              "hasDefaultValue": false,
+              "operations": ["set", "copy"]
+            },
+            "duedate": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "system": "duedate"
+              },
+              "name": "Due date",
+              "key": "duedate",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuelinks": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "issuelinks",
+                "system": "issuelinks"
+              },
+              "name": "Linked Issues",
+              "key": "issuelinks",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/issue/picker?currentProjectId=&showSubTaskParent=true&showSubTasks=true&currentIssueKey=null&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "copy"]
+            },
+            "assignee": {
+              "required": false,
+              "schema": {
+                "type": "user",
+                "system": "assignee"
+              },
+              "name": "Assignee",
+              "key": "assignee",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/user/assignable/search?project=ADM&query=",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            }
+          }
+        },
+        {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10028",
+          "id": "10028",
+          "description": "",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10322?size=medium",
+          "name": "Spike",
+          "untranslatedName": "Spike",
+          "subtask": false,
+          "scope": {
+            "type": "PROJECT",
+            "project": {
+              "id": "10001"
+            }
+          },
+          "expand": "fields",
+          "fields": {
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuetype": {
+              "required": true,
+              "schema": {
+                "type": "issuetype",
+                "system": "issuetype"
+              },
+              "name": "Issue Type",
+              "key": "issuetype",
+              "hasDefaultValue": false,
+              "operations": [],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10028",
+                  "id": "10028",
+                  "description": "",
+                  "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10322?size=medium",
+                  "name": "Spike",
+                  "subtask": false,
+                  "avatarId": 10322,
+                  "entityId": "8f2234f5-19c6-4fec-a1db-d38aca9299b3",
+                  "hierarchyLevel": 0
+                }
+              ]
+            },
+            "parent": {
+              "required": false,
+              "schema": {
+                "type": "issuelink",
+                "system": "parent"
+              },
+              "name": "Parent",
+              "key": "parent",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10020": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "json",
+                "custom": "com.pyxis.greenhopper.jira:gh-sprint",
+                "customId": 10020
+              },
+              "name": "Sprint",
+              "key": "customfield_10020",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "project": {
+              "required": true,
+              "schema": {
+                "type": "project",
+                "system": "project"
+              },
+              "name": "Project",
+              "key": "project",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+                  "id": "10001",
+                  "key": "ADM",
+                  "name": "Auto Dora Metrics",
+                  "projectTypeKey": "software",
+                  "simplified": true,
+                  "avatarUrls": {
+                    "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+                    "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+                    "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+                    "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+                  }
+                }
+              ]
+            },
+            "customfield_10021": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+                "customId": 10021
+              },
+              "name": "Flagged",
+              "key": "customfield_10021",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10019",
+                  "value": "Impediment",
+                  "id": "10019"
+                }
+              ]
+            },
+            "fixVersions": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "version",
+                "system": "fixVersions"
+              },
+              "name": "Fix versions",
+              "key": "fixVersions",
+              "hasDefaultValue": false,
+              "operations": ["set", "add", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10000",
+                  "id": "10000",
+                  "name": "Release 1",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-05-08",
+                  "releaseDate": "2020-06-05",
+                  "overdue": true,
+                  "userStartDate": "08/May/20",
+                  "userReleaseDate": "05/Jun/20",
+                  "projectId": 10001
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/version/10001",
+                  "id": "10001",
+                  "name": "Release 2",
+                  "archived": false,
+                  "released": false,
+                  "startDate": "2020-06-08",
+                  "releaseDate": "2020-06-19",
+                  "overdue": true,
+                  "userStartDate": "08/Jun/20",
+                  "userReleaseDate": "19/Jun/20",
+                  "projectId": 10001
+                }
+              ]
+            },
+            "customfield_10000": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.atlassian.jira.plugins.jira-development-integration-plugin:devsummarycf",
+                "customId": 10000
+              },
+              "name": "Development",
+              "key": "customfield_10000",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "priority": {
+              "required": false,
+              "schema": {
+                "type": "priority",
+                "system": "priority"
+              },
+              "name": "Priority",
+              "key": "priority",
+              "hasDefaultValue": true,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/1",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/highest.svg",
+                  "name": "Highest",
+                  "id": "1"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/2",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/high.svg",
+                  "name": "High",
+                  "id": "2"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/4",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/low.svg",
+                  "name": "Low",
+                  "id": "4"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/priority/5",
+                  "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/lowest.svg",
+                  "name": "Lowest",
+                  "id": "5"
+                }
+              ],
+              "defaultValue": {
+                "self": "https://dorametrics.atlassian.net/rest/api/2/priority/3",
+                "iconUrl": "https://dorametrics.atlassian.net/images/icons/priorities/medium.svg",
+                "name": "Medium",
+                "id": "3"
+              }
+            },
+            "customfield_10037": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "user",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:people",
+                "customId": 10037,
+                "configuration": {
+                  "isMulti": true
+                }
+              },
+              "name": "Partner",
+              "key": "customfield_10037",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/users/picker?fieldName=customfield_10037&showAvatar=true&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "labels": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "string",
+                "system": "labels"
+              },
+              "name": "Labels",
+              "key": "labels",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/labels/suggest?query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "timetracking": {
+              "required": false,
+              "schema": {
+                "type": "timetracking",
+                "system": "timetracking"
+              },
+              "name": "Time tracking",
+              "key": "timetracking",
+              "hasDefaultValue": false,
+              "operations": ["set", "edit"]
+            },
+            "customfield_10015": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:datepicker",
+                "customId": 10015
+              },
+              "name": "Start date",
+              "key": "customfield_10015",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10038": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "user",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:people",
+                "customId": 10038,
+                "configuration": {
+                  "isMulti": true
+                }
+              },
+              "name": "QA",
+              "key": "customfield_10038",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/users/picker?fieldName=customfield_10038&showAvatar=true&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "customfield_10016": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.pyxis.greenhopper.jira:jsw-story-points",
+                "customId": 10016
+              },
+              "name": "Story point estimate",
+              "key": "customfield_10016",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10027": {
+              "required": false,
+              "schema": {
+                "type": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:select",
+                "customId": 10027
+              },
+              "name": "Feature/Operation",
+              "key": "customfield_10027",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10020",
+                  "value": "Planned Feature",
+                  "id": "10020"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10021",
+                  "value": "Planned Operation",
+                  "id": "10021"
+                },
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10022",
+                  "value": "Unplanned Operation",
+                  "id": "10022"
+                }
+              ]
+            },
+            "customfield_10019": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.pyxis.greenhopper.jira:gh-lexo-rank",
+                "customId": 10019
+              },
+              "name": "Rank",
+              "key": "customfield_10019",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "attachment": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "attachment",
+                "system": "attachment"
+              },
+              "name": "Attachment",
+              "key": "attachment",
+              "hasDefaultValue": false,
+              "operations": ["set", "copy"]
+            },
+            "duedate": {
+              "required": false,
+              "schema": {
+                "type": "date",
+                "system": "duedate"
+              },
+              "name": "Due date",
+              "key": "duedate",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuelinks": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "issuelinks",
+                "system": "issuelinks"
+              },
+              "name": "Linked Issues",
+              "key": "issuelinks",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/issue/picker?currentProjectId=&showSubTaskParent=true&showSubTasks=true&currentIssueKey=null&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "copy"]
+            },
+            "assignee": {
+              "required": false,
+              "schema": {
+                "type": "user",
+                "system": "assignee"
+              },
+              "name": "Assignee",
+              "key": "assignee",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/user/assignable/search?project=ADM&query=",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            }
+          }
+        },
+        {
+          "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10107",
+          "id": "10107",
+          "description": "",
+          "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10304?size=medium",
+          "name": "Analysis",
+          "untranslatedName": "Analysis",
+          "subtask": false,
+          "scope": {
+            "type": "PROJECT",
+            "project": {
+              "id": "10001"
+            }
+          },
+          "expand": "fields",
+          "fields": {
+            "summary": {
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              },
+              "name": "Summary",
+              "key": "summary",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "issuetype": {
+              "required": false,
+              "schema": {
+                "type": "issuetype",
+                "system": "issuetype"
+              },
+              "name": "Issue Type",
+              "key": "issuetype",
+              "hasDefaultValue": false,
+              "operations": [],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/issuetype/10107",
+                  "id": "10107",
+                  "description": "",
+                  "iconUrl": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10304?size=medium",
+                  "name": "Analysis",
+                  "subtask": false,
+                  "avatarId": 10304,
+                  "entityId": "0c27b69b-1c26-4336-bd6e-d1b9865e4717",
+                  "hierarchyLevel": 0
+                }
+              ]
+            },
+            "parent": {
+              "required": false,
+              "schema": {
+                "type": "issuelink",
+                "system": "parent"
+              },
+              "name": "Parent",
+              "key": "parent",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10060": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:float",
+                "customId": 10060
+              },
+              "name": "Story testing",
+              "key": "customfield_10060",
+              "hasDefaultValue": true,
+              "operations": ["set"],
+              "defaultValue": 1.0
+            },
+            "description": {
+              "required": false,
+              "schema": {
+                "type": "string",
+                "system": "description"
+              },
+              "name": "Description",
+              "key": "description",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10020": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "json",
+                "custom": "com.pyxis.greenhopper.jira:gh-sprint",
+                "customId": 10020
+              },
+              "name": "Sprint",
+              "key": "customfield_10020",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "project": {
+              "required": true,
+              "schema": {
+                "type": "project",
+                "system": "project"
+              },
+              "name": "Project",
+              "key": "project",
+              "hasDefaultValue": false,
+              "operations": ["set"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/project/10001",
+                  "id": "10001",
+                  "key": "ADM",
+                  "name": "Auto Dora Metrics",
+                  "projectTypeKey": "software",
+                  "simplified": true,
+                  "avatarUrls": {
+                    "48x48": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400",
+                    "24x24": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=small",
+                    "16x16": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xsmall",
+                    "32x32": "https://dorametrics.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=medium"
+                  }
+                }
+              ]
+            },
+            "customfield_10021": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+                "customId": 10021
+              },
+              "name": "Flagged",
+              "key": "customfield_10021",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"],
+              "allowedValues": [
+                {
+                  "self": "https://dorametrics.atlassian.net/rest/api/2/customFieldOption/10019",
+                  "value": "Impediment",
+                  "id": "10019"
+                }
+              ]
+            },
+            "customfield_10000": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.atlassian.jira.plugins.jira-development-integration-plugin:devsummarycf",
+                "customId": 10000
+              },
+              "name": "Development",
+              "key": "customfield_10000",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "labels": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "string",
+                "system": "labels"
+              },
+              "name": "Labels",
+              "key": "labels",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/1.0/labels/suggest?query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "set", "remove"]
+            },
+            "customfield_10016": {
+              "required": false,
+              "schema": {
+                "type": "number",
+                "custom": "com.pyxis.greenhopper.jira:jsw-story-points",
+                "customId": 10016
+              },
+              "name": "Story point estimate",
+              "key": "customfield_10016",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "customfield_10019": {
+              "required": false,
+              "schema": {
+                "type": "any",
+                "custom": "com.pyxis.greenhopper.jira:gh-lexo-rank",
+                "customId": 10019
+              },
+              "name": "Rank",
+              "key": "customfield_10019",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            },
+            "attachment": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "attachment",
+                "system": "attachment"
+              },
+              "name": "Attachment",
+              "key": "attachment",
+              "hasDefaultValue": false,
+              "operations": ["set", "copy"]
+            },
+            "issuelinks": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "issuelinks",
+                "system": "issuelinks"
+              },
+              "name": "Linked Issues",
+              "key": "issuelinks",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/issue/picker?currentProjectId=&showSubTaskParent=true&showSubTasks=true&currentIssueKey=null&query=",
+              "hasDefaultValue": false,
+              "operations": ["add", "copy"]
+            },
+            "assignee": {
+              "required": false,
+              "schema": {
+                "type": "user",
+                "system": "assignee"
+              },
+              "name": "Assignee",
+              "key": "assignee",
+              "autoCompleteUrl": "https://dorametrics.atlassian.net/rest/api/2/user/assignable/search?project=ADM&query=",
+              "hasDefaultValue": false,
+              "operations": ["set"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

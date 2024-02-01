@@ -1,0 +1,14 @@
+{
+	"id": 1,
+	"name": "FAKE",
+	"type": "simple",
+	"location": {
+		"projectId": 10001,
+		"displayName": "FAKE (FA)",
+		"projectName": "1963",
+		"projectKey": "PLL",
+		"projectTypeKey": "software",
+		"avatarURI": "http://fake.avatar.com",
+		"name": "FAKE (FA)"
+	}
+}

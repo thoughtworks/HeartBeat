@@ -143,9 +143,7 @@ describe('Crew', () => {
   it('should call update function when change radio option', async () => {
     setup();
 
-    await act(async () => {
-      await userEvent.click(screen.getByRole('radio', { name: assigneeFilterLabels[1] }));
-    });
+    await userEvent.click(screen.getByRole('radio', { name: assigneeFilterLabels[1] }));
 
     await waitFor(() => {
       expect(mockedUseAppDispatch).toHaveBeenCalledTimes(2);

@@ -57,7 +57,6 @@
       startAt: 0
       jql: status changed during %281661961600000%2C 1663171199999%29
 
-
   response:
     headers:
       content-type: application/json
@@ -78,20 +77,6 @@
       content-type: application/json
     status: 200
     file: ./backend/jira/jsons/jira.board.1963.issue.allnondone.json
-
-# target Fields
-- request:
-    method: GET
-    url: /rest/api/2/issue/createmeta
-    query:
-      projectKeys: PLL
-      expand: projects.issuetypes.fields
-
-  response:
-    headers:
-      content-type: application/json
-    status: 200
-    file: ./backend/jira/jsons/jira.issue.createmeta.targetfields.json
 
 # Done Cards History
 - request:
@@ -114,3 +99,65 @@
       content-type: application/json
     status: 200
     file: ./backend/jira/jsons/jira.issue.<% url.1 %>.activityfeed.json
+
+- request:
+    method: GET
+    url: /rest/agile/1.0/board/(\w+)$
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.board.verify.json
+
+- request:
+    method: GET
+    url: /
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+
+- request:
+    method: GET
+    url: /rest/api/2/project/(\w+)
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.board.info.project.json
+
+- request:
+    method: GET
+    url: /rest/api/2/issue/createmeta
+    query:
+      projectKeys: PLL
+      expand: projects.issuetypes.fields
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.board.info.createmeta.json
+
+- request:
+    method: GET
+    url: /rest/agile/1.0/board/(\w+)/issue
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.issue.createmeta.targetfields.json
+
+- request:
+    method: GET
+    url: /rest/agile/1.0/board/(\w+)/configuration
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    file: ./backend/jira/jsons/jira.board.info.configuration.json

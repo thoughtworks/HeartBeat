@@ -4,40 +4,48 @@ import {
   CONFIG_TITLE,
   ERROR_MESSAGE_COLOR,
   MOCK_BOARD_URL_FOR_JIRA,
-  NO_CARD_ERROR_MESSAGE,
   RESET,
   VERIFIED,
   VERIFY,
-  VERIFY_ERROR_MESSAGE,
-  VERIFY_FAILED,
+  FAKE_TOKEN,
 } from '../../fixtures';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { Board } from '@src/containers/ConfigStep/Board';
 import { setupStore } from '../../utils/setupStoreUtil';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
 import { rest } from 'msw';
-import React from 'react';
 
-export const fillBoardFieldsInformation = () => {
-  const fields = ['Board Id', 'Email', 'Project Key', 'Site', 'Token'];
-  const mockInfo = ['2', 'mockEmail@qq.com', 'mockKey', '1', 'mockToken'];
-  const fieldInputs = fields.map((label) => screen.getByTestId(label).querySelector('input') as HTMLInputElement);
-  fieldInputs.map((input, index) => {
-    fireEvent.change(input, { target: { value: mockInfo[index] } });
-  });
-  fieldInputs.map((input, index) => {
-    expect(input.value).toEqual(mockInfo[index]);
-  });
+export const fillBoardFieldsInformation = async () => {
+  await userEvent.type(screen.getByLabelText(/board id/i), '1');
+  await userEvent.type(screen.getByLabelText(/email/i), 'fake@qq.com');
+  await userEvent.type(screen.getByLabelText(/site/i), 'fake');
+  await userEvent.type(screen.getByLabelText(/token/i), FAKE_TOKEN);
 };
 
 let store = null;
 
-const server = setupServer(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(200))));
+const server = setupServer();
+
+const mockVerifySuccess = (delay = 0) => {
+  server.use(
+    rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) =>
+      res(
+        ctx.json({
+          projectKey: 'FAKE',
+        }),
+        ctx.delay(delay),
+      ),
+    ),
+  );
+};
 
 describe('Board', () => {
-  beforeAll(() => server.listen());
+  beforeAll(() => {
+    server.listen();
+  });
   afterAll(() => server.close());
 
   store = setupStore();
@@ -56,7 +64,6 @@ describe('Board', () => {
 
   it('should show board title and fields when render board component ', () => {
     setup();
-
     BOARD_FIELDS.map((field) => {
       expect(screen.getByLabelText(`${field} *`)).toBeInTheDocument();
     });
@@ -65,17 +72,16 @@ describe('Board', () => {
 
   it('should show default value jira when init board component', () => {
     setup();
-    const boardType = screen.getByText(BOARD_TYPES.JIRA);
+    const boardType = screen.getByRole('button', {
+      name: /board/i,
+    });
 
     expect(boardType).toBeInTheDocument();
-
-    const option = screen.queryByText(BOARD_TYPES.CLASSIC_JIRA);
-    expect(option).not.toBeTruthy();
   });
 
-  it('should show detail options when click board field', () => {
+  it('should show detail options when click board field', async () => {
     setup();
-    fireEvent.mouseDown(screen.getByRole('button', { name: CONFIG_TITLE.BOARD }));
+    await userEvent.click(screen.getByRole('button', { name: /board jira/i }));
     const listBox = within(screen.getByRole('listbox'));
     const options = listBox.getAllByRole('option');
     const optionValue = options.map((li) => li.getAttribute('data-value'));
@@ -85,103 +91,101 @@ describe('Board', () => {
 
   it('should show board type when select board field value ', async () => {
     setup();
-
-    fireEvent.mouseDown(screen.getByRole('button', { name: CONFIG_TITLE.BOARD }));
-    fireEvent.click(screen.getByText(BOARD_TYPES.CLASSIC_JIRA));
+    await userEvent.click(screen.getByRole('button', { name: /board jira/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(BOARD_TYPES.CLASSIC_JIRA)).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /jira/i })).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('option', { name: /jira/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', {
+          name: /board/i,
+        }),
+      ).toBeInTheDocument();
     });
   });
 
   it('should show error message when input a wrong type or empty email ', async () => {
     setup();
     const EMAil_INVALID_ERROR_MESSAGE = 'Email is invalid!';
-    const emailInput = screen.getByTestId('Email').querySelector('input') as HTMLInputElement;
+    const emailInput = screen.getByRole('textbox', {
+      name: /email/i,
+    });
 
-    fireEvent.change(emailInput, { target: { value: 'wrong type email' } });
+    await userEvent.type(emailInput, 'wrong@email');
 
-    expect(screen.getByText(EMAil_INVALID_ERROR_MESSAGE)).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText(EMAil_INVALID_ERROR_MESSAGE)).toBeVisible();
+    });
+
     expect(screen.getByText(EMAil_INVALID_ERROR_MESSAGE)).toHaveStyle(ERROR_MESSAGE_COLOR);
 
-    fireEvent.change(emailInput, { target: { value: '' } });
+    await userEvent.clear(emailInput);
 
-    const EMAIL_REQUIRE_ERROR_MESSAGE = 'Email is required!';
-    expect(screen.getByText(EMAIL_REQUIRE_ERROR_MESSAGE)).toBeVisible();
-  });
-
-  it('should clear other fields information when change board field selection', () => {
-    setup();
-    const boardIdInput = screen.getByRole('textbox', {
-      name: 'Board Id',
-    }) as HTMLInputElement;
-    const emailInput = screen.getByRole('textbox', {
-      name: 'Email',
-    }) as HTMLInputElement;
-
-    fireEvent.change(boardIdInput, { target: { value: 2 } });
-    fireEvent.change(emailInput, { target: { value: 'mockEmail@qq.com' } });
-    fireEvent.mouseDown(screen.getByRole('button', { name: CONFIG_TITLE.BOARD }));
-    fireEvent.click(screen.getByText(BOARD_TYPES.CLASSIC_JIRA));
-
-    expect(emailInput.value).toEqual('');
-    expect(boardIdInput.value).toEqual('');
+    await waitFor(() => {
+      expect(screen.getByText('Email is required!')).toBeVisible();
+    });
   });
 
   it('should clear all fields information when click reset button', async () => {
     setup();
-    const fieldInputs = BOARD_FIELDS.slice(1, 5).map(
-      (label) =>
-        screen.getByRole('textbox', {
-          name: label,
-          hidden: true,
-        }) as HTMLInputElement,
-    );
-    fillBoardFieldsInformation();
+    mockVerifySuccess();
+    await fillBoardFieldsInformation();
 
-    fireEvent.click(screen.getByText(VERIFY));
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', { name: RESET }));
+      expect(screen.getByRole('button', { name: /verify/i })).not.toBeDisabled();
     });
 
-    fieldInputs.map((input) => {
-      expect(input.value).toEqual('');
+    await userEvent.click(screen.getByText(/verify/i));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /reset/i })).toBeInTheDocument();
     });
-    expect(screen.getByText(BOARD_TYPES.JIRA)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: RESET })).not.toBeTruthy();
-    expect(screen.queryByRole('button', { name: VERIFY })).toBeDisabled();
-  });
+    expect(screen.queryByRole('button', { name: /verified/i })).toBeDisabled();
 
-  it('should enabled verify button when all fields checked correctly given disable verify button', () => {
-    setup();
-    const verifyButton = screen.getByRole('button', { name: VERIFY });
+    await userEvent.click(screen.getByRole('button', { name: /reset/i }));
 
-    expect(verifyButton).toBeDisabled();
+    await waitFor(() => {
+      expect(screen.getByLabelText(/board id/i)).not.toHaveValue();
+    });
+    expect(screen.getByLabelText(/email/i)).not.toHaveValue();
+    expect(screen.getByLabelText(/site/i)).not.toHaveValue();
+    expect(screen.getByLabelText(/token/i)).not.toHaveValue();
 
-    fillBoardFieldsInformation();
+    await userEvent.click(screen.getByRole('button', { name: /board/i }));
 
-    expect(verifyButton).toBeEnabled();
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: /jira/i })).toBeInTheDocument();
+    });
+    await userEvent.click(screen.getByRole('option', { name: /jira/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /board jira/i })).toBeInTheDocument();
+    });
   });
 
   it('should show reset button and verified button when verify succeed ', async () => {
+    mockVerifySuccess();
     setup();
-    fillBoardFieldsInformation();
+    await fillBoardFieldsInformation();
 
-    fireEvent.click(screen.getByText(VERIFY));
+    await userEvent.click(screen.getByText(VERIFY));
 
     await waitFor(() => {
       expect(screen.getByText(RESET)).toBeVisible();
     });
 
-    await waitFor(() => {
-      expect(screen.getByText(VERIFIED)).toBeTruthy();
-    });
+    expect(screen.getByText(VERIFIED)).toBeInTheDocument();
   });
 
   it('should called verifyBoard method once when click verify button', async () => {
+    mockVerifySuccess();
     setup();
-    fillBoardFieldsInformation();
-    fireEvent.click(screen.getByRole('button', { name: VERIFY }));
+    await fillBoardFieldsInformation();
+    await userEvent.click(screen.getByRole('button', { name: /verify/i }));
 
     await waitFor(() => {
       expect(screen.getByText('Verified')).toBeInTheDocument();
@@ -189,45 +193,25 @@ describe('Board', () => {
   });
 
   it('should check loading animation when click verify button', async () => {
-    const { container } = setup();
-    fillBoardFieldsInformation();
-    fireEvent.click(screen.getByRole('button', { name: VERIFY }));
-
-    await waitFor(() => {
-      expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar');
-    });
-  });
-
-  it('should check noCardPop show and disappear when board verify response status is 204', async () => {
-    server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))));
+    mockVerifySuccess(300);
     setup();
-    fillBoardFieldsInformation();
-
-    fireEvent.click(screen.getByRole('button', { name: VERIFY }));
+    await fillBoardFieldsInformation();
+    await userEvent.click(screen.getByRole('button', { name: VERIFY }));
 
     await waitFor(() => {
-      expect(screen.getByText(NO_CARD_ERROR_MESSAGE)).toBeInTheDocument();
+      expect(screen.getByTestId('loading')).toBeInTheDocument();
     });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Ok' }));
-    expect(screen.getByText(NO_CARD_ERROR_MESSAGE)).not.toBeVisible();
   });
 
   it('should check error notification show and disappear when board verify response status is 401', async () => {
-    server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED })),
-      ),
-    );
+    server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))));
     setup();
-    fillBoardFieldsInformation();
+    await fillBoardFieldsInformation();
 
-    fireEvent.click(screen.getByRole('button', { name: VERIFY }));
+    await userEvent.click(screen.getByRole('button', { name: /verify/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(`${BOARD_TYPES.JIRA} ${VERIFY_FAILED}: ${VERIFY_ERROR_MESSAGE.UNAUTHORIZED}`),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/email is incorrect/i)).toBeInTheDocument();
     });
   });
 });

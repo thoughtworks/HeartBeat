@@ -7,46 +7,34 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Z_INDEX } from '@src/constants/commons';
 import { Nullable } from '@src/utils/types';
 import dayjs, { Dayjs } from 'dayjs';
+import isNull from 'lodash/isNull';
 
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch();
   const { startDate, endDate } = useAppSelector(selectDateRange);
-  const updateVerifyStates = () => {
-    dispatch(updateBoardVerifyState(false));
-  };
   const changeStartDate = (value: Nullable<Dayjs>) => {
-    if (value === null) {
-      dispatch(
-        updateDateRange({
-          startDate: null,
-          endDate: null,
-        }),
-      );
-    } else {
-      dispatch(
-        updateDateRange({
-          startDate: value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-          endDate: value.endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-        }),
-      );
-    }
-    updateVerifyStates();
+    dispatch(
+      updateDateRange(
+        isNull(value)
+          ? {
+              startDate: null,
+              endDate: null,
+            }
+          : {
+              startDate: value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+              endDate: value.endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+            },
+      ),
+    );
   };
 
   const changeEndDate = (value: Dayjs) => {
-    if (value === null) {
-      dispatch(
-        updateDateRange({
-          startDate: startDate,
-          endDate: null,
-        }),
-      );
-    } else {
-      dispatch(
-        updateDateRange({ startDate: startDate, endDate: value.endOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ') }),
-      );
-    }
-    updateVerifyStates();
+    dispatch(
+      updateDateRange({
+        startDate: startDate,
+        endDate: !isNull(value) ? value.endOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ') : null,
+      }),
+    );
   };
 
   return (

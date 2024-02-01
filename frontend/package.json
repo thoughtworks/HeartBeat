@@ -13,6 +13,7 @@
     "fix": "eslint -c .eslintrc.json --fix && npx prettier --write . --ignore-unknown",
     "audit": "npx audit-ci@^6 --config ./audit-ci.jsonc",
     "test": "jest",
+    "test:watch": "jest --watchAll",
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
     "coverage:silent": "jest --env=jsdom --watchAll=false --coverage --silent",
     "e2e:open": "TZ='PRC' cypress open",

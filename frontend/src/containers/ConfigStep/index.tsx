@@ -14,7 +14,7 @@ const ConfigStep = () => {
 
   return (
     <ConfigStepWrapper>
-      <BasicInfo></BasicInfo>
+      <BasicInfo />
       <MetricsTypeCheckbox />
     </ConfigStepWrapper>
   );

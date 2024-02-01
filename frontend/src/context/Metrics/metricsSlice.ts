@@ -212,11 +212,11 @@ export const metricsSlice = createSlice({
     },
     addADeploymentFrequencySetting: (state) => {
       const { deploymentFrequencySettings, importedData } = state;
-      const newId =
-        Math.max(
-          deploymentFrequencySettings[deploymentFrequencySettings.length - 1]?.id ?? 0,
-          importedData.importedDeployment[importedData.importedDeployment.length - 1]?.id ?? 0,
-        ) + 1;
+      const maxId = Math.max(
+        deploymentFrequencySettings[deploymentFrequencySettings.length - 1]?.id ?? 0,
+        importedData.importedDeployment[importedData.importedDeployment.length - 1]?.id ?? 0,
+      );
+      const newId = maxId + 1;
       state.deploymentFrequencySettings = [
         ...deploymentFrequencySettings,
         { id: newId, organization: '', pipelineName: '', step: '', branches: [] },

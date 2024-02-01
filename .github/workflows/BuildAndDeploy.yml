@@ -253,6 +253,45 @@ jobs:
   #            echo "BuildKite build failed. Cannot merge the PR."
   #            exit 1
   #          fi
+  images-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build and tag
+        run: |
+          docker build -t frontend:latest ./ -f ./ops/infra/Dockerfile.frontend
+          docker build -t backend:latest ./ -f ./ops/infra/Dockerfile.backend
+          docker build -t stub:latest ./ -f ./ops/infra/Dockerfile.stub
+
+      - name: Run Trivy vulnerability scanner for frontend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: frontned:latest
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+          trivyignores: ".trivyignore"
+      - name: Run Trivy vulnerability scanner for backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: backend:latest
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+          trivyignores: ".trivyignore"
+      - name: Run Trivy vulnerability scanner for stub
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: stub:latest
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+          trivyignores: ".trivyignore"
   deploy-infra:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
@@ -265,6 +304,7 @@ jobs:
       - backend-check
       - deny-dot-star-check
       - security-check
+      - images-backend
       - shellcheck
       - credential-check
       - frontend-license-check
@@ -328,15 +368,6 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./ops/infra/Dockerfile.backend
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./ops/infra/Dockerfile.backend
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_backend:latest
-          format: "table"
-          exit-code: "1"
-          ignore-unfixed: true
-          severity: "CRITICAL,HIGH"
-          trivyignores: ".trivyignore"
       # - name: Push for Backend
       #   env:
       #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -376,16 +407,6 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./ops/infra/Dockerfile.frontend
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./ops/infra/Dockerfile.frontend
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_frontend:latest
-          format: "table"
-          exit-code: "1"
-          ignore-unfixed: true
-          severity: "CRITICAL,HIGH"
-          trivyignores: ".trivyignore"
 
       # - name: Push for Frontend
       #   env:
@@ -427,16 +448,6 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./ops/infra/Dockerfile.stub
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./ops/infra/Dockerfile.stub
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ steps.login-ecr.outputs.registry }}/heartbeat_stub:latest
-          format: "table"
-          exit-code: "1"
-          ignore-unfixed: true
-          severity: "CRITICAL,HIGH"
-          trivyignores: ".trivyignore"
 
       # - name: Push for MockServer
       #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}

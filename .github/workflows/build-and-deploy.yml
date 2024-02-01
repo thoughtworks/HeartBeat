@@ -268,7 +268,7 @@ jobs:
       - name: Run Trivy vulnerability scanner for frontend
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: frontned:latest
+          image-ref: frontend:latest
           format: "table"
           exit-code: "1"
           ignore-unfixed: true

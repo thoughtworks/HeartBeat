@@ -110,7 +110,7 @@ public class ReportServiceTest {
 	}
 
 	@Test
-	void ShouldInitializeMetricsDataCompletedInHandlerWhenRequestMetricsExist() {
+	void ShouldInitializeMetricsDataCompletedInHandlerWhenRequestMetricsExist() throws InterruptedException {
 		MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
 			.boardMetricsCompleted(false)
 			.pipelineMetricsCompleted(true)
@@ -124,6 +124,7 @@ public class ReportServiceTest {
 			.thenReturn(MetricsDataCompleted.builder().pipelineMetricsCompleted(true).build());
 		doAnswer(invocation -> null).when(generateReporterService).generateBoardReport(request);
 
+		Thread.sleep(100);
 		reportService.generateReportByType(request, MetricType.BOARD);
 
 		verify(asyncMetricsDataHandler).putMetricsDataCompleted("csvTimeStamp", expectMetricsDataResult);

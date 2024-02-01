@@ -124,8 +124,8 @@ public class ReportServiceTest {
 			.thenReturn(MetricsDataCompleted.builder().pipelineMetricsCompleted(true).build());
 		doAnswer(invocation -> null).when(generateReporterService).generateBoardReport(request);
 
-		Thread.sleep(100);
 		reportService.generateReportByType(request, MetricType.BOARD);
+		Thread.sleep(100);
 
 		verify(asyncMetricsDataHandler).putMetricsDataCompleted("csvTimeStamp", expectMetricsDataResult);
 		verify(generateReporterService).generateBoardReport(request);

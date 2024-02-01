@@ -641,7 +641,7 @@ class GenerateReporterServiceTest {
 
 			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
 			assertEquals(true, res.getAllMetricsCompleted());
-			assertEquals(null, res.getReportMetricsError().getBoardMetricsError());
+			assertNull(res.getReportMetricsError().getBoardMetricsError());
 		}
 
 		@Test
@@ -662,7 +662,7 @@ class GenerateReporterServiceTest {
 			assertEquals(false, res.getBoardMetricsCompleted());
 			assertEquals(false, res.getPipelineMetricsCompleted());
 			assertEquals(false, res.getSourceControlMetricsCompleted());
-			assertEquals(null, res.getReportMetricsError().getBoardMetricsError());
+			assertNull(res.getReportMetricsError().getBoardMetricsError());
 		}
 
 		@Test
@@ -683,7 +683,7 @@ class GenerateReporterServiceTest {
 			assertEquals(true, res.getBoardMetricsCompleted());
 			assertEquals(true, res.getPipelineMetricsCompleted());
 			assertEquals(true, res.getSourceControlMetricsCompleted());
-			assertEquals(null, res.getReportMetricsError().getBoardMetricsError());
+			assertNull(res.getReportMetricsError().getBoardMetricsError());
 		}
 
 		@Test
@@ -697,10 +697,10 @@ class GenerateReporterServiceTest {
 
 			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
 			assertEquals(false, res.getAllMetricsCompleted());
-			assertEquals(null, res.getBoardMetricsCompleted());
-			assertEquals(null, res.getPipelineMetricsCompleted());
-			assertEquals(null, res.getSourceControlMetricsCompleted());
-			assertEquals(null, res.getReportMetricsError().getBoardMetricsError());
+			assertNull(res.getBoardMetricsCompleted());
+			assertNull(res.getPipelineMetricsCompleted());
+			assertNull(res.getSourceControlMetricsCompleted());
+			assertNull(res.getReportMetricsError().getBoardMetricsError());
 		}
 
 		@Test

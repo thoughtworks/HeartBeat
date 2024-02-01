@@ -32,9 +32,12 @@ class KanbanServiceTest {
 	private KanbanCsvService kanbanCsvService;
 
 	@Test
-	void shouldCallCsvServiceToGenerateScvInfo() {
+	void shouldCallCsvServiceToGenerateCSVInfoWhenJiraBoardSettingIsNotNull() {
+		JiraBoardSetting mockJiraBoardSetting = KanbanFixture.MOCK_JIRA_BOARD_SETTING();
 		GenerateReportRequest request = GenerateReportRequest.builder()
-			.jiraBoardSetting(JiraBoardSetting.builder().treatFlagCardAsBlock(true).build())
+			.jiraBoardSetting(mockJiraBoardSetting)
+			.startTime("startTime")
+			.endTime("endTime")
 			.build();
 		CardCollection realDoneCardCollection = CardCollection.builder().build();
 		CardCollection nonDoneCardCollection = CardCollection.builder().build();
@@ -49,6 +52,12 @@ class KanbanServiceTest {
 		assertEquals(realDoneCardCollection, result.getRealDoneCardCollection());
 		assertEquals(nonDoneCardCollection, result.getNonDoneCardCollection());
 		verify(kanbanCsvService).generateCsvInfo(request, realDoneCardCollection, nonDoneCardCollection);
+		verify(jiraService).getStoryPointsAndCycleTimeForNonDoneCards(
+				KanbanFixture.MOCK_EXPECT_STORY_POINT_AND_CYCLE_TIME_REQUEST(), mockJiraBoardSetting.getBoardColumns(),
+				mockJiraBoardSetting.getUsers());
+		verify(jiraService).getStoryPointsAndCycleTimeForDoneCards(
+				KanbanFixture.MOCK_EXPECT_STORY_POINT_AND_CYCLE_TIME_REQUEST(), mockJiraBoardSetting.getBoardColumns(),
+				mockJiraBoardSetting.getUsers(), mockJiraBoardSetting.getAssigneeFilter());
 	}
 
 }

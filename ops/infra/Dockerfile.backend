@@ -7,7 +7,7 @@ FROM eclipse-temurin
 LABEL app=Heartbeat
 LABEL arch=Backend
 RUN groupadd -r nonroot && useradd --no-log-init -r -g nonroot nonroot
-RUN mkdir -p ./app && chown -R nonroot:nonroot ./app
+RUN mkdir -p ./app/output && chown -R nonroot:nonroot ./app/output
 RUN mkdir -p ./logs && chown -R nonroot:nonroot ./logs
 USER nonroot
 

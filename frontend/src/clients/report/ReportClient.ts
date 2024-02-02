@@ -65,8 +65,7 @@ export class ReportClient extends HttpClient {
     meanTimeToRecovery: null,
     exportValidityTime: null,
     boardMetricsCompleted: false,
-    pipelineMetricsCompleted: false,
-    sourceControlMetricsCompleted: false,
+    doraMetricsCompleted: false,
     allMetricsCompleted: false,
   };
 

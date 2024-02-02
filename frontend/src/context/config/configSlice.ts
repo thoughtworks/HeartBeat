@@ -129,6 +129,9 @@ export const configSlice = createSlice({
         steps: [],
       }));
     },
+    updatePipelineList: (state, action) => {
+      state.pipelineTool.verifiedResponse.pipelineList = action.payload;
+    },
     updatePipelineToolVerifyResponseSteps: (state, action) => {
       const { organization, pipelineName, steps, branches, pipelineCrews } = action.payload;
       state.pipelineTool.verifiedResponse.pipelineList = state.pipelineTool.verifiedResponse.pipelineList.map(
@@ -173,6 +176,7 @@ export const {
   updatePipelineToolVerifyState,
   updatePipelineTool,
   updatePipelineToolVerifyResponse,
+  updatePipelineList,
   updateSourceControl,
   updateSourceControlVerifyState,
   updateSourceControlVerifiedResponse,

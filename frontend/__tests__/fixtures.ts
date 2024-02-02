@@ -486,8 +486,7 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   ],
   exportValidityTime: 1800000,
   boardMetricsCompleted: true,
-  pipelineMetricsCompleted: true,
-  sourceControlMetricsCompleted: true,
+  doraMetricsCompleted: true,
   allMetricsCompleted: true,
   reportMetricsError,
 };
@@ -651,8 +650,7 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   leadTimeForChanges: null,
   exportValidityTime: null,
   boardMetricsCompleted: false,
-  pipelineMetricsCompleted: false,
-  sourceControlMetricsCompleted: false,
+  doraMetricsCompleted: false,
   allMetricsCompleted: false,
   reportMetricsError,
 };

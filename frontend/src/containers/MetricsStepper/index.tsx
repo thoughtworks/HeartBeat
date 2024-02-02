@@ -1,4 +1,5 @@
 import {
+  updatePipelineList,
   selectConfig,
   selectMetrics,
   selectPipelineList,
@@ -32,6 +33,7 @@ import {
 import { ICycleTimeSetting, savedMetricsSettingState, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
+import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
 import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
@@ -95,12 +97,14 @@ const MetricsStepper = () => {
 
     return (
       !isEmpty(selectedPipelines) &&
-      pipelines.every(({ step }) => step !== '') &&
+      pipelines.every(({ step }) => !isEmpty(step)) &&
       pipelines.every(({ branches }) => !isEmpty(branches)) &&
+      selectedPipelines.every(({ steps }) => !isEmpty(steps)) &&
+      selectedPipelines.every(({ branches }) => !isEmpty(branches)) &&
       getDuplicatedPipeLineIds(pipelines).length === 0 &&
       every(pipelinesFormMeta, (item) => every(item.branches, (branch) => !branch.error && !branch.needVerify))
     );
-  }, [formMeta.metrics.pipelines, getDuplicatedPipeLineIds, metricsConfig.deploymentFrequencySettings]);
+  }, [pipelineList, formMeta.metrics.pipelines, getDuplicatedPipeLineIds, metricsConfig.deploymentFrequencySettings]);
 
   useEffect(() => {
     if (activeStep === METRICS_STEPS.CONFIG) {
@@ -243,6 +247,14 @@ const MetricsStepper = () => {
   const handleBack = () => {
     setIsDialogShowing(!activeStep);
     dispatch(backStep());
+    if (activeStep === METRICS_STEPS.METRICS) {
+      const initPipelineSteps = pipelineList.map((item: pipeline) => ({
+        ...item,
+        steps: [],
+        branches: [],
+      }));
+      dispatch(updatePipelineList(initPipelineSteps));
+    }
   };
 
   const backToHomePage = () => {

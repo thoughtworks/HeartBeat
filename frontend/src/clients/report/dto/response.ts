@@ -10,9 +10,8 @@ export interface ReportResponseDTO {
   leadTimeForChanges: Nullable<LeadTimeForChangesResponse>;
   changeFailureRate: Nullable<ChangeFailureRateResponse>;
   exportValidityTime: Nullable<number>;
-  boardMetricsCompleted: Nullable<boolean>;
-  pipelineMetricsCompleted: Nullable<boolean>;
-  sourceControlMetricsCompleted: Nullable<boolean>;
+  boardMetricsCompleted: boolean;
+  doraMetricsCompleted: boolean;
   allMetricsCompleted: boolean;
   reportMetricsError: AllErrorResponse;
 }

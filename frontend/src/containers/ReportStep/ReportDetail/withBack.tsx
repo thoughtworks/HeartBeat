@@ -13,7 +13,8 @@ const StyledDiv = styled('div')`
   width: max-content;
   z-index: 2;
   margin-bottom: 2.5rem;
-  color: ${theme.main.button.disabled.color};
+  color: ${theme.main.secondColor};
+  opacity: 0.65;
   cursor: pointer;
   font-size: 1rem;
 `;

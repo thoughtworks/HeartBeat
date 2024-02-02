@@ -50,8 +50,7 @@ export const ReportButtonGroup = ({
 
   const pipelineButtonDisabled =
     !reportData ||
-    reportData.pipelineMetricsCompleted === false ||
-    reportData.sourceControlMetricsCompleted === false ||
+    reportData.doraMetricsCompleted === false ||
     reportData?.reportMetricsError?.pipelineMetricsError ||
     reportData?.reportMetricsError?.sourceControlMetricsError;
 

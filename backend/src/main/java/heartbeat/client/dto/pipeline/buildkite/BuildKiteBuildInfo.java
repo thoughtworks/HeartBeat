@@ -17,6 +17,8 @@ import java.util.List;
 @Builder
 public class BuildKiteBuildInfo implements Serializable {
 
+	private String state;
+
 	private List<BuildKiteJob> jobs;
 
 	private String commit;

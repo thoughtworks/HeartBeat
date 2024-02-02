@@ -107,6 +107,7 @@ public class PipelineService {
 			.pipeLineName(deploymentEnvironment.getName())
 			.stepName(deployInfo.getJobName())
 			.valid(deployInfo.getJobName().equals(deploymentEnvironment.getStep()))
+			.piplineStatus(buildInfo.getState())
 			.buildInfo(buildInfo)
 			.deployInfo(deployInfo)
 			.commitInfo(commitInfo)

@@ -20,6 +20,8 @@ public class PipelineCSVInfo {
 
 	private Boolean valid;
 
+	private String piplineStatus;
+
 	private BuildKiteBuildInfo buildInfo;
 
 	private DeployInfo deployInfo;

@@ -64,6 +64,8 @@ public class CSVFileGenerator {
 
 	public static final String FILE_LOCAL_PATH = "./app/output/csv";
 
+	private static final String CANCELED_STATUS = "canceled";
+
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
 			InputStream inputStream = new FileInputStream(fileName);
@@ -108,7 +110,8 @@ public class CSVFileGenerator {
 					String stepName = csvInfo.getStepName();
 					String valid = String.valueOf(csvInfo.getValid()).toLowerCase();
 					String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
-					String state = csvInfo.getDeployInfo().getState();
+					String state = csvInfo.getPiplineStatus().equals(CANCELED_STATUS) ? CANCELED_STATUS
+							: csvInfo.getDeployInfo().getState();
 					String branch = csvInfo.getBuildInfo().getBranch();
 					if (csvInfo.getCommitInfo() != null) {
 						committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();

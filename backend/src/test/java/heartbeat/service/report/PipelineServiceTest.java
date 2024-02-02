@@ -16,7 +16,6 @@ import heartbeat.service.pipeline.buildkite.BuildKiteService;
 import heartbeat.service.report.calculator.model.FetchedData;
 import heartbeat.service.source.github.GitHubService;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,12 +32,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -58,18 +57,11 @@ public class PipelineServiceTest {
 	@Captor
 	ArgumentCaptor<Map<String, String>> roadMapArgumentCaptor;
 
-	private String token;
+	public String token = "startTime";
 
-	private String startTime;
+	public String startTime = "endTime";
 
-	private String endTime;
-
-	@BeforeEach
-	public void setup() {
-		startTime = "startTime";
-		endTime = "endTime";
-		token = "token";
-	}
+	public String endTime = "token";
 
 	@Nested
 	class FetchGithubData {

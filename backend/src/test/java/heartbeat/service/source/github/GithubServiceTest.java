@@ -98,6 +98,7 @@ class GithubServiceTest {
 		commitInfo = CommitInfo.builder()
 			.commit(Commit.builder()
 				.committer(Committer.builder().date("2022-07-23T04:03:00.000+00:00").build())
+				.message("mock commit message")
 				.build())
 			.build();
 
@@ -255,7 +256,7 @@ class GithubServiceTest {
 
 	@Test
 	void CommitTimeInPrShouldBeZeroWhenCommitInfoIsNull() {
-		commitInfo = CommitInfo.builder().build();
+		commitInfo = CommitInfo.builder().commit(Commit.builder().message("mock commit message").build()).build();
 		LeadTime expect = LeadTime.builder()
 			.commitId("111")
 			.prCreatedTime(1658548980000L)
@@ -275,8 +276,50 @@ class GithubServiceTest {
 	}
 
 	@Test
+	void CommitTimeInPrLeadTimeShouldBeZeroWhenCommitInfoIsRevert() {
+		commitInfo = CommitInfo.builder().commit(Commit.builder().message("Revert commit message").build()).build();
+		LeadTime expect = LeadTime.builder()
+			.commitId("111")
+			.prCreatedTime(1658548980000L)
+			.prMergedTime(1658549040000L)
+			.firstCommitTimeInPr(0L)
+			.jobFinishTime(1658549160000L)
+			.pipelineLeadTime(1658549100000L)
+			.pipelineCreateTime(1658549100000L)
+			.prLeadTime(0L)
+			.pipelineLeadTime(120000)
+			.totalTime(120000)
+			.build();
+
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+
+		assertEquals(expect, result);
+	}
+
+	@Test
+	void CommitTimeInPrLeadTimeShouldBeZeroWhenCommitInfoIsRevertInLowerCase() {
+		commitInfo = CommitInfo.builder().commit(Commit.builder().message("revert commit message").build()).build();
+		LeadTime expect = LeadTime.builder()
+			.commitId("111")
+			.prCreatedTime(1658548980000L)
+			.prMergedTime(1658549040000L)
+			.firstCommitTimeInPr(0L)
+			.jobFinishTime(1658549160000L)
+			.pipelineLeadTime(1658549100000L)
+			.pipelineCreateTime(1658549100000L)
+			.prLeadTime(0L)
+			.pipelineLeadTime(120000)
+			.totalTime(120000)
+			.build();
+
+		LeadTime result = githubService.mapLeadTimeWithInfo(pullRequestInfo, deployInfo, commitInfo);
+
+		assertEquals(expect, result);
+	}
+
+	@Test
 	void shouldReturnFirstCommitTimeInPrZeroWhenCommitInfoIsNull() {
-		commitInfo = CommitInfo.builder().build();
+		commitInfo = CommitInfo.builder().commit(Commit.builder().message("mock commit message").build()).build();
 		LeadTime expect = LeadTime.builder()
 			.commitId("111")
 			.prCreatedTime(1658548980000L)

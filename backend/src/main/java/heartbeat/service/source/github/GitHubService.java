@@ -232,11 +232,17 @@ public class GitHubService {
 		long pipelineLeadTime = jobFinishTime - prMergedTime;
 		long prLeadTime;
 		long totalTime;
-		if (firstCommitTimeInPr > 0) {
-			prLeadTime = prMergedTime - firstCommitTimeInPr;
+		if (commitInfo.getCommit().getMessage().startsWith("Revert")
+				|| commitInfo.getCommit().getMessage().startsWith("revert")) {
+			prLeadTime = 0;
 		}
 		else {
-			prLeadTime = prMergedTime - prCreatedTime;
+			if (firstCommitTimeInPr > 0) {
+				prLeadTime = prMergedTime - firstCommitTimeInPr;
+			}
+			else {
+				prLeadTime = prMergedTime - prCreatedTime;
+			}
 		}
 		totalTime = prLeadTime + pipelineLeadTime;
 

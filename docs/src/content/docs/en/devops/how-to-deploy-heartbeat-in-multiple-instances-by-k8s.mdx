@@ -9,30 +9,13 @@ Following the next tutorial, you can use Heartbeat in the k8s environment more c
 
 ## Multiple instances deploy tutorial
 
-### Step 1: create a namespace
+First, create a `k8s-heartbeat.yml` file, and copy below code into the file.
 
-If you don't have heartbeat namespace, create one.
-
-```shell
-kubectl create namespace heartbeat
-```
-
-### Step 2: create pv and pvc
-
-#### 2.1 Create pv
-
-Create file `k8s-persistent-volume.yaml` and run `kubectl apply -f k8s-persistent-volume.yaml` to deploy pv.
-
-- k8s-persistent-volume.yaml
-
-You can use this command to create file `k8s-persistent-volume.yaml` with filled in content.
-
-```shell
-echo 'apiVersion: v1
+```yaml
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: pv
-  namespace: heartbeat
 spec:
   capacity:
     storage: 200Mi
@@ -40,108 +23,23 @@ spec:
     - ReadWriteMany
   storageClassName: heartbeat
   hostPath:
-    path: /data' > k8s-persistent-volume.yaml
-```
-
-Then you can use this command to deploy pv.
-
-```shell
-kubectl apply -f k8s-persistent-volume.yaml
-```
-
-You can use `kubectl get pv pv` to confirm whether the pv is created successfully.
-
-```shell
-kubectl get pv pv
-```
-
-#### 2.2 Create pvc
-
-Create file `k8s-persistent-volume-claim.yaml` and run `kubectl apply -f k8s-persistent-volume-claim.yaml` to deploy pvc.
-
-- k8s-persistent-volume-claim.yaml
-
-You can use this command to create file `k8s-persistent-volume-claim.yaml` with filled in content.
-
-```shell
-echo 'apiVersion: v1
+    path: /data
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pvc
-  namespace: heartbeat
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 200Mi
-  storageClassName: heartbeat' > k8s-persistent-volume-claim.yaml
-```
-
-Then you can use this command to deploy pvc.
-
-```shell
-kubectl apply -f k8s-persistent-volume-claim.yaml
-```
-
-You can use `kubectl get pvc -n heartbeat` to confirm whether the pvc is created successfully.
-
-```shell
-kubectl get pvc -n heartbeat
-```
-
-### Step 3: deploy backend
-
-#### 3.1 Create backend service
-
-Create file `k8s-backend-service.yaml` and run `kubectl apply -f k8s-backend-service.yaml` to create backend service.
-
-- k8s-backend-service.yaml
-
-You can use this command to create file `k8s-backend-service.yaml` with filled in content.
-
-```shell
-echo 'apiVersion: v1
-kind: Service
-metadata:
-  namespace: heartbeat
-  name: backend
-  labels:
-    app: backend
-spec:
-  selector:
-    app: backend
-  ports:
-    - protocol: TCP
-      port: 4322
-      targetPort: 4322' > k8s-backend-service.yaml
-```
-
-Then you can use this command to deploy backend service.
-
-```shell
-kubectl apply -f k8s-backend-service.yaml
-```
-
-You can use `kubectl get services -n heartbeat` to confirm whether the backend service is created successfully.
-
-```shell
-kubectl get services -n heartbeat
-```
-
-#### 3.2 Deploy backend pods
-
-Create `k8s-backend-deployment.yaml` and run `kubectl apply -f k8s-backend-deployment.yaml` to deploy backend deployment.
-
-- k8s-backend-deployment.yaml
-
-You can use this command to create file `k8s-backend-deployment.yaml` with filled in content.
-
-```shell
-echo 'apiVersion: apps/v1
+  storageClassName: heartbeat
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: heartbeat
   name: backend
   labels:
     app: backend
@@ -173,79 +71,25 @@ spec:
       volumes:
         - name: volumes
           persistentVolumeClaim:
-            claimName: pvc' > k8s-backend-deployment.yaml
-```
-
-Then you can use this command to deploy backend deployment.
-
-```shell
-kubectl apply -f k8s-backend-deployment.yaml
-```
-
-You can use `kubectl get pods -n heartbeat` to confirm whether the backend pods is created successfully.
-
-```shell
-kubectl get pods -n heartbeat
-```
-
-### Step 4: deploy frontend
-
-#### 4.1 Create frontend service
-
-Create `k8s-frontend-service.yaml` and run `kubectl apply -f k8s-frontend-service.yaml` to create frontend service.
-
-- k8s-frontend-service.yaml
-
-You can use this command to create file `k8s-frontend-service.yaml` with filled in content.
-
-```shell
-echo 'apiVersion: v1
+            claimName: pvc
+---
+apiVersion: v1
 kind: Service
 metadata:
-  namespace: heartbeat
-  name: frontend
-  labels:
-    app: frontend
+  name: backend
 spec:
   selector:
-    app: frontend
+    app: backend
   ports:
     - protocol: TCP
-      port: 4321
-      targetPort: 80
-  type: LoadBalancer' > k8s-frontend-service.yaml
-```
-
-Then you can use this command to deploy frontend service.
-
-```shell
-kubectl apply -f k8s-frontend-service.yaml
-```
-
-You can use `kubectl get services -n heartbeat` to confirm whether the frontend service is created successfully.
-
-```shell
-kubectl get services -n heartbeat
-```
-
-#### 4.2 Deploy frontend pods
-
-Create `k8s-frontend-deployment.yaml` and run `kubectl apply -f k8s-frontend-deployment.yaml` to deploy frontend deployment.
-
-- k8s-frontend-deployment.yaml
-
-You can use this command to create file `k8s-frontend-deployment.yaml` with filled in content.
-
-```shell
-echo 'apiVersion: apps/v1
+      port: 4322
+      targetPort: 4322
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: heartbeat
   name: frontend
-  labels:
-    app: frontend
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -256,33 +100,32 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/au-heartbeat/heartbeat_frontend:latest' > k8s-frontend-deployment.yaml
+          image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 4321
+      targetPort: 80
+  type: LoadBalancer
 ```
 
-Then you can use this command to deploy frontend service.
+Then, execute this command
 
-```shell
-kubectl apply -f k8s-frontend-deployment.yaml
-```
-
-You can use `kubectl get pods -n heartbeat` to confirm whether the frontend pods is created successfully.
-
-```shell
-kubectl get pods -n heartbeat
+```sh
+kubectl apply -f k8s-heartbeat.yml
 ```
 
 ## K8s resource recycling
 
 If for some reason you need to restore the system to its pre-deployment state, you can use the following command.
 
-- clear namespace
-
 ```shell
-kubectl delete namespace heartbeat
-```
-
-- clear pv
-
-```shell
-kubectl delete pv pv
+kubectl delete -f k8s-heartbeat.yml
 ```

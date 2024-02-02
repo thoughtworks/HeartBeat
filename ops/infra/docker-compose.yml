@@ -3,7 +3,6 @@ version: "3.4"
 services:
   backend:
     image: heartbeat_backend:latest
-    container_name: backend
     expose:
       - 4322
     restart: always

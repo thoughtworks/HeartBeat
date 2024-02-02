@@ -522,3 +522,106 @@ services:
       - backend
     restart: always
 ```
+
+### 7.1.2 Multiple instance deployment
+Specifically, if you want to run with multiple instances. You can do it as below.
+
+You can change `deploy.replicas` to adjust the number of instances.
+```yaml
+version: "3.4"
+
+services:
+  backend:
+    image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+    expose:
+      - 4322
+    deploy:
+      replicas: 3
+    restart: always
+    volumes:
+      - file_volume:/app/output
+  frontend:
+    image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+    container_name: frontend
+    ports:
+      - 4321:80
+    depends_on:
+      - backend
+    restart: always
+volumes:
+  file_volume:
+```
+
+## 7.2 K8s
+
+First, create a `k8s-heartbeat.yml` file, and copy below code into the file.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 4322
+      targetPort: 4322
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 4321
+      targetPort: 80
+  type: LoadBalancer
+```
+
+Then, execute this command
+
+```sh
+kubectl apply -f k8s-heartbeat.yml
+```
+
+You also can deploy Heartbeats in multiple instances using k8s through the following [documentation](https://au-heartbeat.github.io/Heartbeat/en/devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s/).

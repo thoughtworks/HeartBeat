@@ -14,6 +14,13 @@ export default [
 	{ text: 'Way of Working', slug: 'onboarding/way-of-working', key: 'onboarding/way-of-working' },
 	{ text: 'Conventions', slug: 'onboarding/conventions', key: 'onboarding/conventions' },
 
+	{ text: 'DevOps', header: true, type: 'tech', key: 'devops' },
+	{
+		text: 'How to deploy heartbeat in multiple instances by k8s',
+		slug: 'devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s',
+		key: 'devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s',
+	},
+
 	{ text: 'Guides', header: true, type: 'tech', key: 'guides' },
 	{
 		text: 'Guideline and best practices',

@@ -77,7 +77,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
           message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
         }),
       );
-  }, [exportValidityTimeMin, allMetricsCompleted]);
+  }, [dispatch, exportValidityTimeMin, allMetricsCompleted]);
 
   useLayoutEffect(() => {
     if (exportValidityTimeMin && allMetricsCompleted) {
@@ -102,16 +102,16 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
         clearInterval(timer);
       };
     }
-  }, [exportValidityTimeMin, allMetricsCompleted]);
+  }, [dispatch, exportValidityTimeMin, allMetricsCompleted]);
 
   useLayoutEffect(() => {
     dispatch(closeAllNotifications());
-  }, [pageType]);
+  }, [dispatch, pageType]);
 
   useEffect(() => {
     setExportValidityTimeMin(reportData?.exportValidityTime);
     reportData && setAllMetricsCompleted(reportData.allMetricsCompleted);
-  }, [reportData]);
+  }, [dispatch, reportData]);
 
   useEffect(() => {
     if (isSummaryPage && notifications4SummaryPage.length > 0) {
@@ -119,7 +119,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
       notification && dispatch(addNotification(notification));
       setNotifications4SummaryPage(notifications4SummaryPage.slice(1));
     }
-  }, [notifications4SummaryPage, isSummaryPage]);
+  }, [dispatch, notifications4SummaryPage, isSummaryPage]);
 
   useEffect(() => {
     if (reportData?.reportMetricsError.boardMetricsError) {

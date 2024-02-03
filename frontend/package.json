@@ -47,7 +47,10 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.12",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.10.0"
+    "react-router-dom": "^6.10.0",
+    "typescript": "^5.0.3",
+    "vite": "^5.0.12",
+    "vite-plugin-pwa": "^0.17.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.5",
@@ -92,10 +95,7 @@
     "prettier-plugin-sort-imports": "^1.8.1",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.2",
-    "tsc-files": "^1.1.4",
-    "typescript": "^5.0.3",
-    "vite": "^5.0.12",
-    "vite-plugin-pwa": "^0.17.2"
+    "tsc-files": "^1.1.4"
   },
   "engines": {
     "node": ">=16.18.0"

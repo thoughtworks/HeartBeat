@@ -67,6 +67,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     return () => {
       stopPollingReports();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useLayoutEffect(() => {

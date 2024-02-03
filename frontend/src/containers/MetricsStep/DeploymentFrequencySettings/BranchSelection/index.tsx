@@ -55,7 +55,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
             needVerify: sourceControlFields.token !== '',
           };
     });
-  }, [branches, branchesFormData]);
+  }, [branches, branchesFormData, sourceControlFields.token]);
 
   const updateSingleBranchMeta = useCallback(
     (branchWithMeta: FormFieldWithMeta) => {

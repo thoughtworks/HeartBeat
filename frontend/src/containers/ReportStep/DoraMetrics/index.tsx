@@ -199,6 +199,7 @@ const DoraMetrics = ({
 
   useEffect(() => {
     !isBackFromDetail && startToRequestDoraData(getDoraReportRequestBody());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

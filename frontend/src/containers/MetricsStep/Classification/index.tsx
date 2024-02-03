@@ -24,7 +24,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
   const classificationSettings = targetFields.filter(({ flag }) => flag).map(({ name }) => name);
   const isAllSelected = useMemo(() => {
     return classificationSettings.length > 0 && classificationSettings.length === targetFields.length;
-  }, [classificationSettings]);
+  }, [classificationSettings, targetFields.length]);
 
   const handleChange = (_: React.SyntheticEvent, value: string[]) => {
     const newClassificationSettings =

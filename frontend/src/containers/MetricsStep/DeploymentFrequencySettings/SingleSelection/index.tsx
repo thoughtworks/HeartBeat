@@ -35,6 +35,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDat
     if (onGetSteps && !!selectedOptions && shouldRefresh) {
       onGetSteps(selectedOptions);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const emojiView = (pipelineStepName: string) => {

@@ -41,7 +41,7 @@ export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => 
 
   useEffect(() => {
     dispatch(isBoardCrews ? saveUsers(selectedCrews) : savePipelineCrews(selectedCrews));
-  }, [selectedCrews, dispatch]);
+  }, [selectedCrews, dispatch, isBoardCrews]);
 
   return (
     <>

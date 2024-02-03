@@ -145,6 +145,7 @@ const BoardMetrics = ({
 
   useEffect(() => {
     !isBackFromDetail && startToRequestBoardData(getBoardReportRequestBody());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

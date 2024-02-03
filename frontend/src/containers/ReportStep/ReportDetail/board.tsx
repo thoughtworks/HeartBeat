@@ -36,7 +36,7 @@ export const BoardDetail = withGoBack(({ data, errorMessage }: Property) => {
         }),
       );
     }
-  }, [errorMessage]);
+  }, [dispatch, onlySelectClassification, errorMessage]);
 
   return (
     <>

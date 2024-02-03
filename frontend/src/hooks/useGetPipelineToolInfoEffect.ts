@@ -61,7 +61,7 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
       apiTouchedRef.current = true;
       getPipelineToolInfo();
     }
-  }, [getPipelineToolInfo, isLoading]);
+  }, [getPipelineToolInfo, isLoading, shouldRefresh]);
 
   return {
     result: info,

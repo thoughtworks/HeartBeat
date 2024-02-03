@@ -45,7 +45,7 @@ const Header = () => {
         dispatch(saveVersion(res));
       });
     }
-  }, []);
+  }, [dispatch, version]);
 
   return (
     <LogoWarp data-test-id={'Header'}>

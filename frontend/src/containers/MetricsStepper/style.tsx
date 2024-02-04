@@ -80,8 +80,8 @@ export const NextButton = styled(Button)({
   color: theme.main.color,
   marginLeft: '0.5rem',
   '&:disabled': {
-    backgroundColor: 'rgba(0, 0, 0, 0.12)',
-    color: 'rgba(0,0,0,0.35)',
+    backgroundColor: theme.main.button.disabled.backgroundColor,
+    color: theme.main.button.disabled.color,
   },
   '&:hover': {
     backgroundColor: theme.main.backgroundColor,

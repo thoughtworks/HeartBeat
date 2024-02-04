@@ -103,7 +103,7 @@ rgba_check() {
    --exclude='*.test.tsx' \
    --exclude='theme.ts' \
    --exclude='*.webmanifest' \
-   'rgb\(([0-9]{1,3}, ?){2}[0-9]{1,3}\)' \
+   'rgb[a]?\(' \
   ./ || true)
   if [ -n "$result" ]; then
     echo "Error: Found files with Hex color:"

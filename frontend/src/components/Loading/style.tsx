@@ -7,7 +7,7 @@ import { theme } from '@src/theme';
 export const LoadingDrop = styled(Backdrop)((props: { placement: Placement }) => ({
   position: 'absolute',
   zIndex: Z_INDEX.MODAL_BACKDROP,
-  backgroundColor: 'rgba(199,199,199,0.43)',
+  backgroundColor: theme.main.button.disabled.color,
   color: theme.main.backgroundColor,
   display: 'flex',
   flexDirection: 'column',

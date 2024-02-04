@@ -142,7 +142,7 @@ export const theme = createTheme({
     boxShadow:
       '0 0.2rem 0.1rem -0.1rem rgb(0 0 0 / 20%), 0 0.1rem 0.1rem 0 rgb(0 0 0 / 14%), 0 0.1rem 0.3rem 0 rgb(0 0 0 / 12%)',
     cardShadow: '0 0.013rem 1rem 0 rgba(0, 0, 0, 0.08);',
-    cardBorder: '0.063rem solid rgba(0, 0, 0, 0.10);',
+    cardBorder: '0.07rem solid rgba(0, 0, 0, 0.10);',
     font: {
       primary: 'Roboto',
       secondary: 'sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Arial',

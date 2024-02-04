@@ -13,7 +13,7 @@ export const TextBox = styled(Paper)({
   height: '2rem',
   padding: '0.75rem',
   border: '0 solid #ccc',
-  boxShadow: '0 0.125rem 0.5rem rgba(0, 0, 0, 0.2)',
+  boxShadow: `0 0.125rem 0.5rem ${theme.palette.secondary.contrastText}`,
   borderBottomLeftRadius: '0.375rem',
   borderBottomRightRadius: '0.375rem',
   display: 'flex',

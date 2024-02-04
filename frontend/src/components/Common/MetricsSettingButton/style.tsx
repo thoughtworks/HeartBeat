@@ -1,11 +1,12 @@
 import { Button } from '@mui/material';
 import styled from '@emotion/styled';
+import { theme } from '@src/theme';
 
 export const MetricsSettingAddButtonContainer = styled.div({
   display: 'flex',
   justifyContent: 'center',
   borderRadius: '0.25rem',
-  border: '0.07rem dashed rgba(67, 80, 175, 1)',
+  border: `0.07rem dashed ${theme.main.alert.info.iconColor}`,
   marginBottom: '1rem',
 });
 

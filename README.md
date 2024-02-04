@@ -57,6 +57,9 @@
 - [7 How to use](#7-how-to-use)
   - [7.1 Docker-compose](#71-docker-compose)
     - [7.1.1 Customize story point field in Jira](#711-customize-story-point-field-in-jira)
+    - [7.1.2 Multiple instance deployment](#712-multiple-instance-deployment)
+  - [7.2 K8S](#72-k8s)
+    - [7.2.1 Multiple instance deployment](#721-multiple-instance-deployment)
 
 # News
 
@@ -624,4 +627,5 @@ Then, execute this command
 kubectl apply -f k8s-heartbeat.yml
 ```
 
+### 7.2.1 Multiple instance deployment
 You also can deploy Heartbeats in multiple instances using K8S through the following [documentation](https://au-heartbeat.github.io/Heartbeat/en/devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s/).

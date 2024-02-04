@@ -68,7 +68,6 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: pv
-  namespace: heartbeat
 spec:
   capacity:
     storage: 200Mi
@@ -88,7 +87,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pvc
-  namespace: heartbeat
 spec:
   accessModes:
     - ReadWriteMany
@@ -106,7 +104,6 @@ The `spec.resources.requests.storage` can be adjusted to the appropriate size, b
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: heartbeat
   name: backend
   labels:
     app: backend
@@ -120,6 +117,15 @@ spec:
       labels:
         app: backend
     spec:
+      initContainers:
+        - name: backend-init
+          image: busybox
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: volumes
+              mountPath: /app/output
+          command: ["sh", "-c", "chown -R 999:999 /app/output"]
       containers:
         - name: backend
           image: ghcr.io/au-heartbeat/heartbeat_backend:latest
@@ -140,10 +146,7 @@ Three backend pods are started here and the files are mounted to volumes
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: heartbeat
   name: backend
-  labels:
-    app: backend
 spec:
   selector:
     app: backend
@@ -159,12 +162,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: heartbeat
   name: frontend
-  labels:
-    app: frontend
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -184,10 +183,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: heartbeat
   name: frontend
-  labels:
-    app: frontend
 spec:
   selector:
     app: frontend

@@ -1,4 +1,4 @@
-import { selectDateRange, updateBoardVerifyState, updateDateRange } from '@src/context/config/configSlice';
+import { selectDateRange, updateDateRange } from '@src/context/config/configSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';

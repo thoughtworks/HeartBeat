@@ -28,6 +28,7 @@ export const TooltipContainer = styled('div')({
   marginLeft: '0.25rem',
 });
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const StyledTooltip = styled(({ className, ...props }: any) => (
   <Tooltip placement='right-start' {...props} componentsProps={{ tooltip: { className: className } }} />
 ))(`

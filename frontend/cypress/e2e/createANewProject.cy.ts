@@ -1,86 +1,9 @@
-import { GITHUB_TOKEN, METRICS_TITLE } from '../fixtures/fixtures';
 import { TIPS } from '../../src/constants/resources';
+import { GITHUB_TOKEN } from '../fixtures/fixtures';
 import metricsPage from '../pages/metrics/metrics';
 import configPage from '../pages/metrics/config';
 import reportPage from '../pages/metrics/report';
 import homePage from '../pages/home';
-
-const cycleTimeData = [
-  { label: 'Average Cycle Time(Days/SP)', value: '7.64' },
-  { label: 'Average Cycle Time(Days/Card)', value: '9.55' },
-];
-
-const velocityData = [
-  { label: 'Velocity(Story Point)', value: '17.5' },
-  { label: 'Throughput(Cards Count)', value: '14' },
-];
-
-const deploymentFrequencyData = [{ label: 'Deployment Frequency(Deployments/Day)', value: '0.27' }];
-
-const meanTimeToRecoveryData = [{ label: 'Mean Time To Recovery(Hours)', value: '8.55' }];
-
-const leadTimeForChangeData = [
-  { label: 'PR Lead Time(Hours)', value: '0.00' },
-  { label: 'Pipeline Lead Time(Hours)', value: '-65.70' },
-  { label: 'Total Lead Time(Hours)', value: '-65.70' },
-];
-
-const changeFailureRateData = [{ label: 'Failure Rate', value: '91.43' }];
-
-const metricsTextList = [
-  'Board configuration',
-  'Pipeline configuration',
-  'Crew settings',
-  'Brian Ong',
-  'Harsh Singal',
-  'Prashant Agarwal',
-  'Sumit Narang',
-  'Yu Zhang',
-  'Peihang Yu',
-  'Mengyang Sun',
-  'HanWei Wang',
-  'Aaron Camilleri',
-  'Qian Zhang',
-  'Gerard Ho',
-  'Anthony Tse',
-  'Yonghee Jeon Jeon',
-  'Cycle time settings',
-  'Real done',
-  'Classification setting',
-  'Issue Type',
-  'Has Dependancies',
-  'FS R&D Classification',
-  'Parent',
-  'Components',
-  'DONE',
-  'CLOSED',
-  'Project',
-  'Reporter',
-  'Parent Link',
-  'Fix versions',
-  'Priority',
-  'Paired Member',
-  'Labels',
-  'Story Points',
-  'Sprint',
-  'Epic Link',
-  'Assignee',
-  'FS Work Categorization',
-  'FS Work Type',
-  'Epic Name',
-  'Acceptance Criteria',
-  'Environment',
-  'Affects versions',
-  'FS Domains',
-  'PIR Completed',
-  'Team',
-  'Incident Priority',
-  'Resolution Details',
-  'Time to Resolution - Hrs',
-  'Time to Detect - Hrs',
-  'Cause by - System',
-  'Pipeline settings',
-];
 
 const pipelineSettingsAutoCompleteTextList = [
   { name: 'Organization', value: 'XXXX' },
@@ -121,54 +44,6 @@ const tokenInputValues = [
   { index: 2, value: `${GITHUB_TOKEN}` },
 ];
 
-interface MetricsDataItem {
-  label: string;
-  value?: string;
-}
-
-const checkMetricsCalculation = (testId: string, boardData: MetricsDataItem[]) => {
-  cy.get(testId).should('exist');
-  cy.get(testId)
-    .children('[data-test-id="report-section"]')
-    .children()
-    .each((section, index) => {
-      cy.wrap(section).within(() => {
-        cy.contains(boardData[index].label).should('exist');
-        cy.contains(boardData[index].value).should('exist');
-      });
-    });
-};
-
-const checkBoardShowMore = () => {
-  reportPage.showMoreBoardButton.should('exist');
-  reportPage.goToBoardDetailPage();
-  reportPage.checkDateRange();
-  cy.get(`[data-test-id="${METRICS_TITLE.VELOCITY}"]`).find('tbody > tr').should('have.length', 2);
-  cy.get(`[data-test-id="${METRICS_TITLE.CYCLE_TIME}"]`).find('tbody > tr').should('have.length', 17);
-  cy.get(`[data-test-id="${METRICS_TITLE.CLASSIFICATION}"]`).find('tbody > tr').should('have.length', 122);
-
-  reportPage.exportBoardData();
-  checkBoardCSV();
-
-  reportPage.boardGoToReportPage();
-};
-
-const checkDoraShowMore = () => {
-  reportPage.showMoreDoraButton.should('exist');
-  reportPage.goToDoraDetailPage();
-  reportPage.checkDateRange();
-
-  cy.get(`[data-test-id="${METRICS_TITLE.DEPLOYMENT_FREQUENCY}"]`).find('tbody > tr').should('have.length', 2);
-  cy.get(`[data-test-id="${METRICS_TITLE.LEAD_TIME_FOR_CHANGES}"]`).find('tbody > tr').should('have.length', 4);
-  cy.get(`[data-test-id="${METRICS_TITLE.CHANGE_FAILURE_RATE}"]`).find('tbody > tr').should('have.length', 2);
-  cy.get(`[data-test-id="${METRICS_TITLE.MEAN_TIME_TO_RECOVERY}"]`).find('tbody > tr').should('have.length', 2);
-
-  reportPage.exportPipelineData();
-  checkPipelineCSV();
-
-  reportPage.doraGoToReportPage();
-};
-
 const checkCycleTimeTooltip = () => {
   metricsPage.cycleTimeTitleTooltip.trigger('mouseover');
   cy.contains(TIPS.CYCLE_TIME).should('be.visible');
@@ -177,36 +52,6 @@ const checkCycleTimeTooltip = () => {
 const clearDownloadFile = () => {
   cy.task('clearDownloads');
   cy.wait(500);
-};
-
-const checkMetricCSV = () => {
-  cy.wait(2000);
-  cy.fixture('metric.csv').then((localFileContent) => {
-    cy.task('readDir', 'cypress/downloads').then((files: string[]) => {
-      expect(files).to.match(new RegExp(/metric-.*\.csv/));
-      files.forEach((file: string) => {
-        if (file.match(/metric-.*\.csv/)) {
-          cy.readFile(`cypress/downloads/${file}`).then((fileContent) => {
-            expect(fileContent).to.contains(localFileContent);
-          });
-        }
-      });
-    });
-  });
-};
-
-const checkPipelineCSV = () => {
-  cy.wait(2000);
-  return cy.task('readDir', 'cypress/downloads').then((files) => {
-    expect(files).to.match(new RegExp(/pipeline-.*\.csv/));
-  });
-};
-
-const checkBoardCSV = () => {
-  cy.wait(2000);
-  return cy.task('readDir', 'cypress/downloads').then((files) => {
-    expect(files).to.match(new RegExp(/board-.*\.csv/));
-  });
 };
 
 const checkFieldsExist = (fields: string[]) => {

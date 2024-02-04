@@ -86,7 +86,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
         }}
         getOptionLabel={(option) => option.name}
         onChange={(event, value) => handleChange(event, value as ITargetFieldType[])}
-        renderOption={(props, option: any, state) => {
+        renderOption={(props, option: ITargetFieldType, state) => {
           const selectAllProps = option.key === 'all' ? { checked: isAllSelected } : {};
           return (
             <li {...props}>

@@ -10,7 +10,7 @@ on:
 jobs:
   shellcheck:
     name: Shellcheck
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Run ShellCheck
@@ -19,7 +19,7 @@ jobs:
           scandir: "./ops"
 
   fossa-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: FOSSA Check
@@ -30,7 +30,7 @@ jobs:
 
   credential-check:
     name: Credential Check
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,7 +53,7 @@ jobs:
             -v --redact
 
   security-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -77,7 +77,7 @@ jobs:
           severity: "CRITICAL"
           trivyignores: .trivyignore
   backend-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./backend
@@ -101,7 +101,7 @@ jobs:
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
   backend-license-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./backend
@@ -125,7 +125,7 @@ jobs:
           path: backend/build/reports/dependency-license/
           retention-days: ${{ vars.RETENTION_DAYS }}
   deny-dot-star-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./backend
@@ -144,7 +144,7 @@ jobs:
             echo "No matching files found."
           fi
   deny-px-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
@@ -163,7 +163,7 @@ jobs:
             echo "No matching files found."
           fi
   deny-css-hex-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: CSS hex check
@@ -171,14 +171,14 @@ jobs:
         run: ./ops/check.sh hex
 
   deny-css-rgba-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: CSS rgba check
         shell: bash {0}
         run: ./ops/check.sh rgba
   frontend-type-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
@@ -195,7 +195,7 @@ jobs:
           pnpm run type-check
 
   frontend-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
@@ -222,7 +222,7 @@ jobs:
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
   frontend-license-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
@@ -241,7 +241,7 @@ jobs:
 
   #  check-buildkite-status:
   #    if: ${{ github.event_name == 'pull_request' }}
-  #    runs-on: macos-14
+  #    runs-on: ubuntu-latest
   #    steps:
   #      - name: Checkout code
   #        uses: actions/checkout@v4
@@ -255,7 +255,7 @@ jobs:
   #            exit 1
   #          fi
   images-check:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -310,7 +310,7 @@ jobs:
       - credential-check
       - frontend-license-check
       - backend-license-check
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -342,7 +342,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - deploy-infra
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -382,7 +382,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - deploy-infra
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -422,7 +422,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - deploy-infra
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -461,7 +461,7 @@ jobs:
       #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   deploy-e2e:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     needs:
       - build-backend
       - build-frontend
@@ -508,7 +508,7 @@ jobs:
       #       docker-compose up -d frontend
 
   deploy-stub:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     needs:
       - build-mock-server
     steps:
@@ -551,7 +551,7 @@ jobs:
       #       export MOCK_SERVER_PORT=${{ secrets.AWS_EC2_IP_E2E_PORT }}
       #       docker-compose -f docker-compose-stub.yml up -d stub
   e2e:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
@@ -579,7 +579,7 @@ jobs:
           retention-days: ${{ vars.RETENTION_DAYS }}
 
   deploy:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     needs:
       - e2e
     steps:

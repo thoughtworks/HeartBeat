@@ -552,7 +552,7 @@ volumes:
   file_volume:
 ```
 
-## 7.2 K8s
+## 7.2 K8S
 
 First, create a `k8s-heartbeat.yml` file, and copy below code into the file.
 
@@ -624,4 +624,4 @@ Then, execute this command
 kubectl apply -f k8s-heartbeat.yml
 ```
 
-You also can deploy Heartbeats in multiple instances using k8s through the following [documentation](https://au-heartbeat.github.io/Heartbeat/en/devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s/).
+You also can deploy Heartbeats in multiple instances using K8S through the following [documentation](https://au-heartbeat.github.io/Heartbeat/en/devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s/).

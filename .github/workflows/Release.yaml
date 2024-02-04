@@ -10,7 +10,7 @@ env:
 
 jobs:
   build_backend:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     defaults:
       run:
         working-directory: ./backend
@@ -34,7 +34,7 @@ jobs:
           retention-days: ${{ vars.RETENTION_DAYS || 10 }}
 
   build_frontend:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     defaults:
       run:
         working-directory: ./frontend
@@ -60,7 +60,7 @@ jobs:
           retention-days: ${{ vars.RETENTION_DAYS || 10 }}
 
   build_and_push_image:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     needs:
       - build_frontend
       - build_backend
@@ -92,7 +92,7 @@ jobs:
             ghcr.io/${{ env.LOWCASE_REPO_NAME }}_backend:${{ env.TAG_NAME }}
             ghcr.io/${{ env.LOWCASE_REPO_NAME }}_backend:latest
   release:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     needs:
       - build_and_push_image
     steps:

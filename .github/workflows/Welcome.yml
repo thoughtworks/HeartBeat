@@ -8,7 +8,7 @@ on:
 
 jobs:
   welcome:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - name: Welcome Issue
         if: github.event_name == 'issues'

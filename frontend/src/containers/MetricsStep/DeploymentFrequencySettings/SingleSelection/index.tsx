@@ -1,6 +1,6 @@
 import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
 import { Autocomplete, Box, ListItemText, TextField } from '@mui/material';
-import { shouldRefreshData } from '@src/context/stepper/StepperSlice';
+import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import { EmojiWrap, StyledAvatar } from '@src/constants/emojis/style';
 import React, { useEffect, useState } from 'react';
 import { Z_INDEX } from '@src/constants/commons';
@@ -20,7 +20,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDat
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`;
   const [selectedOptions, setSelectedOptions] = useState(value);
   const [inputValue, setInputValue] = useState<string>(value);
-  const shouldRefresh = useAppSelector(shouldRefreshData);
+  const shouldLoad = useAppSelector(shouldMetricsLoad);
 
   const handleSelectedOptionsChange = (value: string) => {
     setSelectedOptions(value);
@@ -32,7 +32,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDat
   };
 
   useEffect(() => {
-    if (onGetSteps && !!selectedOptions && shouldRefresh) {
+    if (onGetSteps && !!selectedOptions && shouldLoad) {
       onGetSteps(selectedOptions);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

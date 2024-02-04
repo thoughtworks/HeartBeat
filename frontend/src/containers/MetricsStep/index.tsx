@@ -17,6 +17,7 @@ import { selectMetricsContent, updateMetricsState } from '@src/context/Metrics/m
 import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA } from '@src/constants/resources';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
+import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
@@ -48,6 +49,7 @@ const MetricsStep = () => {
     cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN &&
     cycleTimeSettings.filter((e) => e.value === DONE).length > 1;
   const { getBoardInfo, isLoading, errorMessage } = useGetBoardInfoEffect();
+  const shouldLoad = useAppSelector(shouldMetricsLoad);
 
   const getInfo = () => {
     getBoardInfo({
@@ -63,6 +65,7 @@ const MetricsStep = () => {
   };
 
   useLayoutEffect(() => {
+    if (!shouldLoad) return;
     dispatch(closeAllNotifications());
     getInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps

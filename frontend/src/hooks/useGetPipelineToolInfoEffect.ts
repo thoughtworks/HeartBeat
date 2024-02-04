@@ -7,7 +7,7 @@ import {
 } from '@src/context/config/configSlice';
 import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
-import { shouldRefreshData } from '@src/context/stepper/StepperSlice';
+import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 
@@ -31,7 +31,7 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
   const isProjectCreated = useAppSelector(selectIsProjectCreated);
   const restoredPipelineTool = useAppSelector(selectPipelineTool);
   const dateRange = useAppSelector(selectDateRange);
-  const shouldRefresh = useAppSelector(shouldRefreshData);
+  const shouldLoad = useAppSelector(shouldMetricsLoad);
 
   const getPipelineToolInfo = useCallback(async () => {
     const params = {
@@ -57,11 +57,11 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
   ]);
 
   useEffect(() => {
-    if (!apiTouchedRef.current && !isLoading && shouldRefresh) {
+    if (!apiTouchedRef.current && !isLoading && shouldLoad) {
       apiTouchedRef.current = true;
       getPipelineToolInfo();
     }
-  }, [getPipelineToolInfo, isLoading, shouldRefresh]);
+  }, [getPipelineToolInfo, isLoading, shouldLoad]);
 
   return {
     result: info,

@@ -24,6 +24,7 @@ import {
 import { saveCycleTimeSettings, saveDoneColumn, setCycleTimeSettingsType } from '@src/context/Metrics/metricsSlice';
 import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
+import { backStep, nextStep } from '@src/context/stepper/StepperSlice';
 import { CYCLE_TIME_SETTINGS_TYPES } from '@src/constants/resources';
 import userEvent from '@testing-library/user-event';
 import { HttpStatusCode } from 'axios';
@@ -257,6 +258,24 @@ describe('MetricsStep', () => {
       const { queryByText } = setup();
 
       expect(queryByText(REAL_DONE)).not.toBeInTheDocument();
+    });
+
+    it('should not call closeAllNotifications given back step and shouldRefreshData is false', async () => {
+      store.dispatch(backStep());
+      setup();
+
+      await waitFor(() => {
+        expect(closeAllNotifications).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should call closeAllNotifications given next step and shouldRefreshData is false', async () => {
+      store.dispatch(nextStep());
+      setup();
+
+      await waitFor(() => {
+        expect(closeAllNotifications).toHaveBeenCalled();
+      });
     });
 
     it('should be render no card container when get board card when no data', async () => {

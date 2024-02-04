@@ -52,6 +52,7 @@ public class ReportController {
 
 	@GetMapping("/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
+		log.info("Start to generate report_reportId: {}", reportId);
 		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId);
 		if (reportResponse.isAllMetricsCompleted()) {
 			log.info("Successfully generate Report_reportId: {}, reports: {}", reportId, reportResponse);
@@ -66,8 +67,10 @@ public class ReportController {
 			@Schema(type = "string", allowableValues = { "board", "dora" },
 					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable MetricType metricType,
 			@RequestBody GenerateReportRequest request) {
+		log.info("Start to generate report_metricType: {}", metricType);
 		reportService.generateReportByType(request, metricType);
 		String callbackUrl = "/reports/" + request.getCsvTimeStamp();
+		log.info("Successfully generate report_metricsType: {}", metricType);
 		return ResponseEntity.status(HttpStatus.ACCEPTED)
 			.body(CallbackResponse.builder().callbackUrl(callbackUrl).interval(interval).build());
 	}

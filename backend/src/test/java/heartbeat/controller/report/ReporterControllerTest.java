@@ -60,7 +60,7 @@ class ReporterControllerTest {
 	private final ObjectMapper mapper = new ObjectMapper();
 
 	@Test
-	void shouldReturnCreatedStatusWhenAllMetricsCompletedIsTrue() throws Exception {
+	void shouldReturnCreatedStatusWhenRequestToGenerateReportGivenAllMetricsCompletedIsTrue() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis());
 		ReportResponse expectedReportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
 		when(generateReporterService.getComposedReportResponse(reportId)).thenReturn(expectedReportResponse);
@@ -77,7 +77,7 @@ class ReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnOkStatusWhenAllMetricsCompletedIsFalse() throws Exception {
+	void shouldReturnOkStatusWhenRequestToGenerateReportAllMetricsCompletedIsFalse() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis());
 		ReportResponse reportResponse = ReportResponse.builder()
 			.boardMetricsCompleted(false)
@@ -95,7 +95,7 @@ class ReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturn500StatusWhenReportTimeIsExpired() throws Exception {
+	void shouldReturn500StatusWhenRequestGenerateReportGivenReportTimeIsExpired() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis() - EXPORT_CSV_VALIDITY_TIME - 200L);
 		doThrow(new GenerateReportException("Failed to get report due to report time expires"))
 			.when(generateReporterService)
@@ -127,7 +127,7 @@ class ReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnCallBackUrlWithAcceptedStatusAndInvokeGenerateReportByType() throws Exception {
+	void shouldReturnCallBackUrlWithAcceptedStatusAndInvokeWhenGenerateReportByType() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		GenerateReportRequest request = mapper.readValue(new File(REQUEST_FILE_PATH), GenerateReportRequest.class);
 

@@ -298,3 +298,8 @@ export const SOURCE_CONTROL_GET_INFO_ERROR_CASE_TEXT_MAPPING: Record<string, str
 };
 
 export const SOURCE_CONTROL_BRANCH_INVALID_TEXT = 'The codebase branch marked in red is invalid!';
+
+export const ALL_OPTION_META: Record<string, string> = {
+  label: 'All',
+  key: 'all',
+};

@@ -1,5 +1,5 @@
+import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
 import { act, render, waitFor, within, screen } from '@testing-library/react';
-import { TargetFieldType } from '@src/containers/MetricsStep/Classification';
 import { Classification } from '@src/containers/MetricsStep/Classification';
 import { saveTargetFields } from '@src/context/Metrics/metricsSlice';
 import { ERROR_MESSAGE_TIME_DURATION } from '../../fixtures';
@@ -14,6 +14,8 @@ const mockLabel = 'Distinguished by';
 const mockTargetFields = [
   { flag: true, key: 'issue', name: 'Issue' },
   { flag: false, key: 'type', name: 'Type' },
+  { flag: true, key: 'custom_field10060', name: 'Story testing' },
+  { flag: false, key: 'custom_field10061', name: 'Story testing' },
 ];
 
 jest.mock('@src/context/config/configSlice', () => ({
@@ -27,11 +29,11 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
 }));
 
 const RenderComponent = () => {
-  const targetFields = useSelector((state: State<TargetFieldType[]>) => state.metrics.targetFields);
+  const targetFields = useSelector((state: State<ITargetFieldType[]>) => state.metrics.targetFields);
   return <Classification title={mockTitle} label={mockLabel} targetFields={targetFields} />;
 };
 
-const setup = async (initField: TargetFieldType[]) => {
+const setup = async (initField: ITargetFieldType[]) => {
   const store = setupStore();
   await store.dispatch(saveTargetFields(initField));
   return render(
@@ -78,7 +80,32 @@ describe('Classification', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: names[0] })).toBeVisible();
     });
-    expect(screen.getByRole('button', { name: names[1] })).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: names[1] })).toBeVisible();
+    });
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: `${names[2]}-1` })).toBeVisible();
+    });
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: `${names[3]}-2` })).toBeVisible();
+    });
+  });
+
+  it('should hide all options when de-select option given options selected', async () => {
+    await setup(mockTargetFields);
+    const names = mockTargetFields.map((item) => item.name);
+    await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
+    await userEvent.click(screen.getByRole('option', { name: 'Issue' }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: names[0] })).not.toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('option', { name: 'Story testing-1' }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: names[2] })).not.toBeInTheDocument();
+    });
   });
 
   it('should show toggle show all options when toggle select all option', async () => {
@@ -91,7 +118,15 @@ describe('Classification', () => {
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: names[0] })).not.toBeInTheDocument();
     });
-    expect(screen.queryByRole('button', { name: names[1] })).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: names[1] })).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: `${names[2]}-1` })).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: `${names[3]}-2` })).not.toBeInTheDocument();
+    });
   });
 
   it('should show selected targetField when click selected field', async () => {
@@ -114,6 +149,14 @@ describe('Classification', () => {
     await setup(mockTargetFields);
 
     expect(screen.getByText('Test warning Message')).toBeVisible();
+  });
+
+  it('should add suffix when targetFields have duplicated names', async () => {
+    await setup(mockTargetFields);
+    await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
+
+    expect(screen.getByRole('option', { name: 'Story testing-1' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Story testing-2' })).toBeInTheDocument();
   });
 
   it('should show disable warning message when classification warning message has a value after two seconds in cycleTime component', async () => {

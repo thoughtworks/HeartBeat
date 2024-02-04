@@ -527,7 +527,7 @@ services:
 ```
 
 ### 7.1.2 Multiple instance deployment
-Specifically, if you want to run with multiple instances. You can do it as below.
+Specifically, if you want to run with multiple instances. You can do it with below docker compose file.
 
 You can change `deploy.replicas` to adjust the number of instances.
 ```yaml

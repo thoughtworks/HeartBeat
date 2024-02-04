@@ -66,6 +66,7 @@ public class MeanToRecoveryCalculator {
 		List<DeployInfo> sortedJobs = new ArrayList<>(deploy.getFailed());
 		sortedJobs.addAll(deploy.getPassed());
 		sortedJobs.sort(Comparator.comparing(DeployInfo::getPipelineCreateTime));
+		sortedJobs = sortedJobs.stream().filter(deployInfo -> !deployInfo.isPipelineCanceled()).toList();
 
 		long totalTimeToRecovery = 0;
 		long failedJobFinishedTime = 0;

@@ -43,6 +43,8 @@ public class BuildKiteService {
 
 	private static final List<String> permissions = List.of("read_builds", "read_organizations", "read_pipelines");
 
+	private static final String CANCELED_STATE = "canceled";
+
 	private final CachePageService cachePageService;
 
 	private final ThreadPoolTaskExecutor customTaskExecutor;
@@ -318,7 +320,7 @@ public class BuildKiteService {
 		}
 
 		return new DeployInfo(buildInfo.getPipelineCreateTime(), job.getStartedAt(), job.getFinishedAt(),
-				buildInfo.getCommit(), job.getState(), job.getName());
+				buildInfo.getCommit(), job.getState(), CANCELED_STATE.equals(buildInfo.getState()), job.getName());
 	}
 
 }

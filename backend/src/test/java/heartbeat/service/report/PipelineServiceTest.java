@@ -57,11 +57,11 @@ public class PipelineServiceTest {
 	@Captor
 	ArgumentCaptor<Map<String, String>> roadMapArgumentCaptor;
 
-	public String token = "startTime";
+	private final String MOCK_TOKEN = "mock-token";
 
-	public String startTime = "endTime";
+	private final String MOCK_START_TIME = "1661702400000";
 
-	public String endTime = "token";
+	private final String MOCK_END_TIME = "1662739199000";
 
 	@Nested
 	class FetchGithubData {
@@ -71,13 +71,13 @@ public class PipelineServiceTest {
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.buildKiteSetting(BuildKiteSetting.builder().deploymentEnvList(new ArrayList<>()).build())
 				.metrics(new ArrayList<>())
-				.codebaseSetting(CodebaseSetting.builder().token(token).build())
+				.codebaseSetting(CodebaseSetting.builder().token(MOCK_TOKEN).build())
 				.build();
 			FetchedData.BuildKiteData result = pipelineService.fetchGithubData(request);
 
 			assertEquals(0, result.getBuildInfosList().size());
 			verify(buildKiteService, never()).countDeployTimes(any(), any(), any(), any());
-			verify(gitHubService).fetchPipelinesLeadTime(List.of(), new HashMap<>(), token);
+			verify(gitHubService).fetchPipelinesLeadTime(List.of(), new HashMap<>(), MOCK_TOKEN);
 		}
 
 		@Test
@@ -100,17 +100,18 @@ public class PipelineServiceTest {
 					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build(),
 							DeploymentEnvironment.builder().id("env2").repository("repo2").build()))
 					.build())
-				.startTime(startTime)
-				.endTime(endTime)
-				.codebaseSetting(CodebaseSetting.builder().token(token).build())
+				.startTime(MOCK_START_TIME)
+				.endTime(MOCK_END_TIME)
+				.codebaseSetting(CodebaseSetting.builder().token(MOCK_TOKEN).build())
 				.metrics(new ArrayList<>())
 				.build();
 
-			when(buildKiteService.fetchPipelineBuilds(eq(token), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.fetchPipelineBuilds(eq(MOCK_TOKEN), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(fakeBuildKiteBuildInfos);
-			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(startTime), eq(endTime)))
+			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(MOCK_START_TIME),
+					eq(MOCK_END_TIME)))
 				.thenReturn(DeployTimes.builder().build());
-			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(token)))
+			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN)))
 				.thenReturn(List.of(PipelineLeadTime.builder().build()));
 
 			FetchedData.BuildKiteData result = pipelineService.fetchGithubData(request);
@@ -120,7 +121,7 @@ public class PipelineServiceTest {
 			assertEquals(2, result.getDeployTimesList().size());
 			verify(buildKiteService, times(2)).countDeployTimes(any(), any(), any(), any());
 			verify(buildKiteService, times(2)).countDeployTimes(any(), any(), any(), any());
-			verify(gitHubService, times(1)).fetchPipelinesLeadTime(any(), any(), eq(token));
+			verify(gitHubService, times(1)).fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN));
 		}
 
 		@Test
@@ -131,17 +132,18 @@ public class PipelineServiceTest {
 					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build(),
 							DeploymentEnvironment.builder().id("env1").repository("repo2").build()))
 					.build())
-				.startTime(startTime)
-				.endTime(endTime)
-				.codebaseSetting(CodebaseSetting.builder().token(token).build())
+				.startTime(MOCK_START_TIME)
+				.endTime(MOCK_END_TIME)
+				.codebaseSetting(CodebaseSetting.builder().token(MOCK_TOKEN).build())
 				.metrics(new ArrayList<>())
 				.build();
 
-			when(buildKiteService.fetchPipelineBuilds(eq(token), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.fetchPipelineBuilds(eq(MOCK_TOKEN), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(fakeBuildKiteBuildInfos);
-			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(startTime), eq(endTime)))
+			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(MOCK_START_TIME),
+					eq(MOCK_END_TIME)))
 				.thenReturn(DeployTimes.builder().build());
-			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(token)))
+			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN)))
 				.thenReturn(List.of(PipelineLeadTime.builder().build()));
 
 			pipelineService.fetchGithubData(request);
@@ -165,17 +167,18 @@ public class PipelineServiceTest {
 					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build()))
 					.pipelineCrews(List.of("test-author1"))
 					.build())
-				.startTime(startTime)
-				.endTime(endTime)
-				.codebaseSetting(CodebaseSetting.builder().token(token).build())
+				.startTime(MOCK_START_TIME)
+				.endTime(MOCK_END_TIME)
+				.codebaseSetting(CodebaseSetting.builder().token(MOCK_TOKEN).build())
 				.metrics(new ArrayList<>())
 				.build();
 
-			when(buildKiteService.fetchPipelineBuilds(eq(token), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.fetchPipelineBuilds(eq(MOCK_TOKEN), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(fakeBuildKiteBuildInfos);
-			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(startTime), eq(endTime)))
+			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(MOCK_START_TIME),
+					eq(MOCK_END_TIME)))
 				.thenReturn(DeployTimes.builder().build());
-			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(token)))
+			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN)))
 				.thenReturn(List.of(PipelineLeadTime.builder().build()));
 
 			FetchedData.BuildKiteData result = pipelineService.fetchGithubData(request);
@@ -186,7 +189,7 @@ public class PipelineServiceTest {
 			assertEquals(1, result.getDeployTimesList().size());
 			verify(buildKiteService, times(1)).fetchPipelineBuilds(any(), any(), any(), any());
 			verify(buildKiteService, times(1)).countDeployTimes(any(), any(), any(), any());
-			verify(gitHubService, times(1)).fetchPipelinesLeadTime(any(), any(), eq(token));
+			verify(gitHubService, times(1)).fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN));
 		}
 
 	}
@@ -215,18 +218,19 @@ public class PipelineServiceTest {
 				.build());
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.buildKiteSetting(BuildKiteSetting.builder()
-					.token(token)
+					.token(MOCK_TOKEN)
 					.pipelineCrews(List.of("someone"))
 					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build()))
 					.build())
 				.metrics(new ArrayList<>())
-				.startTime(startTime)
-				.endTime(endTime)
+				.startTime(MOCK_START_TIME)
+				.endTime(MOCK_END_TIME)
 				.build();
 
-			when(buildKiteService.fetchPipelineBuilds(eq(token), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.fetchPipelineBuilds(eq(MOCK_TOKEN), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(fakeBuildKiteBuildInfos);
-			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(startTime), eq(endTime)))
+			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(MOCK_START_TIME),
+					eq(MOCK_END_TIME)))
 				.thenReturn(DeployTimes.builder().build());
 
 			FetchedData.BuildKiteData result = pipelineService.fetchBuildKiteInfo(request);
@@ -252,14 +256,15 @@ public class PipelineServiceTest {
 					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build()))
 					.pipelineCrews(List.of("test-creator2", "test-creator3", "Unknown"))
 					.build())
-				.startTime(startTime)
-				.endTime(endTime)
-				.codebaseSetting(CodebaseSetting.builder().token(token).build())
+				.startTime(MOCK_START_TIME)
+				.endTime(MOCK_END_TIME)
+				.codebaseSetting(CodebaseSetting.builder().token(MOCK_TOKEN).build())
 				.metrics(new ArrayList<>())
 				.build();
 
 			when(buildKiteService.fetchPipelineBuilds(any(), any(), any(), any())).thenReturn(fakeBuildKiteBuildInfos);
-			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(startTime), eq(endTime)))
+			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(MOCK_START_TIME),
+					eq(MOCK_END_TIME)))
 				.thenReturn(DeployTimes.builder().build());
 
 			FetchedData.BuildKiteData result = pipelineService.fetchBuildKiteInfo(request);
@@ -279,8 +284,8 @@ public class PipelineServiceTest {
 		@Test
 		void shouldReturnEmptyWhenDeploymentEnvironmentsIsEmpty() {
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().build(), startTime, endTime, FetchedData.BuildKiteData.builder().build(),
-					Lists.list());
+					CodebaseSetting.builder().build(), MOCK_START_TIME, MOCK_END_TIME,
+					FetchedData.BuildKiteData.builder().build(), Lists.list());
 
 			assertEquals(0, result.size());
 			verify(buildKiteService, never()).getPipelineStepNames(any());
@@ -289,7 +294,7 @@ public class PipelineServiceTest {
 		@Test
 		void shouldReturnEmptyWhenNoBuildInfoFoundForDeploymentEnvironment() {
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().build(), startTime, endTime,
+					CodebaseSetting.builder().build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder().buildInfosList(List.of(Map.entry("env1", List.of()))).build(),
 					List.of(DeploymentEnvironment.builder().id("env1").build()));
 
@@ -303,7 +308,7 @@ public class PipelineServiceTest {
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of());
 
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().build(), startTime, endTime,
+					CodebaseSetting.builder().build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
 						.build(),
@@ -317,10 +322,11 @@ public class PipelineServiceTest {
 		void shouldReturnEmptyWhenBuildJobIsEmpty() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
-			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime))).thenReturn(null);
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
+				.thenReturn(null);
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().build(), startTime, endTime,
+					CodebaseSetting.builder().build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
 						.build(),
@@ -328,7 +334,8 @@ public class PipelineServiceTest {
 
 			assertEquals(0, result.size());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
-			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime));
+			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME),
+					eq(MOCK_END_TIME));
 		}
 
 		@Test
@@ -336,11 +343,11 @@ public class PipelineServiceTest {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().commit("").build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
-			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(BuildKiteJob.builder().build());
 
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().build(), startTime, endTime,
+					CodebaseSetting.builder().build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
 						.build(),
@@ -356,12 +363,13 @@ public class PipelineServiceTest {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().commit("commit").build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
-			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(BuildKiteJob.builder().build());
-			when(buildKiteService.mapToDeployInfo(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.mapToDeployInfo(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(DeployInfo.builder().jobName("test").build());
 
-			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(null, startTime, endTime,
+			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(null, MOCK_START_TIME,
+					MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
 						.build(),
@@ -378,13 +386,13 @@ public class PipelineServiceTest {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().commit("commit").build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
-			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(BuildKiteJob.builder().build());
-			when(buildKiteService.mapToDeployInfo(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.mapToDeployInfo(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(DeployInfo.builder().jobName("test").build());
 
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().build(), startTime, endTime,
+					CodebaseSetting.builder().build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
 						.build(),
@@ -401,13 +409,13 @@ public class PipelineServiceTest {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().commit("commit").build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
-			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(BuildKiteJob.builder().build());
-			when(buildKiteService.mapToDeployInfo(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.mapToDeployInfo(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(DeployInfo.builder().jobName("test").build());
 
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().token("token").build(), startTime, endTime,
+					CodebaseSetting.builder().token("token").build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
 						.build(),
@@ -425,14 +433,14 @@ public class PipelineServiceTest {
 			CommitInfo fakeCommitInfo = CommitInfo.builder().build();
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
-			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(BuildKiteJob.builder().build());
 			DeployInfo fakeDeploy = DeployInfo.builder().commitId("commitId").jobName("test").build();
 			when(buildKiteService.mapToDeployInfo(any(), any(), any(), any(), any())).thenReturn(fakeDeploy);
 			when(gitHubService.fetchCommitInfo(any(), any(), any())).thenReturn(fakeCommitInfo);
 
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().token("token").build(), startTime, endTime,
+					CodebaseSetting.builder().token("token").build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
 						.build(),
@@ -453,14 +461,14 @@ public class PipelineServiceTest {
 			CommitInfo fakeCommitInfo = CommitInfo.builder().build();
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
-			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(startTime), eq(endTime)))
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
 				.thenReturn(BuildKiteJob.builder().build());
 			DeployInfo fakeDeploy = DeployInfo.builder().commitId("commitId").jobName("test").build();
 			when(buildKiteService.mapToDeployInfo(any(), any(), any(), any(), any())).thenReturn(fakeDeploy);
 			when(gitHubService.fetchCommitInfo(any(), any(), any())).thenReturn(fakeCommitInfo);
 
 			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
-					CodebaseSetting.builder().token("token").build(), startTime, endTime,
+					CodebaseSetting.builder().token("token").build(), MOCK_START_TIME, MOCK_END_TIME,
 					FetchedData.BuildKiteData.builder()
 						.pipelineLeadTimes(List.of(PipelineLeadTime.builder()
 							.leadTimes(List.of(LeadTime.builder().commitId("commitId").build()))

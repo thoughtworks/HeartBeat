@@ -1,5 +1,6 @@
 package heartbeat.service.pipeline.buildkite;
 
+import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import heartbeat.exception.InternalServerErrorException;
@@ -78,9 +79,13 @@ class BuildKiteServiceTest {
 
 	private static final String FAILED_STATE = "failed";
 
+	private static final String CANCELED_STATE = "canceled";
+
 	private static final String MOCK_START_TIME = "1661702400000";
 
 	private static final String MOCK_END_TIME = "1662739199000";
+
+	private static final String MOCK_PIPELINE_CREATED_TIME = "1660702400000";
 
 	public static final List<String> PERMISSION_SCOPES = List.of("read_builds", "read_organizations", "read_pipelines");
 
@@ -532,6 +537,87 @@ class BuildKiteServiceTest {
 		assertThatThrownBy(() -> buildKiteService.getBuildKiteInfo(tokenParam))
 			.isInstanceOf(UnauthorizedException.class)
 			.hasMessageContaining(UNAUTHORIZED_MSG);
+	}
+
+	@Test
+	void shouldReturnEmptyDeployInfoWhenPipeLineCreatedTimeIsNull() {
+		BuildKiteBuildInfo buildKiteBuildInfo = BuildKiteBuildInfo.builder().jobs(List.of()).build();
+
+		DeployInfo deployInfoResult = buildKiteService.mapToDeployInfo(buildKiteBuildInfo, List.of(TEST_JOB_NAME),
+				List.of(PASSED_STATE), MOCK_START_TIME, MOCK_END_TIME);
+
+		assertThat(deployInfoResult).usingRecursiveComparison().isEqualTo(DeployInfo.builder().build());
+	}
+
+	@Test
+	void shouldReturnEmptyDeployInfoWhenJobIsNull() {
+		BuildKiteBuildInfo buildKiteBuildInfo = BuildKiteBuildInfo.builder()
+			.pipelineCreateTime(MOCK_PIPELINE_CREATED_TIME)
+			.jobs(List.of(BuildKiteJob.builder().name("fakeJobName").build()))
+			.build();
+
+		DeployInfo deployInfoResult = buildKiteService.mapToDeployInfo(buildKiteBuildInfo, List.of(TEST_JOB_NAME),
+				List.of(PASSED_STATE), MOCK_START_TIME, MOCK_END_TIME);
+
+		assertThat(deployInfoResult).usingRecursiveComparison().isEqualTo(DeployInfo.builder().build());
+	}
+
+	@Test
+	void shouldReturnCorrectDeployInfoWithIsPipelineCanceledFalseWhenGetStartedAtInJobIsNotNULLAndNotCanceledStateInBuildInfo() {
+		String jobStartTime = "2022-09-09T03:57:09.545Z";
+		String jobFinishTime = "2022-09-09T04:57:09.545Z";
+		BuildKiteBuildInfo buildKiteBuildInfo = BuildKiteBuildInfo.builder()
+			.pipelineCreateTime(MOCK_PIPELINE_CREATED_TIME)
+			.state(PASSED_STATE)
+			.jobs(List.of(BuildKiteJob.builder()
+				.name(TEST_JOB_NAME)
+				.startedAt(jobStartTime)
+				.finishedAt(jobFinishTime)
+				.state(PASSED_STATE)
+				.build()))
+			.build();
+		DeployInfo expectDeployInfo = DeployInfo.builder()
+			.pipelineCreateTime(MOCK_PIPELINE_CREATED_TIME)
+			.jobStartTime(jobStartTime)
+			.jobFinishTime(jobFinishTime)
+			.state(PASSED_STATE)
+			.isPipelineCanceled(false)
+			.jobName(TEST_JOB_NAME)
+			.build();
+
+		DeployInfo deployInfoResult = buildKiteService.mapToDeployInfo(buildKiteBuildInfo, List.of(TEST_JOB_NAME),
+				List.of(PASSED_STATE), MOCK_START_TIME, MOCK_END_TIME);
+
+		assertThat(deployInfoResult).usingRecursiveComparison().isEqualTo(expectDeployInfo);
+	}
+
+	@Test
+	void shouldReturnCorrectDeployInfoWithIsPipelineCanceledTrueWhenGetStartedAtInJobIsNotNULLAndCanceledStateInBuildInfo() {
+		String jobStartTime = "2022-09-09T03:57:09.545Z";
+		String jobFinishTime = "2022-09-09T04:57:09.545Z";
+		BuildKiteBuildInfo buildKiteBuildInfo = BuildKiteBuildInfo.builder()
+			.pipelineCreateTime(MOCK_PIPELINE_CREATED_TIME)
+			.state(CANCELED_STATE)
+			.jobs(List.of(BuildKiteJob.builder()
+				.name(TEST_JOB_NAME)
+				.startedAt(jobStartTime)
+				.finishedAt(jobFinishTime)
+				.state(PASSED_STATE)
+				.build()))
+			.build();
+		DeployInfo expectDeployInfo = DeployInfo.builder()
+			.pipelineCreateTime(MOCK_PIPELINE_CREATED_TIME)
+			.jobStartTime(jobStartTime)
+			.jobFinishTime(jobFinishTime)
+			.state(PASSED_STATE)
+			.isPipelineCanceled(true)
+			.jobName(TEST_JOB_NAME)
+			.build();
+
+		DeployInfo deployInfoResult = buildKiteService.mapToDeployInfo(buildKiteBuildInfo, List.of(TEST_JOB_NAME),
+				List.of(PASSED_STATE), MOCK_START_TIME, MOCK_END_TIME);
+
+		assertThat(deployInfoResult).usingRecursiveComparison().isEqualTo(expectDeployInfo);
 	}
 
 }

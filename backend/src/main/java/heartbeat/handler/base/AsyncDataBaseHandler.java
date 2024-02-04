@@ -28,6 +28,8 @@ public class AsyncDataBaseHandler {
 
 	public static final String SUFFIX_LOCK = ".lock";
 
+	public static final String FILENAME_SPLIT_PATTERN = "\\s*\\-|\\.\\s*";
+
 	protected synchronized void createFileByType(FIleType fIleType, String fileId, String json) {
 		createDirToConvertData(fIleType);
 		String fileName = OUTPUT_FILE_PATH + fIleType.getPath() + fileId;
@@ -157,7 +159,7 @@ public class AsyncDataBaseHandler {
 		if (!ObjectUtils.isEmpty(files)) {
 			for (File file : files) {
 				String fileName = file.getName();
-				String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
+				String[] splitResult = fileName.split(FILENAME_SPLIT_PATTERN);
 				String timeStamp = METRICS_DATA_COMPLETED == fIleType ? splitResult[0] : splitResult[1];
 				if (validateExpire(currentTimeStamp, Long.parseLong(timeStamp)) && !file.delete() && file.exists()) {
 					log.error("Failed to deleted expired fIleType: {} file, file name: {}", fIleType.getType(),

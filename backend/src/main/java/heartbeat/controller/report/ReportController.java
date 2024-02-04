@@ -52,10 +52,8 @@ public class ReportController {
 
 	@GetMapping("/{reportId}")
 	public ResponseEntity<ReportResponse> generateReport(@PathVariable String reportId) {
-		boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(reportId);
-		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId,
-				generateReportIsOver);
-		if (generateReportIsOver) {
+		ReportResponse reportResponse = generateReporterService.getComposedReportResponse(reportId);
+		if (reportResponse.isAllMetricsCompleted()) {
 			log.info("Successfully generate Report_reportId: {}, reports: {}", reportId, reportResponse);
 			generateReporterService.generateCSVForMetric(reportResponse, reportId);
 			return ResponseEntity.status(HttpStatus.CREATED).body(reportResponse);

@@ -1,17 +1,18 @@
 package heartbeat.handler;
 
 import com.google.gson.Gson;
+import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.handler.base.AsyncDataBaseHandler;
+import heartbeat.service.report.MetricsDataDTO;
+import heartbeat.util.ValueUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 import static heartbeat.handler.base.FIleType.METRICS_DATA_COMPLETED;
 
@@ -34,23 +35,35 @@ public class AsyncMetricsDataHandler extends AsyncDataBaseHandler {
 		return readFileByType(METRICS_DATA_COMPLETED, timeStamp, MetricsDataCompleted.class);
 	}
 
-	public boolean isReportReady(String timeStamp) {
-		MetricsDataCompleted metricsDataCompleted = getMetricsDataCompleted(timeStamp);
+	public void deleteExpireMetricsDataCompletedFile(long currentTimeStamp, File directory) {
+		deleteExpireFileByType(METRICS_DATA_COMPLETED, currentTimeStamp, directory);
+	}
+
+	@Synchronized
+	public void updateMetricsDataCompletedInHandler(String timeStamp, MetricType metricType) {
+		MetricsDataCompleted previousMetricsCompleted = getMetricsDataCompleted(timeStamp);
+		if (previousMetricsCompleted == null) {
+			log.error("Failed to update metrics data completed through this timestamp.");
+			throw new GenerateReportException("Failed to update metrics data completed through this timestamp.");
+		}
+		switch (metricType) {
+			case BOARD -> previousMetricsCompleted.setBoardMetricsCompleted(true);
+			case DORA -> previousMetricsCompleted.setDoraMetricsCompleted(true);
+			default -> {
+			}
+		}
+		putMetricsDataCompleted(timeStamp, previousMetricsCompleted);
+	}
+
+	public MetricsDataDTO getReportReadyStatusByTimeStamp(String reportTimeStamp) {
+		MetricsDataCompleted metricsDataCompleted = getMetricsDataCompleted(reportTimeStamp);
 		if (metricsDataCompleted == null) {
 			throw new GenerateReportException("Failed to locate the report using this report ID.");
 		}
-
-		List<Boolean> metricsReady = Stream
-			.of(metricsDataCompleted.boardMetricsCompleted(), metricsDataCompleted.pipelineMetricsCompleted(),
-					metricsDataCompleted.sourceControlMetricsCompleted())
-			.filter(Objects::nonNull)
-			.toList();
-
-		return metricsReady.stream().allMatch(Boolean::valueOf);
-	}
-
-	public void deleteExpireMetricsDataCompletedFile(long currentTimeStamp, File directory) {
-		deleteExpireFileByType(METRICS_DATA_COMPLETED, currentTimeStamp, directory);
+		boolean isBoardReady = ValueUtil.valueOrDefault(false, metricsDataCompleted.boardMetricsCompleted());
+		boolean isDoraReady = ValueUtil.valueOrDefault(false, metricsDataCompleted.doraMetricsCompleted());
+		boolean isReportReady = metricsDataCompleted.isAllMetricsCompleted();
+		return new MetricsDataDTO(isBoardReady, isDoraReady, isReportReady);
 	}
 
 }

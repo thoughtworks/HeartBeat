@@ -6,11 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.function.Function;
-
-import static heartbeat.util.ValueUtil.getValueOrNull;
-
-import static heartbeat.util.ValueUtil.getValueOrNull;
 
 @Data
 @Builder
@@ -36,13 +31,11 @@ public class ReportResponse {
 
 	private Long exportValidityTime;
 
-	private Boolean boardMetricsCompleted;
+	private boolean boardMetricsCompleted;
 
-	private Boolean pipelineMetricsCompleted;
+	private boolean doraMetricsCompleted;
 
-	private Boolean sourceControlMetricsCompleted;
-
-	private Boolean allMetricsCompleted;
+	private boolean allMetricsCompleted;
 
 	public ReportResponse(Long exportValidityTime) {
 		this.exportValidityTime = exportValidityTime;

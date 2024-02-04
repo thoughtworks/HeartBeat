@@ -6,6 +6,7 @@ import heartbeat.controller.report.dto.request.ReportType;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.NotFoundException;
 import heartbeat.handler.AsyncMetricsDataHandler;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -72,64 +73,139 @@ public class ReportServiceTest {
 		verify(csvFileGenerator, never()).getDataFromCSV(ReportType.METRIC, invalidTimestamp);
 	}
 
-	@Test
-	void generateBoardReportByTypeShouldCallGenerateBoardReport() throws InterruptedException {
-		GenerateReportRequest request = GenerateReportRequest.builder().metrics(new ArrayList<>()).build();
-		doAnswer(invocation -> null).when(generateReporterService).generateBoardReport(request);
+	@Nested
+	class GenerateReportByType {
 
-		reportService.generateReportByType(request, MetricType.BOARD);
-		Thread.sleep(100);
+		String timeStamp = "1683734399999";
 
-		verify(generateReporterService).generateBoardReport(request);
-		verify(generateReporterService, never()).generateDoraReport(request);
-	}
-
-	@Test
-	void generateDoraReportByTypeShouldCallGenerateDoraReport() throws InterruptedException {
-		GenerateReportRequest request = GenerateReportRequest.builder().metrics(new ArrayList<>()).build();
-		doAnswer(invocation -> null).when(generateReporterService).generateDoraReport(request);
-
-		reportService.generateReportByType(request, MetricType.DORA);
-		Thread.sleep(100);
-
-		verify(generateReporterService).generateDoraReport(request);
-		verify(generateReporterService, never()).generateBoardReport(request);
-	}
-
-	@Test
-	void ShouldInitializeMetricsDataCompletedInHandlerWithPreOneWhenPreOneExisted() throws InterruptedException {
-		GenerateReportRequest request = GenerateReportRequest.builder().metrics(new ArrayList<>()).build();
-		when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(MetricsDataCompleted.builder().build());
-		doAnswer(invocation -> null).when(generateReporterService).generateBoardReport(request);
-
-		reportService.generateReportByType(request, MetricType.BOARD);
-		Thread.sleep(100);
-
-		verify(generateReporterService).generateBoardReport(request);
-		verify(generateReporterService, never()).generateDoraReport(request);
-	}
-
-	@Test
-	void ShouldInitializeMetricsDataCompletedInHandlerWhenRequestMetricsExist() throws InterruptedException {
-		MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
-			.boardMetricsCompleted(false)
-			.pipelineMetricsCompleted(true)
-			.sourceControlMetricsCompleted(false)
-			.build();
 		GenerateReportRequest request = GenerateReportRequest.builder()
-			.csvTimeStamp("csvTimeStamp")
+			.csvTimeStamp(timeStamp)
+			.metrics(new ArrayList<>())
+			.build();
+
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
+			.boardMetricsCompleted(true)
+			.doraMetricsCompleted(true)
+			.build();
+
+		@Test
+		void shouldCallGenerateBoardReportWhenMetricTypeIsBoard() throws InterruptedException {
+			MetricsDataCompleted expected = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(false)
+				.doraMetricsCompleted(true)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp)).thenReturn(metricsDataCompleted);
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
+			doAnswer(invocation -> null).when(generateReporterService).generateBoardReport(request);
+
+			reportService.generateReportByType(request, MetricType.BOARD);
+			Thread.sleep(100);
+
+			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expected);
+			verify(generateReporterService).generateBoardReport(request);
+			verify(generateReporterService, never()).generateDoraReport(request);
+		}
+
+		@Test
+		void shouldCallGenerateDoraReportWhenMetricTypeIsDora() throws InterruptedException {
+			MetricsDataCompleted expected = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(true)
+				.doraMetricsCompleted(false)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp)).thenReturn(metricsDataCompleted);
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
+			doAnswer(invocation -> null).when(generateReporterService).generateDoraReport(request);
+
+			reportService.generateReportByType(request, MetricType.DORA);
+			Thread.sleep(100);
+
+			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expected);
+			verify(generateReporterService).generateDoraReport(request);
+			verify(generateReporterService, never()).generateBoardReport(request);
+		}
+
+	}
+
+	@Nested
+	class InitializeMetricsDataCompletedInHandler {
+
+		String timeStamp = "1683734399999";
+
+		GenerateReportRequest request = GenerateReportRequest.builder()
+			.csvTimeStamp(timeStamp)
 			.metrics(List.of(VELOCITY.getValue(), LEAD_TIME_FOR_CHANGES.getValue()))
 			.build();
-		when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
-			.thenReturn(MetricsDataCompleted.builder().pipelineMetricsCompleted(true).build());
-		doAnswer(invocation -> null).when(generateReporterService).generateBoardReport(request);
 
-		reportService.generateReportByType(request, MetricType.BOARD);
-		Thread.sleep(100);
+		@Test
+		void shouldInitializeBoardMetricsCompletedFalseWhenPreviousIsNull() {
+			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(false)
+				.doraMetricsCompleted(null)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(null);
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
 
-		verify(asyncMetricsDataHandler).putMetricsDataCompleted("csvTimeStamp", expectMetricsDataResult);
-		verify(generateReporterService).generateBoardReport(request);
-		verify(generateReporterService, never()).generateDoraReport(request);
+			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.BOARD);
+
+			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
+		}
+
+		@Test
+		void shouldInitializeDoraMetricsCompletedFalseWhenPreviousIsNull() {
+			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(null)
+				.doraMetricsCompleted(false)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(null);
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
+
+			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.DORA);
+
+			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
+		}
+
+		@Test
+		void shouldInitializeBoardMetricsCompletedFalseAndKeepPreviousDoraValueWhenPreviousIsNotNull() {
+			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(false)
+				.doraMetricsCompleted(true)
+				.build();
+			MetricsDataCompleted previousMetricsData = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(true)
+				.doraMetricsCompleted(true)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(previousMetricsData);
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
+
+			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.BOARD);
+
+			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
+		}
+
+		@Test
+		void shouldInitializeDoraMetricsCompletedFalseAndKeepPreviousBoardValueWhenPreviousIsNotNull() {
+			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(true)
+				.doraMetricsCompleted(false)
+				.build();
+			MetricsDataCompleted previousMetricsData = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(true)
+				.doraMetricsCompleted(true)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(previousMetricsData);
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
+
+			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.DORA);
+
+			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
+		}
+
 	}
 
 }

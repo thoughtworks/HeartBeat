@@ -212,6 +212,7 @@ group async process board related metrics
     Backend -> Backend: generate board report csv
     deactivate Backend
     note left
+        response.boardMetricsCompleted is true
         board metrics are ready for display
         board csv is ready for download
     end note
@@ -244,6 +245,7 @@ group async process pipeline and sourcecontrol related metrics
     end
     Backend -> Backend: generate pipeline report csv with github data if required
     note left
+        response.doraMetricsCompleted is true
         pipeline report is ready for download
     end note
     deactivate Backend
@@ -493,10 +495,9 @@ Response:
         "errorMessage": "string"
       },
     } <could be null if not required>,
-    "boardMetricsCompleted": Boolean <default is null>, 
-    "pipelineMetricsCompleted": Boolean <default is null>, 
-    "sourceControlMetricsCompleted": Boolean <default is null>,
-    "allMetricsCompleted": Boolean <default is null>,
+    "boardMetricsCompleted": boolean <default is false>, 
+    "doraMetricsCompleted": boolean <default is false>, 
+    "allMetricsCompleted": boolean <default is false>,
     "exportValidityTime": 0
 }
 ```

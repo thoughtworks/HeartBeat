@@ -24,9 +24,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 
+import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
@@ -57,12 +60,10 @@ class ReporterControllerTest {
 	private final ObjectMapper mapper = new ObjectMapper();
 
 	@Test
-	void shouldReturnCreatedStatusWhenCheckGenerateReportIsTrue() throws Exception {
+	void shouldReturnCreatedStatusWhenAllMetricsCompletedIsTrue() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis());
 		ReportResponse expectedReportResponse = mapper.readValue(new File(RESPONSE_FILE_PATH), ReportResponse.class);
-
-		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(true);
-		when(generateReporterService.getComposedReportResponse(reportId, true)).thenReturn(expectedReportResponse);
+		when(generateReporterService.getComposedReportResponse(reportId)).thenReturn(expectedReportResponse);
 
 		MockHttpServletResponse response = mockMvc
 			.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
@@ -76,36 +77,36 @@ class ReporterControllerTest {
 	}
 
 	@Test
-	void shouldReturnOkStatusWhenCheckGenerateReportIsFalse() throws Exception {
+	void shouldReturnOkStatusWhenAllMetricsCompletedIsFalse() throws Exception {
 		String reportId = Long.toString(System.currentTimeMillis());
 		ReportResponse reportResponse = ReportResponse.builder()
 			.boardMetricsCompleted(false)
 			.allMetricsCompleted(false)
 			.build();
 
-		when(generateReporterService.checkGenerateReportIsDone(reportId)).thenReturn(false);
-		when(generateReporterService.getComposedReportResponse(reportId, false)).thenReturn(reportResponse);
+		when(generateReporterService.getComposedReportResponse(reportId)).thenReturn(reportResponse);
 
 		mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.allMetricsCompleted").value(false))
 			.andReturn()
 			.getResponse();
+		verify(generateReporterService).getComposedReportResponse(any());
 	}
 
 	@Test
-	void shouldReturnInternalServerErrorStatusWhenCheckGenerateReportThrowException() throws Exception {
-		String reportId = Long.toString(System.currentTimeMillis());
-
-		when(generateReporterService.checkGenerateReportIsDone(reportId))
-			.thenThrow(new GenerateReportException("Report time expires"));
+	void shouldReturn500StatusWhenReportTimeIsExpired() throws Exception {
+		String reportId = Long.toString(System.currentTimeMillis() - EXPORT_CSV_VALIDITY_TIME - 200L);
+		doThrow(new GenerateReportException("Failed to get report due to report time expires"))
+			.when(generateReporterService)
+			.getComposedReportResponse(any());
 
 		mockMvc.perform(get("/reports/{reportId}", reportId).contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isInternalServerError())
-			.andExpect(jsonPath("$.message").value("Report time expires"))
-			.andExpect(jsonPath("$.hintInfo").value("Failed to generate report"))
+			.andExpect(jsonPath("$.message").value("Failed to get report due to report time expires"))
 			.andReturn()
 			.getResponse();
+		verify(generateReporterService).getComposedReportResponse(any());
 	}
 
 	@Test

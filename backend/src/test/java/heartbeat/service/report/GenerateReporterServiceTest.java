@@ -6,6 +6,8 @@ import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
+import heartbeat.controller.report.dto.request.MetricEnum;
+import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.response.ChangeFailureRate;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.CycleTime;
@@ -32,6 +34,8 @@ import heartbeat.service.report.calculator.LeadTimeForChangesCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.report.calculator.model.FetchedData;
+import heartbeat.util.ValueUtil;
+import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -60,7 +64,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -150,6 +156,8 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
 			generateReporterService.generateBoardReport(request);
 
 			verify(kanbanService, never()).fetchDataFromKanban(eq(request));
@@ -157,15 +165,12 @@ class GenerateReporterServiceTest {
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler).putReport(eq(request.getBoardReportId()),
 					responseArgumentCaptor.capture());
-
 			ReportResponse response = responseArgumentCaptor.getValue();
-
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertNull(response.getCycleTime());
 			assertNull(response.getVelocity());
 			assertNull(response.getClassificationList());
-
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
 		}
 
 		@Test
@@ -177,8 +182,14 @@ class GenerateReporterServiceTest {
 				.csvTimeStamp(TIMESTAMP)
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(null);
+			doAnswer(invocation -> null).when(asyncReportRequestHandler).putReport(any(), any());
+			doThrow(new GenerateReportException("Failed to update metrics data completed through this timestamp."))
+				.when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
+
 			generateReporterService.generateBoardReport(request);
 
+			verify(asyncExceptionHandler).remove(eq(request.getBoardReportId()));
 			verify(asyncExceptionHandler).put(eq(request.getBoardReportId()), exceptionCaptor.capture());
 			assertEquals("Failed to update metrics data completed through this timestamp.",
 					exceptionCaptor.getValue().getMessage());
@@ -187,12 +198,10 @@ class GenerateReporterServiceTest {
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler).putReport(eq(request.getBoardReportId()),
 					responseArgumentCaptor.capture());
-
 			ReportResponse response = responseArgumentCaptor.getValue();
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertNull(response.getCycleTime());
-
-			verify(asyncMetricsDataHandler, never()).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
 		}
 
 		@Test
@@ -205,6 +214,9 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
+
 			generateReporterService.generateBoardReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getBoardReportId()), exceptionCaptor.capture());
@@ -214,7 +226,8 @@ class GenerateReporterServiceTest {
 			verify(kanbanService, never()).fetchDataFromKanban(eq(request));
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler, never()).putReport(eq(request.getBoardReportId()), any());
-			verify(asyncMetricsDataHandler, never()).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler, never()).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()),
+					any());
 		}
 
 		@Test
@@ -228,11 +241,14 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
 			when(velocityCalculator.calculateVelocity(any()))
 				.thenReturn(Velocity.builder().velocityForSP(10).velocityForCards(20).build());
 			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
 				.realDoneCardCollection(CardCollection.builder().build())
 				.build());
+
 			generateReporterService.generateBoardReport(request);
 
 			verify(asyncExceptionHandler).remove(request.getBoardReportId());
@@ -241,14 +257,11 @@ class GenerateReporterServiceTest {
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler).putReport(eq(request.getBoardReportId()),
 					responseArgumentCaptor.capture());
-
 			ReportResponse response = responseArgumentCaptor.getValue();
-
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(10, response.getVelocity().getVelocityForSP());
 			assertEquals(20, response.getVelocity().getVelocityForCards());
-
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
 		}
 
 		@Test
@@ -262,6 +275,8 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().boardMetricsCompleted(true).build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
 			when(cycleTimeCalculator.calculateCycleTime(any(), any())).thenReturn(CycleTime.builder()
 				.averageCycleTimePerSP(10)
 				.totalTimeForCards(15)
@@ -270,6 +285,7 @@ class GenerateReporterServiceTest {
 			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
 				.realDoneCardCollection(CardCollection.builder().build())
 				.build());
+
 			generateReporterService.generateBoardReport(request);
 
 			verify(pipelineService, never()).fetchGithubData(any());
@@ -277,15 +293,12 @@ class GenerateReporterServiceTest {
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler).putReport(eq(request.getBoardReportId()),
 					responseArgumentCaptor.capture());
-
 			ReportResponse response = responseArgumentCaptor.getValue();
-
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(10, response.getCycleTime().getAverageCycleTimePerSP());
 			assertEquals(20, response.getCycleTime().getAverageCycleTimePerCard());
 			assertEquals(15, response.getCycleTime().getTotalTimeForCards());
-
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
 		}
 
 		@Test
@@ -299,11 +312,14 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
 			List<Classification> classifications = List.of(Classification.builder().build());
 			when(classificationCalculator.calculate(any(), any())).thenReturn(classifications);
 			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
 				.realDoneCardCollection(CardCollection.builder().build())
 				.build());
+
 			generateReporterService.generateBoardReport(request);
 
 			verify(pipelineService, never()).fetchGithubData(any());
@@ -311,13 +327,10 @@ class GenerateReporterServiceTest {
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler).putReport(eq(request.getBoardReportId()),
 					responseArgumentCaptor.capture());
-
 			ReportResponse response = responseArgumentCaptor.getValue();
-
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(classifications, response.getClassificationList());
-
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
 		}
 
 		@Test
@@ -332,11 +345,13 @@ class GenerateReporterServiceTest {
 			when(kanbanService.fetchDataFromKanban(request)).thenThrow(new NotFoundException(""));
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
 
 			generateReporterService.generateBoardReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getBoardReportId()), any());
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
 		}
 
 	}
@@ -354,9 +369,12 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
+
 			generateReporterService.generateDoraReport(request);
 
 			verify(asyncExceptionHandler).remove(request.getPipelineReportId());
@@ -375,9 +393,12 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
+
 			try {
 				generateReporterService.generateDoraReport(request);
 				fail();
@@ -402,9 +423,12 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
+
 			try {
 				generateReporterService.generateDoraReport(request);
 				fail();
@@ -433,6 +457,8 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -474,6 +500,8 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -484,7 +512,8 @@ class GenerateReporterServiceTest {
 			generateReporterService.generateDoraReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getPipelineReportId()), any());
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler, times(2)).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()),
+					any());
 		}
 
 		@Test
@@ -500,6 +529,8 @@ class GenerateReporterServiceTest {
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -513,12 +544,9 @@ class GenerateReporterServiceTest {
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler).putReport(eq(request.getSourceControlReportId()),
 					responseArgumentCaptor.capture());
-
 			ReportResponse response = responseArgumentCaptor.getValue();
-
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(fakeLeadTimeForChange, response.getLeadTimeForChanges());
-
 			verify(csvFileGenerator).convertPipelineDataToCSV(eq(pipelineCSVInfos), eq(request.getCsvTimeStamp()));
 		}
 
@@ -528,19 +556,22 @@ class GenerateReporterServiceTest {
 				.considerHoliday(false)
 				.startTime("10000")
 				.endTime("20000")
-				.metrics(List.of("lead time for changes", "change failure rate"))
+				.metrics(
+						List.of(MetricEnum.LEAD_TIME_FOR_CHANGES.getValue(), MetricEnum.CHANGE_FAILURE_RATE.getValue()))
 				.codebaseSetting(CodebaseSetting.builder().build())
 				.buildKiteSetting(BuildKiteSetting.builder().build())
 				.csvTimeStamp(TIMESTAMP)
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
-			when(pipelineService.fetchGithubData(request))
+			when(pipelineService.fetchGithubData(any()))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
-			when(pipelineService.fetchBuildKiteInfo(request))
+			when(pipelineService.fetchBuildKiteInfo(any()))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
 			LeadTimeForChanges fakeLeadTimeForChange = LeadTimeForChanges.builder().build();
 			when(leadTimeForChangesCalculator.calculate(any())).thenReturn(fakeLeadTimeForChange);
@@ -550,12 +581,9 @@ class GenerateReporterServiceTest {
 			verify(workDay, times(2)).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler).putReport(eq(request.getSourceControlReportId()),
 					responseArgumentCaptor.capture());
-
 			ReportResponse response = responseArgumentCaptor.getValue();
-
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(fakeLeadTimeForChange, response.getLeadTimeForChanges());
-
 			verify(csvFileGenerator).convertPipelineDataToCSV(eq(pipelineCSVInfos), eq(request.getCsvTimeStamp()));
 		}
 
@@ -565,24 +593,27 @@ class GenerateReporterServiceTest {
 				.considerHoliday(false)
 				.startTime("10000")
 				.endTime("20000")
-				.metrics(List.of("lead time for changes"))
+				.metrics(List.of(MetricEnum.LEAD_TIME_FOR_CHANGES.getValue()))
 				.codebaseSetting(CodebaseSetting.builder().build())
 				.buildKiteSetting(BuildKiteSetting.builder().build())
 				.csvTimeStamp(TIMESTAMP)
 				.build();
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
 			when(pipelineService.fetchGithubData(request)).thenReturn(
 					FetchedData.BuildKiteData.builder().pipelineLeadTimes(List.of()).buildInfosList(List.of()).build());
-			when(leadTimeForChangesCalculator.calculate(any())).thenThrow(new NotFoundException(""));
+			doThrow(new NotFoundException("")).when(leadTimeForChangesCalculator).calculate(any());
 
 			generateReporterService.generateDoraReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getSourceControlReportId()), any());
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler, times(2)).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()),
+					any());
 		}
 
 	}
@@ -601,12 +632,12 @@ class GenerateReporterServiceTest {
 	}
 
 	@Nested
-	class CheckGenerateReportIsDone {
+	class CheckReportReadyStatus {
 
 		@Test
-		void shouldThrowErrorWhenTimestampIsInvalid() {
+		void shouldThrowErrorWhenTimeStampIsInvalid() {
 			try {
-				generateReporterService.checkGenerateReportIsDone(
+				generateReporterService.checkReportReadyStatus(
 						String.valueOf(System.currentTimeMillis() - EXPORT_CSV_VALIDITY_TIME - 200));
 				fail();
 			}
@@ -619,9 +650,12 @@ class GenerateReporterServiceTest {
 		@Test
 		void shouldReturnMetricStatus() {
 			String timeStamp = String.valueOf(System.currentTimeMillis() - EXPORT_CSV_VALIDITY_TIME + 200);
-			when(asyncMetricsDataHandler.isReportReady(timeStamp)).thenReturn(true);
+			MetricsDataDTO metricsDataDTO = new MetricsDataDTO(true, true, true);
+			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(timeStamp)).thenReturn(metricsDataDTO);
 
-			assertTrue(generateReporterService.checkGenerateReportIsDone(timeStamp));
+			MetricsDataDTO readyStatus = generateReporterService.checkReportReadyStatus(timeStamp);
+
+			assertEquals(metricsDataDTO, readyStatus);
 		}
 
 	}
@@ -629,105 +663,49 @@ class GenerateReporterServiceTest {
 	@Nested
 	class GetComposedReportResponse {
 
+		String reportId = String.valueOf(System.currentTimeMillis() - EXPORT_CSV_VALIDITY_TIME + 200);
+
+		MetricsDataDTO metricsDataDTO = new MetricsDataDTO(false, true, false);
+
 		@Test
 		void shouldGetDataFromCache() {
-			String reportId = "reportId";
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId))
-				.thenReturn(MetricsDataCompleted.builder().build());
+			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
+				.thenReturn(metricsDataDTO);
 			when(asyncExceptionHandler.get(any())).thenReturn(null);
 
-			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, true);
+			ReportResponse res = generateReporterService.getComposedReportResponse(reportId);
 
 			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
-			assertEquals(true, res.getAllMetricsCompleted());
-			assertNull(res.getReportMetricsError().getBoardMetricsError());
-		}
-
-		@Test
-		void shouldReturnCompletedFalseGivenResponseNullMetricsDataCompletedFalseWhenGetDataFromCache() {
-			String reportId = "reportId";
-			when(asyncReportRequestHandler.getReport(any())).thenReturn(null);
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId)).thenReturn(MetricsDataCompleted.builder()
-				.boardMetricsCompleted(false)
-				.pipelineMetricsCompleted(false)
-				.sourceControlMetricsCompleted(false)
-				.build());
-			when(asyncExceptionHandler.get(any())).thenReturn(null);
-
-			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, false);
-
-			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
-			assertEquals(false, res.getAllMetricsCompleted());
-			assertEquals(false, res.getBoardMetricsCompleted());
-			assertEquals(false, res.getPipelineMetricsCompleted());
-			assertEquals(false, res.getSourceControlMetricsCompleted());
-			assertNull(res.getReportMetricsError().getBoardMetricsError());
-		}
-
-		@Test
-		void shouldReturnCompletedTrueGivenResponseNonNullMetricsDataCompletedFalseWhenGetDataFromCache() {
-			String reportId = "reportId";
-			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId)).thenReturn(MetricsDataCompleted.builder()
-				.boardMetricsCompleted(false)
-				.pipelineMetricsCompleted(false)
-				.sourceControlMetricsCompleted(false)
-				.build());
-			when(asyncExceptionHandler.get(any())).thenReturn(null);
-
-			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, true);
-
-			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
-			assertEquals(true, res.getAllMetricsCompleted());
-			assertEquals(true, res.getBoardMetricsCompleted());
-			assertEquals(true, res.getPipelineMetricsCompleted());
-			assertEquals(true, res.getSourceControlMetricsCompleted());
-			assertNull(res.getReportMetricsError().getBoardMetricsError());
-		}
-
-		@Test
-		void shouldReturnMetricsCompletedStatusIsNullWhenAsyncMetricsStatusIsNull() {
-			String reportId = "reportId";
-			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId)).thenReturn(null);
-			when(asyncExceptionHandler.get(any())).thenReturn(null);
-
-			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, false);
-
-			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
-			assertEquals(false, res.getAllMetricsCompleted());
-			assertNull(res.getBoardMetricsCompleted());
-			assertNull(res.getPipelineMetricsCompleted());
-			assertNull(res.getSourceControlMetricsCompleted());
+			assertEquals(false, res.isBoardMetricsCompleted());
+			assertEquals(true, res.isDoraMetricsCompleted());
+			assertEquals(false, res.isAllMetricsCompleted());
 			assertNull(res.getReportMetricsError().getBoardMetricsError());
 		}
 
 		@Test
 		void shouldReturnErrorDataWhenExceptionIs404Or403Or401() {
-			String reportId = "reportId";
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId))
-				.thenReturn(MetricsDataCompleted.builder().build());
+			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
+				.thenReturn(metricsDataDTO);
 			when(asyncExceptionHandler.get(any())).thenReturn(new NotFoundException("error"));
 
-			ReportResponse res = generateReporterService.getComposedReportResponse(reportId, true);
+			ReportResponse res = generateReporterService.getComposedReportResponse(reportId);
 
 			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
-			assertEquals(true, res.getAllMetricsCompleted());
+			assertEquals(false, res.isAllMetricsCompleted());
 			assertEquals(404, res.getReportMetricsError().getBoardMetricsError().getStatus());
 		}
 
 		@Test
 		void shouldThrowGenerateReportExceptionWhenErrorIs500() {
-			String reportId = "reportId";
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId))
-				.thenReturn(MetricsDataCompleted.builder().build());
+			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
+				.thenReturn(metricsDataDTO);
 			when(asyncExceptionHandler.get(any())).thenReturn(new GenerateReportException("errorMessage"));
 
 			try {
-				generateReporterService.getComposedReportResponse(reportId, true);
+				generateReporterService.getComposedReportResponse(reportId);
 				fail();
 			}
 			catch (BaseException e) {
@@ -738,14 +716,13 @@ class GenerateReporterServiceTest {
 
 		@Test
 		void shouldThrowServiceUnavailableExceptionWhenErrorIs503() {
-			String reportId = "reportId";
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId))
-				.thenReturn(MetricsDataCompleted.builder().build());
+			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
+				.thenReturn(metricsDataDTO);
 			when(asyncExceptionHandler.get(any())).thenReturn(new ServiceUnavailableException("errorMessage"));
 
 			try {
-				generateReporterService.getComposedReportResponse(reportId, true);
+				generateReporterService.getComposedReportResponse(reportId);
 				fail();
 			}
 			catch (BaseException e) {
@@ -756,14 +733,13 @@ class GenerateReporterServiceTest {
 
 		@Test
 		void shouldThrowRequestFailedExceptionWhenErrorIsDefault() {
-			String reportId = "reportId";
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(reportId))
-				.thenReturn(MetricsDataCompleted.builder().build());
+			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
+				.thenReturn(metricsDataDTO);
 			when(asyncExceptionHandler.get(any())).thenReturn(new BadRequestException("error"));
 
 			try {
-				generateReporterService.getComposedReportResponse(reportId, true);
+				generateReporterService.getComposedReportResponse(reportId);
 				fail();
 			}
 			catch (BaseException e) {
@@ -833,40 +809,6 @@ class GenerateReporterServiceTest {
 			Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
 
 			assertTrue(deleteStatus);
-		}
-
-		@Test
-		void shouldReturnTrueWhenReportIsReady() {
-
-			String fileTimeStamp = Long.toString(System.currentTimeMillis());
-
-			when(asyncMetricsDataHandler.isReportReady(fileTimeStamp)).thenReturn(true);
-			boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
-
-			assertTrue(generateReportIsOver);
-		}
-
-		@Test
-		void shouldReturnFalseWhenReportIsNotReady() {
-
-			String fileTimeStamp = Long.toString(System.currentTimeMillis());
-			asyncReportRequestHandler.putReport("111111111", MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE());
-
-			boolean generateReportIsOver = generateReporterService.checkGenerateReportIsDone(fileTimeStamp);
-
-			assertFalse(generateReportIsOver);
-
-		}
-
-		@Test
-		void shouldThrowExceptionWhenTimeOutOf30m() {
-			String fileExpiredTimeStamp = Long.toString(System.currentTimeMillis() - 1900000L);
-
-			var generateReportException = assertThrows(GenerateReportException.class,
-					() -> generateReporterService.checkGenerateReportIsDone(fileExpiredTimeStamp));
-
-			assertEquals(500, generateReportException.getStatus());
-			assertEquals("Failed to get report due to report time expires", generateReportException.getMessage());
 		}
 
 		@Test

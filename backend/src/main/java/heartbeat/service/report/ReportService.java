@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
-import static heartbeat.util.ValueUtil.valueOrDefault;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public class ReportService {
 	}
 
 	public void generateReportByType(GenerateReportRequest request, MetricType metricType) {
-		initializeMetricsDataCompletedInHandler(request);
+		initializeMetricsDataCompletedInHandler(request.getCsvTimeStamp(), metricType);
 		CompletableFuture.runAsync(() -> {
 			switch (metricType) {
 				case BOARD -> generateReporterService.generateBoardReport(request);
@@ -49,33 +48,34 @@ public class ReportService {
 		});
 	}
 
-	private MetricsDataCompleted createMetricsDataCompleted(MetricsDataCompleted metricProcess,
+	private MetricsDataCompleted getInitializedData(MetricType metricType,
 			MetricsDataCompleted previousMetricsCompleted) {
-		return previousMetricsCompleted == null
-				? MetricsDataCompleted.builder()
-					.boardMetricsCompleted(metricProcess.boardMetricsCompleted())
-					.pipelineMetricsCompleted(metricProcess.pipelineMetricsCompleted())
-					.sourceControlMetricsCompleted(metricProcess.sourceControlMetricsCompleted())
-					.build()
-				: MetricsDataCompleted.builder()
-					.boardMetricsCompleted(valueOrDefault(previousMetricsCompleted.boardMetricsCompleted(),
-							metricProcess.boardMetricsCompleted()))
-					.pipelineMetricsCompleted(valueOrDefault(previousMetricsCompleted.pipelineMetricsCompleted(),
-							metricProcess.pipelineMetricsCompleted()))
-					.sourceControlMetricsCompleted(
-							valueOrDefault(previousMetricsCompleted.sourceControlMetricsCompleted(),
-									metricProcess.sourceControlMetricsCompleted()))
-					.build();
-
+		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().build();
+		if (previousMetricsCompleted == null) {
+			if (metricType == MetricType.BOARD) {
+				metricsDataCompleted.setBoardMetricsCompleted(false);
+			}
+			else {
+				metricsDataCompleted.setDoraMetricsCompleted(false);
+			}
+		}
+		else {
+			if (metricType == MetricType.BOARD) {
+				metricsDataCompleted.setBoardMetricsCompleted(false);
+				metricsDataCompleted.setDoraMetricsCompleted(previousMetricsCompleted.doraMetricsCompleted());
+			}
+			else {
+				metricsDataCompleted.setDoraMetricsCompleted(false);
+				metricsDataCompleted.setBoardMetricsCompleted(previousMetricsCompleted.boardMetricsCompleted());
+			}
+		}
+		return metricsDataCompleted;
 	}
 
-	private void initializeMetricsDataCompletedInHandler(GenerateReportRequest request) {
-		MetricsDataCompleted metricsStatus = request.getMetricsStatus(Boolean.FALSE);
-		String timeStamp = request.getCsvTimeStamp();
+	public void initializeMetricsDataCompletedInHandler(String timeStamp, MetricType metricType) {
 		MetricsDataCompleted previousMetricsCompleted = asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp);
-		MetricsDataCompleted isMetricsDataCompleted = createMetricsDataCompleted(metricsStatus,
-				previousMetricsCompleted);
-		asyncMetricsDataHandler.putMetricsDataCompleted(timeStamp, isMetricsDataCompleted);
+		MetricsDataCompleted initializedData = getInitializedData(metricType, previousMetricsCompleted);
+		asyncMetricsDataHandler.putMetricsDataCompleted(timeStamp, initializedData);
 	}
 
 }

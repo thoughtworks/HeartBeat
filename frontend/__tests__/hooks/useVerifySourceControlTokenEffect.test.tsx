@@ -40,7 +40,7 @@ describe('use verify sourceControl token', () => {
     await waitFor(() => {
       expect(result.current.isLoading).toEqual(false);
     });
-    await waitFor(() => expect(result.current.errorMessage).toBeUndefined());
+    await waitFor(() => expect(result.current.verifiedError).toBeUndefined());
   });
 
   it('should set error message when get verify sourceControl response status 401', async () => {
@@ -58,7 +58,7 @@ describe('use verify sourceControl token', () => {
       expect(result.current.isLoading).toEqual(false);
     });
     await waitFor(() => {
-      expect(result.current.errorMessage).toEqual(MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT);
+      expect(result.current.verifiedError).toEqual(MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT);
     });
   });
 
@@ -70,10 +70,10 @@ describe('use verify sourceControl token', () => {
     const { result } = setup();
 
     await act(() => result.current.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS));
-    await act(() => result.current.clearErrorMessage());
+    await act(() => result.current.clearVerifiedError());
 
     await waitFor(() => {
-      expect(result.current.errorMessage).toEqual('');
+      expect(result.current.verifiedError).toEqual('');
     });
   });
 });

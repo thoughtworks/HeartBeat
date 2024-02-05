@@ -2,7 +2,7 @@ import { ReportDataWithThreeColumns, ReportDataWithTwoColumns } from '@src/hooks
 
 export const PROJECT_NAME = 'Heartbeat';
 
-export const DEFAULT_HELPER_TEXT = ' ';
+export const DEFAULT_HELPER_TEXT = '';
 
 export const FIVE_HUNDRED = 500;
 

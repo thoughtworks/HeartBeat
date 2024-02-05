@@ -1,4 +1,4 @@
-import { GITHUB_TOKEN } from '../fixtures/fixtures';
+import { GITHUB_TOKEN, PIPELINE_TOKEN } from '../fixtures/fixtures';
 import metricsPage from '../pages/metrics/metrics';
 import { Metrics } from '../pages/metrics/metrics';
 import configPage from '../pages/metrics/config';
@@ -56,8 +56,8 @@ const textInputValues = [
 
 const tokenInputValues = [
   { index: 0, value: 'mockToken' },
-  { index: 1, value: 'mockToken' },
-  { index: 2, value: `${GITHUB_TOKEN}` },
+  { index: 1, value: PIPELINE_TOKEN },
+  { index: 2, value: GITHUB_TOKEN },
 ];
 
 const checkFieldsExist = (fields: string[]) => {
@@ -137,6 +137,7 @@ describe('Import project from file', () => {
     checkInputValue('.MuiInput-input', 'ConfigFileForImporting');
 
     cy.waitForNetworkIdle('@api', 2000);
+    configPage.pipelineToolTokenInput.type(PIPELINE_TOKEN);
     configPage.verifyAndClickNextToMetrics();
 
     configPage.goMetricsStep();
@@ -181,6 +182,7 @@ describe('Import project from file', () => {
     checkInputValue('.MuiInput-input', 'ConfigFileForImporting');
 
     cy.waitForNetworkIdle('@api', 2000);
+    configPage.pipelineToolTokenInput.type(PIPELINE_TOKEN);
     configPage.verifyAndClickNextToMetrics();
 
     configPage.goMetricsStep();

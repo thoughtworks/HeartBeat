@@ -29,7 +29,7 @@ describe('use verify pipelineTool state', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.errorMessage).toEqual('');
+      expect(result.current.verifiedError).toEqual('');
       expect(result.current.isLoading).toEqual(false);
     });
   });
@@ -43,7 +43,7 @@ describe('use verify pipelineTool state', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.errorMessage).toEqual(`Token is incorrect!`);
+      expect(result.current.verifiedError).toEqual(`Token is incorrect!`);
     });
   });
 
@@ -56,15 +56,15 @@ describe('use verify pipelineTool state', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.errorMessage).toEqual(
+      expect(result.current.verifiedError).toEqual(
         'Forbidden request, please change your token with correct access permission.',
       );
     });
 
-    result.current.clearErrorMessage();
+    result.current.clearVerifiedError();
 
     await waitFor(() => {
-      expect(result.current.errorMessage).toEqual('');
+      expect(result.current.verifiedError).toEqual('');
     });
   });
 });

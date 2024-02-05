@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 export const useVerifyPipelineToolEffect = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [verifiedError, setVerifiedError] = useState('');
   const dispatch = useAppDispatch();
 
   const verifyPipelineTool = async (params: IPipelineVerifyRequestDTO): Promise<void> => {
@@ -18,19 +18,19 @@ export const useVerifyPipelineToolEffect = () => {
       dispatch(updatePipelineToolVerifyState(true));
       dispatch(initDeploymentFrequencySettings());
     } else {
-      setErrorMessage(response.errorTitle);
+      setVerifiedError(response.errorTitle);
     }
     setIsLoading(false);
   };
 
-  const clearErrorMessage = () => {
-    if (errorMessage) setErrorMessage('');
+  const clearVerifiedError = () => {
+    if (verifiedError) setVerifiedError('');
   };
 
   return {
     verifyPipelineTool,
     isLoading,
-    errorMessage,
-    clearErrorMessage,
+    verifiedError,
+    clearVerifiedError,
   };
 };

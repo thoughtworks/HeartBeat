@@ -22,7 +22,7 @@
   "pipeline": "mockToken",
   "pipelineTool": {
     "type": "BuildKite",
-    "token": "mockToken"
+    "token": ""
   },
   "sourceControl": {
     "type": "GitHub",

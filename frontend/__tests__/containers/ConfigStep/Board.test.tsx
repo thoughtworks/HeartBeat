@@ -81,7 +81,7 @@ describe('Board', () => {
 
   it('should show detail options when click board field', async () => {
     setup();
-    await userEvent.click(screen.getByRole('button', { name: /board jira/i }));
+    await userEvent.click(screen.getByRole('button', { name: CONFIG_TITLE.BOARD }));
     const listBox = within(screen.getByRole('listbox'));
     const options = listBox.getAllByRole('option');
     const optionValue = options.map((li) => li.getAttribute('data-value'));
@@ -91,7 +91,7 @@ describe('Board', () => {
 
   it('should show board type when select board field value ', async () => {
     setup();
-    await userEvent.click(screen.getByRole('button', { name: /board jira/i }));
+    await userEvent.click(screen.getByRole('button', { name: CONFIG_TITLE.BOARD }));
 
     await waitFor(() => {
       expect(screen.getByRole('option', { name: /jira/i })).toBeInTheDocument();
@@ -163,7 +163,7 @@ describe('Board', () => {
     await userEvent.click(screen.getByRole('option', { name: /jira/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /board jira/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: CONFIG_TITLE.BOARD })).toBeInTheDocument();
     });
   });
 
@@ -203,7 +203,7 @@ describe('Board', () => {
     });
   });
 
-  it('should check error notification show and disappear when board verify response status is 401', async () => {
+  it('should show error message when board verify response status is 401', async () => {
     server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))));
     setup();
     await fillBoardFieldsInformation();
@@ -211,7 +211,9 @@ describe('Board', () => {
     await userEvent.click(screen.getByRole('button', { name: /verify/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/email is incorrect/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Token is invalid, please change your token with correct access permission!/i),
+      ).toBeInTheDocument();
     });
   });
 });

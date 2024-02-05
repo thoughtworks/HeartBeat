@@ -1,5 +1,5 @@
+import { GITHUB_TOKEN, PIPELINE_TOKEN } from '../fixtures/fixtures';
 import { TIPS } from '../../src/constants/resources';
-import { GITHUB_TOKEN } from '../fixtures/fixtures';
 import metricsPage from '../pages/metrics/metrics';
 import configPage from '../pages/metrics/config';
 import reportPage from '../pages/metrics/report';
@@ -40,8 +40,8 @@ const textInputValues = [
 
 const tokenInputValues = [
   { index: 0, value: 'mockToken' },
-  { index: 1, value: 'mock1234'.repeat(5) },
-  { index: 2, value: `${GITHUB_TOKEN}` },
+  { index: 1, value: PIPELINE_TOKEN },
+  { index: 2, value: GITHUB_TOKEN },
 ];
 
 const checkCycleTimeTooltip = () => {
@@ -121,9 +121,9 @@ describe('Create a new project', () => {
     configPage.getVerifiedButton(configPage.boardConfigSection).should('be.disabled');
     configPage.getResetButton(configPage.boardConfigSection).should('be.enabled');
 
-    configPage.fillPipelineToolFieldsInfoAndVerify('mock1234'.repeat(5));
+    configPage.fillPipelineToolFieldsInfoAndVerify(PIPELINE_TOKEN);
 
-    configPage.fillSourceControlFieldsInfoAndVerify(`${GITHUB_TOKEN}`);
+    configPage.fillSourceControlFieldsInfoAndVerify(GITHUB_TOKEN);
 
     configPage.nextStepButton.should('be.enabled');
 

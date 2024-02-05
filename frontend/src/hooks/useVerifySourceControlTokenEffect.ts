@@ -8,7 +8,7 @@ import { HttpStatusCode } from 'axios';
 export const useVerifySourceControlTokenEffect = () => {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
+  const [verifiedError, setVerifiedError] = useState<string>();
 
   const verifyToken = async (params: SourceControlVerifyRequestDTO) => {
     setIsLoading(true);
@@ -17,20 +17,20 @@ export const useVerifySourceControlTokenEffect = () => {
       dispatch(updateSourceControlVerifyState(true));
     } else {
       dispatch(updateSourceControlVerifyState(false));
-      setErrorMessage(response.errorTitle);
+      setVerifiedError(response.errorTitle);
     }
     setIsLoading(false);
     return response;
   };
 
-  const clearErrorMessage = useCallback(() => {
-    setErrorMessage('');
+  const clearVerifiedError = useCallback(() => {
+    setVerifiedError('');
   }, []);
 
   return {
     verifyToken,
     isLoading,
-    errorMessage,
-    clearErrorMessage,
+    verifiedError,
+    clearVerifiedError,
   };
 };

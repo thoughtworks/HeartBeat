@@ -1,5 +1,5 @@
 import {
-  saveCycleTimeSettings,
+  updateCycleTimeSettings,
   saveDoneColumn,
   selectMetricsContent,
   setCycleTimeSettingsType,
@@ -323,7 +323,7 @@ describe('CycleTime', () => {
     expect(mockedUseAppDispatch).toHaveBeenCalledTimes(3);
     expect(mockedUseAppDispatch).toHaveBeenCalledWith(setCycleTimeSettingsType(CYCLE_TIME_SETTINGS_TYPES.BY_STATUS));
     expect(mockedUseAppDispatch).toHaveBeenCalledWith(
-      saveCycleTimeSettings(
+      updateCycleTimeSettings(
         cycleTimeSettings.map((item) => ({
           ...item,
           value: METRICS_CONSTANTS.cycleTimeEmptyStr,

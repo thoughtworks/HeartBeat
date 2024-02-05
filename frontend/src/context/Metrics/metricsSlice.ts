@@ -204,7 +204,7 @@ export const metricsSlice = createSlice({
     savePipelineCrews: (state, action) => {
       state.pipelineCrews = action.payload;
     },
-    saveCycleTimeSettings: (state, action) => {
+    updateCycleTimeSettings: (state, action) => {
       state.cycleTimeSettings = action.payload;
     },
     setCycleTimeSettingsType: (state, action) => {
@@ -457,7 +457,7 @@ export const {
   saveDoneColumn,
   saveUsers,
   savePipelineCrews,
-  saveCycleTimeSettings,
+  updateCycleTimeSettings,
   addADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
   deleteADeploymentFrequencySetting,

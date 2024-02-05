@@ -1,4 +1,4 @@
-import { saveCycleTimeSettings } from '@src/context/Metrics/metricsSlice';
+import { updateCycleTimeSettings } from '@src/context/Metrics/metricsSlice';
 import { act, render, waitFor, within } from '@testing-library/react';
 import { RealDone } from '@src/containers/MetricsStep/RealDone';
 import { ERROR_MESSAGE_TIME_DURATION } from '../../fixtures';
@@ -110,7 +110,7 @@ describe('RealDone', () => {
 
     it('should show doing when choose Testing column is Done', async () => {
       await store.dispatch(
-        saveCycleTimeSettings([
+        updateCycleTimeSettings([
           { column: 'Done', status: 'DONE', value: 'Done' },
           { column: 'Done', status: 'CANCELLED', value: 'Done' },
         ]),

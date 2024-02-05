@@ -2,7 +2,7 @@ import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   initDeploymentFrequencySettings,
-  saveCycleTimeSettings,
+  updateCycleTimeSettings,
   saveDoneColumn,
   saveTargetFields,
   saveUsers,
@@ -164,7 +164,7 @@ describe('saveMetricsSetting reducer', () => {
     };
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
-      saveCycleTimeSettings({
+      updateCycleTimeSettings({
         cycleTimeSettings: mockSavedCycleTimeSettings.cycleTimeSettings,
       }),
     );

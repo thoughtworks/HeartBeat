@@ -21,6 +21,13 @@ import {
   TIPS,
 } from '@src/constants/resources';
 import {
+  ICycleTimeSetting,
+  updateCycleTimeSettings,
+  savedMetricsSettingState,
+  selectCycleTimeSettings,
+  selectMetricsContent,
+} from '@src/context/Metrics/metricsSlice';
+import {
   BackButton,
   ButtonContainer,
   MetricsStepperContent,
@@ -30,7 +37,6 @@ import {
   StyledStepLabel,
   StyledStepper,
 } from './style';
-import { ICycleTimeSetting, savedMetricsSettingState, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
@@ -61,6 +67,7 @@ const MetricsStepper = () => {
   const requiredData = useAppSelector(selectMetrics);
   const config = useAppSelector(selectConfig);
   const metricsConfig = useAppSelector(selectMetricsContent);
+  const cycleTimeSettings = useAppSelector(selectCycleTimeSettings);
   const [isDisableNextButton, setIsDisableNextButton] = useState(true);
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext();
   const formMeta = useAppSelector(getFormMeta);
@@ -70,7 +77,7 @@ const MetricsStepper = () => {
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool;
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl;
   const isShowCycleTimeSettings = requiredData.includes(REQUIRED_DATA.CYCLE_TIME);
-  const isCycleTimeSettingsVerified = metricsConfig.cycleTimeSettings.some((e) => e.value === DONE);
+  const isCycleTimeSettingsVerified = cycleTimeSettings.some((e) => e.value === DONE);
   const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
   const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag);
   const { metrics, projectName, dateRange } = config.basic;
@@ -254,6 +261,7 @@ const MetricsStepper = () => {
         branches: [],
       }));
       dispatch(updatePipelineList(initPipelineSteps));
+      dispatch(updateCycleTimeSettings([]));
     }
   };
 

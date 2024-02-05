@@ -6,7 +6,7 @@ import {
   METRICS_CYCLE_SETTING_TABLE_HEADER_BY_STATUS,
 } from '@src/constants/resources';
 import {
-  saveCycleTimeSettings,
+  updateCycleTimeSettings,
   saveDoneColumn,
   selectMetricsContent,
   setCycleTimeSettingsType,
@@ -55,7 +55,7 @@ const CycleTimeTable = () => {
           : item,
       );
       isColumnAsKey && resetRealDoneColumn(name, value);
-      dispatch(saveCycleTimeSettings(newCycleTimeSettings));
+      dispatch(updateCycleTimeSettings(newCycleTimeSettings));
     },
     [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
   );
@@ -79,7 +79,7 @@ const CycleTimeTable = () => {
   const handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setCycleTimeSettingsType(event.target.value));
     dispatch(
-      saveCycleTimeSettings(
+      updateCycleTimeSettings(
         cycleTimeSettings.map((item) => ({
           ...item,
           value: METRICS_CONSTANTS.cycleTimeEmptyStr,

@@ -1,11 +1,9 @@
 import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
 import { Autocomplete, Box, ListItemText, TextField } from '@mui/material';
-import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import { EmojiWrap, StyledAvatar } from '@src/constants/emojis/style';
-import React, { useEffect, useState } from 'react';
 import { Z_INDEX } from '@src/constants/commons';
 import { FormControlWrapper } from './style';
-import { useAppSelector } from '@src/hooks';
+import React, { useState } from 'react';
 
 interface Props {
   options: string[];
@@ -18,25 +16,15 @@ interface Props {
 
 export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDatePipeline }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`;
-  const [selectedOptions, setSelectedOptions] = useState(value);
   const [inputValue, setInputValue] = useState<string>(value);
-  const shouldLoad = useAppSelector(shouldMetricsLoad);
 
   const handleSelectedOptionsChange = (value: string) => {
-    setSelectedOptions(value);
     if (onGetSteps) {
       onUpDatePipeline(id, 'Step', '');
       onGetSteps(value);
     }
     onUpDatePipeline(id, label, value);
   };
-
-  useEffect(() => {
-    if (onGetSteps && !!selectedOptions && shouldLoad) {
-      onGetSteps(selectedOptions);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const emojiView = (pipelineStepName: string) => {
     const emojiUrls: string[] = getEmojiUrls(pipelineStepName);

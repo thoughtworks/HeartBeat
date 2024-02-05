@@ -17,11 +17,12 @@ import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMes
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
 import { ErrorNotification } from '@src/components/ErrorNotification';
+import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
+import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { MESSAGE } from '@src/constants/resources';
 import { Loading } from '@src/components/Loading';
-import { useAppDispatch } from '@src/hooks';
+import { useEffect, useState } from 'react';
 import { store } from '@src/store';
-import { useState } from 'react';
 
 interface pipelineMetricSelectionProps {
   type: string;
@@ -32,6 +33,7 @@ interface pipelineMetricSelectionProps {
     step: string;
     branches: string[];
   };
+  isInfoLoading: boolean;
   isShowRemoveButton: boolean;
   onRemovePipeline: (id: number) => void;
   onUpdatePipeline: (id: number, label: string, value: string | StringConstructor[] | unknown) => void;
@@ -45,6 +47,7 @@ export const PipelineMetricSelection = ({
   onRemovePipeline,
   onUpdatePipeline,
   isDuplicated,
+  isInfoLoading,
 }: pipelineMetricSelectionProps) => {
   const { id, organization, pipelineName, step } = pipelineSetting;
   const dispatch = useAppDispatch();
@@ -56,10 +59,16 @@ export const PipelineMetricSelection = ({
   const pipelineNameWarningMessage = selectPipelineNameWarningMessage(store.getState(), id);
   const stepWarningMessage = selectStepWarningMessage(store.getState(), id);
   const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false);
+  const shouldLoad = useAppSelector(shouldMetricsLoad);
 
   const handleRemoveClick = () => {
     onRemovePipeline(id);
   };
+
+  useEffect(() => {
+    !isInfoLoading && shouldLoad && handleGetPipelineData(pipelineName);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldLoad, pipelineName, isInfoLoading]);
 
   const handleGetPipelineData = (_pipelineName: string) => {
     const { params, buildId, organizationId, pipelineType, token } = selectStepsParams(

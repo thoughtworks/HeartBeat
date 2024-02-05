@@ -49,6 +49,7 @@ export const DeploymentFrequencySettings = () => {
           <MetricsSettingTitle title={'Pipeline settings'} />
           {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
             <PipelineMetricSelection
+              isInfoLoading={isLoading}
               key={deploymentFrequencySetting.id}
               type={PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE}
               pipelineSetting={deploymentFrequencySetting}

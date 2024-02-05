@@ -5,7 +5,6 @@ import '@fontsource/roboto';
 
 declare module '@mui/material/styles' {
   interface Theme extends ThemeOptions {}
-
   // allow configuration using `createTheme`
   interface ThemeOptions {
     main: {

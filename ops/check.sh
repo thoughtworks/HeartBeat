@@ -46,7 +46,7 @@ backend_license_check() {
 
 frontend_license_check() {
   cd frontend
-  npm install
+  npm install --force
   npm run license-compliance
 }
 

@@ -199,21 +199,15 @@ jobs:
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
   frontend-license-check:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ vars.NODE_VERSION }}
-      - name: Install
-        run: |
-          npm install
       - name: License compliance check
         run: |
-          npm run license-compliance
+          ./ops/check.sh frontend-license
 
   #  check-buildkite-status:
   #    if: ${{ github.event_name == 'pull_request' }}

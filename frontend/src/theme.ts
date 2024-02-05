@@ -4,55 +4,7 @@ import { indigo } from '@mui/material/colors';
 import '@fontsource/roboto';
 
 declare module '@mui/material/styles' {
-  interface Theme {
-    main: {
-      backgroundColor: string;
-      color: string;
-      secondColor: string;
-      fontSize: string;
-      boxShadow: string;
-      cardShadow: string;
-      cardBorder: string;
-      font: {
-        primary: string;
-        secondary: string;
-      };
-      button: {
-        disabled: {
-          backgroundColor: string;
-          color: string;
-        };
-      };
-      errorMessage: {
-        color: string;
-      };
-      alert: {
-        title: {
-          color: string;
-        };
-        error: {
-          iconColor: string;
-          backgroundColor: string;
-          borderColor: string;
-        };
-        success: {
-          iconColor: string;
-          backgroundColor: string;
-          borderColor: string;
-        };
-        warning: {
-          iconColor: string;
-          backgroundColor: string;
-          borderColor: string;
-        };
-        info: {
-          iconColor: string;
-          backgroundColor: string;
-          borderColor: string;
-        };
-      };
-    };
-  }
+  interface Theme extends ThemeOptions {}
 
   // allow configuration using `createTheme`
   interface ThemeOptions {

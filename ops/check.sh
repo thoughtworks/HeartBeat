@@ -75,6 +75,7 @@ px_check() {
     --exclude='*.png' \
     --exclude='*.yaml' \
     --exclude-dir='node_modules' \
+    --exclude-dir='coverage' \
     '[0-9]\+px' \
     ./ || true)
   if [ -n "$result" ]; then

@@ -170,7 +170,7 @@ class GenerateReporterServiceTest {
 			assertNull(response.getCycleTime());
 			assertNull(response.getVelocity());
 			assertNull(response.getClassificationList());
-			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
 		}
 
 		@Test
@@ -185,7 +185,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncReportRequestHandler).putReport(any(), any());
 			doThrow(new GenerateReportException("Failed to update metrics data completed through this timestamp."))
 				.when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
+				.updateMetricsDataCompletedInHandler(request.getBoardReportId(), MetricType.BOARD);
 
 			generateReporterService.generateBoardReport(request);
 
@@ -201,7 +201,7 @@ class GenerateReporterServiceTest {
 			ReportResponse response = responseArgumentCaptor.getValue();
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertNull(response.getCycleTime());
-			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
 		}
 
 		@Test
@@ -226,7 +226,7 @@ class GenerateReporterServiceTest {
 			verify(kanbanService, never()).fetchDataFromKanban(eq(request));
 			verify(workDay).changeConsiderHolidayMode(false);
 			verify(asyncReportRequestHandler, never()).putReport(eq(request.getBoardReportId()), any());
-			verify(asyncMetricsDataHandler, never()).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()),
+			verify(asyncMetricsDataHandler, never()).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()),
 					any());
 		}
 
@@ -261,7 +261,7 @@ class GenerateReporterServiceTest {
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(10, response.getVelocity().getVelocityForSP());
 			assertEquals(20, response.getVelocity().getVelocityForCards());
-			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
 		}
 
 		@Test
@@ -298,7 +298,7 @@ class GenerateReporterServiceTest {
 			assertEquals(10, response.getCycleTime().getAverageCycleTimePerSP());
 			assertEquals(20, response.getCycleTime().getAverageCycleTimePerCard());
 			assertEquals(15, response.getCycleTime().getTotalTimeForCards());
-			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
 		}
 
 		@Test
@@ -330,7 +330,7 @@ class GenerateReporterServiceTest {
 			ReportResponse response = responseArgumentCaptor.getValue();
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(classifications, response.getClassificationList());
-			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
 		}
 
 		@Test
@@ -351,7 +351,7 @@ class GenerateReporterServiceTest {
 			generateReporterService.generateBoardReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getBoardReportId()), any());
-			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()), any());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
 		}
 
 	}
@@ -512,7 +512,7 @@ class GenerateReporterServiceTest {
 			generateReporterService.generateDoraReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getPipelineReportId()), any());
-			verify(asyncMetricsDataHandler, times(2)).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()),
+			verify(asyncMetricsDataHandler, times(2)).updateMetricsDataCompletedInHandler(eq(request.getDoraReportId()),
 					any());
 		}
 
@@ -612,7 +612,7 @@ class GenerateReporterServiceTest {
 			generateReporterService.generateDoraReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getSourceControlReportId()), any());
-			verify(asyncMetricsDataHandler, times(2)).updateMetricsDataCompletedInHandler(eq(request.getCsvTimeStamp()),
+			verify(asyncMetricsDataHandler, times(2)).updateMetricsDataCompletedInHandler(eq(request.getDoraReportId()),
 					any());
 		}
 

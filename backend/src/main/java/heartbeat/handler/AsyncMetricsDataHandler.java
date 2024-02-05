@@ -6,13 +6,17 @@ import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.handler.base.AsyncDataBaseHandler;
 import heartbeat.service.report.MetricsDataDTO;
+import heartbeat.util.IdUtil;
 import heartbeat.util.ValueUtil;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static heartbeat.handler.base.FIleType.METRICS_DATA_COMPLETED;
 
@@ -40,8 +44,8 @@ public class AsyncMetricsDataHandler extends AsyncDataBaseHandler {
 	}
 
 	@Synchronized
-	public void updateMetricsDataCompletedInHandler(String timeStamp, MetricType metricType) {
-		MetricsDataCompleted previousMetricsCompleted = getMetricsDataCompleted(timeStamp);
+	public void updateMetricsDataCompletedInHandler(String metricDataFileId, MetricType metricType) {
+		MetricsDataCompleted previousMetricsCompleted = getMetricsDataCompleted(metricDataFileId);
 		if (previousMetricsCompleted == null) {
 			log.error("Failed to update metrics data completed through this timestamp.");
 			throw new GenerateReportException("Failed to update metrics data completed through this timestamp.");
@@ -52,18 +56,34 @@ public class AsyncMetricsDataHandler extends AsyncDataBaseHandler {
 			default -> {
 			}
 		}
-		putMetricsDataCompleted(timeStamp, previousMetricsCompleted);
+		putMetricsDataCompleted(metricDataFileId, previousMetricsCompleted);
 	}
 
-	public MetricsDataDTO getReportReadyStatusByTimeStamp(String reportTimeStamp) {
-		MetricsDataCompleted metricsDataCompleted = getMetricsDataCompleted(reportTimeStamp);
-		if (metricsDataCompleted == null) {
-			throw new GenerateReportException("Failed to locate the report using this report ID.");
-		}
-		boolean isBoardReady = ValueUtil.valueOrDefault(false, metricsDataCompleted.boardMetricsCompleted());
-		boolean isDoraReady = ValueUtil.valueOrDefault(false, metricsDataCompleted.doraMetricsCompleted());
-		boolean isReportReady = metricsDataCompleted.isAllMetricsCompleted();
+	public MetricsDataDTO getReportReadyStatusByTimeStamp(String timeStamp) {
+		Boolean boardReadyStatus = getReadyStatus(IdUtil.getBoardReportId(timeStamp), MetricType.BOARD);
+		boolean isBoardReady = ValueUtil.valueOrDefault(false, boardReadyStatus);
+
+		Boolean doraReadyStatus = getReadyStatus(IdUtil.getDoraReportId(timeStamp), MetricType.DORA);
+		boolean isDoraReady = ValueUtil.valueOrDefault(false, doraReadyStatus);
+
+		boolean isReportReady = Stream.of(boardReadyStatus, doraReadyStatus)
+			.filter(Objects::nonNull)
+			.allMatch(Boolean::booleanValue);
 		return new MetricsDataDTO(isBoardReady, isDoraReady, isReportReady);
+	}
+
+	@Nullable
+	private Boolean getReadyStatus(String fileId, MetricType metricType) {
+		MetricsDataCompleted metricsDataCompleted = getMetricsDataCompleted(fileId);
+		if (metricsDataCompleted == null) {
+			return null;
+		}
+		else if (metricType == MetricType.BOARD) {
+			return metricsDataCompleted.boardMetricsCompleted();
+		}
+		else {
+			return metricsDataCompleted.doraMetricsCompleted();
+		}
 	}
 
 }

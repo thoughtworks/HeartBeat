@@ -83,45 +83,30 @@ public class ReportServiceTest {
 			.metrics(new ArrayList<>())
 			.build();
 
-		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
-			.boardMetricsCompleted(true)
-			.doraMetricsCompleted(true)
-			.build();
-
 		@Test
 		void shouldCallGenerateBoardReportWhenMetricTypeIsBoard() throws InterruptedException {
-			MetricsDataCompleted expected = MetricsDataCompleted.builder()
-				.boardMetricsCompleted(false)
-				.doraMetricsCompleted(true)
-				.build();
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp)).thenReturn(metricsDataCompleted);
+			MetricsDataCompleted expected = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
 			doAnswer(invocation -> null).when(generateReporterService).generateBoardReport(request);
 
 			reportService.generateReportByType(request, MetricType.BOARD);
 			Thread.sleep(100);
 
-			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expected);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(request.getBoardReportId(), expected);
 			verify(generateReporterService).generateBoardReport(request);
 			verify(generateReporterService, never()).generateDoraReport(request);
 		}
 
 		@Test
 		void shouldCallGenerateDoraReportWhenMetricTypeIsDora() throws InterruptedException {
-			MetricsDataCompleted expected = MetricsDataCompleted.builder()
-				.boardMetricsCompleted(true)
-				.doraMetricsCompleted(false)
-				.build();
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp)).thenReturn(metricsDataCompleted);
+			MetricsDataCompleted expected = MetricsDataCompleted.builder().doraMetricsCompleted(false).build();
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
 			doAnswer(invocation -> null).when(generateReporterService).generateDoraReport(request);
 
 			reportService.generateReportByType(request, MetricType.DORA);
 			Thread.sleep(100);
 
-			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expected);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(request.getDoraReportId(), expected);
 			verify(generateReporterService).generateDoraReport(request);
 			verify(generateReporterService, never()).generateBoardReport(request);
 		}
@@ -142,68 +127,25 @@ public class ReportServiceTest {
 		void shouldInitializeBoardMetricsCompletedFalseWhenPreviousIsNull() {
 			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
 				.boardMetricsCompleted(false)
-				.doraMetricsCompleted(null)
 				.build();
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(null);
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
 
 			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.BOARD);
 
-			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(request.getBoardReportId(),
+					expectMetricsDataResult);
 		}
 
 		@Test
 		void shouldInitializeDoraMetricsCompletedFalseWhenPreviousIsNull() {
 			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
-				.boardMetricsCompleted(null)
 				.doraMetricsCompleted(false)
 				.build();
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(null);
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
 
 			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.DORA);
 
-			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
-		}
-
-		@Test
-		void shouldInitializeBoardMetricsCompletedFalseAndKeepPreviousDoraValueWhenPreviousIsNotNull() {
-			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
-				.boardMetricsCompleted(false)
-				.doraMetricsCompleted(true)
-				.build();
-			MetricsDataCompleted previousMetricsData = MetricsDataCompleted.builder()
-				.boardMetricsCompleted(true)
-				.doraMetricsCompleted(true)
-				.build();
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(previousMetricsData);
-			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
-
-			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.BOARD);
-
-			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
-		}
-
-		@Test
-		void shouldInitializeDoraMetricsCompletedFalseAndKeepPreviousBoardValueWhenPreviousIsNotNull() {
-			MetricsDataCompleted expectMetricsDataResult = MetricsDataCompleted.builder()
-				.boardMetricsCompleted(true)
-				.doraMetricsCompleted(false)
-				.build();
-			MetricsDataCompleted previousMetricsData = MetricsDataCompleted.builder()
-				.boardMetricsCompleted(true)
-				.doraMetricsCompleted(true)
-				.build();
-			when(asyncMetricsDataHandler.getMetricsDataCompleted(any())).thenReturn(previousMetricsData);
-			doAnswer(invocation -> null).when(asyncMetricsDataHandler).putMetricsDataCompleted(any(), any());
-
-			reportService.initializeMetricsDataCompletedInHandler(timeStamp, MetricType.DORA);
-
-			verify(asyncMetricsDataHandler).getMetricsDataCompleted(timeStamp);
-			verify(asyncMetricsDataHandler).putMetricsDataCompleted(timeStamp, expectMetricsDataResult);
+			verify(asyncMetricsDataHandler).putMetricsDataCompleted(request.getDoraReportId(), expectMetricsDataResult);
 		}
 
 	}

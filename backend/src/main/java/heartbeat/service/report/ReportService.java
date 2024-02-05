@@ -6,6 +6,7 @@ import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.NotFoundException;
 import heartbeat.handler.AsyncMetricsDataHandler;
+import heartbeat.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
@@ -48,34 +49,15 @@ public class ReportService {
 		});
 	}
 
-	private MetricsDataCompleted getInitializedData(MetricType metricType,
-			MetricsDataCompleted previousMetricsCompleted) {
-		MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder().build();
-		if (previousMetricsCompleted == null) {
-			if (metricType == MetricType.BOARD) {
-				metricsDataCompleted.setBoardMetricsCompleted(false);
-			}
-			else {
-				metricsDataCompleted.setDoraMetricsCompleted(false);
-			}
+	public void initializeMetricsDataCompletedInHandler(String timeStamp, MetricType metricType) {
+		if (metricType == MetricType.BOARD) {
+			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getBoardReportId(timeStamp),
+					MetricsDataCompleted.builder().boardMetricsCompleted(false).build());
 		}
 		else {
-			if (metricType == MetricType.BOARD) {
-				metricsDataCompleted.setBoardMetricsCompleted(false);
-				metricsDataCompleted.setDoraMetricsCompleted(previousMetricsCompleted.doraMetricsCompleted());
-			}
-			else {
-				metricsDataCompleted.setDoraMetricsCompleted(false);
-				metricsDataCompleted.setBoardMetricsCompleted(previousMetricsCompleted.boardMetricsCompleted());
-			}
+			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getDoraReportId(timeStamp),
+					MetricsDataCompleted.builder().doraMetricsCompleted(false).build());
 		}
-		return metricsDataCompleted;
-	}
-
-	public void initializeMetricsDataCompletedInHandler(String timeStamp, MetricType metricType) {
-		MetricsDataCompleted previousMetricsCompleted = asyncMetricsDataHandler.getMetricsDataCompleted(timeStamp);
-		MetricsDataCompleted initializedData = getInitializedData(metricType, previousMetricsCompleted);
-		asyncMetricsDataHandler.putMetricsDataCompleted(timeStamp, initializedData);
 	}
 
 }

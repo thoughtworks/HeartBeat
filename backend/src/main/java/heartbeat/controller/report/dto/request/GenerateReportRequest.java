@@ -73,6 +73,11 @@ public class GenerateReportRequest {
 	}
 
 	@JsonIgnore
+	public String getDoraReportId() {
+		return IdUtil.getDoraReportId(this.csvTimeStamp);
+	}
+
+	@JsonIgnore
 	public GenerateReportRequest toPipelineRequest() {
 		return GenerateReportRequest.builder()
 			.startTime(this.startTime)

@@ -74,6 +74,9 @@ declare module '@mui/material/styles' {
           color: string;
         };
       };
+      loading: {
+        backgroundColor: string;
+      };
       errorMessage: {
         color: string;
       };
@@ -155,6 +158,9 @@ export const theme = createTheme({
     },
     errorMessage: {
       color: '#A2A2A2',
+    },
+    loading: {
+      backgroundColor: 'rgba(199,199,199,0.43)',
     },
     alert: {
       title: {

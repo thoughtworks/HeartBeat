@@ -126,42 +126,18 @@ jobs:
           retention-days: ${{ vars.RETENTION_DAYS }}
   deny-dot-star-check:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
     steps:
       - uses: actions/checkout@v4
       - name: Java .*; check
         shell: bash {0}
-        run: |
-          local result
-          result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' '\.\*;' ./ || true)
-          if [ -n "$result" ]; then
-            echo "Error: Found files with [0-9]+px pattern:"
-            echo "$result"
-            exit 1
-          else
-            echo "No matching files found."
-          fi
+        run: ./ops/check.sh dot-star
   deny-px-check:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
       - name: CSS unit `px` check
         shell: bash {0}
-        run: |
-          result=$(grep -rin --exclude='*.svg' --exclude='*.png' --exclude='*.yaml' --exclude-dir='node_modules' "[0-9]\+px" ./)
-
-          if [ -n "$result" ]; then
-            echo "Error: Found files with [0-9]+px pattern:"
-            echo "$result"
-            exit 1
-          else
-            echo "No matching files found."
-          fi
+        run: ./ops/check.sh px
   deny-css-hex-check:
     runs-on: ubuntu-latest
     steps:

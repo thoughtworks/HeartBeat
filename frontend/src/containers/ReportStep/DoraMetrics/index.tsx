@@ -1,6 +1,7 @@
 import {
   CALENDAR,
   DORA_METRICS,
+  DORA_METRICS_MAPPING,
   METRICS_SUBTITLE,
   METRICS_TITLE,
   REPORT_PAGE,
@@ -50,6 +51,10 @@ const DoraMetrics = ({
   const { metrics, calendarType } = configData.basic;
   const { pipelineCrews, deploymentFrequencySettings, leadTimeForChanges } = useAppSelector(selectMetricsContent);
   const shouldShowSourceControl = metrics.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES);
+  const doraMetricsCompleted = metrics
+    .filter((metric) => DORA_METRICS.includes(metric))
+    .map((metric) => DORA_METRICS_MAPPING[metric])
+    .every((metric) => doraReport?.[metric] ?? false);
 
   const getDoraReportRequestBody = (): ReportRequestDTO => {
     const doraMetrics = metrics.filter((metric) => DORA_METRICS.includes(metric));
@@ -207,7 +212,7 @@ const DoraMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          {!hasDoraError && !errorMessage && doraReport?.doraMetricsCompleted && (
+          {!hasDoraError && !errorMessage && doraMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
           {shouldShowRetry() && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}

@@ -1,12 +1,6 @@
 import {
-  StyledLoading,
-  StyledMetricsSection,
-  StyledRetry,
-  StyledShowMore,
-  StyledTitleWrapper,
-} from '@src/containers/ReportStep/BoardMetrics/BoardMetrics';
-import {
   BOARD_METRICS,
+  BOARD_METRICS_MAPPING,
   CALENDAR,
   METRICS_SUBTITLE,
   METRICS_TITLE,
@@ -15,6 +9,13 @@ import {
   RETRY,
   SHOW_MORE,
 } from '@src/constants/resources';
+import {
+  StyledLoading,
+  StyledMetricsSection,
+  StyledRetry,
+  StyledShowMore,
+  StyledTitleWrapper,
+} from '@src/containers/ReportStep/BoardMetrics/BoardMetrics';
 import { filterAndMapCycleTimeSettings, getJiraBoardToken, getRealDoneStatus } from '@src/utils/util';
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
@@ -65,6 +66,9 @@ const BoardMetrics = ({
   const { token, type, site, projectKey, boardId, email } = board.config;
   const jiraToken = getJiraBoardToken(token, email);
   const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric));
+  const boardMetricsCompleted = boardMetrics
+    .map((metric) => BOARD_METRICS_MAPPING[metric])
+    .every((metric) => boardReport?.[metric] ?? false);
 
   const getBoardReportRequestBody = (): BoardReportRequestDTO => {
     return {
@@ -153,7 +157,7 @@ const BoardMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.BOARD.TITLE} />
-          {!errorMessage && boardReport?.boardMetricsCompleted && (
+          {!errorMessage && boardMetricsCompleted && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
           {isShowMoreLoadingDisplay() && (

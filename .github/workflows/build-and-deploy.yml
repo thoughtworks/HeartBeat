@@ -533,6 +533,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           node-version: ${{ vars.NODE_VERSION }}
+      - name: Set up caching
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - name: Restore cached dependencies
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
       - name: Install dependencies
         run: |
           npm install -g pnpm
@@ -544,9 +554,14 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-videos
-          path: frontend/cypress/videos/
-          retention-days: ${{ vars.RETENTION_DAYS }}
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 30
+      - name: Save cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
 
   deploy:
     runs-on: ubuntu-latest

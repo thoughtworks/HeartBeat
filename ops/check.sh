@@ -156,6 +156,7 @@ dot_star_check() {
 e2e_check(){
   cd frontend
   pnpm install --no-frozen-lockfile
+  npx playwright install --with-deps
   pnpm run e2e
 }
 

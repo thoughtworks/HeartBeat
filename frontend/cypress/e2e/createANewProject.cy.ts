@@ -94,6 +94,8 @@ describe('Create a new project', () => {
   });
 
   it('Should create a new project manually', () => {
+    cy.log(Cypress.env('ENV_VAR_TEST'));
+
     homePage.navigate();
 
     homePage.headerVersion.should('exist');
@@ -117,13 +119,13 @@ describe('Create a new project', () => {
 
     configPage.selectMetricsData();
 
-    configPage.fillBoardInfoAndVerifyWithJira('1963', 'test@test.com', 'site', 'mockToken');
+    configPage.fillBoardInfoAndVerifyWithJira('1963', 'test@test.com', 'site', Cypress.env('TOKEN_JIRA'));
     configPage.getVerifiedButton(configPage.boardConfigSection).should('be.disabled');
     configPage.getResetButton(configPage.boardConfigSection).should('be.enabled');
 
-    configPage.fillPipelineToolFieldsInfoAndVerify(PIPELINE_TOKEN);
+    configPage.fillPipelineToolFieldsInfoAndVerify(Cypress.env('TOKEN_BUILD_KITE'));
 
-    configPage.fillSourceControlFieldsInfoAndVerify(GITHUB_TOKEN);
+    configPage.fillSourceControlFieldsInfoAndVerify(Cypress.env('TOKEN_GITHUB'));
 
     configPage.nextStepButton.should('be.enabled');
 

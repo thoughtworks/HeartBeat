@@ -1,5 +1,3 @@
-import { GITHUB_TOKEN } from '../fixtures/fixtures';
-
 class Home {
   get createANewProjectButton() {
     return cy.contains('Create a new project');
@@ -25,7 +23,7 @@ class Home {
     this.importProjectFromFileButton.click();
     cy.fixture(configFixtureName).then((fileContent) => {
       // Add Randomly generated token
-      fileContent.sourceControl.token = GITHUB_TOKEN;
+      fileContent.sourceControl.token = Cypress.env('TOKEN_GITHUB');
 
       cy.get<HTMLInputElement>('#importJson').then((e) => {
         const testFile = new File([JSON.stringify(fileContent)], configFixtureName, {

@@ -16,10 +16,16 @@
     "test:watch": "jest --watchAll",
     "coverage": "jest --env=jsdom --watchAll=false --coverage",
     "coverage:silent": "jest --env=jsdom --watchAll=false --coverage --silent",
-    "e2e:open": "TZ='PRC' cypress open",
-    "e2e": "TZ='PRC' cypress run --spec cypress/",
-    "e2e:local": "APP_ENV=local  TZ='PRC' cypress run --spec cypress/",
-    "e2e:with-server": "ts-node --project tsconfig.scripts.json ./scripts/runE2eWithServer.ts 'npm run e2e:local'",
+    "cypress": "TZ='PRC' cypress run --spec cypress/",
+    "cypress:open": "dotenvx run --env-file=./cypress/.env.local -- cypress open",
+    "cypress:local": "dotenvx run --env-file=./cypress/.env.local -- cypress run --spec cypress/",
+    "cypress:with-server": "ts-node --project tsconfig.scripts.json ./scripts/runE2eWithServer.ts 'npm run e2e:local'",
+    "e2e": "pnpm exec playwright test",
+    "e2e:local": "dotenvx run --env-file=./e2e/.env.local -- pnpm run e2e",
+    "e2e:with-server": "ts-node --project tsconfig.scripts.json ./scripts/runE2eWithServer.ts 'pnpm run e2e:local'",
+    "e2e:ui": "dotenvx run --env-file=./e2e/.env.local -- pnpm exec playwright test --ui",
+    "e2e:report": "pnpm exec playwright show-report",
+    "e2e:codegen": "pnpm exec playwright codegen localhost:4321",
     "prepare": "cd .. && husky install frontend/.husky",
     "license-compliance": "license-compliance -r detailed",
     "type-check": "tsc --noEmit"
@@ -53,6 +59,8 @@
     "vite-plugin-pwa": "^0.17.2"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^0.14.1",
+    "@playwright/test": "^1.41.2",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -104,5 +112,10 @@
   "bugs": {
     "url": "https://github.com/thoughtworks/HeartBeat/issues",
     "email": "heartbeat@thoughtworks.com"
+  },
+  "pnpm": {
+    "overrides": {
+      "got@<11.8.5": ">=11.8.5"
+    }
   }
 }

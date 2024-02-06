@@ -9,13 +9,11 @@ const WAIT_INTERVAL = 3000;
 const HEALTH_ENDPOINT_SUFFIX = {
   FRONT_END: ':4321/',
   BACK_END: ':4322/api/v1/health',
-  STUB: ':4323/health',
 };
 
 const DIR = {
   FRONT_END: path.resolve(__dirname, '../'),
   BACK_END: path.resolve(__dirname, '../../backend'),
-  STUB: path.resolve(__dirname, '../../stubs'),
 };
 
 const main = async (args: string[]) => {
@@ -64,13 +62,6 @@ const main = async (args: string[]) => {
       shell: true,
     })`./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://localhost:4323'`;
 
-  const startSTUB = () =>
-    $({
-      cwd: DIR.STUB,
-      stderr: 'inherit',
-      shell: true,
-    })`docker-compose up`;
-
   const waitForUrl = (url: string) =>
     new Promise((resolve) => {
       const startTime = Date.now();
@@ -107,9 +98,6 @@ const main = async (args: string[]) => {
         case HEALTH_ENDPOINT_SUFFIX.FRONT_END:
           console.log(`Start to run front-end service`);
           return startFE();
-        case HEALTH_ENDPOINT_SUFFIX.STUB:
-          console.log(`Start to run stub service`);
-          return startSTUB();
         default:
           console.error(`Failed to run service: ${name}`);
       }

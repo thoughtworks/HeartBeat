@@ -42,5 +42,12 @@
       "version": "detect"
     }
   },
-  "ignorePatterns": ["dist/*", "coverage/*", "dev-dist/*", "cypress/reports/**"]
+  "ignorePatterns": [
+    "dist/*",
+    "coverage/*",
+    "dev-dist/*",
+    "cypress/reports/**",
+    "e2e/reports/**",
+    "e2e/test-results/**"
+  ]
 }

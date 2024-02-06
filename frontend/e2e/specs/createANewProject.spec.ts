@@ -1,12 +1,12 @@
 import { test } from '../fixtures/testWithExtendFixtures';
-import { expect } from '@playwright/test';
+import { E2E_PROJECT_NAME } from 'e2e/fixtures/fixtures';
 
 test('Create a new project', async ({ homePage, configStep }) => {
   await homePage.goto();
   await homePage.createANewProject();
 
   await configStep.waitForShown();
-  await configStep.typeProjectName(process.env.E2E_TOKEN_JIRA || '');
+  await configStep.typeProjectName(E2E_PROJECT_NAME);
 
-  await expect(configStep.projectNameInput).toHaveValue('mockToken');
+  await configStep.checkProjectName(E2E_PROJECT_NAME);
 });

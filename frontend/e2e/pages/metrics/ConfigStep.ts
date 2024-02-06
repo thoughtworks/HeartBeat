@@ -54,6 +54,10 @@ export class ConfigStep {
     await this.projectNameInput.fill(projectName);
   }
 
+  async checkProjectName(projectName: string) {
+    await expect(this.projectNameInput).toHaveValue(projectName);
+  }
+
   async selectRegularCalendar() {
     await this.regularCalendar.click();
 

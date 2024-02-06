@@ -3,7 +3,7 @@ import EmptyBox from '@src/assets/EmptyBox.svg';
 import { ReactNode } from 'react';
 
 export interface Props {
-  title: string;
+  title: ReactNode;
   message: ReactNode;
 }
 

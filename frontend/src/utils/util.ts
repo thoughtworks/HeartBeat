@@ -36,12 +36,10 @@ export const transformToCleanedBuildKiteEmoji = (input: OriginBuildKiteEmoji[]):
   }));
 
 export const getJiraBoardToken = (token: string, email: string) => {
-  if (token) {
-    const encodedMsg = btoa(`${email}:${token}`);
-    return `Basic ${encodedMsg}`;
-  } else {
-    return '';
-  }
+  if (!token) return '';
+  const encodedMsg = btoa(`${email}:${token}`);
+
+  return `Basic ${encodedMsg}`;
 };
 
 export const filterAndMapCycleTimeSettings = (cycleTimeSettings: ICycleTimeSetting[]) =>

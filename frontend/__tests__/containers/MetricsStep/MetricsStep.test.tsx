@@ -203,6 +203,7 @@ describe('MetricsStep', () => {
     });
 
     it('should reset real done when change Cycle time settings DONE to other status', async () => {
+      server.use(rest.post(MOCK_BOARD_INFO_URL, (req, res, ctx) => res(ctx.status(500))));
       setup();
       const realDoneSettingSection = screen.getByLabelText(REAL_DONE_SETTING_SECTION);
 
@@ -218,6 +219,7 @@ describe('MetricsStep', () => {
     });
 
     it('should reset real done when change Cycle time settings other status to DONE', async () => {
+      server.use(rest.post(MOCK_BOARD_INFO_URL, (req, res, ctx) => res(ctx.status(500))));
       setup();
       const cycleTimeSettingsSection = screen.getByLabelText(CYCLE_TIME_SETTINGS_SECTION);
       const realDoneSettingSection = screen.getByLabelText(REAL_DONE_SETTING_SECTION);
@@ -318,6 +320,19 @@ describe('MetricsStep', () => {
         expect(screen.getByText(/crew settings/i)).toBeInTheDocument();
       });
       expect(screen.getByText(/cycle time settings/i)).toBeInTheDocument();
+    });
+
+    it('should show retry button when call get info timeout', async () => {
+      server.use(
+        rest.post(MOCK_BOARD_INFO_URL, (_, res) => {
+          return res.networkError('HB_TIMEOUT');
+        }),
+      );
+      setup();
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
+      });
     });
   });
 });

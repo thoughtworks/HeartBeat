@@ -1,5 +1,6 @@
 import { Divider } from '@src/components/Common/MetricsSettingTitle/style';
 import { styled } from '@mui/material/styles';
+import { Button } from '@mui/material';
 import { theme } from '@src/theme';
 
 export const MetricSelectionHeader = styled('div')({
@@ -35,3 +36,9 @@ export const ReportSelectionTitle = styled(MetricsSelectionTitle)({
 });
 
 export const ConfigSelectionTitle = styled(ReportSelectionTitle)({});
+
+export const StyledRetryButton = styled(Button)({
+  fontWeight: '700',
+  minWidth: '3.4rem',
+  padding: '0',
+});

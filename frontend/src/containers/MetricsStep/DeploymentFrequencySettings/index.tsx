@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import { Loading } from '@src/components/Loading';
 import { HttpStatusCode } from 'axios';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 export const DeploymentFrequencySettings = () => {
   const dispatch = useAppDispatch();
@@ -62,7 +62,7 @@ export const DeploymentFrequencySettings = () => {
             />
           ))}
           <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />
-          {!_.isEmpty(pipelineCrews) && (
+          {!isEmpty(pipelineCrews) && (
             <Crews
               options={pipelineCrews}
               title={'Crew setting (optional)'}

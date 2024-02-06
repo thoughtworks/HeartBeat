@@ -91,7 +91,7 @@ export const SOURCE_CONTROL_FIELDS = ['Source Control', 'Token'];
 
 export const BASE_URL = 'api/v1';
 export const MOCK_BOARD_URL_FOR_JIRA = `${BASE_URL}/boards/jira/verify`;
-export const MOCK_BOARD_INFO_URL = `${BASE_URL}/boards/:type/info`;
+export const MOCK_BOARD_INFO_URL = `${BASE_URL}/boards/jira/info`;
 export const MOCK_PIPELINE_URL = `${BASE_URL}/pipelines/buildkite`;
 export const MOCK_PIPELINE_VERIFY_URL = `${BASE_URL}/pipelines/buildkite/verify`;
 export const MOCK_PIPELINE_GET_INFO_URL = `${BASE_URL}/pipelines/buildkite/info`;

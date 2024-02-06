@@ -1,11 +1,12 @@
 import {
   selectDateRange,
-  selectJiraColumns,
   selectIsProjectCreated,
   selectMetrics,
-  selectUsers,
   updateBoardVerifyState,
   selectBoard,
+  updateJiraVerifyResponse,
+  selectUsers,
+  selectJiraColumns,
 } from '@src/context/config/configSlice';
 import {
   MetricSelectionHeader,
@@ -18,15 +19,17 @@ import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA } from '@src/constants/r
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
+import { StyledRetryButton } from '@src/containers/MetricsStep/style';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
+import { HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
 import { RealDone } from '@src/containers/MetricsStep/RealDone';
 import EmptyContent from '@src/components/Common/EmptyContent';
 import { useAppSelector, useAppDispatch } from '@src/hooks';
 import { Crews } from '@src/containers/MetricsStep/Crews';
+import { useCallback, useLayoutEffect } from 'react';
 import { Loading } from '@src/components/Loading';
-import { useLayoutEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 import dayjs from 'dayjs';
@@ -51,25 +54,29 @@ const MetricsStep = () => {
   const { getBoardInfo, isLoading, errorMessage } = useGetBoardInfoEffect();
   const shouldLoad = useAppSelector(shouldMetricsLoad);
 
-  const getInfo = () => {
-    getBoardInfo({
-      ...boardConfig,
-      startTime: dayjs(startDate).valueOf().toString(),
-      endTime: dayjs(endDate).valueOf().toString(),
-    }).then((res) => {
-      if (res.data) {
-        dispatch(updateBoardVerifyState(true));
-        dispatch(updateMetricsState(merge(res.data, { isProjectCreated: isProjectCreated })));
-      }
-    });
-  };
+  const getInfo = useCallback(
+    () =>
+      getBoardInfo({
+        ...boardConfig,
+        startTime: dayjs(startDate).valueOf().toString(),
+        endTime: dayjs(endDate).valueOf().toString(),
+      }).then((res) => {
+        if (res.data) {
+          dispatch(updateBoardVerifyState(true));
+          dispatch(updateJiraVerifyResponse(res.data));
+          dispatch(updateMetricsState(merge(res.data, { isProjectCreated: isProjectCreated })));
+        }
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   useLayoutEffect(() => {
     if (!shouldLoad) return;
     dispatch(closeAllNotifications());
+    if (!shouldLoad || !isShowCrewsAndRealDone) return;
     getInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [shouldLoad, isShowCrewsAndRealDone, dispatch, getInfo]);
 
   return (
     <>
@@ -79,28 +86,50 @@ const MetricsStep = () => {
         </MetricSelectionHeader>
       )}
 
-      <MetricSelectionWrapper>
-        {isLoading && <Loading />}
-        {isEmpty(errorMessage) ? (
-          <>
-            <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
+      {isShowCrewsAndRealDone && (
+        <MetricSelectionWrapper>
+          {isLoading && <Loading />}
+          {isEmpty(errorMessage) ? (
+            <>
+              <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
 
-            {isShowCrewsAndRealDone && <Crews options={users} title={'Crew settings'} label={'Included Crews'} />}
+              <Crews options={users} title={'Crew settings'} label={'Included Crews'} />
 
-            {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime />}
+              {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime />}
 
-            {isShowCrewsAndRealDone && isShowRealDone && (
-              <RealDone columns={jiraColumns} title={'Real done setting'} label={'Consider as Done'} />
-            )}
+              {isShowRealDone && (
+                <RealDone columns={jiraColumns} title={'Real done setting'} label={'Consider as Done'} />
+              )}
 
-            {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
-              <Classification targetFields={targetFields} title={'Classification setting'} label={'Distinguished By'} />
-            )}
-          </>
-        ) : (
-          <EmptyContent title={errorMessage.title} message={errorMessage.message} />
-        )}
-      </MetricSelectionWrapper>
+              {requiredData.includes(REQUIRED_DATA.CLASSIFICATION) && (
+                <Classification
+                  targetFields={targetFields}
+                  title={'Classification setting'}
+                  label={'Distinguished By'}
+                />
+              )}
+            </>
+          ) : (
+            <EmptyContent
+              title={errorMessage.title}
+              message={
+                errorMessage.code !== HEARTBEAT_EXCEPTION_CODE.TIMEOUT ? (
+                  errorMessage.message
+                ) : (
+                  <>
+                    {errorMessage.message}
+                    {
+                      <StyledRetryButton variant='text' disabled={isLoading} onClick={getInfo}>
+                        Retry
+                      </StyledRetryButton>
+                    }
+                  </>
+                )
+              }
+            />
+          )}
+        </MetricSelectionWrapper>
+      )}
 
       {(requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
         requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||

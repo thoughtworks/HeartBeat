@@ -1,0 +1,3 @@
+FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+USER root
+RUN npm install -g pnpm

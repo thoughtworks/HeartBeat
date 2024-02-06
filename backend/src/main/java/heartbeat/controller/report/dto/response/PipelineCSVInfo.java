@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PipelineCSVInfo {
 
+	private String organizationName;
+
 	private String pipeLineName;
 
 	private String stepName;

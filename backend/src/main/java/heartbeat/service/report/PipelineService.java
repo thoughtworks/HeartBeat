@@ -104,6 +104,7 @@ public class PipelineService {
 					GithubUtil.getGithubUrlFullName(deploymentEnvironment.getRepository()), codebaseSetting.getToken());
 		}
 		return PipelineCSVInfo.builder()
+			.organizationName(deploymentEnvironment.getOrgName())
 			.pipeLineName(deploymentEnvironment.getName())
 			.stepName(deployInfo.getJobName())
 			.valid(deployInfo.getJobName().equals(deploymentEnvironment.getStep()))

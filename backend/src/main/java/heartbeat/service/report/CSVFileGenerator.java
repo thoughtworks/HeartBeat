@@ -95,9 +95,9 @@ public class CSVFileGenerator {
 		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			File file = new File(fileName);
 			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
-				String[] headers = { "Pipeline Name", "Pipeline Step", "Valid", "Build Number", "Code Committer",
-						"Pipeline Creator", "First Code Committed Time In PR", "Code Committed Time", "PR Created Time",
-						"PR Merged Time", "Deployment Completed Time", "Total Lead Time (HH:mm:ss)",
+				String[] headers = { "Organization", "Pipeline Name", "Pipeline Step", "Valid", "Build Number",
+						"Code Committer", "Pipeline Creator", "First Code Committed Time In PR", "Code Committed Time",
+						"PR Created Time", "PR Merged Time", "Deployment Completed Time", "Total Lead Time (HH:mm:ss)",
 						"PR Lead Time (HH:mm:ss)", "Pipeline Lead Time (HH:mm:ss)", "Status", "Branch" };
 
 				csvWriter.writeNext(headers);
@@ -106,6 +106,7 @@ public class CSVFileGenerator {
 					String committerName = null;
 					String commitDate = null;
 					String creatorName = null;
+					String organization = csvInfo.getOrganizationName();
 					String pipelineName = csvInfo.getPipeLineName();
 					String stepName = csvInfo.getStepName();
 					String valid = String.valueOf(csvInfo.getValid()).toLowerCase();
@@ -132,9 +133,9 @@ public class CSVFileGenerator {
 					String prLeadTime = leadTimeInfo.getPrLeadTime();
 					String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();
 
-					String[] rowData = { pipelineName, stepName, valid, buildNumber, committerName, creatorName,
-							firstCommitTimeInPr, commitDate, prCreatedTime, prMergedTime, jobFinishTime, totalTime,
-							prLeadTime, pipelineLeadTime, state, branch };
+					String[] rowData = { organization, pipelineName, stepName, valid, buildNumber, committerName,
+							creatorName, firstCommitTimeInPr, commitDate, prCreatedTime, prMergedTime, jobFinishTime,
+							totalTime, prLeadTime, pipelineLeadTime, state, branch };
 
 					csvWriter.writeNext(rowData);
 				}

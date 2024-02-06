@@ -103,7 +103,6 @@ steps:
 
   - label: ":rocket: Run e2e"
     if: build.branch == "main" && build.message =~ /(?i)\[e2e\]/
-    branches: main
     key: "check-e2e"
     depends_on:
       - "deploy-e2e"
@@ -130,7 +129,6 @@ steps:
 
   - label: ":rocket: Run e2e only"
     if: build.branch == "main" && build.message =~ /(?i)\[e2e-only\]/
-    branches: main
     key: "check-e2e-only"
     command: ./ops/check.sh e2e
     plugins:

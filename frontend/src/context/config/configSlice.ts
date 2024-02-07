@@ -42,6 +42,29 @@ export const initialBasicConfigState: BasicConfigState = {
   warningMessage: null,
 };
 
+const getMetricsInfo = (metrics: string[]) => {
+  const {
+    VELOCITY,
+    CYCLE_TIME,
+    CLASSIFICATION,
+    LEAD_TIME_FOR_CHANGES,
+    DEPLOYMENT_FREQUENCY,
+    CHANGE_FAILURE_RATE,
+    MEAN_TIME_TO_RECOVERY,
+  } = REQUIRED_DATA;
+  return {
+    metrics: metrics.filter((metric) => (Object.values(REQUIRED_DATA) as string[]).includes(metric)),
+    shouldBoardShow: [VELOCITY, CYCLE_TIME, CLASSIFICATION].some((metric) => metrics.includes(metric)),
+    shouldPipelineToolShow: [
+      LEAD_TIME_FOR_CHANGES,
+      DEPLOYMENT_FREQUENCY,
+      CHANGE_FAILURE_RATE,
+      MEAN_TIME_TO_RECOVERY,
+    ].some((metric) => metrics.includes(metric)),
+    shouldSourceControlShow: [LEAD_TIME_FOR_CHANGES].some((metric) => metrics.includes(metric)),
+  };
+};
+
 export const configSlice = createSlice({
   name: 'config',
   initialState: {
@@ -62,30 +85,24 @@ export const configSlice = createSlice({
       state.basic.dateRange = { startDate, endDate };
     },
     updateMetrics: (state, action) => {
-      const {
-        VELOCITY,
-        CYCLE_TIME,
-        CLASSIFICATION,
-        LEAD_TIME_FOR_CHANGES,
-        DEPLOYMENT_FREQUENCY,
-        CHANGE_FAILURE_RATE,
-        MEAN_TIME_TO_RECOVERY,
-      } = REQUIRED_DATA;
-      state.basic.metrics = action.payload;
-      state.board.isShow = [VELOCITY, CYCLE_TIME, CLASSIFICATION].some((metric) =>
-        state.basic.metrics.includes(metric),
+      const { metrics, shouldBoardShow, shouldPipelineToolShow, shouldSourceControlShow } = getMetricsInfo(
+        action.payload,
       );
-      state.pipelineTool.isShow = [
-        LEAD_TIME_FOR_CHANGES,
-        DEPLOYMENT_FREQUENCY,
-        CHANGE_FAILURE_RATE,
-        MEAN_TIME_TO_RECOVERY,
-      ].some((metric) => state.basic.metrics.includes(metric));
-      state.sourceControl.isShow = [LEAD_TIME_FOR_CHANGES].some((metric) => state.basic.metrics.includes(metric));
+      state.basic.metrics = metrics;
+      state.board.isShow = shouldBoardShow;
+      state.pipelineTool.isShow = shouldPipelineToolShow;
+      state.sourceControl.isShow = shouldSourceControlShow;
     },
     updateBasicConfigState: (state, action) => {
       state.basic = action.payload;
-      const { projectName, dateRange, metrics } = state.basic;
+      const { metrics, shouldBoardShow, shouldPipelineToolShow, shouldSourceControlShow } = getMetricsInfo(
+        action.payload.metrics,
+      );
+      state.basic.metrics = metrics;
+      state.board.isShow = shouldBoardShow;
+      state.pipelineTool.isShow = shouldPipelineToolShow;
+      state.sourceControl.isShow = shouldSourceControlShow;
+      const { projectName, dateRange } = state.basic;
       if (!state.isProjectCreated) {
         state.warningMessage =
           projectName && dateRange.startDate && dateRange.endDate && metrics.length > 0

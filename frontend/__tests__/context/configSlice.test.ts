@@ -18,7 +18,7 @@ const MockBasicState = {
     startDate: new Date(),
     endDate: new Date(),
   },
-  metrics: ['Metric 1', 'Metric 2'],
+  metrics: ['Velocity', 'Cycle time'],
 };
 describe('config reducer', () => {
   it('should be default value when init render config page', () => {
@@ -79,7 +79,22 @@ describe('config reducer', () => {
     expect(config.pipelineTool.verifiedResponse.pipelineList).toEqual(mockPipelineList);
   });
 
-  it('should set warningMessage is null when projectName startDate endDate and metrics data have value', () => {
+  it('should set warningMessage when metrics data not include in REQUIRED_DATA', () => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: false,
+    };
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: { ...MockBasicState, metrics: ['Metric 1', 'Metric 2'] },
+    };
+
+    const config = configReducer(initialState, action);
+
+    expect(config.warningMessage).toBe(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE);
+  });
+
+  it('should not set warningMessage when projectName startDate endDate and metrics data have value', () => {
     const initialState = {
       ...initialConfigState,
       isProjectCreated: false,

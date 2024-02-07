@@ -93,6 +93,12 @@ steps:
     depends_on: "build-stub"
     command: ./ops/deploy.sh stub
 
+  - label: ":rocket: Build e2e-runner"
+    if: build.branch == "main" && build.message =~ /(?i)\[e2e\]/
+    key: "build-e2e-runner"
+    depends_on: "deploy-infra"
+    command: ./ops/build.sh e2e-runner
+
   - label: ":rocket: Deploy e2e"
     if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
     key: "deploy-e2e"

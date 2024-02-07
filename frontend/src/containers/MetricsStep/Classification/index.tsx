@@ -56,7 +56,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
       nextSelectedOptions = [];
     } else {
       nextSelectedOptions =
-        value[value.length - 1].key === 'all' ? (isAllSelected ? [] : [...targetFieldsWithSuffix]) : [...value];
+        value[value.length - 1].key === 'all' ? (isAllSelected ? [] : targetFieldsWithSuffix) : value;
     }
     const updatedTargetFields = targetFields.map((targetField) => ({
       ...targetField,

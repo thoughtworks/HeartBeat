@@ -71,13 +71,10 @@ export const configSlice = createSlice({
         CHANGE_FAILURE_RATE,
         MEAN_TIME_TO_RECOVERY,
       } = REQUIRED_DATA;
-
       state.basic.metrics = action.payload;
-
       state.board.isShow = [VELOCITY, CYCLE_TIME, CLASSIFICATION].some((metric) =>
         state.basic.metrics.includes(metric),
       );
-
       state.pipelineTool.isShow = [
         LEAD_TIME_FOR_CHANGES,
         DEPLOYMENT_FREQUENCY,
@@ -85,7 +82,6 @@ export const configSlice = createSlice({
         MEAN_TIME_TO_RECOVERY,
       ].some((metric) => state.basic.metrics.includes(metric));
       state.sourceControl.isShow = [LEAD_TIME_FOR_CHANGES].some((metric) => state.basic.metrics.includes(metric));
-      state.basic.metrics = action.payload;
     },
     updateBasicConfigState: (state, action) => {
       state.basic = action.payload;

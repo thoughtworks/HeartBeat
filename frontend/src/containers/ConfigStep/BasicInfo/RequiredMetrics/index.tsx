@@ -4,54 +4,41 @@ import { selectConfig, updateMetrics } from '@src/context/config/configSlice';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons';
 import { REQUIRED_DATA } from '@src/constants/resources';
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect } from 'react';
+
+const ALL = 'All';
 
 export const RequiredMetrics = () => {
   const dispatch = useAppDispatch();
-  const configData = useAppSelector(selectConfig);
-  const { metrics } = configData.basic;
-  const [isEmptyRequireData, setIsEmptyProjectData] = useState<boolean>(false);
+  const {
+    basic: { metrics },
+  } = useAppSelector(selectConfig);
+
   useEffect(() => {
     metrics && dispatch(updateMetrics(metrics));
   }, [metrics, dispatch]);
 
-  const [isAllSelected, setIsAllSelected] = useState(false);
-  const handleSelectOptionsChange = (selectOptions: string | string[]) => {
-    if (selectOptions.includes(REQUIRED_DATA.All) && !isAllSelected) {
-      setIsAllSelected(true);
-      selectOptions = Object.values(REQUIRED_DATA);
-    } else if (selectOptions.length == Object.values(REQUIRED_DATA).length - 1 && !isAllSelected) {
-      setIsAllSelected(true);
-      selectOptions = Object.values(REQUIRED_DATA);
-    } else if (selectOptions.includes(REQUIRED_DATA.All)) {
-      setIsAllSelected(false);
-      selectOptions = selectOptions.slice(1);
-    } else if (!selectOptions.includes(REQUIRED_DATA.All) && isAllSelected) {
-      setIsAllSelected(false);
-      selectOptions = [];
-    }
-    return selectOptions;
+  const isEveryOptionsSelected = (options: string[]) =>
+    Object.values(REQUIRED_DATA).every((metric) => options.includes(metric));
+
+  const isAllSelected = useMemo(() => isEveryOptionsSelected(metrics), [metrics]);
+
+  const isClickedAll = (options: string[]) => isEveryOptionsSelected(options) || options[options.length - 1] === ALL;
+
+  const handleRequireDataChange = ({ target: { value: selectedOptions } }: SelectChangeEvent<typeof metrics>) => {
+    const nextSelectedOptions = isClickedAll(selectedOptions as string[])
+      ? isAllSelected
+        ? []
+        : Object.values(REQUIRED_DATA)
+      : selectedOptions;
+    dispatch(updateMetrics(nextSelectedOptions));
   };
 
-  const handleRequireDataChange = (event: SelectChangeEvent<typeof metrics>) => {
-    const {
-      target: { value },
-    } = event;
-
-    dispatch(updateMetrics(handleSelectOptionsChange(value)));
-    handleSelectOptionsChange(value).length === 0 ? setIsEmptyProjectData(true) : setIsEmptyProjectData(false);
-  };
-
-  const handleRenderSelectOptions = (selected: string[]) => {
-    if (selected.includes(REQUIRED_DATA.All)) {
-      return selected.slice(1).join(SELECTED_VALUE_SEPARATOR);
-    }
-    return selected.join(SELECTED_VALUE_SEPARATOR);
-  };
+  const handleRenderSelectOptions = (selected: string[]) => selected.join(SELECTED_VALUE_SEPARATOR);
 
   return (
     <>
-      <RequireDataSelections variant='standard' required error={isEmptyRequireData}>
+      <RequireDataSelections variant='standard' required error={metrics.length === 0}>
         <InputLabel id='require-data-multiple-checkbox-label'>Required metrics</InputLabel>
         <Select
           labelId='require-data-multiple-checkbox-label'
@@ -60,6 +47,10 @@ export const RequiredMetrics = () => {
           onChange={handleRequireDataChange}
           renderValue={handleRenderSelectOptions}
         >
+          <MenuItem key={ALL} value={ALL}>
+            <Checkbox checked={isAllSelected} />
+            <ListItemText primary={ALL} />
+          </MenuItem>
           {Object.values(REQUIRED_DATA).map((data) => (
             <MenuItem key={data} value={data}>
               <Checkbox checked={metrics.indexOf(data) > -1} />
@@ -67,7 +58,7 @@ export const RequiredMetrics = () => {
             </MenuItem>
           ))}
         </Select>
-        {isEmptyRequireData && <FormHelperText>Metrics is required</FormHelperText>}
+        {metrics.length === 0 && <FormHelperText>Metrics is required</FormHelperText>}
       </RequireDataSelections>
     </>
   );

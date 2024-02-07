@@ -79,7 +79,7 @@ describe('MetricsTypeCheckbox', () => {
       await userEvent.click(listBox.getByRole('option', { name: ALL }));
     });
 
-    expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true');
+    expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxIcon')).toBeTruthy();
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument();
   });
 
@@ -90,7 +90,6 @@ describe('MetricsTypeCheckbox', () => {
     await act(async () => {
       await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
     });
-
     const listBox = within(getByRole('listbox'));
     await act(async () => {
       await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
@@ -99,7 +98,7 @@ describe('MetricsTypeCheckbox', () => {
       await userEvent.click(listBox.getByRole('option', { name: ALL }));
     });
 
-    expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true');
+    expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxIcon')).toBeTruthy();
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument();
   });
 
@@ -121,9 +120,7 @@ describe('MetricsTypeCheckbox', () => {
     ];
     await Promise.all(optionsToClick.map((opt) => fireEvent.click(opt)));
 
-    await waitFor(() => {
-      expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'true');
-    });
+    expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxIcon')).toBeTruthy();
   });
 
   it('should show some selections when click all option and then click velocity selection', async () => {
@@ -143,7 +140,7 @@ describe('MetricsTypeCheckbox', () => {
     });
 
     expect(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY })).toHaveAttribute('aria-selected', 'false');
-    expect(listBox.getByRole('option', { name: ALL })).toHaveAttribute('aria-selected', 'false');
+    expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxOutlineBlankIcon')).toBeTruthy();
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument();
   });
 

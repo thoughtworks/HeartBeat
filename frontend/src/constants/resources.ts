@@ -37,7 +37,6 @@ export const DORA_METRICS_MAPPING: Record<string, string> = {
 };
 
 export enum REQUIRED_DATA {
-  All = 'All',
   VELOCITY = 'Velocity',
   CYCLE_TIME = 'Cycle time',
   CLASSIFICATION = 'Classification',

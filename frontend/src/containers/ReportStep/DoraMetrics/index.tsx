@@ -4,10 +4,12 @@ import {
   DORA_METRICS_MAPPING,
   METRICS_SUBTITLE,
   METRICS_TITLE,
+  PIPELINE_METRICS,
   REPORT_PAGE,
   REQUIRED_DATA,
   RETRY,
   SHOW_MORE,
+  SOURCE_CONTROL_METRICS,
 } from '@src/constants/resources';
 import { StyledMetricsSection, StyledShowMore, StyledTitleWrapper } from '@src/containers/ReportStep/DoraMetrics/style';
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
@@ -51,8 +53,12 @@ const DoraMetrics = ({
   const { metrics, calendarType } = configData.basic;
   const { pipelineCrews, deploymentFrequencySettings, leadTimeForChanges } = useAppSelector(selectMetricsContent);
   const shouldShowSourceControl = metrics.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES);
-  const doraMetricsCompleted = metrics
-    .filter((metric) => DORA_METRICS.includes(metric))
+  const sourceControlMetricsCompleted = metrics
+    .filter((metric) => SOURCE_CONTROL_METRICS.includes(metric))
+    .map((metric) => DORA_METRICS_MAPPING[metric])
+    .every((metric) => doraReport?.[metric] ?? false);
+  const pipelineMetricsCompleted = metrics
+    .filter((metric) => PIPELINE_METRICS.includes(metric))
     .map((metric) => DORA_METRICS_MAPPING[metric])
     .every((metric) => doraReport?.[metric] ?? false);
 
@@ -212,7 +218,7 @@ const DoraMetrics = ({
       <StyledMetricsSection>
         <StyledTitleWrapper>
           <ReportTitle title={REPORT_PAGE.DORA.TITLE} />
-          {!hasDoraError && !errorMessage && doraMetricsCompleted && (
+          {!hasDoraError && !errorMessage && (sourceControlMetricsCompleted || pipelineMetricsCompleted) && (
             <StyledShowMore onClick={onShowDetail}>{SHOW_MORE}</StyledShowMore>
           )}
           {shouldShowRetry() && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}

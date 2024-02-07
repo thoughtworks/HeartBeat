@@ -117,6 +117,8 @@ steps:
       - "check-frontend-license"
       - "check-backend-license"
     command: ./ops/check.sh e2e
+    env:
+      IS_WEBKIT: false
     plugins:
       - artifacts#v1.9.0:
           upload:
@@ -128,7 +130,7 @@ steps:
             E2E_TOKEN_JIRA: /E2E/TOKEN_JIRA
 
   - label: ":rocket: Deploy prod"
-    branches: main
+    if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
     depends_on:
       - "check-e2e"
     command: ./ops/deploy.sh prod

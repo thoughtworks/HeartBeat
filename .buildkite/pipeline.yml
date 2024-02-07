@@ -128,6 +128,7 @@ steps:
             E2E_TOKEN_JIRA: /E2E/TOKEN_JIRA
 
   - label: ":rocket: Deploy prod"
-    if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
-    depends_on: "check-e2e"
+    branches: main
+    depends_on:
+      - "check-e2e"
     command: ./ops/deploy.sh prod

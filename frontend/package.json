@@ -27,7 +27,6 @@
     "e2e:report": "pnpm exec playwright show-report",
     "e2e:codegen": "pnpm exec playwright codegen localhost:4321",
     "prepare": "cd .. && husky install frontend/.husky",
-    "postinstall": "playwright install",
     "license-compliance": "license-compliance -r detailed",
     "type-check": "tsc --noEmit"
   },

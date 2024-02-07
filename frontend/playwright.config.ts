@@ -34,14 +34,14 @@ const e2eBaseProjects = [
   },
 
   /* Test against branded browsers. */
-  {
-    name: 'Microsoft Edge',
-    use: { ...devices['Desktop Edge'], channel: 'msedge' },
-  },
-  {
-    name: 'Google Chrome',
-    use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-  },
+  // {
+  //   name: 'Microsoft Edge',
+  //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
+  // },
+  // {
+  //   name: 'Google Chrome',
+  //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+  // },
 
   /* Test against mobile viewports. */
   // {

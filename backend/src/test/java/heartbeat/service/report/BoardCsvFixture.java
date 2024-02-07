@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class BoardCsvFixture {
 
@@ -55,6 +54,12 @@ public class BoardCsvFixture {
 	private static final BoardCSVConfig STATUS_CONFIG = BoardCSVConfig.builder()
 		.label("Status")
 		.value("baseInfo.fields.status.name")
+		.originKey(null)
+		.build();
+
+	private static final BoardCSVConfig STATUS_DATE_CONFIG = BoardCSVConfig.builder()
+		.label("Status Date")
+		.value("baseInfo.fields.statuscategorychangedate")
 		.originKey(null)
 		.build();
 
@@ -212,11 +217,12 @@ public class BoardCsvFixture {
 		.readJsonFile("./src/test/resources/fields.json");
 
 	public static List<BoardCSVConfig> MOCK_FIXED_FIELDS() {
-		return List.of(ISSUE_KEY_CONFIG, SUMMARY_CONFIG, ISSUE_TYPE_CONFIG, STATUS_CONFIG, STORY_POINTS_CONFIG,
-				ASSIGNEE_CONFIG, REPORTER_CONFIG, PROJECT_KEY_CONFIG, PROJECT_NAME_CONFIG, PRIORITY_CONFIG,
-				PARENT_SUMMARY_CONFIG, SPRINT_CONFIG, LABELS_CONFIG, CYCLE_TIME_CONFIG, CYCLE_TIME_STORY_POINTS_CONFIG,
-				ANALYSIS_DAYS_CONFIG, IN_DEV_DAYS_CONFIG, WAITING_DAYS_CONFIG, TESTING_DAYS_CONFIG, BLOCK_DAYS_CONFIG,
-				REVIEW_DAYS_CONFIG, ORIGIN_CYCLE_TIME_DOING_CONFIG, ORIGIN_CYCLE_BLOCKED_CONFIG);
+		return List.of(ISSUE_KEY_CONFIG, SUMMARY_CONFIG, ISSUE_TYPE_CONFIG, STATUS_CONFIG, STATUS_DATE_CONFIG,
+				STORY_POINTS_CONFIG, ASSIGNEE_CONFIG, REPORTER_CONFIG, PROJECT_KEY_CONFIG, PROJECT_NAME_CONFIG,
+				PRIORITY_CONFIG, PARENT_SUMMARY_CONFIG, SPRINT_CONFIG, LABELS_CONFIG, CYCLE_TIME_CONFIG,
+				CYCLE_TIME_STORY_POINTS_CONFIG, ANALYSIS_DAYS_CONFIG, IN_DEV_DAYS_CONFIG, WAITING_DAYS_CONFIG,
+				TESTING_DAYS_CONFIG, BLOCK_DAYS_CONFIG, REVIEW_DAYS_CONFIG, ORIGIN_CYCLE_TIME_DOING_CONFIG,
+				ORIGIN_CYCLE_BLOCKED_CONFIG);
 	}
 
 	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS_WITH_CUSTOM() {
@@ -259,6 +265,7 @@ public class BoardCsvFixture {
 			.summary("summary")
 			.issuetype(IssueType.builder().name("issue type").build())
 			.status(Status.builder().displayValue("done").build())
+			.statuscategorychangedate("2023-11-28T14:02:03.724+0800")
 			.storyPoints(2)
 			.assignee(Assignee.builder().displayName("name").build())
 			.reporter(Reporter.builder().displayName("name").build())
@@ -305,6 +312,7 @@ public class BoardCsvFixture {
 			.issuetype(IssueType.builder().name("issue type").build())
 			.status(Status.builder().displayValue("done").build())
 			.storyPoints(2)
+			.statuscategorychangedate("2023-11-28T14:02:03.724+0800")
 			.assignee(Assignee.builder().displayName("name").build())
 			.reporter(Reporter.builder().displayName("name").build())
 			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
@@ -345,6 +353,7 @@ public class BoardCsvFixture {
 			.summary("summary")
 			.issuetype(IssueType.builder().name("任务").build())
 			.status(Status.builder().displayValue("已完成").build())
+			.statuscategorychangedate("2023-11-28T14:02:03.724+0800")
 			.storyPoints(2)
 			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
 			.priority(Priority.builder().name("Medium").build())
@@ -464,7 +473,7 @@ public class BoardCsvFixture {
 					.status(Status.builder().displayValue("Doing").build())
 					.issuetype(IssueType.builder().name("Task").build())
 					.reporter(Reporter.builder().displayName("Jack").build())
-					.statusCategoryChangeDate("2023-4-23")
+					.statuscategorychangedate("2023-11-28T14:02:03.724+0800")
 					.storyPoints(3)
 					.priority(Priority.builder().name("Top").build())
 					.fixVersions(List.of(FixVersion.builder().name("sprint1").build(),

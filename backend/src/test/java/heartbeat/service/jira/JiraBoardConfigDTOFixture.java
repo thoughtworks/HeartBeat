@@ -1,6 +1,6 @@
 package heartbeat.service.jira;
 
-import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.board.jira.AllCardsResponseDTO;
 
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
@@ -123,8 +123,8 @@ public class JiraBoardConfigDTOFixture {
 		return StatusSelfDTO.builder().untranslatedName("doing").statusCategory(new StatusCategory("doing", "doing"));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
+		return AllCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(
 					new JiraCard("1",
@@ -139,8 +139,8 @@ public class JiraBoardConfigDTOFixture {
 							JiraCardField.builder().assignee(new Assignee(ASSIGNEE_NAME)).storyPoints(5).build())));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_REAL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ALL_REAL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
+		return AllCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(
 					new JiraCard("1",
@@ -175,8 +175,8 @@ public class JiraBoardConfigDTOFixture {
 								.build())));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder NEED_FILTERED_ALL_DONE_CARDS_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder NEED_FILTERED_ALL_DONE_CARDS_BUILDER() {
+		return AllCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(
 					new JiraCard("1",
@@ -185,8 +185,8 @@ public class JiraBoardConfigDTOFixture {
 							JiraCardField.builder().assignee(new Assignee(ASSIGNEE_NAME)).storyPoints(5).build())));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER() {
+		return AllCardsResponseDTO.builder()
 			.total("3")
 			.issues(List.of(
 					new JiraCard("1",
@@ -211,14 +211,14 @@ public class JiraBoardConfigDTOFixture {
 								.build())));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponseDTO.builder()
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER() {
+		return AllCardsResponseDTO.builder()
 			.total("200")
 			.issues(List.of(new JiraCard("1", JiraCardField.builder().assignee(new Assignee(ASSIGNEE_NAME)).build())));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER() {
-		return AllDoneCardsResponseDTO.builder().total("1").issues(Collections.emptyList());
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ONE_PAGE_NO_DONE_CARDS_RESPONSE_BUILDER() {
+		return AllCardsResponseDTO.builder().total("1").issues(Collections.emptyList());
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {
@@ -626,8 +626,8 @@ public class JiraBoardConfigDTOFixture {
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST() {
-		return AllDoneCardsResponseDTO.builder()
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST() {
+		return AllCardsResponseDTO.builder()
 			.total("3")
 			.issues(List.of(
 					new JiraCard("ADM-475",
@@ -686,8 +686,8 @@ public class JiraBoardConfigDTOFixture {
 							new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
 	}
 
-	public static AllDoneCardsResponseDTO.AllDoneCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS() {
-		return AllDoneCardsResponseDTO.builder()
+	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS() {
+		return AllCardsResponseDTO.builder()
 			.total("2")
 			.issues(List.of(
 					new JiraCard("ADM-475",

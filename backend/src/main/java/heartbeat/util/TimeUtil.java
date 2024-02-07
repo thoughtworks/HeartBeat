@@ -3,6 +3,7 @@ package heartbeat.util;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public interface TimeUtil {
@@ -27,6 +28,12 @@ public interface TimeUtil {
 
 	}
 
+	static String convertToSimpleISOFormat(String timestamp) {
+		ZonedDateTime zonedDateTime = ZonedDateTime.parse(timestamp,
+				DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		return zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	}
+
 	static String msToHMS(long timeStamp) {
 		long tempTimeStamp = timeStamp;
 		long milliseconds = tempTimeStamp % 1000;
@@ -37,6 +44,13 @@ public interface TimeUtil {
 		long hours = (tempTimeStamp - minutes) / 60;
 
 		return hours + ":" + minutes + ":" + seconds;
+	}
+
+	static int compareToDateString(String preDateString, String nextDateString) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		ZonedDateTime preDate = ZonedDateTime.parse(preDateString, formatter);
+		ZonedDateTime nextDate = ZonedDateTime.parse(nextDateString, formatter);
+		return nextDate.compareTo(preDate);
 	}
 
 }

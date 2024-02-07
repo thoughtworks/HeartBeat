@@ -4,6 +4,7 @@ public enum BoardCSVConfigEnum {
 
 	ISSUE_KEY("Issue key", "baseInfo.key"), SUMMARY("Summary", "baseInfo.fields.summary"),
 	ISSUE_TYPE("Issue Type", "baseInfo.fields.issuetype.name"), STATUS("Status", "baseInfo.fields.status.name"),
+	STATUS_DATE("Status Date", "baseInfo.fields.statuscategorychangedate"),
 	STORY_POINTS("Story Points", "baseInfo.fields.storyPoints"),
 	ASSIGNEE("assignee", "baseInfo.fields.assignee.displayName"),
 	REPORTER("Reporter", "baseInfo.fields.reporter.displayName"),

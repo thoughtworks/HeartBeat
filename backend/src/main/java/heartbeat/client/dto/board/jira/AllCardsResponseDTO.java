@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AllDoneCardsResponseDTO {
+public class AllCardsResponseDTO {
 
 	private String total;
 

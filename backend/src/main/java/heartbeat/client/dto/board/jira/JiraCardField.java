@@ -1,6 +1,7 @@
 package heartbeat.client.dto.board.jira;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.JsonElement;
 import heartbeat.controller.board.dto.response.CardParent;
 import heartbeat.controller.board.dto.response.FixVersion;
@@ -33,7 +34,7 @@ public class JiraCardField {
 
 	private Reporter reporter;
 
-	private String statusCategoryChangeDate;
+	private String statuscategorychangedate;
 
 	private double storyPoints;
 

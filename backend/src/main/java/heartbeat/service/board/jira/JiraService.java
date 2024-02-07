@@ -8,7 +8,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
-import heartbeat.client.dto.board.jira.AllDoneCardsResponseDTO;
+import heartbeat.client.dto.board.jira.AllCardsResponseDTO;
 import heartbeat.client.dto.board.jira.Assignee;
 import heartbeat.client.dto.board.jira.CardHistoryResponseDTO;
 import heartbeat.client.dto.board.jira.FieldResponseDTO;
@@ -381,16 +381,12 @@ public class JiraService {
 		return getCardList(baseUrl, boardRequestParam, jql, "all");
 	}
 
-	private AllDoneCardsResponseDTO formatAllDoneCards(String allDoneCardResponse, List<TargetField> targetFields) {
+	private AllCardsResponseDTO formatAllCards(String allCardResponse, List<TargetField> targetFields) {
 		Gson gson = new Gson();
-		AllDoneCardsResponseDTO allDoneCardsResponseDTO = gson.fromJson(allDoneCardResponse,
-				AllDoneCardsResponseDTO.class);
-		List<JiraCard> jiraCards = allDoneCardsResponseDTO.getIssues();
+		AllCardsResponseDTO allCardsResponseDTO = gson.fromJson(allCardResponse, AllCardsResponseDTO.class);
+		List<JiraCard> jiraCards = allCardsResponseDTO.getIssues();
 
-		JsonArray elements = JsonParser.parseString(allDoneCardResponse)
-			.getAsJsonObject()
-			.get("issues")
-			.getAsJsonArray();
+		JsonArray elements = JsonParser.parseString(allCardResponse).getAsJsonObject().get("issues").getAsJsonArray();
 		List<Map<String, JsonElement>> customFieldMapList = new ArrayList<>();
 		ArrayList<Double> storyPointList = new ArrayList<>();
 		ArrayList<Sprint> sprintList = new ArrayList<>();
@@ -451,12 +447,12 @@ public class JiraService {
 			customFieldMapList.add(customFieldMap);
 		}
 		for (int index = 0; index < customFieldMapList.size(); index++) {
-			allDoneCardsResponseDTO.getIssues().get(index).getFields().setCustomFields(customFieldMapList.get(index));
+			allCardsResponseDTO.getIssues().get(index).getFields().setCustomFields(customFieldMapList.get(index));
 		}
 		for (int index = 0; index < sprintList.size(); index++) {
-			allDoneCardsResponseDTO.getIssues().get(index).getFields().setSprint(sprintList.get(index));
+			allCardsResponseDTO.getIssues().get(index).getFields().setSprint(sprintList.get(index));
 		}
-		return allDoneCardsResponseDTO;
+		return allCardsResponseDTO;
 	}
 
 	private String parseJiraJql(BoardType boardType, List<String> doneColumns, BoardRequestParam boardRequestParam) {
@@ -896,7 +892,7 @@ public class JiraService {
 		log.info("Successfully get first-page xxx card information form kanban, _param {}", cardType);
 
 		List<TargetField> targetField = getTargetField(baseUrl, boardRequestParam);
-		AllDoneCardsResponseDTO allCardsResponseDTO = formatAllDoneCards(allCardResponse, targetField);
+		AllCardsResponseDTO allCardsResponseDTO = formatAllCards(allCardResponse, targetField);
 
 		List<JiraCard> cards = new ArrayList<>(new HashSet<>(allCardsResponseDTO.getIssues()));
 		int pages = (int) Math.ceil(Double.parseDouble(allCardsResponseDTO.getTotal()) / QUERY_COUNT);
@@ -906,15 +902,15 @@ public class JiraService {
 
 		log.info("Start to get more xxx card information form kanban, _param {}", cardType);
 		List<Integer> range = IntStream.rangeClosed(1, pages - 1).boxed().toList();
-		List<CompletableFuture<AllDoneCardsResponseDTO>> futures = range.stream()
+		List<CompletableFuture<AllCardsResponseDTO>> futures = range.stream()
 			.map(startFrom -> CompletableFuture.supplyAsync(
-					() -> (formatAllDoneCards(jiraFeignClient.getJiraCards(baseUrl, boardRequestParam.getBoardId(),
+					() -> (formatAllCards(jiraFeignClient.getJiraCards(baseUrl, boardRequestParam.getBoardId(),
 							QUERY_COUNT, startFrom * QUERY_COUNT, jql, boardRequestParam.getToken()), targetField)),
 					customTaskExecutor))
 			.toList();
 		log.info("Successfully get more xxx card information form kanban, _param {}", cardType);
 
-		List<AllDoneCardsResponseDTO> nonDoneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
+		List<AllCardsResponseDTO> nonDoneCardsResponses = futures.stream().map(CompletableFuture::join).toList();
 		List<JiraCard> moreNonDoneCards = nonDoneCardsResponses.stream()
 			.flatMap(moreDoneCardsResponses -> moreDoneCardsResponses.getIssues().stream())
 			.toList();

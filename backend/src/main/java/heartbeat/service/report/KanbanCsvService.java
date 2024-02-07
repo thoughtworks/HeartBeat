@@ -31,8 +31,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static heartbeat.util.TimeUtil.compareToDateString;
 
 @Service
 @Log4j2
@@ -74,22 +77,50 @@ public class KanbanCsvService {
 			List<JiraColumnDTO> jiraColumns, List<TargetField> targetFields, String csvTimeStamp) {
 		List<JiraCardDTO> cardDTOList = new ArrayList<>();
 		List<JiraCardDTO> emptyJiraCard = List.of(JiraCardDTO.builder().build());
-		cardDTOList.addAll(allDoneCards);
+
+		if (allDoneCards != null) {
+			if (allDoneCards.size() > 1) {
+				allDoneCards.sort((preCard, nextCard) -> {
+					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
+					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
+					String preDateString = preCard.getBaseInfo().getFields().getStatuscategorychangedate();
+					String nextDateString = nextCard.getBaseInfo().getFields().getStatuscategorychangedate();
+					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateString)
+							|| Objects.isNull(nextDateString)) {
+						return jiraColumns.size() + 1;
+					}
+					else {
+						return compareToDateString(preDateString, nextDateString);
+					}
+				});
+			}
+			cardDTOList.addAll(allDoneCards);
+		}
+
 		cardDTOList.addAll(emptyJiraCard);
 
 		if (nonDoneCards != null) {
 			if (nonDoneCards.size() > 1) {
-				nonDoneCards.sort((preCard, nextCard) -> { // 8, 0, -2
+				nonDoneCards.sort((preCard, nextCard) -> {
 					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
 					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
-					if (preStatus == null || nextStatus == null) {
+					String preDateString = preCard.getBaseInfo().getFields().getStatuscategorychangedate();
+					String nextDateString = nextCard.getBaseInfo().getFields().getStatuscategorychangedate();
+					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateString)
+							|| Objects.isNull(nextDateString)) {
 						return jiraColumns.size() + 1;
 					}
 					else {
 						String preCardStatusName = preStatus.getName();
 						String nextCardStatusName = nextStatus.getName();
-						return getIndexForStatus(jiraColumns, nextCardStatusName)
+						int statusIndexComparison = getIndexForStatus(jiraColumns, nextCardStatusName)
 								- getIndexForStatus(jiraColumns, preCardStatusName);
+
+						if (statusIndexComparison == 0) {
+							return compareToDateString(preDateString, nextDateString);
+						}
+
+						return statusIndexComparison;
 					}
 				});
 			}
@@ -176,7 +207,7 @@ public class KanbanCsvService {
 				case "issuetype" -> tempFields.put(fieldName, jiraCardFields.getIssuetype());
 				case "reporter" -> tempFields.put(fieldName, jiraCardFields.getReporter());
 				case "statusCategoryChangeData" ->
-					tempFields.put(fieldName, jiraCardFields.getStatusCategoryChangeDate());
+					tempFields.put(fieldName, jiraCardFields.getStatuscategorychangedate());
 				case "storyPoints" -> tempFields.put(fieldName, jiraCardFields.getStoryPoints());
 				case "fixVersions" -> tempFields.put(fieldName, jiraCardFields.getFixVersions());
 				case "project" -> tempFields.put(fieldName, jiraCardFields.getProject());

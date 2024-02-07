@@ -49,10 +49,11 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'] },
     },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    /** Disable it, GitHub actions's can't use this browser to run test */
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
     /* Test against Tablet viewports. */
     {
       name: 'Tablet',

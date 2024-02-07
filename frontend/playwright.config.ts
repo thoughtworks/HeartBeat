@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { viewportDefault } from './e2e/fixtures/consts';
 
-const isWebkit = !!process.env.IS_WEBKIT;
+const isWebkit = process.env.IS_WEBKIT === 'true';
 console.log(`isWebkit: ${isWebkit}`);
 
 /**

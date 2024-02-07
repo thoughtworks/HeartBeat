@@ -10,7 +10,6 @@ display_help() {
   echo "   frontend     build frontend"
   echo "   backend      build backend"
   echo "   stub         build stub"
-  echo "   e2e-runner   build e2e-runner"
   echo
   exit 1
 }
@@ -25,7 +24,6 @@ while [[ "$#" -gt 0 ]]; do
   frontend) build_and_push_image frontend ;;
   backend) build_and_push_image backend ;;
   stub) build_and_push_image stub ;;
-  e2e-runner) build_and_push_image e2e-runner ;;
   *) echo "Unknown parameter passed: $1" ;;
   esac
   shift

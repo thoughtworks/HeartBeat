@@ -157,6 +157,8 @@ e2e_check(){
   cd frontend
   pnpm install --no-frozen-lockfile
   pnpm exec playwright install
+  pnpm exec playwright install msedge
+  pnpm exec playwright install chrome
   pnpm run e2e
 }
 

@@ -22,7 +22,7 @@
     },
     "types": ["node", "vite-plugin-pwa/react", "jest"],
   },
-  "include": ["src", "__tests__", "e2e"],
+  "include": ["src", "__tests__", "e2e", "*.ts"],
   "exclude": ["__tests__/__mocks__/svgTransformer.ts", "package.json", "pnpm-lock.yaml"],
   "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.scripts.json" }],
 }

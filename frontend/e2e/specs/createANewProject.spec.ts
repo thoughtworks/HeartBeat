@@ -8,8 +8,8 @@ import fs from 'fs';
 const clearTempDir = async () => {
   try {
     const configStepSavePath = path.resolve(__dirname, '..', './temp/', `./${CONFIG_STEP_SAVING_FILENAME}`);
-    const stats = fs.statSync(configStepSavePath);
-    if (stats) {
+    const isExist = fs.existsSync(configStepSavePath);
+    if (isExist) {
       fs.rmSync(configStepSavePath);
     }
   } finally {

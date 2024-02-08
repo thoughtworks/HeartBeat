@@ -1,12 +1,59 @@
+import { config as configStepData } from '../fixtures/configStep';
 import { test } from '../fixtures/testWithExtendFixtures';
-import { E2E_PROJECT_NAME } from 'e2e/fixtures/fixtures';
+import { CONFIG_STEP_SAVING_FILENAME } from '../fixtures';
+import dayjs from 'dayjs';
+import path from 'path';
+import fs from 'fs';
 
-test('Create a new project', async ({ homePage, configStep }) => {
+const clearTempDir = async () => {
+  try {
+    const configStepSavePath = path.resolve(__dirname, '..', './temp/', `./${CONFIG_STEP_SAVING_FILENAME}`);
+    const stats = fs.statSync(configStepSavePath);
+    if (stats) {
+      fs.rmSync(configStepSavePath);
+    }
+  } finally {
+    console.log('e2e/temp/ dir cleared, going to start testing suite.');
+  }
+};
+
+test.beforeAll(async () => {
+  await clearTempDir();
+});
+
+test('Create a new project', async ({ homePage, configStep, metricsStep }) => {
+  const dateRange = {
+    startDate: dayjs(configStepData.dateRange.startDate).format('MM/DD/YYYY'),
+    endDate: dayjs(configStepData.dateRange.endDate).format('MM/DD/YYYY'),
+  };
+
   await homePage.goto();
   await homePage.createANewProject();
-
   await configStep.waitForShown();
-  await configStep.typeProjectName(E2E_PROJECT_NAME);
+  await configStep.typeInProjectName(configStepData.projectName);
+  await configStep.clickPreviousButtonThenGoHome();
+  await homePage.createANewProject();
+  await configStep.typeInProjectName(configStepData.projectName);
+  await configStep.typeInDateRange(dateRange);
+  await configStep.validateNextButtonNotClickable();
+  await configStep.selectAllRequiredMetrics();
+  await configStep.checkBoardFormVisible();
+  await configStep.checkPipelineToolFormVisible();
+  await configStep.checkSourceControlFormVisible();
+  await configStep.fillAndVerifyBoardConfig(configStepData.board);
+  await configStep.resetBoardConfig();
+  await configStep.fillAndVerifyBoardConfig(configStepData.board);
+  await configStep.fillAndVerifyPipelineToolForm(configStepData.pipelineTool);
+  await configStep.fillAndVerifySourceControlForm(configStepData.sourceControl);
+  await configStep.saveConfigStepAsJSONThenVerifyDownloadFile(configStepData);
+  await configStep.validateNextButtonClickable();
+  await configStep.goToMetrics();
 
-  await configStep.checkProjectName(E2E_PROJECT_NAME);
+  await metricsStep.waitForShown();
+  await metricsStep.validateNextButtonNotClickable();
+  await metricsStep.checkBoardConfigurationVisible();
+  await metricsStep.checkPipelineConfigurationVisible();
+  await metricsStep.checkLastAssigneeCrewFilterChecked();
+  await metricsStep.checkCycleTimeConsiderCheckboxChecked();
+  await metricsStep.checkCycleTimeSettingIsByColumn();
 });

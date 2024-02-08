@@ -1,9 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
-import { viewportDefault } from './e2e/fixtures/consts';
+import { VIEWPORT_DEFAULT } from 'e2e/fixtures';
 
 const isWebkit = process.env.IS_WEBKIT === 'true';
-console.log(`isWebkit: ${isWebkit}`);
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -78,7 +76,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.APP_ORIGIN,
-    viewport: viewportDefault,
+    viewport: VIEWPORT_DEFAULT,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',

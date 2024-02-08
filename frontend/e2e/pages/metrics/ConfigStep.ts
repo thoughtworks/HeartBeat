@@ -1,5 +1,25 @@
+import { config as configStepData } from '../../fixtures/configStep';
+import { CONFIG_STEP_SAVING_FILENAME } from '../../fixtures';
 import { expect, Locator, Page } from '@playwright/test';
 import { Dayjs } from 'dayjs';
+import path from 'path';
+import fs from 'fs';
+
+interface IBoardData {
+  boardId: string;
+  email: string;
+  site: string;
+  token: string;
+}
+
+interface IPipelineToolData {
+  token: string;
+}
+
+interface ISourceControlData {
+  token: string;
+}
+
 export class ConfigStep {
   readonly page: Page;
   readonly stepTitle: Locator;
@@ -16,7 +36,35 @@ export class ConfigStep {
   readonly velocityCheckbox: Locator;
   readonly classificationCheckbox: Locator;
   readonly requiredDataErrorMessage: Locator;
+  readonly previousButton: Locator;
   readonly nextButton: Locator;
+  readonly previousModal: Locator;
+  readonly previousModalYesButton: Locator;
+  readonly requiredMetricsLabel: Locator;
+  readonly requiredMetricsAllOption: Locator;
+  readonly boardContainer: Locator;
+  readonly boardTypeSelect: Locator;
+  readonly boardIdInput: Locator;
+  readonly boardEmailInput: Locator;
+  readonly boardSiteInput: Locator;
+  readonly boardTokenInput: Locator;
+  readonly boardVerifyButton: Locator;
+  readonly boardVerifiedButton: Locator;
+  readonly boardResetButton: Locator;
+  readonly pipelineToolContainer: Locator;
+  readonly pipelineToolTypeSelect: Locator;
+  readonly pipelineToolTypeBuildKiteOption: Locator;
+  readonly pipelineToolTokenInput: Locator;
+  readonly pipelineToolVerifyButton: Locator;
+  readonly pipelineToolVerifiedButton: Locator;
+  readonly pipelineToolResetButton: Locator;
+  readonly sourceControlContainer: Locator;
+  readonly sourceControlTypeSelect: Locator;
+  readonly sourceControlTokenInput: Locator;
+  readonly sourceControlVerifyButton: Locator;
+  readonly sourceControlVerifiedButton: Locator;
+  readonly sourceControlResetButton: Locator;
+  readonly saveAsButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -43,19 +91,58 @@ export class ConfigStep {
     this.velocityCheckbox = page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox');
     this.classificationCheckbox = page.getByRole('option', { name: 'Classification' }).getByRole('checkbox');
     this.requiredDataErrorMessage = page.getByText('Metrics is required');
+    this.previousButton = page.getByRole('button', { name: 'Previous' });
     this.nextButton = page.getByRole('button', { name: 'Next' });
+    this.previousModal = page.getByText('All the filled data will be cleared. Continue to Home page?');
+    this.previousModalYesButton = page.getByRole('button', { name: 'Yes' });
+
+    this.requiredMetricsLabel = page.getByLabel('Required metrics *');
+    this.requiredMetricsAllOption = page.getByRole('option', { name: 'All' });
+
+    this.boardContainer = page.getByLabel('Board Config');
+    this.boardTypeSelect = this.boardContainer.getByLabel('Board *');
+    this.boardIdInput = this.boardContainer.getByLabel('Board Id *');
+    this.boardEmailInput = this.boardContainer.getByLabel('Email *');
+    this.boardSiteInput = this.boardContainer.getByLabel('Site *');
+    this.boardTokenInput = this.boardContainer.getByLabel('Token *');
+    this.boardVerifyButton = this.boardContainer.getByRole('button', { name: 'Verify' });
+    this.boardVerifiedButton = this.boardContainer.getByRole('button', { name: 'Verified' });
+    this.boardResetButton = this.boardContainer.getByRole('button', { name: 'Reset' });
+
+    this.pipelineToolContainer = page.getByLabel('Pipeline Tool Config');
+    this.pipelineToolTypeSelect = this.pipelineToolContainer.getByLabel('Pipeline Tool *');
+    this.pipelineToolTypeBuildKiteOption = page.getByRole('option', { name: 'BuildKite' });
+    this.pipelineToolTokenInput = this.pipelineToolContainer.getByLabel('Token');
+    this.pipelineToolVerifyButton = this.pipelineToolContainer.getByRole('button', { name: 'Verify' });
+    this.pipelineToolVerifiedButton = this.pipelineToolContainer.getByRole('button', { name: 'Verified' });
+    this.pipelineToolResetButton = this.pipelineToolContainer.getByRole('button', { name: 'Reset' });
+
+    this.sourceControlContainer = page.getByLabel('Source Control Config');
+    this.sourceControlTypeSelect = this.sourceControlContainer.getByLabel('Source Control *');
+    this.sourceControlTokenInput = this.sourceControlContainer.getByLabel('Token');
+    this.sourceControlVerifyButton = this.sourceControlContainer.getByRole('button', { name: 'Verify' });
+    this.sourceControlVerifiedButton = this.sourceControlContainer.getByRole('button', { name: 'Verified' });
+    this.sourceControlResetButton = this.sourceControlContainer.getByRole('button', { name: 'Reset' });
+
+    this.saveAsButton = page.getByRole('button', { name: 'Save' });
   }
 
   async waitForShown() {
     await expect(this.stepTitle).toHaveClass(/Mui-active/);
   }
 
-  async typeProjectName(projectName: string) {
+  async typeInProjectName(projectName: string) {
     await this.projectNameInput.fill(projectName);
   }
 
-  async checkProjectName(projectName: string) {
-    await expect(this.projectNameInput).toHaveValue(projectName);
+  async clickPreviousButtonThenGoHome() {
+    await this.previousButton.click();
+
+    await expect(this.previousModal).toBeVisible();
+
+    await this.previousModalYesButton.click();
+
+    await expect(this.page).toHaveURL(/\//);
   }
 
   async selectRegularCalendar() {
@@ -91,7 +178,123 @@ export class ConfigStep {
 
     expect(this.requiredDataErrorMessage).toBeTruthy();
   }
+
+  async typeInDateRange({ startDate, endDate }: { startDate: string; endDate: string }) {
+    await this.fromDateInput.fill(startDate);
+    await this.toDateInput.fill(endDate);
+  }
+
+  async validateNextButtonNotClickable() {
+    await expect(this.nextButton).toBeDisabled();
+  }
+
+  async validateNextButtonClickable() {
+    await expect(this.nextButton).toBeEnabled();
+  }
+
+  async selectAllRequiredMetrics() {
+    await this.requiredMetricsLabel.click();
+    await this.requiredMetricsAllOption.click();
+    await this.page.keyboard.press('Escape');
+  }
+
+  async checkBoardFormVisible() {
+    await expect(this.boardContainer).toBeVisible();
+    await expect(this.boardTypeSelect).toBeVisible();
+    await expect(this.boardIdInput).toBeVisible();
+    await expect(this.boardEmailInput).toBeVisible();
+    await expect(this.boardSiteInput).toBeVisible();
+    await expect(this.boardTokenInput).toBeVisible();
+  }
+
+  async checkPipelineToolFormVisible() {
+    await expect(this.pipelineToolContainer).toBeVisible();
+    await expect(this.pipelineToolTypeSelect).toBeVisible();
+    await expect(this.pipelineToolTokenInput).toBeVisible();
+  }
+
+  async checkSourceControlFormVisible() {
+    await expect(this.sourceControlContainer).toBeVisible();
+    await expect(this.sourceControlTypeSelect).toBeVisible();
+    await expect(this.sourceControlTokenInput).toBeVisible();
+  }
+
+  async fillBoardConfigForm({ boardId, email, site, token }: IBoardData) {
+    await this.boardIdInput.fill(boardId);
+    await this.boardEmailInput.fill(email);
+    await this.boardSiteInput.fill(site);
+    await this.boardTokenInput.fill(token);
+  }
+
+  async fillAndVerifyBoardConfig(boardData: IBoardData) {
+    await this.fillBoardConfigForm(boardData);
+
+    await expect(this.boardVerifyButton).toBeEnabled();
+
+    await this.boardVerifyButton.click();
+
+    await expect(this.boardVerifiedButton).toBeVisible();
+  }
+
+  async resetBoardConfig() {
+    await expect(this.boardResetButton).toBeEnabled();
+
+    await this.boardResetButton.click();
+  }
+
+  async fillPipelineToolForm({ token }: IPipelineToolData) {
+    await this.pipelineToolTokenInput.fill(token);
+    await this.pipelineToolTypeSelect.click();
+    await this.pipelineToolTypeBuildKiteOption.click();
+  }
+
+  async fillAndVerifyPipelineToolForm(pipelineToolData: IPipelineToolData) {
+    await this.fillPipelineToolForm(pipelineToolData);
+
+    await expect(this.pipelineToolVerifyButton).toBeEnabled();
+
+    await this.pipelineToolVerifyButton.click();
+
+    await expect(this.pipelineToolVerifiedButton).toBeVisible();
+  }
+
+  async fillSourceControlForm({ token }: ISourceControlData) {
+    await this.sourceControlTokenInput.fill(token);
+  }
+
+  async fillAndVerifySourceControlForm(sourceControlData: ISourceControlData) {
+    await this.fillSourceControlForm(sourceControlData);
+
+    await expect(this.sourceControlVerifyButton).toBeEnabled();
+
+    await this.sourceControlVerifyButton.click();
+
+    await expect(this.sourceControlVerifiedButton).toBeVisible();
+  }
+
+  async saveConfigStepAsJSONThenVerifyDownloadFile(json: typeof configStepData) {
+    const downloadPromise = this.page.waitForEvent('download');
+
+    await expect(this.saveAsButton).toBeEnabled();
+
+    await this.saveAsButton.click();
+    const download = await downloadPromise;
+    const savePath = path.resolve(__dirname, '..', '..', './temp', `./${CONFIG_STEP_SAVING_FILENAME}`);
+    await download.saveAs(savePath);
+
+    const downloadPath = await download.path();
+    const fileData = JSON.parse(fs.readFileSync(downloadPath, 'utf8'));
+
+    expect(fileData).toEqual(json);
+
+    await download.delete();
+  }
+
+  async goToMetrics() {
+    await this.nextButton.click();
+  }
 }
+
 function covertToDateString(day: Dayjs): string | RegExp {
   return `${day.month() + 1} / ${day.date()} / ${day.year()}`;
 }

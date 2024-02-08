@@ -37,8 +37,8 @@ deploy_e2e() {
     docker pull ${AWS_ECR_HOST}/heartbeat_backend:latest
     docker pull ${AWS_ECR_HOST}/heartbeat_frontend:latest
 
-    export MOCK_SERVER_URL=${AWS_EC2_IP_MOCK_SERVER}:${AWS_EC2_IP_MOCK_SERVER_PORT}
-    export SPRING_PROFILES_ACTIVE=e2e
+    # export MOCK_SERVER_URL=${AWS_EC2_IP_MOCK_SERVER}:${AWS_EC2_IP_MOCK_SERVER_PORT}
+    # export SPRING_PROFILES_ACTIVE=e2e
     docker-compose up -d frontend
   "
   echo "Successfully deployed e2e service"

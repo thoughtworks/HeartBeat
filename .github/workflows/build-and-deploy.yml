@@ -536,6 +536,9 @@ jobs:
       - name: Run E2E
         env:
           APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_FRONTEND_PORT }}
+          E2E_TOKEN_JIRA: ${{ secrets.E2E_TOKEN_JIRA }}
+          E2E_TOKEN_BUILD_KITE: ${{ secrets.E2E_TOKEN_BUILD_KITE }}
+          E2E_TOKEN_GITHUB: ${{ secrets.E2E_TOKEN_GITHUB }}
         shell: bash {0}
         run: ./ops/check.sh e2e
       - uses: actions/upload-artifact@v4
@@ -562,6 +565,9 @@ jobs:
         env:
           APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_FRONTEND_PORT }}
           IS_WEBKIT: true
+          E2E_TOKEN_JIRA: ${{ secrets.E2E_TOKEN_JIRA }}
+          E2E_TOKEN_BUILD_KITE: ${{ secrets.E2E_TOKEN_BUILD_KITE }}
+          E2E_TOKEN_GITHUB: ${{ secrets.E2E_TOKEN_GITHUB }}
         shell: bash {0}
         run: ./ops/check.sh e2e
       - uses: actions/upload-artifact@v4

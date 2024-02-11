@@ -525,6 +525,8 @@ jobs:
     needs:
       - deploy-e2e
       - deploy-stub
+    container:
+      image: mcr.microsoft.com/playwright:latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -533,6 +535,8 @@ jobs:
       - name: Install
         run: |
           npm install -g pnpm
+      - name: Set env
+        run: echo "HOME=/root" >> $GITHUB_ENV
       - name: Run E2E
         env:
           APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_FRONTEND_PORT }}
@@ -549,10 +553,12 @@ jobs:
           retention-days: 30
 
   e2e-webkit:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     needs:
       - deploy-e2e
       - deploy-stub
+    container:
+      image: mcr.microsoft.com/playwright:latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4

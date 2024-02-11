@@ -154,9 +154,12 @@ dot_star_check() {
 }
 
 e2e_check(){
+  export TZ=Asia/Shanghai
   cd frontend
   pnpm install --no-frozen-lockfile
   pnpm exec playwright install
+  pnpm exec playwright install msedge
+  pnpm exec playwright install chrome
   pnpm run e2e
 }
 

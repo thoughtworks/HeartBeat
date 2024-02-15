@@ -1,7 +1,0 @@
-videos
-downloads
-screenshots
-reports
-
-.env.*
-!.env.example

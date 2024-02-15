@@ -116,18 +116,7 @@ steps:
       - "check-backend"
       - "check-frontend-license"
       - "check-backend-license"
-    command: ./ops/check.sh e2e
-    env:
-      IS_WEBKIT: false
-    plugins:
-      - artifacts#v1.9.0:
-          upload:
-            - "frontend/e2e/reports/**/*"
-          name: "e2e-reports"
-          expire_in: "${RETENTION_DAYS} days"
-      - aws-ssm#v1.0.0:
-          parameters:
-            E2E_TOKEN_JIRA: /E2E/TOKEN_JIRA
+    command: ./ops/check.sh e2e-container
 
   - label: ":rocket: Deploy prod"
     if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)

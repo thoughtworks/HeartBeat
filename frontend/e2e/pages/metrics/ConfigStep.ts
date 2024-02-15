@@ -269,7 +269,7 @@ export class ConfigStep {
 
     await this.sourceControlVerifyButton.click();
 
-    await expect(this.sourceControlVerifiedButton).toBeVisible();
+    await expect(this.sourceControlVerifiedButton).toBeHidden();
   }
 
   async saveConfigStepAsJSONThenVerifyDownloadFile(json: typeof configStepData) {

@@ -16,6 +16,7 @@ display_help() {
   echo "   backend-license      check license for the backend"
   echo "   frontend-license     check license for the frontend"
   echo "   e2e                  run e2e for the frontend"
+  echo "   e2e-container        run e2e for the frontend in container"
   echo
   exit 1
 }
@@ -153,8 +154,23 @@ dot_star_check() {
   fi
 }
 
+e2e_container_check() {
+  docker build -t "heartbeat_e2e:latest" ./ -f ./ops/infra/Dockerfile.e2e
+
+  docker run --rm \
+    -e "APP_ORIGIN=${APP_HTTP_SCHEDULE:-}://${AWS_EC2_IP_E2E:-}:${AWS_EC2_IP_E2E_PORT:-}" \
+    -e "E2E_TOKEN_JIRA=${E2E_TOKEN_JIRA:-}" \
+    -e "E2E_TOKEN_BUILD_KITE=${E2E_TOKEN_BUILD_KITE:-}" \
+    -e "E2E_TOKEN_GITHUB=${E2E_TOKEN_GITHUB:-}" \
+    -e "CI='true'" \
+    heartbeat_e2e:latest \
+    pnpm run e2e
+}
+
 e2e_check(){
+  echo "start to run e2e"
   export TZ=Asia/Shanghai
+  npm install -g pnpm
   cd frontend
   pnpm install --no-frozen-lockfile
   pnpm exec playwright install
@@ -180,6 +196,7 @@ while [[ "$#" -gt 0 ]]; do
     hex) hex_check ;;
     rgba) rgba_check ;;
     e2e) e2e_check ;;
+    "e2e-container") e2e_container_check ;;
     "backend-license") backend_license_check ;;
     "frontend-license") frontend_license_check ;;
     *) echo "Unknown parameter passed: $1" ;;

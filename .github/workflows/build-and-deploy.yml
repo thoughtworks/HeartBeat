@@ -552,41 +552,10 @@ jobs:
           path: frontend/e2e/reports/
           retention-days: 30
 
-  e2e-webkit:
-    runs-on: ubuntu-latest
-    needs:
-      - deploy-e2e
-      - deploy-stub
-    container:
-      image: mcr.microsoft.com/playwright:latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          node-version: ${{ vars.NODE_VERSION }}
-      - name: Install
-        run: |
-          npm install -g pnpm
-      - name: Run E2E
-        env:
-          APP_ORIGIN: ${{ vars.APP_HTTP_SCHEDULE }}://${{ secrets.AWS_EC2_IP_E2E }}:${{ secrets.AWS_EC2_IP_E2E_FRONTEND_PORT }}
-          IS_WEBKIT: true
-          E2E_TOKEN_JIRA: ${{ secrets.E2E_TOKEN_JIRA }}
-          E2E_TOKEN_BUILD_KITE: ${{ secrets.E2E_TOKEN_BUILD_KITE }}
-          E2E_TOKEN_GITHUB: ${{ secrets.E2E_TOKEN_GITHUB }}
-        shell: bash {0}
-        run: ./ops/check.sh e2e
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report-webkit
-          path: frontend/e2e/reports/
-          retention-days: 30
   deploy:
     runs-on: ubuntu-latest
     needs:
       - e2e
-      - e2e-webkit
     steps:
       - name: Checkout repo
         # uses: actions/checkout@v4

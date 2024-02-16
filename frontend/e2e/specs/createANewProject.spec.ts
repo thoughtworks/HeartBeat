@@ -1,32 +1,17 @@
 import { config as configStepData } from '../fixtures/configStep';
 import { test } from '../fixtures/testWithExtendFixtures';
-import { CONFIG_STEP_SAVING_FILENAME } from '../fixtures';
-import dayjs from 'dayjs';
-import path from 'path';
-import fs from 'fs';
-
-const clearTempDir = async () => {
-  try {
-    const configStepSavePath = path.resolve(__dirname, '..', './temp/', `./${CONFIG_STEP_SAVING_FILENAME}`);
-    const isExist = fs.existsSync(configStepSavePath);
-    if (isExist) {
-      fs.rmSync(configStepSavePath);
-    }
-  } finally {
-    console.log('e2e/temp/ dir cleared, going to start testing suite.');
-  }
-};
+import { clearTempDir } from 'e2e/utils/clearTempDir';
+import { format } from 'e2e/utils/dateTime';
 
 test.beforeAll(async () => {
   await clearTempDir();
 });
 
-test('Create a new project', async ({ homePage, configStep, metricsStep }) => {
+test('Create a new project', async ({ homePage, configStep, metricsStep, reportStep }) => {
   const dateRange = {
-    startDate: dayjs(configStepData.dateRange.startDate).format('MM/DD/YYYY'),
-    endDate: dayjs(configStepData.dateRange.endDate).format('MM/DD/YYYY'),
+    startDate: format(configStepData.dateRange.startDate),
+    endDate: format(configStepData.dateRange.endDate),
   };
-
   await homePage.goto();
   await homePage.createANewProject();
   await configStep.waitForShown();
@@ -56,4 +41,24 @@ test('Create a new project', async ({ homePage, configStep, metricsStep }) => {
   await metricsStep.checkLastAssigneeCrewFilterChecked();
   await metricsStep.checkCycleTimeConsiderCheckboxChecked();
   await metricsStep.checkCycleTimeSettingIsByColumn();
+  await metricsStep.waitForHiddenLoading();
+  await metricsStep.selectHeartbeatState(
+    'To do',
+    'In Dev',
+    'Block',
+    'Review',
+    'Waiting for testing',
+    'Testing',
+    'Done',
+  );
+  await metricsStep.selectDistinguishedByOptions();
+  await metricsStep.selectPipelineSetting();
+  await metricsStep.goToReportPage();
+
+  await reportStep.confirmGeneratedReport();
+  await reportStep.checkBoardMetrics('17', '9', '4.92', '9.30');
+  await reportStep.checkBoardMetricsDetails('./e2e/snapshot/Board-Metrics.png');
+
+  await reportStep.checkDoraMetrics('6.12', '0.50', '6.62', '6.60', '17.50% (7/40)', '1.90');
+  await reportStep.checkDoraMetricsDetails('./e2e/snapshot/DORA-Metrics.png');
 });

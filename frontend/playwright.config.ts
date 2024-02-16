@@ -15,6 +15,10 @@ if (!process.env.APP_ORIGIN) {
 
 export default defineConfig({
   testDir: './e2e',
+  timeout: 50 * 1000,
+  expect: {
+    timeout: 50 * 1000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

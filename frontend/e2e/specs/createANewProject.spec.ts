@@ -57,8 +57,8 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
 
   await reportStep.confirmGeneratedReport();
   await reportStep.checkBoardMetrics('17', '9', '4.92', '9.30');
-  await reportStep.checkBoardMetricsDetails('./e2e/snapshot/Board-Metrics.png');
+  await reportStep.checkBoardMetricsDetails('./e2e/snapshot/create-a-new-project-Board-Metrics.png');
 
   await reportStep.checkDoraMetrics('6.12', '0.50', '6.62', '6.60', '17.50% (7/40)', '1.90');
-  await reportStep.checkDoraMetricsDetails('./e2e/snapshot/DORA-Metrics.png');
+  await reportStep.checkDoraMetricsDetails('./e2e/snapshot/create-a-new-project-DORA-Metrics.png');
 });

@@ -35,7 +35,7 @@ export class ReportStep {
 
   async checkDoraMetricsDetails(snapshotPath: string) {
     await this.showMoreLinks.nth(1).click();
-    // await this.page.screenshot({ path: snapshotPath, fullPage: true });
+    await this.page.screenshot({ path: snapshotPath, fullPage: true });
     await expect(this.page).toHaveScreenshot([snapshotPath]);
     await this.backButton.click();
   }
@@ -61,7 +61,7 @@ export class ReportStep {
 
   async checkBoardMetricsDetails(snapshotPath: string) {
     await this.showMoreLinks.first().click();
-    // await this.page.screenshot({ path: snapshotPath, fullPage: true });
+    await this.page.screenshot({ path: snapshotPath, fullPage: true });
     await expect(this.page).toHaveScreenshot([snapshotPath]);
     await this.backButton.click();
   }

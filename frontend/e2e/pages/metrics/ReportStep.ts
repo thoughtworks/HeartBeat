@@ -1,3 +1,4 @@
+import { checkDownloadReport } from 'e2e/utils/download';
 import { expect, Locator, Page } from '@playwright/test';
 
 export class ReportStep {
@@ -13,6 +14,9 @@ export class ReportStep {
   readonly meanTimeToRecovery: Locator;
   readonly showMoreLinks: Locator;
   readonly backButton: Locator;
+  readonly exportPipelineDataButton: Locator;
+  readonly exportBoardData: Locator;
+  readonly exportMetricData: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -31,9 +35,13 @@ export class ReportStep {
     );
     this.showMoreLinks = this.page.getByText('show more >');
     this.backButton = this.page.getByText('Back');
+    this.exportMetricData = this.page.getByText('Export metric data');
+    this.exportBoardData = this.page.getByText('Export board data');
+    this.exportPipelineDataButton = this.page.getByText('Export pipeline data');
   }
 
-  async checkDoraMetricsDetails() {
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async checkDoraMetricsDetails(snapshotPath: string) {
     await this.showMoreLinks.nth(1).click();
     //FIXME fix snapshot issue
     // await expect(this.page).toHaveScreenshot([snapshotPath]);
@@ -59,7 +67,8 @@ export class ReportStep {
     await expect(this.averageCycleTimeForCard).toContainText(`${averageCycleTimeForCard}Average Cycle Time(Days/Card)`);
   }
 
-  async checkBoardMetricsDetails() {
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async checkBoardMetricsDetails(snapshotPath: string) {
     await this.showMoreLinks.first().click();
     //FIXME fix snapshot issue
     // await expect(this.page).toHaveScreenshot([snapshotPath]);
@@ -80,5 +89,11 @@ export class ReportStep {
     await expect(this.deploymentFrequency).toContainText(`${deploymentFrequency}Deployment Frequency(Deployments/Day)`);
     await expect(this.failureRate).toContainText(`${failureRate}Failure Rate`);
     await expect(this.meanTimeToRecovery).toContainText(`${meanTimeToRecovery}Mean Time To Recovery(Hours)`);
+  }
+
+  async checkDownloadReports() {
+    await checkDownloadReport(this.page, this.exportMetricData, 'metricReport.csv');
+    await checkDownloadReport(this.page, this.exportBoardData, 'boardReport.csv');
+    await checkDownloadReport(this.page, this.exportPipelineDataButton, 'pipelineReport.csv');
   }
 }

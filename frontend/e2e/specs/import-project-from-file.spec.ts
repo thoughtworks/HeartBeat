@@ -21,13 +21,5 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
   await reportStep.checkDoraMetrics('6.12', '0.50', '6.62', '6.60', '17.50% (7/40)', '1.90');
   await reportStep.checkDoraMetricsDetails('import-project-from-file-DORA-Metrics.png');
 
-  // const downloadPromise = page.waitForEvent('download');
-  // await page.getByRole('button', { name: 'Export pipeline data' }).click();
-  // const download = await downloadPromise;
-  // const download1Promise = page.waitForEvent('download');
-  // await page.getByRole('button', { name: 'Export board data' }).click();
-  // const download1 = await download1Promise;
-  // const download2Promise = page.waitForEvent('download');
-  // await page.getByRole('button', { name: 'Export metric data' }).click();
-  // const download2 = await download2Promise;
+  await reportStep.checkDownloadReports();
 });

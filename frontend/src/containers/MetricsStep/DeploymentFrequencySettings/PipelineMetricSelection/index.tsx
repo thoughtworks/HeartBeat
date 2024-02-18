@@ -66,7 +66,7 @@ export const PipelineMetricSelection = ({
   };
 
   useEffect(() => {
-    !isInfoLoading && shouldLoad && handleGetPipelineData(pipelineName);
+    !isInfoLoading && shouldLoad && pipelineName && handleGetPipelineData(pipelineName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldLoad, pipelineName, isInfoLoading]);
 

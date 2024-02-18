@@ -1,0 +1,362 @@
+---
+title: BuildKite GraphQL API about replacing existing REST API
+description: BuildKite GraphQL API about replacing existing REST API
+---
+
+## Background
+
+Currently, our BuildKite API are all REST API, and the REST API has the problem of over-fetching or multiple requests.
+
+## Expect
+
+We want to use the GraphQL API to retrieve the key information we need. With the data obtained this way, we can calculate related metrics.
+
+## Solutions
+
+### BuildKite GraphQL Overview
+
+The quickest way to get started with the GraphQL API is to generate an [API Access Token](https://buildkite.com/user/api-access-tokens) with GraphQL scope, and then use the [GraphQL explorer](https://graphql.buildkite.com/explorer) with its built-in documentation.
+For the list of existing disparities between the GraphQL API and the REST API, see [API differences](https://buildkite.com/docs/apis/api-differences).
+
+#### Endpoint
+
+The GraphQL API endpoint is `https://graphql.buildkite.com/v1`. All requests must be HTTP POST requests with `application/json` encoded bodies.
+
+#### Authentication
+
+GraphQL requests must be authenticated using an [API access token](https://buildkite.com/user/api-access-tokens) with the GraphQL scope enabled. Pass the token in your GraphQL request using the `Authorization` HTTP header with a value `Bearer <token>`.
+
+### Using BuildKite GraphQL to replace REST
+
+#### Get the buildKite token info
+
+1.We need to verify the permission scopes.
+*Existing REST API*
+- GET v2/access-token
+Key info we need as follows:
+```
+{
+"scopes": [
+      "string"
+    ]
+}
+```
+
+*Using GraphQL API*
+GraphQL Scheme:
+```
+query getTokenScope {
+  organization(slug: ID!) {
+    apiAccessTokens(first: int) {
+      nodes {
+        scopes
+      }
+    }
+  }
+}
+```
+slug: ID ---- "organization-slug"
+first: Int ---- 10
+
+
+
+- Field correspondence
+
+| REST API   | graphQL API   |
+|------------|---------------|
+| scopes     | nodes.scopes  |
+
+- *Test GraphQL API curl*
+```
+curl --request POST \
+  --url https://graphql.buildkite.com/v1 \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --header 'accept: */*' \
+  --header 'accept-language: zh-CN,zh;q=0.9' \
+  --header 'authority: buildkite.com' \
+  --header 'content-type: text/plain;charset=UTF-8' \
+  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --header 'origin: https://buildkite.com' \
+  --header 'referer: https://buildkite.com/user/graphql/console' \
+  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
+  --header 'sec-ch-ua-mobile: ?0' \
+  --header 'sec-ch-ua-platform: "macOS"' \
+  --header 'sec-fetch-dest: empty' \
+  --header 'sec-fetch-mode: cors' \
+  --header 'sec-fetch-site: same-origin' \
+  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
+  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
+  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --data '{"query":"query getTokenScope {\n  organization(slug: \"thoughtworks-Heartbeat\") {\n    apiAccessTokens(first: 1) {\n      nodes {\n        scopes\n      }\n    }\n  }\n}","operationName":"getTokenScope"}'
+
+```
+
+2.We need to get buildKite organisation info. 
+*Existing REST API*
+- GET v2/organizations
+Key info we need as follows:
+```
+{
+"slug": "string",
+"name": "string"
+}
+```
+*Using GraphQL API*
+GraphQL Scheme:
+```
+query getTokenScope {
+  organization(slug:ID!) {
+    slug
+    name
+    }
+}
+```
+Query variables:
+slug: ID ---- "organization-slug"
+
+- Field correspondence
+
+| REST API   | graphQL API |
+|------------|-------------|
+| slug       | slug        |
+| name       | name        |
+
+- *Test GraphQL API curl*
+```
+curl --request POST \
+  --url https://graphql.buildkite.com/v1 \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --header 'accept: */*' \
+  --header 'accept-language: zh-CN,zh;q=0.9' \
+  --header 'authority: buildkite.com' \
+  --header 'content-type: text/plain;charset=UTF-8' \
+  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --header 'origin: https://buildkite.com' \
+  --header 'referer: https://buildkite.com/user/graphql/console' \
+  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
+  --header 'sec-ch-ua-mobile: ?0' \
+  --header 'sec-ch-ua-platform: "macOS"' \
+  --header 'sec-fetch-dest: empty' \
+  --header 'sec-fetch-mode: cors' \
+  --header 'sec-fetch-site: same-origin' \
+  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
+  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
+  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --data '{"query":"query getTokenScope {\n  organization(slug:\"thoughtworks-Heartbeat\") {\n    slug\n    name\n    }\n}","operationName":"getTokenScope"}'
+
+```
+
+3.We need to get our pipeline info.
+*Existing REST API*
+- `GET v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}`
+Key info we need as follows:
+```
+{
+"name": "string",
+"slug": "string",,
+"repository": "string",
+"steps": [
+    "name": "string"
+  ]
+}
+```
+
+*Using GraphQL API*
+GraphQL Scheme:
+```
+query getPipelineInfo {
+  organization(slug: ID!) {
+    pipelines(first: Int) {
+      edges {
+        node {
+          slug
+          name
+          repository {
+            url
+          }
+          steps {
+            yaml
+          }
+        }
+      }
+    }
+  }
+}
+```
+Query variables:
+slug: ID ---- "organization-slug"
+first: Int ---- 10
+
+- Field correspondence
+
+| REST API    | graphQL API                |
+|-------------|----------------------------|
+| slug        | edges.node.slug            |
+| name        | edges.node.name            |
+| repository  | edges.node.repository.url  |
+| steps       | edges.node.steps.yaml      |
+
+- *Test GraphQL API curl*
+```
+curl --request POST \
+  --url https://graphql.buildkite.com/v1 \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --header 'accept: */*' \
+  --header 'accept-language: zh-CN,zh;q=0.9' \
+  --header 'authority: buildkite.com' \
+  --header 'content-type: text/plain;charset=UTF-8' \
+  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --header 'origin: https://buildkite.com' \
+  --header 'referer: https://buildkite.com/user/graphql/console' \
+  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
+  --header 'sec-ch-ua-mobile: ?0' \
+  --header 'sec-ch-ua-platform: "macOS"' \
+  --header 'sec-fetch-dest: empty' \
+  --header 'sec-fetch-mode: cors' \
+  --header 'sec-fetch-site: same-origin' \
+  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
+  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
+  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --data '{"query":"query getPipelineInfo {\n  organization(slug: \"thoughtworks-Heartbeat\") {\n    pipelines(first: 1) {\n      edges {\n        node {\n          slug\n          name\n          repository {\n            url\n          }\n          steps {\n            yaml\n          }\n        }\n      }\n    }\n  }\n}","operationName":"getPipelineInfo"}'
+
+```
+
+4.We need to get our pipeline steps info.
+*Existing REST API*
+- `GET v2/organizations/{organizationId}/pipelines/{pipelineId}/builds`
+Key info we need as follows:
+```
+{
+	"state": "string",
+	"commit": "string",
+  "creator": {
+      "name": "string",
+      "email": "string"
+    }
+	"pipelineCreateTime": "string",
+	"branch": "string",
+	"number": 4004,
+	"steps": [
+		"jobs": {
+			"name": "string",
+			"state": "string",
+			"startedAt": "string",
+			"finishedAt": "string"
+		}
+	]
+}
+```
+
+*Using GraphQL API*
+We find almost all steps info we need can get from this scheme. But we can't get the exact name of jobs in a build. So we still need to do more research if we want to get the key info about pipeline steps info.
+GraphQL Scheme:
+```
+query getPipelineStepsInfo {
+  pipeline(slug: "thoughtworks-Heartbeat/heartbeat") {
+    builds(first: 1) {
+      edges {
+        node {
+          state
+          branch
+          commit
+          number
+          createdAt
+          createdBy {
+            ... on User {
+              name
+              email
+            }
+            ... on UnregisteredUser {
+              name
+              email
+            }
+          }
+          jobs(first: 1) {
+            edges {
+              node {
+                ... on JobTypeCommand {
+                  label
+                  state
+                  startedAt
+                  finishedAt
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+Query variables:
+slug: ID ---- "organization-slug/pipeline-slug"
+The slug of the pipeline, prefixed with its organization. i.e. acme-inc/my-pipeline
+
+Builds variable: can refer [pipeline -> builds](https://buildkite.com/docs/apis/graphql/schemas/object/pipeline)
+after: String
+Returns the elements in the list that come after the specified cursor.
+
+before: String
+Returns the elements in the list that come before the specified cursor.
+
+branch: [String!]
+Use %default to search by the Pipelines default branch
+
+commit: [String!]
+
+createdAtFrom: DateTime
+
+createdAtTo: DateTime
+
+first: Int
+Returns the first n elements from the list.
+
+last: Int
+Returns the last n elements from the list.
+
+state: [BuildStates!]
+- Field correspondence
+
+| REST API               | graphQL API                            |
+|------------------------|----------------------------------------|
+| state                  | builds.edges.node.state                |
+| commit                 | builds.edges.node.commit               |
+| creator.name           | builds.edges.node.createdBy.name       |
+| creator.email          | builds.edges.node.createdBy.email      |
+| pipelineCreateTime     | builds.edges.node.createdAt            |
+| branch                 | builds.edges.node.branch               |
+| number                 | builds.edges.node.number               |
+| steps.jobs.name        | builds.edges.node.jobs.node.label      |
+| steps.jobs.state       | builds.edges.node.jobs.node.state      |
+| steps.jobs.startedAt   | builds.edges.node.jobs.node.startedAt  |
+| steps.jobs.finishedAt  | builds.edges.node.jobs.node.finishedAt |
+
+- *Test GraphQL API curl*
+```
+curl --request POST \
+  --url https://graphql.buildkite.com/v1 \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --header 'accept: */*' \
+  --header 'accept-language: zh-CN,zh;q=0.9' \
+  --header 'authority: buildkite.com' \
+  --header 'content-type: text/plain;charset=UTF-8' \
+  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --header 'origin: https://buildkite.com' \
+  --header 'referer: https://buildkite.com/user/graphql/console' \
+  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
+  --header 'sec-ch-ua-mobile: ?0' \
+  --header 'sec-ch-ua-platform: "macOS"' \
+  --header 'sec-fetch-dest: empty' \
+  --header 'sec-fetch-mode: cors' \
+  --header 'sec-fetch-site: same-origin' \
+  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
+  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
+  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --data '{"query":"query getPipelineStepsInfo {\n  pipeline(slug: \"thoughtworks-Heartbeat/heartbeat\") {\n    builds(first: 1) {\n      edges {\n        node {\n          state\n          branch\n          commit\n          number\n          createdAt\n          createdBy {\n            ... on User {\n              name\n              email\n            }\n            ... on UnregisteredUser {\n              name\n              email\n            }\n          }\n          jobs(first: 1) {\n            edges {\n              node {\n                ... on JobTypeCommand {\n                  label\n                  state\n                  startedAt\n                  finishedAt\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}","operationName":"getPipelineStepsInfo"}'
+
+```

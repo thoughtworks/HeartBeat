@@ -141,6 +141,11 @@ export default [
 		slug: 'spikes/tech-spikes-jira-graphql-api-about-replacing-existing-rest-api',
 		key: 'spikes/tech-spikes-jira-graphql-api-about-replacing-existing-rest-api',
 	},
+	{
+		text: 'Call buildkite with graphQL API',
+		slug: 'spikes/tech-spikes-buildkite-graphql-api-about-replacing-existing-rest-api',
+		key: 'spikes/tech-spikes-buildkite-graphql-api-about-replacing-existing-rest-api',
+	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },
